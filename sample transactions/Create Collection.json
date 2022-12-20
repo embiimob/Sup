@@ -1,0 +1,22 @@
+{
+  "@nm": "morks_gallery",
+  "nme": "mork\\'s gallery",
+  "dsc": "a collection of objects found on a spaceship",
+  "img": "3ff52882c93420c8fe4a90f6fa94b2a563316b5e7b83afe2ddd5bcadc86d3821@BTC/FakeUFO.png",
+  "bnr": "c2bf33118e223989849ecb514041cec5087ae68d9d5399903e6130da8827fc22/1201.jpg",
+  "url": {
+    "🛸": "iamtimeloop.org",
+    "✉": "mork@embii.com"
+  },
+  "pkx": "afe10a413f20208b6ec5487341c835e0b9d29681c22cb3c96a8235c29bf543f4",
+  "pky": "b13f9d5caeacfc53b7c748035580adc701d29aafe97d8c40d209c9674c2c961c",
+  "lic": null,
+  "cre": [ 0, 2 ],
+  "roy": {
+    "0": 7,
+    "2": 3
+  },
+  "max": 2,
+  "min": { "1:0:1": 1 },
+  "s": "i496oQc"
+}
