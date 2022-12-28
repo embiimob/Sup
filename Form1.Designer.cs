@@ -47,7 +47,7 @@
             // 
             // btnPut
             // 
-            this.btnPut.Location = new System.Drawing.Point(703, 53);
+            this.btnPut.Location = new System.Drawing.Point(1162, 58);
             this.btnPut.Name = "btnPut";
             this.btnPut.Size = new System.Drawing.Size(75, 23);
             this.btnPut.TabIndex = 0;
@@ -57,7 +57,7 @@
             // 
             // btnGet
             // 
-            this.btnGet.Location = new System.Drawing.Point(703, 254);
+            this.btnGet.Location = new System.Drawing.Point(1162, 254);
             this.btnGet.Name = "btnGet";
             this.btnGet.Size = new System.Drawing.Size(75, 23);
             this.btnGet.TabIndex = 1;
@@ -122,7 +122,7 @@
             // 
             this.txtDeleteKey.Location = new System.Drawing.Point(95, 469);
             this.txtDeleteKey.Name = "txtDeleteKey";
-            this.txtDeleteKey.Size = new System.Drawing.Size(684, 20);
+            this.txtDeleteKey.Size = new System.Drawing.Size(1142, 20);
             this.txtDeleteKey.TabIndex = 7;
             // 
             // label4
@@ -139,7 +139,7 @@
             this.txtPutValue.Location = new System.Drawing.Point(321, 84);
             this.txtPutValue.Multiline = true;
             this.txtPutValue.Name = "txtPutValue";
-            this.txtPutValue.Size = new System.Drawing.Size(457, 164);
+            this.txtPutValue.Size = new System.Drawing.Size(916, 164);
             this.txtPutValue.TabIndex = 9;
             // 
             // label5
@@ -157,7 +157,8 @@
             this.txtGetValue.Multiline = true;
             this.txtGetValue.Name = "txtGetValue";
             this.txtGetValue.ReadOnly = true;
-            this.txtGetValue.Size = new System.Drawing.Size(455, 166);
+            this.txtGetValue.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
+            this.txtGetValue.Size = new System.Drawing.Size(914, 166);
             this.txtGetValue.TabIndex = 11;
             // 
             // lbTableName
@@ -189,7 +190,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(790, 503);
+            this.ClientSize = new System.Drawing.Size(1249, 503);
             this.Controls.Add(this.label6);
             this.Controls.Add(this.lbTableName);
             this.Controls.Add(this.label5);
@@ -205,8 +206,8 @@
             this.Controls.Add(this.btnDelete);
             this.Controls.Add(this.btnGet);
             this.Controls.Add(this.btnPut);
-            this.MaximumSize = new System.Drawing.Size(806, 542);
-            this.MinimumSize = new System.Drawing.Size(806, 542);
+            this.MaximumSize = new System.Drawing.Size(1265, 542);
+            this.MinimumSize = new System.Drawing.Size(1265, 542);
             this.Name = "Form1";
             this.Text = "levelDBTest";
             this.ResumeLayout(false);

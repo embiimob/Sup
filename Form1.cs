@@ -83,38 +83,59 @@ namespace SUP
             {
                 case "PRO":
                     var PRO = new Options { CreateIfMissing = true };
+                    txtGetValue.Text = "";
                     using (var db = new DB(PRO, @"PRO"))
                     {
-                        var keyValue = db.Get(txtGetKey.Text);
-                        txtGetValue.Text = keyValue;
+
+                        LevelDB.Iterator it = db.CreateIterator();
+                        for (it.Seek(txtGetKey.Text); it.IsValid() && it.KeyAsString().StartsWith(txtGetKey.Text); it.Next())
+                        {
+                            txtGetValue.Text = txtGetValue.Text + it.ValueAsString() + Environment.NewLine;
+                        }
+                        it.Dispose();
 
                     }
                     break;
 
                 case "COL":
                     var COL = new Options { CreateIfMissing = true };
+                    txtGetValue.Text = "";
                     using (var db = new DB(COL, @"COL"))
                     {
-                        var keyValue = db.Get(txtGetKey.Text);
-                        txtGetValue.Text = keyValue;
+                        LevelDB.Iterator it = db.CreateIterator();
+                        for (it.Seek(txtGetKey.Text); it.IsValid() && it.KeyAsString().StartsWith(txtGetKey.Text); it.Next())
+                        {
+                            txtGetValue.Text = txtGetValue.Text + it.ValueAsString() + Environment.NewLine;
+                        }
+                        it.Dispose();
                     }
                     break;
 
                 case "OBJ":
                     var OBJ = new Options { CreateIfMissing = true };
+                    txtGetValue.Text = "";
                     using (var db = new DB(OBJ, @"OBJ"))
                     {
-                        var keyValue = db.Get(txtGetKey.Text);
-                        txtGetValue.Text = keyValue;
+                        LevelDB.Iterator it = db.CreateIterator();
+                        for (it.Seek(txtGetKey.Text); it.IsValid() && it.KeyAsString().StartsWith(txtGetKey.Text) ; it.Next())
+                        {
+                            txtGetValue.Text = txtGetValue.Text + it.ValueAsString() + Environment.NewLine;
+                        }
+                        it.Dispose();
                     }
                     break;
 
                 case "LOG":
                     var LOG = new Options { CreateIfMissing = true };
+                    txtGetValue.Text = "";
                     using (var db = new DB(LOG, @"LOG"))
                     {
-                        var keyValue = db.Get(txtGetKey.Text);
-                        txtGetValue.Text = keyValue;
+                        LevelDB.Iterator it = db.CreateIterator();
+                        for (it.Seek(txtGetKey.Text); it.IsValid() && it.KeyAsString().StartsWith(txtGetKey.Text); it.Next())
+                        {
+                            txtGetValue.Text = txtGetValue.Text + it.ValueAsString() + Environment.NewLine;
+                        }
+                        it.Dispose();
                     }
                     break;
 
