@@ -249,7 +249,7 @@ namespace SUP
                 //defining items to include in the search results
                 string transactionID = transID.txid;
                 string confirmations = transID.confirmations;
-                string blocktime = transID.blocktime;
+                DateTime blocktime = DateTimeOffset.FromUnixTimeSeconds(Convert.ToInt32(transID.blocktime)).DateTime; 
                 byte[] transactionBytes = new byte[0];
                 string transactionASCII = "";
                 string strPublicAddress = "";
