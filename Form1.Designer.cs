@@ -63,6 +63,7 @@
             this.sigstartbyte = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.sigendbyte = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.transaction_data = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.transaction_bytes = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.confirmations = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.block_time = new System.Windows.Forms.DataGridViewTextBoxColumn();
             ((System.ComponentModel.ISupportInitialize)(this.dgTransactions)).BeginInit();
@@ -326,6 +327,7 @@
             this.sigstartbyte,
             this.sigendbyte,
             this.transaction_data,
+            this.transaction_bytes,
             this.confirmations,
             this.block_time});
             this.dgTransactions.Location = new System.Drawing.Point(12, 213);
@@ -369,6 +371,11 @@
             // 
             this.transaction_data.HeaderText = "Transaction Data";
             this.transaction_data.Name = "transaction_data";
+            // 
+            // transaction_bytes
+            // 
+            this.transaction_bytes.HeaderText = "Transaction Bytes";
+            this.transaction_bytes.Name = "transaction_bytes";
             // 
             // confirmations
             // 
@@ -460,6 +467,7 @@
         private System.Windows.Forms.DataGridViewTextBoxColumn sigstartbyte;
         private System.Windows.Forms.DataGridViewTextBoxColumn sigendbyte;
         private System.Windows.Forms.DataGridViewTextBoxColumn transaction_data;
+        private System.Windows.Forms.DataGridViewTextBoxColumn transaction_bytes;
         private System.Windows.Forms.DataGridViewTextBoxColumn confirmations;
         private System.Windows.Forms.DataGridViewTextBoxColumn block_time;
     }

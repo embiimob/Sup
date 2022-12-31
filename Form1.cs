@@ -16,6 +16,7 @@ using Newtonsoft.Json;
 using SUP.SEC;
 using System.Text.RegularExpressions;
 using System.Security.Cryptography;
+using System.CodeDom.Compiler;
 
 namespace SUP
 {
@@ -223,81 +224,108 @@ namespace SUP
             string walletUrl = txtUrl.Text;
             string walletUsername = txtLogin.Text;
             string walletPassword = txtPassword.Text;
+            
+            //used as P2FK Delimiters 
+            char[] specialChars = new char[] { '\\', '/', ':', '*', '?', '"', '<', '>', '|' };
+
+           //find all occurences of numbers that start with 0
+            Regex regex = new Regex(@"\d*0\d+");
+
+
+
             NetworkCredential credentials = new NetworkCredential(walletUsername, walletPassword);
             RPCClient rpcClient = new RPCClient(credentials, new Uri(walletUrl));
+
+            //Clearing the datagrid of any data from previous searches
             dgTransactions.Rows.Clear();
+
+            // calls the bitcoin wallet searchrawtransaction command and returns it as a dynamic deserialized object.
             dynamic deserializedObject = JsonConvert.DeserializeObject(rpcClient.SendCommand("searchrawtransactions", txtSearchAddress.Text, 1, 0, 500).ResultString);
 
+
+            //itterating through JSON search results
             foreach (dynamic transID in deserializedObject)
             {
-                string transaction = "";
+                //defining items to include in the search results
                 string transactionID = transID.txid;
                 string confirmations = transID.confirmations;
                 string blocktime = transID.blocktime;
                 byte[] transactionBytes = new byte[0];
+                string transactionASCII = "";
                 string strPublicAddress = "";
                 int sigStartByte = 0;
                 int sigEndByte = 0;
                 string signature = "";
-                Boolean sigCheck = false;
+                object[] rowData = new object[0];
+                var sigResult = false;
 
                 foreach (dynamic v_out in transID.vout)
                 {
-
+                 
+                    // checking for all known microtransaction values
                     if (v_out.value == "5.46E-06" || v_out.value == "5.48E-06" || v_out.value == "5.48E-05")
-                    {
+                    {   
                         byte[] results = new byte[0];
                         strPublicAddress = v_out.scriptPubKey.addresses[0];
+
+                        //retreiving payload data from each address
                         Base58.DecodeWithCheckSum(strPublicAddress, out results);
+
+                        //append to a byte[] of all P2FK data
                         transactionBytes = AddBytes(transactionBytes, RemoveFirstByte(results));
 
                     }
                 }
 
-                transaction = Encoding.UTF8.GetString(transactionBytes);
-                if (transaction.StartsWith("SIG"))
-                    {
 
-                    char[] specialChars = new char[] { '\\', '/', ':', '*', '?', '"', '<', '>', '|' };
-                    string input = transaction;
-
-                    // Use a regular expression to match numbers in the input string
-                    Regex regex = new Regex(@"\d+");
+                //review necessary P2FK header encoding. 
+                //ASCII Header Encoding is working still troubleshooting why some signed objects are not being recogrnized as signed
+                transactionASCII = Encoding.ASCII.GetString(transactionBytes);
 
 
-                    // Perform the loop until the regular expression fails to match any more numbers
+                //a lot of overhead only needed for objects that ar signed
+                if (transactionASCII.StartsWith("SIG"))
+                {
+
+                    
+                    string input = transactionASCII;
+
+
+                    // Perform the loop until no additional numbers are found and the regular expression fails to match 
                     while (input.IndexOfAny(specialChars) != -1 && regex.IsMatch(input))
                     {
-                         Match match = regex.Match(input);
-
-                        if (input.IndexOfAny(specialChars) == match.Index -1)
+                        Match match = regex.Match(input);
+                        sigEndByte++;
+                        //invalid if a special character is not found before the number
+                        if (input.IndexOfAny(specialChars) == match.Index - 1 && match.Length > 1)
                         {
+                           
                             sigEndByte += Int32.Parse(match.Value) + match.Index + match.Length;
+
+                            if (sigStartByte == 0)
+                            {
+
+                                sigStartByte = sigEndByte;
+                                
+                                signature = input.Substring(match.Index + match.Length + 1, Int32.Parse(match.Value));
+                            }
+
+                                input = input.Remove(0, (Int32.Parse(match.Value) + match.Index + match.Length + 1));
+                           
                         }
+                        else { break; }
                         
-                        if (sigStartByte == 0) { sigStartByte = sigEndByte; signature = input.Substring(match.Index + match.Length+1, Int32.Parse(match.Value));
-                        }
-                       
-                        try { input = input.Remove(0, (Int32.Parse(match.Value) + match.Index + match.Length )); }
-                        catch(Exception ex) {
-                            
-                            break; }
-
-
                     }
 
+                    //verify a hash of the byte data was signed by the last address found on the transaction 
                     System.Security.Cryptography.SHA256 mySHA256 = SHA256Managed.Create();
-                    byte[] hashValue = mySHA256.ComputeHash(transactionBytes.Skip(sigStartByte + 1).Take(sigEndByte - sigStartByte).ToArray());
+                    byte[] hashValue = mySHA256.ComputeHash(transactionBytes.Skip(sigStartByte).Take(sigEndByte - sigStartByte).ToArray());
                     var result = rpcClient.SendCommand("verifymessage", strPublicAddress, signature, BitConverter.ToString(hashValue).Replace("-", String.Empty));
-                    object[] rowData = { transactionID, result.Result, signature, strPublicAddress,sigStartByte,sigEndByte,transaction, confirmations, blocktime };
-                    dgTransactions.Rows.Add(rowData);
-                }
-
-
-
-
-
-     
+                    sigResult = Convert.ToBoolean(result.Result);
+                }else { strPublicAddress = ""; }
+                rowData = new object[] { transactionID, sigResult, signature, strPublicAddress, sigStartByte, sigEndByte, transactionASCII, transactionBytes.Length, confirmations, blocktime };
+                dgTransactions.Rows.Add(rowData);
+        
 
             }
 
