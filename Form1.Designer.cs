@@ -55,7 +55,17 @@
             this.txtSearchAddress = new System.Windows.Forms.TextBox();
             this.label11 = new System.Windows.Forms.Label();
             this.btnSearch = new System.Windows.Forms.Button();
-            this.lstTransactions = new System.Windows.Forms.ListBox();
+            this.dgTransactions = new System.Windows.Forms.DataGridView();
+            this.transaction_id = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.is_signed = new System.Windows.Forms.DataGridViewCheckBoxColumn();
+            this.signature = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.signed_by = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.sigstartbyte = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.sigendbyte = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.transaction_data = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.confirmations = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.block_time = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            ((System.ComponentModel.ISupportInitialize)(this.dgTransactions)).BeginInit();
             this.SuspendLayout();
             // 
             // btnPut
@@ -305,22 +315,77 @@
             this.btnSearch.UseVisualStyleBackColor = true;
             this.btnSearch.Click += new System.EventHandler(this.btnSearch_Click);
             // 
-            // lstTransactions
+            // dgTransactions
             // 
-            this.lstTransactions.FormattingEnabled = true;
-            this.lstTransactions.HorizontalScrollbar = true;
-            this.lstTransactions.Location = new System.Drawing.Point(12, 201);
-            this.lstTransactions.Name = "lstTransactions";
-            this.lstTransactions.ScrollAlwaysVisible = true;
-            this.lstTransactions.Size = new System.Drawing.Size(1045, 134);
-            this.lstTransactions.TabIndex = 29;
+            this.dgTransactions.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.dgTransactions.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
+            this.transaction_id,
+            this.is_signed,
+            this.signature,
+            this.signed_by,
+            this.sigstartbyte,
+            this.sigendbyte,
+            this.transaction_data,
+            this.confirmations,
+            this.block_time});
+            this.dgTransactions.Location = new System.Drawing.Point(12, 213);
+            this.dgTransactions.Name = "dgTransactions";
+            this.dgTransactions.Size = new System.Drawing.Size(1045, 379);
+            this.dgTransactions.TabIndex = 30;
+            // 
+            // transaction_id
+            // 
+            this.transaction_id.HeaderText = "Transaction ID";
+            this.transaction_id.Name = "transaction_id";
+            // 
+            // is_signed
+            // 
+            this.is_signed.HeaderText = "Is Signed?";
+            this.is_signed.Name = "is_signed";
+            this.is_signed.Resizable = System.Windows.Forms.DataGridViewTriState.True;
+            this.is_signed.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.Automatic;
+            // 
+            // signature
+            // 
+            this.signature.HeaderText = "Signature";
+            this.signature.Name = "signature";
+            // 
+            // signed_by
+            // 
+            this.signed_by.HeaderText = "Signed By";
+            this.signed_by.Name = "signed_by";
+            // 
+            // sigstartbyte
+            // 
+            this.sigstartbyte.HeaderText = "Signature Start Byte";
+            this.sigstartbyte.Name = "sigstartbyte";
+            // 
+            // sigendbyte
+            // 
+            this.sigendbyte.HeaderText = "Signature End Byte";
+            this.sigendbyte.Name = "sigendbyte";
+            // 
+            // transaction_data
+            // 
+            this.transaction_data.HeaderText = "Transaction Data";
+            this.transaction_data.Name = "transaction_data";
+            // 
+            // confirmations
+            // 
+            this.confirmations.HeaderText = "Confirmations";
+            this.confirmations.Name = "confirmations";
+            // 
+            // block_time
+            // 
+            this.block_time.HeaderText = "Block Time";
+            this.block_time.Name = "block_time";
             // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1069, 604);
-            this.Controls.Add(this.lstTransactions);
+            this.Controls.Add(this.dgTransactions);
             this.Controls.Add(this.btnSearch);
             this.Controls.Add(this.label11);
             this.Controls.Add(this.txtSearchAddress);
@@ -352,6 +417,7 @@
             this.MinimumSize = new System.Drawing.Size(1085, 643);
             this.Name = "Form1";
             this.Text = "Sup!? Just testing ";
+            ((System.ComponentModel.ISupportInitialize)(this.dgTransactions)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -386,7 +452,16 @@
         private System.Windows.Forms.TextBox txtSearchAddress;
         private System.Windows.Forms.Label label11;
         private System.Windows.Forms.Button btnSearch;
-        private System.Windows.Forms.ListBox lstTransactions;
+        private System.Windows.Forms.DataGridView dgTransactions;
+        private System.Windows.Forms.DataGridViewTextBoxColumn transaction_id;
+        private System.Windows.Forms.DataGridViewCheckBoxColumn is_signed;
+        private System.Windows.Forms.DataGridViewTextBoxColumn signature;
+        private System.Windows.Forms.DataGridViewTextBoxColumn signed_by;
+        private System.Windows.Forms.DataGridViewTextBoxColumn sigstartbyte;
+        private System.Windows.Forms.DataGridViewTextBoxColumn sigendbyte;
+        private System.Windows.Forms.DataGridViewTextBoxColumn transaction_data;
+        private System.Windows.Forms.DataGridViewTextBoxColumn confirmations;
+        private System.Windows.Forms.DataGridViewTextBoxColumn block_time;
     }
 }
 

@@ -14,6 +14,8 @@ using System.Windows.Forms;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 using Newtonsoft.Json;
 using SUP.SEC;
+using System.Text.RegularExpressions;
+using System.Security.Cryptography;
 
 namespace SUP
 {
@@ -223,29 +225,115 @@ namespace SUP
             string walletPassword = txtPassword.Text;
             NetworkCredential credentials = new NetworkCredential(walletUsername, walletPassword);
             RPCClient rpcClient = new RPCClient(credentials, new Uri(walletUrl));
-            lstTransactions.Items.Clear();
-
+            dgTransactions.Rows.Clear();
             dynamic deserializedObject = JsonConvert.DeserializeObject(rpcClient.SendCommand("searchrawtransactions", txtSearchAddress.Text, 1, 0, 500).ResultString);
 
             foreach (dynamic transID in deserializedObject)
             {
                 string transaction = "";
+                string transactionID = transID.txid;
+                string confirmations = transID.confirmations;
+                string blocktime = transID.blocktime;
+                byte[] transactionBytes = new byte[0];
+                string strPublicAddress = "";
+                int sigStartByte = 0;
+                int sigEndByte = 0;
+                string signature = "";
+                Boolean sigCheck = false;
 
                 foreach (dynamic v_out in transID.vout)
                 {
 
-                    if (v_out.value == "5.46E-06" ||  v_out.value == "5.48E-06" || v_out.value == "5.48E-05" )
+                    if (v_out.value == "5.46E-06" || v_out.value == "5.48E-06" || v_out.value == "5.48E-05")
                     {
                         byte[] results = new byte[0];
-                        string strPublicAddress = v_out.scriptPubKey.addresses[0];
+                        strPublicAddress = v_out.scriptPubKey.addresses[0];
                         Base58.DecodeWithCheckSum(strPublicAddress, out results);
-                        transaction = transaction + Encoding.UTF8.GetString(results).Remove(0, 1);
+                        transactionBytes = AddBytes(transactionBytes, RemoveFirstByte(results));
+
                     }
                 }
 
-                lstTransactions.Items.Add(transaction);
+                transaction = Encoding.UTF8.GetString(transactionBytes);
+                if (transaction.StartsWith("SIG"))
+                    {
+
+                    char[] specialChars = new char[] { '\\', '/', ':', '*', '?', '"', '<', '>', '|' };
+                    string input = transaction;
+
+                    // Use a regular expression to match numbers in the input string
+                    Regex regex = new Regex(@"\d+");
+
+
+                    // Perform the loop until the regular expression fails to match any more numbers
+                    while (input.IndexOfAny(specialChars) != -1 && regex.IsMatch(input))
+                    {
+                         Match match = regex.Match(input);
+
+                        if (input.IndexOfAny(specialChars) == match.Index -1)
+                        {
+                            sigEndByte += Int32.Parse(match.Value) + match.Index + match.Length;
+                        }
+                        
+                        if (sigStartByte == 0) { sigStartByte = sigEndByte; signature = input.Substring(match.Index + match.Length+1, Int32.Parse(match.Value));
+                        }
+                       
+                        try { input = input.Remove(0, (Int32.Parse(match.Value) + match.Index + match.Length )); }
+                        catch(Exception ex) {
+                            
+                            break; }
+
+
+                    }
+
+                    System.Security.Cryptography.SHA256 mySHA256 = SHA256Managed.Create();
+                    byte[] hashValue = mySHA256.ComputeHash(transactionBytes.Skip(sigStartByte + 1).Take(sigEndByte - sigStartByte).ToArray());
+                    var result = rpcClient.SendCommand("verifymessage", strPublicAddress, signature, BitConverter.ToString(hashValue).Replace("-", String.Empty));
+                    object[] rowData = { transactionID, result.Result, signature, strPublicAddress,sigStartByte,sigEndByte,transaction, confirmations, blocktime };
+                    dgTransactions.Rows.Add(rowData);
+                }
+
+
+
+
+
+     
 
             }
+
+        }
+        public static byte[] AddBytes(byte[] existingArray, byte[] newArray)
+        {
+            // Create a new array with a capacity large enough to hold both arrays
+            byte[] combinedArray = new byte[existingArray.Length + newArray.Length];
+
+            // Copy the elements from the existing array into the new array
+            Array.Copy(existingArray, combinedArray, existingArray.Length);
+
+            // Copy the elements from the new array into the new array
+            Array.Copy(newArray, 0, combinedArray, existingArray.Length, newArray.Length);
+
+            return combinedArray;
+        }
+
+        public static byte[] RemoveFirstByte(byte[] array)
+        {
+            // Check if the array is empty
+            if (array.Length == 0)
+            {
+                return array;
+            }
+
+            // Create a new array with a capacity one less than the original array
+            byte[] newArray = new byte[array.Length - 1];
+
+            // Copy the elements from the original array into the new array, starting at the second element
+            Array.Copy(array, 1, newArray, 0, newArray.Length);
+
+            return newArray;
+        }
+        private void lstTransactions_SelectedIndexChanged(object sender, EventArgs e)
+        {
 
         }
     }
