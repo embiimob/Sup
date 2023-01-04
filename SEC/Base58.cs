@@ -3,7 +3,7 @@ using System.Linq;
 using System.Numerics; 
 
 
-namespace SUP.SEC
+namespace SUP.P2FK
 {
     /// <summary>
     /// Modified from CodesInChaos' public domain code

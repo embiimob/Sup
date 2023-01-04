@@ -60,12 +60,16 @@
             this.is_signed = new System.Windows.Forms.DataGridViewCheckBoxColumn();
             this.signature = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.signed_by = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.sigstartbyte = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.sigendbyte = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.transaction_data = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.transaction_bytes = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.filecount = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.messagecount = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.keywordcount = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.total_bytes = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.confirmations = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.block_time = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.buildtime = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.btnGetTransactionId = new System.Windows.Forms.Button();
+            this.label12 = new System.Windows.Forms.Label();
+            this.txtTransactionId = new System.Windows.Forms.TextBox();
             ((System.ComponentModel.ISupportInitialize)(this.dgTransactions)).BeginInit();
             this.SuspendLayout();
             // 
@@ -91,7 +95,7 @@
             // 
             // btnDelete
             // 
-            this.btnDelete.Location = new System.Drawing.Point(982, 172);
+            this.btnDelete.Location = new System.Drawing.Point(982, 184);
             this.btnDelete.Name = "btnDelete";
             this.btnDelete.Size = new System.Drawing.Size(75, 23);
             this.btnDelete.TabIndex = 2;
@@ -138,7 +142,7 @@
             // label3
             // 
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(624, 153);
+            this.label3.Location = new System.Drawing.Point(624, 161);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(65, 13);
             this.label3.TabIndex = 8;
@@ -146,7 +150,7 @@
             // 
             // txtDeleteKey
             // 
-            this.txtDeleteKey.Location = new System.Drawing.Point(627, 175);
+            this.txtDeleteKey.Location = new System.Drawing.Point(627, 187);
             this.txtDeleteKey.Name = "txtDeleteKey";
             this.txtDeleteKey.Size = new System.Drawing.Size(350, 20);
             this.txtDeleteKey.TabIndex = 7;
@@ -193,20 +197,21 @@
             this.lbTableName.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F);
             this.lbTableName.FormattingEnabled = true;
             this.lbTableName.Items.AddRange(new object[] {
+            "ROOT",
             "PRO",
             "COL",
             "OBJ",
             "LOG"});
-            this.lbTableName.Location = new System.Drawing.Point(535, 152);
+            this.lbTableName.Location = new System.Drawing.Point(535, 177);
             this.lbTableName.Name = "lbTableName";
             this.lbTableName.ScrollAlwaysVisible = true;
-            this.lbTableName.Size = new System.Drawing.Size(83, 43);
+            this.lbTableName.Size = new System.Drawing.Size(83, 30);
             this.lbTableName.TabIndex = 13;
             // 
             // label6
             // 
             this.label6.AutoSize = true;
-            this.label6.Location = new System.Drawing.Point(455, 182);
+            this.label6.Location = new System.Drawing.Point(532, 161);
             this.label6.Name = "label6";
             this.label6.Size = new System.Drawing.Size(74, 13);
             this.label6.TabIndex = 14;
@@ -291,7 +296,7 @@
             // 
             // txtSearchAddress
             // 
-            this.txtSearchAddress.Location = new System.Drawing.Point(12, 174);
+            this.txtSearchAddress.Location = new System.Drawing.Point(12, 142);
             this.txtSearchAddress.Name = "txtSearchAddress";
             this.txtSearchAddress.Size = new System.Drawing.Size(277, 20);
             this.txtSearchAddress.TabIndex = 25;
@@ -300,15 +305,15 @@
             // label11
             // 
             this.label11.AutoSize = true;
-            this.label11.Location = new System.Drawing.Point(13, 158);
+            this.label11.Location = new System.Drawing.Point(9, 127);
             this.label11.Name = "label11";
-            this.label11.Size = new System.Drawing.Size(82, 13);
+            this.label11.Size = new System.Drawing.Size(65, 13);
             this.label11.TabIndex = 26;
-            this.label11.Text = "Search Address";
+            this.label11.Text = "Get Address";
             // 
             // btnSearch
             // 
-            this.btnSearch.Location = new System.Drawing.Point(295, 172);
+            this.btnSearch.Location = new System.Drawing.Point(295, 140);
             this.btnSearch.Name = "btnSearch";
             this.btnSearch.Size = new System.Drawing.Size(58, 23);
             this.btnSearch.TabIndex = 27;
@@ -324,12 +329,13 @@
             this.is_signed,
             this.signature,
             this.signed_by,
-            this.sigstartbyte,
-            this.sigendbyte,
-            this.transaction_data,
-            this.transaction_bytes,
+            this.filecount,
+            this.messagecount,
+            this.keywordcount,
+            this.total_bytes,
             this.confirmations,
-            this.block_time});
+            this.block_time,
+            this.buildtime});
             this.dgTransactions.Location = new System.Drawing.Point(12, 213);
             this.dgTransactions.Name = "dgTransactions";
             this.dgTransactions.Size = new System.Drawing.Size(1045, 379);
@@ -357,25 +363,25 @@
             this.signed_by.HeaderText = "Signed By";
             this.signed_by.Name = "signed_by";
             // 
-            // sigstartbyte
+            // filecount
             // 
-            this.sigstartbyte.HeaderText = "Signature Start Byte";
-            this.sigstartbyte.Name = "sigstartbyte";
+            this.filecount.HeaderText = "Files";
+            this.filecount.Name = "filecount";
             // 
-            // sigendbyte
+            // messagecount
             // 
-            this.sigendbyte.HeaderText = "Signature End Byte";
-            this.sigendbyte.Name = "sigendbyte";
+            this.messagecount.HeaderText = "Messages";
+            this.messagecount.Name = "messagecount";
             // 
-            // transaction_data
+            // keywordcount
             // 
-            this.transaction_data.HeaderText = "Transaction Data";
-            this.transaction_data.Name = "transaction_data";
+            this.keywordcount.HeaderText = "Keywords";
+            this.keywordcount.Name = "keywordcount";
             // 
-            // transaction_bytes
+            // total_bytes
             // 
-            this.transaction_bytes.HeaderText = "Transaction Bytes";
-            this.transaction_bytes.Name = "transaction_bytes";
+            this.total_bytes.HeaderText = "Total Bytes";
+            this.total_bytes.Name = "total_bytes";
             // 
             // confirmations
             // 
@@ -387,11 +393,46 @@
             this.block_time.HeaderText = "Block Time";
             this.block_time.Name = "block_time";
             // 
+            // buildtime
+            // 
+            this.buildtime.HeaderText = "Build Time";
+            this.buildtime.Name = "buildtime";
+            // 
+            // btnGetTransactionId
+            // 
+            this.btnGetTransactionId.Location = new System.Drawing.Point(409, 184);
+            this.btnGetTransactionId.Name = "btnGetTransactionId";
+            this.btnGetTransactionId.Size = new System.Drawing.Size(58, 23);
+            this.btnGetTransactionId.TabIndex = 33;
+            this.btnGetTransactionId.Text = "Search";
+            this.btnGetTransactionId.UseVisualStyleBackColor = true;
+            this.btnGetTransactionId.Click += new System.EventHandler(this.btnGetTransactionId_Click);
+            // 
+            // label12
+            // 
+            this.label12.AutoSize = true;
+            this.label12.Location = new System.Drawing.Point(13, 171);
+            this.label12.Name = "label12";
+            this.label12.Size = new System.Drawing.Size(95, 13);
+            this.label12.TabIndex = 32;
+            this.label12.Text = "Get Transaction Id";
+            // 
+            // txtTransactionId
+            // 
+            this.txtTransactionId.Location = new System.Drawing.Point(12, 187);
+            this.txtTransactionId.Name = "txtTransactionId";
+            this.txtTransactionId.Size = new System.Drawing.Size(391, 20);
+            this.txtTransactionId.TabIndex = 31;
+            this.txtTransactionId.Text = "a87d87b2b9821c4fc7d2c349cdda7542627b774d56db81e3a988503735b8a4f9";
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1069, 604);
+            this.Controls.Add(this.btnGetTransactionId);
+            this.Controls.Add(this.label12);
+            this.Controls.Add(this.txtTransactionId);
             this.Controls.Add(this.dgTransactions);
             this.Controls.Add(this.btnSearch);
             this.Controls.Add(this.label11);
@@ -464,12 +505,16 @@
         private System.Windows.Forms.DataGridViewCheckBoxColumn is_signed;
         private System.Windows.Forms.DataGridViewTextBoxColumn signature;
         private System.Windows.Forms.DataGridViewTextBoxColumn signed_by;
-        private System.Windows.Forms.DataGridViewTextBoxColumn sigstartbyte;
-        private System.Windows.Forms.DataGridViewTextBoxColumn sigendbyte;
-        private System.Windows.Forms.DataGridViewTextBoxColumn transaction_data;
-        private System.Windows.Forms.DataGridViewTextBoxColumn transaction_bytes;
+        private System.Windows.Forms.DataGridViewTextBoxColumn filecount;
+        private System.Windows.Forms.DataGridViewTextBoxColumn messagecount;
+        private System.Windows.Forms.DataGridViewTextBoxColumn keywordcount;
+        private System.Windows.Forms.DataGridViewTextBoxColumn total_bytes;
         private System.Windows.Forms.DataGridViewTextBoxColumn confirmations;
         private System.Windows.Forms.DataGridViewTextBoxColumn block_time;
+        private System.Windows.Forms.DataGridViewTextBoxColumn buildtime;
+        private System.Windows.Forms.Button btnGetTransactionId;
+        private System.Windows.Forms.Label label12;
+        private System.Windows.Forms.TextBox txtTransactionId;
     }
 }
 

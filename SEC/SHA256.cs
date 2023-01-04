@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Security.Cryptography;
 
-namespace SUP.SEC
+namespace SUP.P2FK
 {
     public class SHA256
     {
