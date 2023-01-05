@@ -2,12 +2,12 @@
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Security.Cryptography;
 using System.Text;
 using System.Text.RegularExpressions;
-using System.IO;
 
 namespace SUP.P2FK
 {
@@ -109,23 +109,17 @@ namespace SUP.P2FK
 
                         if (fileName != "")
                         {
-                            if (regexTransactionId.IsMatch(fileName))
+
+                            while (regexTransactionId.IsMatch(fileName))
                             {
-
-                                while (regexTransactionId.IsMatch(fileName))
-                                {
-                                    string strTransactionID = transID.txid;
-                                    LedgerRoot = GetRootByByteArray(GetLedgerBytes(fileName + Environment.NewLine + Encoding.ASCII.GetString(fileBytes).Replace(fileName, ""), username, password, url), username, password, url, strPublicAddress, strTransactionID);
-                                    fileName = LedgerRoot.File.Keys.First();
-                                    fileBytes = LedgerRoot.File.Values.First();
-                                    newRoot = LedgerRoot;
-                                }
-
+                                string strTransactionID = transID.txid;
+                                LedgerRoot = GetRootByByteArray(GetLedgerBytes(fileName + Environment.NewLine + Encoding.ASCII.GetString(fileBytes).Replace(fileName, ""), username, password, url), username, password, url, strPublicAddress, strTransactionID);
+                                fileName = LedgerRoot.File.Keys.First();
+                                fileBytes = LedgerRoot.File.Values.First();
+                                newRoot = LedgerRoot;
                                 newRoot.TransactionId = transID.txid;
                                 newRoot.Confirmations = transID.confirmations;
                                 newRoot.BlockDate = DateTimeOffset.FromUnixTimeSeconds(Convert.ToInt32(transID.blocktime)).DateTime;
-
-
                             }
 
                             if (fileName == "SIG")
@@ -139,32 +133,40 @@ namespace SUP.P2FK
 
                             files.Add(fileName, fileBytes);
 
-                            string diskpath = "root\\" + transID.txid + "\\";
-                            if (!Directory.Exists(diskpath))
+                            try
                             {
-                                Directory.CreateDirectory(diskpath);
-                            }
+                                string diskpath = "root\\" + transID.txid + "\\";
+                                if (!Directory.Exists(diskpath))
+                                {
+                                    Directory.CreateDirectory(diskpath);
+                                }
 
-                            using (FileStream fs = new FileStream(diskpath + fileName, FileMode.Create))
-                            {
-                                fs.Write(fileBytes, 0, fileBytes.Length);
-                            }
-
-                        }
-                        else { 
-                            MessageList.Add(Encoding.UTF8.GetString(fileBytes));
-                            
-                            string diskpath = "root\\" + transID.txid + "\\";
-                            if (!Directory.Exists(diskpath))
-                            {
-                                Directory.CreateDirectory(diskpath);
-                            }
-
-                            using (FileStream fs = new FileStream(diskpath + "MSG", FileMode.Create))
+                                using (FileStream fs = new FileStream(diskpath + fileName, FileMode.Create))
                                 {
                                     fs.Write(fileBytes, 0, fileBytes.Length);
                                 }
-                            
+                            }
+                            catch (Exception ex) { }
+
+                        }
+                        else
+                        {
+                            MessageList.Add(Encoding.UTF8.GetString(fileBytes));
+
+                            try
+                            {
+                                string diskpath = "root\\" + transID.txid + "\\";
+                                if (!Directory.Exists(diskpath))
+                                {
+                                    Directory.CreateDirectory(diskpath);
+                                }
+
+                                using (FileStream fs = new FileStream(diskpath + "MSG", FileMode.Create))
+                                {
+                                    fs.Write(fileBytes, 0, fileBytes.Length);
+                                }
+                            }
+                            catch (Exception ex) { }
 
                         }
 
@@ -173,12 +175,12 @@ namespace SUP.P2FK
                     }
                     else
                     {
-                      break;
+                        break;
                     }
 
                 }
 
-                //removing characters that cause some keyewords to be out of alignment.....still researching
+                //removing a null character prevents some keyewords from being out of alignment.....still researching why
                 int index = transactionASCII.IndexOf('\0');
 
                 if (index >= 0)
@@ -188,8 +190,12 @@ namespace SUP.P2FK
 
                 for (int i = 0; i < transactionASCII.Length; i += 20)
                 {
-                    keywords.Add(Base58.EncodeWithCheckSum(AddBytes(new byte[] { byte.Parse("111") }, transactionBytes.Skip(i + (transactionBytes.Count() - transactionASCII.Length)).Take(20).ToArray())), Encoding.ASCII.GetString(transactionBytes.Skip(i + (transactionBytes.Count() - transactionASCII.Length)).Take(20).ToArray()));
+                    try
+                    {
+                        keywords.Add(Base58.EncodeWithCheckSum(AddBytes(new byte[] { byte.Parse("111") }, transactionBytes.Skip(i + (transactionBytes.Count() - transactionASCII.Length)).Take(20).ToArray())), Encoding.ASCII.GetString(transactionBytes.Skip(i + (transactionBytes.Count() - transactionASCII.Length)).Take(20).ToArray()));
 
+                    }
+                    catch (Exception ex) { }
                 }
 
                 if (sigStartByte > 0 && LedgerRoot.Signature == null)
@@ -201,7 +207,7 @@ namespace SUP.P2FK
                     newRoot.Hash = BitConverter.ToString(mySHA256.ComputeHash(transactionBytes.Skip(sigStartByte).Take(sigEndByte - sigStartByte).ToArray())).Replace("-", String.Empty);
                     var result = rpcClient.SendCommand("verifymessage", strPublicAddress, signature, newRoot.Hash);
                     newRoot.Signed = Convert.ToBoolean(result.Result);
-   
+
                 }
                 else { if (sigStartByte == 0) { strPublicAddress = ""; } }
 
@@ -312,23 +318,20 @@ namespace SUP.P2FK
 
                     if (fileName != "")
                     {
-                        if (regexTransactionId.IsMatch(fileName))
+
+
+                        while (regexTransactionId.IsMatch(fileName))
                         {
-
-                            while (regexTransactionId.IsMatch(fileName))
-                            {
-                                LedgerRoot = GetRootByByteArray(GetLedgerBytes(fileName + Environment.NewLine + Encoding.ASCII.GetString(fileBytes).Replace(fileName, ""), username, password, url), username, password, url, strPublicAddress, transactionid);
-                                fileName = LedgerRoot.File.Keys.First();
-                                fileBytes = LedgerRoot.File.Values.First();
-                                newRoot = LedgerRoot;
-                            }
-
+                            LedgerRoot = GetRootByByteArray(GetLedgerBytes(fileName + Environment.NewLine + Encoding.ASCII.GetString(fileBytes).Replace(fileName, ""), username, password, url), username, password, url, strPublicAddress, transactionid);
+                            fileName = LedgerRoot.File.Keys.First();
+                            fileBytes = LedgerRoot.File.Values.First();
+                            newRoot = LedgerRoot;
                             newRoot.TransactionId = transactionid;
                             newRoot.Confirmations = deserializedObject.confirmations;
                             newRoot.BlockDate = DateTimeOffset.FromUnixTimeSeconds(Convert.ToInt32(deserializedObject.blocktime)).DateTime;
-
-
                         }
+
+
 
                         if (fileName == "SIG")
                         {
@@ -337,34 +340,39 @@ namespace SUP.P2FK
                         }
 
                         files.Add(fileName, fileBytes);
-
-                        string diskpath = "root\\" + transactionid + "\\";
-                        if (!Directory.Exists(diskpath))
+                        try
                         {
-                            Directory.CreateDirectory(diskpath);
-                        }
+                            string diskpath = "root\\" + transactionid + "\\";
+                            if (!Directory.Exists(diskpath))
+                            {
+                                Directory.CreateDirectory(diskpath);
+                            }
 
-                        using (FileStream fs = new FileStream(diskpath + fileName, FileMode.Create))
-                        {
-                            fs.Write(fileBytes, 0, fileBytes.Length);
+                            using (FileStream fs = new FileStream(diskpath + fileName, FileMode.Create))
+                            {
+                                fs.Write(fileBytes, 0, fileBytes.Length);
+                            }
                         }
-
+                        catch (Exception ex) { }
                     }
-                    else { 
-                        
+                    else
+                    {
+
                         MessageList.Add(Encoding.UTF8.GetString(fileBytes));
-
-                        string diskpath = "root\\" + transactionid + "\\";
-                        if (!Directory.Exists(diskpath))
+                        try
                         {
-                            Directory.CreateDirectory(diskpath);
-                        }
+                            string diskpath = "root\\" + transactionid + "\\";
+                            if (!Directory.Exists(diskpath))
+                            {
+                                Directory.CreateDirectory(diskpath);
+                            }
 
-                        using (FileStream fs = new FileStream(diskpath + "MSG", FileMode.Create))
-                        {
-                            fs.Write(fileBytes, 0, fileBytes.Length);
+                            using (FileStream fs = new FileStream(diskpath + "MSG", FileMode.Create))
+                            {
+                                fs.Write(fileBytes, 0, fileBytes.Length);
+                            }
                         }
-
+                        catch (Exception ex) { }
                     }
 
                     transactionASCII = transactionASCII.Remove(0, (packetSize + headerSize));
@@ -388,8 +396,12 @@ namespace SUP.P2FK
 
             for (int i = 0; i < transactionASCII.Length; i += 20)
             {
-                keywords.Add(Base58.EncodeWithCheckSum(AddBytes(new byte[] { byte.Parse("111") }, transactionBytes.Skip(i + (transactionBytes.Count() - transactionASCII.Length)).Take(20).ToArray())), Encoding.ASCII.GetString(transactionBytes.Skip(i + (transactionBytes.Count() - transactionASCII.Length)).Take(20).ToArray()));
+                try
+                {
 
+                    keywords.Add(Base58.EncodeWithCheckSum(AddBytes(new byte[] { byte.Parse("111") }, transactionBytes.Skip(i + (transactionBytes.Count() - transactionASCII.Length)).Take(20).ToArray())), Encoding.ASCII.GetString(transactionBytes.Skip(i + (transactionBytes.Count() - transactionASCII.Length)).Take(20).ToArray()));
+                }
+                catch (Exception ex) { }
             }
 
             if (sigStartByte > 0 && LedgerRoot.Signature == null)
@@ -400,7 +412,7 @@ namespace SUP.P2FK
                 newRoot.Hash = BitConverter.ToString(mySHA256.ComputeHash(transactionBytes.Skip(sigStartByte).Take(sigEndByte - sigStartByte).ToArray())).Replace("-", String.Empty);
                 var result = rpcClient.SendCommand("verifymessage", strPublicAddress, signature, newRoot.Hash);
                 newRoot.Signed = Convert.ToBoolean(result.Result);
-                
+
             }
             else { if (sigStartByte == 0) { strPublicAddress = ""; } }
 
@@ -475,32 +487,38 @@ namespace SUP.P2FK
                         }
 
                         files.Add(fileName, fileBytes);
-
-                        string diskpath = "root\\" + transactionid + "\\";
-                        if (!Directory.Exists(diskpath))
+                        try
                         {
-                            Directory.CreateDirectory(diskpath);
-                        }
+                            string diskpath = "root\\" + transactionid + "\\";
+                            if (!Directory.Exists(diskpath))
+                            {
+                                Directory.CreateDirectory(diskpath);
+                            }
 
-                        using (FileStream fs = new FileStream(diskpath + fileName, FileMode.Create))
-                        {
-                            fs.Write(fileBytes, 0, fileBytes.Length);
+                            using (FileStream fs = new FileStream(diskpath + fileName, FileMode.Create))
+                            {
+                                fs.Write(fileBytes, 0, fileBytes.Length);
+                            }
                         }
-
+                        catch (Exception ex) { }
                     }
-                    else { MessageList.Add(Encoding.UTF8.GetString(fileBytes));
-                       
-                        string diskpath = "root\\" + transactionid + "\\";
-                        if (!Directory.Exists(diskpath))
+                    else
+                    {
+                        MessageList.Add(Encoding.UTF8.GetString(fileBytes));
+                        try
                         {
-                            Directory.CreateDirectory(diskpath);
-                        }
+                            string diskpath = "root\\" + transactionid + "\\";
+                            if (!Directory.Exists(diskpath))
+                            {
+                                Directory.CreateDirectory(diskpath);
+                            }
 
-                        using (FileStream fs = new FileStream(diskpath + "MSG", FileMode.Create))
-                        {
-                            fs.Write(fileBytes, 0, fileBytes.Length);
+                            using (FileStream fs = new FileStream(diskpath + "MSG", FileMode.Create))
+                            {
+                                fs.Write(fileBytes, 0, fileBytes.Length);
+                            }
                         }
-
+                        catch (Exception ex) { }
                     }
 
 
@@ -521,8 +539,6 @@ namespace SUP.P2FK
             if (sigStartByte > 0)
             {
                 //verify a hash of the byte data was signed by the last address found on the transaction 
-
-
                 newRoot.Hash = BitConverter.ToString(mySHA256.ComputeHash(transactionBytes.Skip(sigStartByte).Take(sigEndByte - sigStartByte).ToArray())).Replace("-", String.Empty);
                 var result = rpcClient.SendCommand("verifymessage", strPublicAddress, signature, newRoot.Hash);
                 newRoot.Signed = Convert.ToBoolean(result.Result);
@@ -582,6 +598,26 @@ namespace SUP.P2FK
             return transactionBytes;
 
         }
+
+        public static string GetKeywordAddress(string keyword, string versionbyte = "111")
+        {
+
+
+            // Cut the string at 20 characters
+            if (keyword.Length > 20)
+            {
+                keyword = keyword.Substring(0, 20);
+            }
+            // Right pad the string with '#' characters
+            keyword = keyword.PadRight(20, '#');
+
+
+            return Base58.EncodeWithCheckSum(AddBytes(new byte[] { byte.Parse(versionbyte) }, System.Text.Encoding.ASCII.GetBytes(keyword)));
+
+
+        }
+
+
 
         private static byte[] AddBytes(byte[] existingArray, byte[] newArray)
         {

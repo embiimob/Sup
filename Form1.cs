@@ -288,7 +288,29 @@ namespace SUP
 
         }
 
+        private void btnGetKeyword_Click(object sender, EventArgs e)
+        {
+            string walletAddress = Root.GetKeywordAddress(txtGetKeyword.Text);
 
+
+            Root[] roots = Root.GetRootByAddress(walletAddress, txtLogin.Text, txtPassword.Text, txtUrl.Text);
+            dgTransactions.Rows.Clear();
+            int totalbytes = 0;
+
+            for (int i = 0; i < roots.Length; i += 1)
+            {
+
+                var ROOT = new Options { CreateIfMissing = true };
+                using (var db = new DB(ROOT, @"root"))
+                {
+                    db.Put(roots[i].TransactionId, JsonConvert.SerializeObject(roots[i]));
+                }
+                object[] rowData = new object[] { roots[i].TransactionId, roots[i].Signed, roots[i].SignedBy, roots[i].Signature, roots[i].File.Count(), roots[i].Message.Count(), roots[i].Keyword.Count(), roots[i].TotalByteSize, roots[i].BlockDate, roots[i].Confirmations, roots[i].BuildDate.ToString("MM/dd/yyyy hh:mm:ss.ffff tt") };
+                dgTransactions.Rows.Add(rowData);
+                totalbytes += roots[i].TotalByteSize;
+            }
+            lblTotalBytes.Text = "Total Bytes: " + totalbytes.ToString();
+        }
     }
 }
 

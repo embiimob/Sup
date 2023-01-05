@@ -70,6 +70,12 @@
             this.block_time = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.confirmations = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.buildtime = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.btnGetKeyword = new System.Windows.Forms.Button();
+            this.label10 = new System.Windows.Forms.Label();
+            this.txtGetKeyword = new System.Windows.Forms.TextBox();
+            this.label13 = new System.Windows.Forms.Label();
+            this.textBox1 = new System.Windows.Forms.TextBox();
+            this.label14 = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.dgTransactions)).BeginInit();
             this.SuspendLayout();
             // 
@@ -95,7 +101,7 @@
             // 
             // btnDelete
             // 
-            this.btnDelete.Location = new System.Drawing.Point(982, 171);
+            this.btnDelete.Location = new System.Drawing.Point(982, 177);
             this.btnDelete.Name = "btnDelete";
             this.btnDelete.Size = new System.Drawing.Size(75, 23);
             this.btnDelete.TabIndex = 2;
@@ -142,7 +148,7 @@
             // label3
             // 
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(624, 148);
+            this.label3.Location = new System.Drawing.Point(624, 154);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(65, 13);
             this.label3.TabIndex = 8;
@@ -150,7 +156,7 @@
             // 
             // txtDeleteKey
             // 
-            this.txtDeleteKey.Location = new System.Drawing.Point(627, 174);
+            this.txtDeleteKey.Location = new System.Drawing.Point(627, 180);
             this.txtDeleteKey.Name = "txtDeleteKey";
             this.txtDeleteKey.Size = new System.Drawing.Size(350, 20);
             this.txtDeleteKey.TabIndex = 7;
@@ -202,7 +208,7 @@
             "COL",
             "OBJ",
             "LOGS"});
-            this.lbTableName.Location = new System.Drawing.Point(535, 164);
+            this.lbTableName.Location = new System.Drawing.Point(535, 170);
             this.lbTableName.Name = "lbTableName";
             this.lbTableName.ScrollAlwaysVisible = true;
             this.lbTableName.Size = new System.Drawing.Size(83, 30);
@@ -211,7 +217,7 @@
             // label6
             // 
             this.label6.AutoSize = true;
-            this.label6.Location = new System.Drawing.Point(532, 148);
+            this.label6.Location = new System.Drawing.Point(532, 154);
             this.label6.Name = "label6";
             this.label6.Size = new System.Drawing.Size(74, 13);
             this.label6.TabIndex = 14;
@@ -237,7 +243,7 @@
             // label8
             // 
             this.label8.AutoSize = true;
-            this.label8.Location = new System.Drawing.Point(139, 9);
+            this.label8.Location = new System.Drawing.Point(131, 9);
             this.label8.Name = "label8";
             this.label8.Size = new System.Drawing.Size(52, 13);
             this.label8.TabIndex = 18;
@@ -245,9 +251,9 @@
             // 
             // txtPassword
             // 
-            this.txtPassword.Location = new System.Drawing.Point(142, 26);
+            this.txtPassword.Location = new System.Drawing.Point(129, 26);
             this.txtPassword.Name = "txtPassword";
-            this.txtPassword.Size = new System.Drawing.Size(108, 20);
+            this.txtPassword.Size = new System.Drawing.Size(121, 20);
             this.txtPassword.TabIndex = 17;
             this.txtPassword.Text = "embiipassword";
             // 
@@ -262,9 +268,9 @@
             // 
             // txtUrl
             // 
-            this.txtUrl.Location = new System.Drawing.Point(13, 71);
+            this.txtUrl.Location = new System.Drawing.Point(13, 67);
             this.txtUrl.Name = "txtUrl";
-            this.txtUrl.Size = new System.Drawing.Size(218, 20);
+            this.txtUrl.Size = new System.Drawing.Size(170, 20);
             this.txtUrl.TabIndex = 19;
             this.txtUrl.Text = "http://127.0.0.1:18332";
             // 
@@ -281,7 +287,7 @@
             // lblTotalBytes
             // 
             this.lblTotalBytes.AutoSize = true;
-            this.lblTotalBytes.Location = new System.Drawing.Point(694, 206);
+            this.lblTotalBytes.Location = new System.Drawing.Point(757, 228);
             this.lblTotalBytes.Name = "lblTotalBytes";
             this.lblTotalBytes.Size = new System.Drawing.Size(60, 13);
             this.lblTotalBytes.TabIndex = 23;
@@ -289,14 +295,14 @@
             // 
             // txtbalance
             // 
-            this.txtbalance.Location = new System.Drawing.Point(288, 71);
+            this.txtbalance.Location = new System.Drawing.Point(256, 67);
             this.txtbalance.Name = "txtbalance";
-            this.txtbalance.Size = new System.Drawing.Size(65, 20);
+            this.txtbalance.Size = new System.Drawing.Size(97, 20);
             this.txtbalance.TabIndex = 22;
             // 
             // txtSearchAddress
             // 
-            this.txtSearchAddress.Location = new System.Drawing.Point(12, 135);
+            this.txtSearchAddress.Location = new System.Drawing.Point(12, 179);
             this.txtSearchAddress.Name = "txtSearchAddress";
             this.txtSearchAddress.Size = new System.Drawing.Size(238, 20);
             this.txtSearchAddress.TabIndex = 25;
@@ -305,7 +311,7 @@
             // label11
             // 
             this.label11.AutoSize = true;
-            this.label11.Location = new System.Drawing.Point(9, 120);
+            this.label11.Location = new System.Drawing.Point(9, 164);
             this.label11.Name = "label11";
             this.label11.Size = new System.Drawing.Size(65, 13);
             this.label11.TabIndex = 26;
@@ -313,11 +319,11 @@
             // 
             // btnSearch
             // 
-            this.btnSearch.Location = new System.Drawing.Point(256, 133);
+            this.btnSearch.Location = new System.Drawing.Point(256, 177);
             this.btnSearch.Name = "btnSearch";
             this.btnSearch.Size = new System.Drawing.Size(58, 23);
             this.btnSearch.TabIndex = 27;
-            this.btnSearch.Text = "Search";
+            this.btnSearch.Text = "Get";
             this.btnSearch.UseVisualStyleBackColor = true;
             this.btnSearch.Click += new System.EventHandler(this.btnSearch_Click);
             // 
@@ -336,25 +342,25 @@
             this.block_time,
             this.confirmations,
             this.buildtime});
-            this.dgTransactions.Location = new System.Drawing.Point(12, 222);
+            this.dgTransactions.Location = new System.Drawing.Point(12, 244);
             this.dgTransactions.Name = "dgTransactions";
-            this.dgTransactions.Size = new System.Drawing.Size(1045, 370);
+            this.dgTransactions.Size = new System.Drawing.Size(1045, 348);
             this.dgTransactions.TabIndex = 30;
             // 
             // btnGetTransactionId
             // 
-            this.btnGetTransactionId.Location = new System.Drawing.Point(409, 185);
+            this.btnGetTransactionId.Location = new System.Drawing.Point(441, 216);
             this.btnGetTransactionId.Name = "btnGetTransactionId";
             this.btnGetTransactionId.Size = new System.Drawing.Size(58, 23);
             this.btnGetTransactionId.TabIndex = 33;
-            this.btnGetTransactionId.Text = "Search";
+            this.btnGetTransactionId.Text = "Get";
             this.btnGetTransactionId.UseVisualStyleBackColor = true;
             this.btnGetTransactionId.Click += new System.EventHandler(this.btnGetTransactionId_Click);
             // 
             // label12
             // 
             this.label12.AutoSize = true;
-            this.label12.Location = new System.Drawing.Point(13, 171);
+            this.label12.Location = new System.Drawing.Point(13, 202);
             this.label12.Name = "label12";
             this.label12.Size = new System.Drawing.Size(95, 13);
             this.label12.TabIndex = 32;
@@ -362,9 +368,9 @@
             // 
             // txtTransactionId
             // 
-            this.txtTransactionId.Location = new System.Drawing.Point(12, 187);
+            this.txtTransactionId.Location = new System.Drawing.Point(12, 218);
             this.txtTransactionId.Name = "txtTransactionId";
-            this.txtTransactionId.Size = new System.Drawing.Size(391, 20);
+            this.txtTransactionId.Size = new System.Drawing.Size(423, 20);
             this.txtTransactionId.TabIndex = 31;
             this.txtTransactionId.Text = "a87d87b2b9821c4fc7d2c349cdda7542627b774d56db81e3a988503735b8a4f9";
             // 
@@ -425,11 +431,70 @@
             this.buildtime.HeaderText = "Build Time";
             this.buildtime.Name = "buildtime";
             // 
+            // btnGetKeyword
+            // 
+            this.btnGetKeyword.Location = new System.Drawing.Point(256, 139);
+            this.btnGetKeyword.Name = "btnGetKeyword";
+            this.btnGetKeyword.Size = new System.Drawing.Size(58, 23);
+            this.btnGetKeyword.TabIndex = 36;
+            this.btnGetKeyword.Text = "Get";
+            this.btnGetKeyword.UseVisualStyleBackColor = true;
+            this.btnGetKeyword.Click += new System.EventHandler(this.btnGetKeyword_Click);
+            // 
+            // label10
+            // 
+            this.label10.AutoSize = true;
+            this.label10.Location = new System.Drawing.Point(9, 126);
+            this.label10.Name = "label10";
+            this.label10.Size = new System.Drawing.Size(68, 13);
+            this.label10.TabIndex = 35;
+            this.label10.Text = "Get Keyword";
+            // 
+            // txtGetKeyword
+            // 
+            this.txtGetKeyword.Location = new System.Drawing.Point(12, 141);
+            this.txtGetKeyword.Name = "txtGetKeyword";
+            this.txtGetKeyword.Size = new System.Drawing.Size(238, 20);
+            this.txtGetKeyword.TabIndex = 34;
+            this.txtGetKeyword.Text = "embii";
+            // 
+            // label13
+            // 
+            this.label13.AutoSize = true;
+            this.label13.Location = new System.Drawing.Point(186, 51);
+            this.label13.Name = "label13";
+            this.label13.Size = new System.Drawing.Size(27, 13);
+            this.label13.TabIndex = 38;
+            this.label13.Text = "byte";
+            // 
+            // textBox1
+            // 
+            this.textBox1.Location = new System.Drawing.Point(189, 67);
+            this.textBox1.Name = "textBox1";
+            this.textBox1.Size = new System.Drawing.Size(61, 20);
+            this.textBox1.TabIndex = 37;
+            this.textBox1.Text = "111";
+            // 
+            // label14
+            // 
+            this.label14.AutoSize = true;
+            this.label14.Location = new System.Drawing.Point(253, 51);
+            this.label14.Name = "label14";
+            this.label14.Size = new System.Drawing.Size(45, 13);
+            this.label14.TabIndex = 39;
+            this.label14.Text = "balance";
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1069, 604);
+            this.Controls.Add(this.label14);
+            this.Controls.Add(this.label13);
+            this.Controls.Add(this.textBox1);
+            this.Controls.Add(this.btnGetKeyword);
+            this.Controls.Add(this.label10);
+            this.Controls.Add(this.txtGetKeyword);
             this.Controls.Add(this.btnGetTransactionId);
             this.Controls.Add(this.label12);
             this.Controls.Add(this.txtTransactionId);
@@ -515,6 +580,12 @@
         private System.Windows.Forms.DataGridViewTextBoxColumn block_time;
         private System.Windows.Forms.DataGridViewTextBoxColumn confirmations;
         private System.Windows.Forms.DataGridViewTextBoxColumn buildtime;
+        private System.Windows.Forms.Button btnGetKeyword;
+        private System.Windows.Forms.Label label10;
+        private System.Windows.Forms.TextBox txtGetKeyword;
+        private System.Windows.Forms.Label label13;
+        private System.Windows.Forms.TextBox textBox1;
+        private System.Windows.Forms.Label label14;
     }
 }
 
