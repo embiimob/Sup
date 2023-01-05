@@ -1,4 +1,5 @@
 ﻿using LevelDB;
+using NBitcoin;
 using NBitcoin.RPC;
 using Newtonsoft.Json;
 using SUP.P2FK;
@@ -25,9 +26,17 @@ namespace SUP
 
             switch (lbTableName.SelectedItem.ToString().Trim())
             {
+                case "ROOT":
+                    var ROOT = new Options { CreateIfMissing = true };
+                    using (var db = new DB(ROOT, @"root"))
+                    {
+                        db.Put(txtPutKey.Text, txtPutValue.Text);
+                    }
+                    break;
+
                 case "PRO":
                     var PRO = new Options { CreateIfMissing = true };
-                    using (var db = new DB(PRO, @"PRO"))
+                    using (var db = new DB(PRO, @"root\pro"))
                     {
                         db.Put(txtPutKey.Text, txtPutValue.Text);
                     }
@@ -35,7 +44,7 @@ namespace SUP
 
                 case "COL":
                     var COL = new Options { CreateIfMissing = true };
-                    using (var db = new DB(COL, @"COL"))
+                    using (var db = new DB(COL, @"root\col"))
                     {
                         db.Put(txtPutKey.Text, txtPutValue.Text);
                     }
@@ -43,15 +52,15 @@ namespace SUP
 
                 case "OBJ":
                     var OBJ = new Options { CreateIfMissing = true };
-                    using (var db = new DB(OBJ, @"OBJ"))
+                    using (var db = new DB(OBJ, @"root\obj"))
                     {
                         db.Put(txtPutKey.Text, txtPutValue.Text);
                     }
                     break;
 
-                case "LOG":
-                    var LOG = new Options { CreateIfMissing = true };
-                    using (var db = new DB(LOG, @"LOG"))
+                case "LOGS":
+                    var LOGS = new Options { CreateIfMissing = true };
+                    using (var db = new DB(LOGS, @"root\logs"))
                     {
                         db.Put(txtPutKey.Text, txtPutValue.Text);
                     }
@@ -61,9 +70,6 @@ namespace SUP
                     MessageBox.Show("something went wrong");
                     break;
             }
-
-
-
 
 
 
@@ -84,7 +90,7 @@ namespace SUP
                 case "ROOT":
                     var ROOT = new Options { CreateIfMissing = true };
                     txtGetValue.Text = "";
-                    using (var db = new DB(ROOT, @"ROOT"))
+                    using (var db = new DB(ROOT, @"root"))
                     {
 
                         LevelDB.Iterator it = db.CreateIterator();
@@ -101,7 +107,7 @@ namespace SUP
                 case "PRO":
                     var PRO = new Options { CreateIfMissing = true };
                     txtGetValue.Text = "";
-                    using (var db = new DB(PRO, @"PRO"))
+                    using (var db = new DB(PRO, @"root\pro"))
                     {
 
                         LevelDB.Iterator it = db.CreateIterator();
@@ -117,7 +123,7 @@ namespace SUP
                 case "COL":
                     var COL = new Options { CreateIfMissing = true };
                     txtGetValue.Text = "";
-                    using (var db = new DB(COL, @"COL"))
+                    using (var db = new DB(COL, @"root\col"))
                     {
                         LevelDB.Iterator it = db.CreateIterator();
                         for (it.Seek(txtGetKey.Text); it.IsValid() && it.KeyAsString().StartsWith(txtGetKey.Text); it.Next())
@@ -131,7 +137,7 @@ namespace SUP
                 case "OBJ":
                     var OBJ = new Options { CreateIfMissing = true };
                     txtGetValue.Text = "";
-                    using (var db = new DB(OBJ, @"OBJ"))
+                    using (var db = new DB(OBJ, @"root\obj"))
                     {
                         LevelDB.Iterator it = db.CreateIterator();
                         for (it.Seek(txtGetKey.Text); it.IsValid() && it.KeyAsString().StartsWith(txtGetKey.Text); it.Next())
@@ -142,10 +148,10 @@ namespace SUP
                     }
                     break;
 
-                case "LOG":
+                case "LOGS":
                     var LOG = new Options { CreateIfMissing = true };
                     txtGetValue.Text = "";
-                    using (var db = new DB(LOG, @"LOG"))
+                    using (var db = new DB(LOG, @"root\log"))
                     {
                         LevelDB.Iterator it = db.CreateIterator();
                         for (it.Seek(txtGetKey.Text); it.IsValid() && it.KeyAsString().StartsWith(txtGetKey.Text); it.Next())
@@ -176,9 +182,17 @@ namespace SUP
 
             switch (lbTableName.SelectedItem.ToString().Trim())
             {
+                case "ROOT":
+                    var ROOT = new Options { CreateIfMissing = true };
+                    using (var db = new DB(ROOT, @"root"))
+                    {
+                        db.Delete(txtDeleteKey.Text);
+
+                    }
+                    break;
                 case "PRO":
                     var PRO = new Options { CreateIfMissing = true };
-                    using (var db = new DB(PRO, @"PRO"))
+                    using (var db = new DB(PRO, @"root\pro"))
                     {
                         db.Delete(txtDeleteKey.Text);
 
@@ -187,7 +201,7 @@ namespace SUP
 
                 case "COL":
                     var COL = new Options { CreateIfMissing = true };
-                    using (var db = new DB(COL, @"COL"))
+                    using (var db = new DB(COL, @"root\col"))
                     {
                         db.Delete(txtDeleteKey.Text);
                     }
@@ -195,15 +209,15 @@ namespace SUP
 
                 case "OBJ":
                     var OBJ = new Options { CreateIfMissing = true };
-                    using (var db = new DB(OBJ, @"OBJ"))
+                    using (var db = new DB(OBJ, @"root\obj"))
                     {
                         db.Delete(txtDeleteKey.Text);
                     }
                     break;
 
-                case "LOG":
+                case "LOGS":
                     var LOG = new Options { CreateIfMissing = true };
-                    using (var db = new DB(LOG, @"LOG"))
+                    using (var db = new DB(LOG, @"root\logs"))
                     {
                         db.Delete(txtDeleteKey.Text);
                     }
@@ -231,22 +245,23 @@ namespace SUP
         private void btnSearch_Click(object sender, EventArgs e)
         {
 
-            Root[] roots = Root.GetRootsByAddress(txtSearchAddress.Text, txtLogin.Text, txtPassword.Text, txtUrl.Text);
+            Root[] roots = Root.GetRootByAddress(txtSearchAddress.Text, txtLogin.Text, txtPassword.Text, txtUrl.Text);
             dgTransactions.Rows.Clear();
-
+            int totalbytes = 0;
 
             for (int i = 0; i < roots.Length; i += 1)
             {
 
                 var ROOT = new Options { CreateIfMissing = true };
-                using (var db = new DB(ROOT, @"ROOT"))
+                using (var db = new DB(ROOT, @"root"))
                 {
                     db.Put(roots[i].TransactionId, JsonConvert.SerializeObject(roots[i]));
                 }
-                //object[] rowData = new object[] { roots[i].TransactionId, roots[i].Signed, roots[i].Signature, roots[i].SignedBy, Encoding.ASCII.GetString(roots[i].RawBytes), roots[i].Confirmations, roots[i].BlockDate, roots[i].BuildDate };
-                object[] rowData = new object[] { roots[i].TransactionId, roots[i].Signed, roots[i].Signature, roots[i].SignedBy, roots[i].File.Count(), roots[i].Message.Count(), roots[i].Keyword.Count(), roots[i].TotalByteSize, roots[i].Confirmations, roots[i].BlockDate, roots[i].BuildDate.ToString("MM/dd/yyyy hh:mm:ss.ffff tt") };
+                object[] rowData = new object[] { roots[i].TransactionId, roots[i].Signed, roots[i].SignedBy, roots[i].Signature,  roots[i].File.Count(), roots[i].Message.Count(), roots[i].Keyword.Count(), roots[i].TotalByteSize, roots[i].BlockDate, roots[i].Confirmations, roots[i].BuildDate.ToString("MM/dd/yyyy hh:mm:ss.ffff tt") };
                 dgTransactions.Rows.Add(rowData);
+                totalbytes+= roots[i].TotalByteSize;
             }
+            lblTotalBytes.Text = "Total Bytes: " + totalbytes.ToString();
 
 
 
@@ -257,14 +272,20 @@ namespace SUP
             Root root = Root.GetRootByTransactionId(txtTransactionId.Text, txtLogin.Text, txtPassword.Text, txtUrl.Text);
             dgTransactions.Rows.Clear();
 
+
+      
+
             var ROOT = new Options { CreateIfMissing = true };
-            using (var db = new DB(ROOT, @"ROOT"))
+            using (var db = new DB(ROOT, @"root"))
             {
                 db.Put(root.TransactionId, JsonConvert.SerializeObject(root));
+
             }
-            //object[] rowData = new object[] { roots[i].TransactionId, roots[i].Signed, roots[i].Signature, roots[i].SignedBy, Encoding.ASCII.GetString(roots[i].RawBytes), roots[i].Confirmations, roots[i].BlockDate, roots[i].BuildDate };
-            object[] rowData = new object[] { root.TransactionId, root.Signed, root.Signature, root.SignedBy, root.File.Count(), root.Message.Count(), root.Keyword.Count(), root.TotalByteSize, root.Confirmations, root.BlockDate, root.BuildDate.ToString("MM/dd/yyyy hh:mm:ss.ffff tt") };
+            object[] rowData = new object[] { root.TransactionId, root.Signed, root.SignedBy, root.Signature,  root.File.Count(), root.Message.Count(), root.Keyword.Count(), root.TotalByteSize, root.BlockDate, root.Confirmations, root.BuildDate.ToString("MM/dd/yyyy hh:mm:ss.ffff tt") };
             dgTransactions.Rows.Add(rowData);
+          
+            lblTotalBytes.Text = "Total Bytes: " + root.TotalByteSize.ToString();
+
         }
 
 
