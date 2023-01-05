@@ -1,5 +1,4 @@
 ﻿using LevelDB;
-using NBitcoin;
 using NBitcoin.RPC;
 using Newtonsoft.Json;
 using SUP.P2FK;
@@ -290,10 +289,9 @@ namespace SUP
 
         private void btnGetKeyword_Click(object sender, EventArgs e)
         {
-            string walletAddress = Root.GetKeywordAddress(txtGetKeyword.Text);
-
-
-            Root[] roots = Root.GetRootByAddress(walletAddress, txtLogin.Text, txtPassword.Text, txtUrl.Text);
+            string publicAddress = Root.GetPublicAddressByKeyword(txtGetKeyword.Text);
+ 
+            Root[] roots = Root.GetRootByAddress(publicAddress, txtLogin.Text, txtPassword.Text, txtUrl.Text);
             dgTransactions.Rows.Clear();
             int totalbytes = 0;
 

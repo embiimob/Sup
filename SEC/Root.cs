@@ -25,8 +25,6 @@ namespace SUP.P2FK
         public int TotalByteSize { get; set; }
         public int Confirmations { get; set; }
         public DateTime BuildDate { get; set; }
-
-
         public static Root[] GetRootByAddress(string address, string username, string password, string url, int skip = 0, int qty = 100)
         {
 
@@ -130,7 +128,6 @@ namespace SUP.P2FK
 
 
 
-
                             files.Add(fileName, fileBytes);
 
                             try
@@ -192,7 +189,7 @@ namespace SUP.P2FK
                 {
                     try
                     {
-                        keywords.Add(Base58.EncodeWithCheckSum(AddBytes(new byte[] { byte.Parse("111") }, transactionBytes.Skip(i + (transactionBytes.Count() - transactionASCII.Length)).Take(20).ToArray())), Encoding.ASCII.GetString(transactionBytes.Skip(i + (transactionBytes.Count() - transactionASCII.Length)).Take(20).ToArray()));
+                        keywords.Add(Base58.EncodeWithCheckSum(AddBytes(new byte[] { byte.Parse("111") }, transactionBytes.Skip(i + (transactionBytesSize - transactionASCII.Length)).Take(20).ToArray())), Encoding.ASCII.GetString(transactionBytes.Skip(i + (transactionBytesSize - transactionASCII.Length)).Take(20).ToArray()));
 
                     }
                     catch (Exception ex) { }
@@ -238,8 +235,6 @@ namespace SUP.P2FK
             }
             return RootList.ToArray();
         }
-
-
         public static Root GetRootByTransactionId(string transactionid, string username, string password, string url)
         {
 
@@ -399,7 +394,7 @@ namespace SUP.P2FK
                 try
                 {
 
-                    keywords.Add(Base58.EncodeWithCheckSum(AddBytes(new byte[] { byte.Parse("111") }, transactionBytes.Skip(i + (transactionBytes.Count() - transactionASCII.Length)).Take(20).ToArray())), Encoding.ASCII.GetString(transactionBytes.Skip(i + (transactionBytes.Count() - transactionASCII.Length)).Take(20).ToArray()));
+                    keywords.Add(Base58.EncodeWithCheckSum(AddBytes(new byte[] { byte.Parse("111") }, transactionBytes.Skip(i + (transactionBytesSize - transactionASCII.Length)).Take(20).ToArray())), Encoding.ASCII.GetString(transactionBytes.Skip(i + (transactionBytesSize - transactionASCII.Length)).Take(20).ToArray()));
                 }
                 catch (Exception ex) { }
             }
@@ -437,7 +432,6 @@ namespace SUP.P2FK
             newRoot.BuildDate = DateTime.UtcNow;
             return newRoot;
         }
-
         public static Root GetRootByByteArray(byte[] input, string username, string password, string url, string publicAddress, string transactionid)
         {
             NetworkCredential credentials = new NetworkCredential(username, password);
@@ -558,7 +552,35 @@ namespace SUP.P2FK
 
 
         }
+        public static string GetPublicAddressByKeyword(string keyword, string versionbyte = "111")
+        {
 
+
+            // Cut the string at 20 characters
+            if (keyword.Length > 20)
+            {
+                keyword = keyword.Substring(0, 20);
+            }
+            // Right pad the string with '#' characters
+            keyword = keyword.PadRight(20, '#');
+
+
+            return Base58.EncodeWithCheckSum(AddBytes(new byte[] { byte.Parse(versionbyte) }, System.Text.Encoding.ASCII.GetBytes(keyword)));
+
+
+        }
+        public static string GetKeywordByPublicAddress(string public_address)
+        {
+
+
+            byte[] payloadBytes = new byte[0];
+
+            Base58.DecodeWithCheckSum(public_address, out payloadBytes);
+
+            return Encoding.ASCII.GetString(payloadBytes).Replace("#", "").Substring(1);
+
+
+        }
         private static byte[] GetLedgerBytes(string ledger, string username, string password, string url)
         {
             Regex regexTransactionId = new Regex(@"\b[0-9a-f]{64}\b");
@@ -598,27 +620,6 @@ namespace SUP.P2FK
             return transactionBytes;
 
         }
-
-        public static string GetKeywordAddress(string keyword, string versionbyte = "111")
-        {
-
-
-            // Cut the string at 20 characters
-            if (keyword.Length > 20)
-            {
-                keyword = keyword.Substring(0, 20);
-            }
-            // Right pad the string with '#' characters
-            keyword = keyword.PadRight(20, '#');
-
-
-            return Base58.EncodeWithCheckSum(AddBytes(new byte[] { byte.Parse(versionbyte) }, System.Text.Encoding.ASCII.GetBytes(keyword)));
-
-
-        }
-
-
-
         private static byte[] AddBytes(byte[] existingArray, byte[] newArray)
         {
             // Create a new array with a capacity large enough to hold both arrays
@@ -632,7 +633,6 @@ namespace SUP.P2FK
 
             return combinedArray;
         }
-
         private static byte[] RemoveFirstByte(byte[] array)
         {
 
@@ -644,7 +644,6 @@ namespace SUP.P2FK
 
             return newArray;
         }
-
     }
 }
 
