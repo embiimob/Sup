@@ -114,22 +114,38 @@ namespace SUP.P2FK
 
                     //increment a counter used to determind total size of signed content
                     sigEndByte += packetSize + headerSize;
-                    bool isValid = true;
                     string fileName = transactionASCII.Substring(0, match.Index);
                     byte[] fileBytes = transactionBytes.Skip(headerSize + (transactionBytesSize - transactionASCII.Length)).Take(packetSize).ToArray();
-
-                    try
+                    bool isValid = true;
+                    string diskpath = "root\\" + transID.txid + "\\";
+                    if (!Directory.Exists(diskpath))
                     {
-                        // This will throw an exception if the file name is not valid
-                        System.IO.File.Create(fileName).Dispose();
+                        Directory.CreateDirectory(diskpath);
                     }
-                    catch (Exception ex) { isValid = false; }
 
+                    if (fileName != "")
+                    {
+
+                        try
+                        {
+                            // This will throw an exception if the file name is not valid
+                            System.IO.File.Create(diskpath + fileName).Dispose();
+                        }
+                        catch (Exception ex) { isValid = false; }
+                    }
+                    else { isValid = false; }
+                    
                     if (isValid)
                     {
 
+
                         while (regexTransactionId.IsMatch(fileName))
                         {
+                            using (FileStream fs = new FileStream(diskpath + fileName, FileMode.Create))
+                            {
+                                fs.Write(fileBytes, 0, fileBytes.Length);
+                            }
+
                             string strTransactionID = transID.txid;
                             LedgerRoot = GetRootByByteArray(GetLedgerBytes(fileName + Environment.NewLine + Encoding.ASCII.GetString(fileBytes).Replace(fileName, ""), username, password, url), username, password, url, strPublicAddress, strTransactionID);
                             fileName = LedgerRoot.File.Keys.First();
@@ -147,11 +163,6 @@ namespace SUP.P2FK
                         }
 
 
-                        string diskpath = "root\\" + transID.txid + "\\";
-                        if (!Directory.Exists(diskpath))
-                        {
-                            Directory.CreateDirectory(diskpath);
-                        }
 
                         using (FileStream fs = new FileStream(diskpath + fileName, FileMode.Create))
                         {
@@ -166,11 +177,7 @@ namespace SUP.P2FK
                         if (fileName == "")
                         {
                             MessageList.Add(Encoding.UTF8.GetString(fileBytes));
-                            string diskpath = "root\\" + transID.txid + "\\";
-                            if (!Directory.Exists(diskpath))
-                            {
-                                Directory.CreateDirectory(diskpath);
-                            }
+
                             using (FileStream fs = new FileStream(diskpath + "MSG", FileMode.Create))
                             {
                                 fs.Write(fileBytes, 0, fileBytes.Length);
@@ -328,26 +335,38 @@ namespace SUP.P2FK
                 if (transactionASCII.IndexOfAny(specialChars) != match.Index) { break; }
 
                 sigEndByte += packetSize + headerSize;
-                bool isValid = true;
+
                 string fileName = transactionASCII.Substring(0, match.Index);
                 byte[] fileBytes = transactionBytes.Skip(headerSize + (transactionBytesSize - transactionASCII.Length)).Take(packetSize).ToArray();
 
-                try
+                bool isValid = true;
+                string diskpath = "root\\" + transactionid + "\\";
+                if (!Directory.Exists(diskpath))
                 {
-                    // This will throw an exception if the file name is not valid
-                    System.IO.File.Create(fileName).Dispose();
+                    Directory.CreateDirectory(diskpath);
                 }
-                catch (Exception ex)
+                if (fileName != "")
                 {
-                    isValid = false;
-                }
 
+                    try
+                    {
+                        // This will throw an exception if the file name is not valid
+                        System.IO.File.Create(diskpath + fileName).Dispose();
+                    }
+                    catch (Exception ex) { isValid = false; }
+                }
+                else { isValid = false; }
 
                 if (isValid)
                 {
 
                     while (regexTransactionId.IsMatch(fileName))
                     {
+                        using (FileStream fs = new FileStream(diskpath + fileName, FileMode.Create))
+                        {
+                            fs.Write(fileBytes, 0, fileBytes.Length);
+                        }
+
                         LedgerRoot = GetRootByByteArray(GetLedgerBytes(fileName + Environment.NewLine + Encoding.ASCII.GetString(fileBytes).Replace(fileName, ""), username, password, url), username, password, url, strPublicAddress, transactionid);
                         fileName = LedgerRoot.File.Keys.First();
                         fileBytes = LedgerRoot.File.Values.First();
@@ -363,11 +382,6 @@ namespace SUP.P2FK
                         signature = transactionASCII.Substring(headerSize, packetSize);
                     }
 
-                    string diskpath = "root\\" + transactionid + "\\";
-                    if (!Directory.Exists(diskpath))
-                    {
-                        Directory.CreateDirectory(diskpath);
-                    }
 
                     using (FileStream fs = new FileStream(diskpath + fileName, FileMode.Create))
                     {
@@ -382,11 +396,6 @@ namespace SUP.P2FK
                     {
                         MessageList.Add(Encoding.UTF8.GetString(fileBytes));
 
-                        string diskpath = "root\\" + transactionid + "\\";
-                        if (!Directory.Exists(diskpath))
-                        {
-                            Directory.CreateDirectory(diskpath);
-                        }
 
                         using (FileStream fs = new FileStream(diskpath + "MSG", FileMode.Create))
                         {
@@ -483,19 +492,31 @@ namespace SUP.P2FK
                 if (transactionASCII.IndexOfAny(specialChars) != match.Index) { break; }
 
                 sigEndByte += packetSize + headerSize;
-                bool isValid = true;
+
                 string fileName = transactionASCII.Substring(0, match.Index);
                 byte[] fileBytes = transactionBytes.Skip(headerSize + (transactionBytesSize - transactionASCII.Length)).Take(packetSize).ToArray();
 
-                try
+                bool isValid = true;
+                string diskpath = "root\\" + transactionid + "\\";
+                if (!Directory.Exists(diskpath))
                 {
-                    // This will throw an exception if the file name is not valid
-                    System.IO.File.Create(fileName).Dispose();
+                    Directory.CreateDirectory(diskpath);
                 }
-                catch (Exception ex) { isValid = false; }
+                if (fileName != "")
+                {
+
+                    try
+                    {
+                        // This will throw an exception if the file name is not valid
+                        System.IO.File.Create(diskpath + fileName).Dispose();
+                    }
+                    catch (Exception ex) { isValid = false; }
+                }
+                else { isValid = false; }
 
                 if (isValid)
                 {
+
 
                     if (fileName == "SIG")
                     {
@@ -504,12 +525,6 @@ namespace SUP.P2FK
                     }
 
                     files.AddOrReplace(fileName, fileBytes);
-
-                    string diskpath = "root\\" + transactionid + "\\";
-                    if (!Directory.Exists(diskpath))
-                    {
-                        Directory.CreateDirectory(diskpath);
-                    }
 
                     using (FileStream fs = new FileStream(diskpath + fileName, FileMode.Create))
                     {
@@ -522,12 +537,6 @@ namespace SUP.P2FK
                     if (fileName == "")
                     {
                         MessageList.Add(Encoding.UTF8.GetString(fileBytes));
-
-                        string diskpath = "root\\" + transactionid + "\\";
-                        if (!Directory.Exists(diskpath))
-                        {
-                            Directory.CreateDirectory(diskpath);
-                        }
 
                         using (FileStream fs = new FileStream(diskpath + "MSG", FileMode.Create))
                         {
@@ -547,7 +556,7 @@ namespace SUP.P2FK
 
                     break;
                 }
-                
+
 
             }
 
