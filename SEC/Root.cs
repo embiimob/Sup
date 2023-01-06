@@ -26,24 +26,37 @@ namespace SUP.P2FK
         public int TotalByteSize { get; set; }
         public int Confirmations { get; set; }
         public DateTime BuildDate { get; set; }
-        public static Root[] GetRootByAddress(string address, string username, string password, string url, int skip = 0, int qty = 100)
+        public static Root[] GetRootByAddress(string address, string username, string password, string url, int skip = 0, int qty = 200, string versionbyte = "111")
         {
 
             //used as P2FK Delimiters 
             char[] specialChars = new char[] { '\\', '/', ':', '*', '?', '"', '<', '>', '|' };
             Regex regexSpecialChars = new Regex(@"([\\/:*?""<>|])\d+");
             Regex regexTransactionId = new Regex(@"\b[0-9a-f]{64}\b");
-            byte bitcoinTestnetVersionByte = byte.Parse("111");
+            byte VersionByte = byte.Parse(versionbyte);
+            List<Root> RootList = new List<Root>();
+            dynamic deserializedObject = null;
 
             NetworkCredential credentials = new NetworkCredential(username, password);
             RPCClient rpcClient = new RPCClient(credentials, new Uri(url));
 
             // calls the bitcoin testnet wallet's searchrawtransaction command and returns it as a dynamic deserialized object.
             // implements the address search feature found here -->  https://github.com/btcdrak/bitcoin/tree/addrindex-0.14 
-            dynamic deserializedObject = JsonConvert.DeserializeObject(rpcClient.SendCommand("searchrawtransactions", address, 1, skip, qty).ResultString);
+            try
+            {
+                deserializedObject = JsonConvert.DeserializeObject(rpcClient.SendCommand("searchrawtransactions", address, 1, skip, qty).ResultString);
+            }
+            catch (Exception ex)
+            {
+                Root newRoot = new Root();
+                newRoot.Message = new string[] { ex.Message };
+                newRoot.BuildDate = DateTime.UtcNow;
+                newRoot.File = new Dictionary<string, byte[]>();
+                newRoot.Keyword = new Dictionary<string, string>();
+                RootList.Add(newRoot);
+                return RootList.ToArray();
+            }
 
-            //create a list to hold the Root objects
-            List<Root> RootList = new List<Root>();
 
             //itterating through JSON search results
             foreach (dynamic transID in deserializedObject)
@@ -72,7 +85,6 @@ namespace SUP.P2FK
                     // checking for all known P2FK bitcoin testnet microtransaction values
                     if (v_out.value == "5.46E-06" || v_out.value == "5.48E-06" || v_out.value == "5.48E-05")
                     {
-
                         byte[] results = Array.Empty<byte>();
                         strPublicAddress = v_out.scriptPubKey.addresses[0];
 
@@ -87,8 +99,8 @@ namespace SUP.P2FK
 
                 // newRoot.RawBytes = transactionBytes;
                 //ASCII Header Encoding is working still troubleshooting why some signed objects are not being recogrnized as signed
-                transactionASCII = Encoding.ASCII.GetString(transactionBytes);
                 int transactionBytesSize = transactionBytes.Count();
+                transactionASCII = Encoding.ASCII.GetString(transactionBytes);
 
                 // Perform the loop until no additional numbers are found and the regular expression fails to match 
                 while (regexSpecialChars.IsMatch(transactionASCII))
@@ -97,105 +109,99 @@ namespace SUP.P2FK
                     int packetSize = Int32.Parse(match.Value.ToString().Remove(0, 1));
                     int headerSize = match.Index + match.Length + 1;
 
-                    //invalid if a special character is not found before a number
-                    if (transactionASCII.IndexOfAny(specialChars) == match.Index)
+                    //invalid if a special character is not found before the number
+                    if (transactionASCII.IndexOfAny(specialChars) != match.Index) { break; }
+
+                    //increment a counter used to determind total size of signed content
+                    sigEndByte += packetSize + headerSize;
+                    bool isValid = true;
+                    string fileName = transactionASCII.Substring(0, match.Index);
+                    byte[] fileBytes = transactionBytes.Skip(headerSize + (transactionBytesSize - transactionASCII.Length)).Take(packetSize).ToArray();
+
+                    try
                     {
-                        //increment a counter used to determind total size of signed content
-                        sigEndByte += packetSize + headerSize;
+                        // This will throw an exception if the file name is not valid
+                        System.IO.File.Create(fileName).Dispose();
+                    }
+                    catch (Exception ex) { isValid = false; }
 
-                        string fileName = transactionASCII.Substring(0, transactionASCII.IndexOfAny(specialChars));
-                        byte[] fileBytes = transactionBytes.Skip(headerSize + (transactionBytesSize - transactionASCII.Length)).Take(packetSize).ToArray();
+                    if (isValid)
+                    {
 
-                        if (fileName != "")
+                        while (regexTransactionId.IsMatch(fileName))
                         {
-
-                            while (regexTransactionId.IsMatch(fileName))
-                            {
-                                string strTransactionID = transID.txid;
-                                LedgerRoot = GetRootByByteArray(GetLedgerBytes(fileName + Environment.NewLine + Encoding.ASCII.GetString(fileBytes).Replace(fileName, ""), username, password, url), username, password, url, strPublicAddress, strTransactionID);
-                                fileName = LedgerRoot.File.Keys.First();
-                                fileBytes = LedgerRoot.File.Values.First();
-                                newRoot = LedgerRoot;
-                                newRoot.TransactionId = transID.txid;
-                                newRoot.Confirmations = transID.confirmations;
-                                newRoot.BlockDate = DateTimeOffset.FromUnixTimeSeconds(Convert.ToInt32(transID.blocktime)).DateTime;
-                            }
-
-                            if (fileName == "SIG")
-                            {
-                                sigStartByte = sigEndByte;
-                                signature = transactionASCII.Substring(headerSize, packetSize);
-                            }
-
-                            try
-                            {
-                                string diskpath = "root\\" + transID.txid + "\\";
-                                if (!Directory.Exists(diskpath))
-                                {
-                                    Directory.CreateDirectory(diskpath);
-                                }
-
-                                using (FileStream fs = new FileStream(diskpath + fileName, FileMode.Create))
-                                {
-                                    fs.Write(fileBytes, 0, fileBytes.Length);
-                                }
-                            }
-                            catch (Exception ex) { break; }
-                            files.AddOrReplace(fileName, fileBytes);
-
-                        }
-                        else
-                        {
-                            MessageList.Add(Encoding.UTF8.GetString(fileBytes));
-
-                            try
-                            {
-                                string diskpath = "root\\" + transID.txid + "\\";
-                                if (!Directory.Exists(diskpath))
-                                {
-                                    Directory.CreateDirectory(diskpath);
-                                }
-
-                                using (FileStream fs = new FileStream(diskpath + "MSG", FileMode.Create))
-                                {
-                                    fs.Write(fileBytes, 0, fileBytes.Length);
-                                }
-                            }
-                            catch (Exception ex) { break; }
-
+                            string strTransactionID = transID.txid;
+                            LedgerRoot = GetRootByByteArray(GetLedgerBytes(fileName + Environment.NewLine + Encoding.ASCII.GetString(fileBytes).Replace(fileName, ""), username, password, url), username, password, url, strPublicAddress, strTransactionID);
+                            fileName = LedgerRoot.File.Keys.First();
+                            fileBytes = LedgerRoot.File.Values.First();
+                            newRoot = LedgerRoot;
+                            newRoot.TransactionId = transID.txid;
+                            newRoot.Confirmations = transID.confirmations;
+                            newRoot.BlockDate = DateTimeOffset.FromUnixTimeSeconds(Convert.ToInt32(transID.blocktime)).DateTime;
                         }
 
-                        try
+                        if (fileName == "SIG")
                         {
-                            transactionASCII = transactionASCII.Remove(0, (packetSize + headerSize));
+                            sigStartByte = sigEndByte;
+                            signature = transactionASCII.Substring(headerSize, packetSize);
                         }
-                        catch (Exception ex)
+
+
+                        string diskpath = "root\\" + transID.txid + "\\";
+                        if (!Directory.Exists(diskpath))
                         {
-                            
-                            break;
+                            Directory.CreateDirectory(diskpath);
                         }
+
+                        using (FileStream fs = new FileStream(diskpath + fileName, FileMode.Create))
+                        {
+                            fs.Write(fileBytes, 0, fileBytes.Length);
+                        }
+
+                        files.AddOrReplace(fileName, fileBytes);
 
                     }
                     else
                     {
+                        if (fileName == "")
+                        {
+                            MessageList.Add(Encoding.UTF8.GetString(fileBytes));
+                            string diskpath = "root\\" + transID.txid + "\\";
+                            if (!Directory.Exists(diskpath))
+                            {
+                                Directory.CreateDirectory(diskpath);
+                            }
+                            using (FileStream fs = new FileStream(diskpath + "MSG", FileMode.Create))
+                            {
+                                fs.Write(fileBytes, 0, fileBytes.Length);
+                            }
+                        }
+
+                    }
+
+                    try
+                    {
+                        transactionASCII = transactionASCII.Remove(0, (packetSize + headerSize));
+                    }
+                    catch (Exception ex)
+                    {
+
                         break;
                     }
 
                 }
 
-                //removing a null character prevents some keyewords from being out of alignment.....still researching why
-                int index = transactionASCII.IndexOf('\0');
-
-                if (index >= 0)
+                //removing null character prevents some keywords from being out of alignment.....still researching why
+                while (transactionASCII.IndexOf('\0') >= 0)
                 {
-                    transactionASCII = transactionASCII.Substring(index + 1);
+                    transactionASCII = transactionASCII.Substring(transactionASCII.IndexOf('\0') + 1);
                 }
 
                 for (int i = 0; i < transactionASCII.Length; i += 20)
                 {
                     try
                     {
-                        keywords.Add(Base58.EncodeWithCheckSum(AddBytes(new byte[] { byte.Parse("111") }, transactionBytes.Skip(i + (transactionBytesSize - transactionASCII.Length)).Take(20).ToArray())), Encoding.ASCII.GetString(transactionBytes.Skip(i + (transactionBytesSize - transactionASCII.Length)).Take(20).ToArray()));
+                        keywords.Add(Base58.EncodeWithCheckSum(AddBytes(new byte[] { VersionByte }, transactionBytes.Skip(i + (transactionBytesSize - transactionASCII.Length)).Take(20).ToArray())), Encoding.ASCII.GetString(transactionBytes.Skip(i + (transactionBytesSize - transactionASCII.Length)).Take(20).ToArray()));
 
                     }
                     catch (Exception ex) { }
@@ -241,7 +247,7 @@ namespace SUP.P2FK
             }
             return RootList.ToArray();
         }
-        public static Root GetRootByTransactionId(string transactionid, string username, string password, string url)
+        public static Root GetRootByTransactionId(string transactionid, string username, string password, string url, string versionbyte = "111")
         {
 
             //used as P2FK Delimiters 
@@ -249,7 +255,7 @@ namespace SUP.P2FK
             Regex regexSpecialChars = new Regex(@"([\\/:*?""<>|])\d+");
             Regex regexTransactionId = new Regex(@"\b[0-9a-f]{64}\b");
             dynamic deserializedObject = null;
-
+            byte VersionByte = byte.Parse(versionbyte);
             //defining items to include in the returned object
             Dictionary<string, byte[]> files = new Dictionary<string, byte[]>();
             Dictionary<string, string> keywords = new Dictionary<string, string>();
@@ -280,9 +286,7 @@ namespace SUP.P2FK
                 return newRoot;
             }
 
-
             int totalByteSize = deserializedObject.size;
-
 
             Root LedgerRoot = new Root();
             // we are spinning through all the out addresses within each bitcoin transaction
@@ -293,8 +297,6 @@ namespace SUP.P2FK
                 // checking for all known P2FK bitcoin testnet microtransaction values
                 if (v_out.value == "5.46E-06" || v_out.value == "5.48E-06" || v_out.value == "5.48E-05")
                 {
-
-
 
                     byte[] results = Array.Empty<byte>();
                     strPublicAddress = v_out.scriptPubKey.addresses[0];
@@ -310,8 +312,9 @@ namespace SUP.P2FK
 
             // newRoot.RawBytes = transactionBytes;
             //ASCII Header Encoding is working still troubleshooting why some signed objects are not being recogrnized as signed
-            transactionASCII = Encoding.ASCII.GetString(transactionBytes);
+
             int transactionBytesSize = transactionBytes.Count();
+            transactionASCII = Encoding.ASCII.GetString(transactionBytes);
 
             // Perform the loop until no additional numbers are found and the regular expression fails to match 
             while (regexSpecialChars.IsMatch(transactionASCII))
@@ -321,103 +324,86 @@ namespace SUP.P2FK
                 int headerSize = match.Index + match.Length + 1;
 
 
-
-
                 //invalid if a special character is not found before a number
-                if (transactionASCII.IndexOfAny(specialChars) == match.Index)
+                if (transactionASCII.IndexOfAny(specialChars) != match.Index) { break; }
+
+                sigEndByte += packetSize + headerSize;
+                bool isValid = true;
+                string fileName = transactionASCII.Substring(0, match.Index);
+                byte[] fileBytes = transactionBytes.Skip(headerSize + (transactionBytesSize - transactionASCII.Length)).Take(packetSize).ToArray();
+
+                try
+                {
+                    // This will throw an exception if the file name is not valid
+                    System.IO.File.Create(fileName).Dispose();
+                }
+                catch (Exception ex)
+                {
+                    isValid = false;
+                }
+
+
+                if (isValid)
                 {
 
-                    sigEndByte += packetSize + headerSize;
-
-                    string fileName = transactionASCII.Substring(0, transactionASCII.IndexOfAny(specialChars));
-                    byte[] fileBytes = transactionBytes.Skip(headerSize + (transactionBytesSize - transactionASCII.Length)).Take(packetSize).ToArray();
-
-                    if (fileName != "")
+                    while (regexTransactionId.IsMatch(fileName))
                     {
-
-
-                        while (regexTransactionId.IsMatch(fileName))
-                        {
-                            LedgerRoot = GetRootByByteArray(GetLedgerBytes(fileName + Environment.NewLine + Encoding.ASCII.GetString(fileBytes).Replace(fileName, ""), username, password, url), username, password, url, strPublicAddress, transactionid);
-                            fileName = LedgerRoot.File.Keys.First();
-                            fileBytes = LedgerRoot.File.Values.First();
-                            newRoot = LedgerRoot;
-                            newRoot.TransactionId = transactionid;
-                            newRoot.Confirmations = deserializedObject.confirmations;
-                            newRoot.BlockDate = DateTimeOffset.FromUnixTimeSeconds(Convert.ToInt32(deserializedObject.blocktime)).DateTime;
-                        }
-
-
-
-                        if (fileName == "SIG")
-                        {
-                            sigStartByte = sigEndByte;
-                            signature = transactionASCII.Substring(headerSize, packetSize);
-                        }
-
-
-                        try
-                        {
-                            string diskpath = "root\\" + transactionid + "\\";
-                            if (!Directory.Exists(diskpath))
-                            {
-                                Directory.CreateDirectory(diskpath);
-                            }
-
-                            using (FileStream fs = new FileStream(diskpath + fileName, FileMode.Create))
-                            {
-                                fs.Write(fileBytes, 0, fileBytes.Length);
-                            }
-                        }
-                        catch (Exception ex) { break; }
-                        files.AddOrReplace(fileName, fileBytes);
-                    }
-                    else
-                    {
-
-                        MessageList.Add(Encoding.UTF8.GetString(fileBytes));
-                        try
-                        {
-                            string diskpath = "root\\" + transactionid + "\\";
-                            if (!Directory.Exists(diskpath))
-                            {
-                                Directory.CreateDirectory(diskpath);
-                            }
-
-                            using (FileStream fs = new FileStream(diskpath + "MSG", FileMode.Create))
-                            {
-                                fs.Write(fileBytes, 0, fileBytes.Length);
-                            }
-                        }
-                        catch (Exception ex) { break; }
+                        LedgerRoot = GetRootByByteArray(GetLedgerBytes(fileName + Environment.NewLine + Encoding.ASCII.GetString(fileBytes).Replace(fileName, ""), username, password, url), username, password, url, strPublicAddress, transactionid);
+                        fileName = LedgerRoot.File.Keys.First();
+                        fileBytes = LedgerRoot.File.Values.First();
+                        newRoot = LedgerRoot;
+                        newRoot.TransactionId = transactionid;
+                        newRoot.Confirmations = deserializedObject.confirmations;
+                        newRoot.BlockDate = DateTimeOffset.FromUnixTimeSeconds(Convert.ToInt32(deserializedObject.blocktime)).DateTime;
                     }
 
-                    try
+                    if (fileName == "SIG")
                     {
-                        transactionASCII = transactionASCII.Remove(0, (packetSize + headerSize));
-                    }
-                    catch (Exception ex)
-                    {
-
-                        break;
+                        sigStartByte = sigEndByte;
+                        signature = transactionASCII.Substring(headerSize, packetSize);
                     }
 
+                    string diskpath = "root\\" + transactionid + "\\";
+                    if (!Directory.Exists(diskpath))
+                    {
+                        Directory.CreateDirectory(diskpath);
+                    }
 
+                    using (FileStream fs = new FileStream(diskpath + fileName, FileMode.Create))
+                    {
+                        fs.Write(fileBytes, 0, fileBytes.Length);
+                    }
+
+                    files.AddOrReplace(fileName, fileBytes);
                 }
                 else
                 {
+                    if (fileName == "")
+                    {
+                        MessageList.Add(Encoding.UTF8.GetString(fileBytes));
 
+                        string diskpath = "root\\" + transactionid + "\\";
+                        if (!Directory.Exists(diskpath))
+                        {
+                            Directory.CreateDirectory(diskpath);
+                        }
 
-                    break;
+                        using (FileStream fs = new FileStream(diskpath + "MSG", FileMode.Create))
+                        {
+                            fs.Write(fileBytes, 0, fileBytes.Length);
+                        }
+                    }
+                    else { break; }
+
                 }
 
+                transactionASCII = transactionASCII.Remove(0, (packetSize + headerSize));
             }
 
-            int index = transactionASCII.IndexOf('\0');
-
-            if (index >= 0)
+            //removing null characters
+            while (transactionASCII.IndexOf('\0') >= 0)
             {
-                transactionASCII = transactionASCII.Substring(index + 1);
+                transactionASCII = transactionASCII.Substring(transactionASCII.IndexOf('\0') + 1);
             }
 
             for (int i = 0; i < transactionASCII.Length; i += 20)
@@ -425,7 +411,7 @@ namespace SUP.P2FK
                 try
                 {
 
-                    keywords.Add(Base58.EncodeWithCheckSum(AddBytes(new byte[] { byte.Parse("111") }, transactionBytes.Skip(i + (transactionBytesSize - transactionASCII.Length)).Take(20).ToArray())), Encoding.ASCII.GetString(transactionBytes.Skip(i + (transactionBytesSize - transactionASCII.Length)).Take(20).ToArray()));
+                    keywords.Add(Base58.EncodeWithCheckSum(AddBytes(new byte[] { VersionByte }, transactionBytes.Skip(i + (transactionBytesSize - transactionASCII.Length)).Take(20).ToArray())), Encoding.ASCII.GetString(transactionBytes.Skip(i + (transactionBytesSize - transactionASCII.Length)).Take(20).ToArray()));
                 }
                 catch (Exception ex) { }
             }
@@ -474,7 +460,6 @@ namespace SUP.P2FK
             char[] specialChars = new char[] { '\\', '/', ':', '*', '?', '"', '<', '>', '|' };
             Regex regexSpecialChars = new Regex(@"([\\/:*?""<>|])\d+");
             Regex regexTransactionId = new Regex(@"\b[0-9a-f]{64}\b");
-            byte bitcoinTestnetVersionByte = byte.Parse("111");
             Root newRoot = new Root();
             System.Security.Cryptography.SHA256 mySHA256 = SHA256Managed.Create();
             Dictionary<string, byte[]> files = new Dictionary<string, byte[]>();
@@ -495,76 +480,74 @@ namespace SUP.P2FK
                 int headerSize = match.Index + match.Length + 1;
 
                 //invalid if a special character is not found before a number
-                if (transactionASCII.IndexOfAny(specialChars) == match.Index)
+                if (transactionASCII.IndexOfAny(specialChars) != match.Index) { break; }
+
+                sigEndByte += packetSize + headerSize;
+                bool isValid = true;
+                string fileName = transactionASCII.Substring(0, match.Index);
+                byte[] fileBytes = transactionBytes.Skip(headerSize + (transactionBytesSize - transactionASCII.Length)).Take(packetSize).ToArray();
+
+                try
+                {
+                    // This will throw an exception if the file name is not valid
+                    System.IO.File.Create(fileName).Dispose();
+                }
+                catch (Exception ex) { isValid = false; }
+
+                if (isValid)
                 {
 
-                    sigEndByte += packetSize + headerSize;
-
-                    string fileName = transactionASCII.Substring(0, transactionASCII.IndexOfAny(specialChars));
-                    byte[] fileBytes = transactionBytes.Skip(headerSize + (transactionBytesSize - transactionASCII.Length)).Take(packetSize).ToArray();
-
-                    if (fileName != "")
+                    if (fileName == "SIG")
                     {
-
-                        if (fileName == "SIG")
-                        {
-                            sigStartByte = sigEndByte;
-                            signature = transactionASCII.Substring(headerSize, packetSize);
-                        }
-
-                        files.AddOrReplace(fileName, fileBytes);
-                        try
-                        {
-                            string diskpath = "root\\" + transactionid + "\\";
-                            if (!Directory.Exists(diskpath))
-                            {
-                                Directory.CreateDirectory(diskpath);
-                            }
-
-                            using (FileStream fs = new FileStream(diskpath + fileName, FileMode.Create))
-                            {
-                                fs.Write(fileBytes, 0, fileBytes.Length);
-                            }
-                        }
-                        catch (Exception ex) { break; }
-                    }
-                    else
-                    {
-                        MessageList.Add(Encoding.UTF8.GetString(fileBytes));
-                        try
-                        {
-                            string diskpath = "root\\" + transactionid + "\\";
-                            if (!Directory.Exists(diskpath))
-                            {
-                                Directory.CreateDirectory(diskpath);
-                            }
-
-                            using (FileStream fs = new FileStream(diskpath + "MSG", FileMode.Create))
-                            {
-                                fs.Write(fileBytes, 0, fileBytes.Length);
-                            }
-                        }
-                        catch (Exception ex) { break; }
+                        sigStartByte = sigEndByte;
+                        signature = transactionASCII.Substring(headerSize, packetSize);
                     }
 
+                    files.AddOrReplace(fileName, fileBytes);
 
-                    //remove what has been processed from the string
-                    try
+                    string diskpath = "root\\" + transactionid + "\\";
+                    if (!Directory.Exists(diskpath))
                     {
-                        transactionASCII = transactionASCII.Remove(0, (packetSize + headerSize));
+                        Directory.CreateDirectory(diskpath);
                     }
-                    catch (Exception ex)
+
+                    using (FileStream fs = new FileStream(diskpath + fileName, FileMode.Create))
                     {
-                        
-                        break;
+                        fs.Write(fileBytes, 0, fileBytes.Length);
                     }
+
                 }
                 else
                 {
+                    if (fileName == "")
+                    {
+                        MessageList.Add(Encoding.UTF8.GetString(fileBytes));
 
+                        string diskpath = "root\\" + transactionid + "\\";
+                        if (!Directory.Exists(diskpath))
+                        {
+                            Directory.CreateDirectory(diskpath);
+                        }
+
+                        using (FileStream fs = new FileStream(diskpath + "MSG", FileMode.Create))
+                        {
+                            fs.Write(fileBytes, 0, fileBytes.Length);
+                        }
+                    }
+
+                }
+
+                //remove what has been processed from the string
+                try
+                {
+                    transactionASCII = transactionASCII.Remove(0, (packetSize + headerSize));
+                }
+                catch (Exception ex)
+                {
 
                     break;
                 }
+                
 
             }
 
