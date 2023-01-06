@@ -1,4 +1,5 @@
-﻿using NBitcoin.RPC;
+﻿using NBitcoin;
+using NBitcoin.RPC;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -126,10 +127,6 @@ namespace SUP.P2FK
                                 signature = transactionASCII.Substring(headerSize, packetSize);
                             }
 
-
-
-                            files.Add(fileName, fileBytes);
-
                             try
                             {
                                 string diskpath = "root\\" + transID.txid + "\\";
@@ -143,7 +140,8 @@ namespace SUP.P2FK
                                     fs.Write(fileBytes, 0, fileBytes.Length);
                                 }
                             }
-                            catch (Exception ex) { }
+                            catch (Exception ex) { break; }
+                            files.AddOrReplace(fileName, fileBytes);
 
                         }
                         else
@@ -163,11 +161,19 @@ namespace SUP.P2FK
                                     fs.Write(fileBytes, 0, fileBytes.Length);
                                 }
                             }
-                            catch (Exception ex) { }
+                            catch (Exception ex) { break; }
 
                         }
 
-                        transactionASCII = transactionASCII.Remove(0, (packetSize + headerSize));
+                        try
+                        {
+                            transactionASCII = transactionASCII.Remove(0, (packetSize + headerSize));
+                        }
+                        catch (Exception ex)
+                        {
+                            
+                            break;
+                        }
 
                     }
                     else
@@ -242,14 +248,9 @@ namespace SUP.P2FK
             char[] specialChars = new char[] { '\\', '/', ':', '*', '?', '"', '<', '>', '|' };
             Regex regexSpecialChars = new Regex(@"([\\/:*?""<>|])\d+");
             Regex regexTransactionId = new Regex(@"\b[0-9a-f]{64}\b");
-
-            NetworkCredential credentials = new NetworkCredential(username, password);
-            RPCClient rpcClient = new RPCClient(credentials, new Uri(url));
-
-            dynamic deserializedObject = JsonConvert.DeserializeObject(rpcClient.SendCommand("getrawtransaction", transactionid, 1).ResultString);
+            dynamic deserializedObject = null;
 
             //defining items to include in the returned object
-
             Dictionary<string, byte[]> files = new Dictionary<string, byte[]>();
             Dictionary<string, string> keywords = new Dictionary<string, string>();
             List<String> MessageList = new List<String>();
@@ -259,10 +260,30 @@ namespace SUP.P2FK
             string signature = "";
             int sigStartByte = 0;
             int sigEndByte = 0;
-            int totalByteSize = deserializedObject.size;
-
             //create a new root object
             Root newRoot = new Root();
+            NetworkCredential credentials = new NetworkCredential(username, password);
+            RPCClient rpcClient = new RPCClient(credentials, new Uri(url));
+
+            try
+            {
+                deserializedObject = JsonConvert.DeserializeObject(rpcClient.SendCommand("getrawtransaction", transactionid, 1).ResultString);
+
+            }
+            catch (Exception ex)
+            {
+                newRoot.Message = new string[] { ex.Message };
+                newRoot.BuildDate = DateTime.UtcNow;
+                newRoot.File = files;
+                newRoot.Keyword = keywords;
+                newRoot.TransactionId = transactionid;
+                return newRoot;
+            }
+
+
+            int totalByteSize = deserializedObject.size;
+
+
             Root LedgerRoot = new Root();
             // we are spinning through all the out addresses within each bitcoin transaction
             // we are base58 decdoing each address to obtain a 20 byte payload that is appended to a byte[]
@@ -334,7 +355,7 @@ namespace SUP.P2FK
                             signature = transactionASCII.Substring(headerSize, packetSize);
                         }
 
-                        files.Add(fileName, fileBytes);
+
                         try
                         {
                             string diskpath = "root\\" + transactionid + "\\";
@@ -348,7 +369,8 @@ namespace SUP.P2FK
                                 fs.Write(fileBytes, 0, fileBytes.Length);
                             }
                         }
-                        catch (Exception ex) { }
+                        catch (Exception ex) { break; }
+                        files.AddOrReplace(fileName, fileBytes);
                     }
                     else
                     {
@@ -367,10 +389,19 @@ namespace SUP.P2FK
                                 fs.Write(fileBytes, 0, fileBytes.Length);
                             }
                         }
-                        catch (Exception ex) { }
+                        catch (Exception ex) { break; }
                     }
 
-                    transactionASCII = transactionASCII.Remove(0, (packetSize + headerSize));
+                    try
+                    {
+                        transactionASCII = transactionASCII.Remove(0, (packetSize + headerSize));
+                    }
+                    catch (Exception ex)
+                    {
+
+                        break;
+                    }
+
 
                 }
                 else
@@ -413,6 +444,7 @@ namespace SUP.P2FK
 
             if (LedgerRoot.TransactionId != null)
             {
+                LedgerRoot.Message = MessageList.ToArray();
                 LedgerRoot.Keyword = keywords;
                 LedgerRoot.Confirmations = deserializedObject.confirmations;
                 LedgerRoot.BuildDate = DateTime.UtcNow;
@@ -480,7 +512,7 @@ namespace SUP.P2FK
                             signature = transactionASCII.Substring(headerSize, packetSize);
                         }
 
-                        files.Add(fileName, fileBytes);
+                        files.AddOrReplace(fileName, fileBytes);
                         try
                         {
                             string diskpath = "root\\" + transactionid + "\\";
@@ -494,7 +526,7 @@ namespace SUP.P2FK
                                 fs.Write(fileBytes, 0, fileBytes.Length);
                             }
                         }
-                        catch (Exception ex) { }
+                        catch (Exception ex) { break; }
                     }
                     else
                     {
@@ -512,13 +544,20 @@ namespace SUP.P2FK
                                 fs.Write(fileBytes, 0, fileBytes.Length);
                             }
                         }
-                        catch (Exception ex) { }
+                        catch (Exception ex) { break; }
                     }
 
 
                     //remove what has been processed from the string
-                    transactionASCII = transactionASCII.Remove(0, (packetSize + headerSize));
-
+                    try
+                    {
+                        transactionASCII = transactionASCII.Remove(0, (packetSize + headerSize));
+                    }
+                    catch (Exception ex)
+                    {
+                        
+                        break;
+                    }
                 }
                 else
                 {

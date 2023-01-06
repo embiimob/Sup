@@ -256,9 +256,15 @@ namespace SUP
                 {
                     db.Put(roots[i].TransactionId, JsonConvert.SerializeObject(roots[i]));
                 }
-                object[] rowData = new object[] { roots[i].TransactionId, roots[i].Signed, roots[i].SignedBy, roots[i].Signature,  roots[i].File.Count(), roots[i].Message.Count(), roots[i].Keyword.Count(), roots[i].TotalByteSize, roots[i].BlockDate, roots[i].Confirmations, roots[i].BuildDate.ToString("MM/dd/yyyy hh:mm:ss.ffff tt") };
+
+                string strmessage = "";
+                
+                foreach (var rfile in roots[i].Message)
+                { strmessage = strmessage + rfile; }
+
+                object[] rowData = new object[] { roots[i].TransactionId, roots[i].Signed, roots[i].SignedBy, roots[i].Signature, roots[i].File.Count(), strmessage, roots[i].Keyword.Count(), roots[i].TotalByteSize, roots[i].BlockDate, roots[i].Confirmations, roots[i].BuildDate.ToString("MM/dd/yyyy hh:mm:ss.ffff tt") };
                 dgTransactions.Rows.Add(rowData);
-                totalbytes+= roots[i].TotalByteSize;
+                totalbytes += roots[i].TotalByteSize;
             }
             lblTotalBytes.Text = "Total Bytes: " + totalbytes.ToString();
 
@@ -272,7 +278,7 @@ namespace SUP
             dgTransactions.Rows.Clear();
 
 
-      
+
 
             var ROOT = new Options { CreateIfMissing = true };
             using (var db = new DB(ROOT, @"root"))
@@ -280,9 +286,13 @@ namespace SUP
                 db.Put(root.TransactionId, JsonConvert.SerializeObject(root));
 
             }
-            object[] rowData = new object[] { root.TransactionId, root.Signed, root.SignedBy, root.Signature,  root.File.Count(), root.Message.Count(), root.Keyword.Count(), root.TotalByteSize, root.BlockDate, root.Confirmations, root.BuildDate.ToString("MM/dd/yyyy hh:mm:ss.ffff tt") };
+            string strmessage = "";
+
+            foreach (var rfile in root.Message)
+            { strmessage = strmessage + rfile; }
+            object[] rowData = new object[] { root.TransactionId, root.Signed, root.SignedBy , root.Signature , root.File.Count(), strmessage, root.Keyword.Count(), root.TotalByteSize, root.BlockDate, root.Confirmations, root.BuildDate.ToString("MM/dd/yyyy hh:mm:ss.ffff tt") };
             dgTransactions.Rows.Add(rowData);
-          
+
             lblTotalBytes.Text = "Total Bytes: " + root.TotalByteSize.ToString();
 
         }
@@ -290,7 +300,7 @@ namespace SUP
         private void btnGetKeyword_Click(object sender, EventArgs e)
         {
             string publicAddress = Root.GetPublicAddressByKeyword(txtGetKeyword.Text);
- 
+
             Root[] roots = Root.GetRootByAddress(publicAddress, txtLogin.Text, txtPassword.Text, txtUrl.Text);
             dgTransactions.Rows.Clear();
             int totalbytes = 0;
@@ -303,7 +313,13 @@ namespace SUP
                 {
                     db.Put(roots[i].TransactionId, JsonConvert.SerializeObject(roots[i]));
                 }
-                object[] rowData = new object[] { roots[i].TransactionId, roots[i].Signed, roots[i].SignedBy, roots[i].Signature, roots[i].File.Count(), roots[i].Message.Count(), roots[i].Keyword.Count(), roots[i].TotalByteSize, roots[i].BlockDate, roots[i].Confirmations, roots[i].BuildDate.ToString("MM/dd/yyyy hh:mm:ss.ffff tt") };
+
+                string strmessage = "";
+
+                foreach (var rfile in roots[i].Message)
+                { strmessage = strmessage + rfile; }
+
+                object[] rowData = new object[] { roots[i].TransactionId, roots[i].Signed, roots[i].SignedBy, roots[i].Signature, roots[i].File.Count(), strmessage, roots[i].Keyword.Count(), roots[i].TotalByteSize, roots[i].BlockDate, roots[i].Confirmations, roots[i].BuildDate.ToString("MM/dd/yyyy hh:mm:ss.ffff tt") };
                 dgTransactions.Rows.Add(rowData);
                 totalbytes += roots[i].TotalByteSize;
             }
