@@ -11,6 +11,7 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
+using static System.Net.WebRequestMethods;
 
 namespace SUP.P2FK
 {
@@ -190,7 +191,11 @@ namespace SUP.P2FK
 
                 }
 
-                transactionASCII = transactionASCII.Remove(0, (packetSize + headerSize));
+                try
+                {
+                  transactionASCII = transactionASCII.Remove(0, (packetSize + headerSize));
+                }
+                catch (Exception ex) { break; }
             }
 
 
@@ -265,8 +270,9 @@ namespace SUP.P2FK
                 Root newRoot = new Root();
                 newRoot.Message = new string[] { ex.Message };
                 newRoot.BuildDate = DateTime.UtcNow;
-                newRoot.File = new Dictionary<string, byte[]>();
-                newRoot.Keyword = new Dictionary<string, string>();
+                newRoot.File = new Dictionary<string, byte[]> { };
+                newRoot.Keyword = new Dictionary<string, string> { };
+                newRoot.TransactionId = address;
                 RootList.Add(newRoot);
                 return RootList.ToArray();
             }

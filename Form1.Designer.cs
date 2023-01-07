@@ -231,7 +231,7 @@
             this.txtLogin.Name = "txtLogin";
             this.txtLogin.Size = new System.Drawing.Size(111, 20);
             this.txtLogin.TabIndex = 15;
-            this.txtLogin.Text = "embiiuser";
+            this.txtLogin.Text = "good-user";
             // 
             // label7
             // 
@@ -257,7 +257,7 @@
             this.txtPassword.Name = "txtPassword";
             this.txtPassword.Size = new System.Drawing.Size(121, 20);
             this.txtPassword.TabIndex = 17;
-            this.txtPassword.Text = "embiipassword";
+            this.txtPassword.Text = "better-password";
             // 
             // label9
             // 
@@ -308,7 +308,7 @@
             this.txtSearchAddress.Name = "txtSearchAddress";
             this.txtSearchAddress.Size = new System.Drawing.Size(238, 20);
             this.txtSearchAddress.TabIndex = 25;
-            this.txtSearchAddress.Text = "mzbQbFQeCx14eqAaGfFeZDbsCDonfxWncK";
+            this.txtSearchAddress.Text = "mmkLUNKvLdLBHycaTRmRv1tZpDxsAKXBNn";
             // 
             // label11
             // 
@@ -374,7 +374,7 @@
             this.txtTransactionId.Name = "txtTransactionId";
             this.txtTransactionId.Size = new System.Drawing.Size(423, 20);
             this.txtTransactionId.TabIndex = 31;
-            this.txtTransactionId.Text = "a87d87b2b9821c4fc7d2c349cdda7542627b774d56db81e3a988503735b8a4f9";
+            this.txtTransactionId.Text = "7223070fbc3706856e90701b62a8bfb3f5a618dc13d64d8f029260cba187ca26";
             // 
             // transaction_id
             // 
@@ -458,7 +458,7 @@
             this.txtGetKeyword.Name = "txtGetKeyword";
             this.txtGetKeyword.Size = new System.Drawing.Size(238, 20);
             this.txtGetKeyword.TabIndex = 34;
-            this.txtGetKeyword.Text = "embii";
+            this.txtGetKeyword.Text = "HugPuddle";
             // 
             // label13
             // 
