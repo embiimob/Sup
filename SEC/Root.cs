@@ -6,12 +6,11 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net;
-using System.Runtime.Remoting.Messaging;
 using System.Security.Cryptography;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
-using static System.Net.WebRequestMethods;
+
 
 namespace SUP.P2FK
 {
@@ -60,7 +59,7 @@ namespace SUP.P2FK
             RPCClient rpcClient = new RPCClient(credentials, new Uri(url));
             if (rootBytes == null)
             {
-              
+
 
                 try
                 {
@@ -96,7 +95,9 @@ namespace SUP.P2FK
                         Base58.DecodeWithCheckSum(strPublicAddress, out results);
 
                         //append to a byte[] of all P2FK data
-                        transactionBytes = AddBytes(transactionBytes, RemoveFirstByte(results));
+                        transactionBytes = transactionBytes.Concat(results.Skip(1)).ToArray();
+
+                        //transactionBytes = AddBytes(transactionBytes, results.Skip(1).ToArray());
 
                     }
                 }
@@ -152,7 +153,7 @@ namespace SUP.P2FK
                             fs.Write(fileBytes, 0, fileBytes.Length);
                         }
 
-                        LedgerRoot = GetRootByTransactionId(transactionid, username, password, url, versionbyte,GetLedgerBytes(fileName + Environment.NewLine + Encoding.ASCII.GetString(fileBytes).Replace(fileName, ""), username,  password,  url), strPublicAddress);
+                        LedgerRoot = GetRootByTransactionId(transactionid, username, password, url, versionbyte, GetLedgerBytes(fileName + Environment.NewLine + Encoding.ASCII.GetString(fileBytes).Replace(fileName, ""), username, password, url), strPublicAddress);
                         fileName = LedgerRoot.File.Keys.First();
                         fileBytes = LedgerRoot.File.Values.First();
                         newRoot = LedgerRoot;
@@ -193,7 +194,7 @@ namespace SUP.P2FK
 
                 try
                 {
-                  transactionASCII = transactionASCII.Remove(0, (packetSize + headerSize));
+                    transactionASCII = transactionASCII.Remove(0, (packetSize + headerSize));
                 }
                 catch (Exception ex) { break; }
             }
@@ -212,12 +213,12 @@ namespace SUP.P2FK
                 try
                 {
 
-                    keywords.Add(Base58.EncodeWithCheckSum(AddBytes(new byte[] { VersionByte }, transactionBytes.Skip(i + (transactionBytesSize - transactionASCII.Length)).Take(20).ToArray())), Encoding.ASCII.GetString(transactionBytes.Skip(i + (transactionBytesSize - transactionASCII.Length)).Take(20).ToArray()));
+                    keywords.Add(Base58.EncodeWithCheckSum(new byte[] { VersionByte }.Concat(transactionBytes.Skip(i + (transactionBytesSize - transactionASCII.Length)).Take(20)).ToArray()), Encoding.ASCII.GetString(transactionBytes.Skip(i + (transactionBytesSize - transactionASCII.Length)).Take(20).ToArray()));
+
                 }
                 catch (Exception ex) { }
             }
 
-                
 
             if (sigStartByte > 0 && LedgerRoot.Signature == null)
             {
@@ -285,11 +286,11 @@ namespace SUP.P2FK
                 Thread thread = new Thread(() =>
                 {
                     string transactionid = transID.txid;
-                    Root root = Root.GetRootByTransactionId( transactionid,  username,  password,  url);
+                    Root root = Root.GetRootByTransactionId(transactionid, username, password, url);
 
                     if (root != null)
                     {
-                        // Add the transaction bytes to the concurrent queue
+                        
                         try
                         {
                             synchronousData.Add(transactionid, root);
@@ -332,8 +333,7 @@ namespace SUP.P2FK
             keyword = keyword.PadRight(20, '#');
 
 
-            return Base58.EncodeWithCheckSum(AddBytes(new byte[] { byte.Parse(versionbyte) }, System.Text.Encoding.ASCII.GetBytes(keyword)));
-
+            return Base58.EncodeWithCheckSum(new byte[] { byte.Parse(versionbyte) }.Concat(System.Text.Encoding.ASCII.GetBytes(keyword)).ToArray());
 
         }
         public static string GetKeywordByPublicAddress(string public_address)
@@ -359,7 +359,7 @@ namespace SUP.P2FK
             var matches = regexTransactionId.Matches(ledger);
             foreach (Match match in matches)
             {
-                byte[] transactionBytesBatch = Array.Empty<byte>();
+                byte[] transactionBytesBatch = new byte[0];
                 dynamic deserializedObject = JsonConvert.DeserializeObject(rpcClient.SendCommand("getrawtransaction", match.Value, 1).ResultString);
 
                 foreach (dynamic v_out in deserializedObject.vout)
@@ -375,42 +375,18 @@ namespace SUP.P2FK
                         Base58.DecodeWithCheckSum(strPublicAddress, out results);
 
                         //append to a byte[] of all P2FK data
-                        transactionBytesBatch = AddBytes(transactionBytesBatch, RemoveFirstByte(results));
 
+                        transactionBytesBatch = transactionBytesBatch.Concat(results.Skip(1)).ToArray();
                     }
                 }
-                transactionBytes = AddBytes(transactionBytes, transactionBytesBatch);
 
-
+                transactionBytes = transactionBytes.Concat(transactionBytesBatch).ToArray();
 
             }
             return transactionBytes;
 
         }
-        private static byte[] AddBytes(byte[] existingArray, byte[] newArray)
-        {
-            // Create a new array with a capacity large enough to hold both arrays
-            byte[] combinedArray = new byte[existingArray.Length + newArray.Length];
 
-            // Copy the elements from the existing array into the new array
-            Array.Copy(existingArray, combinedArray, existingArray.Length);
-
-            // Copy the elements from the new array into the new array
-            Array.Copy(newArray, 0, combinedArray, existingArray.Length, newArray.Length);
-
-            return combinedArray;
-        }
-        private static byte[] RemoveFirstByte(byte[] array)
-        {
-
-            // Create a new array with a capacity one less than the original array
-            byte[] newArray = new byte[array.Length - 1];
-
-            // Copy the elements from the original array into the new array, starting at the second element
-            Array.Copy(array, 1, newArray, 0, newArray.Length);
-
-            return newArray;
-        }
     }
 }
 
