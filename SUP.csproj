@@ -174,9 +174,9 @@
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="SEC\Base58.cs" />
-    <Compile Include="SEC\Root.cs" />
-    <Compile Include="SEC\SHA256.cs" />
+    <Compile Include="P2FK\Base58.cs" />
+    <Compile Include="P2FK\Root.cs" />
+    <Compile Include="P2FK\SHA256.cs" />
     <EmbeddedResource Include="Form1.resx">
       <DependentUpon>Form1.cs</DependentUpon>
     </EmbeddedResource>
