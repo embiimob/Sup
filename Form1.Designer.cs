@@ -76,6 +76,8 @@
             this.label13 = new System.Windows.Forms.Label();
             this.textBox1 = new System.Windows.Forms.TextBox();
             this.label14 = new System.Windows.Forms.Label();
+            this.lblTotalTime = new System.Windows.Forms.Label();
+            this.lblKbs = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.dgTransactions)).BeginInit();
             this.SuspendLayout();
             // 
@@ -287,7 +289,7 @@
             // lblTotalBytes
             // 
             this.lblTotalBytes.AutoSize = true;
-            this.lblTotalBytes.Location = new System.Drawing.Point(757, 228);
+            this.lblTotalBytes.Location = new System.Drawing.Point(753, 221);
             this.lblTotalBytes.Name = "lblTotalBytes";
             this.lblTotalBytes.Size = new System.Drawing.Size(60, 13);
             this.lblTotalBytes.TabIndex = 23;
@@ -484,11 +486,31 @@
             this.label14.TabIndex = 39;
             this.label14.Text = "balance";
             // 
+            // lblTotalTime
+            // 
+            this.lblTotalTime.AutoSize = true;
+            this.lblTotalTime.Location = new System.Drawing.Point(549, 221);
+            this.lblTotalTime.Name = "lblTotalTime";
+            this.lblTotalTime.Size = new System.Drawing.Size(57, 13);
+            this.lblTotalTime.TabIndex = 40;
+            this.lblTotalTime.Text = "Total Time";
+            // 
+            // lblKbs
+            // 
+            this.lblKbs.AutoSize = true;
+            this.lblKbs.Location = new System.Drawing.Point(922, 221);
+            this.lblKbs.Name = "lblKbs";
+            this.lblKbs.Size = new System.Drawing.Size(30, 13);
+            this.lblKbs.TabIndex = 41;
+            this.lblKbs.Text = "Kb/s";
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1069, 604);
+            this.Controls.Add(this.lblKbs);
+            this.Controls.Add(this.lblTotalTime);
             this.Controls.Add(this.label14);
             this.Controls.Add(this.label13);
             this.Controls.Add(this.textBox1);
@@ -586,6 +608,8 @@
         private System.Windows.Forms.Label label13;
         private System.Windows.Forms.TextBox textBox1;
         private System.Windows.Forms.Label label14;
+        private System.Windows.Forms.Label lblTotalTime;
+        private System.Windows.Forms.Label lblKbs;
     }
 }
 

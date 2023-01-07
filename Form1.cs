@@ -243,10 +243,13 @@ namespace SUP
 
         private void btnSearch_Click(object sender, EventArgs e)
         {
-
+            DateTime tmbeginCall = DateTime.UtcNow;
             Root[] roots = Root.GetRootByAddress(txtSearchAddress.Text, txtLogin.Text, txtPassword.Text, txtUrl.Text);
+            DateTime tmendCall = DateTime.UtcNow;         
             dgTransactions.Rows.Clear();
             int totalbytes = 0;
+            TimeSpan elapsedTime = tmendCall - tmbeginCall;
+            double elapsedMilliseconds = elapsedTime.TotalMilliseconds;
 
             for (int i = 0; i < roots.Length; i += 1)
             {
@@ -268,6 +271,11 @@ namespace SUP
                 totalbytes += roots[i].TotalByteSize;
             }
             lblTotalBytes.Text = "Total Bytes: " + totalbytes.ToString();
+            lblTotalTime.Text = "Total Time: " + elapsedMilliseconds;
+            double secondsExpired = elapsedMilliseconds / 1000.0;
+            double kilobytes = totalbytes / 1024.0;
+            double kbs = kilobytes / secondsExpired;
+            lblKbs.Text = "Kb/s " + kbs;
 
 
 
@@ -275,8 +283,13 @@ namespace SUP
 
         private void btnGetTransactionId_Click(object sender, EventArgs e)
         {
+            DateTime tmbeginCall = DateTime.UtcNow;
             Root root = Root.GetRootByTransactionId(txtTransactionId.Text, txtLogin.Text, txtPassword.Text, txtUrl.Text);
+            DateTime tmendCall = DateTime.UtcNow;
             dgTransactions.Rows.Clear();
+            int totalbytes = 0;
+            TimeSpan elapsedTime = tmendCall - tmbeginCall;
+            double elapsedMilliseconds = elapsedTime.TotalMilliseconds;
 
             if (root != null)
             {
@@ -290,10 +303,16 @@ namespace SUP
 
                 foreach (var rfile in root.Message)
                 { strmessage = strmessage + rfile; }
+
                 object[] rowData = new object[] { root.TransactionId, root.Signed, root.SignedBy, root.Signature, root.File.Count(), strmessage, root.Keyword.Count(), root.TotalByteSize, root.BlockDate, root.Confirmations, root.BuildDate.ToString("MM/dd/yyyy hh:mm:ss.ffff tt") };
                 dgTransactions.Rows.Add(rowData);
-
-                lblTotalBytes.Text = "Total Bytes: " + root.TotalByteSize.ToString();
+                totalbytes = root.TotalByteSize;
+                lblTotalBytes.Text = "Total Bytes: " + totalbytes.ToString();
+                lblTotalTime.Text = "Total Time: " + elapsedMilliseconds;
+                double secondsExpired = elapsedMilliseconds / 1000.0;
+                double kilobytes = totalbytes / 1024.0;
+                double kbs = kilobytes / secondsExpired;
+                lblKbs.Text = "Kb/s " + kbs;
             }
 
         }
@@ -302,9 +321,13 @@ namespace SUP
         {
             string publicAddress = Root.GetPublicAddressByKeyword(txtGetKeyword.Text);
 
+            DateTime tmbeginCall = DateTime.UtcNow;
             Root[] roots = Root.GetRootByAddress(publicAddress, txtLogin.Text, txtPassword.Text, txtUrl.Text);
+            DateTime tmendCall = DateTime.UtcNow;
             dgTransactions.Rows.Clear();
             int totalbytes = 0;
+            TimeSpan elapsedTime = tmendCall - tmbeginCall;
+            double elapsedMilliseconds = elapsedTime.TotalMilliseconds;
 
             for (int i = 0; i < roots.Length; i += 1)
             {
@@ -325,6 +348,11 @@ namespace SUP
                 totalbytes += roots[i].TotalByteSize;
             }
             lblTotalBytes.Text = "Total Bytes: " + totalbytes.ToString();
+            lblTotalTime.Text = "Total Time: " + elapsedMilliseconds;
+            double secondsExpired = elapsedMilliseconds / 1000.0;
+            double kilobytes = totalbytes / 1024.0;
+            double kbs = kilobytes / secondsExpired;
+            lblKbs.Text = "Kb/s " + kbs;
         }
     }
 }
