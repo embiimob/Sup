@@ -199,11 +199,11 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
-    <None Include="sample transactions\Burn Transaction.json" />
-    <None Include="sample transactions\Create Collection.json" />
-    <None Include="sample transactions\Create Object.json" />
-    <None Include="sample transactions\Create Profile.json" />
-    <None Include="sample transactions\Give Object.json" />
+    <None Include="P2FK\sample transactions\Burn Transaction.json" />
+    <None Include="P2FK\sample transactions\Create Collection.json" />
+    <None Include="P2FK\sample transactions\Create Object.json" />
+    <None Include="P2FK\sample transactions\Create Profile.json" />
+    <None Include="P2FK\sample transactions\Give Object.json" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

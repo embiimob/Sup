@@ -1,6 +1,5 @@
 ﻿using LevelDB;
 using NBitcoin.RPC;
-using Newtonsoft.Json;
 using SUP.P2FK;
 using System;
 using System.Collections.Generic;
@@ -15,14 +14,14 @@ namespace SUP
         public Form1()
         {
             InitializeComponent();
-
         }
 
         private void btnPut_Click(object sender, EventArgs e)
         {
-
-            if (lbTableName.SelectedItem == null) { lbTableName.SelectedIndex = 0; }
-
+            if (lbTableName.SelectedItem == null)
+            {
+                lbTableName.SelectedIndex = 0;
+            }
 
             switch (lbTableName.SelectedItem.ToString().Trim())
             {
@@ -70,53 +69,52 @@ namespace SUP
                     MessageBox.Show("something went wrong");
                     break;
             }
-
-
-
-
         }
 
         private void btnGet_Click(object sender, EventArgs e)
         {
-
-
-            if (lbTableName.SelectedItem == null) { lbTableName.SelectedIndex = 0; }
-
+            if (lbTableName.SelectedItem == null)
+            {
+                lbTableName.SelectedIndex = 0;
+            }
 
             switch (lbTableName.SelectedItem.ToString().Trim())
             {
-
-
                 case "ROOT":
                     var ROOT = new Options { CreateIfMissing = true };
                     txtGetValue.Text = "";
                     using (var db = new DB(ROOT, @"root"))
                     {
-
                         LevelDB.Iterator it = db.CreateIterator();
-                        for (it.Seek(txtGetKey.Text); it.IsValid() && it.KeyAsString().StartsWith(txtGetKey.Text); it.Next())
+                        for (
+                            it.Seek(txtGetKey.Text);
+                            it.IsValid() && it.KeyAsString().StartsWith(txtGetKey.Text);
+                            it.Next()
+                        )
                         {
-                            txtGetValue.Text = txtGetValue.Text + it.ValueAsString() + Environment.NewLine;
+                            txtGetValue.Text =
+                                txtGetValue.Text + it.ValueAsString() + Environment.NewLine;
                         }
                         it.Dispose();
-
                     }
                     break;
-
 
                 case "PRO":
                     var PRO = new Options { CreateIfMissing = true };
                     txtGetValue.Text = "";
                     using (var db = new DB(PRO, @"root\pro"))
                     {
-
                         LevelDB.Iterator it = db.CreateIterator();
-                        for (it.Seek(txtGetKey.Text); it.IsValid() && it.KeyAsString().StartsWith(txtGetKey.Text); it.Next())
+                        for (
+                            it.Seek(txtGetKey.Text);
+                            it.IsValid() && it.KeyAsString().StartsWith(txtGetKey.Text);
+                            it.Next()
+                        )
                         {
-                            txtGetValue.Text = txtGetValue.Text + it.ValueAsString() + Environment.NewLine;
+                            txtGetValue.Text =
+                                txtGetValue.Text + it.ValueAsString() + Environment.NewLine;
                         }
                         it.Dispose();
-
                     }
                     break;
 
@@ -126,9 +124,14 @@ namespace SUP
                     using (var db = new DB(COL, @"root\col"))
                     {
                         LevelDB.Iterator it = db.CreateIterator();
-                        for (it.Seek(txtGetKey.Text); it.IsValid() && it.KeyAsString().StartsWith(txtGetKey.Text); it.Next())
+                        for (
+                            it.Seek(txtGetKey.Text);
+                            it.IsValid() && it.KeyAsString().StartsWith(txtGetKey.Text);
+                            it.Next()
+                        )
                         {
-                            txtGetValue.Text = txtGetValue.Text + it.ValueAsString() + Environment.NewLine;
+                            txtGetValue.Text =
+                                txtGetValue.Text + it.ValueAsString() + Environment.NewLine;
                         }
                         it.Dispose();
                     }
@@ -140,9 +143,14 @@ namespace SUP
                     using (var db = new DB(OBJ, @"root\obj"))
                     {
                         LevelDB.Iterator it = db.CreateIterator();
-                        for (it.Seek(txtGetKey.Text); it.IsValid() && it.KeyAsString().StartsWith(txtGetKey.Text); it.Next())
+                        for (
+                            it.Seek(txtGetKey.Text);
+                            it.IsValid() && it.KeyAsString().StartsWith(txtGetKey.Text);
+                            it.Next()
+                        )
                         {
-                            txtGetValue.Text = txtGetValue.Text + it.ValueAsString() + Environment.NewLine;
+                            txtGetValue.Text =
+                                txtGetValue.Text + it.ValueAsString() + Environment.NewLine;
                         }
                         it.Dispose();
                     }
@@ -154,9 +162,14 @@ namespace SUP
                     using (var db = new DB(LOG, @"root\log"))
                     {
                         LevelDB.Iterator it = db.CreateIterator();
-                        for (it.Seek(txtGetKey.Text); it.IsValid() && it.KeyAsString().StartsWith(txtGetKey.Text); it.Next())
+                        for (
+                            it.Seek(txtGetKey.Text);
+                            it.IsValid() && it.KeyAsString().StartsWith(txtGetKey.Text);
+                            it.Next()
+                        )
                         {
-                            txtGetValue.Text = txtGetValue.Text + it.ValueAsString() + Environment.NewLine;
+                            txtGetValue.Text =
+                                txtGetValue.Text + it.ValueAsString() + Environment.NewLine;
                         }
                         it.Dispose();
                     }
@@ -166,19 +179,14 @@ namespace SUP
                     MessageBox.Show("something went wrong");
                     break;
             }
-
-
-
-
-
-
         }
 
         private void btnDelete_Click(object sender, EventArgs e)
         {
-
-            if (lbTableName.SelectedItem == null) { lbTableName.SelectedIndex = 0; }
-
+            if (lbTableName.SelectedItem == null)
+            {
+                lbTableName.SelectedIndex = 0;
+            }
 
             switch (lbTableName.SelectedItem.ToString().Trim())
             {
@@ -187,7 +195,6 @@ namespace SUP
                     using (var db = new DB(ROOT, @"root"))
                     {
                         db.Delete(txtDeleteKey.Text);
-
                     }
                     break;
                 case "PRO":
@@ -195,7 +202,6 @@ namespace SUP
                     using (var db = new DB(PRO, @"root\pro"))
                     {
                         db.Delete(txtDeleteKey.Text);
-
                     }
                     break;
 
@@ -227,8 +233,6 @@ namespace SUP
                     MessageBox.Show("something went wrong");
                     break;
             }
-
-
         }
 
         private void btnTestConnection_Click(object sender, EventArgs e)
@@ -243,8 +247,8 @@ namespace SUP
             {
                 txtbalance.Text = rpcClient.GetBalance().ToString();
             }
-            catch (Exception ex) {
-
+            catch (Exception ex)
+            {
                 dgTransactions.Rows.Clear();
 
                 Root newRoot = new Root();
@@ -254,21 +258,34 @@ namespace SUP
                 newRoot.Keyword = new Dictionary<string, string> { };
                 newRoot.TransactionId = "";
 
-                object[] rowData = new object[] { newRoot.TransactionId, newRoot.Signed, newRoot.SignedBy, newRoot.Signature, newRoot.File.Count(), ex.Message, newRoot.Keyword.Count(), newRoot.TotalByteSize, newRoot.BlockDate, newRoot.Confirmations, newRoot.BuildDate.ToString("MM/dd/yyyy hh:mm:ss.ffff tt") };
+                object[] rowData = new object[]
+                {
+                    newRoot.TransactionId,
+                    newRoot.Signed,
+                    newRoot.SignedBy,
+                    newRoot.Signature,
+                    newRoot.File.Count(),
+                    ex.Message,
+                    newRoot.Keyword.Count(),
+                    newRoot.TotalByteSize,
+                    newRoot.BlockDate,
+                    newRoot.Confirmations,
+                    newRoot.BuildDate.ToString("MM/dd/yyyy hh:mm:ss.ffff tt")
+                };
                 dgTransactions.Rows.Add(rowData);
-
-
-
             }
-
-
-            }
+        }
 
         private void btnSearch_Click(object sender, EventArgs e)
         {
             DateTime tmbeginCall = DateTime.UtcNow;
-            Root[] roots = Root.GetRootByAddress(txtSearchAddress.Text, txtLogin.Text, txtPassword.Text, txtUrl.Text);
-            DateTime tmendCall = DateTime.UtcNow;         
+            Root[] roots = Root.GetRootByAddress(
+                txtSearchAddress.Text,
+                txtLogin.Text,
+                txtPassword.Text,
+                txtUrl.Text
+            );
+            DateTime tmendCall = DateTime.UtcNow;
             dgTransactions.Rows.Clear();
             int totalbytes = 0;
             TimeSpan elapsedTime = tmendCall - tmbeginCall;
@@ -276,20 +293,27 @@ namespace SUP
 
             for (int i = 0; i < roots.Length; i += 1)
             {
-                if (roots[i].TransactionId != null)
-                {
-                    var ROOT = new Options { CreateIfMissing = true };
-                    using (var db = new DB(ROOT, @"root"))
-                    {
-                        db.Put(roots[i].TransactionId, JsonConvert.SerializeObject(roots[i]));
-                    }
-                }
                 string strmessage = "";
-                
-                foreach (var rfile in roots[i].Message)
-                { strmessage = strmessage + rfile; }
 
-                object[] rowData = new object[] { roots[i].TransactionId, roots[i].Signed, roots[i].SignedBy, roots[i].Signature, roots[i].File.Count(), strmessage, roots[i].Keyword.Count(), roots[i].TotalByteSize, roots[i].BlockDate, roots[i].Confirmations, roots[i].BuildDate.ToString("MM/dd/yyyy hh:mm:ss.ffff tt") };
+                foreach (var rfile in roots[i].Message)
+                {
+                    strmessage = strmessage + rfile;
+                }
+
+                object[] rowData = new object[]
+                {
+                    roots[i].TransactionId,
+                    roots[i].Signed,
+                    roots[i].SignedBy,
+                    roots[i].Signature,
+                    roots[i].File.Count(),
+                    strmessage,
+                    roots[i].Keyword.Count(),
+                    roots[i].TotalByteSize,
+                    roots[i].BlockDate,
+                    roots[i].Confirmations,
+                    roots[i].BuildDate.ToString("MM/dd/yyyy hh:mm:ss.ffff tt")
+                };
                 dgTransactions.Rows.Add(rowData);
                 totalbytes += roots[i].TotalByteSize;
             }
@@ -299,15 +323,17 @@ namespace SUP
             double kilobytes = totalbytes / 1024.0;
             double kbs = kilobytes / secondsExpired;
             lblKbs.Text = "Kb/s " + kbs;
-
-
-
         }
 
         private void btnGetTransactionId_Click(object sender, EventArgs e)
         {
             DateTime tmbeginCall = DateTime.UtcNow;
-            Root root = Root.GetRootByTransactionId(txtTransactionId.Text, txtLogin.Text, txtPassword.Text, txtUrl.Text);
+            Root root = Root.GetRootByTransactionId(
+                txtTransactionId.Text,
+                txtLogin.Text,
+                txtPassword.Text,
+                txtUrl.Text
+            );
             DateTime tmendCall = DateTime.UtcNow;
             dgTransactions.Rows.Clear();
             int totalbytes = 0;
@@ -316,18 +342,27 @@ namespace SUP
 
             if (root != null)
             {
-                var ROOT = new Options { CreateIfMissing = true };
-                using (var db = new DB(ROOT, @"root"))
-                {
-                    db.Put(root.TransactionId, JsonConvert.SerializeObject(root));
-
-                }
                 string strmessage = "";
 
                 foreach (var rfile in root.Message)
-                { strmessage = strmessage + rfile; }
+                {
+                    strmessage = strmessage + rfile;
+                }
 
-                object[] rowData = new object[] { root.TransactionId, root.Signed, root.SignedBy, root.Signature, root.File.Count(), strmessage, root.Keyword.Count(), root.TotalByteSize, root.BlockDate, root.Confirmations, root.BuildDate.ToString("MM/dd/yyyy hh:mm:ss.ffff tt") };
+                object[] rowData = new object[]
+                {
+                    root.TransactionId,
+                    root.Signed,
+                    root.SignedBy,
+                    root.Signature,
+                    root.File.Count(),
+                    strmessage,
+                    root.Keyword.Count(),
+                    root.TotalByteSize,
+                    root.BlockDate,
+                    root.Confirmations,
+                    root.BuildDate.ToString("MM/dd/yyyy hh:mm:ss.ffff tt")
+                };
                 dgTransactions.Rows.Add(rowData);
                 totalbytes = root.TotalByteSize;
                 lblTotalBytes.Text = "Total Bytes: " + totalbytes.ToString();
@@ -337,49 +372,56 @@ namespace SUP
                 double kbs = kilobytes / secondsExpired;
                 lblKbs.Text = "Kb/s " + kbs;
             }
-
         }
 
         private void btnGetKeyword_Click(object sender, EventArgs e)
         {
             string publicAddress = Root.GetPublicAddressByKeyword(txtGetKeyword.Text);
-
             DateTime tmbeginCall = DateTime.UtcNow;
-            Root[] roots = Root.GetRootByAddress(publicAddress, txtLogin.Text, txtPassword.Text, txtUrl.Text);
+            Root[] roots = Root.GetRootByAddress(
+                publicAddress,
+                txtLogin.Text,
+                txtPassword.Text,
+                txtUrl.Text
+            );
             DateTime tmendCall = DateTime.UtcNow;
             dgTransactions.Rows.Clear();
-            if (roots != null)
+            int totalbytes = 0;
+            TimeSpan elapsedTime = tmendCall - tmbeginCall;
+            double elapsedMilliseconds = elapsedTime.TotalMilliseconds;
+
+            for (int i = 0; i < roots.Length; i += 1)
             {
+                string strmessage = "";
 
-                int totalbytes = 0;
-                TimeSpan elapsedTime = tmendCall - tmbeginCall;
-                double elapsedMilliseconds = elapsedTime.TotalMilliseconds;
-
-                for (int i = 0; i < roots.Length; i += 1)
+                foreach (var rfile in roots[i].Message)
                 {
-
-                    var ROOT = new Options { CreateIfMissing = true };
-                    using (var db = new DB(ROOT, @"root"))
-                    {
-                        db.Put(roots[i].TransactionId, JsonConvert.SerializeObject(roots[i]));
-                    }
-
-                    string strmessage = "";
-
-                    foreach (var rfile in roots[i].Message)
-                    { strmessage = strmessage + rfile; }
-
-                    object[] rowData = new object[] { roots[i].TransactionId, roots[i].Signed, roots[i].SignedBy, roots[i].Signature, roots[i].File.Count(), strmessage, roots[i].Keyword.Count(), roots[i].TotalByteSize, roots[i].BlockDate, roots[i].Confirmations, roots[i].BuildDate.ToString("MM/dd/yyyy hh:mm:ss.ffff tt") };
-                    dgTransactions.Rows.Add(rowData);
-                    totalbytes += roots[i].TotalByteSize;
+                    strmessage = strmessage + rfile;
                 }
-                lblTotalBytes.Text = "Total Bytes: " + totalbytes.ToString();
-                lblTotalTime.Text = "Total Time: " + elapsedMilliseconds;
-                double secondsExpired = elapsedMilliseconds / 1000.0;
-                double kilobytes = totalbytes / 1024.0;
-                double kbs = kilobytes / secondsExpired;
-                lblKbs.Text = "Kb/s " + kbs;
+
+                object[] rowData = new object[]
+                {
+                    roots[i].TransactionId,
+                    roots[i].Signed,
+                    roots[i].SignedBy,
+                    roots[i].Signature,
+                    roots[i].File.Count(),
+                    strmessage,
+                    roots[i].Keyword.Count(),
+                    roots[i].TotalByteSize,
+                    roots[i].BlockDate,
+                    roots[i].Confirmations,
+                    roots[i].BuildDate.ToString("MM/dd/yyyy hh:mm:ss.ffff tt")
+                };
+                dgTransactions.Rows.Add(rowData);
+                totalbytes += roots[i].TotalByteSize;
             }
+            lblTotalBytes.Text = "Total Bytes: " + totalbytes.ToString();
+            lblTotalTime.Text = "Total Time: " + elapsedMilliseconds;
+            double secondsExpired = elapsedMilliseconds / 1000.0;
+            double kilobytes = totalbytes / 1024.0;
+            double kbs = kilobytes / secondsExpired;
+            lblKbs.Text = "Kb/s " + kbs;
         }
     }
 }

@@ -7,7 +7,10 @@ namespace SUP.P2FK
     public class SHA256
     {
         private static readonly SHA256Managed sha256 = new SHA256Managed();
-        private static readonly Dictionary<string, byte> _hexToByte = new Dictionary<string, byte>();
+        private static readonly Dictionary<string, byte> _hexToByte = new Dictionary<
+            string,
+            byte
+        >();
 
         public static byte[] Hash(byte[] data)
         {
@@ -43,8 +46,7 @@ namespace SUP.P2FK
             byte[] bytes = HexToBytes(hexData);
             return DoubleHashCheckSum(bytes);
         }
-       
-  
+
         public static byte[] HexToBytes(string hex)
         {
             if (hex.Length % 2 != 0)
