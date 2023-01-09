@@ -247,17 +247,18 @@ namespace SUP.P2FK
                 {
                     isValid = false;
                 }
-
+                bool isledger = false;
                 if (isValid)
                 {
                     while (regexTransactionId.IsMatch(fileName))
                     {
+                        isledger = true;
                         using (FileStream fs = new FileStream(diskpath + fileName, FileMode.Create))
                         {
                             fs.Write(fileBytes, 0, fileBytes.Length);
                         }
 
-                        LedgerRoot = GetRootByTransactionId(
+                        newRoot = GetRootByTransactionId(
                             transactionid,
                             username,
                             password,
@@ -274,16 +275,18 @@ namespace SUP.P2FK
                             ),
                             strPublicAddress
                         );
-                        fileName = LedgerRoot.File.Keys.First();
-                        fileBytes = LedgerRoot.File.Values.First();
-                        totalByteSize += LedgerRoot.TotalByteSize;
-                        newRoot = LedgerRoot;
+
+                        fileName = newRoot.File.Keys.First();
+                        fileBytes = newRoot.File.Values.First();
+                        totalByteSize += newRoot.TotalByteSize;
+                        newRoot.TotalByteSize = totalByteSize;
                         newRoot.TransactionId = transactionid;
                         newRoot.Confirmations = confirmations;
-                        newRoot.BlockDate = blockdate;
+                        newRoot.BlockDate = blockdate;                        
                     }
+                     if (isledger) { return newRoot; }
 
-                    if (fileName == "SIG")
+                    if (fileName == "SIG" )
                     {
                         sigStartByte = sigEndByte;
                         signature = transactionASCII.Substring(headerSize, packetSize);
@@ -400,7 +403,7 @@ namespace SUP.P2FK
             newRoot.SignedBy = strPublicAddress;
             newRoot.BlockDate = blockdate;
             newRoot.Confirmations = confirmations;
-            newRoot.File = files;
+            
             newRoot.Message = MessageList.ToArray();
             newRoot.Keyword = keywords;
             newRoot.TotalByteSize = totalByteSize;
