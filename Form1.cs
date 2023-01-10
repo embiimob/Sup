@@ -460,6 +460,68 @@ namespace SUP
             double kbs = kilobytes / secondsExpired;
             lblKbs.Text = "Kb/s " + kbs;
         }
+
+        private void btnGPT3_Click(object sender, EventArgs e)
+        {
+            DateTime tmbeginCall = DateTime.UtcNow;
+            Root[] roots = Root.GetRootByAddress(
+                txtSearchAddress.Text,
+                txtLogin.Text,
+                txtPassword.Text,
+                txtUrl.Text,
+                txtVersionByte.Text
+            );
+            DateTime tmendCall = DateTime.UtcNow;
+            dgTransactions.Rows.Clear();
+            int totalbytes = 0;
+            int totalfilebytes = 0;
+            TimeSpan elapsedTime = tmendCall - tmbeginCall;
+            double elapsedMilliseconds = elapsedTime.TotalMilliseconds;
+
+            for (int i = 0; i < roots.Length; i += 1)
+            {
+                if (roots[i] != null)
+                {
+                    string strmessage = "";
+
+                    foreach (var rfile in roots[i].Message)
+                    {
+                        strmessage = strmessage + rfile;
+                    }
+                    foreach (var rfile in roots[i].File)
+                    {
+                        totalfilebytes += rfile.Value.Length;
+
+                    }
+
+                    object[] rowData = new object[]
+                    {
+                    roots[i].Id,
+                    roots[i].TransactionId,
+                    roots[i].Signed,
+                    roots[i].SignedBy,
+                    roots[i].Signature,
+                    roots[i].File.Count(),
+                    totalfilebytes,
+                    strmessage,
+                    roots[i].Keyword.Count(),
+                    roots[i].TotalByteSize,
+                    roots[i].BlockDate,
+                    roots[i].Confirmations,
+                    roots[i].BuildDate.ToString("MM/dd/yyyy hh:mm:ss.ffff tt")
+                    };
+                    dgTransactions.Rows.Add(rowData);
+                    totalbytes += roots[i].TotalByteSize;
+                }
+            }
+            dgTransactions.AutoResizeRows();
+            lblTotalBytes.Text = "Total Bytes: " + totalbytes.ToString();
+            lblTotalTime.Text = "Total Time: " + elapsedMilliseconds;
+            double secondsExpired = elapsedMilliseconds / 1000.0;
+            double kilobytes = totalbytes / 1024.0;
+            double kbs = kilobytes / secondsExpired;
+            lblKbs.Text = "Kb/s " + kbs;
+        }
     }
 }
 

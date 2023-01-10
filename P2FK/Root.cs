@@ -4,6 +4,7 @@ using NBitcoin.RPC;
 using Newtonsoft.Json;
 using System;
 using System.Collections;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -12,6 +13,7 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
+using System.Threading.Tasks;
 
 namespace SUP.P2FK
 {
@@ -32,17 +34,11 @@ namespace SUP.P2FK
         public DateTime BuildDate { get; set; }
         public bool Cached { get; set; }
 
+        //ensures levelDB is only opened once per session
         private readonly static object levelDBLocker = new object();
-        public static Root GetRootByTransactionId(
-            string transactionid,
-            string username,
-            string password,
-            string url,
-            string versionbyte = "111",
-            bool usecache = true,
-            byte[] rootbytes = null,
-            string signatureaddress = null
-        )
+
+
+        public static Root GetRootByTransactionId( string transactionid, string username, string password, string url, string versionbyte = "111", bool usecache = true, byte[] rootbytes = null, string signatureaddress = null )
         {
             Root P2FKRoot = new Root();
             string diskpath = "root\\" + transactionid + "\\";
@@ -426,98 +422,76 @@ namespace SUP.P2FK
 
             return P2FKRoot;
         }
-        public static Root[] GetRootByAddress(
-            string address,
-            string username,
-            string password,
-            string url,
-            string versionbyte = "111",
-            bool useCache = true,
-            int skip = 0,
-            int qty = 500
-        )
+        public static Root[] GetRootByAddress(string address, string username, string password, string url, string versionByte = "111", bool useCache = true, int skip = 0, int qty = 500)
         {
-            List<Root> RootList = new List<Root>();
-            Root P2FKRoot = new Root();
+            var rootList = new List<Root>();
             NetworkCredential credentials = new NetworkCredential(username, password);
-            RPCClient rpcClient = new RPCClient(credentials, new Uri(url));
-            Dictionary<int, Root> synchronousData = new Dictionary<int, Root>();
-            synchronousData.Clear();
+            var rpcClient = new RPCClient(credentials, new Uri(url));
+            var synchronousData = new Dictionary<int, Root>();
             dynamic deserializedObject = null;
-            int RecordId = 0;
             try
             {
-                deserializedObject = JsonConvert.DeserializeObject(
-                    rpcClient.SendCommand(
-                        "searchrawtransactions",
-                        address,
-                        0,
-                        skip,
-                        qty
-                    ).ResultString
-                );
+                deserializedObject = JsonConvert.DeserializeObject(rpcClient.SendCommand("searchrawtransactions", address, 0, skip, qty).ResultString);
             }
             catch (Exception ex)
             {
-
-                P2FKRoot.Message = new string[] { ex.Message };
-                P2FKRoot.BuildDate = DateTime.UtcNow;
-                P2FKRoot.File = new Dictionary<string, byte[]> { };
-                P2FKRoot.Keyword = new Dictionary<string, string> { };
-                P2FKRoot.TransactionId = address;
-                RootList.Add(P2FKRoot);
-                return RootList.ToArray();
+                var root = new Root
+                {
+                    Message = new[] { ex.Message },
+                    BuildDate = DateTime.UtcNow,
+                    File = new Dictionary<string, byte[]> { },
+                    Keyword = new Dictionary<string, string> { },
+                    TransactionId = address
+                };
+                rootList.Add(root);
+                return rootList.ToArray();
             }
 
-            CountdownEvent countdownEvent = new CountdownEvent(deserializedObject.Count);
-            //itterating through JSON search results
-            foreach (dynamic transID in deserializedObject)
+            // Use a ConcurrentDictionary to store the transaction data
+            // This will allow multiple threads to add data to it concurrently
+            var concurrentData = new ConcurrentDictionary<int, Root>();
+            var tasks = new List<Task>();
+            int taskCount = 0;
+
+            // Iterate through the transaction IDs
+            for (int i = 0; i < deserializedObject.Count; i++)
             {
-                string HexId = GetTransactionId(transID.ToString());
-                int RootId = RecordId++;
-               
-                // Launch a separate thread to retrieve the transaction bytes for this match
-                Thread thread = new Thread(
-                    () =>
+                int rootId = i;
+                string hexId = GetTransactionId(deserializedObject[i].ToString());
+
+                // Launch a separate task to retrieve the transaction bytes for this match
+                var task = Task.Run(() =>
+                {
+                    var root = Root.GetRootByTransactionId(hexId, username, password, url, versionByte, useCache);
+
+                    if (root != null && root.TotalByteSize > 0)
                     {
-                        
-                        Root root = Root.GetRootByTransactionId(
-                            HexId,
-                            username,
-                            password,
-                            url,
-                            versionbyte,
-                            useCache
-                        );
-
-
-                        if (root != null && root.TotalByteSize > 0)
-                        {
-                            root.Id = RootId;
-                            try
-                            {
-                                synchronousData.Add(RootId, root);
-                            }
-                            catch (Exception ex) 
-                            {
-
-                            }
-                        }
-                        countdownEvent.Signal();
+                        root.Id = rootId;
+                        concurrentData[rootId] = root;
                     }
-                );
+                });
+                tasks.Add(task);
+                taskCount++;
 
-                thread.Start();
+                // If there are 10 or more tasks, wait for some of them to complete before continuing
+                if (taskCount >= 3)
+                {
+                    Task.WaitAny(tasks.ToArray());
+                    tasks = tasks.Where(t => !t.IsCompleted).ToList();
+                    taskCount = tasks.Count;
+                }
             }
-            countdownEvent.Wait();
-            
-            var P2FKOrdered = synchronousData.OrderBy(kvp => kvp.Key);
 
-            foreach (var kvp in P2FKOrdered)
+            // Wait for all tasks to complete
+            Task.WaitAll(tasks.ToArray());
+
+            // Add the transaction data to the list in the correct order
+            foreach (var kvp in concurrentData.OrderBy(kvp => kvp.Key))
             {
-               RootList.Add(kvp.Value);
+                rootList.Add(kvp.Value);
             }
-                return RootList.ToArray();
+
+            return rootList.ToArray();
         }
         public static string GetPublicAddressByKeyword(string keyword, string versionbyte = "111")
         {
@@ -543,7 +517,7 @@ namespace SUP.P2FK
 
             return Encoding.ASCII.GetString(payloadBytes).Replace("#", "").Substring(1);
         }
-        public static bool CacheRoot(Root root)
+        private static bool CacheRoot(Root root)
         {
             //we have to take the file data out of the object before storing it into a LevelDB cache
             //replacing the bytes array with the filebyte count.
