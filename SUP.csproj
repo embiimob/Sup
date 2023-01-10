@@ -199,16 +199,18 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
-    <None Include="P2FK\sample transactions\Burn Transaction.json" />
-    <None Include="P2FK\sample transactions\Create Collection.json" />
-    <None Include="P2FK\sample transactions\Create Object.json" />
-    <None Include="P2FK\sample transactions\Create Profile.json" />
-    <None Include="P2FK\sample transactions\Give Object.json" />
+    <None Include="P2FK\samples\Burn Transaction.json" />
+    <None Include="P2FK\samples\Create Collection.json" />
+    <None Include="P2FK\samples\Create Object.json" />
+    <None Include="P2FK\samples\Create Profile.json" />
+    <None Include="P2FK\samples\Give Object.json" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Content Include="P2FK\samples\P2FKJSONViewer.html" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="packages\Microsoft.Web.WebView2.1.0.1462.37\build\Microsoft.Web.WebView2.targets" Condition="Exists('packages\Microsoft.Web.WebView2.1.0.1462.37\build\Microsoft.Web.WebView2.targets')" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">

@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
             this.btnPut = new System.Windows.Forms.Button();
             this.btnGet = new System.Windows.Forms.Button();
             this.btnDelete = new System.Windows.Forms.Button();
@@ -59,25 +60,27 @@
             this.btnGetTransactionId = new System.Windows.Forms.Button();
             this.label12 = new System.Windows.Forms.Label();
             this.txtTransactionId = new System.Windows.Forms.TextBox();
+            this.btnGetKeyword = new System.Windows.Forms.Button();
+            this.label10 = new System.Windows.Forms.Label();
+            this.txtGetKeyword = new System.Windows.Forms.TextBox();
+            this.label13 = new System.Windows.Forms.Label();
+            this.txtVersionByte = new System.Windows.Forms.TextBox();
+            this.label14 = new System.Windows.Forms.Label();
+            this.lblTotalTime = new System.Windows.Forms.Label();
+            this.lblKbs = new System.Windows.Forms.Label();
+            this.rootid = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.transaction_id = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.is_signed = new System.Windows.Forms.DataGridViewCheckBoxColumn();
             this.signed_by = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.signature = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.filecount = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.totalfilebytes = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.messagecount = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.keywordcount = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.total_bytes = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.block_time = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.confirmations = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.buildtime = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.btnGetKeyword = new System.Windows.Forms.Button();
-            this.label10 = new System.Windows.Forms.Label();
-            this.txtGetKeyword = new System.Windows.Forms.TextBox();
-            this.label13 = new System.Windows.Forms.Label();
-            this.textBox1 = new System.Windows.Forms.TextBox();
-            this.label14 = new System.Windows.Forms.Label();
-            this.lblTotalTime = new System.Windows.Forms.Label();
-            this.lblKbs = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.dgTransactions)).BeginInit();
             this.SuspendLayout();
             // 
@@ -333,11 +336,13 @@
             // 
             this.dgTransactions.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.dgTransactions.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
+            this.rootid,
             this.transaction_id,
             this.is_signed,
             this.signed_by,
             this.signature,
             this.filecount,
+            this.totalfilebytes,
             this.messagecount,
             this.keywordcount,
             this.total_bytes,
@@ -376,63 +381,6 @@
             this.txtTransactionId.TabIndex = 31;
             this.txtTransactionId.Text = "7223070fbc3706856e90701b62a8bfb3f5a618dc13d64d8f029260cba187ca26";
             // 
-            // transaction_id
-            // 
-            this.transaction_id.HeaderText = "Transaction ID";
-            this.transaction_id.Name = "transaction_id";
-            // 
-            // is_signed
-            // 
-            this.is_signed.HeaderText = "Is Signed?";
-            this.is_signed.Name = "is_signed";
-            this.is_signed.Resizable = System.Windows.Forms.DataGridViewTriState.True;
-            this.is_signed.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.Automatic;
-            // 
-            // signed_by
-            // 
-            this.signed_by.HeaderText = "Signed By";
-            this.signed_by.Name = "signed_by";
-            // 
-            // signature
-            // 
-            this.signature.HeaderText = "Signature";
-            this.signature.Name = "signature";
-            // 
-            // filecount
-            // 
-            this.filecount.HeaderText = "Files";
-            this.filecount.Name = "filecount";
-            // 
-            // messagecount
-            // 
-            this.messagecount.HeaderText = "Messages";
-            this.messagecount.Name = "messagecount";
-            // 
-            // keywordcount
-            // 
-            this.keywordcount.HeaderText = "Keywords";
-            this.keywordcount.Name = "keywordcount";
-            // 
-            // total_bytes
-            // 
-            this.total_bytes.HeaderText = "Total Bytes";
-            this.total_bytes.Name = "total_bytes";
-            // 
-            // block_time
-            // 
-            this.block_time.HeaderText = "Block Time";
-            this.block_time.Name = "block_time";
-            // 
-            // confirmations
-            // 
-            this.confirmations.HeaderText = "Confirmations";
-            this.confirmations.Name = "confirmations";
-            // 
-            // buildtime
-            // 
-            this.buildtime.HeaderText = "Build Time";
-            this.buildtime.Name = "buildtime";
-            // 
             // btnGetKeyword
             // 
             this.btnGetKeyword.Location = new System.Drawing.Point(256, 139);
@@ -469,13 +417,13 @@
             this.label13.TabIndex = 38;
             this.label13.Text = "byte";
             // 
-            // textBox1
+            // txtVersionByte
             // 
-            this.textBox1.Location = new System.Drawing.Point(189, 67);
-            this.textBox1.Name = "textBox1";
-            this.textBox1.Size = new System.Drawing.Size(61, 20);
-            this.textBox1.TabIndex = 37;
-            this.textBox1.Text = "111";
+            this.txtVersionByte.Location = new System.Drawing.Point(189, 67);
+            this.txtVersionByte.Name = "txtVersionByte";
+            this.txtVersionByte.Size = new System.Drawing.Size(61, 20);
+            this.txtVersionByte.TabIndex = 37;
+            this.txtVersionByte.Text = "111";
             // 
             // label14
             // 
@@ -504,6 +452,91 @@
             this.lblKbs.TabIndex = 41;
             this.lblKbs.Text = "Kb/s";
             // 
+            // rootid
+            // 
+            this.rootid.Frozen = true;
+            this.rootid.HeaderText = "Object ID";
+            this.rootid.MinimumWidth = 60;
+            this.rootid.Name = "rootid";
+            this.rootid.Width = 60;
+            // 
+            // transaction_id
+            // 
+            this.transaction_id.HeaderText = "TID";
+            this.transaction_id.Name = "transaction_id";
+            this.transaction_id.Width = 50;
+            // 
+            // is_signed
+            // 
+            this.is_signed.HeaderText = "Signed";
+            this.is_signed.MinimumWidth = 50;
+            this.is_signed.Name = "is_signed";
+            this.is_signed.Resizable = System.Windows.Forms.DataGridViewTriState.True;
+            this.is_signed.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.Automatic;
+            this.is_signed.Width = 50;
+            // 
+            // signed_by
+            // 
+            this.signed_by.HeaderText = "Signed By";
+            this.signed_by.Name = "signed_by";
+            this.signed_by.Width = 80;
+            // 
+            // signature
+            // 
+            this.signature.HeaderText = "SIG";
+            this.signature.Name = "signature";
+            this.signature.Width = 50;
+            // 
+            // filecount
+            // 
+            this.filecount.HeaderText = "Files";
+            this.filecount.Name = "filecount";
+            this.filecount.Width = 50;
+            // 
+            // totalfilebytes
+            // 
+            this.totalfilebytes.HeaderText = "File Bytes";
+            this.totalfilebytes.Name = "totalfilebytes";
+            this.totalfilebytes.Width = 50;
+            // 
+            // messagecount
+            // 
+            dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.messagecount.DefaultCellStyle = dataGridViewCellStyle1;
+            this.messagecount.HeaderText = "Messages";
+            this.messagecount.Name = "messagecount";
+            this.messagecount.Width = 180;
+            // 
+            // keywordcount
+            // 
+            this.keywordcount.HeaderText = "Keys";
+            this.keywordcount.Name = "keywordcount";
+            this.keywordcount.Width = 50;
+            // 
+            // total_bytes
+            // 
+            this.total_bytes.HeaderText = "Total Bytes";
+            this.total_bytes.Name = "total_bytes";
+            this.total_bytes.Width = 50;
+            // 
+            // block_time
+            // 
+            this.block_time.HeaderText = "Block Time";
+            this.block_time.Name = "block_time";
+            this.block_time.Width = 117;
+            // 
+            // confirmations
+            // 
+            this.confirmations.HeaderText = "Confirms";
+            this.confirmations.Name = "confirmations";
+            this.confirmations.Width = 55;
+            // 
+            // buildtime
+            // 
+            this.buildtime.HeaderText = "Build Time";
+            this.buildtime.Name = "buildtime";
+            this.buildtime.Width = 160;
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -513,7 +546,7 @@
             this.Controls.Add(this.lblTotalTime);
             this.Controls.Add(this.label14);
             this.Controls.Add(this.label13);
-            this.Controls.Add(this.textBox1);
+            this.Controls.Add(this.txtVersionByte);
             this.Controls.Add(this.btnGetKeyword);
             this.Controls.Add(this.label10);
             this.Controls.Add(this.txtGetKeyword);
@@ -591,25 +624,27 @@
         private System.Windows.Forms.Button btnGetTransactionId;
         private System.Windows.Forms.Label label12;
         private System.Windows.Forms.TextBox txtTransactionId;
+        private System.Windows.Forms.Button btnGetKeyword;
+        private System.Windows.Forms.Label label10;
+        private System.Windows.Forms.TextBox txtGetKeyword;
+        private System.Windows.Forms.Label label13;
+        private System.Windows.Forms.TextBox txtVersionByte;
+        private System.Windows.Forms.Label label14;
+        private System.Windows.Forms.Label lblTotalTime;
+        private System.Windows.Forms.Label lblKbs;
+        private System.Windows.Forms.DataGridViewTextBoxColumn rootid;
         private System.Windows.Forms.DataGridViewTextBoxColumn transaction_id;
         private System.Windows.Forms.DataGridViewCheckBoxColumn is_signed;
         private System.Windows.Forms.DataGridViewTextBoxColumn signed_by;
         private System.Windows.Forms.DataGridViewTextBoxColumn signature;
         private System.Windows.Forms.DataGridViewTextBoxColumn filecount;
+        private System.Windows.Forms.DataGridViewTextBoxColumn totalfilebytes;
         private System.Windows.Forms.DataGridViewTextBoxColumn messagecount;
         private System.Windows.Forms.DataGridViewTextBoxColumn keywordcount;
         private System.Windows.Forms.DataGridViewTextBoxColumn total_bytes;
         private System.Windows.Forms.DataGridViewTextBoxColumn block_time;
         private System.Windows.Forms.DataGridViewTextBoxColumn confirmations;
         private System.Windows.Forms.DataGridViewTextBoxColumn buildtime;
-        private System.Windows.Forms.Button btnGetKeyword;
-        private System.Windows.Forms.Label label10;
-        private System.Windows.Forms.TextBox txtGetKeyword;
-        private System.Windows.Forms.Label label13;
-        private System.Windows.Forms.TextBox textBox1;
-        private System.Windows.Forms.Label label14;
-        private System.Windows.Forms.Label lblTotalTime;
-        private System.Windows.Forms.Label lblKbs;
     }
 }
 

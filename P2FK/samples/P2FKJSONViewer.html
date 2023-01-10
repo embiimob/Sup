@@ -1,0 +1,146 @@
+﻿<!DOCTYPE html>
+
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <style>
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+
+        img {
+            max-width: 800px;
+        }
+
+        td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: center;
+            vertical-align: middle;
+        }
+
+        tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+
+        th {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+            max-width: 300px;
+            background-color: #4CAF50;
+            color: white;
+            word-wrap: break-word;
+            font-weight: bold;
+        }
+
+        @media (max-width: 600px) {
+            table,
+            th,
+            td {
+                display: block;
+            }
+
+            th {
+                text-align: left;
+                word-break: word;
+            }
+
+            td {
+                border: none;
+                display: flex;
+                justify-content: space-between;
+                margin-bottom: 10px;
+            }
+
+                td:before {
+                    content: attr(data-label);
+                    font-weight: bold;
+                }
+        }
+    </style>
+</head>
+<body>
+    <script>
+      // read file and parse JSON
+      var request = new XMLHttpRequest();
+      request.open("GET", "P2FK.json", false);
+      request.send(null);
+      var data = JSON.parse(request.responseText);
+
+      // create table
+      var table = document.createElement("table");
+      table.setAttribute("id", "jsonTable");
+      document.body.appendChild(table);
+
+      // create table rows and cells for each key-value pair
+      for (var key in data) {
+        var tr = document.createElement("tr");
+        table.appendChild(tr);
+        var th = document.createElement("th");
+        th.innerHTML = key;
+        tr.appendChild(th);
+        var td = document.createElement("td");
+        if (typeof data[key] === "object") {
+          // create subtable if element is an object
+          var subtable = document.createElement("table");
+          for (var subkey in data[key]) {
+// check if subkey is a file name
+            if (subkey.includes(".")) {
+              // create subtable row for file
+              var subtr = document.createElement("tr");
+              subtable.appendChild(subtr);
+              var subth = document.createElement("th");
+              subth.innerHTML = subkey;
+              subtr.appendChild(subth);
+              var subtd = document.createElement("td");
+              // render file in viewer based on extension
+              var fileExtension = subkey.split(".").pop();
+              switch (fileExtension) {
+                case "jpg":
+                case "jpeg":
+                case "png":
+                  var img = document.createElement("img");
+                  img.src = subkey;
+                  subtd.appendChild(img);
+                  break;
+                case "pdf":
+                  var iframe = document.createElement("iframe");
+                  iframe.src = subkey;
+                  subtd.appendChild(iframe);
+                  break;
+                default:
+                  subtd.innerHTML = "Cannot render file type " + fileExtension;
+              }
+              subtr.appendChild(subtd);
+            } else {
+              // create subtable row for non-file key-value pair
+              var subtr = document.createElement("tr");
+              subtable.appendChild(subtr);
+              var subth = document.createElement("th");
+              subth.innerHTML = subkey;
+              subtr.appendChild(subth);
+              var subtd = document.createElement("td");
+              subtd.innerHTML = data[key][subkey];
+              subtr.appendChild(subtd);
+            }
+          }
+          td.appendChild(subtable);
+        } else if (Array.isArray(data[key])) {
+          // create ordered list if element is an array
+          var ol = document.createElement("ol");
+          for (var i = 0; i < data[key].length; i++) {
+            var li = document.createElement("li");
+            li.innerHTML = data[key][i];
+            ol.appendChild(li);
+          }
+          td.appendChild(ol);
+        } else {
+          td.innerHTML = data[key];
+        }
+        tr.appendChild(td);
+      }
+    </script>
+</body>
+</html>
