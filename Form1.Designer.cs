@@ -1,4 +1,6 @@
-﻿namespace SUP
+﻿using System.Windows.Forms;
+
+namespace SUP
 {
     partial class Form1
     {
@@ -28,6 +30,9 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle4 = new System.Windows.Forms.DataGridViewCellStyle();
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
             this.btnPut = new System.Windows.Forms.Button();
             this.btnGet = new System.Windows.Forms.Button();
@@ -68,25 +73,30 @@
             this.label14 = new System.Windows.Forms.Label();
             this.lblTotalTime = new System.Windows.Forms.Label();
             this.lblKbs = new System.Windows.Forms.Label();
+            this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.rootid = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.transaction_id = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.messagecount = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.is_signed = new System.Windows.Forms.DataGridViewCheckBoxColumn();
             this.signed_by = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.signature = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.filecount = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.totalfilebytes = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.messagecount = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.keywordcount = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.total_bytes = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.block_time = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.transaction_id = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.signature = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.confirmations = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.buildtime = new System.Windows.Forms.DataGridViewTextBoxColumn();
             ((System.ComponentModel.ISupportInitialize)(this.dgTransactions)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
+            this.splitContainer1.Panel1.SuspendLayout();
+            this.splitContainer1.Panel2.SuspendLayout();
+            this.splitContainer1.SuspendLayout();
             this.SuspendLayout();
             // 
             // btnPut
             // 
-            this.btnPut.Location = new System.Drawing.Point(982, 44);
+            this.btnPut.Location = new System.Drawing.Point(997, 52);
             this.btnPut.Name = "btnPut";
             this.btnPut.Size = new System.Drawing.Size(75, 23);
             this.btnPut.TabIndex = 0;
@@ -96,7 +106,7 @@
             // 
             // btnGet
             // 
-            this.btnGet.Location = new System.Drawing.Point(982, 117);
+            this.btnGet.Location = new System.Drawing.Point(997, 125);
             this.btnGet.Name = "btnGet";
             this.btnGet.Size = new System.Drawing.Size(75, 23);
             this.btnGet.TabIndex = 1;
@@ -106,7 +116,7 @@
             // 
             // btnDelete
             // 
-            this.btnDelete.Location = new System.Drawing.Point(982, 177);
+            this.btnDelete.Location = new System.Drawing.Point(997, 185);
             this.btnDelete.Name = "btnDelete";
             this.btnDelete.Size = new System.Drawing.Size(75, 23);
             this.btnDelete.TabIndex = 2;
@@ -116,7 +126,7 @@
             // 
             // txtPutKey
             // 
-            this.txtPutKey.Location = new System.Drawing.Point(379, 26);
+            this.txtPutKey.Location = new System.Drawing.Point(394, 34);
             this.txtPutKey.Multiline = true;
             this.txtPutKey.Name = "txtPutKey";
             this.txtPutKey.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
@@ -126,7 +136,7 @@
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(376, 9);
+            this.label1.Location = new System.Drawing.Point(391, 17);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(65, 13);
             this.label1.TabIndex = 4;
@@ -135,7 +145,7 @@
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(376, 81);
+            this.label2.Location = new System.Drawing.Point(391, 89);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(65, 13);
             this.label2.TabIndex = 6;
@@ -143,7 +153,7 @@
             // 
             // txtGetKey
             // 
-            this.txtGetKey.Location = new System.Drawing.Point(379, 97);
+            this.txtGetKey.Location = new System.Drawing.Point(394, 105);
             this.txtGetKey.Multiline = true;
             this.txtGetKey.Name = "txtGetKey";
             this.txtGetKey.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
@@ -153,7 +163,7 @@
             // label3
             // 
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(624, 154);
+            this.label3.Location = new System.Drawing.Point(639, 162);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(65, 13);
             this.label3.TabIndex = 8;
@@ -161,7 +171,7 @@
             // 
             // txtDeleteKey
             // 
-            this.txtDeleteKey.Location = new System.Drawing.Point(627, 180);
+            this.txtDeleteKey.Location = new System.Drawing.Point(642, 188);
             this.txtDeleteKey.Name = "txtDeleteKey";
             this.txtDeleteKey.Size = new System.Drawing.Size(350, 20);
             this.txtDeleteKey.TabIndex = 7;
@@ -169,7 +179,7 @@
             // label4
             // 
             this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(624, 10);
+            this.label4.Location = new System.Drawing.Point(639, 18);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(34, 13);
             this.label4.TabIndex = 10;
@@ -177,7 +187,7 @@
             // 
             // txtPutValue
             // 
-            this.txtPutValue.Location = new System.Drawing.Point(627, 26);
+            this.txtPutValue.Location = new System.Drawing.Point(642, 34);
             this.txtPutValue.Multiline = true;
             this.txtPutValue.Name = "txtPutValue";
             this.txtPutValue.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
@@ -187,7 +197,7 @@
             // label5
             // 
             this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(624, 74);
+            this.label5.Location = new System.Drawing.Point(639, 82);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(34, 13);
             this.label5.TabIndex = 12;
@@ -195,7 +205,7 @@
             // 
             // txtGetValue
             // 
-            this.txtGetValue.Location = new System.Drawing.Point(627, 97);
+            this.txtGetValue.Location = new System.Drawing.Point(642, 105);
             this.txtGetValue.Multiline = true;
             this.txtGetValue.Name = "txtGetValue";
             this.txtGetValue.ReadOnly = true;
@@ -213,7 +223,7 @@
             "COL",
             "OBJ",
             "LOGS"});
-            this.lbTableName.Location = new System.Drawing.Point(535, 170);
+            this.lbTableName.Location = new System.Drawing.Point(550, 178);
             this.lbTableName.Name = "lbTableName";
             this.lbTableName.ScrollAlwaysVisible = true;
             this.lbTableName.Size = new System.Drawing.Size(83, 30);
@@ -222,7 +232,7 @@
             // label6
             // 
             this.label6.AutoSize = true;
-            this.label6.Location = new System.Drawing.Point(532, 154);
+            this.label6.Location = new System.Drawing.Point(547, 162);
             this.label6.Name = "label6";
             this.label6.Size = new System.Drawing.Size(74, 13);
             this.label6.TabIndex = 14;
@@ -230,7 +240,7 @@
             // 
             // txtLogin
             // 
-            this.txtLogin.Location = new System.Drawing.Point(12, 26);
+            this.txtLogin.Location = new System.Drawing.Point(27, 34);
             this.txtLogin.Name = "txtLogin";
             this.txtLogin.Size = new System.Drawing.Size(111, 20);
             this.txtLogin.TabIndex = 15;
@@ -239,7 +249,7 @@
             // label7
             // 
             this.label7.AutoSize = true;
-            this.label7.Location = new System.Drawing.Point(12, 9);
+            this.label7.Location = new System.Drawing.Point(27, 17);
             this.label7.Name = "label7";
             this.label7.Size = new System.Drawing.Size(29, 13);
             this.label7.TabIndex = 16;
@@ -248,7 +258,7 @@
             // label8
             // 
             this.label8.AutoSize = true;
-            this.label8.Location = new System.Drawing.Point(131, 9);
+            this.label8.Location = new System.Drawing.Point(146, 17);
             this.label8.Name = "label8";
             this.label8.Size = new System.Drawing.Size(52, 13);
             this.label8.TabIndex = 18;
@@ -256,7 +266,7 @@
             // 
             // txtPassword
             // 
-            this.txtPassword.Location = new System.Drawing.Point(129, 26);
+            this.txtPassword.Location = new System.Drawing.Point(144, 34);
             this.txtPassword.Name = "txtPassword";
             this.txtPassword.Size = new System.Drawing.Size(121, 20);
             this.txtPassword.TabIndex = 17;
@@ -265,7 +275,7 @@
             // label9
             // 
             this.label9.AutoSize = true;
-            this.label9.Location = new System.Drawing.Point(13, 54);
+            this.label9.Location = new System.Drawing.Point(28, 62);
             this.label9.Name = "label9";
             this.label9.Size = new System.Drawing.Size(18, 13);
             this.label9.TabIndex = 20;
@@ -273,7 +283,7 @@
             // 
             // txtUrl
             // 
-            this.txtUrl.Location = new System.Drawing.Point(13, 67);
+            this.txtUrl.Location = new System.Drawing.Point(28, 75);
             this.txtUrl.Name = "txtUrl";
             this.txtUrl.Size = new System.Drawing.Size(170, 20);
             this.txtUrl.TabIndex = 19;
@@ -281,7 +291,7 @@
             // 
             // btnTestConnection
             // 
-            this.btnTestConnection.Location = new System.Drawing.Point(256, 24);
+            this.btnTestConnection.Location = new System.Drawing.Point(271, 32);
             this.btnTestConnection.Name = "btnTestConnection";
             this.btnTestConnection.Size = new System.Drawing.Size(97, 23);
             this.btnTestConnection.TabIndex = 21;
@@ -292,7 +302,7 @@
             // lblTotalBytes
             // 
             this.lblTotalBytes.AutoSize = true;
-            this.lblTotalBytes.Location = new System.Drawing.Point(753, 221);
+            this.lblTotalBytes.Location = new System.Drawing.Point(768, 229);
             this.lblTotalBytes.Name = "lblTotalBytes";
             this.lblTotalBytes.Size = new System.Drawing.Size(60, 13);
             this.lblTotalBytes.TabIndex = 23;
@@ -300,14 +310,14 @@
             // 
             // txtbalance
             // 
-            this.txtbalance.Location = new System.Drawing.Point(256, 67);
+            this.txtbalance.Location = new System.Drawing.Point(271, 75);
             this.txtbalance.Name = "txtbalance";
             this.txtbalance.Size = new System.Drawing.Size(97, 20);
             this.txtbalance.TabIndex = 22;
             // 
             // txtSearchAddress
             // 
-            this.txtSearchAddress.Location = new System.Drawing.Point(12, 179);
+            this.txtSearchAddress.Location = new System.Drawing.Point(27, 187);
             this.txtSearchAddress.Name = "txtSearchAddress";
             this.txtSearchAddress.Size = new System.Drawing.Size(238, 20);
             this.txtSearchAddress.TabIndex = 25;
@@ -316,7 +326,7 @@
             // label11
             // 
             this.label11.AutoSize = true;
-            this.label11.Location = new System.Drawing.Point(9, 164);
+            this.label11.Location = new System.Drawing.Point(24, 172);
             this.label11.Name = "label11";
             this.label11.Size = new System.Drawing.Size(65, 13);
             this.label11.TabIndex = 26;
@@ -324,7 +334,7 @@
             // 
             // btnSearch
             // 
-            this.btnSearch.Location = new System.Drawing.Point(256, 177);
+            this.btnSearch.Location = new System.Drawing.Point(271, 185);
             this.btnSearch.Name = "btnSearch";
             this.btnSearch.Size = new System.Drawing.Size(58, 23);
             this.btnSearch.TabIndex = 27;
@@ -334,29 +344,55 @@
             // 
             // dgTransactions
             // 
+            this.dgTransactions.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.Fill;
+            dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle1.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle1.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle1.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.dgTransactions.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle1;
             this.dgTransactions.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.dgTransactions.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
             this.rootid,
-            this.transaction_id,
+            this.messagecount,
             this.is_signed,
             this.signed_by,
-            this.signature,
             this.filecount,
             this.totalfilebytes,
-            this.messagecount,
             this.keywordcount,
             this.total_bytes,
             this.block_time,
+            this.transaction_id,
+            this.signature,
             this.confirmations,
             this.buildtime});
-            this.dgTransactions.Location = new System.Drawing.Point(12, 244);
+            dataGridViewCellStyle3.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle3.BackColor = System.Drawing.SystemColors.Window;
+            dataGridViewCellStyle3.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle3.ForeColor = System.Drawing.SystemColors.ControlText;
+            dataGridViewCellStyle3.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle3.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle3.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
+            this.dgTransactions.DefaultCellStyle = dataGridViewCellStyle3;
+            this.dgTransactions.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.dgTransactions.Location = new System.Drawing.Point(0, 0);
             this.dgTransactions.Name = "dgTransactions";
-            this.dgTransactions.Size = new System.Drawing.Size(1045, 348);
+            dataGridViewCellStyle4.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle4.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle4.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle4.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle4.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle4.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle4.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.dgTransactions.RowHeadersDefaultCellStyle = dataGridViewCellStyle4;
+            this.dgTransactions.Size = new System.Drawing.Size(1085, 147);
             this.dgTransactions.TabIndex = 30;
             // 
             // btnGetTransactionId
             // 
-            this.btnGetTransactionId.Location = new System.Drawing.Point(441, 216);
+            this.btnGetTransactionId.Location = new System.Drawing.Point(456, 224);
             this.btnGetTransactionId.Name = "btnGetTransactionId";
             this.btnGetTransactionId.Size = new System.Drawing.Size(58, 23);
             this.btnGetTransactionId.TabIndex = 33;
@@ -367,7 +403,7 @@
             // label12
             // 
             this.label12.AutoSize = true;
-            this.label12.Location = new System.Drawing.Point(13, 202);
+            this.label12.Location = new System.Drawing.Point(28, 210);
             this.label12.Name = "label12";
             this.label12.Size = new System.Drawing.Size(95, 13);
             this.label12.TabIndex = 32;
@@ -375,7 +411,7 @@
             // 
             // txtTransactionId
             // 
-            this.txtTransactionId.Location = new System.Drawing.Point(12, 218);
+            this.txtTransactionId.Location = new System.Drawing.Point(27, 226);
             this.txtTransactionId.Name = "txtTransactionId";
             this.txtTransactionId.Size = new System.Drawing.Size(423, 20);
             this.txtTransactionId.TabIndex = 31;
@@ -383,7 +419,7 @@
             // 
             // btnGetKeyword
             // 
-            this.btnGetKeyword.Location = new System.Drawing.Point(256, 139);
+            this.btnGetKeyword.Location = new System.Drawing.Point(271, 147);
             this.btnGetKeyword.Name = "btnGetKeyword";
             this.btnGetKeyword.Size = new System.Drawing.Size(58, 23);
             this.btnGetKeyword.TabIndex = 36;
@@ -394,7 +430,7 @@
             // label10
             // 
             this.label10.AutoSize = true;
-            this.label10.Location = new System.Drawing.Point(9, 126);
+            this.label10.Location = new System.Drawing.Point(24, 134);
             this.label10.Name = "label10";
             this.label10.Size = new System.Drawing.Size(68, 13);
             this.label10.TabIndex = 35;
@@ -402,7 +438,7 @@
             // 
             // txtGetKeyword
             // 
-            this.txtGetKeyword.Location = new System.Drawing.Point(12, 141);
+            this.txtGetKeyword.Location = new System.Drawing.Point(27, 149);
             this.txtGetKeyword.Name = "txtGetKeyword";
             this.txtGetKeyword.Size = new System.Drawing.Size(238, 20);
             this.txtGetKeyword.TabIndex = 34;
@@ -411,7 +447,7 @@
             // label13
             // 
             this.label13.AutoSize = true;
-            this.label13.Location = new System.Drawing.Point(186, 51);
+            this.label13.Location = new System.Drawing.Point(201, 59);
             this.label13.Name = "label13";
             this.label13.Size = new System.Drawing.Size(27, 13);
             this.label13.TabIndex = 38;
@@ -419,7 +455,7 @@
             // 
             // txtVersionByte
             // 
-            this.txtVersionByte.Location = new System.Drawing.Point(189, 67);
+            this.txtVersionByte.Location = new System.Drawing.Point(204, 75);
             this.txtVersionByte.Name = "txtVersionByte";
             this.txtVersionByte.Size = new System.Drawing.Size(61, 20);
             this.txtVersionByte.TabIndex = 37;
@@ -428,7 +464,7 @@
             // label14
             // 
             this.label14.AutoSize = true;
-            this.label14.Location = new System.Drawing.Point(253, 51);
+            this.label14.Location = new System.Drawing.Point(268, 59);
             this.label14.Name = "label14";
             this.label14.Size = new System.Drawing.Size(45, 13);
             this.label14.TabIndex = 39;
@@ -437,7 +473,7 @@
             // lblTotalTime
             // 
             this.lblTotalTime.AutoSize = true;
-            this.lblTotalTime.Location = new System.Drawing.Point(549, 221);
+            this.lblTotalTime.Location = new System.Drawing.Point(564, 229);
             this.lblTotalTime.Name = "lblTotalTime";
             this.lblTotalTime.Size = new System.Drawing.Size(57, 13);
             this.lblTotalTime.TabIndex = 40;
@@ -446,25 +482,82 @@
             // lblKbs
             // 
             this.lblKbs.AutoSize = true;
-            this.lblKbs.Location = new System.Drawing.Point(922, 221);
+            this.lblKbs.Location = new System.Drawing.Point(937, 229);
             this.lblKbs.Name = "lblKbs";
             this.lblKbs.Size = new System.Drawing.Size(30, 13);
             this.lblKbs.TabIndex = 41;
             this.lblKbs.Text = "Kb/s";
             // 
+            // splitContainer1
+            // 
+            this.splitContainer1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.splitContainer1.Location = new System.Drawing.Point(0, 0);
+            this.splitContainer1.Name = "splitContainer1";
+            this.splitContainer1.Orientation = System.Windows.Forms.Orientation.Horizontal;
+            // 
+            // splitContainer1.Panel1
+            // 
+            this.splitContainer1.Panel1.Controls.Add(this.txtPutValue);
+            this.splitContainer1.Panel1.Controls.Add(this.lblKbs);
+            this.splitContainer1.Panel1.Controls.Add(this.btnPut);
+            this.splitContainer1.Panel1.Controls.Add(this.lblTotalTime);
+            this.splitContainer1.Panel1.Controls.Add(this.btnGet);
+            this.splitContainer1.Panel1.Controls.Add(this.label14);
+            this.splitContainer1.Panel1.Controls.Add(this.btnDelete);
+            this.splitContainer1.Panel1.Controls.Add(this.label13);
+            this.splitContainer1.Panel1.Controls.Add(this.txtPutKey);
+            this.splitContainer1.Panel1.Controls.Add(this.txtVersionByte);
+            this.splitContainer1.Panel1.Controls.Add(this.label1);
+            this.splitContainer1.Panel1.Controls.Add(this.btnGetKeyword);
+            this.splitContainer1.Panel1.Controls.Add(this.txtGetKey);
+            this.splitContainer1.Panel1.Controls.Add(this.label10);
+            this.splitContainer1.Panel1.Controls.Add(this.label2);
+            this.splitContainer1.Panel1.Controls.Add(this.txtGetKeyword);
+            this.splitContainer1.Panel1.Controls.Add(this.txtDeleteKey);
+            this.splitContainer1.Panel1.Controls.Add(this.btnGetTransactionId);
+            this.splitContainer1.Panel1.Controls.Add(this.label3);
+            this.splitContainer1.Panel1.Controls.Add(this.label12);
+            this.splitContainer1.Panel1.Controls.Add(this.label4);
+            this.splitContainer1.Panel1.Controls.Add(this.txtTransactionId);
+            this.splitContainer1.Panel1.Controls.Add(this.txtGetValue);
+            this.splitContainer1.Panel1.Controls.Add(this.btnSearch);
+            this.splitContainer1.Panel1.Controls.Add(this.label5);
+            this.splitContainer1.Panel1.Controls.Add(this.label11);
+            this.splitContainer1.Panel1.Controls.Add(this.lbTableName);
+            this.splitContainer1.Panel1.Controls.Add(this.txtSearchAddress);
+            this.splitContainer1.Panel1.Controls.Add(this.label6);
+            this.splitContainer1.Panel1.Controls.Add(this.lblTotalBytes);
+            this.splitContainer1.Panel1.Controls.Add(this.txtLogin);
+            this.splitContainer1.Panel1.Controls.Add(this.txtbalance);
+            this.splitContainer1.Panel1.Controls.Add(this.label7);
+            this.splitContainer1.Panel1.Controls.Add(this.btnTestConnection);
+            this.splitContainer1.Panel1.Controls.Add(this.txtPassword);
+            this.splitContainer1.Panel1.Controls.Add(this.label9);
+            this.splitContainer1.Panel1.Controls.Add(this.label8);
+            this.splitContainer1.Panel1.Controls.Add(this.txtUrl);
+            this.splitContainer1.Panel1MinSize = 0;
+            // 
+            // splitContainer1.Panel2
+            // 
+            this.splitContainer1.Panel2.Controls.Add(this.dgTransactions);
+            this.splitContainer1.Size = new System.Drawing.Size(1085, 422);
+            this.splitContainer1.SplitterDistance = 255;
+            this.splitContainer1.SplitterWidth = 20;
+            this.splitContainer1.TabIndex = 42;
+            // 
             // rootid
             // 
-            this.rootid.Frozen = true;
             this.rootid.HeaderText = "Object ID";
             this.rootid.MinimumWidth = 60;
             this.rootid.Name = "rootid";
-            this.rootid.Width = 60;
             // 
-            // transaction_id
+            // messagecount
             // 
-            this.transaction_id.HeaderText = "TID";
-            this.transaction_id.Name = "transaction_id";
-            this.transaction_id.Width = 50;
+            dataGridViewCellStyle2.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.messagecount.DefaultCellStyle = dataGridViewCellStyle2;
+            this.messagecount.HeaderText = "Messages";
+            this.messagecount.MaxInputLength = 100000000;
+            this.messagecount.Name = "messagecount";
             // 
             // is_signed
             // 
@@ -473,121 +566,73 @@
             this.is_signed.Name = "is_signed";
             this.is_signed.Resizable = System.Windows.Forms.DataGridViewTriState.True;
             this.is_signed.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.Automatic;
-            this.is_signed.Width = 50;
             // 
             // signed_by
             // 
             this.signed_by.HeaderText = "Signed By";
             this.signed_by.Name = "signed_by";
-            this.signed_by.Width = 80;
-            // 
-            // signature
-            // 
-            this.signature.HeaderText = "SIG";
-            this.signature.Name = "signature";
-            this.signature.Width = 50;
             // 
             // filecount
             // 
             this.filecount.HeaderText = "Files";
             this.filecount.Name = "filecount";
-            this.filecount.Width = 50;
             // 
             // totalfilebytes
             // 
             this.totalfilebytes.HeaderText = "File Bytes";
             this.totalfilebytes.Name = "totalfilebytes";
-            this.totalfilebytes.Width = 50;
-            // 
-            // messagecount
-            // 
-            dataGridViewCellStyle2.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.messagecount.DefaultCellStyle = dataGridViewCellStyle2;
-            this.messagecount.HeaderText = "Messages";
-            this.messagecount.Name = "messagecount";
-            this.messagecount.Width = 180;
+            this.totalfilebytes.Resizable = System.Windows.Forms.DataGridViewTriState.True;
             // 
             // keywordcount
             // 
             this.keywordcount.HeaderText = "Keys";
             this.keywordcount.Name = "keywordcount";
-            this.keywordcount.Width = 50;
             // 
             // total_bytes
             // 
             this.total_bytes.HeaderText = "Total Bytes";
             this.total_bytes.Name = "total_bytes";
-            this.total_bytes.Width = 50;
             // 
             // block_time
             // 
             this.block_time.HeaderText = "Block Time";
             this.block_time.Name = "block_time";
-            this.block_time.Width = 117;
+            // 
+            // transaction_id
+            // 
+            this.transaction_id.HeaderText = "TID";
+            this.transaction_id.Name = "transaction_id";
+            // 
+            // signature
+            // 
+            this.signature.HeaderText = "SIG";
+            this.signature.Name = "signature";
             // 
             // confirmations
             // 
             this.confirmations.HeaderText = "Confirms";
             this.confirmations.Name = "confirmations";
-            this.confirmations.Width = 55;
             // 
             // buildtime
             // 
             this.buildtime.HeaderText = "Build Time";
             this.buildtime.Name = "buildtime";
-            this.buildtime.Width = 160;
             // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1069, 604);
-            this.Controls.Add(this.lblKbs);
-            this.Controls.Add(this.lblTotalTime);
-            this.Controls.Add(this.label14);
-            this.Controls.Add(this.label13);
-            this.Controls.Add(this.txtVersionByte);
-            this.Controls.Add(this.btnGetKeyword);
-            this.Controls.Add(this.label10);
-            this.Controls.Add(this.txtGetKeyword);
-            this.Controls.Add(this.btnGetTransactionId);
-            this.Controls.Add(this.label12);
-            this.Controls.Add(this.txtTransactionId);
-            this.Controls.Add(this.dgTransactions);
-            this.Controls.Add(this.btnSearch);
-            this.Controls.Add(this.label11);
-            this.Controls.Add(this.txtSearchAddress);
-            this.Controls.Add(this.lblTotalBytes);
-            this.Controls.Add(this.txtbalance);
-            this.Controls.Add(this.btnTestConnection);
-            this.Controls.Add(this.label9);
-            this.Controls.Add(this.txtUrl);
-            this.Controls.Add(this.label8);
-            this.Controls.Add(this.txtPassword);
-            this.Controls.Add(this.label7);
-            this.Controls.Add(this.txtLogin);
-            this.Controls.Add(this.label6);
-            this.Controls.Add(this.lbTableName);
-            this.Controls.Add(this.label5);
-            this.Controls.Add(this.txtGetValue);
-            this.Controls.Add(this.label4);
-            this.Controls.Add(this.txtPutValue);
-            this.Controls.Add(this.label3);
-            this.Controls.Add(this.txtDeleteKey);
-            this.Controls.Add(this.label2);
-            this.Controls.Add(this.txtGetKey);
-            this.Controls.Add(this.label1);
-            this.Controls.Add(this.txtPutKey);
-            this.Controls.Add(this.btnDelete);
-            this.Controls.Add(this.btnGet);
-            this.Controls.Add(this.btnPut);
-            this.MaximumSize = new System.Drawing.Size(1085, 643);
-            this.MinimumSize = new System.Drawing.Size(1085, 643);
+            this.ClientSize = new System.Drawing.Size(1085, 422);
+            this.Controls.Add(this.splitContainer1);
             this.Name = "Form1";
             this.Text = "Sup!? Just testing ";
             ((System.ComponentModel.ISupportInitialize)(this.dgTransactions)).EndInit();
+            this.splitContainer1.Panel1.ResumeLayout(false);
+            this.splitContainer1.Panel1.PerformLayout();
+            this.splitContainer1.Panel2.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).EndInit();
+            this.splitContainer1.ResumeLayout(false);
             this.ResumeLayout(false);
-            this.PerformLayout();
 
         }
 
@@ -632,19 +677,20 @@
         private System.Windows.Forms.Label label14;
         private System.Windows.Forms.Label lblTotalTime;
         private System.Windows.Forms.Label lblKbs;
-        private System.Windows.Forms.DataGridViewTextBoxColumn rootid;
-        private System.Windows.Forms.DataGridViewTextBoxColumn transaction_id;
-        private System.Windows.Forms.DataGridViewCheckBoxColumn is_signed;
-        private System.Windows.Forms.DataGridViewTextBoxColumn signed_by;
-        private System.Windows.Forms.DataGridViewTextBoxColumn signature;
-        private System.Windows.Forms.DataGridViewTextBoxColumn filecount;
-        private System.Windows.Forms.DataGridViewTextBoxColumn totalfilebytes;
-        private System.Windows.Forms.DataGridViewTextBoxColumn messagecount;
-        private System.Windows.Forms.DataGridViewTextBoxColumn keywordcount;
-        private System.Windows.Forms.DataGridViewTextBoxColumn total_bytes;
-        private System.Windows.Forms.DataGridViewTextBoxColumn block_time;
-        private System.Windows.Forms.DataGridViewTextBoxColumn confirmations;
-        private System.Windows.Forms.DataGridViewTextBoxColumn buildtime;
+        private System.Windows.Forms.SplitContainer splitContainer1;
+        private DataGridViewTextBoxColumn rootid;
+        private DataGridViewTextBoxColumn messagecount;
+        private DataGridViewCheckBoxColumn is_signed;
+        private DataGridViewTextBoxColumn signed_by;
+        private DataGridViewTextBoxColumn filecount;
+        private DataGridViewTextBoxColumn totalfilebytes;
+        private DataGridViewTextBoxColumn keywordcount;
+        private DataGridViewTextBoxColumn total_bytes;
+        private DataGridViewTextBoxColumn block_time;
+        private DataGridViewTextBoxColumn transaction_id;
+        private DataGridViewTextBoxColumn signature;
+        private DataGridViewTextBoxColumn confirmations;
+        private DataGridViewTextBoxColumn buildtime;
     }
 }
 

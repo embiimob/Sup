@@ -314,24 +314,25 @@ namespace SUP
                     object[] rowData = new object[]
                     {
                     roots[i].Id,
-                    roots[i].TransactionId,
+                    strmessage,
                     roots[i].Signed,
                     roots[i].SignedBy,
-                    roots[i].Signature,
                     roots[i].File.Count(),
                     totalfilebytes,
-                    strmessage,
                     roots[i].Keyword.Count(),
                     roots[i].TotalByteSize,
                     roots[i].BlockDate,
+                    roots[i].TransactionId,
+                    roots[i].Signature,
                     roots[i].Confirmations,
                     roots[i].BuildDate.ToString("MM/dd/yyyy hh:mm:ss.ffff tt")
-                    };
+                        };
                     dgTransactions.Rows.Add(rowData);
                     totalbytes += roots[i].TotalByteSize;
                 }
             }
             dgTransactions.AutoResizeRows();
+            dgTransactions.AutoResizeColumns();
             lblTotalBytes.Text = "Total Bytes: " + totalbytes.ToString();
             lblTotalTime.Text = "Total Time: " + elapsedMilliseconds;
             double secondsExpired = elapsedMilliseconds / 1000.0;
@@ -353,7 +354,7 @@ namespace SUP
             DateTime tmendCall = DateTime.UtcNow;
             dgTransactions.Rows.Clear();
             int totalbytes = 0;
-            
+
             TimeSpan elapsedTime = tmendCall - tmbeginCall;
             double elapsedMilliseconds = elapsedTime.TotalMilliseconds;
 
@@ -364,32 +365,35 @@ namespace SUP
                 foreach (var rfile in root.Message)
                 {
                     strmessage = strmessage + rfile;
-                    
+
                 }
+             
                 foreach (var rfile in root.File)
                 {
-                    totalfilebytes+= rfile.Value.Length;
+                    totalfilebytes += rfile.Value.Length;
+                   
 
                 }
 
                 object[] rowData = new object[]
                 {
                     root.Id,
-                    root.TransactionId,
+                    strmessage,
                     root.Signed,
                     root.SignedBy,
-                    root.Signature,
                     root.File.Count(),
                     totalfilebytes,
-                    strmessage,
                     root.Keyword.Count(),
                     root.TotalByteSize,
                     root.BlockDate,
+                    root.TransactionId,
+                    root.Signature,
                     root.Confirmations,
                     root.BuildDate.ToString("MM/dd/yyyy hh:mm:ss.ffff tt")
                 };
                 dgTransactions.Rows.Add(rowData);
                 dgTransactions.AutoResizeRows();
+                dgTransactions.AutoResizeColumns();
 
                 totalbytes = root.TotalByteSize;
                 lblTotalBytes.Text = "Total Bytes: " + totalbytes.ToString();
@@ -403,7 +407,7 @@ namespace SUP
 
         private void btnGetKeyword_Click(object sender, EventArgs e)
         {
-            string publicAddress = Root.GetPublicAddressByKeyword(txtGetKeyword.Text,txtVersionByte.Text);
+            string publicAddress = Root.GetPublicAddressByKeyword(txtGetKeyword.Text, txtVersionByte.Text);
             DateTime tmbeginCall = DateTime.UtcNow;
             Root[] roots = Root.GetRootByAddress(
                 publicAddress,
@@ -415,7 +419,7 @@ namespace SUP
             DateTime tmendCall = DateTime.UtcNow;
             dgTransactions.Rows.Clear();
             int totalbytes = 0;
-           
+
             TimeSpan elapsedTime = tmendCall - tmbeginCall;
             double elapsedMilliseconds = elapsedTime.TotalMilliseconds;
 
@@ -436,23 +440,25 @@ namespace SUP
                 object[] rowData = new object[]
                 {
                     roots[i].Id,
-                    roots[i].TransactionId,
+                    strmessage,
                     roots[i].Signed,
                     roots[i].SignedBy,
-                    roots[i].Signature,
                     roots[i].File.Count(),
                     totalfilebytes,
-                    strmessage,
                     roots[i].Keyword.Count(),
                     roots[i].TotalByteSize,
                     roots[i].BlockDate,
+                    roots[i].TransactionId,
+                    roots[i].Signature,
                     roots[i].Confirmations,
                     roots[i].BuildDate.ToString("MM/dd/yyyy hh:mm:ss.ffff tt")
-                };
+   };
                 dgTransactions.Rows.Add(rowData);
                 totalbytes += roots[i].TotalByteSize;
             }
             dgTransactions.AutoResizeRows();
+            dgTransactions.AutoResizeColumns();
+
             lblTotalBytes.Text = "Total Bytes: " + totalbytes.ToString();
             lblTotalTime.Text = "Total Time: " + elapsedMilliseconds;
             double secondsExpired = elapsedMilliseconds / 1000.0;
@@ -522,6 +528,8 @@ namespace SUP
             double kbs = kilobytes / secondsExpired;
             lblKbs.Text = "Kb/s " + kbs;
         }
+
+
     }
 }
 

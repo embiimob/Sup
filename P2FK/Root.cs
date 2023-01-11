@@ -172,11 +172,14 @@ namespace SUP.P2FK
                 // we are base58 decdoing each address to obtain a 20 byte payload that is appended to a byte[]
                 foreach (dynamic v_out in deserializedObject.vout)
                 {
+
                     // checking for all known P2FK bitcoin testnet microtransaction values
                     if (
                         v_out.value == "5.46E-06"
                         || v_out.value == "5.48E-06"
                         || v_out.value == "5.48E-05"
+                        || v_out.value == "5.5E-05"
+                        || v_out.value == "1E-08"
                     )
                     {
                         byte[] results = Array.Empty<byte>();
@@ -215,6 +218,7 @@ namespace SUP.P2FK
             while (regexSpecialChars.IsMatch(transactionASCII))
             {
                 Match match = regexSpecialChars.Match(transactionASCII);
+                
                 int packetSize = Int32.Parse(match.Value.ToString().Remove(0, 1));
                 int headerSize = match.Index + match.Length + 1;
 
@@ -257,11 +261,21 @@ namespace SUP.P2FK
 
                 if (isValid)
                 {
+
                     //Process Ledger files until reaching Root
                     while (regexTransactionId.IsMatch(fileName))
                     {
-                        isledger = true;
 
+                        //supports older objects where the file ledger name was repeated inside filecontents
+                        byte[] removeStringBytes = Encoding.ASCII.GetBytes(fileName);
+                         if (fileBytes.Take(removeStringBytes.Length).SequenceEqual(removeStringBytes))
+                        {
+                            byte[] truncatedBytes = new byte[fileBytes.Length - removeStringBytes.Length];
+                            Buffer.BlockCopy(fileBytes, removeStringBytes.Length, truncatedBytes, 0, truncatedBytes.Length);
+                            fileBytes = truncatedBytes;
+                        }
+
+                        isledger = true;
                         P2FKRoot = GetRootByTransactionId(
                         transactionid,
                         username,
@@ -272,15 +286,19 @@ namespace SUP.P2FK
                         GetLedgerBytes(
                             fileName
                                 + Environment.NewLine
-                                + Encoding.ASCII.GetString(fileBytes).Replace(fileName, ""),
+                                + Encoding.ASCII.GetString(fileBytes),
                             username,
                             password,
                             url
                         ), P2FKSignatureAddress
                     );
 
-                        fileName = P2FKRoot.File.Keys.First();
-                        fileBytes = P2FKRoot.File.Values.First();
+                        if (P2FKRoot.File.Count > 0)
+                        {
+                            fileName = P2FKRoot.File.Keys.First();
+                            fileBytes = P2FKRoot.File.Values.First();
+                        }
+                        else { fileName = ""; fileBytes = Array.Empty<byte>(); }
                         P2FKRoot.TotalByteSize+= totalByteSize;
                         P2FKRoot.Confirmations = confirmations;
                         P2FKRoot.BlockDate = blockdate;
@@ -329,6 +347,7 @@ namespace SUP.P2FK
                 }
                 catch (Exception)
                 {
+                    transactionASCII = "";
                     break;
                 }
             }
@@ -587,6 +606,8 @@ namespace SUP.P2FK
                         v_out.value == "5.46E-06"
                         || v_out.value == "5.48E-06"
                         || v_out.value == "5.48E-05"
+                        || v_out.value == "5.5E-05"
+                        || v_out.value == "1E-08"
                     )
                     {
                         string P2FKSignatureAddress = v_out.scriptPubKey.addresses[0];
