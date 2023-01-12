@@ -3,42 +3,40 @@ using NBitcoin;
 using NBitcoin.RPC;
 using Newtonsoft.Json;
 using System;
-using System.Collections;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Numerics;
 using System.Security.Cryptography;
 using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading;
 using System.Threading.Tasks;
+
 
 namespace SUP.P2FK
 {
     public class Root
     {
         public int Id { get; set; }
-        public string TransactionId { get; set; }
+        public string[] Message { get; set; }
+        public Dictionary<string, byte[]> File { get; set; }
+        public Dictionary<string, string> Keyword { get; set; }
         public string Hash { get; set; }
+        public string SignedBy { get; set; }
         public string Signature { get; set; }
         public bool Signed { get; set; }
-        public string SignedBy { get; set; }
-        public Dictionary<string, byte[]> File { get; set; }
-        public string[] Message { get; set; }
-        public Dictionary<string, string> Keyword { get; set; }
         public DateTime BlockDate { get; set; }
         public int TotalByteSize { get; set; }
+        public string TransactionId { get; set; }
         public int Confirmations { get; set; }
         public DateTime BuildDate { get; set; }
         public bool Cached { get; set; }
 
         //ensures levelDB is only opened once per session
         private readonly static object levelDBLocker = new object();
-
-
-        public static Root GetRootByTransactionId( string transactionid, string username, string password, string url, string versionbyte = "111", bool usecache = true, byte[] rootbytes = null, string signatureaddress = null )
+        public static Root GetRootByTransactionId(string transactionid, string username, string password, string url, string versionbyte = "111", bool usecache = true, byte[] rootbytes = null, string signatureaddress = null)
         {
             Root P2FKRoot = new Root();
             string diskpath = "root\\" + transactionid + "\\";
@@ -140,10 +138,11 @@ namespace SUP.P2FK
             //create a new root object
 
 
-            NetworkCredential credentials = new NetworkCredential(username, password);
-            RPCClient rpcClient = new RPCClient(credentials, new Uri(url));
             if (rootbytes == null)
             {
+                NetworkCredential credentials = new NetworkCredential(username, password);
+                RPCClient rpcClient = new RPCClient(credentials, new Uri(url));
+
                 try
                 {
                     deserializedObject = JsonConvert.DeserializeObject(
@@ -179,7 +178,6 @@ namespace SUP.P2FK
                         || v_out.value == "5.48E-06"
                         || v_out.value == "5.48E-05"
                         || v_out.value == "5.5E-05"
-                        || v_out.value == "1E-08"
                     )
                     {
                         byte[] results = Array.Empty<byte>();
@@ -198,6 +196,7 @@ namespace SUP.P2FK
                         System.Buffer.BlockCopy(results, 1, result, length1, length2);
 
                         transactionBytes = result;
+
                     }
                 }
             }
@@ -208,8 +207,6 @@ namespace SUP.P2FK
 
             }
 
-            // P2FKRoot.RawBytes = transactionBytes;
-            //ASCII Header Encoding is working still troubleshooting why some signed objects are not being recogrnized as signed
 
             int transactionBytesSize = transactionBytes.Count();
             transactionASCII = Encoding.ASCII.GetString(transactionBytes);
@@ -218,7 +215,7 @@ namespace SUP.P2FK
             while (regexSpecialChars.IsMatch(transactionASCII))
             {
                 Match match = regexSpecialChars.Match(transactionASCII);
-                
+
                 int packetSize = Int32.Parse(match.Value.ToString().Remove(0, 1));
                 int headerSize = match.Index + match.Length + 1;
 
@@ -268,7 +265,7 @@ namespace SUP.P2FK
 
                         //supports older objects where the file ledger name was repeated inside filecontents
                         byte[] removeStringBytes = Encoding.ASCII.GetBytes(fileName);
-                         if (fileBytes.Take(removeStringBytes.Length).SequenceEqual(removeStringBytes))
+                        if (fileBytes.Take(removeStringBytes.Length).SequenceEqual(removeStringBytes))
                         {
                             byte[] truncatedBytes = new byte[fileBytes.Length - removeStringBytes.Length];
                             Buffer.BlockCopy(fileBytes, removeStringBytes.Length, truncatedBytes, 0, truncatedBytes.Length);
@@ -283,7 +280,7 @@ namespace SUP.P2FK
                         url,
                         versionbyte,
                         usecache,
-                        GetLedgerBytes(
+                        GetRootBytesByLedger(
                             fileName
                                 + Environment.NewLine
                                 + Encoding.ASCII.GetString(fileBytes),
@@ -299,7 +296,7 @@ namespace SUP.P2FK
                             fileBytes = P2FKRoot.File.Values.First();
                         }
                         else { fileName = ""; fileBytes = Array.Empty<byte>(); }
-                        P2FKRoot.TotalByteSize+= totalByteSize;
+                        P2FKRoot.TotalByteSize += totalByteSize;
                         P2FKRoot.Confirmations = confirmations;
                         P2FKRoot.BlockDate = blockdate;
 
@@ -409,6 +406,9 @@ namespace SUP.P2FK
                         )
                     )
                     .Replace("-", String.Empty);
+                NetworkCredential credentials = new NetworkCredential(username, password);
+                RPCClient rpcClient = new RPCClient(credentials, new Uri(url));
+
                 var result = rpcClient.SendCommand(
                     "verifymessage",
                     P2FKSignatureAddress,
@@ -476,7 +476,7 @@ namespace SUP.P2FK
             for (int i = 0; i < deserializedObject.Count; i++)
             {
                 int rootId = i;
-                string hexId = GetTransactionId(deserializedObject[i].ToString());
+                string hexId = GetTransactionIdByHexString(deserializedObject[i].ToString());
 
                 // Launch a separate task to retrieve the transaction bytes for this match
                 var task = Task.Run(() =>
@@ -493,7 +493,7 @@ namespace SUP.P2FK
                 taskCount++;
 
                 // If there are 10 or more tasks, wait for some of them to complete before continuing
-                if (taskCount >= 3)
+                if (taskCount >= 8)
                 {
                     Task.WaitAny(tasks.ToArray());
                     tasks = tasks.Where(t => !t.IsCompleted).ToList();
@@ -512,76 +512,7 @@ namespace SUP.P2FK
 
             return rootList.ToArray();
         }
-        public static string GetPublicAddressByKeyword(string keyword, string versionbyte = "111")
-        {
-            // Cut the string at 20 characters
-            if (keyword.Length > 20)
-            {
-                keyword = keyword.Substring(0, 20);
-            }
-            // Right pad the string with '#' characters
-            keyword = keyword.PadRight(20, '#');
-
-            return Base58.EncodeWithCheckSum(
-                new byte[] { byte.Parse(versionbyte) }
-                    .Concat(System.Text.Encoding.ASCII.GetBytes(keyword))
-                    .ToArray()
-            );
-        }
-        public static string GetKeywordByPublicAddress(string public_address)
-        {
-
-
-            Base58.DecodeWithCheckSum(public_address, out byte[] payloadBytes);
-
-            return Encoding.ASCII.GetString(payloadBytes).Replace("#", "").Substring(1);
-        }
-        private static bool CacheRoot(Root root)
-        {
-            //we have to take the file data out of the object before storing it into a LevelDB cache
-            //replacing the bytes array with the filebyte count.
-            var modifiedDictionary = new Dictionary<string, byte[]>();
-            var status = true;
-            try
-            {
-                try
-                {
-                    foreach (var kvp in root.File)
-                    {
-                        // Modify the key by adding "root/" to the beginning
-                        string modifiedKey = @"root/" + root.TransactionId + @"/" + kvp.Key;
-
-                        // Replace the value with an empty byte array
-                        byte[] modifiedValue = Encoding.ASCII.GetBytes(kvp.Value.Length.ToString());
-
-                        // Add the modified key-value pair to the new dictionary
-                        modifiedDictionary.Add(modifiedKey, modifiedValue);
-                    }
-                }
-                catch (Exception) { }
-
-
-                root.File = modifiedDictionary;
-                root.Cached = true;
-                var rootSerialized = JsonConvert.SerializeObject(root);
-                var rootByteArray = Encoding.ASCII.GetBytes(rootSerialized);
-                lock (levelDBLocker)
-                {
-                    var ROOT = new Options { CreateIfMissing = true };
-                    var db = new DB(ROOT, @"root");
-                    db.Put(root.TransactionId, rootSerialized);
-                    db.Close();
-                }
-
-                using (FileStream fs = new FileStream(@"root/" + root.TransactionId + @"/" + "P2FK.json", FileMode.Create))
-                {
-                    fs.Write(rootByteArray, 0, rootByteArray.Length);
-                }
-            }
-            catch (Exception) { status = false; }
-            return status;
-        }
-        private static byte[] GetLedgerBytes(string ledger, string username, string password, string url )
+        public static byte[] GetRootBytesByLedger(string ledger, string username, string password, string url)
         {
             Regex regexTransactionId = new Regex(@"\b[0-9a-f]{64}\b");
             byte[] transactionBytes = Array.Empty<byte>();
@@ -590,7 +521,6 @@ namespace SUP.P2FK
             int length1;
             int length2;
             byte[] result;
-            byte[] results;
             var matches = regexTransactionId.Matches(ledger);
             foreach (Match match in matches)
             {
@@ -607,13 +537,12 @@ namespace SUP.P2FK
                         || v_out.value == "5.48E-06"
                         || v_out.value == "5.48E-05"
                         || v_out.value == "5.5E-05"
-                        || v_out.value == "1E-08"
                     )
                     {
                         string P2FKSignatureAddress = v_out.scriptPubKey.addresses[0];
 
                         //retreiving payload data from each address
-                        Base58.DecodeWithCheckSum(P2FKSignatureAddress, out results);
+                        Base58.DecodeWithCheckSum(P2FKSignatureAddress, out byte[] results);
 
                         //append to a byte[] of all P2FK data
 
@@ -641,7 +570,42 @@ namespace SUP.P2FK
             }
             return transactionBytes;
         }
-        static string GetTransactionId(string transactionHex)
+        public static byte[] GetRootBytesByFile(string[] fileNames)
+        {
+            byte[] separators = new byte[] { 92, 47, 58, 42, 63, 34, 60, 62, 124 };
+            byte[] joinedFileBytes = new byte[] { };
+            foreach (string fileName in fileNames)
+            {
+                byte[] fileNameBytes = Encoding.ASCII.GetBytes(Path.GetFileName(fileName));
+                byte[] separator1 = new byte[] { separators[new Random().Next(0, separators.Length)] };
+                byte[] separator2 = new byte[] { separators[new Random().Next(0, separators.Length)] };
+                byte[] fileBytes = System.IO.File.ReadAllBytes(fileName);
+                byte[] fileSizeBytes = Encoding.ASCII.GetBytes(fileBytes.Length.ToString());
+                byte[] joinedBytes = joinedFileBytes.Concat(fileNameBytes).Concat(separator1).Concat(fileSizeBytes).Concat(separator2).Concat(fileBytes).ToArray();
+                joinedFileBytes = joinedBytes;
+
+            }
+            System.IO.File.WriteAllBytes("joined-files.bin", joinedFileBytes);
+            return joinedFileBytes;
+        }
+        public static byte[] GetRootBytesByMessage(string[] messages)
+        {
+            byte[] separators = new byte[] { 92, 47, 58, 42, 63, 34, 60, 62, 124 };
+            byte[] joinedMessageBytes = new byte[] { };
+            foreach (string message in messages)
+            {
+                byte[] separator1 = new byte[] { separators[new Random().Next(0, separators.Length)] };
+                byte[] separator2 = new byte[] { separators[new Random().Next(0, separators.Length)] };
+                byte[] messageBytes = System.IO.File.ReadAllBytes(message);
+                byte[] messageSizeBytes = Encoding.ASCII.GetBytes(messageBytes.Length.ToString());
+
+                byte[] joinedBytes = joinedMessageBytes.Concat(separator1).Concat(messageSizeBytes).Concat(separator2).Concat(messageBytes).ToArray();
+                joinedMessageBytes = joinedBytes;
+            }
+            System.IO.File.WriteAllBytes("joined-messages.bin", joinedMessageBytes);
+            return joinedMessageBytes;
+        }
+        static string GetTransactionIdByHexString(string transactionHex)
         {
             // Decode the hex string into a byte array
             byte[] transactionBytes = HexStringToByteArray(transactionHex);
@@ -654,6 +618,154 @@ namespace SUP.P2FK
 
             // Convert the hash to a hex string and return it
             return ByteArrayToHexString(hash);
+        }
+        public static string GetPublicAddressByKeyword(string keyword, string versionbyte = "111")
+        {
+            // Cut the string at 20 characters
+            if (keyword.Length > 20)
+            {
+                keyword = keyword.Substring(0, 20);
+            }
+            // Right pad the string with '#' characters
+            keyword = keyword.PadRight(20, '#');
+
+            return Base58.EncodeWithCheckSum(
+                new byte[] { byte.Parse(versionbyte) }
+                    .Concat(System.Text.Encoding.ASCII.GetBytes(keyword))
+                    .ToArray()
+            );
+        }
+        public static string GetKeywordByPublicAddress(string public_address)
+        {
+
+
+            Base58.DecodeWithCheckSum(public_address, out byte[] payloadBytes);
+
+            return Encoding.ASCII.GetString(payloadBytes).Replace("#", "").Substring(1);
+        }
+        public static byte[] DecryptRootBytes(string username, string password, string url, string address, byte[] rootbytes)
+        {
+            byte[] separators = new byte[] { 92, 47, 58, 42, 63, 34, 60, 62, 124 };
+            byte[] input = rootbytes;
+            int secondIndex = -1;
+            int count = 0;
+
+            for (int i = 0; i < input.Length; i++)
+            {
+                if (separators.Contains(input[i]))
+                {
+                    count++;
+                    if (count == 2)
+                    {
+                        secondIndex = i;
+                        break;
+                    }
+                }
+            }
+            byte[] output = new byte[input.Length - (secondIndex + 1)];
+            Array.Copy(input, secondIndex + 1, output, 0, output.Length);
+            rootbytes = output;
+
+            NetworkCredential credentials = new NetworkCredential(username, password);
+            RPCClient rpcClient = new RPCClient(credentials, new Uri(url));
+            string privKeyHex;
+            try
+            {
+                privKeyHex = BitConverter.ToString(Base58.Decode(rpcClient.SendCommand("dumpprivkey", parameters: address).ResultString)).Replace("-", "");
+
+            }
+            catch (Exception ex)
+            {
+                return Encoding.ASCII.GetBytes("?" + ex.Message.Length + "?" + ex.Message.ToString());
+            }
+
+
+            privKeyHex = privKeyHex.Substring(2, 64);
+            BigInteger privateKey = Hex.HexToBigInteger(privKeyHex);
+
+            ECEncryption encryption = new ECEncryption();
+            byte[] decrypted = encryption.Decrypt(privateKey, rootbytes);
+
+            return decrypted;
+
+        }
+        public static byte[] EncryptRootBytes(string username, string password, string url, string address, byte[] rootbytes)
+        {
+            NetworkCredential credentials = new NetworkCredential(username, password);
+            RPCClient rpcClient = new RPCClient(credentials, new Uri(url));
+            string privKeyHex;
+            try
+            {
+                privKeyHex = BitConverter.ToString(Base58.Decode(rpcClient.SendCommand("dumpprivkey", parameters: address).ResultString)).Replace("-", "");
+
+            }
+            catch (Exception ex)
+            {
+                return Encoding.ASCII.GetBytes("?" + ex.Message.Length + "?" + ex.Message.ToString());
+            }
+
+
+            privKeyHex = privKeyHex.Substring(2, 64);
+            BigInteger privateKey = Hex.HexToBigInteger(privKeyHex);
+            ECPoint publicKey = Secp256k1.G.Multiply(privateKey);
+            ECEncryption encryption = new ECEncryption();
+            byte[] encrypted = encryption.Encrypt(publicKey, rootbytes);
+
+            byte[] separators = new byte[] { 92, 47, 58, 42, 63, 34, 60, 62, 124 };
+            byte[] joinedBytes = new byte[0];
+            byte[] fileNameBytes = Encoding.ASCII.GetBytes("SEC");
+            byte[] separator1 = new byte[] { separators[new Random().Next(0, separators.Length)] };
+            byte[] separator2 = new byte[] { separators[new Random().Next(0, separators.Length)] };
+            byte[] fileBytes = encrypted;
+            byte[] fileSizeBytes = Encoding.ASCII.GetBytes(fileBytes.Length.ToString());
+            joinedBytes = joinedBytes.Concat(fileNameBytes).Concat(separator1).Concat(fileSizeBytes).Concat(separator2).Concat(fileBytes).ToArray();
+
+
+            System.IO.File.WriteAllBytes("encrypted-files.bin", joinedBytes);
+            return joinedBytes;
+
+        }
+        private static void CacheRoot(Root root)
+        {
+            //we have to take the file data out of the object before storing it into a LevelDB cache
+            //replacing the bytes array with the filebyte count.
+            var modifiedDictionary = new Dictionary<string, byte[]>();
+
+
+            try
+            {
+                foreach (var kvp in root.File)
+                {
+                    // Modify the key by adding "root/" to the beginning
+                    string modifiedKey = @"root/" + root.TransactionId + @"/" + kvp.Key;
+
+                    // Replace the value with an empty byte array
+                    byte[] modifiedValue = Encoding.ASCII.GetBytes(kvp.Value.Length.ToString());
+
+                    // Add the modified key-value pair to the new dictionary
+                    modifiedDictionary.Add(modifiedKey, modifiedValue);
+                }
+            }
+            catch (Exception) { }
+
+
+            root.File = modifiedDictionary;
+            root.Cached = true;
+            var rootSerialized = JsonConvert.SerializeObject(root);
+            var rootByteArray = Encoding.ASCII.GetBytes(rootSerialized);
+            lock (levelDBLocker)
+            {
+                var ROOT = new Options { CreateIfMissing = true };
+                var db = new DB(ROOT, @"root");
+                db.Put(root.TransactionId, rootSerialized);
+                db.Close();
+            }
+
+            using (FileStream fs = new FileStream(@"root/" + root.TransactionId + @"/" + "P2FK.json", FileMode.Create))
+            {
+                fs.Write(rootByteArray, 0, rootByteArray.Length);
+            }
+
         }
         static byte[] HexStringToByteArray(string hex)
         {
@@ -687,5 +799,6 @@ namespace SUP.P2FK
 
             return sb.ToString();
         }
+
     }
 }

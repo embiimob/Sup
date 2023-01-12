@@ -3,8 +3,11 @@ using NBitcoin.RPC;
 using SUP.P2FK;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Net;
+using System.Numerics;
 using System.Text;
 using System.Windows.Forms;
 
@@ -17,7 +20,7 @@ namespace SUP
             InitializeComponent();
         }
 
-        private void btnPut_Click(object sender, EventArgs e)
+        private void BtnPut_Click(object sender, EventArgs e)
         {
             if (lbTableName.SelectedItem == null)
             {
@@ -72,7 +75,7 @@ namespace SUP
             }
         }
 
-        private void btnGet_Click(object sender, EventArgs e)
+        private void BtnGet_Click(object sender, EventArgs e)
         {
             if (lbTableName.SelectedItem == null)
             {
@@ -182,7 +185,7 @@ namespace SUP
             }
         }
 
-        private void btnDelete_Click(object sender, EventArgs e)
+        private void BtnDelete_Click(object sender, EventArgs e)
         {
             if (lbTableName.SelectedItem == null)
             {
@@ -236,7 +239,7 @@ namespace SUP
             }
         }
 
-        private void btnTestConnection_Click(object sender, EventArgs e)
+        private void BtnTestConnection_Click(object sender, EventArgs e)
         {
             string walletUrl = txtUrl.Text;
             string walletUsername = txtLogin.Text;
@@ -252,12 +255,14 @@ namespace SUP
             {
                 dgTransactions.Rows.Clear();
 
-                Root newRoot = new Root();
-                newRoot.Message = new string[] { ex.Message };
-                newRoot.BuildDate = DateTime.UtcNow;
-                newRoot.File = new Dictionary<string, byte[]> { };
-                newRoot.Keyword = new Dictionary<string, string> { };
-                newRoot.TransactionId = "";
+                Root newRoot = new Root
+                {
+                    Message = new string[] { ex.Message },
+                    BuildDate = DateTime.UtcNow,
+                    File = new Dictionary<string, byte[]> { },
+                    Keyword = new Dictionary<string, string> { },
+                    TransactionId = ""
+                };
 
                 object[] rowData = new object[]
                 {
@@ -278,7 +283,7 @@ namespace SUP
             }
         }
 
-        private void btnSearch_Click(object sender, EventArgs e)
+        private void BtnSearch_Click(object sender, EventArgs e)
         {
             DateTime tmbeginCall = DateTime.UtcNow;
             Root[] roots = Root.GetRootByAddress(
@@ -303,7 +308,7 @@ namespace SUP
 
                     foreach (var rfile in roots[i].Message)
                     {
-                        strmessage = strmessage + rfile;
+                        strmessage+= rfile;
                     }
                     foreach (var rfile in roots[i].File)
                     {
@@ -341,7 +346,7 @@ namespace SUP
             lblKbs.Text = "Kb/s " + kbs;
         }
 
-        private void btnGetTransactionId_Click(object sender, EventArgs e)
+        private void BtnGetTransactionId_Click(object sender, EventArgs e)
         {
             DateTime tmbeginCall = DateTime.UtcNow;
             Root root = Root.GetRootByTransactionId(
@@ -353,7 +358,7 @@ namespace SUP
             );
             DateTime tmendCall = DateTime.UtcNow;
             dgTransactions.Rows.Clear();
-            int totalbytes = 0;
+            int totalbytes;
 
             TimeSpan elapsedTime = tmendCall - tmbeginCall;
             double elapsedMilliseconds = elapsedTime.TotalMilliseconds;
@@ -364,7 +369,7 @@ namespace SUP
                 int totalfilebytes = 0;
                 foreach (var rfile in root.Message)
                 {
-                    strmessage = strmessage + rfile;
+                    strmessage+= rfile;
 
                 }
              
@@ -405,7 +410,7 @@ namespace SUP
             }
         }
 
-        private void btnGetKeyword_Click(object sender, EventArgs e)
+        private void BtnGetKeyword_Click(object sender, EventArgs e)
         {
             string publicAddress = Root.GetPublicAddressByKeyword(txtGetKeyword.Text, txtVersionByte.Text);
             DateTime tmbeginCall = DateTime.UtcNow;
@@ -429,7 +434,7 @@ namespace SUP
                 int totalfilebytes = 0;
                 foreach (var rfile in roots[i].Message)
                 {
-                    strmessage = strmessage + rfile;
+                    strmessage+= rfile;
                 }
                 foreach (var rfile in roots[i].File)
                 {
@@ -467,7 +472,7 @@ namespace SUP
             lblKbs.Text = "Kb/s " + kbs;
         }
 
-        private void btnGPT3_Click(object sender, EventArgs e)
+        private void BtnGPT3_Click(object sender, EventArgs e)
         {
             DateTime tmbeginCall = DateTime.UtcNow;
             Root[] roots = Root.GetRootByAddress(
@@ -492,7 +497,7 @@ namespace SUP
 
                     foreach (var rfile in roots[i].Message)
                     {
-                        strmessage = strmessage + rfile;
+                        strmessage+= rfile;
                     }
                     foreach (var rfile in roots[i].File)
                     {
@@ -529,7 +534,141 @@ namespace SUP
             lblKbs.Text = "Kb/s " + kbs;
         }
 
+        private void Button1_Click(object sender, EventArgs e)
+        {
+            OpenFileDialog openFileDialog = new OpenFileDialog
+            {
+                Multiselect = true
+            };
+            byte[] result = new byte[0];
+            if (openFileDialog.ShowDialog() == DialogResult.OK)
+            {
+                result = Root.GetRootBytesByFile(openFileDialog.FileNames);
+                result = Root.EncryptRootBytes(txtLogin.Text,txtPassword.Text,txtUrl.Text,txtSearchAddress.Text, result);
 
+            }
+            DateTime tmbeginCall = DateTime.UtcNow;
+
+
+            Root root = Root.GetRootByTransactionId(Guid.NewGuid().ToString(), null, null, null, txtVersionByte.Text, true, result);
+            DateTime tmendCall = DateTime.UtcNow;
+            dgTransactions.Rows.Clear();
+            int totalbytes;
+
+            TimeSpan elapsedTime = tmendCall - tmbeginCall;
+            double elapsedMilliseconds = elapsedTime.TotalMilliseconds;
+
+            if (root != null)
+            {
+                string strmessage = "";
+                
+                foreach (var rfile in root.Message)
+                {
+                    strmessage+= rfile;
+
+                }
+                BigInteger totalfilebytes = 0;
+                foreach (var rfile in root.File)
+                {
+                    totalfilebytes+= BigInteger.Parse(Encoding.ASCII.GetString(rfile.Value));
+                 }
+
+                object[] rowData = new object[]
+                {
+                    root.Id,
+                    strmessage,
+                    root.Signed,
+                    root.SignedBy,
+                    root.File.Count(),
+                    totalfilebytes,
+                    root.Keyword.Count(),
+                    root.TotalByteSize,
+                    root.BlockDate,
+                    root.TransactionId,
+                    root.Signature,
+                    root.Confirmations,
+                    root.BuildDate.ToString("MM/dd/yyyy hh:mm:ss.ffff tt")
+                };
+                dgTransactions.Rows.Add(rowData);
+                dgTransactions.AutoResizeRows();
+                dgTransactions.AutoResizeColumns();
+
+                totalbytes = root.TotalByteSize;
+                lblTotalBytes.Text = "Total Bytes: " + totalbytes.ToString();
+                lblTotalTime.Text = "Total Time: " + elapsedMilliseconds;
+                double secondsExpired = elapsedMilliseconds / 1000.0;
+                double kilobytes = totalbytes / 1024.0;
+                double kbs = kilobytes / secondsExpired;
+                lblKbs.Text = "Kb/s " + kbs;
+            }
+
+
+
+        }
+
+        private void button2_Click(object sender, EventArgs e)
+        {
+            DateTime tmbeginCall = DateTime.UtcNow;
+            byte[] result = Root.GetRootBytesByFile(new string[] { @"root/" + txtTransactionId.Text + @"/SEC" });
+            result = Root.DecryptRootBytes(txtLogin.Text, txtPassword.Text, txtUrl.Text, txtSearchAddress.Text, result);
+            
+            Root root = Root.GetRootByTransactionId(txtTransactionId.Text, null, null, null, txtVersionByte.Text, false, result);
+            DateTime tmendCall = DateTime.UtcNow;
+            dgTransactions.Rows.Clear();
+            int totalbytes;
+
+            TimeSpan elapsedTime = tmendCall - tmbeginCall;
+            double elapsedMilliseconds = elapsedTime.TotalMilliseconds;
+
+            if (root != null)
+            {
+                string strmessage = "";
+
+                foreach (var rfile in root.Message)
+                {
+                    strmessage += rfile;
+
+                }
+                BigInteger totalfilebytes = 0;
+                foreach (var rfile in root.File)
+                {
+                    totalfilebytes += rfile.Value.Length;
+                }
+
+                object[] rowData = new object[]
+                {
+                    root.Id,
+                    strmessage,
+                    root.Signed,
+                    root.SignedBy,
+                    root.File.Count(),
+                    totalfilebytes,
+                    root.Keyword.Count(),
+                    root.TotalByteSize,
+                    root.BlockDate,
+                    root.TransactionId,
+                    root.Signature,
+                    root.Confirmations,
+                    root.BuildDate.ToString("MM/dd/yyyy hh:mm:ss.ffff tt")
+                };
+                dgTransactions.Rows.Add(rowData);
+                dgTransactions.AutoResizeRows();
+                dgTransactions.AutoResizeColumns();
+
+                totalbytes = root.TotalByteSize;
+                lblTotalBytes.Text = "Total Bytes: " + totalbytes.ToString();
+                lblTotalTime.Text = "Total Time: " + elapsedMilliseconds;
+                double secondsExpired = elapsedMilliseconds / 1000.0;
+                double kilobytes = totalbytes / 1024.0;
+                double kbs = kilobytes / secondsExpired;
+                lblKbs.Text = "Kb/s " + kbs;
+            }
+
+
+
+
+
+        }
     }
 }
 

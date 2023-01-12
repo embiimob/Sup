@@ -62,18 +62,6 @@ namespace SUP
             this.label11 = new System.Windows.Forms.Label();
             this.btnSearch = new System.Windows.Forms.Button();
             this.dgTransactions = new System.Windows.Forms.DataGridView();
-            this.btnGetTransactionId = new System.Windows.Forms.Button();
-            this.label12 = new System.Windows.Forms.Label();
-            this.txtTransactionId = new System.Windows.Forms.TextBox();
-            this.btnGetKeyword = new System.Windows.Forms.Button();
-            this.label10 = new System.Windows.Forms.Label();
-            this.txtGetKeyword = new System.Windows.Forms.TextBox();
-            this.label13 = new System.Windows.Forms.Label();
-            this.txtVersionByte = new System.Windows.Forms.TextBox();
-            this.label14 = new System.Windows.Forms.Label();
-            this.lblTotalTime = new System.Windows.Forms.Label();
-            this.lblKbs = new System.Windows.Forms.Label();
-            this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.rootid = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.messagecount = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.is_signed = new System.Windows.Forms.DataGridViewCheckBoxColumn();
@@ -87,6 +75,20 @@ namespace SUP
             this.signature = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.confirmations = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.buildtime = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.btnGetTransactionId = new System.Windows.Forms.Button();
+            this.label12 = new System.Windows.Forms.Label();
+            this.txtTransactionId = new System.Windows.Forms.TextBox();
+            this.btnGetKeyword = new System.Windows.Forms.Button();
+            this.label10 = new System.Windows.Forms.Label();
+            this.txtGetKeyword = new System.Windows.Forms.TextBox();
+            this.label13 = new System.Windows.Forms.Label();
+            this.txtVersionByte = new System.Windows.Forms.TextBox();
+            this.label14 = new System.Windows.Forms.Label();
+            this.lblTotalTime = new System.Windows.Forms.Label();
+            this.lblKbs = new System.Windows.Forms.Label();
+            this.splitContainer1 = new System.Windows.Forms.SplitContainer();
+            this.button2 = new System.Windows.Forms.Button();
+            this.button1 = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.dgTransactions)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
@@ -96,37 +98,37 @@ namespace SUP
             // 
             // btnPut
             // 
-            this.btnPut.Location = new System.Drawing.Point(997, 52);
+            this.btnPut.Location = new System.Drawing.Point(972, 50);
             this.btnPut.Name = "btnPut";
             this.btnPut.Size = new System.Drawing.Size(75, 23);
             this.btnPut.TabIndex = 0;
             this.btnPut.Text = "Put";
             this.btnPut.UseVisualStyleBackColor = true;
-            this.btnPut.Click += new System.EventHandler(this.btnPut_Click);
+            this.btnPut.Click += new System.EventHandler(this.BtnPut_Click);
             // 
             // btnGet
             // 
-            this.btnGet.Location = new System.Drawing.Point(997, 125);
+            this.btnGet.Location = new System.Drawing.Point(972, 123);
             this.btnGet.Name = "btnGet";
             this.btnGet.Size = new System.Drawing.Size(75, 23);
             this.btnGet.TabIndex = 1;
             this.btnGet.Text = "Get";
             this.btnGet.UseVisualStyleBackColor = true;
-            this.btnGet.Click += new System.EventHandler(this.btnGet_Click);
+            this.btnGet.Click += new System.EventHandler(this.BtnGet_Click);
             // 
             // btnDelete
             // 
-            this.btnDelete.Location = new System.Drawing.Point(997, 185);
+            this.btnDelete.Location = new System.Drawing.Point(972, 179);
             this.btnDelete.Name = "btnDelete";
             this.btnDelete.Size = new System.Drawing.Size(75, 23);
             this.btnDelete.TabIndex = 2;
             this.btnDelete.Text = "delete";
             this.btnDelete.UseVisualStyleBackColor = true;
-            this.btnDelete.Click += new System.EventHandler(this.btnDelete_Click);
+            this.btnDelete.Click += new System.EventHandler(this.BtnDelete_Click);
             // 
             // txtPutKey
             // 
-            this.txtPutKey.Location = new System.Drawing.Point(394, 34);
+            this.txtPutKey.Location = new System.Drawing.Point(369, 32);
             this.txtPutKey.Multiline = true;
             this.txtPutKey.Name = "txtPutKey";
             this.txtPutKey.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
@@ -136,7 +138,7 @@ namespace SUP
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(391, 17);
+            this.label1.Location = new System.Drawing.Point(366, 15);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(65, 13);
             this.label1.TabIndex = 4;
@@ -145,7 +147,7 @@ namespace SUP
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(391, 89);
+            this.label2.Location = new System.Drawing.Point(366, 87);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(65, 13);
             this.label2.TabIndex = 6;
@@ -153,7 +155,7 @@ namespace SUP
             // 
             // txtGetKey
             // 
-            this.txtGetKey.Location = new System.Drawing.Point(394, 105);
+            this.txtGetKey.Location = new System.Drawing.Point(369, 103);
             this.txtGetKey.Multiline = true;
             this.txtGetKey.Name = "txtGetKey";
             this.txtGetKey.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
@@ -163,7 +165,7 @@ namespace SUP
             // label3
             // 
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(639, 162);
+            this.label3.Location = new System.Drawing.Point(614, 156);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(65, 13);
             this.label3.TabIndex = 8;
@@ -171,7 +173,7 @@ namespace SUP
             // 
             // txtDeleteKey
             // 
-            this.txtDeleteKey.Location = new System.Drawing.Point(642, 188);
+            this.txtDeleteKey.Location = new System.Drawing.Point(617, 182);
             this.txtDeleteKey.Name = "txtDeleteKey";
             this.txtDeleteKey.Size = new System.Drawing.Size(350, 20);
             this.txtDeleteKey.TabIndex = 7;
@@ -179,7 +181,7 @@ namespace SUP
             // label4
             // 
             this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(639, 18);
+            this.label4.Location = new System.Drawing.Point(614, 16);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(34, 13);
             this.label4.TabIndex = 10;
@@ -187,7 +189,7 @@ namespace SUP
             // 
             // txtPutValue
             // 
-            this.txtPutValue.Location = new System.Drawing.Point(642, 34);
+            this.txtPutValue.Location = new System.Drawing.Point(617, 32);
             this.txtPutValue.Multiline = true;
             this.txtPutValue.Name = "txtPutValue";
             this.txtPutValue.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
@@ -197,7 +199,7 @@ namespace SUP
             // label5
             // 
             this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(639, 82);
+            this.label5.Location = new System.Drawing.Point(614, 80);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(34, 13);
             this.label5.TabIndex = 12;
@@ -205,7 +207,7 @@ namespace SUP
             // 
             // txtGetValue
             // 
-            this.txtGetValue.Location = new System.Drawing.Point(642, 105);
+            this.txtGetValue.Location = new System.Drawing.Point(617, 103);
             this.txtGetValue.Multiline = true;
             this.txtGetValue.Name = "txtGetValue";
             this.txtGetValue.ReadOnly = true;
@@ -223,7 +225,7 @@ namespace SUP
             "COL",
             "OBJ",
             "LOGS"});
-            this.lbTableName.Location = new System.Drawing.Point(550, 178);
+            this.lbTableName.Location = new System.Drawing.Point(525, 172);
             this.lbTableName.Name = "lbTableName";
             this.lbTableName.ScrollAlwaysVisible = true;
             this.lbTableName.Size = new System.Drawing.Size(83, 30);
@@ -232,7 +234,7 @@ namespace SUP
             // label6
             // 
             this.label6.AutoSize = true;
-            this.label6.Location = new System.Drawing.Point(547, 162);
+            this.label6.Location = new System.Drawing.Point(522, 156);
             this.label6.Name = "label6";
             this.label6.Size = new System.Drawing.Size(74, 13);
             this.label6.TabIndex = 14;
@@ -240,7 +242,7 @@ namespace SUP
             // 
             // txtLogin
             // 
-            this.txtLogin.Location = new System.Drawing.Point(27, 34);
+            this.txtLogin.Location = new System.Drawing.Point(13, 34);
             this.txtLogin.Name = "txtLogin";
             this.txtLogin.Size = new System.Drawing.Size(111, 20);
             this.txtLogin.TabIndex = 15;
@@ -249,7 +251,7 @@ namespace SUP
             // label7
             // 
             this.label7.AutoSize = true;
-            this.label7.Location = new System.Drawing.Point(27, 17);
+            this.label7.Location = new System.Drawing.Point(13, 17);
             this.label7.Name = "label7";
             this.label7.Size = new System.Drawing.Size(29, 13);
             this.label7.TabIndex = 16;
@@ -258,7 +260,7 @@ namespace SUP
             // label8
             // 
             this.label8.AutoSize = true;
-            this.label8.Location = new System.Drawing.Point(146, 17);
+            this.label8.Location = new System.Drawing.Point(132, 17);
             this.label8.Name = "label8";
             this.label8.Size = new System.Drawing.Size(52, 13);
             this.label8.TabIndex = 18;
@@ -266,7 +268,7 @@ namespace SUP
             // 
             // txtPassword
             // 
-            this.txtPassword.Location = new System.Drawing.Point(144, 34);
+            this.txtPassword.Location = new System.Drawing.Point(130, 34);
             this.txtPassword.Name = "txtPassword";
             this.txtPassword.Size = new System.Drawing.Size(121, 20);
             this.txtPassword.TabIndex = 17;
@@ -275,7 +277,7 @@ namespace SUP
             // label9
             // 
             this.label9.AutoSize = true;
-            this.label9.Location = new System.Drawing.Point(28, 62);
+            this.label9.Location = new System.Drawing.Point(14, 62);
             this.label9.Name = "label9";
             this.label9.Size = new System.Drawing.Size(18, 13);
             this.label9.TabIndex = 20;
@@ -283,7 +285,7 @@ namespace SUP
             // 
             // txtUrl
             // 
-            this.txtUrl.Location = new System.Drawing.Point(28, 75);
+            this.txtUrl.Location = new System.Drawing.Point(14, 75);
             this.txtUrl.Name = "txtUrl";
             this.txtUrl.Size = new System.Drawing.Size(170, 20);
             this.txtUrl.TabIndex = 19;
@@ -291,18 +293,18 @@ namespace SUP
             // 
             // btnTestConnection
             // 
-            this.btnTestConnection.Location = new System.Drawing.Point(271, 32);
+            this.btnTestConnection.Location = new System.Drawing.Point(257, 32);
             this.btnTestConnection.Name = "btnTestConnection";
             this.btnTestConnection.Size = new System.Drawing.Size(97, 23);
             this.btnTestConnection.TabIndex = 21;
             this.btnTestConnection.Text = "Test Connection";
             this.btnTestConnection.UseVisualStyleBackColor = true;
-            this.btnTestConnection.Click += new System.EventHandler(this.btnTestConnection_Click);
+            this.btnTestConnection.Click += new System.EventHandler(this.BtnTestConnection_Click);
             // 
             // lblTotalBytes
             // 
             this.lblTotalBytes.AutoSize = true;
-            this.lblTotalBytes.Location = new System.Drawing.Point(768, 229);
+            this.lblTotalBytes.Location = new System.Drawing.Point(759, 213);
             this.lblTotalBytes.Name = "lblTotalBytes";
             this.lblTotalBytes.Size = new System.Drawing.Size(60, 13);
             this.lblTotalBytes.TabIndex = 23;
@@ -310,14 +312,14 @@ namespace SUP
             // 
             // txtbalance
             // 
-            this.txtbalance.Location = new System.Drawing.Point(271, 75);
+            this.txtbalance.Location = new System.Drawing.Point(257, 75);
             this.txtbalance.Name = "txtbalance";
             this.txtbalance.Size = new System.Drawing.Size(97, 20);
             this.txtbalance.TabIndex = 22;
             // 
             // txtSearchAddress
             // 
-            this.txtSearchAddress.Location = new System.Drawing.Point(27, 187);
+            this.txtSearchAddress.Location = new System.Drawing.Point(10, 166);
             this.txtSearchAddress.Name = "txtSearchAddress";
             this.txtSearchAddress.Size = new System.Drawing.Size(238, 20);
             this.txtSearchAddress.TabIndex = 25;
@@ -326,21 +328,21 @@ namespace SUP
             // label11
             // 
             this.label11.AutoSize = true;
-            this.label11.Location = new System.Drawing.Point(24, 172);
+            this.label11.Location = new System.Drawing.Point(7, 151);
             this.label11.Name = "label11";
-            this.label11.Size = new System.Drawing.Size(65, 13);
+            this.label11.Size = new System.Drawing.Size(45, 13);
             this.label11.TabIndex = 26;
-            this.label11.Text = "Get Address";
+            this.label11.Text = "Address";
             // 
             // btnSearch
             // 
-            this.btnSearch.Location = new System.Drawing.Point(271, 185);
+            this.btnSearch.Location = new System.Drawing.Point(254, 164);
             this.btnSearch.Name = "btnSearch";
             this.btnSearch.Size = new System.Drawing.Size(58, 23);
             this.btnSearch.TabIndex = 27;
             this.btnSearch.Text = "Get";
             this.btnSearch.UseVisualStyleBackColor = true;
-            this.btnSearch.Click += new System.EventHandler(this.btnSearch_Click);
+            this.btnSearch.Click += new System.EventHandler(this.BtnSearch_Click);
             // 
             // dgTransactions
             // 
@@ -387,163 +389,8 @@ namespace SUP
             dataGridViewCellStyle4.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
             dataGridViewCellStyle4.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
             this.dgTransactions.RowHeadersDefaultCellStyle = dataGridViewCellStyle4;
-            this.dgTransactions.Size = new System.Drawing.Size(1085, 147);
+            this.dgTransactions.Size = new System.Drawing.Size(1056, 87);
             this.dgTransactions.TabIndex = 30;
-            // 
-            // btnGetTransactionId
-            // 
-            this.btnGetTransactionId.Location = new System.Drawing.Point(456, 224);
-            this.btnGetTransactionId.Name = "btnGetTransactionId";
-            this.btnGetTransactionId.Size = new System.Drawing.Size(58, 23);
-            this.btnGetTransactionId.TabIndex = 33;
-            this.btnGetTransactionId.Text = "Get";
-            this.btnGetTransactionId.UseVisualStyleBackColor = true;
-            this.btnGetTransactionId.Click += new System.EventHandler(this.btnGetTransactionId_Click);
-            // 
-            // label12
-            // 
-            this.label12.AutoSize = true;
-            this.label12.Location = new System.Drawing.Point(28, 210);
-            this.label12.Name = "label12";
-            this.label12.Size = new System.Drawing.Size(95, 13);
-            this.label12.TabIndex = 32;
-            this.label12.Text = "Get Transaction Id";
-            // 
-            // txtTransactionId
-            // 
-            this.txtTransactionId.Location = new System.Drawing.Point(27, 226);
-            this.txtTransactionId.Name = "txtTransactionId";
-            this.txtTransactionId.Size = new System.Drawing.Size(423, 20);
-            this.txtTransactionId.TabIndex = 31;
-            this.txtTransactionId.Text = "7223070fbc3706856e90701b62a8bfb3f5a618dc13d64d8f029260cba187ca26";
-            // 
-            // btnGetKeyword
-            // 
-            this.btnGetKeyword.Location = new System.Drawing.Point(271, 147);
-            this.btnGetKeyword.Name = "btnGetKeyword";
-            this.btnGetKeyword.Size = new System.Drawing.Size(58, 23);
-            this.btnGetKeyword.TabIndex = 36;
-            this.btnGetKeyword.Text = "Get";
-            this.btnGetKeyword.UseVisualStyleBackColor = true;
-            this.btnGetKeyword.Click += new System.EventHandler(this.btnGetKeyword_Click);
-            // 
-            // label10
-            // 
-            this.label10.AutoSize = true;
-            this.label10.Location = new System.Drawing.Point(24, 134);
-            this.label10.Name = "label10";
-            this.label10.Size = new System.Drawing.Size(68, 13);
-            this.label10.TabIndex = 35;
-            this.label10.Text = "Get Keyword";
-            // 
-            // txtGetKeyword
-            // 
-            this.txtGetKeyword.Location = new System.Drawing.Point(27, 149);
-            this.txtGetKeyword.Name = "txtGetKeyword";
-            this.txtGetKeyword.Size = new System.Drawing.Size(238, 20);
-            this.txtGetKeyword.TabIndex = 34;
-            this.txtGetKeyword.Text = "HugPuddle";
-            // 
-            // label13
-            // 
-            this.label13.AutoSize = true;
-            this.label13.Location = new System.Drawing.Point(201, 59);
-            this.label13.Name = "label13";
-            this.label13.Size = new System.Drawing.Size(27, 13);
-            this.label13.TabIndex = 38;
-            this.label13.Text = "byte";
-            // 
-            // txtVersionByte
-            // 
-            this.txtVersionByte.Location = new System.Drawing.Point(204, 75);
-            this.txtVersionByte.Name = "txtVersionByte";
-            this.txtVersionByte.Size = new System.Drawing.Size(61, 20);
-            this.txtVersionByte.TabIndex = 37;
-            this.txtVersionByte.Text = "111";
-            // 
-            // label14
-            // 
-            this.label14.AutoSize = true;
-            this.label14.Location = new System.Drawing.Point(268, 59);
-            this.label14.Name = "label14";
-            this.label14.Size = new System.Drawing.Size(45, 13);
-            this.label14.TabIndex = 39;
-            this.label14.Text = "balance";
-            // 
-            // lblTotalTime
-            // 
-            this.lblTotalTime.AutoSize = true;
-            this.lblTotalTime.Location = new System.Drawing.Point(564, 229);
-            this.lblTotalTime.Name = "lblTotalTime";
-            this.lblTotalTime.Size = new System.Drawing.Size(57, 13);
-            this.lblTotalTime.TabIndex = 40;
-            this.lblTotalTime.Text = "Total Time";
-            // 
-            // lblKbs
-            // 
-            this.lblKbs.AutoSize = true;
-            this.lblKbs.Location = new System.Drawing.Point(937, 229);
-            this.lblKbs.Name = "lblKbs";
-            this.lblKbs.Size = new System.Drawing.Size(30, 13);
-            this.lblKbs.TabIndex = 41;
-            this.lblKbs.Text = "Kb/s";
-            // 
-            // splitContainer1
-            // 
-            this.splitContainer1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.splitContainer1.Location = new System.Drawing.Point(0, 0);
-            this.splitContainer1.Name = "splitContainer1";
-            this.splitContainer1.Orientation = System.Windows.Forms.Orientation.Horizontal;
-            // 
-            // splitContainer1.Panel1
-            // 
-            this.splitContainer1.Panel1.Controls.Add(this.txtPutValue);
-            this.splitContainer1.Panel1.Controls.Add(this.lblKbs);
-            this.splitContainer1.Panel1.Controls.Add(this.btnPut);
-            this.splitContainer1.Panel1.Controls.Add(this.lblTotalTime);
-            this.splitContainer1.Panel1.Controls.Add(this.btnGet);
-            this.splitContainer1.Panel1.Controls.Add(this.label14);
-            this.splitContainer1.Panel1.Controls.Add(this.btnDelete);
-            this.splitContainer1.Panel1.Controls.Add(this.label13);
-            this.splitContainer1.Panel1.Controls.Add(this.txtPutKey);
-            this.splitContainer1.Panel1.Controls.Add(this.txtVersionByte);
-            this.splitContainer1.Panel1.Controls.Add(this.label1);
-            this.splitContainer1.Panel1.Controls.Add(this.btnGetKeyword);
-            this.splitContainer1.Panel1.Controls.Add(this.txtGetKey);
-            this.splitContainer1.Panel1.Controls.Add(this.label10);
-            this.splitContainer1.Panel1.Controls.Add(this.label2);
-            this.splitContainer1.Panel1.Controls.Add(this.txtGetKeyword);
-            this.splitContainer1.Panel1.Controls.Add(this.txtDeleteKey);
-            this.splitContainer1.Panel1.Controls.Add(this.btnGetTransactionId);
-            this.splitContainer1.Panel1.Controls.Add(this.label3);
-            this.splitContainer1.Panel1.Controls.Add(this.label12);
-            this.splitContainer1.Panel1.Controls.Add(this.label4);
-            this.splitContainer1.Panel1.Controls.Add(this.txtTransactionId);
-            this.splitContainer1.Panel1.Controls.Add(this.txtGetValue);
-            this.splitContainer1.Panel1.Controls.Add(this.btnSearch);
-            this.splitContainer1.Panel1.Controls.Add(this.label5);
-            this.splitContainer1.Panel1.Controls.Add(this.label11);
-            this.splitContainer1.Panel1.Controls.Add(this.lbTableName);
-            this.splitContainer1.Panel1.Controls.Add(this.txtSearchAddress);
-            this.splitContainer1.Panel1.Controls.Add(this.label6);
-            this.splitContainer1.Panel1.Controls.Add(this.lblTotalBytes);
-            this.splitContainer1.Panel1.Controls.Add(this.txtLogin);
-            this.splitContainer1.Panel1.Controls.Add(this.txtbalance);
-            this.splitContainer1.Panel1.Controls.Add(this.label7);
-            this.splitContainer1.Panel1.Controls.Add(this.btnTestConnection);
-            this.splitContainer1.Panel1.Controls.Add(this.txtPassword);
-            this.splitContainer1.Panel1.Controls.Add(this.label9);
-            this.splitContainer1.Panel1.Controls.Add(this.label8);
-            this.splitContainer1.Panel1.Controls.Add(this.txtUrl);
-            this.splitContainer1.Panel1MinSize = 0;
-            // 
-            // splitContainer1.Panel2
-            // 
-            this.splitContainer1.Panel2.Controls.Add(this.dgTransactions);
-            this.splitContainer1.Size = new System.Drawing.Size(1085, 422);
-            this.splitContainer1.SplitterDistance = 255;
-            this.splitContainer1.SplitterWidth = 20;
-            this.splitContainer1.TabIndex = 42;
             // 
             // rootid
             // 
@@ -618,12 +465,190 @@ namespace SUP
             this.buildtime.HeaderText = "Build Time";
             this.buildtime.Name = "buildtime";
             // 
+            // btnGetTransactionId
+            // 
+            this.btnGetTransactionId.Location = new System.Drawing.Point(439, 203);
+            this.btnGetTransactionId.Name = "btnGetTransactionId";
+            this.btnGetTransactionId.Size = new System.Drawing.Size(58, 23);
+            this.btnGetTransactionId.TabIndex = 33;
+            this.btnGetTransactionId.Text = "Get";
+            this.btnGetTransactionId.UseVisualStyleBackColor = true;
+            this.btnGetTransactionId.Click += new System.EventHandler(this.BtnGetTransactionId_Click);
+            // 
+            // label12
+            // 
+            this.label12.AutoSize = true;
+            this.label12.Location = new System.Drawing.Point(11, 189);
+            this.label12.Name = "label12";
+            this.label12.Size = new System.Drawing.Size(75, 13);
+            this.label12.TabIndex = 32;
+            this.label12.Text = "Transaction Id";
+            // 
+            // txtTransactionId
+            // 
+            this.txtTransactionId.Location = new System.Drawing.Point(10, 205);
+            this.txtTransactionId.Name = "txtTransactionId";
+            this.txtTransactionId.Size = new System.Drawing.Size(423, 20);
+            this.txtTransactionId.TabIndex = 31;
+            this.txtTransactionId.Text = "7223070fbc3706856e90701b62a8bfb3f5a618dc13d64d8f029260cba187ca26";
+            // 
+            // btnGetKeyword
+            // 
+            this.btnGetKeyword.Location = new System.Drawing.Point(254, 126);
+            this.btnGetKeyword.Name = "btnGetKeyword";
+            this.btnGetKeyword.Size = new System.Drawing.Size(58, 23);
+            this.btnGetKeyword.TabIndex = 36;
+            this.btnGetKeyword.Text = "Get";
+            this.btnGetKeyword.UseVisualStyleBackColor = true;
+            this.btnGetKeyword.Click += new System.EventHandler(this.BtnGetKeyword_Click);
+            // 
+            // label10
+            // 
+            this.label10.AutoSize = true;
+            this.label10.Location = new System.Drawing.Point(7, 113);
+            this.label10.Name = "label10";
+            this.label10.Size = new System.Drawing.Size(48, 13);
+            this.label10.TabIndex = 35;
+            this.label10.Text = "Keyword";
+            // 
+            // txtGetKeyword
+            // 
+            this.txtGetKeyword.Location = new System.Drawing.Point(10, 128);
+            this.txtGetKeyword.Name = "txtGetKeyword";
+            this.txtGetKeyword.Size = new System.Drawing.Size(238, 20);
+            this.txtGetKeyword.TabIndex = 34;
+            this.txtGetKeyword.Text = "HugPuddle";
+            // 
+            // label13
+            // 
+            this.label13.AutoSize = true;
+            this.label13.Location = new System.Drawing.Point(187, 59);
+            this.label13.Name = "label13";
+            this.label13.Size = new System.Drawing.Size(27, 13);
+            this.label13.TabIndex = 38;
+            this.label13.Text = "byte";
+            // 
+            // txtVersionByte
+            // 
+            this.txtVersionByte.Location = new System.Drawing.Point(190, 75);
+            this.txtVersionByte.Name = "txtVersionByte";
+            this.txtVersionByte.Size = new System.Drawing.Size(61, 20);
+            this.txtVersionByte.TabIndex = 37;
+            this.txtVersionByte.Text = "111";
+            // 
+            // label14
+            // 
+            this.label14.AutoSize = true;
+            this.label14.Location = new System.Drawing.Point(254, 59);
+            this.label14.Name = "label14";
+            this.label14.Size = new System.Drawing.Size(45, 13);
+            this.label14.TabIndex = 39;
+            this.label14.Text = "balance";
+            // 
+            // lblTotalTime
+            // 
+            this.lblTotalTime.AutoSize = true;
+            this.lblTotalTime.Location = new System.Drawing.Point(555, 213);
+            this.lblTotalTime.Name = "lblTotalTime";
+            this.lblTotalTime.Size = new System.Drawing.Size(57, 13);
+            this.lblTotalTime.TabIndex = 40;
+            this.lblTotalTime.Text = "Total Time";
+            // 
+            // lblKbs
+            // 
+            this.lblKbs.AutoSize = true;
+            this.lblKbs.Location = new System.Drawing.Point(928, 213);
+            this.lblKbs.Name = "lblKbs";
+            this.lblKbs.Size = new System.Drawing.Size(30, 13);
+            this.lblKbs.TabIndex = 41;
+            this.lblKbs.Text = "Kb/s";
+            // 
+            // splitContainer1
+            // 
+            this.splitContainer1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.splitContainer1.Location = new System.Drawing.Point(0, 0);
+            this.splitContainer1.Name = "splitContainer1";
+            this.splitContainer1.Orientation = System.Windows.Forms.Orientation.Horizontal;
+            // 
+            // splitContainer1.Panel1
+            // 
+            this.splitContainer1.Panel1.Controls.Add(this.button2);
+            this.splitContainer1.Panel1.Controls.Add(this.button1);
+            this.splitContainer1.Panel1.Controls.Add(this.txtPutValue);
+            this.splitContainer1.Panel1.Controls.Add(this.lblKbs);
+            this.splitContainer1.Panel1.Controls.Add(this.btnPut);
+            this.splitContainer1.Panel1.Controls.Add(this.lblTotalTime);
+            this.splitContainer1.Panel1.Controls.Add(this.btnGet);
+            this.splitContainer1.Panel1.Controls.Add(this.label14);
+            this.splitContainer1.Panel1.Controls.Add(this.btnDelete);
+            this.splitContainer1.Panel1.Controls.Add(this.label13);
+            this.splitContainer1.Panel1.Controls.Add(this.txtPutKey);
+            this.splitContainer1.Panel1.Controls.Add(this.txtVersionByte);
+            this.splitContainer1.Panel1.Controls.Add(this.label1);
+            this.splitContainer1.Panel1.Controls.Add(this.btnGetKeyword);
+            this.splitContainer1.Panel1.Controls.Add(this.txtGetKey);
+            this.splitContainer1.Panel1.Controls.Add(this.label10);
+            this.splitContainer1.Panel1.Controls.Add(this.label2);
+            this.splitContainer1.Panel1.Controls.Add(this.txtGetKeyword);
+            this.splitContainer1.Panel1.Controls.Add(this.txtDeleteKey);
+            this.splitContainer1.Panel1.Controls.Add(this.btnGetTransactionId);
+            this.splitContainer1.Panel1.Controls.Add(this.label3);
+            this.splitContainer1.Panel1.Controls.Add(this.label12);
+            this.splitContainer1.Panel1.Controls.Add(this.label4);
+            this.splitContainer1.Panel1.Controls.Add(this.txtTransactionId);
+            this.splitContainer1.Panel1.Controls.Add(this.txtGetValue);
+            this.splitContainer1.Panel1.Controls.Add(this.btnSearch);
+            this.splitContainer1.Panel1.Controls.Add(this.label5);
+            this.splitContainer1.Panel1.Controls.Add(this.label11);
+            this.splitContainer1.Panel1.Controls.Add(this.lbTableName);
+            this.splitContainer1.Panel1.Controls.Add(this.txtSearchAddress);
+            this.splitContainer1.Panel1.Controls.Add(this.label6);
+            this.splitContainer1.Panel1.Controls.Add(this.lblTotalBytes);
+            this.splitContainer1.Panel1.Controls.Add(this.txtLogin);
+            this.splitContainer1.Panel1.Controls.Add(this.txtbalance);
+            this.splitContainer1.Panel1.Controls.Add(this.label7);
+            this.splitContainer1.Panel1.Controls.Add(this.btnTestConnection);
+            this.splitContainer1.Panel1.Controls.Add(this.txtPassword);
+            this.splitContainer1.Panel1.Controls.Add(this.label9);
+            this.splitContainer1.Panel1.Controls.Add(this.label8);
+            this.splitContainer1.Panel1.Controls.Add(this.txtUrl);
+            this.splitContainer1.Panel1MinSize = 0;
+            // 
+            // splitContainer1.Panel2
+            // 
+            this.splitContainer1.Panel2.Controls.Add(this.dgTransactions);
+            this.splitContainer1.Size = new System.Drawing.Size(1056, 335);
+            this.splitContainer1.SplitterDistance = 228;
+            this.splitContainer1.SplitterWidth = 20;
+            this.splitContainer1.TabIndex = 42;
+            // 
+            // button2
+            // 
+            this.button2.Location = new System.Drawing.Point(385, 162);
+            this.button2.Name = "button2";
+            this.button2.Size = new System.Drawing.Size(60, 23);
+            this.button2.TabIndex = 43;
+            this.button2.Text = "decrypt";
+            this.button2.UseVisualStyleBackColor = true;
+            this.button2.Click += new System.EventHandler(this.button2_Click);
+            // 
+            // button1
+            // 
+            this.button1.Location = new System.Drawing.Point(319, 162);
+            this.button1.Name = "button1";
+            this.button1.Size = new System.Drawing.Size(60, 23);
+            this.button1.TabIndex = 42;
+            this.button1.Text = "encrypt";
+            this.button1.UseVisualStyleBackColor = true;
+            this.button1.Click += new System.EventHandler(this.Button1_Click);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1085, 422);
+            this.ClientSize = new System.Drawing.Size(1056, 335);
             this.Controls.Add(this.splitContainer1);
+            this.MinimumSize = new System.Drawing.Size(1072, 374);
             this.Name = "Form1";
             this.Text = "Sup!? Just testing ";
             ((System.ComponentModel.ISupportInitialize)(this.dgTransactions)).EndInit();
@@ -691,6 +716,8 @@ namespace SUP
         private DataGridViewTextBoxColumn signature;
         private DataGridViewTextBoxColumn confirmations;
         private DataGridViewTextBoxColumn buildtime;
+        private Button button1;
+        private Button button2;
     }
 }
 
