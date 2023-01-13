@@ -485,7 +485,7 @@ namespace SUP.P2FK
 
                     if (root != null && root.TotalByteSize > 0)
                     {
-                        root.Id = rootId;
+                        root.Id = rootId + skip;
                         concurrentData[rootId] = root;
                     }
                 });
@@ -585,7 +585,6 @@ namespace SUP.P2FK
                 joinedFileBytes = joinedBytes;
 
             }
-            System.IO.File.WriteAllBytes("joined-files.bin", joinedFileBytes);
             return joinedFileBytes;
         }
         public static byte[] GetRootBytesByMessage(string[] messages)
@@ -596,13 +595,12 @@ namespace SUP.P2FK
             {
                 byte[] separator1 = new byte[] { separators[new Random().Next(0, separators.Length)] };
                 byte[] separator2 = new byte[] { separators[new Random().Next(0, separators.Length)] };
-                byte[] messageBytes = System.IO.File.ReadAllBytes(message);
+                byte[] messageBytes = Encoding.ASCII.GetBytes(message);
                 byte[] messageSizeBytes = Encoding.ASCII.GetBytes(messageBytes.Length.ToString());
 
                 byte[] joinedBytes = joinedMessageBytes.Concat(separator1).Concat(messageSizeBytes).Concat(separator2).Concat(messageBytes).ToArray();
                 joinedMessageBytes = joinedBytes;
             }
-            System.IO.File.WriteAllBytes("joined-messages.bin", joinedMessageBytes);
             return joinedMessageBytes;
         }
         static string GetTransactionIdByHexString(string transactionHex)
@@ -646,13 +644,11 @@ namespace SUP.P2FK
         public static byte[] DecryptRootBytes(string username, string password, string url, string address, byte[] rootbytes)
         {
             byte[] separators = new byte[] { 92, 47, 58, 42, 63, 34, 60, 62, 124 };
-            byte[] input = rootbytes;
             int secondIndex = -1;
             int count = 0;
-
-            for (int i = 0; i < input.Length; i++)
+            for (int i = 0; i < rootbytes.Length; i++)
             {
-                if (separators.Contains(input[i]))
+                if (separators.Contains(rootbytes[i]))
                 {
                     count++;
                     if (count == 2)
@@ -662,32 +658,24 @@ namespace SUP.P2FK
                     }
                 }
             }
-            byte[] output = new byte[input.Length - (secondIndex + 1)];
-            Array.Copy(input, secondIndex + 1, output, 0, output.Length);
-            rootbytes = output;
-
+            byte[] output = new byte[rootbytes.Length - (secondIndex + 1)];
+            Array.Copy(rootbytes, secondIndex + 1, output, 0, output.Length);
             NetworkCredential credentials = new NetworkCredential(username, password);
             RPCClient rpcClient = new RPCClient(credentials, new Uri(url));
             string privKeyHex;
             try
             {
                 privKeyHex = BitConverter.ToString(Base58.Decode(rpcClient.SendCommand("dumpprivkey", parameters: address).ResultString)).Replace("-", "");
-
             }
             catch (Exception ex)
             {
                 return Encoding.ASCII.GetBytes("?" + ex.Message.Length + "?" + ex.Message.ToString());
             }
-
-
             privKeyHex = privKeyHex.Substring(2, 64);
             BigInteger privateKey = Hex.HexToBigInteger(privKeyHex);
-
             ECEncryption encryption = new ECEncryption();
-            byte[] decrypted = encryption.Decrypt(privateKey, rootbytes);
-
+            byte[] decrypted = encryption.Decrypt(privateKey, output);
             return decrypted;
-
         }
         public static byte[] EncryptRootBytes(string username, string password, string url, string address, byte[] rootbytes)
         {
@@ -697,33 +685,23 @@ namespace SUP.P2FK
             try
             {
                 privKeyHex = BitConverter.ToString(Base58.Decode(rpcClient.SendCommand("dumpprivkey", parameters: address).ResultString)).Replace("-", "");
-
             }
             catch (Exception ex)
             {
                 return Encoding.ASCII.GetBytes("?" + ex.Message.Length + "?" + ex.Message.ToString());
             }
-
-
             privKeyHex = privKeyHex.Substring(2, 64);
             BigInteger privateKey = Hex.HexToBigInteger(privKeyHex);
             ECPoint publicKey = Secp256k1.G.Multiply(privateKey);
             ECEncryption encryption = new ECEncryption();
             byte[] encrypted = encryption.Encrypt(publicKey, rootbytes);
-
             byte[] separators = new byte[] { 92, 47, 58, 42, 63, 34, 60, 62, 124 };
-            byte[] joinedBytes = new byte[0];
             byte[] fileNameBytes = Encoding.ASCII.GetBytes("SEC");
             byte[] separator1 = new byte[] { separators[new Random().Next(0, separators.Length)] };
             byte[] separator2 = new byte[] { separators[new Random().Next(0, separators.Length)] };
-            byte[] fileBytes = encrypted;
-            byte[] fileSizeBytes = Encoding.ASCII.GetBytes(fileBytes.Length.ToString());
-            joinedBytes = joinedBytes.Concat(fileNameBytes).Concat(separator1).Concat(fileSizeBytes).Concat(separator2).Concat(fileBytes).ToArray();
-
-
-            System.IO.File.WriteAllBytes("encrypted-files.bin", joinedBytes);
+            byte[] fileSizeBytes = Encoding.ASCII.GetBytes(encrypted.Length.ToString());
+            byte[] joinedBytes = fileNameBytes.Concat(separator1).Concat(fileSizeBytes).Concat(separator2).Concat(encrypted).ToArray();
             return joinedBytes;
-
         }
         private static void CacheRoot(Root root)
         {

@@ -178,6 +178,7 @@
     <Compile Include="P2FK\ECPoint.cs" />
     <Compile Include="P2FK\Hash160.cs" />
     <Compile Include="P2FK\Hex.cs" />
+    <Compile Include="P2FK\OBJ.cs" />
     <Compile Include="P2FK\RIPEMD160.cs" />
     <Compile Include="P2FK\Secp256k1.cs" />
     <Compile Include="Program.cs" />

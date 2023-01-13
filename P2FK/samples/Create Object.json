@@ -1,18 +1,9 @@
 {
-  "col": "1:0",
-  "uri": "41e38cda3af5aa977bc9aff7908c853279f65a5f49dd6e118a9753e9b1b35cd9/Flowers of war no were but down.jpg",
-  "img": "41e38cda3af5aa977bc9aff7908c853279f65a5f49dd6e118a9753e9b1b35cd9/Flowers of war no were but down.jpg",
-  "nme": "Flowers of war no were but down",
-  "dsc": "What would extraterrestrial beings think of our warring behaviour?\\n*NOTE: Owners of this object can collect Flowers of War Never End",
-  "lic": "No License / All Rights Reserved",
-  "cre": {
-    "0": 900,
-    "2": 100
-  },
-  "roy": {
-    "0": 7,
-    "2": 3
-  },
-  "max": 2,
-  "s": "tl08Hrc3"
+  "urn": "41e38cda3af5aa977bc9aff7908c853279f65a5f49dd6e118a9753e9b1b35cd9/7d656af0d23a52be2ce033e986eba7c28108efef60937ed5930da3c6c9b5b56a/CIA-RDP96-00789R003000110001-6.pdf",
+  "img": "BTC:3ff52882c93420c8fe4a90f6fa94b2a563316b5e7b83afe2ddd5bcadc86d3821/FakeUFO.png",
+  "nme": "STARGATE",
+  "dsc": "The enclosed information is an interim response to the FY 1994 Defense Authorization Conference Classified Annex Joint Explanatory Statement, which requests a program plan for Project STARGATE.",
+  "lic": "",
+  "cre": [ 1 ],
+  "own": { "0": 100 }
 }
