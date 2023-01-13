@@ -389,7 +389,7 @@ namespace SUP
             dataGridViewCellStyle4.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
             dataGridViewCellStyle4.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
             this.dgTransactions.RowHeadersDefaultCellStyle = dataGridViewCellStyle4;
-            this.dgTransactions.Size = new System.Drawing.Size(1056, 87);
+            this.dgTransactions.Size = new System.Drawing.Size(1056, 284);
             this.dgTransactions.TabIndex = 30;
             // 
             // rootid
@@ -617,8 +617,8 @@ namespace SUP
             // splitContainer1.Panel2
             // 
             this.splitContainer1.Panel2.Controls.Add(this.dgTransactions);
-            this.splitContainer1.Size = new System.Drawing.Size(1056, 335);
-            this.splitContainer1.SplitterDistance = 228;
+            this.splitContainer1.Size = new System.Drawing.Size(1056, 543);
+            this.splitContainer1.SplitterDistance = 239;
             this.splitContainer1.SplitterWidth = 20;
             this.splitContainer1.TabIndex = 42;
             // 
@@ -646,7 +646,7 @@ namespace SUP
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1056, 335);
+            this.ClientSize = new System.Drawing.Size(1056, 543);
             this.Controls.Add(this.splitContainer1);
             this.MinimumSize = new System.Drawing.Size(1072, 374);
             this.Name = "Form1";

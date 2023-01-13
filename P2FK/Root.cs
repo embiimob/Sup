@@ -34,7 +34,7 @@ namespace SUP.P2FK
         public DateTime BuildDate { get; set; }
         public bool Cached { get; set; }
 
-        //ensures levelDB is only opened once per session
+        //ensures levelDB is thread safely
         private readonly static object levelDBLocker = new object();
         public static Root GetRootByTransactionId(string transactionid, string username, string password, string url, string versionbyte = "111", bool usecache = true, byte[] rootbytes = null, string signatureaddress = null)
         {

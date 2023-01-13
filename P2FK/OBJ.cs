@@ -2,12 +2,8 @@
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics.Eventing.Reader;
 using System.Linq;
-using System.Security.Cryptography;
 using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
 
 namespace SUP.P2FK
 {
@@ -34,18 +30,21 @@ namespace SUP.P2FK
         public DateTime LockedDate { get; set; }
         public int ProcessHeight { get; set; }
         public DateTime ChangeDate { get; set; }
-
+        //ensures levelDB is thread safely
+        private readonly static object levelDBLocker = new object();
 
         public static OBJState GetObjectByAddress(string address, string username, string password, string url, string versionByte = "111", bool useCache = true)
         {
-
-            OBJState objectState = new OBJState();
-            var OBJ = new Options { CreateIfMissing = true };
-
-            //try grabbing the object state from levelDB cache
-            using (var db = new DB(OBJ, @"root\obj"))
+            
+                OBJState objectState = new OBJState();
+                var OBJ = new Options { CreateIfMissing = true };
+            lock (levelDBLocker)
             {
-                objectState = JsonConvert.DeserializeObject<OBJState>(db.Get(address));
+                //try grabbing the object state from levelDB cache
+                using (var db = new DB(OBJ, @"root\obj"))
+                {
+                    objectState = JsonConvert.DeserializeObject<OBJState>(db.Get(address));
+                }
             }
             var intProcessHeight = objectState.ProcessHeight;
 
@@ -180,11 +179,18 @@ namespace SUP.P2FK
 
                                     }
                                     else { objectState.Owners[reciever] = recieverOwned + qtyToGive; }
+
+
                                     logstatus = "txid:" + transaction.TransactionId + ":" + giveCount++ + " give " + qtyToGive + " to " + reciever + " succeded";
-                                    using (var db = new DB(OBJ, @"root\log"))
+
+                                    lock (levelDBLocker)
                                     {
-                                        db.Put(address + "!" + intProcessHeight + "!" + giveCount, logstatus);
+                                        using (var db = new DB(OBJ, @"root\log"))
+                                        {
+                                            db.Put(address + "!" + intProcessHeight + "!" + giveCount, logstatus);
+                                        }
                                     }
+                                    if (objectState.LockedDate == null) { objectState.LockedDate = transaction.BlockDate; } 
                                     objectState.ChangeDate = transaction.BlockDate;
                                     logstatus = "";
                                 }
@@ -252,12 +258,19 @@ namespace SUP.P2FK
                                     // remove the dictionary key
                                     objectState.Owners.Remove(burner);
                                 }
-                                objectState.ChangeDate = transaction.BlockDate;
+                               
                                 logstatus = "txid:" + transaction.TransactionId + " burn " + qtyToBurn + " of " + burner + " succeded";
-                                using (var db = new DB(OBJ, @"root\log"))
+
+                                lock (levelDBLocker)
                                 {
-                                    db.Put(address + "!" + intProcessHeight , logstatus);
+                                    using (var db = new DB(OBJ, @"root\log"))
+                                    {
+                                        db.Put(address + "!" + intProcessHeight, logstatus);
+                                    }
                                 }
+                                objectState.ChangeDate = transaction.BlockDate;
+                                if (objectState.LockedDate == null) { objectState.LockedDate = transaction.BlockDate; }
+
                                 logstatus = "";
 
                             }
@@ -282,22 +295,27 @@ namespace SUP.P2FK
                 else { logstatus = "txid:" + transaction.TransactionId + " transaction failed due to invalid signature"; }
                 if (logstatus != "")
                 {
-                    using (var db = new DB(OBJ, @"root\log"))
+                    lock (levelDBLocker)
                     {
-                        db.Put(address + "!" + intProcessHeight, logstatus);
+                        using (var db = new DB(OBJ, @"root\log"))
+                        {
+                            db.Put(address + "!" + intProcessHeight, logstatus);
+                        }
+                    }
+                }
+                //used to determine where to begin object State processing when retrieved from cache
+                objectState.ProcessHeight = intProcessHeight;
+                lock (levelDBLocker)
+                {
+                    using (var db = new DB(OBJ, @"root\obj"))
+                    {
+                        db.Put(address, JsonConvert.SerializeObject(objectState));
                     }
                 }
 
-
             }
 
-            //used to determine where to begin object State processing when retrieved from cache
-            objectState.ProcessHeight = intProcessHeight;
             
-            using (var db = new DB(OBJ, @"root\obj"))
-            {
-                db.Put(address, JsonConvert.SerializeObject(objectState));
-            }
 
             return objectState;
 
