@@ -35,7 +35,7 @@ namespace SUP.P2FK
         //ensures levelDB is thread safely
         private readonly static object levelDBLocker = new object();
 
-        public static OBJState GetObjectByAddress(string address, string username, string password, string url, string versionByte = "111")
+        public static OBJState GetObjectByAddress(string objectaddress, string username, string password, string url, string versionByte = "111")
         {
 
             OBJState objectState = new OBJState();
@@ -47,7 +47,7 @@ namespace SUP.P2FK
                 //try grabbing the object state from levelDB cache
                 using (var db = new DB(OBJ, @"root\obj"))
                 {
-                    JSONOBJ = db.Get(address);
+                    JSONOBJ = db.Get(objectaddress);
                 }
             }
 
@@ -61,7 +61,7 @@ namespace SUP.P2FK
             lock (levelDBLocker)
             {
                 //return all roots found at address
-                objectTransactions = Root.GetRootByAddress(address, username, password, url, versionByte, true, intProcessHeight);
+                objectTransactions = Root.GetRootByAddress(objectaddress, username, password, url, versionByte, true, intProcessHeight);
             }
             string logstatus;
 
@@ -107,7 +107,7 @@ namespace SUP.P2FK
                         //put updated File element back into the object
                         transaction.File = modifiedDictionary;
                     }
-                    
+
 
                     switch (transaction.File.Last().Key.ToString().Substring(transaction.File.Last().Key.ToString().Length - 3))
                     {
@@ -120,15 +120,15 @@ namespace SUP.P2FK
                             catch
                             {
 
-                                logstatus = "txid:" + transaction.TransactionId + " object creation failed due to invalid transaction format";
+                                logstatus = "txid:" + transaction.TransactionId + ",object,inspect,\"failed due to invalid transaction format\"";
                                 break;
                             }
 
-                            if (objectinspector == null)
-                            {
-                                logstatus = "txid:" + transaction.TransactionId + " object creation failed due to invalid transaction format";
-                                break;
-                            }
+                            //if (objectinspector == null)
+                            //{
+                            //    logstatus = "txid:" + transaction.TransactionId + " object creation failed due to invalid transaction format";
+                            //    break;
+                            //}
 
 
                             if (objectinspector.cre != null && objectState.Creators == null)
@@ -154,7 +154,7 @@ namespace SUP.P2FK
 
 
                             //has proper authority to make OBJ changes
-                            if (objectState.Creators.Contains(transaction.SignedBy) || transaction.SignedBy == address)
+                            if (objectState.Creators.Contains(transaction.SignedBy))
                             {
                                 if (objectState.LockedDate.Year < 1975)
                                 {
@@ -179,8 +179,9 @@ namespace SUP.P2FK
                                                     objectState.Creators.Add(creator);
                                                 }
                                             }
-                                            catch {
-                                                logstatus = "txid:" + transaction.TransactionId + " object creation failed due to invalid transaction format";
+                                            catch
+                                            {
+                                                logstatus = "txid:" + transaction.TransactionId + ",object,create,\"failed due to invalid transaction format\"";
                                                 break;
                                             }
 
@@ -188,15 +189,17 @@ namespace SUP.P2FK
 
                                         objectState.ChangeDate = transaction.BlockDate;
 
-
                                     }
-
+                                    if (objectState.ChangeDate == transaction.BlockDate)
+                                    {
+                                        logstatus = "txid:" + transaction.TransactionId + ",object,update,\"success\"";
+                                    }
                                     if (objectinspector.own != null)
                                     {
                                         if (objectState.Owners == null)
                                         {
                                             objectState.Owners = new Dictionary<string, int>();
-                                            logstatus = "txid:" + transaction.TransactionId + " object creation success";
+                                            logstatus = "txid:" + transaction.TransactionId + ",object,create,\"success\"";
 
                                         }
 
@@ -213,49 +216,78 @@ namespace SUP.P2FK
 
 
                                 }
+                                else
+                                {
+                                    logstatus = "txid:" + transaction.TransactionId + ",object,update,\"failed due to object lock\"";
+                                    break;
+                                }
                             }
                             else
                             {
-                                logstatus = "txid:" + transaction.TransactionId + " object creation failed due to invalid privlidges";
+                                logstatus = "txid:" + transaction.TransactionId + ",object,update,\"failed due to insufficent privlidges\"";
                             }
                             break;
 
                         case "GIV":
+
                             List<List<int>> givinspector = JsonConvert.DeserializeObject<List<List<int>>>(Encoding.ASCII.GetString(transaction.File.Last().Value));
                             if (givinspector == null)
                             {
-                                logstatus = "txid:" + transaction.TransactionId + " give failed due to invalid transaction format";
+                                logstatus = "txid:" + transaction.TransactionId + ",action,giv,\"failed due to invalid transaction format\"";
                                 break;
                             }
                             int giveCount = 0;
                             foreach (var give in givinspector)
                             {
                                 string giver = transaction.SignedBy;
-                                string reciever = transaction.Keyword.ElementAt(give[0]).Key;
+                                string reciever = transaction.Keyword.Reverse().ElementAt(give[0]).Key;
                                 int qtyToGive = give[1];
-
+                                giveCount++;
                                 if (qtyToGive < 1)
                                 {
-                                    logstatus = "txid:" + transaction.TransactionId + " give " + qtyToGive + "to" + reciever + "failed due to a qty of < = 0";
+                                    logstatus = "txid:" + transaction.TransactionId + ",action,giv," + giveCount + ",\"" + qtyToGive + " from " + transaction.SignedBy + " to " + reciever + " failed due to a give qty of < 1\"";
+                                    lock (levelDBLocker)
+                                    {
+                                        using (var db = new DB(OBJ, @"root\event"))
+                                        {
+                                            db.Put(objectaddress + "!" + intProcessHeight + "!" + giveCount, logstatus);
+                                        }
+                                    }
+
                                     break;
                                 }
+
+                                //probably something needs to be done more here
+                                //probably
+                                if (objectState.Owners == null) { break; }
 
                                 if (!objectState.Owners.TryGetValue(transaction.SignedBy, out int qtyOwnedG))
                                 {
                                     //try grant access to object's self Owned qtyOwned to any creator
-                                    if (!objectState.Owners.TryGetValue(address, out int selfOwned))
+                                    if (!objectState.Owners.TryGetValue(objectaddress, out int selfOwned))
                                     {
                                         //Add Invalid trade attempt status
-                                        logstatus = "txid:" + transaction.TransactionId + " give " + qtyToGive + " to " + reciever + " failed due to insufficent qty";
+                                        logstatus = "txid:" + transaction.TransactionId + ",action,giv," + giveCount + ",\"" + qtyToGive + " from " + transaction.SignedBy + " to " + reciever + " failed due to insufficent qty owned\"";
+                                        lock (levelDBLocker)
+                                        {
+                                            using (var db = new DB(OBJ, @"root\event"))
+                                            {
+                                                db.Put(objectaddress + "!" + intProcessHeight + "!" + giveCount, logstatus);
+                                            }
+                                        }
+
                                         break;
                                     }
-                                    if (objectState.Creators.Contains(transaction.SignedBy))
+                                    else
                                     {
-                                        giver = address;
-                                        qtyOwnedG = selfOwned;
+                                        if (objectState.Creators.Contains(transaction.SignedBy) || transaction.SignedBy == objectaddress)
+                                        {
+                                            giver = objectaddress;
+                                            qtyOwnedG = selfOwned;
+                                        }
                                     }
-
                                 }
+
 
                                 if (qtyOwnedG >= qtyToGive)
                                 {
@@ -285,18 +317,45 @@ namespace SUP.P2FK
 
                                     }
                                     else { objectState.Owners[reciever] = recieverOwned + qtyToGive; }
+                                    logstatus = "txid:" + transaction.TransactionId + ",action,giv," + giveCount + ",\"" + qtyToGive + " from " + transaction.SignedBy + " to " + reciever + " succeeded\"";
+                                    lock (levelDBLocker)
+                                    {
+                                        using (var db = new DB(OBJ, @"root\event"))
+                                        {
+                                            db.Put(objectaddress + "!" + intProcessHeight + "!" + giveCount, logstatus);
+                                        }
+                                    }
 
 
-                                    logstatus = "txid:" + transaction.TransactionId + ":" + giveCount++ + " give " + qtyToGive + " to " + reciever + " succeded";
 
-                                    if (objectState.LockedDate == null) { objectState.LockedDate = transaction.BlockDate; }
+                                    if (objectState.LockedDate.Year < 1975)
+                                    {
+
+                                        logstatus = "txid:" + transaction.TransactionId + ",object,lock,\"success\"";
+                                        lock (levelDBLocker)
+                                        {
+                                            using (var db = new DB(OBJ, @"root\event"))
+                                            {
+                                                db.Put(objectaddress + "!LockedDate", logstatus);
+                                            }
+                                        }
+
+                                        objectState.LockedDate = transaction.BlockDate;
+                                    }
                                     objectState.ChangeDate = transaction.BlockDate;
                                     logstatus = "";
                                 }
                                 else
                                 {
                                     //Add Invalid trade attempt status
-                                    logstatus = "txid:" + transaction.TransactionId + " give " + qtyToGive + "to" + reciever + "failed due to insufficent qty of " + qtyOwnedG;
+                                    logstatus = "txid:" + transaction.TransactionId + ",action,giv," + giveCount + ",\"" + qtyToGive + " from " + transaction.SignedBy + " to " + reciever + " failed due to insufficent qty owned\"";
+                                    lock (levelDBLocker)
+                                    {
+                                        using (var db = new DB(OBJ, @"root\event"))
+                                        {
+                                            db.Put(objectaddress + "!" + intProcessHeight + "!" + giveCount, logstatus);
+                                        }
+                                    }
                                     break;
                                 }
 
@@ -321,7 +380,7 @@ namespace SUP.P2FK
                             if (!objectState.Owners.TryGetValue(transaction.SignedBy, out qtyOwnedB))
                             {
                                 //try grant access to object's self Owned qtyOwned to any creator
-                                if (!objectState.Owners.TryGetValue(address, out int selfOwned))
+                                if (!objectState.Owners.TryGetValue(objectaddress, out int selfOwned))
                                 {
                                     //Add Invalid trade attempt status
                                     logstatus = "txid:" + transaction.TransactionId + " burn " + qtyToBurn + " failed due to insufficent qty";
@@ -330,7 +389,7 @@ namespace SUP.P2FK
                                 if (objectState.Creators.Contains(transaction.SignedBy))
                                 {
                                     //assume self owned address identity if on creator list
-                                    burner = address;
+                                    burner = objectaddress;
                                     qtyOwnedB = selfOwned;
                                 }
 
@@ -390,7 +449,7 @@ namespace SUP.P2FK
                     {
                         using (var db = new DB(OBJ, @"root\event"))
                         {
-                            db.Put(address + "!" + intProcessHeight, logstatus);
+                            db.Put(objectaddress + "!" + intProcessHeight, logstatus);
                         }
                     }
 
@@ -404,7 +463,7 @@ namespace SUP.P2FK
             {
                 using (var db = new DB(OBJ, @"root\obj"))
                 {
-                    db.Put(address, JsonConvert.SerializeObject(objectState));
+                    db.Put(objectaddress, JsonConvert.SerializeObject(objectState));
                 }
             }
 
