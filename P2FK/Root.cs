@@ -106,6 +106,7 @@ namespace SUP.P2FK
                     }
                     //put updated File element back into the object
                     P2FKRoot.File = modifiedDictionary;
+                    P2FKRoot.Cached = false;
                     return P2FKRoot;
                 }
             }
@@ -437,7 +438,7 @@ namespace SUP.P2FK
             P2FKRoot.BuildDate = DateTime.UtcNow;
 
             //Cache Root if enabled
-            if (usecache) { CacheRoot(P2FKRoot); }
+            if (usecache) { CacheRoot(P2FKRoot); P2FKRoot.Cached = true; } else { P2FKRoot.Cached = false; }
 
             return P2FKRoot;
         }

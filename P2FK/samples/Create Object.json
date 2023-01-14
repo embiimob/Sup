@@ -3,7 +3,7 @@
   "img": "BTC:3ff52882c93420c8fe4a90f6fa94b2a563316b5e7b83afe2ddd5bcadc86d3821/FakeUFO.png",
   "nme": "STARGATE",
   "dsc": "The enclosed information is an interim response to the FY 1994 Defense Authorization Conference Classified Annex Joint Explanatory Statement, which requests a program plan for Project STARGATE.",
-  "lic": "",
-  "cre": [ 1 ],
+  "lic": "CC0",
+  "cre": [0, 1 ],
   "own": { "0": 100 }
 }

@@ -33,7 +33,7 @@ namespace SUP
                     var ROOT = new Options { CreateIfMissing = true };
                     using (var db = new DB(ROOT, @"root"))
                     {
-                        db.Put(txtPutKey.Text, txtPutValue.Text);
+                        db.Put(txtlevelDBKey.Text, txtlevelDBKey.Text);
                     }
                     break;
 
@@ -41,7 +41,7 @@ namespace SUP
                     var PRO = new Options { CreateIfMissing = true };
                     using (var db = new DB(PRO, @"root\pro"))
                     {
-                        db.Put(txtPutKey.Text, txtPutValue.Text);
+                        db.Put(txtlevelDBKey.Text, txtlevelDBKey.Text);
                     }
                     break;
 
@@ -49,7 +49,7 @@ namespace SUP
                     var COL = new Options { CreateIfMissing = true };
                     using (var db = new DB(COL, @"root\col"))
                     {
-                        db.Put(txtPutKey.Text, txtPutValue.Text);
+                        db.Put(txtlevelDBKey.Text, txtlevelDBKey.Text);
                     }
                     break;
 
@@ -57,15 +57,15 @@ namespace SUP
                     var OBJ = new Options { CreateIfMissing = true };
                     using (var db = new DB(OBJ, @"root\obj"))
                     {
-                        db.Put(txtPutKey.Text, txtPutValue.Text);
+                        db.Put(txtlevelDBKey.Text, txtlevelDBKey.Text);
                     }
                     break;
 
-                case "LOGS":
+                case "EVENT":
                     var LOGS = new Options { CreateIfMissing = true };
-                    using (var db = new DB(LOGS, @"root\logs"))
+                    using (var db = new DB(LOGS, @"root\event"))
                     {
-                        db.Put(txtPutKey.Text, txtPutValue.Text);
+                        db.Put(txtlevelDBKey.Text, txtlevelDBKey.Text);
                     }
                     break;
 
@@ -91,8 +91,8 @@ namespace SUP
                     {
                         LevelDB.Iterator it = db.CreateIterator();
                         for (
-                            it.Seek(txtGetKey.Text);
-                            it.IsValid() && it.KeyAsString().StartsWith(txtGetKey.Text);
+                            it.Seek(txtlevelDBKey.Text);
+                            it.IsValid() && it.KeyAsString().StartsWith(txtlevelDBKey.Text);
                             it.Next()
                         )
                         {
@@ -110,8 +110,8 @@ namespace SUP
                     {
                         LevelDB.Iterator it = db.CreateIterator();
                         for (
-                            it.Seek(txtGetKey.Text);
-                            it.IsValid() && it.KeyAsString().StartsWith(txtGetKey.Text);
+                            it.Seek(txtlevelDBKey.Text);
+                            it.IsValid() && it.KeyAsString().StartsWith(txtlevelDBKey.Text);
                             it.Next()
                         )
                         {
@@ -129,8 +129,8 @@ namespace SUP
                     {
                         LevelDB.Iterator it = db.CreateIterator();
                         for (
-                            it.Seek(txtGetKey.Text);
-                            it.IsValid() && it.KeyAsString().StartsWith(txtGetKey.Text);
+                            it.Seek(txtlevelDBKey.Text);
+                            it.IsValid() && it.KeyAsString().StartsWith(txtlevelDBKey.Text);
                             it.Next()
                         )
                         {
@@ -148,8 +148,8 @@ namespace SUP
                     {
                         LevelDB.Iterator it = db.CreateIterator();
                         for (
-                            it.Seek(txtGetKey.Text);
-                            it.IsValid() && it.KeyAsString().StartsWith(txtGetKey.Text);
+                            it.Seek(txtlevelDBKey.Text);
+                            it.IsValid() && it.KeyAsString().StartsWith(txtlevelDBKey.Text);
                             it.Next()
                         )
                         {
@@ -160,15 +160,15 @@ namespace SUP
                     }
                     break;
 
-                case "LOGS":
+                case "EVENT":
                     var LOG = new Options { CreateIfMissing = true };
                     txtGetValue.Text = "";
-                    using (var db = new DB(LOG, @"root\log"))
+                    using (var db = new DB(LOG, @"root\event"))
                     {
                         LevelDB.Iterator it = db.CreateIterator();
                         for (
-                            it.Seek(txtGetKey.Text);
-                            it.IsValid() && it.KeyAsString().StartsWith(txtGetKey.Text);
+                            it.Seek(txtlevelDBKey.Text);
+                            it.IsValid() && it.KeyAsString().StartsWith(txtlevelDBKey.Text);
                             it.Next()
                         )
                         {
@@ -198,14 +198,14 @@ namespace SUP
                     var ROOT = new Options { CreateIfMissing = true };
                     using (var db = new DB(ROOT, @"root"))
                     {
-                        db.Delete(txtDeleteKey.Text);
+                        db.Delete(txtlevelDBKey.Text);
                     }
                     break;
                 case "PRO":
                     var PRO = new Options { CreateIfMissing = true };
                     using (var db = new DB(PRO, @"root\pro"))
                     {
-                        db.Delete(txtDeleteKey.Text);
+                        db.Delete(txtlevelDBKey.Text);
                     }
                     break;
 
@@ -213,7 +213,7 @@ namespace SUP
                     var COL = new Options { CreateIfMissing = true };
                     using (var db = new DB(COL, @"root\col"))
                     {
-                        db.Delete(txtDeleteKey.Text);
+                        db.Delete(txtlevelDBKey.Text);
                     }
                     break;
 
@@ -221,15 +221,15 @@ namespace SUP
                     var OBJ = new Options { CreateIfMissing = true };
                     using (var db = new DB(OBJ, @"root\obj"))
                     {
-                        db.Delete(txtDeleteKey.Text);
+                        db.Delete(txtlevelDBKey.Text);
                     }
                     break;
 
-                case "LOGS":
+                case "EVENT":
                     var LOG = new Options { CreateIfMissing = true };
-                    using (var db = new DB(LOG, @"root\logs"))
+                    using (var db = new DB(LOG, @"root\event"))
                     {
-                        db.Delete(txtDeleteKey.Text);
+                        db.Delete(txtlevelDBKey.Text);
                     }
                     break;
 
@@ -412,7 +412,7 @@ namespace SUP
 
         private void BtnGetKeyword_Click(object sender, EventArgs e)
         {
-            string publicAddress = Root.GetPublicAddressByKeyword(txtGetKeyword.Text, txtVersionByte.Text);
+            string publicAddress = Root.GetPublicAddressByKeyword(txtSearchAddress.Text, txtVersionByte.Text);
             DateTime tmbeginCall = DateTime.UtcNow;
             Root[] roots = Root.GetRootByAddress(
                 publicAddress,
@@ -668,6 +668,17 @@ namespace SUP
 
 
 
+        }
+
+        private void button3_Click(object sender, EventArgs e)
+        {
+            OBJState Tester = OBJState.GetObjectByAddress(txtSearchAddress.Text,txtLogin.Text,txtPassword.Text,txtUrl.Text,txtVersionByte.Text);
+            txtbalance.Text = Tester.ProcessHeight.ToString();
+        }
+
+        private void btnPurge_Click(object sender, EventArgs e)
+        {
+            if (Directory.Exists("root")) { Directory.Delete("root", true); };
         }
     }
 }
