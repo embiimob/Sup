@@ -124,13 +124,7 @@ namespace SUP.P2FK
                                 break;
                             }
 
-                            //if (objectinspector == null)
-                            //{
-                            //    logstatus = "txid:" + transaction.TransactionId + " object creation failed due to invalid transaction format";
-                            //    break;
-                            //}
-
-
+                           
                             if (objectinspector.cre != null && objectState.Creators == null)
                             {
 
@@ -200,7 +194,6 @@ namespace SUP.P2FK
                                         {
                                             objectState.Owners = new Dictionary<string, int>();
                                             logstatus = "txid:" + transaction.TransactionId + ",object,create,\"success\"";
-
                                         }
 
                                         objectState.ChangeDate = transaction.BlockDate;
@@ -253,7 +246,7 @@ namespace SUP.P2FK
                                             db.Put(objectaddress + "!" + intProcessHeight + "!" + giveCount, logstatus);
                                         }
                                     }
-
+                                    logstatus = "";
                                     break;
                                 }
 
@@ -275,7 +268,7 @@ namespace SUP.P2FK
                                                 db.Put(objectaddress + "!" + intProcessHeight + "!" + giveCount, logstatus);
                                             }
                                         }
-
+                                        logstatus = "";
                                         break;
                                     }
                                     else
@@ -325,7 +318,7 @@ namespace SUP.P2FK
                                             db.Put(objectaddress + "!" + intProcessHeight + "!" + giveCount, logstatus);
                                         }
                                     }
-
+                                    logstatus = "";
 
                                     if (objectState.LockedDate.Year < 1975)
                                     {
@@ -335,14 +328,14 @@ namespace SUP.P2FK
                                         {
                                             using (var db = new DB(OBJ, @"root\event"))
                                             {
-                                                db.Put(objectaddress + "!LockedDate", logstatus);
+                                                db.Put(objectaddress + "!" + intProcessHeight + "!" + "!LockedDate", logstatus);
                                             }
                                         }
-
+                                        logstatus = "";
                                         objectState.LockedDate = transaction.BlockDate;
                                     }
                                     objectState.ChangeDate = transaction.BlockDate;
-                                    logstatus = "";
+                                    
                                 }
                                 else
                                 {
@@ -355,6 +348,7 @@ namespace SUP.P2FK
                                             db.Put(objectaddress + "!" + intProcessHeight + "!" + giveCount, logstatus);
                                         }
                                     }
+                                    logstatus = "";
                                     break;
                                 }
 
@@ -386,7 +380,7 @@ namespace SUP.P2FK
                                             db.Put(objectaddress + "!" + intProcessHeight + "!" + burnCount, logstatus);
                                         }
                                     }
-
+                                    logstatus = "";
                                     break;
                                 }
 
@@ -408,7 +402,7 @@ namespace SUP.P2FK
                                                 db.Put(objectaddress + "!" + intProcessHeight + "!" + burnCount, logstatus);
                                             }
                                         }
-
+                                        logstatus = "";
                                         break;
                                     }
                                     else
@@ -450,7 +444,7 @@ namespace SUP.P2FK
                                             db.Put(objectaddress + "!" + intProcessHeight + "!" + burnCount, logstatus);
                                         }
                                     }
-
+                                    logstatus = "";
 
                                     if (objectState.LockedDate.Year < 1975)
                                     {
@@ -480,6 +474,7 @@ namespace SUP.P2FK
                                             db.Put(objectaddress + "!" + intProcessHeight + "!" + burnCount, logstatus);
                                         }
                                     }
+                                    logstatus = "";
                                     break;
                                 }
 

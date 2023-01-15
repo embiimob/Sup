@@ -13,6 +13,7 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using static NBitcoin.Scripting.PubKeyProvider;
 
 
 namespace SUP.P2FK
@@ -312,7 +313,23 @@ namespace SUP.P2FK
                     if (fileName == "SIG")
                     {
                         sigStartByte = sigEndByte;
-                        signature = transactionASCII.Substring(headerSize, packetSize);
+                        try
+                        {
+                            signature = transactionASCII.Substring(headerSize, packetSize);
+                        }
+                        catch {
+                            if (usecache)
+                            {
+                                lock (levelDBLocker)
+                                {
+                                    var ROOT = new Options { CreateIfMissing = true };
+                                    var db = new DB(ROOT, @"root");
+                                    db.Put(transactionid, "invalid");
+                                    db.Close();
+                                }
+                            }
+
+                            return null; }
                     }
 
                     using (FileStream fs = new FileStream(diskpath + fileName, FileMode.Create))
@@ -391,7 +408,9 @@ namespace SUP.P2FK
                     );
                 }
                 catch (Exception) { }
+
             }
+
 
             if (sigStartByte > 0)
             {

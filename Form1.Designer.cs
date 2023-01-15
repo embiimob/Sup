@@ -127,7 +127,7 @@ namespace SUP
             this.txtlevelDBKey.Name = "txtlevelDBKey";
             this.txtlevelDBKey.Size = new System.Drawing.Size(314, 20);
             this.txtlevelDBKey.TabIndex = 7;
-            this.txtlevelDBKey.Text = "n3tjfSAo4PpHPxUNtyFLDyzKry9jztBXDa";
+            this.txtlevelDBKey.Text = "mx72Ng5c3km45F8eX7sjET1Q6VzbnPxKYe";
             // 
             // label5
             // 
@@ -256,7 +256,7 @@ namespace SUP
             this.txtSearchAddress.Name = "txtSearchAddress";
             this.txtSearchAddress.Size = new System.Drawing.Size(238, 20);
             this.txtSearchAddress.TabIndex = 25;
-            this.txtSearchAddress.Text = "n3tjfSAo4PpHPxUNtyFLDyzKry9jztBXDa";
+            this.txtSearchAddress.Text = "mx72Ng5c3km45F8eX7sjET1Q6VzbnPxKYe";
             // 
             // label11
             // 
