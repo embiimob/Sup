@@ -4,5 +4,7 @@
   [ 4, 3 ]
 ]
 
-//assume keyword 0 is the from address
-//assume keyword 1 is the object address
+//assume keyword 0 is the authorization address
+//assume keyword 1 is the object being given
+//[new owner keyword order id, qty to give]
+

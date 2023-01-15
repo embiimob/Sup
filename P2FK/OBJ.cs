@@ -327,6 +327,130 @@ namespace SUP.P2FK
                                     }
 
 
+                                    if (objectState.LockedDate.Year < 1975)
+                                    {
+
+                                        logstatus = "txid:" + transaction.TransactionId + ",object,lock,\"success\"";
+                                        lock (levelDBLocker)
+                                        {
+                                            using (var db = new DB(OBJ, @"root\event"))
+                                            {
+                                                db.Put(objectaddress + "!LockedDate", logstatus);
+                                            }
+                                        }
+
+                                        objectState.LockedDate = transaction.BlockDate;
+                                    }
+                                    objectState.ChangeDate = transaction.BlockDate;
+                                    logstatus = "";
+                                }
+                                else
+                                {
+                                    //Invalid trade attempt
+                                    logstatus = "txid:" + transaction.TransactionId + ",action,giv," + giveCount + ",\"" + qtyToGive + " from " + transaction.SignedBy + " to " + reciever + " failed due to insufficent qty owned\"";
+                                    lock (levelDBLocker)
+                                    {
+                                        using (var db = new DB(OBJ, @"root\event"))
+                                        {
+                                            db.Put(objectaddress + "!" + intProcessHeight + "!" + giveCount, logstatus);
+                                        }
+                                    }
+                                    break;
+                                }
+
+
+
+                            }
+                            break;
+
+                        case "BRN":
+                            List<List<int>> brninspector = JsonConvert.DeserializeObject<List<List<int>>>(Encoding.ASCII.GetString(transaction.File.Last().Value));
+                            if (brninspector == null)
+                            {
+                                logstatus = "txid:" + transaction.TransactionId + ",action,brn,\"failed due to invalid transaction format\"";
+                                break;
+                            }
+                            int burnCount = 0;
+                            foreach (var burn in brninspector)
+                            {
+                                string burnr = transaction.SignedBy;
+                                int qtyToBurn = burn[1];
+                                burnCount++;
+                                if (qtyToBurn < 1)
+                                {
+                                    logstatus = "txid:" + transaction.TransactionId + ",action,brn," + burnCount + ",\"" + qtyToBurn + " from " + transaction.SignedBy + " failed due to a burn qty of < 1\"";
+                                    lock (levelDBLocker)
+                                    {
+                                        using (var db = new DB(OBJ, @"root\event"))
+                                        {
+                                            db.Put(objectaddress + "!" + intProcessHeight + "!" + burnCount, logstatus);
+                                        }
+                                    }
+
+                                    break;
+                                }
+
+                                //probably something needs to be done more here
+                                //probably
+                                if (objectState.Owners == null) { break; }
+
+                                if (!objectState.Owners.TryGetValue(transaction.SignedBy, out int qtyOwnedG))
+                                {
+                                    //try grant access to object's self Owned qtyOwned to any creator
+                                    if (!objectState.Owners.TryGetValue(objectaddress, out int selfOwned))
+                                    {
+                                        //Add Invalid trade attempt status
+                                        logstatus = "txid:" + transaction.TransactionId + ",action,brn," + burnCount + ",\"" + qtyToBurn + " from " + transaction.SignedBy + " failed due to insufficent qty owned\"";
+                                        lock (levelDBLocker)
+                                        {
+                                            using (var db = new DB(OBJ, @"root\event"))
+                                            {
+                                                db.Put(objectaddress + "!" + intProcessHeight + "!" + burnCount, logstatus);
+                                            }
+                                        }
+
+                                        break;
+                                    }
+                                    else
+                                    {
+                                        if (objectState.Creators.Contains(transaction.SignedBy) || transaction.SignedBy == objectaddress)
+                                        {
+                                            burnr = objectaddress;
+                                            qtyOwnedG = selfOwned;
+                                        }
+                                    }
+                                }
+
+
+                                if (qtyOwnedG >= qtyToBurn)
+                                {
+                                    //update owners Dictionary with new values
+
+                                    // New value to update with
+                                    int newValue = qtyOwnedG - qtyToBurn;
+
+
+                                    // Check if the new value is an integer
+                                    if (newValue > 0)
+                                    {
+                                        // Update the value
+                                        objectState.Owners[burnr] = newValue;
+                                    }
+                                    else
+                                    {
+                                        // remove the dictionary key
+                                        objectState.Owners.Remove(burnr);
+                                    }
+                                                                        
+                                    logstatus = "txid:" + transaction.TransactionId + ",action,brn," + burnCount + ",\"" + qtyToBurn + " from " + transaction.SignedBy + " succeeded\"";
+                                    lock (levelDBLocker)
+                                    {
+                                        using (var db = new DB(OBJ, @"root\event"))
+                                        {
+                                            db.Put(objectaddress + "!" + intProcessHeight + "!" + burnCount, logstatus);
+                                        }
+                                    }
+
 
                                     if (objectState.LockedDate.Year < 1975)
                                     {
@@ -347,13 +471,13 @@ namespace SUP.P2FK
                                 }
                                 else
                                 {
-                                    //Add Invalid trade attempt status
-                                    logstatus = "txid:" + transaction.TransactionId + ",action,giv," + giveCount + ",\"" + qtyToGive + " from " + transaction.SignedBy + " to " + reciever + " failed due to insufficent qty owned\"";
+                                    //Invalid trade attempt
+                                    logstatus = "txid:" + transaction.TransactionId + ",action,brn," + burnCount + ",\"" + qtyToBurn + " from " + transaction.SignedBy + " failed due to insufficent qty owned\"";
                                     lock (levelDBLocker)
                                     {
                                         using (var db = new DB(OBJ, @"root\event"))
                                         {
-                                            db.Put(objectaddress + "!" + intProcessHeight + "!" + giveCount, logstatus);
+                                            db.Put(objectaddress + "!" + intProcessHeight + "!" + burnCount, logstatus);
                                         }
                                     }
                                     break;
@@ -364,77 +488,8 @@ namespace SUP.P2FK
                             }
                             break;
 
-                        case "BRN":
-
-                            string burner = transaction.SignedBy;
-                            int qtyToBurn = JsonConvert.DeserializeObject<int>(Encoding.ASCII.GetString(transaction.File.Last().Value));
-
-
-                            if (qtyToBurn < 1)
-                            {
-                                logstatus = "txid:" + transaction.TransactionId + " burn " + qtyToBurn + " failed due to a qty of < = 0";
-                                break;
-                            }
-
-                            int qtyOwnedB;
-                            if (!objectState.Owners.TryGetValue(transaction.SignedBy, out qtyOwnedB))
-                            {
-                                //try grant access to object's self Owned qtyOwned to any creator
-                                if (!objectState.Owners.TryGetValue(objectaddress, out int selfOwned))
-                                {
-                                    //Add Invalid trade attempt status
-                                    logstatus = "txid:" + transaction.TransactionId + " burn " + qtyToBurn + " failed due to insufficent qty";
-                                    break;
-                                }
-                                if (objectState.Creators.Contains(transaction.SignedBy))
-                                {
-                                    //assume self owned address identity if on creator list
-                                    burner = objectaddress;
-                                    qtyOwnedB = selfOwned;
-                                }
-
-
-                            }
-
-                            if (qtyOwnedB >= qtyToBurn)
-                            {
-                                //update owners Dictionary with new values
-
-                                // New value to update with
-                                int newValue = qtyOwnedB - qtyToBurn;
-
-
-                                // Check if the new value is an integer
-                                if (newValue > 0)
-                                {
-                                    // Update the value
-                                    objectState.Owners[burner] = newValue;
-                                }
-                                else
-                                {
-                                    // remove the dictionary key
-                                    objectState.Owners.Remove(burner);
-                                }
-                                logstatus = "txid:" + transaction.TransactionId + " burn " + qtyToBurn + " of " + burner + " succeded";
-
-                                objectState.ChangeDate = transaction.BlockDate;
-                                if (objectState.LockedDate == null) { objectState.LockedDate = transaction.BlockDate; }
-
-
-
-                            }
-                            else
-                            {
-                                //Add Invalid trade attempt status
-                                logstatus = "txid:" + transaction.TransactionId + " burn " + qtyToBurn + " of " + burner + " failed due to insufficent qty of " + qtyOwnedB;
-                                break;
-                            }
-
-                            break;
-
                         default:
                             // ignore
-
 
                             break;
                     }
