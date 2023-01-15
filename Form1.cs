@@ -1,5 +1,6 @@
 ﻿using LevelDB;
 using NBitcoin.RPC;
+using Newtonsoft.Json;
 using SUP.P2FK;
 using System;
 using System.Collections.Generic;
@@ -259,7 +260,7 @@ namespace SUP
                 {
                     Message = new string[] { ex.Message },
                     BuildDate = DateTime.UtcNow,
-                    File = new Dictionary<string, byte[]> { },
+                    File = new Dictionary<string, BigInteger> { },
                     Keyword = new Dictionary<string, string> { },
                     TransactionId = ""
                 };
@@ -296,7 +297,7 @@ namespace SUP
             DateTime tmendCall = DateTime.UtcNow;
             dgTransactions.Rows.Clear();
             int totalbytes = 0;
-            int totalfilebytes = 0;
+            BigInteger totalfilebytes = 0;
             TimeSpan elapsedTime = tmendCall - tmbeginCall;
             double elapsedMilliseconds = elapsedTime.TotalMilliseconds;
 
@@ -312,7 +313,7 @@ namespace SUP
                     }
                     foreach (var rfile in roots[i].File)
                     {
-                        totalfilebytes += rfile.Value.Length;
+                        totalfilebytes += rfile.Value;
 
                     }
 
@@ -366,7 +367,7 @@ namespace SUP
             if (root != null)
             {
                 string strmessage = "";
-                int totalfilebytes = 0;
+                BigInteger totalfilebytes = 0;
                 foreach (var rfile in root.Message)
                 {
                     strmessage+= rfile;
@@ -375,7 +376,7 @@ namespace SUP
              
                 foreach (var rfile in root.File)
                 {
-                    totalfilebytes += rfile.Value.Length;
+                    totalfilebytes += rfile.Value;
                    
 
                 }
@@ -431,14 +432,14 @@ namespace SUP
             for (int i = 0; i < roots.Length; i += 1)
             {
                 string strmessage = "";
-                int totalfilebytes = 0;
+                BigInteger totalfilebytes = 0;
                 foreach (var rfile in roots[i].Message)
                 {
                     strmessage+= rfile;
                 }
                 foreach (var rfile in roots[i].File)
                 {
-                    totalfilebytes += rfile.Value.Length;
+                    totalfilebytes += rfile.Value;
 
                 }
 
@@ -485,7 +486,7 @@ namespace SUP
             DateTime tmendCall = DateTime.UtcNow;
             dgTransactions.Rows.Clear();
             int totalbytes = 0;
-            int totalfilebytes = 0;
+            BigInteger totalfilebytes = 0;
             TimeSpan elapsedTime = tmendCall - tmbeginCall;
             double elapsedMilliseconds = elapsedTime.TotalMilliseconds;
 
@@ -501,7 +502,7 @@ namespace SUP
                     }
                     foreach (var rfile in roots[i].File)
                     {
-                        totalfilebytes += rfile.Value.Length;
+                        totalfilebytes += rfile.Value;
 
                     }
 
@@ -550,7 +551,7 @@ namespace SUP
             DateTime tmbeginCall = DateTime.UtcNow;
 
 
-            Root root = Root.GetRootByTransactionId(Guid.NewGuid().ToString(), null, null, null, txtVersionByte.Text, true, result);
+            Root root = Root.GetRootByTransactionId(Guid.NewGuid().ToString(), null, null, null, txtVersionByte.Text, result);
             DateTime tmendCall = DateTime.UtcNow;
             dgTransactions.Rows.Clear();
             int totalbytes;
@@ -570,7 +571,7 @@ namespace SUP
                 BigInteger totalfilebytes = 0;
                 foreach (var rfile in root.File)
                 {
-                    totalfilebytes+= BigInteger.Parse(Encoding.ASCII.GetString(rfile.Value));
+                    totalfilebytes+= rfile.Value;
                  }
 
                 object[] rowData = new object[]
@@ -612,7 +613,7 @@ namespace SUP
             byte[] result = Root.GetRootBytesByFile(new string[] { @"root/" + txtTransactionId.Text + @"/SEC" });
             result = Root.DecryptRootBytes(txtLogin.Text, txtPassword.Text, txtUrl.Text, txtSearchAddress.Text, result);
             
-            Root root = Root.GetRootByTransactionId(txtTransactionId.Text, null, null, null, txtVersionByte.Text, false, result);
+            Root root = Root.GetRootByTransactionId(txtTransactionId.Text, null, null, null, txtVersionByte.Text, result);
             DateTime tmendCall = DateTime.UtcNow;
             dgTransactions.Rows.Clear();
             int totalbytes;
@@ -632,7 +633,7 @@ namespace SUP
                 BigInteger totalfilebytes = 0;
                 foreach (var rfile in root.File)
                 {
-                    totalfilebytes += rfile.Value.Length;
+                    totalfilebytes += rfile.Value;
                 }
 
                 object[] rowData = new object[]
@@ -672,13 +673,21 @@ namespace SUP
 
         private void button3_Click(object sender, EventArgs e)
         {
+            DateTime tmbeginCall = DateTime.UtcNow;
             OBJState Tester = OBJState.GetObjectByAddress(txtSearchAddress.Text,txtLogin.Text,txtPassword.Text,txtUrl.Text,txtVersionByte.Text);
-            txtbalance.Text = Tester.ProcessHeight.ToString();
+            DateTime tmendCall = DateTime.UtcNow;
+
+            TimeSpan elapsedTime = tmendCall - tmbeginCall;
+            double elapsedMilliseconds = elapsedTime.TotalMilliseconds;
+            double secondsExpired = elapsedMilliseconds / 1000.0;
+            lblTotalTime.Text = "Total Time: " + elapsedMilliseconds;
+            txtGetValue.Text = JsonConvert.SerializeObject(Tester);
         }
 
         private void btnPurge_Click(object sender, EventArgs e)
         {
             if (Directory.Exists("root")) { Directory.Delete("root", true); };
+            txtGetValue.Clear();
         }
     }
 }

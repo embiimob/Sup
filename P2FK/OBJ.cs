@@ -42,26 +42,21 @@ namespace SUP.P2FK
             var OBJ = new Options { CreateIfMissing = true };
             string JSONOBJ;
 
-            lock (levelDBLocker)
+            string diskpath = "root\\" + objectaddress + "\\";
+           
+            try
             {
-                //try grabbing the object state from levelDB cache
-                using (var db = new DB(OBJ, @"root\obj"))
-                {
-                    JSONOBJ = db.Get(objectaddress);
-                }
+                JSONOBJ = System.IO.File.ReadAllText(diskpath + "P2FK.json");
+                objectState = JsonConvert.DeserializeObject<OBJState>(JSONOBJ);
             }
-
-            try { objectState = JsonConvert.DeserializeObject<OBJState>(JSONOBJ); }
             catch { }
-
-
 
             var intProcessHeight = objectState.ProcessHeight;
             Root[] objectTransactions;
             lock (levelDBLocker)
             {
                 //return all roots found at address
-                objectTransactions = Root.GetRootByAddress(objectaddress, username, password, url, versionByte, true, intProcessHeight);
+                objectTransactions = Root.GetRootByAddress(objectaddress, username, password, url, versionByte, intProcessHeight);
             }
             string logstatus;
 
@@ -75,39 +70,7 @@ namespace SUP.P2FK
                 if (transaction.Signed)
                 {
 
-                    if (transaction.Cached)
-                    {
-                        var modifiedDictionary = new Dictionary<string, byte[]>();
-
-                        //Add cached file data from disk back into the root object
-                        foreach (var kvp in transaction.File)
-                        {
-                            byte[] fileBytes;
-                            using (
-                                FileStream fs = new FileStream(
-                                    kvp.Key,
-                                    FileMode.Open,
-                                    FileAccess.Read
-                                )
-                            )
-                            {
-                                fileBytes = new byte[fs.Length];
-                                fs.Read(fileBytes, 0, fileBytes.Length);
-                            }
-
-                            // Modify the key to be fileName
-                            string modifiedKey = Path.GetFileName(kvp.Key);
-
-                            // Replace the value with actual file Bytes
-                            byte[] modifiedValue = fileBytes;
-
-                            // Add the modified key-value pair to the new dictionary
-                            modifiedDictionary.Add(modifiedKey, modifiedValue);
-                        }
-                        //put updated File element back into the object
-                        transaction.File = modifiedDictionary;
-                    }
-
+                    
 
                     switch (transaction.File.Last().Key.ToString().Substring(transaction.File.Last().Key.ToString().Length - 3))
                     {
@@ -115,7 +78,7 @@ namespace SUP.P2FK
                             OBJ objectinspector = null;
                             try
                             {
-                                objectinspector = JsonConvert.DeserializeObject<OBJ>(Encoding.ASCII.GetString(transaction.File.Last().Value));
+                                objectinspector = JsonConvert.DeserializeObject<OBJ>(File.ReadAllText(@"root\" + transaction.TransactionId +@"\OBJ"));
                             }
                             catch
                             {
@@ -223,7 +186,7 @@ namespace SUP.P2FK
 
                         case "GIV":
 
-                            List<List<int>> givinspector = JsonConvert.DeserializeObject<List<List<int>>>(Encoding.ASCII.GetString(transaction.File.Last().Value));
+                            List<List<int>> givinspector = JsonConvert.DeserializeObject<List<List<int>>>(File.ReadAllText(@"root\" + transaction.TransactionId + @"\GIV"));
                             if (givinspector == null)
                             {
                                 logstatus = "txid:" + transaction.TransactionId + ",action,giv,\"failed due to invalid transaction format\"";
@@ -358,7 +321,7 @@ namespace SUP.P2FK
                             break;
 
                         case "BRN":
-                            List<List<int>> brninspector = JsonConvert.DeserializeObject<List<List<int>>>(Encoding.ASCII.GetString(transaction.File.Last().Value));
+                            List<List<int>> brninspector = JsonConvert.DeserializeObject<List<List<int>>>(File.ReadAllText(@"root\" + transaction.TransactionId + @"\BRN"));
                             if (brninspector == null)
                             {
                                 logstatus = "txid:" + transaction.TransactionId + ",action,brn,\"failed due to invalid transaction format\"";
@@ -509,12 +472,19 @@ namespace SUP.P2FK
 
             //used to determine where to begin object State processing when retrieved from cache
             objectState.ProcessHeight = intProcessHeight;
-            lock (levelDBLocker)
+            var objectSerialized = JsonConvert.SerializeObject(objectState);
+                     
+
+            try
             {
-                using (var db = new DB(OBJ, @"root\obj"))
+                System.IO.File.WriteAllText(@"root\" + objectaddress + @"\" + "P2FK.json", objectSerialized);
+            }catch
+            {
+                if (!Directory.Exists(@"root\" + objectaddress))
                 {
-                    db.Put(objectaddress, JsonConvert.SerializeObject(objectState));
+                    Directory.CreateDirectory(@"root\" + objectaddress);
                 }
+                System.IO.File.WriteAllText(@"root\" + objectaddress + @"\" + "P2FK.json", objectSerialized);
             }
 
             return objectState;
