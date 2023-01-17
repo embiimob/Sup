@@ -578,23 +578,9 @@ namespace SUP.P2FK
 
             }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
             //used to determine where to begin object State processing when retrieved from cache
             objectState.ProcessHeight = intProcessHeight;
             var objectSerialized = JsonConvert.SerializeObject(objectState);
-
 
             try
             {
@@ -636,24 +622,24 @@ namespace SUP.P2FK
 
                     if (isOwnedObject.URN != null)
 
-                    try
-                    {
-
-
-                        if (!addedValues.Contains(findObject))
+                        try
                         {
 
-                            try
+
+                            if (!addedValues.Contains(findObject))
                             {
-                                objectStates.Add(isOwnedObject);
-                                addedValues.Add(findObject);
+
+                                try
+                                {
+                                    objectStates.Add(isOwnedObject);
+                                    addedValues.Add(findObject);
+                                }
+                                catch { }
+
                             }
-                            catch { }
 
                         }
-
-                    }
-                    catch { break; }
+                        catch { break; }
 
 
                 }
@@ -689,47 +675,15 @@ namespace SUP.P2FK
 
                     if (isOwnedObject.URN != null)
                     {
+                        var isValidObject = (isOwnedObject.Owners.ContainsKey(objectaddress) ||
+                                            (isOwnedObject.Creators.Contains(objectaddress) &&
+                                             isOwnedObject.Owners.TryGetValue(transaction.Keyword.Last().Key, out int qty)));
 
-                        try
+                        if (isValidObject && !addedValues.Contains(findObject))
                         {
-
-                            if (isOwnedObject.Owners.ContainsKey(objectaddress))
-                            {
-
-                                try
-                                {
-
-
-                                    if (!addedValues.Contains(findObject))
-                                    {
-
-
-                                        objectStates.Add(isOwnedObject);
-                                        addedValues.Add(findObject);
-                                    }
-                                }
-                                catch { }
-
-                            }
-                            else
-                            {
-                                if (isOwnedObject.Creators.Contains(objectaddress) && isOwnedObject.Owners.TryGetValue(transaction.Keyword.Last().Key, out int qty))
-                                {
-                                    if (!addedValues.Contains(findObject))
-                                    {
-
-                                        
-                                        objectStates.Add(isOwnedObject);
-                                        addedValues.Add(findObject);
-                                    }
-
-                                }
-                            }
-
-
+                            objectStates.Add(isOwnedObject);
+                            addedValues.Add(findObject);
                         }
-                        catch { break; }
-
                     }
 
 
@@ -766,40 +720,28 @@ namespace SUP.P2FK
                     OBJState isOwnedObject = GetObjectByAddress(foundObject, username, password, url, versionByte);
 
 
-                    try
+                    if (isOwnedObject.URN != null)
                     {
 
                         if (isOwnedObject.Creators.Contains(objectaddress) && !addedValues.Contains(foundObject))
                         {
+                            objectStates.Add(isOwnedObject);
+                            addedValues.Add(transaction.Keyword.ElementAt(1).Key);
 
-                            try
-                            {
-                                objectStates.Add(isOwnedObject);
-                                addedValues.Add(transaction.Keyword.ElementAt(1).Key);
-                            }
-                            catch { }
 
                         }
 
-
                     }
-                    catch { break; }
-
-
-
-
 
                 }
 
-
             }
-
 
             return objectStates;
 
         }
 
-        public static List<OBJState> GetObjectsByKeyword(List<string>searchstrings, string username, string password, string url, string versionByte = "111", int skip = 0)
+        public static List<OBJState> GetObjectsByKeyword(List<string> searchstrings, string username, string password, string url, string versionByte = "111", int skip = 0)
         {
             List<OBJState> objectStates = new List<OBJState> { };
 
@@ -808,7 +750,7 @@ namespace SUP.P2FK
             foreach (string keyword in searchstrings)
             {
                 //return all roots found at address
-                objectTransactions = Root.GetRootsByAddress(Root.GetPublicAddressByKeyword(keyword,versionByte), username, password, url, versionByte, skip);
+                objectTransactions = Root.GetRootsByAddress(Root.GetPublicAddressByKeyword(keyword, versionByte), username, password, url, versionByte, skip);
                 HashSet<string> addedValues = new HashSet<string>();
                 foreach (Root transaction in objectTransactions)
                 {
@@ -819,29 +761,19 @@ namespace SUP.P2FK
                     {
                         string findObject = transaction.Keyword.ElementAt(transaction.Keyword.Count - 2).Key;
 
-                    
+
                         OBJState isOwnedObject = GetObjectByAddress(findObject, username, password, url, versionByte);
                         if (isOwnedObject.URN != null)
                         {
 
-                            try
+                            if (!addedValues.Contains(findObject))
                             {
 
-
-                                if (!addedValues.Contains(findObject))
-                                {
-
-                                    try
-                                    {
-                                        objectStates.Add(isOwnedObject);
-                                        addedValues.Add(findObject);
-                                    }
-                                    catch { }
-
-                                }
+                                objectStates.Add(isOwnedObject);
+                                addedValues.Add(findObject);
 
                             }
-                            catch { break; }
+
 
                         }
                     }

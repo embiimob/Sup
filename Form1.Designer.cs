@@ -38,7 +38,6 @@ namespace SUP
             this.btnDelete = new System.Windows.Forms.Button();
             this.label3 = new System.Windows.Forms.Label();
             this.txtlevelDBKey = new System.Windows.Forms.TextBox();
-            this.label5 = new System.Windows.Forms.Label();
             this.txtGetValue = new System.Windows.Forms.TextBox();
             this.lbTableName = new System.Windows.Forms.ListBox();
             this.label6 = new System.Windows.Forms.Label();
@@ -96,9 +95,9 @@ namespace SUP
             // 
             // btnGet
             // 
-            this.btnGet.Location = new System.Drawing.Point(518, 75);
+            this.btnGet.Location = new System.Drawing.Point(291, 132);
             this.btnGet.Name = "btnGet";
-            this.btnGet.Size = new System.Drawing.Size(52, 33);
+            this.btnGet.Size = new System.Drawing.Size(42, 23);
             this.btnGet.TabIndex = 1;
             this.btnGet.Text = "get";
             this.btnGet.UseVisualStyleBackColor = true;
@@ -106,9 +105,9 @@ namespace SUP
             // 
             // btnDelete
             // 
-            this.btnDelete.Location = new System.Drawing.Point(576, 75);
+            this.btnDelete.Location = new System.Drawing.Point(289, 106);
             this.btnDelete.Name = "btnDelete";
-            this.btnDelete.Size = new System.Drawing.Size(53, 33);
+            this.btnDelete.Size = new System.Drawing.Size(44, 23);
             this.btnDelete.TabIndex = 2;
             this.btnDelete.Text = "delete";
             this.btnDelete.UseVisualStyleBackColor = true;
@@ -117,37 +116,30 @@ namespace SUP
             // label3
             // 
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(371, 16);
+            this.label3.Location = new System.Drawing.Point(14, 116);
             this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(61, 13);
+            this.label3.Size = new System.Drawing.Size(41, 13);
             this.label3.TabIndex = 8;
-            this.label3.Text = "leveldb key";
+            this.label3.Text = "leveldb";
             // 
             // txtlevelDBKey
             // 
-            this.txtlevelDBKey.Location = new System.Drawing.Point(374, 32);
+            this.txtlevelDBKey.Location = new System.Drawing.Point(9, 132);
             this.txtlevelDBKey.Name = "txtlevelDBKey";
-            this.txtlevelDBKey.Size = new System.Drawing.Size(314, 20);
+            this.txtlevelDBKey.Size = new System.Drawing.Size(271, 20);
             this.txtlevelDBKey.TabIndex = 7;
             this.txtlevelDBKey.Text = "mt1ZyUkEjnjV6vLs4EQ3f2B1utF9Xqjp7j";
             // 
-            // label5
-            // 
-            this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(691, 9);
-            this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(33, 13);
-            this.label5.TabIndex = 12;
-            this.label5.Text = "value";
-            // 
             // txtGetValue
             // 
-            this.txtGetValue.Location = new System.Drawing.Point(694, 32);
+            this.txtGetValue.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.txtGetValue.Location = new System.Drawing.Point(457, 12);
             this.txtGetValue.Multiline = true;
             this.txtGetValue.Name = "txtGetValue";
             this.txtGetValue.ReadOnly = true;
             this.txtGetValue.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.txtGetValue.Size = new System.Drawing.Size(350, 82);
+            this.txtGetValue.Size = new System.Drawing.Size(587, 316);
             this.txtGetValue.TabIndex = 11;
             // 
             // lbTableName
@@ -160,16 +152,16 @@ namespace SUP
             "PRO",
             "COL",
             "EVENT"});
-            this.lbTableName.Location = new System.Drawing.Point(441, 78);
+            this.lbTableName.Location = new System.Drawing.Point(349, 83);
             this.lbTableName.Name = "lbTableName";
             this.lbTableName.ScrollAlwaysVisible = true;
-            this.lbTableName.Size = new System.Drawing.Size(71, 30);
+            this.lbTableName.Size = new System.Drawing.Size(102, 69);
             this.lbTableName.TabIndex = 13;
             // 
             // label6
             // 
             this.label6.AutoSize = true;
-            this.label6.Location = new System.Drawing.Point(438, 62);
+            this.label6.Location = new System.Drawing.Point(339, 67);
             this.label6.Name = "label6";
             this.label6.Size = new System.Drawing.Size(67, 13);
             this.label6.TabIndex = 14;
@@ -212,7 +204,7 @@ namespace SUP
             // label9
             // 
             this.label9.AutoSize = true;
-            this.label9.Location = new System.Drawing.Point(14, 75);
+            this.label9.Location = new System.Drawing.Point(14, 67);
             this.label9.Name = "label9";
             this.label9.Size = new System.Drawing.Size(18, 13);
             this.label9.TabIndex = 20;
@@ -220,7 +212,7 @@ namespace SUP
             // 
             // txtUrl
             // 
-            this.txtUrl.Location = new System.Drawing.Point(14, 88);
+            this.txtUrl.Location = new System.Drawing.Point(13, 83);
             this.txtUrl.Name = "txtUrl";
             this.txtUrl.Size = new System.Drawing.Size(170, 20);
             this.txtUrl.TabIndex = 19;
@@ -228,18 +220,18 @@ namespace SUP
             // 
             // btnTestConnection
             // 
-            this.btnTestConnection.Location = new System.Drawing.Point(257, 32);
+            this.btnTestConnection.Location = new System.Drawing.Point(257, 34);
             this.btnTestConnection.Name = "btnTestConnection";
-            this.btnTestConnection.Size = new System.Drawing.Size(97, 23);
+            this.btnTestConnection.Size = new System.Drawing.Size(76, 23);
             this.btnTestConnection.TabIndex = 21;
-            this.btnTestConnection.Text = "Test Connection";
+            this.btnTestConnection.Text = "Test Connect";
             this.btnTestConnection.UseVisualStyleBackColor = true;
             this.btnTestConnection.Click += new System.EventHandler(this.BtnTestConnection_Click);
             // 
             // lblTotalBytes
             // 
             this.lblTotalBytes.AutoSize = true;
-            this.lblTotalBytes.Location = new System.Drawing.Point(573, 126);
+            this.lblTotalBytes.Location = new System.Drawing.Point(196, 251);
             this.lblTotalBytes.Name = "lblTotalBytes";
             this.lblTotalBytes.Size = new System.Drawing.Size(35, 13);
             this.lblTotalBytes.TabIndex = 23;
@@ -247,23 +239,23 @@ namespace SUP
             // 
             // txtbalance
             // 
-            this.txtbalance.Location = new System.Drawing.Point(257, 88);
+            this.txtbalance.Location = new System.Drawing.Point(257, 83);
             this.txtbalance.Name = "txtbalance";
-            this.txtbalance.Size = new System.Drawing.Size(97, 20);
+            this.txtbalance.Size = new System.Drawing.Size(76, 20);
             this.txtbalance.TabIndex = 22;
             // 
             // txtSearchAddress
             // 
-            this.txtSearchAddress.Location = new System.Drawing.Point(61, 159);
+            this.txtSearchAddress.Location = new System.Drawing.Point(9, 184);
             this.txtSearchAddress.Name = "txtSearchAddress";
-            this.txtSearchAddress.Size = new System.Drawing.Size(227, 20);
+            this.txtSearchAddress.Size = new System.Drawing.Size(260, 20);
             this.txtSearchAddress.TabIndex = 25;
             this.txtSearchAddress.Text = "mt1ZyUkEjnjV6vLs4EQ3f2B1utF9Xqjp7j";
             // 
             // label11
             // 
             this.label11.AutoSize = true;
-            this.label11.Location = new System.Drawing.Point(10, 162);
+            this.label11.Location = new System.Drawing.Point(6, 164);
             this.label11.Name = "label11";
             this.label11.Size = new System.Drawing.Size(44, 13);
             this.label11.TabIndex = 26;
@@ -271,7 +263,7 @@ namespace SUP
             // 
             // btnSearch
             // 
-            this.btnSearch.Location = new System.Drawing.Point(296, 157);
+            this.btnSearch.Location = new System.Drawing.Point(275, 181);
             this.btnSearch.Name = "btnSearch";
             this.btnSearch.Size = new System.Drawing.Size(76, 23);
             this.btnSearch.TabIndex = 27;
@@ -324,7 +316,7 @@ namespace SUP
             dataGridViewCellStyle4.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
             dataGridViewCellStyle4.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
             this.dgTransactions.RowHeadersDefaultCellStyle = dataGridViewCellStyle4;
-            this.dgTransactions.Size = new System.Drawing.Size(1056, 340);
+            this.dgTransactions.Size = new System.Drawing.Size(1056, 200);
             this.dgTransactions.TabIndex = 30;
             // 
             // rootid
@@ -402,18 +394,18 @@ namespace SUP
             // 
             // btnGetTransactionId
             // 
-            this.btnGetTransactionId.Location = new System.Drawing.Point(427, 120);
+            this.btnGetTransactionId.Location = new System.Drawing.Point(408, 225);
             this.btnGetTransactionId.Name = "btnGetTransactionId";
             this.btnGetTransactionId.Size = new System.Drawing.Size(43, 23);
             this.btnGetTransactionId.TabIndex = 33;
-            this.btnGetTransactionId.Text = "Get";
+            this.btnGetTransactionId.Text = "get";
             this.btnGetTransactionId.UseVisualStyleBackColor = true;
             this.btnGetTransactionId.Click += new System.EventHandler(this.BtnGetTransactionId_Click);
             // 
             // label12
             // 
             this.label12.AutoSize = true;
-            this.label12.Location = new System.Drawing.Point(11, 125);
+            this.label12.Location = new System.Drawing.Point(6, 212);
             this.label12.Name = "label12";
             this.label12.Size = new System.Drawing.Size(23, 13);
             this.label12.TabIndex = 32;
@@ -421,17 +413,17 @@ namespace SUP
             // 
             // txtTransactionId
             // 
-            this.txtTransactionId.Location = new System.Drawing.Point(40, 123);
+            this.txtTransactionId.Location = new System.Drawing.Point(9, 228);
             this.txtTransactionId.Name = "txtTransactionId";
-            this.txtTransactionId.Size = new System.Drawing.Size(381, 20);
+            this.txtTransactionId.Size = new System.Drawing.Size(383, 20);
             this.txtTransactionId.TabIndex = 31;
             this.txtTransactionId.Text = "7223070fbc3706856e90701b62a8bfb3f5a618dc13d64d8f029260cba187ca26";
             // 
             // btnGetKeyword
             // 
-            this.btnGetKeyword.Location = new System.Drawing.Point(378, 156);
+            this.btnGetKeyword.Location = new System.Drawing.Point(367, 181);
             this.btnGetKeyword.Name = "btnGetKeyword";
-            this.btnGetKeyword.Size = new System.Drawing.Size(80, 23);
+            this.btnGetKeyword.Size = new System.Drawing.Size(84, 23);
             this.btnGetKeyword.TabIndex = 36;
             this.btnGetKeyword.Text = "get keywords";
             this.btnGetKeyword.UseVisualStyleBackColor = true;
@@ -440,7 +432,7 @@ namespace SUP
             // label13
             // 
             this.label13.AutoSize = true;
-            this.label13.Location = new System.Drawing.Point(187, 72);
+            this.label13.Location = new System.Drawing.Point(187, 67);
             this.label13.Name = "label13";
             this.label13.Size = new System.Drawing.Size(27, 13);
             this.label13.TabIndex = 38;
@@ -448,7 +440,7 @@ namespace SUP
             // 
             // txtVersionByte
             // 
-            this.txtVersionByte.Location = new System.Drawing.Point(190, 88);
+            this.txtVersionByte.Location = new System.Drawing.Point(190, 83);
             this.txtVersionByte.Name = "txtVersionByte";
             this.txtVersionByte.Size = new System.Drawing.Size(61, 20);
             this.txtVersionByte.TabIndex = 37;
@@ -457,7 +449,7 @@ namespace SUP
             // label14
             // 
             this.label14.AutoSize = true;
-            this.label14.Location = new System.Drawing.Point(254, 72);
+            this.label14.Location = new System.Drawing.Point(254, 67);
             this.label14.Name = "label14";
             this.label14.Size = new System.Drawing.Size(45, 13);
             this.label14.TabIndex = 39;
@@ -466,7 +458,7 @@ namespace SUP
             // lblTotalTime
             // 
             this.lblTotalTime.AutoSize = true;
-            this.lblTotalTime.Location = new System.Drawing.Point(659, 125);
+            this.lblTotalTime.Location = new System.Drawing.Point(12, 251);
             this.lblTotalTime.Name = "lblTotalTime";
             this.lblTotalTime.Size = new System.Drawing.Size(29, 13);
             this.lblTotalTime.TabIndex = 40;
@@ -475,7 +467,7 @@ namespace SUP
             // lblKbs
             // 
             this.lblKbs.AutoSize = true;
-            this.lblKbs.Location = new System.Drawing.Point(750, 126);
+            this.lblKbs.Location = new System.Drawing.Point(301, 251);
             this.lblKbs.Name = "lblKbs";
             this.lblKbs.Size = new System.Drawing.Size(32, 13);
             this.lblKbs.TabIndex = 41;
@@ -514,7 +506,6 @@ namespace SUP
             this.splitContainer1.Panel1.Controls.Add(this.txtTransactionId);
             this.splitContainer1.Panel1.Controls.Add(this.txtGetValue);
             this.splitContainer1.Panel1.Controls.Add(this.btnSearch);
-            this.splitContainer1.Panel1.Controls.Add(this.label5);
             this.splitContainer1.Panel1.Controls.Add(this.label11);
             this.splitContainer1.Panel1.Controls.Add(this.lbTableName);
             this.splitContainer1.Panel1.Controls.Add(this.txtSearchAddress);
@@ -534,13 +525,13 @@ namespace SUP
             // 
             this.splitContainer1.Panel2.Controls.Add(this.dgTransactions);
             this.splitContainer1.Size = new System.Drawing.Size(1056, 543);
-            this.splitContainer1.SplitterDistance = 183;
-            this.splitContainer1.SplitterWidth = 20;
+            this.splitContainer1.SplitterDistance = 333;
+            this.splitContainer1.SplitterWidth = 10;
             this.splitContainer1.TabIndex = 42;
             // 
             // button2
             // 
-            this.button2.Location = new System.Drawing.Point(794, 156);
+            this.button2.Location = new System.Drawing.Point(267, 305);
             this.button2.Name = "button2";
             this.button2.Size = new System.Drawing.Size(79, 23);
             this.button2.TabIndex = 53;
@@ -550,9 +541,9 @@ namespace SUP
             // 
             // button1
             // 
-            this.button1.Location = new System.Drawing.Point(563, 156);
+            this.button1.Location = new System.Drawing.Point(97, 276);
             this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(72, 23);
+            this.button1.Size = new System.Drawing.Size(79, 23);
             this.button1.TabIndex = 52;
             this.button1.Text = "get objects";
             this.button1.UseVisualStyleBackColor = true;
@@ -560,9 +551,9 @@ namespace SUP
             // 
             // btnGetCreated
             // 
-            this.btnGetCreated.Location = new System.Drawing.Point(716, 157);
+            this.btnGetCreated.Location = new System.Drawing.Point(267, 276);
             this.btnGetCreated.Name = "btnGetCreated";
-            this.btnGetCreated.Size = new System.Drawing.Size(72, 23);
+            this.btnGetCreated.Size = new System.Drawing.Size(79, 23);
             this.btnGetCreated.TabIndex = 51;
             this.btnGetCreated.Text = "get created";
             this.btnGetCreated.UseVisualStyleBackColor = true;
@@ -570,9 +561,9 @@ namespace SUP
             // 
             // btnGetOwned
             // 
-            this.btnGetOwned.Location = new System.Drawing.Point(641, 156);
+            this.btnGetOwned.Location = new System.Drawing.Point(182, 276);
             this.btnGetOwned.Name = "btnGetOwned";
-            this.btnGetOwned.Size = new System.Drawing.Size(69, 23);
+            this.btnGetOwned.Size = new System.Drawing.Size(79, 23);
             this.btnGetOwned.TabIndex = 50;
             this.btnGetOwned.Text = "get owned";
             this.btnGetOwned.UseVisualStyleBackColor = true;
@@ -581,7 +572,7 @@ namespace SUP
             // lblTotal
             // 
             this.lblTotal.AutoSize = true;
-            this.lblTotal.Location = new System.Drawing.Point(493, 126);
+            this.lblTotal.Location = new System.Drawing.Point(94, 251);
             this.lblTotal.Name = "lblTotal";
             this.lblTotal.Size = new System.Drawing.Size(30, 13);
             this.lblTotal.TabIndex = 49;
@@ -589,9 +580,9 @@ namespace SUP
             // 
             // btnPurge
             // 
-            this.btnPurge.Location = new System.Drawing.Point(635, 75);
+            this.btnPurge.Location = new System.Drawing.Point(364, 276);
             this.btnPurge.Name = "btnPurge";
-            this.btnPurge.Size = new System.Drawing.Size(53, 33);
+            this.btnPurge.Size = new System.Drawing.Size(87, 52);
             this.btnPurge.TabIndex = 45;
             this.btnPurge.Text = "purge";
             this.btnPurge.UseVisualStyleBackColor = true;
@@ -599,9 +590,9 @@ namespace SUP
             // 
             // btnGetObject
             // 
-            this.btnGetObject.Location = new System.Drawing.Point(484, 157);
+            this.btnGetObject.Location = new System.Drawing.Point(12, 276);
             this.btnGetObject.Name = "btnGetObject";
-            this.btnGetObject.Size = new System.Drawing.Size(73, 23);
+            this.btnGetObject.Size = new System.Drawing.Size(79, 23);
             this.btnGetObject.TabIndex = 44;
             this.btnGetObject.Text = "get object";
             this.btnGetObject.UseVisualStyleBackColor = true;
@@ -609,9 +600,9 @@ namespace SUP
             // 
             // btnDecrypt
             // 
-            this.btnDecrypt.Location = new System.Drawing.Point(984, 156);
+            this.btnDecrypt.Location = new System.Drawing.Point(398, 32);
             this.btnDecrypt.Name = "btnDecrypt";
-            this.btnDecrypt.Size = new System.Drawing.Size(60, 23);
+            this.btnDecrypt.Size = new System.Drawing.Size(53, 23);
             this.btnDecrypt.TabIndex = 43;
             this.btnDecrypt.Text = "decrypt";
             this.btnDecrypt.UseVisualStyleBackColor = true;
@@ -619,9 +610,9 @@ namespace SUP
             // 
             // btnEncrypt
             // 
-            this.btnEncrypt.Location = new System.Drawing.Point(918, 156);
+            this.btnEncrypt.Location = new System.Drawing.Point(339, 31);
             this.btnEncrypt.Name = "btnEncrypt";
-            this.btnEncrypt.Size = new System.Drawing.Size(60, 23);
+            this.btnEncrypt.Size = new System.Drawing.Size(53, 23);
             this.btnEncrypt.TabIndex = 42;
             this.btnEncrypt.Text = "encrypt";
             this.btnEncrypt.UseVisualStyleBackColor = true;
@@ -651,7 +642,6 @@ namespace SUP
         private System.Windows.Forms.Button btnDelete;
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.TextBox txtlevelDBKey;
-        private System.Windows.Forms.Label label5;
         private System.Windows.Forms.TextBox txtGetValue;
         private System.Windows.Forms.ListBox lbTableName;
         private System.Windows.Forms.Label label6;
