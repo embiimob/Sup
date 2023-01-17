@@ -181,12 +181,17 @@ namespace SUP.P2FK
             while (regexSpecialChars.IsMatch(transactionASCII))
             {
                 Match match = regexSpecialChars.Match(transactionASCII);
+                int packetSize;
+                int headerSize;
+                try
+                {
+                    packetSize = Int32.Parse(match.Value.ToString().Remove(0, 1));
+                    headerSize = match.Index + match.Length + 1;
+                }
+                catch { break; }
 
-                int packetSize = Int32.Parse(match.Value.ToString().Remove(0, 1));
-                int headerSize = match.Index + match.Length + 1;
-
-                //invalid if a special character is not found before a number
-                if (transactionASCII.IndexOfAny(specialChars) != match.Index)
+                    //invalid if a special character is not found before a number
+                    if (transactionASCII.IndexOfAny(specialChars) != match.Index)
                 {
                     break;
                 }
@@ -427,7 +432,7 @@ namespace SUP.P2FK
 
             return P2FKRoot;
         }
-        public static Root[] GetRootByAddress(string address, string username, string password, string url, string versionByte = "111", int skip = 0, int qty = 500)
+        public static Root[] GetRootsByAddress(string address, string username, string password, string url, string versionByte = "111", int skip = 0, int qty = 500)
         {
             var rootList = new List<Root>();
             NetworkCredential credentials = new NetworkCredential(username, password);
@@ -479,7 +484,7 @@ namespace SUP.P2FK
                 taskCount++;
 
                 // If there are 10 or more tasks, wait for some of them to complete before continuing
-                if (taskCount >= 2)
+                if (taskCount >= 1)
                 {
                     Task.WaitAny(tasks.ToArray());
                     tasks = tasks.Where(t => !t.IsCompleted).ToList();

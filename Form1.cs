@@ -232,7 +232,7 @@ namespace SUP
         private void BtnSearch_Click(object sender, EventArgs e)
         {
             DateTime tmbeginCall = DateTime.UtcNow;
-            Root[] roots = Root.GetRootByAddress(
+            Root[] roots = Root.GetRootsByAddress(
                 txtSearchAddress.Text,
                 txtLogin.Text,
                 txtPassword.Text,
@@ -372,7 +372,7 @@ namespace SUP
         {
             string publicAddress = Root.GetPublicAddressByKeyword(txtSearchAddress.Text, txtVersionByte.Text);
             DateTime tmbeginCall = DateTime.UtcNow;
-            Root[] roots = Root.GetRootByAddress(
+            Root[] roots = Root.GetRootsByAddress(
                 publicAddress,
                 txtLogin.Text,
                 txtPassword.Text,
@@ -442,17 +442,19 @@ namespace SUP
                 Multiselect = true
             };
             byte[] result = new byte[0];
+            DateTime tmbeginCall = DateTime.UtcNow;
             if (openFileDialog.ShowDialog() == DialogResult.OK)
             {
                 result = Root.GetRootBytesByFile(openFileDialog.FileNames);
                 result = Root.EncryptRootBytes(txtLogin.Text, txtPassword.Text, txtUrl.Text, txtSearchAddress.Text, result);
 
             }
-            DateTime tmbeginCall = DateTime.UtcNow;
-
-
-            Root root = Root.GetRootByTransactionId(Guid.NewGuid().ToString(), null, null, null, txtVersionByte.Text, result);
             DateTime tmendCall = DateTime.UtcNow;
+
+            string jobId = Guid.NewGuid().ToString();
+            Root root = Root.GetRootByTransactionId(jobId, null, null, null, txtVersionByte.Text, result);
+            txtTransactionId.Text = jobId;
+            
             dgTransactions.Rows.Clear();
             int totalbytes;
 
@@ -606,6 +608,22 @@ namespace SUP
 
             List<OBJState> createdObjects = OBJState.GetObjectsCreatedByAddress(txtSearchAddress.Text, txtLogin.Text, txtPassword.Text, txtUrl.Text);
             txtGetValue.Text = JsonConvert.SerializeObject(createdObjects);
+
+        }
+
+        private void button1_Click_1(object sender, EventArgs e)
+        {
+            List<OBJState> createdObjects = OBJState.GetObjectsByAddress(txtSearchAddress.Text, txtLogin.Text, txtPassword.Text, txtUrl.Text);
+            txtGetValue.Text = JsonConvert.SerializeObject(createdObjects);
+        }
+
+        private void button2_Click_1(object sender, EventArgs e)
+        {
+
+            List<string> searchList = new List<string> { txtSearchAddress.Text };
+            List<OBJState> createdObjects = OBJState.GetObjectsByKeyword(searchList, txtLogin.Text, txtPassword.Text, txtUrl.Text);
+            txtGetValue.Text = JsonConvert.SerializeObject(createdObjects);
+
 
         }
     }

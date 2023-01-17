@@ -6,7 +6,9 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
+using System.Windows.Forms;
 
 namespace SUP.P2FK
 {
@@ -58,7 +60,7 @@ namespace SUP.P2FK
             Root[] objectTransactions;
 
             //return all roots found at address
-            objectTransactions = Root.GetRootByAddress(objectaddress, username, password, url, versionByte, intProcessHeight);
+            objectTransactions = Root.GetRootsByAddress(objectaddress, username, password, url, versionByte, intProcessHeight);
 
             foreach (Root transaction in objectTransactions)
             {
@@ -127,80 +129,93 @@ namespace SUP.P2FK
                                 }
 
 
-
-                                //has proper authority to make OBJ changes
-                                if (objectState.Creators.Contains(transaction.SignedBy))
+                                try
                                 {
-                                    if (objectState.LockedDate.Year == 1)
+                                    //has proper authority to make OBJ changes
+                                    if (objectState.Creators.Contains(transaction.SignedBy))
                                     {
-                                        if (objectinspector.urn != null) { objectState.ChangeDate = transaction.BlockDate; objectState.URN = objectinspector.urn; }
-                                        if (objectinspector.img != null) { objectState.ChangeDate = transaction.BlockDate; objectState.Image = objectinspector.img; }
-                                        if (objectinspector.nme != null) { objectState.ChangeDate = transaction.BlockDate; objectState.Name = objectinspector.nme; }
-                                        if (objectinspector.dsc != null) { objectState.ChangeDate = transaction.BlockDate; objectState.Description = objectinspector.dsc; }
-                                        if (objectinspector.lic != null) { objectState.ChangeDate = transaction.BlockDate; objectState.License = objectinspector.lic; }
-                                        if (objectinspector.cre != null)
+                                        if (objectState.LockedDate.Year == 1)
                                         {
-                                            objectState.Creators.Clear();
-                                            foreach (int keywordId in objectinspector.cre)
+                                            if (objectinspector.urn != null) { objectState.ChangeDate = transaction.BlockDate; objectState.URN = objectinspector.urn; }
+                                            if (objectinspector.img != null) { objectState.ChangeDate = transaction.BlockDate; objectState.Image = objectinspector.img; }
+                                            if (objectinspector.nme != null) { objectState.ChangeDate = transaction.BlockDate; objectState.Name = objectinspector.nme; }
+                                            if (objectinspector.dsc != null) { objectState.ChangeDate = transaction.BlockDate; objectState.Description = objectinspector.dsc; }
+                                            if (objectinspector.lic != null) { objectState.ChangeDate = transaction.BlockDate; objectState.License = objectinspector.lic; }
+                                            if (objectinspector.cre != null)
                                             {
-
-                                                try
+                                                objectState.Creators.Clear();
+                                                foreach (int keywordId in objectinspector.cre)
                                                 {
 
-                                                    string creator = transaction.Keyword.Reverse().ElementAt(keywordId).Key;
-
-                                                    if (!objectState.Creators.Contains(creator))
+                                                    try
                                                     {
-                                                        objectState.Creators.Add(creator);
+
+                                                        string creator = transaction.Keyword.Reverse().ElementAt(keywordId).Key;
+
+                                                        if (!objectState.Creators.Contains(creator))
+                                                        {
+                                                            objectState.Creators.Add(creator);
+                                                        }
+                                                    }
+                                                    catch
+                                                    {
+                                                        logstatus = "txid:" + transaction.TransactionId + ",object,create,\"failed due to invalid transaction format\"";
+                                                        break;
+                                                    }
+
+                                                }
+
+                                                objectState.ChangeDate = transaction.BlockDate;
+
+                                            }
+                                            if (objectState.ChangeDate == transaction.BlockDate)
+                                            {
+                                                logstatus = "txid:" + transaction.TransactionId + ",object,update,\"success\"";
+                                            }
+                                            if (objectinspector.own != null)
+                                            {
+                                                if (objectState.Owners == null)
+                                                {
+                                                    objectState.Owners = new Dictionary<string, int>();
+                                                    logstatus = "txid:" + transaction.TransactionId + ",object,create,\"success\"";
+                                                }
+
+                                                objectState.ChangeDate = transaction.BlockDate;
+                                                foreach (var ownerId in objectinspector.own)
+                                                {
+                                                    string owner = transaction.Keyword.Reverse().ElementAt(ownerId.Key).Key;
+                                                    if (!objectState.Owners.ContainsKey(owner))
+                                                    {
+                                                        objectState.Owners.Add(owner, ownerId.Value);
                                                     }
                                                 }
-                                                catch
-                                                {
-                                                    logstatus = "txid:" + transaction.TransactionId + ",object,create,\"failed due to invalid transaction format\"";
-                                                    break;
-                                                }
-
                                             }
 
-                                            objectState.ChangeDate = transaction.BlockDate;
 
                                         }
-                                        if (objectState.ChangeDate == transaction.BlockDate)
+                                        else
                                         {
-                                            logstatus = "txid:" + transaction.TransactionId + ",object,update,\"success\"";
+                                            logstatus = "txid:" + transaction.TransactionId + ",object,update,\"failed due to object lock\"";
+                                            break;
                                         }
-                                        if (objectinspector.own != null)
-                                        {
-                                            if (objectState.Owners == null)
-                                            {
-                                                objectState.Owners = new Dictionary<string, int>();
-                                                logstatus = "txid:" + transaction.TransactionId + ",object,create,\"success\"";
-                                            }
-
-                                            objectState.ChangeDate = transaction.BlockDate;
-                                            foreach (var ownerId in objectinspector.own)
-                                            {
-                                                string owner = transaction.Keyword.Reverse().ElementAt(ownerId.Key).Key;
-                                                if (!objectState.Owners.ContainsKey(owner))
-                                                {
-                                                    objectState.Owners.Add(owner, ownerId.Value);
-                                                }
-                                            }
-                                        }
-
-
                                     }
                                     else
                                     {
-                                        logstatus = "txid:" + transaction.TransactionId + ",object,update,\"failed due to object lock\"";
-                                        break;
+                                        logstatus = "txid:" + transaction.TransactionId + ",object,update,\"failed due to insufficent privlidges\"";
                                     }
+                                    break;
+
+
+
                                 }
-                                else
+                                catch
                                 {
-                                    logstatus = "txid:" + transaction.TransactionId + ",object,update,\"failed due to insufficent privlidges\"";
+                                    logstatus = "txid:" + transaction.TransactionId + ",object,create,\"failed due to invalid transaction format\"";
+
+                                    break;
                                 }
-                                break;
+
+
 
                             case "GIV":
 
@@ -598,21 +613,14 @@ namespace SUP.P2FK
 
         }
 
-        public static List<OBJState> GetObjectsByAddress(string objectaddress, string username, string password, string url, string versionByte = "111")
+        public static List<OBJState> GetObjectsByAddress(string objectaddress, string username, string password, string url, string versionByte = "111", int skip = 0)
         {
-            return null;
-
-        }
-
-        public static List<OBJState> GetObjectsOwnedByAddress(string objectaddress, string username, string password, string url, string versionByte = "111", int skip = 0)
-        {
-
             List<OBJState> objectStates = new List<OBJState> { };
-       
+
             Root[] objectTransactions;
 
             //return all roots found at address
-            objectTransactions = Root.GetRootByAddress(objectaddress, username, password, url, versionByte, skip);
+            objectTransactions = Root.GetRootsByAddress(objectaddress, username, password, url, versionByte, skip);
             HashSet<string> addedValues = new HashSet<string>();
             foreach (Root transaction in objectTransactions)
             {
@@ -621,33 +629,111 @@ namespace SUP.P2FK
                 //ignore any transaction that is not signed
                 if (transaction.Signed)
                 {
-                    string findObject = transaction.Keyword.ElementAt(1).Key;
+                    string findObject = transaction.Keyword.ElementAt(transaction.Keyword.Count - 2).Key;
 
-                    OBJState isOwnedObject = GetObjectByAddress(findObject, username,password,url,versionByte);
 
+                    OBJState isOwnedObject = GetObjectByAddress(findObject, username, password, url, versionByte);
+
+                    if (isOwnedObject.URN != null)
 
                     try
                     {
 
-                        if (isOwnedObject.Owners.ContainsKey(objectaddress) && !addedValues.Contains(findObject))
+
+                        if (!addedValues.Contains(findObject))
                         {
 
                             try
                             {
                                 objectStates.Add(isOwnedObject);
-                                addedValues.Add(transaction.Keyword.ElementAt(1).Key);
+                                addedValues.Add(findObject);
                             }
                             catch { }
 
                         }
 
-
-                    }catch { break; }
-
-
+                    }
+                    catch { break; }
 
 
-                    
+                }
+
+
+            }
+
+
+            return objectStates;
+
+        }
+
+        public static List<OBJState> GetObjectsOwnedByAddress(string objectaddress, string username, string password, string url, string versionByte = "111", int skip = 0)
+        {
+
+            List<OBJState> objectStates = new List<OBJState> { };
+
+            Root[] objectTransactions;
+
+            //return all roots found at address
+            objectTransactions = Root.GetRootsByAddress(objectaddress, username, password, url, versionByte, skip);
+            HashSet<string> addedValues = new HashSet<string>();
+            foreach (Root transaction in objectTransactions)
+            {
+
+
+                //ignore any transaction that is not signed
+                if (transaction.Signed)
+                {
+                    string findObject = transaction.Keyword.ElementAt(transaction.Keyword.Count - 2).Key;
+
+                    OBJState isOwnedObject = GetObjectByAddress(findObject, username, password, url, versionByte);
+
+                    if (isOwnedObject.URN != null)
+                    {
+
+                        try
+                        {
+
+                            if (isOwnedObject.Owners.ContainsKey(objectaddress))
+                            {
+
+                                try
+                                {
+
+
+                                    if (!addedValues.Contains(findObject))
+                                    {
+
+
+                                        objectStates.Add(isOwnedObject);
+                                        addedValues.Add(findObject);
+                                    }
+                                }
+                                catch { }
+
+                            }
+                            else
+                            {
+                                if (isOwnedObject.Creators.Contains(objectaddress) && isOwnedObject.Owners.TryGetValue(transaction.Keyword.Last().Key, out int qty))
+                                {
+                                    if (!addedValues.Contains(findObject))
+                                    {
+
+                                        
+                                        objectStates.Add(isOwnedObject);
+                                        addedValues.Add(findObject);
+                                    }
+
+                                }
+                            }
+
+
+                        }
+                        catch { break; }
+
+                    }
+
+
+
                 }
 
 
@@ -666,7 +752,7 @@ namespace SUP.P2FK
             Root[] objectTransactions;
 
             //return all roots found at address
-            objectTransactions = Root.GetRootByAddress(objectaddress, username, password, url, versionByte, skip);
+            objectTransactions = Root.GetRootsByAddress(objectaddress, username, password, url, versionByte, skip);
             HashSet<string> addedValues = new HashSet<string>();
             foreach (Root transaction in objectTransactions)
             {
@@ -675,7 +761,7 @@ namespace SUP.P2FK
                 //ignore any transaction that is not signed
                 if (transaction.Signed)
                 {
-                    string foundObject = transaction.Keyword.ElementAt(0).Key;
+                    string foundObject = transaction.Keyword.ElementAt(transaction.Keyword.Count - 1).Key;
 
                     OBJState isOwnedObject = GetObjectByAddress(foundObject, username, password, url, versionByte);
 
@@ -706,6 +792,62 @@ namespace SUP.P2FK
                 }
 
 
+            }
+
+
+            return objectStates;
+
+        }
+
+        public static List<OBJState> GetObjectsByKeyword(List<string>searchstrings, string username, string password, string url, string versionByte = "111", int skip = 0)
+        {
+            List<OBJState> objectStates = new List<OBJState> { };
+
+            Root[] objectTransactions;
+
+            foreach (string keyword in searchstrings)
+            {
+                //return all roots found at address
+                objectTransactions = Root.GetRootsByAddress(Root.GetPublicAddressByKeyword(keyword,versionByte), username, password, url, versionByte, skip);
+                HashSet<string> addedValues = new HashSet<string>();
+                foreach (Root transaction in objectTransactions)
+                {
+
+
+                    //ignore any transaction that is not signed
+                    if (transaction.Signed)
+                    {
+                        string findObject = transaction.Keyword.ElementAt(transaction.Keyword.Count - 2).Key;
+
+                    
+                        OBJState isOwnedObject = GetObjectByAddress(findObject, username, password, url, versionByte);
+                        if (isOwnedObject.URN != null)
+                        {
+
+                            try
+                            {
+
+
+                                if (!addedValues.Contains(findObject))
+                                {
+
+                                    try
+                                    {
+                                        objectStates.Add(isOwnedObject);
+                                        addedValues.Add(findObject);
+                                    }
+                                    catch { }
+
+                                }
+
+                            }
+                            catch { break; }
+
+                        }
+                    }
+
+
+                }
             }
 
 
