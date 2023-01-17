@@ -30,15 +30,14 @@ namespace SUP
         /// </summary>
         private void InitializeComponent()
         {
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle5 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle7 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle8 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle6 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle4 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
             this.btnGet = new System.Windows.Forms.Button();
             this.btnDelete = new System.Windows.Forms.Button();
             this.label3 = new System.Windows.Forms.Label();
             this.txtlevelDBKey = new System.Windows.Forms.TextBox();
-            this.txtGetValue = new System.Windows.Forms.TextBox();
             this.lbTableName = new System.Windows.Forms.ListBox();
             this.label6 = new System.Windows.Forms.Label();
             this.txtLogin = new System.Windows.Forms.TextBox();
@@ -86,6 +85,7 @@ namespace SUP
             this.btnGetObject = new System.Windows.Forms.Button();
             this.btnDecrypt = new System.Windows.Forms.Button();
             this.btnEncrypt = new System.Windows.Forms.Button();
+            this.txtGetValue = new System.Windows.Forms.TextBox();
             ((System.ComponentModel.ISupportInitialize)(this.dgTransactions)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
@@ -129,18 +129,6 @@ namespace SUP
             this.txtlevelDBKey.Size = new System.Drawing.Size(271, 20);
             this.txtlevelDBKey.TabIndex = 7;
             this.txtlevelDBKey.Text = "mt1ZyUkEjnjV6vLs4EQ3f2B1utF9Xqjp7j";
-            // 
-            // txtGetValue
-            // 
-            this.txtGetValue.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.txtGetValue.Location = new System.Drawing.Point(457, 12);
-            this.txtGetValue.Multiline = true;
-            this.txtGetValue.Name = "txtGetValue";
-            this.txtGetValue.ReadOnly = true;
-            this.txtGetValue.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.txtGetValue.Size = new System.Drawing.Size(587, 316);
-            this.txtGetValue.TabIndex = 11;
             // 
             // lbTableName
             // 
@@ -231,7 +219,7 @@ namespace SUP
             // lblTotalBytes
             // 
             this.lblTotalBytes.AutoSize = true;
-            this.lblTotalBytes.Location = new System.Drawing.Point(196, 251);
+            this.lblTotalBytes.Location = new System.Drawing.Point(187, 260);
             this.lblTotalBytes.Name = "lblTotalBytes";
             this.lblTotalBytes.Size = new System.Drawing.Size(35, 13);
             this.lblTotalBytes.TabIndex = 23;
@@ -246,7 +234,7 @@ namespace SUP
             // 
             // txtSearchAddress
             // 
-            this.txtSearchAddress.Location = new System.Drawing.Point(9, 184);
+            this.txtSearchAddress.Location = new System.Drawing.Point(9, 228);
             this.txtSearchAddress.Name = "txtSearchAddress";
             this.txtSearchAddress.Size = new System.Drawing.Size(270, 20);
             this.txtSearchAddress.TabIndex = 25;
@@ -255,7 +243,7 @@ namespace SUP
             // label11
             // 
             this.label11.AutoSize = true;
-            this.label11.Location = new System.Drawing.Point(6, 164);
+            this.label11.Location = new System.Drawing.Point(6, 208);
             this.label11.Name = "label11";
             this.label11.Size = new System.Drawing.Size(44, 13);
             this.label11.TabIndex = 26;
@@ -263,7 +251,7 @@ namespace SUP
             // 
             // btnSearch
             // 
-            this.btnSearch.Location = new System.Drawing.Point(285, 182);
+            this.btnSearch.Location = new System.Drawing.Point(285, 226);
             this.btnSearch.Name = "btnSearch";
             this.btnSearch.Size = new System.Drawing.Size(76, 23);
             this.btnSearch.TabIndex = 27;
@@ -274,14 +262,14 @@ namespace SUP
             // dgTransactions
             // 
             this.dgTransactions.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.Fill;
-            dataGridViewCellStyle5.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle5.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle5.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            dataGridViewCellStyle5.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle5.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle5.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle5.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.dgTransactions.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle5;
+            dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle1.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle1.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle1.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.dgTransactions.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle1;
             this.dgTransactions.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.dgTransactions.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
             this.rootid,
@@ -297,26 +285,26 @@ namespace SUP
             this.signature,
             this.confirmations,
             this.buildtime});
-            dataGridViewCellStyle7.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle7.BackColor = System.Drawing.SystemColors.Window;
-            dataGridViewCellStyle7.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            dataGridViewCellStyle7.ForeColor = System.Drawing.SystemColors.ControlText;
-            dataGridViewCellStyle7.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle7.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle7.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
-            this.dgTransactions.DefaultCellStyle = dataGridViewCellStyle7;
+            dataGridViewCellStyle3.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle3.BackColor = System.Drawing.SystemColors.Window;
+            dataGridViewCellStyle3.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle3.ForeColor = System.Drawing.SystemColors.ControlText;
+            dataGridViewCellStyle3.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle3.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle3.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
+            this.dgTransactions.DefaultCellStyle = dataGridViewCellStyle3;
             this.dgTransactions.Dock = System.Windows.Forms.DockStyle.Fill;
             this.dgTransactions.Location = new System.Drawing.Point(0, 0);
             this.dgTransactions.Name = "dgTransactions";
-            dataGridViewCellStyle8.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle8.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle8.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            dataGridViewCellStyle8.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle8.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle8.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle8.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.dgTransactions.RowHeadersDefaultCellStyle = dataGridViewCellStyle8;
-            this.dgTransactions.Size = new System.Drawing.Size(1056, 200);
+            dataGridViewCellStyle4.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle4.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle4.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle4.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle4.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle4.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle4.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.dgTransactions.RowHeadersDefaultCellStyle = dataGridViewCellStyle4;
+            this.dgTransactions.Size = new System.Drawing.Size(1056, 194);
             this.dgTransactions.TabIndex = 30;
             // 
             // rootid
@@ -327,8 +315,8 @@ namespace SUP
             // 
             // messagecount
             // 
-            dataGridViewCellStyle6.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.messagecount.DefaultCellStyle = dataGridViewCellStyle6;
+            dataGridViewCellStyle2.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.messagecount.DefaultCellStyle = dataGridViewCellStyle2;
             this.messagecount.HeaderText = "Messages";
             this.messagecount.MaxInputLength = 100000000;
             this.messagecount.Name = "messagecount";
@@ -394,7 +382,7 @@ namespace SUP
             // 
             // btnGetTransactionId
             // 
-            this.btnGetTransactionId.Location = new System.Drawing.Point(408, 225);
+            this.btnGetTransactionId.Location = new System.Drawing.Point(408, 178);
             this.btnGetTransactionId.Name = "btnGetTransactionId";
             this.btnGetTransactionId.Size = new System.Drawing.Size(43, 23);
             this.btnGetTransactionId.TabIndex = 33;
@@ -405,7 +393,7 @@ namespace SUP
             // label12
             // 
             this.label12.AutoSize = true;
-            this.label12.Location = new System.Drawing.Point(6, 212);
+            this.label12.Location = new System.Drawing.Point(6, 165);
             this.label12.Name = "label12";
             this.label12.Size = new System.Drawing.Size(23, 13);
             this.label12.TabIndex = 32;
@@ -413,15 +401,15 @@ namespace SUP
             // 
             // txtTransactionId
             // 
-            this.txtTransactionId.Location = new System.Drawing.Point(9, 228);
+            this.txtTransactionId.Location = new System.Drawing.Point(9, 181);
             this.txtTransactionId.Name = "txtTransactionId";
-            this.txtTransactionId.Size = new System.Drawing.Size(383, 20);
+            this.txtTransactionId.Size = new System.Drawing.Size(393, 20);
             this.txtTransactionId.TabIndex = 31;
             this.txtTransactionId.Text = "7223070fbc3706856e90701b62a8bfb3f5a618dc13d64d8f029260cba187ca26";
             // 
             // btnGetKeyword
             // 
-            this.btnGetKeyword.Location = new System.Drawing.Point(367, 181);
+            this.btnGetKeyword.Location = new System.Drawing.Point(367, 225);
             this.btnGetKeyword.Name = "btnGetKeyword";
             this.btnGetKeyword.Size = new System.Drawing.Size(84, 23);
             this.btnGetKeyword.TabIndex = 36;
@@ -458,7 +446,7 @@ namespace SUP
             // lblTotalTime
             // 
             this.lblTotalTime.AutoSize = true;
-            this.lblTotalTime.Location = new System.Drawing.Point(12, 251);
+            this.lblTotalTime.Location = new System.Drawing.Point(12, 260);
             this.lblTotalTime.Name = "lblTotalTime";
             this.lblTotalTime.Size = new System.Drawing.Size(29, 13);
             this.lblTotalTime.TabIndex = 40;
@@ -467,7 +455,7 @@ namespace SUP
             // lblKbs
             // 
             this.lblKbs.AutoSize = true;
-            this.lblKbs.Location = new System.Drawing.Point(301, 251);
+            this.lblKbs.Location = new System.Drawing.Point(301, 260);
             this.lblKbs.Name = "lblKbs";
             this.lblKbs.Size = new System.Drawing.Size(32, 13);
             this.lblKbs.TabIndex = 41;
@@ -482,6 +470,7 @@ namespace SUP
             // 
             // splitContainer1.Panel1
             // 
+            this.splitContainer1.Panel1.Controls.Add(this.txtGetValue);
             this.splitContainer1.Panel1.Controls.Add(this.button2);
             this.splitContainer1.Panel1.Controls.Add(this.button1);
             this.splitContainer1.Panel1.Controls.Add(this.btnGetCreated);
@@ -504,7 +493,6 @@ namespace SUP
             this.splitContainer1.Panel1.Controls.Add(this.label3);
             this.splitContainer1.Panel1.Controls.Add(this.label12);
             this.splitContainer1.Panel1.Controls.Add(this.txtTransactionId);
-            this.splitContainer1.Panel1.Controls.Add(this.txtGetValue);
             this.splitContainer1.Panel1.Controls.Add(this.btnSearch);
             this.splitContainer1.Panel1.Controls.Add(this.label11);
             this.splitContainer1.Panel1.Controls.Add(this.lbTableName);
@@ -525,7 +513,7 @@ namespace SUP
             // 
             this.splitContainer1.Panel2.Controls.Add(this.dgTransactions);
             this.splitContainer1.Size = new System.Drawing.Size(1056, 543);
-            this.splitContainer1.SplitterDistance = 333;
+            this.splitContainer1.SplitterDistance = 339;
             this.splitContainer1.SplitterWidth = 10;
             this.splitContainer1.TabIndex = 42;
             // 
@@ -572,7 +560,7 @@ namespace SUP
             // lblTotal
             // 
             this.lblTotal.AutoSize = true;
-            this.lblTotal.Location = new System.Drawing.Point(94, 251);
+            this.lblTotal.Location = new System.Drawing.Point(94, 260);
             this.lblTotal.Name = "lblTotal";
             this.lblTotal.Size = new System.Drawing.Size(30, 13);
             this.lblTotal.TabIndex = 49;
@@ -618,6 +606,18 @@ namespace SUP
             this.btnEncrypt.UseVisualStyleBackColor = true;
             this.btnEncrypt.Click += new System.EventHandler(this.Button1_Click);
             // 
+            // txtGetValue
+            // 
+            this.txtGetValue.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.txtGetValue.Location = new System.Drawing.Point(457, 14);
+            this.txtGetValue.Multiline = true;
+            this.txtGetValue.Name = "txtGetValue";
+            this.txtGetValue.ReadOnly = true;
+            this.txtGetValue.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
+            this.txtGetValue.Size = new System.Drawing.Size(587, 314);
+            this.txtGetValue.TabIndex = 54;
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -642,7 +642,6 @@ namespace SUP
         private System.Windows.Forms.Button btnDelete;
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.TextBox txtlevelDBKey;
-        private System.Windows.Forms.TextBox txtGetValue;
         private System.Windows.Forms.ListBox lbTableName;
         private System.Windows.Forms.Label label6;
         private System.Windows.Forms.TextBox txtLogin;
@@ -690,6 +689,7 @@ namespace SUP
         private Button btnGetOwned;
         private Button button1;
         private Button button2;
+        private TextBox txtGetValue;
     }
 }
 
