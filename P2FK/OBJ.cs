@@ -617,7 +617,7 @@ namespace SUP.P2FK
                 //ignore any transaction that is not signed
                 if (transaction.Signed)
                 {
-                    string findObject = transaction.Keyword.ElementAt(transaction.Keyword.Count -1).Key;
+                    string findObject = transaction.Keyword.ElementAt(transaction.Keyword.Count -2).Key;
 
 
                     OBJState isObject = GetObjectByAddress(findObject, username, password, url, versionByte);
