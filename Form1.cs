@@ -1,10 +1,12 @@
 ﻿using LevelDB;
 using NBitcoin.RPC;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using SUP.P2FK;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Net;
@@ -583,7 +585,8 @@ namespace SUP
 
             lblTotalTime.Text = "time: " + Math.Truncate(elapsedMilliseconds);
             lblTotal.Text = "total: " + Tester.ProcessHeight.ToString();
-            txtGetValue.Text = JsonConvert.SerializeObject(Tester);
+                                  
+            displayRootJSON(new JObject[] { JObject.FromObject(Tester)});
         }
 
         private void btnPurge_Click(object sender, EventArgs e)
@@ -610,7 +613,15 @@ namespace SUP
 
             lblTotalTime.Text = "time: " + Math.Truncate(elapsedMilliseconds);
             lblTotal.Text = "total: " + ownedObjects.Count();
-            txtGetValue.Text = JsonConvert.SerializeObject(ownedObjects);
+
+            JObject[] ObjectArray = new JObject[ownedObjects.Count];
+            int objectcount = 0;
+            foreach (object obj in ownedObjects)
+            {
+                
+                ObjectArray[objectcount++] = JObject.FromObject(obj);
+            }
+            displayRootJSON(ObjectArray);
         }
 
         private void btnGetCreated_Click(object sender, EventArgs e)
@@ -627,7 +638,14 @@ namespace SUP
 
             lblTotalTime.Text = "time: " + Math.Truncate(elapsedMilliseconds);
             lblTotal.Text = "total: " + createdObjects.Count();
-            txtGetValue.Text = JsonConvert.SerializeObject(createdObjects);
+            JObject[] ObjectArray = new JObject[createdObjects.Count];
+            int objectcount = 0;
+            foreach (object obj in createdObjects)
+            {
+
+                ObjectArray[objectcount++] = JObject.FromObject(obj);
+            }
+            displayRootJSON(ObjectArray);
 
         }
 
@@ -645,9 +663,14 @@ namespace SUP
 
             lblTotalTime.Text = "time: " + Math.Truncate(elapsedMilliseconds);
             lblTotal.Text = "total: " + createdObjects.Count();
+            JObject[] ObjectArray = new JObject[createdObjects.Count];
+            int objectcount = 0;
+            foreach (object obj in createdObjects)
+            {
 
-
-        txtGetValue.Text = JsonConvert.SerializeObject(createdObjects);
+                ObjectArray[objectcount++] = JObject.FromObject(obj);
+            }
+            displayRootJSON(ObjectArray);
         }
 
         private void button2_Click_1(object sender, EventArgs e)
@@ -666,7 +689,14 @@ namespace SUP
 
             lblTotalTime.Text = "time: " + Math.Truncate(elapsedMilliseconds);
             lblTotal.Text = "total: " + createdObjects.Count();
-            txtGetValue.Text = JsonConvert.SerializeObject(createdObjects);
+            JObject[] ObjectArray = new JObject[createdObjects.Count];
+            int objectcount = 0;
+            foreach (object obj in createdObjects)
+            {
+
+                ObjectArray[objectcount++] = JObject.FromObject(obj);
+            }
+            displayRootJSON(ObjectArray);
 
 
         }
@@ -675,15 +705,74 @@ namespace SUP
         {
             if (e.RowIndex >= 0)
             {
-                
+
                 try
                 {
-                  
-                    string transactionID = dgTransactions.Rows[e.RowIndex].Cells[9].Value.ToString();
-                    txtGetValue.Text = System.IO.File.ReadAllText(@"root\" + transactionID + @"\P2Fk.json");
 
+                    string transactionID = dgTransactions.Rows[e.RowIndex].Cells[9].Value.ToString();
+                    
+                    displayRootJSON(new JObject[] { JObject.Parse(System.IO.File.ReadAllText(@"root\" + transactionID + @"\P2Fk.json")) });
+                                   }
+                catch(Exception ex){ 
+                    string error = ex.Message; }
+            }
+        }
+
+
+        private void displayRootJSON(JObject[] jsonObject)
+        {
+            // parse the JSON string
+            JObject[] json = jsonObject;
+
+            // use JsonConvert to format the JSON
+            JsonSerializerSettings settings = new JsonSerializerSettings
+            {
+                Formatting = Formatting.Indented,
+                DateFormatHandling = DateFormatHandling.IsoDateFormat,
+                DateParseHandling = DateParseHandling.DateTimeOffset,
+                NullValueHandling = NullValueHandling.Ignore
+            };
+            string formattedJson = JsonConvert.SerializeObject(json, settings);
+
+            // clear the RichTextBox
+            txtGetValue.Clear();
+
+            // set the color for the different elements
+            txtGetValue.SelectionColor = Color.Blue; // for key
+            txtGetValue.SelectionBackColor = System.Drawing.SystemColors.Control;
+            txtGetValue.SelectionFont = new Font(txtGetValue.SelectionFont, FontStyle.Bold);
+
+            string[] lines = formattedJson.Split(new[] { Environment.NewLine }, StringSplitOptions.None);
+            foreach (string line in lines)
+            {
+                if (line.Trim().StartsWith("\""))
+                {
+                    txtGetValue.AppendText(line + Environment.NewLine);
+                    try { txtGetValue.SelectionStart = txtGetValue.TextLength - line.Length - 1; } catch { }
+                    txtGetValue.SelectionLength = line.IndexOf(':') + 1;
+                    txtGetValue.SelectionColor = Color.Green; // for key
+                    txtGetValue.SelectionFont = new Font(txtGetValue.SelectionFont, FontStyle.Bold);
                 }
-                catch { }
+                else if (line.Contains(":"))
+                {
+                    txtGetValue.AppendText(line + Environment.NewLine);
+                    try
+                    {
+                        txtGetValue.SelectionStart = txtGetValue.TextLength - line.Length - 1;
+                } catch { }
+                txtGetValue.SelectionLength = line.Length;
+                    txtGetValue.SelectionColor = Color.Black; // for value
+                }
+                else
+                {
+                    txtGetValue.AppendText(line + Environment.NewLine);
+                    try
+                    {
+                        txtGetValue.SelectionStart = txtGetValue.TextLength - line.Length - 1;
+            } catch { }
+            txtGetValue.SelectionLength = line.Length;
+                    txtGetValue.SelectionColor = Color.Red; // for separator
+                }
             }
         }
     }

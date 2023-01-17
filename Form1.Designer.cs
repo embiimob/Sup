@@ -85,8 +85,8 @@ namespace SUP
             this.btnGetObject = new System.Windows.Forms.Button();
             this.btnDecrypt = new System.Windows.Forms.Button();
             this.btnEncrypt = new System.Windows.Forms.Button();
-            this.txtGetValue = new System.Windows.Forms.TextBox();
             this.checkBox1 = new System.Windows.Forms.CheckBox();
+            this.txtGetValue = new System.Windows.Forms.RichTextBox();
             ((System.ComponentModel.ISupportInitialize)(this.dgTransactions)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
@@ -220,7 +220,7 @@ namespace SUP
             // lblTotalBytes
             // 
             this.lblTotalBytes.AutoSize = true;
-            this.lblTotalBytes.Location = new System.Drawing.Point(187, 260);
+            this.lblTotalBytes.Location = new System.Drawing.Point(200, 359);
             this.lblTotalBytes.Name = "lblTotalBytes";
             this.lblTotalBytes.Size = new System.Drawing.Size(35, 13);
             this.lblTotalBytes.TabIndex = 23;
@@ -305,7 +305,7 @@ namespace SUP
             dataGridViewCellStyle4.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
             dataGridViewCellStyle4.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
             this.dgTransactions.RowHeadersDefaultCellStyle = dataGridViewCellStyle4;
-            this.dgTransactions.Size = new System.Drawing.Size(1056, 194);
+            this.dgTransactions.Size = new System.Drawing.Size(1056, 261);
             this.dgTransactions.TabIndex = 30;
             this.dgTransactions.CellClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dgTransactions_CellClick);
             // 
@@ -448,7 +448,7 @@ namespace SUP
             // lblTotalTime
             // 
             this.lblTotalTime.AutoSize = true;
-            this.lblTotalTime.Location = new System.Drawing.Point(12, 260);
+            this.lblTotalTime.Location = new System.Drawing.Point(25, 359);
             this.lblTotalTime.Name = "lblTotalTime";
             this.lblTotalTime.Size = new System.Drawing.Size(29, 13);
             this.lblTotalTime.TabIndex = 40;
@@ -457,7 +457,7 @@ namespace SUP
             // lblKbs
             // 
             this.lblKbs.AutoSize = true;
-            this.lblKbs.Location = new System.Drawing.Point(301, 260);
+            this.lblKbs.Location = new System.Drawing.Point(314, 359);
             this.lblKbs.Name = "lblKbs";
             this.lblKbs.Size = new System.Drawing.Size(32, 13);
             this.lblKbs.TabIndex = 41;
@@ -472,8 +472,8 @@ namespace SUP
             // 
             // splitContainer1.Panel1
             // 
-            this.splitContainer1.Panel1.Controls.Add(this.checkBox1);
             this.splitContainer1.Panel1.Controls.Add(this.txtGetValue);
+            this.splitContainer1.Panel1.Controls.Add(this.checkBox1);
             this.splitContainer1.Panel1.Controls.Add(this.button2);
             this.splitContainer1.Panel1.Controls.Add(this.button1);
             this.splitContainer1.Panel1.Controls.Add(this.btnGetCreated);
@@ -515,8 +515,8 @@ namespace SUP
             // splitContainer1.Panel2
             // 
             this.splitContainer1.Panel2.Controls.Add(this.dgTransactions);
-            this.splitContainer1.Size = new System.Drawing.Size(1056, 543);
-            this.splitContainer1.SplitterDistance = 339;
+            this.splitContainer1.Size = new System.Drawing.Size(1056, 648);
+            this.splitContainer1.SplitterDistance = 377;
             this.splitContainer1.SplitterWidth = 10;
             this.splitContainer1.TabIndex = 42;
             // 
@@ -563,7 +563,7 @@ namespace SUP
             // lblTotal
             // 
             this.lblTotal.AutoSize = true;
-            this.lblTotal.Location = new System.Drawing.Point(94, 260);
+            this.lblTotal.Location = new System.Drawing.Point(107, 359);
             this.lblTotal.Name = "lblTotal";
             this.lblTotal.Size = new System.Drawing.Size(30, 13);
             this.lblTotal.TabIndex = 49;
@@ -609,18 +609,6 @@ namespace SUP
             this.btnEncrypt.UseVisualStyleBackColor = true;
             this.btnEncrypt.Click += new System.EventHandler(this.Button1_Click);
             // 
-            // txtGetValue
-            // 
-            this.txtGetValue.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.txtGetValue.Location = new System.Drawing.Point(457, 14);
-            this.txtGetValue.Multiline = true;
-            this.txtGetValue.Name = "txtGetValue";
-            this.txtGetValue.ReadOnly = true;
-            this.txtGetValue.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.txtGetValue.Size = new System.Drawing.Size(587, 314);
-            this.txtGetValue.TabIndex = 54;
-            // 
             // checkBox1
             // 
             this.checkBox1.AutoSize = true;
@@ -631,13 +619,22 @@ namespace SUP
             this.checkBox1.Text = "verbose";
             this.checkBox1.UseVisualStyleBackColor = true;
             // 
+            // txtGetValue
+            // 
+            this.txtGetValue.BackColor = System.Drawing.SystemColors.Control;
+            this.txtGetValue.Location = new System.Drawing.Point(457, 12);
+            this.txtGetValue.Name = "txtGetValue";
+            this.txtGetValue.Size = new System.Drawing.Size(587, 360);
+            this.txtGetValue.TabIndex = 56;
+            this.txtGetValue.Text = "";
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1056, 543);
+            this.ClientSize = new System.Drawing.Size(1056, 648);
             this.Controls.Add(this.splitContainer1);
-            this.MinimumSize = new System.Drawing.Size(1072, 374);
+            this.MinimumSize = new System.Drawing.Size(1072, 687);
             this.Name = "Form1";
             this.Text = "Sup!? Just testing ";
             ((System.ComponentModel.ISupportInitialize)(this.dgTransactions)).EndInit();
@@ -702,8 +699,8 @@ namespace SUP
         private Button btnGetOwned;
         private Button button1;
         private Button button2;
-        private TextBox txtGetValue;
         private CheckBox checkBox1;
+        private RichTextBox txtGetValue;
     }
 }
 
