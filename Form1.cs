@@ -670,6 +670,22 @@ namespace SUP
 
 
         }
+
+        private void dgTransactions_CellClick(object sender, DataGridViewCellEventArgs e)
+        {
+            if (e.RowIndex >= 0)
+            {
+                
+                try
+                {
+                  
+                    string transactionID = dgTransactions.Rows[e.RowIndex].Cells[9].Value.ToString();
+                    txtGetValue.Text = System.IO.File.ReadAllText(@"root\" + transactionID + @"\P2Fk.json");
+
+                }
+                catch { }
+            }
+        }
     }
 }
 
