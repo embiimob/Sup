@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace SUP.P2FK
 {
@@ -35,7 +36,7 @@ namespace SUP.P2FK
         //ensures levelDB is thread safely
         private readonly static object levelDBLocker = new object();
 
-        public static OBJState GetObjectByAddress(string objectaddress, string username, string password, string url, string versionByte = "111")
+        public static OBJState GetObjectByAddress(string objectaddress, string username, string password, string url, string versionByte = "111", bool verbose = false)
         {
 
             OBJState objectState = new OBJState();
@@ -43,6 +44,7 @@ namespace SUP.P2FK
             string JSONOBJ;
             string logstatus;
             string diskpath = "root\\" + objectaddress + "\\";
+
 
             // fetch current JSONOBJ from disk if it exists
             try
@@ -60,6 +62,7 @@ namespace SUP.P2FK
 
             foreach (Root transaction in objectTransactions)
             {
+
                 intProcessHeight = transaction.Id;
                 string sortableProcessHeight = intProcessHeight.ToString("X").PadLeft(9, '0');
                 logstatus = "";
@@ -128,7 +131,7 @@ namespace SUP.P2FK
                                 //has proper authority to make OBJ changes
                                 if (objectState.Creators.Contains(transaction.SignedBy))
                                 {
-                                    if (objectState.LockedDate.Year < 1975)
+                                    if (objectState.LockedDate.Year == 1)
                                     {
                                         if (objectinspector.urn != null) { objectState.ChangeDate = transaction.BlockDate; objectState.URN = objectinspector.urn; }
                                         if (objectinspector.img != null) { objectState.ChangeDate = transaction.BlockDate; objectState.Image = objectinspector.img; }
@@ -211,7 +214,7 @@ namespace SUP.P2FK
                                     logstatus = "txid:" + transaction.TransactionId + ",object,inspect,\"failed due to invalid transaction format\"";
                                     break;
                                 }
-                                
+
                                 if (givinspector == null)
                                 {
                                     logstatus = "txid:" + transaction.TransactionId + ",action,giv,\"failed due to invalid transaction format\"";
@@ -237,19 +240,25 @@ namespace SUP.P2FK
 
                                     int qtyToGive = give[1];
                                     giveCount++;
+                                    string sortableGiveCount = giveCount.ToString("X").PadLeft(4, '0');
+
+
 
                                     // cannot give less then 1
                                     if (qtyToGive < 1)
                                     {
-                                        logstatus = "txid:" + transaction.TransactionId + ",action,giv," + giveCount + ",\"" + qtyToGive + " from " + transaction.SignedBy + " to " + reciever + " failed due to a give qty of < 1\"";
-                                        lock (levelDBLocker)
+                                        if (verbose)
                                         {
-                                            using (var db = new DB(OBJ, @"root\event"))
+                                            logstatus = "txid:" + transaction.TransactionId + ",action,giv," + sortableGiveCount + ",\"" + qtyToGive + " from " + transaction.SignedBy + " to " + reciever + " failed due to a give qty of < 1\"";
+                                            lock (levelDBLocker)
                                             {
-                                                db.Put(objectaddress + "!" + sortableProcessHeight + "!" + giveCount, logstatus);
+                                                using (var db = new DB(OBJ, @"root\event"))
+                                                {
+                                                    db.Put(objectaddress + "!" + sortableProcessHeight + "!" + sortableGiveCount, logstatus);
+                                                }
                                             }
+                                            logstatus = "";
                                         }
-                                        logstatus = "";
                                         break;
                                     }
 
@@ -263,16 +272,19 @@ namespace SUP.P2FK
                                         //is the object container empty
                                         if (!objectState.Owners.TryGetValue(objectaddress, out int selfOwned))
                                         {
-                                            //Add Invalid trade attempt status
-                                            logstatus = "txid:" + transaction.TransactionId + ",action,giv," + giveCount + ",\"" + qtyToGive + " from " + transaction.SignedBy + " to " + reciever + " failed due to insufficent qty owned\"";
-                                            lock (levelDBLocker)
+                                            if (verbose)
                                             {
-                                                using (var db = new DB(OBJ, @"root\event"))
+                                                //Add Invalid trade attempt status
+                                                logstatus = "txid:" + transaction.TransactionId + ",action,giv," + sortableGiveCount + ",\"" + qtyToGive + " from " + transaction.SignedBy + " to " + reciever + " failed due to insufficent qty owned\"";
+                                                lock (levelDBLocker)
                                                 {
-                                                    db.Put(objectaddress + "!" + sortableProcessHeight + "!" + giveCount, logstatus);
+                                                    using (var db = new DB(OBJ, @"root\event"))
+                                                    {
+                                                        db.Put(objectaddress + "!" + sortableProcessHeight + "!" + sortableGiveCount, logstatus);
+                                                    }
                                                 }
+                                                logstatus = "";
                                             }
-                                            logstatus = "";
                                             break;
                                         }
                                         else
@@ -315,28 +327,34 @@ namespace SUP.P2FK
                                         }
                                         else { objectState.Owners[reciever] = recieverOwned + qtyToGive; }
 
-                                        logstatus = "txid:" + transaction.TransactionId + ",action,giv," + giveCount + ",\"" + qtyToGive + " from " + transaction.SignedBy + " to " + reciever + " succeeded\"";
-                                        lock (levelDBLocker)
+                                        if (verbose)
                                         {
-                                            using (var db = new DB(OBJ, @"root\event"))
-                                            {
-                                                db.Put(objectaddress + "!" + sortableProcessHeight + "!" + giveCount, logstatus);
-                                            }
-                                        }
-                                        logstatus = "";
-
-                                        if (objectState.LockedDate.Year == 1)
-                                        {
-                                            giveCount++;
-                                            logstatus = "txid:" + transaction.TransactionId + ",object,lock,\"success\"";
+                                            logstatus = "txid:" + transaction.TransactionId + ",action,giv," + sortableGiveCount + ",\"" + qtyToGive + " from " + transaction.SignedBy + " to " + reciever + " succeeded\"";
                                             lock (levelDBLocker)
                                             {
                                                 using (var db = new DB(OBJ, @"root\event"))
                                                 {
-                                                    db.Put(objectaddress + "!" + sortableProcessHeight + "!" + giveCount, logstatus);
+                                                    db.Put(objectaddress + "!" + sortableProcessHeight + "!" + sortableGiveCount, logstatus);
                                                 }
                                             }
                                             logstatus = "";
+                                        }
+
+                                        if (objectState.LockedDate.Year == 1)
+                                        {
+                                            giveCount++;
+                                            if (verbose)
+                                            {
+                                                logstatus = "txid:" + transaction.TransactionId + ",object,lock,\"success\"";
+                                                lock (levelDBLocker)
+                                                {
+                                                    using (var db = new DB(OBJ, @"root\event"))
+                                                    {
+                                                        db.Put(objectaddress + "!" + sortableProcessHeight + "!" + sortableGiveCount, logstatus);
+                                                    }
+                                                }
+                                                logstatus = "";
+                                            }
                                             objectState.LockedDate = transaction.BlockDate;
                                         }
                                         objectState.ChangeDate = transaction.BlockDate;
@@ -344,16 +362,18 @@ namespace SUP.P2FK
                                     }
                                     else
                                     {
-                                        //Invalid trade attempt
-                                        logstatus = "txid:" + transaction.TransactionId + ",action,giv," + giveCount + ",\"" + qtyToGive + " from " + transaction.SignedBy + " to " + reciever + " failed due to insufficent qty owned\"";
-                                        lock (levelDBLocker)
-                                        {
-                                            using (var db = new DB(OBJ, @"root\event"))
+                                        if (verbose)
+                                        { //Invalid trade attempt
+                                            logstatus = "txid:" + transaction.TransactionId + ",action,giv," + sortableGiveCount + ",\"" + qtyToGive + " from " + transaction.SignedBy + " to " + reciever + " failed due to insufficent qty owned\"";
+                                            lock (levelDBLocker)
                                             {
-                                                db.Put(objectaddress + "!" + sortableProcessHeight + "!" + giveCount, logstatus);
+                                                using (var db = new DB(OBJ, @"root\event"))
+                                                {
+                                                    db.Put(objectaddress + "!" + sortableProcessHeight + "!" + sortableGiveCount, logstatus);
+                                                }
                                             }
+                                            logstatus = "";
                                         }
-                                        logstatus = "";
                                         break;
                                     }
 
@@ -386,17 +406,22 @@ namespace SUP.P2FK
                                     string burnr = transaction.SignedBy;
                                     int qtyToBurn = burn[1];
                                     burnCount++;
+                                    string sortableBurnCount = burnCount.ToString("X").PadLeft(4, '0');
+
                                     if (qtyToBurn < 1)
                                     {
-                                        logstatus = "txid:" + transaction.TransactionId + ",action,brn," + burnCount + ",\"" + qtyToBurn + " from " + transaction.SignedBy + " failed due to a burn qty of < 1\"";
-                                        lock (levelDBLocker)
+                                        if (verbose)
                                         {
-                                            using (var db = new DB(OBJ, @"root\event"))
+                                            logstatus = "txid:" + transaction.TransactionId + ",action,brn," + sortableBurnCount + ",\"" + qtyToBurn + " from " + transaction.SignedBy + " failed due to a burn qty of < 1\"";
+                                            lock (levelDBLocker)
                                             {
-                                                db.Put(objectaddress + "!" + sortableProcessHeight + "!" + burnCount, logstatus);
+                                                using (var db = new DB(OBJ, @"root\event"))
+                                                {
+                                                    db.Put(objectaddress + "!" + sortableProcessHeight + "!" + sortableBurnCount, logstatus);
+                                                }
                                             }
+                                            logstatus = "";
                                         }
-                                        logstatus = "";
                                         break;
                                     }
 
@@ -408,16 +433,19 @@ namespace SUP.P2FK
                                         //try grant access to object's self Owned qtyOwned to any creator
                                         if (!objectState.Owners.TryGetValue(objectaddress, out int selfOwned))
                                         {
-                                            //Add Invalid trade attempt status
-                                            logstatus = "txid:" + transaction.TransactionId + ",action,brn," + burnCount + ",\"" + qtyToBurn + " from " + transaction.SignedBy + " failed due to insufficent qty owned\"";
-                                            lock (levelDBLocker)
+                                            if (verbose)
                                             {
-                                                using (var db = new DB(OBJ, @"root\event"))
+                                                //Add Invalid trade attempt status
+                                                logstatus = "txid:" + transaction.TransactionId + ",action,brn," + sortableBurnCount + ",\"" + qtyToBurn + " from " + transaction.SignedBy + " failed due to insufficent qty owned\"";
+                                                lock (levelDBLocker)
                                                 {
-                                                    db.Put(objectaddress + "!" + sortableProcessHeight + "!" + burnCount, logstatus);
+                                                    using (var db = new DB(OBJ, @"root\event"))
+                                                    {
+                                                        db.Put(objectaddress + "!" + sortableProcessHeight + "!" + sortableBurnCount, logstatus);
+                                                    }
                                                 }
+                                                logstatus = "";
                                             }
-                                            logstatus = "";
                                             break;
                                         }
                                         else
@@ -450,49 +478,55 @@ namespace SUP.P2FK
                                             // remove the dictionary key
                                             objectState.Owners.Remove(burnr);
                                         }
-
-                                        logstatus = "txid:" + transaction.TransactionId + ",action,brn," + burnCount + ",\"" + qtyToBurn + " from " + transaction.SignedBy + " succeeded\"";
-                                        lock (levelDBLocker)
+                                        if (verbose)
                                         {
-                                            using (var db = new DB(OBJ, @"root\event"))
-                                            {
-                                                db.Put(objectaddress + "!" + sortableProcessHeight + "!" + burnCount, logstatus);
-                                            }
-                                        }
-                                        logstatus = "";
-
-                                        if (objectState.LockedDate.Year == 1)
-                                        {
-                                            burnCount++;
-
-                                            logstatus = "txid:" + transaction.TransactionId + ",object,lock,\"success\"";
+                                            logstatus = "txid:" + transaction.TransactionId + ",action,brn," + sortableBurnCount + ",\"" + qtyToBurn + " from " + transaction.SignedBy + " succeeded\"";
                                             lock (levelDBLocker)
                                             {
                                                 using (var db = new DB(OBJ, @"root\event"))
                                                 {
-                                                    
-
-                                                    db.Put(objectaddress + "!" + sortableProcessHeight + "!" + burnCount, logstatus);
+                                                    db.Put(objectaddress + "!" + sortableProcessHeight + "!" + sortableBurnCount, logstatus);
                                                 }
                                             }
                                             logstatus = "";
+                                        }
+                                        if (objectState.LockedDate.Year == 1)
+                                        {
+                                            burnCount++;
+                                            if (verbose)
+                                            {
+                                                logstatus = "txid:" + transaction.TransactionId + ",object,lock,\"success\"";
+                                                lock (levelDBLocker)
+                                                {
+                                                    using (var db = new DB(OBJ, @"root\event"))
+                                                    {
+
+
+                                                        db.Put(objectaddress + "!" + sortableProcessHeight + "!" + sortableBurnCount, logstatus);
+                                                    }
+                                                }
+                                                logstatus = "";
+                                            }
                                             objectState.LockedDate = transaction.BlockDate;
                                         }
                                         objectState.ChangeDate = transaction.BlockDate;
-                                       
+
                                     }
                                     else
                                     {
-                                        //Invalid trade attempt
-                                        logstatus = "txid:" + transaction.TransactionId + ",action,brn," + burnCount + ",\"" + qtyToBurn + " from " + transaction.SignedBy + " failed due to insufficent qty owned\"";
-                                        lock (levelDBLocker)
+                                        if (verbose)
                                         {
-                                            using (var db = new DB(OBJ, @"root\event"))
+                                            //Invalid trade attempt
+                                            logstatus = "txid:" + transaction.TransactionId + ",action,brn," + sortableBurnCount + ",\"" + qtyToBurn + " from " + transaction.SignedBy + " failed due to insufficent qty owned\"";
+                                            lock (levelDBLocker)
                                             {
-                                                db.Put(objectaddress + "!" + sortableProcessHeight + "!" + burnCount, logstatus);
+                                                using (var db = new DB(OBJ, @"root\event"))
+                                                {
+                                                    db.Put(objectaddress + "!" + sortableProcessHeight + "!" + sortableBurnCount, logstatus);
+                                                }
                                             }
+                                            logstatus = "";
                                         }
-                                        logstatus = "";
                                         break;
                                     }
 
@@ -510,20 +544,37 @@ namespace SUP.P2FK
 
                 }
                 else { logstatus = "txid:" + transaction.TransactionId + " transaction failed due to invalid signature"; }
-                if (logstatus != "")
+
+                if (verbose)
                 {
-
-                    lock (levelDBLocker)
+                    if (logstatus != "")
                     {
-                        using (var db = new DB(OBJ, @"root\event"))
-                        {
-                            db.Put(objectaddress + "!" + sortableProcessHeight + "!" + "0", logstatus);
-                        }
-                    }
 
+                        lock (levelDBLocker)
+                        {
+                            using (var db = new DB(OBJ, @"root\event"))
+                            {
+                                db.Put(objectaddress + "!" + sortableProcessHeight + "!" + "0", logstatus);
+                            }
+                        }
+
+                    }
                 }
 
             }
+
+
+
+
+
+
+
+
+
+
+
+
+
 
             //used to determine where to begin object State processing when retrieved from cache
             objectState.ProcessHeight = intProcessHeight;
@@ -546,6 +597,123 @@ namespace SUP.P2FK
             return objectState;
 
         }
+
+        public static List<OBJState> GetObjectsByAddress(string objectaddress, string username, string password, string url, string versionByte = "111")
+        {
+            return null;
+
+        }
+
+        public static List<OBJState> GetObjectsOwnedByAddress(string objectaddress, string username, string password, string url, string versionByte = "111", int skip = 0)
+        {
+
+            List<OBJState> objectStates = new List<OBJState> { };
+       
+            Root[] objectTransactions;
+
+            //return all roots found at address
+            objectTransactions = Root.GetRootByAddress(objectaddress, username, password, url, versionByte, skip);
+            HashSet<string> addedValues = new HashSet<string>();
+            foreach (Root transaction in objectTransactions)
+            {
+
+
+                //ignore any transaction that is not signed
+                if (transaction.Signed)
+                {
+                    string findObject = transaction.Keyword.ElementAt(1).Key;
+
+                    OBJState isOwnedObject = GetObjectByAddress(findObject, username,password,url,versionByte);
+
+
+                    try
+                    {
+
+                        if (isOwnedObject.Owners.ContainsKey(objectaddress) && !addedValues.Contains(findObject))
+                        {
+
+                            try
+                            {
+                                objectStates.Add(isOwnedObject);
+                                addedValues.Add(transaction.Keyword.ElementAt(1).Key);
+                            }
+                            catch { }
+
+                        }
+
+
+                    }catch { break; }
+
+
+
+
+                    
+                }
+
+
+            }
+
+
+            return objectStates;
+
+        }
+
+        public static List<OBJState> GetObjectsCreatedByAddress(string objectaddress, string username, string password, string url, string versionByte = "111", int skip = 0)
+        {
+
+            List<OBJState> objectStates = new List<OBJState> { };
+
+            Root[] objectTransactions;
+
+            //return all roots found at address
+            objectTransactions = Root.GetRootByAddress(objectaddress, username, password, url, versionByte, skip);
+            HashSet<string> addedValues = new HashSet<string>();
+            foreach (Root transaction in objectTransactions)
+            {
+
+
+                //ignore any transaction that is not signed
+                if (transaction.Signed)
+                {
+                    string foundObject = transaction.Keyword.ElementAt(0).Key;
+
+                    OBJState isOwnedObject = GetObjectByAddress(foundObject, username, password, url, versionByte);
+
+
+                    try
+                    {
+
+                        if (isOwnedObject.Creators.Contains(objectaddress) && !addedValues.Contains(foundObject))
+                        {
+
+                            try
+                            {
+                                objectStates.Add(isOwnedObject);
+                                addedValues.Add(transaction.Keyword.ElementAt(1).Key);
+                            }
+                            catch { }
+
+                        }
+
+
+                    }
+                    catch { break; }
+
+
+
+
+
+                }
+
+
+            }
+
+
+            return objectStates;
+
+        }
+
+
     }
 
 

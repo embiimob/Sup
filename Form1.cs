@@ -21,61 +21,6 @@ namespace SUP
             InitializeComponent();
         }
 
-        private void BtnPut_Click(object sender, EventArgs e)
-        {
-            if (lbTableName.SelectedItem == null)
-            {
-                lbTableName.SelectedIndex = 0;
-            }
-
-            switch (lbTableName.SelectedItem.ToString().Trim())
-            {
-                case "ROOT":
-                    var ROOT = new Options { CreateIfMissing = true };
-                    using (var db = new DB(ROOT, @"root"))
-                    {
-                        db.Put(txtlevelDBKey.Text, txtlevelDBKey.Text);
-                    }
-                    break;
-
-                case "PRO":
-                    var PRO = new Options { CreateIfMissing = true };
-                    using (var db = new DB(PRO, @"root\pro"))
-                    {
-                        db.Put(txtlevelDBKey.Text, txtlevelDBKey.Text);
-                    }
-                    break;
-
-                case "COL":
-                    var COL = new Options { CreateIfMissing = true };
-                    using (var db = new DB(COL, @"root\col"))
-                    {
-                        db.Put(txtlevelDBKey.Text, txtlevelDBKey.Text);
-                    }
-                    break;
-
-                case "OBJ":
-                    var OBJ = new Options { CreateIfMissing = true };
-                    using (var db = new DB(OBJ, @"root\obj"))
-                    {
-                        db.Put(txtlevelDBKey.Text, txtlevelDBKey.Text);
-                    }
-                    break;
-
-                case "EVENT":
-                    var LOGS = new Options { CreateIfMissing = true };
-                    using (var db = new DB(LOGS, @"root\event"))
-                    {
-                        db.Put(txtlevelDBKey.Text, txtlevelDBKey.Text);
-                    }
-                    break;
-
-                default:
-                    MessageBox.Show("something went wrong");
-                    break;
-            }
-        }
-
         private void BtnGet_Click(object sender, EventArgs e)
         {
             if (lbTableName.SelectedItem == null)
@@ -295,6 +240,11 @@ namespace SUP
                 txtVersionByte.Text
             );
             DateTime tmendCall = DateTime.UtcNow;
+
+            lblTotalBytes.Text = "bytes: ";
+            lblTotalTime.Text = "time: ";
+            lblKbs.Text = "kb/s: ";
+            lblTotal.Text = "total:";
             dgTransactions.Rows.Clear();
             int totalbytes = 0;
             BigInteger totalfilebytes = 0;
@@ -309,7 +259,7 @@ namespace SUP
 
                     foreach (var rfile in roots[i].Message)
                     {
-                        strmessage+= rfile;
+                        strmessage += rfile;
                     }
                     foreach (var rfile in roots[i].File)
                     {
@@ -339,12 +289,13 @@ namespace SUP
             }
             dgTransactions.AutoResizeRows();
             dgTransactions.AutoResizeColumns();
-            lblTotalBytes.Text = "Total Bytes: " + totalbytes.ToString();
-            lblTotalTime.Text = "Total Time: " + elapsedMilliseconds;
+            lblTotalBytes.Text = "bytes: " + totalbytes.ToString();
+            lblTotalTime.Text = "time: " + Math.Truncate(elapsedMilliseconds);
             double secondsExpired = elapsedMilliseconds / 1000.0;
             double kilobytes = totalbytes / 1024.0;
             double kbs = kilobytes / secondsExpired;
-            lblKbs.Text = "Kb/s " + kbs;
+            lblKbs.Text = "kb/s: " + Math.Truncate(kbs);
+            lblTotal.Text = "total:" + roots.Length.ToString();
         }
 
         private void BtnGetTransactionId_Click(object sender, EventArgs e)
@@ -358,6 +309,10 @@ namespace SUP
                 txtVersionByte.Text
             );
             DateTime tmendCall = DateTime.UtcNow;
+            lblTotalBytes.Text = "bytes: ";
+            lblTotalTime.Text = "time: ";
+            lblKbs.Text = "kb/s: ";
+            lblTotal.Text = "total:";
             dgTransactions.Rows.Clear();
             int totalbytes;
 
@@ -370,14 +325,14 @@ namespace SUP
                 BigInteger totalfilebytes = 0;
                 foreach (var rfile in root.Message)
                 {
-                    strmessage+= rfile;
+                    strmessage += rfile;
 
                 }
-             
+
                 foreach (var rfile in root.File)
                 {
                     totalfilebytes += rfile.Value;
-                   
+
 
                 }
 
@@ -402,12 +357,14 @@ namespace SUP
                 dgTransactions.AutoResizeColumns();
 
                 totalbytes = root.TotalByteSize;
-                lblTotalBytes.Text = "Total Bytes: " + totalbytes.ToString();
-                lblTotalTime.Text = "Total Time: " + elapsedMilliseconds;
+                lblTotalBytes.Text = "bytes: " + totalbytes.ToString();
+                lblTotalTime.Text = "time: " + Math.Truncate(elapsedMilliseconds);
                 double secondsExpired = elapsedMilliseconds / 1000.0;
                 double kilobytes = totalbytes / 1024.0;
                 double kbs = kilobytes / secondsExpired;
-                lblKbs.Text = "Kb/s " + kbs;
+                lblKbs.Text = "kb/s: " + Math.Truncate(kbs);
+                if (root != null) { lblTotal.Text = "total: 1"; }
+
             }
         }
 
@@ -423,6 +380,10 @@ namespace SUP
                 txtVersionByte.Text
             );
             DateTime tmendCall = DateTime.UtcNow;
+            lblTotalBytes.Text = "bytes: ";
+            lblTotalTime.Text = "time: ";
+            lblKbs.Text = "kb/s: ";
+            lblTotal.Text = "total:";
             dgTransactions.Rows.Clear();
             int totalbytes = 0;
 
@@ -435,7 +396,7 @@ namespace SUP
                 BigInteger totalfilebytes = 0;
                 foreach (var rfile in roots[i].Message)
                 {
-                    strmessage+= rfile;
+                    strmessage += rfile;
                 }
                 foreach (var rfile in roots[i].File)
                 {
@@ -465,74 +426,13 @@ namespace SUP
             dgTransactions.AutoResizeRows();
             dgTransactions.AutoResizeColumns();
 
-            lblTotalBytes.Text = "Total Bytes: " + totalbytes.ToString();
-            lblTotalTime.Text = "Total Time: " + elapsedMilliseconds;
+            lblTotalBytes.Text = "bytes: " + totalbytes.ToString();
+            lblTotalTime.Text = "time: " + Math.Truncate(elapsedMilliseconds);
             double secondsExpired = elapsedMilliseconds / 1000.0;
             double kilobytes = totalbytes / 1024.0;
             double kbs = kilobytes / secondsExpired;
-            lblKbs.Text = "Kb/s " + kbs;
-        }
-
-        private void BtnGPT3_Click(object sender, EventArgs e)
-        {
-            DateTime tmbeginCall = DateTime.UtcNow;
-            Root[] roots = Root.GetRootByAddress(
-                txtSearchAddress.Text,
-                txtLogin.Text,
-                txtPassword.Text,
-                txtUrl.Text,
-                txtVersionByte.Text
-            );
-            DateTime tmendCall = DateTime.UtcNow;
-            dgTransactions.Rows.Clear();
-            int totalbytes = 0;
-            BigInteger totalfilebytes = 0;
-            TimeSpan elapsedTime = tmendCall - tmbeginCall;
-            double elapsedMilliseconds = elapsedTime.TotalMilliseconds;
-
-            for (int i = 0; i < roots.Length; i += 1)
-            {
-                if (roots[i] != null)
-                {
-                    string strmessage = "";
-
-                    foreach (var rfile in roots[i].Message)
-                    {
-                        strmessage+= rfile;
-                    }
-                    foreach (var rfile in roots[i].File)
-                    {
-                        totalfilebytes += rfile.Value;
-
-                    }
-
-                    object[] rowData = new object[]
-                    {
-                    roots[i].Id,
-                    roots[i].TransactionId,
-                    roots[i].Signed,
-                    roots[i].SignedBy,
-                    roots[i].Signature,
-                    roots[i].File.Count(),
-                    totalfilebytes,
-                    strmessage,
-                    roots[i].Keyword.Count(),
-                    roots[i].TotalByteSize,
-                    roots[i].BlockDate,
-                    roots[i].Confirmations,
-                    roots[i].BuildDate.ToString("MM/dd/yyyy hh:mm:ss.ffff tt")
-                    };
-                    dgTransactions.Rows.Add(rowData);
-                    totalbytes += roots[i].TotalByteSize;
-                }
-            }
-            dgTransactions.AutoResizeRows();
-            lblTotalBytes.Text = "Total Bytes: " + totalbytes.ToString();
-            lblTotalTime.Text = "Total Time: " + elapsedMilliseconds;
-            double secondsExpired = elapsedMilliseconds / 1000.0;
-            double kilobytes = totalbytes / 1024.0;
-            double kbs = kilobytes / secondsExpired;
-            lblKbs.Text = "Kb/s " + kbs;
+            lblKbs.Text = "kb/s: " + Math.Truncate(kbs);
+            lblTotal.Text = "total:" + roots.Length.ToString();
         }
 
         private void Button1_Click(object sender, EventArgs e)
@@ -545,7 +445,7 @@ namespace SUP
             if (openFileDialog.ShowDialog() == DialogResult.OK)
             {
                 result = Root.GetRootBytesByFile(openFileDialog.FileNames);
-                result = Root.EncryptRootBytes(txtLogin.Text,txtPassword.Text,txtUrl.Text,txtSearchAddress.Text, result);
+                result = Root.EncryptRootBytes(txtLogin.Text, txtPassword.Text, txtUrl.Text, txtSearchAddress.Text, result);
 
             }
             DateTime tmbeginCall = DateTime.UtcNow;
@@ -562,17 +462,17 @@ namespace SUP
             if (root != null)
             {
                 string strmessage = "";
-                
+
                 foreach (var rfile in root.Message)
                 {
-                    strmessage+= rfile;
+                    strmessage += rfile;
 
                 }
                 BigInteger totalfilebytes = 0;
                 foreach (var rfile in root.File)
                 {
-                    totalfilebytes+= rfile.Value;
-                 }
+                    totalfilebytes += rfile.Value;
+                }
 
                 object[] rowData = new object[]
                 {
@@ -612,7 +512,7 @@ namespace SUP
             DateTime tmbeginCall = DateTime.UtcNow;
             byte[] result = Root.GetRootBytesByFile(new string[] { @"root/" + txtTransactionId.Text + @"/SEC" });
             result = Root.DecryptRootBytes(txtLogin.Text, txtPassword.Text, txtUrl.Text, txtSearchAddress.Text, result);
-            
+
             Root root = Root.GetRootByTransactionId(txtTransactionId.Text, null, null, null, txtVersionByte.Text, result);
             DateTime tmendCall = DateTime.UtcNow;
             dgTransactions.Rows.Clear();
@@ -670,20 +570,43 @@ namespace SUP
         private void button3_Click(object sender, EventArgs e)
         {
             DateTime tmbeginCall = DateTime.UtcNow;
-            OBJState Tester = OBJState.GetObjectByAddress(txtSearchAddress.Text,txtLogin.Text,txtPassword.Text,txtUrl.Text,txtVersionByte.Text);
+            OBJState Tester = OBJState.GetObjectByAddress(txtSearchAddress.Text, txtLogin.Text, txtPassword.Text, txtUrl.Text, txtVersionByte.Text);
             DateTime tmendCall = DateTime.UtcNow;
-
+            lblTotalBytes.Text = "bytes: ";
+            lblTotalTime.Text = "time: ";
+            lblKbs.Text = "kb/s: ";
+            lblTotal.Text = "total:";
             TimeSpan elapsedTime = tmendCall - tmbeginCall;
             double elapsedMilliseconds = elapsedTime.TotalMilliseconds;
-            double secondsExpired = elapsedMilliseconds / 1000.0;
-            lblTotalTime.Text = "Total Time: " + elapsedMilliseconds;
+
+            lblTotalTime.Text = "time: " + Math.Truncate(elapsedMilliseconds);
+            lblTotal.Text = "total: " + Tester.ProcessHeight.ToString();
             txtGetValue.Text = JsonConvert.SerializeObject(Tester);
         }
 
         private void btnPurge_Click(object sender, EventArgs e)
         {
+            lblTotalBytes.Text = "bytes: ";
+            lblTotalTime.Text = "time: ";
+            lblKbs.Text = "kb/s: ";
+            lblTotal.Text = "total:";
             if (Directory.Exists("root")) { Directory.Delete("root", true); };
             txtGetValue.Clear();
+        }
+
+        private void btnGetOwned_Click(object sender, EventArgs e)
+        {
+
+            List<OBJState> ownedObjects = OBJState.GetObjectsOwnedByAddress(txtSearchAddress.Text, txtLogin.Text, txtPassword.Text, txtUrl.Text);
+            txtGetValue.Text = JsonConvert.SerializeObject(ownedObjects);
+        }
+
+        private void btnGetCreated_Click(object sender, EventArgs e)
+        {
+
+            List<OBJState> createdObjects = OBJState.GetObjectsCreatedByAddress(txtSearchAddress.Text, txtLogin.Text, txtPassword.Text, txtUrl.Text);
+            txtGetValue.Text = JsonConvert.SerializeObject(createdObjects);
+
         }
     }
 }

@@ -37,39 +37,42 @@ namespace SUP.P2FK
 
         //ensures levelDB is thread safely
         private readonly static object levelDBLocker = new object();
- 
+
         public static Root GetRootByTransactionId(string transactionid, string username, string password, string url, string versionbyte = "111", byte[] rootbytes = null, string signatureaddress = null)
         {
             Root P2FKRoot = new Root();
             string diskpath = "root\\" + transactionid + "\\";
             string P2FKJSONString = null;
-
-            try
+            if (rootbytes == null)
             {
-
-                P2FKJSONString = System.IO.File.ReadAllText(diskpath + "P2FK.json");
-                P2FKRoot = JsonConvert.DeserializeObject<Root>(P2FKJSONString);
-                return P2FKRoot;
-
-
-            }
-            //Throws exception if P2FK.json file cache does not exist
-            catch
-            {
-                //Check levelDB for P2FK transaction ID cache status
-                lock (levelDBLocker)
+                try
                 {
-                    var ROOT = new Options { CreateIfMissing = true };
-                    var db = new DB(ROOT, @"root");
-                    P2FKJSONString = db.Get(transactionid);
-                    db.Close();
+
+                    P2FKJSONString = System.IO.File.ReadAllText(diskpath + "P2FK.json");
+                    P2FKRoot = JsonConvert.DeserializeObject<Root>(P2FKJSONString);
+                    return P2FKRoot;
+
+
+                }
+                //Throws exception if P2FK.json file cache does not exist
+                catch
+                {
+                    //Check levelDB for P2FK transaction ID cache status
+                    lock (levelDBLocker)
+                    {
+                        var ROOT = new Options { CreateIfMissing = true };
+                        var db = new DB(ROOT, @"root");
+                        P2FKJSONString = db.Get(transactionid);
+                        db.Close();
+                    }
+
+                }
+                //if transactionID is found in LevelDB cache with invalid or blocked status return null
+                if (P2FKJSONString == "invalid" || P2FKJSONString == "blocked")
+                {
+                    return null;
                 }
 
-            }
-            //if transactionID is found in LevelDB cache with invalid or blocked status return null
-            if (P2FKJSONString == "invalid" || P2FKJSONString == "blocked")
-            {
-                return null;
             }
 
             //P2FK Object Cache does not exist
@@ -238,9 +241,9 @@ namespace SUP.P2FK
                             Buffer.BlockCopy(fileBytes, removeStringBytes.Length, truncatedBytes, 0, truncatedBytes.Length);
                             fileBytes = truncatedBytes;
                         }
-                        lock (levelDBLocker)
-                        {
-                            isledger = true;
+
+                        isledger = true;
+                        
                             P2FKRoot = GetRootByTransactionId(
                             transactionid,
                             username,
@@ -256,7 +259,7 @@ namespace SUP.P2FK
                                 url
                             ), P2FKSignatureAddress
                         );
-                        }
+                       
                         if (P2FKRoot.File.Count > 0)
                         {
                             fileName = P2FKRoot.File.Keys.First();
@@ -686,7 +689,6 @@ namespace SUP.P2FK
             byte[] joinedBytes = fileNameBytes.Concat(separator1).Concat(fileSizeBytes).Concat(separator2).Concat(encrypted).ToArray();
             return joinedBytes;
         }
-
         static byte[] HexStringToByteArray(string hex)
         {
             // Check for an even number of characters
