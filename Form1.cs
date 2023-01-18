@@ -781,6 +781,33 @@ namespace SUP
         {
             splitContainer1.SplitterDistance = 0;
         }
+
+        private void button3_Click_1(object sender, EventArgs e)
+        {
+
+            List<string> searchList = new List<string> { txtSearchAddress.Text };
+            DateTime tmbeginCall = DateTime.UtcNow;
+            List<OBJState> createdObjects = OBJState.GetKeywordObjects(searchList, txtLogin.Text, txtPassword.Text, txtUrl.Text);
+            DateTime tmendCall = DateTime.UtcNow;
+            lblTotalBytes.Text = "bytes: ";
+            lblTotalTime.Text = "time: ";
+            lblKbs.Text = "kb/s: ";
+            lblTotal.Text = "total:";
+            TimeSpan elapsedTime = tmendCall - tmbeginCall;
+            double elapsedMilliseconds = elapsedTime.TotalMilliseconds;
+
+            lblTotalTime.Text = "time: " + Math.Truncate(elapsedMilliseconds);
+            lblTotal.Text = "total: " + createdObjects.Count();
+            JObject[] ObjectArray = new JObject[createdObjects.Count];
+            int objectcount = 0;
+            foreach (object obj in createdObjects)
+            {
+
+                ObjectArray[objectcount++] = JObject.FromObject(obj);
+            }
+            displayRootJSON(ObjectArray);
+
+        }
     }
 }
 

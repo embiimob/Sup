@@ -87,6 +87,7 @@ namespace SUP
             this.btnGetObject = new System.Windows.Forms.Button();
             this.btnDecrypt = new System.Windows.Forms.Button();
             this.btnEncrypt = new System.Windows.Forms.Button();
+            this.button3 = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.dgTransactions)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
@@ -305,7 +306,7 @@ namespace SUP
             dataGridViewCellStyle12.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
             dataGridViewCellStyle12.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
             this.dgTransactions.RowHeadersDefaultCellStyle = dataGridViewCellStyle12;
-            this.dgTransactions.Size = new System.Drawing.Size(1056, 258);
+            this.dgTransactions.Size = new System.Drawing.Size(1056, 267);
             this.dgTransactions.TabIndex = 30;
             this.dgTransactions.CellClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dgTransactions_CellClick);
             // 
@@ -473,6 +474,7 @@ namespace SUP
             // 
             // splitContainer1.Panel1
             // 
+            this.splitContainer1.Panel1.Controls.Add(this.button3);
             this.splitContainer1.Panel1.Controls.Add(this.txtGetValue);
             this.splitContainer1.Panel1.Controls.Add(this.checkBox1);
             this.splitContainer1.Panel1.Controls.Add(this.button2);
@@ -518,7 +520,7 @@ namespace SUP
             this.splitContainer1.Panel2.Controls.Add(this.dgTransactions);
             this.splitContainer1.Size = new System.Drawing.Size(1056, 648);
             this.splitContainer1.SplitterDistance = 380;
-            this.splitContainer1.SplitterWidth = 10;
+            this.splitContainer1.SplitterWidth = 1;
             this.splitContainer1.TabIndex = 42;
             this.splitContainer1.Resize += new System.EventHandler(this.splitContainer1_Resize);
             // 
@@ -632,6 +634,16 @@ namespace SUP
             this.btnEncrypt.UseVisualStyleBackColor = true;
             this.btnEncrypt.Click += new System.EventHandler(this.Button1_Click);
             // 
+            // button3
+            // 
+            this.button3.Location = new System.Drawing.Point(182, 330);
+            this.button3.Name = "button3";
+            this.button3.Size = new System.Drawing.Size(117, 23);
+            this.button3.TabIndex = 57;
+            this.button3.Text = "keyword register";
+            this.button3.UseVisualStyleBackColor = true;
+            this.button3.Click += new System.EventHandler(this.button3_Click_1);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -705,6 +717,7 @@ namespace SUP
         private Button button2;
         private CheckBox checkBox1;
         private RichTextBox txtGetValue;
+        private Button button3;
     }
 }
 

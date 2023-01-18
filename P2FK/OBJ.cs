@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -795,8 +796,73 @@ namespace SUP.P2FK
 
         }
 
+        public static List<OBJState> GetKeywordObjects(List<string> searchstrings, string username, string password, string url, string versionByte = "111", int skip = 0)
+        {
+            List<OBJState> objectStates = new List<OBJState> { };
 
+            Root[] objectTransactions;
+
+            foreach (string keyword in searchstrings)
+            {
+                //return all roots found at address
+                objectTransactions = Root.GetRootsByAddress(Root.GetPublicAddressByKeyword(keyword, versionByte), username, password, url, versionByte, skip);
+                HashSet<string> addedValues = new HashSet<string>();
+                foreach (Root transaction in objectTransactions)
+                {
+
+                    DateTime threeYearsAgo = DateTime.UtcNow.AddYears(-3);
+                    int result = threeYearsAgo.CompareTo(transaction.BlockDate);
+
+                    //ignore any transaction that is not signed
+                    if (transaction.Signed && result < 0)
+                    {
+                        string findObject = transaction.Keyword.ElementAt(transaction.Keyword.Count - 1).Key;
+
+
+                        OBJState isOwnedObject = GetObjectByAddress(findObject, username, password, url, versionByte);
+                        if (IsKeywordValid(isOwnedObject.URN) && isOwnedObject.URN.TrimEnd('#') == keyword)
+                        {
+
+
+                            if (isOwnedObject.Creators.ElementAt(0) == findObject)
+                            {
+                                var isValidObject = (isOwnedObject.Owners.ContainsKey(findObject) ||
+                                                (isOwnedObject.Creators.Contains(findObject) &&
+                                                 isOwnedObject.Owners.TryGetValue(transaction.Keyword.Last().Key, out int qty)));
+
+                                if (isValidObject && !addedValues.Contains(isOwnedObject.URN))
+                                {
+                                    objectStates.Add(isOwnedObject);
+                                    addedValues.Add(isOwnedObject.URN);
+                                }
+                            }
+
+
+                        }
+                    }
+
+
+                }
+            }
+
+
+            return objectStates;
+
+        }
+        static bool IsKeywordValid(string s)
+        {
+            Regex pattern  = new Regex("^.{0,19}#{1,20}$");
+
+            if (s != null)
+            {
+                return pattern.IsMatch(s);
+
+            }
+            else { return false; }
+               
+        }
     }
-
-
 }
+
+
+
