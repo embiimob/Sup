@@ -30,10 +30,10 @@ namespace SUP
         /// </summary>
         private void InitializeComponent()
         {
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle4 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle9 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle11 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle12 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle10 = new System.Windows.Forms.DataGridViewCellStyle();
             this.btnGet = new System.Windows.Forms.Button();
             this.btnDelete = new System.Windows.Forms.Button();
             this.label3 = new System.Windows.Forms.Label();
@@ -76,6 +76,8 @@ namespace SUP
             this.lblTotalTime = new System.Windows.Forms.Label();
             this.lblKbs = new System.Windows.Forms.Label();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
+            this.txtGetValue = new System.Windows.Forms.RichTextBox();
+            this.checkBox1 = new System.Windows.Forms.CheckBox();
             this.button2 = new System.Windows.Forms.Button();
             this.button1 = new System.Windows.Forms.Button();
             this.btnGetCreated = new System.Windows.Forms.Button();
@@ -85,8 +87,6 @@ namespace SUP
             this.btnGetObject = new System.Windows.Forms.Button();
             this.btnDecrypt = new System.Windows.Forms.Button();
             this.btnEncrypt = new System.Windows.Forms.Button();
-            this.checkBox1 = new System.Windows.Forms.CheckBox();
-            this.txtGetValue = new System.Windows.Forms.RichTextBox();
             ((System.ComponentModel.ISupportInitialize)(this.dgTransactions)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
@@ -235,7 +235,7 @@ namespace SUP
             // 
             // txtSearchAddress
             // 
-            this.txtSearchAddress.Location = new System.Drawing.Point(9, 228);
+            this.txtSearchAddress.Location = new System.Drawing.Point(9, 265);
             this.txtSearchAddress.Name = "txtSearchAddress";
             this.txtSearchAddress.Size = new System.Drawing.Size(270, 20);
             this.txtSearchAddress.TabIndex = 25;
@@ -244,7 +244,7 @@ namespace SUP
             // label11
             // 
             this.label11.AutoSize = true;
-            this.label11.Location = new System.Drawing.Point(6, 208);
+            this.label11.Location = new System.Drawing.Point(6, 245);
             this.label11.Name = "label11";
             this.label11.Size = new System.Drawing.Size(44, 13);
             this.label11.TabIndex = 26;
@@ -252,7 +252,7 @@ namespace SUP
             // 
             // btnSearch
             // 
-            this.btnSearch.Location = new System.Drawing.Point(285, 226);
+            this.btnSearch.Location = new System.Drawing.Point(285, 263);
             this.btnSearch.Name = "btnSearch";
             this.btnSearch.Size = new System.Drawing.Size(76, 23);
             this.btnSearch.TabIndex = 27;
@@ -263,14 +263,14 @@ namespace SUP
             // dgTransactions
             // 
             this.dgTransactions.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.Fill;
-            dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle1.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            dataGridViewCellStyle1.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle1.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.dgTransactions.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle1;
+            dataGridViewCellStyle9.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle9.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle9.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle9.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle9.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle9.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle9.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.dgTransactions.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle9;
             this.dgTransactions.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.dgTransactions.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
             this.rootid,
@@ -286,26 +286,26 @@ namespace SUP
             this.signature,
             this.confirmations,
             this.buildtime});
-            dataGridViewCellStyle3.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle3.BackColor = System.Drawing.SystemColors.Window;
-            dataGridViewCellStyle3.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            dataGridViewCellStyle3.ForeColor = System.Drawing.SystemColors.ControlText;
-            dataGridViewCellStyle3.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle3.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle3.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
-            this.dgTransactions.DefaultCellStyle = dataGridViewCellStyle3;
+            dataGridViewCellStyle11.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle11.BackColor = System.Drawing.SystemColors.Window;
+            dataGridViewCellStyle11.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle11.ForeColor = System.Drawing.SystemColors.ControlText;
+            dataGridViewCellStyle11.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle11.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle11.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
+            this.dgTransactions.DefaultCellStyle = dataGridViewCellStyle11;
             this.dgTransactions.Dock = System.Windows.Forms.DockStyle.Fill;
             this.dgTransactions.Location = new System.Drawing.Point(0, 0);
             this.dgTransactions.Name = "dgTransactions";
-            dataGridViewCellStyle4.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle4.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle4.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            dataGridViewCellStyle4.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle4.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle4.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle4.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.dgTransactions.RowHeadersDefaultCellStyle = dataGridViewCellStyle4;
-            this.dgTransactions.Size = new System.Drawing.Size(1056, 261);
+            dataGridViewCellStyle12.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle12.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle12.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle12.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle12.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle12.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle12.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.dgTransactions.RowHeadersDefaultCellStyle = dataGridViewCellStyle12;
+            this.dgTransactions.Size = new System.Drawing.Size(1056, 258);
             this.dgTransactions.TabIndex = 30;
             this.dgTransactions.CellClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dgTransactions_CellClick);
             // 
@@ -317,8 +317,8 @@ namespace SUP
             // 
             // messagecount
             // 
-            dataGridViewCellStyle2.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.messagecount.DefaultCellStyle = dataGridViewCellStyle2;
+            dataGridViewCellStyle10.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.messagecount.DefaultCellStyle = dataGridViewCellStyle10;
             this.messagecount.HeaderText = "Messages";
             this.messagecount.MaxInputLength = 100000000;
             this.messagecount.Name = "messagecount";
@@ -384,7 +384,7 @@ namespace SUP
             // 
             // btnGetTransactionId
             // 
-            this.btnGetTransactionId.Location = new System.Drawing.Point(408, 178);
+            this.btnGetTransactionId.Location = new System.Drawing.Point(408, 203);
             this.btnGetTransactionId.Name = "btnGetTransactionId";
             this.btnGetTransactionId.Size = new System.Drawing.Size(43, 23);
             this.btnGetTransactionId.TabIndex = 33;
@@ -395,7 +395,7 @@ namespace SUP
             // label12
             // 
             this.label12.AutoSize = true;
-            this.label12.Location = new System.Drawing.Point(6, 165);
+            this.label12.Location = new System.Drawing.Point(6, 190);
             this.label12.Name = "label12";
             this.label12.Size = new System.Drawing.Size(23, 13);
             this.label12.TabIndex = 32;
@@ -403,7 +403,7 @@ namespace SUP
             // 
             // txtTransactionId
             // 
-            this.txtTransactionId.Location = new System.Drawing.Point(9, 181);
+            this.txtTransactionId.Location = new System.Drawing.Point(9, 206);
             this.txtTransactionId.Name = "txtTransactionId";
             this.txtTransactionId.Size = new System.Drawing.Size(393, 20);
             this.txtTransactionId.TabIndex = 31;
@@ -411,7 +411,7 @@ namespace SUP
             // 
             // btnGetKeyword
             // 
-            this.btnGetKeyword.Location = new System.Drawing.Point(367, 225);
+            this.btnGetKeyword.Location = new System.Drawing.Point(367, 262);
             this.btnGetKeyword.Name = "btnGetKeyword";
             this.btnGetKeyword.Size = new System.Drawing.Size(84, 23);
             this.btnGetKeyword.TabIndex = 36;
@@ -466,6 +466,7 @@ namespace SUP
             // splitContainer1
             // 
             this.splitContainer1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.splitContainer1.IsSplitterFixed = true;
             this.splitContainer1.Location = new System.Drawing.Point(0, 0);
             this.splitContainer1.Name = "splitContainer1";
             this.splitContainer1.Orientation = System.Windows.Forms.Orientation.Horizontal;
@@ -510,19 +511,41 @@ namespace SUP
             this.splitContainer1.Panel1.Controls.Add(this.label9);
             this.splitContainer1.Panel1.Controls.Add(this.label8);
             this.splitContainer1.Panel1.Controls.Add(this.txtUrl);
-            this.splitContainer1.Panel1MinSize = 0;
+            this.splitContainer1.Panel1MinSize = 380;
             // 
             // splitContainer1.Panel2
             // 
             this.splitContainer1.Panel2.Controls.Add(this.dgTransactions);
             this.splitContainer1.Size = new System.Drawing.Size(1056, 648);
-            this.splitContainer1.SplitterDistance = 377;
+            this.splitContainer1.SplitterDistance = 380;
             this.splitContainer1.SplitterWidth = 10;
             this.splitContainer1.TabIndex = 42;
+            this.splitContainer1.Resize += new System.EventHandler(this.splitContainer1_Resize);
+            // 
+            // txtGetValue
+            // 
+            this.txtGetValue.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.txtGetValue.BackColor = System.Drawing.SystemColors.Control;
+            this.txtGetValue.Location = new System.Drawing.Point(457, 12);
+            this.txtGetValue.Name = "txtGetValue";
+            this.txtGetValue.Size = new System.Drawing.Size(587, 360);
+            this.txtGetValue.TabIndex = 56;
+            this.txtGetValue.Text = "";
+            // 
+            // checkBox1
+            // 
+            this.checkBox1.AutoSize = true;
+            this.checkBox1.Location = new System.Drawing.Point(17, 330);
+            this.checkBox1.Name = "checkBox1";
+            this.checkBox1.Size = new System.Drawing.Size(64, 17);
+            this.checkBox1.TabIndex = 55;
+            this.checkBox1.Text = "verbose";
+            this.checkBox1.UseVisualStyleBackColor = true;
             // 
             // button2
             // 
-            this.button2.Location = new System.Drawing.Point(97, 305);
+            this.button2.Location = new System.Drawing.Point(97, 329);
             this.button2.Name = "button2";
             this.button2.Size = new System.Drawing.Size(79, 23);
             this.button2.TabIndex = 53;
@@ -532,7 +555,7 @@ namespace SUP
             // 
             // button1
             // 
-            this.button1.Location = new System.Drawing.Point(97, 276);
+            this.button1.Location = new System.Drawing.Point(97, 300);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(79, 23);
             this.button1.TabIndex = 52;
@@ -542,7 +565,7 @@ namespace SUP
             // 
             // btnGetCreated
             // 
-            this.btnGetCreated.Location = new System.Drawing.Point(267, 276);
+            this.btnGetCreated.Location = new System.Drawing.Point(267, 300);
             this.btnGetCreated.Name = "btnGetCreated";
             this.btnGetCreated.Size = new System.Drawing.Size(79, 23);
             this.btnGetCreated.TabIndex = 51;
@@ -552,7 +575,7 @@ namespace SUP
             // 
             // btnGetOwned
             // 
-            this.btnGetOwned.Location = new System.Drawing.Point(182, 276);
+            this.btnGetOwned.Location = new System.Drawing.Point(182, 300);
             this.btnGetOwned.Name = "btnGetOwned";
             this.btnGetOwned.Size = new System.Drawing.Size(79, 23);
             this.btnGetOwned.TabIndex = 50;
@@ -571,7 +594,7 @@ namespace SUP
             // 
             // btnPurge
             // 
-            this.btnPurge.Location = new System.Drawing.Point(364, 276);
+            this.btnPurge.Location = new System.Drawing.Point(364, 300);
             this.btnPurge.Name = "btnPurge";
             this.btnPurge.Size = new System.Drawing.Size(87, 52);
             this.btnPurge.TabIndex = 45;
@@ -581,7 +604,7 @@ namespace SUP
             // 
             // btnGetObject
             // 
-            this.btnGetObject.Location = new System.Drawing.Point(12, 276);
+            this.btnGetObject.Location = new System.Drawing.Point(12, 300);
             this.btnGetObject.Name = "btnGetObject";
             this.btnGetObject.Size = new System.Drawing.Size(79, 23);
             this.btnGetObject.TabIndex = 44;
@@ -591,9 +614,9 @@ namespace SUP
             // 
             // btnDecrypt
             // 
-            this.btnDecrypt.Location = new System.Drawing.Point(398, 32);
+            this.btnDecrypt.Location = new System.Drawing.Point(285, 174);
             this.btnDecrypt.Name = "btnDecrypt";
-            this.btnDecrypt.Size = new System.Drawing.Size(53, 23);
+            this.btnDecrypt.Size = new System.Drawing.Size(76, 23);
             this.btnDecrypt.TabIndex = 43;
             this.btnDecrypt.Text = "decrypt";
             this.btnDecrypt.UseVisualStyleBackColor = true;
@@ -601,32 +624,13 @@ namespace SUP
             // 
             // btnEncrypt
             // 
-            this.btnEncrypt.Location = new System.Drawing.Point(339, 31);
+            this.btnEncrypt.Location = new System.Drawing.Point(367, 174);
             this.btnEncrypt.Name = "btnEncrypt";
-            this.btnEncrypt.Size = new System.Drawing.Size(53, 23);
+            this.btnEncrypt.Size = new System.Drawing.Size(84, 23);
             this.btnEncrypt.TabIndex = 42;
             this.btnEncrypt.Text = "encrypt";
             this.btnEncrypt.UseVisualStyleBackColor = true;
             this.btnEncrypt.Click += new System.EventHandler(this.Button1_Click);
-            // 
-            // checkBox1
-            // 
-            this.checkBox1.AutoSize = true;
-            this.checkBox1.Location = new System.Drawing.Point(17, 306);
-            this.checkBox1.Name = "checkBox1";
-            this.checkBox1.Size = new System.Drawing.Size(64, 17);
-            this.checkBox1.TabIndex = 55;
-            this.checkBox1.Text = "verbose";
-            this.checkBox1.UseVisualStyleBackColor = true;
-            // 
-            // txtGetValue
-            // 
-            this.txtGetValue.BackColor = System.Drawing.SystemColors.Control;
-            this.txtGetValue.Location = new System.Drawing.Point(457, 12);
-            this.txtGetValue.Name = "txtGetValue";
-            this.txtGetValue.Size = new System.Drawing.Size(587, 360);
-            this.txtGetValue.TabIndex = 56;
-            this.txtGetValue.Text = "";
             // 
             // Form1
             // 

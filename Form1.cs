@@ -597,6 +597,7 @@ namespace SUP
             lblTotal.Text = "total:";
             if (Directory.Exists("root")) { Directory.Delete("root", true); };
             txtGetValue.Clear();
+            dgTransactions.Rows.Clear();
         }
 
         private void btnGetOwned_Click(object sender, EventArgs e)
@@ -774,6 +775,11 @@ namespace SUP
                     txtGetValue.SelectionColor = Color.Red; // for separator
                 }
             }
+        }
+
+        private void splitContainer1_Resize(object sender, EventArgs e)
+        {
+            splitContainer1.SplitterDistance = 0;
         }
     }
 }
