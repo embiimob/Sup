@@ -625,7 +625,7 @@ namespace SUP.P2FK
 
 
                     OBJState isObject = GetObjectByAddress(findObject, username, password, url, versionByte);
-                    if (isObject.URN != null)
+                    if (isObject.URN != null && !addedValues.Contains(isObject.URN))
                     {
                         if (isObject.Creators.ElementAt(0) == findObject)
                         {
@@ -692,18 +692,18 @@ namespace SUP.P2FK
 
 
                     OBJState isObject = GetObjectByAddress(findObject, username, password, url, versionByte);
-                    if (isObject.URN != null)
+                    if (isObject.URN != null && !addedValues.Contains(isObject.URN))
                     {
                         if (isObject.Creators.ElementAt(0) == findObject)
                         {
-                                                      
-                           
-                            
-                            if (!addedValues.Contains(findObject) && (isObject.Owners.ContainsKey(objectaddress)||(isObject.Owners.ContainsKey(isObject.Creators.ElementAt(0)))))
+
+
+
+                            if (!addedValues.Contains(isObject.URN) && (isObject.Owners.ContainsKey(objectaddress) || (isObject.Owners.ContainsKey(isObject.Creators.ElementAt(0)))))
                             {
 
                                 objectStates.Add(isObject);
-                                addedValues.Add(findObject);
+                                addedValues.Add(isObject.URN);
 
                             }
 
@@ -720,11 +720,11 @@ namespace SUP.P2FK
                             if (isObject.Creators.ElementAt(0) == findObject)
                             {
 
-                                if (!addedValues.Contains(findObject) && (isObject.Owners.ContainsKey(objectaddress) || (isObject.Owners.ContainsKey(isObject.Creators.ElementAt(0)))))
+                                if (!addedValues.Contains(isObject.URN) && (isObject.Owners.ContainsKey(objectaddress) || (isObject.Owners.ContainsKey(isObject.Creators.ElementAt(0)))))
                                 {
 
                                     objectStates.Add(isObject);
-                                    addedValues.Add(findObject);
+                                    addedValues.Add(isObject.URN);
 
                                 }
                             }
@@ -764,18 +764,18 @@ namespace SUP.P2FK
 
 
                     OBJState isObject = GetObjectByAddress(findObject, username, password, url, versionByte);
-                    if (isObject.URN != null)
+                    if (isObject.URN != null && !addedValues.Contains(isObject.URN))
                     {
                         if (isObject.Creators.ElementAt(0) == findObject)
                         {
 
 
 
-                            if (!addedValues.Contains(findObject) && (isObject.Creators.Contains(objectaddress)))
+                            if (!addedValues.Contains(isObject.URN) && (isObject.Creators.Contains(objectaddress)))
                             {
 
                                 objectStates.Add(isObject);
-                                addedValues.Add(findObject);
+                                addedValues.Add(isObject.URN);
 
                             }
 
@@ -792,11 +792,11 @@ namespace SUP.P2FK
                             if (isObject.Creators.ElementAt(0) == findObject)
                             {
 
-                                if (!addedValues.Contains(findObject) && (isObject.Creators.Contains(objectaddress)))
+                                if (!addedValues.Contains(isObject.URN) && (isObject.Creators.Contains(objectaddress)))
                                 {
 
                                     objectStates.Add(isObject);
-                                    addedValues.Add(findObject);
+                                    addedValues.Add(isObject.URN);
 
                                 }
                             }
@@ -825,7 +825,7 @@ namespace SUP.P2FK
             {
                 List<OBJState> foundKeywords = GetObjectsByAddress(Root.GetPublicAddressByKeyword(search), username, password, url, versionByte, skip);
 
-                 foreach (OBJState found in foundKeywords)
+                foreach (OBJState found in foundKeywords)
                 {
                     totalSearch.Add(found);
                 }
@@ -842,57 +842,72 @@ namespace SUP.P2FK
         public static List<OBJState> GetObjectsByURN(List<string> searchstrings, string username, string password, string url, string versionByte = "111", int skip = 0)
         {
             List<OBJState> objectStates = new List<OBJState> { };
-
+            List<OBJState> totalObjectStates = new List<OBJState> { };
             Root[] objectTransactions;
 
-            foreach (string keyword in searchstrings)
+            foreach (string search in searchstrings)
             {
                 //return all roots found at address
-                objectTransactions = Root.GetRootsByAddress(Root.GetPublicAddressByKeyword(keyword, versionByte), username, password, url, versionByte, skip);
+                objectTransactions = Root.GetRootsByAddress(Root.GetPublicAddressByKeyword(search), username, password, url, versionByte, skip);
                 HashSet<string> addedValues = new HashSet<string>();
                 foreach (Root transaction in objectTransactions)
                 {
 
-                    DateTime threeYearsAgo = DateTime.UtcNow.AddYears(-3);
-                    int result = threeYearsAgo.CompareTo(transaction.BlockDate);
 
                     //ignore any transaction that is not signed
-                    if (transaction.Signed && result < 0)
+                    if (transaction.Signed)
                     {
-                        string findObject = transaction.Keyword.ElementAt(transaction.Keyword.Count - 1).Key;
+                        string findObject = transaction.Keyword.ElementAt(transaction.Keyword.Count - 2).Key;
 
 
-                        OBJState isOwnedObject = GetObjectByAddress(findObject, username, password, url, versionByte);
-                        if (isOwnedObject.URN.TrimEnd('#') == keyword)
+                        OBJState isObject = GetObjectByAddress(findObject, username, password, url, versionByte);
+                        if (!addedValues.Contains(isObject.URN) && isObject.URN == search.PadRight(20,'#') && isObject.ChangeDate > DateTime.Now.AddYears(-3))
                         {
-
-
-                            if (isOwnedObject.Creators.ElementAt(0) == findObject)
+                            if (isObject.Creators.ElementAt(0) == findObject)
                             {
-                                var isValidObject = (isOwnedObject.Owners.ContainsKey(findObject) ||
-                                                (isOwnedObject.Creators.Contains(findObject) &&
-                                                 isOwnedObject.Owners.TryGetValue(transaction.Keyword.Last().Key, out int qty)));
 
-                                if (isValidObject)
+                                if (!addedValues.Contains(isObject.URN))
                                 {
-                                    objectStates.Add(isOwnedObject);
-                                    return objectStates;
+
+                                    objectStates.Add(isObject);
+                                    addedValues.Add(isObject.URN);
+
                                 }
                             }
 
-
                         }
+                        else
+                        {
+                            findObject = transaction.Keyword.ElementAt(transaction.Keyword.Count - 1).Key;
+                            isObject = GetObjectByAddress(findObject, username, password, url, versionByte);
+                            if (isObject.URN == search.PadRight(20, '#') && isObject.ChangeDate > DateTime.Now.AddYears(-3))
+                            {
+                                if (isObject.Creators.ElementAt(0) == findObject)
+                                {
+
+                                    if (!addedValues.Contains(isObject.URN))
+                                    {
+
+                                        objectStates.Add(isObject);
+                                        addedValues.Add(isObject.URN);
+                                    }
+                                }
+
+                            }
+                        }
+
+
                     }
 
 
                 }
+
+                
+
             }
-
-
             return objectStates;
 
         }
-
     }
 }
 
