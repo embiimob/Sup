@@ -799,7 +799,7 @@ namespace SUP.P2FK
 
         }
 
-        public static List<OBJState> GetURNObjects(List<string> searchstrings, string username, string password, string url, string versionByte = "111", int skip = 0)
+        public static List<OBJState> GetObjectsByURN(List<string> searchstrings, string username, string password, string url, string versionByte = "111", int skip = 0)
         {
             List<OBJState> objectStates = new List<OBJState> { };
 

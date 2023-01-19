@@ -787,7 +787,7 @@ namespace SUP
 
             List<string> searchList = txtSearchAddress.Text.Split(',').ToList();
             DateTime tmbeginCall = DateTime.UtcNow;
-            List<OBJState> createdObjects = OBJState.GetURNObjects(searchList, txtLogin.Text, txtPassword.Text, txtUrl.Text);
+            List<OBJState> createdObjects = OBJState.GetObjectsByURN(searchList, txtLogin.Text, txtPassword.Text, txtUrl.Text);
             DateTime tmendCall = DateTime.UtcNow;
             lblTotalBytes.Text = "bytes: ";
             lblTotalTime.Text = "time: ";
