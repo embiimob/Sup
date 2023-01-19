@@ -16,6 +16,7 @@ namespace SUP.P2FK
     public class OBJ
     {
         public string urn { get; set; }
+        public string uri { get; set; }
         public string img { get; set; }
         public string nme { get; set; }
         public string dsc { get; set; }
@@ -27,6 +28,7 @@ namespace SUP.P2FK
     public class OBJState
     {
         public string URN { get; set; }
+        public string URI { get; set; }
         public string Image { get; set; }
         public string Name { get; set; }
         public string Description { get; set; }
@@ -140,6 +142,7 @@ namespace SUP.P2FK
                                         if (objectState.LockedDate.Year == 1)
                                         {
                                             if (objectinspector.urn != null) { objectState.ChangeDate = transaction.BlockDate; objectState.URN = objectinspector.urn; }
+                                            if (objectinspector.uri != null) { objectState.ChangeDate = transaction.BlockDate; objectState.URI = objectinspector.uri; }
                                             if (objectinspector.img != null) { objectState.ChangeDate = transaction.BlockDate; objectState.Image = objectinspector.img; }
                                             if (objectinspector.nme != null) { objectState.ChangeDate = transaction.BlockDate; objectState.Name = objectinspector.nme; }
                                             if (objectinspector.dsc != null) { objectState.ChangeDate = transaction.BlockDate; objectState.Description = objectinspector.dsc; }
@@ -830,10 +833,10 @@ namespace SUP.P2FK
                                                 (isOwnedObject.Creators.Contains(findObject) &&
                                                  isOwnedObject.Owners.TryGetValue(transaction.Keyword.Last().Key, out int qty)));
 
-                                if (isValidObject && !addedValues.Contains(isOwnedObject.URN))
+                                if (isValidObject )
                                 {
                                     objectStates.Add(isOwnedObject);
-                                    addedValues.Add(isOwnedObject.URN);
+                                    return objectStates;
                                 }
                             }
 
