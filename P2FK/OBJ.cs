@@ -799,7 +799,7 @@ namespace SUP.P2FK
 
         }
 
-        public static List<OBJState> GetKeywordObjects(List<string> searchstrings, string username, string password, string url, string versionByte = "111", int skip = 0)
+        public static List<OBJState> GetURNObjects(List<string> searchstrings, string username, string password, string url, string versionByte = "111", int skip = 0)
         {
             List<OBJState> objectStates = new List<OBJState> { };
 
@@ -823,7 +823,7 @@ namespace SUP.P2FK
 
 
                         OBJState isOwnedObject = GetObjectByAddress(findObject, username, password, url, versionByte);
-                        if (IsKeywordValid(isOwnedObject.URN) && isOwnedObject.URN.TrimEnd('#') == keyword)
+                        if (isOwnedObject.URN.TrimEnd('#') == keyword)
                         {
 
 
@@ -854,7 +854,7 @@ namespace SUP.P2FK
         }
         static bool IsKeywordValid(string s)
         {
-            Regex pattern  = new Regex("^.{0,19}#{1,20}$");
+            Regex pattern  = new Regex("^.{0,19}#{1,104}$");
 
             if (s != null)
             {

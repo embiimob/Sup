@@ -785,9 +785,9 @@ namespace SUP
         private void button3_Click_1(object sender, EventArgs e)
         {
 
-            List<string> searchList = new List<string> { txtSearchAddress.Text };
+            List<string> searchList = txtSearchAddress.Text.Split(',').ToList();
             DateTime tmbeginCall = DateTime.UtcNow;
-            List<OBJState> createdObjects = OBJState.GetKeywordObjects(searchList, txtLogin.Text, txtPassword.Text, txtUrl.Text);
+            List<OBJState> createdObjects = OBJState.GetURNObjects(searchList, txtLogin.Text, txtPassword.Text, txtUrl.Text);
             DateTime tmendCall = DateTime.UtcNow;
             lblTotalBytes.Text = "bytes: ";
             lblTotalTime.Text = "time: ";
