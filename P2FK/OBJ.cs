@@ -113,7 +113,7 @@ namespace SUP.P2FK
                                 }
 
 
-                                if (objectinspector.cre != null && objectState.Creators == null)
+                                if (objectinspector.cre != null && objectState.Creators == null && transaction.SignedBy == objectaddress)
                                 {
 
                                     objectState.Creators = new List<string> { };
@@ -621,14 +621,12 @@ namespace SUP.P2FK
                 //ignore any transaction that is not signed
                 if (transaction.Signed)
                 {
-                    string findObject = transaction.Keyword.ElementAt(transaction.Keyword.Count -2).Key;
+                    string findObject = transaction.Keyword.ElementAt(transaction.Keyword.Count - 2).Key;
 
 
                     OBJState isObject = GetObjectByAddress(findObject, username, password, url, versionByte);
-
                     if (isObject.URN != null)
-
-
+                    {
                         if (isObject.Creators.ElementAt(0) == findObject)
                         {
 
@@ -639,8 +637,28 @@ namespace SUP.P2FK
                                 addedValues.Add(findObject);
 
                             }
+                        }
+
+                    }
+                    else
+                    {
+                        findObject = transaction.Keyword.ElementAt(transaction.Keyword.Count - 1).Key;
+                        isObject = GetObjectByAddress(findObject, username, password, url, versionByte);
+                        if (isObject.URN != null)
+                        {
+                            if (isObject.Creators.ElementAt(0) == findObject)
+                            {
+
+                                if (!addedValues.Contains(findObject))
+                                {
+
+                                    objectStates.Add(isObject);
+                                    addedValues.Add(findObject);
+                                }
+                            }
 
                         }
+                    }
 
 
                 }
@@ -648,8 +666,8 @@ namespace SUP.P2FK
 
             }
 
-
             return objectStates;
+
 
         }
 
@@ -672,27 +690,47 @@ namespace SUP.P2FK
                 {
                     string findObject = transaction.Keyword.ElementAt(transaction.Keyword.Count - 2).Key;
 
-                    OBJState isOwnedObject = GetObjectByAddress(findObject, username, password, url, versionByte);
 
-                    if (isOwnedObject.URN != null)
+                    OBJState isObject = GetObjectByAddress(findObject, username, password, url, versionByte);
+                    if (isObject.URN != null)
                     {
-
-
-
-                        if (isOwnedObject.Creators.ElementAt(0) == findObject)
+                        if (isObject.Creators.ElementAt(0) == findObject)
                         {
-                            var isValidObject = (isOwnedObject.Owners.ContainsKey(objectaddress) ||
-                                            (isOwnedObject.Creators.Contains(objectaddress) &&
-                                             isOwnedObject.Owners.TryGetValue(transaction.Keyword.Last().Key, out int qty)));
-
-                            if (isValidObject && !addedValues.Contains(findObject))
+                                                      
+                           
+                            
+                            if (!addedValues.Contains(findObject) && (isObject.Owners.ContainsKey(objectaddress)||(isObject.Owners.ContainsKey(isObject.Creators.ElementAt(0)))))
                             {
-                                objectStates.Add(isOwnedObject);
+
+                                objectStates.Add(isObject);
                                 addedValues.Add(findObject);
+
                             }
+
+
+                        }
+
+                    }
+                    else
+                    {
+                        findObject = transaction.Keyword.ElementAt(transaction.Keyword.Count - 1).Key;
+                        isObject = GetObjectByAddress(findObject, username, password, url, versionByte);
+                        if (isObject.URN != null)
+                        {
+                            if (isObject.Creators.ElementAt(0) == findObject)
+                            {
+
+                                if (!addedValues.Contains(findObject) && (isObject.Owners.ContainsKey(objectaddress) || (isObject.Owners.ContainsKey(isObject.Creators.ElementAt(0)))))
+                                {
+
+                                    objectStates.Add(isObject);
+                                    addedValues.Add(findObject);
+
+                                }
+                            }
+
                         }
                     }
-
 
 
                 }
@@ -700,14 +738,14 @@ namespace SUP.P2FK
 
             }
 
-
             return objectStates;
+
+
 
         }
 
         public static List<OBJState> GetObjectsCreatedByAddress(string objectaddress, string username, string password, string url, string versionByte = "111", int skip = 0)
         {
-
             List<OBJState> objectStates = new List<OBJState> { };
 
             Root[] objectTransactions;
@@ -722,62 +760,39 @@ namespace SUP.P2FK
                 //ignore any transaction that is not signed
                 if (transaction.Signed)
                 {
-                    string findObject = transaction.Keyword.ElementAt(transaction.Keyword.Count - 1).Key;
-
-                    OBJState isCreatedObject = GetObjectByAddress(findObject, username, password, url, versionByte);
+                    string findObject = transaction.Keyword.ElementAt(transaction.Keyword.Count - 2).Key;
 
 
-                    if (isCreatedObject.URN != null)
+                    OBJState isObject = GetObjectByAddress(findObject, username, password, url, versionByte);
+                    if (isObject.URN != null)
                     {
-                        if (isCreatedObject.Creators.ElementAt(0) == findObject)
+                        if (isObject.Creators.ElementAt(0) == findObject)
                         {
-                            if (isCreatedObject.Creators.Contains(objectaddress) && !addedValues.Contains(findObject))
-                            {
-                                objectStates.Add(isCreatedObject);
-                                addedValues.Add(transaction.Keyword.ElementAt(1).Key);
 
+
+
+                            if (!addedValues.Contains(findObject) && (isObject.Creators.Contains(objectaddress)))
+                            {
+
+                                objectStates.Add(isObject);
+                                addedValues.Add(findObject);
 
                             }
+
+
                         }
 
                     }
-
-                }
-
-            }
-
-            return objectStates;
-
-        }
-
-        public static List<OBJState> GetObjectsByKeyword(List<string> searchstrings, string username, string password, string url, string versionByte = "111", int skip = 0)
-        {
-            List<OBJState> objectStates = new List<OBJState> { };
-
-            Root[] objectTransactions;
-
-            foreach (string keyword in searchstrings)
-            {
-                //return all roots found at address
-                objectTransactions = Root.GetRootsByAddress(Root.GetPublicAddressByKeyword(keyword, versionByte), username, password, url, versionByte, skip);
-                HashSet<string> addedValues = new HashSet<string>();
-                foreach (Root transaction in objectTransactions)
-                {
-
-
-                    //ignore any transaction that is not signed
-                    if (transaction.Signed)
+                    else
                     {
-                        string findObject = transaction.Keyword.ElementAt(transaction.Keyword.Count - 2).Key;
-
-
-                        OBJState isObject = GetObjectByAddress(findObject, username, password, url, versionByte);
+                        findObject = transaction.Keyword.ElementAt(transaction.Keyword.Count - 1).Key;
+                        isObject = GetObjectByAddress(findObject, username, password, url, versionByte);
                         if (isObject.URN != null)
                         {
                             if (isObject.Creators.ElementAt(0) == findObject)
                             {
 
-                                if (!addedValues.Contains(findObject))
+                                if (!addedValues.Contains(findObject) && (isObject.Creators.Contains(objectaddress)))
                                 {
 
                                     objectStates.Add(isObject);
@@ -786,16 +801,41 @@ namespace SUP.P2FK
                                 }
                             }
 
-
                         }
                     }
 
 
                 }
+
+
             }
 
-
             return objectStates;
+
+
+
+
+        }
+
+        public static List<OBJState> GetObjectsByKeyword(List<string> searchstrings, string username, string password, string url, string versionByte = "111", int skip = 0)
+        {
+            List<OBJState> totalSearch = new List<OBJState>();
+
+            foreach (string search in searchstrings)
+            {
+                List<OBJState> foundKeywords = GetObjectsByAddress(Root.GetPublicAddressByKeyword(search), username, password, url, versionByte, skip);
+
+                 foreach (OBJState found in foundKeywords)
+                {
+                    totalSearch.Add(found);
+                }
+            }
+
+            return totalSearch;
+
+
+
+
 
         }
 
@@ -833,7 +873,7 @@ namespace SUP.P2FK
                                                 (isOwnedObject.Creators.Contains(findObject) &&
                                                  isOwnedObject.Owners.TryGetValue(transaction.Keyword.Last().Key, out int qty)));
 
-                                if (isValidObject )
+                                if (isValidObject)
                                 {
                                     objectStates.Add(isOwnedObject);
                                     return objectStates;
@@ -852,18 +892,7 @@ namespace SUP.P2FK
             return objectStates;
 
         }
-        static bool IsKeywordValid(string s)
-        {
-            Regex pattern  = new Regex("^.{0,19}#{1,104}$");
 
-            if (s != null)
-            {
-                return pattern.IsMatch(s);
-
-            }
-            else { return false; }
-               
-        }
     }
 }
 
