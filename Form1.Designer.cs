@@ -30,10 +30,10 @@ namespace SUP
         /// </summary>
         private void InitializeComponent()
         {
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle17 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle19 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle20 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle18 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle4 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
             this.btnGet = new System.Windows.Forms.Button();
             this.btnDelete = new System.Windows.Forms.Button();
             this.label3 = new System.Windows.Forms.Label();
@@ -76,6 +76,7 @@ namespace SUP
             this.lblTotalTime = new System.Windows.Forms.Label();
             this.lblKbs = new System.Windows.Forms.Label();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
+            this.button3 = new System.Windows.Forms.Button();
             this.txtGetValue = new System.Windows.Forms.RichTextBox();
             this.checkBox1 = new System.Windows.Forms.CheckBox();
             this.button2 = new System.Windows.Forms.Button();
@@ -87,7 +88,6 @@ namespace SUP
             this.btnGetObject = new System.Windows.Forms.Button();
             this.btnDecrypt = new System.Windows.Forms.Button();
             this.btnEncrypt = new System.Windows.Forms.Button();
-            this.button3 = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.dgTransactions)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
@@ -130,7 +130,7 @@ namespace SUP
             this.txtlevelDBKey.Name = "txtlevelDBKey";
             this.txtlevelDBKey.Size = new System.Drawing.Size(271, 20);
             this.txtlevelDBKey.TabIndex = 7;
-            this.txtlevelDBKey.Text = "mt1ZyUkEjnjV6vLs4EQ3f2B1utF9Xqjp7j";
+            this.txtlevelDBKey.Text = "muVrFVk3ErfrnmWosLF4WixxRtDKfMx9bs";
             // 
             // lbTableName
             // 
@@ -240,7 +240,7 @@ namespace SUP
             this.txtSearchAddress.Name = "txtSearchAddress";
             this.txtSearchAddress.Size = new System.Drawing.Size(270, 20);
             this.txtSearchAddress.TabIndex = 25;
-            this.txtSearchAddress.Text = "mt1ZyUkEjnjV6vLs4EQ3f2B1utF9Xqjp7j";
+            this.txtSearchAddress.Text = "muVrFVk3ErfrnmWosLF4WixxRtDKfMx9bs";
             // 
             // label11
             // 
@@ -264,14 +264,14 @@ namespace SUP
             // dgTransactions
             // 
             this.dgTransactions.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.Fill;
-            dataGridViewCellStyle17.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle17.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle17.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            dataGridViewCellStyle17.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle17.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle17.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle17.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.dgTransactions.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle17;
+            dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle1.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle1.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle1.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.dgTransactions.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle1;
             this.dgTransactions.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.dgTransactions.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
             this.rootid,
@@ -287,25 +287,25 @@ namespace SUP
             this.signature,
             this.confirmations,
             this.buildtime});
-            dataGridViewCellStyle19.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle19.BackColor = System.Drawing.SystemColors.Window;
-            dataGridViewCellStyle19.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            dataGridViewCellStyle19.ForeColor = System.Drawing.SystemColors.ControlText;
-            dataGridViewCellStyle19.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle19.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle19.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
-            this.dgTransactions.DefaultCellStyle = dataGridViewCellStyle19;
+            dataGridViewCellStyle3.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle3.BackColor = System.Drawing.SystemColors.Window;
+            dataGridViewCellStyle3.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle3.ForeColor = System.Drawing.SystemColors.ControlText;
+            dataGridViewCellStyle3.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle3.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle3.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
+            this.dgTransactions.DefaultCellStyle = dataGridViewCellStyle3;
             this.dgTransactions.Dock = System.Windows.Forms.DockStyle.Fill;
             this.dgTransactions.Location = new System.Drawing.Point(0, 0);
             this.dgTransactions.Name = "dgTransactions";
-            dataGridViewCellStyle20.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle20.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle20.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            dataGridViewCellStyle20.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle20.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle20.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle20.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.dgTransactions.RowHeadersDefaultCellStyle = dataGridViewCellStyle20;
+            dataGridViewCellStyle4.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle4.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle4.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle4.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle4.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle4.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle4.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.dgTransactions.RowHeadersDefaultCellStyle = dataGridViewCellStyle4;
             this.dgTransactions.Size = new System.Drawing.Size(1056, 267);
             this.dgTransactions.TabIndex = 30;
             this.dgTransactions.CellClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dgTransactions_CellClick);
@@ -318,8 +318,8 @@ namespace SUP
             // 
             // messagecount
             // 
-            dataGridViewCellStyle18.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.messagecount.DefaultCellStyle = dataGridViewCellStyle18;
+            dataGridViewCellStyle2.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.messagecount.DefaultCellStyle = dataGridViewCellStyle2;
             this.messagecount.HeaderText = "Messages";
             this.messagecount.MaxInputLength = 100000000;
             this.messagecount.Name = "messagecount";
@@ -524,6 +524,16 @@ namespace SUP
             this.splitContainer1.TabIndex = 42;
             this.splitContainer1.Resize += new System.EventHandler(this.splitContainer1_Resize);
             // 
+            // button3
+            // 
+            this.button3.Location = new System.Drawing.Point(184, 330);
+            this.button3.Name = "button3";
+            this.button3.Size = new System.Drawing.Size(77, 23);
+            this.button3.TabIndex = 57;
+            this.button3.Text = "urn register";
+            this.button3.UseVisualStyleBackColor = true;
+            this.button3.Click += new System.EventHandler(this.button3_Click_1);
+            // 
             // txtGetValue
             // 
             this.txtGetValue.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
@@ -633,16 +643,6 @@ namespace SUP
             this.btnEncrypt.Text = "encrypt";
             this.btnEncrypt.UseVisualStyleBackColor = true;
             this.btnEncrypt.Click += new System.EventHandler(this.Button1_Click);
-            // 
-            // button3
-            // 
-            this.button3.Location = new System.Drawing.Point(184, 330);
-            this.button3.Name = "button3";
-            this.button3.Size = new System.Drawing.Size(77, 23);
-            this.button3.TabIndex = 57;
-            this.button3.Text = "urn register";
-            this.button3.UseVisualStyleBackColor = true;
-            this.button3.Click += new System.EventHandler(this.button3_Click_1);
             // 
             // Form1
             // 

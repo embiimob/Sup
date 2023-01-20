@@ -63,7 +63,7 @@ namespace SUP.P2FK
             Root[] objectTransactions;
 
             //return all roots found at address
-            objectTransactions = Root.GetRootsByAddress(objectaddress, username, password, url, versionByte, intProcessHeight);
+            objectTransactions = Root.GetRootsByAddress(objectaddress, username, password, url, intProcessHeight, 300, versionByte);
 
             if (intProcessHeight > 0 && objectTransactions.Count() == 1) { return objectState; }
 
@@ -605,6 +605,47 @@ namespace SUP.P2FK
 
         }
 
+        public static OBJState GetObjectByURN(string searchstring, string username, string password, string url, string versionByte = "111", int skip = 0)
+        {
+            OBJState objectState = new OBJState { };
+
+            Root[] objectTransactions;
+            string objectaddress = Root.GetPublicAddressByKeyword(searchstring, versionByte);
+
+            //return all roots found at address
+            objectTransactions = Root.GetRootsByAddress(objectaddress, username, password, url,skip,300, versionByte);
+            HashSet<string> addedValues = new HashSet<string>();
+            foreach (Root transaction in objectTransactions)
+            {
+
+
+                //ignore any transaction that is not signed
+                if (transaction.Signed && (transaction.File.ContainsKey("OBJ") || transaction.File.ContainsKey("GIV") || transaction.File.ContainsKey("BRN")))
+                {
+                    string findObject = transaction.Keyword.ElementAt(transaction.Keyword.Count - 1).Key;
+                    OBJState isObject = GetObjectByAddress(findObject, username, password, url, versionByte);
+
+                    if (isObject.URN != null && isObject.URN == searchstring && isObject.Owners != null && isObject.ChangeDate > DateTime.Now.AddYears(-3))
+                    {
+                        if (isObject.Creators.ElementAt(0) == findObject)
+                        {
+
+                            return isObject;
+
+                        }
+
+                    }
+
+
+
+                }
+
+
+            }
+            return objectState;
+
+        }
+
         public static List<OBJState> GetObjectsByAddress(string objectaddress, string username, string password, string url, string versionByte = "111", int skip = 0)
         {
             List<OBJState> objectStates = new List<OBJState> { };
@@ -612,14 +653,14 @@ namespace SUP.P2FK
             Root[] objectTransactions;
 
             //return all roots found at address
-            objectTransactions = Root.GetRootsByAddress(objectaddress, username, password, url, versionByte, skip);
+            objectTransactions = Root.GetRootsByAddress(objectaddress, username, password, url, skip,300, versionByte);
             HashSet<string> addedValues = new HashSet<string>();
             foreach (Root transaction in objectTransactions)
             {
 
 
                 //ignore any transaction that is not signed
-                if (transaction.Signed)
+                if (transaction.Signed && (transaction.File.ContainsKey("OBJ") || transaction.File.ContainsKey("GIV") || transaction.File.ContainsKey("BRN")))
                 {
                     string findObject = transaction.Keyword.ElementAt(transaction.Keyword.Count - 2).Key;
 
@@ -679,14 +720,14 @@ namespace SUP.P2FK
             Root[] objectTransactions;
 
             //return all roots found at address
-            objectTransactions = Root.GetRootsByAddress(objectaddress, username, password, url, versionByte, skip);
+            objectTransactions = Root.GetRootsByAddress(objectaddress, username, password, url, skip,300, versionByte);
             HashSet<string> addedValues = new HashSet<string>();
             foreach (Root transaction in objectTransactions)
             {
 
 
                 //ignore any transaction that is not signed
-                if (transaction.Signed)
+                if (transaction.Signed && (transaction.File.ContainsKey("OBJ") || transaction.File.ContainsKey("GIV") || transaction.File.ContainsKey("BRN")))
                 {
                     string findObject = transaction.Keyword.ElementAt(transaction.Keyword.Count - 2).Key;
 
@@ -751,14 +792,14 @@ namespace SUP.P2FK
             Root[] objectTransactions;
 
             //return all roots found at address
-            objectTransactions = Root.GetRootsByAddress(objectaddress, username, password, url, versionByte, skip);
+            objectTransactions = Root.GetRootsByAddress(objectaddress, username, password, url, skip,300, versionByte);
             HashSet<string> addedValues = new HashSet<string>();
             foreach (Root transaction in objectTransactions)
             {
 
 
                 //ignore any transaction that is not signed
-                if (transaction.Signed)
+                if (transaction.Signed && (transaction.File.ContainsKey("OBJ") || transaction.File.ContainsKey("GIV") || transaction.File.ContainsKey("BRN")))
                 {
                     string findObject = transaction.Keyword.ElementAt(transaction.Keyword.Count - 2).Key;
 
@@ -823,9 +864,49 @@ namespace SUP.P2FK
 
             foreach (string search in searchstrings)
             {
-                List<OBJState> foundKeywords = GetObjectsByAddress(Root.GetPublicAddressByKeyword(search), username, password, url, versionByte, skip);
 
-                foreach (OBJState found in foundKeywords)
+
+                List<OBJState> objectStates = new List<OBJState> { };
+                string objectaddress = Root.GetPublicAddressByKeyword(search, versionByte);
+
+                Root[] objectTransactions;
+
+                //return all roots found at address
+                objectTransactions = Root.GetRootsByAddress(objectaddress, username, password, url, skip, 300, versionByte);
+                HashSet<string> addedValues = new HashSet<string>();
+                foreach (Root transaction in objectTransactions)
+                {
+
+                    //ignore any transaction that is not signed
+                    if (transaction.Signed && (transaction.File.ContainsKey("OBJ") || transaction.File.ContainsKey("GIV") || transaction.File.ContainsKey("BRN")))
+                    {
+                        string findObject = transaction.Keyword.ElementAt(transaction.Keyword.Count - 2).Key;
+                        OBJState isObject = GetObjectByAddress(findObject, username, password, url, versionByte);
+                        if (isObject.URN != null && !addedValues.Contains(findObject))
+                        {
+                            if (isObject.Creators.ElementAt(0) == findObject)
+                            {
+
+                                if (!addedValues.Contains(findObject))
+                                {
+
+                                    objectStates.Add(isObject);
+                                    addedValues.Add(findObject);
+
+                                }
+                            }
+
+                        }
+                        
+
+
+                    }
+
+
+                }
+
+                
+                foreach (OBJState found in objectStates)
                 {
                     totalSearch.Add(found);
                 }
@@ -839,75 +920,6 @@ namespace SUP.P2FK
 
         }
 
-        public static List<OBJState> GetObjectsByURN(List<string> searchstrings, string username, string password, string url, string versionByte = "111", int skip = 0)
-        {
-            List<OBJState> objectStates = new List<OBJState> { };
-            List<OBJState> totalObjectStates = new List<OBJState> { };
-            Root[] objectTransactions;
-
-            foreach (string search in searchstrings)
-            {
-                //return all roots found at address
-                objectTransactions = Root.GetRootsByAddress(Root.GetPublicAddressByKeyword(search), username, password, url, versionByte, skip);
-                HashSet<string> addedValues = new HashSet<string>();
-                foreach (Root transaction in objectTransactions)
-                {
-
-
-                    //ignore any transaction that is not signed
-                    if (transaction.Signed)
-                    {
-                        string findObject = transaction.Keyword.ElementAt(transaction.Keyword.Count - 2).Key;
-
-
-                        OBJState isObject = GetObjectByAddress(findObject, username, password, url, versionByte);
-                        if (!addedValues.Contains(isObject.URN) && isObject.URN == search.PadRight(20,'#') && isObject.ChangeDate > DateTime.Now.AddYears(-3))
-                        {
-                            if (isObject.Creators.ElementAt(0) == findObject)
-                            {
-
-                                if (!addedValues.Contains(isObject.URN))
-                                {
-
-                                    objectStates.Add(isObject);
-                                    addedValues.Add(isObject.URN);
-
-                                }
-                            }
-
-                        }
-                        else
-                        {
-                            findObject = transaction.Keyword.ElementAt(transaction.Keyword.Count - 1).Key;
-                            isObject = GetObjectByAddress(findObject, username, password, url, versionByte);
-                            if (isObject.URN == search.PadRight(20, '#') && isObject.ChangeDate > DateTime.Now.AddYears(-3))
-                            {
-                                if (isObject.Creators.ElementAt(0) == findObject)
-                                {
-
-                                    if (!addedValues.Contains(isObject.URN))
-                                    {
-
-                                        objectStates.Add(isObject);
-                                        addedValues.Add(isObject.URN);
-                                    }
-                                }
-
-                            }
-                        }
-
-
-                    }
-
-
-                }
-
-                
-
-            }
-            return objectStates;
-
-        }
     }
 }
 

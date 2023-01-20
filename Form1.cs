@@ -238,7 +238,7 @@ namespace SUP
                 txtSearchAddress.Text,
                 txtLogin.Text,
                 txtPassword.Text,
-                txtUrl.Text,
+                txtUrl.Text,0,300,
                 txtVersionByte.Text
             );
             DateTime tmendCall = DateTime.UtcNow;
@@ -378,7 +378,7 @@ namespace SUP
                 publicAddress,
                 txtLogin.Text,
                 txtPassword.Text,
-                txtUrl.Text,
+                txtUrl.Text, 0, 300,
                 txtVersionByte.Text
             );
             DateTime tmendCall = DateTime.UtcNow;
@@ -785,9 +785,9 @@ namespace SUP
         private void button3_Click_1(object sender, EventArgs e)
         {
 
-            List<string> searchList = txtSearchAddress.Text.Split(',').ToList();
+        
             DateTime tmbeginCall = DateTime.UtcNow;
-            List<OBJState> createdObjects = OBJState.GetObjectsByURN(searchList, txtLogin.Text, txtPassword.Text, txtUrl.Text);
+            OBJState createdObject = OBJState.GetObjectByURN(txtSearchAddress.Text, txtLogin.Text, txtPassword.Text, txtUrl.Text);
             DateTime tmendCall = DateTime.UtcNow;
             lblTotalBytes.Text = "bytes: ";
             lblTotalTime.Text = "time: ";
@@ -797,14 +797,11 @@ namespace SUP
             double elapsedMilliseconds = elapsedTime.TotalMilliseconds;
 
             lblTotalTime.Text = "time: " + Math.Truncate(elapsedMilliseconds);
-            lblTotal.Text = "total: " + createdObjects.Count();
-            JObject[] ObjectArray = new JObject[createdObjects.Count];
-            int objectcount = 0;
-            foreach (object obj in createdObjects)
-            {
-
-                ObjectArray[objectcount++] = JObject.FromObject(obj);
-            }
+           
+            JObject[] ObjectArray = new JObject[1];
+                  
+           ObjectArray[0] = JObject.FromObject(createdObject);
+           
             displayRootJSON(ObjectArray);
 
         }

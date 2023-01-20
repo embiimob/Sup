@@ -432,7 +432,7 @@ namespace SUP.P2FK
 
             return P2FKRoot;
         }
-        public static Root[] GetRootsByAddress(string address, string username, string password, string url, string versionByte = "111", int skip = 0, int qty = 500)
+        public static Root[] GetRootsByAddress(string address, string username, string password, string url,  int skip = 0, int qty = 300, string versionByte = "111")
         {
             var rootList = new List<Root>();
             NetworkCredential credentials = new NetworkCredential(username, password);
@@ -441,7 +441,31 @@ namespace SUP.P2FK
             dynamic deserializedObject = null;
             try
             {
-                deserializedObject = JsonConvert.DeserializeObject(rpcClient.SendCommand("searchrawtransactions", address, 0, skip, qty).ResultString);
+                while (true)
+                {
+                    deserializedObject = JsonConvert.DeserializeObject(rpcClient.SendCommand("searchrawtransactions", address, 0, skip, qty).ResultString);
+                    if (deserializedObject.Count == 0)
+                        break;
+
+                    var concurrentData = new ConcurrentDictionary<int, Root>();
+
+                    for (int i = 0; i < deserializedObject.Count; i++)
+                    {
+                        int rootId = i;
+                        string hexId = GetTransactionIdByHexString(deserializedObject[i].ToString());
+
+                            var root = Root.GetRootByTransactionId(hexId, username, password, url, versionByte);
+
+                            if (root != null && root.TotalByteSize > 0)
+                            {
+                                root.Id = rootId + skip;
+                            rootList.Add(root);
+                            }
+                      
+                    }
+                    skip += qty;
+                    
+                }
             }
             catch (Exception ex)
             {
@@ -456,51 +480,6 @@ namespace SUP.P2FK
                 rootList.Add(root);
                 return rootList.ToArray();
             }
-
-            // Use a ConcurrentDictionary to store the transaction data
-            // This will allow multiple threads to add data to it concurrently
-            var concurrentData = new ConcurrentDictionary<int, Root>();
-            var tasks = new List<Task>();
-            int taskCount = 0;
-
-            // Iterate through the transaction IDs
-            for (int i = 0; i < deserializedObject.Count; i++)
-            {
-                int rootId = i;
-                string hexId = GetTransactionIdByHexString(deserializedObject[i].ToString());
-
-                // Launch a separate task to retrieve the transaction bytes for this match
-                var task = Task.Run(() =>
-                {
-                    var root = Root.GetRootByTransactionId(hexId, username, password, url, versionByte);
-
-                    if (root != null && root.TotalByteSize > 0)
-                    {
-                        root.Id = rootId + skip;
-                        concurrentData[rootId] = root;
-                    }
-                });
-                tasks.Add(task);
-                taskCount++;
-
-                // If there are 10 or more tasks, wait for some of them to complete before continuing
-                if (taskCount >= 1)
-                {
-                    Task.WaitAny(tasks.ToArray());
-                    tasks = tasks.Where(t => !t.IsCompleted).ToList();
-                    taskCount = tasks.Count;
-                }
-            }
-
-            // Wait for all tasks to complete
-            Task.WaitAll(tasks.ToArray());
-
-            // Add the transaction data to the list in the correct order
-            foreach (var kvp in concurrentData.OrderBy(kvp => kvp.Key))
-            {
-                rootList.Add(kvp.Value);
-            }
-
             return rootList.ToArray();
         }
         public static byte[] GetRootBytesByLedger(string ledger, string username, string password, string url)
