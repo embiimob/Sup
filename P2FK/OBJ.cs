@@ -77,7 +77,7 @@ namespace SUP.P2FK
 
 
                 //ignore any transaction that is not signed
-                if (transaction.Signed)
+                if (transaction.Signed && (transaction.File.ContainsKey("OBJ") || transaction.File.ContainsKey("GIV") || transaction.File.ContainsKey("BRN")))
                 {
 
                     string sigSeen;
@@ -635,7 +635,6 @@ namespace SUP.P2FK
                         }
 
                     }
-
 
 
                 }
