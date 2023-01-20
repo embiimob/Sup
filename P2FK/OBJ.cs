@@ -620,7 +620,7 @@ namespace SUP.P2FK
 
 
                 //ignore any transaction that is not signed
-                if (transaction.Signed && (transaction.File.ContainsKey("OBJ") || transaction.File.ContainsKey("GIV") || transaction.File.ContainsKey("BRN")))
+                if (transaction.Signed && transaction.File.ContainsKey("OBJ"))
                 {
                     string findObject = transaction.Keyword.ElementAt(transaction.Keyword.Count - 1).Key;
                     OBJState isObject = GetObjectByAddress(findObject, username, password, url, versionByte);
@@ -659,7 +659,7 @@ namespace SUP.P2FK
 
 
                 //ignore any transaction that is not signed
-                if (transaction.Signed && (transaction.File.ContainsKey("OBJ") || transaction.File.ContainsKey("GIV") || transaction.File.ContainsKey("BRN")))
+                if (transaction.Signed && (transaction.File.ContainsKey("OBJ") || transaction.File.ContainsKey("GIV")))
                 {
                     string findObject = transaction.Keyword.ElementAt(transaction.Keyword.Count - 2).Key;
 
@@ -877,9 +877,9 @@ namespace SUP.P2FK
                 {
 
                     //ignore any transaction that is not signed
-                    if (transaction.Signed && (transaction.File.ContainsKey("OBJ") || transaction.File.ContainsKey("GIV") || transaction.File.ContainsKey("BRN")))
+                    if (transaction.Signed && transaction.File.ContainsKey("OBJ"))
                     {
-                        string findObject = transaction.Keyword.ElementAt(transaction.Keyword.Count - 2).Key;
+                        string findObject = transaction.Keyword.Last().Key;
                         OBJState isObject = GetObjectByAddress(findObject, username, password, url, versionByte);
                         if (isObject.URN != null && !addedValues.Contains(findObject))
                         {
