@@ -585,7 +585,7 @@ namespace SUP
 
             lblTotalTime.Text = "time: " + Math.Truncate(elapsedMilliseconds);
             lblTotal.Text = "total: " + Tester.ProcessHeight.ToString();
-                                  
+                       
             displayRootJSON(new JObject[] { JObject.FromObject(Tester)});
         }
 
@@ -666,12 +666,26 @@ namespace SUP
             lblTotal.Text = "total: " + createdObjects.Count();
             JObject[] ObjectArray = new JObject[createdObjects.Count];
             int objectcount = 0;
+
+            foreach (OBJState objstate in createdObjects)
+            {
+
+               
+            }
             foreach (object obj in createdObjects)
             {
 
                 ObjectArray[objectcount++] = JObject.FromObject(obj);
             }
             displayRootJSON(ObjectArray);
+        }
+
+        private void Image_Click(object sender, EventArgs e)
+        {
+            var selectedImage = (PictureBox)sender;
+            //pictureBox1.Image = selectedImage.Image;
+            string url = selectedImage.ImageLocation;
+            Console.WriteLine(url);
         }
 
         private void button2_Click_1(object sender, EventArgs e)

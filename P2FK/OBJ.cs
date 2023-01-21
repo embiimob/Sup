@@ -604,7 +604,6 @@ namespace SUP.P2FK
             return objectState;
 
         }
-
         public static OBJState GetObjectByURN(string searchstring, string username, string password, string url, string versionByte = "111", int skip = 0)
         {
             OBJState objectState = new OBJState { };
@@ -644,7 +643,6 @@ namespace SUP.P2FK
             return objectState;
 
         }
-
         public static List<OBJState> GetObjectsByAddress(string objectaddress, string username, string password, string url, string versionByte = "111", int skip = 0)
         {
             List<OBJState> objectStates = new List<OBJState> { };
@@ -710,7 +708,6 @@ namespace SUP.P2FK
 
 
         }
-
         public static List<OBJState> GetObjectsOwnedByAddress(string objectaddress, string username, string password, string url, string versionByte = "111", int skip = 0)
         {
 
@@ -726,7 +723,7 @@ namespace SUP.P2FK
 
 
                 //ignore any transaction that is not signed
-                if (transaction.Signed && (transaction.File.ContainsKey("OBJ") || transaction.File.ContainsKey("GIV") || transaction.File.ContainsKey("BRN")))
+                if (transaction.Signed && (transaction.File.ContainsKey("OBJ") || transaction.File.ContainsKey("GIV") ))
                 {
                     string findObject = transaction.Keyword.ElementAt(transaction.Keyword.Count - 2).Key;
 
@@ -783,7 +780,6 @@ namespace SUP.P2FK
 
 
         }
-
         public static List<OBJState> GetObjectsCreatedByAddress(string objectaddress, string username, string password, string url, string versionByte = "111", int skip = 0)
         {
             List<OBJState> objectStates = new List<OBJState> { };
@@ -798,7 +794,7 @@ namespace SUP.P2FK
 
 
                 //ignore any transaction that is not signed
-                if (transaction.Signed && (transaction.File.ContainsKey("OBJ") || transaction.File.ContainsKey("GIV") || transaction.File.ContainsKey("BRN")))
+                if (transaction.Signed && (transaction.File.ContainsKey("OBJ") || transaction.File.ContainsKey("GIV")))
                 {
                     string findObject = transaction.Keyword.ElementAt(transaction.Keyword.Count - 2).Key;
 
@@ -856,7 +852,6 @@ namespace SUP.P2FK
 
 
         }
-
         public static List<OBJState> GetObjectsByKeyword(List<string> searchstrings, string username, string password, string url, string versionByte = "111", int skip = 0)
         {
             List<OBJState> totalSearch = new List<OBJState>();
