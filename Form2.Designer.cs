@@ -45,15 +45,15 @@
             // 
             // txtVersionByte
             // 
-            this.txtVersionByte.Location = new System.Drawing.Point(886, 7);
+            this.txtVersionByte.Location = new System.Drawing.Point(876, 5);
             this.txtVersionByte.Name = "txtVersionByte";
-            this.txtVersionByte.Size = new System.Drawing.Size(36, 20);
+            this.txtVersionByte.Size = new System.Drawing.Size(25, 20);
             this.txtVersionByte.TabIndex = 49;
             this.txtVersionByte.Text = "111";
             // 
             // txtLogin
             // 
-            this.txtLogin.Location = new System.Drawing.Point(600, 7);
+            this.txtLogin.Location = new System.Drawing.Point(600, 5);
             this.txtLogin.Name = "txtLogin";
             this.txtLogin.Size = new System.Drawing.Size(57, 20);
             this.txtLogin.TabIndex = 41;
@@ -61,7 +61,7 @@
             // 
             // txtPassword
             // 
-            this.txtPassword.Location = new System.Drawing.Point(663, 8);
+            this.txtPassword.Location = new System.Drawing.Point(663, 5);
             this.txtPassword.Name = "txtPassword";
             this.txtPassword.Size = new System.Drawing.Size(85, 20);
             this.txtPassword.TabIndex = 43;
@@ -69,9 +69,9 @@
             // 
             // txtUrl
             // 
-            this.txtUrl.Location = new System.Drawing.Point(754, 7);
+            this.txtUrl.Location = new System.Drawing.Point(754, 5);
             this.txtUrl.Name = "txtUrl";
-            this.txtUrl.Size = new System.Drawing.Size(126, 20);
+            this.txtUrl.Size = new System.Drawing.Size(116, 20);
             this.txtUrl.TabIndex = 45;
             this.txtUrl.Text = "http://127.0.0.1:18332";
             // 
@@ -143,40 +143,39 @@
             // 
             // txtSearchAddress
             // 
-            this.txtSearchAddress.Location = new System.Drawing.Point(2, 5);
+            this.txtSearchAddress.Location = new System.Drawing.Point(12, 5);
             this.txtSearchAddress.Name = "txtSearchAddress";
-            this.txtSearchAddress.Size = new System.Drawing.Size(240, 20);
+            this.txtSearchAddress.Size = new System.Drawing.Size(230, 20);
             this.txtSearchAddress.TabIndex = 58;
             this.txtSearchAddress.Text = "muVrFVk3ErfrnmWosLF4WixxRtDKfMx9bs";
             // 
             // button4
             // 
             this.button4.BackColor = System.Drawing.SystemColors.Control;
-            this.button4.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.button4.Location = new System.Drawing.Point(0, 459);
+            this.button4.Location = new System.Drawing.Point(907, 4);
             this.button4.Name = "button4";
-            this.button4.Size = new System.Drawing.Size(936, 22);
-            this.button4.TabIndex = 67;
-            this.button4.Text = "open workbench";
+            this.button4.Size = new System.Drawing.Size(70, 20);
+            this.button4.TabIndex = 68;
+            this.button4.Text = "workbench";
             this.button4.UseVisualStyleBackColor = false;
-            this.button4.Click += new System.EventHandler(this.button4_Click_1);
             // 
             // flowLayoutPanel1
             // 
+            this.flowLayoutPanel1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.flowLayoutPanel1.AutoScroll = true;
-            this.flowLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.flowLayoutPanel1.Location = new System.Drawing.Point(0, 0);
-            this.flowLayoutPanel1.Margin = new System.Windows.Forms.Padding(3, 3, 3, 30);
+            this.flowLayoutPanel1.BackColor = System.Drawing.SystemColors.InactiveCaption;
+            this.flowLayoutPanel1.Location = new System.Drawing.Point(0, 32);
             this.flowLayoutPanel1.Name = "flowLayoutPanel1";
-            this.flowLayoutPanel1.Padding = new System.Windows.Forms.Padding(0, 30, 0, 0);
-            this.flowLayoutPanel1.Size = new System.Drawing.Size(936, 481);
-            this.flowLayoutPanel1.TabIndex = 68;
+            this.flowLayoutPanel1.Size = new System.Drawing.Size(981, 510);
+            this.flowLayoutPanel1.TabIndex = 69;
             // 
             // Form2
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(936, 481);
+            this.ClientSize = new System.Drawing.Size(981, 542);
             this.Controls.Add(this.button4);
             this.Controls.Add(this.button3);
             this.Controls.Add(this.button2);

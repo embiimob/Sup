@@ -183,6 +183,7 @@
             this.Controls.Add(this.ObjectCreators);
             this.Controls.Add(this.ObjectName);
             this.Controls.Add(this.ObjectImage);
+            this.Margin = new System.Windows.Forms.Padding(10);
             this.MaximumSize = new System.Drawing.Size(300, 492);
             this.MinimumSize = new System.Drawing.Size(300, 492);
             this.Name = "foundObjectControl";

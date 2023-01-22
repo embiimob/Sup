@@ -67,6 +67,8 @@ namespace SUP
             button.BackColor = Color.Yellow;
 
             flowLayoutPanel1.Controls.Clear();
+            
+
 
             List<OBJState> createdObjects = OBJState.GetObjectsByAddress(txtSearchAddress.Text, txtLogin.Text, txtPassword.Text, txtUrl.Text);
            
@@ -260,6 +262,7 @@ namespace SUP
                 flowLayoutPanel1.Controls.Add(foundObject);
                 }
             }
-        
+
+       
     }
 }
