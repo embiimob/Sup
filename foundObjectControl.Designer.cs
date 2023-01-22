@@ -45,7 +45,7 @@
             // 
             // ObjectImage
             // 
-            this.ObjectImage.BackColor = System.Drawing.SystemColors.GradientInactiveCaption;
+            this.ObjectImage.BackColor = System.Drawing.Color.Gray;
             this.ObjectImage.Location = new System.Drawing.Point(0, 0);
             this.ObjectImage.Name = "ObjectImage";
             this.ObjectImage.Size = new System.Drawing.Size(301, 301);

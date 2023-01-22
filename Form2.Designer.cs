@@ -189,7 +189,7 @@
             this.Controls.Add(this.txtPassword);
             this.Controls.Add(this.txtUrl);
             this.Controls.Add(this.flowLayoutPanel1);
-            this.MinimumSize = new System.Drawing.Size(952, 520);
+            this.MinimumSize = new System.Drawing.Size(997, 581);
             this.Name = "Form2";
             this.Text = "Sup!? Object Browser";
             this.ResumeLayout(false);
