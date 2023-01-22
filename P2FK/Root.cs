@@ -435,12 +435,13 @@ namespace SUP.P2FK
         public static Root[] GetRootsByAddress(string address, string username, string password, string url,  int skip = 0, int qty = 300, string versionByte = "111")
         {
             var rootList = new List<Root>();
-            NetworkCredential credentials = new NetworkCredential(username, password);
-            var rpcClient = new RPCClient(credentials, new Uri(url));
-            var synchronousData = new Dictionary<int, Root>();
-            dynamic deserializedObject = null;
             try
             {
+                
+                NetworkCredential credentials = new NetworkCredential(username, password);
+                var rpcClient = new RPCClient(credentials, new Uri(url));
+                var synchronousData = new Dictionary<int, Root>();
+                dynamic deserializedObject = null;
                 while (true)
                 {
                     deserializedObject = JsonConvert.DeserializeObject(rpcClient.SendCommand("searchrawtransactions", address, 0, skip, qty).ResultString);

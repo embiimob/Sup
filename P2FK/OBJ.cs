@@ -471,7 +471,7 @@ namespace SUP.P2FK
                                         }
                                         else
                                         {
-                                            if (objectState.Creators.Contains(transaction.SignedBy) || transaction.SignedBy == objectaddress)
+                                            if (objectState.Creators.Contains(transaction.SignedBy))
                                             {
                                                 burnr = objectaddress;
                                                 qtyOwnedG = selfOwned;
@@ -736,7 +736,7 @@ namespace SUP.P2FK
 
 
 
-                            if (!addedValues.Contains(isObject.URN) && (isObject.Owners.ContainsKey(objectaddress) || (isObject.Owners.ContainsKey(isObject.Creators.ElementAt(0)))))
+                            if (!addedValues.Contains(isObject.URN) && (isObject.Owners.ContainsKey(objectaddress) || (isObject.Creators.Contains(objectaddress) && isObject.Owners.ContainsKey(isObject.Creators.First()))))
                             {
 
                                 objectStates.Add(isObject);
@@ -757,7 +757,7 @@ namespace SUP.P2FK
                             if (isObject.Creators.ElementAt(0) == findObject)
                             {
 
-                                if (!addedValues.Contains(isObject.URN) && (isObject.Owners.ContainsKey(objectaddress) || (isObject.Owners.ContainsKey(isObject.Creators.ElementAt(0)))))
+                                if (!addedValues.Contains(isObject.URN) && (isObject.Owners.ContainsKey(objectaddress) || (isObject.Creators.Contains(objectaddress) && isObject.Owners.ContainsKey(isObject.Creators.First()))))
                                 {
 
                                     objectStates.Add(isObject);

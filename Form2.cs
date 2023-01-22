@@ -44,8 +44,15 @@ namespace SUP
                 foundObject.ObjectImage.ImageLocation = objstate.Image.Replace("BTC:", @"http://bitfossil.com/");
                 foundObject.ObjectName.Text = objstate.Name;
                 foundObject.ObjectDescription.Text = objstate.Description;
-                foundObject.ObjectCreators.Text = TruncateAddress(objstate.Creators.First());
+                string creators = null;
+                foreach (string creator in objstate.Creators.Skip(1))
+                {
+                    creators = creators + "  " + TruncateAddress(creator);
+
+                }
+                foundObject.ObjectCreators.Text = creators;
                 foundObject.ObjectQty.Text = objstate.Owners.Values.Sum().ToString() + "x";
+                foundObject.ObjectAddress.Text = "@"+ objstate.Creators.First();
                 flowLayoutPanel1.Controls.Add(foundObject);
             }
         }
@@ -73,8 +80,15 @@ namespace SUP
                     foundObject.ObjectImage.ImageLocation = objstate.Image.Replace("BTC:", @"http://bitfossil.com/");
                     foundObject.ObjectName.Text = objstate.Name;
                     foundObject.ObjectDescription.Text = objstate.Description;
-                    foundObject.ObjectCreators.Text = TruncateAddress(objstate.Creators.First());
+                    foundObject.ObjectAddress.Text = objstate.Creators.First();
                     foundObject.ObjectQty.Text = objstate.Owners.Values.Sum().ToString() + "x";
+                    string creators = null;
+                    foreach (string creator in objstate.Creators.Skip(1))
+                    {
+                            creators = creators + "  " + TruncateAddress(creator);
+                       
+                    }
+                    foundObject.ObjectCreators.Text = creators;
                     flowLayoutPanel1.Controls.Add(foundObject);
                 }
             }
@@ -105,8 +119,15 @@ namespace SUP
                     foundObject.ObjectImage.ImageLocation = objstate.Image.Replace("BTC:", @"http://bitfossil.com/");
                     foundObject.ObjectName.Text = objstate.Name;
                     foundObject.ObjectDescription.Text = objstate.Description;
-                    foundObject.ObjectCreators.Text = TruncateAddress(objstate.Creators.First());
+                    string creators = null;
+                    foreach (string creator in objstate.Creators.Skip(1))
+                    {
+                        creators = creators + "  " + TruncateAddress(creator);
+
+                    }
+                    foundObject.ObjectCreators.Text = creators;
                     foundObject.ObjectQty.Text = objstate.Owners.Values.Sum().ToString() + "x";
+                    foundObject.ObjectAddress.Text = "@" + objstate.Creators.First();
                     flowLayoutPanel1.Controls.Add(foundObject);
                 }
             }
@@ -134,8 +155,15 @@ namespace SUP
                     foundObject.ObjectImage.ImageLocation = objstate.Image.Replace("BTC:", @"http://bitfossil.com/");
                     foundObject.ObjectName.Text = objstate.Name;
                     foundObject.ObjectDescription.Text = objstate.Description;
-                    foundObject.ObjectCreators.Text = TruncateAddress(objstate.Creators.First());
+                    string creators = null;
+                    foreach (string creator in objstate.Creators.Skip(1))
+                    {
+                        creators = creators + "  " + TruncateAddress(creator);
+
+                    }
+                    foundObject.ObjectCreators.Text = creators;
                     foundObject.ObjectQty.Text = objstate.Owners.Values.Sum().ToString() + "x";
+                    foundObject.ObjectAddress.Text = "@" + objstate.Creators.First();
                     flowLayoutPanel1.Controls.Add(foundObject);
                 }
             }
@@ -165,8 +193,15 @@ namespace SUP
                     foundObject.ObjectImage.ImageLocation = objstate.Image.Replace("BTC:", @"http://bitfossil.com/");
                     foundObject.ObjectName.Text = objstate.Name;
                     foundObject.ObjectDescription.Text = objstate.Description;
-                    foundObject.ObjectCreators.Text = TruncateAddress(objstate.Creators.First());
+                    string creators = null;
+                    foreach (string creator in objstate.Creators.Skip(1))
+                    {
+                        creators = creators + "  " + TruncateAddress(creator);
+
+                    }
+                    foundObject.ObjectCreators.Text = creators;
                     foundObject.ObjectQty.Text = objstate.Owners.Values.Sum().ToString() + "x";
+                    foundObject.ObjectAddress.Text = "@" + objstate.Creators.First();
                     flowLayoutPanel1.Controls.Add(foundObject);
                 }
             }
@@ -213,9 +248,16 @@ namespace SUP
                     foundObject.ObjectImage.ImageLocation = objstate.Image.Replace("BTC:", @"http://bitfossil.com/");
                     foundObject.ObjectName.Text = objstate.Name;
                     foundObject.ObjectDescription.Text = objstate.Description;
-                    foundObject.ObjectCreators.Text = TruncateAddress(objstate.Creators.First());
-                    foundObject.ObjectQty.Text = objstate.Owners.Values.Sum().ToString() + "x";
-                    flowLayoutPanel1.Controls.Add(foundObject);
+                string creators = null;
+                foreach (string creator in objstate.Creators.Skip(1))
+                {
+                    creators = creators + "  " + TruncateAddress(creator);
+
+                }
+                foundObject.ObjectCreators.Text = creators;
+                foundObject.ObjectQty.Text = objstate.Owners.Values.Sum().ToString() + "x";
+                foundObject.ObjectAddress.Text = "@" + objstate.Creators.First();
+                flowLayoutPanel1.Controls.Add(foundObject);
                 }
             }
         

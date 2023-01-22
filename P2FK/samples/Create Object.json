@@ -1,9 +1,11 @@
 {
-  "urn": "41e38cda3af5aa977bc9aff7908c853279f65a5f49dd6e118a9753e9b1b35cd9/7d656af0d23a52be2ce033e986eba7c28108efef60937ed5930da3c6c9b5b56a/CIA-RDP96-00789R003000110001-6.pdf",
-  "img": "BTC:3ff52882c93420c8fe4a90f6fa94b2a563316b5e7b83afe2ddd5bcadc86d3821/FakeUFO.png",
-  "nme": "STARGATE",
-  "dsc": "The enclosed information is an interim response to the FY 1994 Defense Authorization Conference Classified Annex Joint Explanatory Statement, which requests a program plan for Project STARGATE.",
+  "urn": "BTC:67b2facfd8160d4fa11b02829b6387d07537b57a7a24f19b029b2a5ae7b81830/YellowRobot.jpg",
+  "img": "BTC:67b2facfd8160d4fa11b02829b6387d07537b57a7a24f19b029b2a5ae7b81830/YellowRobot.jpg",
+  "nme": "Yellow Robot",
+  "dsc": "Chiharu and I found this little yellow robot while exploring Chicago. It will be covered by tar or eventually removed but this tribute will remain. N 41.880778 E -87.629210",
   "lic": "CC0",
-  "cre": [0, 1 ],
-  "own": { 0: 100 }
+  "cre": [ 0, 1 ],
+  "own": { 0: 300 }
 }
+
+//  "uri": "BTC:67b2facfd8160d4fa11b02829b6387d07537b57a7a24f19b029b2a5ae7b81830/YellowRobot.jpg" optional
