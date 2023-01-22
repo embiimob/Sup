@@ -659,7 +659,15 @@ namespace SUP.P2FK
                 //ignore any transaction that is not signed
                 if (transaction.Signed && (transaction.File.ContainsKey("OBJ") || transaction.File.ContainsKey("GIV")))
                 {
-                    string findObject = transaction.Keyword.ElementAt(transaction.Keyword.Count - 2).Key;
+                    string findObject;
+                    if (transaction.Keyword.Count > 1)
+                    {
+                        findObject = transaction.Keyword.ElementAt(transaction.Keyword.Count - 2).Key;
+                    }else
+                    {
+                        findObject = transaction.Keyword.ElementAt(0).Key;
+
+                    }
 
 
                     OBJState isObject = GetObjectByAddress(findObject, username, password, url, versionByte);
@@ -725,7 +733,16 @@ namespace SUP.P2FK
                 //ignore any transaction that is not signed
                 if (transaction.Signed && (transaction.File.ContainsKey("OBJ") || transaction.File.ContainsKey("GIV") ))
                 {
-                    string findObject = transaction.Keyword.ElementAt(transaction.Keyword.Count - 2).Key;
+                    string findObject;
+                    if (transaction.Keyword.Count > 1)
+                    {
+                        findObject = transaction.Keyword.ElementAt(transaction.Keyword.Count - 2).Key;
+                    }
+                    else
+                    {
+                        findObject = transaction.Keyword.ElementAt(0).Key;
+
+                    }
 
 
                     OBJState isObject = GetObjectByAddress(findObject, username, password, url, versionByte);
@@ -796,8 +813,16 @@ namespace SUP.P2FK
                 //ignore any transaction that is not signed
                 if (transaction.Signed && (transaction.File.ContainsKey("OBJ") || transaction.File.ContainsKey("GIV")))
                 {
-                    string findObject = transaction.Keyword.ElementAt(transaction.Keyword.Count - 2).Key;
+                    string findObject;
+                    if (transaction.Keyword.Count > 1)
+                    {
+                        findObject = transaction.Keyword.ElementAt(transaction.Keyword.Count - 2).Key;
+                    }
+                    else
+                    {
+                        findObject = transaction.Keyword.ElementAt(0).Key;
 
+                    }
 
                     OBJState isObject = GetObjectByAddress(findObject, username, password, url, versionByte);
                     if (isObject.URN != null && !addedValues.Contains(isObject.URN))

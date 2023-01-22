@@ -223,10 +223,6 @@ namespace SUP
             }
         }
 
-        private void button4_Click_1(object sender, EventArgs e)
-        {
-            new Form1().Show();
-        }
 
         private void button3_Click(object sender, EventArgs e)
         {
@@ -263,6 +259,9 @@ namespace SUP
                 }
             }
 
-       
+        private void button4_Click(object sender, EventArgs e)
+        {
+            new Form1().Show();
+        }
     }
 }
