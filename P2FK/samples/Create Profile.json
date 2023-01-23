@@ -8,9 +8,11 @@
   "img": "BTC:7033eb8138de0d3f4be111a57dfb8319b400d3b6a6f5b387a22b334ebb998e93/EMBII.jpg",
   "url": {
     "🛸": "embii.wtf",
-    "👾": "BTC:75a1d7ef8732ad0611ebecbd3e7d4a3a65bf02bbc79eb7fafa118d08970756f7/index.html"
+    "👾": "BTC:75a1d7ef8732ad0611ebecbd3e7d4a3a65bf02bbc79eb7fafa118d08970756f7/index.html",
+    "✉": "embii@embii.com"
   },
   "loc": { "quark": "earth" },
   "pkx": "1464ff8570761789398bdeac42facdfb70f5b565aa665b45642a4277923a0485",
-  "pky": "8d1f74f7f2b01db0530b3edbe19afa2d41fb7c52741ce6e7416fcf9ea0c4f07f"
+  "pky": "8d1f74f7f2b01db0530b3edbe19afa2d41fb7c52741ce6e7416fcf9ea0c4f07f",
+  "cre": [ 0 ]
 }
