@@ -85,10 +85,10 @@ namespace SUP
             var button = (Button)sender;
             lastClickedButton = button;
             button.BackColor = Color.Yellow;
-
+            
+            
             flowLayoutPanel1.Controls.Clear();
-
-
+           
 
             List<OBJState> createdObjects = OBJState.GetObjectsByAddress(txtSearchAddress.Text, txtLogin.Text, txtPassword.Text, txtUrl.Text);
 
@@ -134,11 +134,13 @@ namespace SUP
 
                     }
                     foundObject.ObjectCreators.Text = creators;
+                 
                     flowLayoutPanel1.Controls.Add(foundObject);
+                    
                 }
             }
 
-
+            
         }
 
         private void btnGetOwned_Click(object sender, EventArgs e)
@@ -314,6 +316,8 @@ namespace SUP
                     foundObject.ObjectCreators.Text = creators;
                     foundObject.ObjectQty.Text = objstate.Owners.Values.Sum().ToString() + "x";
                     foundObject.ObjectAddress.Text = "@" + objstate.Creators.First();
+
+
                     flowLayoutPanel1.Controls.Add(foundObject);
                 }
             }

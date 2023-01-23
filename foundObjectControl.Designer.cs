@@ -46,6 +46,8 @@
             // ObjectImage
             // 
             this.ObjectImage.BackColor = System.Drawing.Color.Gray;
+            this.ObjectImage.ImageLocation = "";
+            this.ObjectImage.InitialImage = null;
             this.ObjectImage.Location = new System.Drawing.Point(0, 0);
             this.ObjectImage.Name = "ObjectImage";
             this.ObjectImage.Size = new System.Drawing.Size(301, 301);
@@ -183,6 +185,7 @@
             this.Controls.Add(this.ObjectCreators);
             this.Controls.Add(this.ObjectName);
             this.Controls.Add(this.ObjectImage);
+            this.DoubleBuffered = true;
             this.Margin = new System.Windows.Forms.Padding(10);
             this.MaximumSize = new System.Drawing.Size(300, 492);
             this.MinimumSize = new System.Drawing.Size(300, 492);
