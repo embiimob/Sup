@@ -766,7 +766,7 @@ namespace SUP
                     try { txtGetValue.SelectionStart = txtGetValue.TextLength - line.Length - 1; } catch { }
                     txtGetValue.SelectionLength = line.IndexOf(':') + 1;
                     txtGetValue.SelectionColor = Color.Green; // for key
-                    txtGetValue.SelectionFont = new Font(txtGetValue.SelectionFont, FontStyle.Bold);
+                    try { txtGetValue.SelectionFont = new Font(txtGetValue.SelectionFont, FontStyle.Bold); } catch { }
                 }
                 else if (line.Contains(":"))
                 {
@@ -798,8 +798,7 @@ namespace SUP
 
         private void button3_Click_1(object sender, EventArgs e)
         {
-
-        
+                    
             DateTime tmbeginCall = DateTime.UtcNow;
             OBJState createdObject = OBJState.GetObjectByURN(txtSearchAddress.Text, txtLogin.Text, txtPassword.Text, txtUrl.Text);
             DateTime tmendCall = DateTime.UtcNow;
@@ -818,6 +817,46 @@ namespace SUP
            
             displayRootJSON(ObjectArray);
 
+        }
+
+        private void button4_Click(object sender, EventArgs e)
+        {
+            DateTime tmbeginCall = DateTime.UtcNow;
+            PROState Tester = PROState.GetProfileByAddress(txtSearchAddress.Text, txtLogin.Text, txtPassword.Text, txtUrl.Text, txtVersionByte.Text, checkBox1.Checked);
+            DateTime tmendCall = DateTime.UtcNow;
+            lblTotalBytes.Text = "bytes: ";
+            lblTotalTime.Text = "time: ";
+            lblKbs.Text = "kb/s: ";
+            lblTotal.Text = "total:";
+            TimeSpan elapsedTime = tmendCall - tmbeginCall;
+            double elapsedMilliseconds = elapsedTime.TotalMilliseconds;
+
+            lblTotalTime.Text = "time: " + Math.Truncate(elapsedMilliseconds);
+            lblTotal.Text = "total: " + Tester.ProcessHeight.ToString();
+
+            displayRootJSON(new JObject[] { JObject.FromObject(Tester) });
+        }
+
+        private void btnProfileURN_Click(object sender, EventArgs e)
+        {
+
+            DateTime tmbeginCall = DateTime.UtcNow;
+            PROState createdObject = PROState.GetProfileByURN(txtSearchAddress.Text, txtLogin.Text, txtPassword.Text, txtUrl.Text);
+            DateTime tmendCall = DateTime.UtcNow;
+            lblTotalBytes.Text = "bytes: ";
+            lblTotalTime.Text = "time: ";
+            lblKbs.Text = "kb/s: ";
+            lblTotal.Text = "total:";
+            TimeSpan elapsedTime = tmendCall - tmbeginCall;
+            double elapsedMilliseconds = elapsedTime.TotalMilliseconds;
+
+            lblTotalTime.Text = "time: " + Math.Truncate(elapsedMilliseconds);
+
+            JObject[] ObjectArray = new JObject[1];
+
+            ObjectArray[0] = JObject.FromObject(createdObject);
+
+            displayRootJSON(ObjectArray);
         }
     }
 }

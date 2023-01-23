@@ -1,17 +1,16 @@
 {
-  "@nm": "mork",
-  "fnm": "mork",
-  "mnm": "",
-  "lnm": "",
-  "sfx": "",
-  "bio": "i am mork from planet quark",
-  "img": "a87d87b2b9821c4fc7d2c349cdda7542627b774d56db81e3a988503735b8a4f9/mork.jpg",
+  "urn": "embii4u",
+  "fnm": "eric",
+  "mnm": "michael",
+  "lnm": "bobby",
+  "sfx": "ii",
+  "bio": "galactic freedom fighter",
+  "img": "BTC:7033eb8138de0d3f4be111a57dfb8319b400d3b6a6f5b387a22b334ebb998e93/EMBII.jpg",
   "url": {
     "🛸": "embii.wtf",
-    "👾": "75a1d7ef8732ad0611ebecbd3e7d4a3a65bf02bbc79eb7fafa118d08970756f7"
+    "👾": "BTC:75a1d7ef8732ad0611ebecbd3e7d4a3a65bf02bbc79eb7fafa118d08970756f7/index.html"
   },
-  "loc": { "planet": "ork" },
-  "pkx": "afe10a413f20208b6ec5487341c835e0b9d29681c22cb3c96a8235c29bf543f4",
-  "pky": "b13f9d5caeacfc53b7c748035580adc701d29aafe97d8c40d209c9674c2c961c",
-  "s": "ju789S45"
+  "loc": { "quark": "earth" },
+  "pkx": "1464ff8570761789398bdeac42facdfb70f5b565aa665b45642a4277923a0485",
+  "pky": "8d1f74f7f2b01db0530b3edbe19afa2d41fb7c52741ce6e7416fcf9ea0c4f07f"
 }

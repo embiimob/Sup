@@ -143,6 +143,7 @@ namespace SUP.P2FK
                         || v_out.value == "5.48E-06"
                         || v_out.value == "5.48E-05"
                         || v_out.value == "5.5E-05"
+                        || v_out.value == "5.5E-06"
                     )
                     {
                         byte[] results = Array.Empty<byte>();
@@ -265,7 +266,7 @@ namespace SUP.P2FK
                             ), P2FKSignatureAddress
                         );
                        
-                        if (P2FKRoot.File.Count > 0)
+                        if ( P2FKRoot.File.Count > 0)
                         {
                             fileName = P2FKRoot.File.Keys.First();
                             fileBytes = System.IO.File.ReadAllBytes(@"root\" + P2FKRoot.TransactionId + @"\" + fileName); ;
@@ -508,6 +509,7 @@ namespace SUP.P2FK
                         || v_out.value == "5.48E-06"
                         || v_out.value == "5.48E-05"
                         || v_out.value == "5.5E-05"
+                        || v_out.value == "5.5E-06"
                     )
                     {
                         string P2FKSignatureAddress = v_out.scriptPubKey.addresses[0];

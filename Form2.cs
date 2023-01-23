@@ -13,7 +13,7 @@ using System.Windows.Forms;
 
 namespace SUP
 {
-    
+
     public partial class Form2 : Form
     {
         Button lastClickedButton;
@@ -21,7 +21,7 @@ namespace SUP
         {
             InitializeComponent();
         }
-        
+
         private void btnGetObject_Click(object sender, EventArgs e)
         {
             if (lastClickedButton != null)
@@ -41,18 +41,38 @@ namespace SUP
             {
                 foundObjectControl foundObject = new foundObjectControl();
 
-                foundObject.ObjectImage.ImageLocation = objstate.Image.Replace("BTC:", @"http://bitfossil.com/");
-                foundObject.ObjectName.Text = objstate.Name;
+                if (objstate.Image.StartsWith("BTC:"))
+                {
+                    string transid = objstate.Image.Substring(4, 64);
+
+                    if (!System.IO.Directory.Exists("root/" + transid))
+                    {
+                        Root root = Root.GetRootByTransactionId(transid, txtLogin.Text, txtPassword.Text, @"http://127.0.0.1:8332", "0");
+
+                    }
+
+                }
+                foundObject.ObjectImage.ImageLocation = objstate.Image.Replace("BTC:", @"root/"); foundObject.ObjectName.Text = objstate.Name;
                 foundObject.ObjectDescription.Text = objstate.Description;
                 string creators = null;
                 foreach (string creator in objstate.Creators.Skip(1))
                 {
-                    creators = creators + "  " + TruncateAddress(creator);
+
+                    PROState profile = PROState.GetProfileByAddress(creator, txtLogin.Text, txtPassword.Text, txtUrl.Text);
+
+                    if (profile.URN != null)
+                    {
+                        creators = creators + "  " + profile.URN;
+                    }
+                    else
+                    {
+                        creators = creators + "  " + TruncateAddress(creator);
+                    }
 
                 }
                 foundObject.ObjectCreators.Text = creators;
                 foundObject.ObjectQty.Text = objstate.Owners.Values.Sum().ToString() + "x";
-                foundObject.ObjectAddress.Text = "@"+ objstate.Creators.First();
+                foundObject.ObjectAddress.Text = "@" + objstate.Creators.First();
                 flowLayoutPanel1.Controls.Add(foundObject);
             }
         }
@@ -67,11 +87,11 @@ namespace SUP
             button.BackColor = Color.Yellow;
 
             flowLayoutPanel1.Controls.Clear();
-            
+
 
 
             List<OBJState> createdObjects = OBJState.GetObjectsByAddress(txtSearchAddress.Text, txtLogin.Text, txtPassword.Text, txtUrl.Text);
-           
+
             foreach (OBJState objstate in createdObjects)
             {
                 if (objstate.Owners != null)
@@ -79,7 +99,18 @@ namespace SUP
 
                     foundObjectControl foundObject = new foundObjectControl();
 
-                    foundObject.ObjectImage.ImageLocation = objstate.Image.Replace("BTC:", @"http://bitfossil.com/");
+                    if (objstate.Image.StartsWith("BTC:"))
+                    {
+                        string transid = objstate.Image.Substring(4, 64);
+
+                        if (!System.IO.Directory.Exists("root/" + transid))
+                        {
+                            Root root = Root.GetRootByTransactionId( transid, txtLogin.Text, txtPassword.Text, @"http://127.0.0.1:8332", "0" );
+
+                        }
+
+                    }
+                    foundObject.ObjectImage.ImageLocation = objstate.Image.Replace("BTC:", @"root/");
                     foundObject.ObjectName.Text = objstate.Name;
                     foundObject.ObjectDescription.Text = objstate.Description;
                     foundObject.ObjectAddress.Text = objstate.Creators.First();
@@ -87,8 +118,20 @@ namespace SUP
                     string creators = null;
                     foreach (string creator in objstate.Creators.Skip(1))
                     {
+
+                        PROState profile = PROState.GetProfileByAddress(creator, txtLogin.Text, txtPassword.Text, txtUrl.Text);
+
+                        if (profile.URN != null)
+                        {
+                            creators = creators + "  " + profile.URN;
+                        }
+                        else
+                        {
                             creators = creators + "  " + TruncateAddress(creator);
-                       
+                        }
+
+                        
+
                     }
                     foundObject.ObjectCreators.Text = creators;
                     flowLayoutPanel1.Controls.Add(foundObject);
@@ -118,13 +161,36 @@ namespace SUP
                 {
                     foundObjectControl foundObject = new foundObjectControl();
 
-                    foundObject.ObjectImage.ImageLocation = objstate.Image.Replace("BTC:", @"http://bitfossil.com/");
+                    if (objstate.Image.StartsWith("BTC:"))
+                    {
+                        string transid = objstate.Image.Substring(4, 64);
+
+                        if (!System.IO.Directory.Exists("root/" + transid))
+                        {
+                            Root root = Root.GetRootByTransactionId(transid, txtLogin.Text, txtPassword.Text, @"http://127.0.0.1:8332", "0");
+
+                        }
+
+                    }
+                    foundObject.ObjectImage.ImageLocation = objstate.Image.Replace("BTC:", @"root/");
                     foundObject.ObjectName.Text = objstate.Name;
                     foundObject.ObjectDescription.Text = objstate.Description;
                     string creators = null;
                     foreach (string creator in objstate.Creators.Skip(1))
                     {
-                        creators = creators + "  " + TruncateAddress(creator);
+
+                        PROState profile = PROState.GetProfileByAddress(creator, txtLogin.Text, txtPassword.Text, txtUrl.Text);
+
+                        if (profile.URN != null)
+                        {
+                            creators = creators + "  " + profile.URN;
+                        }
+                        else
+                        {
+                            creators = creators + "  " + TruncateAddress(creator);
+                        }
+
+
 
                     }
                     foundObject.ObjectCreators.Text = creators;
@@ -154,13 +220,35 @@ namespace SUP
                 {
                     foundObjectControl foundObject = new foundObjectControl();
 
-                    foundObject.ObjectImage.ImageLocation = objstate.Image.Replace("BTC:", @"http://bitfossil.com/");
+                    if (objstate.Image.StartsWith("BTC:"))
+                    {
+                        string transid = objstate.Image.Substring(4, 64);
+
+                        if (!System.IO.Directory.Exists("root/" + transid))
+                        {
+                            Root root = Root.GetRootByTransactionId(transid, txtLogin.Text, txtPassword.Text, @"http://127.0.0.1:8332", "0");
+
+                        }
+
+                    }
+                    foundObject.ObjectImage.ImageLocation = objstate.Image.Replace("BTC:", @"root/");
                     foundObject.ObjectName.Text = objstate.Name;
                     foundObject.ObjectDescription.Text = objstate.Description;
                     string creators = null;
                     foreach (string creator in objstate.Creators.Skip(1))
                     {
-                        creators = creators + "  " + TruncateAddress(creator);
+
+                        PROState profile = PROState.GetProfileByAddress(creator, txtLogin.Text, txtPassword.Text, txtUrl.Text);
+
+                        if (profile.URN != null)
+                        {
+                            creators = creators + "  " + profile.URN;
+                        }
+                        else
+                        {
+                            creators = creators + "  " + TruncateAddress(creator);
+                        }
+
 
                     }
                     foundObject.ObjectCreators.Text = creators;
@@ -192,13 +280,35 @@ namespace SUP
 
                     foundObjectControl foundObject = new foundObjectControl();
 
-                    foundObject.ObjectImage.ImageLocation = objstate.Image.Replace("BTC:", @"http://bitfossil.com/");
-                    foundObject.ObjectName.Text = objstate.Name;
+                    if (objstate.Image.StartsWith("BTC:"))
+                    {
+                        string transid = objstate.Image.Substring(4, 64);
+
+                        if (!System.IO.Directory.Exists("root/" + transid))
+                        {
+                            Root root = Root.GetRootByTransactionId(transid, txtLogin.Text, txtPassword.Text, @"http://127.0.0.1:8332", "0");
+
+                        }
+
+                    }
+                    foundObject.ObjectImage.ImageLocation = objstate.Image.Replace("BTC:", @"root/"); foundObject.ObjectName.Text = objstate.Name;
                     foundObject.ObjectDescription.Text = objstate.Description;
                     string creators = null;
                     foreach (string creator in objstate.Creators.Skip(1))
                     {
-                        creators = creators + "  " + TruncateAddress(creator);
+
+                        PROState profile = PROState.GetProfileByAddress(creator, txtLogin.Text, txtPassword.Text, txtUrl.Text);
+
+                        if (profile.URN != null)
+                        {
+                            creators = creators + "  " + profile.URN;
+                        }
+                        else
+                        {
+                            creators = creators + "  " + TruncateAddress(creator);
+                        }
+
+
 
                     }
                     foundObject.ObjectCreators.Text = creators;
@@ -237,27 +347,49 @@ namespace SUP
 
             OBJState objstate = OBJState.GetObjectByURN(txtSearchAddress.Text, txtLogin.Text, txtPassword.Text, txtUrl.Text);
 
-         
-                if (objstate.Owners != null)
+
+            if (objstate.Owners != null)
+            {
+
+                foundObjectControl foundObject = new foundObjectControl();
+
+                if (objstate.Image.StartsWith("BTC:"))
                 {
+                    string transid = objstate.Image.Substring(4, 64);
 
-                    foundObjectControl foundObject = new foundObjectControl();
+                    if (!System.IO.Directory.Exists("root/" + transid))
+                    {
+                        Root root = Root.GetRootByTransactionId(transid, txtLogin.Text, txtPassword.Text, @"http://127.0.0.1:8332", "0");
 
-                    foundObject.ObjectImage.ImageLocation = objstate.Image.Replace("BTC:", @"http://bitfossil.com/");
-                    foundObject.ObjectName.Text = objstate.Name;
-                    foundObject.ObjectDescription.Text = objstate.Description;
+                    }
+
+                }
+                foundObject.ObjectImage.ImageLocation = objstate.Image.Replace("BTC:", @"root/"); foundObject.ObjectName.Text = objstate.Name;
+                foundObject.ObjectDescription.Text = objstate.Description;
                 string creators = null;
                 foreach (string creator in objstate.Creators.Skip(1))
                 {
-                    creators = creators + "  " + TruncateAddress(creator);
+
+                    PROState profile = PROState.GetProfileByAddress(creator, txtLogin.Text, txtPassword.Text, txtUrl.Text);
+
+                    if (profile.URN != null)
+                    {
+                        creators = creators + "  " + profile.URN;
+                    }
+                    else
+                    {
+                        creators = creators + "  " + TruncateAddress(creator);
+                    }
+
+
 
                 }
                 foundObject.ObjectCreators.Text = creators;
                 foundObject.ObjectQty.Text = objstate.Owners.Values.Sum().ToString() + "x";
                 foundObject.ObjectAddress.Text = "@" + objstate.Creators.First();
                 flowLayoutPanel1.Controls.Add(foundObject);
-                }
             }
+        }
 
         private void button4_Click(object sender, EventArgs e)
         {
