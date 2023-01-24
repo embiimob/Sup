@@ -194,6 +194,7 @@
     <Compile Include="ObjectDetails.Designer.cs">
       <DependentUpon>ObjectDetails.cs</DependentUpon>
     </Compile>
+    <Compile Include="P2FK\samples\GTP3.cs" />
     <Compile Include="WorkBench.cs">
       <SubType>Form</SubType>
     </Compile>

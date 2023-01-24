@@ -1,11 +1,12 @@
 {
-  "urn": "7223070fbc3706856e90701b62a8bfb3f5a618dc13d64d8f029260cba187ca26/embii in the woods.mp4",
-  "img": "BTC:eb11576a8751e4bcd4faed814583ecceaf3d8a65ff643f2d0db5a221eb9d398c/self-portrait-6551.002-archive.jpg",
-  "nme": "2023",
-  "dsc": "wood rabbit",
+  "urn": "BTC:a3a24d6ea01ce481a50346818b8977220687f3ba385838fe8894ce61c9718bbc/alien.wav",
+  "img": "BTC:a3a24d6ea01ce481a50346818b8977220687f3ba385838fe8894ce61c9718bbc/alien.jpg",
+  "uri": "BTC:483a428c6ffdf94f04b6deab0b02d78de40bfc62d839ba534f9da66dc9102ac9/MSG",
+  "nme": "Alien",
+  "dsc": "alien adjective \\ˈā-lē-ən, ˈāl-yən\\ : not familiar or like other things you have known : different from what you are used to : from another country : too different from something to be acceptable or suitable",
   "lic": "CC0",
   "cre": [ 0, 1 ],
-  "own": { "0": 1 }
+  "own": { "0": 10000 }
 }
 
-//  "uri": "BTC:67b2facfd8160d4fa11b02829b6387d07537b57a7a24f19b029b2a5ae7b81830/YellowRobot.jpg" optional
+//  "uri":  optional

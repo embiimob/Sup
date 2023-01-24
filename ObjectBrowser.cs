@@ -37,7 +37,7 @@ namespace SUP
             flowLayoutPanel1.Controls.Clear();
 
             OBJState objstate = OBJState.GetObjectByAddress(txtSearchAddress.Text, txtLogin.Text, txtPassword.Text, txtUrl.Text);
-            txtLastSearch.Text = JsonConvert.SerializeObject(new OBJState[] { objstate });
+            txtLastSearchJSON.Text = JsonConvert.SerializeObject(new OBJState[] { objstate });
             if (objstate.Owners != null)
             {
                 foundObjectControl foundObject = new foundObjectControl();
@@ -87,14 +87,44 @@ namespace SUP
             var button = (Button)sender;
             lastClickedButton = button;
             button.BackColor = Color.Yellow;
-            
-            
+
+            string profileCheck = txtSearchAddress.Text;
+            PROState searchprofile = PROState.GetProfileByAddress(txtSearchAddress.Text, txtLogin.Text, txtPassword.Text, txtUrl.Text);
+
+            if (searchprofile.URN != null)
+            {
+                linkLabel1.Text = searchprofile.URN;
+                linkLabel1.LinkColor = System.Drawing.SystemColors.Highlight;
+            }
+            else
+            {
+
+
+               searchprofile = PROState.GetProfileByURN(txtSearchAddress.Text, txtLogin.Text, txtPassword.Text, txtUrl.Text);
+
+                if (searchprofile.URN != null)
+                {
+                    linkLabel1.Text = TruncateAddress(searchprofile.Creators.First());
+                    linkLabel1.LinkColor = System.Drawing.SystemColors.Highlight;
+                    profileCheck = searchprofile.Creators.First();
+                }
+                else
+                {
+                    linkLabel1.Text = "anon";
+                    linkLabel1.LinkColor = System.Drawing.SystemColors.GradientActiveCaption;
+
+                }
+            }
+
+           
+
+
             flowLayoutPanel1.Controls.Clear();
            
 
-            List<OBJState> createdObjects = OBJState.GetObjectsByAddress(txtSearchAddress.Text, txtLogin.Text, txtPassword.Text, txtUrl.Text);
+            List<OBJState> createdObjects = OBJState.GetObjectsByAddress(profileCheck, txtLogin.Text, txtPassword.Text, txtUrl.Text);
 
-            txtLastSearch.Text = JsonConvert.SerializeObject(createdObjects);
+            txtLastSearchJSON.Text = JsonConvert.SerializeObject(createdObjects);
             foreach (OBJState objstate in createdObjects)
             {
                 if (objstate.Owners != null)
@@ -159,7 +189,7 @@ namespace SUP
             flowLayoutPanel1.Controls.Clear();
 
             List<OBJState> createdObjects = OBJState.GetObjectsOwnedByAddress(txtSearchAddress.Text, txtLogin.Text, txtPassword.Text, txtUrl.Text);
-            txtLastSearch.Text = JsonConvert.SerializeObject(createdObjects);
+            txtLastSearchJSON.Text = JsonConvert.SerializeObject(createdObjects);
             foreach (OBJState objstate in createdObjects)
             {
                 if (objstate.Owners != null)
@@ -200,7 +230,7 @@ namespace SUP
                     }
                     foundObject.ObjectCreators.Text = creators;
                     foundObject.ObjectQty.Text = objstate.Owners.Values.Sum().ToString() + "x";
-                    foundObject.ObjectAddress.Text = "@" + objstate.Creators.First();
+                    foundObject.ObjectAddress.Text = objstate.Creators.First();
                     flowLayoutPanel1.Controls.Add(foundObject);
                 }
             }
@@ -215,10 +245,42 @@ namespace SUP
             lastClickedButton = button;
             button.BackColor = Color.Yellow;
 
+
+            string profileCheck = txtSearchAddress.Text;
+            PROState searchprofile = PROState.GetProfileByAddress(txtSearchAddress.Text, txtLogin.Text, txtPassword.Text, txtUrl.Text);
+
+            if (searchprofile.URN != null)
+            {
+                linkLabel1.Text = searchprofile.URN;
+                linkLabel1.LinkColor = System.Drawing.SystemColors.Highlight;
+            }
+            else
+            {
+
+
+                searchprofile = PROState.GetProfileByURN(txtSearchAddress.Text, txtLogin.Text, txtPassword.Text, txtUrl.Text);
+
+                if (searchprofile.URN != null)
+                {
+                    linkLabel1.Text = TruncateAddress(searchprofile.Creators.First());
+                    linkLabel1.LinkColor = System.Drawing.SystemColors.Highlight;
+                    profileCheck = searchprofile.Creators.First();
+                }
+                else
+                {
+                    linkLabel1.Text = "anon";
+                    linkLabel1.LinkColor = System.Drawing.SystemColors.GradientActiveCaption;
+
+                }
+            }
+
+
+
+
             flowLayoutPanel1.Controls.Clear();
 
-            List<OBJState> createdObjects = OBJState.GetObjectsCreatedByAddress(txtSearchAddress.Text, txtLogin.Text, txtPassword.Text, txtUrl.Text);
-            txtLastSearch.Text = JsonConvert.SerializeObject(createdObjects);
+            List<OBJState> createdObjects = OBJState.GetObjectsCreatedByAddress(profileCheck, txtLogin.Text, txtPassword.Text, txtUrl.Text);
+            txtLastSearchJSON.Text = JsonConvert.SerializeObject(createdObjects);
             foreach (OBJState objstate in createdObjects)
             {
                 if (objstate.Owners != null)
@@ -277,7 +339,7 @@ namespace SUP
             flowLayoutPanel1.Controls.Clear();
 
             List<OBJState> createdObjects = OBJState.GetObjectsByKeyword(new List<string> { txtSearchAddress.Text }, txtLogin.Text, txtPassword.Text, txtUrl.Text);
-            txtLastSearch.Text = JsonConvert.SerializeObject(createdObjects);
+            txtLastSearchJSON.Text = JsonConvert.SerializeObject(createdObjects);
             foreach (OBJState objstate in createdObjects)
             {
                 if (objstate.Owners != null)
@@ -353,7 +415,7 @@ namespace SUP
             flowLayoutPanel1.Controls.Clear();
 
             OBJState objstate = OBJState.GetObjectByURN(txtSearchAddress.Text, txtLogin.Text, txtPassword.Text, txtUrl.Text);
-            txtLastSearch.Text = JsonConvert.SerializeObject(new OBJState[] { objstate });
+            txtLastSearchJSON.Text = JsonConvert.SerializeObject(new OBJState[] { objstate });
 
             if (objstate.Owners != null)
             {
@@ -403,6 +465,47 @@ namespace SUP
         private void button4_Click(object sender, EventArgs e)
         {
             new WorkBench().Show();
+        }
+
+        private void linkLabel1_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        {
+
+
+
+            string profileCheck = txtSearchAddress.Text;
+            PROState searchprofile = PROState.GetProfileByAddress(txtSearchAddress.Text, txtLogin.Text, txtPassword.Text, txtUrl.Text);
+
+            if (searchprofile.URN != null)
+            {
+                txtSearchAddress.Text = searchprofile.URN;
+                linkLabel1.Text = TruncateAddress(searchprofile.Creators.First());
+
+                linkLabel1.LinkColor = System.Drawing.SystemColors.Highlight;
+            }
+            else
+            {
+
+
+                searchprofile = PROState.GetProfileByURN(txtSearchAddress.Text, txtLogin.Text, txtPassword.Text, txtUrl.Text);
+
+                if (searchprofile.URN != null)
+                {
+                    txtSearchAddress.Text = searchprofile.Creators.First();
+                    linkLabel1.Text = searchprofile.URN;
+                    linkLabel1.LinkColor = System.Drawing.SystemColors.Highlight;
+
+                }
+                else
+                {
+                    linkLabel1.Text = "anon";
+                    linkLabel1.LinkColor = System.Drawing.SystemColors.GradientActiveCaption;
+
+                }
+            }
+
+
+
+
         }
     }
 }

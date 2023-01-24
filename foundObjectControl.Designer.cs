@@ -186,7 +186,7 @@
             this.Controls.Add(this.ObjectCreators);
             this.Controls.Add(this.ObjectImage);
             this.DoubleBuffered = true;
-            this.Margin = new System.Windows.Forms.Padding(5);
+            this.Margin = new System.Windows.Forms.Padding(2);
             this.MaximumSize = new System.Drawing.Size(208, 367);
             this.MinimumSize = new System.Drawing.Size(208, 367);
             this.Name = "foundObjectControl";
