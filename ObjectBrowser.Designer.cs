@@ -1,6 +1,6 @@
 ﻿namespace SUP
 {
-    partial class Form2
+    partial class ObjectBrowser
     {
         /// <summary>
         /// Required designer variable.
@@ -41,6 +41,7 @@
             this.txtSearchAddress = new System.Windows.Forms.TextBox();
             this.button4 = new System.Windows.Forms.Button();
             this.flowLayoutPanel1 = new System.Windows.Forms.FlowLayoutPanel();
+            this.txtLastSearch = new System.Windows.Forms.TextBox();
             this.SuspendLayout();
             // 
             // txtVersionByte
@@ -166,14 +167,21 @@
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.flowLayoutPanel1.AutoScroll = true;
-           
             this.flowLayoutPanel1.BackColor = System.Drawing.SystemColors.InactiveCaption;
             this.flowLayoutPanel1.Location = new System.Drawing.Point(0, 32);
             this.flowLayoutPanel1.Name = "flowLayoutPanel1";
             this.flowLayoutPanel1.Size = new System.Drawing.Size(981, 510);
             this.flowLayoutPanel1.TabIndex = 69;
             // 
-            // Form2
+            // txtLastSearch
+            // 
+            this.txtLastSearch.Location = new System.Drawing.Point(58, 106);
+            this.txtLastSearch.Multiline = true;
+            this.txtLastSearch.Name = "txtLastSearch";
+            this.txtLastSearch.Size = new System.Drawing.Size(760, 314);
+            this.txtLastSearch.TabIndex = 70;
+            // 
+            // ObjectBrowser
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
@@ -191,8 +199,9 @@
             this.Controls.Add(this.txtPassword);
             this.Controls.Add(this.txtUrl);
             this.Controls.Add(this.flowLayoutPanel1);
+            this.Controls.Add(this.txtLastSearch);
             this.MinimumSize = new System.Drawing.Size(997, 581);
-            this.Name = "Form2";
+            this.Name = "ObjectBrowser";
             this.Text = "Sup!? Object Browser";
             this.ResumeLayout(false);
             this.PerformLayout();
@@ -213,5 +222,6 @@
         private System.Windows.Forms.TextBox txtSearchAddress;
         private System.Windows.Forms.Button button4;
         private System.Windows.Forms.FlowLayoutPanel flowLayoutPanel1;
+        private System.Windows.Forms.TextBox txtLastSearch;
     }
 }

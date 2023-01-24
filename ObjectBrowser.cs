@@ -1,4 +1,5 @@
 ﻿using NBitcoin.Protocol;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using SUP.P2FK;
 using System;
@@ -14,10 +15,10 @@ using System.Windows.Forms;
 namespace SUP
 {
 
-    public partial class Form2 : Form
+    public partial class ObjectBrowser : Form
     {
         Button lastClickedButton;
-        public Form2()
+        public ObjectBrowser()
         {
             InitializeComponent();
         }
@@ -36,7 +37,7 @@ namespace SUP
             flowLayoutPanel1.Controls.Clear();
 
             OBJState objstate = OBJState.GetObjectByAddress(txtSearchAddress.Text, txtLogin.Text, txtPassword.Text, txtUrl.Text);
-
+            txtLastSearch.Text = JsonConvert.SerializeObject(new OBJState[] { objstate });
             if (objstate.Owners != null)
             {
                 foundObjectControl foundObject = new foundObjectControl();
@@ -72,7 +73,8 @@ namespace SUP
                 }
                 foundObject.ObjectCreators.Text = creators;
                 foundObject.ObjectQty.Text = objstate.Owners.Values.Sum().ToString() + "x";
-                foundObject.ObjectAddress.Text = "@" + objstate.Creators.First();
+                foundObject.ObjectAddress.Text = objstate.Creators.First();
+
                 flowLayoutPanel1.Controls.Add(foundObject);
             }
         }
@@ -92,6 +94,7 @@ namespace SUP
 
             List<OBJState> createdObjects = OBJState.GetObjectsByAddress(txtSearchAddress.Text, txtLogin.Text, txtPassword.Text, txtUrl.Text);
 
+            txtLastSearch.Text = JsonConvert.SerializeObject(createdObjects);
             foreach (OBJState objstate in createdObjects)
             {
                 if (objstate.Owners != null)
@@ -156,7 +159,7 @@ namespace SUP
             flowLayoutPanel1.Controls.Clear();
 
             List<OBJState> createdObjects = OBJState.GetObjectsOwnedByAddress(txtSearchAddress.Text, txtLogin.Text, txtPassword.Text, txtUrl.Text);
-
+            txtLastSearch.Text = JsonConvert.SerializeObject(createdObjects);
             foreach (OBJState objstate in createdObjects)
             {
                 if (objstate.Owners != null)
@@ -215,7 +218,7 @@ namespace SUP
             flowLayoutPanel1.Controls.Clear();
 
             List<OBJState> createdObjects = OBJState.GetObjectsCreatedByAddress(txtSearchAddress.Text, txtLogin.Text, txtPassword.Text, txtUrl.Text);
-
+            txtLastSearch.Text = JsonConvert.SerializeObject(createdObjects);
             foreach (OBJState objstate in createdObjects)
             {
                 if (objstate.Owners != null)
@@ -255,7 +258,7 @@ namespace SUP
                     }
                     foundObject.ObjectCreators.Text = creators;
                     foundObject.ObjectQty.Text = objstate.Owners.Values.Sum().ToString() + "x";
-                    foundObject.ObjectAddress.Text = "@" + objstate.Creators.First();
+                    foundObject.ObjectAddress.Text = objstate.Creators.First();
                     flowLayoutPanel1.Controls.Add(foundObject);
                 }
             }
@@ -274,7 +277,7 @@ namespace SUP
             flowLayoutPanel1.Controls.Clear();
 
             List<OBJState> createdObjects = OBJState.GetObjectsByKeyword(new List<string> { txtSearchAddress.Text }, txtLogin.Text, txtPassword.Text, txtUrl.Text);
-
+            txtLastSearch.Text = JsonConvert.SerializeObject(createdObjects);
             foreach (OBJState objstate in createdObjects)
             {
                 if (objstate.Owners != null)
@@ -315,7 +318,7 @@ namespace SUP
                     }
                     foundObject.ObjectCreators.Text = creators;
                     foundObject.ObjectQty.Text = objstate.Owners.Values.Sum().ToString() + "x";
-                    foundObject.ObjectAddress.Text = "@" + objstate.Creators.First();
+                    foundObject.ObjectAddress.Text = objstate.Creators.First();
 
 
                     flowLayoutPanel1.Controls.Add(foundObject);
@@ -350,7 +353,7 @@ namespace SUP
             flowLayoutPanel1.Controls.Clear();
 
             OBJState objstate = OBJState.GetObjectByURN(txtSearchAddress.Text, txtLogin.Text, txtPassword.Text, txtUrl.Text);
-
+            txtLastSearch.Text = JsonConvert.SerializeObject(new OBJState[] { objstate });
 
             if (objstate.Owners != null)
             {
@@ -390,14 +393,16 @@ namespace SUP
                 }
                 foundObject.ObjectCreators.Text = creators;
                 foundObject.ObjectQty.Text = objstate.Owners.Values.Sum().ToString() + "x";
-                foundObject.ObjectAddress.Text = "@" + objstate.Creators.First();
+                foundObject.ObjectAddress.Text = objstate.Creators.First();
                 flowLayoutPanel1.Controls.Add(foundObject);
             }
         }
 
+    
+
         private void button4_Click(object sender, EventArgs e)
         {
-            new Form1().Show();
+            new WorkBench().Show();
         }
     }
 }

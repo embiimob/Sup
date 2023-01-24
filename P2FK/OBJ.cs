@@ -671,7 +671,7 @@ namespace SUP.P2FK
 
 
                     OBJState isObject = GetObjectByAddress(findObject, username, password, url, versionByte);
-                    if (isObject.URN != null && !addedValues.Contains(isObject.URN))
+                    if (isObject.URN != null && !addedValues.Contains(findObject))
                     {
                         if (isObject.Creators.ElementAt(0) == findObject)
                         {
@@ -690,7 +690,7 @@ namespace SUP.P2FK
                     {
                         findObject = transaction.Keyword.ElementAt(transaction.Keyword.Count - 1).Key;
                         isObject = GetObjectByAddress(findObject, username, password, url, versionByte);
-                        if (isObject.URN != null)
+                        if (isObject.URN != null && !addedValues.Contains(findObject))
                         {
                             if (isObject.Creators.ElementAt(0) == findObject)
                             {

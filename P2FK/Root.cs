@@ -144,6 +144,7 @@ namespace SUP.P2FK
                         || v_out.value == "5.48E-05"
                         || v_out.value == "5.5E-05"
                         || v_out.value == "5.5E-06"
+                        || v_out.value == "1E-05"
                     )
                     {
                         byte[] results = Array.Empty<byte>();
@@ -510,6 +511,7 @@ namespace SUP.P2FK
                         || v_out.value == "5.48E-05"
                         || v_out.value == "5.5E-05"
                         || v_out.value == "5.5E-06"
+                        || v_out.value == "1E-05"
                     )
                     {
                         string P2FKSignatureAddress = v_out.scriptPubKey.addresses[0];

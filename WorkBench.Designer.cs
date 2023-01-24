@@ -2,7 +2,7 @@
 
 namespace SUP
 {
-    partial class Form1
+    partial class WorkBench
     {
         /// <summary>
         /// Required designer variable.

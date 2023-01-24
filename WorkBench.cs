@@ -16,9 +16,9 @@ using System.Windows.Forms;
 
 namespace SUP
 {
-    public partial class Form1 : Form
+    public partial class WorkBench : Form
     {
-        public Form1()
+        public WorkBench()
         {
             InitializeComponent();
         }

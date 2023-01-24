@@ -1,11 +1,11 @@
 {
-  "urn": "BTC:67b2facfd8160d4fa11b02829b6387d07537b57a7a24f19b029b2a5ae7b81830/YellowRobot.jpg",
-  "img": "BTC:67b2facfd8160d4fa11b02829b6387d07537b57a7a24f19b029b2a5ae7b81830/YellowRobot.jpg",
-  "nme": "Yellow Robot",
-  "dsc": "Chiharu and I found this little yellow robot while exploring Chicago. It will be covered by tar or eventually removed but this tribute will remain. N 41.880778 E -87.629210",
+  "urn": "7223070fbc3706856e90701b62a8bfb3f5a618dc13d64d8f029260cba187ca26/embii in the woods.mp4",
+  "img": "BTC:eb11576a8751e4bcd4faed814583ecceaf3d8a65ff643f2d0db5a221eb9d398c/self-portrait-6551.002-archive.jpg",
+  "nme": "2023",
+  "dsc": "wood rabbit",
   "lic": "CC0",
   "cre": [ 0, 1 ],
-  "own": { 0: 300 }
+  "own": { "0": 1 }
 }
 
 //  "uri": "BTC:67b2facfd8160d4fa11b02829b6387d07537b57a7a24f19b029b2a5ae7b81830/YellowRobot.jpg" optional
