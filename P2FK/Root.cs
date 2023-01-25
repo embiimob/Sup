@@ -322,6 +322,7 @@ namespace SUP.P2FK
                         using (FileStream fs = new FileStream(diskpath + "MSG", FileMode.Create))
                         {
                             fs.Write(fileBytes, 0, fileBytes.Length);
+                            
                         }
                     }
                     else
@@ -431,6 +432,23 @@ namespace SUP.P2FK
 
             var rootSerialized = JsonConvert.SerializeObject(P2FKRoot);
             System.IO.File.WriteAllText(@"root\" + P2FKRoot.TransactionId + @"\" + "P2FK.json", rootSerialized);
+
+
+            foreach (KeyValuePair<string, string> keyword in P2FKRoot.Keyword)
+            {
+                int messageCount = 0;
+                foreach (string msg in P2FKRoot.Message)
+                {
+                    messageCount++;
+                    lock (levelDBLocker)
+                    {
+                        var ROOT = new Options { CreateIfMissing = true };
+                        var db = new DB(ROOT, @"sup");
+                        db.Put(keyword.Key + "!" + P2FKRoot.BlockDate.ToString("yyyyMMddHHmmss") + "!"+ messageCount.ToString("X").PadLeft(9, '0'), msg);
+                        db.Close();
+                    }
+                }
+            }
 
             return P2FKRoot;
         }

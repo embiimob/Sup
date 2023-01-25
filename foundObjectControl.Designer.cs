@@ -141,13 +141,15 @@
             // 
             // ObjectQty
             // 
+            this.ObjectQty.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.ObjectQty.BackColor = System.Drawing.Color.Transparent;
             this.ObjectQty.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.ObjectQty.Location = new System.Drawing.Point(154, 221);
+            this.ObjectQty.Location = new System.Drawing.Point(131, 215);
             this.ObjectQty.Name = "ObjectQty";
-            this.ObjectQty.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
-            this.ObjectQty.Size = new System.Drawing.Size(54, 20);
+            this.ObjectQty.Size = new System.Drawing.Size(77, 20);
             this.ObjectQty.TabIndex = 7;
             this.ObjectQty.Text = "10000x";
+            this.ObjectQty.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             this.ObjectQty.Click += new System.EventHandler(this.foundObjectControl_Click);
             // 
             // ObjectAddress
@@ -164,11 +166,10 @@
             // 
             // ObjectName
             // 
-            this.ObjectName.AutoSize = true;
-            this.ObjectName.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.ObjectName.Location = new System.Drawing.Point(3, 217);
+            this.ObjectName.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.ObjectName.Location = new System.Drawing.Point(1, 217);
             this.ObjectName.Name = "ObjectName";
-            this.ObjectName.Size = new System.Drawing.Size(150, 18);
+            this.ObjectName.Size = new System.Drawing.Size(137, 18);
             this.ObjectName.TabIndex = 9;
             this.ObjectName.Text = "FakeUFO Keyword";
             this.ObjectName.Click += new System.EventHandler(this.foundObjectControl_Click);
@@ -212,11 +213,11 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.SystemColors.ActiveCaption;
-            this.Controls.Add(this.flowLayoutPanel1);
+            this.Controls.Add(this.ObjectQty);
             this.Controls.Add(this.ObjectName);
+            this.Controls.Add(this.flowLayoutPanel1);
             this.Controls.Add(this.ObjectDescription);
             this.Controls.Add(this.ObjectAddress);
-            this.Controls.Add(this.ObjectQty);
             this.Controls.Add(this.panel1);
             this.Controls.Add(this.ObjectImage);
             this.DoubleBuffered = true;
@@ -233,7 +234,6 @@
             this.flowLayoutPanel1.ResumeLayout(false);
             this.flowLayoutPanel1.PerformLayout();
             this.ResumeLayout(false);
-            this.PerformLayout();
 
         }
 

@@ -34,7 +34,7 @@ namespace SUP.P2FK
         public string Description { get; set; }
         public string License { get; set; }
         public List<string> Creators { get; set; }
-        public Dictionary<string, int> Owners { get; set; }
+        public Dictionary<string, long> Owners { get; set; }
         public DateTime LockedDate { get; set; }
         public int ProcessHeight { get; set; }
         public DateTime ChangeDate { get; set; }
@@ -182,7 +182,7 @@ namespace SUP.P2FK
                                             {
                                                 if (objectState.Owners == null)
                                                 {
-                                                    objectState.Owners = new Dictionary<string, int>();
+                                                    objectState.Owners = new Dictionary<string, long>();
                                                     logstatus = "txid:" + transaction.TransactionId + ",object,create,\"success\"";
                                                 }
 
@@ -288,10 +288,10 @@ namespace SUP.P2FK
 
 
                                     //is transaction signer not on the Owners list
-                                    if (!objectState.Owners.TryGetValue(transaction.SignedBy, out int qtyOwnedG))
+                                    if (!objectState.Owners.TryGetValue(transaction.SignedBy, out long qtyOwnedG))
                                     {
                                         //is the object container empty
-                                        if (!objectState.Owners.TryGetValue(objectaddress, out int selfOwned))
+                                        if (!objectState.Owners.TryGetValue(objectaddress, out long selfOwned))
                                         {
                                             if (verbose)
                                             {
@@ -324,7 +324,7 @@ namespace SUP.P2FK
 
 
                                         // New value to update with
-                                        int newValue = qtyOwnedG - qtyToGive;
+                                        long newValue = qtyOwnedG - qtyToGive;
 
 
                                         // Check if the new value is an integer
@@ -341,7 +341,7 @@ namespace SUP.P2FK
 
 
                                         //check if Reciever already has a qty if not add a  new owner if yes increment
-                                        if (!objectState.Owners.TryGetValue(reciever, out int recieverOwned))
+                                        if (!objectState.Owners.TryGetValue(reciever, out long recieverOwned))
                                         {
                                             objectState.Owners.Add(reciever, qtyToGive);
 
@@ -449,10 +449,10 @@ namespace SUP.P2FK
 
                                     if (objectState.Owners == null) { break; }
 
-                                    if (!objectState.Owners.TryGetValue(transaction.SignedBy, out int qtyOwnedG))
+                                    if (!objectState.Owners.TryGetValue(transaction.SignedBy, out long qtyOwnedG))
                                     {
                                         //try grant access to object's self Owned qtyOwned to any creator
-                                        if (!objectState.Owners.TryGetValue(objectaddress, out int selfOwned))
+                                        if (!objectState.Owners.TryGetValue(objectaddress, out long selfOwned))
                                         {
                                             if (verbose)
                                             {
@@ -485,7 +485,7 @@ namespace SUP.P2FK
                                         //update owners Dictionary with new values
 
                                         // New value to update with
-                                        int newValue = qtyOwnedG - qtyToBurn;
+                                        long newValue = qtyOwnedG - qtyToBurn;
 
 
                                         // Check if the new value is an integer

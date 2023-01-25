@@ -51,6 +51,25 @@ namespace SUP
                     }
                     break;
 
+                case "SUP":
+                    var SUP = new Options { CreateIfMissing = true };
+                    txtGetValue.Text = "";
+                    using (var db = new DB(SUP, @"sup"))
+                    {
+                        LevelDB.Iterator it = db.CreateIterator();
+                        for (
+                            it.Seek(txtlevelDBKey.Text);
+                            it.IsValid() && it.KeyAsString().StartsWith(txtlevelDBKey.Text);
+                            it.Next()
+                        )
+                        {
+                            txtGetValue.Text =
+                                txtGetValue.Text + it.ValueAsString() + Environment.NewLine;
+                        }
+                        it.Dispose();
+                    }
+                    break;
+
                 case "PRO":
                     var PRO = new Options { CreateIfMissing = true };
                     txtGetValue.Text = "";

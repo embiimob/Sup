@@ -210,7 +210,7 @@ namespace SUP.P2FK
 
                         }
                     }
-                }
+                }else { break; }
 
             }
 
