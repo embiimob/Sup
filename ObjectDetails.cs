@@ -121,7 +121,9 @@ namespace SUP
                             flowPanel.Visible = false;
                             string viewerPath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + @"\root\" + transactionid + @"\urnviewer.html";
                             flowPanel.Controls.Clear();
-                            string htmlstring = "<html><body><embed src=\"" + filePath + "\" width=100% height=100%></body></html>";
+
+                        string htmlstring = "<html><body><embed src=\"" + filePath + "\" width=100% height=100%></body></html>";
+
                         try
                         {
                             System.IO.File.WriteAllText(@"root\" + transactionid + @"\urnviewer.html", htmlstring);
@@ -140,8 +142,6 @@ namespace SUP
                         // Add the default image to the flowPanel                        
                         break;
                 }
-
-
 
                 string creators = null;
                 foreach (string creator in objstate.Creators.Skip(1))

@@ -21,5 +21,10 @@ namespace SUP
         {
             new ObjectDetails(ObjectAddress.Text).Show();
         }
+
+        private void ObjectCreators_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        {
+            //send to searchtextbox click on the creator button
+        }
     }
 }

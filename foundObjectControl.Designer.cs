@@ -29,7 +29,6 @@
         private void InitializeComponent()
         {
             this.ObjectImage = new System.Windows.Forms.PictureBox();
-            this.ObjectCreators = new System.Windows.Forms.Label();
             this.panel1 = new System.Windows.Forms.Panel();
             this.ObjectPrice = new System.Windows.Forms.Label();
             this.label4 = new System.Windows.Forms.Label();
@@ -39,8 +38,12 @@
             this.ObjectQty = new System.Windows.Forms.Label();
             this.ObjectAddress = new System.Windows.Forms.Label();
             this.ObjectName = new System.Windows.Forms.Label();
+            this.ObjectCreators = new System.Windows.Forms.LinkLabel();
+            this.ObjectCreators2 = new System.Windows.Forms.LinkLabel();
+            this.flowLayoutPanel1 = new System.Windows.Forms.FlowLayoutPanel();
             ((System.ComponentModel.ISupportInitialize)(this.ObjectImage)).BeginInit();
             this.panel1.SuspendLayout();
+            this.flowLayoutPanel1.SuspendLayout();
             this.SuspendLayout();
             // 
             // ObjectImage
@@ -56,20 +59,7 @@
             this.ObjectImage.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
             this.ObjectImage.TabIndex = 0;
             this.ObjectImage.TabStop = false;
-            // 
-            // ObjectCreators
-            // 
-            this.ObjectCreators.AutoSize = true;
-            this.ObjectCreators.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.ObjectCreators.Location = new System.Drawing.Point(6, 235);
-            this.ObjectCreators.MaximumSize = new System.Drawing.Size(170, 0);
-            this.ObjectCreators.Name = "ObjectCreators";
-            this.ObjectCreators.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
-            this.ObjectCreators.Size = new System.Drawing.Size(40, 16);
-            this.ObjectCreators.TabIndex = 4;
-            this.ObjectCreators.Text = "embii";
-            this.ObjectCreators.TextAlign = System.Drawing.ContentAlignment.TopRight;
-            this.ObjectCreators.UseMnemonic = false;
+            this.ObjectImage.Click += new System.EventHandler(this.foundObjectControl_Click);
             // 
             // panel1
             // 
@@ -83,6 +73,7 @@
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(210, 40);
             this.panel1.TabIndex = 5;
+            this.panel1.Click += new System.EventHandler(this.foundObjectControl_Click);
             // 
             // ObjectPrice
             // 
@@ -92,6 +83,7 @@
             this.ObjectPrice.Size = new System.Drawing.Size(92, 20);
             this.ObjectPrice.TabIndex = 9;
             this.ObjectPrice.Text = "-";
+            this.ObjectPrice.Click += new System.EventHandler(this.foundObjectControl_Click);
             // 
             // label4
             // 
@@ -107,6 +99,7 @@
             this.label4.Text = "offer";
             this.label4.TextAlign = System.Drawing.ContentAlignment.TopRight;
             this.label4.UseMnemonic = false;
+            this.label4.Click += new System.EventHandler(this.foundObjectControl_Click);
             // 
             // ObjectOffer
             // 
@@ -117,6 +110,7 @@
             this.ObjectOffer.Size = new System.Drawing.Size(95, 20);
             this.ObjectOffer.TabIndex = 8;
             this.ObjectOffer.Text = "-";
+            this.ObjectOffer.Click += new System.EventHandler(this.foundObjectControl_Click);
             // 
             // label3
             // 
@@ -132,6 +126,7 @@
             this.label3.Text = "price";
             this.label3.TextAlign = System.Drawing.ContentAlignment.TopRight;
             this.label3.UseMnemonic = false;
+            this.label3.Click += new System.EventHandler(this.foundObjectControl_Click);
             // 
             // ObjectDescription
             // 
@@ -141,6 +136,8 @@
             this.ObjectDescription.Size = new System.Drawing.Size(199, 42);
             this.ObjectDescription.TabIndex = 6;
             this.ObjectDescription.Text = "a collection of items found on a spaceship";
+            this.ObjectDescription.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.ObjectDescription.Click += new System.EventHandler(this.foundObjectControl_Click);
             // 
             // ObjectQty
             // 
@@ -151,6 +148,7 @@
             this.ObjectQty.Size = new System.Drawing.Size(54, 20);
             this.ObjectQty.TabIndex = 7;
             this.ObjectQty.Text = "10000x";
+            this.ObjectQty.Click += new System.EventHandler(this.foundObjectControl_Click);
             // 
             // ObjectAddress
             // 
@@ -162,6 +160,7 @@
             this.ObjectAddress.TabIndex = 8;
             this.ObjectAddress.Text = "@";
             this.ObjectAddress.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.ObjectAddress.Click += new System.EventHandler(this.foundObjectControl_Click);
             // 
             // ObjectName
             // 
@@ -172,18 +171,53 @@
             this.ObjectName.Size = new System.Drawing.Size(150, 18);
             this.ObjectName.TabIndex = 9;
             this.ObjectName.Text = "FakeUFO Keyword";
+            this.ObjectName.Click += new System.EventHandler(this.foundObjectControl_Click);
+            // 
+            // ObjectCreators
+            // 
+            this.ObjectCreators.AutoSize = true;
+            this.ObjectCreators.BackColor = System.Drawing.Color.Transparent;
+            this.ObjectCreators.LinkColor = System.Drawing.SystemColors.Highlight;
+            this.ObjectCreators.Location = new System.Drawing.Point(3, 0);
+            this.ObjectCreators.Name = "ObjectCreators";
+            this.ObjectCreators.Size = new System.Drawing.Size(0, 13);
+            this.ObjectCreators.TabIndex = 10;
+            this.ObjectCreators.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.ObjectCreators.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.ObjectCreators_LinkClicked);
+            // 
+            // ObjectCreators2
+            // 
+            this.ObjectCreators2.AutoSize = true;
+            this.ObjectCreators2.BackColor = System.Drawing.Color.Transparent;
+            this.ObjectCreators2.LinkColor = System.Drawing.SystemColors.Highlight;
+            this.ObjectCreators2.Location = new System.Drawing.Point(9, 0);
+            this.ObjectCreators2.Name = "ObjectCreators2";
+            this.ObjectCreators2.Size = new System.Drawing.Size(0, 13);
+            this.ObjectCreators2.TabIndex = 11;
+            this.ObjectCreators2.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            // 
+            // flowLayoutPanel1
+            // 
+            this.flowLayoutPanel1.Controls.Add(this.ObjectCreators);
+            this.flowLayoutPanel1.Controls.Add(this.ObjectCreators2);
+            this.flowLayoutPanel1.Location = new System.Drawing.Point(0, 238);
+            this.flowLayoutPanel1.Margin = new System.Windows.Forms.Padding(10, 3, 10, 3);
+            this.flowLayoutPanel1.Name = "flowLayoutPanel1";
+            this.flowLayoutPanel1.Size = new System.Drawing.Size(207, 20);
+            this.flowLayoutPanel1.TabIndex = 12;
+            this.flowLayoutPanel1.Click += new System.EventHandler(this.foundObjectControl_Click);
             // 
             // foundObjectControl
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.SystemColors.ActiveCaption;
+            this.Controls.Add(this.flowLayoutPanel1);
             this.Controls.Add(this.ObjectName);
             this.Controls.Add(this.ObjectDescription);
             this.Controls.Add(this.ObjectAddress);
             this.Controls.Add(this.ObjectQty);
             this.Controls.Add(this.panel1);
-            this.Controls.Add(this.ObjectCreators);
             this.Controls.Add(this.ObjectImage);
             this.DoubleBuffered = true;
             this.Margin = new System.Windows.Forms.Padding(2);
@@ -196,6 +230,8 @@
             ((System.ComponentModel.ISupportInitialize)(this.ObjectImage)).EndInit();
             this.panel1.ResumeLayout(false);
             this.panel1.PerformLayout();
+            this.flowLayoutPanel1.ResumeLayout(false);
+            this.flowLayoutPanel1.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -205,7 +241,6 @@
         private System.Windows.Forms.Panel panel1;
         private System.Windows.Forms.Label label4;
         private System.Windows.Forms.Label label3;
-        public System.Windows.Forms.Label ObjectCreators;
         public System.Windows.Forms.Label ObjectPrice;
         public System.Windows.Forms.Label ObjectOffer;
         public System.Windows.Forms.Label ObjectDescription;
@@ -213,5 +248,8 @@
         public System.Windows.Forms.PictureBox ObjectImage;
         public System.Windows.Forms.Label ObjectAddress;
         public System.Windows.Forms.Label ObjectName;
+        public System.Windows.Forms.LinkLabel ObjectCreators;
+        public System.Windows.Forms.LinkLabel ObjectCreators2;
+        private System.Windows.Forms.FlowLayoutPanel flowLayoutPanel1;
     }
 }

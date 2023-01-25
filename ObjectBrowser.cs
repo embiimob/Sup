@@ -55,23 +55,28 @@ namespace SUP
                 }
                 foundObject.ObjectImage.ImageLocation = objstate.Image.Replace("BTC:", @"root/"); foundObject.ObjectName.Text = objstate.Name;
                 foundObject.ObjectDescription.Text = objstate.Description;
-                string creators = null;
+         
                 foreach (string creator in objstate.Creators.Skip(1))
                 {
 
                     PROState profile = PROState.GetProfileByAddress(creator, txtLogin.Text, txtPassword.Text, txtUrl.Text);
 
-                    if (profile.URN != null)
+                    if (profile.URN != null && foundObject.ObjectCreators.Text == null)
                     {
-                        creators = creators + "  " + profile.URN;
+                        foundObject.ObjectCreators.Text = TruncateAddress(profile.URN);
                     }
                     else
                     {
-                        creators = creators + "  " + TruncateAddress(creator);
+                        foundObject.ObjectCreators.Text = TruncateAddress(creator);
+
+                        if (profile.URN != null && foundObject.ObjectCreators2.Text == null)
+                        {
+                            foundObject.ObjectCreators2.Text = TruncateAddress(profile.URN);
+                        }
                     }
 
                 }
-                foundObject.ObjectCreators.Text = creators;
+
                 foundObject.ObjectQty.Text = objstate.Owners.Values.Sum().ToString() + "x";
                 foundObject.ObjectAddress.Text = objstate.Creators.First();
 
@@ -100,7 +105,7 @@ namespace SUP
             {
 
 
-               searchprofile = PROState.GetProfileByURN(txtSearchAddress.Text, txtLogin.Text, txtPassword.Text, txtUrl.Text);
+                searchprofile = PROState.GetProfileByURN(txtSearchAddress.Text, txtLogin.Text, txtPassword.Text, txtUrl.Text);
 
                 if (searchprofile.URN != null)
                 {
@@ -116,11 +121,11 @@ namespace SUP
                 }
             }
 
-           
+
 
 
             flowLayoutPanel1.Controls.Clear();
-           
+
 
             List<OBJState> createdObjects = OBJState.GetObjectsByAddress(profileCheck, txtLogin.Text, txtPassword.Text, txtUrl.Text);
 
@@ -138,7 +143,7 @@ namespace SUP
 
                         if (!System.IO.Directory.Exists("root/" + transid))
                         {
-                            Root root = Root.GetRootByTransactionId( transid, txtLogin.Text, txtPassword.Text, @"http://127.0.0.1:8332", "0" );
+                            Root root = Root.GetRootByTransactionId(transid, txtLogin.Text, txtPassword.Text, @"http://127.0.0.1:8332", "0");
 
                         }
 
@@ -148,32 +153,38 @@ namespace SUP
                     foundObject.ObjectDescription.Text = objstate.Description;
                     foundObject.ObjectAddress.Text = objstate.Creators.First();
                     foundObject.ObjectQty.Text = objstate.Owners.Values.Sum().ToString() + "x";
-                    string creators = null;
+                  
                     foreach (string creator in objstate.Creators.Skip(1))
                     {
 
                         PROState profile = PROState.GetProfileByAddress(creator, txtLogin.Text, txtPassword.Text, txtUrl.Text);
 
-                        if (profile.URN != null)
+                        if (profile.URN != null && foundObject.ObjectCreators.Text == "")
                         {
-                            creators = creators + "  " + profile.URN;
+                            foundObject.ObjectCreators.Text = TruncateAddress(profile.URN);
                         }
                         else
                         {
-                            creators = creators + "  " + TruncateAddress(creator);
+                            
+
+                            if (profile.URN != null && foundObject.ObjectCreators2.Text == "")
+                            {
+                                foundObject.ObjectCreators2.Text = TruncateAddress(profile.URN);
+                            }
+
+                            if (foundObject.ObjectCreators.Text == "") { foundObject.ObjectCreators.Text = TruncateAddress(creator); }
                         }
 
-                        
+
 
                     }
-                    foundObject.ObjectCreators.Text = creators;
-                 
+                
                     flowLayoutPanel1.Controls.Add(foundObject);
-                    
+
                 }
             }
 
-            
+
         }
 
         private void btnGetOwned_Click(object sender, EventArgs e)
@@ -210,25 +221,33 @@ namespace SUP
                     foundObject.ObjectImage.ImageLocation = objstate.Image.Replace("BTC:", @"root/");
                     foundObject.ObjectName.Text = objstate.Name;
                     foundObject.ObjectDescription.Text = objstate.Description;
-                    string creators = null;
+                    
                     foreach (string creator in objstate.Creators.Skip(1))
                     {
 
                         PROState profile = PROState.GetProfileByAddress(creator, txtLogin.Text, txtPassword.Text, txtUrl.Text);
 
-                        if (profile.URN != null)
+                        if (profile.URN != null && foundObject.ObjectCreators.Text == "")
                         {
-                            creators = creators + "  " + profile.URN;
+                            foundObject.ObjectCreators.Text = TruncateAddress(profile.URN);
                         }
                         else
                         {
-                            creators = creators + "  " + TruncateAddress(creator);
+
+
+                            if (profile.URN != null && foundObject.ObjectCreators2.Text == "")
+                            {
+                                foundObject.ObjectCreators2.Text = TruncateAddress(profile.URN);
+                            }
+
+                            if (foundObject.ObjectCreators.Text == "") { foundObject.ObjectCreators.Text = TruncateAddress(creator); }
                         }
+
 
 
 
                     }
-                    foundObject.ObjectCreators.Text = creators;
+                  
                     foundObject.ObjectQty.Text = objstate.Owners.Values.Sum().ToString() + "x";
                     foundObject.ObjectAddress.Text = objstate.Creators.First();
                     flowLayoutPanel1.Controls.Add(foundObject);
@@ -301,24 +320,31 @@ namespace SUP
                     foundObject.ObjectImage.ImageLocation = objstate.Image.Replace("BTC:", @"root/");
                     foundObject.ObjectName.Text = objstate.Name;
                     foundObject.ObjectDescription.Text = objstate.Description;
-                    string creators = null;
+                 
                     foreach (string creator in objstate.Creators.Skip(1))
                     {
 
                         PROState profile = PROState.GetProfileByAddress(creator, txtLogin.Text, txtPassword.Text, txtUrl.Text);
 
-                        if (profile.URN != null)
+                        if (profile.URN != null && foundObject.ObjectCreators.Text == "")
                         {
-                            creators = creators + "  " + profile.URN;
+                            foundObject.ObjectCreators.Text = TruncateAddress(profile.URN);
                         }
                         else
                         {
-                            creators = creators + "  " + TruncateAddress(creator);
+
+
+                            if (profile.URN != null && foundObject.ObjectCreators2.Text == "")
+                            {
+                                foundObject.ObjectCreators2.Text = TruncateAddress(profile.URN);
+                            }
+
+                            if (foundObject.ObjectCreators.Text == "") { foundObject.ObjectCreators.Text = TruncateAddress(creator); }
                         }
 
 
+
                     }
-                    foundObject.ObjectCreators.Text = creators;
                     foundObject.ObjectQty.Text = objstate.Owners.Values.Sum().ToString() + "x";
                     foundObject.ObjectAddress.Text = objstate.Creators.First();
                     flowLayoutPanel1.Controls.Add(foundObject);
@@ -360,25 +386,31 @@ namespace SUP
                     }
                     foundObject.ObjectImage.ImageLocation = objstate.Image.Replace("BTC:", @"root/"); foundObject.ObjectName.Text = objstate.Name;
                     foundObject.ObjectDescription.Text = objstate.Description;
-                    string creators = null;
                     foreach (string creator in objstate.Creators.Skip(1))
                     {
 
                         PROState profile = PROState.GetProfileByAddress(creator, txtLogin.Text, txtPassword.Text, txtUrl.Text);
 
-                        if (profile.URN != null)
+                        if (profile.URN != null && foundObject.ObjectCreators.Text == "")
                         {
-                            creators = creators + "  " + profile.URN;
+                            foundObject.ObjectCreators.Text = TruncateAddress(profile.URN);
                         }
                         else
                         {
-                            creators = creators + "  " + TruncateAddress(creator);
+
+
+                            if (profile.URN != null && foundObject.ObjectCreators2.Text == "")
+                            {
+                                foundObject.ObjectCreators2.Text = TruncateAddress(profile.URN);
+                            }
+
+                            if (foundObject.ObjectCreators.Text == "") { foundObject.ObjectCreators.Text = TruncateAddress(creator); }
                         }
+
 
 
 
                     }
-                    foundObject.ObjectCreators.Text = creators;
                     foundObject.ObjectQty.Text = objstate.Owners.Values.Sum().ToString() + "x";
                     foundObject.ObjectAddress.Text = objstate.Creators.First();
 
@@ -435,32 +467,38 @@ namespace SUP
                 }
                 foundObject.ObjectImage.ImageLocation = objstate.Image.Replace("BTC:", @"root/"); foundObject.ObjectName.Text = objstate.Name;
                 foundObject.ObjectDescription.Text = objstate.Description;
-                string creators = null;
                 foreach (string creator in objstate.Creators.Skip(1))
                 {
 
                     PROState profile = PROState.GetProfileByAddress(creator, txtLogin.Text, txtPassword.Text, txtUrl.Text);
 
-                    if (profile.URN != null)
+                    if (profile.URN != null && foundObject.ObjectCreators.Text == "")
                     {
-                        creators = creators + "  " + profile.URN;
+                        foundObject.ObjectCreators.Text = TruncateAddress(profile.URN);
                     }
                     else
                     {
-                        creators = creators + "  " + TruncateAddress(creator);
+
+
+                        if (profile.URN != null && foundObject.ObjectCreators2.Text == "")
+                        {
+                            foundObject.ObjectCreators2.Text = TruncateAddress(profile.URN);
+                        }
+
+                        if (foundObject.ObjectCreators.Text == "") { foundObject.ObjectCreators.Text = TruncateAddress(creator); }
                     }
+
 
 
 
                 }
-                foundObject.ObjectCreators.Text = creators;
                 foundObject.ObjectQty.Text = objstate.Owners.Values.Sum().ToString() + "x";
                 foundObject.ObjectAddress.Text = objstate.Creators.First();
                 flowLayoutPanel1.Controls.Add(foundObject);
             }
         }
 
-    
+
 
         private void button4_Click(object sender, EventArgs e)
         {
@@ -506,6 +544,18 @@ namespace SUP
 
 
 
+        }
+
+        private void txtSearchAddress_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Enter)
+            {
+                if (btnObjects.BackColor == Color.Yellow) { btnObjects.PerformClick(); }
+                if (btnCreated.BackColor == Color.Yellow) { btnCreated.PerformClick(); }
+                if (btnOwned.BackColor == Color.Yellow) { btnOwned.PerformClick(); }
+                if (btnKeywords.BackColor == Color.Yellow) { btnKeywords.PerformClick(); }
+                if (btnURN.BackColor == Color.Yellow) { btnURN.PerformClick(); }
+            }
         }
     }
 }
