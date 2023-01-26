@@ -118,14 +118,13 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="textBox1.Text" xml:space="preserve">
-    <value>
-This experimental Sup!? browser is read only for now.
+    <value>This experimental Sup!? browser is read only for now.
 
 Compose your message in a blank text file called MSG (the file must NOT have any file extensions!) 
 
 Use the apertus.io @address feature to direct your messages to the appropriate object's address
 (with no message option selected!) , attach the file and etch.
 
-** only signed P2FK messages are inspected.</value>
+* Only signed P2FK messages are inspected.</value>
   </data>
 </root>

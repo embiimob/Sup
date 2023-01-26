@@ -89,7 +89,7 @@ namespace SUP.P2FK
 
                     string sigSeen;
 
-                    using (var db = new DB(OBJ, @"root\obj"))
+                    using (var db = new DB(OBJ, @"root\pro"))
                     {
                         sigSeen = db.Get(transaction.Signature);
                     }
@@ -98,7 +98,7 @@ namespace SUP.P2FK
                     {
 
 
-                        using (var db = new DB(OBJ, @"root\obj"))
+                        using (var db = new DB(OBJ, @"root\pro"))
                         {
                             db.Put(transaction.Signature, transaction.TransactionId);
                         }
@@ -149,7 +149,7 @@ namespace SUP.P2FK
 
 
                         //has proper authority to make OBJ changes
-                        if (logstatus == null && profileState.Creators.Contains(transaction.SignedBy))
+                        if (logstatus == null && profileState.Creators != null && profileState.Creators.Contains(transaction.SignedBy))
                         {
 
                             if (profileinspector.urn != null) { profileState.ChangeDate = transaction.BlockDate; profileState.URN = profileinspector.urn; }
@@ -210,7 +210,7 @@ namespace SUP.P2FK
 
                         }
                     }
-                }else { break; }
+                }else {  }///not sure why their is an else may not be necessary..
 
             }
 

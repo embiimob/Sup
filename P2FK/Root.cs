@@ -192,8 +192,8 @@ namespace SUP.P2FK
                 }
                 catch { break; }
 
-                    //invalid if a special character is not found before a number
-                    if (transactionASCII.IndexOfAny(specialChars) != match.Index)
+                //invalid if a special character is not found before a number
+                if (transactionASCII.IndexOfAny(specialChars) != match.Index)
                 {
                     break;
                 }
@@ -250,24 +250,24 @@ namespace SUP.P2FK
                         }
 
                         isledger = true;
-                        
-                            P2FKRoot = GetRootByTransactionId(
-                            transactionid,
+
+                        P2FKRoot = GetRootByTransactionId(
+                        transactionid,
+                        username,
+                        password,
+                        url,
+                        versionbyte,
+                        GetRootBytesByLedger(
+                            fileName
+                                + Environment.NewLine
+                                + Encoding.ASCII.GetString(fileBytes),
                             username,
                             password,
-                            url,
-                            versionbyte,
-                            GetRootBytesByLedger(
-                                fileName
-                                    + Environment.NewLine
-                                    + Encoding.ASCII.GetString(fileBytes),
-                                username,
-                                password,
-                                url
-                            ), P2FKSignatureAddress
-                        );
-                       
-                        if ( P2FKRoot.File.Count > 0)
+                            url
+                        ), P2FKSignatureAddress
+                    );
+
+                        if (P2FKRoot.File.Count > 0)
                         {
                             fileName = P2FKRoot.File.Keys.First();
                             fileBytes = System.IO.File.ReadAllBytes(@"root\" + P2FKRoot.TransactionId + @"\" + fileName); ;
@@ -322,7 +322,7 @@ namespace SUP.P2FK
                         using (FileStream fs = new FileStream(diskpath + "MSG", FileMode.Create))
                         {
                             fs.Write(fileBytes, 0, fileBytes.Length);
-                            
+
                         }
                     }
                     else
@@ -434,30 +434,30 @@ namespace SUP.P2FK
             System.IO.File.WriteAllText(@"root\" + P2FKRoot.TransactionId + @"\" + "P2FK.json", rootSerialized);
 
 
-            foreach (KeyValuePair<string, string> keyword in P2FKRoot.Keyword)
+            if (P2FKRoot.Message.Count() > 0)
             {
-                int messageCount = 0;
-                foreach (string msg in P2FKRoot.Message)
+                foreach (KeyValuePair<string, string> keyword in P2FKRoot.Keyword)
                 {
-                    messageCount++;
+
+                    string msg = "[\"" + P2FKRoot.SignedBy + "\",\"" + P2FKRoot.TransactionId + "\"]";
                     lock (levelDBLocker)
                     {
                         var ROOT = new Options { CreateIfMissing = true };
-                        var db = new DB(ROOT, @"sup");
-                        db.Put(keyword.Key + "!" + P2FKRoot.BlockDate.ToString("yyyyMMddHHmmss") + "!"+ messageCount.ToString("X").PadLeft(9, '0'), msg);
+                        var db = new DB(ROOT, @"root/sup");
+                        db.Put(keyword.Key + "!" + P2FKRoot.BlockDate.ToString("yyyyMMddHHmmss"), msg);
                         db.Close();
                     }
+
                 }
             }
-
             return P2FKRoot;
         }
-        public static Root[] GetRootsByAddress(string address, string username, string password, string url,  int skip = 0, int qty = 300, string versionByte = "111")
+        public static Root[] GetRootsByAddress(string address, string username, string password, string url, int skip = 0, int qty = 300, string versionByte = "111")
         {
             var rootList = new List<Root>();
             try
             {
-                
+
                 NetworkCredential credentials = new NetworkCredential(username, password);
                 var rpcClient = new RPCClient(credentials, new Uri(url));
                 var synchronousData = new Dictionary<int, Root>();
@@ -475,17 +475,17 @@ namespace SUP.P2FK
                         int rootId = i;
                         string hexId = GetTransactionIdByHexString(deserializedObject[i].ToString());
 
-                            var root = Root.GetRootByTransactionId(hexId, username, password, url, versionByte);
+                        var root = Root.GetRootByTransactionId(hexId, username, password, url, versionByte);
 
-                            if (root != null && root.TotalByteSize > 0)
-                            {
-                                root.Id = rootId + skip;
+                        if (root != null && root.TotalByteSize > 0)
+                        {
+                            root.Id = rootId + skip;
                             rootList.Add(root);
-                            }
-                      
+                        }
+
                     }
                     skip += qty;
-                    
+
                 }
             }
             catch (Exception ex)

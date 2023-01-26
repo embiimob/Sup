@@ -39,7 +39,7 @@
             this.label1 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
             this.CreatorsPanel = new System.Windows.Forms.FlowLayoutPanel();
-            this.lblTotalOwned = new System.Windows.Forms.Label();
+            this.lblTotalOwnedMain = new System.Windows.Forms.Label();
             this.button2 = new System.Windows.Forms.Button();
             this.button4 = new System.Windows.Forms.Button();
             this.imgPicture = new System.Windows.Forms.PictureBox();
@@ -56,6 +56,7 @@
             this.label3 = new System.Windows.Forms.Label();
             this.txtName = new System.Windows.Forms.Label();
             this.supFlow = new System.Windows.Forms.FlowLayoutPanel();
+            this.lblTotalOwnedDetail = new System.Windows.Forms.Label();
             this.flowPanel.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.webviewer)).BeginInit();
@@ -166,17 +167,18 @@
             this.CreatorsPanel.Size = new System.Drawing.Size(157, 150);
             this.CreatorsPanel.TabIndex = 7;
             // 
-            // lblTotalOwned
+            // lblTotalOwnedMain
             // 
-            this.lblTotalOwned.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblTotalOwned.ForeColor = System.Drawing.SystemColors.ControlText;
-            this.lblTotalOwned.Location = new System.Drawing.Point(930, 358);
-            this.lblTotalOwned.Name = "lblTotalOwned";
-            this.lblTotalOwned.Padding = new System.Windows.Forms.Padding(3);
-            this.lblTotalOwned.Size = new System.Drawing.Size(269, 23);
-            this.lblTotalOwned.TabIndex = 9;
-            this.lblTotalOwned.Text = "total: 100";
-            this.lblTotalOwned.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            this.lblTotalOwnedMain.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblTotalOwnedMain.ForeColor = System.Drawing.SystemColors.ControlText;
+            this.lblTotalOwnedMain.Location = new System.Drawing.Point(82, 58);
+            this.lblTotalOwnedMain.Name = "lblTotalOwnedMain";
+            this.lblTotalOwnedMain.Padding = new System.Windows.Forms.Padding(3);
+            this.lblTotalOwnedMain.Size = new System.Drawing.Size(226, 23);
+            this.lblTotalOwnedMain.TabIndex = 9;
+            this.lblTotalOwnedMain.Text = "x";
+            this.lblTotalOwnedMain.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.lblTotalOwnedMain.Click += new System.EventHandler(this.lblTotalOwnedMain_Click);
             // 
             // button2
             // 
@@ -206,6 +208,7 @@
             this.imgPicture.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
             this.imgPicture.TabIndex = 15;
             this.imgPicture.TabStop = false;
+            this.imgPicture.Click += new System.EventHandler(this.imgPicture_Click);
             // 
             // txtdesc
             // 
@@ -295,11 +298,11 @@
             this.textBox1.BackColor = System.Drawing.SystemColors.GradientInactiveCaption;
             this.textBox1.Enabled = false;
             this.textBox1.ForeColor = System.Drawing.SystemColors.WindowFrame;
-            this.textBox1.Location = new System.Drawing.Point(6, 381);
+            this.textBox1.Location = new System.Drawing.Point(6, 492);
             this.textBox1.Multiline = true;
             this.textBox1.Name = "textBox1";
             this.textBox1.ScrollBars = System.Windows.Forms.ScrollBars.Horizontal;
-            this.textBox1.Size = new System.Drawing.Size(269, 181);
+            this.textBox1.Size = new System.Drawing.Size(269, 70);
             this.textBox1.TabIndex = 1;
             this.textBox1.Text = resources.GetString("textBox1.Text");
             // 
@@ -328,20 +331,33 @@
             // txtName
             // 
             this.txtName.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.txtName.Location = new System.Drawing.Point(82, 14);
+            this.txtName.Location = new System.Drawing.Point(82, 11);
             this.txtName.Name = "txtName";
-            this.txtName.Size = new System.Drawing.Size(222, 67);
+            this.txtName.Size = new System.Drawing.Size(222, 39);
             this.txtName.TabIndex = 33;
             this.txtName.Text = "Title";
             this.txtName.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.txtName.Click += new System.EventHandler(this.txtName_Click);
             // 
             // supFlow
             // 
             this.supFlow.AutoScroll = true;
             this.supFlow.Location = new System.Drawing.Point(6, 5);
             this.supFlow.Name = "supFlow";
-            this.supFlow.Size = new System.Drawing.Size(269, 370);
+            this.supFlow.Size = new System.Drawing.Size(269, 478);
             this.supFlow.TabIndex = 3;
+            // 
+            // lblTotalOwnedDetail
+            // 
+            this.lblTotalOwnedDetail.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblTotalOwnedDetail.ForeColor = System.Drawing.SystemColors.ControlText;
+            this.lblTotalOwnedDetail.Location = new System.Drawing.Point(956, 358);
+            this.lblTotalOwnedDetail.Name = "lblTotalOwnedDetail";
+            this.lblTotalOwnedDetail.Padding = new System.Windows.Forms.Padding(3);
+            this.lblTotalOwnedDetail.Size = new System.Drawing.Size(221, 23);
+            this.lblTotalOwnedDetail.TabIndex = 34;
+            this.lblTotalOwnedDetail.Text = "total";
+            this.lblTotalOwnedDetail.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
             // ObjectDetails
             // 
@@ -362,7 +378,7 @@
             this.Controls.Add(this.imgPicture);
             this.Controls.Add(this.button4);
             this.Controls.Add(this.button2);
-            this.Controls.Add(this.lblTotalOwned);
+            this.Controls.Add(this.lblTotalOwnedMain);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.CreatorsPanel);
             this.Controls.Add(this.label1);
@@ -372,6 +388,7 @@
             this.Controls.Add(this.lblImageFullPath);
             this.Controls.Add(this.flowPanel);
             this.Controls.Add(this.webviewer);
+            this.Controls.Add(this.lblTotalOwnedDetail);
             this.Name = "ObjectDetails";
             this.Padding = new System.Windows.Forms.Padding(3);
             this.Text = "ObjectDetails";
@@ -404,7 +421,7 @@
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.FlowLayoutPanel CreatorsPanel;
-        private System.Windows.Forms.Label lblTotalOwned;
+        private System.Windows.Forms.Label lblTotalOwnedMain;
         private System.Windows.Forms.Button button2;
         private System.Windows.Forms.Button button4;
         private System.Windows.Forms.PictureBox imgPicture;
@@ -421,5 +438,6 @@
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.Label txtName;
         private System.Windows.Forms.FlowLayoutPanel supFlow;
+        private System.Windows.Forms.Label lblTotalOwnedDetail;
     }
 }
