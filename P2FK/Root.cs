@@ -361,6 +361,19 @@ namespace SUP.P2FK
 
             //transactionASCII = transactionASCII.Replace("\0"," "); 
             //assumes any remaining unprocessed characters are keywords
+
+
+           
+            int charactersPerDivision = 20;
+
+            if (transactionASCII.Length > charactersPerDivision)
+            {
+                int remainder = transactionASCII.Length % charactersPerDivision;
+                transactionASCII = transactionASCII.Substring(remainder);
+            }
+
+
+
             for (int i = 0; i < transactionASCII.Length; i += 20)
             {
                 try

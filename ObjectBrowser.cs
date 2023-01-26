@@ -18,9 +18,11 @@ namespace SUP
     public partial class ObjectBrowser : Form
     {
         Button lastClickedButton;
-        public ObjectBrowser()
+        private string _objectaddress;
+        public ObjectBrowser(string objectaddress)
         {
             InitializeComponent();
+            _objectaddress = objectaddress;
         }
 
         private void btnGetObject_Click(object sender, EventArgs e)
@@ -555,6 +557,15 @@ namespace SUP
                 if (btnOwned.BackColor == Color.Yellow) { btnOwned.PerformClick(); }
                 if (btnKeywords.BackColor == Color.Yellow) { btnKeywords.PerformClick(); }
                 if (btnURN.BackColor == Color.Yellow) { btnURN.PerformClick(); }
+            }
+        }
+
+        private void ObjectBrowser_Load(object sender, EventArgs e)
+        {
+            if (_objectaddress != null)
+            {
+                txtSearchAddress.Text = _objectaddress;
+                btnObjects.PerformClick();
             }
         }
     }

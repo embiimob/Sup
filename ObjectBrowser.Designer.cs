@@ -215,6 +215,7 @@
             this.Name = "ObjectBrowser";
             this.RightToLeft = System.Windows.Forms.RightToLeft.No;
             this.Text = "Sup!? Object Browser";
+            this.Load += new System.EventHandler(this.ObjectBrowser_Load);
             this.ResumeLayout(false);
             this.PerformLayout();
 

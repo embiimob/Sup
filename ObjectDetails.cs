@@ -265,18 +265,8 @@ namespace SUP
 
             // Get the link data
             var linkData = e.Link.LinkData;
+            new ObjectBrowser((string)linkData).Show();
 
-            // Check if the link data is of the correct type (string in this case)
-            if (linkData is string)
-            {
-                // Display the link data in the message box
-                System.Windows.MessageBox.Show((string)linkData);
-            }
-            else
-            {
-                // Display an error message
-                System.Windows.MessageBox.Show("Invalid link data.");
-            }
         }
 
         private void btnShowObjectDetails_Click(object sender, EventArgs e)
@@ -523,7 +513,8 @@ namespace SUP
         private void button7_Click(object sender, EventArgs e)
         {
             supFlow.Controls.Clear();
-                     
+            OBJState objstate = OBJState.GetObjectByAddress(_objectaddress, "good-user", "better-password", "http://127.0.0.1:18332");
+
             var SUP = new Options { CreateIfMissing = true };
     
             using (var db = new DB(SUP, @"root/sup"))
@@ -681,8 +672,8 @@ namespace SUP
 
         void Owner_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e, string ownerId)
         {
-            // Handle the LinkLabel's Click event and pass the owner id value
-            Console.WriteLine("Owner id: " + ownerId);
+
+            new ObjectBrowser(ownerId).Show();
         }
 
         private void txtName_Click(object sender, EventArgs e)

@@ -19,6 +19,8 @@ namespace SUP
 
         private void foundObjectControl_Click(object sender, EventArgs e)
         {
+
+      
             new ObjectDetails(ObjectAddress.Text).Show();
         }
 

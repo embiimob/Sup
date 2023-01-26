@@ -28,7 +28,6 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(ObjectDetails));
             this.flowPanel = new System.Windows.Forms.FlowLayoutPanel();
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
             this.webviewer = new Microsoft.Web.WebView2.WinForms.WebView2();
@@ -51,11 +50,11 @@
             this.button6 = new System.Windows.Forms.Button();
             this.button3 = new System.Windows.Forms.Button();
             this.supPanel = new System.Windows.Forms.Panel();
-            this.textBox1 = new System.Windows.Forms.TextBox();
+            this.supFlow = new System.Windows.Forms.FlowLayoutPanel();
             this.button7 = new System.Windows.Forms.Button();
+            this.textBox1 = new System.Windows.Forms.TextBox();
             this.label3 = new System.Windows.Forms.Label();
             this.txtName = new System.Windows.Forms.Label();
-            this.supFlow = new System.Windows.Forms.FlowLayoutPanel();
             this.lblTotalOwnedDetail = new System.Windows.Forms.Label();
             this.flowPanel.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
@@ -293,18 +292,13 @@
             this.supPanel.Size = new System.Drawing.Size(282, 624);
             this.supPanel.TabIndex = 31;
             // 
-            // textBox1
+            // supFlow
             // 
-            this.textBox1.BackColor = System.Drawing.SystemColors.GradientInactiveCaption;
-            this.textBox1.Enabled = false;
-            this.textBox1.ForeColor = System.Drawing.SystemColors.WindowFrame;
-            this.textBox1.Location = new System.Drawing.Point(6, 492);
-            this.textBox1.Multiline = true;
-            this.textBox1.Name = "textBox1";
-            this.textBox1.ScrollBars = System.Windows.Forms.ScrollBars.Horizontal;
-            this.textBox1.Size = new System.Drawing.Size(269, 70);
-            this.textBox1.TabIndex = 1;
-            this.textBox1.Text = resources.GetString("textBox1.Text");
+            this.supFlow.AutoScroll = true;
+            this.supFlow.Location = new System.Drawing.Point(6, 5);
+            this.supFlow.Name = "supFlow";
+            this.supFlow.Size = new System.Drawing.Size(269, 478);
+            this.supFlow.TabIndex = 3;
             // 
             // button7
             // 
@@ -316,6 +310,20 @@
             this.button7.Text = "📣";
             this.button7.UseVisualStyleBackColor = true;
             this.button7.Click += new System.EventHandler(this.button7_Click);
+            // 
+            // textBox1
+            // 
+            this.textBox1.BackColor = System.Drawing.SystemColors.GradientInactiveCaption;
+            this.textBox1.ForeColor = System.Drawing.SystemColors.WindowFrame;
+            this.textBox1.Location = new System.Drawing.Point(6, 492);
+            this.textBox1.Multiline = true;
+            this.textBox1.Name = "textBox1";
+            this.textBox1.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
+            this.textBox1.Size = new System.Drawing.Size(269, 70);
+            this.textBox1.TabIndex = 1;
+            this.textBox1.Text = "This experimental Sup!? browser is read only\r\n\r\nUse the apertus.io @address featu" +
+    "re to direct your messages to this object\'s address\r\n\r\n* Only signed P2FK messag" +
+    "es are inspected.";
             // 
             // label3
             // 
@@ -338,14 +346,6 @@
             this.txtName.Text = "Title";
             this.txtName.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             this.txtName.Click += new System.EventHandler(this.txtName_Click);
-            // 
-            // supFlow
-            // 
-            this.supFlow.AutoScroll = true;
-            this.supFlow.Location = new System.Drawing.Point(6, 5);
-            this.supFlow.Name = "supFlow";
-            this.supFlow.Size = new System.Drawing.Size(269, 478);
-            this.supFlow.TabIndex = 3;
             // 
             // lblTotalOwnedDetail
             // 
