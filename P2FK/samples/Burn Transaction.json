@@ -4,5 +4,16 @@
   [ 3, 2 ]
 ]
 
-//assume keyword 0 is the authorization address
+//assume keyword order id 0 is the authorization address
+//assume keyword order id 1+ are the objects being burnt
 //[object to burn keyword order id, qty to burn]
+
+//remove all unnecessary spaces
+//place JSON in a file named BRN (no file extension)
+//enter @objectaddress to burn in the apertus.io message box
+//enter each additional @objectaddress to burn above the first @objectaddress in the apertus.io message box 
+//in this example keyword order id 3 would be on the top of the list
+//attach file BRN using the apertus.io attach button
+//select an owner signature address from the signature list in apertus.io
+//verify that the no message box is checked.
+//click the apertus.io etch button

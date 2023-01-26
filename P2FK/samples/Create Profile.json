@@ -16,3 +16,12 @@
   "pky": "8d1f74f7f2b01db0530b3edbe19afa2d41fb7c52741ce6e7416fcf9ea0c4f07f",
   "cre": [ 0 ]
 }
+
+//created by 0 the signature address
+//pkx, pkxy are public keys of signature address for private message delivery
+//remove all unnecessary spaces
+//place JSON in a file named PRO (no file extension)
+//attach file PRO using the apertus.io attach button
+//select an owner signature address from the signature list in apertus.io
+//verify that the no message box is checked.
+//click the apertus.io etch button

@@ -4,7 +4,17 @@
   [ 4, 3 ]
 ]
 
-//assume keyword 0 is the authorization address
-//assume keyword 1 is the object being given
+//assume keyword order id 0 is the authorization address
+//assume keyword order id 1 is the object being given
 //[new owner keyword order id, qty to give]
+
+//remove all unnecessary spaces
+//place JSON in a file named GIV  (no file extension)
+//enter @objectaddress to give in the apertus.io message box
+//enter each additional @ownerAddress above the @objectaddress in the apertus.io message box 
+//in this example keyword order id 4 would be on the top of the list
+//attach file BRN using the apertus.io attach button
+//select a owners signature address from the signature list in apertus.io
+//verify that the no message box is checked.
+//click the apertus.io etch button
 

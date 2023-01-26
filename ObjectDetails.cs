@@ -12,6 +12,7 @@ using System.IO;
 using System.Linq;
 using System.Numerics;
 using System.Reflection;
+using System.Reflection.Emit;
 using System.Security.Policy;
 using System.Text.RegularExpressions;
 using System.Windows;
@@ -31,209 +32,11 @@ namespace SUP
             _objectaddress = objectaddress;
         }
 
-        private async void ObjectDetails_Load(object sender, EventArgs e)
+        private void ObjectDetails_Load(object sender, EventArgs e)
         {
             this.Text = "Sup!? Object Details [ " + _objectaddress + " ]";
-
-
-            OBJState objstate = OBJState.GetObjectByAddress(_objectaddress, "good-user", "better-password", "http://127.0.0.1:18332");
-
-            if (objstate.Owners != null)
-            {
-
-                string urn = objstate.URN.Replace("BTC:", @"root/");
-                string imgurn = objstate.Image.Replace("BTC:", @"root/");
-                DateTime urnblockdate = new DateTime();
-                DateTime imgblockdate = new DateTime();
-                DateTime uriblockdate = new DateTime();
-                try
-                {
-                    if (objstate.Image.StartsWith("BTC:"))
-                    {
-                        string transid = objstate.Image.Substring(4, 64);
-                        lblImageFullPath.Text = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + @"\" + imgurn.Replace(@"/", @"\");
-
-
-                        if (!System.IO.Directory.Exists("root/" + transid))
-                        {
-                            Root root = Root.GetRootByTransactionId(transid, "good-user", "better-password", "http://127.0.0.1:8332", "0");
-                            imgblockdate = root.BlockDate;
-
-                        }
-                        else
-                        {
-                            string P2FKJSONString = System.IO.File.ReadAllText(@"root/" + transid + @"/P2FK.json");
-                            Root root = JsonConvert.DeserializeObject<Root>(P2FKJSONString);
-                            imgblockdate = root.BlockDate;
-                        }
-
-                    }
-                    else
-                    {
-                        string transid = objstate.Image.Substring(0, 64);
-                        lblImageFullPath.Text = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + @"\root\" + imgurn.Replace(@" / ", @"\");
-                        if (!System.IO.Directory.Exists("root/" + transid))
-                        {
-                            Root root = Root.GetRootByTransactionId(transid, "good-user", "better-password", "http://127.0.0.1:18332", "0");
-                            imgblockdate = root.BlockDate;
-                        }
-                        else
-                        {
-                            string P2FKJSONString = System.IO.File.ReadAllText(@"root/" + transid + @"/P2FK.json");
-                            Root root = JsonConvert.DeserializeObject<Root>(P2FKJSONString);
-                            imgblockdate = root.BlockDate;
-                        }
-                    }
-                }
-                catch { }
-
-                    imgPicture.ImageLocation = lblImageFullPath.Text;
-
-                try
-                {
-                    if (objstate.URN.StartsWith("BTC:"))
-                    {
-                        string transid = objstate.URN.Substring(4, 64);
-
-                        if (!System.IO.Directory.Exists("root/" + transid))
-                        {
-                            Root root = Root.GetRootByTransactionId(transid, "good-user", "better-password", "http://127.0.0.1:8332", "0");
-                            urnblockdate = root.BlockDate;
-                        }
-                        else
-                        {
-                            string P2FKJSONString = System.IO.File.ReadAllText(@"root/" + transid + @"/P2FK.json");
-                            Root root = JsonConvert.DeserializeObject<Root>(P2FKJSONString);
-                            urnblockdate = root.BlockDate;
-                        }
-
-
-                    }
-                    else
-                    {
-                        string transid = objstate.URN.Substring(0, 64);
-                        if (!System.IO.Directory.Exists("root/" + transid))
-                        {
-                            Root root = Root.GetRootByTransactionId(transid, "good-user", "better-password", "http://127.0.0.1:18332", "0");
-                            urnblockdate = root.BlockDate;
-                        }
-                        else
-                        {
-                            string P2FKJSONString = System.IO.File.ReadAllText(@"root/" + transid + @"/P2FK.json");
-                            Root root = JsonConvert.DeserializeObject<Root>(P2FKJSONString);
-                            urnblockdate = root.BlockDate;
-                        }
-
-
-                    }
-                }
-                catch { urn = objstate.Image.Replace("BTC:", @"root/"); }
-
-
-                try
-                {
-                    if (objstate.URI.StartsWith("BTC:"))
-                    {
-                        string transid = objstate.URI.Substring(4, 64);
-
-                        if (!System.IO.Directory.Exists("root/" + transid))
-                        {
-                            Root root = Root.GetRootByTransactionId(transid, "good-user", "better-password", "http://127.0.0.1:8332", "0");
-                            uriblockdate = root.BlockDate;
-                        }
-                        else
-                        {
-                            string P2FKJSONString = System.IO.File.ReadAllText(@"root/" + transid + @"/P2FK.json");
-                            Root root = JsonConvert.DeserializeObject<Root>(P2FKJSONString);
-                            uriblockdate = root.BlockDate;
-                        }
-
-
-                    }
-                    else
-                    {
-                        string transid = objstate.URN.Substring(0, 64);
-                        if (!System.IO.Directory.Exists("root/" + transid))
-                        {
-                            Root root = Root.GetRootByTransactionId(transid, "good-user", "better-password", "http://127.0.0.1:18332", "0");
-                            uriblockdate = root.BlockDate;
-                        }
-                        else
-                        {
-                            string P2FKJSONString = System.IO.File.ReadAllText(@"root/" + transid + @"/P2FK.json");
-                            Root root = JsonConvert.DeserializeObject<Root>(P2FKJSONString);
-                            uriblockdate = root.BlockDate;
-                        }
-
-
-                    }
-                }
-                catch { }
-
-
-                // Get the file extension
-                string extension = Path.GetExtension(urn).ToLower();
-                Regex regexTransactionId = new Regex(@"\b[0-9a-f]{64}\b");
-                Match match = regexTransactionId.Match(urn);
-                string transactionid = match.Value;
-                string filePath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + @"\root\" + urn.Replace(@"/", @"\");
-                filePath = filePath.Replace(@"\root\root\", @"\root\");
-                lblURNFullPath.Text = filePath;
-                lblurn.Text = "URN " + urnblockdate.ToString() + " " + objstate.URN;
-                lblimg.Text = "IMG " + imgblockdate.ToString() + " " + objstate.Image;
-                lbluri.Text = "URI " + uriblockdate.ToString() + " " + objstate.URI;
-                txtdesc.Text = objstate.Description;
-                txtName.Text = objstate.Name;
-                long totalQty = objstate.Owners.Values.Sum();
-                button7.PerformClick();
-
-
-                lblTotalOwnedMain.Text = "x" + totalQty.ToString("N0");
-
-                switch (extension)
-                {
-                    case ".jpg":
-                    case ".jpeg":
-                    case ".gif":
-                    case ".png":
-                        // Create a new PictureBox
-                        pictureBox1.ImageLocation = urn;
-
-                        break;
-                    case ".mp4":
-                    case ".avi":
-                    case ".mp3":
-                    case ".wav":
-                    case ".pdf":
+            btnReloadObject.PerformClick();
                        
-                            flowPanel.Visible = false;
-                            string viewerPath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + @"\root\" + transactionid + @"\urnviewer.html";
-                            flowPanel.Controls.Clear();
-
-                        string htmlstring = "<html><body><embed src=\"" + filePath + "\" width=100% height=100%></body></html>";
-
-                        try
-                        {
-                            System.IO.File.WriteAllText(@"root\" + transactionid + @"\urnviewer.html", htmlstring);
-                            button1.Visible = true;
-                        }
-                        catch { }
-
-                            await webviewer.EnsureCoreWebView2Async();
-                            webviewer.CoreWebView2.Navigate(viewerPath);                        
-
-                        break;
-                    default:
-                        // Create a default "not supported" image
-
-                        pictureBox1.ImageLocation = @"root/" + objstate.Image.Replace("BTC:", "");
-                        // Add the default image to the flowPanel                        
-                        break;
-                }
-
-              
-
-            }
         }
         private string TruncateAddress(string input)
         {
@@ -513,6 +316,7 @@ namespace SUP
         private void button7_Click(object sender, EventArgs e)
         {
             supFlow.Controls.Clear();
+            
             OBJState objstate = OBJState.GetObjectByAddress(_objectaddress, "good-user", "better-password", "http://127.0.0.1:18332");
 
             var SUP = new Options { CreateIfMissing = true };
@@ -600,7 +404,8 @@ namespace SUP
                 }
                 it.Dispose();
             }
-
+            if (supFlow.Controls.Count > 0) { supFlow.ScrollControlIntoView(supFlow.Controls[supFlow.Controls.Count - 1]); }
+            supPanel.Visible = true;
         }
 
         void CreateRow(string imageLocation, string ownerName, string ownerId, DateTime timestamp , string messageText, FlowLayoutPanel layoutPanel)
@@ -689,6 +494,269 @@ namespace SUP
         private void imgPicture_Click(object sender, EventArgs e)
         {
             System.Windows.Clipboard.SetText(_objectaddress);
+        }
+
+        private async void lblRefreshFrame_Click(object sender, EventArgs e)
+        {
+            OBJState objstate = OBJState.GetObjectByAddress(_objectaddress, "good-user", "better-password", "http://127.0.0.1:18332");
+
+            if (objstate.Owners != null)
+            {
+
+                string urn = objstate.URN.Replace("BTC:", @"root/");
+                string imgurn = objstate.Image.Replace("BTC:", @"root/");
+                DateTime urnblockdate = new DateTime();
+                DateTime imgblockdate = new DateTime();
+                DateTime uriblockdate = new DateTime();
+                try
+                {
+                    if (objstate.Image.StartsWith("BTC:"))
+                    {
+                        string transid = objstate.Image.Substring(4, 64);
+                        lblImageFullPath.Text = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + @"\" + imgurn.Replace(@"/", @"\");
+
+
+                        if (!System.IO.Directory.Exists("root/" + transid))
+                        {
+                            Root root = Root.GetRootByTransactionId(transid, "good-user", "better-password", "http://127.0.0.1:8332", "0");
+                            imgblockdate = root.BlockDate;
+
+                        }
+                        else
+                        {
+                            string P2FKJSONString = System.IO.File.ReadAllText(@"root/" + transid + @"/P2FK.json");
+                            Root root = JsonConvert.DeserializeObject<Root>(P2FKJSONString);
+                            imgblockdate = root.BlockDate;
+                        }
+
+                    }
+                    else
+                    {
+                        string transid = objstate.Image.Substring(0, 64);
+                        lblImageFullPath.Text = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + @"\root\" + imgurn.Replace(@" / ", @"\");
+                        if (!System.IO.Directory.Exists("root/" + transid))
+                        {
+                            Root root = Root.GetRootByTransactionId(transid, "good-user", "better-password", "http://127.0.0.1:18332", "0");
+                            imgblockdate = root.BlockDate;
+                        }
+                        else
+                        {
+                            string P2FKJSONString = System.IO.File.ReadAllText(@"root/" + transid + @"/P2FK.json");
+                            Root root = JsonConvert.DeserializeObject<Root>(P2FKJSONString);
+                            imgblockdate = root.BlockDate;
+                        }
+                    }
+                }
+                catch { }
+
+                imgPicture.ImageLocation = lblImageFullPath.Text;
+
+                try
+                {
+                    if (objstate.URN.StartsWith("BTC:"))
+                    {
+                        string transid = objstate.URN.Substring(4, 64);
+
+                        if (!System.IO.Directory.Exists("root/" + transid))
+                        {
+                            Root root = Root.GetRootByTransactionId(transid, "good-user", "better-password", "http://127.0.0.1:8332", "0");
+                            urnblockdate = root.BlockDate;
+                        }
+                        else
+                        {
+                            string P2FKJSONString = System.IO.File.ReadAllText(@"root/" + transid + @"/P2FK.json");
+                            Root root = JsonConvert.DeserializeObject<Root>(P2FKJSONString);
+                            urnblockdate = root.BlockDate;
+                        }
+
+
+                    }
+                    else
+                    {
+                        string transid = objstate.URN.Substring(0, 64);
+                        if (!System.IO.Directory.Exists("root/" + transid))
+                        {
+                            Root root = Root.GetRootByTransactionId(transid, "good-user", "better-password", "http://127.0.0.1:18332", "0");
+                            urnblockdate = root.BlockDate;
+                        }
+                        else
+                        {
+                            string P2FKJSONString = System.IO.File.ReadAllText(@"root/" + transid + @"/P2FK.json");
+                            Root root = JsonConvert.DeserializeObject<Root>(P2FKJSONString);
+                            urnblockdate = root.BlockDate;
+                        }
+
+
+                    }
+                }
+                catch { urn = objstate.Image.Replace("BTC:", @"root/"); }
+
+
+                try
+                {
+                    if (objstate.URI.StartsWith("BTC:"))
+                    {
+                        string transid = objstate.URI.Substring(4, 64);
+
+                        if (!System.IO.Directory.Exists("root/" + transid))
+                        {
+                            Root root = Root.GetRootByTransactionId(transid, "good-user", "better-password", "http://127.0.0.1:8332", "0");
+                            uriblockdate = root.BlockDate;
+                        }
+                        else
+                        {
+                            string P2FKJSONString = System.IO.File.ReadAllText(@"root/" + transid + @"/P2FK.json");
+                            Root root = JsonConvert.DeserializeObject<Root>(P2FKJSONString);
+                            uriblockdate = root.BlockDate;
+                        }
+
+
+                    }
+                    else
+                    {
+                        string transid = objstate.URN.Substring(0, 64);
+                        if (!System.IO.Directory.Exists("root/" + transid))
+                        {
+                            Root root = Root.GetRootByTransactionId(transid, "good-user", "better-password", "http://127.0.0.1:18332", "0");
+                            uriblockdate = root.BlockDate;
+                        }
+                        else
+                        {
+                            string P2FKJSONString = System.IO.File.ReadAllText(@"root/" + transid + @"/P2FK.json");
+                            Root root = JsonConvert.DeserializeObject<Root>(P2FKJSONString);
+                            uriblockdate = root.BlockDate;
+                        }
+
+
+                    }
+                }
+                catch { }
+
+
+                // Get the file extension
+                string extension = Path.GetExtension(urn).ToLower();
+                Regex regexTransactionId = new Regex(@"\b[0-9a-f]{64}\b");
+                Match match = regexTransactionId.Match(urn);
+                string transactionid = match.Value;
+                string filePath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + @"\root\" + urn.Replace(@"/", @"\");
+                filePath = filePath.Replace(@"\root\root\", @"\root\");
+                lblURNFullPath.Text = filePath;
+                txtURN.Text = objstate.URN;
+                txtIMG.Text = objstate.Image;
+                txtURI.Text = objstate.URI;
+                if (urnblockdate.Year > 1)
+                {
+                    lblURNBlockDate.Text = urnblockdate.ToString();
+                }
+                if (imgblockdate.Year > 1)
+                {
+                    lblIMGBlockDate.Text = imgblockdate.ToString();
+                }
+                if (uriblockdate.Year > 1)
+                {
+                    lblURIBlockDate.Text = uriblockdate.ToString();
+                }
+               
+                txtdesc.Text = objstate.Description;
+                txtName.Text = objstate.Name;
+                long totalQty = objstate.Owners.Values.Sum();
+                
+                if (supPanel.Visible)
+                {
+                    btnRefreshSup.PerformClick();
+                }
+                else
+                {
+       
+                    btnRefreshOwners.PerformClick();
+                }
+
+
+                lblTotalOwnedMain.Text = "x" + totalQty.ToString("N0");
+
+                switch (extension)
+                {
+                    case ".jpg":
+                    case ".jpeg":
+                    case ".gif":
+                    case ".png":
+                        // Create a new PictureBox
+                        pictureBox1.ImageLocation = urn;
+
+                        break;
+                    case ".mp4":
+                    case ".avi":
+                    case ".mp3":
+                    case ".wav":
+                    case ".pdf":
+
+
+                        flowPanel.Visible = false;
+                        string viewerPath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + @"\root\" + transactionid + @"\urnviewer.html";
+                        flowPanel.Controls.Clear();
+
+                        string htmlstring = "<html><body><embed src=\"" + filePath + "\" width=100% height=100%></body></html>";
+
+                        try
+                        {
+                            System.IO.File.WriteAllText(@"root\" + transactionid + @"\urnviewer.html", htmlstring);
+                            button1.Visible = true;
+                        }
+                        catch { }
+
+                        await webviewer.EnsureCoreWebView2Async();
+                        webviewer.CoreWebView2.Navigate(viewerPath);
+
+                        break;
+                    case ".htm":
+                    case ".html":
+                        chkRunTrustedObject.Visible = true;
+                        flowPanel.Visible = false;
+                        string browserPath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + @"\root\" + transactionid + @"\urnviewer.html";
+                        flowPanel.Controls.Clear();
+
+                        string htmlembed = "<html><body><embed src=\"" + filePath + "\" width=100% height=100%></body></html>";
+                        if (chkRunTrustedObject.Checked)
+                        {
+                            htmlembed = "<html><body><embed src=\"" + filePath + "\" width=100% height=100%></body></html>";
+
+
+
+
+                        }
+                       
+
+                        try
+                        {
+                            System.IO.File.WriteAllText(@"root\" + transactionid + @"\urnviewer.html", htmlembed);
+                            button1.Visible = true;
+                        }
+                        catch { }
+
+                        await webviewer.EnsureCoreWebView2Async();
+                        webviewer.CoreWebView2.Navigate(browserPath);
+
+
+
+
+
+                        break;
+                    default:
+                        // Create a default "not supported" image
+
+                        pictureBox1.ImageLocation = @"root/" + objstate.Image.Replace("BTC:", "");
+                        // Add the default image to the flowPanel                        
+                        break;
+                }
+
+
+
+            }
+        }
+
+        private void lbluri_TextChanged(object sender, EventArgs e)
+        {
+
         }
     }
    

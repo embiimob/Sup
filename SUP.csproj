@@ -194,7 +194,6 @@
     <Compile Include="ObjectDetails.Designer.cs">
       <DependentUpon>ObjectDetails.cs</DependentUpon>
     </Compile>
-    <Compile Include="P2FK\samples\GTP3.cs" />
     <Compile Include="WorkBench.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -213,21 +212,21 @@
     <Compile Include="foundObjectControl.Designer.cs">
       <DependentUpon>foundObjectControl.cs</DependentUpon>
     </Compile>
-    <Compile Include="P2FK\BigIntExtensions.cs" />
-    <Compile Include="P2FK\ECElGamal.cs" />
-    <Compile Include="P2FK\ECEncryption.cs" />
-    <Compile Include="P2FK\ECPoint.cs" />
-    <Compile Include="P2FK\Hash160.cs" />
-    <Compile Include="P2FK\Hex.cs" />
-    <Compile Include="P2FK\OBJ.cs" />
-    <Compile Include="P2FK\PRO.cs" />
-    <Compile Include="P2FK\RIPEMD160.cs" />
-    <Compile Include="P2FK\Secp256k1.cs" />
+    <Compile Include="P2FK\classes\BigIntExtensions.cs" />
+    <Compile Include="P2FK\classes\ECElGamal.cs" />
+    <Compile Include="P2FK\classes\ECEncryption.cs" />
+    <Compile Include="P2FK\classes\ECPoint.cs" />
+    <Compile Include="P2FK\classes\Hash160.cs" />
+    <Compile Include="P2FK\classes\Hex.cs" />
+    <Compile Include="P2FK\classes\OBJ.cs" />
+    <Compile Include="P2FK\classes\PRO.cs" />
+    <Compile Include="P2FK\classes\RIPEMD160.cs" />
+    <Compile Include="P2FK\classes\Secp256k1.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="P2FK\Base58.cs" />
-    <Compile Include="P2FK\Root.cs" />
-    <Compile Include="P2FK\SHA256.cs" />
+    <Compile Include="P2FK\classes\Base58.cs" />
+    <Compile Include="P2FK\classes\Root.cs" />
+    <Compile Include="P2FK\classes\SHA256.cs" />
     <EmbeddedResource Include="FullScreenView.resx">
       <DependentUpon>FullScreenView.cs</DependentUpon>
     </EmbeddedResource>
@@ -263,16 +262,12 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
     <None Include="P2FK\samples\Burn Transaction.json" />
-    <None Include="P2FK\samples\Create Collection.json" />
     <None Include="P2FK\samples\Create Object.json" />
     <None Include="P2FK\samples\Create Profile.json" />
     <None Include="P2FK\samples\Give Object.json" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="P2FK\samples\P2FKJSONViewer.html" />
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include=".NETFramework,Version=v4.7.2">

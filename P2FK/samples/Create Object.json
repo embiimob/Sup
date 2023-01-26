@@ -6,11 +6,24 @@
   "dsc": "alien adjective \\ˈā-lē-ən, ˈāl-yən\\ : not familiar or like other things you have known : different from what you are used to : from another country : too different from something to be acceptable or suitable",
   "lic": "CC0",
   "cre": [ 0, 1 ],
-  "own": { "0": 10000 }
+  "own": { 0: 10000 }
 }
 
-//  "uri":  optional
 
+//assume keyword order id 0 is the authorization address
+//"cre": [ 0, 1 ] assume keyword order id 0 is the object address, keyword order id 1 is a creator address
+//"own": { 0: 10000 } assume keyword order id 0 owns a qty of 10000
+
+
+//remove all unnecessary spaces
+//place JSON in a file named OBJ (no file extension)
+//enter #[first 20 charachters of urn] to create a URN registration in this example #BTC:a3a24d6ea01ce481 in the apertus.io message box
+//enter each additional @creatoraddress and or @owneraddress above the @objectaddress in the apertus.io message box in matching orders
+//in this example keyword order id 1 would be the second from the bottom if the #BTC:a3a24d6ea01ce481 URN was also being registered
+//attach file OBJ using the apertus.io attach button
+//create a new signature address in the signature list in apertus.io. select it.  this will be the object address
+//verify that the no message box is checked.
+//click the apertus.io etch button
 
 
 
