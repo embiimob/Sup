@@ -15,6 +15,7 @@ using System.Reflection;
 using System.Reflection.Emit;
 using System.Security.Policy;
 using System.Text.RegularExpressions;
+using System.Web.NBitcoin;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Forms;
@@ -36,7 +37,7 @@ namespace SUP
         {
             this.Text = "Sup!? Object Details [ " + _objectaddress + " ]";
             btnReloadObject.PerformClick();
-                       
+
         }
         private string TruncateAddress(string input)
         {
@@ -59,7 +60,8 @@ namespace SUP
         {
             string src = lblURNFullPath.Text;
             try
-            { System.Diagnostics.Process.Start(src); }catch{ System.Media.SystemSounds.Exclamation.Play(); }
+            { System.Diagnostics.Process.Start(src); }
+            catch { System.Media.SystemSounds.Exclamation.Play(); }
         }
 
         private void LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
@@ -316,11 +318,11 @@ namespace SUP
         private void button7_Click(object sender, EventArgs e)
         {
             supFlow.Controls.Clear();
-            
+
             OBJState objstate = OBJState.GetObjectByAddress(_objectaddress, "good-user", "better-password", "http://127.0.0.1:18332");
 
             var SUP = new Options { CreateIfMissing = true };
-    
+
             using (var db = new DB(SUP, @"root/sup"))
             {
                 LevelDB.Iterator it = db.CreateIterator();
@@ -329,7 +331,7 @@ namespace SUP
                    it.IsValid() && it.KeyAsString().StartsWith(this._objectaddress);
                     it.Next()
                  )
-         
+
 
                 {
 
@@ -357,20 +359,20 @@ namespace SUP
                         if (imagelocation.StartsWith("BTC:"))
                         {
                             string transid = imagelocation.Substring(4, 64);
-                            imagelocation = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + @"\root\" + imagelocation.Replace("BTC:","").Replace(@"/", @"\");
+                            imagelocation = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + @"\root\" + imagelocation.Replace("BTC:", "").Replace(@"/", @"\");
 
 
                             if (!System.IO.Directory.Exists("root/" + transid))
                             {
                                 Root root = Root.GetRootByTransactionId(transid, "good-user", "better-password", "http://127.0.0.1:8332", "0");
-                 
+
 
                             }
                             else
                             {
                                 string P2FKJSONString = System.IO.File.ReadAllText(@"root/" + transid + @"/P2FK.json");
                                 Root root = JsonConvert.DeserializeObject<Root>(P2FKJSONString);
-                            
+
                             }
 
                         }
@@ -381,17 +383,17 @@ namespace SUP
                             if (!System.IO.Directory.Exists("root/" + transid))
                             {
                                 Root root = Root.GetRootByTransactionId(transid, "good-user", "better-password", "http://127.0.0.1:18332", "0");
-                              
+
                             }
                             else
                             {
                                 string P2FKJSONString = System.IO.File.ReadAllText(@"root/" + transid + @"/P2FK.json");
                                 Root root = JsonConvert.DeserializeObject<Root>(P2FKJSONString);
-                                
+
                             }
                         }
 
-                        
+
                     }
                     else
                     { fromAddress = TruncateAddress(fromAddress); }
@@ -399,8 +401,8 @@ namespace SUP
 
                     string tstamp = it.KeyAsString().Split('!')[1];
 
-                        CreateRow(imagelocation, fromAddress, supMessagePacket[0], DateTime.ParseExact(tstamp,"yyyyMMddHHmmss", CultureInfo.InvariantCulture), message, supFlow);
-                    
+                    CreateRow(imagelocation, fromAddress, supMessagePacket[0], DateTime.ParseExact(tstamp, "yyyyMMddHHmmss", CultureInfo.InvariantCulture), message, supFlow);
+
                 }
                 it.Dispose();
             }
@@ -408,7 +410,7 @@ namespace SUP
             supPanel.Visible = true;
         }
 
-        void CreateRow(string imageLocation, string ownerName, string ownerId, DateTime timestamp , string messageText, FlowLayoutPanel layoutPanel)
+        void CreateRow(string imageLocation, string ownerName, string ownerId, DateTime timestamp, string messageText, FlowLayoutPanel layoutPanel)
         {
 
             // Create a table layout panel for each row
@@ -419,7 +421,7 @@ namespace SUP
             row.AutoSize = true;
             row.Padding = new System.Windows.Forms.Padding(0);
             // Add the width of the first column to fixed value and second to fill remaining space
-            row.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute,100));
+            row.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 100));
             row.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 140));
 
             layoutPanel.Controls.Add(row);
@@ -453,7 +455,7 @@ namespace SUP
             owner.Dock = DockStyle.Left;
             owner.TextAlign = System.Drawing.ContentAlignment.TopLeft;
             row.Controls.Add(owner, 0, 1);
- 
+
 
             TableLayoutPanel msg = new TableLayoutPanel();
             msg.RowCount = 1;
@@ -508,6 +510,8 @@ namespace SUP
                 DateTime urnblockdate = new DateTime();
                 DateTime imgblockdate = new DateTime();
                 DateTime uriblockdate = new DateTime();
+                lblObjectCreatedDate.Text = objstate.CreatedDate.ToString("MM/dd/yyyy hh:mm:ss");
+
                 try
                 {
                     if (objstate.Image.StartsWith("BTC:"))
@@ -644,30 +648,32 @@ namespace SUP
                 txtURN.Text = objstate.URN;
                 txtIMG.Text = objstate.Image;
                 txtURI.Text = objstate.URI;
+                lblProcessHeight.Text = objstate.ProcessHeight.ToString();
+                lblLastChangedDate.Text = objstate.ChangeDate.ToString("MM/dd/yyyy hh:mm:ss"); ;
                 if (urnblockdate.Year > 1)
                 {
-                    lblURNBlockDate.Text = urnblockdate.ToString();
+                    lblURNBlockDate.Text = urnblockdate.ToString("MM/dd/yyyy hh:mm:ss"); ;
                 }
                 if (imgblockdate.Year > 1)
                 {
-                    lblIMGBlockDate.Text = imgblockdate.ToString();
+                    lblIMGBlockDate.Text = imgblockdate.ToString("MM/dd/yyyy hh:mm:ss"); ;
                 }
                 if (uriblockdate.Year > 1)
                 {
-                    lblURIBlockDate.Text = uriblockdate.ToString();
+                    lblURIBlockDate.Text = uriblockdate.ToString("MM/dd/yyyy hh:mm:ss"); ;
                 }
-               
+
                 txtdesc.Text = objstate.Description;
                 txtName.Text = objstate.Name;
                 long totalQty = objstate.Owners.Values.Sum();
-                
+
                 if (supPanel.Visible)
                 {
                     btnRefreshSup.PerformClick();
                 }
                 else
                 {
-       
+
                     btnRefreshOwners.PerformClick();
                 }
 
@@ -718,13 +724,28 @@ namespace SUP
                         string htmlembed = "<html><body><embed src=\"" + filePath + "\" width=100% height=100%></body></html>";
                         if (chkRunTrustedObject.Checked)
                         {
-                            htmlembed = "<html><body><embed src=\"" + filePath + "\" width=100% height=100%></body></html>";
+
+                            string _address = _objectaddress;
+                            string _viewer = null;//to be implemented
+                            string _viewername = null; //to be implemented
+                            string _creator = objstate.Creators.Last();
+                            int _owner = 0;//to be implemented
+                            string _urn = HttpUtility.UrlEncode(objstate.URN);
+                            string _uri = HttpUtility.UrlEncode(objstate.URI);
+                            string _img = HttpUtility.UrlEncode(objstate.Image);
+
+                            string querystring = "?address=" + _address + "viewer=" + _viewer + "viewername=" + _viewername + "creator=" + _creator + "owner=" + _owner + "urn=" + _urn + "uri=" + _uri + "img=" + _img;
 
 
-
-
+                            htmlembed = "<html><body><embed src=\"" + filePath + querystring + "\" width=100% height=100%></body></html>";
                         }
-                       
+
+                        string potentialyUnsafeHtml = System.IO.File.ReadAllText(filePath);
+
+
+                      
+                        string cleanedHTML = potentialyUnsafeHtml;
+
 
                         try
                         {
@@ -758,7 +779,37 @@ namespace SUP
         {
 
         }
+
+        private void lblObjectCreatedDate_Click(object sender, EventArgs e)
+        {
+            System.Windows.Clipboard.SetText(_objectaddress);
+        }
+
+        private void txtdesc_Click(object sender, EventArgs e)
+        {
+            System.Windows.Clipboard.SetText(txtdesc.Text);
+        }
+
+        private void txtURN_TextChanged(object sender, EventArgs e)
+        {
+            System.Windows.Clipboard.SetText(txtURN.Text);
+        }
+
+        private void txtIMG_TextChanged(object sender, EventArgs e)
+        {
+            System.Windows.Clipboard.SetText(txtIMG.Text);
+        }
+
+        private void txtURI_TextChanged(object sender, EventArgs e)
+        {
+            System.Windows.Clipboard.SetText(txtURI.Text);
+        }
+
+        private void textBox1_TextChanged(object sender, EventArgs e)
+        {
+            System.Windows.Clipboard.SetText(txtSupMessage.Text);
+        }
     }
-   
+
 }
 

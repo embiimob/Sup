@@ -37,6 +37,7 @@ namespace SUP.P2FK
         public Dictionary<string, long> Owners { get; set; }
         public DateTime LockedDate { get; set; }
         public int ProcessHeight { get; set; }
+        public DateTime CreatedDate { get; set; }
         public DateTime ChangeDate { get; set; }
         //ensures levelDB is thread safely
         private readonly static object levelDBLocker = new object();
@@ -182,6 +183,7 @@ namespace SUP.P2FK
                                             {
                                                 if (objectState.Owners == null)
                                                 {
+                                                    objectState.CreatedDate = transaction.BlockDate;
                                                     objectState.Owners = new Dictionary<string, long>();
                                                     logstatus = "txid:" + transaction.TransactionId + ",object,create,\"success\"";
                                                 }

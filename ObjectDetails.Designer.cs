@@ -45,7 +45,7 @@
             this.button6 = new System.Windows.Forms.Button();
             this.supPanel = new System.Windows.Forms.Panel();
             this.supFlow = new System.Windows.Forms.FlowLayoutPanel();
-            this.textBox1 = new System.Windows.Forms.TextBox();
+            this.txtSupMessage = new System.Windows.Forms.TextBox();
             this.btnRefreshSup = new System.Windows.Forms.Button();
             this.txtName = new System.Windows.Forms.Label();
             this.lblTotalOwnedDetail = new System.Windows.Forms.Label();
@@ -65,6 +65,11 @@
             this.lblURNFullPath = new System.Windows.Forms.Label();
             this.lblIMGFullPath = new System.Windows.Forms.Label();
             this.lblImageFullPath = new System.Windows.Forms.Label();
+            this.lblObjectCreatedDate = new System.Windows.Forms.Label();
+            this.lblphtitle = new System.Windows.Forms.Label();
+            this.lbllcdtitle = new System.Windows.Forms.Label();
+            this.lblProcessHeight = new System.Windows.Forms.Label();
+            this.lblLastChangedDate = new System.Windows.Forms.Label();
             this.flowPanel.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.webviewer)).BeginInit();
@@ -159,7 +164,7 @@
             // 
             this.lblTotalOwnedMain.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lblTotalOwnedMain.ForeColor = System.Drawing.SystemColors.ControlText;
-            this.lblTotalOwnedMain.Location = new System.Drawing.Point(82, 58);
+            this.lblTotalOwnedMain.Location = new System.Drawing.Point(82, 50);
             this.lblTotalOwnedMain.Name = "lblTotalOwnedMain";
             this.lblTotalOwnedMain.Padding = new System.Windows.Forms.Padding(3);
             this.lblTotalOwnedMain.Size = new System.Drawing.Size(193, 23);
@@ -202,13 +207,14 @@
             // 
             this.txtdesc.BackColor = System.Drawing.SystemColors.InactiveCaption;
             this.txtdesc.BorderStyle = System.Windows.Forms.BorderStyle.None;
-            this.txtdesc.Location = new System.Drawing.Point(6, 100);
+            this.txtdesc.Location = new System.Drawing.Point(6, 104);
             this.txtdesc.Multiline = true;
             this.txtdesc.Name = "txtdesc";
-            this.txtdesc.ScrollBars = System.Windows.Forms.ScrollBars.Horizontal;
-            this.txtdesc.Size = new System.Drawing.Size(269, 170);
+            this.txtdesc.ReadOnly = true;
+            this.txtdesc.Size = new System.Drawing.Size(269, 173);
             this.txtdesc.TabIndex = 22;
-            this.txtdesc.Text = "Description";
+            this.txtdesc.Text = "description";
+            this.txtdesc.Click += new System.EventHandler(this.txtdesc_Click);
             // 
             // button5
             // 
@@ -233,10 +239,10 @@
             // supPanel
             // 
             this.supPanel.Controls.Add(this.supFlow);
-            this.supPanel.Controls.Add(this.textBox1);
+            this.supPanel.Controls.Add(this.txtSupMessage);
             this.supPanel.Location = new System.Drawing.Point(884, 5);
             this.supPanel.Name = "supPanel";
-            this.supPanel.Size = new System.Drawing.Size(282, 562);
+            this.supPanel.Size = new System.Drawing.Size(282, 558);
             this.supPanel.TabIndex = 31;
             // 
             // supFlow
@@ -247,19 +253,20 @@
             this.supFlow.Size = new System.Drawing.Size(269, 478);
             this.supFlow.TabIndex = 3;
             // 
-            // textBox1
+            // txtSupMessage
             // 
-            this.textBox1.BackColor = System.Drawing.SystemColors.GradientInactiveCaption;
-            this.textBox1.ForeColor = System.Drawing.SystemColors.WindowFrame;
-            this.textBox1.Location = new System.Drawing.Point(6, 490);
-            this.textBox1.Multiline = true;
-            this.textBox1.Name = "textBox1";
-            this.textBox1.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.textBox1.Size = new System.Drawing.Size(270, 70);
-            this.textBox1.TabIndex = 1;
-            this.textBox1.Text = "This experimental Sup!? browser is read only\r\n\r\nUse the apertus.io @address featu" +
+            this.txtSupMessage.BackColor = System.Drawing.SystemColors.GradientInactiveCaption;
+            this.txtSupMessage.ForeColor = System.Drawing.SystemColors.WindowFrame;
+            this.txtSupMessage.Location = new System.Drawing.Point(6, 490);
+            this.txtSupMessage.Multiline = true;
+            this.txtSupMessage.Name = "txtSupMessage";
+            this.txtSupMessage.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
+            this.txtSupMessage.Size = new System.Drawing.Size(270, 62);
+            this.txtSupMessage.TabIndex = 1;
+            this.txtSupMessage.Text = "This experimental Sup!? browser is read only\r\n\r\nUse the apertus.io @address featu" +
     "re to direct your messages to this object\'s address\r\n\r\n* Only signed P2FK messag" +
     "es are inspected.";
+            this.txtSupMessage.TextChanged += new System.EventHandler(this.textBox1_TextChanged);
             // 
             // btnRefreshSup
             // 
@@ -275,12 +282,11 @@
             // txtName
             // 
             this.txtName.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.txtName.Location = new System.Drawing.Point(82, 11);
+            this.txtName.Location = new System.Drawing.Point(82, 12);
             this.txtName.Name = "txtName";
-            this.txtName.Size = new System.Drawing.Size(193, 39);
+            this.txtName.Size = new System.Drawing.Size(193, 38);
             this.txtName.TabIndex = 33;
             this.txtName.Text = "Title";
-            this.txtName.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             this.txtName.Click += new System.EventHandler(this.txtName_Click);
             // 
             // lblTotalOwnedDetail
@@ -298,19 +304,19 @@
             // chkRunTrustedObject
             // 
             this.chkRunTrustedObject.AutoSize = true;
-            this.chkRunTrustedObject.Location = new System.Drawing.Point(187, 533);
+            this.chkRunTrustedObject.Location = new System.Drawing.Point(229, 278);
             this.chkRunTrustedObject.Name = "chkRunTrustedObject";
             this.chkRunTrustedObject.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
-            this.chkRunTrustedObject.Size = new System.Drawing.Size(78, 17);
+            this.chkRunTrustedObject.Size = new System.Drawing.Size(46, 17);
             this.chkRunTrustedObject.TabIndex = 35;
-            this.chkRunTrustedObject.Text = "trust object";
+            this.chkRunTrustedObject.Text = "trust";
             this.chkRunTrustedObject.UseVisualStyleBackColor = true;
             this.chkRunTrustedObject.Visible = false;
             // 
             // btnRefreshOwners
             // 
             this.btnRefreshOwners.Font = new System.Drawing.Font("Microsoft Sans Serif", 21.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnRefreshOwners.Location = new System.Drawing.Point(887, 569);
+            this.btnRefreshOwners.Location = new System.Drawing.Point(887, 566);
             this.btnRefreshOwners.Margin = new System.Windows.Forms.Padding(0);
             this.btnRefreshOwners.Name = "btnRefreshOwners";
             this.btnRefreshOwners.Size = new System.Drawing.Size(100, 42);
@@ -323,7 +329,7 @@
             // btnReloadObject
             // 
             this.btnReloadObject.Font = new System.Drawing.Font("Microsoft Sans Serif", 21.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnReloadObject.Location = new System.Drawing.Point(178, 569);
+            this.btnReloadObject.Location = new System.Drawing.Point(175, 566);
             this.btnReloadObject.Name = "btnReloadObject";
             this.btnReloadObject.Size = new System.Drawing.Size(100, 42);
             this.btnReloadObject.TabIndex = 4;
@@ -357,8 +363,9 @@
             this.txtURN.Multiline = true;
             this.txtURN.Name = "txtURN";
             this.txtURN.ScrollBars = System.Windows.Forms.ScrollBars.Horizontal;
-            this.txtURN.Size = new System.Drawing.Size(269, 47);
+            this.txtURN.Size = new System.Drawing.Size(269, 34);
             this.txtURN.TabIndex = 40;
+            this.txtURN.TextChanged += new System.EventHandler(this.txtURN_TextChanged);
             // 
             // label4
             // 
@@ -375,7 +382,7 @@
             // 
             this.label3.AutoSize = true;
             this.label3.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label3.Location = new System.Drawing.Point(6, 360);
+            this.label3.Location = new System.Drawing.Point(6, 340);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(37, 15);
             this.label3.TabIndex = 44;
@@ -384,17 +391,18 @@
             // 
             // txtIMG
             // 
-            this.txtIMG.Location = new System.Drawing.Point(6, 378);
+            this.txtIMG.Location = new System.Drawing.Point(6, 358);
             this.txtIMG.Multiline = true;
             this.txtIMG.Name = "txtIMG";
             this.txtIMG.ScrollBars = System.Windows.Forms.ScrollBars.Horizontal;
-            this.txtIMG.Size = new System.Drawing.Size(269, 47);
+            this.txtIMG.Size = new System.Drawing.Size(269, 33);
             this.txtIMG.TabIndex = 43;
+            this.txtIMG.TextChanged += new System.EventHandler(this.txtIMG_TextChanged);
             // 
             // lblIMGBlockDate
             // 
             this.lblIMGBlockDate.AutoSize = true;
-            this.lblIMGBlockDate.Location = new System.Drawing.Point(47, 362);
+            this.lblIMGBlockDate.Location = new System.Drawing.Point(47, 342);
             this.lblIMGBlockDate.Name = "lblIMGBlockDate";
             this.lblIMGBlockDate.Size = new System.Drawing.Size(103, 13);
             this.lblIMGBlockDate.TabIndex = 42;
@@ -405,7 +413,7 @@
             // 
             this.label6.AutoSize = true;
             this.label6.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label6.Location = new System.Drawing.Point(6, 435);
+            this.label6.Location = new System.Drawing.Point(6, 396);
             this.label6.Name = "label6";
             this.label6.Size = new System.Drawing.Size(35, 15);
             this.label6.TabIndex = 47;
@@ -414,17 +422,18 @@
             // 
             // txtURI
             // 
-            this.txtURI.Location = new System.Drawing.Point(6, 453);
+            this.txtURI.Location = new System.Drawing.Point(6, 414);
             this.txtURI.Multiline = true;
             this.txtURI.Name = "txtURI";
             this.txtURI.ScrollBars = System.Windows.Forms.ScrollBars.Horizontal;
-            this.txtURI.Size = new System.Drawing.Size(269, 47);
+            this.txtURI.Size = new System.Drawing.Size(269, 35);
             this.txtURI.TabIndex = 46;
+            this.txtURI.TextChanged += new System.EventHandler(this.txtURI_TextChanged);
             // 
             // lblURIBlockDate
             // 
             this.lblURIBlockDate.AutoSize = true;
-            this.lblURIBlockDate.Location = new System.Drawing.Point(47, 437);
+            this.lblURIBlockDate.Location = new System.Drawing.Point(47, 398);
             this.lblURIBlockDate.Name = "lblURIBlockDate";
             this.lblURIBlockDate.Size = new System.Drawing.Size(103, 13);
             this.lblURIBlockDate.TabIndex = 45;
@@ -434,7 +443,7 @@
             // lblURNFullPath
             // 
             this.lblURNFullPath.AutoSize = true;
-            this.lblURNFullPath.Location = new System.Drawing.Point(8, 348);
+            this.lblURNFullPath.Location = new System.Drawing.Point(366, 603);
             this.lblURNFullPath.Name = "lblURNFullPath";
             this.lblURNFullPath.Size = new System.Drawing.Size(35, 13);
             this.lblURNFullPath.TabIndex = 48;
@@ -444,7 +453,7 @@
             // lblIMGFullPath
             // 
             this.lblIMGFullPath.AutoSize = true;
-            this.lblIMGFullPath.Location = new System.Drawing.Point(12, 505);
+            this.lblIMGFullPath.Location = new System.Drawing.Point(284, 603);
             this.lblIMGFullPath.Name = "lblIMGFullPath";
             this.lblIMGFullPath.Size = new System.Drawing.Size(35, 13);
             this.lblIMGFullPath.TabIndex = 49;
@@ -454,12 +463,63 @@
             // lblImageFullPath
             // 
             this.lblImageFullPath.AutoSize = true;
-            this.lblImageFullPath.Location = new System.Drawing.Point(8, 524);
+            this.lblImageFullPath.Location = new System.Drawing.Point(325, 603);
             this.lblImageFullPath.Name = "lblImageFullPath";
             this.lblImageFullPath.Size = new System.Drawing.Size(35, 13);
             this.lblImageFullPath.TabIndex = 50;
             this.lblImageFullPath.Text = "label5";
             this.lblImageFullPath.Visible = false;
+            // 
+            // lblObjectCreatedDate
+            // 
+            this.lblObjectCreatedDate.AutoSize = true;
+            this.lblObjectCreatedDate.Location = new System.Drawing.Point(79, 73);
+            this.lblObjectCreatedDate.Margin = new System.Windows.Forms.Padding(0);
+            this.lblObjectCreatedDate.Name = "lblObjectCreatedDate";
+            this.lblObjectCreatedDate.Size = new System.Drawing.Size(94, 13);
+            this.lblObjectCreatedDate.TabIndex = 51;
+            this.lblObjectCreatedDate.Text = "[ is not immutable ]";
+            this.lblObjectCreatedDate.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.lblObjectCreatedDate.Click += new System.EventHandler(this.lblObjectCreatedDate_Click);
+            // 
+            // lblphtitle
+            // 
+            this.lblphtitle.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblphtitle.Location = new System.Drawing.Point(-11, 464);
+            this.lblphtitle.Name = "lblphtitle";
+            this.lblphtitle.Size = new System.Drawing.Size(111, 15);
+            this.lblphtitle.TabIndex = 52;
+            this.lblphtitle.Text = "process height";
+            this.lblphtitle.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            // 
+            // lbllcdtitle
+            // 
+            this.lbllcdtitle.AutoSize = true;
+            this.lbllcdtitle.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lbllcdtitle.Location = new System.Drawing.Point(6, 485);
+            this.lbllcdtitle.Name = "lbllcdtitle";
+            this.lbllcdtitle.Size = new System.Drawing.Size(94, 15);
+            this.lbllcdtitle.TabIndex = 53;
+            this.lbllcdtitle.Text = "changed date";
+            this.lbllcdtitle.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            // 
+            // lblProcessHeight
+            // 
+            this.lblProcessHeight.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblProcessHeight.Location = new System.Drawing.Point(106, 464);
+            this.lblProcessHeight.Name = "lblProcessHeight";
+            this.lblProcessHeight.Size = new System.Drawing.Size(121, 15);
+            this.lblProcessHeight.TabIndex = 54;
+            this.lblProcessHeight.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            // 
+            // lblLastChangedDate
+            // 
+            this.lblLastChangedDate.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblLastChangedDate.Location = new System.Drawing.Point(106, 485);
+            this.lblLastChangedDate.Name = "lblLastChangedDate";
+            this.lblLastChangedDate.Size = new System.Drawing.Size(169, 15);
+            this.lblLastChangedDate.TabIndex = 55;
+            this.lblLastChangedDate.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
             // ObjectDetails
             // 
@@ -467,6 +527,11 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.SystemColors.InactiveCaption;
             this.ClientSize = new System.Drawing.Size(1166, 619);
+            this.Controls.Add(this.lblLastChangedDate);
+            this.Controls.Add(this.lblProcessHeight);
+            this.Controls.Add(this.lbllcdtitle);
+            this.Controls.Add(this.lblphtitle);
+            this.Controls.Add(this.lblObjectCreatedDate);
             this.Controls.Add(this.lblImageFullPath);
             this.Controls.Add(this.lblIMGFullPath);
             this.Controls.Add(this.lblURNFullPath);
@@ -542,7 +607,7 @@
         private System.Windows.Forms.Button button6;
         private System.Windows.Forms.Panel supPanel;
         private System.Windows.Forms.Button btnRefreshSup;
-        private System.Windows.Forms.TextBox textBox1;
+        private System.Windows.Forms.TextBox txtSupMessage;
         private System.Windows.Forms.Label txtName;
         private System.Windows.Forms.FlowLayoutPanel supFlow;
         private System.Windows.Forms.Label lblTotalOwnedDetail;
@@ -562,5 +627,10 @@
         private System.Windows.Forms.Label lblURNFullPath;
         private System.Windows.Forms.Label lblIMGFullPath;
         private System.Windows.Forms.Label lblImageFullPath;
+        private System.Windows.Forms.Label lblObjectCreatedDate;
+        private System.Windows.Forms.Label lblphtitle;
+        private System.Windows.Forms.Label lbllcdtitle;
+        private System.Windows.Forms.Label lblProcessHeight;
+        private System.Windows.Forms.Label lblLastChangedDate;
     }
 }
