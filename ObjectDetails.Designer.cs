@@ -62,14 +62,15 @@
             this.label6 = new System.Windows.Forms.Label();
             this.txtURI = new System.Windows.Forms.TextBox();
             this.lblURIBlockDate = new System.Windows.Forms.Label();
-            this.lblURNFullPath = new System.Windows.Forms.Label();
-            this.lblIMGFullPath = new System.Windows.Forms.Label();
             this.lblImageFullPath = new System.Windows.Forms.Label();
             this.lblObjectCreatedDate = new System.Windows.Forms.Label();
             this.lblphtitle = new System.Windows.Forms.Label();
             this.lbllcdtitle = new System.Windows.Forms.Label();
             this.lblProcessHeight = new System.Windows.Forms.Label();
             this.lblLastChangedDate = new System.Windows.Forms.Label();
+            this.lblURNFullPath = new System.Windows.Forms.Label();
+            this.label5 = new System.Windows.Forms.Label();
+            this.lblLicense = new System.Windows.Forms.Label();
             this.flowPanel.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.webviewer)).BeginInit();
@@ -207,11 +208,12 @@
             // 
             this.txtdesc.BackColor = System.Drawing.SystemColors.InactiveCaption;
             this.txtdesc.BorderStyle = System.Windows.Forms.BorderStyle.None;
-            this.txtdesc.Location = new System.Drawing.Point(6, 104);
+            this.txtdesc.Location = new System.Drawing.Point(6, 97);
             this.txtdesc.Multiline = true;
             this.txtdesc.Name = "txtdesc";
             this.txtdesc.ReadOnly = true;
-            this.txtdesc.Size = new System.Drawing.Size(269, 173);
+            this.txtdesc.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
+            this.txtdesc.Size = new System.Drawing.Size(272, 206);
             this.txtdesc.TabIndex = 22;
             this.txtdesc.Text = "description";
             this.txtdesc.Click += new System.EventHandler(this.txtdesc_Click);
@@ -304,7 +306,7 @@
             // chkRunTrustedObject
             // 
             this.chkRunTrustedObject.AutoSize = true;
-            this.chkRunTrustedObject.Location = new System.Drawing.Point(229, 278);
+            this.chkRunTrustedObject.Location = new System.Drawing.Point(229, 334);
             this.chkRunTrustedObject.Name = "chkRunTrustedObject";
             this.chkRunTrustedObject.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
             this.chkRunTrustedObject.Size = new System.Drawing.Size(46, 17);
@@ -350,7 +352,7 @@
             // lblURNBlockDate
             // 
             this.lblURNBlockDate.AutoSize = true;
-            this.lblURNBlockDate.Location = new System.Drawing.Point(47, 282);
+            this.lblURNBlockDate.Location = new System.Drawing.Point(47, 338);
             this.lblURNBlockDate.Name = "lblURNBlockDate";
             this.lblURNBlockDate.Size = new System.Drawing.Size(103, 13);
             this.lblURNBlockDate.TabIndex = 39;
@@ -359,7 +361,7 @@
             // 
             // txtURN
             // 
-            this.txtURN.Location = new System.Drawing.Point(6, 298);
+            this.txtURN.Location = new System.Drawing.Point(6, 354);
             this.txtURN.Multiline = true;
             this.txtURN.Name = "txtURN";
             this.txtURN.ScrollBars = System.Windows.Forms.ScrollBars.Horizontal;
@@ -371,7 +373,7 @@
             // 
             this.label4.AutoSize = true;
             this.label4.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label4.Location = new System.Drawing.Point(6, 280);
+            this.label4.Location = new System.Drawing.Point(6, 336);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(41, 15);
             this.label4.TabIndex = 41;
@@ -382,7 +384,7 @@
             // 
             this.label3.AutoSize = true;
             this.label3.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label3.Location = new System.Drawing.Point(6, 340);
+            this.label3.Location = new System.Drawing.Point(6, 396);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(37, 15);
             this.label3.TabIndex = 44;
@@ -391,7 +393,7 @@
             // 
             // txtIMG
             // 
-            this.txtIMG.Location = new System.Drawing.Point(6, 358);
+            this.txtIMG.Location = new System.Drawing.Point(6, 414);
             this.txtIMG.Multiline = true;
             this.txtIMG.Name = "txtIMG";
             this.txtIMG.ScrollBars = System.Windows.Forms.ScrollBars.Horizontal;
@@ -402,7 +404,7 @@
             // lblIMGBlockDate
             // 
             this.lblIMGBlockDate.AutoSize = true;
-            this.lblIMGBlockDate.Location = new System.Drawing.Point(47, 342);
+            this.lblIMGBlockDate.Location = new System.Drawing.Point(47, 398);
             this.lblIMGBlockDate.Name = "lblIMGBlockDate";
             this.lblIMGBlockDate.Size = new System.Drawing.Size(103, 13);
             this.lblIMGBlockDate.TabIndex = 42;
@@ -413,7 +415,7 @@
             // 
             this.label6.AutoSize = true;
             this.label6.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label6.Location = new System.Drawing.Point(6, 396);
+            this.label6.Location = new System.Drawing.Point(6, 452);
             this.label6.Name = "label6";
             this.label6.Size = new System.Drawing.Size(35, 15);
             this.label6.TabIndex = 47;
@@ -422,7 +424,7 @@
             // 
             // txtURI
             // 
-            this.txtURI.Location = new System.Drawing.Point(6, 414);
+            this.txtURI.Location = new System.Drawing.Point(6, 470);
             this.txtURI.Multiline = true;
             this.txtURI.Name = "txtURI";
             this.txtURI.ScrollBars = System.Windows.Forms.ScrollBars.Horizontal;
@@ -433,41 +435,21 @@
             // lblURIBlockDate
             // 
             this.lblURIBlockDate.AutoSize = true;
-            this.lblURIBlockDate.Location = new System.Drawing.Point(47, 398);
+            this.lblURIBlockDate.Location = new System.Drawing.Point(47, 454);
             this.lblURIBlockDate.Name = "lblURIBlockDate";
             this.lblURIBlockDate.Size = new System.Drawing.Size(103, 13);
             this.lblURIBlockDate.TabIndex = 45;
             this.lblURIBlockDate.Text = "   [ is not immutable ]";
             this.lblURIBlockDate.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
-            // lblURNFullPath
-            // 
-            this.lblURNFullPath.AutoSize = true;
-            this.lblURNFullPath.Location = new System.Drawing.Point(366, 603);
-            this.lblURNFullPath.Name = "lblURNFullPath";
-            this.lblURNFullPath.Size = new System.Drawing.Size(35, 13);
-            this.lblURNFullPath.TabIndex = 48;
-            this.lblURNFullPath.Text = "label5";
-            this.lblURNFullPath.Visible = false;
-            // 
-            // lblIMGFullPath
-            // 
-            this.lblIMGFullPath.AutoSize = true;
-            this.lblIMGFullPath.Location = new System.Drawing.Point(284, 603);
-            this.lblIMGFullPath.Name = "lblIMGFullPath";
-            this.lblIMGFullPath.Size = new System.Drawing.Size(35, 13);
-            this.lblIMGFullPath.TabIndex = 49;
-            this.lblIMGFullPath.Text = "label5";
-            this.lblIMGFullPath.Visible = false;
-            // 
             // lblImageFullPath
             // 
             this.lblImageFullPath.AutoSize = true;
-            this.lblImageFullPath.Location = new System.Drawing.Point(325, 603);
+            this.lblImageFullPath.Location = new System.Drawing.Point(281, 608);
             this.lblImageFullPath.Name = "lblImageFullPath";
-            this.lblImageFullPath.Size = new System.Drawing.Size(35, 13);
+            this.lblImageFullPath.Size = new System.Drawing.Size(71, 13);
             this.lblImageFullPath.TabIndex = 50;
-            this.lblImageFullPath.Text = "label5";
+            this.lblImageFullPath.Text = "IMG Full Path";
             this.lblImageFullPath.Visible = false;
             // 
             // lblObjectCreatedDate
@@ -485,9 +467,9 @@
             // lblphtitle
             // 
             this.lblphtitle.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblphtitle.Location = new System.Drawing.Point(-11, 464);
+            this.lblphtitle.Location = new System.Drawing.Point(2, 513);
             this.lblphtitle.Name = "lblphtitle";
-            this.lblphtitle.Size = new System.Drawing.Size(111, 15);
+            this.lblphtitle.Size = new System.Drawing.Size(102, 15);
             this.lblphtitle.TabIndex = 52;
             this.lblphtitle.Text = "process height";
             this.lblphtitle.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
@@ -496,7 +478,7 @@
             // 
             this.lbllcdtitle.AutoSize = true;
             this.lbllcdtitle.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lbllcdtitle.Location = new System.Drawing.Point(6, 485);
+            this.lbllcdtitle.Location = new System.Drawing.Point(10, 533);
             this.lbllcdtitle.Name = "lbllcdtitle";
             this.lbllcdtitle.Size = new System.Drawing.Size(94, 15);
             this.lbllcdtitle.TabIndex = 53;
@@ -505,21 +487,52 @@
             // 
             // lblProcessHeight
             // 
-            this.lblProcessHeight.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblProcessHeight.Location = new System.Drawing.Point(106, 464);
+            this.lblProcessHeight.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblProcessHeight.Location = new System.Drawing.Point(107, 513);
             this.lblProcessHeight.Name = "lblProcessHeight";
-            this.lblProcessHeight.Size = new System.Drawing.Size(121, 15);
+            this.lblProcessHeight.Size = new System.Drawing.Size(168, 15);
             this.lblProcessHeight.TabIndex = 54;
             this.lblProcessHeight.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
             // lblLastChangedDate
             // 
-            this.lblLastChangedDate.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblLastChangedDate.Location = new System.Drawing.Point(106, 485);
+            this.lblLastChangedDate.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblLastChangedDate.Location = new System.Drawing.Point(107, 533);
             this.lblLastChangedDate.Name = "lblLastChangedDate";
-            this.lblLastChangedDate.Size = new System.Drawing.Size(169, 15);
+            this.lblLastChangedDate.Size = new System.Drawing.Size(168, 15);
             this.lblLastChangedDate.TabIndex = 55;
             this.lblLastChangedDate.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            // 
+            // lblURNFullPath
+            // 
+            this.lblURNFullPath.AutoSize = true;
+            this.lblURNFullPath.Location = new System.Drawing.Point(369, 608);
+            this.lblURNFullPath.Name = "lblURNFullPath";
+            this.lblURNFullPath.Size = new System.Drawing.Size(75, 13);
+            this.lblURNFullPath.TabIndex = 48;
+            this.lblURNFullPath.Text = "URN Full Path";
+            this.lblURNFullPath.Visible = false;
+            // 
+            // label5
+            // 
+            this.label5.AutoSize = true;
+            this.label5.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label5.Location = new System.Drawing.Point(6, 306);
+            this.label5.Name = "label5";
+            this.label5.Size = new System.Drawing.Size(72, 15);
+            this.label5.TabIndex = 56;
+            this.label5.Text = "copyrights";
+            this.label5.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            // 
+            // lblLicense
+            // 
+            this.lblLicense.AutoSize = true;
+            this.lblLicense.Location = new System.Drawing.Point(84, 308);
+            this.lblLicense.Name = "lblLicense";
+            this.lblLicense.Size = new System.Drawing.Size(100, 13);
+            this.lblLicense.TabIndex = 57;
+            this.lblLicense.Text = "All Rights Reserved";
+            this.lblLicense.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
             // ObjectDetails
             // 
@@ -527,14 +540,15 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.SystemColors.InactiveCaption;
             this.ClientSize = new System.Drawing.Size(1166, 619);
+            this.Controls.Add(this.lblLicense);
+            this.Controls.Add(this.label5);
+            this.Controls.Add(this.lblImageFullPath);
+            this.Controls.Add(this.lblURNFullPath);
             this.Controls.Add(this.lblLastChangedDate);
             this.Controls.Add(this.lblProcessHeight);
             this.Controls.Add(this.lbllcdtitle);
             this.Controls.Add(this.lblphtitle);
             this.Controls.Add(this.lblObjectCreatedDate);
-            this.Controls.Add(this.lblImageFullPath);
-            this.Controls.Add(this.lblIMGFullPath);
-            this.Controls.Add(this.lblURNFullPath);
             this.Controls.Add(this.label6);
             this.Controls.Add(this.txtURI);
             this.Controls.Add(this.lblURIBlockDate);
@@ -624,13 +638,14 @@
         private System.Windows.Forms.Label label6;
         private System.Windows.Forms.TextBox txtURI;
         private System.Windows.Forms.Label lblURIBlockDate;
-        private System.Windows.Forms.Label lblURNFullPath;
-        private System.Windows.Forms.Label lblIMGFullPath;
         private System.Windows.Forms.Label lblImageFullPath;
         private System.Windows.Forms.Label lblObjectCreatedDate;
         private System.Windows.Forms.Label lblphtitle;
         private System.Windows.Forms.Label lbllcdtitle;
         private System.Windows.Forms.Label lblProcessHeight;
         private System.Windows.Forms.Label lblLastChangedDate;
+        private System.Windows.Forms.Label lblURNFullPath;
+        private System.Windows.Forms.Label label5;
+        private System.Windows.Forms.Label lblLicense;
     }
 }
