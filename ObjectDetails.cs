@@ -402,6 +402,108 @@ namespace SUP
             msg.Controls.Add(message, 0, 1);
         }
 
+        void CreateTransRow(string fromName, string fromId, string toName, string toId, string action, string qty, string amount, DateTime timestamp, string status, FlowLayoutPanel layoutPanel)
+        {
+
+            // Create a table layout panel for each row
+            TableLayoutPanel row = new TableLayoutPanel();
+            row.RowCount = 1;
+            row.ColumnCount = 2;
+            row.Dock = DockStyle.Top;
+            row.AutoSize = true;
+            row.Padding = new System.Windows.Forms.Padding(0);
+
+            row.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 120));
+            row.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 120));
+            layoutPanel.Controls.Add(row);
+
+      
+            LinkLabel fromname = new LinkLabel();
+            fromname.Text = fromName;
+            fromname.AutoSize = true;
+            fromname.LinkClicked += (sender, e) => { Owner_LinkClicked(sender, e, fromId); };
+            fromname.Dock = DockStyle.Left;
+            fromname.TextAlign = System.Drawing.ContentAlignment.TopLeft;
+            row.Controls.Add(fromname, 0,0);
+
+            LinkLabel toname = new LinkLabel();
+            toname.Text = toName;
+            toname.AutoSize = true;
+            toname.LinkClicked += (sender, e) => { Owner_LinkClicked(sender, e, toId); };
+            toname.Dock = DockStyle.Left;
+            toname.TextAlign = System.Drawing.ContentAlignment.TopLeft;
+            row.Controls.Add(toname, 0, 1);
+
+
+
+            TableLayoutPanel stats = new TableLayoutPanel();
+            stats.RowCount = 1;
+            stats.ColumnCount = 3;
+            stats.Dock = DockStyle.Top;
+            stats.AutoSize = true;
+            stats.Padding = new System.Windows.Forms.Padding(0);
+            // Add the width of the first column to fixed value and second to fill remaining space
+            stats.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 100));
+            stats.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 40));
+            stats.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 100));
+            layoutPanel.Controls.Add(stats);
+
+
+            LinkLabel laction = new LinkLabel();
+            laction.Text = action;
+            laction.AutoSize = true;
+            laction.Dock = DockStyle.Left;
+            laction.TextAlign = System.Drawing.ContentAlignment.TopLeft;
+            stats.Controls.Add(laction, 0, 0);
+
+     
+            LinkLabel lqty = new LinkLabel();
+            lqty.Text = qty;
+            lqty.AutoSize = true;
+            lqty.Dock = DockStyle.Left;
+            lqty.TextAlign = System.Drawing.ContentAlignment.TopLeft;
+            stats.Controls.Add(lqty, 0, 1);
+                    
+
+
+            LinkLabel lamount = new LinkLabel();
+            lamount.Text = amount;
+            lamount.AutoSize = true;
+            lamount.Dock = DockStyle.Left;
+            lamount.TextAlign = System.Drawing.ContentAlignment.TopLeft;
+            stats.Controls.Add(lamount, 0, 2);
+
+
+            
+
+            TableLayoutPanel msg = new TableLayoutPanel();
+            msg.RowCount = 1;
+            msg.ColumnCount = 1;
+            msg.Dock = DockStyle.Bottom;
+            msg.AutoSize = true;
+            msg.Padding = new System.Windows.Forms.Padding(0);
+            // Add the width of the first column to fixed value and second to fill remaining space
+            msg.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 240));
+            layoutPanel.Controls.Add(msg);
+
+
+            LinkLabel lstatus = new LinkLabel();
+            lstatus.Text = status;
+            lstatus.AutoSize = true;
+            lstatus.Dock = DockStyle.Left;
+            lstatus.TextAlign = System.Drawing.ContentAlignment.TopLeft;
+            msg.Controls.Add(lstatus, 0, 0);
+
+
+            // Create a LinkLabel with the owner name
+            Label tstamp = new Label();
+            tstamp.AutoSize = true;
+            tstamp.Font = new System.Drawing.Font("Microsoft Sans Serif", 7.77F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            tstamp.Text = timestamp.ToString("MM/dd/yyyy hh:mm:ss");
+            tstamp.Dock = DockStyle.Right;
+            msg.Controls.Add(tstamp, 1, 0);
+        }
+
         void Owner_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e, string ownerId)
         {
 
@@ -425,7 +527,8 @@ namespace SUP
 
         private async void lblRefreshFrame_Click(object sender, EventArgs e)
         {
-            
+            transFlow.Visible = false;
+
             OBJState objstate = OBJState.GetObjectByAddress(_objectaddress, "good-user", "better-password", "http://127.0.0.1:18332");
 
             if (objstate.Owners != null)
@@ -766,9 +869,79 @@ namespace SUP
             System.Windows.Clipboard.SetText(txtSupMessage.Text);
         }
 
-       
+        private void btnRefreshTransactions_Click(object sender, EventArgs e)
+        {
+            transFlow.Controls.Clear();
 
-      
+            try { System.IO.Directory.Delete(@"root/" + _objectaddress, true); } catch { }
+            try { System.IO.Directory.Delete(@"root/event", true); } catch { }
+
+            OBJState objstate = OBJState.GetObjectByAddress(_objectaddress, "good-user", "better-password", "http://127.0.0.1:18332","111",true);
+
+            var trans = new Options { CreateIfMissing = true };
+            
+            using (var db = new DB(trans, @"root/event"))
+            {
+                LevelDB.Iterator it = db.CreateIterator();
+                for (
+                   it.Seek(this._objectaddress);
+                   it.IsValid() && it.KeyAsString().StartsWith(this._objectaddress);
+                    it.Next()
+                 )
+
+
+                {
+
+
+                    string process = it.ValueAsString();
+
+                    List<string> transMessagePacket = JsonConvert.DeserializeObject<List<string>>(process);
+
+                    string fromAddress = transMessagePacket[0];
+                    string toAddress = transMessagePacket[1];
+                    string action = transMessagePacket[2];
+                    string qty = transMessagePacket[3];
+                    string amount = transMessagePacket[4];
+                    string status = transMessagePacket[5];
+           
+
+                    PROState profile = PROState.GetProfileByAddress(fromAddress, "good-user", "better-password", "http://127.0.0.1:18332");
+
+                    if (profile.URN != null)
+                    {
+                        fromAddress = TruncateAddress(profile.URN);
+
+                        
+                    }
+                    else
+                    { fromAddress = TruncateAddress(fromAddress); }
+
+
+                   profile = PROState.GetProfileByAddress(toAddress, "good-user", "better-password", "http://127.0.0.1:18332");
+
+                    if (profile.URN != null)
+                    {
+                        toAddress = TruncateAddress(profile.URN);
+
+                    }
+                    else
+                    { toAddress = TruncateAddress(toAddress); }
+
+
+
+                    string tstamp = it.KeyAsString().Split('!')[1];
+
+                    CreateTransRow(fromAddress, transMessagePacket[0], toAddress, transMessagePacket[1], action, qty,amount, DateTime.ParseExact(tstamp, "yyyyMMddHHmmss", CultureInfo.InvariantCulture),status, transFlow);
+
+                }
+                it.Dispose();
+            }
+            if (transFlow.Controls.Count > 0) { transFlow.ScrollControlIntoView(transFlow.Controls[transFlow.Controls.Count - 1]); }
+            
+            transFlow.Visible = true;
+
+
+        }
     }
 
 }

@@ -52,7 +52,7 @@
             this.chkRunTrustedObject = new System.Windows.Forms.CheckBox();
             this.btnRefreshOwners = new System.Windows.Forms.Button();
             this.btnReloadObject = new System.Windows.Forms.Button();
-            this.button7 = new System.Windows.Forms.Button();
+            this.btnRefreshTransactions = new System.Windows.Forms.Button();
             this.lblURNBlockDate = new System.Windows.Forms.Label();
             this.txtURN = new System.Windows.Forms.TextBox();
             this.label4 = new System.Windows.Forms.Label();
@@ -71,6 +71,7 @@
             this.lblURNFullPath = new System.Windows.Forms.Label();
             this.label5 = new System.Windows.Forms.Label();
             this.lblLicense = new System.Windows.Forms.Label();
+            this.transFlow = new System.Windows.Forms.FlowLayoutPanel();
             this.flowPanel.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.webviewer)).BeginInit();
@@ -168,7 +169,7 @@
             this.lblTotalOwnedMain.Location = new System.Drawing.Point(82, 50);
             this.lblTotalOwnedMain.Name = "lblTotalOwnedMain";
             this.lblTotalOwnedMain.Padding = new System.Windows.Forms.Padding(3);
-            this.lblTotalOwnedMain.Size = new System.Drawing.Size(193, 23);
+            this.lblTotalOwnedMain.Size = new System.Drawing.Size(192, 23);
             this.lblTotalOwnedMain.TabIndex = 9;
             this.lblTotalOwnedMain.Text = "x";
             this.lblTotalOwnedMain.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
@@ -286,7 +287,7 @@
             this.txtName.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.txtName.Location = new System.Drawing.Point(82, 12);
             this.txtName.Name = "txtName";
-            this.txtName.Size = new System.Drawing.Size(193, 38);
+            this.txtName.Size = new System.Drawing.Size(192, 38);
             this.txtName.TabIndex = 33;
             this.txtName.Text = "Title";
             this.txtName.Click += new System.EventHandler(this.txtName_Click);
@@ -339,15 +340,16 @@
             this.btnReloadObject.UseVisualStyleBackColor = true;
             this.btnReloadObject.Click += new System.EventHandler(this.lblRefreshFrame_Click);
             // 
-            // button7
+            // btnRefreshTransactions
             // 
-            this.button7.Font = new System.Drawing.Font("Microsoft Sans Serif", 21.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.button7.Location = new System.Drawing.Point(6, 569);
-            this.button7.Name = "button7";
-            this.button7.Size = new System.Drawing.Size(100, 42);
-            this.button7.TabIndex = 38;
-            this.button7.Text = "🔍";
-            this.button7.UseVisualStyleBackColor = true;
+            this.btnRefreshTransactions.Font = new System.Drawing.Font("Microsoft Sans Serif", 21.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnRefreshTransactions.Location = new System.Drawing.Point(6, 569);
+            this.btnRefreshTransactions.Name = "btnRefreshTransactions";
+            this.btnRefreshTransactions.Size = new System.Drawing.Size(100, 42);
+            this.btnRefreshTransactions.TabIndex = 38;
+            this.btnRefreshTransactions.Text = "🔍";
+            this.btnRefreshTransactions.UseVisualStyleBackColor = true;
+            this.btnRefreshTransactions.Click += new System.EventHandler(this.btnRefreshTransactions_Click);
             // 
             // lblURNBlockDate
             // 
@@ -455,7 +457,7 @@
             // lblObjectCreatedDate
             // 
             this.lblObjectCreatedDate.AutoSize = true;
-            this.lblObjectCreatedDate.Location = new System.Drawing.Point(79, 73);
+            this.lblObjectCreatedDate.Location = new System.Drawing.Point(79, 68);
             this.lblObjectCreatedDate.Margin = new System.Windows.Forms.Padding(0);
             this.lblObjectCreatedDate.Name = "lblObjectCreatedDate";
             this.lblObjectCreatedDate.Size = new System.Drawing.Size(94, 13);
@@ -534,12 +536,22 @@
             this.lblLicense.Text = "All Rights Reserved";
             this.lblLicense.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
+            // transFlow
+            // 
+            this.transFlow.AutoScroll = true;
+            this.transFlow.Location = new System.Drawing.Point(5, 87);
+            this.transFlow.Margin = new System.Windows.Forms.Padding(0);
+            this.transFlow.Name = "transFlow";
+            this.transFlow.Size = new System.Drawing.Size(273, 470);
+            this.transFlow.TabIndex = 58;
+            // 
             // ObjectDetails
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.SystemColors.InactiveCaption;
             this.ClientSize = new System.Drawing.Size(1166, 619);
+            this.Controls.Add(this.transFlow);
             this.Controls.Add(this.lblLicense);
             this.Controls.Add(this.label5);
             this.Controls.Add(this.lblImageFullPath);
@@ -560,7 +572,7 @@
             this.Controls.Add(this.lblURNBlockDate);
             this.Controls.Add(this.btnRefreshOwners);
             this.Controls.Add(this.btnRefreshSup);
-            this.Controls.Add(this.button7);
+            this.Controls.Add(this.btnRefreshTransactions);
             this.Controls.Add(this.btnReloadObject);
             this.Controls.Add(this.chkRunTrustedObject);
             this.Controls.Add(this.txtName);
@@ -628,7 +640,7 @@
         private System.Windows.Forms.CheckBox chkRunTrustedObject;
         private System.Windows.Forms.Button btnRefreshOwners;
         private System.Windows.Forms.Button btnReloadObject;
-        private System.Windows.Forms.Button button7;
+        private System.Windows.Forms.Button btnRefreshTransactions;
         private System.Windows.Forms.Label lblURNBlockDate;
         private System.Windows.Forms.TextBox txtURN;
         private System.Windows.Forms.Label label4;
@@ -647,5 +659,6 @@
         private System.Windows.Forms.Label lblURNFullPath;
         private System.Windows.Forms.Label label5;
         private System.Windows.Forms.Label lblLicense;
+        private System.Windows.Forms.FlowLayoutPanel transFlow;
     }
 }
