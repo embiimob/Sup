@@ -82,7 +82,7 @@
             // flowPanel
             // 
             this.flowPanel.Controls.Add(this.pictureBox1);
-            this.flowPanel.Location = new System.Drawing.Point(281, 8);
+            this.flowPanel.Location = new System.Drawing.Point(295, 21);
             this.flowPanel.Margin = new System.Windows.Forms.Padding(0);
             this.flowPanel.Name = "flowPanel";
             this.flowPanel.Size = new System.Drawing.Size(600, 600);
@@ -107,7 +107,7 @@
             this.webviewer.BackColor = System.Drawing.SystemColors.ControlDark;
             this.webviewer.CreationProperties = null;
             this.webviewer.DefaultBackgroundColor = System.Drawing.SystemColors.ControlDark;
-            this.webviewer.Location = new System.Drawing.Point(281, 8);
+            this.webviewer.Location = new System.Drawing.Point(295, 21);
             this.webviewer.Name = "webviewer";
             this.webviewer.Size = new System.Drawing.Size(600, 600);
             this.webviewer.TabIndex = 1;
@@ -117,7 +117,7 @@
             // 
             this.button1.BackColor = System.Drawing.SystemColors.ControlDark;
             this.button1.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.button1.Location = new System.Drawing.Point(833, 563);
+            this.button1.Location = new System.Drawing.Point(847, 576);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(34, 31);
             this.button1.TabIndex = 2;
@@ -130,7 +130,7 @@
             // 
             this.OwnersPanel.AutoScroll = true;
             this.OwnersPanel.BackColor = System.Drawing.SystemColors.InactiveCaption;
-            this.OwnersPanel.Location = new System.Drawing.Point(894, 28);
+            this.OwnersPanel.Location = new System.Drawing.Point(919, 41);
             this.OwnersPanel.Name = "OwnersPanel";
             this.OwnersPanel.Size = new System.Drawing.Size(272, 317);
             this.OwnersPanel.TabIndex = 5;
@@ -138,7 +138,7 @@
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(891, 12);
+            this.label1.Location = new System.Drawing.Point(916, 25);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(41, 13);
             this.label1.TabIndex = 6;
@@ -147,7 +147,7 @@
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(890, 391);
+            this.label2.Location = new System.Drawing.Point(915, 404);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(45, 13);
             this.label2.TabIndex = 8;
@@ -157,7 +157,7 @@
             // 
             this.CreatorsPanel.AutoScroll = true;
             this.CreatorsPanel.BackColor = System.Drawing.SystemColors.InactiveCaption;
-            this.CreatorsPanel.Location = new System.Drawing.Point(894, 407);
+            this.CreatorsPanel.Location = new System.Drawing.Point(911, 420);
             this.CreatorsPanel.Name = "CreatorsPanel";
             this.CreatorsPanel.Size = new System.Drawing.Size(157, 150);
             this.CreatorsPanel.TabIndex = 7;
@@ -166,7 +166,7 @@
             // 
             this.lblTotalOwnedMain.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lblTotalOwnedMain.ForeColor = System.Drawing.SystemColors.ControlText;
-            this.lblTotalOwnedMain.Location = new System.Drawing.Point(82, 50);
+            this.lblTotalOwnedMain.Location = new System.Drawing.Point(95, 63);
             this.lblTotalOwnedMain.Name = "lblTotalOwnedMain";
             this.lblTotalOwnedMain.Padding = new System.Windows.Forms.Padding(3);
             this.lblTotalOwnedMain.Size = new System.Drawing.Size(192, 23);
@@ -178,7 +178,7 @@
             // button2
             // 
             this.button2.Enabled = false;
-            this.button2.Location = new System.Drawing.Point(1057, 407);
+            this.button2.Location = new System.Drawing.Point(1069, 420);
             this.button2.Name = "button2";
             this.button2.Size = new System.Drawing.Size(103, 33);
             this.button2.TabIndex = 10;
@@ -188,7 +188,7 @@
             // button4
             // 
             this.button4.Enabled = false;
-            this.button4.Location = new System.Drawing.Point(1057, 524);
+            this.button4.Location = new System.Drawing.Point(1069, 537);
             this.button4.Name = "button4";
             this.button4.Size = new System.Drawing.Size(103, 33);
             this.button4.TabIndex = 12;
@@ -197,7 +197,7 @@
             // 
             // imgPicture
             // 
-            this.imgPicture.Location = new System.Drawing.Point(6, 11);
+            this.imgPicture.Location = new System.Drawing.Point(19, 24);
             this.imgPicture.Name = "imgPicture";
             this.imgPicture.Size = new System.Drawing.Size(70, 70);
             this.imgPicture.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
@@ -209,12 +209,12 @@
             // 
             this.txtdesc.BackColor = System.Drawing.SystemColors.InactiveCaption;
             this.txtdesc.BorderStyle = System.Windows.Forms.BorderStyle.None;
-            this.txtdesc.Location = new System.Drawing.Point(6, 97);
+            this.txtdesc.Location = new System.Drawing.Point(19, 110);
             this.txtdesc.Multiline = true;
             this.txtdesc.Name = "txtdesc";
             this.txtdesc.ReadOnly = true;
             this.txtdesc.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.txtdesc.Size = new System.Drawing.Size(272, 206);
+            this.txtdesc.Size = new System.Drawing.Size(256, 206);
             this.txtdesc.TabIndex = 22;
             this.txtdesc.Text = "description";
             this.txtdesc.Click += new System.EventHandler(this.txtdesc_Click);
@@ -222,7 +222,7 @@
             // button5
             // 
             this.button5.Enabled = false;
-            this.button5.Location = new System.Drawing.Point(1057, 446);
+            this.button5.Location = new System.Drawing.Point(1069, 457);
             this.button5.Name = "button5";
             this.button5.Size = new System.Drawing.Size(103, 33);
             this.button5.TabIndex = 28;
@@ -232,7 +232,7 @@
             // button6
             // 
             this.button6.Enabled = false;
-            this.button6.Location = new System.Drawing.Point(1057, 485);
+            this.button6.Location = new System.Drawing.Point(1069, 498);
             this.button6.Name = "button6";
             this.button6.Size = new System.Drawing.Size(103, 33);
             this.button6.TabIndex = 29;
@@ -243,28 +243,28 @@
             // 
             this.supPanel.Controls.Add(this.supFlow);
             this.supPanel.Controls.Add(this.txtSupMessage);
-            this.supPanel.Location = new System.Drawing.Point(884, 5);
+            this.supPanel.Location = new System.Drawing.Point(909, 18);
             this.supPanel.Name = "supPanel";
-            this.supPanel.Size = new System.Drawing.Size(282, 558);
+            this.supPanel.Size = new System.Drawing.Size(282, 559);
             this.supPanel.TabIndex = 31;
             // 
             // supFlow
             // 
             this.supFlow.AutoScroll = true;
-            this.supFlow.Location = new System.Drawing.Point(6, 5);
+            this.supFlow.Location = new System.Drawing.Point(5, 6);
             this.supFlow.Name = "supFlow";
-            this.supFlow.Size = new System.Drawing.Size(269, 478);
+            this.supFlow.Size = new System.Drawing.Size(270, 478);
             this.supFlow.TabIndex = 3;
             // 
             // txtSupMessage
             // 
             this.txtSupMessage.BackColor = System.Drawing.SystemColors.GradientInactiveCaption;
             this.txtSupMessage.ForeColor = System.Drawing.SystemColors.WindowFrame;
-            this.txtSupMessage.Location = new System.Drawing.Point(6, 490);
+            this.txtSupMessage.Location = new System.Drawing.Point(8, 490);
             this.txtSupMessage.Multiline = true;
             this.txtSupMessage.Name = "txtSupMessage";
             this.txtSupMessage.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.txtSupMessage.Size = new System.Drawing.Size(270, 62);
+            this.txtSupMessage.Size = new System.Drawing.Size(252, 62);
             this.txtSupMessage.TabIndex = 1;
             this.txtSupMessage.Text = "This experimental Sup!? browser is read only\r\n\r\nUse the apertus.io @address featu" +
     "re to direct your messages to this object\'s address\r\n\r\n* Only signed P2FK messag" +
@@ -274,7 +274,7 @@
             // btnRefreshSup
             // 
             this.btnRefreshSup.Font = new System.Drawing.Font("Microsoft Sans Serif", 21.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnRefreshSup.Location = new System.Drawing.Point(1060, 569);
+            this.btnRefreshSup.Location = new System.Drawing.Point(1069, 579);
             this.btnRefreshSup.Name = "btnRefreshSup";
             this.btnRefreshSup.Size = new System.Drawing.Size(100, 42);
             this.btnRefreshSup.TabIndex = 2;
@@ -285,7 +285,7 @@
             // txtName
             // 
             this.txtName.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.txtName.Location = new System.Drawing.Point(82, 12);
+            this.txtName.Location = new System.Drawing.Point(95, 25);
             this.txtName.Name = "txtName";
             this.txtName.Size = new System.Drawing.Size(192, 38);
             this.txtName.TabIndex = 33;
@@ -296,7 +296,7 @@
             // 
             this.lblTotalOwnedDetail.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lblTotalOwnedDetail.ForeColor = System.Drawing.SystemColors.ControlText;
-            this.lblTotalOwnedDetail.Location = new System.Drawing.Point(923, 358);
+            this.lblTotalOwnedDetail.Location = new System.Drawing.Point(948, 371);
             this.lblTotalOwnedDetail.Name = "lblTotalOwnedDetail";
             this.lblTotalOwnedDetail.Padding = new System.Windows.Forms.Padding(3);
             this.lblTotalOwnedDetail.Size = new System.Drawing.Size(221, 23);
@@ -307,7 +307,7 @@
             // chkRunTrustedObject
             // 
             this.chkRunTrustedObject.AutoSize = true;
-            this.chkRunTrustedObject.Location = new System.Drawing.Point(229, 334);
+            this.chkRunTrustedObject.Location = new System.Drawing.Point(229, 347);
             this.chkRunTrustedObject.Name = "chkRunTrustedObject";
             this.chkRunTrustedObject.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
             this.chkRunTrustedObject.Size = new System.Drawing.Size(46, 17);
@@ -319,7 +319,7 @@
             // btnRefreshOwners
             // 
             this.btnRefreshOwners.Font = new System.Drawing.Font("Microsoft Sans Serif", 21.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnRefreshOwners.Location = new System.Drawing.Point(887, 566);
+            this.btnRefreshOwners.Location = new System.Drawing.Point(917, 580);
             this.btnRefreshOwners.Margin = new System.Windows.Forms.Padding(0);
             this.btnRefreshOwners.Name = "btnRefreshOwners";
             this.btnRefreshOwners.Size = new System.Drawing.Size(100, 42);
@@ -332,7 +332,7 @@
             // btnReloadObject
             // 
             this.btnReloadObject.Font = new System.Drawing.Font("Microsoft Sans Serif", 21.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnReloadObject.Location = new System.Drawing.Point(175, 566);
+            this.btnReloadObject.Location = new System.Drawing.Point(177, 579);
             this.btnReloadObject.Name = "btnReloadObject";
             this.btnReloadObject.Size = new System.Drawing.Size(100, 42);
             this.btnReloadObject.TabIndex = 4;
@@ -343,7 +343,7 @@
             // btnRefreshTransactions
             // 
             this.btnRefreshTransactions.Font = new System.Drawing.Font("Microsoft Sans Serif", 21.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnRefreshTransactions.Location = new System.Drawing.Point(6, 569);
+            this.btnRefreshTransactions.Location = new System.Drawing.Point(19, 579);
             this.btnRefreshTransactions.Name = "btnRefreshTransactions";
             this.btnRefreshTransactions.Size = new System.Drawing.Size(100, 42);
             this.btnRefreshTransactions.TabIndex = 38;
@@ -354,7 +354,7 @@
             // lblURNBlockDate
             // 
             this.lblURNBlockDate.AutoSize = true;
-            this.lblURNBlockDate.Location = new System.Drawing.Point(47, 338);
+            this.lblURNBlockDate.Location = new System.Drawing.Point(60, 351);
             this.lblURNBlockDate.Name = "lblURNBlockDate";
             this.lblURNBlockDate.Size = new System.Drawing.Size(103, 13);
             this.lblURNBlockDate.TabIndex = 39;
@@ -363,11 +363,11 @@
             // 
             // txtURN
             // 
-            this.txtURN.Location = new System.Drawing.Point(6, 354);
+            this.txtURN.Location = new System.Drawing.Point(19, 367);
             this.txtURN.Multiline = true;
             this.txtURN.Name = "txtURN";
             this.txtURN.ScrollBars = System.Windows.Forms.ScrollBars.Horizontal;
-            this.txtURN.Size = new System.Drawing.Size(269, 34);
+            this.txtURN.Size = new System.Drawing.Size(256, 34);
             this.txtURN.TabIndex = 40;
             this.txtURN.TextChanged += new System.EventHandler(this.txtURN_TextChanged);
             // 
@@ -375,7 +375,7 @@
             // 
             this.label4.AutoSize = true;
             this.label4.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label4.Location = new System.Drawing.Point(6, 336);
+            this.label4.Location = new System.Drawing.Point(19, 349);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(41, 15);
             this.label4.TabIndex = 41;
@@ -386,7 +386,7 @@
             // 
             this.label3.AutoSize = true;
             this.label3.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label3.Location = new System.Drawing.Point(6, 396);
+            this.label3.Location = new System.Drawing.Point(19, 409);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(37, 15);
             this.label3.TabIndex = 44;
@@ -395,18 +395,18 @@
             // 
             // txtIMG
             // 
-            this.txtIMG.Location = new System.Drawing.Point(6, 414);
+            this.txtIMG.Location = new System.Drawing.Point(19, 427);
             this.txtIMG.Multiline = true;
             this.txtIMG.Name = "txtIMG";
             this.txtIMG.ScrollBars = System.Windows.Forms.ScrollBars.Horizontal;
-            this.txtIMG.Size = new System.Drawing.Size(269, 33);
+            this.txtIMG.Size = new System.Drawing.Size(256, 33);
             this.txtIMG.TabIndex = 43;
             this.txtIMG.TextChanged += new System.EventHandler(this.txtIMG_TextChanged);
             // 
             // lblIMGBlockDate
             // 
             this.lblIMGBlockDate.AutoSize = true;
-            this.lblIMGBlockDate.Location = new System.Drawing.Point(47, 398);
+            this.lblIMGBlockDate.Location = new System.Drawing.Point(60, 411);
             this.lblIMGBlockDate.Name = "lblIMGBlockDate";
             this.lblIMGBlockDate.Size = new System.Drawing.Size(103, 13);
             this.lblIMGBlockDate.TabIndex = 42;
@@ -417,7 +417,7 @@
             // 
             this.label6.AutoSize = true;
             this.label6.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label6.Location = new System.Drawing.Point(6, 452);
+            this.label6.Location = new System.Drawing.Point(19, 465);
             this.label6.Name = "label6";
             this.label6.Size = new System.Drawing.Size(35, 15);
             this.label6.TabIndex = 47;
@@ -426,18 +426,18 @@
             // 
             // txtURI
             // 
-            this.txtURI.Location = new System.Drawing.Point(6, 470);
+            this.txtURI.Location = new System.Drawing.Point(19, 483);
             this.txtURI.Multiline = true;
             this.txtURI.Name = "txtURI";
             this.txtURI.ScrollBars = System.Windows.Forms.ScrollBars.Horizontal;
-            this.txtURI.Size = new System.Drawing.Size(269, 35);
+            this.txtURI.Size = new System.Drawing.Size(256, 35);
             this.txtURI.TabIndex = 46;
             this.txtURI.TextChanged += new System.EventHandler(this.txtURI_TextChanged);
             // 
             // lblURIBlockDate
             // 
             this.lblURIBlockDate.AutoSize = true;
-            this.lblURIBlockDate.Location = new System.Drawing.Point(47, 454);
+            this.lblURIBlockDate.Location = new System.Drawing.Point(60, 467);
             this.lblURIBlockDate.Name = "lblURIBlockDate";
             this.lblURIBlockDate.Size = new System.Drawing.Size(103, 13);
             this.lblURIBlockDate.TabIndex = 45;
@@ -447,7 +447,7 @@
             // lblImageFullPath
             // 
             this.lblImageFullPath.AutoSize = true;
-            this.lblImageFullPath.Location = new System.Drawing.Point(281, 608);
+            this.lblImageFullPath.Location = new System.Drawing.Point(295, 621);
             this.lblImageFullPath.Name = "lblImageFullPath";
             this.lblImageFullPath.Size = new System.Drawing.Size(71, 13);
             this.lblImageFullPath.TabIndex = 50;
@@ -457,7 +457,7 @@
             // lblObjectCreatedDate
             // 
             this.lblObjectCreatedDate.AutoSize = true;
-            this.lblObjectCreatedDate.Location = new System.Drawing.Point(79, 68);
+            this.lblObjectCreatedDate.Location = new System.Drawing.Point(92, 81);
             this.lblObjectCreatedDate.Margin = new System.Windows.Forms.Padding(0);
             this.lblObjectCreatedDate.Name = "lblObjectCreatedDate";
             this.lblObjectCreatedDate.Size = new System.Drawing.Size(94, 13);
@@ -469,7 +469,7 @@
             // lblphtitle
             // 
             this.lblphtitle.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblphtitle.Location = new System.Drawing.Point(2, 513);
+            this.lblphtitle.Location = new System.Drawing.Point(15, 526);
             this.lblphtitle.Name = "lblphtitle";
             this.lblphtitle.Size = new System.Drawing.Size(102, 15);
             this.lblphtitle.TabIndex = 52;
@@ -480,7 +480,7 @@
             // 
             this.lbllcdtitle.AutoSize = true;
             this.lbllcdtitle.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lbllcdtitle.Location = new System.Drawing.Point(10, 533);
+            this.lbllcdtitle.Location = new System.Drawing.Point(23, 546);
             this.lbllcdtitle.Name = "lbllcdtitle";
             this.lbllcdtitle.Size = new System.Drawing.Size(94, 15);
             this.lbllcdtitle.TabIndex = 53;
@@ -490,7 +490,7 @@
             // lblProcessHeight
             // 
             this.lblProcessHeight.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblProcessHeight.Location = new System.Drawing.Point(107, 513);
+            this.lblProcessHeight.Location = new System.Drawing.Point(120, 526);
             this.lblProcessHeight.Name = "lblProcessHeight";
             this.lblProcessHeight.Size = new System.Drawing.Size(168, 15);
             this.lblProcessHeight.TabIndex = 54;
@@ -499,7 +499,7 @@
             // lblLastChangedDate
             // 
             this.lblLastChangedDate.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblLastChangedDate.Location = new System.Drawing.Point(107, 533);
+            this.lblLastChangedDate.Location = new System.Drawing.Point(120, 546);
             this.lblLastChangedDate.Name = "lblLastChangedDate";
             this.lblLastChangedDate.Size = new System.Drawing.Size(168, 15);
             this.lblLastChangedDate.TabIndex = 55;
@@ -508,7 +508,7 @@
             // lblURNFullPath
             // 
             this.lblURNFullPath.AutoSize = true;
-            this.lblURNFullPath.Location = new System.Drawing.Point(369, 608);
+            this.lblURNFullPath.Location = new System.Drawing.Point(295, 634);
             this.lblURNFullPath.Name = "lblURNFullPath";
             this.lblURNFullPath.Size = new System.Drawing.Size(75, 13);
             this.lblURNFullPath.TabIndex = 48;
@@ -519,7 +519,7 @@
             // 
             this.label5.AutoSize = true;
             this.label5.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label5.Location = new System.Drawing.Point(6, 306);
+            this.label5.Location = new System.Drawing.Point(19, 319);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(72, 15);
             this.label5.TabIndex = 56;
@@ -529,7 +529,7 @@
             // lblLicense
             // 
             this.lblLicense.AutoSize = true;
-            this.lblLicense.Location = new System.Drawing.Point(84, 308);
+            this.lblLicense.Location = new System.Drawing.Point(97, 321);
             this.lblLicense.Name = "lblLicense";
             this.lblLicense.Size = new System.Drawing.Size(100, 13);
             this.lblLicense.TabIndex = 57;
@@ -539,10 +539,10 @@
             // transFlow
             // 
             this.transFlow.AutoScroll = true;
-            this.transFlow.Location = new System.Drawing.Point(5, 87);
+            this.transFlow.Location = new System.Drawing.Point(19, 110);
             this.transFlow.Margin = new System.Windows.Forms.Padding(0);
             this.transFlow.Name = "transFlow";
-            this.transFlow.Size = new System.Drawing.Size(273, 470);
+            this.transFlow.Size = new System.Drawing.Size(270, 408);
             this.transFlow.TabIndex = 58;
             // 
             // ObjectDetails
@@ -550,7 +550,7 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.SystemColors.InactiveCaption;
-            this.ClientSize = new System.Drawing.Size(1166, 619);
+            this.ClientSize = new System.Drawing.Size(1192, 642);
             this.Controls.Add(this.transFlow);
             this.Controls.Add(this.lblLicense);
             this.Controls.Add(this.label5);
@@ -592,7 +592,6 @@
             this.Controls.Add(this.flowPanel);
             this.Controls.Add(this.webviewer);
             this.Controls.Add(this.lblTotalOwnedDetail);
-            this.MaximumSize = new System.Drawing.Size(1182, 658);
             this.MinimumSize = new System.Drawing.Size(1182, 658);
             this.Name = "ObjectDetails";
             this.Padding = new System.Windows.Forms.Padding(3);

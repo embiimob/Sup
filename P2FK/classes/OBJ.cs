@@ -39,6 +39,7 @@ namespace SUP.P2FK
         public int ProcessHeight { get; set; }
         public DateTime CreatedDate { get; set; }
         public DateTime ChangeDate { get; set; }
+        public bool Verbose { get; set; }
         //ensures levelDB is thread safely
         private readonly static object levelDBLocker = new object();
 
@@ -57,6 +58,7 @@ namespace SUP.P2FK
             {
                 JSONOBJ = System.IO.File.ReadAllText(diskpath + "P2FK.json");
                 objectState = JsonConvert.DeserializeObject<OBJState>(JSONOBJ);
+                verbose = objectState.Verbose;
             }
             catch { }
 
@@ -185,7 +187,7 @@ namespace SUP.P2FK
                                                 {
                                                     objectState.CreatedDate = transaction.BlockDate;
                                                     objectState.Owners = new Dictionary<string, long>();
-                                                    logstatus = "[\"" + transaction.SignedBy + "\",\"" + objectaddress + "\",\"create\",\"\",\"\",\"success\"]";
+                                                    logstatus = "[\"" + transaction.SignedBy + "\",\"" + objectaddress + "\",\"create\",\""+ objectinspector.own.Values.Sum() + "\",\"\",\"success\"]";
 
                                                 }
 
@@ -274,7 +276,7 @@ namespace SUP.P2FK
                                     {
                                         if (verbose)
                                         {
-                                            logstatus = "[\"" + transaction.SignedBy + "\",\"" + reciever + "\",\"give\",\"" + qtyToGive + "\",\"0\",\"failed due to a give qty of < 1\"]";
+                                            logstatus = "[\"" + transaction.SignedBy + "\",\"" + reciever + "\",\"give\",\"" + qtyToGive + "\",\"\",\"failed due to a give qty of < 1\"]";
 
                                             lock (levelDBLocker)
                                             {
@@ -300,7 +302,7 @@ namespace SUP.P2FK
                                         {
                                             if (verbose)
                                             {
-                                                logstatus = "[\"" + transaction.SignedBy + "\",\"" + reciever + "\",\"give\",\"" + qtyToGive + "\",\"0\",\"failed due to insufficent qty owned\"]";
+                                                logstatus = "[\"" + transaction.SignedBy + "\",\"" + reciever + "\",\"give\",\"" + qtyToGive + "\",\"\",\"failed due to insufficent qty owned\"]";
 
                                                 lock (levelDBLocker)
                                                 {
@@ -355,7 +357,8 @@ namespace SUP.P2FK
 
                                         if (verbose)
                                         {
-                                            logstatus = "[\"" + transaction.SignedBy + "\",\"" + reciever + "\",\"give\",\"" + qtyToGive + "\",\"0\",\"success\"]";
+                                           
+                                            logstatus = "[\"" + transaction.SignedBy + "\",\"" + reciever + "\",\"give\",\"" + qtyToGive + "\",\"\",\"success\"]";
 
                                             lock (levelDBLocker)
                                             {
@@ -369,10 +372,12 @@ namespace SUP.P2FK
 
                                         if (objectState.LockedDate.Year == 1)
                                         {
-                                            giveCount++;
+                                            
                                             if (verbose)
                                             {
-                                                logstatus = "[\"" + transaction.SignedBy + "\",\"" + objectaddress + "\",\"lock\",\"\",\"0\",\"success\"]";
+                                                giveCount++;
+                                                sortableGiveCount = giveCount.ToString("X").PadLeft(4, '0');
+                                                logstatus = "[\"" + transaction.SignedBy + "\",\"" + objectaddress + "\",\"lock\",\"\",\"\",\"success\"]";
 
                                                 lock (levelDBLocker)
                                                 {
@@ -392,7 +397,7 @@ namespace SUP.P2FK
                                     {
                                         if (verbose)
                                         { //Invalid trade attempt
-                                            logstatus = "[\"" + transaction.SignedBy + "\",\"" + reciever + "\",\"give\",\"" + qtyToGive + "\",\"0\",\"failed due to insufficent qty owned\"]";
+                                            logstatus = "[\"" + transaction.SignedBy + "\",\"" + reciever + "\",\"give\",\"" + qtyToGive + "\",\"\",\"failed due to insufficent qty owned\"]";
 
                                             lock (levelDBLocker)
                                             {
@@ -442,7 +447,7 @@ namespace SUP.P2FK
                                     {
                                         if (verbose)
                                         {
-                                            logstatus = "[\"" + transaction.SignedBy + "\",\"" + objectaddress + "\",\"burn\",\"" + qtyToBurn + "\",\"0\",\"failed due to a burn qty of < 1\"]";
+                                            logstatus = "[\"" + transaction.SignedBy + "\",\"" + objectaddress + "\",\"burn\",\"" + qtyToBurn + "\",\"\",\"failed due to a burn qty of < 1\"]";
 
                                             lock (levelDBLocker)
                                             {
@@ -467,7 +472,7 @@ namespace SUP.P2FK
                                             if (verbose)
                                             {
                                                 //Add Invalid trade attempt status
-                                                logstatus = "[\"" + transaction.SignedBy + "\",\"" + objectaddress + "\",\"burn\",\"" + qtyToBurn + "\",\"0\",\"failed due to a insufficent qty owned\"]";
+                                                logstatus = "[\"" + transaction.SignedBy + "\",\"" + objectaddress + "\",\"burn\",\"" + qtyToBurn + "\",\"\",\"failed due to a insufficent qty owned\"]";
 
                                                 lock (levelDBLocker)
                                                 {
@@ -512,8 +517,8 @@ namespace SUP.P2FK
                                         }
                                         if (verbose)
                                         {
-                                            logstatus = "[\"" + transaction.SignedBy + "\",\"" + objectaddress + "\",\"burn\",\"" + qtyToBurn + "\",\"0\",\"success\"]";
-
+                                            logstatus = "[\"" + transaction.SignedBy + "\",\"" + objectaddress + "\",\"burn\",\"" + qtyToBurn + "\",\"\",\"success\"]";
+                                         
                                             lock (levelDBLocker)
                                             {
                                                 var ROOT = new Options { CreateIfMissing = true };
@@ -525,11 +530,13 @@ namespace SUP.P2FK
                                         }
                                         if (objectState.LockedDate.Year == 1)
                                         {
-                                            burnCount++;
+                                            
                                             if (verbose)
                                             {
-                                                logstatus = "[\"" + transaction.SignedBy + "\",\"" + objectaddress + "\",\"lock\",\"\",\"0\",\"success\"]";
-
+                                                burnCount++;
+                                                sortableBurnCount = burnCount.ToString("X").PadLeft(4, '0');
+                                                logstatus = "[\"" + transaction.SignedBy + "\",\"" + objectaddress + "\",\"lock\",\"\",\"\",\"success\"]";
+                                                
                                                 lock (levelDBLocker)
                                                 {
                                                     var ROOT = new Options { CreateIfMissing = true };
@@ -548,7 +555,7 @@ namespace SUP.P2FK
                                     {
                                         if (verbose)
                                         {
-                                            logstatus = "[\"" + transaction.SignedBy + "\",\"" + objectaddress + "\",\"burn\",\"" + qtyToBurn + "\",\"0\",\"failed due to a insufficent qty owned\"]";
+                                            logstatus = "[\"" + transaction.SignedBy + "\",\"" + objectaddress + "\",\"burn\",\"" + qtyToBurn + "\",\"\",\"failed due to a insufficent qty owned\"]";
 
                                             lock (levelDBLocker)
                                             {
@@ -574,13 +581,13 @@ namespace SUP.P2FK
                     }
                     else
                     {
-                        logstatus = "[\"" + transaction.SignedBy + "\",\"" + objectaddress + "\",\"burn\",\"\",\"0\",\"failed due to duplicate signature\"]";
+                        logstatus = "[\"" + transaction.SignedBy + "\",\"" + objectaddress + "\",\"burn\",\"\",\"\",\"failed due to duplicate signature\"]";
                     }
 
                        
 
                 }
-                else { logstatus = "[\"" + transaction.SignedBy + "\",\"" + objectaddress + "\",\"burn\",\"\",\"0\",\"failed due to invalid transaction\"]"; }
+                else { logstatus = "[\"" + transaction.SignedBy + "\",\"" + objectaddress + "\",\"burn\",\"\",\"\",\"failed due to invalid transaction\"]"; }
 
                 if (verbose)
                 {
@@ -604,6 +611,7 @@ namespace SUP.P2FK
 
             //used to determine where to begin object State processing when retrieved from cache
             objectState.ProcessHeight = intProcessHeight;
+            objectState.Verbose= verbose;
             var objectSerialized = JsonConvert.SerializeObject(objectState);
 
             try

@@ -16,6 +16,7 @@ namespace SUP.P2FK
     public class PRO
     {
         public string urn { get; set; }
+        public string snm { get; set; }
         public string fnm { get; set; }
         public string mnm { get; set; }
         public string lnm { get; set; }
@@ -33,6 +34,7 @@ namespace SUP.P2FK
     public class PROState
     {
         public string URN { get; set; }
+        public string ShortName { get; set; }
         public string FirstName { get; set; }
         public string MiddleName { get; set; }
         public string LastName { get; set; }
@@ -153,6 +155,7 @@ namespace SUP.P2FK
                         {
 
                             if (profileinspector.urn != null) { profileState.ChangeDate = transaction.BlockDate; profileState.URN = profileinspector.urn; }
+                            if (profileinspector.snm != null) { profileState.ChangeDate = transaction.BlockDate; profileState.ShortName = profileinspector.snm; }
                             if (profileinspector.fnm != null) { profileState.ChangeDate = transaction.BlockDate; profileState.FirstName = profileinspector.fnm; }
                             if (profileinspector.mnm != null) { profileState.ChangeDate = transaction.BlockDate; profileState.MiddleName = profileinspector.mnm; }
                             if (profileinspector.lnm != null) { profileState.ChangeDate = transaction.BlockDate; profileState.LastName = profileinspector.lnm; }
@@ -224,11 +227,17 @@ namespace SUP.P2FK
             }
             catch
             {
-                if (!Directory.Exists(@"root\" + profileaddress))
+
+                try
                 {
-                    Directory.CreateDirectory(@"root\" + profileaddress);
+                    if (!Directory.Exists(@"root\" + profileaddress))
+
+                    {
+                        Directory.CreateDirectory(@"root\" + profileaddress);
+                    }
+                    System.IO.File.WriteAllText(@"root\" + profileaddress + @"\" + "PRO.json", profileSerialized);
                 }
-                System.IO.File.WriteAllText(@"root\" + profileaddress + @"\" + "PRO.json", profileSerialized);
+                catch { };
             }
 
             return profileState;
