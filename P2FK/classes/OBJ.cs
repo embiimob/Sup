@@ -68,7 +68,7 @@ namespace SUP.P2FK
             //return all roots found at address
             objectTransactions = Root.GetRootsByAddress(objectaddress, username, password, url, intProcessHeight, 300, versionByte);
 
-            if (intProcessHeight >= 0 && objectTransactions.Count() == 1) { return objectState; }
+            if (intProcessHeight > 0 && objectTransactions.Count() == 1) { return objectState; }
 
             foreach (Root transaction in objectTransactions)
             {
@@ -177,7 +177,7 @@ namespace SUP.P2FK
                                                 objectState.ChangeDate = transaction.BlockDate;
 
                                             }
-                                            if (objectState.ChangeDate == transaction.BlockDate)
+                                            if (objectState.ProcessHeight > 0  && objectState.ChangeDate == transaction.BlockDate )
                                             {
                                                 logstatus = "[\"" + transaction.SignedBy + "\",\"" + objectaddress + "\",\"update\",\"\",\"\",\"success\"]";
                                             }
