@@ -80,7 +80,7 @@
             // 
             this.btnURN.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.btnURN.BackColor = System.Drawing.SystemColors.Control;
-            this.btnURN.Location = new System.Drawing.Point(564, 4);
+            this.btnURN.Location = new System.Drawing.Point(975, 4);
             this.btnURN.Name = "btnURN";
             this.btnURN.Size = new System.Drawing.Size(42, 20);
             this.btnURN.TabIndex = 66;
@@ -92,7 +92,7 @@
             // 
             this.btnKeywords.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.btnKeywords.BackColor = System.Drawing.SystemColors.Control;
-            this.btnKeywords.Location = new System.Drawing.Point(498, 4);
+            this.btnKeywords.Location = new System.Drawing.Point(909, 4);
             this.btnKeywords.Name = "btnKeywords";
             this.btnKeywords.Size = new System.Drawing.Size(60, 20);
             this.btnKeywords.TabIndex = 64;
@@ -104,7 +104,7 @@
             // 
             this.btnObjects.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.btnObjects.BackColor = System.Drawing.SystemColors.Control;
-            this.btnObjects.Location = new System.Drawing.Point(323, 4);
+            this.btnObjects.Location = new System.Drawing.Point(734, 4);
             this.btnObjects.Name = "btnObjects";
             this.btnObjects.Size = new System.Drawing.Size(53, 20);
             this.btnObjects.TabIndex = 63;
@@ -116,7 +116,7 @@
             // 
             this.btnCreated.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.btnCreated.BackColor = System.Drawing.SystemColors.Control;
-            this.btnCreated.Location = new System.Drawing.Point(382, 4);
+            this.btnCreated.Location = new System.Drawing.Point(793, 4);
             this.btnCreated.Name = "btnCreated";
             this.btnCreated.Size = new System.Drawing.Size(55, 20);
             this.btnCreated.TabIndex = 62;
@@ -128,7 +128,7 @@
             // 
             this.btnOwned.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.btnOwned.BackColor = System.Drawing.SystemColors.Control;
-            this.btnOwned.Location = new System.Drawing.Point(443, 4);
+            this.btnOwned.Location = new System.Drawing.Point(854, 4);
             this.btnOwned.Name = "btnOwned";
             this.btnOwned.Size = new System.Drawing.Size(49, 20);
             this.btnOwned.TabIndex = 61;
@@ -142,7 +142,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.txtSearchAddress.Location = new System.Drawing.Point(12, 5);
             this.txtSearchAddress.Name = "txtSearchAddress";
-            this.txtSearchAddress.Size = new System.Drawing.Size(214, 20);
+            this.txtSearchAddress.Size = new System.Drawing.Size(631, 20);
             this.txtSearchAddress.TabIndex = 58;
             this.txtSearchAddress.Text = "muVrFVk3ErfrnmWosLF4WixxRtDKfMx9bs";
             this.txtSearchAddress.KeyDown += new System.Windows.Forms.KeyEventHandler(this.txtSearchAddress_KeyDown);
@@ -151,7 +151,7 @@
             // 
             this.btnWorkBench.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.btnWorkBench.BackColor = System.Drawing.SystemColors.Control;
-            this.btnWorkBench.Location = new System.Drawing.Point(612, 4);
+            this.btnWorkBench.Location = new System.Drawing.Point(1023, 4);
             this.btnWorkBench.Name = "btnWorkBench";
             this.btnWorkBench.Size = new System.Drawing.Size(30, 20);
             this.btnWorkBench.TabIndex = 68;
@@ -168,7 +168,7 @@
             this.flowLayoutPanel1.BackColor = System.Drawing.SystemColors.InactiveCaption;
             this.flowLayoutPanel1.Location = new System.Drawing.Point(0, 32);
             this.flowLayoutPanel1.Name = "flowLayoutPanel1";
-            this.flowLayoutPanel1.Size = new System.Drawing.Size(653, 371);
+            this.flowLayoutPanel1.Size = new System.Drawing.Size(1064, 744);
             this.flowLayoutPanel1.TabIndex = 69;
             // 
             // txtLastSearchJSON
@@ -183,9 +183,9 @@
             // 
             this.linkLabel1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.linkLabel1.LinkColor = System.Drawing.SystemColors.GradientActiveCaption;
-            this.linkLabel1.Location = new System.Drawing.Point(232, 4);
+            this.linkLabel1.Location = new System.Drawing.Point(649, 4);
             this.linkLabel1.Name = "linkLabel1";
-            this.linkLabel1.Size = new System.Drawing.Size(85, 21);
+            this.linkLabel1.Size = new System.Drawing.Size(79, 21);
             this.linkLabel1.TabIndex = 71;
             this.linkLabel1.TabStop = true;
             this.linkLabel1.Text = "anon";
@@ -196,7 +196,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(653, 403);
+            this.ClientSize = new System.Drawing.Size(1064, 776);
             this.Controls.Add(this.linkLabel1);
             this.Controls.Add(this.btnWorkBench);
             this.Controls.Add(this.btnURN);
