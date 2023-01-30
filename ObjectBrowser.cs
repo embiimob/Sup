@@ -57,7 +57,7 @@ namespace SUP
                 }
                 foundObject.ObjectImage.ImageLocation = objstate.Image.Replace("BTC:", @"root/"); foundObject.ObjectName.Text = objstate.Name;
                 foundObject.ObjectDescription.Text = objstate.Description;
-         
+
                 foreach (string creator in objstate.Creators.Skip(1))
                 {
 
@@ -125,7 +125,7 @@ namespace SUP
 
 
 
-
+            flowLayoutPanel1.SuspendLayout();
             flowLayoutPanel1.Controls.Clear();
 
 
@@ -148,14 +148,33 @@ namespace SUP
                             Root root = Root.GetRootByTransactionId(transid, txtLogin.Text, txtPassword.Text, @"http://127.0.0.1:8332", "0");
 
                         }
-
+                        foundObject.ObjectImage.ImageLocation = objstate.Image.Replace("BTC:", @"root/");
                     }
-                    foundObject.ObjectImage.ImageLocation = objstate.Image.Replace("BTC:", @"root/");
+                    else
+                    {
+
+                        if (!objstate.Image.ToLower().StartsWith("http"))
+                        {
+                            string transid = objstate.Image.Substring(0, 64);
+
+                            if (!System.IO.Directory.Exists("root/" + transid))
+                            {
+                                Root root = Root.GetRootByTransactionId(transid, txtLogin.Text, txtPassword.Text, @"http://127.0.0.1:18332", "0");
+
+                            }
+
+                            foundObject.ObjectImage.ImageLocation = @"root/" + objstate.Image;
+                        }
+                        else
+                        {
+                            foundObject.ObjectImage.ImageLocation = objstate.Image;
+                        }
+                    }
                     foundObject.ObjectName.Text = objstate.Name;
                     foundObject.ObjectDescription.Text = objstate.Description;
                     foundObject.ObjectAddress.Text = objstate.Creators.First();
                     foundObject.ObjectQty.Text = objstate.Owners.Values.Sum().ToString() + "x";
-                  
+
                     foreach (string creator in objstate.Creators.Skip(1))
                     {
 
@@ -167,7 +186,7 @@ namespace SUP
                         }
                         else
                         {
-                            
+
 
                             if (profile.URN != null && foundObject.ObjectCreators2.Text == "")
                             {
@@ -180,11 +199,12 @@ namespace SUP
 
 
                     }
-                
+
                     flowLayoutPanel1.Controls.Add(foundObject);
 
                 }
             }
+            flowLayoutPanel1.ResumeLayout();
 
 
         }
@@ -231,7 +251,7 @@ namespace SUP
 
 
 
-
+            flowLayoutPanel1.SuspendLayout();
             flowLayoutPanel1.Controls.Clear();
 
             List<OBJState> createdObjects = OBJState.GetObjectsOwnedByAddress(profileCheck, txtLogin.Text, txtPassword.Text, txtUrl.Text);
@@ -251,12 +271,33 @@ namespace SUP
                             Root root = Root.GetRootByTransactionId(transid, txtLogin.Text, txtPassword.Text, @"http://127.0.0.1:8332", "0");
 
                         }
+                        foundObject.ObjectImage.ImageLocation = objstate.Image.Replace("BTC:", @"root/");
+
 
                     }
-                    foundObject.ObjectImage.ImageLocation = objstate.Image.Replace("BTC:", @"root/");
+                    else
+                    {
+
+                        if (!objstate.Image.ToLower().StartsWith("http"))
+                        {
+                            string transid = objstate.Image.Substring(0, 64);
+
+                            if (!System.IO.Directory.Exists("root/" + transid))
+                            {
+                                Root root = Root.GetRootByTransactionId(transid, txtLogin.Text, txtPassword.Text, @"http://127.0.0.1:18332", "0");
+
+                            }
+
+                            foundObject.ObjectImage.ImageLocation = @"root/" + objstate.Image;
+                        }
+                        else
+                        {
+                            foundObject.ObjectImage.ImageLocation = objstate.Image;
+                        }
+                    }
                     foundObject.ObjectName.Text = objstate.Name;
                     foundObject.ObjectDescription.Text = objstate.Description;
-                    
+
                     foreach (string creator in objstate.Creators.Skip(1))
                     {
 
@@ -282,12 +323,13 @@ namespace SUP
 
 
                     }
-                  
+
                     foundObject.ObjectQty.Text = objstate.Owners.Values.Sum().ToString() + "x";
                     foundObject.ObjectAddress.Text = objstate.Creators.First();
                     flowLayoutPanel1.Controls.Add(foundObject);
                 }
             }
+            flowLayoutPanel1.ResumeLayout();
         }
 
         private void btnGetCreated_Click(object sender, EventArgs e)
@@ -330,7 +372,7 @@ namespace SUP
 
 
 
-
+            flowLayoutPanel1.SuspendLayout();
             flowLayoutPanel1.Controls.Clear();
 
             List<OBJState> createdObjects = OBJState.GetObjectsCreatedByAddress(profileCheck, txtLogin.Text, txtPassword.Text, txtUrl.Text);
@@ -350,12 +392,33 @@ namespace SUP
                             Root root = Root.GetRootByTransactionId(transid, txtLogin.Text, txtPassword.Text, @"http://127.0.0.1:8332", "0");
 
                         }
-
+                        foundObject.ObjectImage.ImageLocation = objstate.Image.Replace("BTC:", @"root/");
                     }
-                    foundObject.ObjectImage.ImageLocation = objstate.Image.Replace("BTC:", @"root/");
+                    else
+                    {
+
+                        if (!objstate.Image.ToLower().StartsWith("http"))
+                        {
+                            string transid = objstate.Image.Substring(0, 64);
+
+                            if (!System.IO.Directory.Exists("root/" + transid))
+                            {
+                                Root root = Root.GetRootByTransactionId(transid, txtLogin.Text, txtPassword.Text, @"http://127.0.0.1:18332", "0");
+
+                            }
+
+                            foundObject.ObjectImage.ImageLocation = @"root/" + objstate.Image;
+                        }
+                        else
+                        {
+                            foundObject.ObjectImage.ImageLocation = objstate.Image;
+                        }
+                    }
+
+
                     foundObject.ObjectName.Text = objstate.Name;
                     foundObject.ObjectDescription.Text = objstate.Description;
-                 
+
                     foreach (string creator in objstate.Creators.Skip(1))
                     {
 
@@ -385,6 +448,7 @@ namespace SUP
                     flowLayoutPanel1.Controls.Add(foundObject);
                 }
             }
+            flowLayoutPanel1.ResumeLayout();
 
         }
 
@@ -397,6 +461,7 @@ namespace SUP
             lastClickedButton = button;
             button.BackColor = Color.Yellow;
 
+            flowLayoutPanel1.SuspendLayout();
             flowLayoutPanel1.Controls.Clear();
 
             List<OBJState> createdObjects = OBJState.GetObjectsByKeyword(new List<string> { txtSearchAddress.Text }, txtLogin.Text, txtPassword.Text, txtUrl.Text);
@@ -417,9 +482,29 @@ namespace SUP
                             Root root = Root.GetRootByTransactionId(transid, txtLogin.Text, txtPassword.Text, @"http://127.0.0.1:8332", "0");
 
                         }
+                        foundObject.ObjectImage.ImageLocation = objstate.Image.Replace("BTC:", @"root/"); foundObject.ObjectName.Text = objstate.Name;
 
                     }
-                    foundObject.ObjectImage.ImageLocation = objstate.Image.Replace("BTC:", @"root/"); foundObject.ObjectName.Text = objstate.Name;
+                    else
+                    {
+
+                        if (!objstate.Image.ToLower().StartsWith("http"))
+                        {
+                            string transid = objstate.Image.Substring(0, 64);
+
+                            if (!System.IO.Directory.Exists("root/" + transid))
+                            {
+                                Root root = Root.GetRootByTransactionId(transid, txtLogin.Text, txtPassword.Text, @"http://127.0.0.1:18332", "0");
+
+                            }
+
+                            foundObject.ObjectImage.ImageLocation = @"root/" + objstate.Image;
+                        }
+                        else
+                        {
+                            foundObject.ObjectImage.ImageLocation = objstate.Image;
+                        }
+                    }
                     foundObject.ObjectDescription.Text = objstate.Description;
                     foreach (string creator in objstate.Creators.Skip(1))
                     {
@@ -453,13 +538,13 @@ namespace SUP
                     flowLayoutPanel1.Controls.Add(foundObject);
                 }
             }
-
+            flowLayoutPanel1.ResumeLayout();
         }
 
 
         string TruncateAddress(string input)
         {
-            if (input.Length <= 10)
+            if (input.Length <= 13)
             {
                 return input;
             }
@@ -498,9 +583,31 @@ namespace SUP
                         Root root = Root.GetRootByTransactionId(transid, txtLogin.Text, txtPassword.Text, @"http://127.0.0.1:8332", "0");
 
                     }
+                    foundObject.ObjectImage.ImageLocation = objstate.Image.Replace("BTC:", @"root/"); foundObject.ObjectName.Text = objstate.Name;
+
 
                 }
-                foundObject.ObjectImage.ImageLocation = objstate.Image.Replace("BTC:", @"root/"); foundObject.ObjectName.Text = objstate.Name;
+                else
+                {
+
+                    if (!objstate.Image.ToLower().StartsWith("http"))
+                    {
+                        string transid = objstate.Image.Substring(0, 64);
+
+                        if (!System.IO.Directory.Exists("root/" + transid))
+                        {
+                            Root root = Root.GetRootByTransactionId(transid, txtLogin.Text, txtPassword.Text, @"http://127.0.0.1:18332", "0");
+
+                        }
+
+                        foundObject.ObjectImage.ImageLocation = @"root/" + objstate.Image;
+                    }
+                    else
+                    {
+                        foundObject.ObjectImage.ImageLocation = objstate.Image;
+                    }
+                }
+
                 foundObject.ObjectDescription.Text = objstate.Description;
                 foreach (string creator in objstate.Creators.Skip(1))
                 {

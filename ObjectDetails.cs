@@ -49,7 +49,7 @@ namespace SUP
         }
         private string TruncateAddress(string input)
         {
-            if (input.Length <= 10)
+            if (input.Length <= 13)
             {
                 return input;
             }
@@ -266,7 +266,7 @@ namespace SUP
         {
             supFlow.SuspendLayout();
             supFlow.Controls.Clear();
-            
+
             Dictionary<string, string[]> profileAddress = new Dictionary<string, string[]> { };
             OBJState objstate = OBJState.GetObjectByAddress(_objectaddress, "good-user", "better-password", "http://127.0.0.1:18332");
             int rownum = 1;
@@ -656,19 +656,22 @@ namespace SUP
                     }
                     else
                     {
-                        string transid = objstate.Image.Substring(0, 64);
-                        lblImageFullPath.Text = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + @"\root\" + imgurn.Replace(@" / ", @"\");
-                        if (!System.IO.Directory.Exists("root/" + transid))
+
+                        if (!objstate.Image.ToLower().StartsWith("http"))
                         {
-                            Root root = Root.GetRootByTransactionId(transid, "good-user", "better-password", "http://127.0.0.1:18332");
-                            imgblockdate = root.BlockDate;
-                            if (root.BlockDate.Year == 1) { lblImageFullPath.Text = objstate.Image; };
+                            string transid = objstate.Image.Substring(0, 64);
+
+                            if (!System.IO.Directory.Exists("root/" + transid))
+                            {
+                                Root root = Root.GetRootByTransactionId(transid, "good-user", "better-password", @"http://127.0.0.1:18332");
+
+                            }
+
+                            lblImageFullPath.Text = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + @"\root\" + objstate.Image.Replace(@"/", @"\");
                         }
                         else
                         {
-                            string P2FKJSONString = System.IO.File.ReadAllText(@"root/" + transid + @"/P2FK.json");
-                            Root root = JsonConvert.DeserializeObject<Root>(P2FKJSONString);
-                            imgblockdate = root.BlockDate;
+                            lblImageFullPath.Text = objstate.Image;
                         }
                     }
                 }
@@ -698,17 +701,27 @@ namespace SUP
                     }
                     else
                     {
-                        string transid = objstate.URN.Substring(0, 64);
-                        if (!System.IO.Directory.Exists(@"root/" + transid))
+                        if (!objstate.URN.ToLower().StartsWith("http"))
                         {
-                            Root root = Root.GetRootByTransactionId(transid, "good-user", "better-password", "http://127.0.0.1:18332");
-                            urnblockdate = root.BlockDate;
+                            string transid = objstate.URN.Substring(0, 64);
+                            if (!System.IO.Directory.Exists(@"root/" + transid))
+                            {
+                                Root root = Root.GetRootByTransactionId(transid, "good-user", "better-password", "http://127.0.0.1:18332");
+                                urnblockdate = root.BlockDate;
+                            }
+                            else
+                            {
+                                string P2FKJSONString = System.IO.File.ReadAllText(@"root/" + transid + @"/P2FK.json");
+                                Root root = JsonConvert.DeserializeObject<Root>(P2FKJSONString);
+                                urnblockdate = root.BlockDate;
+                            }
+                            urn = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + @"\root\" + objstate.URN.Replace(@"/", @"\");
+
                         }
                         else
                         {
-                            string P2FKJSONString = System.IO.File.ReadAllText(@"root/" + transid + @"/P2FK.json");
-                            Root root = JsonConvert.DeserializeObject<Root>(P2FKJSONString);
-                            urnblockdate = root.BlockDate;
+
+                            urn = objstate.URN;
                         }
 
 
@@ -739,7 +752,7 @@ namespace SUP
                     }
                     else
                     {
-                        string transid = objstate.URN.Substring(0, 64);
+                        string transid = objstate.URI.Substring(0, 64);
                         if (!System.IO.Directory.Exists(@"root/" + transid))
                         {
                             Root root = Root.GetRootByTransactionId(transid, "good-user", "better-password", "http://127.0.0.1:18332");
@@ -984,8 +997,8 @@ namespace SUP
             catch { }
 
             OBJState objstate = OBJState.GetObjectByAddress(_objectaddress, "good-user", "better-password", "http://127.0.0.1:18332", "111", true);
-           
-        
+
+
             var trans = new Options { CreateIfMissing = true };
 
             using (var db = new DB(trans, @"root/event"))
@@ -1036,7 +1049,7 @@ namespace SUP
             transFlow.ResumeLayout();
             transFlow.Visible = true;
 
-            
+
 
         }
     }
