@@ -1,5 +1,5 @@
 # Sup!? 
-open source experimental decentralized state engine protocl
+open source experimental decentralized state engine protocol
 
 this Sup!? objectbrowseer is a READ ONLY demonstration of establishing identies and tracking changes with comments of immutable bitcoin objects in a format familiar to more traditional nft collectors.
 
