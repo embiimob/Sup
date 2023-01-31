@@ -1,6 +1,6 @@
 # Sup!? 
 
-This Sup!? Object Browseer is a read only demonstration of using Sup!? to comment on and track changes of bitcoin objects in a format familiar to more traditional nft collectors.
+This Sup!? Object Browseer is a READ ONLY demonstration of using Sup!? to comment on and track changes of bitcoin objects in a format familiar to more traditional nft collectors.
 
 
 1. Click the Key Button
