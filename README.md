@@ -1,4 +1,5 @@
 # Sup!? 
+open source experimental decentralized state engine Protocl
 
 This Sup!? Object Browseer is a READ ONLY demonstration of establishing identies and tracking changes with comments of immutable bitcoin objects in a format familiar to more traditional nft collectors.
 
@@ -21,9 +22,6 @@ launch example altcoin mazacoin using the buttons provided   https://github.com/
 
 ** see example transaction JSON to begin testing the entry of your own blockchain objects
 
- 
- 
- 
-  
+   
 
- Sup!? open source experimental decentralized state engine Protocl
+ Sup!? 
