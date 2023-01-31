@@ -16,6 +16,6 @@ type embii4u
 hit enter
 
 
-# Sup!
+# hugpduddle.org
 
  experimental decentralized state engine Protocl compatible with most blockchains based on bitcoin brought to you buy hugpuddle.org
