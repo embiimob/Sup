@@ -21,6 +21,9 @@ launch example altcoin mazacoin using the buttons provided   project site -->  h
 
 ** see example transaction JSON to begin testing the entry of your own blockchain objects
 
-
+ 
+ 
+ 
+  
 
  Sup!? is an open source experimental decentralized state engine Protocl compatible with most blockchains based on bitcoin.
