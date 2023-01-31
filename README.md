@@ -20,4 +20,5 @@ hit enter
  
 
 ** all transactions in this trading demonstration were entered using http://Apertus.io 
+
 ** see example transaction JSON to begin testing the entry of your own blockchain objects
