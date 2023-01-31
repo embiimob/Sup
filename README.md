@@ -13,11 +13,11 @@ To Perform you first Sup!? Object Search
 
 
 Optional:
-launch example altcoin mazacoin using the buttons provided   project site -->  https://github.com/mazacoin/maza
+launch example altcoin mazacoin using the buttons provided   https://github.com/mazacoin/maza
 
 
 
-** all transactions in this trading demonstration were entered using http://Apertus.io 
+** all transactions in this trading demonstration were entered using   http://Apertus.io 
 
 ** see example transaction JSON to begin testing the entry of your own blockchain objects
 
@@ -26,4 +26,4 @@ launch example altcoin mazacoin using the buttons provided   project site -->  h
  
   
 
- Sup!? is an open source experimental decentralized state engine Protocl compatible with most blockchains based on bitcoin.
+ Sup!? open source experimental decentralized state engine Protocl
