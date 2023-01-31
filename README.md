@@ -11,9 +11,9 @@ This Sup!? Object Browseer is a read only demonstration of using Sup!? to commen
 Optional:
 launch example altcoin mazacoin using the buttons provided   project site -->  https://github.com/mazacoin/maza
 
-type embii4u
+type embii4u in the main search box
 
 hit enter
 
 
- experimental decentralized state engine Protocl compatible with most blockchains based on bitcoin brought to you buy hugpuddle.org
+ Sup!? is an open source experimental decentralized state engine Protocl compatible with most blockchains based on bitcoin.
