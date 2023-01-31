@@ -1,9 +1,9 @@
 # Sup!? 
 
-This Sup!? Object Browseer is a READ ONLY demonstration of establishing identies, redirecting domain names, tracking changes and public comments of bitcoin objects in a format familiar to more traditional nft collectors.
+This Sup!? Object Browseer is a READ ONLY demonstration of establishing identies and tracking changes with comments of immutable bitcoin objects in a format familiar to more traditional nft collectors.
 
 
-To Perform you first Object Search using Sup!?
+To Perform you first Sup!? Object Search
 
 1. Click the Key Button
 2. Launch a full bitcoin Production node AND a full Bitcoin testnet node using the buttons provided
