@@ -1,7 +1,7 @@
 # Sup!? 
 open source experimental decentralized state engine protocol
 
-this Sup!? Object Browseer is a READ ONLY demonstration of establishing identies and tracking changes with comments on immutable bitcoin objects in a format familiar to more traditional nft enthusiasts.
+this Sup!? Object Browser is a READ ONLY demonstration of establishing identies and tracking changes with comments on immutable bitcoin objects in a format familiar to more traditional nft enthusiasts.
 
 Installation 
 1. Download latest release .zip file
