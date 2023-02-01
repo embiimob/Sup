@@ -14,7 +14,7 @@ to perform you first Sup!? object search
 
 1. Click the key button
 2. Launch a full bitcoin Production node AND a full Bitcoin testnet node using the buttons provided
-3. Wait until both blockchains have completely synced.  
+3. Wait until both blockchains have completely synced.  ( this part could take days )
 4. Type embii4u in the main search box
 5. Hit enter
 
