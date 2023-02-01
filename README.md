@@ -21,9 +21,9 @@ This Sup!? Object Browser is a READ ONLY demonstration of establishing a decentr
 
 ### **Search Options**
 
-#Keyword ------------- searches up to 20 character keyword shows all object associations
-sup://twitter.com ---- searches urn shows currently registered object with URI  (no urn character limits, redirects are not enabled)
-@userName ------------ searches urn shows currently registered profile object associated with @userName
+1. #Keyword ------------- searches up to 20 character keyword shows all object associations
+2. sup://twitter.com ---- searches urn shows currently registered object with URI  (no urn character limits, redirects are not enabled)
+3. @userName ------------ searches urn shows currently registered profile object associated with @userName
 
 
 
