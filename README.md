@@ -31,6 +31,6 @@ sup://twitter.com ---- searches urn shows currently registered object with URI  
 
 - this experiment references mazacoin their latest official release has been included in this deployment https://github.com/mazacoin/maza
 
-- see [the example transaction JSON files](https://github.com/embiimob/Sup/tree/master/P2FK/samples) to begin experimenting with the entry and trading of your own Sup!? objects
+- see the example transaction JSON files https://github.com/embiimob/Sup/tree/master/P2FK/samples to begin experimenting with the entry and trading of your own Sup!? objects
 
 - Sup!? bitcoin objects can be discovered and browsed without internet access because Sup!? is communicating with a local copy of the blockchain.
