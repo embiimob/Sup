@@ -14,7 +14,7 @@ to perform you first Sup!? object search
 
 
 optional:
-launch example altcoin mazacoin using the buttons provided    https://github.com/mazacoin/maza
+launch example altcoin mazacoin using the button provided    https://github.com/mazacoin/maza
 
 * uses this v0.13.2 full bitcoin core clone with an address index change  https://github.com/btcdrak/bitcoin/tree/addrindex-0.14
 
