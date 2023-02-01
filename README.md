@@ -17,10 +17,10 @@ Perform you first Sup!? object search
 4. Type #flowersofwar in the main search box
 5. Hit enter
 
-search parameters
-#Keyword ------------- searches up to 20 character keyword shows all object associations
-sup://twitter.com ---- searches urn shows currently registered object with URI
-@userName ------------ searches urn shows currently registered profile object associated with @userName
+Search Options
+1. #Keyword ------------- searches up to 20 character keyword shows all object associations
+2. sup://twitter.com ---- searches urn shows currently registered object with URI
+3. @userName ------------ searches urn shows currently registered profile object associated with @userName
 
 
 * uses a v0.13.2 full bitcoin core clone with address index change  https://github.com/btcdrak/bitcoin/tree/addrindex-0.14
