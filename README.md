@@ -18,6 +18,6 @@ launch example altcoin mazacoin using the buttons provided    https://github.com
 
 * uses this v0.13.2 full bitcoin core clone with an address index change  https://github.com/btcdrak/bitcoin/tree/addrindex-0.14
 
-** all transactions and objects in this trading demonstration were entered using    http://Apertus.io 
+* all transactions and objects in this trading demonstration were entered using    http://Apertus.io 
 
-*** see example transaction JSON files to begin testing the entry and trading of your own blockchain objects and comments
+* see example transaction JSON files to begin testing the entry and trading of your own blockchain objects and comments
