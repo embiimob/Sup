@@ -24,6 +24,6 @@ optional:
 
 * uses a v0.13.2 full bitcoin core clone with address index change  https://github.com/btcdrak/bitcoin/tree/addrindex-0.14
 
-* all transactions and objects in this trading demonstration were entered using apertus.io  http://Apertus.io 
+* all transactions and objects in this experiment were entered using apertus.io  http://Apertus.io 
 
 ** see example transaction JSON files to begin TESTING the entry and trading of your own blockchain objects and comments
