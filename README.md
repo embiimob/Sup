@@ -14,10 +14,10 @@ to perform you first Sup!? object search
 
 1. Click the key button
 2. Launch a full bitcoin Production node AND a full Bitcoin testnet node using the buttons provided
-* optional - launch example altcoin mazacoin using the button provided    https://github.com/mazacoin/maza
-4. Wait until both blockchains have completely synced.  ( this part could take days )
-5. Type embii4u in the main search box
-6. Hit enter
+  a. optional - launch example altcoin mazacoin using the button provided    https://github.com/mazacoin/maza
+3. Wait until both blockchains have completely synced.  ( this part could take days )
+4. Type embii4u in the main search box
+5. Hit enter
 
 
 optional:
