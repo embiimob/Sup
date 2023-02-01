@@ -25,3 +25,8 @@
 //select an owner signature address from the signature list in apertus.io
 //verify that the no message box is checked.
 //click the apertus.io etch button
+
+// profile element update transaction example
+
+{ "sfx": "xxv" }
+

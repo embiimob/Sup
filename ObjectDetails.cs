@@ -1,32 +1,18 @@
 ﻿using AngleSharp.Dom;
 using Ganss.Xss;
 using LevelDB;
-using Microsoft.Web.WebView2.Core;
-using Microsoft.Web.WebView2.WinForms;
-using Microsoft.Web.WebView2.Wpf;
 using NBitcoin;
-using NBitcoin.RPC;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 using SUP.P2FK;
 using System;
 using System.Collections.Generic;
-using System.Data.SqlTypes;
 using System.Globalization;
 using System.IO;
 using System.Linq;
-using System.Net;
-using System.Numerics;
 using System.Reflection;
-using System.Reflection.Emit;
-using System.Security.Policy;
 using System.Text.RegularExpressions;
 using System.Web.NBitcoin;
-using System.Windows;
-using System.Windows.Controls;
 using System.Windows.Forms;
-using System.Windows.Forms.Integration;
-
 using Label = System.Windows.Forms.Label;
 
 namespace SUP
@@ -106,6 +92,7 @@ namespace SUP
                 DateTime uriblockdate = new DateTime();
                 foreach (KeyValuePair<string, long> item in objstate.Owners)
                 {
+                   
                     // Create a table layout panel for each row
                     TableLayoutPanel rowPanel = new TableLayoutPanel();
                     rowPanel.RowCount = 1;
@@ -184,6 +171,9 @@ namespace SUP
                     // Add the row panel to the main panel
                     OwnersPanel.Controls.Add(rowPanel);
                     row++;
+
+
+
                 }
 
                 long totalQty = objstate.Owners.Values.Sum();
@@ -192,62 +182,68 @@ namespace SUP
                 lblTotalOwnedDetail.Text = "total: " + totalQty.ToString("N0");
 
 
-                foreach (string item in objstate.Creators)
+                foreach (KeyValuePair <string,DateTime> item in objstate.Creators)
                 {
-                    // Create a table layout panel for each row
-                    TableLayoutPanel rowPanel = new TableLayoutPanel();
-                    rowPanel.RowCount = 1;
-                    rowPanel.ColumnCount = 2;
-                    rowPanel.Dock = DockStyle.Top;
-                    rowPanel.AutoSize = true;
-                    rowPanel.Padding = new System.Windows.Forms.Padding(3);
 
+                    if (item.Value.Year > 1)
 
-                    rowPanel.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 130));
-                    rowPanel.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 0));
-
-
-
-                    LinkLabel keyLabel = new LinkLabel();
-
-                    string searchkey = item;
-                    PROState profile = PROState.GetProfileByAddress(searchkey, "good-user", "better-password", "http://127.0.0.1:18332");
-
-                    if (profile.URN != null)
-                    {
-                        keyLabel.Text = TruncateAddress(profile.URN);
-                    }
-                    else
                     {
 
+                        // Create a table layout panel for each row
+                        TableLayoutPanel rowPanel = new TableLayoutPanel();
+                        rowPanel.RowCount = 1;
+                        rowPanel.ColumnCount = 2;
+                        rowPanel.Dock = DockStyle.Top;
+                        rowPanel.AutoSize = true;
+                        rowPanel.Padding = new System.Windows.Forms.Padding(3);
 
-                        keyLabel.Text = TruncateAddress(item);
+
+                        rowPanel.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 130));
+                        rowPanel.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 0));
+
+
+
+                        LinkLabel keyLabel = new LinkLabel();
+
+                        string searchkey = item.Key;
+                        PROState profile = PROState.GetProfileByAddress(searchkey, "good-user", "better-password", "http://127.0.0.1:18332");
+
+                        if (profile.URN != null)
+                        {
+                            keyLabel.Text = TruncateAddress(profile.URN);
+                        }
+                        else
+                        {
+
+
+                            keyLabel.Text = TruncateAddress(item.Key);
+                        }
+                        keyLabel.Links[0].LinkData = item.Key;
+                        keyLabel.AutoSize = true;
+                        keyLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+                        keyLabel.LinkBehavior = LinkBehavior.NeverUnderline;
+                        keyLabel.LinkColor = System.Drawing.Color.Black;
+                        keyLabel.ActiveLinkColor = System.Drawing.Color.Black;
+                        keyLabel.VisitedLinkColor = System.Drawing.Color.Black;
+                        keyLabel.LinkClicked += new LinkLabelLinkClickedEventHandler(LinkClicked);
+                        keyLabel.Dock = DockStyle.Left; // set dock property for key label 
+                        rowPanel.Controls.Add(keyLabel, 0, 0);
+
+
+                        // Alternate the background color of the row panel
+                        if (row % 2 == 0)
+                        {
+                            rowPanel.BackColor = System.Drawing.Color.White;
+                        }
+                        else
+                        {
+                            rowPanel.BackColor = System.Drawing.Color.LightGray;
+                        }
+
+                        // Add the row panel to the main panel
+                        CreatorsPanel.Controls.Add(rowPanel);
+                        row++;
                     }
-                    keyLabel.Links[0].LinkData = item;
-                    keyLabel.AutoSize = true;
-                    keyLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-                    keyLabel.LinkBehavior = LinkBehavior.NeverUnderline;
-                    keyLabel.LinkColor = System.Drawing.Color.Black;
-                    keyLabel.ActiveLinkColor = System.Drawing.Color.Black;
-                    keyLabel.VisitedLinkColor = System.Drawing.Color.Black;
-                    keyLabel.LinkClicked += new LinkLabelLinkClickedEventHandler(LinkClicked);
-                    keyLabel.Dock = DockStyle.Left; // set dock property for key label 
-                    rowPanel.Controls.Add(keyLabel, 0, 0);
-
-
-                    // Alternate the background color of the row panel
-                    if (row % 2 == 0)
-                    {
-                        rowPanel.BackColor = System.Drawing.Color.White;
-                    }
-                    else
-                    {
-                        rowPanel.BackColor = System.Drawing.Color.LightGray;
-                    }
-
-                    // Add the row panel to the main panel
-                    CreatorsPanel.Controls.Add(rowPanel);
-                    row++;
                 }
 
             }
@@ -625,8 +621,42 @@ namespace SUP
             if (objstate.Owners != null)
             {
 
-                string urn = objstate.URN.Replace("BTC:", @"root/");
-                string imgurn = objstate.Image.Replace("BTC:", @"root/");
+                string urn = "";
+                if (objstate.URN != null)
+                {
+                    urn = objstate.URN;
+
+                    if (!objstate.URN.ToLower().StartsWith("http"))
+                    {
+                        urn = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + @"\root\" + objstate.URN.Replace("BTC:", "").Replace(@"/", @"\");
+                    }
+                }
+
+
+                string imgurn = "";
+                if (objstate.Image != null)
+                {
+                    imgurn = objstate.Image;
+
+                    if (!objstate.Image.ToLower().StartsWith("http"))
+                    {
+                        imgurn = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + @"\root\" + objstate.Image.Replace("BTC:", "").Replace(@"/", @"\");
+                    }
+                }
+
+
+                string uriurn = "";
+                if (objstate.URI != null)
+                {
+                    uriurn = objstate.URI;
+
+                    if (!objstate.URI.ToLower().StartsWith("http"))
+                    {
+                        uriurn = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + @"\root\" + objstate.URI.Replace("BTC:", "").Replace(@"/", @"\");
+                    }
+                }
+
+
                 DateTime urnblockdate = new DateTime();
                 DateTime imgblockdate = new DateTime();
                 DateTime uriblockdate = new DateTime();
@@ -637,8 +667,6 @@ namespace SUP
                     if (objstate.Image.StartsWith("BTC:"))
                     {
                         string transid = objstate.Image.Substring(4, 64);
-                        lblImageFullPath.Text = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + @"\" + imgurn.Replace(@"/", @"\");
-
 
                         if (!System.IO.Directory.Exists("root/" + transid))
                         {
@@ -664,20 +692,21 @@ namespace SUP
                             if (!System.IO.Directory.Exists("root/" + transid))
                             {
                                 Root root = Root.GetRootByTransactionId(transid, "good-user", "better-password", @"http://127.0.0.1:18332");
-
+                                imgblockdate = root.BlockDate;
                             }
-
-                            lblImageFullPath.Text = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + @"\root\" + objstate.Image.Replace(@"/", @"\");
+                            else
+                            {
+                                string P2FKJSONString = System.IO.File.ReadAllText(@"root/" + transid + @"/P2FK.json");
+                                Root root = JsonConvert.DeserializeObject<Root>(P2FKJSONString);
+                                imgblockdate = root.BlockDate;
+                            }
                         }
-                        else
-                        {
-                            lblImageFullPath.Text = objstate.Image;
-                        }
+                        
                     }
                 }
                 catch { }
 
-                imgPicture.ImageLocation = lblImageFullPath.Text;
+                imgPicture.ImageLocation = imgurn;
 
                 try
                 {
@@ -696,6 +725,7 @@ namespace SUP
                             Root root = JsonConvert.DeserializeObject<Root>(P2FKJSONString);
                             urnblockdate = root.BlockDate;
                         }
+                        
 
 
                     }
@@ -715,7 +745,7 @@ namespace SUP
                                 Root root = JsonConvert.DeserializeObject<Root>(P2FKJSONString);
                                 urnblockdate = root.BlockDate;
                             }
-                            urn = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + @"\root\" + objstate.URN.Replace(@"/", @"\");
+                           
 
                         }
                         else
@@ -727,7 +757,7 @@ namespace SUP
 
                     }
                 }
-                catch { urn = objstate.Image.Replace("BTC:", @"root/"); }
+                catch { urn = imgurn; }
 
 
                 try
@@ -776,7 +806,7 @@ namespace SUP
                 Regex regexTransactionId = new Regex(@"\b[0-9a-f]{64}\b");
                 Match match = regexTransactionId.Match(urn);
                 string transactionid = match.Value;
-                string filePath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + @"\root\" + urn.Replace(@"/", @"\");
+                string filePath = urn;
                 filePath = filePath.Replace(@"\root\root\", @"\root\");
                 lblURNFullPath.Text = filePath;
                 txtURN.Text = objstate.URN;
@@ -836,7 +866,7 @@ namespace SUP
                         string viewerPath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + @"\root\" + transactionid + @"\urnviewer.html";
                         flowPanel.Controls.Clear();
 
-                        string htmlstring = "<html><body><embed src=\"" + filePath + "\" width=100% height=100%></body></html>";
+                        string htmlstring = "<html><body><embed src=\"" + urn + "\" width=100% height=100%></body></html>";
 
                         try
                         {
@@ -856,10 +886,16 @@ namespace SUP
                         string browserPath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + @"\root\" + transactionid + @"\urnviewer.html";
                         flowPanel.Controls.Clear();
 
-                        string htmlembed = "<html><body><embed src=\"" + filePath + "\" width=100% height=100%></body></html>";
-                        string potentialyUnsafeHtml = System.IO.File.ReadAllText(filePath);
+                        string htmlembed = "<html><body><embed src=\"" + urn + "\" width=100% height=100%></body></html>";
+                        string potentialyUnsafeHtml = "";
+                        try
+                        {
+                            potentialyUnsafeHtml = System.IO.File.ReadAllText(urn);
+                        }
+                        catch { }
 
-                        if (chkRunTrustedObject.Checked)
+
+                            if (chkRunTrustedObject.Checked)
                         {
 
 
@@ -875,10 +911,10 @@ namespace SUP
                             {
                                 transid = objstate.URN.Substring(0, 64);
                                 try { System.IO.Directory.Delete(@"root/" + transid, true); } catch { }
-                                P2FK.Root.GetRootByTransactionId(transid, "good-user", "better-password", "http://127.0.0.1:8332", "0");
+                                P2FK.Root.GetRootByTransactionId(transid, "good-user", "better-password", "http://127.0.0.1:18332");
                             }
 
-                            potentialyUnsafeHtml = System.IO.File.ReadAllText(filePath);
+                            potentialyUnsafeHtml = System.IO.File.ReadAllText(urn);
 
                             var matches = regexTransactionId.Matches(potentialyUnsafeHtml);
                             foreach (Match transactionID in matches)
@@ -902,20 +938,20 @@ namespace SUP
                             string _address = _objectaddress;
                             string _viewer = null;//to be implemented
                             string _viewername = null; //to be implemented
-                            string _creator = objstate.Creators.Last();
+                            string _creator = objstate.Creators.Last().Key;
                             int _owner = 0;//to be implemented
                             string _urn = HttpUtility.UrlEncode(objstate.URN);
                             string _uri = HttpUtility.UrlEncode(objstate.URI);
                             string _img = HttpUtility.UrlEncode(objstate.Image);
 
                             string querystring = "?address=" + _address + "&viewer=" + _viewer + "&viewername=" + _viewername + "&creator=" + _creator + "&owner=" + _owner + "&urn=" + _urn + "&uri=" + _uri + "&img=" + _img;
-                            htmlembed = "<html><body><embed src=\"" + filePath + querystring + "\" width=100% height=100%></body></html>";
+                            htmlembed = "<html><body><embed src=\"" + urn + querystring + "\" width=100% height=100%></body></html>";
                         }
                         else
                         {
                             var sanitizer = new HtmlSanitizer();
                             var sanitized = sanitizer.Sanitize(potentialyUnsafeHtml);
-                            System.IO.File.WriteAllText(filePath, sanitized);
+                            try { System.IO.File.WriteAllText(urn, sanitized); } catch { }
                         }
 
                         try

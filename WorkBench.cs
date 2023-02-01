@@ -5,13 +5,11 @@ using Newtonsoft.Json.Linq;
 using SUP.P2FK;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Net;
 using System.Numerics;
-using System.Text;
 using System.Windows.Forms;
 
 namespace SUP

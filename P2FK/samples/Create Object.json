@@ -26,4 +26,9 @@
 //click the apertus.io etch button
 
 
+// confirm creator deligation transaction example with numeric salt
+
+{"cre":[1234]}
+
+
 

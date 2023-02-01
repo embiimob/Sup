@@ -200,6 +200,12 @@
     <Reference Include="WindowsFormsIntegration" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Connections.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Connections.Designer.cs">
+      <DependentUpon>Connections.cs</DependentUpon>
+    </Compile>
     <Compile Include="FullScreenView.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -221,11 +227,11 @@
     <Compile Include="ObjectBrowser.Designer.cs">
       <DependentUpon>ObjectBrowser.cs</DependentUpon>
     </Compile>
-    <Compile Include="foundObjectControl.cs">
+    <Compile Include="FoundObjectControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="foundObjectControl.Designer.cs">
-      <DependentUpon>foundObjectControl.cs</DependentUpon>
+    <Compile Include="FoundObjectControl.Designer.cs">
+      <DependentUpon>FoundObjectControl.cs</DependentUpon>
     </Compile>
     <Compile Include="P2FK\classes\BigIntExtensions.cs" />
     <Compile Include="P2FK\classes\ECElGamal.cs" />
@@ -242,6 +248,10 @@
     <Compile Include="P2FK\classes\Base58.cs" />
     <Compile Include="P2FK\classes\Root.cs" />
     <Compile Include="P2FK\classes\SHA256.cs" />
+    <EmbeddedResource Include="Connections.resx">
+      <DependentUpon>Connections.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
     <EmbeddedResource Include="FullScreenView.resx">
       <DependentUpon>FullScreenView.cs</DependentUpon>
     </EmbeddedResource>
@@ -254,8 +264,8 @@
     <EmbeddedResource Include="ObjectBrowser.resx">
       <DependentUpon>ObjectBrowser.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="foundObjectControl.resx">
-      <DependentUpon>foundObjectControl.cs</DependentUpon>
+    <EmbeddedResource Include="FoundObjectControl.resx">
+      <DependentUpon>FoundObjectControl.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
@@ -276,10 +286,18 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
-    <None Include="P2FK\samples\Burn Transaction.json" />
-    <None Include="P2FK\samples\Create Object.json" />
-    <None Include="P2FK\samples\Create Profile.json" />
-    <None Include="P2FK\samples\Give Object.json" />
+    <None Include="P2FK\samples\Burn Transaction.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="P2FK\samples\Create Object.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="P2FK\samples\Create Profile.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="P2FK\samples\Give Object.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
@@ -295,6 +313,14 @@
       <ProductName>.NET Framework 3.5 SP1</ProductName>
       <Install>false</Install>
     </BootstrapperPackage>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="bitcoin-qt.exe">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="maza-qt.exe">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="packages\Microsoft.Web.WebView2.1.0.1462.37\build\Microsoft.Web.WebView2.targets" Condition="Exists('packages\Microsoft.Web.WebView2.1.0.1462.37\build\Microsoft.Web.WebView2.targets')" />

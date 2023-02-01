@@ -177,7 +177,7 @@ namespace SUP.P2FK
 
             int transactionBytesSize = transactionBytes.Count();
             transactionASCII = Encoding.ASCII.GetString(transactionBytes);
-
+            bool isNoise = false;
 
             // Perform the loop until no additional numbers are found and the regular expression fails to match
             while (regexSpecialChars.IsMatch(transactionASCII))
@@ -207,12 +207,12 @@ namespace SUP.P2FK
                     .ToArray();
 
                 bool isValid = true;
-
+               
                 if (!Directory.Exists(diskpath))
                 {
                     Directory.CreateDirectory(diskpath);
                 }
-                if (fileName != "")
+                if (fileName.Length > 1)
                 {
                     try
                     {
@@ -223,12 +223,12 @@ namespace SUP.P2FK
                     catch (Exception)
                     {
                         isValid = false;
-
+                        
                     }
                 }
                 else
                 {
-                    isValid = false;
+                    isValid = false;                   
 
                 }
 
@@ -315,7 +315,7 @@ namespace SUP.P2FK
                 }
                 else
                 {
-                    if (fileName == "")
+                    if (fileName == "" && fileBytes.Length > 4)
                     {
                         sigEndByte += packetSize + headerSize;
                         MessageList.Add(Encoding.UTF8.GetString(fileBytes));
@@ -327,7 +327,7 @@ namespace SUP.P2FK
                     }
                     else
                     {
-                        break;
+                       break;
                     }
                 }
 

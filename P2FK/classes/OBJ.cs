@@ -33,7 +33,7 @@ namespace SUP.P2FK
         public string Name { get; set; }
         public string Description { get; set; }
         public string License { get; set; }
-        public List<string> Creators { get; set; }
+        public Dictionary<string, DateTime> Creators { get; set; }
         public Dictionary<string, long> Owners { get; set; }
         public DateTime LockedDate { get; set; }
         public int ProcessHeight { get; set; }
@@ -119,15 +119,15 @@ namespace SUP.P2FK
                                 if (objectinspector.cre != null && objectState.Creators == null && transaction.SignedBy == objectaddress)
                                 {
 
-                                    objectState.Creators = new List<string> { };
+                                    objectState.Creators = new Dictionary<string, DateTime> { };
                                     foreach (int keywordId in objectinspector.cre)
                                     {
 
                                         string creator = transaction.Keyword.Reverse().ElementAt(keywordId).Key;
 
-                                        if (!objectState.Creators.Contains(creator))
+                                        if (!objectState.Creators.ContainsKey(creator))
                                         {
-                                            objectState.Creators.Add(creator);
+                                            objectState.Creators.Add(creator, new DateTime());
                                         }
 
                                     }
@@ -140,8 +140,36 @@ namespace SUP.P2FK
                                 try
                                 {
                                     //has proper authority to make OBJ changes
-                                    if (objectState.Creators.Contains(transaction.SignedBy))
+                                    if (objectState.Creators.ContainsKey(transaction.SignedBy))
                                     {
+
+                                        if (objectinspector.cre != null && objectState.Creators.TryGet(transaction.SignedBy).Year == 1 && transaction.File.ContainsKey("OBJ"))
+                                        {
+                                            objectState.Creators[transaction.SignedBy] = transaction.BlockDate;
+
+                                            objectState.ChangeDate = transaction.BlockDate;
+
+
+                                            if (verbose)
+                                            {
+
+                                                logstatus = "[\"" + transaction.SignedBy + "\",\"" + objectaddress + "\",\"grant\",\"\",\"\",\"success\"]";
+
+                                                lock (levelDBLocker)
+                                                {
+                                                    var ROOT = new Options { CreateIfMissing = true };
+                                                    var db = new DB(ROOT, @"root\event");
+                                                    db.Put(objectaddress + "!" + transaction.BlockDate.ToString("yyyyMMddHHmmss") + "!" + sortableProcessHeight + "!", logstatus);
+                                                    db.Close();
+                                                }
+                                                logstatus = "";
+
+                                            }
+
+                                        }
+
+                                       
+
                                         if (objectState.LockedDate.Year == 1)
                                         {
                                             if (objectinspector.urn != null) { objectState.ChangeDate = transaction.BlockDate; objectState.URN = objectinspector.urn; }
@@ -150,34 +178,7 @@ namespace SUP.P2FK
                                             if (objectinspector.nme != null) { objectState.ChangeDate = transaction.BlockDate; objectState.Name = objectinspector.nme; }
                                             if (objectinspector.dsc != null) { objectState.ChangeDate = transaction.BlockDate; objectState.Description = objectinspector.dsc; }
                                             if (objectinspector.lic != null) { objectState.ChangeDate = transaction.BlockDate; objectState.License = objectinspector.lic; }
-                                            if (objectinspector.cre != null)
-                                            {
-                                                objectState.Creators.Clear();
-                                                foreach (int keywordId in objectinspector.cre)
-                                                {
-
-                                                    try
-                                                    {
-
-                                                        string creator = transaction.Keyword.Reverse().ElementAt(keywordId).Key;
-
-                                                        if (!objectState.Creators.Contains(creator))
-                                                        {
-                                                            objectState.Creators.Add(creator);
-                                                        }
-                                                    }
-                                                    catch
-                                                    {
-                                                        logstatus = "[\"" + transaction.SignedBy + "\",\"" + objectaddress + "\",\"create\",\"\",\"\",\"failed\"]";
-                                                        break;
-                                                    }
-
-                                                }
-
-                                                objectState.ChangeDate = transaction.BlockDate;
-
-                                            }
-                                            if (objectState.ProcessHeight > 0  && objectState.ChangeDate == transaction.BlockDate )
+                                            if (objectState.ProcessHeight > 0 && objectState.ChangeDate == transaction.BlockDate)
                                             {
                                                 logstatus = "[\"" + transaction.SignedBy + "\",\"" + objectaddress + "\",\"update\",\"\",\"\",\"success\"]";
                                             }
@@ -187,7 +188,7 @@ namespace SUP.P2FK
                                                 {
                                                     objectState.CreatedDate = transaction.BlockDate;
                                                     objectState.Owners = new Dictionary<string, long>();
-                                                    logstatus = "[\"" + transaction.SignedBy + "\",\"" + objectaddress + "\",\"create\",\""+ objectinspector.own.Values.Sum() + "\",\"\",\"success\"]";
+                                                    logstatus = "[\"" + transaction.SignedBy + "\",\"" + objectaddress + "\",\"create\",\"" + objectinspector.own.Values.Sum() + "\",\"\",\"success\"]";
 
                                                 }
 
@@ -198,6 +199,12 @@ namespace SUP.P2FK
                                                     if (!objectState.Owners.ContainsKey(owner))
                                                     {
                                                         objectState.Owners.Add(owner, ownerId.Value);
+                                                    }
+                                                    else
+                                                    {
+                                                        objectState.Owners[owner] = ownerId.Value;
+
+                                                        logstatus = "[\"" + transaction.SignedBy + "\",\"" + objectaddress + "\",\"update\",\""+ ownerId.Value + "\",\"\",\"success\"]";
                                                     }
                                                 }
                                             }
@@ -317,7 +324,7 @@ namespace SUP.P2FK
                                         }
                                         else
                                         {    //if the transaction is signed by a creator who doesn't own any objects emulate container
-                                            if (objectState.Creators.Contains(transaction.SignedBy) || transaction.SignedBy == objectaddress)
+                                            if (objectState.Creators.ContainsKey(transaction.SignedBy) || transaction.SignedBy == objectaddress)
                                             {
                                                 giver = objectaddress;
                                                 qtyOwnedG = selfOwned;
@@ -357,7 +364,7 @@ namespace SUP.P2FK
 
                                         if (verbose)
                                         {
-                                           
+
                                             logstatus = "[\"" + transaction.SignedBy + "\",\"" + reciever + "\",\"give\",\"" + qtyToGive + "\",\"\",\"success\"]";
 
                                             lock (levelDBLocker)
@@ -372,7 +379,7 @@ namespace SUP.P2FK
 
                                         if (objectState.LockedDate.Year == 1)
                                         {
-                                            
+
                                             if (verbose)
                                             {
                                                 giveCount++;
@@ -487,7 +494,7 @@ namespace SUP.P2FK
                                         }
                                         else
                                         {
-                                            if (objectState.Creators.Contains(transaction.SignedBy))
+                                            if (objectState.Creators.ContainsKey(transaction.SignedBy))
                                             {
                                                 burnr = objectaddress;
                                                 qtyOwnedG = selfOwned;
@@ -518,7 +525,7 @@ namespace SUP.P2FK
                                         if (verbose)
                                         {
                                             logstatus = "[\"" + transaction.SignedBy + "\",\"" + objectaddress + "\",\"burn\",\"" + qtyToBurn + "\",\"\",\"success\"]";
-                                         
+
                                             lock (levelDBLocker)
                                             {
                                                 var ROOT = new Options { CreateIfMissing = true };
@@ -530,13 +537,13 @@ namespace SUP.P2FK
                                         }
                                         if (objectState.LockedDate.Year == 1)
                                         {
-                                            
+
                                             if (verbose)
                                             {
                                                 burnCount++;
                                                 sortableBurnCount = burnCount.ToString("X").PadLeft(4, '0');
                                                 logstatus = "[\"" + transaction.SignedBy + "\",\"" + objectaddress + "\",\"lock\",\"\",\"\",\"success\"]";
-                                                
+
                                                 lock (levelDBLocker)
                                                 {
                                                     var ROOT = new Options { CreateIfMissing = true };
@@ -584,7 +591,7 @@ namespace SUP.P2FK
                         logstatus = "[\"" + transaction.SignedBy + "\",\"" + objectaddress + "\",\"burn\",\"\",\"\",\"failed due to duplicate signature\"]";
                     }
 
-                       
+
 
                 }
                 else { logstatus = "[\"" + transaction.SignedBy + "\",\"" + objectaddress + "\",\"burn\",\"\",\"\",\"failed due to invalid transaction\"]"; }
@@ -599,10 +606,10 @@ namespace SUP.P2FK
                         {
                             var ROOT = new Options { CreateIfMissing = true };
                             var db = new DB(ROOT, @"root\event");
-                            db.Put(objectaddress + "!" + transaction.BlockDate.ToString("yyyyMMddHHmmss")+"!" + sortableProcessHeight, logstatus);
+                            db.Put(objectaddress + "!" + transaction.BlockDate.ToString("yyyyMMddHHmmss") + "!" + sortableProcessHeight, logstatus);
                             db.Close();
                         }
-                                               
+
 
                     }
                 }
@@ -611,7 +618,7 @@ namespace SUP.P2FK
 
             //used to determine where to begin object State processing when retrieved from cache
             objectState.ProcessHeight = intProcessHeight;
-            objectState.Verbose= verbose;
+            objectState.Verbose = verbose;
             var objectSerialized = JsonConvert.SerializeObject(objectState);
 
             try
@@ -652,7 +659,7 @@ namespace SUP.P2FK
 
                     if (isObject.URN != null && isObject.URN == searchstring && isObject.Owners != null && isObject.ChangeDate > DateTime.Now.AddYears(-3))
                     {
-                        if (isObject.Creators.ElementAt(0) == findObject)
+                        if (isObject.Creators.ElementAt(0).Key == findObject)
                         {
 
                             return isObject;
@@ -683,7 +690,7 @@ namespace SUP.P2FK
 
 
                 //ignore any transaction that is not signed
-                if (transaction.Signed && (transaction.File.ContainsKey("OBJ") || transaction.File.ContainsKey("GIV")))
+                if (transaction.Signed && transaction.Keyword!= null && (transaction.File.ContainsKey("OBJ") || transaction.File.ContainsKey("GIV")))
                 {
                     string findObject;
                     if (transaction.Keyword.Count > 1)
@@ -692,7 +699,7 @@ namespace SUP.P2FK
                         OBJState isObject = GetObjectByAddress(findObject, username, password, url, versionByte);
                         if (isObject.URN != null && !addedValues.Contains(findObject))
                         {
-                            if (isObject.Creators.ElementAt(0) == findObject)
+                            if (isObject.Creators.ElementAt(0).Key == findObject)
                             {
 
                                 if (!addedValues.Contains(findObject))
@@ -705,12 +712,35 @@ namespace SUP.P2FK
                             }
 
                         }
-                        
-                            findObject = transaction.Keyword.ElementAt(transaction.Keyword.Count - 1).Key;
-                            isObject = GetObjectByAddress(findObject, username, password, url, versionByte);
+
+                        findObject = transaction.Keyword.ElementAt(transaction.Keyword.Count - 1).Key;
+                        isObject = GetObjectByAddress(findObject, username, password, url, versionByte);
+                        if (isObject.URN != null && !addedValues.Contains(findObject))
+                        {
+                            if (isObject.Creators.ElementAt(0).Key == findObject)
+                            {
+
+                                if (!addedValues.Contains(findObject))
+                                {
+
+                                    objectStates.Add(isObject);
+                                    addedValues.Add(findObject);
+                                }
+                            }
+
+                        }
+
+
+                    }
+                    else
+                    {
+                        try
+                        {
+                            findObject = transaction.Keyword.ElementAt(0).Key;
+                            OBJState isObject = GetObjectByAddress(findObject, username, password, url, versionByte);
                             if (isObject.URN != null && !addedValues.Contains(findObject))
                             {
-                                if (isObject.Creators.ElementAt(0) == findObject)
+                                if (isObject.Creators.ElementAt(0).Key == findObject)
                                 {
 
                                     if (!addedValues.Contains(findObject))
@@ -718,34 +748,15 @@ namespace SUP.P2FK
 
                                         objectStates.Add(isObject);
                                         addedValues.Add(findObject);
+
                                     }
                                 }
 
+
                             }
-                               
-
-                    }
-                    else
-                    {
-                        findObject = transaction.Keyword.ElementAt(0).Key;
-                        OBJState isObject = GetObjectByAddress(findObject, username, password, url, versionByte);
-                        if (isObject.URN != null && !addedValues.Contains(findObject))
-                        {
-                            if (isObject.Creators.ElementAt(0) == findObject)
-                            {
-
-                                if (!addedValues.Contains(findObject))
-                                {
-
-                                    objectStates.Add(isObject);
-                                    addedValues.Add(findObject);
-
-                                }
-                            }
-
-
                         }
-                        
+                        catch { }//may be a better way
+
                     }
 
 
@@ -783,12 +794,12 @@ namespace SUP.P2FK
                         OBJState isObject = GetObjectByAddress(findObject, username, password, url, versionByte);
                         if (isObject.URN != null && !addedValues.Contains(isObject.URN))
                         {
-                            if (isObject.Creators.ElementAt(0) == findObject)
+                            if (isObject.Creators.ElementAt(0).Key == findObject)
                             {
 
 
 
-                                if (!addedValues.Contains(isObject.URN) && (isObject.Owners.ContainsKey(objectaddress) || (isObject.Creators.Contains(objectaddress) && isObject.Owners.ContainsKey(isObject.Creators.First()))))
+                                if (!addedValues.Contains(isObject.URN) && (isObject.Owners.ContainsKey(objectaddress) || (isObject.Creators.ContainsKey(objectaddress) && isObject.Owners.ContainsKey(isObject.Creators.First().Key))))
                                 {
 
                                     objectStates.Add(isObject);
@@ -800,25 +811,25 @@ namespace SUP.P2FK
                             }
 
                         }
-                        
-                            findObject = transaction.Keyword.ElementAt(transaction.Keyword.Count - 1).Key;
-                            isObject = GetObjectByAddress(findObject, username, password, url, versionByte);
-                            if (isObject.URN != null && !addedValues.Contains(isObject.URN))
+
+                        findObject = transaction.Keyword.ElementAt(transaction.Keyword.Count - 1).Key;
+                        isObject = GetObjectByAddress(findObject, username, password, url, versionByte);
+                        if (isObject.URN != null && !addedValues.Contains(isObject.URN))
+                        {
+                            if (isObject.Creators.ElementAt(0).Key == findObject)
                             {
-                                if (isObject.Creators.ElementAt(0) == findObject)
+
+                                if (!addedValues.Contains(isObject.URN) && (isObject.Owners.ContainsKey(objectaddress) || (isObject.Creators.ContainsKey(objectaddress) && isObject.Owners.ContainsKey(isObject.Creators.First().Key))))
                                 {
 
-                                    if (!addedValues.Contains(isObject.URN) && (isObject.Owners.ContainsKey(objectaddress) || (isObject.Creators.Contains(objectaddress) && isObject.Owners.ContainsKey(isObject.Creators.First()))))
-                                    {
+                                    objectStates.Add(isObject);
+                                    addedValues.Add(isObject.URN);
 
-                                        objectStates.Add(isObject);
-                                        addedValues.Add(isObject.URN);
-
-                                    }
                                 }
-
                             }
-                        
+
+                        }
+
 
                     }
                     else
@@ -827,10 +838,10 @@ namespace SUP.P2FK
                         OBJState isObject = GetObjectByAddress(findObject, username, password, url, versionByte);
                         if (isObject.URN != null && !addedValues.Contains(isObject.URN))
                         {
-                            if (isObject.Creators.ElementAt(0) == findObject)
+                            if (isObject.Creators.ElementAt(0).Key == findObject)
                             {
 
-                                if (!addedValues.Contains(isObject.URN) && (isObject.Owners.ContainsKey(objectaddress) || (isObject.Creators.Contains(objectaddress) && isObject.Owners.ContainsKey(isObject.Creators.First()))))
+                                if (!addedValues.Contains(isObject.URN) && (isObject.Owners.ContainsKey(objectaddress) || (isObject.Creators.ContainsKey(objectaddress) && isObject.Owners.ContainsKey(isObject.Creators.First().Key))))
                                 {
 
                                     objectStates.Add(isObject);
@@ -877,11 +888,11 @@ namespace SUP.P2FK
                         OBJState isObject = GetObjectByAddress(findObject, username, password, url, versionByte);
                         if (isObject.URN != null && !addedValues.Contains(isObject.URN))
                         {
-                            if (isObject.Creators.ElementAt(0) == findObject)
+                            if (isObject.Creators.ElementAt(0).Key == findObject)
                             {
 
 
-                                if (!addedValues.Contains(isObject.URN) && (isObject.Creators.Contains(objectaddress)))
+                                if (!addedValues.Contains(isObject.URN) && isObject.Creators.ContainsKey(objectaddress) && isObject.Creators[objectaddress].Year > 1)
                                 {
 
                                     objectStates.Add(isObject);
@@ -893,25 +904,25 @@ namespace SUP.P2FK
                             }
 
                         }
-                        
-                            findObject = transaction.Keyword.ElementAt(transaction.Keyword.Count - 1).Key;
-                            isObject = GetObjectByAddress(findObject, username, password, url, versionByte);
-                            if (isObject.URN != null && !addedValues.Contains(isObject.URN))
+
+                        findObject = transaction.Keyword.ElementAt(transaction.Keyword.Count - 1).Key;
+                        isObject = GetObjectByAddress(findObject, username, password, url, versionByte);
+                        if (isObject.URN != null && !addedValues.Contains(isObject.URN))
+                        {
+                            if (isObject.Creators.ElementAt(0).Key == findObject)
                             {
-                                if (isObject.Creators.ElementAt(0) == findObject)
+
+                                if (!addedValues.Contains(isObject.URN) && isObject.Creators.ContainsKey(objectaddress) && isObject.Creators[objectaddress].Year > 1)
                                 {
 
-                                    if (!addedValues.Contains(isObject.URN) && (isObject.Creators.Contains(objectaddress)))
-                                    {
+                                    objectStates.Add(isObject);
+                                    addedValues.Add(isObject.URN);
 
-                                        objectStates.Add(isObject);
-                                        addedValues.Add(isObject.URN);
-
-                                    }
                                 }
-
                             }
-                        
+
+                        }
+
                     }
                     else
                     {
@@ -919,10 +930,10 @@ namespace SUP.P2FK
                         OBJState isObject = GetObjectByAddress(findObject, username, password, url, versionByte);
                         if (isObject.URN != null && !addedValues.Contains(isObject.URN))
                         {
-                            if (isObject.Creators.ElementAt(0) == findObject)
+                            if (isObject.Creators.ElementAt(0).Key == findObject)
                             {
 
-                                if (!addedValues.Contains(isObject.URN) && (isObject.Creators.Contains(objectaddress)))
+                                if (!addedValues.Contains(isObject.URN) && (isObject.Creators.ContainsKey(objectaddress) && isObject.Creators[objectaddress].Year > 1))
                                 {
 
                                     objectStates.Add(isObject);
@@ -935,7 +946,7 @@ namespace SUP.P2FK
 
                     }
 
-                    
+
 
 
                 }
@@ -975,7 +986,7 @@ namespace SUP.P2FK
                         OBJState isObject = GetObjectByAddress(findObject, username, password, url, versionByte);
                         if (isObject.URN != null && !addedValues.Contains(findObject))
                         {
-                            if (isObject.Creators.ElementAt(0) == findObject)
+                            if (isObject.Creators.ElementAt(0).Key == findObject)
                             {
 
                                 if (!addedValues.Contains(findObject))

@@ -1,18 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace SUP
 {
-    public partial class foundObjectControl : UserControl
+    public partial class FoundObjectControl : UserControl
     {
-        public foundObjectControl()
+        public FoundObjectControl()
         {
             InitializeComponent();
         }
@@ -26,7 +19,12 @@ namespace SUP
 
         private void ObjectCreators_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
-            //send to searchtextbox click on the creator button
+            new ObjectBrowser(ObjectCreators.Text).Show();
+        }
+
+        private void ObjectCreators2_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        {
+            new ObjectBrowser(ObjectCreators2.Text).Show();
         }
     }
 }

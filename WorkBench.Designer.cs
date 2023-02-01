@@ -132,7 +132,6 @@ namespace SUP
             this.txtlevelDBKey.Name = "txtlevelDBKey";
             this.txtlevelDBKey.Size = new System.Drawing.Size(271, 20);
             this.txtlevelDBKey.TabIndex = 7;
-            this.txtlevelDBKey.Text = "muVrFVk3ErfrnmWosLF4WixxRtDKfMx9bs";
             // 
             // lbTableName
             // 
@@ -242,7 +241,7 @@ namespace SUP
             this.txtSearchAddress.Name = "txtSearchAddress";
             this.txtSearchAddress.Size = new System.Drawing.Size(270, 20);
             this.txtSearchAddress.TabIndex = 25;
-            this.txtSearchAddress.Text = "mwUGmhdc9zqo9w7Bue8eeGrhrJT9CCaqNV";
+            this.txtSearchAddress.Text = "muVrFVk3ErfrnmWosLF4WixxRtDKfMx9bs";
             // 
             // label11
             // 
@@ -676,7 +675,7 @@ namespace SUP
             this.Controls.Add(this.splitContainer1);
             this.MinimumSize = new System.Drawing.Size(1072, 687);
             this.Name = "WorkBench";
-            this.Text = "Sup!? workbench";
+            this.Text = "Sup!?  Workbench";
             ((System.ComponentModel.ISupportInitialize)(this.dgTransactions)).EndInit();
             this.splitContainer1.Panel1.ResumeLayout(false);
             this.splitContainer1.Panel1.PerformLayout();

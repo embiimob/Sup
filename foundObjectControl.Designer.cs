@@ -1,6 +1,6 @@
 ﻿namespace SUP
 {
-    partial class foundObjectControl
+    partial class FoundObjectControl
     {
         /// <summary> 
         /// Required designer variable.
@@ -131,9 +131,9 @@
             // ObjectDescription
             // 
             this.ObjectDescription.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.ObjectDescription.Location = new System.Drawing.Point(6, 261);
+            this.ObjectDescription.Location = new System.Drawing.Point(3, 257);
             this.ObjectDescription.Name = "ObjectDescription";
-            this.ObjectDescription.Size = new System.Drawing.Size(199, 42);
+            this.ObjectDescription.Size = new System.Drawing.Size(202, 51);
             this.ObjectDescription.TabIndex = 6;
             this.ObjectDescription.Text = "a collection of items found on a spaceship";
             this.ObjectDescription.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
@@ -143,10 +143,10 @@
             // 
             this.ObjectQty.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.ObjectQty.BackColor = System.Drawing.Color.Transparent;
-            this.ObjectQty.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.ObjectQty.Location = new System.Drawing.Point(131, 215);
+            this.ObjectQty.Font = new System.Drawing.Font("Microsoft Sans Serif", 6.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.ObjectQty.Location = new System.Drawing.Point(151, 213);
             this.ObjectQty.Name = "ObjectQty";
-            this.ObjectQty.Size = new System.Drawing.Size(77, 20);
+            this.ObjectQty.Size = new System.Drawing.Size(54, 20);
             this.ObjectQty.TabIndex = 7;
             this.ObjectQty.Text = "10000x";
             this.ObjectQty.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
@@ -155,23 +155,25 @@
             // ObjectAddress
             // 
             this.ObjectAddress.BackColor = System.Drawing.Color.Transparent;
-            this.ObjectAddress.Font = new System.Drawing.Font("Microsoft Sans Serif", 6.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.ObjectAddress.Font = new System.Drawing.Font("Microsoft Sans Serif", 5.75F);
+            this.ObjectAddress.ImageAlign = System.Drawing.ContentAlignment.BottomCenter;
             this.ObjectAddress.Location = new System.Drawing.Point(3, 303);
             this.ObjectAddress.Name = "ObjectAddress";
             this.ObjectAddress.Size = new System.Drawing.Size(202, 21);
             this.ObjectAddress.TabIndex = 8;
             this.ObjectAddress.Text = "@";
-            this.ObjectAddress.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.ObjectAddress.TextAlign = System.Drawing.ContentAlignment.BottomCenter;
             this.ObjectAddress.Click += new System.EventHandler(this.foundObjectControl_Click);
             // 
             // ObjectName
             // 
-            this.ObjectName.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.ObjectName.Location = new System.Drawing.Point(1, 217);
+            this.ObjectName.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.ObjectName.Location = new System.Drawing.Point(2, 215);
+            this.ObjectName.Margin = new System.Windows.Forms.Padding(0);
             this.ObjectName.Name = "ObjectName";
-            this.ObjectName.Size = new System.Drawing.Size(137, 18);
+            this.ObjectName.Size = new System.Drawing.Size(146, 18);
             this.ObjectName.TabIndex = 9;
-            this.ObjectName.Text = "FakeUFO Keyword";
+            this.ObjectName.Text = "FakeUFO Keywords this hoy sdgfd";
             this.ObjectName.Click += new System.EventHandler(this.foundObjectControl_Click);
             // 
             // ObjectCreators
@@ -196,6 +198,7 @@
             this.ObjectCreators2.Size = new System.Drawing.Size(0, 13);
             this.ObjectCreators2.TabIndex = 11;
             this.ObjectCreators2.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.ObjectCreators2.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.ObjectCreators2_LinkClicked);
             // 
             // flowLayoutPanel1
             // 
@@ -213,15 +216,15 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.SystemColors.ActiveCaption;
-            this.Controls.Add(this.ObjectQty);
             this.Controls.Add(this.ObjectName);
+            this.Controls.Add(this.ObjectQty);
             this.Controls.Add(this.flowLayoutPanel1);
-            this.Controls.Add(this.ObjectDescription);
-            this.Controls.Add(this.ObjectAddress);
             this.Controls.Add(this.panel1);
             this.Controls.Add(this.ObjectImage);
+            this.Controls.Add(this.ObjectAddress);
+            this.Controls.Add(this.ObjectDescription);
             this.DoubleBuffered = true;
-            this.Margin = new System.Windows.Forms.Padding(2);
+            this.Margin = new System.Windows.Forms.Padding(1, 2, 2, 2);
             this.MaximumSize = new System.Drawing.Size(208, 367);
             this.MinimumSize = new System.Drawing.Size(208, 367);
             this.Name = "foundObjectControl";
