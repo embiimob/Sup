@@ -10,16 +10,17 @@ Installation
 4. Create a shortcut to SUP.exe and launch.
 
 
-to perform you first Sup!? object search
-
+Perform you first Sup!? object search
 1. Click the key button
 2. Launch a full bitcoin Production node AND a full Bitcoin testnet node using the buttons provided
 3. Wait until both blockchains have completely synced.  ( this part could take days )
 4. Type #flowersofwar in the main search box
 5. Hit enter
 
-
-optional:
+search parameters
+#Keyword ------------- searches up to 20 character keyword shows all object associations
+sup://twitter.com ---- searches urn shows currently registered object with URI
+@userName ------------ searches urn shows currently registered profile object associated with @userName
 
 
 * uses a v0.13.2 full bitcoin core clone with address index change  https://github.com/btcdrak/bitcoin/tree/addrindex-0.14
