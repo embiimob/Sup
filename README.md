@@ -23,8 +23,8 @@ Search Options
 3. @userName ------------ searches urn shows currently registered profile object associated with @userName
 
 
-* uses a v0.13.2 full bitcoin core clone with address index change  https://github.com/btcdrak/bitcoin/tree/addrindex-0.14
+** uses a v0.13.2 full bitcoin core clone with address index change  https://github.com/btcdrak/bitcoin/tree/addrindex-0.14
 
-* all transactions and objects in this experiment were entered using apertus.io  http://Apertus.io 
+** all transactions and objects in this experiment were entered using apertus.io  http://Apertus.io 
 
 ** see the example transaction JSON files to begin experimenting with the entry and trading of your own Sup!? objects
