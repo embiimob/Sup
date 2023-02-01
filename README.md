@@ -21,10 +21,14 @@ This Sup!? Object Browser is a READ ONLY demonstration of establishing a decentr
 
 ### **Search Options**
 
-1. #Keyword   searches up to 20 character keyword shows all object associations
-2. sup://twitter.com   searches urn shows currently registered object with URI  ( no urn character limits, redirects are NOT enabled )
-3. @userName   searches urn shows currently registered profile object associated with @userName
+### **#Keywords**
+searches up to 20 character keyword shows all object associations
+ 
+### **sup://twitter.com**
+searches urn shows currently registered object with URI  ( no urn character limits, redirects are NOT enabled )
 
+### **@UserName**
+searches urn shows currently registered profile object associated with @userName
 
 
 - this experiment uses a v0.13.2 full bitcoin core clone with address index change https://github.com/btcdrak/bitcoin/tree/addrindex-0.14
