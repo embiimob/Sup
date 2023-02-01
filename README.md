@@ -20,4 +20,4 @@ launch example altcoin mazacoin using the buttons provided    https://github.com
 
 * all transactions and objects in this trading demonstration were entered using    http://Apertus.io 
 
-* see example transaction JSON files to begin testing the entry and trading of your own blockchain objects and comments
+** see example transaction JSON files to begin testing the entry and trading of your own blockchain objects and comments
