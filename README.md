@@ -26,4 +26,4 @@ optional:
 
 * all transactions and objects in this experiment were entered using apertus.io  http://Apertus.io 
 
-** see the example transaction JSON files to begin experimenting with the entry and trading of your own Sup!? apertus.io P2FK blockchain objects and comments
+** see the example transaction JSON files to begin experimenting with the entry and trading of your own Sup!? apertus.io P2FK objects and comments
