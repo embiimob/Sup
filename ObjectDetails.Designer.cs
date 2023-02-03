@@ -593,7 +593,8 @@
             this.Controls.Add(this.flowPanel);
             this.Controls.Add(this.webviewer);
             this.Controls.Add(this.lblTotalOwnedDetail);
-            this.MinimumSize = new System.Drawing.Size(1182, 658);
+            this.MaximumSize = new System.Drawing.Size(1208, 681);
+            this.MinimumSize = new System.Drawing.Size(1208, 681);
             this.Name = "ObjectDetails";
             this.Padding = new System.Windows.Forms.Padding(3);
             this.Text = "ObjectDetails";

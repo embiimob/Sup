@@ -124,7 +124,7 @@
             this.label15.Name = "label15";
             this.label15.Size = new System.Drawing.Size(203, 13);
             this.label15.TabIndex = 124;
-            this.label15.Text = "Sup!? Object Browser  v0.1.0-beta";
+            this.label15.Text = "Sup!? Object Browser  v0.1.1-beta";
             // 
             // label14
             // 
@@ -479,6 +479,8 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(659, 351);
             this.Controls.Add(this.panel1);
+            this.MaximumSize = new System.Drawing.Size(675, 390);
+            this.MinimumSize = new System.Drawing.Size(675, 390);
             this.Name = "Connections";
             this.Text = "Sup!? Connections";
             this.panel1.ResumeLayout(false);
