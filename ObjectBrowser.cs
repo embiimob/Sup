@@ -227,7 +227,7 @@ namespace SUP
 
 
             string profileCheck = txtSearchAddress.Text;
-            PROState searchprofile = PROState.GetProfileByAddress(txtSearchAddress.Text, txtLogin.Text, txtPassword.Text, txtUrl.Text);
+            PROState searchprofile = PROState.GetProfileByAddress(txtSearchAddress.Text.Replace("@", ""), txtLogin.Text, txtPassword.Text, txtUrl.Text);
 
             if (searchprofile.URN != null)
             {
@@ -238,7 +238,7 @@ namespace SUP
             {
 
 
-                searchprofile = PROState.GetProfileByURN(txtSearchAddress.Text, txtLogin.Text, txtPassword.Text, txtUrl.Text);
+                searchprofile = PROState.GetProfileByURN(txtSearchAddress.Text.Replace("@", ""), txtLogin.Text, txtPassword.Text, txtUrl.Text);
 
                 if (searchprofile.URN != null)
                 {
@@ -364,7 +364,7 @@ namespace SUP
 
 
             string profileCheck = txtSearchAddress.Text;
-            PROState searchprofile = PROState.GetProfileByAddress(txtSearchAddress.Text, txtLogin.Text, txtPassword.Text, txtUrl.Text);
+            PROState searchprofile = PROState.GetProfileByAddress(txtSearchAddress.Text.Replace("@", ""), txtLogin.Text, txtPassword.Text, txtUrl.Text);
 
             if (searchprofile.URN != null)
             {
@@ -375,7 +375,7 @@ namespace SUP
             {
 
 
-                searchprofile = PROState.GetProfileByURN(txtSearchAddress.Text, txtLogin.Text, txtPassword.Text, txtUrl.Text);
+                searchprofile = PROState.GetProfileByURN(txtSearchAddress.Text.Replace("@", ""), txtLogin.Text, txtPassword.Text, txtUrl.Text);
 
                 if (searchprofile.URN != null)
                 {
