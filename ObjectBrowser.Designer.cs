@@ -45,7 +45,7 @@
             // 
             this.btnCreated.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.btnCreated.BackColor = System.Drawing.SystemColors.Control;
-            this.btnCreated.Location = new System.Drawing.Point(840, 3);
+            this.btnCreated.Location = new System.Drawing.Point(854, 3);
             this.btnCreated.Name = "btnCreated";
             this.btnCreated.Size = new System.Drawing.Size(55, 20);
             this.btnCreated.TabIndex = 62;
@@ -57,7 +57,7 @@
             // 
             this.btnOwned.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.btnOwned.BackColor = System.Drawing.SystemColors.Control;
-            this.btnOwned.Location = new System.Drawing.Point(901, 3);
+            this.btnOwned.Location = new System.Drawing.Point(915, 3);
             this.btnOwned.Name = "btnOwned";
             this.btnOwned.Size = new System.Drawing.Size(55, 20);
             this.btnOwned.TabIndex = 61;
@@ -71,7 +71,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.txtSearchAddress.Location = new System.Drawing.Point(12, 5);
             this.txtSearchAddress.Name = "txtSearchAddress";
-            this.txtSearchAddress.Size = new System.Drawing.Size(699, 20);
+            this.txtSearchAddress.Size = new System.Drawing.Size(713, 20);
             this.txtSearchAddress.TabIndex = 58;
             this.txtSearchAddress.KeyDown += new System.Windows.Forms.KeyEventHandler(this.txtSearchAddress_KeyDown);
             // 
@@ -79,7 +79,7 @@
             // 
             this.btnWorkBench.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.btnWorkBench.BackColor = System.Drawing.SystemColors.Control;
-            this.btnWorkBench.Location = new System.Drawing.Point(1023, 4);
+            this.btnWorkBench.Location = new System.Drawing.Point(1037, 4);
             this.btnWorkBench.Name = "btnWorkBench";
             this.btnWorkBench.Size = new System.Drawing.Size(30, 20);
             this.btnWorkBench.TabIndex = 68;
@@ -96,14 +96,14 @@
             this.flowLayoutPanel1.BackColor = System.Drawing.SystemColors.InactiveCaption;
             this.flowLayoutPanel1.Location = new System.Drawing.Point(0, 31);
             this.flowLayoutPanel1.Name = "flowLayoutPanel1";
-            this.flowLayoutPanel1.Size = new System.Drawing.Size(1064, 745);
+            this.flowLayoutPanel1.Size = new System.Drawing.Size(1078, 745);
             this.flowLayoutPanel1.TabIndex = 69;
             // 
             // linkLabel1
             // 
             this.linkLabel1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.linkLabel1.LinkColor = System.Drawing.SystemColors.GradientActiveCaption;
-            this.linkLabel1.Location = new System.Drawing.Point(728, 3);
+            this.linkLabel1.Location = new System.Drawing.Point(742, 3);
             this.linkLabel1.Name = "linkLabel1";
             this.linkLabel1.Size = new System.Drawing.Size(106, 21);
             this.linkLabel1.TabIndex = 71;
@@ -152,7 +152,7 @@
             // 
             this.button1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.button1.BackColor = System.Drawing.SystemColors.Control;
-            this.button1.Location = new System.Drawing.Point(962, 3);
+            this.button1.Location = new System.Drawing.Point(976, 3);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(30, 20);
             this.button1.TabIndex = 72;
@@ -164,7 +164,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1064, 776);
+            this.ClientSize = new System.Drawing.Size(1078, 776);
             this.Controls.Add(this.button1);
             this.Controls.Add(this.linkLabel1);
             this.Controls.Add(this.btnWorkBench);

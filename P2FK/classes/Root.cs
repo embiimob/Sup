@@ -106,7 +106,7 @@ namespace SUP.P2FK
             if (rootbytes == null)
             {
                 NetworkCredential credentials = new NetworkCredential(username, password);
-                RPCClient rpcClient = new RPCClient(credentials, new Uri(url));
+                RPCClient rpcClient = new RPCClient(credentials, new Uri(url),Network.Main);
 
                 try
                 {
@@ -212,7 +212,7 @@ namespace SUP.P2FK
                 {
                     Directory.CreateDirectory(diskpath);
                 }
-                if (fileName.Length > 1)
+                if (fileName.Length > 1 & fileName != "BTC" & fileName != "MZC")
                 {
                     try
                     {
@@ -411,7 +411,7 @@ namespace SUP.P2FK
                     )
                     .Replace("-", String.Empty);
                 NetworkCredential credentials = new NetworkCredential(username, password);
-                RPCClient rpcClient = new RPCClient(credentials, new Uri(url));
+                RPCClient rpcClient = new RPCClient(credentials, new Uri(url),Network.Main);
 
                 var result = rpcClient.SendCommand(
                     "verifymessage",
@@ -521,7 +521,7 @@ namespace SUP.P2FK
             Regex regexTransactionId = new Regex(@"\b[0-9a-f]{64}\b");
             byte[] transactionBytes = Array.Empty<byte>();
             NetworkCredential credentials = new NetworkCredential(username, password);
-            RPCClient rpcClient = new RPCClient(credentials, new Uri(url));
+            RPCClient rpcClient = new RPCClient(credentials, new Uri(url),Network.Main);
             int length1;
             int length2;
             byte[] result;

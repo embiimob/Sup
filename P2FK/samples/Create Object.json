@@ -1,12 +1,11 @@
 {
-  "urn": "BTC:a3a24d6ea01ce481a50346818b8977220687f3ba385838fe8894ce61c9718bbc/alien.wav",
-  "img": "BTC:a3a24d6ea01ce481a50346818b8977220687f3ba385838fe8894ce61c9718bbc/alien.jpg",
-  "uri": "BTC:483a428c6ffdf94f04b6deab0b02d78de40bfc62d839ba534f9da66dc9102ac9/MSG",
-  "nme": "Alien",
-  "dsc": "alien adjective \\ˈā-lē-ən, ˈāl-yən\\ : not familiar or like other things you have known : different from what you are used to : from another country : too different from something to be acceptable or suitable",
+  "urn": "BTC:0618f12af65a4e82f8e7b41f8578721dfeb109e9a73ff71aebdbc982696e3720/index.html",
+  "img": "BTC:0618f12af65a4e82f8e7b41f8578721dfeb109e9a73ff71aebdbc982696e3720/Mahabharata.jpg",
+  "nme": "The Mahabharata Book 18",
+  "dsc": "Svargarohanika Parva Translated to english by Kisari Mohan Ganguli [1883-1896] Source: \"Internet Sacred Text Archive\"",
   "lic": "CC0",
-  "cre": [ 0, 1 ],
-  "own": { 0: 10000 }
+  "cre": [ 0],
+  "own": { "0": 1 }
 }
 
 

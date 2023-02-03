@@ -306,17 +306,24 @@ namespace SUP
 
 
 
-                            if (imagelocation.StartsWith("BTC:"))
+                            if (imagelocation.StartsWith("BTC:") || imagelocation.StartsWith("MZC:"))
                             {
                                 string transid = imagelocation.Substring(4, 64);
-                                imagelocation = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + @"\root\" + imagelocation.Replace("BTC:", "").Replace(@"/", @"\");
+                                imagelocation = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + @"\root\" + imagelocation.Replace("BTC:", "").Replace("MZC:","").Replace(@"/", @"\");
 
 
                                 if (!System.IO.Directory.Exists("root/" + transid))
                                 {
-                                    Root root = Root.GetRootByTransactionId(transid, "good-user", "better-password", "http://127.0.0.1:8332", "0");
+                                    if (objstate.Image.StartsWith("MZC:"))
+                                    {
+                                        Root root = Root.GetRootByTransactionId(transid, "good-user", "better-password", @"http://127.0.0.1:12832", "50");
+                                    }
+                                    else
+                                    {
 
+                                        Root root = Root.GetRootByTransactionId(transid, "good-user", "better-password", "http://127.0.0.1:8332", "0");
 
+                                    }
                                 }
                                 else
                                 {
@@ -628,7 +635,7 @@ namespace SUP
 
                     if (!objstate.URN.ToLower().StartsWith("http"))
                     {
-                        urn = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + @"\root\" + objstate.URN.Replace("BTC:", "").Replace(@"/", @"\");
+                        urn = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + @"\root\" + objstate.URN.Replace("BTC:", "").Replace("MZC:","").Replace(@"/", @"\");
                     }
                 }
 
@@ -640,7 +647,7 @@ namespace SUP
 
                     if (!objstate.Image.ToLower().StartsWith("http"))
                     {
-                        imgurn = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + @"\root\" + objstate.Image.Replace("BTC:", "").Replace(@"/", @"\");
+                        imgurn = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + @"\root\" + objstate.Image.Replace("BTC:", "").Replace("MZC:","").Replace(@"/", @"\");
                     }
                 }
 
@@ -652,7 +659,7 @@ namespace SUP
 
                     if (!objstate.URI.ToLower().StartsWith("http"))
                     {
-                        uriurn = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + @"\root\" + objstate.URI.Replace("BTC:", "").Replace(@"/", @"\");
+                        uriurn = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + @"\root\" + objstate.URI.Replace("BTC:", "").Replace("MZC:","").Replace(@"/", @"\");
                     }
                 }
 
@@ -664,14 +671,29 @@ namespace SUP
 
                 try
                 {
-                    if (objstate.Image.StartsWith("BTC:"))
+                    if (objstate.Image.StartsWith("BTC:") || objstate.Image.StartsWith("MZC:"))
                     {
                         string transid = objstate.Image.Substring(4, 64);
 
                         if (!System.IO.Directory.Exists("root/" + transid))
                         {
-                            Root root = Root.GetRootByTransactionId(transid, "good-user", "better-password", "http://127.0.0.1:8332", "0");
-                            imgblockdate = root.BlockDate;
+
+                            if (objstate.Image.StartsWith("MZC:"))
+                            {
+                                Root root = Root.GetRootByTransactionId(transid, "good-user", "better-password", @"http://127.0.0.1:12832", "50");
+                                imgblockdate = root.BlockDate;
+                            }
+                            else
+                            {
+                                Root root = Root.GetRootByTransactionId(transid, "good-user", "better-password", "http://127.0.0.1:8332", "0");
+                                imgblockdate = root.BlockDate;
+                            }
+                            
+                            
+                            
+                            
+                            
+                            
 
                         }
                         else
@@ -706,18 +728,26 @@ namespace SUP
                 }
                 catch { }
 
-                imgPicture.ImageLocation = imgurn;
-
                 try
                 {
-                    if (objstate.URN.StartsWith("BTC:"))
+                    if (objstate.URN.StartsWith("BTC:") || objstate.URN.StartsWith("MZC:"))
                     {
                         string transid = objstate.URN.Substring(4, 64);
 
                         if (!System.IO.Directory.Exists(@"root/" + transid))
                         {
-                            Root root = Root.GetRootByTransactionId(transid, "good-user", "better-password", "http://127.0.0.1:8332", "0");
-                            urnblockdate = root.BlockDate;
+
+                            if (objstate.URN.StartsWith("MZC:"))
+                            {
+                                Root root = Root.GetRootByTransactionId(transid, "good-user", "better-password", @"http://127.0.0.1:12832", "50");
+                                urnblockdate = root.BlockDate;
+                            }
+                            else
+                            {
+                                Root root = Root.GetRootByTransactionId(transid, "good-user", "better-password", "http://127.0.0.1:8332", "0");
+                                urnblockdate = root.BlockDate;
+                            }
+                           
                         }
                         else
                         {
@@ -762,14 +792,24 @@ namespace SUP
 
                 try
                 {
-                    if (objstate.URI.StartsWith("BTC:"))
+                    if (objstate.URI.StartsWith("BTC:") || objstate.URI.StartsWith("MZC:"))
                     {
                         string transid = objstate.URI.Substring(4, 64);
 
                         if (!System.IO.Directory.Exists(@"root/" + transid))
                         {
-                            Root root = Root.GetRootByTransactionId(transid, "good-user", "better-password", "http://127.0.0.1:8332", "0");
-                            uriblockdate = root.BlockDate;
+
+                            if (objstate.URI.StartsWith("MZC:"))
+                            {
+                                Root root = Root.GetRootByTransactionId(transid, "good-user", "better-password", @"http://127.0.0.1:12832", "50");
+                                uriblockdate = root.BlockDate;
+                            }
+                            else
+                            {
+                                Root root = Root.GetRootByTransactionId(transid, "good-user", "better-password", "http://127.0.0.1:8332", "0");
+                                uriblockdate = root.BlockDate;
+                            }
+                           
                         }
                         else
                         {
@@ -831,6 +871,7 @@ namespace SUP
                 txtdesc.Text = objstate.Description;
                 txtName.Text = objstate.Name;
                 long totalQty = objstate.Owners.Values.Sum();
+
 
                 if (supPanel.Visible)
                 {
@@ -901,11 +942,19 @@ namespace SUP
 
 
                             string transid;
-                            if (objstate.URN.Contains("BTC:"))
+                            if (objstate.URN.Contains("BTC:") || objstate.URN.Contains("MZC:"))
                             {
                                 transid = objstate.URN.Substring(4, 64);
                                 try { System.IO.Directory.Delete(@"root/" + transid, true); } catch { }
-                                P2FK.Root.GetRootByTransactionId(transid, "good-user", "better-password", "http://127.0.0.1:8332", "0");
+
+                                if (objstate.URN.Contains("MZC:"))
+                                {
+                                    P2FK.Root.GetRootByTransactionId(transid, "good-user", "better-password", "http://127.0.0.1:12832", "50");
+                                }
+                                else
+                                {
+                                    P2FK.Root.GetRootByTransactionId(transid, "good-user", "better-password", "http://127.0.0.1:8332", "0");
+                                }
                             }
                             else
                             {
@@ -921,10 +970,16 @@ namespace SUP
                             {
 
 
-                                if (objstate.URN.Contains("BTC:"))
+                                if (objstate.URN.Contains("BTC:") || objstate.URN.Contains("MZC:"))
                                 {
-
-                                    P2FK.Root.GetRootByTransactionId(transactionID.Value, "good-user", "better-password", "http://127.0.0.1:8332", "0");
+                                    if (objstate.URN.Contains("MZC:"))
+                                    {
+                                        P2FK.Root.GetRootByTransactionId(transactionID.Value, "good-user", "better-password", "http://127.0.0.1:12832", "50");
+                                    }
+                                    else
+                                    {
+                                        P2FK.Root.GetRootByTransactionId(transactionID.Value, "good-user", "better-password", "http://127.0.0.1:8332", "0");
+                                    }
                                 }
                                 else
                                 {
@@ -936,16 +991,17 @@ namespace SUP
                             }
 
                             string _address = _objectaddress;
-                            string _viewer = null;//to be implemented
+                            string _viewer = objstate.Owners.Last().Key;
                             string _viewername = null; //to be implemented
                             string _creator = objstate.Creators.Last().Key;
-                            int _owner = 0;//to be implemented
+                            int _owner = objstate.Owners.Count();
                             string _urn = HttpUtility.UrlEncode(objstate.URN);
                             string _uri = HttpUtility.UrlEncode(objstate.URI);
                             string _img = HttpUtility.UrlEncode(objstate.Image);
 
                             string querystring = "?address=" + _address + "&viewer=" + _viewer + "&viewername=" + _viewername + "&creator=" + _creator + "&owner=" + _owner + "&urn=" + _urn + "&uri=" + _uri + "&img=" + _img;
                             htmlembed = "<html><body><embed src=\"" + urn + querystring + "\" width=100% height=100%></body></html>";
+
                         }
                         else
                         {
@@ -968,11 +1024,13 @@ namespace SUP
                     default:
                         // Create a default "not supported" image
 
-                        pictureBox1.ImageLocation = @"root/" + objstate.Image.Replace("BTC:", "");
+                        pictureBox1.ImageLocation = @"root/" + objstate.Image.Replace("BTC:", "").Replace("MZC:","");
                         // Add the default image to the flowPanel                        
                         break;
                 }
-
+                imgPicture.SuspendLayout();
+                imgPicture.ImageLocation = imgurn;
+                imgPicture.ResumeLayout();
 
 
             }
