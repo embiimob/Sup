@@ -15,8 +15,8 @@ This Sup!? Object Browser is a READ ONLY demonstration of establishing a decentr
 
 1. Click the key button
 2. Launch a full bitcoin Production node AND a full Bitcoin testnet node using the buttons provided
-3. Wait until both blockchains have completely synced. ( this part could take days )
-4.  type #flowersofwar in the main search box and hit enter
+3. Wait until testnet is fully synched and production has synced passed at least 2014. ( this part could take several hours )
+4. Type #flowersofwar in the main search box and hit enter
 
 
 ### **Search Options**
@@ -33,7 +33,7 @@ searches urn shows currently registered profile object associated with @userName
 
 - this experiment uses a v0.13.2 full bitcoin core clone with address index change https://github.com/btcdrak/bitcoin/tree/addrindex-0.14
 
-- this experiment references mazacoin their latest official release has been included in this deployment https://github.com/mazacoin/maza
+- this experiment uses mazacoin their latest official release has been included in the deployment https://github.com/mazacoin/maza
 
 - see the example transaction JSON files https://github.com/embiimob/Sup/tree/master/P2FK/samples to begin experimenting with the entry and trading of your own Sup!? objects
 
