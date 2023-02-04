@@ -15,8 +15,8 @@ This Sup!? Object Browser is a READ ONLY demonstration of establishing a decentr
 
 1. Click the key button
 2. Launch a full bitcoin Production node AND a full Bitcoin testnet node using the buttons provided
-3. Wait until both blockchains have completely synced. ( this part could take days )
-4.  type #flowersofwar in the main search box and hit enter
+3. Wait until testnet is fully synched and production has synced passed at least 2014. ( this part could take several hours )
+4. Type #flowersofwar in the main search box and hit enter
 
 
 ### **Search Options**
