@@ -29,9 +29,9 @@
 
 //remove all unnecessary spaces
 //place JSON in a file named OBJ (no file extension)
-//enter #[first 20 charachters of urn] to create a URN registration in this example #BTC:a3a24d6ea01ce481 in the apertus.io message box
+//enter #[first 20 charachters of urn] to create a URN registration in this example #66e5f4df4bd0a3ea9b56 in the apertus.io message box
 //enter each additional @creatoraddress and or @owneraddress above the @objectaddress in the apertus.io message box in matching orders
-//in this example keyword order id 1 would be the second from the bottom if the #BTC:a3a24d6ea01ce481 URN was also being registered
+//in this example keyword order id 1 would be the second from the bottom if the #66e5f4df4bd0a3ea9b56 URN was also being registered
 //attach file OBJ using the apertus.io attach button
 //create a new signature address in the signature list in apertus.io. select it.  this will be the object address
 //verify that the no message box is checked.
