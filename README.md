@@ -33,7 +33,7 @@ searches urn shows currently registered profile object associated with @userName
 
 - this experiment uses a v0.13.2 full bitcoin core clone with address index change https://github.com/btcdrak/bitcoin/tree/addrindex-0.14
 
-- this experiment references mazacoin their latest official release has been included in this deployment https://github.com/mazacoin/maza
+- this experiment uses mazacoin their latest official release has been included in the deployment https://github.com/mazacoin/maza
 
 - see the example transaction JSON files https://github.com/embiimob/Sup/tree/master/P2FK/samples to begin experimenting with the entry and trading of your own Sup!? objects
 
