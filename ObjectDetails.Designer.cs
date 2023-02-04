@@ -530,9 +530,11 @@
             // lblLicense
             // 
             this.lblLicense.AutoSize = true;
-            this.lblLicense.Location = new System.Drawing.Point(97, 321);
+            this.lblLicense.Font = new System.Drawing.Font("Microsoft Sans Serif", 6.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblLicense.Location = new System.Drawing.Point(90, 322);
+            this.lblLicense.Margin = new System.Windows.Forms.Padding(0, 0, 3, 0);
             this.lblLicense.Name = "lblLicense";
-            this.lblLicense.Size = new System.Drawing.Size(100, 13);
+            this.lblLicense.Size = new System.Drawing.Size(88, 12);
             this.lblLicense.TabIndex = 57;
             this.lblLicense.Text = "All Rights Reserved";
             this.lblLicense.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;

@@ -20,6 +20,7 @@ namespace SUP.P2FK
         public string img { get; set; }
         public string nme { get; set; }
         public string dsc { get; set; }
+        public Dictionary<string, string> atr { get; set; }
         public string lic { get; set; }
         public int[] cre { get; set; }
         public Dictionary<int, int> own { get; set; }
@@ -32,6 +33,8 @@ namespace SUP.P2FK
         public string Image { get; set; }
         public string Name { get; set; }
         public string Description { get; set; }
+
+        public Dictionary<string, string> Attributes { get; set; }
         public string License { get; set; }
         public Dictionary<string, DateTime> Creators { get; set; }
         public Dictionary<string, long> Owners { get; set; }
@@ -177,6 +180,7 @@ namespace SUP.P2FK
                                             if (objectinspector.img != null) { objectState.ChangeDate = transaction.BlockDate; objectState.Image = objectinspector.img; }
                                             if (objectinspector.nme != null) { objectState.ChangeDate = transaction.BlockDate; objectState.Name = objectinspector.nme; }
                                             if (objectinspector.dsc != null) { objectState.ChangeDate = transaction.BlockDate; objectState.Description = objectinspector.dsc; }
+                                            if (objectinspector.atr != null) { objectState.ChangeDate = transaction.BlockDate; objectState.Attributes = objectinspector.atr; }
                                             if (objectinspector.lic != null) { objectState.ChangeDate = transaction.BlockDate; objectState.License = objectinspector.lic; }
                                             if (objectState.ProcessHeight > 0 && objectState.ChangeDate == transaction.BlockDate)
                                             {
@@ -594,7 +598,7 @@ namespace SUP.P2FK
 
 
                 }
-                else { logstatus = "[\"" + transaction.SignedBy + "\",\"" + objectaddress + "\",\"burn\",\"\",\"\",\"failed due to invalid transaction\"]"; }
+                else { logstatus = ""; }
 
                 if (verbose)
                 {
