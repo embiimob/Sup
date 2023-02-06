@@ -35,7 +35,7 @@ searches urn shows currently registered profile object associated with @userName
 
 - this experiment uses mazacoin their latest official release has been included in the deployment https://github.com/mazacoin/maza
 
-- this experiment includes the most recent ipfs Kubo command line tool found here https://dist.ipfs.tech/kubo/v0.18.1/kubo_v0.18.1_windows-amd64.zip
+- this experiment uses the most recent ipfs kubo command line tool found here https://dist.ipfs.tech/kubo/v0.18.1/kubo_v0.18.1_windows-amd64.zip
 
 - see the example transaction JSON files https://github.com/embiimob/Sup/tree/master/P2FK/samples to begin experimenting with the entry and trading of your own Sup!? objects
 
