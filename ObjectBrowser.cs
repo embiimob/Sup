@@ -1,9 +1,13 @@
 ﻿using SUP.P2FK;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
+using System.Net.Sockets;
+using System.Security.Policy;
 using System.Windows.Forms;
+
 
 namespace SUP
 {
@@ -15,84 +19,17 @@ namespace SUP
         public ObjectBrowser(string objectaddress)
         {
             InitializeComponent();
-            if (objectaddress != null){
+            if (objectaddress != null)
+            {
                 _objectaddress = objectaddress;
             }
             else
             { _objectaddress = ""; }
         }
 
-        private void btnGetObject_Click(object sender, EventArgs e)
-        {
-            if (lastClickedButton != null)
-                lastClickedButton.BackColor = Color.White;
-
-            var button = (Button)sender;
-            lastClickedButton = button;
-            button.BackColor = Color.Yellow;
-
-
-
-            flowLayoutPanel1.Controls.Clear();
-
-            OBJState objstate = OBJState.GetObjectByAddress(txtSearchAddress.Text, txtLogin.Text, txtPassword.Text, txtUrl.Text);
-            if (objstate.Owners != null)
-            {
-                FoundObjectControl foundObject = new FoundObjectControl();
-
-                if (objstate.Image.StartsWith("BTC:") || objstate.Image.StartsWith("MZC:"))
-                {
-                    string transid = objstate.Image.Substring(4, 64);
-
-                    if (!System.IO.Directory.Exists("root/" + transid))
-                    {
-                        if (objstate.Image.StartsWith("MZC:"))
-                        {
-                            Root root = Root.GetRootByTransactionId(transid, txtLogin.Text, txtPassword.Text, @"http://127.0.0.1:12832", "50");
-                        }
-                        else
-                        {
-                            Root root = Root.GetRootByTransactionId(transid, txtLogin.Text, txtPassword.Text, @"http://127.0.0.1:8332", "0");
-                        }
-
-                    }
-
-                }
-                foundObject.ObjectImage.ImageLocation = objstate.Image.Replace("BTC:", @"root/").Replace("MZC:", @"root/"); 
-                foundObject.ObjectName.Text = objstate.Name;
-                foundObject.ObjectDescription.Text = objstate.Description;
-
-                foreach (KeyValuePair<string,DateTime> creator in objstate.Creators.Skip(1))
-                {
-
-                    PROState profile = PROState.GetProfileByAddress(creator.Key, txtLogin.Text, txtPassword.Text, txtUrl.Text);
-
-                    if (profile.URN != null && foundObject.ObjectCreators.Text == null)
-                    {
-                        foundObject.ObjectCreators.Text = TruncateAddress(profile.URN);
-                    }
-                    else
-                    {
-                        foundObject.ObjectCreators.Text = TruncateAddress(creator.Key);
-
-                        if (profile.URN != null && foundObject.ObjectCreators2.Text == null)
-                        {
-                            foundObject.ObjectCreators2.Text = TruncateAddress(profile.URN);
-                        }
-                    }
-
-                }
-
-                foundObject.ObjectQty.Text = objstate.Owners.Values.Sum().ToString() + "x";
-                foundObject.ObjectAddress.Text = objstate.Creators.First().Key;
-
-                flowLayoutPanel1.Controls.Add(foundObject);
-            }
-        }
-
         private void getObjectsbyAddress(string address)
         {
-            
+
             string profileCheck = address;
             PROState searchprofile = PROState.GetProfileByAddress(address, txtLogin.Text, txtPassword.Text, txtUrl.Text);
 
@@ -129,7 +66,7 @@ namespace SUP
 
             List<OBJState> createdObjects = OBJState.GetObjectsByAddress(profileCheck, txtLogin.Text, txtPassword.Text, txtUrl.Text);
 
-           
+
             foreach (OBJState objstate in createdObjects)
             {
                 if (objstate.Owners != null)
@@ -137,52 +74,77 @@ namespace SUP
 
                     FoundObjectControl foundObject = new FoundObjectControl();
 
-                    if (objstate.Image.StartsWith("BTC:") || objstate.Image.StartsWith("MZC:"))
+                    switch (objstate.Image.ToUpper().Substring(0, 4))
                     {
-                        string transid = objstate.Image.Substring(4, 64);
-
-                        if (!System.IO.Directory.Exists("root/" + transid))
-                        {
-                            if (objstate.Image.StartsWith("MZC:"))
-                            {
-                                Root root = Root.GetRootByTransactionId(transid, txtLogin.Text, txtPassword.Text, @"http://127.0.0.1:12832", "50");
-                            }
-                            else
+                        case "BTC:":
+                            string transid = objstate.Image.Substring(4, 64);
+                            if (!System.IO.Directory.Exists("root/" + transid))
                             {
                                 Root root = Root.GetRootByTransactionId(transid, txtLogin.Text, txtPassword.Text, @"http://127.0.0.1:8332", "0");
                             }
-                        }
-                        foundObject.ObjectImage.ImageLocation = objstate.Image.Replace("BTC:", @"root/").Replace("MZC:",@"root/");
-                    }
-                    else
-                    {
-
-                        if (!objstate.Image.ToLower().StartsWith("http"))
-                        {
-                            string transid = objstate.Image.Substring(0, 64);
-
+                            foundObject.ObjectImage.ImageLocation = objstate.Image.Replace("BTC:", @"root/");
+                            break;
+                        case "MZC:":
+                            transid = objstate.Image.Substring(4, 64);
                             if (!System.IO.Directory.Exists("root/" + transid))
                             {
-                                Root root = Root.GetRootByTransactionId(transid, txtLogin.Text, txtPassword.Text, @"http://127.0.0.1:18332");
+                                Root root = Root.GetRootByTransactionId(transid, txtLogin.Text, txtPassword.Text, @"http://127.0.0.1:12832", "50");
+                            }
+                            foundObject.ObjectImage.ImageLocation = objstate.Image.Replace("MZC:", @"root/");
+                            break;
+                        case "IPFS":
+                            transid = objstate.Image.Substring(5, 46);
+
+                            if (!System.IO.Directory.Exists("ipfs/" + transid))
+                            {
+                                Process process2 = new Process();
+                                process2.StartInfo.FileName = @"ipfs\ipfs.exe";
+                                process2.StartInfo.Arguments = "get " + objstate.Image.Substring(5, 46) + @" -o ipfs\" + transid;
+                                process2.StartInfo.UseShellExecute = false;
+                                process2.StartInfo.CreateNoWindow = true;
+                                process2.Start();
+
+                                //attempt to pin fails silently if daemon is not running
+                                Process process3 = new Process
+                                {
+                                    StartInfo = new ProcessStartInfo
+                                    {
+                                        FileName = @"ipfs\ipfs.exe",
+                                        Arguments = "pin add " + transid,
+                                        UseShellExecute = false,
+                                        CreateNoWindow = true
+                                    }
+                                };
+                                process3.Start();
 
                             }
+                            foundObject.ObjectImage.ImageLocation = objstate.Image.Replace("IPFS:", @"ipfs/"); ;
 
-                            foundObject.ObjectImage.ImageLocation = @"root/" + objstate.Image;
-                        }
-                        else
-                        {
+                            break;
+                        case "HTTP":
                             foundObject.ObjectImage.ImageLocation = objstate.Image;
-                        }
+                            break;
+
+
+                        default:
+                               transid = objstate.Image.Substring(0, 64);
+                                if (!System.IO.Directory.Exists("root/" + transid))
+                                {
+                                    Root root = Root.GetRootByTransactionId(transid, txtLogin.Text, txtPassword.Text, @"http://127.0.0.1:18332");
+                                }
+                                foundObject.ObjectImage.ImageLocation = @"root/" + objstate.Image;
+                            
+                            break;
                     }
                     foundObject.ObjectName.Text = objstate.Name;
                     foundObject.ObjectDescription.Text = objstate.Description;
                     foundObject.ObjectAddress.Text = objstate.Creators.First().Key;
                     foundObject.ObjectQty.Text = objstate.Owners.Values.Sum().ToString() + "x";
 
-                    foreach (KeyValuePair<string,DateTime> creator in objstate.Creators)
+                    foreach (KeyValuePair<string, DateTime> creator in objstate.Creators)
                     {
 
-                        if (creator.Value.Year > 1 )
+                        if (creator.Value.Year > 1)
                         {
                             PROState profile = PROState.GetProfileByAddress(creator.Key, txtLogin.Text, txtPassword.Text, txtUrl.Text);
 
@@ -200,8 +162,7 @@ namespace SUP
                                 {
                                     foundObject.ObjectCreators2.Text = TruncateAddress(profile.URN);
                                 }
-
-                                //if (foundObject.ObjectCreators.Text == "") { foundObject.ObjectCreators.Text = TruncateAddress(creator.Key); }
+                                                               
                             }
                         }
 
@@ -254,10 +215,6 @@ namespace SUP
                 }
             }
 
-
-
-
-
             flowLayoutPanel1.SuspendLayout();
             flowLayoutPanel1.Controls.Clear();
 
@@ -269,49 +226,72 @@ namespace SUP
                 {
                     FoundObjectControl foundObject = new FoundObjectControl();
 
-                    if (objstate.Image.StartsWith("BTC:") || objstate.Image.StartsWith("MZC:"))
+                    switch (objstate.Image.ToUpper().Substring(0, 4))
                     {
-                        string transid = objstate.Image.Substring(4, 64);
-
-                        if (!System.IO.Directory.Exists("root/" + transid))
-                        {
-                            if (objstate.Image.StartsWith("MZC:"))
-                            {
-                                Root root = Root.GetRootByTransactionId(transid, txtLogin.Text, txtPassword.Text, @"http://127.0.0.1:12832", "50");
-                            }
-                            else
+                        case "BTC:":
+                            string transid = objstate.Image.Substring(4, 64);
+                            if (!System.IO.Directory.Exists("root/" + transid))
                             {
                                 Root root = Root.GetRootByTransactionId(transid, txtLogin.Text, txtPassword.Text, @"http://127.0.0.1:8332", "0");
                             }
-                        }
-                        foundObject.ObjectImage.ImageLocation = objstate.Image.Replace("BTC:", @"root/").Replace("MZC:",@"root/");
+                            foundObject.ObjectImage.ImageLocation = objstate.Image.Replace("BTC:", @"root/");
+                            break;
+                        case "MZC:":
+                            transid = objstate.Image.Substring(4, 64);
+                            if (!System.IO.Directory.Exists("root/" + transid))
+                            {
+                                Root root = Root.GetRootByTransactionId(transid, txtLogin.Text, txtPassword.Text, @"http://127.0.0.1:12832", "50");
+                            }
+                            foundObject.ObjectImage.ImageLocation = objstate.Image.Replace("MZC:", @"root/");
+                            break;
+                        case "IPFS":
+                            transid = objstate.Image.Substring(5, 46);
+
+                            if (!System.IO.Directory.Exists("ipfs/" + transid))
+                            {
+                                Process process2 = new Process();
+                                process2.StartInfo.FileName = @"ipfs\ipfs.exe";
+                                process2.StartInfo.Arguments = "get " + objstate.Image.Substring(5, 46) + @" -o ipfs\" + transid;
+                                process2.StartInfo.UseShellExecute = false;
+                                process2.StartInfo.CreateNoWindow = true;
+                                process2.Start();
+
+                                //attempt to pin fails silently if daemon is not running
+                                Process process3 = new Process
+                                {
+                                    StartInfo = new ProcessStartInfo
+                                    {
+                                        FileName = @"ipfs\ipfs.exe",
+                                        Arguments = "pin add " + transid,
+                                        UseShellExecute = false,
+                                        CreateNoWindow = true
+                                    }
+                                };
+                                process3.Start();
+
+                            }
+                            foundObject.ObjectImage.ImageLocation = objstate.Image.Replace("IPFS:", @"ipfs/"); ;
+
+                            break;
+                        case "HTTP":
+                            foundObject.ObjectImage.ImageLocation = objstate.Image;
+                            break;
 
 
-                    }
-                    else
-                    {
-
-                        if (!objstate.Image.ToLower().StartsWith("http"))
-                        {
-                            string transid = objstate.Image.Substring(0, 64);
-
+                        default:
+                            transid = objstate.Image.Substring(0, 64);
                             if (!System.IO.Directory.Exists("root/" + transid))
                             {
                                 Root root = Root.GetRootByTransactionId(transid, txtLogin.Text, txtPassword.Text, @"http://127.0.0.1:18332");
-
                             }
-
                             foundObject.ObjectImage.ImageLocation = @"root/" + objstate.Image;
-                        }
-                        else
-                        {
-                            foundObject.ObjectImage.ImageLocation = objstate.Image;
-                        }
+
+                            break;
                     }
                     foundObject.ObjectName.Text = objstate.Name;
                     foundObject.ObjectDescription.Text = objstate.Description;
 
-                    foreach (KeyValuePair<string,DateTime> creator in objstate.Creators.Skip(1))
+                    foreach (KeyValuePair<string, DateTime> creator in objstate.Creators.Skip(1))
                     {
 
                         if (creator.Value.Year > 1)
@@ -343,9 +323,9 @@ namespace SUP
 
 
 
-                        }
+                    }
 
-                        foundObject.ObjectQty.Text = objstate.Owners.Values.Sum().ToString() + "x";
+                    foundObject.ObjectQty.Text = objstate.Owners.Values.Sum().ToString() + "x";
                     foundObject.ObjectAddress.Text = objstate.Creators.First().Key;
                     flowLayoutPanel1.Controls.Add(foundObject);
                 }
@@ -353,7 +333,7 @@ namespace SUP
             flowLayoutPanel1.ResumeLayout();
         }
 
-        private async void btnGetCreated_Click(object sender, EventArgs e)
+        private void btnGetCreated_Click(object sender, EventArgs e)
         {
             if (lastClickedButton != null)
                 lastClickedButton.BackColor = Color.White;
@@ -403,49 +383,73 @@ namespace SUP
                 {
                     FoundObjectControl foundObject = new FoundObjectControl();
 
-                    if (objstate.Image.StartsWith("BTC:") || objstate.Image.StartsWith("MZC:"))
+                    switch (objstate.Image.ToUpper().Substring(0, 4))
                     {
-                        string transid = objstate.Image.Substring(4, 64);
-
-                        if (!System.IO.Directory.Exists("root/" + transid))
-                        {
-                            if (objstate.Image.StartsWith("MZC:"))
-                            {
-                                Root root = Root.GetRootByTransactionId(transid, txtLogin.Text, txtPassword.Text, @"http://127.0.0.1:12832", "50");
-                            }
-                            else
+                        case "BTC:":
+                            string transid = objstate.Image.Substring(4, 64);
+                            if (!System.IO.Directory.Exists("root/" + transid))
                             {
                                 Root root = Root.GetRootByTransactionId(transid, txtLogin.Text, txtPassword.Text, @"http://127.0.0.1:8332", "0");
                             }
-                        }
-                        foundObject.ObjectImage.ImageLocation = objstate.Image.Replace("BTC:", @"root/").Replace("MZC:",@"root/");
-                    }
-                    else
-                    {
+                            foundObject.ObjectImage.ImageLocation = objstate.Image.Replace("BTC:", @"root/");
+                            break;
+                        case "MZC:":
+                            transid = objstate.Image.Substring(4, 64);
+                            if (!System.IO.Directory.Exists("root/" + transid))
+                            {
+                                Root root = Root.GetRootByTransactionId(transid, txtLogin.Text, txtPassword.Text, @"http://127.0.0.1:12832", "50");
+                            }
+                            foundObject.ObjectImage.ImageLocation = objstate.Image.Replace("MZC:", @"root/");
+                            break;
+                        case "IPFS":
+                            transid = objstate.Image.Substring(5, 46);
 
-                        if (!objstate.Image.ToLower().StartsWith("http"))
-                        {
-                            string transid = objstate.Image.Substring(0, 64);
+                            if (!System.IO.Directory.Exists("ipfs/" + transid))
+                            {
+                                Process process2 = new Process();
+                                process2.StartInfo.FileName = @"ipfs\ipfs.exe";
+                                process2.StartInfo.Arguments = "get " + objstate.Image.Substring(5, 46) + @" -o ipfs\" + transid;
+                                process2.StartInfo.UseShellExecute = false;
+                                process2.StartInfo.CreateNoWindow = true;
+                                process2.Start();
 
+                                //attempt to pin fails silently if daemon is not running
+                                Process process3 = new Process
+                                {
+                                    StartInfo = new ProcessStartInfo
+                                    {
+                                        FileName = @"ipfs\ipfs.exe",
+                                        Arguments = "pin add " + transid,
+                                        UseShellExecute = false,
+                                        CreateNoWindow = true
+                                    }
+                                };
+                                process3.Start();
+
+                            }
+                            foundObject.ObjectImage.ImageLocation = objstate.Image.Replace("IPFS:", @"ipfs/"); ;
+
+                            break;
+                        case "HTTP":
+                            foundObject.ObjectImage.ImageLocation = objstate.Image;
+                            break;
+
+
+                        default:
+                            transid = objstate.Image.Substring(0, 64);
                             if (!System.IO.Directory.Exists("root/" + transid))
                             {
                                 Root root = Root.GetRootByTransactionId(transid, txtLogin.Text, txtPassword.Text, @"http://127.0.0.1:18332");
-
                             }
-
                             foundObject.ObjectImage.ImageLocation = @"root/" + objstate.Image;
-                        }
-                        else
-                        {
-                            foundObject.ObjectImage.ImageLocation = objstate.Image;
-                        }
-                    }
 
+                            break;
+                    }
 
                     foundObject.ObjectName.Text = objstate.Name;
                     foundObject.ObjectDescription.Text = objstate.Description;
 
-                    foreach (KeyValuePair <string,DateTime> creator in objstate.Creators.Skip(1))
+                    foreach (KeyValuePair<string, DateTime> creator in objstate.Creators.Skip(1))
                     {
 
                         PROState profile = PROState.GetProfileByAddress(creator.Key, txtLogin.Text, txtPassword.Text, txtUrl.Text);
@@ -464,7 +468,6 @@ namespace SUP
                             }
 
                         }
-
 
 
                     }
@@ -479,7 +482,7 @@ namespace SUP
 
         private void getObjectsByKeyword(string keyword)
         {
-            
+
 
             flowLayoutPanel1.SuspendLayout();
             flowLayoutPanel1.Controls.Clear();
@@ -492,49 +495,71 @@ namespace SUP
 
                     FoundObjectControl foundObject = new FoundObjectControl();
 
-                    if (objstate.Image.StartsWith("BTC:") || objstate.Image.StartsWith("MZC:"))
+                    switch (objstate.Image.ToUpper().Substring(0, 4))
                     {
-                        string transid = objstate.Image.Substring(4, 64);
-
-                        if (!System.IO.Directory.Exists("root/" + transid))
-                        {
-                            if (objstate.Image.StartsWith("MZC:"))
-                            {
-                                Root root = Root.GetRootByTransactionId(transid, txtLogin.Text, txtPassword.Text, @"http://127.0.0.1:12832", "50");
-                            }
-                            else
+                        case "BTC:":
+                            string transid = objstate.Image.Substring(4, 64);
+                            if (!System.IO.Directory.Exists("root/" + transid))
                             {
                                 Root root = Root.GetRootByTransactionId(transid, txtLogin.Text, txtPassword.Text, @"http://127.0.0.1:8332", "0");
                             }
-                        }
-                        foundObject.ObjectImage.ImageLocation = objstate.Image.Replace("BTC:", @"root/").Replace("MZC:",@"root/"); 
-                        foundObject.ObjectName.Text = objstate.Name;
+                            foundObject.ObjectImage.ImageLocation = objstate.Image.Replace("BTC:", @"root/");
+                            break;
+                        case "MZC:":
+                            transid = objstate.Image.Substring(4, 64);
+                            if (!System.IO.Directory.Exists("root/" + transid))
+                            {
+                                Root root = Root.GetRootByTransactionId(transid, txtLogin.Text, txtPassword.Text, @"http://127.0.0.1:12832", "50");
+                            }
+                            foundObject.ObjectImage.ImageLocation = objstate.Image.Replace("MZC:", @"root/");
+                            break;
+                        case "IPFS":
+                            transid = objstate.Image.Substring(5, 46);
+
+                            if (!System.IO.Directory.Exists("ipfs/" + transid))
+                            {
+                                Process process2 = new Process();
+                                process2.StartInfo.FileName = @"ipfs\ipfs.exe";
+                                process2.StartInfo.Arguments = "get " + objstate.Image.Substring(5, 46) + @" -o ipfs\" + transid;
+                                process2.StartInfo.UseShellExecute = false;
+                                process2.StartInfo.CreateNoWindow = true;
+                                process2.Start();
+
+                                //attempt to pin fails silently if daemon is not running
+                                Process process3 = new Process
+                                {
+                                    StartInfo = new ProcessStartInfo
+                                    {
+                                        FileName = @"ipfs\ipfs.exe",
+                                        Arguments = "pin add " + transid,
+                                        UseShellExecute = false,
+                                        CreateNoWindow = true
+                                    }
+                                };
+                                process3.Start();
+
+                            }
+                            foundObject.ObjectImage.ImageLocation = objstate.Image.Replace("IPFS:", @"ipfs/"); ;
+
+                            break;
+                        case "HTTP":
+                            foundObject.ObjectImage.ImageLocation = objstate.Image;
+                            break;
 
 
-                    }
-                    else
-                    {
-
-                        if (!objstate.Image.ToLower().StartsWith("http"))
-                        {
-                            string transid = objstate.Image.Substring(0, 64);
-
+                        default:
+                            transid = objstate.Image.Substring(0, 64);
                             if (!System.IO.Directory.Exists("root/" + transid))
                             {
                                 Root root = Root.GetRootByTransactionId(transid, txtLogin.Text, txtPassword.Text, @"http://127.0.0.1:18332");
-
                             }
-
                             foundObject.ObjectImage.ImageLocation = @"root/" + objstate.Image;
-                        }
-                        else
-                        {
-                            foundObject.ObjectImage.ImageLocation = objstate.Image;
-                        }
+
+                            break;
                     }
                     foundObject.ObjectName.Text = objstate.Name;
                     foundObject.ObjectDescription.Text = objstate.Description;
-                    foreach (KeyValuePair <string,DateTime> creator in objstate.Creators.Skip(1))
+                    foreach (KeyValuePair<string, DateTime> creator in objstate.Creators.Skip(1))
                     {
 
                         PROState profile = PROState.GetProfileByAddress(creator.Key, txtLogin.Text, txtPassword.Text, txtUrl.Text);
@@ -553,8 +578,6 @@ namespace SUP
                             }
 
                         }
-
-
 
 
                     }
@@ -584,7 +607,7 @@ namespace SUP
 
         private void getObjectsByURN(string urn)
         {
-          
+
             flowLayoutPanel1.Controls.Clear();
 
             OBJState objstate = OBJState.GetObjectByURN(urn, txtLogin.Text, txtPassword.Text, txtUrl.Text);
@@ -594,49 +617,72 @@ namespace SUP
 
                 FoundObjectControl foundObject = new FoundObjectControl();
 
-                if (objstate.Image.StartsWith("BTC:") || objstate.Image.StartsWith("MZC:"))
+                switch (objstate.Image.ToUpper().Substring(0, 4))
                 {
-                    string transid = objstate.Image.Substring(4, 64);
-
-                    if (!System.IO.Directory.Exists("root/" + transid))
-                    {
-                        if (objstate.Image.StartsWith("MZC:"))
-                        {
-                            Root root = Root.GetRootByTransactionId(transid, txtLogin.Text, txtPassword.Text, @"http://127.0.0.1:12832", "50");
-                        }
-                        else
+                    case "BTC:":
+                        string transid = objstate.Image.Substring(4, 64);
+                        if (!System.IO.Directory.Exists("root/" + transid))
                         {
                             Root root = Root.GetRootByTransactionId(transid, txtLogin.Text, txtPassword.Text, @"http://127.0.0.1:8332", "0");
                         }
-                    }
-                    foundObject.ObjectImage.ImageLocation = objstate.Image.Replace("BTC:", @"root/").Replace("MZC:",@"root/"); 
-                    foundObject.ObjectName.Text = objstate.Name;
+                        foundObject.ObjectImage.ImageLocation = objstate.Image.Replace("BTC:", @"root/");
+                        break;
+                    case "MZC:":
+                        transid = objstate.Image.Substring(4, 64);
+                        if (!System.IO.Directory.Exists("root/" + transid))
+                        {
+                            Root root = Root.GetRootByTransactionId(transid, txtLogin.Text, txtPassword.Text, @"http://127.0.0.1:12832", "50");
+                        }
+                        foundObject.ObjectImage.ImageLocation = objstate.Image.Replace("MZC:", @"root/");
+                        break;
+                    case "IPFS":
+                        transid = objstate.Image.Substring(5, 46);
+
+                        if (!System.IO.Directory.Exists("ipfs/" + transid))
+                        {
+                            Process process2 = new Process();
+                            process2.StartInfo.FileName = @"ipfs\ipfs.exe";
+                            process2.StartInfo.Arguments = "get " + objstate.Image.Substring(5, 46) + @" -o ipfs\" + transid;
+                            process2.StartInfo.UseShellExecute = false;
+                            process2.StartInfo.CreateNoWindow = true;
+                            process2.Start();
+
+                            //attempt to pin fails silently if daemon is not running
+                            Process process3 = new Process
+                            {
+                                StartInfo = new ProcessStartInfo
+                                {
+                                    FileName = @"ipfs\ipfs.exe",
+                                    Arguments = "pin add " + transid,
+                                    UseShellExecute = false,
+                                    CreateNoWindow = true
+                                }
+                            };
+                            process3.Start();
+                            process3.WaitForExit();
+
+                        }
+                        foundObject.ObjectImage.ImageLocation = objstate.Image.Replace("IPFS:", @"ipfs/"); ;
+
+                        break;
+                    case "HTTP":
+                        foundObject.ObjectImage.ImageLocation = objstate.Image;
+                        break;
 
 
-                }
-                else
-                {
-
-                    if (!objstate.Image.ToLower().StartsWith("http"))
-                    {
-                        string transid = objstate.Image.Substring(0, 64);
-
+                    default:
+                        transid = objstate.Image.Substring(0, 64);
                         if (!System.IO.Directory.Exists("root/" + transid))
                         {
                             Root root = Root.GetRootByTransactionId(transid, txtLogin.Text, txtPassword.Text, @"http://127.0.0.1:18332");
-
                         }
-
                         foundObject.ObjectImage.ImageLocation = @"root/" + objstate.Image;
-                    }
-                    else
-                    {
-                        foundObject.ObjectImage.ImageLocation = objstate.Image;
-                    }
-                }
 
+                        break;
+                }
+                foundObject.ObjectName.Text = objstate.Name;
                 foundObject.ObjectDescription.Text = objstate.Description;
-                foreach (KeyValuePair < string,DateTime> creator in objstate.Creators.Skip(1))
+                foreach (KeyValuePair<string, DateTime> creator in objstate.Creators.Skip(1))
                 {
 
                     PROState profile = PROState.GetProfileByAddress(creator.Key, txtLogin.Text, txtPassword.Text, txtUrl.Text);
@@ -655,8 +701,6 @@ namespace SUP
                         }
 
                     }
-
-
 
 
                 }
@@ -733,11 +777,11 @@ namespace SUP
                     else { getObjectsbyAddress(txtSearchAddress.Text.Replace("@", "")); }
 
                 }
-                    
-    
+
+
             }
 
-       
+
         }
 
         private void ObjectBrowser_Load(object sender, EventArgs e)
@@ -748,15 +792,17 @@ namespace SUP
 
                 if (txtSearchAddress.Text.StartsWith("#"))
                 {
-getObjectsByKeyword(txtSearchAddress.Text.Replace("#",""));
+                    getObjectsByKeyword(txtSearchAddress.Text.Replace("#", ""));
 
                 }
                 else
-                   getObjectsbyAddress(txtSearchAddress.Text.Replace("@", ""));
+                    getObjectsbyAddress(txtSearchAddress.Text.Replace("@", ""));
             }
+           
+
         }
 
-       
+
         private void button1_Click_1(object sender, EventArgs e)
         {
             new Connections().Show();

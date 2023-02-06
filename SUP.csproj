@@ -56,6 +56,18 @@
     <Reference Include="AngleSharp.Css, Version=0.17.0.0, Culture=neutral, PublicKeyToken=e83494dcdc6d31ea, processorArchitecture=MSIL">
       <HintPath>packages\AngleSharp.Css.0.17.0\lib\net472\AngleSharp.Css.dll</HintPath>
     </Reference>
+    <Reference Include="BouncyCastle.Crypto, Version=1.8.5.0, Culture=neutral, PublicKeyToken=0e99375e54769942, processorArchitecture=MSIL">
+      <HintPath>packages\Portable.BouncyCastle.1.8.5\lib\net40\BouncyCastle.Crypto.dll</HintPath>
+    </Reference>
+    <Reference Include="Common.Logging, Version=3.4.1.0, Culture=neutral, PublicKeyToken=af08829b84f0328e, processorArchitecture=MSIL">
+      <HintPath>packages\Common.Logging.3.4.1\lib\net40\Common.Logging.dll</HintPath>
+    </Reference>
+    <Reference Include="Common.Logging.Core, Version=3.4.1.0, Culture=neutral, PublicKeyToken=af08829b84f0328e, processorArchitecture=MSIL">
+      <HintPath>packages\Common.Logging.Core.3.4.1\lib\net40\Common.Logging.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="Google.Protobuf, Version=3.8.0.0, Culture=neutral, PublicKeyToken=a7d26565bac4d604, processorArchitecture=MSIL">
+      <HintPath>packages\Google.Protobuf.3.8.0\lib\net45\Google.Protobuf.dll</HintPath>
+    </Reference>
     <Reference Include="HtmlSanitizer, Version=8.0.0.0, Culture=neutral, PublicKeyToken=61c49a1a9e79cc28, processorArchitecture=MSIL">
       <HintPath>packages\HtmlSanitizer.8.0.645\lib\net461\HtmlSanitizer.dll</HintPath>
     </Reference>
@@ -106,6 +118,9 @@
     </Reference>
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
+    <Reference Include="SimpleBase, Version=1.3.1.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>packages\SimpleBase.1.3.1\lib\net45\SimpleBase.dll</HintPath>
+    </Reference>
     <Reference Include="System">
       <HintPath>..\..\..\..\..\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.7.2\System.dll</HintPath>
     </Reference>
@@ -233,21 +248,21 @@
     <Compile Include="FoundObjectControl.Designer.cs">
       <DependentUpon>FoundObjectControl.cs</DependentUpon>
     </Compile>
-    <Compile Include="P2FK\classes\BigIntExtensions.cs" />
-    <Compile Include="P2FK\classes\ECElGamal.cs" />
-    <Compile Include="P2FK\classes\ECEncryption.cs" />
-    <Compile Include="P2FK\classes\ECPoint.cs" />
-    <Compile Include="P2FK\classes\Hash160.cs" />
-    <Compile Include="P2FK\classes\Hex.cs" />
-    <Compile Include="P2FK\classes\OBJ.cs" />
-    <Compile Include="P2FK\classes\PRO.cs" />
-    <Compile Include="P2FK\classes\RIPEMD160.cs" />
-    <Compile Include="P2FK\classes\Secp256k1.cs" />
+    <Compile Include="p2fk\classes\BigIntExtensions.cs" />
+    <Compile Include="p2fk\classes\ECElGamal.cs" />
+    <Compile Include="p2fk\classes\ECEncryption.cs" />
+    <Compile Include="p2fk\classes\ECPoint.cs" />
+    <Compile Include="p2fk\classes\Hash160.cs" />
+    <Compile Include="p2fk\classes\Hex.cs" />
+    <Compile Include="p2fk\classes\OBJ.cs" />
+    <Compile Include="p2fk\classes\PRO.cs" />
+    <Compile Include="p2fk\classes\RIPEMD160.cs" />
+    <Compile Include="p2fk\classes\Secp256k1.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="P2FK\classes\Base58.cs" />
-    <Compile Include="P2FK\classes\Root.cs" />
-    <Compile Include="P2FK\classes\SHA256.cs" />
+    <Compile Include="p2fk\classes\Base58.cs" />
+    <Compile Include="p2fk\classes\Root.cs" />
+    <Compile Include="p2fk\classes\SHA256.cs" />
     <EmbeddedResource Include="Connections.resx">
       <DependentUpon>Connections.cs</DependentUpon>
       <SubType>Designer</SubType>
@@ -286,16 +301,16 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
-    <None Include="P2FK\samples\Burn Transaction.json">
+    <None Include="p2fk\samples\Burn Transaction.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="P2FK\samples\Create Object.json">
+    <None Include="p2fk\samples\Create Object.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="P2FK\samples\Create Profile.json">
+    <None Include="p2fk\samples\Create Profile.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="P2FK\samples\Give Object.json">
+    <None Include="p2fk\samples\Give Object.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>
@@ -317,6 +332,9 @@
   <ItemGroup>
     <Content Include="bitcoin-qt.exe">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="ipfs\ipfs.exe">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="maza-qt.exe">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>

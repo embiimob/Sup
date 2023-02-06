@@ -30,6 +30,7 @@
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Connections));
             this.panel1 = new System.Windows.Forms.Panel();
+            this.button1 = new System.Windows.Forms.Button();
             this.label15 = new System.Windows.Forms.Label();
             this.label14 = new System.Windows.Forms.Label();
             this.checkBox2 = new System.Windows.Forms.CheckBox();
@@ -68,11 +69,18 @@
             this.txtPort = new System.Windows.Forms.TextBox();
             this.btnMainConnection = new System.Windows.Forms.Button();
             this.label1 = new System.Windows.Forms.Label();
+            this.btnPinIPFS = new System.Windows.Forms.Button();
+            this.btnUnpinIPFS = new System.Windows.Forms.Button();
+            this.btnPurgeIPFS = new System.Windows.Forms.Button();
             this.panel1.SuspendLayout();
             this.SuspendLayout();
             // 
             // panel1
             // 
+            this.panel1.Controls.Add(this.btnPurgeIPFS);
+            this.panel1.Controls.Add(this.btnUnpinIPFS);
+            this.panel1.Controls.Add(this.btnPinIPFS);
+            this.panel1.Controls.Add(this.button1);
             this.panel1.Controls.Add(this.label15);
             this.panel1.Controls.Add(this.label14);
             this.panel1.Controls.Add(this.checkBox2);
@@ -113,34 +121,44 @@
             this.panel1.Controls.Add(this.label1);
             this.panel1.Location = new System.Drawing.Point(13, 8);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(644, 338);
+            this.panel1.Size = new System.Drawing.Size(644, 377);
             this.panel1.TabIndex = 1;
+            // 
+            // button1
+            // 
+            this.button1.Location = new System.Drawing.Point(6, 172);
+            this.button1.Name = "button1";
+            this.button1.Size = new System.Drawing.Size(234, 23);
+            this.button1.TabIndex = 125;
+            this.button1.UseVisualStyleBackColor = true;
+            this.button1.Click += new System.EventHandler(this.button1_Click);
             // 
             // label15
             // 
             this.label15.AutoSize = true;
             this.label15.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label15.Location = new System.Drawing.Point(358, 214);
+            this.label15.Location = new System.Drawing.Point(360, 228);
             this.label15.Name = "label15";
             this.label15.Size = new System.Drawing.Size(203, 13);
             this.label15.TabIndex = 124;
-            this.label15.Text = "Sup!? Object Browser  v0.1.1-beta";
+            this.label15.Text = "Sup!? Object Browser  v0.1.2-beta";
             // 
             // label14
             // 
             this.label14.AutoSize = true;
-            this.label14.Location = new System.Drawing.Point(358, 250);
+            this.label14.Location = new System.Drawing.Point(356, 265);
             this.label14.Name = "label14";
-            this.label14.Size = new System.Drawing.Size(258, 39);
+            this.label14.Size = new System.Drawing.Size(258, 52);
             this.label14.TabIndex = 123;
             this.label14.Text = "Copyright (C) 2009-2016 The Bitcoin Core developers\r\nCopyright (C) 2013-2023 HugP" +
-    "uddle\r\nCopyright (C) 2018-2021 The Maza Core developers";
+    "uddle\r\nCopyright (C) 2014-2019 Juan Batiz-Benet ( IPFS )\r\nCopyright (C) 2018-202" +
+    "1 The Maza Core developers";
             // 
             // checkBox2
             // 
             this.checkBox2.AutoSize = true;
             this.checkBox2.Enabled = false;
-            this.checkBox2.Location = new System.Drawing.Point(505, 160);
+            this.checkBox2.Location = new System.Drawing.Point(505, 131);
             this.checkBox2.Name = "checkBox2";
             this.checkBox2.Size = new System.Drawing.Size(58, 17);
             this.checkBox2.TabIndex = 122;
@@ -150,7 +168,7 @@
             // textBox5
             // 
             this.textBox5.Enabled = false;
-            this.textBox5.Location = new System.Drawing.Point(371, 156);
+            this.textBox5.Location = new System.Drawing.Point(371, 127);
             this.textBox5.Name = "textBox5";
             this.textBox5.Size = new System.Drawing.Size(55, 20);
             this.textBox5.TabIndex = 121;
@@ -158,7 +176,7 @@
             // 
             // btnMZC
             // 
-            this.btnMZC.Location = new System.Drawing.Point(578, 154);
+            this.btnMZC.Location = new System.Drawing.Point(578, 125);
             this.btnMZC.Name = "btnMZC";
             this.btnMZC.Size = new System.Drawing.Size(54, 23);
             this.btnMZC.TabIndex = 120;
@@ -169,7 +187,7 @@
             // textBox11
             // 
             this.textBox11.Enabled = false;
-            this.textBox11.Location = new System.Drawing.Point(80, 156);
+            this.textBox11.Location = new System.Drawing.Point(80, 127);
             this.textBox11.Name = "textBox11";
             this.textBox11.Size = new System.Drawing.Size(65, 20);
             this.textBox11.TabIndex = 116;
@@ -178,7 +196,7 @@
             // textBox12
             // 
             this.textBox12.Enabled = false;
-            this.textBox12.Location = new System.Drawing.Point(151, 156);
+            this.textBox12.Location = new System.Drawing.Point(151, 127);
             this.textBox12.Name = "textBox12";
             this.textBox12.Size = new System.Drawing.Size(89, 20);
             this.textBox12.TabIndex = 117;
@@ -187,7 +205,7 @@
             // textBox13
             // 
             this.textBox13.Enabled = false;
-            this.textBox13.Location = new System.Drawing.Point(246, 156);
+            this.textBox13.Location = new System.Drawing.Point(246, 127);
             this.textBox13.Name = "textBox13";
             this.textBox13.Size = new System.Drawing.Size(100, 20);
             this.textBox13.TabIndex = 118;
@@ -196,7 +214,7 @@
             // textBox14
             // 
             this.textBox14.Enabled = false;
-            this.textBox14.Location = new System.Drawing.Point(437, 156);
+            this.textBox14.Location = new System.Drawing.Point(437, 127);
             this.textBox14.Name = "textBox14";
             this.textBox14.Size = new System.Drawing.Size(43, 20);
             this.textBox14.TabIndex = 119;
@@ -205,7 +223,7 @@
             // textBox15
             // 
             this.textBox15.Enabled = false;
-            this.textBox15.Location = new System.Drawing.Point(6, 158);
+            this.textBox15.Location = new System.Drawing.Point(6, 129);
             this.textBox15.Name = "textBox15";
             this.textBox15.Size = new System.Drawing.Size(45, 20);
             this.textBox15.TabIndex = 114;
@@ -250,7 +268,7 @@
             // label13
             // 
             this.label13.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label13.Location = new System.Drawing.Point(21, 195);
+            this.label13.Location = new System.Drawing.Point(13, 228);
             this.label13.Name = "label13";
             this.label13.Size = new System.Drawing.Size(303, 132);
             this.label13.TabIndex = 109;
@@ -259,7 +277,7 @@
             // label8
             // 
             this.label8.AutoSize = true;
-            this.label8.Location = new System.Drawing.Point(368, 108);
+            this.label8.Location = new System.Drawing.Point(368, 79);
             this.label8.Name = "label8";
             this.label8.Size = new System.Drawing.Size(25, 13);
             this.label8.TabIndex = 108;
@@ -268,7 +286,7 @@
             // label9
             // 
             this.label9.AutoSize = true;
-            this.label9.Location = new System.Drawing.Point(434, 108);
+            this.label9.Location = new System.Drawing.Point(434, 79);
             this.label9.Name = "label9";
             this.label9.Size = new System.Drawing.Size(64, 13);
             this.label9.TabIndex = 107;
@@ -277,7 +295,7 @@
             // label10
             // 
             this.label10.AutoSize = true;
-            this.label10.Location = new System.Drawing.Point(243, 108);
+            this.label10.Location = new System.Drawing.Point(243, 79);
             this.label10.Name = "label10";
             this.label10.Size = new System.Drawing.Size(28, 13);
             this.label10.TabIndex = 106;
@@ -286,7 +304,7 @@
             // label11
             // 
             this.label11.AutoSize = true;
-            this.label11.Location = new System.Drawing.Point(148, 108);
+            this.label11.Location = new System.Drawing.Point(148, 79);
             this.label11.Name = "label11";
             this.label11.Size = new System.Drawing.Size(52, 13);
             this.label11.TabIndex = 105;
@@ -295,7 +313,7 @@
             // label12
             // 
             this.label12.AutoSize = true;
-            this.label12.Location = new System.Drawing.Point(80, 108);
+            this.label12.Location = new System.Drawing.Point(80, 79);
             this.label12.Name = "label12";
             this.label12.Size = new System.Drawing.Size(29, 13);
             this.label12.TabIndex = 104;
@@ -305,7 +323,7 @@
             // 
             this.checkBox3.AutoSize = true;
             this.checkBox3.Enabled = false;
-            this.checkBox3.Location = new System.Drawing.Point(505, 131);
+            this.checkBox3.Location = new System.Drawing.Point(505, 102);
             this.checkBox3.Name = "checkBox3";
             this.checkBox3.Size = new System.Drawing.Size(58, 17);
             this.checkBox3.TabIndex = 103;
@@ -315,7 +333,7 @@
             // textBox6
             // 
             this.textBox6.Enabled = false;
-            this.textBox6.Location = new System.Drawing.Point(371, 127);
+            this.textBox6.Location = new System.Drawing.Point(371, 98);
             this.textBox6.Name = "textBox6";
             this.textBox6.Size = new System.Drawing.Size(55, 20);
             this.textBox6.TabIndex = 102;
@@ -323,7 +341,7 @@
             // 
             // btnBTC
             // 
-            this.btnBTC.Location = new System.Drawing.Point(578, 125);
+            this.btnBTC.Location = new System.Drawing.Point(578, 96);
             this.btnBTC.Name = "btnBTC";
             this.btnBTC.Size = new System.Drawing.Size(54, 23);
             this.btnBTC.TabIndex = 101;
@@ -334,7 +352,7 @@
             // textBox7
             // 
             this.textBox7.Enabled = false;
-            this.textBox7.Location = new System.Drawing.Point(80, 127);
+            this.textBox7.Location = new System.Drawing.Point(80, 98);
             this.textBox7.Name = "textBox7";
             this.textBox7.Size = new System.Drawing.Size(65, 20);
             this.textBox7.TabIndex = 97;
@@ -343,7 +361,7 @@
             // textBox8
             // 
             this.textBox8.Enabled = false;
-            this.textBox8.Location = new System.Drawing.Point(151, 127);
+            this.textBox8.Location = new System.Drawing.Point(151, 98);
             this.textBox8.Name = "textBox8";
             this.textBox8.Size = new System.Drawing.Size(89, 20);
             this.textBox8.TabIndex = 98;
@@ -352,7 +370,7 @@
             // textBox9
             // 
             this.textBox9.Enabled = false;
-            this.textBox9.Location = new System.Drawing.Point(246, 127);
+            this.textBox9.Location = new System.Drawing.Point(246, 98);
             this.textBox9.Name = "textBox9";
             this.textBox9.Size = new System.Drawing.Size(100, 20);
             this.textBox9.TabIndex = 99;
@@ -361,7 +379,7 @@
             // textBox10
             // 
             this.textBox10.Enabled = false;
-            this.textBox10.Location = new System.Drawing.Point(437, 127);
+            this.textBox10.Location = new System.Drawing.Point(437, 98);
             this.textBox10.Name = "textBox10";
             this.textBox10.Size = new System.Drawing.Size(43, 20);
             this.textBox10.TabIndex = 100;
@@ -416,7 +434,7 @@
             // 
             this.label2.AutoSize = true;
             this.label2.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label2.Location = new System.Drawing.Point(3, 108);
+            this.label2.Location = new System.Drawing.Point(3, 79);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(52, 13);
             this.label2.TabIndex = 91;
@@ -438,7 +456,7 @@
             // textBox26
             // 
             this.textBox26.Enabled = false;
-            this.textBox26.Location = new System.Drawing.Point(6, 129);
+            this.textBox26.Location = new System.Drawing.Point(6, 100);
             this.textBox26.Name = "textBox26";
             this.textBox26.Size = new System.Drawing.Size(45, 20);
             this.textBox26.TabIndex = 83;
@@ -473,16 +491,48 @@
             this.label1.TabIndex = 50;
             this.label1.Text = "main chain";
             // 
+            // btnPinIPFS
+            // 
+            this.btnPinIPFS.Enabled = false;
+            this.btnPinIPFS.Location = new System.Drawing.Point(246, 172);
+            this.btnPinIPFS.Name = "btnPinIPFS";
+            this.btnPinIPFS.Size = new System.Drawing.Size(104, 23);
+            this.btnPinIPFS.TabIndex = 126;
+            this.btnPinIPFS.Text = "pin ipfs cache";
+            this.btnPinIPFS.UseVisualStyleBackColor = true;
+            this.btnPinIPFS.Click += new System.EventHandler(this.button2_Click);
+            // 
+            // btnUnpinIPFS
+            // 
+            this.btnUnpinIPFS.Enabled = false;
+            this.btnUnpinIPFS.Location = new System.Drawing.Point(356, 172);
+            this.btnUnpinIPFS.Name = "btnUnpinIPFS";
+            this.btnUnpinIPFS.Size = new System.Drawing.Size(104, 23);
+            this.btnUnpinIPFS.TabIndex = 127;
+            this.btnUnpinIPFS.Text = "unpin ipfs cache";
+            this.btnUnpinIPFS.UseVisualStyleBackColor = true;
+            this.btnUnpinIPFS.Click += new System.EventHandler(this.btnUnpinIPFS_Click);
+            // 
+            // btnPurgeIPFS
+            // 
+            this.btnPurgeIPFS.Location = new System.Drawing.Point(528, 172);
+            this.btnPurgeIPFS.Name = "btnPurgeIPFS";
+            this.btnPurgeIPFS.Size = new System.Drawing.Size(104, 23);
+            this.btnPurgeIPFS.TabIndex = 128;
+            this.btnPurgeIPFS.Text = "purge ipfs cache";
+            this.btnPurgeIPFS.UseVisualStyleBackColor = true;
+            this.btnPurgeIPFS.Click += new System.EventHandler(this.btnPurgeIPFS_Click);
+            // 
             // Connections
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(659, 351);
+            this.ClientSize = new System.Drawing.Size(659, 397);
             this.Controls.Add(this.panel1);
-            this.MaximumSize = new System.Drawing.Size(675, 390);
             this.MinimumSize = new System.Drawing.Size(675, 390);
             this.Name = "Connections";
             this.Text = "Sup!? Connections";
+            this.Load += new System.EventHandler(this.Connections_Load);
             this.panel1.ResumeLayout(false);
             this.panel1.PerformLayout();
             this.ResumeLayout(false);
@@ -530,5 +580,9 @@
         private System.Windows.Forms.TextBox textBox15;
         private System.Windows.Forms.Label label14;
         private System.Windows.Forms.Label label15;
+        private System.Windows.Forms.Button button1;
+        private System.Windows.Forms.Button btnPinIPFS;
+        private System.Windows.Forms.Button btnPurgeIPFS;
+        private System.Windows.Forms.Button btnUnpinIPFS;
     }
 }
