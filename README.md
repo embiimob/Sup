@@ -6,7 +6,7 @@ This Sup!? Object Browser is a READ ONLY demonstration of establishing a decentr
 
 ### **Installation**
 
-1. Download the Sup.v0.1.0-beta.zip file
+1. Download the Sup.v0.1.2-beta.zip file
 2. Create a folder on your **fastest** disk drive with at least **700GB** free (it will be storing the bitcoin prod and testnet blockchains)
 3. Unzip all contents into the folder.
 4. Create a shortcut to SUP.exe and launch.
@@ -34,6 +34,8 @@ searches urn shows currently registered profile object associated with @userName
 - this experiment uses a v0.13.2 full bitcoin core clone with address index change https://github.com/btcdrak/bitcoin/tree/addrindex-0.14
 
 - this experiment uses mazacoin their latest official release has been included in the deployment https://github.com/mazacoin/maza
+
+- this experiment includes the most recent ipfs Kubo command line tool found here https://dist.ipfs.tech/kubo/v0.18.1/kubo_v0.18.1_windows-amd64.zip
 
 - see the example transaction JSON files https://github.com/embiimob/Sup/tree/master/P2FK/samples to begin experimenting with the entry and trading of your own Sup!? objects
 
