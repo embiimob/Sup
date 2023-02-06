@@ -1,10 +1,12 @@
-﻿using SUP.P2FK;
+﻿using LevelDB;
+using SUP.P2FK;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 using System.Net.Sockets;
+using System.Reflection;
 using System.Security.Policy;
 using System.Windows.Forms;
 
@@ -103,20 +105,32 @@ namespace SUP
                                 process2.StartInfo.UseShellExecute = false;
                                 process2.StartInfo.CreateNoWindow = true;
                                 process2.Start();
+                                process2.WaitForExit();
 
-                                //attempt to pin fails silently if daemon is not running
-                                Process process3 = new Process
+
+
+                                var SUP = new Options { CreateIfMissing = true };
+
+                                using (var db = new DB(SUP, @"sup"))
                                 {
-                                    StartInfo = new ProcessStartInfo
-                                    {
-                                        FileName = @"ipfs\ipfs.exe",
-                                        Arguments = "pin add " + transid,
-                                        UseShellExecute = false,
-                                        CreateNoWindow = true
-                                    }
-                                };
-                                process3.Start();
 
+                                    string ipfsdaemon = db.Get("ipfs-daemon");
+
+                                    if (ipfsdaemon == "true")
+                                    {
+                                        Process process3 = new Process
+                                        {
+                                            StartInfo = new ProcessStartInfo
+                                            {
+                                                FileName = @"ipfs\ipfs.exe",
+                                                Arguments = "pin add " + transid,
+                                                UseShellExecute = false,
+                                                CreateNoWindow = true
+                                            }
+                                        };
+                                        process3.Start();
+                                    }
+                                }
                             }
                             foundObject.ObjectImage.ImageLocation = objstate.Image.Replace("IPFS:", @"ipfs/"); ;
 
@@ -255,19 +269,30 @@ namespace SUP
                                 process2.StartInfo.UseShellExecute = false;
                                 process2.StartInfo.CreateNoWindow = true;
                                 process2.Start();
+                                process2.WaitForExit();
 
-                                //attempt to pin fails silently if daemon is not running
-                                Process process3 = new Process
+                                var SUP = new Options { CreateIfMissing = true };
+
+                                using (var db = new DB(SUP, @"sup"))
                                 {
-                                    StartInfo = new ProcessStartInfo
+
+                                    string ipfsdaemon = db.Get("ipfs-daemon");
+
+                                    if (ipfsdaemon == "true")
                                     {
-                                        FileName = @"ipfs\ipfs.exe",
-                                        Arguments = "pin add " + transid,
-                                        UseShellExecute = false,
-                                        CreateNoWindow = true
+                                        Process process3 = new Process
+                                        {
+                                            StartInfo = new ProcessStartInfo
+                                            {
+                                                FileName = @"ipfs\ipfs.exe",
+                                                Arguments = "pin add " + transid,
+                                                UseShellExecute = false,
+                                                CreateNoWindow = true
+                                            }
+                                        };
+                                        process3.Start();
                                     }
-                                };
-                                process3.Start();
+                                }
 
                             }
                             foundObject.ObjectImage.ImageLocation = objstate.Image.Replace("IPFS:", @"ipfs/"); ;
@@ -412,19 +437,30 @@ namespace SUP
                                 process2.StartInfo.UseShellExecute = false;
                                 process2.StartInfo.CreateNoWindow = true;
                                 process2.Start();
+                                process2.WaitForExit();
 
-                                //attempt to pin fails silently if daemon is not running
-                                Process process3 = new Process
+                                var SUP = new Options { CreateIfMissing = true };
+
+                                using (var db = new DB(SUP, @"sup"))
                                 {
-                                    StartInfo = new ProcessStartInfo
+
+                                    string ipfsdaemon = db.Get("ipfs-daemon");
+
+                                    if (ipfsdaemon == "true")
                                     {
-                                        FileName = @"ipfs\ipfs.exe",
-                                        Arguments = "pin add " + transid,
-                                        UseShellExecute = false,
-                                        CreateNoWindow = true
+                                        Process process3 = new Process
+                                        {
+                                            StartInfo = new ProcessStartInfo
+                                            {
+                                                FileName = @"ipfs\ipfs.exe",
+                                                Arguments = "pin add " + transid,
+                                                UseShellExecute = false,
+                                                CreateNoWindow = true
+                                            }
+                                        };
+                                        process3.Start();
                                     }
-                                };
-                                process3.Start();
+                                }
 
                             }
                             foundObject.ObjectImage.ImageLocation = objstate.Image.Replace("IPFS:", @"ipfs/"); ;
@@ -524,19 +560,31 @@ namespace SUP
                                 process2.StartInfo.UseShellExecute = false;
                                 process2.StartInfo.CreateNoWindow = true;
                                 process2.Start();
+                                process2.WaitForExit();
 
                                 //attempt to pin fails silently if daemon is not running
-                                Process process3 = new Process
+                                var SUP = new Options { CreateIfMissing = true };
+
+                                using (var db = new DB(SUP, @"sup"))
                                 {
-                                    StartInfo = new ProcessStartInfo
+
+                                    string ipfsdaemon = db.Get("ipfs-daemon");
+
+                                    if (ipfsdaemon == "true")
                                     {
-                                        FileName = @"ipfs\ipfs.exe",
-                                        Arguments = "pin add " + transid,
-                                        UseShellExecute = false,
-                                        CreateNoWindow = true
+                                        Process process3 = new Process
+                                        {
+                                            StartInfo = new ProcessStartInfo
+                                            {
+                                                FileName = @"ipfs\ipfs.exe",
+                                                Arguments = "pin add " + transid,
+                                                UseShellExecute = false,
+                                                CreateNoWindow = true
+                                            }
+                                        };
+                                        process3.Start();
                                     }
-                                };
-                                process3.Start();
+                                }
 
                             }
                             foundObject.ObjectImage.ImageLocation = objstate.Image.Replace("IPFS:", @"ipfs/"); ;
@@ -646,20 +694,30 @@ namespace SUP
                             process2.StartInfo.UseShellExecute = false;
                             process2.StartInfo.CreateNoWindow = true;
                             process2.Start();
+                            process2.WaitForExit();
 
-                            //attempt to pin fails silently if daemon is not running
-                            Process process3 = new Process
+                            var SUP = new Options { CreateIfMissing = true };
+
+                            using (var db = new DB(SUP, @"sup"))
                             {
-                                StartInfo = new ProcessStartInfo
+
+                                string ipfsdaemon = db.Get("ipfs-daemon");
+
+                                if (ipfsdaemon == "true")
                                 {
-                                    FileName = @"ipfs\ipfs.exe",
-                                    Arguments = "pin add " + transid,
-                                    UseShellExecute = false,
-                                    CreateNoWindow = true
+                                    Process process3 = new Process
+                                    {
+                                        StartInfo = new ProcessStartInfo
+                                        {
+                                            FileName = @"ipfs\ipfs.exe",
+                                            Arguments = "pin add " + transid,
+                                            UseShellExecute = false,
+                                            CreateNoWindow = true
+                                        }
+                                    };
+                                    process3.Start();
                                 }
-                            };
-                            process3.Start();
-                            process3.WaitForExit();
+                            }
 
                         }
                         foundObject.ObjectImage.ImageLocation = objstate.Image.Replace("IPFS:", @"ipfs/"); ;
@@ -770,12 +828,66 @@ namespace SUP
                 else
                 {
 
-                    if (txtSearchAddress.Text.StartsWith(@"sup://"))
+                    if (txtSearchAddress.Text.ToLower().StartsWith(@"ipfs://"))
                     {
-                        getObjectsByURN(txtSearchAddress.Text.Replace("sup://", ""));
-                    }
-                    else { getObjectsbyAddress(txtSearchAddress.Text.Replace("@", "")); }
+                        string ipfsHash = txtSearchAddress.Text.Substring(7, 46);
 
+                        if (!System.IO.Directory.Exists("ipfs/" + ipfsHash))
+                        {
+                            Process process2 = new Process();
+                            process2.StartInfo.FileName = @"ipfs\ipfs.exe";
+                            process2.StartInfo.Arguments = "get " + ipfsHash + @" -o ipfs\" + ipfsHash;
+                            process2.StartInfo.UseShellExecute = false;
+                            process2.StartInfo.CreateNoWindow = true;
+                            process2.Start();
+                            process2.WaitForExit();
+
+                            //attempt to pin fails silently if daemon is not running
+                            var SUP = new Options { CreateIfMissing = true };
+
+                            using (var db = new DB(SUP, @"sup"))
+                            {
+
+                                string ipfsdaemon = db.Get("ipfs-daemon");
+
+                                if (ipfsdaemon == "true")
+                                {
+                                    Process process3 = new Process
+                                    {
+                                        StartInfo = new ProcessStartInfo
+                                        {
+                                            FileName = @"ipfs\ipfs.exe",
+                                            Arguments = "pin add " + ipfsHash,
+                                            UseShellExecute = false,
+                                            CreateNoWindow = true
+                                        }
+                                    };
+                                    process3.Start();
+                                }
+                            }
+
+                            Process.Start("explorer.exe", System.IO.Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + @"\ipfs\" + ipfsHash);
+
+                        }
+                        else
+                        {
+
+                            Process.Start("explorer.exe", System.IO.Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + @"\ipfs\" + ipfsHash);
+
+                        }
+
+
+
+
+                    }
+                    else
+                    {
+                        if (txtSearchAddress.Text.StartsWith(@"sup://"))
+                        {
+                            getObjectsByURN(txtSearchAddress.Text.Replace("sup://", ""));
+                        }
+                        else { getObjectsbyAddress(txtSearchAddress.Text.Replace("@", "")); }
+                    }
                 }
 
 
@@ -786,7 +898,7 @@ namespace SUP
 
         private void ObjectBrowser_Load(object sender, EventArgs e)
         {
-            if (_objectaddress != null)
+            if (_objectaddress.Length > 0)
             {
                 txtSearchAddress.Text = _objectaddress;
 
@@ -798,7 +910,34 @@ namespace SUP
                 else
                     getObjectsbyAddress(txtSearchAddress.Text.Replace("@", ""));
             }
-           
+            else
+            {
+                var SUP = new Options { CreateIfMissing = true };
+
+                using (var db = new DB(SUP, @"sup"))
+                {
+
+                    string ipfsdaemon = db.Get("ipfs-daemon");
+
+                    if (ipfsdaemon == "true")
+                    {
+
+                        var process = new Process
+                        {
+                            StartInfo = new ProcessStartInfo
+                            {
+                                FileName = @"ipfs\ipfs.exe",
+                                Arguments = "daemon",
+                                UseShellExecute = false,
+                                CreateNoWindow = true
+                            }
+                        };
+                        process.Start();
+                    }
+
+                }
+            }
+
 
         }
 

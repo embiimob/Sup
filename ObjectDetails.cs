@@ -781,17 +781,28 @@ namespace SUP
                                 process2.Start();
 
                                 //attempt to pin fails silently if daemon is not running
-                                Process process3 = new Process
+                                var SUP = new Options { CreateIfMissing = true };
+
+                                using (var db = new DB(SUP, @"sup"))
                                 {
-                                    StartInfo = new ProcessStartInfo
+
+                                    string ipfsdaemon = db.Get("ipfs-daemon");
+
+                                    if (ipfsdaemon == "true")
                                     {
-                                        FileName = @"ipfs\ipfs.exe",
-                                        Arguments = "pin add " + transid,
-                                        UseShellExecute = false,
-                                        CreateNoWindow = true
+                                        Process process3 = new Process
+                                        {
+                                            StartInfo = new ProcessStartInfo
+                                            {
+                                                FileName = @"ipfs\ipfs.exe",
+                                                Arguments = "pin add " + transid,
+                                                UseShellExecute = false,
+                                                CreateNoWindow = true
+                                            }
+                                        };
+                                        process3.Start();
                                     }
-                                };
-                                process3.Start();
+                                }
 
                             }
                         }
@@ -877,17 +888,28 @@ namespace SUP
                                 process2.Start();
 
                                 //attempt to pin fails silently if daemon is not running
-                                Process process3 = new Process
+                                var SUP = new Options { CreateIfMissing = true };
+
+                                using (var db = new DB(SUP, @"sup"))
                                 {
-                                    StartInfo = new ProcessStartInfo
+
+                                    string ipfsdaemon = db.Get("ipfs-daemon");
+
+                                    if (ipfsdaemon == "true")
                                     {
-                                        FileName = @"ipfs\ipfs.exe",
-                                        Arguments = "pin add " + transid,
-                                        UseShellExecute = false,
-                                        CreateNoWindow = true
+                                        Process process3 = new Process
+                                        {
+                                            StartInfo = new ProcessStartInfo
+                                            {
+                                                FileName = @"ipfs\ipfs.exe",
+                                                Arguments = "pin add " + transid,
+                                                UseShellExecute = false,
+                                                CreateNoWindow = true
+                                            }
+                                        };
+                                        process3.Start();
                                     }
-                                };
-                                process3.Start();
+                                }
 
                             }
                         }
@@ -1064,17 +1086,28 @@ namespace SUP
                                     process2.Start();
 
                                     //attempt to pin fails silently if daemon is not running
-                                    Process process3 = new Process
+                                    var SUP = new Options { CreateIfMissing = true };
+
+                                    using (var db = new DB(SUP, @"sup"))
                                     {
-                                        StartInfo = new ProcessStartInfo
+
+                                        string ipfsdaemon = db.Get("ipfs-daemon");
+
+                                        if (ipfsdaemon == "true")
                                         {
-                                            FileName = @"ipfs\ipfs.exe",
-                                            Arguments = "pin add " + transid,
-                                            UseShellExecute = false,
-                                            CreateNoWindow = true
+                                            Process process3 = new Process
+                                            {
+                                                StartInfo = new ProcessStartInfo
+                                                {
+                                                    FileName = @"ipfs\ipfs.exe",
+                                                    Arguments = "pin add " + transid,
+                                                    UseShellExecute = false,
+                                                    CreateNoWindow = true
+                                                }
+                                            };
+                                            process3.Start();
                                         }
-                                    };
-                                    process3.Start();
+                                    }
 
                                 }
 
