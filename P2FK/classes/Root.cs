@@ -391,7 +391,7 @@ namespace SUP.P2FK
                         Encoding.ASCII.GetString(KeywordArray)
                     );
                 }
-                catch (Exception ex) { }
+                catch { }
 
             }
 
