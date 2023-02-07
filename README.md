@@ -33,7 +33,9 @@ searches urn shows currently registered profile object associated with @userName
 ### **ipfs://QmU42aLJToYmshwJu26iprH9RsX6SfJDw3FTf6senJEdF1**
 performs a ipfs get, archives ipfs file(s) locally, pins file(s) if pinning is enabled, opens a system folder dioluge allowing you to explore any files found
 
+### **Sup!? on youtube** https://youtu.be/X2lVLBw39H8
 
+### 
 - this experiment uses a v0.13.2 full bitcoin core clone with address index change https://github.com/btcdrak/bitcoin/tree/addrindex-0.14
 
 - this experiment uses mazacoin their latest official release has been included in the deployment https://github.com/mazacoin/maza
