@@ -21,14 +21,17 @@ This Sup!? Object Browser is a READ ONLY demonstration of establishing a decentr
 
 ### **Search Options**
 
-### **#Keywords**
-searches up to 20 character keyword shows all object associations
+### **#CaseSensitiveKeyword**
+searches up to a 20 character case sensitive keyword and shows all object associations
  
 ### **sup://twitter.com**
 searches urn shows currently registered object with URI  ( no urn character limits, redirects are NOT enabled )
 
 ### **@UserName**
-searches urn shows currently registered profile object associated with @userName
+searches urn shows currently registered profile object associated with @userName and shows all object associatins
+
+### **ipfs://QmU42aLJToYmshwJu26iprH9RsX6SfJDw3FTf6senJEdF1**
+performs a ipfs get, archives ipfs file(s) locally, pins file(s) if pinning is enabled, opens a system folder dioluge allowing you to explore any files found
 
 
 - this experiment uses a v0.13.2 full bitcoin core clone with address index change https://github.com/btcdrak/bitcoin/tree/addrindex-0.14
@@ -39,4 +42,4 @@ searches urn shows currently registered profile object associated with @userName
 
 - see the example transaction JSON files https://github.com/embiimob/Sup/tree/master/P2FK/samples to begin experimenting with the entry and trading of your own Sup!? objects
 
-- Sup!? bitcoin objects can be discovered and browsed without internet access because Sup!? is communicating with a local copy of the blockchain.
+- Sup!? blockchain objects can be discovered and browsed without internet access because Sup!? is communicating with a local copy of the blockchain.
