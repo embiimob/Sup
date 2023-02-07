@@ -684,10 +684,26 @@ namespace SUP
                             {
                                 Process process2 = new Process();
                                 process2.StartInfo.FileName = @"ipfs\ipfs.exe";
-                                process2.StartInfo.Arguments = "get " + objstate.Image.Substring(5, 46) + @" -o ipfs\" + transid;
+                                process2.StartInfo.Arguments = "get " + transid + @" -o ipfs\" + transid;
                                 process2.StartInfo.UseShellExecute = false;
                                 process2.StartInfo.CreateNoWindow = true;
                                 process2.Start();
+                                process2.WaitForExit();
+
+                                if (System.IO.File.Exists("ipfs/" + transid))
+                                {
+                                    System.IO.File.Move("ipfs/" + transid, "ipfs/" + transid + "_tmp");
+                                    System.IO.Directory.CreateDirectory("ipfs/" + transid);
+                                    string fileName = objstate.Image.Replace(@"//", "").Replace(@"\\", "").Substring(51);
+                                    if (fileName == "")
+                                    {
+                                        fileName = "artifact";
+                                        imgurn = imgurn + @"\artifact";
+                                    }
+                                    else { fileName = fileName.Replace(@"/", "").Replace(@"\", ""); }
+                                    System.IO.File.Move("ipfs/" + transid + "_tmp", @"ipfs/" + transid + @"/" + fileName);
+                                }
+
 
                                 //attempt to pin fails silently if daemon is not running
                                 Process process3 = new Process
@@ -703,6 +719,7 @@ namespace SUP
                                 process3.Start();
 
                             }
+                            if (objstate.Image.Length == 51) { imgurn = imgurn + @"\artifact"; }
                         }
 
                         else
@@ -779,6 +796,22 @@ namespace SUP
                                 process2.StartInfo.UseShellExecute = false;
                                 process2.StartInfo.CreateNoWindow = true;
                                 process2.Start();
+                                process2.WaitForExit();
+
+                                if (System.IO.File.Exists("ipfs/" + transid))
+                                {
+                                    System.IO.File.Move("ipfs/" + transid, "ipfs/" + transid + "_tmp");
+                                    System.IO.Directory.CreateDirectory("ipfs/" + transid);
+                                    string fileName = objstate.URN.Replace(@"//", "").Replace(@"\\", "").Substring(51);
+                                    if (fileName == "")
+                                    {
+                                        fileName = "artifact";
+                                        urn = urn + @"\artifact";
+                                    }
+                                    else { fileName = fileName.Replace(@"/", "").Replace(@"\", ""); }
+                                    System.IO.File.Move("ipfs/" + transid + "_tmp", @"ipfs/" + transid + @"/" + fileName);
+                                }
+
 
                                 //attempt to pin fails silently if daemon is not running
                                 var SUP = new Options { CreateIfMissing = true };
@@ -805,6 +838,8 @@ namespace SUP
                                 }
 
                             }
+
+                            if (objstate.URN.Length == 51) { urn = urn + @"\artifact"; }
                         }
 
                         else
@@ -886,6 +921,19 @@ namespace SUP
                                 process2.StartInfo.UseShellExecute = false;
                                 process2.StartInfo.CreateNoWindow = true;
                                 process2.Start();
+                                process2.WaitForExit();
+
+                                if (System.IO.File.Exists("ipfs/" + transid))
+                                {
+                                    System.IO.File.Move("ipfs/" + transid, "ipfs/" + transid + "_tmp");
+                                    System.IO.Directory.CreateDirectory("ipfs/" + transid);
+                                    string fileName = objstate.URI.Replace(@"//", "").Replace(@"\\", "").Substring(51);
+                                    if (fileName == "") { 
+                                        fileName = "artifact";
+                                        uriurn = uriurn + @"\artifact";
+                                    } else { fileName = fileName.Replace(@"/", "").Replace(@"\", ""); }
+                                    System.IO.File.Move("ipfs/" + transid + "_tmp", @"ipfs/" + transid + @"/" + fileName);
+                                }
 
                                 //attempt to pin fails silently if daemon is not running
                                 var SUP = new Options { CreateIfMissing = true };
@@ -912,6 +960,8 @@ namespace SUP
                                 }
 
                             }
+
+                            if (objstate.URI.Length == 51) { uriurn = uriurn + @"\artifact"; }
                         }
 
                         else
@@ -1012,8 +1062,13 @@ namespace SUP
 
                 lblTotalOwnedMain.Text = "x" + totalQty.ToString("N0");
 
-                switch (extension)
+                switch (extension.ToLower())
                 {
+                    case ".glb":
+                        //Show image in main box and show open file button
+                        pictureBox1.ImageLocation = imgurn;
+                        button1.Visible = true;
+                        break;
                     case ".jpg":
                     case ".jpeg":
                     case ".gif":
@@ -1084,6 +1139,21 @@ namespace SUP
                                     process2.StartInfo.UseShellExecute = false;
                                     process2.StartInfo.CreateNoWindow = true;
                                     process2.Start();
+                                    process2.WaitForExit();
+
+                                    if (System.IO.File.Exists("ipfs/" + transid))
+                                    {
+                                        System.IO.File.Move("ipfs/" + transid, "ipfs/" + transid + "_tmp");
+                                        System.IO.Directory.CreateDirectory("ipfs/" + transid);
+                                        string fileName = objstate.URN.Replace(@"//", "").Replace(@"\\", "").Substring(51);
+                                        if (fileName == "")
+                                        {
+                                            fileName = "artifact";
+                                            urn = urn + @"\artifact";
+                                        }
+                                        else { fileName = fileName.Replace(@"/", "").Replace(@"\", ""); }
+                                        System.IO.File.Move("ipfs/" + transid + "_tmp", @"ipfs/" + transid + @"/" + fileName);
+                                    }
 
                                     //attempt to pin fails silently if daemon is not running
                                     var SUP = new Options { CreateIfMissing = true };
@@ -1108,6 +1178,8 @@ namespace SUP
                                             process3.Start();
                                         }
                                     }
+
+                                    if (objstate.URN.Length == 51) { urn = urn + @"\artifact"; }
 
                                 }
 
@@ -1195,10 +1267,10 @@ namespace SUP
 
                         break;
                     default:
-                        // Create a default "not supported" image
+                       
 
-                        pictureBox1.ImageLocation = @"root/" + objstate.Image.Replace("BTC:", "").Replace("MZC:", "");
-                        // Add the default image to the flowPanel                        
+                        pictureBox1.ImageLocation = imgurn;
+                                            
                         break;
                 }
                 imgPicture.SuspendLayout();

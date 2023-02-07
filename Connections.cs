@@ -137,6 +137,20 @@ namespace SUP
             }
             else {
                 button1.Text = "disable IPFS pinning";
+
+                var init = new Process
+                {
+                    StartInfo = new ProcessStartInfo
+                    {
+                        FileName = @"ipfs\ipfs.exe",
+                        Arguments = "init",
+                        UseShellExecute = false,
+                        CreateNoWindow = true
+                    }
+                };
+                init.Start();
+                init.WaitForExit();
+
                 var process = new Process
                 {
                     StartInfo = new ProcessStartInfo

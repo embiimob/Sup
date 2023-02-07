@@ -9,7 +9,7 @@ using System.Net.Sockets;
 using System.Reflection;
 using System.Security.Policy;
 using System.Windows.Forms;
-
+using System.Windows.Forms.VisualStyles;
 
 namespace SUP
 {
@@ -106,7 +106,15 @@ namespace SUP
                                 process2.StartInfo.CreateNoWindow = true;
                                 process2.Start();
                                 process2.WaitForExit();
-
+                                string fileName;
+                                if (System.IO.File.Exists("ipfs/" + transid))
+                                {
+                                    System.IO.File.Move("ipfs/" + transid, "ipfs/" + transid + "_tmp");
+                                    System.IO.Directory.CreateDirectory("ipfs/" + transid);
+                                    fileName = objstate.Image.Replace(@"//", "").Replace(@"\\", "").Substring(51);
+                                    if (fileName == "") { fileName = "artifact"; } else { fileName = fileName.Replace(@"/", "").Replace(@"\", ""); }
+                                    System.IO.File.Move("ipfs/" + transid + "_tmp", @"ipfs/" + transid + @"/" + fileName);
+                                }
 
 
                                 var SUP = new Options { CreateIfMissing = true };
@@ -132,7 +140,9 @@ namespace SUP
                                     }
                                 }
                             }
-                            foundObject.ObjectImage.ImageLocation = objstate.Image.Replace("IPFS:", @"ipfs/"); ;
+                            if (objstate.Image.Length == 51)
+                            { foundObject.ObjectImage.ImageLocation = objstate.Image.Replace("IPFS:", @"ipfs/") + @"/artifact"; }
+                            else { foundObject.ObjectImage.ImageLocation = objstate.Image.Replace("IPFS:", @"ipfs/"); }
 
                             break;
                         case "HTTP":
@@ -271,6 +281,15 @@ namespace SUP
                                 process2.Start();
                                 process2.WaitForExit();
 
+                                if (System.IO.File.Exists("ipfs/" + transid))
+                                {
+                                    System.IO.File.Move("ipfs/" + transid, "ipfs/" + transid + "_tmp");
+                                    System.IO.Directory.CreateDirectory("ipfs/" + transid);
+                                    string fileName = objstate.Image.Replace(@"//", "").Replace(@"\\", "").Substring(51);
+                                    if (fileName == "") { fileName = "artifact"; } else { fileName = fileName.Replace(@"/", "").Replace(@"\", ""); }
+                                    System.IO.File.Move("ipfs/" + transid + "_tmp", @"ipfs/" + transid + @"/" + fileName);
+                                }
+
                                 var SUP = new Options { CreateIfMissing = true };
 
                                 using (var db = new DB(SUP, @"sup"))
@@ -295,7 +314,9 @@ namespace SUP
                                 }
 
                             }
-                            foundObject.ObjectImage.ImageLocation = objstate.Image.Replace("IPFS:", @"ipfs/"); ;
+                            if (objstate.Image.Length == 51)
+                            { foundObject.ObjectImage.ImageLocation = objstate.Image.Replace("IPFS:", @"ipfs/") + @"/artifact"; }
+                            else { foundObject.ObjectImage.ImageLocation = objstate.Image.Replace("IPFS:", @"ipfs/"); }
 
                             break;
                         case "HTTP":
@@ -439,6 +460,15 @@ namespace SUP
                                 process2.Start();
                                 process2.WaitForExit();
 
+                                if (System.IO.File.Exists("ipfs/" + transid))
+                                {
+                                    System.IO.File.Move("ipfs/" + transid, "ipfs/" + transid + "_tmp");
+                                    System.IO.Directory.CreateDirectory("ipfs/" + transid);
+                                    string fileName = objstate.Image.Replace(@"//", "").Replace(@"\\", "").Substring(51);
+                                    if (fileName == "") { fileName = "artifact"; } else { fileName = fileName.Replace(@"/", "").Replace(@"\", ""); }
+                                    System.IO.File.Move("ipfs/" + transid + "_tmp", @"ipfs/" + transid + @"/" + fileName);
+                                }
+
                                 var SUP = new Options { CreateIfMissing = true };
 
                                 using (var db = new DB(SUP, @"sup"))
@@ -463,7 +493,9 @@ namespace SUP
                                 }
 
                             }
-                            foundObject.ObjectImage.ImageLocation = objstate.Image.Replace("IPFS:", @"ipfs/"); ;
+                            if (objstate.Image.Length == 51)
+                            { foundObject.ObjectImage.ImageLocation = objstate.Image.Replace("IPFS:", @"ipfs/") + @"/artifact"; }
+                            else { foundObject.ObjectImage.ImageLocation = objstate.Image.Replace("IPFS:", @"ipfs/"); }
 
                             break;
                         case "HTTP":
@@ -562,6 +594,18 @@ namespace SUP
                                 process2.Start();
                                 process2.WaitForExit();
 
+                                if (System.IO.File.Exists("ipfs/" + transid))
+                                {
+                                    System.IO.File.Move("ipfs/" + transid, "ipfs/" + transid + "_tmp");
+                                    System.IO.Directory.CreateDirectory("ipfs/" + transid);
+                                    string fileName = objstate.Image.Replace(@"//", "").Replace(@"\\", "").Substring(51);
+                                    if (fileName == "") { fileName = "artifact"; } else { fileName = fileName.Replace(@"/", "").Replace(@"\", ""); }
+                                    System.IO.File.Move("ipfs/" + transid + "_tmp", @"ipfs/" + transid + @"/" + fileName);
+                                }
+
+
+
+
                                 //attempt to pin fails silently if daemon is not running
                                 var SUP = new Options { CreateIfMissing = true };
 
@@ -587,7 +631,9 @@ namespace SUP
                                 }
 
                             }
-                            foundObject.ObjectImage.ImageLocation = objstate.Image.Replace("IPFS:", @"ipfs/"); ;
+                            if (objstate.Image.Length == 51)
+                            { foundObject.ObjectImage.ImageLocation = objstate.Image.Replace("IPFS:", @"ipfs/") + @"/artifact"; }
+                            else { foundObject.ObjectImage.ImageLocation = objstate.Image.Replace("IPFS:", @"ipfs/"); }
 
                             break;
                         case "HTTP":
@@ -696,6 +742,20 @@ namespace SUP
                             process2.Start();
                             process2.WaitForExit();
 
+                            if (System.IO.File.Exists("ipfs/" + transid))
+                            {
+                                System.IO.File.Move("ipfs/" + transid, "ipfs/" + transid + "_tmp");
+                                System.IO.Directory.CreateDirectory("ipfs/" + transid);
+                                string fileName = objstate.Image.Replace(@"//", "").Replace(@"\\", "").Substring(51);
+                                if (fileName == "") { fileName = "artifact"; } else { fileName = fileName.Replace(@"/", "").Replace(@"\", ""); }
+                                System.IO.File.Move("ipfs/" + transid + "_tmp", @"ipfs/" + transid + @"/" + fileName);
+                            }
+
+
+
+
+
+
                             var SUP = new Options { CreateIfMissing = true };
 
                             using (var db = new DB(SUP, @"sup"))
@@ -720,7 +780,9 @@ namespace SUP
                             }
 
                         }
-                        foundObject.ObjectImage.ImageLocation = objstate.Image.Replace("IPFS:", @"ipfs/"); ;
+                        if (objstate.Image.Length == 51)
+                        { foundObject.ObjectImage.ImageLocation = objstate.Image.Replace("IPFS:", @"ipfs/") + @"/artifact"; }
+                        else { foundObject.ObjectImage.ImageLocation = objstate.Image.Replace("IPFS:", @"ipfs/"); }
 
                         break;
                     case "HTTP":
@@ -828,9 +890,9 @@ namespace SUP
                 else
                 {
 
-                    if (txtSearchAddress.Text.ToLower().StartsWith(@"ipfs://"))
+                    if (txtSearchAddress.Text.ToLower().StartsWith(@"ipfs:"))
                     {
-                        string ipfsHash = txtSearchAddress.Text.Substring(7, 46);
+                        string ipfsHash = txtSearchAddress.Text.Replace(@"//","").Replace(@"\\", "").Substring(5,46);
 
                         if (!System.IO.Directory.Exists("ipfs/" + ipfsHash))
                         {
@@ -841,6 +903,16 @@ namespace SUP
                             process2.StartInfo.CreateNoWindow = true;
                             process2.Start();
                             process2.WaitForExit();
+
+                            if (System.IO.File.Exists("ipfs/" + ipfsHash))
+                            {
+                                System.IO.File.Move("ipfs/" + ipfsHash, "ipfs/" + ipfsHash + "_tmp");
+                                System.IO.Directory.CreateDirectory("ipfs/" + ipfsHash);
+                                string fileName = txtSearchAddress.Text.Replace(@"//", "").Replace(@"\\", "").Substring(51);
+                                if (fileName == "") { fileName = "artifact"; }else { fileName = fileName.Replace(@"/", "").Replace(@"\", ""); }
+                                System.IO.File.Move("ipfs/" + ipfsHash + "_tmp", @"ipfs/" + ipfsHash + @"/" + fileName);
+
+                            }
 
                             //attempt to pin fails silently if daemon is not running
                             var SUP = new Options { CreateIfMissing = true };
@@ -877,14 +949,12 @@ namespace SUP
                         }
 
 
-
-
                     }
                     else
                     {
-                        if (txtSearchAddress.Text.StartsWith(@"sup://"))
+                        if (txtSearchAddress.Text.StartsWith(@"sup:"))
                         {
-                            getObjectsByURN(txtSearchAddress.Text.Replace("sup://", ""));
+                            getObjectsByURN(txtSearchAddress.Text.Replace("sup:", "").Replace(@"\\", "").Replace(@"//", ""));
                         }
                         else { getObjectsbyAddress(txtSearchAddress.Text.Replace("@", "")); }
                     }
