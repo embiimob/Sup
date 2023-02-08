@@ -270,7 +270,7 @@ namespace SUP
 
             var SUP = new Options { CreateIfMissing = true };
 
-            using (var db = new DB(SUP, @"root/sup"))
+            using (var db = new DB(SUP, @"root\sup"))
             {
                 LevelDB.Iterator it = db.CreateIterator();
                 for (
@@ -816,7 +816,7 @@ namespace SUP
                                 //attempt to pin fails silently if daemon is not running
                                 var SUP = new Options { CreateIfMissing = true };
 
-                                using (var db = new DB(SUP, @"sup"))
+                                using (var db = new DB(SUP, @"root\sup"))
                                 {
 
                                     string ipfsdaemon = db.Get("ipfs-daemon");
@@ -938,7 +938,7 @@ namespace SUP
                                 //attempt to pin fails silently if daemon is not running
                                 var SUP = new Options { CreateIfMissing = true };
 
-                                using (var db = new DB(SUP, @"sup"))
+                                using (var db = new DB(SUP, @"root\sup"))
                                 {
 
                                     string ipfsdaemon = db.Get("ipfs-daemon");
@@ -1158,7 +1158,7 @@ namespace SUP
                                     //attempt to pin fails silently if daemon is not running
                                     var SUP = new Options { CreateIfMissing = true };
 
-                                    using (var db = new DB(SUP, @"sup"))
+                                    using (var db = new DB(SUP, @"root\sup"))
                                     {
 
                                         string ipfsdaemon = db.Get("ipfs-daemon");
@@ -1340,7 +1340,7 @@ namespace SUP
 
             var trans = new Options { CreateIfMissing = true };
 
-            using (var db = new DB(trans, @"root/event"))
+            using (var db = new DB(trans, @"root\event"))
             {
                 LevelDB.Iterator it = db.CreateIterator();
                 for (

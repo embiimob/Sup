@@ -1,4 +1,5 @@
-﻿using LevelDB;
+﻿using AngleSharp.Css.Dom;
+using LevelDB;
 using NBitcoin;
 using NBitcoin.RPC;
 using Newtonsoft.Json;
@@ -68,7 +69,7 @@ namespace SUP.P2FK
 
                 }
                 //if transactionID is found in LevelDB cache with invalid or blocked status return null
-                if (P2FKJSONString == "invalid" || P2FKJSONString == "blocked")
+                if (P2FKJSONString == "invalid" || P2FKJSONString == "block")
                 {
                     return null;
                 }
@@ -106,7 +107,7 @@ namespace SUP.P2FK
             if (rootbytes == null)
             {
                 NetworkCredential credentials = new NetworkCredential(username, password);
-                RPCClient rpcClient = new RPCClient(credentials, new Uri(url),Network.Main);
+                RPCClient rpcClient = new RPCClient(credentials, new Uri(url), Network.Main);
 
                 try
                 {
@@ -179,6 +180,20 @@ namespace SUP.P2FK
             transactionASCII = Encoding.ASCII.GetString(transactionBytes);
             bool isNoise = false;
 
+
+
+            lock (levelDBLocker)
+            {
+                var OBJ = new Options { CreateIfMissing = true };
+                string isBlocked;
+                using (var db = new DB(OBJ, @"root/block"))
+                {
+                    isBlocked = db.Get(P2FKSignatureAddress);
+                }
+                if (isBlocked == "true") { return null; }
+            }
+
+
             // Perform the loop until no additional numbers are found and the regular expression fails to match
             while (regexSpecialChars.IsMatch(transactionASCII))
             {
@@ -207,7 +222,7 @@ namespace SUP.P2FK
                     .ToArray();
 
                 bool isValid = true;
-               
+
                 if (!Directory.Exists(diskpath))
                 {
                     Directory.CreateDirectory(diskpath);
@@ -223,12 +238,12 @@ namespace SUP.P2FK
                     catch (Exception)
                     {
                         isValid = false;
-                        
+
                     }
                 }
                 else
                 {
-                    isValid = false;                   
+                    isValid = false;
 
                 }
 
@@ -327,7 +342,7 @@ namespace SUP.P2FK
                     }
                     else
                     {
-                       break;
+                        break;
                     }
                 }
 
@@ -363,7 +378,7 @@ namespace SUP.P2FK
             //assumes any remaining unprocessed characters are keywords
 
 
-           
+
             int charactersPerDivision = 20;
 
             if (transactionASCII.Length > charactersPerDivision)
@@ -411,7 +426,7 @@ namespace SUP.P2FK
                     )
                     .Replace("-", String.Empty);
                 NetworkCredential credentials = new NetworkCredential(username, password);
-                RPCClient rpcClient = new RPCClient(credentials, new Uri(url),Network.Main);
+                RPCClient rpcClient = new RPCClient(credentials, new Uri(url), Network.Main);
 
                 var result = rpcClient.SendCommand(
                     "verifymessage",
@@ -447,19 +462,34 @@ namespace SUP.P2FK
             System.IO.File.WriteAllText(@"root\" + P2FKRoot.TransactionId + @"\" + "P2FK.json", rootSerialized);
 
 
-            if (P2FKRoot.Message.Count() > 0)
+            string isMuted;
+
+            lock (levelDBLocker)
+            {
+                var MUTE = new Options { CreateIfMissing = true };
+                using (var db = new DB(MUTE, @"root\mute"))
+                {
+                    isMuted = db.Get(P2FKRoot.SignedBy);
+                }
+            }
+
+
+            if (P2FKRoot.Message.Count() > 0 && isMuted != "true")
             {
                 foreach (KeyValuePair<string, string> keyword in P2FKRoot.Keyword)
                 {
+
+
 
                     string msg = "[\"" + P2FKRoot.SignedBy + "\",\"" + P2FKRoot.TransactionId + "\"]";
                     lock (levelDBLocker)
                     {
                         var ROOT = new Options { CreateIfMissing = true };
-                        var db = new DB(ROOT, @"root/sup");
+                        var db = new DB(ROOT, @"root\sup");
                         db.Put(keyword.Key + "!" + P2FKRoot.BlockDate.ToString("yyyyMMddHHmmss"), msg);
                         db.Close();
                     }
+
 
                 }
             }
@@ -521,7 +551,7 @@ namespace SUP.P2FK
             Regex regexTransactionId = new Regex(@"\b[0-9a-f]{64}\b");
             byte[] transactionBytes = Array.Empty<byte>();
             NetworkCredential credentials = new NetworkCredential(username, password);
-            RPCClient rpcClient = new RPCClient(credentials, new Uri(url),Network.Main);
+            RPCClient rpcClient = new RPCClient(credentials, new Uri(url), Network.Main);
             int length1;
             int length2;
             byte[] result;

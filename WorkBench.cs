@@ -612,9 +612,40 @@ namespace SUP
             lblTotalTime.Text = "time: ";
             lblKbs.Text = "kb/s: ";
             lblTotal.Text = "total:";
-            if (Directory.Exists("root")) { Directory.Delete("root", true); };
             txtGetValue.Clear();
             dgTransactions.Rows.Clear();
+
+            string directoryPath = @"root";
+
+            // Get a list of all the subdirectories in the directory
+            string[] subdirectories = Directory.GetDirectories(directoryPath);
+
+            // Loop through each subdirectory
+            foreach (string subdirectory in subdirectories)
+            {
+                // Get the name of the subdirectory
+                string subdirectoryName = Path.GetFileName(subdirectory);
+
+                // Check if the subdirectory name is "mute" or "block"
+                if (subdirectoryName != "mute" && subdirectoryName != "block")
+                {
+                    // Delete the subdirectory and all its contents
+                    Directory.Delete(subdirectory, true);
+                }
+            }
+
+            // Get a list of all the files in the directory
+            string[] files = Directory.GetFiles(directoryPath);
+
+            // Loop through each file
+            foreach (string file in files)
+            {
+                // Delete the file
+                File.Delete(file);
+            }
+
+
+
         }
 
         private void btnGetOwned_Click(object sender, EventArgs e)
@@ -874,6 +905,54 @@ namespace SUP
             ObjectArray[0] = JObject.FromObject(createdObject);
 
             displayRootJSON(ObjectArray);
+        }
+
+        private void btnBlockAddress_Click(object sender, EventArgs e)
+        {
+            
+                var WORK = new Options { CreateIfMissing = true };
+                using (var db = new DB(WORK, @"root/block"))
+                {
+                    db.Put(txtSearchAddress.Text,"true");
+                }
+
+            
+        }
+
+        private void btnMuteAddress_Click(object sender, EventArgs e)
+        {
+            var WORK = new Options { CreateIfMissing = true };
+            using (var db = new DB(WORK, @"root/mute"))
+            {
+                db.Put(txtSearchAddress.Text, "true");
+            }
+        }
+
+        private void btnUnMuteAddress_Click(object sender, EventArgs e)
+        {
+            var WORK = new Options { CreateIfMissing = true };
+            using (var db = new DB(WORK, @"root/mute"))
+            {
+                db.Delete(txtSearchAddress.Text);
+            }
+        }
+
+        private void btnUnBlockAddress_Click(object sender, EventArgs e)
+        {
+            var WORK = new Options { CreateIfMissing = true };
+            using (var db = new DB(WORK, @"root/block"))
+            {
+                db.Delete(txtSearchAddress.Text);
+            }
+        }
+
+        private void btnBlockTransaction_Click(object sender, EventArgs e)
+        {
+            var WORK = new Options { CreateIfMissing = true };
+            using (var db = new DB(WORK, @"root"))
+            {
+                db.Put(txtTransactionId.Text, "block");
+            }
         }
     }
 }

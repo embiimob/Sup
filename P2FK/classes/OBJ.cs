@@ -50,7 +50,15 @@ namespace SUP.P2FK
         {
 
             OBJState objectState = new OBJState();
+
             var OBJ = new Options { CreateIfMissing = true };
+            string isBlocked;
+            using (var db = new DB(OBJ, @"root\block"))
+            {
+                isBlocked = db.Get(objectaddress);
+            }
+            if (isBlocked == "true") { return objectState; }
+
             string JSONOBJ;
             string logstatus;
             string diskpath = "root\\" + objectaddress + "\\";
@@ -150,7 +158,6 @@ namespace SUP.P2FK
                                         {
                                             objectState.Creators[transaction.SignedBy] = transaction.BlockDate;
                                             objectState.ChangeDate = transaction.BlockDate;
-
                                             if (verbose)
                                             {
 
