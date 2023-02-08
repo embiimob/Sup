@@ -379,13 +379,10 @@
     <Content Include="maza-qt.exe">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="runtimes\win-arm64\WebView2Loader.dll">
+    <Content Include="runtimes\win-x64\native\WebView2Loader.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="runtimes\win-x64\WebView2Loader.dll">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="runtimes\win-x86\WebView2Loader.dll">
+    <Content Include="runtimes\win-x86\native\WebView2Loader.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="x64\leveldb.dll">
