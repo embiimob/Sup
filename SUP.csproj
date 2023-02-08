@@ -379,6 +379,8 @@
     <Content Include="maza-qt.exe">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Include="x64\leveldb.dll" />
+    <Content Include="x86\leveldb.dll" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
