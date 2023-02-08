@@ -34,6 +34,11 @@ searches urn shows currently registered profile object associated with @userName
 performs a ipfs get, archives ipfs file(s) locally, pins file(s) if pinning is enabled, opens a system folder dioluge allowing you to explore any files found
 
 
+### **Web Applet Querystring Data**
+trusted index.html and index.htm files are sent the following Sup!? object information via querystring on load
+"address=", "creator=", "viewer=", "viewer-name=", "owner=", "owner-name=", "urn=", "uri=", "url=", "height="
+
+
 ### 
 - this experiment uses a v0.13.2 full bitcoin core clone with address index change https://github.com/btcdrak/bitcoin/tree/addrindex-0.14
 
