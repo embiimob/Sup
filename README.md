@@ -6,7 +6,7 @@ This Sup!? Object Browser is a READ ONLY demonstration of establishing a decentr
 
 ### **Installation**
 
-1. Download the Sup.v0.1.3-beta.zip file
+1. Download the Sup.v0.1.4-beta.zip file
 2. Create a folder on your **fastest** disk drive with at least **700GB** free (it will be storing the bitcoin prod and testnet blockchains)
 3. Unzip all contents into the folder.
 4. Create a shortcut to SUP.exe and launch.
