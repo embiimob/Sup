@@ -146,12 +146,10 @@ namespace SUP.P2FK
                                     if (objectState.Creators.ContainsKey(transaction.SignedBy))
                                     {
 
-                                        if (objectinspector.cre != null && objectState.Creators.TryGet(transaction.SignedBy).Year == 1 && transaction.File.ContainsKey("OBJ"))
+                                        if (objectinspector.cre != null && objectState.Creators.TryGet(transaction.SignedBy).Year == 1)
                                         {
                                             objectState.Creators[transaction.SignedBy] = transaction.BlockDate;
-
                                             objectState.ChangeDate = transaction.BlockDate;
-
 
                                             if (verbose)
                                             {
@@ -165,13 +163,13 @@ namespace SUP.P2FK
                                                     db.Put(objectaddress + "!" + transaction.BlockDate.ToString("yyyyMMddHHmmss") + "!" + sortableProcessHeight + "!", logstatus);
                                                     db.Close();
                                                 }
-                                                logstatus = "";
+
 
                                             }
 
                                         }
 
-                                       
+
 
                                         if (objectState.LockedDate.Year == 1)
                                         {
@@ -182,9 +180,14 @@ namespace SUP.P2FK
                                             if (objectinspector.dsc != null) { objectState.ChangeDate = transaction.BlockDate; objectState.Description = objectinspector.dsc; }
                                             if (objectinspector.atr != null) { objectState.ChangeDate = transaction.BlockDate; objectState.Attributes = objectinspector.atr; }
                                             if (objectinspector.lic != null) { objectState.ChangeDate = transaction.BlockDate; objectState.License = objectinspector.lic; }
-                                            if (objectState.ProcessHeight > 0 && objectState.ChangeDate == transaction.BlockDate)
+                                            if (intProcessHeight > 0 && objectState.ChangeDate == transaction.BlockDate)
                                             {
-                                                logstatus = "[\"" + transaction.SignedBy + "\",\"" + objectaddress + "\",\"update\",\"\",\"\",\"success\"]";
+                                                if (!logstatus.Contains("grant"))
+                                                {
+
+                                                    logstatus = "[\"" + transaction.SignedBy + "\",\"" + objectaddress + "\",\"update\",\"\",\"\",\"success\"]";
+                                                }
+                                                else { logstatus = ""; }
                                             }
                                             if (objectinspector.own != null)
                                             {
@@ -196,7 +199,7 @@ namespace SUP.P2FK
 
                                                 }
 
-                                                objectState.ChangeDate = transaction.BlockDate;
+
                                                 foreach (var ownerId in objectinspector.own)
                                                 {
                                                     string owner = transaction.Keyword.Reverse().ElementAt(ownerId.Key).Key;
@@ -208,7 +211,7 @@ namespace SUP.P2FK
                                                     {
                                                         objectState.Owners[owner] = ownerId.Value;
 
-                                                        logstatus = "[\"" + transaction.SignedBy + "\",\"" + objectaddress + "\",\"update\",\""+ ownerId.Value + "\",\"\",\"success\"]";
+                                                        logstatus = "[\"" + transaction.SignedBy + "\",\"" + objectaddress + "\",\"update\",\"" + ownerId.Value + "\",\"\",\"success\"]";
                                                     }
                                                 }
                                             }
@@ -223,7 +226,7 @@ namespace SUP.P2FK
                                     }
                                     else
                                     {
-                                        logstatus = "[\"" + transaction.SignedBy + "\",\"" + objectaddress + "\",\"update\",\"\",\"\",\"failed due to insufficient privileges\"]";
+                                        logstatus = "[\"" + transaction.SignedBy + "\",\"" + objectaddress + "\",\"inspect\",\"\",\"\",\"failed due to insufficient privileges\"]";
                                     }
                                     break;
 
@@ -694,7 +697,7 @@ namespace SUP.P2FK
 
 
                 //ignore any transaction that is not signed
-                if (transaction.Signed && transaction.Keyword!= null && (transaction.File.ContainsKey("OBJ") || transaction.File.ContainsKey("GIV")))
+                if (transaction.Signed && transaction.Keyword != null && (transaction.File.ContainsKey("OBJ") || transaction.File.ContainsKey("GIV")))
                 {
                     string findObject;
                     if (transaction.Keyword.Count > 1)
