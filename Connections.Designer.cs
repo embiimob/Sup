@@ -30,6 +30,9 @@
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Connections));
             this.panel1 = new System.Windows.Forms.Panel();
+            this.btnPurgeIPFS = new System.Windows.Forms.Button();
+            this.btnUnpinIPFS = new System.Windows.Forms.Button();
+            this.btnPinIPFS = new System.Windows.Forms.Button();
             this.button1 = new System.Windows.Forms.Button();
             this.label15 = new System.Windows.Forms.Label();
             this.label14 = new System.Windows.Forms.Label();
@@ -69,9 +72,6 @@
             this.txtPort = new System.Windows.Forms.TextBox();
             this.btnMainConnection = new System.Windows.Forms.Button();
             this.label1 = new System.Windows.Forms.Label();
-            this.btnPinIPFS = new System.Windows.Forms.Button();
-            this.btnUnpinIPFS = new System.Windows.Forms.Button();
-            this.btnPurgeIPFS = new System.Windows.Forms.Button();
             this.panel1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -124,6 +124,38 @@
             this.panel1.Size = new System.Drawing.Size(644, 365);
             this.panel1.TabIndex = 1;
             // 
+            // btnPurgeIPFS
+            // 
+            this.btnPurgeIPFS.Location = new System.Drawing.Point(528, 182);
+            this.btnPurgeIPFS.Name = "btnPurgeIPFS";
+            this.btnPurgeIPFS.Size = new System.Drawing.Size(104, 23);
+            this.btnPurgeIPFS.TabIndex = 128;
+            this.btnPurgeIPFS.Text = "purge ipfs cache";
+            this.btnPurgeIPFS.UseVisualStyleBackColor = true;
+            this.btnPurgeIPFS.Click += new System.EventHandler(this.btnPurgeIPFS_Click);
+            // 
+            // btnUnpinIPFS
+            // 
+            this.btnUnpinIPFS.Enabled = false;
+            this.btnUnpinIPFS.Location = new System.Drawing.Point(356, 182);
+            this.btnUnpinIPFS.Name = "btnUnpinIPFS";
+            this.btnUnpinIPFS.Size = new System.Drawing.Size(104, 23);
+            this.btnUnpinIPFS.TabIndex = 127;
+            this.btnUnpinIPFS.Text = "unpin ipfs cache";
+            this.btnUnpinIPFS.UseVisualStyleBackColor = true;
+            this.btnUnpinIPFS.Click += new System.EventHandler(this.btnUnpinIPFS_Click);
+            // 
+            // btnPinIPFS
+            // 
+            this.btnPinIPFS.Enabled = false;
+            this.btnPinIPFS.Location = new System.Drawing.Point(246, 182);
+            this.btnPinIPFS.Name = "btnPinIPFS";
+            this.btnPinIPFS.Size = new System.Drawing.Size(104, 23);
+            this.btnPinIPFS.TabIndex = 126;
+            this.btnPinIPFS.Text = "pin ipfs cache";
+            this.btnPinIPFS.UseVisualStyleBackColor = true;
+            this.btnPinIPFS.Click += new System.EventHandler(this.button2_Click);
+            // 
             // button1
             // 
             this.button1.Location = new System.Drawing.Point(6, 182);
@@ -141,7 +173,7 @@
             this.label15.Name = "label15";
             this.label15.Size = new System.Drawing.Size(203, 13);
             this.label15.TabIndex = 124;
-            this.label15.Text = "Sup!? Object Browser  v0.1.2-beta";
+            this.label15.Text = "Sup!? Object Browser  v0.1.3-beta";
             // 
             // label14
             // 
@@ -490,38 +522,6 @@
             this.label1.Size = new System.Drawing.Size(68, 13);
             this.label1.TabIndex = 50;
             this.label1.Text = "main chain";
-            // 
-            // btnPinIPFS
-            // 
-            this.btnPinIPFS.Enabled = false;
-            this.btnPinIPFS.Location = new System.Drawing.Point(246, 182);
-            this.btnPinIPFS.Name = "btnPinIPFS";
-            this.btnPinIPFS.Size = new System.Drawing.Size(104, 23);
-            this.btnPinIPFS.TabIndex = 126;
-            this.btnPinIPFS.Text = "pin ipfs cache";
-            this.btnPinIPFS.UseVisualStyleBackColor = true;
-            this.btnPinIPFS.Click += new System.EventHandler(this.button2_Click);
-            // 
-            // btnUnpinIPFS
-            // 
-            this.btnUnpinIPFS.Enabled = false;
-            this.btnUnpinIPFS.Location = new System.Drawing.Point(356, 182);
-            this.btnUnpinIPFS.Name = "btnUnpinIPFS";
-            this.btnUnpinIPFS.Size = new System.Drawing.Size(104, 23);
-            this.btnUnpinIPFS.TabIndex = 127;
-            this.btnUnpinIPFS.Text = "unpin ipfs cache";
-            this.btnUnpinIPFS.UseVisualStyleBackColor = true;
-            this.btnUnpinIPFS.Click += new System.EventHandler(this.btnUnpinIPFS_Click);
-            // 
-            // btnPurgeIPFS
-            // 
-            this.btnPurgeIPFS.Location = new System.Drawing.Point(528, 182);
-            this.btnPurgeIPFS.Name = "btnPurgeIPFS";
-            this.btnPurgeIPFS.Size = new System.Drawing.Size(104, 23);
-            this.btnPurgeIPFS.TabIndex = 128;
-            this.btnPurgeIPFS.Text = "purge ipfs cache";
-            this.btnPurgeIPFS.UseVisualStyleBackColor = true;
-            this.btnPurgeIPFS.Click += new System.EventHandler(this.btnPurgeIPFS_Click);
             // 
             // Connections
             // 
