@@ -2,7 +2,7 @@
   "urn": "IPFS:Qmex6VRDqwVCMPrc7ojtBWzUBPdQAmWq9FcprKTcgmbKX3/baby punch.glb",
   "img": "IPFS:QmPZ1xTXjoek9bkAHsPfPzonMtfWBwSw1x9pHFpPBsqNLr",
   "uri": "https://objkt.com/asset/KT19jjT5csLfggEe5B9zDM6fakvqU1p3Fpi6/0",
-  "nme": "CryptoSkull #8354",
+  "nme": "Babby Punch",
   "dsc": "His hand is over his eye.  He looked like a failed soldier. \nDirt seemed so worked into him that the lines of his face were like writing. Baby Punch liked to get in fights because it was in his nature but he really wanted to hold things softly and caress them but his power was too much.",
   "atr": {
     "strength": "yes"
@@ -30,9 +30,9 @@
 
 //remove all unnecessary spaces
 //place JSON in a file named OBJ (no file extension)
-//enter #[first 20 charachters of urn] to create a URN registration in this example #66e5f4df4bd0a3ea9b56 in the apertus.io message box
+//enter #[first 20 charachters of urn] to create a URN registration in this example #IPFS:Qmex6VRDqwVCMPr in the apertus.io message box
 //enter each additional @creatoraddress and or @owneraddress above the @objectaddress in the apertus.io message box in matching orders
-//in this example keyword order id 1 would be the second from the bottom if the #66e5f4df4bd0a3ea9b56 URN was also being registered
+//in this example keyword order id 1 would be the second from the bottom if the #IPFS:Qmex6VRDqwVCMPr URN was also being registered
 //attach file OBJ using the apertus.io attach button
 //create a new signature address in the signature list in apertus.io. select it.  this will be the object address
 //verify that the no message box is checked.
