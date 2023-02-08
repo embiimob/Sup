@@ -1208,7 +1208,7 @@ namespace SUP
                                 P2FK.Root.GetRootByTransactionId(transid, "good-user", "better-password", "http://127.0.0.1:18332");
                             }
 
-                            potentialyUnsafeHtml = System.IO.File.ReadAllText(urn);
+                            try { potentialyUnsafeHtml = System.IO.File.ReadAllText(urn); } catch { }
 
                             var matches = regexTransactionId.Matches(potentialyUnsafeHtml);
                             foreach (Match transactionID in matches)
