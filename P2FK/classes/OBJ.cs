@@ -50,15 +50,16 @@ namespace SUP.P2FK
         {
 
             OBJState objectState = new OBJState();
-
             var OBJ = new Options { CreateIfMissing = true };
             string isBlocked;
-            using (var db = new DB(OBJ, @"root\block"))
+            lock (levelDBLocker)
             {
-                isBlocked = db.Get(objectaddress);
+                using (var db = new DB(OBJ, @"root\block"))
+                {
+                    isBlocked = db.Get(objectaddress);
+                }
+                if (isBlocked == "true") { return objectState; }
             }
-            if (isBlocked == "true") { return objectState; }
-
             string JSONOBJ;
             string logstatus;
             string diskpath = "root\\" + objectaddress + "\\";
@@ -654,9 +655,19 @@ namespace SUP.P2FK
         public static OBJState GetObjectByURN(string searchstring, string username, string password, string url, string versionByte = "111", int skip = 0)
         {
             OBJState objectState = new OBJState { };
-
             Root[] objectTransactions;
             string objectaddress = Root.GetPublicAddressByKeyword(searchstring, versionByte);
+            var OBJ = new Options { CreateIfMissing = true };
+
+            string isBlocked;
+            lock (levelDBLocker)
+            {
+                using (var db = new DB(OBJ, @"root\block"))
+                {
+                    isBlocked = db.Get(objectaddress);
+                }
+                if (isBlocked == "true") { return objectState; }
+            }
 
             //return all roots found at address
             objectTransactions = Root.GetRootsByAddress(objectaddress, username, password, url, skip, 300, versionByte);
@@ -694,6 +705,16 @@ namespace SUP.P2FK
         {
             List<OBJState> objectStates = new List<OBJState> { };
 
+            var OBJ = new Options { CreateIfMissing = true };
+            string isBlocked;
+            lock (levelDBLocker)
+            {
+                using (var db = new DB(OBJ, @"root\block"))
+                {
+                    isBlocked = db.Get(objectaddress);
+                }
+                if (isBlocked == "true") { return objectStates; }
+            }
             Root[] objectTransactions;
 
             //return all roots found at address
@@ -789,6 +810,17 @@ namespace SUP.P2FK
 
             List<OBJState> objectStates = new List<OBJState> { };
 
+            var OBJ = new Options { CreateIfMissing = true };
+            string isBlocked;
+            lock (levelDBLocker)
+            {
+                using (var db = new DB(OBJ, @"root\block"))
+                {
+                    isBlocked = db.Get(objectaddress);
+                }
+                if (isBlocked == "true") { return objectStates; }
+            }
+
             Root[] objectTransactions;
 
             //return all roots found at address
@@ -882,6 +914,17 @@ namespace SUP.P2FK
         public static List<OBJState> GetObjectsCreatedByAddress(string objectaddress, string username, string password, string url, string versionByte = "111", int skip = 0)
         {
             List<OBJState> objectStates = new List<OBJState> { };
+
+            var OBJ = new Options { CreateIfMissing = true };
+            string isBlocked;
+            lock (levelDBLocker)
+            {
+                using (var db = new DB(OBJ, @"root\block"))
+                {
+                    isBlocked = db.Get(objectaddress);
+                }
+                if (isBlocked == "true") { return objectStates; }
+            }
 
             Root[] objectTransactions;
 
@@ -985,46 +1028,59 @@ namespace SUP.P2FK
                 List<OBJState> objectStates = new List<OBJState> { };
                 string objectaddress = Root.GetPublicAddressByKeyword(search, versionByte);
 
-                Root[] objectTransactions;
-
-                //return all roots found at address
-                objectTransactions = Root.GetRootsByAddress(objectaddress, username, password, url, skip, 300, versionByte);
-                HashSet<string> addedValues = new HashSet<string>();
-                foreach (Root transaction in objectTransactions)
+                var OBJ = new Options { CreateIfMissing = true };
+                string isBlocked;
+                lock (levelDBLocker)
+                {
+                    using (var db = new DB(OBJ, @"root\block"))
+                    {
+                        isBlocked = db.Get(objectaddress);
+                    }
+                }
+                if (isBlocked != "true")
                 {
 
-                    //ignore any transaction that is not signed
-                    if (transaction.Signed && transaction.File.ContainsKey("OBJ"))
-                    {
-                        string findObject = transaction.Keyword.Last().Key;
-                        OBJState isObject = GetObjectByAddress(findObject, username, password, url, versionByte);
-                        if (isObject.URN != null && !addedValues.Contains(findObject))
-                        {
-                            if (isObject.Creators.ElementAt(0).Key == findObject)
-                            {
+                    Root[] objectTransactions;
 
-                                if (!addedValues.Contains(findObject))
+                    //return all roots found at address
+                    objectTransactions = Root.GetRootsByAddress(objectaddress, username, password, url, skip, 300, versionByte);
+                    HashSet<string> addedValues = new HashSet<string>();
+                    foreach (Root transaction in objectTransactions)
+                    {
+
+                        //ignore any transaction that is not signed
+                        if (transaction.Signed && transaction.File.ContainsKey("OBJ"))
+                        {
+                            string findObject = transaction.Keyword.Last().Key;
+                            OBJState isObject = GetObjectByAddress(findObject, username, password, url, versionByte);
+                            if (isObject.URN != null && !addedValues.Contains(findObject))
+                            {
+                                if (isObject.Creators.ElementAt(0).Key == findObject)
                                 {
 
-                                    objectStates.Add(isObject);
-                                    addedValues.Add(findObject);
+                                    if (!addedValues.Contains(findObject))
+                                    {
 
+                                        objectStates.Add(isObject);
+                                        addedValues.Add(findObject);
+
+                                    }
                                 }
+
                             }
 
-                        }
 
+
+                        }
 
 
                     }
 
 
-                }
-
-
-                foreach (OBJState found in objectStates)
-                {
-                    totalSearch.Add(found);
+                    foreach (OBJState found in objectStates)
+                    {
+                        totalSearch.Add(found);
+                    }
                 }
             }
 
