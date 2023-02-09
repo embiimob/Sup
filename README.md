@@ -1,8 +1,7 @@
 # Sup!? 
-open source experimental decentralized state engine protocol
+experimental decentralized state engine browser
 
-
-This Sup!? Object Browser is a READ ONLY demonstration of establishing a decentralized identity and tracking changes with comments on immutable bitcoin objects in a format familiar to NFT enthusiasts. As of Sup?'s first release date all transactions and objects discoverable in this experiment were created by embii using http://apertus.io
+Sup!? Object Browser is a READ ONLY demonstration of establishing a decentralized identity and tracking changes with comments on immutable bitcoin objects in a format familiar to NFT enthusiasts. As of Sup?'s first release date all transactions and objects discoverable in this experiment were created by embii using http://apertus.io
 
 ### **Installation**
 
