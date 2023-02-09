@@ -7,7 +7,7 @@ This experiment is using an ancient blockchain protocol called P2FK (Pay to Futu
 
  As of Sup?'s first release date all transactions and objects discoverable in the experiment were created by embii using http://apertus.io
 
-### **Installation**
+## **Installation**
 
 1. Download the Sup.v0.1.4-beta.zip file
 2. Create a folder on your **fastest** disk drive with at least **700GB** free (it will be storing the bitcoin prod and testnet blockchains)
@@ -20,9 +20,7 @@ This experiment is using an ancient blockchain protocol called P2FK (Pay to Futu
 3. Wait until testnet is fully synched and production has synced passed at least 2014. ( this part could take several hours )
 4. Type #flowersofwar in the main search box and hit enter
 
-
-### **Search Options**<br />
-<br /> <br />
+## **Search Options**
 
 ### **#CaseSensitiveKeyword**
 
