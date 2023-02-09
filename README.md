@@ -1,8 +1,7 @@
 # Sup!? 
-open source experimental decentralized state engine protocol
+experimental decentralized state engine browser
 
-
-This Sup!? Object Browser is a READ ONLY demonstration of establishing a decentralized identity and tracking changes with comments on immutable bitcoin objects in a format familiar to NFT enthusiasts. As of Sup?'s first release date all transactions and objects discoverable in this experiment were created by embii using http://apertus.io
+Sup!? Object Browser is a READ ONLY demonstration of establishing a decentralized identity and tracking changes with comments on immutable bitcoin objects in a format familiar to NFT enthusiasts. As of Sup?'s first release date all transactions and objects discoverable in this experiment were created by embii using http://apertus.io
 
 ### **Installation**
 
@@ -34,7 +33,7 @@ searches urn shows currently registered profile object associated with @userName
 performs a ipfs get, archives ipfs file(s) locally, pins file(s) if pinning is enabled, opens a system folder dioluge allowing you to explore any files found
 
 ### **Block \ Mute**
-- blocking addresses and transactions ignores any associations to them going forward preventing a transaction or any transactions signed by the blocked address from outputting to disk. a purge and reinspection is required to completely eliminate all data. if a group of collectors decides to block an address or transaction they can technically prune them out of existence.
+- blocking addresses and transactions ignores any associations to them going forward preventing a transaction or any transactions signed by the blocked address from outputting to disk. a purge and reinspection is required to completely eliminate all data. if a group of collectors decides to block an address or transaction they can technically ignore them out of existence.
 
 - muting an address prevents any further transaction comments signed by the address from outputting onto disk.  a purge and reinspection is required to completely elimninate all transactions comments
 
