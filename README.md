@@ -3,7 +3,9 @@ experimental decentralized state engine browser
 
 Sup!? Object Browser is currently a READ ONLY demonstration of establishing a decentralized identity and tracking state changes with comments on immutable blockhain objects in a format familiar to NFT enthusiasts. 
 
-This experiment is using an ancient blockchain protocol called P2FK (Pay to Future Key) invented by http://HugPuddle.org in 2013.  P2FK was directly inspired by the satoshi uploader  see --> https://cirosantilli.com/satoshi-uploader
+This experiment is using an ancient blockchain protocol called P2FK (Pay to Future Key) invented by http://HugPuddle.org in 2013.
+
+P2FK was directly inspired by the satoshi uploader  see --> https://cirosantilli.com/satoshi-uploader
 
  As of Sup?'s first release date all transactions and objects discoverable in the experiment were created by embii using http://apertus.io
 
