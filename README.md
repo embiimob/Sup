@@ -61,7 +61,7 @@ trusted index.html and index.htm files are sent the following Sup!? object infor
 
 -  IPFS:Qmex6VRDqwVCMPrc7ojtBWzUBPdQAmWq9FcprKTcgmbKX3/baby punch.glb
 
-( references and IPFS file output file with given name {hash}\baby punch.glb )
+( references and IPFS file outputs file with given name {hash}\baby punch.glb )
 
 -  66e5f4df4bd0a3ea9b569498ed25f848e837b9dec7a2699c1d6756ae9560c962/8354.png
 
