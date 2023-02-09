@@ -1,5 +1,4 @@
-﻿using AngleSharp.Css.Dom;
-using LevelDB;
+﻿using LevelDB;
 using NBitcoin;
 using NBitcoin.RPC;
 using Newtonsoft.Json;
@@ -13,8 +12,6 @@ using System.Numerics;
 using System.Security.Cryptography;
 using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
-using static NBitcoin.Scripting.PubKeyProvider;
 
 
 namespace SUP.P2FK
@@ -62,14 +59,14 @@ namespace SUP.P2FK
                     lock (levelDBLocker)
                     {
                         var ROOT = new Options { CreateIfMissing = true };
-                        var db = new DB(ROOT, @"root");
+                        var db = new DB(ROOT, @"root\block");
                         P2FKJSONString = db.Get(transactionid);
                         db.Close();
                     }
 
                 }
                 //if transactionID is found in LevelDB cache with invalid or blocked status return null
-                if (P2FKJSONString == "invalid" || P2FKJSONString == "block")
+                if (P2FKJSONString == "invalid" || P2FKJSONString == "true")
                 {
                     return null;
                 }
@@ -178,21 +175,20 @@ namespace SUP.P2FK
 
             int transactionBytesSize = transactionBytes.Count();
             transactionASCII = Encoding.ASCII.GetString(transactionBytes);
-            bool isNoise = false;
 
-
-
-            lock (levelDBLocker)
+            if (P2FKSignatureAddress != null)
             {
-                var OBJ = new Options { CreateIfMissing = true };
-                string isBlocked;
-                using (var db = new DB(OBJ, @"root/block"))
+                lock (levelDBLocker)
                 {
-                    isBlocked = db.Get(P2FKSignatureAddress);
+                    var OBJ = new Options { CreateIfMissing = true };
+                    string isBlocked;
+                    using (var db = new DB(OBJ, @"root\block"))
+                    {
+                        isBlocked = db.Get(P2FKSignatureAddress);
+                    }
+                    if (isBlocked == "true") { return null; }
                 }
-                if (isBlocked == "true") { return null; }
             }
-
 
             // Perform the loop until no additional numbers are found and the regular expression fails to match
             while (regexSpecialChars.IsMatch(transactionASCII))
@@ -312,7 +308,7 @@ namespace SUP.P2FK
                         {
 
                             var ROOT = new Options { CreateIfMissing = true };
-                            var db = new DB(ROOT, @"root");
+                            var db = new DB(ROOT, @"root\block");
                             db.Put(transactionid, "invalid");
                             db.Close();
 
@@ -363,7 +359,7 @@ namespace SUP.P2FK
                 lock (levelDBLocker)
                 {
                     var ROOT = new Options { CreateIfMissing = true };
-                    var db = new DB(ROOT, @"root");
+                    var db = new DB(ROOT, @"root\block");
                     db.Put(transactionid, "invalid");
                     db.Close();
                 }
@@ -373,12 +369,6 @@ namespace SUP.P2FK
             }
 
 
-
-            //transactionASCII = transactionASCII.Replace("\0"," "); 
-            //assumes any remaining unprocessed characters are keywords
-
-
-
             int charactersPerDivision = 20;
 
             if (transactionASCII.Length > charactersPerDivision)
@@ -386,7 +376,6 @@ namespace SUP.P2FK
                 int remainder = transactionASCII.Length % charactersPerDivision;
                 transactionASCII = transactionASCII.Substring(remainder);
             }
-
 
 
             for (int i = 0; i < transactionASCII.Length; i += 20)
@@ -498,52 +487,40 @@ namespace SUP.P2FK
         public static Root[] GetRootsByAddress(string address, string username, string password, string url, int skip = 0, int qty = 300, string versionByte = "111")
         {
             var rootList = new List<Root>();
-            try
+            var credentials = new NetworkCredential(username, password);
+            var rpcClient = new RPCClient(credentials, new Uri(url));
+            var synchronousData = new Dictionary<int, Root>();
+            dynamic deserializedObject = null;
+            while (true)
             {
-
-                NetworkCredential credentials = new NetworkCredential(username, password);
-                var rpcClient = new RPCClient(credentials, new Uri(url));
-                var synchronousData = new Dictionary<int, Root>();
-                dynamic deserializedObject = null;
-                while (true)
+                try
                 {
                     deserializedObject = JsonConvert.DeserializeObject(rpcClient.SendCommand("searchrawtransactions", address, 0, skip, qty).ResultString);
-                    if (deserializedObject.Count == 0)
-                        break;
+                }catch { break; }
+                
+                if (deserializedObject.Count == 0)
+                    break;
 
-                    var concurrentData = new ConcurrentDictionary<int, Root>();
+                var concurrentData = new ConcurrentDictionary<int, Root>();
 
-                    for (int i = 0; i < deserializedObject.Count; i++)
+                for (int i = 0; i < deserializedObject.Count; i++)
+                {
+                    int rootId = i;
+                    string hexId = GetTransactionIdByHexString(deserializedObject[i].ToString());
+
+                    var root = Root.GetRootByTransactionId(hexId, username, password, url, versionByte);
+
+                    if (root != null && root.TotalByteSize > 0)
                     {
-                        int rootId = i;
-                        string hexId = GetTransactionIdByHexString(deserializedObject[i].ToString());
-
-                        var root = Root.GetRootByTransactionId(hexId, username, password, url, versionByte);
-
-                        if (root != null && root.TotalByteSize > 0)
-                        {
-                            root.Id = rootId + skip;
-                            rootList.Add(root);
-                        }
-
+                        root.Id = rootId + skip;
+                        rootList.Add(root);
                     }
-                    skip += qty;
 
                 }
+                skip += qty;
+
             }
-            catch (Exception ex)
-            {
-                var root = new Root
-                {
-                    Message = new[] { ex.Message },
-                    BuildDate = DateTime.UtcNow,
-                    File = new Dictionary<string, BigInteger> { },
-                    Keyword = new Dictionary<string, string> { },
-                    TransactionId = address
-                };
-                rootList.Add(root);
-                return rootList.ToArray();
-            }
+
             return rootList.ToArray();
         }
         public static byte[] GetRootBytesByLedger(string ledger, string username, string password, string url)
@@ -639,20 +616,6 @@ namespace SUP.P2FK
             }
             return joinedMessageBytes;
         }
-        static string GetTransactionIdByHexString(string transactionHex)
-        {
-            // Decode the hex string into a byte array
-            byte[] transactionBytes = HexStringToByteArray(transactionHex);
-
-            // Calculate the hash of the transaction
-            byte[] hash = SHA256.Hash(SHA256.Hash(transactionBytes));
-
-            // Reverse the hash to get the transaction id
-            Array.Reverse(hash);
-
-            // Convert the hash to a hex string and return it
-            return ByteArrayToHexString(hash);
-        }
         public static string GetPublicAddressByKeyword(string keyword, string versionbyte = "111")
         {
             // Cut the string at 20 characters
@@ -676,6 +639,20 @@ namespace SUP.P2FK
             Base58.DecodeWithCheckSum(public_address, out byte[] payloadBytes);
 
             return Encoding.ASCII.GetString(payloadBytes).Replace("#", "").Substring(1);
+        }
+        static string GetTransactionIdByHexString(string transactionHex)
+        {
+            // Decode the hex string into a byte array
+            byte[] transactionBytes = HexStringToByteArray(transactionHex);
+
+            // Calculate the hash of the transaction
+            byte[] hash = SHA256.Hash(SHA256.Hash(transactionBytes));
+
+            // Reverse the hash to get the transaction id
+            Array.Reverse(hash);
+
+            // Convert the hash to a hex string and return it
+            return ByteArrayToHexString(hash);
         }
         public static byte[] DecryptRootBytes(string username, string password, string url, string address, byte[] rootbytes)
         {

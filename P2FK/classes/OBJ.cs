@@ -671,7 +671,6 @@ namespace SUP.P2FK
 
             //return all roots found at address
             objectTransactions = Root.GetRootsByAddress(objectaddress, username, password, url, skip, 300, versionByte);
-            HashSet<string> addedValues = new HashSet<string>();
             foreach (Root transaction in objectTransactions)
             {
 

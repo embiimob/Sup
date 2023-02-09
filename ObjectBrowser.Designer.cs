@@ -51,7 +51,7 @@
             this.btnCreated.TabIndex = 62;
             this.btnCreated.Text = "created";
             this.btnCreated.UseVisualStyleBackColor = false;
-            this.btnCreated.Click += new System.EventHandler(this.btnGetCreated_Click);
+            this.btnCreated.Click += new System.EventHandler(this.ButtonGetCreatedClick);
             // 
             // btnOwned
             // 
@@ -63,7 +63,7 @@
             this.btnOwned.TabIndex = 61;
             this.btnOwned.Text = "owned";
             this.btnOwned.UseVisualStyleBackColor = false;
-            this.btnOwned.Click += new System.EventHandler(this.btnGetOwned_Click);
+            this.btnOwned.Click += new System.EventHandler(this.ButtonGetOwnedClick);
             // 
             // txtSearchAddress
             // 
@@ -73,7 +73,7 @@
             this.txtSearchAddress.Name = "txtSearchAddress";
             this.txtSearchAddress.Size = new System.Drawing.Size(713, 20);
             this.txtSearchAddress.TabIndex = 58;
-            this.txtSearchAddress.KeyDown += new System.Windows.Forms.KeyEventHandler(this.txtSearchAddress_KeyDown);
+            this.txtSearchAddress.KeyDown += new System.Windows.Forms.KeyEventHandler(this.SearchAddressKeyDown);
             // 
             // btnWorkBench
             // 
@@ -85,7 +85,7 @@
             this.btnWorkBench.TabIndex = 68;
             this.btnWorkBench.Text = "⚙️";
             this.btnWorkBench.UseVisualStyleBackColor = false;
-            this.btnWorkBench.Click += new System.EventHandler(this.button4_Click);
+            this.btnWorkBench.Click += new System.EventHandler(this.ButtonLoadWorkBench);
             // 
             // flowLayoutPanel1
             // 
@@ -110,7 +110,7 @@
             this.linkLabel1.TabStop = true;
             this.linkLabel1.Text = "anon";
             this.linkLabel1.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.linkLabel1.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkLabel1_LinkClicked);
+            this.linkLabel1.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.MainUserNameClick);
             // 
             // txtVersionByte
             // 
@@ -158,7 +158,7 @@
             this.button1.TabIndex = 72;
             this.button1.Text = "🔑";
             this.button1.UseVisualStyleBackColor = false;
-            this.button1.Click += new System.EventHandler(this.button1_Click_1);
+            this.button1.Click += new System.EventHandler(this.ButtonLoadConnections);
             // 
             // ObjectBrowser
             // 
@@ -180,7 +180,7 @@
             this.Name = "ObjectBrowser";
             this.RightToLeft = System.Windows.Forms.RightToLeft.No;
             this.Text = "Sup!? Object Browser";
-            this.Load += new System.EventHandler(this.ObjectBrowser_Load);
+            this.Load += new System.EventHandler(this.ObjectBrowserLoad);
             this.ResumeLayout(false);
             this.PerformLayout();
 

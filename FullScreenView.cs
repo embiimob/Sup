@@ -5,9 +5,7 @@ namespace SUP
 {
     class FullScreenView : Form
     {
-        private Image _image;
         private PictureBox pictureBox1;
-        private Form _fullScreenForm;
        
 
 
@@ -57,7 +55,7 @@ namespace SUP
             this.pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.CenterImage;
             this.pictureBox1.TabIndex = 0;
             this.pictureBox1.TabStop = false;
-            this.pictureBox1.Click += new System.EventHandler(this.pictureBox1_Click);
+            this.pictureBox1.Click += new System.EventHandler(this.FullScreenViewClick);
             // 
             // FullScreenView
             // 
@@ -77,7 +75,7 @@ namespace SUP
 
 
 
-        private void pictureBox1_Click(object sender, System.EventArgs e)
+        private void FullScreenViewClick(object sender, System.EventArgs e)
         {
             Close();
         }

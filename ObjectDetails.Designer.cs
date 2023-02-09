@@ -99,7 +99,7 @@
             this.pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
             this.pictureBox1.TabIndex = 0;
             this.pictureBox1.TabStop = false;
-            this.pictureBox1.Click += new System.EventHandler(this.pictureBox1_Click_1);
+            this.pictureBox1.Click += new System.EventHandler(this.ShowFullScreenModeClick);
             // 
             // webviewer
             // 
@@ -124,7 +124,7 @@
             this.button1.Text = "[  ]";
             this.button1.UseVisualStyleBackColor = false;
             this.button1.Visible = false;
-            this.button1.Click += new System.EventHandler(this.button1_Click);
+            this.button1.Click += new System.EventHandler(this.LaunchURN);
             // 
             // OwnersPanel
             // 
@@ -173,7 +173,7 @@
             this.lblTotalOwnedMain.TabIndex = 9;
             this.lblTotalOwnedMain.Text = "x";
             this.lblTotalOwnedMain.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.lblTotalOwnedMain.Click += new System.EventHandler(this.lblTotalOwnedMain_Click);
+            this.lblTotalOwnedMain.Click += new System.EventHandler(this.CopyAddressByTotalOwnedClick);
             // 
             // button2
             // 
@@ -203,7 +203,7 @@
             this.imgPicture.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
             this.imgPicture.TabIndex = 15;
             this.imgPicture.TabStop = false;
-            this.imgPicture.Click += new System.EventHandler(this.imgPicture_Click);
+            this.imgPicture.Click += new System.EventHandler(this.CopyAddressByImageClick);
             // 
             // txtdesc
             // 
@@ -217,7 +217,7 @@
             this.txtdesc.Size = new System.Drawing.Size(256, 206);
             this.txtdesc.TabIndex = 22;
             this.txtdesc.Text = "description";
-            this.txtdesc.Click += new System.EventHandler(this.txtdesc_Click);
+            this.txtdesc.Click += new System.EventHandler(this.CopyDescriptionByDescriptionClick);
             // 
             // button5
             // 
@@ -269,7 +269,6 @@
             this.txtSupMessage.Text = "This experimental Sup!? browser is read only\r\n\r\nUse the apertus.io @address featu" +
     "re to direct your messages to this object\'s address\r\n\r\n* Only signed P2FK messag" +
     "es are inspected.";
-            this.txtSupMessage.TextChanged += new System.EventHandler(this.textBox1_TextChanged);
             // 
             // btnRefreshSup
             // 
@@ -280,7 +279,7 @@
             this.btnRefreshSup.TabIndex = 2;
             this.btnRefreshSup.Text = "📣";
             this.btnRefreshSup.UseVisualStyleBackColor = true;
-            this.btnRefreshSup.Click += new System.EventHandler(this.button7_Click);
+            this.btnRefreshSup.Click += new System.EventHandler(this.RefreshSupMessages);
             // 
             // txtName
             // 
@@ -291,7 +290,7 @@
             this.txtName.Size = new System.Drawing.Size(209, 38);
             this.txtName.TabIndex = 33;
             this.txtName.Text = "Title";
-            this.txtName.Click += new System.EventHandler(this.txtName_Click);
+            this.txtName.Click += new System.EventHandler(this.CopyAddressByNameClick);
             // 
             // lblTotalOwnedDetail
             // 
@@ -328,7 +327,7 @@
             this.btnRefreshOwners.Text = "👑";
             this.btnRefreshOwners.TextAlign = System.Drawing.ContentAlignment.TopCenter;
             this.btnRefreshOwners.UseVisualStyleBackColor = true;
-            this.btnRefreshOwners.Click += new System.EventHandler(this.btnShowObjectDetails_Click);
+            this.btnRefreshOwners.Click += new System.EventHandler(this.ButtonShowObjectDetailsClick);
             // 
             // btnReloadObject
             // 
@@ -339,7 +338,7 @@
             this.btnReloadObject.TabIndex = 4;
             this.btnReloadObject.Text = "♻️";
             this.btnReloadObject.UseVisualStyleBackColor = true;
-            this.btnReloadObject.Click += new System.EventHandler(this.lblRefreshFrame_Click);
+            this.btnReloadObject.Click += new System.EventHandler(this.MainRefreshClick);
             // 
             // btnRefreshTransactions
             // 
@@ -350,7 +349,7 @@
             this.btnRefreshTransactions.TabIndex = 38;
             this.btnRefreshTransactions.Text = "🔍";
             this.btnRefreshTransactions.UseVisualStyleBackColor = true;
-            this.btnRefreshTransactions.Click += new System.EventHandler(this.btnRefreshTransactions_Click);
+            this.btnRefreshTransactions.Click += new System.EventHandler(this.ButtonRefreshTransactionsClick);
             // 
             // lblURNBlockDate
             // 
@@ -370,7 +369,6 @@
             this.txtURN.ScrollBars = System.Windows.Forms.ScrollBars.Horizontal;
             this.txtURN.Size = new System.Drawing.Size(256, 34);
             this.txtURN.TabIndex = 40;
-            this.txtURN.TextChanged += new System.EventHandler(this.txtURN_TextChanged);
             // 
             // label4
             // 
@@ -402,7 +400,6 @@
             this.txtIMG.ScrollBars = System.Windows.Forms.ScrollBars.Horizontal;
             this.txtIMG.Size = new System.Drawing.Size(256, 33);
             this.txtIMG.TabIndex = 43;
-            this.txtIMG.TextChanged += new System.EventHandler(this.txtIMG_TextChanged);
             // 
             // lblIMGBlockDate
             // 
@@ -433,7 +430,6 @@
             this.txtURI.ScrollBars = System.Windows.Forms.ScrollBars.Horizontal;
             this.txtURI.Size = new System.Drawing.Size(256, 35);
             this.txtURI.TabIndex = 46;
-            this.txtURI.TextChanged += new System.EventHandler(this.txtURI_TextChanged);
             // 
             // lblURIBlockDate
             // 
@@ -465,7 +461,7 @@
             this.lblObjectCreatedDate.TabIndex = 51;
             this.lblObjectCreatedDate.Text = "[ is not immutable ]";
             this.lblObjectCreatedDate.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.lblObjectCreatedDate.Click += new System.EventHandler(this.lblObjectCreatedDate_Click);
+            this.lblObjectCreatedDate.Click += new System.EventHandler(this.CopyAddressByCreatedDateClick);
             // 
             // lblphtitle
             // 

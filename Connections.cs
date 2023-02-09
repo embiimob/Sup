@@ -127,7 +127,7 @@ namespace SUP
 
                 var SUP = new Options { CreateIfMissing = true };
 
-                using (var db = new DB(SUP, @"sup"))
+                using (var db = new DB(SUP, @"ipfs"))
                 {
 
                     db.Delete("ipfs-daemon");
@@ -167,7 +167,7 @@ namespace SUP
 
                 var SUP = new Options { CreateIfMissing = true };
 
-                using (var db = new DB(SUP, @"sup"))
+                using (var db = new DB(SUP, @"ipfs"))
                 {
 
                     db.Put("ipfs-daemon", "true");

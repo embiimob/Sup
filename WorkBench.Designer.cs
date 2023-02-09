@@ -30,10 +30,10 @@ namespace SUP
         /// </summary>
         private void InitializeComponent()
         {
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle17 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle19 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle20 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle18 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle4 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
             this.btnGet = new System.Windows.Forms.Button();
             this.btnDelete = new System.Windows.Forms.Button();
             this.label3 = new System.Windows.Forms.Label();
@@ -111,7 +111,7 @@ namespace SUP
             this.btnGet.TabIndex = 1;
             this.btnGet.Text = "get";
             this.btnGet.UseVisualStyleBackColor = true;
-            this.btnGet.Click += new System.EventHandler(this.BtnGet_Click);
+            this.btnGet.Click += new System.EventHandler(this.ButtonGetLevelDBClick);
             // 
             // btnDelete
             // 
@@ -121,7 +121,7 @@ namespace SUP
             this.btnDelete.TabIndex = 2;
             this.btnDelete.Text = "delete";
             this.btnDelete.UseVisualStyleBackColor = true;
-            this.btnDelete.Click += new System.EventHandler(this.BtnDelete_Click);
+            this.btnDelete.Click += new System.EventHandler(this.ButtonDeleteLevelDBClick);
             // 
             // label3
             // 
@@ -223,7 +223,7 @@ namespace SUP
             this.btnTestConnection.TabIndex = 21;
             this.btnTestConnection.Text = "Test Connect";
             this.btnTestConnection.UseVisualStyleBackColor = true;
-            this.btnTestConnection.Click += new System.EventHandler(this.BtnTestConnection_Click);
+            this.btnTestConnection.Click += new System.EventHandler(this.ButtonTestConnectionClick);
             // 
             // lblTotalBytes
             // 
@@ -266,19 +266,19 @@ namespace SUP
             this.btnSearch.TabIndex = 27;
             this.btnSearch.Text = "get address";
             this.btnSearch.UseVisualStyleBackColor = true;
-            this.btnSearch.Click += new System.EventHandler(this.BtnSearch_Click);
+            this.btnSearch.Click += new System.EventHandler(this.ButtonSearchClick);
             // 
             // dgTransactions
             // 
             this.dgTransactions.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.Fill;
-            dataGridViewCellStyle17.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle17.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle17.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            dataGridViewCellStyle17.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle17.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle17.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle17.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.dgTransactions.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle17;
+            dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle1.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle1.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle1.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.dgTransactions.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle1;
             this.dgTransactions.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.dgTransactions.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
             this.rootid,
@@ -294,28 +294,28 @@ namespace SUP
             this.signature,
             this.confirmations,
             this.buildtime});
-            dataGridViewCellStyle19.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle19.BackColor = System.Drawing.SystemColors.Window;
-            dataGridViewCellStyle19.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            dataGridViewCellStyle19.ForeColor = System.Drawing.SystemColors.ControlText;
-            dataGridViewCellStyle19.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle19.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle19.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
-            this.dgTransactions.DefaultCellStyle = dataGridViewCellStyle19;
+            dataGridViewCellStyle3.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle3.BackColor = System.Drawing.SystemColors.Window;
+            dataGridViewCellStyle3.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle3.ForeColor = System.Drawing.SystemColors.ControlText;
+            dataGridViewCellStyle3.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle3.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle3.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
+            this.dgTransactions.DefaultCellStyle = dataGridViewCellStyle3;
             this.dgTransactions.Dock = System.Windows.Forms.DockStyle.Fill;
             this.dgTransactions.Location = new System.Drawing.Point(0, 0);
             this.dgTransactions.Name = "dgTransactions";
-            dataGridViewCellStyle20.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle20.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle20.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            dataGridViewCellStyle20.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle20.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle20.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle20.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.dgTransactions.RowHeadersDefaultCellStyle = dataGridViewCellStyle20;
+            dataGridViewCellStyle4.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle4.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle4.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle4.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle4.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle4.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle4.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.dgTransactions.RowHeadersDefaultCellStyle = dataGridViewCellStyle4;
             this.dgTransactions.Size = new System.Drawing.Size(1056, 267);
             this.dgTransactions.TabIndex = 30;
-            this.dgTransactions.CellClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dgTransactions_CellClick);
+            this.dgTransactions.CellClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.DataGridViewClick);
             // 
             // rootid
             // 
@@ -325,8 +325,8 @@ namespace SUP
             // 
             // messagecount
             // 
-            dataGridViewCellStyle18.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.messagecount.DefaultCellStyle = dataGridViewCellStyle18;
+            dataGridViewCellStyle2.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.messagecount.DefaultCellStyle = dataGridViewCellStyle2;
             this.messagecount.HeaderText = "Messages";
             this.messagecount.MaxInputLength = 100000000;
             this.messagecount.Name = "messagecount";
@@ -398,7 +398,7 @@ namespace SUP
             this.btnGetTransactionId.TabIndex = 33;
             this.btnGetTransactionId.Text = "get";
             this.btnGetTransactionId.UseVisualStyleBackColor = true;
-            this.btnGetTransactionId.Click += new System.EventHandler(this.BtnGetTransactionId_Click);
+            this.btnGetTransactionId.Click += new System.EventHandler(this.ButtonGetTransactionIdClick);
             // 
             // label12
             // 
@@ -425,7 +425,7 @@ namespace SUP
             this.btnGetKeyword.TabIndex = 36;
             this.btnGetKeyword.Text = "by keyword";
             this.btnGetKeyword.UseVisualStyleBackColor = true;
-            this.btnGetKeyword.Click += new System.EventHandler(this.BtnGetKeyword_Click);
+            this.btnGetKeyword.Click += new System.EventHandler(this.ButtonGetKeywordClick);
             // 
             // label13
             // 
@@ -537,7 +537,7 @@ namespace SUP
             this.splitContainer1.SplitterDistance = 380;
             this.splitContainer1.SplitterWidth = 1;
             this.splitContainer1.TabIndex = 42;
-            this.splitContainer1.Resize += new System.EventHandler(this.splitContainer1_Resize);
+            this.splitContainer1.Resize += new System.EventHandler(this.OnContainerResize);
             // 
             // btnUnblockTransaction
             // 
@@ -547,6 +547,7 @@ namespace SUP
             this.btnUnblockTransaction.TabIndex = 65;
             this.btnUnblockTransaction.Text = "unblock";
             this.btnUnblockTransaction.UseVisualStyleBackColor = true;
+            this.btnUnblockTransaction.Click += new System.EventHandler(this.ButtonUnblockTransactionIdClick);
             // 
             // btnUnBlockAddress
             // 
@@ -556,7 +557,7 @@ namespace SUP
             this.btnUnBlockAddress.TabIndex = 64;
             this.btnUnBlockAddress.Text = "unblock";
             this.btnUnBlockAddress.UseVisualStyleBackColor = true;
-            this.btnUnBlockAddress.Click += new System.EventHandler(this.btnUnBlockAddress_Click);
+            this.btnUnBlockAddress.Click += new System.EventHandler(this.ButtonUnBlockAddressClick);
             // 
             // btnUnMuteAddress
             // 
@@ -566,7 +567,7 @@ namespace SUP
             this.btnUnMuteAddress.TabIndex = 63;
             this.btnUnMuteAddress.Text = "unmute";
             this.btnUnMuteAddress.UseVisualStyleBackColor = true;
-            this.btnUnMuteAddress.Click += new System.EventHandler(this.btnUnMuteAddress_Click);
+            this.btnUnMuteAddress.Click += new System.EventHandler(this.ButtonUnMuteAddressClick);
             // 
             // btnMuteAddress
             // 
@@ -576,7 +577,7 @@ namespace SUP
             this.btnMuteAddress.TabIndex = 62;
             this.btnMuteAddress.Text = "mute address";
             this.btnMuteAddress.UseVisualStyleBackColor = true;
-            this.btnMuteAddress.Click += new System.EventHandler(this.btnMuteAddress_Click);
+            this.btnMuteAddress.Click += new System.EventHandler(this.ButtonMuteAddressClick);
             // 
             // btnBlockTransaction
             // 
@@ -586,7 +587,7 @@ namespace SUP
             this.btnBlockTransaction.TabIndex = 61;
             this.btnBlockTransaction.Text = "block transaction";
             this.btnBlockTransaction.UseVisualStyleBackColor = true;
-            this.btnBlockTransaction.Click += new System.EventHandler(this.btnBlockTransaction_Click);
+            this.btnBlockTransaction.Click += new System.EventHandler(this.ButtonBlockTransactionIdClick);
             // 
             // btnBlockAddress
             // 
@@ -596,7 +597,7 @@ namespace SUP
             this.btnBlockAddress.TabIndex = 60;
             this.btnBlockAddress.Text = "block address";
             this.btnBlockAddress.UseVisualStyleBackColor = true;
-            this.btnBlockAddress.Click += new System.EventHandler(this.btnBlockAddress_Click);
+            this.btnBlockAddress.Click += new System.EventHandler(this.ButtonBlockAddressClick);
             // 
             // btnProfileURN
             // 
@@ -606,7 +607,7 @@ namespace SUP
             this.btnProfileURN.TabIndex = 59;
             this.btnProfileURN.Text = "profile urn";
             this.btnProfileURN.UseVisualStyleBackColor = true;
-            this.btnProfileURN.Click += new System.EventHandler(this.btnProfileURN_Click);
+            this.btnProfileURN.Click += new System.EventHandler(this.ButtonProfileURNClick);
             // 
             // button4
             // 
@@ -616,7 +617,7 @@ namespace SUP
             this.button4.TabIndex = 58;
             this.button4.Text = "get profile";
             this.button4.UseVisualStyleBackColor = true;
-            this.button4.Click += new System.EventHandler(this.button4_Click);
+            this.button4.Click += new System.EventHandler(this.ButtonGetProfileByAddressClick);
             // 
             // btnObjectURN
             // 
@@ -626,7 +627,7 @@ namespace SUP
             this.btnObjectURN.TabIndex = 57;
             this.btnObjectURN.Text = "object urn";
             this.btnObjectURN.UseVisualStyleBackColor = true;
-            this.btnObjectURN.Click += new System.EventHandler(this.button3_Click_1);
+            this.btnObjectURN.Click += new System.EventHandler(this.ButtonGetObjectByURNClick);
             // 
             // txtGetValue
             // 
@@ -657,7 +658,7 @@ namespace SUP
             this.button2.TabIndex = 53;
             this.button2.Text = "by keyword";
             this.button2.UseVisualStyleBackColor = true;
-            this.button2.Click += new System.EventHandler(this.button2_Click_1);
+            this.button2.Click += new System.EventHandler(this.ButtonGetObjectsByKeywordClick);
             // 
             // button1
             // 
@@ -667,7 +668,7 @@ namespace SUP
             this.button1.TabIndex = 52;
             this.button1.Text = "get objects";
             this.button1.UseVisualStyleBackColor = true;
-            this.button1.Click += new System.EventHandler(this.button1_Click_1);
+            this.button1.Click += new System.EventHandler(this.ButtonGetObjectsByAddressClick);
             // 
             // btnGetCreated
             // 
@@ -677,7 +678,7 @@ namespace SUP
             this.btnGetCreated.TabIndex = 51;
             this.btnGetCreated.Text = "get created";
             this.btnGetCreated.UseVisualStyleBackColor = true;
-            this.btnGetCreated.Click += new System.EventHandler(this.btnGetCreated_Click);
+            this.btnGetCreated.Click += new System.EventHandler(this.ButtonGetCreatedClick);
             // 
             // btnGetOwned
             // 
@@ -687,7 +688,7 @@ namespace SUP
             this.btnGetOwned.TabIndex = 50;
             this.btnGetOwned.Text = "get owned";
             this.btnGetOwned.UseVisualStyleBackColor = true;
-            this.btnGetOwned.Click += new System.EventHandler(this.btnGetOwned_Click);
+            this.btnGetOwned.Click += new System.EventHandler(this.ButtonGetOwnedClick);
             // 
             // lblTotal
             // 
@@ -706,7 +707,7 @@ namespace SUP
             this.btnPurge.TabIndex = 45;
             this.btnPurge.Text = "purge";
             this.btnPurge.UseVisualStyleBackColor = true;
-            this.btnPurge.Click += new System.EventHandler(this.btnPurge_Click);
+            this.btnPurge.Click += new System.EventHandler(this.ButtonPurgeClick);
             // 
             // btnGetObject
             // 
@@ -716,7 +717,7 @@ namespace SUP
             this.btnGetObject.TabIndex = 44;
             this.btnGetObject.Text = "get object";
             this.btnGetObject.UseVisualStyleBackColor = true;
-            this.btnGetObject.Click += new System.EventHandler(this.button3_Click);
+            this.btnGetObject.Click += new System.EventHandler(this.ButtonGetObjectByAddressClick);
             // 
             // btnDecrypt
             // 
@@ -726,7 +727,7 @@ namespace SUP
             this.btnDecrypt.TabIndex = 43;
             this.btnDecrypt.Text = "decrypt";
             this.btnDecrypt.UseVisualStyleBackColor = true;
-            this.btnDecrypt.Click += new System.EventHandler(this.button2_Click);
+            this.btnDecrypt.Click += new System.EventHandler(this.ButtonDecryptTransactionIdClick);
             // 
             // btnEncrypt
             // 
@@ -736,7 +737,7 @@ namespace SUP
             this.btnEncrypt.TabIndex = 42;
             this.btnEncrypt.Text = "encrypt";
             this.btnEncrypt.UseVisualStyleBackColor = true;
-            this.btnEncrypt.Click += new System.EventHandler(this.Button1_Click);
+            this.btnEncrypt.Click += new System.EventHandler(this.ButtonEncryptTransactionIdClick);
             // 
             // WorkBench
             // 

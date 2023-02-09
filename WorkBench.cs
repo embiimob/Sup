@@ -21,7 +21,7 @@ namespace SUP
             InitializeComponent();
         }
 
-        private void BtnGet_Click(object sender, EventArgs e)
+        private void ButtonGetLevelDBClick(object sender, EventArgs e)
         {
             if (lbTableName.SelectedItem == null)
             {
@@ -52,7 +52,7 @@ namespace SUP
                 case "SUP":
                     var SUP = new Options { CreateIfMissing = true };
                     txtGetValue.Text = "";
-                    using (var db = new DB(SUP, @"sup"))
+                    using (var db = new DB(SUP, @"root\sup"))
                     {
                         LevelDB.Iterator it = db.CreateIterator();
                         for (
@@ -150,7 +150,7 @@ namespace SUP
             }
         }
 
-        private void BtnDelete_Click(object sender, EventArgs e)
+        private void ButtonDeleteLevelDBClick(object sender, EventArgs e)
         {
             if (lbTableName.SelectedItem == null)
             {
@@ -204,7 +204,7 @@ namespace SUP
             }
         }
 
-        private void BtnTestConnection_Click(object sender, EventArgs e)
+        private void ButtonTestConnectionClick(object sender, EventArgs e)
         {
             string walletUrl = txtUrl.Text;
             string walletUsername = txtLogin.Text;
@@ -248,7 +248,7 @@ namespace SUP
             }
         }
 
-        private void BtnSearch_Click(object sender, EventArgs e)
+        private void ButtonSearchClick(object sender, EventArgs e)
         {
             DateTime tmbeginCall = DateTime.UtcNow;
             Root[] roots = Root.GetRootsByAddress(
@@ -317,7 +317,7 @@ namespace SUP
             lblTotal.Text = "total:" + roots.Length.ToString();
         }
 
-        private void BtnGetTransactionId_Click(object sender, EventArgs e)
+        private void ButtonGetTransactionIdClick(object sender, EventArgs e)
         {
             DateTime tmbeginCall = DateTime.UtcNow;
             Root root = Root.GetRootByTransactionId(
@@ -387,7 +387,7 @@ namespace SUP
             }
         }
 
-        private void BtnGetKeyword_Click(object sender, EventArgs e)
+        private void ButtonGetKeywordClick(object sender, EventArgs e)
         {
             string publicAddress = Root.GetPublicAddressByKeyword(txtSearchAddress.Text, txtVersionByte.Text);
             DateTime tmbeginCall = DateTime.UtcNow;
@@ -454,7 +454,7 @@ namespace SUP
             lblTotal.Text = "total:" + roots.Length.ToString();
         }
 
-        private void Button1_Click(object sender, EventArgs e)
+        private void ButtonEncryptTransactionIdClick(object sender, EventArgs e)
         {
             OpenFileDialog openFileDialog = new OpenFileDialog
             {
@@ -528,7 +528,7 @@ namespace SUP
 
         }
 
-        private void button2_Click(object sender, EventArgs e)
+        private void ButtonDecryptTransactionIdClick(object sender, EventArgs e)
         {
             DateTime tmbeginCall = DateTime.UtcNow;
             byte[] result = Root.GetRootBytesByFile(new string[] { @"root/" + txtTransactionId.Text + @"/SEC" });
@@ -588,7 +588,7 @@ namespace SUP
 
         }
 
-        private void button3_Click(object sender, EventArgs e)
+        private void ButtonGetObjectByAddressClick(object sender, EventArgs e)
         {
             DateTime tmbeginCall = DateTime.UtcNow;
             OBJState Tester = OBJState.GetObjectByAddress(txtSearchAddress.Text, txtLogin.Text, txtPassword.Text, txtUrl.Text, txtVersionByte.Text,checkBox1.Checked);
@@ -603,10 +603,10 @@ namespace SUP
             lblTotalTime.Text = "time: " + Math.Truncate(elapsedMilliseconds);
             lblTotal.Text = "total: " + Tester.ProcessHeight.ToString();
                        
-            displayRootJSON(new JObject[] { JObject.FromObject(Tester)});
+            DisplayRootJSON(new JObject[] { JObject.FromObject(Tester)});
         }
 
-        private void btnPurge_Click(object sender, EventArgs e)
+        private void ButtonPurgeClick(object sender, EventArgs e)
         {
             lblTotalBytes.Text = "bytes: ";
             lblTotalTime.Text = "time: ";
@@ -648,7 +648,7 @@ namespace SUP
 
         }
 
-        private void btnGetOwned_Click(object sender, EventArgs e)
+        private void ButtonGetOwnedClick(object sender, EventArgs e)
         {
             DateTime tmbeginCall = DateTime.UtcNow;
             List<OBJState> ownedObjects = OBJState.GetObjectsOwnedByAddress(txtSearchAddress.Text, txtLogin.Text, txtPassword.Text, txtUrl.Text);
@@ -670,10 +670,10 @@ namespace SUP
                 
                 ObjectArray[objectcount++] = JObject.FromObject(obj);
             }
-            displayRootJSON(ObjectArray);
+            DisplayRootJSON(ObjectArray);
         }
 
-        private void btnGetCreated_Click(object sender, EventArgs e)
+        private void ButtonGetCreatedClick(object sender, EventArgs e)
         {
             DateTime tmbeginCall = DateTime.UtcNow;
             List<OBJState> createdObjects = OBJState.GetObjectsCreatedByAddress(txtSearchAddress.Text, txtLogin.Text, txtPassword.Text, txtUrl.Text);
@@ -694,11 +694,11 @@ namespace SUP
 
                 ObjectArray[objectcount++] = JObject.FromObject(obj);
             }
-            displayRootJSON(ObjectArray);
+            DisplayRootJSON(ObjectArray);
 
         }
 
-        private void button1_Click_1(object sender, EventArgs e)
+        private void ButtonGetObjectsByAddressClick(object sender, EventArgs e)
         {
             DateTime tmbeginCall = DateTime.UtcNow;
             List<OBJState> createdObjects = OBJState.GetObjectsByAddress(txtSearchAddress.Text, txtLogin.Text, txtPassword.Text, txtUrl.Text);
@@ -715,28 +715,16 @@ namespace SUP
             JObject[] ObjectArray = new JObject[createdObjects.Count];
             int objectcount = 0;
 
-            foreach (OBJState objstate in createdObjects)
-            {
-
-               
-            }
+     
             foreach (object obj in createdObjects)
             {
 
                 ObjectArray[objectcount++] = JObject.FromObject(obj);
             }
-            displayRootJSON(ObjectArray);
+            DisplayRootJSON(ObjectArray);
         }
 
-        private void Image_Click(object sender, EventArgs e)
-        {
-            var selectedImage = (PictureBox)sender;
-            //pictureBox1.Image = selectedImage.Image;
-            string url = selectedImage.ImageLocation;
-            Console.WriteLine(url);
-        }
-
-        private void button2_Click_1(object sender, EventArgs e)
+        private void ButtonGetObjectsByKeywordClick(object sender, EventArgs e)
         {
 
             List<string> searchList = new List<string> { txtSearchAddress.Text };
@@ -759,12 +747,12 @@ namespace SUP
 
                 ObjectArray[objectcount++] = JObject.FromObject(obj);
             }
-            displayRootJSON(ObjectArray);
+            DisplayRootJSON(ObjectArray);
 
 
         }
 
-        private void dgTransactions_CellClick(object sender, DataGridViewCellEventArgs e)
+        private void DataGridViewClick(object sender, DataGridViewCellEventArgs e)
         {
             if (e.RowIndex >= 0)
             {
@@ -774,15 +762,135 @@ namespace SUP
 
                     string transactionID = dgTransactions.Rows[e.RowIndex].Cells[9].Value.ToString();
                     
-                    displayRootJSON(new JObject[] { JObject.Parse(System.IO.File.ReadAllText(@"root\" + transactionID + @"\P2Fk.json")) });
+                    DisplayRootJSON(new JObject[] { JObject.Parse(System.IO.File.ReadAllText(@"root\" + transactionID + @"\P2Fk.json")) });
                                    }
-                catch(Exception ex){ 
-                    string error = ex.Message; }
+                catch{ }
             }
         }
 
+        private void ButtonGetObjectByURNClick(object sender, EventArgs e)
+        {
+                    
+            DateTime tmbeginCall = DateTime.UtcNow;
+            OBJState createdObject = OBJState.GetObjectByURN(txtSearchAddress.Text, txtLogin.Text, txtPassword.Text, txtUrl.Text);
+            DateTime tmendCall = DateTime.UtcNow;
+            lblTotalBytes.Text = "bytes: ";
+            lblTotalTime.Text = "time: ";
+            lblKbs.Text = "kb/s: ";
+            lblTotal.Text = "total:";
+            TimeSpan elapsedTime = tmendCall - tmbeginCall;
+            double elapsedMilliseconds = elapsedTime.TotalMilliseconds;
 
-        private void displayRootJSON(JObject[] jsonObject)
+            lblTotalTime.Text = "time: " + Math.Truncate(elapsedMilliseconds);
+           
+            JObject[] ObjectArray = new JObject[1];
+                  
+           ObjectArray[0] = JObject.FromObject(createdObject);
+           
+            DisplayRootJSON(ObjectArray);
+
+        }
+
+        private void ButtonGetProfileByAddressClick(object sender, EventArgs e)
+        {
+            DateTime tmbeginCall = DateTime.UtcNow;
+            PROState Tester = PROState.GetProfileByAddress(txtSearchAddress.Text, txtLogin.Text, txtPassword.Text, txtUrl.Text, txtVersionByte.Text, checkBox1.Checked);
+            DateTime tmendCall = DateTime.UtcNow;
+            lblTotalBytes.Text = "bytes: ";
+            lblTotalTime.Text = "time: ";
+            lblKbs.Text = "kb/s: ";
+            lblTotal.Text = "total:";
+            TimeSpan elapsedTime = tmendCall - tmbeginCall;
+            double elapsedMilliseconds = elapsedTime.TotalMilliseconds;
+
+            lblTotalTime.Text = "time: " + Math.Truncate(elapsedMilliseconds);
+            lblTotal.Text = "total: " + Tester.ProcessHeight.ToString();
+
+            DisplayRootJSON(new JObject[] { JObject.FromObject(Tester) });
+        }
+
+        private void ButtonProfileURNClick(object sender, EventArgs e)
+        {
+
+            DateTime tmbeginCall = DateTime.UtcNow;
+            PROState createdObject = PROState.GetProfileByURN(txtSearchAddress.Text, txtLogin.Text, txtPassword.Text, txtUrl.Text);
+            DateTime tmendCall = DateTime.UtcNow;
+            lblTotalBytes.Text = "bytes: ";
+            lblTotalTime.Text = "time: ";
+            lblKbs.Text = "kb/s: ";
+            lblTotal.Text = "total:";
+            TimeSpan elapsedTime = tmendCall - tmbeginCall;
+            double elapsedMilliseconds = elapsedTime.TotalMilliseconds;
+
+            lblTotalTime.Text = "time: " + Math.Truncate(elapsedMilliseconds);
+
+            JObject[] ObjectArray = new JObject[1];
+
+            ObjectArray[0] = JObject.FromObject(createdObject);
+
+            DisplayRootJSON(ObjectArray);
+        }
+
+        private void ButtonBlockTransactionIdClick(object sender, EventArgs e)
+        {
+            var WORK = new Options { CreateIfMissing = true };
+            using (var db = new DB(WORK, @"root\block"))
+            {
+                db.Put(txtTransactionId.Text, "true");
+            }
+        }
+
+        private void ButtonUnblockTransactionIdClick(object sender, EventArgs e)
+        {
+
+            var WORK = new Options { CreateIfMissing = true };
+            using (var db = new DB(WORK, @"root\block"))
+            {
+                db.Delete(txtTransactionId.Text);
+            }
+
+        }
+
+        private void ButtonBlockAddressClick(object sender, EventArgs e)
+        {
+            
+                var WORK = new Options { CreateIfMissing = true };
+                using (var db = new DB(WORK, @"root\block"))
+                {
+                    db.Put(txtSearchAddress.Text,"true");
+                }
+
+            
+        }
+
+        private void ButtonUnBlockAddressClick(object sender, EventArgs e)
+        {
+            var WORK = new Options { CreateIfMissing = true };
+            using (var db = new DB(WORK, @"root\block"))
+            {
+                db.Delete(txtSearchAddress.Text);
+            }
+        }
+
+        private void ButtonMuteAddressClick(object sender, EventArgs e)
+        {
+            var WORK = new Options { CreateIfMissing = true };
+            using (var db = new DB(WORK, @"root\mute"))
+            {
+                db.Put(txtSearchAddress.Text, "true");
+            }
+        }
+
+        private void ButtonUnMuteAddressClick(object sender, EventArgs e)
+        {
+            var WORK = new Options { CreateIfMissing = true };
+            using (var db = new DB(WORK, @"root\mute"))
+            {
+                db.Delete(txtSearchAddress.Text);
+            }
+        }
+
+        private void DisplayRootJSON(JObject[] jsonObject)
         {
             // parse the JSON string
             JObject[] json = jsonObject;
@@ -822,8 +930,9 @@ namespace SUP
                     try
                     {
                         txtGetValue.SelectionStart = txtGetValue.TextLength - line.Length - 1;
-                } catch { }
-                txtGetValue.SelectionLength = line.Length;
+                    }
+                    catch { }
+                    txtGetValue.SelectionLength = line.Length;
                     txtGetValue.SelectionColor = Color.Black; // for value
                 }
                 else
@@ -832,128 +941,21 @@ namespace SUP
                     try
                     {
                         txtGetValue.SelectionStart = txtGetValue.TextLength - line.Length - 1;
-            } catch { }
-            txtGetValue.SelectionLength = line.Length;
+                    }
+                    catch { }
+                    txtGetValue.SelectionLength = line.Length;
                     txtGetValue.SelectionColor = Color.Red; // for separator
                 }
             }
         }
 
-        private void splitContainer1_Resize(object sender, EventArgs e)
+        private void OnContainerResize(object sender, EventArgs e)
         {
             splitContainer1.SplitterDistance = 0;
         }
 
-        private void button3_Click_1(object sender, EventArgs e)
-        {
-                    
-            DateTime tmbeginCall = DateTime.UtcNow;
-            OBJState createdObject = OBJState.GetObjectByURN(txtSearchAddress.Text, txtLogin.Text, txtPassword.Text, txtUrl.Text);
-            DateTime tmendCall = DateTime.UtcNow;
-            lblTotalBytes.Text = "bytes: ";
-            lblTotalTime.Text = "time: ";
-            lblKbs.Text = "kb/s: ";
-            lblTotal.Text = "total:";
-            TimeSpan elapsedTime = tmendCall - tmbeginCall;
-            double elapsedMilliseconds = elapsedTime.TotalMilliseconds;
 
-            lblTotalTime.Text = "time: " + Math.Truncate(elapsedMilliseconds);
-           
-            JObject[] ObjectArray = new JObject[1];
-                  
-           ObjectArray[0] = JObject.FromObject(createdObject);
-           
-            displayRootJSON(ObjectArray);
 
-        }
-
-        private void button4_Click(object sender, EventArgs e)
-        {
-            DateTime tmbeginCall = DateTime.UtcNow;
-            PROState Tester = PROState.GetProfileByAddress(txtSearchAddress.Text, txtLogin.Text, txtPassword.Text, txtUrl.Text, txtVersionByte.Text, checkBox1.Checked);
-            DateTime tmendCall = DateTime.UtcNow;
-            lblTotalBytes.Text = "bytes: ";
-            lblTotalTime.Text = "time: ";
-            lblKbs.Text = "kb/s: ";
-            lblTotal.Text = "total:";
-            TimeSpan elapsedTime = tmendCall - tmbeginCall;
-            double elapsedMilliseconds = elapsedTime.TotalMilliseconds;
-
-            lblTotalTime.Text = "time: " + Math.Truncate(elapsedMilliseconds);
-            lblTotal.Text = "total: " + Tester.ProcessHeight.ToString();
-
-            displayRootJSON(new JObject[] { JObject.FromObject(Tester) });
-        }
-
-        private void btnProfileURN_Click(object sender, EventArgs e)
-        {
-
-            DateTime tmbeginCall = DateTime.UtcNow;
-            PROState createdObject = PROState.GetProfileByURN(txtSearchAddress.Text, txtLogin.Text, txtPassword.Text, txtUrl.Text);
-            DateTime tmendCall = DateTime.UtcNow;
-            lblTotalBytes.Text = "bytes: ";
-            lblTotalTime.Text = "time: ";
-            lblKbs.Text = "kb/s: ";
-            lblTotal.Text = "total:";
-            TimeSpan elapsedTime = tmendCall - tmbeginCall;
-            double elapsedMilliseconds = elapsedTime.TotalMilliseconds;
-
-            lblTotalTime.Text = "time: " + Math.Truncate(elapsedMilliseconds);
-
-            JObject[] ObjectArray = new JObject[1];
-
-            ObjectArray[0] = JObject.FromObject(createdObject);
-
-            displayRootJSON(ObjectArray);
-        }
-
-        private void btnBlockAddress_Click(object sender, EventArgs e)
-        {
-            
-                var WORK = new Options { CreateIfMissing = true };
-                using (var db = new DB(WORK, @"root/block"))
-                {
-                    db.Put(txtSearchAddress.Text,"true");
-                }
-
-            
-        }
-
-        private void btnMuteAddress_Click(object sender, EventArgs e)
-        {
-            var WORK = new Options { CreateIfMissing = true };
-            using (var db = new DB(WORK, @"root/mute"))
-            {
-                db.Put(txtSearchAddress.Text, "true");
-            }
-        }
-
-        private void btnUnMuteAddress_Click(object sender, EventArgs e)
-        {
-            var WORK = new Options { CreateIfMissing = true };
-            using (var db = new DB(WORK, @"root/mute"))
-            {
-                db.Delete(txtSearchAddress.Text);
-            }
-        }
-
-        private void btnUnBlockAddress_Click(object sender, EventArgs e)
-        {
-            var WORK = new Options { CreateIfMissing = true };
-            using (var db = new DB(WORK, @"root/block"))
-            {
-                db.Delete(txtSearchAddress.Text);
-            }
-        }
-
-        private void btnBlockTransaction_Click(object sender, EventArgs e)
-        {
-            var WORK = new Options { CreateIfMissing = true };
-            using (var db = new DB(WORK, @"root"))
-            {
-                db.Put(txtTransactionId.Text, "block");
-            }
-        }
     }
 }
 

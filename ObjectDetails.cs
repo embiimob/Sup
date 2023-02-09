@@ -20,7 +20,7 @@ namespace SUP
 {
     public partial class ObjectDetails : Form
     {
-        private string _objectaddress;
+        private readonly string _objectaddress;
         private bool isVerbose = false;
         public ObjectDetails(string objectaddress)
         {
@@ -46,12 +46,12 @@ namespace SUP
             }
         }
 
-        private void pictureBox1_Click_1(object sender, EventArgs e)
+        private void ShowFullScreenModeClick(object sender, EventArgs e)
         {
             new FullScreenView(pictureBox1.ImageLocation).Show();
         }
 
-        private void button1_Click(object sender, EventArgs e)
+        private void LaunchURN(object sender, EventArgs e)
         {
             string src = lblURNFullPath.Text;
             try
@@ -61,15 +61,13 @@ namespace SUP
 
         private void LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
-            // Handle the event here
 
-            // Get the link data
             var linkData = e.Link.LinkData;
             new ObjectBrowser((string)linkData).Show();
 
         }
 
-        private void btnShowObjectDetails_Click(object sender, EventArgs e)
+        private void ButtonShowObjectDetailsClick(object sender, EventArgs e)
         {
             CreatorsPanel.SuspendLayout();
             OwnersPanel.SuspendLayout();
@@ -88,19 +86,18 @@ namespace SUP
                 OwnersPanel.AutoScroll = true;
 
                 int row = 0;
-                DateTime urnblockdate = new DateTime();
-                DateTime imgblockdate = new DateTime();
-                DateTime uriblockdate = new DateTime();
                 foreach (KeyValuePair<string, long> item in objstate.Owners)
                 {
 
                     // Create a table layout panel for each row
-                    TableLayoutPanel rowPanel = new TableLayoutPanel();
-                    rowPanel.RowCount = 1;
-                    rowPanel.ColumnCount = 2;
-                    rowPanel.Dock = DockStyle.Top;
-                    rowPanel.AutoSize = true;
-                    rowPanel.Padding = new System.Windows.Forms.Padding(3);
+                    TableLayoutPanel rowPanel = new TableLayoutPanel
+                    {
+                        RowCount = 1,
+                        ColumnCount = 2,
+                        Dock = DockStyle.Top,
+                        AutoSize = true,
+                        Padding = new System.Windows.Forms.Padding(3)
+                    };
                     // Add the width of the first column to fixed value and second to fill remaining space
                     rowPanel.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 130));
                     rowPanel.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 110));
@@ -132,8 +129,7 @@ namespace SUP
                     }
                     else
                     {
-                        string ShortName;
-                        profileAddress.TryGetValue(searchkey, out ShortName);
+                        profileAddress.TryGetValue(searchkey, out string ShortName);
                         keyLabel.Text = ShortName;
                     }
 
@@ -150,10 +146,12 @@ namespace SUP
                     keyLabel.Dock = DockStyle.Left; // set dock property for key label 
 
                     // Create a label for the value column
-                    Label valueLabel = new Label();
-                    valueLabel.Text = item.Value.ToString();
-                    valueLabel.AutoSize = true;
-                    valueLabel.Dock = DockStyle.Right; // set dock property for value label 
+                    Label valueLabel = new Label
+                    {
+                        Text = item.Value.ToString(),
+                        AutoSize = true,
+                        Dock = DockStyle.Right // set dock property for value label 
+                    };
 
                     // Add the link label and value label to the row panel
                     rowPanel.Controls.Add(keyLabel, 0, 0);
@@ -191,12 +189,14 @@ namespace SUP
                     {
 
                         // Create a table layout panel for each row
-                        TableLayoutPanel rowPanel = new TableLayoutPanel();
-                        rowPanel.RowCount = 1;
-                        rowPanel.ColumnCount = 2;
-                        rowPanel.Dock = DockStyle.Top;
-                        rowPanel.AutoSize = true;
-                        rowPanel.Padding = new System.Windows.Forms.Padding(3);
+                        TableLayoutPanel rowPanel = new TableLayoutPanel
+                        {
+                            RowCount = 1,
+                            ColumnCount = 2,
+                            Dock = DockStyle.Top,
+                            AutoSize = true,
+                            Padding = new System.Windows.Forms.Padding(3)
+                        };
 
 
                         rowPanel.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 130));
@@ -254,12 +254,12 @@ namespace SUP
 
         }
 
-        private void button3_Click(object sender, EventArgs e)
+        private void ShowSupPanel(object sender, EventArgs e)
         {
             supPanel.Visible = true;
         }
 
-        private void button7_Click(object sender, EventArgs e)
+        private void RefreshSupMessages(object sender, EventArgs e)
         {
             supFlow.SuspendLayout();
             supFlow.Controls.Clear();
@@ -401,13 +401,15 @@ namespace SUP
         {
 
             // Create a table layout panel for each row
-            TableLayoutPanel row = new TableLayoutPanel();
-            row.RowCount = 1;
-            row.ColumnCount = 3;
-            row.AutoSize = true;
-            row.BackColor = bgcolor;
-            row.Padding = new System.Windows.Forms.Padding(0);
-            row.Margin = new System.Windows.Forms.Padding(0);
+            TableLayoutPanel row = new TableLayoutPanel
+            {
+                RowCount = 1,
+                ColumnCount = 3,
+                AutoSize = true,
+                BackColor = bgcolor,
+                Padding = new System.Windows.Forms.Padding(0),
+                Margin = new System.Windows.Forms.Padding(0)
+            };
             // Add the width of the first column to fixed value and second to fill remaining space
             row.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 50));
             row.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 90));
@@ -418,21 +420,25 @@ namespace SUP
 
             if (imageLocation != "")
             {
-                PictureBox picture = new PictureBox();
-                picture.Size = new System.Drawing.Size(50, 50);
-                picture.SizeMode = PictureBoxSizeMode.Zoom;
-                picture.ImageLocation = imageLocation;
-                picture.Margin = new System.Windows.Forms.Padding(0);
-                picture.Dock = DockStyle.Bottom;
+                PictureBox picture = new PictureBox
+                {
+                    Size = new System.Drawing.Size(50, 50),
+                    SizeMode = PictureBoxSizeMode.Zoom,
+                    ImageLocation = imageLocation,
+                    Margin = new System.Windows.Forms.Padding(0),
+                    Dock = DockStyle.Bottom
+                };
                 row.Controls.Add(picture, 0, 0);
             }
 
 
             // Create a LinkLabel with the owner name
-            LinkLabel owner = new LinkLabel();
-            owner.Text = ownerName;
-            owner.AutoSize = true;
-            owner.LinkClicked += (sender, e) => { Owner_LinkClicked(sender, e, ownerId); };
+            LinkLabel owner = new LinkLabel
+            {
+                Text = ownerName,
+                AutoSize = true
+            };
+            owner.LinkClicked += (sender, e) => { Owner_LinkClicked(ownerId); };
             owner.Font = new System.Drawing.Font("Microsoft Sans Serif", 7.7F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             owner.Margin = new System.Windows.Forms.Padding(0);
             owner.Dock = DockStyle.Bottom;
@@ -440,50 +446,60 @@ namespace SUP
 
 
             // Create a LinkLabel with the owner name
-            Label tstamp = new Label();
-            tstamp.AutoSize = true;
-            tstamp.Font = new System.Drawing.Font("Microsoft Sans Serif", 7.77F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            tstamp.Text = timestamp.ToString("MM/dd/yyyy hh:mm:ss");
-            tstamp.Margin = new System.Windows.Forms.Padding(0);
-            tstamp.Dock = DockStyle.Bottom;
+            Label tstamp = new Label
+            {
+                AutoSize = true,
+                Font = new System.Drawing.Font("Microsoft Sans Serif", 7.77F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0))),
+                Text = timestamp.ToString("MM/dd/yyyy hh:mm:ss"),
+                Margin = new System.Windows.Forms.Padding(0),
+                Dock = DockStyle.Bottom
+            };
             row.Controls.Add(tstamp, 2, 0);
 
 
 
-            TableLayoutPanel msg = new TableLayoutPanel();
-            msg.RowCount = 3;
-            msg.ColumnCount = 1;
-            msg.Dock = DockStyle.Top;
-            msg.BackColor = bgcolor;
-            msg.AutoSize = true;
-            msg.Margin = new System.Windows.Forms.Padding(0);
-            msg.Padding = new System.Windows.Forms.Padding(0);
+            TableLayoutPanel msg = new TableLayoutPanel
+            {
+                RowCount = 3,
+                ColumnCount = 1,
+                Dock = DockStyle.Top,
+                BackColor = bgcolor,
+                AutoSize = true,
+                Margin = new System.Windows.Forms.Padding(0),
+                Padding = new System.Windows.Forms.Padding(0)
+            };
             // Add the width of the first column to fixed value and second to fill remaining space
             msg.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 252));
             layoutPanel.Controls.Add(msg);
 
             // Create a Label with the message text
-            Label tpadding = new Label();
-            tpadding.AutoSize = true;
-            tpadding.Text = " ";
+            Label tpadding = new Label
+            {
+                AutoSize = true,
+                Text = " ",
 
-            tpadding.Margin = new System.Windows.Forms.Padding(0);
+                Margin = new System.Windows.Forms.Padding(0)
+            };
             msg.Controls.Add(tpadding, 0, 0);
 
             // Create a Label with the message text
-            Label message = new Label();
-            message.AutoSize = true;
-            message.Text = messageText;
-            message.Margin = new System.Windows.Forms.Padding(0);
-            message.TextAlign = System.Drawing.ContentAlignment.TopLeft;
+            Label message = new Label
+            {
+                AutoSize = true,
+                Text = messageText,
+                Margin = new System.Windows.Forms.Padding(0),
+                TextAlign = System.Drawing.ContentAlignment.TopLeft
+            };
             msg.Controls.Add(message, 1, 0);
 
 
             // Create a Label with the message text
-            Label bpadding = new Label();
-            bpadding.AutoSize = true;
-            bpadding.Text = " ";
-            bpadding.Margin = new System.Windows.Forms.Padding(0);
+            Label bpadding = new Label
+            {
+                AutoSize = true,
+                Text = " ",
+                Margin = new System.Windows.Forms.Padding(0)
+            };
             msg.Controls.Add(bpadding, 2, 0);
 
 
@@ -493,42 +509,50 @@ namespace SUP
         {
 
             // Create a table layout panel for each row
-            TableLayoutPanel row = new TableLayoutPanel();
-            row.RowCount = 1;
-            row.ColumnCount = 3;
-            row.Dock = DockStyle.Top;
-            row.AutoSize = true;
-            row.Padding = new System.Windows.Forms.Padding(0);
-            row.BackColor = bgcolor;
-            row.Margin = new System.Windows.Forms.Padding(0);
+            TableLayoutPanel row = new TableLayoutPanel
+            {
+                RowCount = 1,
+                ColumnCount = 3,
+                Dock = DockStyle.Top,
+                AutoSize = true,
+                Padding = new System.Windows.Forms.Padding(0),
+                BackColor = bgcolor,
+                Margin = new System.Windows.Forms.Padding(0)
+            };
             row.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 90));
             row.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 72));
             row.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 90));
             layoutPanel.Controls.Add(row);
 
 
-            LinkLabel fromname = new LinkLabel();
-            fromname.Text = fromName;
-            fromname.AutoSize = true;
-            fromname.LinkClicked += (sender, e) => { Owner_LinkClicked(sender, e, fromId); };
+            LinkLabel fromname = new LinkLabel
+            {
+                Text = fromName,
+                AutoSize = true
+            };
+            fromname.LinkClicked += (sender, e) => { Owner_LinkClicked(fromId); };
             fromname.Dock = DockStyle.Left;
             fromname.TextAlign = System.Drawing.ContentAlignment.TopLeft;
             fromname.Margin = new System.Windows.Forms.Padding(0);
             row.Controls.Add(fromname, 0, 0);
 
-            Label laction = new Label();
-            laction.Text = action;
-            laction.AutoSize = true;
-            laction.Dock = DockStyle.Left;
-            laction.TextAlign = System.Drawing.ContentAlignment.TopLeft;
-            laction.Margin = new System.Windows.Forms.Padding(0);
+            Label laction = new Label
+            {
+                Text = action,
+                AutoSize = true,
+                Dock = DockStyle.Left,
+                TextAlign = System.Drawing.ContentAlignment.TopLeft,
+                Margin = new System.Windows.Forms.Padding(0)
+            };
             row.Controls.Add(laction, 1, 0);
 
 
-            LinkLabel toname = new LinkLabel();
-            toname.Text = toName;
-            toname.AutoSize = true;
-            toname.LinkClicked += (sender, e) => { Owner_LinkClicked(sender, e, toId); };
+            LinkLabel toname = new LinkLabel
+            {
+                Text = toName,
+                AutoSize = true
+            };
+            toname.LinkClicked += (sender, e) => { Owner_LinkClicked(toId); };
             toname.Dock = DockStyle.Right;
             toname.TextAlign = System.Drawing.ContentAlignment.TopLeft;
             toname.Margin = new System.Windows.Forms.Padding(0);
@@ -539,88 +563,100 @@ namespace SUP
             {
 
 
-                TableLayoutPanel stats = new TableLayoutPanel();
-                stats.RowCount = 1;
-                stats.ColumnCount = 2;
-                stats.Dock = DockStyle.Top;
-                stats.AutoSize = true;
-                stats.BackColor = bgcolor;
-                stats.Padding = new System.Windows.Forms.Padding(0);
-                stats.Margin = new System.Windows.Forms.Padding(0);
+                TableLayoutPanel stats = new TableLayoutPanel
+                {
+                    RowCount = 1,
+                    ColumnCount = 2,
+                    Dock = DockStyle.Top,
+                    AutoSize = true,
+                    BackColor = bgcolor,
+                    Padding = new System.Windows.Forms.Padding(0),
+                    Margin = new System.Windows.Forms.Padding(0)
+                };
                 // Add the width of the first column to fixed value and second to fill remaining space
                 stats.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 126));
                 stats.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 126));
                 layoutPanel.Controls.Add(stats);
 
 
-                Label lqty = new Label();
-                lqty.Text = qty;
-                lqty.AutoSize = true;
-                lqty.TextAlign = System.Drawing.ContentAlignment.TopLeft;
-                lqty.Margin = new System.Windows.Forms.Padding(0);
+                Label lqty = new Label
+                {
+                    Text = qty,
+                    AutoSize = true,
+                    TextAlign = System.Drawing.ContentAlignment.TopLeft,
+                    Margin = new System.Windows.Forms.Padding(0)
+                };
                 stats.Controls.Add(lqty, 0, 0);
 
 
-                Label lamount = new Label();
-                lamount.Text = amount;
-                lamount.AutoSize = true;
-                lamount.TextAlign = System.Drawing.ContentAlignment.TopLeft;
-                lamount.Margin = new System.Windows.Forms.Padding(0);
+                Label lamount = new Label
+                {
+                    Text = amount,
+                    AutoSize = true,
+                    TextAlign = System.Drawing.ContentAlignment.TopLeft,
+                    Margin = new System.Windows.Forms.Padding(0)
+                };
                 stats.Controls.Add(lamount, 1, 0);
             }
 
 
-            TableLayoutPanel msg = new TableLayoutPanel();
-            msg.RowCount = 2;
-            msg.ColumnCount = 1;
-            msg.Dock = DockStyle.Bottom;
-            msg.AutoSize = true;
-            msg.BackColor = bgcolor;
-            msg.Padding = new System.Windows.Forms.Padding(0);
-            msg.Margin = new System.Windows.Forms.Padding(0);
+            TableLayoutPanel msg = new TableLayoutPanel
+            {
+                RowCount = 2,
+                ColumnCount = 1,
+                Dock = DockStyle.Bottom,
+                AutoSize = true,
+                BackColor = bgcolor,
+                Padding = new System.Windows.Forms.Padding(0),
+                Margin = new System.Windows.Forms.Padding(0)
+            };
             // Add the width of the first column to fixed value and second to fill remaining space
             msg.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 252));
             layoutPanel.Controls.Add(msg);
 
-            Label lstatus = new Label();
-            lstatus.Text = status;
-            lstatus.AutoSize = true;
-            lstatus.TextAlign = System.Drawing.ContentAlignment.TopLeft;
-            lstatus.Margin = new System.Windows.Forms.Padding(0);
+            Label lstatus = new Label
+            {
+                Text = status,
+                AutoSize = true,
+                TextAlign = System.Drawing.ContentAlignment.TopLeft,
+                Margin = new System.Windows.Forms.Padding(0)
+            };
             msg.Controls.Add(lstatus, 0, 0);
 
             // Create a LinkLabel with the owner name
-            Label tstamp = new Label();
-            tstamp.AutoSize = true;
-            tstamp.Font = new System.Drawing.Font("Microsoft Sans Serif", 7.77F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            tstamp.Text = timestamp.ToString("MM/dd/yyyy hh:mm:ss");
-            tstamp.TextAlign = System.Drawing.ContentAlignment.TopLeft;
-            tstamp.Margin = new System.Windows.Forms.Padding(0);
+            Label tstamp = new Label
+            {
+                AutoSize = true,
+                Font = new System.Drawing.Font("Microsoft Sans Serif", 7.77F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0))),
+                Text = timestamp.ToString("MM/dd/yyyy hh:mm:ss"),
+                TextAlign = System.Drawing.ContentAlignment.TopLeft,
+                Margin = new System.Windows.Forms.Padding(0)
+            };
             msg.Controls.Add(tstamp, 0, 1);
         }
 
-        void Owner_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e, string ownerId)
+        void Owner_LinkClicked( string ownerId)
         {
 
             new ObjectBrowser(ownerId).Show();
         }
 
-        private void txtName_Click(object sender, EventArgs e)
+        private void CopyAddressByNameClick(object sender, EventArgs e)
         {
             System.Windows.Clipboard.SetText(_objectaddress);
         }
 
-        private void lblTotalOwnedMain_Click(object sender, EventArgs e)
+        private void CopyAddressByTotalOwnedClick(object sender, EventArgs e)
         {
             System.Windows.Clipboard.SetText(_objectaddress);
         }
 
-        private void imgPicture_Click(object sender, EventArgs e)
+        private void CopyAddressByImageClick(object sender, EventArgs e)
         {
             System.Windows.Clipboard.SetText(_objectaddress);
         }
 
-        private async void lblRefreshFrame_Click(object sender, EventArgs e)
+        private async void MainRefreshClick(object sender, EventArgs e)
         {
             transFlow.Visible = false;
 
@@ -698,7 +734,7 @@ namespace SUP
                                     if (fileName == "")
                                     {
                                         fileName = "artifact";
-                                        imgurn = imgurn + @"\artifact";
+                                        imgurn += @"\artifact";
                                     }
                                     else { fileName = fileName.Replace(@"/", "").Replace(@"\", ""); }
                                     System.IO.File.Move("ipfs/" + transid + "_tmp", @"ipfs/" + transid + @"/" + fileName);
@@ -719,7 +755,7 @@ namespace SUP
                                 process3.Start();
 
                             }
-                            if (objstate.Image.Length == 51) { imgurn = imgurn + @"\artifact"; }
+                            if (objstate.Image.Length == 51) { imgurn += @"\artifact"; }
                         }
 
                         else
@@ -806,7 +842,7 @@ namespace SUP
                                     if (fileName == "")
                                     {
                                         fileName = "artifact";
-                                        urn = urn + @"\artifact";
+                                        urn += @"\artifact";
                                     }
                                     else { fileName = fileName.Replace(@"/", "").Replace(@"\", ""); }
                                     System.IO.File.Move("ipfs/" + transid + "_tmp", @"ipfs/" + transid + @"/" + fileName);
@@ -816,7 +852,7 @@ namespace SUP
                                 //attempt to pin fails silently if daemon is not running
                                 var SUP = new Options { CreateIfMissing = true };
 
-                                using (var db = new DB(SUP, @"root\sup"))
+                                using (var db = new DB(SUP, @"ipfs"))
                                 {
 
                                     string ipfsdaemon = db.Get("ipfs-daemon");
@@ -839,7 +875,7 @@ namespace SUP
 
                             }
 
-                            if (objstate.URN.Length == 51) { urn = urn + @"\artifact"; }
+                            if (objstate.URN.Length == 51) { urn += @"\artifact"; }
                         }
 
                         else
@@ -930,7 +966,7 @@ namespace SUP
                                     string fileName = objstate.URI.Replace(@"//", "").Replace(@"\\", "").Substring(51);
                                     if (fileName == "") { 
                                         fileName = "artifact";
-                                        uriurn = uriurn + @"\artifact";
+                                        uriurn += @"\artifact";
                                     } else { fileName = fileName.Replace(@"/", "").Replace(@"\", ""); }
                                     System.IO.File.Move("ipfs/" + transid + "_tmp", @"ipfs/" + transid + @"/" + fileName);
                                 }
@@ -938,7 +974,7 @@ namespace SUP
                                 //attempt to pin fails silently if daemon is not running
                                 var SUP = new Options { CreateIfMissing = true };
 
-                                using (var db = new DB(SUP, @"root\sup"))
+                                using (var db = new DB(SUP, @"ipfs"))
                                 {
 
                                     string ipfsdaemon = db.Get("ipfs-daemon");
@@ -961,7 +997,7 @@ namespace SUP
 
                             }
 
-                            if (objstate.URI.Length == 51) { uriurn = uriurn + @"\artifact"; }
+                            if (objstate.URI.Length == 51) { uriurn += @"\artifact"; }
                         }
 
                         else
@@ -1149,7 +1185,7 @@ namespace SUP
                                         if (fileName == "")
                                         {
                                             fileName = "artifact";
-                                            urn = urn + @"\artifact";
+                                            urn += @"\artifact";
                                         }
                                         else { fileName = fileName.Replace(@"/", "").Replace(@"\", ""); }
                                         System.IO.File.Move("ipfs/" + transid + "_tmp", @"ipfs/" + transid + @"/" + fileName);
@@ -1158,7 +1194,7 @@ namespace SUP
                                     //attempt to pin fails silently if daemon is not running
                                     var SUP = new Options { CreateIfMissing = true };
 
-                                    using (var db = new DB(SUP, @"root\sup"))
+                                    using (var db = new DB(SUP, @"ipfs"))
                                     {
 
                                         string ipfsdaemon = db.Get("ipfs-daemon");
@@ -1179,7 +1215,7 @@ namespace SUP
                                         }
                                     }
 
-                                    if (objstate.URN.Length == 51) { urn = urn + @"\artifact"; }
+                                    if (objstate.URN.Length == 51) { urn += @"\artifact"; }
 
                                 }
 
@@ -1282,37 +1318,19 @@ namespace SUP
         }
 
 
-        private void lblObjectCreatedDate_Click(object sender, EventArgs e)
+        private void CopyAddressByCreatedDateClick(object sender, EventArgs e)
         {
             System.Windows.Clipboard.SetText(_objectaddress);
         }
 
-        private void txtdesc_Click(object sender, EventArgs e)
+        private void CopyDescriptionByDescriptionClick(object sender, EventArgs e)
         {
             System.Windows.Clipboard.SetText(txtdesc.Text);
         }
 
-        private void txtURN_TextChanged(object sender, EventArgs e)
-        {
-            System.Windows.Clipboard.SetText(txtURN.Text);
-        }
+      
 
-        private void txtIMG_TextChanged(object sender, EventArgs e)
-        {
-            System.Windows.Clipboard.SetText(txtIMG.Text);
-        }
-
-        private void txtURI_TextChanged(object sender, EventArgs e)
-        {
-            System.Windows.Clipboard.SetText(txtURI.Text);
-        }
-
-        private void textBox1_TextChanged(object sender, EventArgs e)
-        {
-            System.Windows.Clipboard.SetText(txtSupMessage.Text);
-        }
-
-        private void btnRefreshTransactions_Click(object sender, EventArgs e)
+        private void ButtonRefreshTransactionsClick(object sender, EventArgs e)
         {
 
             transFlow.SuspendLayout();
@@ -1335,7 +1353,7 @@ namespace SUP
             }
             catch { }
 
-            OBJState objstate = OBJState.GetObjectByAddress(_objectaddress, "good-user", "better-password", "http://127.0.0.1:18332", "111", true);
+OBJState.GetObjectByAddress(_objectaddress, "good-user", "better-password", "http://127.0.0.1:18332", "111", true);
 
 
             var trans = new Options { CreateIfMissing = true };
