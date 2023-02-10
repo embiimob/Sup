@@ -637,18 +637,13 @@ namespace SUP.P2FK
             objectState.Verbose = verbose;
             var objectSerialized = JsonConvert.SerializeObject(objectState);
 
-            try
-            {
-                System.IO.File.WriteAllText(@"root\" + objectaddress + @"\" + "P2FK.json", objectSerialized);
-            }
-            catch
-            {
+           
                 if (!Directory.Exists(@"root\" + objectaddress))
                 {
                     Directory.CreateDirectory(@"root\" + objectaddress);
                 }
                 System.IO.File.WriteAllText(@"root\" + objectaddress + @"\" + "P2FK.json", objectSerialized);
-            }
+           
 
             return objectState;
 
@@ -728,26 +723,20 @@ namespace SUP.P2FK
                 if (transaction.Signed && transaction.Keyword != null && (transaction.File.ContainsKey("OBJ") || transaction.File.ContainsKey("GIV")))
                 {
 
-
-
                     foreach (string key in transaction.Keyword.Keys)
                     {
-                        OBJState isObject = GetObjectByAddress(key, username, password, url, versionByte);
-                        if (isObject.URN != null && !addedValues.Contains(key))
+
+                        if (!addedValues.Contains(key))
                         {
-                            if (isObject.Creators.ElementAt(0).Key == key)
+                            OBJState isObject = GetObjectByAddress(key, username, password, url, versionByte);
+                            if (isObject.URN != null && !addedValues.Contains(key))
                             {
+                                objectStates.Add(isObject);
+                                addedValues.Add(key);
 
-                                if (!addedValues.Contains(key))
-                                {
-
-                                    objectStates.Add(isObject);
-                                    addedValues.Add(key);
-
-                                }
                             }
-
                         }
+
                     }
 
 
@@ -789,29 +778,29 @@ namespace SUP.P2FK
                 {
 
 
-
-
                     foreach (string key in transaction.Keyword.Keys)
                     {
-                        OBJState isObject = GetObjectByAddress(key, username, password, url, versionByte);
-                        if (isObject.URN != null && !addedValues.Contains(isObject.URN))
+
+                        if (!addedValues.Contains(key))
                         {
-                            if (isObject.Creators.ElementAt(0).Key == key)
+                            OBJState isObject = GetObjectByAddress(key, username, password, url, versionByte);
+                            if (isObject.URN != null)
                             {
-
-
-
-                                if (!addedValues.Contains(isObject.URN) && (isObject.Owners.ContainsKey(objectaddress) || (isObject.Creators.ContainsKey(objectaddress) && isObject.Owners.ContainsKey(isObject.Creators.First().Key))))
+                                if (isObject.Creators.ElementAt(0).Key == key)
                                 {
 
-                                    objectStates.Add(isObject);
-                                    addedValues.Add(isObject.URN);
+                                    if ((isObject.Owners.ContainsKey(objectaddress) || (isObject.Creators.ContainsKey(objectaddress) && isObject.Owners.ContainsKey(isObject.Creators.First().Key))))
+                                    {
+
+                                        objectStates.Add(isObject);
+                                        addedValues.Add(key);
+
+                                    }
+
 
                                 }
 
-
                             }
-
                         }
                     }
 
@@ -857,29 +846,30 @@ namespace SUP.P2FK
 
                     foreach (string key in transaction.Keyword.Keys)
                     {
-
-                        OBJState isObject = GetObjectByAddress(key, username, password, url, versionByte);
-                        if (isObject.URN != null && !addedValues.Contains(isObject.URN))
+                        if (!addedValues.Contains(key))
                         {
-                            if (isObject.Creators.ElementAt(0).Key == key)
+                            OBJState isObject = GetObjectByAddress(key, username, password, url, versionByte);
+                            if (isObject.URN != null)
                             {
-
-
-                                if (!addedValues.Contains(isObject.URN) && isObject.Creators.ContainsKey(objectaddress) && isObject.Creators[objectaddress].Year > 1)
+                                if (isObject.Creators.ElementAt(0).Key == key)
                                 {
 
-                                    objectStates.Add(isObject);
-                                    addedValues.Add(isObject.URN);
+
+                                    if (isObject.Creators.ContainsKey(objectaddress) && isObject.Creators[objectaddress].Year > 1)
+                                    {
+
+                                        objectStates.Add(isObject);
+                                        addedValues.Add(key);
+
+                                    }
 
                                 }
 
                             }
-
                         }
 
                     }
-                    
-      
+
 
                 }
 
@@ -922,32 +912,29 @@ namespace SUP.P2FK
                     HashSet<string> addedValues = new HashSet<string>();
                     foreach (Root transaction in objectTransactions)
                     {
-
-                        //ignore any transaction that is not signed
-                        if (transaction.Signed && transaction.File.ContainsKey("OBJ"))
+                        string findObject = transaction.Keyword.Last().Key;
+                        if (!addedValues.Contains(findObject))
                         {
-                            string findObject = transaction.Keyword.Last().Key;
-                            OBJState isObject = GetObjectByAddress(findObject, username, password, url, versionByte);
-                            if (isObject.URN != null && !addedValues.Contains(findObject))
+                            //ignore any transaction that is not signed
+                            if (transaction.Signed && transaction.File.ContainsKey("OBJ"))
                             {
-                                if (isObject.Creators.ElementAt(0).Key == findObject)
-                                {
 
-                                    if (!addedValues.Contains(findObject))
+                                OBJState isObject = GetObjectByAddress(findObject, username, password, url, versionByte);
+                                if (isObject.URN != null && !addedValues.Contains(findObject))
+                                {
+                                    if (isObject.Creators.ElementAt(0).Key == findObject)
                                     {
 
                                         objectStates.Add(isObject);
                                         addedValues.Add(findObject);
 
                                     }
+
                                 }
 
+
                             }
-
-
-
                         }
-
 
                     }
 
