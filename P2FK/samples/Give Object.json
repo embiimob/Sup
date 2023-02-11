@@ -1,18 +1,21 @@
 [
-  [ 2, 1 ],
-  [ 3, 2 ],
-  [ 4, 3 ]
+  [ 8, 1 ],
+  [ 9, 2 ],
+  [ 10, 3 ]
 ]
 
 //assume keyword order id 0 is the authorization address
-//assume keyword order id 1 is the object being given
+//assume keyword order id 1-?  list of objects to give ( the max amount of objects to give in batch is #unknown but there is one )
 //[new owner keyword order id, qty to give]
 
 //remove all unnecessary spaces
 //place JSON in a file named GIV  (no file extension)
-//enter @objectaddress to give in the apertus.io message box
-//enter each additional @ownerAddress above the @objectaddress in the apertus.io message box 
-//in this example keyword order id 4 would be on the top of the list
+//enter @objectaddress(s) to give in the apertus.io message box
+//enter each @ownerAddress above the @objectaddress(s) in the apertus.io message box 
+//in this example keyword order id 10 would be on the top row of the apertus.io message box
+//in this example keywords 1 - 7 represent a list of objects
+//in this example keywords 8 - 10 represent receipients of the objects
+
 //attach file GIV using the apertus.io attach button
 //select a owners signature address from the signature list in apertus.io
 //verify that the no message box is checked.

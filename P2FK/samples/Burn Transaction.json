@@ -5,7 +5,7 @@
 ]
 
 //assume keyword order id 0 is the authorization address
-//assume keyword order id 1+ are the objects being burnt
+//assume keyword order id 1-?  list of objects to burn ( the max amount of objects to burn in batch is #unknown but there is one )
 //[object to burn keyword order id, qty to burn]
 
 //remove all unnecessary spaces
