@@ -465,21 +465,18 @@ namespace SUP.P2FK
 
             if (P2FKRoot.Message.Count() > 0 && isMuted != "true")
             {
-                foreach (KeyValuePair<string, string> keyword in P2FKRoot.Keyword)
+                lock (levelDBLocker)
                 {
-
-
-
-                    string msg = "[\"" + P2FKRoot.SignedBy + "\",\"" + P2FKRoot.TransactionId + "\"]";
-                    lock (levelDBLocker)
+                    foreach (KeyValuePair<string, string> keyword in P2FKRoot.Keyword)
                     {
+
+                        string msg = "[\"" + P2FKRoot.SignedBy + "\",\"" + P2FKRoot.TransactionId + "\"]";
                         var ROOT = new Options { CreateIfMissing = true };
                         var db = new DB(ROOT, @"root\sup");
                         db.Put(keyword.Key + "!" + P2FKRoot.BlockDate.ToString("yyyyMMddHHmmss"), msg);
                         db.Close();
+
                     }
-
-
                 }
             }
             return P2FKRoot;

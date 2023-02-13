@@ -83,6 +83,7 @@
             this.ObjectPrice.Size = new System.Drawing.Size(92, 20);
             this.ObjectPrice.TabIndex = 9;
             this.ObjectPrice.Text = "-";
+            this.ObjectPrice.TextChanged += new System.EventHandler(this.ObjectPrice_TextChanged);
             this.ObjectPrice.Click += new System.EventHandler(this.foundObjectControl_Click);
             // 
             // label4
@@ -110,6 +111,7 @@
             this.ObjectOffer.Size = new System.Drawing.Size(95, 20);
             this.ObjectOffer.TabIndex = 8;
             this.ObjectOffer.Text = "-";
+            this.ObjectOffer.TextChanged += new System.EventHandler(this.ObjectOffer_TextChanged);
             this.ObjectOffer.Click += new System.EventHandler(this.foundObjectControl_Click);
             // 
             // label3
@@ -162,8 +164,8 @@
             this.ObjectAddress.Size = new System.Drawing.Size(202, 21);
             this.ObjectAddress.TabIndex = 8;
             this.ObjectAddress.Text = "@";
-            this.ObjectAddress.TextAlign = System.Drawing.ContentAlignment.BottomCenter;
-            this.ObjectAddress.Click += new System.EventHandler(this.foundObjectControl_Click);
+            this.ObjectAddress.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.ObjectAddress.Click += new System.EventHandler(this.ObjectAddress_Click);
             // 
             // ObjectName
             // 
@@ -211,10 +213,11 @@
             this.flowLayoutPanel1.TabIndex = 12;
             this.flowLayoutPanel1.Click += new System.EventHandler(this.foundObjectControl_Click);
             // 
-            // foundObjectControl
+            // FoundObjectControl
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
             this.BackColor = System.Drawing.SystemColors.ActiveCaption;
             this.Controls.Add(this.ObjectName);
             this.Controls.Add(this.ObjectQty);
@@ -226,10 +229,9 @@
             this.DoubleBuffered = true;
             this.Margin = new System.Windows.Forms.Padding(1, 2, 2, 2);
             this.MaximumSize = new System.Drawing.Size(208, 367);
-            this.MinimumSize = new System.Drawing.Size(208, 367);
-            this.Name = "foundObjectControl";
+            this.Name = "FoundObjectControl";
             this.Padding = new System.Windows.Forms.Padding(0, 10, 0, 0);
-            this.Size = new System.Drawing.Size(208, 367);
+            this.Size = new System.Drawing.Size(208, 329);
             this.Click += new System.EventHandler(this.foundObjectControl_Click);
             ((System.ComponentModel.ISupportInitialize)(this.ObjectImage)).EndInit();
             this.panel1.ResumeLayout(false);

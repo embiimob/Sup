@@ -173,7 +173,7 @@
             this.label15.Name = "label15";
             this.label15.Size = new System.Drawing.Size(203, 13);
             this.label15.TabIndex = 124;
-            this.label15.Text = "Sup!? Object Browser  v0.1.4-beta";
+            this.label15.Text = "Sup!? Object Browser  v0.1.6-beta";
             // 
             // label14
             // 

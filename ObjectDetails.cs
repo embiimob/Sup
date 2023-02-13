@@ -12,6 +12,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text.RegularExpressions;
+using System.Threading;
 using System.Web.NBitcoin;
 using System.Windows.Forms;
 using Label = System.Windows.Forms.Label;
@@ -392,7 +393,7 @@ namespace SUP
                 }
                 it.Dispose();
             }
-            if (supFlow.Controls.Count > 0) { supFlow.ScrollControlIntoView(supFlow.Controls[supFlow.Controls.Count - 1]); }
+            
             supFlow.ResumeLayout();
             supPanel.Visible = true;
         }
@@ -1130,11 +1131,16 @@ namespace SUP
                         {
                             System.IO.File.WriteAllText(@"root\" + transactionid + @"\urnviewer.html", htmlstring);
                             button1.Visible = true;
+                            await webviewer.EnsureCoreWebView2Async();
+                            webviewer.CoreWebView2.Navigate(viewerPath);
                         }
-                        catch { }
+                        catch { Thread.Sleep(1000);
+                            await webviewer.EnsureCoreWebView2Async();
+                            webviewer.CoreWebView2.Navigate(viewerPath);
+                        }
 
-                        await webviewer.EnsureCoreWebView2Async();
-                        webviewer.CoreWebView2.Navigate(viewerPath);
+
+
 
                         break;
                     case ".htm":
@@ -1295,11 +1301,18 @@ namespace SUP
                         {
                             System.IO.File.WriteAllText(@"root\" + transactionid + @"\urnviewer.html", htmlembed);
                             button1.Visible = true;
+                            await webviewer.EnsureCoreWebView2Async();
+                            webviewer.CoreWebView2.Navigate(browserPath);
                         }
-                        catch { }
+                        catch
+                        {
+                            Thread.Sleep(1000);
+                            await webviewer.EnsureCoreWebView2Async();
+                            webviewer.CoreWebView2.Navigate(browserPath);
+                        }
 
-                        await webviewer.EnsureCoreWebView2Async();
-                        webviewer.CoreWebView2.Navigate(browserPath);
+
+
 
                         break;
                     default:

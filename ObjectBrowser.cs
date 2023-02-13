@@ -8,8 +8,11 @@ using System.Linq;
 using System.Net.Sockets;
 using System.Reflection;
 using System.Security.Policy;
+using System.Text.RegularExpressions;
+using System.Windows;
 using System.Windows.Forms;
 using System.Windows.Forms.VisualStyles;
+using System.Windows.Input;
 
 namespace SUP
 {
@@ -18,6 +21,8 @@ namespace SUP
     {
         Button lastClickedButton;
         private readonly string _objectaddress;
+        private List<String> SearchHistory = new List<String>();
+        private int SearchId = 0;
         public ObjectBrowser(string objectaddress)
         {
             InitializeComponent();
@@ -177,6 +182,7 @@ namespace SUP
 
 
                                 foundObject.ObjectCreators.Text = TruncateAddress(profile.URN);
+                                foundObject.ObjectCreators.Links.Add(0, creator.Key.Length, creator.Key);
                             }
                             else
                             {
@@ -185,6 +191,7 @@ namespace SUP
                                 if (profile.URN != null && foundObject.ObjectCreators2.Text == "")
                                 {
                                     foundObject.ObjectCreators2.Text = TruncateAddress(profile.URN);
+                                    foundObject.ObjectCreators2.Links.Add(0, creator.Key.Length, creator.Key);
                                 }
 
                             }
@@ -852,92 +859,163 @@ namespace SUP
 
         }
 
-        private void SearchAddressKeyDown(object sender, KeyEventArgs e)
+        private async void SearchAddressKeyDown(object sender, System.Windows.Forms.KeyEventArgs e)
         {
             if (e.KeyCode == Keys.Enter)
             {
                 btnOwned.BackColor = Color.White;
                 btnCreated.BackColor = Color.White;
 
-
-                if (txtSearchAddress.Text.StartsWith("#"))
+                if (SearchId == SearchHistory.Count)
                 {
-                    GetObjectsByKeyword(txtSearchAddress.Text.Replace("#", ""));
-
+                    SearchHistory.Add(txtSearchAddress.Text);
+                    SearchId++;
                 }
                 else
                 {
 
-                    if (txtSearchAddress.Text.ToLower().StartsWith(@"ipfs:"))
+                    if (SearchId > SearchHistory.Count - 1) { SearchId = SearchHistory.Count - 1; }
+                    SearchHistory[SearchId] = txtSearchAddress.Text;
+
+                }
+
+
+
+                if (txtSearchAddress.Text.ToLower().StartsWith("http"))
+                {
+                    flowLayoutPanel1.Controls.Clear();
+                    flowLayoutPanel1.AutoScroll = false;
+                    var webBrowser1 = new Microsoft.Web.WebView2.WinForms.WebView2();
+                    webBrowser1.Size = flowLayoutPanel1.Size;
+                    flowLayoutPanel1.Controls.Add(webBrowser1);
+
+                    await webBrowser1.EnsureCoreWebView2Async();
+                    webBrowser1.CoreWebView2.Navigate(txtSearchAddress.Text);
+                }
+                else
+                {
+                    flowLayoutPanel1.Controls.Clear();
+                    flowLayoutPanel1.AutoScroll = true;
+
+
+                    if (txtSearchAddress.Text.StartsWith("#"))
                     {
-                        string ipfsHash = txtSearchAddress.Text.Replace(@"//", "").Replace(@"\\", "").Substring(5, 46);
-
-                        if (!System.IO.Directory.Exists("ipfs/" + ipfsHash))
-                        {
-                            Process process2 = new Process();
-                            process2.StartInfo.FileName = @"ipfs\ipfs.exe";
-                            process2.StartInfo.Arguments = "get " + ipfsHash + @" -o ipfs\" + ipfsHash;
-                            process2.StartInfo.UseShellExecute = false;
-                            process2.StartInfo.CreateNoWindow = true;
-                            process2.Start();
-                            process2.WaitForExit();
-
-                            if (System.IO.File.Exists("ipfs/" + ipfsHash))
-                            {
-                                System.IO.File.Move("ipfs/" + ipfsHash, "ipfs/" + ipfsHash + "_tmp");
-                                System.IO.Directory.CreateDirectory("ipfs/" + ipfsHash);
-                                string fileName = txtSearchAddress.Text.Replace(@"//", "").Replace(@"\\", "").Substring(51);
-                                if (fileName == "") { fileName = "artifact"; } else { fileName = fileName.Replace(@"/", "").Replace(@"\", ""); }
-                                System.IO.File.Move("ipfs/" + ipfsHash + "_tmp", @"ipfs/" + ipfsHash + @"/" + fileName);
-
-                            }
-
-                            //attempt to pin fails silently if daemon is not running
-                            var SUP = new Options { CreateIfMissing = true };
-
-                            using (var db = new DB(SUP, @"ipfs"))
-                            {
-
-                                string ipfsdaemon = db.Get("ipfs-daemon");
-
-                                if (ipfsdaemon == "true")
-                                {
-                                    Process process3 = new Process
-                                    {
-                                        StartInfo = new ProcessStartInfo
-                                        {
-                                            FileName = @"ipfs\ipfs.exe",
-                                            Arguments = "pin add " + ipfsHash,
-                                            UseShellExecute = false,
-                                            CreateNoWindow = true
-                                        }
-                                    };
-                                    process3.Start();
-                                }
-                            }
-
-                            Process.Start("explorer.exe", System.IO.Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + @"\ipfs\" + ipfsHash);
-
-                        }
-                        else
-                        {
-
-                            Process.Start("explorer.exe", System.IO.Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + @"\ipfs\" + ipfsHash);
-
-                        }
-
+                        GetObjectsByKeyword(txtSearchAddress.Text.Replace("#", ""));
 
                     }
                     else
                     {
-                        if (txtSearchAddress.Text.StartsWith(@"sup:"))
+
+                        if (txtSearchAddress.Text.ToLower().StartsWith(@"ipfs:"))
                         {
-                            GetObjectsByURN(txtSearchAddress.Text.Replace("sup:", "").Replace(@"\\", "").Replace(@"//", ""));
+                            string ipfsHash = txtSearchAddress.Text.Replace(@"//", "").Replace(@"\\", "").Substring(5, 46);
+
+                            if (!System.IO.Directory.Exists("ipfs/" + ipfsHash))
+                            {
+                                Process process2 = new Process();
+                                process2.StartInfo.FileName = @"ipfs\ipfs.exe";
+                                process2.StartInfo.Arguments = "get " + ipfsHash + @" -o ipfs\" + ipfsHash;
+                                process2.StartInfo.UseShellExecute = false;
+                                process2.StartInfo.CreateNoWindow = true;
+                                process2.Start();
+                                process2.WaitForExit();
+
+                                if (System.IO.File.Exists("ipfs/" + ipfsHash))
+                                {
+                                    System.IO.File.Move("ipfs/" + ipfsHash, "ipfs/" + ipfsHash + "_tmp");
+                                    System.IO.Directory.CreateDirectory("ipfs/" + ipfsHash);
+                                    string fileName = txtSearchAddress.Text.Replace(@"//", "").Replace(@"\\", "").Substring(51);
+                                    if (fileName == "") { fileName = "artifact"; } else { fileName = fileName.Replace(@"/", "").Replace(@"\", ""); }
+                                    System.IO.File.Move("ipfs/" + ipfsHash + "_tmp", @"ipfs/" + ipfsHash + @"/" + fileName);
+
+                                }
+
+                                //attempt to pin fails silently if daemon is not running
+                                var SUP = new Options { CreateIfMissing = true };
+
+                                using (var db = new DB(SUP, @"ipfs"))
+                                {
+
+                                    string ipfsdaemon = db.Get("ipfs-daemon");
+
+                                    if (ipfsdaemon == "true")
+                                    {
+                                        Process process3 = new Process
+                                        {
+                                            StartInfo = new ProcessStartInfo
+                                            {
+                                                FileName = @"ipfs\ipfs.exe",
+                                                Arguments = "pin add " + ipfsHash,
+                                                UseShellExecute = false,
+                                                CreateNoWindow = true
+                                            }
+                                        };
+                                        process3.Start();
+                                    }
+                                }
+
+                                Process.Start("explorer.exe", System.IO.Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + @"\ipfs\" + ipfsHash);
+
+                            }
+                            else
+                            {
+
+                                Process.Start("explorer.exe", System.IO.Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + @"\ipfs\" + ipfsHash);
+
+                            }
+
+
                         }
-                        else { GetObjectsbyAddress(txtSearchAddress.Text.Replace("@", "")); }
+                        else
+                        {
+                            if (txtSearchAddress.Text.StartsWith(@"sup:"))
+                            {
+                                GetObjectsByURN(txtSearchAddress.Text.Replace("sup:", "").Replace(@"\\", "").Replace(@"//", ""));
+                            }
+                            else
+                            {
+
+                                Regex regexTransactionId = new Regex(@"\b[0-9a-f]{64}\b");
+
+                                if (txtSearchAddress.Text.Count() > 64 && regexTransactionId.IsMatch(txtSearchAddress.Text) && txtSearchAddress.Text.Contains(".htm"))
+                                {
+                                    if (txtSearchAddress.Text.StartsWith("MZC:"))
+                                    {
+                                        Root.GetRootByTransactionId(txtSearchAddress.Text.Substring(4, 64), txtLogin.Text, txtPassword.Text, @"http://127.0.0.1:12832", "50");
+                                    }
+                                    else
+                                    {
+                                        if (txtSearchAddress.Text.StartsWith("BTC:"))
+                                        {
+                                            Root.GetRootByTransactionId(txtSearchAddress.Text.Substring(4, 64), txtLogin.Text, txtPassword.Text, @"http://127.0.0.1:8332", "0");
+                                        }
+                                        else
+                                        {
+                                            Root.GetRootByTransactionId(txtSearchAddress.Text.Substring(0, 64), txtLogin.Text, txtPassword.Text, @"http://127.0.0.1:18332");
+                                        }
+
+                                    }
+                                    Match match = regexTransactionId.Match(txtSearchAddress.Text);
+                                    string browserPath = System.IO.Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + @"\root\" + txtSearchAddress.Text.Replace("MZC:","").Replace("BTC:", "");
+                                    browserPath = @"file:///" + browserPath.Replace(@"\", @"/");
+                                    flowLayoutPanel1.Controls.Clear();
+                                    flowLayoutPanel1.AutoScroll = false;
+                                    var webBrowser1 = new Microsoft.Web.WebView2.WinForms.WebView2();
+                                    webBrowser1.Size = flowLayoutPanel1.Size;
+                                    flowLayoutPanel1.Controls.Add(webBrowser1);
+
+                                    await webBrowser1.EnsureCoreWebView2Async();
+                                    webBrowser1.CoreWebView2.Navigate(browserPath.Replace(@"/", @"\"));
+                                }
+                                else
+                                {
+                                    GetObjectsbyAddress(txtSearchAddress.Text.Replace("@", ""));
+                                }
+
+                            }
+                        }
                     }
                 }
-
 
             }
 
@@ -1011,5 +1089,48 @@ namespace SUP
             }
         }
 
+        private void flowLayoutPanel1_SizeChanged(object sender, EventArgs e)
+        {
+            if (flowLayoutPanel1.Controls.Count > 0 && flowLayoutPanel1.Controls[0] is Microsoft.Web.WebView2.WinForms.WebView2)
+            {
+                flowLayoutPanel1.Controls[0].Size = flowLayoutPanel1.Size;
+            }
+        }
+
+        private void button2_Click(object sender, EventArgs e)
+        {
+            if (lastClickedButton != null)
+                lastClickedButton.BackColor = Color.White;
+
+            var button = (Button)sender;
+            lastClickedButton = button;
+            button.BackColor = Color.Yellow;
+        }
+
+        private void btnHistoryBack_Click(object sender, EventArgs e)
+        {
+
+            if (SearchHistory.Count - 1 > 0)
+            {
+                SearchId--;
+                if (SearchId < 0) { SearchId = 0; }
+
+                txtSearchAddress.Text = SearchHistory[SearchId].ToString();
+                txtSearchAddress.Focus();
+                SendKeys.SendWait("{Enter}");
+
+            }
+        }
+
+        private void btnHistoryForward_Click(object sender, EventArgs e)
+        {
+            if (SearchHistory.Count - 1 > SearchId)
+            {
+                SearchId++;
+                txtSearchAddress.Text = SearchHistory[SearchId].ToString();
+                txtSearchAddress.Focus();
+                SendKeys.SendWait("{Enter}");
+            }
+        }
     }
 }
