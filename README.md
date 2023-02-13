@@ -11,7 +11,7 @@ P2FK was directly inspired by the satoshi uploader  see --> https://cirosantilli
 
 ## **Installation**
 
-1. Download the Sup.v0.1.5-beta.zip file
+1. Download the Sup.v0.1.6-beta.zip file
 2. Create a folder on your **fastest** disk drive with at least **700GB** free (it will be storing the bitcoin prod and testnet blockchains)
 3. Unzip all contents into the folder.
 4. Create a shortcut to SUP.exe and launch.
@@ -34,7 +34,11 @@ searches urn shows currently registered object with URI  ( no urn character limi
 
 ### **@UserName**
 
-searches urn shows currently registered profile object associated with @userName and shows all object associatins
+searches urn shows currently registered profile object associated with @userName and shows all object associations
+
+### **http(s)://embii.org**
+
+navigates to requested url in browser.
 
 ### **ipfs://QmU42aLJToYmshwJu26iprH9RsX6SfJDw3FTf6senJEdF1**
 
