@@ -27,14 +27,18 @@ P2FK was directly inspired by the satoshi uploader  see --> https://cirosantilli
 ### **#CaseSensitiveKeyword**
 
 searches up to a 20 character case sensitive keyword and shows all object associations
- 
-### **sup://twitter.com**
 
-searches urn shows currently registered object with URI  ( no urn character limits, redirects are NOT enabled )
+### **muVrFVk3ErfrnmWosLF4WixxRtDKfMx9bs**
+
+searches main blockchain returns all object associations and associated profile
 
 ### **@UserName**
 
 searches urn shows currently registered profile object associated with @userName and shows all object associations
+
+### **sup://twitter.com**
+
+searches urn shows currently registered object with URI  ( no urn character limits, redirects are NOT enabled )
 
 ### **http(s)://embii.org**
 
@@ -44,7 +48,6 @@ navigates to requested url in browser.
 
 performs a ipfs get, archives ipfs file(s) locally, pins file(s) if pinning is enabled, opens a system folder dioluge allowing you to explore any files found<br />
 <br /> <br />
-
 
 ### **Block \ Mute**
 
