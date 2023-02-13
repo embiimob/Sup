@@ -1,7 +1,7 @@
 # Sup!? 
 experimental decentralized state engine browser
 
-Sup!? is a READ ONLY demonstration of establishing a decentralized identity and tracking state changes with comments on immutable blockchain objects in a format familiar to NFT enthusiasts. the experimental Sup!? object browser is currently hardcoded to reference the bitcoin testnet mainchain ONLY. the production read / write deployment will be released December 2023, our goal is to give #teamworld ample time for testing and integrations
+Sup!? is a READ ONLY demonstration of establishing a decentralized identity and tracking state changes with comments on immutable blockchain objects in a format familiar to NFT enthusiasts. the experimental Sup!? object browser is currently hardcoded to reference the bitcoin testnet mainchain ONLY. a production read / write deployment will be released December 2023, our goal is to give #teamworld ample time for testing and integrations
 
 This experiment is using an ancient blockchain protocol called P2FK (Pay to Future Key) invented by http://HugPuddle.org in 2013.
 
