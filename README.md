@@ -1,7 +1,7 @@
 # Sup!? 
 experimental decentralized state engine browser
 
-Sup!? Object Browser is currently a READ ONLY demonstration of establishing a decentralized identity and tracking state changes with comments on immutable blockhain objects in a format familiar to NFT enthusiasts. 
+Sup!? is a READ ONLY demonstration of establishing a decentralized identity and tracking state changes with comments on immutable blockchain objects in a format familiar to NFT enthusiasts. this experimental Sup!? object browser is currently hardcoded to reference the bitcoin testnet mainchain ONLY. the production read / write deployment will be released December 2023, our goal is to give #teamworld ample time for testing and integrations
 
 This experiment is using an ancient blockchain protocol called P2FK (Pay to Future Key) invented by http://HugPuddle.org in 2013.
 
@@ -42,13 +42,13 @@ searches sidechain - mazacoin production by transaction id returns referenced in
 searches mainchain for up to a 20 character case sensitive keyword and shows all object associations
 
 ### **@UserName**
-searches main blockchain by urn shows currently registered profile object associated with @userName and shows all object associations
+searches main blockchain by urn shows currently registered profile object associated with @userName and shows all object associations.  profile registrations are transferable and expire after 3 years of no activity allowing them to be claimed by other registrants in the future
 
 ### **ipfs://QmU42aLJToYmshwJu26iprH9RsX6SfJDw3FTf6senJEdF1**
 performs a ipfs get, archives ipfs file(s) locally, pins file(s) if pinning is enabled, opens a system folder dioluge allowing you to explore any files found
 
 ### **sup://twitter.com**
-searches main blockchain by  urn shows currently registered object with URI  ( no urn character limits, redirects are NOT enabled )
+searches main blockchain by  urn shows currently registered object with URI.  urn registrations are transferable and expire after 3 years of no activity allowing them to be claimed by other registrants in the future.  ( there are no urn character limits, redirects are NOT enabled )
 
 ### **http(s)://embii.org**
 navigates to requested url in browser.
@@ -69,22 +69,22 @@ trusted index.html and index.htm files are sent the following Sup!? object infor
 ### **URN IMG & URI Referencing Standards**<br />
 <br />
 
-IPFS:Qma7o6Yx2HQfCkNJEHv1gpiDzoZU8rNc6JFQXijfyt8cGc<br />
+IPFS:Qma7o6Yx2HQfCkNJEHv1gpiDzoZU8rNc6JFQXijfyt8cGc
 ( references an IPFS gif file creates a default file named {hash}/artifact  )<br />
 <br />
-IPFS:Qmex6VRDqwVCMPrc7ojtBWzUBPdQAmWq9FcprKTcgmbKX3/baby punch.glb<br />
+IPFS:Qmex6VRDqwVCMPrc7ojtBWzUBPdQAmWq9FcprKTcgmbKX3/baby punch.glb
 ( references and IPFS file outputs file with given name {hash}/baby punch.glb  )<br />
 <br />
-66e5f4df4bd0a3ea9b569498ed25f848e837b9dec7a2699c1d6756ae9560c962/8354.png<br />
+66e5f4df4bd0a3ea9b569498ed25f848e837b9dec7a2699c1d6756ae9560c962/8354.png
 ( references mainchain - bitcoin testnet P2FK )<br />
 <br />
-MZC:c0c7fa9536e31e04a65252d8acec29af1c54cb0a44609af7fb9e3804065c7f19/chief-sitting-bull.jpg<br />
+MZC:c0c7fa9536e31e04a65252d8acec29af1c54cb0a44609af7fb9e3804065c7f19/chief-sitting-bull.jpg
 ( references sidechain - mazacoin production P2FK )<br />
 <br />
-BTC:3ff52882c93420c8fe4a90f6fa94b2a563316b5e7b83afe2ddd5bcadc86d3821/FakeUFO.png<br />
+BTC:3ff52882c93420c8fe4a90f6fa94b2a563316b5e7b83afe2ddd5bcadc86d3821/FakeUFO.png
 ( references sidechain - bitcoin production P2FK )<br />
 <br />
-http://bitfossil.org/7033eb8138de0d3f4be111a57dfb8319b400d3b6a6f5b387a22b334ebb998e93/EMBII.jpg<br /> 
+http://bitfossil.org/7033eb8138de0d3f4be111a57dfb8319b400d3b6a6f5b387a22b334ebb998e93/EMBII.jpg 
 ( references a http(s) address )<br />
 <br />
 
