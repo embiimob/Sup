@@ -48,7 +48,7 @@ searches main blockchain by urn shows currently registered profile object associ
 performs a ipfs get, archives ipfs file(s) locally, pins file(s) if pinning is enabled, opens a system folder dioluge allowing you to explore any files found
 
 ### **sup://twitter.com**
-searches main blockchain by  urn shows currently registered object with URI.  urn registrations are transferable and expire after 3 years of no activity allowing them to be claimed by other registrants in the future.  ( there are no urn character limits, redirects are NOT enabled )
+searches mainchain by  urn shows currently registered object with URI.  urn registrations are transferable and expire after 3 years of no activity allowing them to be claimed by other registrants in the future.  ( there are no urn character limits, redirects are NOT enabled )
 
 ### **http(s)://embii.org**
 navigates to requested url in browser.
