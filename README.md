@@ -42,7 +42,7 @@ searches sidechain - mazacoin production by transaction id returns referenced in
 searches mainchain for up to a 20 character case sensitive keyword and shows all object associations
 
 ### **@UserName**
-searches main blockchain by urn shows currently registered profile object associated with @userName and shows all object associations.  profile registrations are transferable and expire after 3 years of no activity allowing them to be claimed by other registrants in the future
+searches mainchain by urn shows currently registered profile object associated with @userName and shows all object associations.  profile registrations are transferable and expire after 3 years of no activity allowing them to be claimed by other registrants in the future
 
 ### **ipfs://QmU42aLJToYmshwJu26iprH9RsX6SfJDw3FTf6senJEdF1**
 performs a ipfs get, archives ipfs file(s) locally, pins file(s) if pinning is enabled, opens a system folder dioluge allowing you to explore any files found
