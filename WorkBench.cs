@@ -1,4 +1,5 @@
 ﻿using LevelDB;
+using NBitcoin.Protocol;
 using NBitcoin.RPC;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
@@ -10,6 +11,7 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Numerics;
+using System.Windows.Controls;
 using System.Windows.Forms;
 
 namespace SUP
@@ -954,8 +956,35 @@ namespace SUP
             splitContainer1.SplitterDistance = 0;
         }
 
+        private void WorkBench_DragEnter(object sender, DragEventArgs e)
+        {
+            if(e.Data.GetDataPresent(DataFormats.FileDrop))
+    {
+                e.Effect = DragDropEffects.Copy;
+            }
+        }
 
+        private void WorkBench_DragDrop(object sender, DragEventArgs e)
+        {
+            string[] files = (string[])e.Data.GetData(DataFormats.FileDrop);
+            if (files.Length > 0)
+            {
+                string[] filePaths = (string[])e.Data.GetData((System.Windows.Forms.DataFormats.FileDrop));
+                string filepath = filePaths[0];
+                byte[] payload = new byte[21];
 
+                using (FileStream fileStream = new FileStream(filepath, FileMode.Open))
+                {
+                    fileStream.Read(payload, 1, 20);
+                }
+
+                payload[0] = Byte.Parse("111");
+                string objectaddress = Base58.EncodeWithCheckSum(payload);
+
+                txtGetValue.Text = @"Use the following keyword to register this file --> @"+objectaddress;
+
+            }
+        }
     }
 }
 

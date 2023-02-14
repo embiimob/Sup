@@ -1,9 +1,13 @@
 ﻿using LevelDB;
+using NBitcoin.RPC;
+using Newtonsoft.Json;
 using SUP.P2FK;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Net.Sockets;
 using System.Reflection;
@@ -13,6 +17,11 @@ using System.Windows;
 using System.Windows.Forms;
 using System.Windows.Forms.VisualStyles;
 using System.Windows.Input;
+using NBitcoin;
+using AngleSharp.Dom;
+using System.Net;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement.StartPanel;
+using System.Text;
 
 namespace SUP
 {
@@ -170,7 +179,7 @@ namespace SUP
                     foundObject.ObjectAddress.Text = objstate.Creators.First().Key;
                     foundObject.ObjectQty.Text = objstate.Owners.Values.Sum().ToString() + "x";
 
-                    foreach (KeyValuePair<string, DateTime> creator in objstate.Creators)
+                    foreach (KeyValuePair<string, DateTime> creator in objstate.Creators.Skip(1))
                     {
 
                         if (creator.Value.Year > 1)
@@ -195,6 +204,29 @@ namespace SUP
                                 }
 
                             }
+                        }
+                        else
+                        {
+
+                            if (foundObject.ObjectCreators.Text == "")
+                            {
+
+
+                                foundObject.ObjectCreators.Text = TruncateAddress(creator.Key);
+                                foundObject.ObjectCreators.Links.Add(0, creator.Key.Length, creator.Key);
+                            }
+                            else
+                            {
+
+
+                                if (foundObject.ObjectCreators2.Text == "")
+                                {
+                                    foundObject.ObjectCreators2.Text = TruncateAddress(creator.Key);
+                                    foundObject.ObjectCreators2.Links.Add(0, creator.Key.Length, creator.Key);
+                                }
+
+                            }
+
                         }
 
                     }
@@ -316,23 +348,52 @@ namespace SUP
                     foreach (KeyValuePair<string, DateTime> creator in objstate.Creators.Skip(1))
                     {
 
-                        PROState profile = PROState.GetProfileByAddress(creator.Key, txtLogin.Text, txtPassword.Text, txtUrl.Text);
-
-                        if (profile.URN != null && foundObject.ObjectCreators.Text == "")
+                        if (creator.Value.Year > 1)
                         {
-                            foundObject.ObjectCreators.Text = TruncateAddress(profile.URN);
+                            PROState profile = PROState.GetProfileByAddress(creator.Key, txtLogin.Text, txtPassword.Text, txtUrl.Text);
+
+                            if (profile.URN != null && foundObject.ObjectCreators.Text == "")
+                            {
+
+
+                                foundObject.ObjectCreators.Text = TruncateAddress(profile.URN);
+                                foundObject.ObjectCreators.Links.Add(0, creator.Key.Length, creator.Key);
+                            }
+                            else
+                            {
+
+
+                                if (profile.URN != null && foundObject.ObjectCreators2.Text == "")
+                                {
+                                    foundObject.ObjectCreators2.Text = TruncateAddress(profile.URN);
+                                    foundObject.ObjectCreators2.Links.Add(0, creator.Key.Length, creator.Key);
+                                }
+
+                            }
                         }
                         else
                         {
 
-
-                            if (profile.URN != null && foundObject.ObjectCreators2.Text == "")
+                            if (foundObject.ObjectCreators.Text == "")
                             {
-                                foundObject.ObjectCreators2.Text = TruncateAddress(profile.URN);
+
+
+                                foundObject.ObjectCreators.Text = TruncateAddress(creator.Key);
+                                foundObject.ObjectCreators.Links.Add(0, creator.Key.Length, creator.Key);
+                            }
+                            else
+                            {
+
+
+                                if (foundObject.ObjectCreators2.Text == "")
+                                {
+                                    foundObject.ObjectCreators2.Text = TruncateAddress(creator.Key);
+                                    foundObject.ObjectCreators2.Links.Add(0, creator.Key.Length, creator.Key);
+                                }
+
                             }
 
                         }
-
 
                     }
                     foundObject.ObjectQty.Text = objstate.Owners.Values.Sum().ToString() + "x";
@@ -450,20 +511,208 @@ namespace SUP
                 foundObject.ObjectDescription.Text = objstate.Description;
                 foreach (KeyValuePair<string, DateTime> creator in objstate.Creators.Skip(1))
                 {
-
-                    PROState profile = PROState.GetProfileByAddress(creator.Key, txtLogin.Text, txtPassword.Text, txtUrl.Text);
-
-                    if (profile.URN != null && foundObject.ObjectCreators.Text == "")
+                    if (creator.Value.Year > 1)
                     {
-                        foundObject.ObjectCreators.Text = TruncateAddress(profile.URN);
+                        PROState profile = PROState.GetProfileByAddress(creator.Key, txtLogin.Text, txtPassword.Text, txtUrl.Text);
+
+                        if (profile.URN != null && foundObject.ObjectCreators.Text == "")
+                        {
+
+
+                            foundObject.ObjectCreators.Text = TruncateAddress(profile.URN);
+                            foundObject.ObjectCreators.Links.Add(0, creator.Key.Length, creator.Key);
+                        }
+                        else
+                        {
+
+
+                            if (profile.URN != null && foundObject.ObjectCreators2.Text == "")
+                            {
+                                foundObject.ObjectCreators2.Text = TruncateAddress(profile.URN);
+                                foundObject.ObjectCreators2.Links.Add(0, creator.Key.Length, creator.Key);
+                            }
+
+                        }
                     }
                     else
                     {
 
-
-                        if (profile.URN != null && foundObject.ObjectCreators2.Text == "")
+                        if (foundObject.ObjectCreators.Text == "")
                         {
-                            foundObject.ObjectCreators2.Text = TruncateAddress(profile.URN);
+
+
+                            foundObject.ObjectCreators.Text = TruncateAddress(creator.Key);
+                            foundObject.ObjectCreators.Links.Add(0, creator.Key.Length, creator.Key);
+                        }
+                        else
+                        {
+
+
+                            if (foundObject.ObjectCreators2.Text == "")
+                            {
+                                foundObject.ObjectCreators2.Text = TruncateAddress(creator.Key);
+                                foundObject.ObjectCreators2.Links.Add(0, creator.Key.Length, creator.Key);
+                            }
+
+                        }
+
+                    }
+
+
+                }
+                foundObject.ObjectQty.Text = objstate.Owners.Values.Sum().ToString() + "x";
+                foundObject.ObjectAddress.Text = objstate.Creators.First().Key;
+                flowLayoutPanel1.Controls.Add(foundObject);
+            }
+        }
+
+        private void GetObjectByFile(string filePath)
+        {
+
+            flowLayoutPanel1.Controls.Clear();
+
+            OBJState objstate = OBJState.GetObjectByFile(filePath, txtLogin.Text, txtPassword.Text, txtUrl.Text);
+
+            if (objstate.Owners != null)
+            {
+
+                FoundObjectControl foundObject = new FoundObjectControl();
+
+                switch (objstate.Image.ToUpper().Substring(0, 4))
+                {
+                    case "BTC:":
+                        string transid = objstate.Image.Substring(4, 64);
+                        if (!System.IO.Directory.Exists("root/" + transid))
+                        {
+                            Root.GetRootByTransactionId(transid, txtLogin.Text, txtPassword.Text, @"http://127.0.0.1:8332", "0");
+                        }
+                        foundObject.ObjectImage.ImageLocation = objstate.Image.Replace("BTC:", @"root/");
+                        break;
+                    case "MZC:":
+                        transid = objstate.Image.Substring(4, 64);
+                        if (!System.IO.Directory.Exists("root/" + transid))
+                        {
+                            Root.GetRootByTransactionId(transid, txtLogin.Text, txtPassword.Text, @"http://127.0.0.1:12832", "50");
+                        }
+                        foundObject.ObjectImage.ImageLocation = objstate.Image.Replace("MZC:", @"root/");
+                        break;
+                    case "IPFS":
+                        transid = objstate.Image.Substring(5, 46);
+
+                        if (!System.IO.Directory.Exists("ipfs/" + transid))
+                        {
+                            Process process2 = new Process();
+                            process2.StartInfo.FileName = @"ipfs\ipfs.exe";
+                            process2.StartInfo.Arguments = "get " + objstate.Image.Substring(5, 46) + @" -o ipfs\" + transid;
+                            process2.StartInfo.UseShellExecute = false;
+                            process2.StartInfo.CreateNoWindow = true;
+                            process2.Start();
+                            process2.WaitForExit();
+
+                            if (System.IO.File.Exists("ipfs/" + transid))
+                            {
+                                System.IO.File.Move("ipfs/" + transid, "ipfs/" + transid + "_tmp");
+                                System.IO.Directory.CreateDirectory("ipfs/" + transid);
+                                string fileName = objstate.Image.Replace(@"//", "").Replace(@"\\", "").Substring(51);
+                                if (fileName == "") { fileName = "artifact"; } else { fileName = fileName.Replace(@"/", "").Replace(@"\", ""); }
+                                System.IO.File.Move("ipfs/" + transid + "_tmp", @"ipfs/" + transid + @"/" + fileName);
+                            }
+
+
+
+                            var SUP = new Options { CreateIfMissing = true };
+
+                            using (var db = new DB(SUP, @"ipfs"))
+                            {
+
+                                string ipfsdaemon = db.Get("ipfs-daemon");
+
+                                if (ipfsdaemon == "true")
+                                {
+                                    Process process3 = new Process
+                                    {
+                                        StartInfo = new ProcessStartInfo
+                                        {
+                                            FileName = @"ipfs\ipfs.exe",
+                                            Arguments = "pin add " + transid,
+                                            UseShellExecute = false,
+                                            CreateNoWindow = true
+                                        }
+                                    };
+                                    process3.Start();
+                                }
+                            }
+
+                        }
+                        if (objstate.Image.Length == 51)
+                        { foundObject.ObjectImage.ImageLocation = objstate.Image.Replace("IPFS:", @"ipfs/") + @"/artifact"; }
+                        else { foundObject.ObjectImage.ImageLocation = objstate.Image.Replace("IPFS:", @"ipfs/"); }
+
+                        break;
+                    case "HTTP":
+                        foundObject.ObjectImage.ImageLocation = objstate.Image;
+                        break;
+
+
+                    default:
+                        transid = objstate.Image.Substring(0, 64);
+                        if (!System.IO.Directory.Exists("root/" + transid))
+                        {
+                            Root.GetRootByTransactionId(transid, txtLogin.Text, txtPassword.Text, @"http://127.0.0.1:18332");
+                        }
+                        foundObject.ObjectImage.ImageLocation = @"root/" + objstate.Image;
+
+                        break;
+                }
+                foundObject.ObjectName.Text = objstate.Name;
+                foundObject.ObjectDescription.Text = objstate.Description;
+                foreach (KeyValuePair<string, DateTime> creator in objstate.Creators.Skip(1))
+                {
+
+
+                    if (creator.Value.Year > 1)
+                    {
+                        PROState profile = PROState.GetProfileByAddress(creator.Key, txtLogin.Text, txtPassword.Text, txtUrl.Text);
+
+                        if (profile.URN != null && foundObject.ObjectCreators.Text == "")
+                        {
+
+
+                            foundObject.ObjectCreators.Text = TruncateAddress(profile.URN);
+                            foundObject.ObjectCreators.Links.Add(0, creator.Key.Length, creator.Key);
+                        }
+                        else
+                        {
+
+
+                            if (profile.URN != null && foundObject.ObjectCreators2.Text == "")
+                            {
+                                foundObject.ObjectCreators2.Text = TruncateAddress(profile.URN);
+                                foundObject.ObjectCreators2.Links.Add(0, creator.Key.Length, creator.Key);
+                            }
+
+                        }
+                    }
+                    else
+                    {
+
+                        if (foundObject.ObjectCreators.Text == "")
+                        {
+
+
+                            foundObject.ObjectCreators.Text = TruncateAddress(creator.Key);
+                            foundObject.ObjectCreators.Links.Add(0, creator.Key.Length, creator.Key);
+                        }
+                        else
+                        {
+
+
+                            if (foundObject.ObjectCreators2.Text == "")
+                            {
+                                foundObject.ObjectCreators2.Text = TruncateAddress(creator.Key);
+                                foundObject.ObjectCreators2.Links.Add(0, creator.Key.Length, creator.Key);
+                            }
+
                         }
 
                     }
@@ -617,13 +866,14 @@ namespace SUP
 
                         if (creator.Value.Year > 1)
                         {
-
-
                             PROState profile = PROState.GetProfileByAddress(creator.Key, txtLogin.Text, txtPassword.Text, txtUrl.Text);
 
                             if (profile.URN != null && foundObject.ObjectCreators.Text == "")
                             {
+
+
                                 foundObject.ObjectCreators.Text = TruncateAddress(profile.URN);
+                                foundObject.ObjectCreators.Links.Add(0, creator.Key.Length, creator.Key);
                             }
                             else
                             {
@@ -632,13 +882,33 @@ namespace SUP
                                 if (profile.URN != null && foundObject.ObjectCreators2.Text == "")
                                 {
                                     foundObject.ObjectCreators2.Text = TruncateAddress(profile.URN);
+                                    foundObject.ObjectCreators2.Links.Add(0, creator.Key.Length, creator.Key);
                                 }
 
                             }
                         }
                         else
                         {
-                            foundObject.ObjectCreators.Text = TruncateAddress(creator.Key);
+
+                            if (foundObject.ObjectCreators.Text == "")
+                            {
+
+
+                                foundObject.ObjectCreators.Text = TruncateAddress(creator.Key);
+                                foundObject.ObjectCreators.Links.Add(0, creator.Key.Length, creator.Key);
+                            }
+                            else
+                            {
+
+
+                                if (foundObject.ObjectCreators2.Text == "")
+                                {
+                                    foundObject.ObjectCreators2.Text = TruncateAddress(creator.Key);
+                                    foundObject.ObjectCreators2.Links.Add(0, creator.Key.Length, creator.Key);
+                                }
+
+                            }
+
                         }
 
 
@@ -791,19 +1061,49 @@ namespace SUP
                     foreach (KeyValuePair<string, DateTime> creator in objstate.Creators.Skip(1))
                     {
 
-                        PROState profile = PROState.GetProfileByAddress(creator.Key, txtLogin.Text, txtPassword.Text, txtUrl.Text);
-
-                        if (profile.URN != null && foundObject.ObjectCreators.Text == "")
+                        if (creator.Value.Year > 1)
                         {
-                            foundObject.ObjectCreators.Text = TruncateAddress(profile.URN);
+                            PROState profile = PROState.GetProfileByAddress(creator.Key, txtLogin.Text, txtPassword.Text, txtUrl.Text);
+
+                            if (profile.URN != null && foundObject.ObjectCreators.Text == "")
+                            {
+
+
+                                foundObject.ObjectCreators.Text = TruncateAddress(profile.URN);
+                                foundObject.ObjectCreators.Links.Add(0, creator.Key.Length, creator.Key);
+                            }
+                            else
+                            {
+
+
+                                if (profile.URN != null && foundObject.ObjectCreators2.Text == "")
+                                {
+                                    foundObject.ObjectCreators2.Text = TruncateAddress(profile.URN);
+                                    foundObject.ObjectCreators2.Links.Add(0, creator.Key.Length, creator.Key);
+                                }
+
+                            }
                         }
                         else
                         {
 
-
-                            if (profile.URN != null && foundObject.ObjectCreators2.Text == "")
+                            if (foundObject.ObjectCreators.Text == "")
                             {
-                                foundObject.ObjectCreators2.Text = TruncateAddress(profile.URN);
+
+
+                                foundObject.ObjectCreators.Text = TruncateAddress(creator.Key);
+                                foundObject.ObjectCreators.Links.Add(0, creator.Key.Length, creator.Key);
+                            }
+                            else
+                            {
+
+
+                                if (foundObject.ObjectCreators2.Text == "")
+                                {
+                                    foundObject.ObjectCreators2.Text = TruncateAddress(creator.Key);
+                                    foundObject.ObjectCreators2.Links.Add(0, creator.Key.Length, creator.Key);
+                                }
+
                             }
 
                         }
@@ -906,7 +1206,7 @@ namespace SUP
                     else
                     {
 
-                        if (txtSearchAddress.Text.ToLower().StartsWith(@"ipfs:"))
+                        if (txtSearchAddress.Text.ToLower().StartsWith(@"ipfs:") && txtSearchAddress.Text.Length >= 51)
                         {
                             string ipfsHash = txtSearchAddress.Text.Replace(@"//", "").Replace(@"\\", "").Substring(5, 46);
 
@@ -954,14 +1254,17 @@ namespace SUP
                                     }
                                 }
 
-                                Process.Start("explorer.exe", System.IO.Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + @"\ipfs\" + ipfsHash);
+                                if (System.IO.Directory.Exists(System.IO.Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + @"\ipfs\" + ipfsHash))
+                                {
+                                    Process.Start("explorer.exe", System.IO.Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + @"\ipfs\" + ipfsHash);
+                                }
+                                else { Label filenotFound = new Label(); filenotFound.AutoSize = true; filenotFound.Text = "IPFS: Search failed! Verify IPFS pinning is enbaled"; flowLayoutPanel1.Controls.Clear(); flowLayoutPanel1.Controls.Add(filenotFound); }
 
                             }
                             else
                             {
 
                                 Process.Start("explorer.exe", System.IO.Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + @"\ipfs\" + ipfsHash);
-
                             }
 
 
@@ -996,7 +1299,7 @@ namespace SUP
 
                                     }
                                     Match match = regexTransactionId.Match(txtSearchAddress.Text);
-                                    string browserPath = System.IO.Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + @"\root\" + txtSearchAddress.Text.Replace("MZC:","").Replace("BTC:", "");
+                                    string browserPath = System.IO.Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + @"\root\" + txtSearchAddress.Text.Replace("MZC:", "").Replace("BTC:", "");
                                     browserPath = @"file:///" + browserPath.Replace(@"\", @"/");
                                     flowLayoutPanel1.Controls.Clear();
                                     flowLayoutPanel1.AutoScroll = false;
@@ -1131,6 +1434,42 @@ namespace SUP
                 txtSearchAddress.Focus();
                 SendKeys.SendWait("{Enter}");
             }
+        }
+
+        private void btnMint_Click(object sender, EventArgs e)
+        {
+            if (lastClickedButton != null)
+                lastClickedButton.BackColor = Color.White;
+
+            var button = (Button)sender;
+            lastClickedButton = button;
+            button.BackColor = Color.Yellow;
+
+        }
+
+        private void flowLayoutPanel1_DragEnter(object sender, System.Windows.Forms.DragEventArgs e)
+        {
+            // Check if the data being dragged is a file
+            if (e.Data.GetDataPresent(System.Windows.Forms.DataFormats.FileDrop))
+            {
+                // Allow the drop operation
+                e.Effect = System.Windows.Forms.DragDropEffects.Copy;
+            }
+            else
+            {
+                // Prevent the drop operation
+                e.Effect = System.Windows.Forms.DragDropEffects.None;
+            }
+        }
+
+        private void flowLayoutPanel1_DragDrop(object sender, System.Windows.Forms.DragEventArgs e)
+        {
+            // Get the file paths of the files being dropped
+            string[] filePaths = (string[])e.Data.GetData((System.Windows.Forms.DataFormats.FileDrop));
+            string filePath = filePaths[0];
+
+            GetObjectByFile(filePath);
+
         }
     }
 }

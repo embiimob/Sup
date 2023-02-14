@@ -123,7 +123,7 @@ namespace SUP.P2FK
                 }
 
                 totalByteSize = deserializedObject.size;
-                confirmations = deserializedObject.confirmations;
+                try { confirmations = deserializedObject.confirmations; } catch { confirmations = 0;}
                 blockdate =
                     DateTimeOffset.FromUnixTimeSeconds(
                         Convert.ToInt32(deserializedObject.blocktime)
@@ -637,7 +637,7 @@ namespace SUP.P2FK
 
             return Encoding.ASCII.GetString(payloadBytes).Replace("#", "").Substring(1);
         }
-        static string GetTransactionIdByHexString(string transactionHex)
+        public static string GetTransactionIdByHexString(string transactionHex)
         {
             // Decode the hex string into a byte array
             byte[] transactionBytes = HexStringToByteArray(transactionHex);

@@ -42,13 +42,14 @@
             this.button2 = new System.Windows.Forms.Button();
             this.btnHistoryBack = new System.Windows.Forms.Button();
             this.btnHistoryForward = new System.Windows.Forms.Button();
+            this.btnMint = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // btnCreated
             // 
             this.btnCreated.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.btnCreated.BackColor = System.Drawing.SystemColors.Control;
-            this.btnCreated.Location = new System.Drawing.Point(443, 4);
+            this.btnCreated.Location = new System.Drawing.Point(429, 4);
             this.btnCreated.Name = "btnCreated";
             this.btnCreated.Size = new System.Drawing.Size(55, 20);
             this.btnCreated.TabIndex = 62;
@@ -60,9 +61,9 @@
             // 
             this.btnOwned.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.btnOwned.BackColor = System.Drawing.SystemColors.Control;
-            this.btnOwned.Location = new System.Drawing.Point(504, 3);
+            this.btnOwned.Location = new System.Drawing.Point(488, 4);
             this.btnOwned.Name = "btnOwned";
-            this.btnOwned.Size = new System.Drawing.Size(55, 20);
+            this.btnOwned.Size = new System.Drawing.Size(49, 20);
             this.btnOwned.TabIndex = 61;
             this.btnOwned.Text = "owned";
             this.btnOwned.UseVisualStyleBackColor = false;
@@ -72,7 +73,7 @@
             // 
             this.txtSearchAddress.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.txtSearchAddress.Location = new System.Drawing.Point(42, 6);
+            this.txtSearchAddress.Location = new System.Drawing.Point(42, 4);
             this.txtSearchAddress.Name = "txtSearchAddress";
             this.txtSearchAddress.Size = new System.Drawing.Size(227, 20);
             this.txtSearchAddress.TabIndex = 58;
@@ -82,7 +83,7 @@
             // 
             this.btnWorkBench.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.btnWorkBench.BackColor = System.Drawing.SystemColors.Control;
-            this.btnWorkBench.Location = new System.Drawing.Point(617, 4);
+            this.btnWorkBench.Location = new System.Drawing.Point(620, 4);
             this.btnWorkBench.Name = "btnWorkBench";
             this.btnWorkBench.Size = new System.Drawing.Size(30, 20);
             this.btnWorkBench.TabIndex = 68;
@@ -92,16 +93,19 @@
             // 
             // flowLayoutPanel1
             // 
+            this.flowLayoutPanel1.AllowDrop = true;
             this.flowLayoutPanel1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.flowLayoutPanel1.AutoScroll = true;
             this.flowLayoutPanel1.BackColor = System.Drawing.SystemColors.InactiveCaption;
-            this.flowLayoutPanel1.Location = new System.Drawing.Point(0, 31);
+            this.flowLayoutPanel1.Location = new System.Drawing.Point(0, 28);
             this.flowLayoutPanel1.Name = "flowLayoutPanel1";
-            this.flowLayoutPanel1.Size = new System.Drawing.Size(652, 331);
+            this.flowLayoutPanel1.Size = new System.Drawing.Size(652, 334);
             this.flowLayoutPanel1.TabIndex = 69;
             this.flowLayoutPanel1.SizeChanged += new System.EventHandler(this.flowLayoutPanel1_SizeChanged);
+            this.flowLayoutPanel1.DragEnter += flowLayoutPanel1_DragEnter;
+            this.flowLayoutPanel1.DragDrop += flowLayoutPanel1_DragDrop;
             // 
             // linkLabel1
             // 
@@ -156,7 +160,7 @@
             // 
             this.button1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.button1.BackColor = System.Drawing.SystemColors.Control;
-            this.button1.Location = new System.Drawing.Point(582, 3);
+            this.button1.Location = new System.Drawing.Point(586, 4);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(30, 20);
             this.button1.TabIndex = 72;
@@ -168,9 +172,9 @@
             // 
             this.button2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.button2.BackColor = System.Drawing.SystemColors.Control;
-            this.button2.Location = new System.Drawing.Point(382, 5);
+            this.button2.Location = new System.Drawing.Point(382, 4);
             this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(55, 20);
+            this.button2.Size = new System.Drawing.Size(43, 20);
             this.button2.TabIndex = 73;
             this.button2.Text = "profile";
             this.button2.UseVisualStyleBackColor = false;
@@ -179,7 +183,7 @@
             // btnHistoryBack
             // 
             this.btnHistoryBack.BackColor = System.Drawing.SystemColors.Control;
-            this.btnHistoryBack.Location = new System.Drawing.Point(2, 6);
+            this.btnHistoryBack.Location = new System.Drawing.Point(2, 4);
             this.btnHistoryBack.Name = "btnHistoryBack";
             this.btnHistoryBack.Size = new System.Drawing.Size(18, 20);
             this.btnHistoryBack.TabIndex = 74;
@@ -190,7 +194,7 @@
             // btnHistoryForward
             // 
             this.btnHistoryForward.BackColor = System.Drawing.SystemColors.Control;
-            this.btnHistoryForward.Location = new System.Drawing.Point(21, 6);
+            this.btnHistoryForward.Location = new System.Drawing.Point(21, 4);
             this.btnHistoryForward.Name = "btnHistoryForward";
             this.btnHistoryForward.Size = new System.Drawing.Size(18, 20);
             this.btnHistoryForward.TabIndex = 75;
@@ -198,11 +202,24 @@
             this.btnHistoryForward.UseVisualStyleBackColor = false;
             this.btnHistoryForward.Click += new System.EventHandler(this.btnHistoryForward_Click);
             // 
+            // btnMint
+            // 
+            this.btnMint.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnMint.BackColor = System.Drawing.SystemColors.Control;
+            this.btnMint.Location = new System.Drawing.Point(541, 4);
+            this.btnMint.Name = "btnMint";
+            this.btnMint.Size = new System.Drawing.Size(39, 20);
+            this.btnMint.TabIndex = 76;
+            this.btnMint.Text = "mint";
+            this.btnMint.UseVisualStyleBackColor = false;
+            this.btnMint.Click += new System.EventHandler(this.btnMint_Click);
+            // 
             // ObjectBrowser
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(652, 362);
+            this.Controls.Add(this.btnMint);
             this.Controls.Add(this.btnHistoryForward);
             this.Controls.Add(this.btnHistoryBack);
             this.Controls.Add(this.button2);
@@ -242,5 +259,6 @@
         private System.Windows.Forms.Button button2;
         private System.Windows.Forms.Button btnHistoryBack;
         private System.Windows.Forms.Button btnHistoryForward;
+        private System.Windows.Forms.Button btnMint;
     }
 }

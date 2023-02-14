@@ -305,50 +305,40 @@ namespace SUP
                             imagelocation = profile.Image;
 
 
-
-
-
                             if (imagelocation.StartsWith("BTC:") || imagelocation.StartsWith("MZC:"))
                             {
-                                string transid = imagelocation.Substring(4, 64);
-                                imagelocation = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + @"\root\" + imagelocation.Replace("BTC:", "").Replace("MZC:", "").Replace(@"/", @"\");
-
-
-                                if (!System.IO.Directory.Exists("root/" + transid))
+                                if (imagelocation.Length > 64)
                                 {
-                                    if (objstate.Image.StartsWith("MZC:"))
+                                    string transid = imagelocation.Substring(4, 64);
+                                    imagelocation = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + @"\root\" + imagelocation.Replace("BTC:", "").Replace("MZC:", "").Replace(@"/", @"\");
+
+
+                                    if (!System.IO.Directory.Exists("root/" + transid))
                                     {
-                                        Root root = Root.GetRootByTransactionId(transid, "good-user", "better-password", @"http://127.0.0.1:12832", "50");
+                                        if (profile.Image.StartsWith("BTC:"))
+                                        {
+                                            Root.GetRootByTransactionId(transid, "good-user", "better-password", "http://127.0.0.1:8332", "0");
+                                        }
+                                        else
+                                        {
+                                            Root.GetRootByTransactionId(transid, "good-user", "better-password", @"http://127.0.0.1:12832", "50");
+
+                                        }
                                     }
-                                    else
-                                    {
-
-                                        Root root = Root.GetRootByTransactionId(transid, "good-user", "better-password", "http://127.0.0.1:8332", "0");
-
-                                    }
-                                }
-                                else
-                                {
-                                    string P2FKJSONString = System.IO.File.ReadAllText(@"root/" + transid + @"/P2FK.json");
-                                    Root root = JsonConvert.DeserializeObject<Root>(P2FKJSONString);
-
                                 }
 
                             }
                             else
                             {
-                                string transid = imagelocation.Substring(0, 64);
-                                imagelocation = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + @"\root\" + imagelocation.Replace(@" / ", @"\");
-                                if (!System.IO.Directory.Exists("root/" + transid))
+                                if (imagelocation.Length > 64)
                                 {
-                                    Root root = Root.GetRootByTransactionId(transid, "good-user", "better-password", "http://127.0.0.1:18332");
+                                    string transid = imagelocation.Substring(0, 64);
+                                    imagelocation = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + @"\root\" + imagelocation.Replace(@" / ", @"\");
+                                    if (!System.IO.Directory.Exists("root/" + transid))
+                                    {
+                                        Root.GetRootByTransactionId(transid, "good-user", "better-password", "http://127.0.0.1:18332");
 
-                                }
-                                else
-                                {
-                                    string P2FKJSONString = System.IO.File.ReadAllText(@"root/" + transid + @"/P2FK.json");
-                                    Root root = JsonConvert.DeserializeObject<Root>(P2FKJSONString);
-
+                                    }
                                 }
                             }
 
@@ -393,7 +383,7 @@ namespace SUP
                 }
                 it.Dispose();
             }
-            
+
             supFlow.ResumeLayout();
             supPanel.Visible = true;
         }
@@ -636,7 +626,7 @@ namespace SUP
             msg.Controls.Add(tstamp, 0, 1);
         }
 
-        void Owner_LinkClicked( string ownerId)
+        void Owner_LinkClicked(string ownerId)
         {
 
             new ObjectBrowser(ownerId).Show();
@@ -965,10 +955,12 @@ namespace SUP
                                     System.IO.File.Move("ipfs/" + transid, "ipfs/" + transid + "_tmp");
                                     System.IO.Directory.CreateDirectory("ipfs/" + transid);
                                     string fileName = objstate.URI.Replace(@"//", "").Replace(@"\\", "").Substring(51);
-                                    if (fileName == "") { 
+                                    if (fileName == "")
+                                    {
                                         fileName = "artifact";
                                         uriurn += @"\artifact";
-                                    } else { fileName = fileName.Replace(@"/", "").Replace(@"\", ""); }
+                                    }
+                                    else { fileName = fileName.Replace(@"/", "").Replace(@"\", ""); }
                                     System.IO.File.Move("ipfs/" + transid + "_tmp", @"ipfs/" + transid + @"/" + fileName);
                                 }
 
@@ -1134,7 +1126,9 @@ namespace SUP
                             await webviewer.EnsureCoreWebView2Async();
                             webviewer.CoreWebView2.Navigate(viewerPath);
                         }
-                        catch { Thread.Sleep(1000);
+                        catch
+                        {
+                            Thread.Sleep(1000);
                             await webviewer.EnsureCoreWebView2Async();
                             webviewer.CoreWebView2.Navigate(viewerPath);
                         }
@@ -1161,7 +1155,6 @@ namespace SUP
 
                         if (chkRunTrustedObject.Checked)
                         {
-
 
 
                             string transid;
@@ -1316,10 +1309,10 @@ namespace SUP
 
                         break;
                     default:
-                       
+
 
                         pictureBox1.ImageLocation = imgurn;
-                                            
+
                         break;
                 }
                 imgPicture.SuspendLayout();
@@ -1341,7 +1334,7 @@ namespace SUP
             System.Windows.Clipboard.SetText(txtdesc.Text);
         }
 
-      
+
 
         private void ButtonRefreshTransactionsClick(object sender, EventArgs e)
         {
@@ -1366,7 +1359,7 @@ namespace SUP
             }
             catch { }
 
-OBJState.GetObjectByAddress(_objectaddress, "good-user", "better-password", "http://127.0.0.1:18332", "111", true);
+            OBJState.GetObjectByAddress(_objectaddress, "good-user", "better-password", "http://127.0.0.1:18332", "111", true);
 
 
             var trans = new Options { CreateIfMissing = true };

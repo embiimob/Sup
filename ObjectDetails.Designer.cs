@@ -166,10 +166,10 @@
             // 
             this.lblTotalOwnedMain.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lblTotalOwnedMain.ForeColor = System.Drawing.SystemColors.ControlText;
-            this.lblTotalOwnedMain.Location = new System.Drawing.Point(86, 61);
+            this.lblTotalOwnedMain.Location = new System.Drawing.Point(92, 61);
             this.lblTotalOwnedMain.Name = "lblTotalOwnedMain";
             this.lblTotalOwnedMain.Padding = new System.Windows.Forms.Padding(3);
-            this.lblTotalOwnedMain.Size = new System.Drawing.Size(204, 23);
+            this.lblTotalOwnedMain.Size = new System.Drawing.Size(198, 23);
             this.lblTotalOwnedMain.TabIndex = 9;
             this.lblTotalOwnedMain.Text = "x";
             this.lblTotalOwnedMain.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
@@ -284,10 +284,10 @@
             // txtName
             // 
             this.txtName.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.txtName.Location = new System.Drawing.Point(86, 25);
+            this.txtName.Location = new System.Drawing.Point(92, 25);
             this.txtName.Margin = new System.Windows.Forms.Padding(0);
             this.txtName.Name = "txtName";
-            this.txtName.Size = new System.Drawing.Size(209, 38);
+            this.txtName.Size = new System.Drawing.Size(203, 38);
             this.txtName.TabIndex = 33;
             this.txtName.Text = "Title";
             this.txtName.Click += new System.EventHandler(this.CopyAddressByNameClick);

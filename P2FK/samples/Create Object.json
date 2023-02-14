@@ -30,7 +30,9 @@
 //remove all unnecessary spaces
 //place JSON in a file named OBJ (no file extension)
 //enter #[first 20 charachters of urn] to create a URN registration in this example #IPFS:Qmex6VRDqwVCMPr in the apertus.io message box
-//enter each additional @creatoraddress and or @owneraddress above the @objectaddress in the apertus.io message box in matching orders
+//enter @[file public key] to create a file registration in this example @mpwoff3ut1DJzomKaH69PWdfheXqKpYTcz in the apertus.io message box
+//to find the public key associated with a file drag and drop the file somewhere onto the workbench screen and it will be displayed
+//enter each additional @creatoraddress and or @owneraddress in the apertus.io message box in matching orders
 //in this example keyword order id 1 would be the second from the bottom if the #IPFS:Qmex6VRDqwVCMPr URN was also being registered
 //attach file OBJ using the apertus.io attach button
 //create a new signature address in the signature list in apertus.io. select it.  this will be the object address
