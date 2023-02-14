@@ -270,7 +270,7 @@ namespace SUP.P2FK
                                     break;
                                 }
 
-                                if (givinspector == null || givinspector.Count < 2)
+                                if (givinspector == null)
                                 {
                                     logstatus = "[\"" + transaction.SignedBy + "\",\"" + objectaddress + "\",\"give\",\"\",\"\",\"failed due to no data\"]";
                                     break;
@@ -278,8 +278,8 @@ namespace SUP.P2FK
                                 int giveCount = 0;
                                 foreach (var give in givinspector)
                                 {
+                                    int qtyToGive = 0;
                                     string giver = transaction.SignedBy;
-
                                     string reciever;
 
                                     try
@@ -292,8 +292,16 @@ namespace SUP.P2FK
                                         logstatus = "[\"" + transaction.SignedBy + "\",\"" + objectaddress + "\",\"give\",\"\",\"\",\"failed due to invalid keyword count\"]";
                                         break;
                                     }
+                                    try
+                                    {
+                                        qtyToGive = give[1];
+                                    }
+                                    catch
+                                    {
+                                        logstatus = "[\"" + transaction.SignedBy + "\",\"" + objectaddress + "\",\"give\",\"\",\"\",\"failed due to invalid keyword count\"]";
+                                        break;
+                                    }
 
-                                    int qtyToGive = give[1];
                                     giveCount++;
                                     string sortableGiveCount = giveCount.ToString("X").PadLeft(4, '0');
 
