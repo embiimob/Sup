@@ -270,7 +270,7 @@ namespace SUP.P2FK
                                     break;
                                 }
 
-                                if (givinspector == null)
+                                if (givinspector == null || givinspector.Count < 2)
                                 {
                                     logstatus = "[\"" + transaction.SignedBy + "\",\"" + objectaddress + "\",\"give\",\"\",\"\",\"failed due to no data\"]";
                                     break;
