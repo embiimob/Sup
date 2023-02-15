@@ -11,7 +11,7 @@ P2FK was directly inspired by the satoshi uploader  see --> https://cirosantilli
 
 ## **Installation**
 
-1. Download the Sup.v0.1.9-beta.zip file
+1. Download the Sup.v0.1.10-beta.zip file
 2. Create a folder on your **fastest** disk drive with at least **700GB** free (it will be storing the bitcoin prod and testnet blockchains)
 3. Unzip all contents into the folder.
 4. Create a shortcut to SUP.exe and launch.
@@ -57,22 +57,139 @@ searches mainchain by  urn shows currently registered object with uri redirectio
 ### **http(s)://embii.org**
 navigates to requested url in browser.
 <br />
-<br /> <br />
-### **Block \ Mute**
+<br />
+## **Command Line Interface Examples:**<br />
+<br />
+
+**get root by transaction id:** <br/>
+  SUP.EXE --versionbyte 111 --getrootbytransactionid --password better-password --url https://127.0.0.1:18332 --tid
+  6d14b0dc526a431f611f16f29d684f73e6b01f0a59a0b7b3d9b8d951091c2422 --username good-user<br />
+<br />
+
+**get roots by address:**<br />
+  SUP.EXE --address muVrFVk3ErfrnmWosLF4WixxRtDKfMx9bs --versionbyte 111 --getrootsbyaddress --password better-password
+  --url https://127.0.0.1:18332 --username good-user<br />
+<br />
+
+**get public address by keyword:**<br />
+  SUP.EXE --versionbyte 111 --getpublicaddressbykeyword --keyword "20 BYTE ASCII STRING"<br />
+<br />
+
+**get keyword by public address:**<br />
+  SUP.EXE --address mmw6JJrmsEZ1bwyVPKvfRFwpoJ62nJJCsV --getkeywordbypublicaddress<br />
+<br />
+
+**get object by address:**<br />
+  SUP.EXE --address muVrFVk3ErfrnmWosLF4WixxRtDKfMx9bs --versionbyte 111 --getobjectbyaddress --password better-password
+  --url https://127.0.0.1:18332 --username good-user --verbose<br />
+<br />
+
+**get object by urn:**<br />
+  SUP.EXE --versionbyte 111 --getobjectbyurn --password better-password --url https://127.0.0.1:18332 --username
+  good-user --urn twitter.com<br />
+<br />
+
+**get object by file:**<br />
+  SUP.EXE --versionbyte 111 --filepath C:\\folder\\test.jpg --getobjectbyfile --password better-password --url
+  https://127.0.0.1:18332 --username good-user<br />
+<br />
+
+**get objects owned by address:**<br />
+  SUP.EXE --address muVrFVk3ErfrnmWosLF4WixxRtDKfMx9bs --versionbyte 111 --getobjectsownedbyaddress --password
+  better-password --url https://127.0.0.1:18332 --username good-user<br />
+<br />
+
+**get objects created by address:**<br />
+  SUP.EXE --address muVrFVk3ErfrnmWosLF4WixxRtDKfMx9bs --versionbyte 111 --getobjectscreatedbyaddress --password
+  better-password --url https://127.0.0.1:18332 --username good-user<br />
+<br />
+
+**get objects by keyword:**<br />
+  SUP.EXE --versionbyte 111 --getobjectsbykeyword --keyword flowersofwar --password better-password --url
+  https://127.0.0.1:18332 --username good-user<br />
+<br />
+
+**get profile by address:**<br />
+  SUP.EXE --address muVrFVk3ErfrnmWosLF4WixxRtDKfMx9bs --versionbyte 111 --getprofilebyaddress --password
+  better-password --url https://127.0.0.1:18332 --username good-user<br />
+<br />
+
+**get profile by urn:**<br />
+  SUP.EXE --versionbyte 111 --getprofilebyurn --password better-password --url https://127.0.0.1:18332 --username
+  good-user --urn embii4u<br />
+<br />
+
+**parameters:**
+
+  --getrootbytransactionid        Get root by transaction ID
+
+  --getrootsbyaddress             Get roots by address
+
+  --getpublicaddressbykeyword     Get roots by address
+
+  --getkeywordbypublicaddress     Get roots by address
+
+  --getobjectbyaddress            Get object by address
+
+  --getobjectbyurn                Get object by urn
+
+  --getobjectbyfile               Get object by file
+
+  --getobjectsbyaddress           Get object by address
+
+  --getobjectsownedbyaddress      Get objects owned by address
+
+  --getobjectscreatedbyaddress    Get objects created by address
+
+  --getobjectsbykeyword           Get objects by keyword
+
+  --getprofilebyaddress           Get profile by address
+
+  --getprofilebyurn               Get profile by urn
+
+  -u, --username                  The username for authentication
+
+  -p, --password                  The password for authentication
+
+  -r, --url                       The API URL
+
+  -s, --skip                      The number of roots to skip [default: 0]
+
+  -q, --qty                       The number of roots to retrieve per processing batch [default: 300]
+
+  -b, --versionbyte               The version byte
+
+  -t, --tid                       The transaction ID to query
+
+  -a, --address                   The address to query
+
+  -k, --keyword                   The keyword to query
+
+  --urn                           The urn to query
+
+  -f, --filepath                  The full path of file to query
+
+  --verbose                       Get roots by address
+
+  --help                          Display this help screen.
+
+  --version                       Display version information.
+
+## **Block \ Mute**
 
 - blocking addresses and transactions ignores any associations to them going forward preventing a transaction or any transactions signed by the blocked address from outputting to disk. a purge and reinspection is required to completely eliminate all data. if a group of collectors decides to block an address or transaction they can technically ignore them out of existence.
 
 - muting an address prevents any further transaction comments signed by the address from outputting onto disk.  a purge and reinspection is required to completely elimninate all transactions comments<br />
 <br /> <br />
+## **Web Applet Querystring Data**
 
-### **Web Applet Querystring Data**
-
+<br />
 trusted index.html and index.htm files are sent the following Sup!? object information via querystring on load
 "address=", "creator=", "viewer=", "viewer-name=", "owner=", "owner-name=", "urn=", "uri=", "url=", "height="<br />
 <br /> <br />
-### **URN IMG & URI Referencing Standards**<br />
-<br />
 
+## **URN IMG & URI Referencing Standards**<br />
+<br />
 IPFS:Qma7o6Yx2HQfCkNJEHv1gpiDzoZU8rNc6JFQXijfyt8cGc<br />
 ( references an IPFS gif file creates a default file named {hash}/artifact  )<br />
 <br />
@@ -94,7 +211,6 @@ http://bitfossil.org/7033eb8138de0d3f4be111a57dfb8319b400d3b6a6f5b387a22b334ebb9
 
 **ASCII free text urn registrations such as 'twitter.com' cannot begin with 'IPFS:',{transaction id},'MZC:','BTC:' or 'HTTP'**
 
-### 
 - this experiment uses a v0.13.2 full bitcoin core clone with address index change https://github.com/btcdrak/bitcoin/tree/addrindex-0.14
 
 - this experiment uses mazacoin their latest official release has been included in the deployment https://github.com/mazacoin/maza
@@ -107,5 +223,5 @@ http://bitfossil.org/7033eb8138de0d3f4be111a57dfb8319b400d3b6a6f5b387a22b334ebb9
 
 - Sup!? blockchain objects can be discovered and browsed without internet access because Sup!? is communicating with a local copy of the blockchain.
 
-### **explore Sup!? on youtube**
+## **explore Sup!? on youtube**
  https://www.youtube.com/playlist?list=PLDNMoJ2rHmfoxt1AX417-lWt2zvWUnKUH
