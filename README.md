@@ -62,13 +62,13 @@ navigates to requested url in browser.
 <br />
 
 **get root by transaction id:** <br/>
-  SUP.EXE --versionbyte 111 --getrootbytransactionid --password better-password --url https://127.0.0.1:18332 --tid
+  SUP.EXE --versionbyte 111 --getrootbytransactionid --password better-password --url http://127.0.0.1:18332 --tid
   6d14b0dc526a431f611f16f29d684f73e6b01f0a59a0b7b3d9b8d951091c2422 --username good-user<br />
 <br />
 
 **get roots by address:**<br />
   SUP.EXE --address muVrFVk3ErfrnmWosLF4WixxRtDKfMx9bs --versionbyte 111 --getrootsbyaddress --password better-password
-  --url https://127.0.0.1:18332 --username good-user<br />
+  --url http://127.0.0.1:18332 --username good-user<br />
 <br />
 
 **get public address by keyword:**<br />
@@ -81,7 +81,7 @@ navigates to requested url in browser.
 
 **get object by address:**<br />
   SUP.EXE --address muVrFVk3ErfrnmWosLF4WixxRtDKfMx9bs --versionbyte 111 --getobjectbyaddress --password better-password
-  --url https://127.0.0.1:18332 --username good-user --verbose<br />
+  --url http://127.0.0.1:18332 --username good-user --verbose<br />
 <br />
 
 **get object by urn:**<br />
@@ -91,31 +91,31 @@ navigates to requested url in browser.
 
 **get object by file:**<br />
   SUP.EXE --versionbyte 111 --filepath C:\\folder\\test.jpg --getobjectbyfile --password better-password --url
-  https://127.0.0.1:18332 --username good-user<br />
+  http://127.0.0.1:18332 --username good-user<br />
 <br />
 
 **get objects owned by address:**<br />
   SUP.EXE --address muVrFVk3ErfrnmWosLF4WixxRtDKfMx9bs --versionbyte 111 --getobjectsownedbyaddress --password
-  better-password --url https://127.0.0.1:18332 --username good-user<br />
+  better-password --url http://127.0.0.1:18332 --username good-user<br />
 <br />
 
 **get objects created by address:**<br />
   SUP.EXE --address muVrFVk3ErfrnmWosLF4WixxRtDKfMx9bs --versionbyte 111 --getobjectscreatedbyaddress --password
-  better-password --url https://127.0.0.1:18332 --username good-user<br />
+  better-password --url http://127.0.0.1:18332 --username good-user<br />
 <br />
 
 **get objects by keyword:**<br />
   SUP.EXE --versionbyte 111 --getobjectsbykeyword --keyword flowersofwar --password better-password --url
-  https://127.0.0.1:18332 --username good-user<br />
+  http://127.0.0.1:18332 --username good-user<br />
 <br />
 
 **get profile by address:**<br />
   SUP.EXE --address muVrFVk3ErfrnmWosLF4WixxRtDKfMx9bs --versionbyte 111 --getprofilebyaddress --password
-  better-password --url https://127.0.0.1:18332 --username good-user<br />
+  better-password --url http://127.0.0.1:18332 --username good-user<br />
 <br />
 
 **get profile by urn:**<br />
-  SUP.EXE --versionbyte 111 --getprofilebyurn --password better-password --url https://127.0.0.1:18332 --username
+  SUP.EXE --versionbyte 111 --getprofilebyurn --password better-password --url http://127.0.0.1:18332 --username
   good-user --urn embii4u<br />
 <br />
 
