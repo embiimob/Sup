@@ -84,12 +84,12 @@ navigates to requested url in browser.
   --url http://127.0.0.1:18332 --username good-user --verbose<br />
 <br />
 
-**get object by urn:**<br />
+**get object owner by urn registration:**<br />
   SUP.EXE --versionbyte 111 --getobjectbyurn --password better-password --url https://127.0.0.1:18332 --username
   good-user --urn twitter.com<br />
 <br />
 
-**get object by file:**<br />
+**get object owner by file registration:**<br />
   SUP.EXE --versionbyte 111 --filepath C:\\folder\\test.jpg --getobjectbyfile --password better-password --url
   http://127.0.0.1:18332 --username good-user<br />
 <br />
