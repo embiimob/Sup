@@ -11,7 +11,7 @@ P2FK was directly inspired by the satoshi uploader  see --> https://cirosantilli
 
 ## **Installation**
 
-1. Download the Sup.v0.1.10-beta.zip file
+1. Download the Sup.v0.1.11-beta.zip file
 2. Create a folder on your **fastest** disk drive with at least **700GB** free (it will be storing the bitcoin prod and testnet blockchains)
 3. Unzip all contents into the folder.
 4. Create a shortcut to SUP.exe and launch.
@@ -86,37 +86,42 @@ navigates to requested url in browser.
 
 **get object owner by urn registration:**<br />
   SUP.EXE --versionbyte 111 --getobjectbyurn --password better-password --url https://127.0.0.1:18332 --username
-  good-user --urn twitter.com<br />
+  good-user --urn twitter.com --skip 0<br />
 <br />
 
 **get object owner by file registration:**<br />
   SUP.EXE --versionbyte 111 --filepath C:\\folder\\test.jpg --getobjectbyfile --password better-password --url
-  http://127.0.0.1:18332 --username good-user<br />
+  http://127.0.0.1:18332 --username good-user --skip 0<br />
+<br />
+
+**get objects by address:**<br />
+  SUP.EXE --address muVrFVk3ErfrnmWosLF4WixxRtDKfMx9bs --versionbyte 111 --getobjectsbyaddress --password
+  better-password --url http://127.0.0.1:18332 --username good-user --skip 0 --qty -1<br />
 <br />
 
 **get objects owned by address:**<br />
   SUP.EXE --address muVrFVk3ErfrnmWosLF4WixxRtDKfMx9bs --versionbyte 111 --getobjectsownedbyaddress --password
-  better-password --url http://127.0.0.1:18332 --username good-user<br />
+  better-password --url http://127.0.0.1:18332 --username good-user --skip 0 --qty -1<br />
 <br />
 
 **get objects created by address:**<br />
   SUP.EXE --address muVrFVk3ErfrnmWosLF4WixxRtDKfMx9bs --versionbyte 111 --getobjectscreatedbyaddress --password
-  better-password --url http://127.0.0.1:18332 --username good-user<br />
+  better-password --url http://127.0.0.1:18332 --username good-user --skip 0 --qty -1<br />
 <br />
 
 **get objects by keyword:**<br />
   SUP.EXE --versionbyte 111 --getobjectsbykeyword --keyword flowersofwar --password better-password --url
-  http://127.0.0.1:18332 --username good-user<br />
+  http://127.0.0.1:18332 --username good-user --skip 0 --qty -1<br />
 <br />
 
 **get profile by address:**<br />
   SUP.EXE --address muVrFVk3ErfrnmWosLF4WixxRtDKfMx9bs --versionbyte 111 --getprofilebyaddress --password
-  better-password --url http://127.0.0.1:18332 --username good-user<br />
+  better-password --url http://127.0.0.1:18332 --username good-user --skip 0<br />
 <br />
 
 **get profile by urn:**<br />
   SUP.EXE --versionbyte 111 --getprofilebyurn --password better-password --url http://127.0.0.1:18332 --username
-  good-user --urn embii4u<br />
+  good-user --urn embii4u --skip 0<br />
 <br />
 
 **parameters:**
@@ -153,9 +158,9 @@ navigates to requested url in browser.
 
   -r, --url                       The API URL
 
-  -s, --skip                      The number of roots to skip [default: 0]
+  -s, --skip                      The number of roots \ objects to skip [default: 0]
 
-  -q, --qty                       The number of roots to retrieve per processing batch [default: 300]
+  -q, --qty                       The number of roots \ objects to retrieve per processing batch [ default: 300 \ all ]
 
   -b, --versionbyte               The version byte
 
