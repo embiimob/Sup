@@ -1,12 +1,10 @@
 ﻿using System;
 using System.Windows.Forms;
 using CommandLine;
-using System.Diagnostics;
 using Newtonsoft.Json;
 using SUP.P2FK;
 using System.Runtime.InteropServices;
 using CommandLine.Text;
-using LevelDB;
 using System.Collections.Generic;
 
 namespace SUP
@@ -39,7 +37,7 @@ namespace SUP
         [STAThread]
         static void Main(string[] args)
         {
-           
+                     
             var parserResult = Parser.Default.ParseArguments<CommandOptions>(args);
             if (parserResult is Parsed<CommandOptions> parsedOptions)
             {
