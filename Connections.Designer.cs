@@ -72,11 +72,13 @@
             this.txtPort = new System.Windows.Forms.TextBox();
             this.btnMainConnection = new System.Windows.Forms.Button();
             this.label1 = new System.Windows.Forms.Label();
+            this.btnPurge = new System.Windows.Forms.Button();
             this.panel1.SuspendLayout();
             this.SuspendLayout();
             // 
             // panel1
             // 
+            this.panel1.Controls.Add(this.btnPurge);
             this.panel1.Controls.Add(this.btnPurgeIPFS);
             this.panel1.Controls.Add(this.btnUnpinIPFS);
             this.panel1.Controls.Add(this.btnPinIPFS);
@@ -126,7 +128,7 @@
             // 
             // btnPurgeIPFS
             // 
-            this.btnPurgeIPFS.Location = new System.Drawing.Point(528, 182);
+            this.btnPurgeIPFS.Location = new System.Drawing.Point(399, 182);
             this.btnPurgeIPFS.Name = "btnPurgeIPFS";
             this.btnPurgeIPFS.Size = new System.Drawing.Size(104, 23);
             this.btnPurgeIPFS.TabIndex = 128;
@@ -137,7 +139,7 @@
             // btnUnpinIPFS
             // 
             this.btnUnpinIPFS.Enabled = false;
-            this.btnUnpinIPFS.Location = new System.Drawing.Point(356, 182);
+            this.btnUnpinIPFS.Location = new System.Drawing.Point(289, 182);
             this.btnUnpinIPFS.Name = "btnUnpinIPFS";
             this.btnUnpinIPFS.Size = new System.Drawing.Size(104, 23);
             this.btnUnpinIPFS.TabIndex = 127;
@@ -148,7 +150,7 @@
             // btnPinIPFS
             // 
             this.btnPinIPFS.Enabled = false;
-            this.btnPinIPFS.Location = new System.Drawing.Point(246, 182);
+            this.btnPinIPFS.Location = new System.Drawing.Point(178, 182);
             this.btnPinIPFS.Name = "btnPinIPFS";
             this.btnPinIPFS.Size = new System.Drawing.Size(104, 23);
             this.btnPinIPFS.TabIndex = 126;
@@ -160,7 +162,7 @@
             // 
             this.button1.Location = new System.Drawing.Point(6, 182);
             this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(234, 23);
+            this.button1.Size = new System.Drawing.Size(166, 23);
             this.button1.TabIndex = 125;
             this.button1.UseVisualStyleBackColor = true;
             this.button1.Click += new System.EventHandler(this.button1_Click);
@@ -523,6 +525,16 @@
             this.label1.TabIndex = 50;
             this.label1.Text = "main chain";
             // 
+            // btnPurge
+            // 
+            this.btnPurge.Location = new System.Drawing.Point(528, 182);
+            this.btnPurge.Name = "btnPurge";
+            this.btnPurge.Size = new System.Drawing.Size(104, 23);
+            this.btnPurge.TabIndex = 129;
+            this.btnPurge.Text = "purge sup!? cache";
+            this.btnPurge.UseVisualStyleBackColor = true;
+            this.btnPurge.Click += new System.EventHandler(this.btnPurge_Click);
+            // 
             // Connections
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -585,5 +597,6 @@
         private System.Windows.Forms.Button btnPinIPFS;
         private System.Windows.Forms.Button btnPurgeIPFS;
         private System.Windows.Forms.Button btnUnpinIPFS;
+        private System.Windows.Forms.Button btnPurge;
     }
 }

@@ -32,7 +32,8 @@ namespace SUP.P2FK
 
     }
     public class PROState
-    {
+    { 
+        public int Id { get; set; }
         public string URN { get; set; }
         public string ShortName { get; set; }
         public string FirstName { get; set; }
@@ -51,7 +52,7 @@ namespace SUP.P2FK
         //ensures levelDB is thread safely
         private readonly static object levelDBLocker = new object();
 
-        public static PROState GetProfileByAddress(string profileaddress, string username, string password, string url, string versionByte = "111", bool verbose = false)
+        public static PROState GetProfileByAddress(string profileaddress, string username, string password, string url, string versionByte = "111", bool verbose = false, int skip = 0)
         {
 
             PROState profileState = new PROState();
@@ -71,7 +72,7 @@ namespace SUP.P2FK
 
             var intProcessHeight = profileState.ProcessHeight;
             Root[] profileTransactions;
-
+            int depth = skip;
             //return all roots found at address
             profileTransactions = Root.GetRootsByAddress(profileaddress, username, password, url, intProcessHeight, 300, versionByte);
 
@@ -123,7 +124,7 @@ namespace SUP.P2FK
 
                         if (logstatus == null && profileState.Creators == null && transaction.SignedBy == profileaddress)
                         {
-
+                            profileState.Id = depth;
                             profileState.Creators = new List<string> { };
 
                             if (profileinspector.cre != null)
@@ -214,7 +215,7 @@ namespace SUP.P2FK
                         }
                     }
                 }else {  }///not sure why their is an else may not be necessary..
-
+                depth++;
             }
 
             //used to determine where to begin profile State processing when retrieved from cache

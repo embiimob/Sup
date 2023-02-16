@@ -26,12 +26,14 @@ namespace SUP.P2FK
         public string SignedBy { get; set; }
         public string Signature { get; set; }
         public bool Signed { get; set; }
+        public string TransactionId { get; set; }
         public DateTime BlockDate { get; set; }
         public int TotalByteSize { get; set; }
-        public string TransactionId { get; set; }
         public int Confirmations { get; set; }
         public DateTime BuildDate { get; set; }
         public bool Cached { get; set; }
+
+
 
         //ensures levelDB is thread safely
         private readonly static object levelDBLocker = new object();
@@ -508,11 +510,11 @@ namespace SUP.P2FK
                     var root = Root.GetRootByTransactionId(hexId, username, password, url, versionByte);
 
                     if (root != null && root.TotalByteSize > 0)
-                    {
+                    {  
                         root.Id = rootId + skip;
                         rootList.Add(root);
                     }
-
+                   
                 }
                 skip += qty;
 

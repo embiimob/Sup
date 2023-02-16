@@ -1,5 +1,6 @@
 ﻿using LevelDB;
 using System;
+using System.Data.Common;
 using System.Diagnostics;
 using System.IO;
 using System.Windows.Forms;
@@ -235,6 +236,40 @@ namespace SUP
             {
                 Directory.Delete(subfolder, true);
             }
+        }
+
+        private void btnPurge_Click(object sender, EventArgs e)
+        {
+
+            string directoryPath = @"root";
+
+            // Get a list of all the subdirectories in the directory
+            string[] subdirectories = Directory.GetDirectories(directoryPath);
+
+            // Loop through each subdirectory
+            foreach (string subdirectory in subdirectories)
+            {
+                // Get the name of the subdirectory
+                string subdirectoryName = Path.GetFileName(subdirectory);
+
+                // Check if the subdirectory name is "mute" or "block"
+                if (subdirectoryName != "mute" && subdirectoryName != "block")
+                {
+                    // Delete the subdirectory and all its contents
+                    Directory.Delete(subdirectory, true);
+                }
+            }
+
+            // Get a list of all the files in the directory
+            string[] files = Directory.GetFiles(directoryPath);
+
+            // Loop through each file
+            foreach (string file in files)
+            {
+                // Delete the file
+                File.Delete(file);
+            }
+
         }
     }
 }

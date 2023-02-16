@@ -610,42 +610,7 @@ namespace SUP
 
         private void ButtonPurgeClick(object sender, EventArgs e)
         {
-            lblTotalBytes.Text = "bytes: ";
-            lblTotalTime.Text = "time: ";
-            lblKbs.Text = "kb/s: ";
-            lblTotal.Text = "total:";
-            txtGetValue.Clear();
-            dgTransactions.Rows.Clear();
-
-            string directoryPath = @"root";
-
-            // Get a list of all the subdirectories in the directory
-            string[] subdirectories = Directory.GetDirectories(directoryPath);
-
-            // Loop through each subdirectory
-            foreach (string subdirectory in subdirectories)
-            {
-                // Get the name of the subdirectory
-                string subdirectoryName = Path.GetFileName(subdirectory);
-
-                // Check if the subdirectory name is "mute" or "block"
-                if (subdirectoryName != "mute" && subdirectoryName != "block")
-                {
-                    // Delete the subdirectory and all its contents
-                    Directory.Delete(subdirectory, true);
-                }
-            }
-
-            // Get a list of all the files in the directory
-            string[] files = Directory.GetFiles(directoryPath);
-
-            // Loop through each file
-            foreach (string file in files)
-            {
-                // Delete the file
-                File.Delete(file);
-            }
-
+            
 
 
         }
@@ -653,7 +618,7 @@ namespace SUP
         private void ButtonGetOwnedClick(object sender, EventArgs e)
         {
             DateTime tmbeginCall = DateTime.UtcNow;
-            List<OBJState> ownedObjects = OBJState.GetObjectsOwnedByAddress(txtSearchAddress.Text, txtLogin.Text, txtPassword.Text, txtUrl.Text);
+            List<OBJState> ownedObjects = OBJState.GetObjectsOwnedByAddress(txtSearchAddress.Text, txtLogin.Text, txtPassword.Text, txtUrl.Text, txtVersionByte.Text, int.Parse(txtSkip.Text), int.Parse(txtQty.Text));
             DateTime tmendCall = DateTime.UtcNow;
             lblTotalBytes.Text = "bytes: ";
             lblTotalTime.Text = "time: ";
@@ -678,7 +643,7 @@ namespace SUP
         private void ButtonGetCreatedClick(object sender, EventArgs e)
         {
             DateTime tmbeginCall = DateTime.UtcNow;
-            List<OBJState> createdObjects = OBJState.GetObjectsCreatedByAddress(txtSearchAddress.Text, txtLogin.Text, txtPassword.Text, txtUrl.Text);
+            List<OBJState> createdObjects = OBJState.GetObjectsCreatedByAddress(txtSearchAddress.Text, txtLogin.Text, txtPassword.Text, txtUrl.Text, txtVersionByte.Text, int.Parse(txtSkip.Text), int.Parse(txtQty.Text));
             DateTime tmendCall = DateTime.UtcNow;
             lblTotalBytes.Text = "bytes: ";
             lblTotalTime.Text = "time: ";
@@ -703,7 +668,7 @@ namespace SUP
         private void ButtonGetObjectsByAddressClick(object sender, EventArgs e)
         {
             DateTime tmbeginCall = DateTime.UtcNow;
-            List<OBJState> createdObjects = OBJState.GetObjectsByAddress(txtSearchAddress.Text, txtLogin.Text, txtPassword.Text, txtUrl.Text);
+            List<OBJState> createdObjects = OBJState.GetObjectsByAddress(txtSearchAddress.Text, txtLogin.Text, txtPassword.Text, txtUrl.Text,txtVersionByte.Text, int.Parse(txtSkip.Text), int.Parse(txtQty.Text));
             DateTime tmendCall = DateTime.UtcNow;
             lblTotalBytes.Text = "bytes: ";
             lblTotalTime.Text = "time: ";
@@ -731,7 +696,7 @@ namespace SUP
 
             List<string> searchList = new List<string> { txtSearchAddress.Text };
             DateTime tmbeginCall = DateTime.UtcNow;
-            List<OBJState> createdObjects = OBJState.GetObjectsByKeyword(searchList, txtLogin.Text, txtPassword.Text, txtUrl.Text);
+            List<OBJState> createdObjects = OBJState.GetObjectsByKeyword(searchList, txtLogin.Text, txtPassword.Text, txtUrl.Text, txtVersionByte.Text, int.Parse(txtSkip.Text), int.Parse(txtQty.Text));
             DateTime tmendCall = DateTime.UtcNow;
             lblTotalBytes.Text = "bytes: ";
             lblTotalTime.Text = "time: ";
@@ -796,7 +761,7 @@ namespace SUP
         private void ButtonGetProfileByAddressClick(object sender, EventArgs e)
         {
             DateTime tmbeginCall = DateTime.UtcNow;
-            PROState Tester = PROState.GetProfileByAddress(txtSearchAddress.Text, txtLogin.Text, txtPassword.Text, txtUrl.Text, txtVersionByte.Text, checkBox1.Checked);
+            PROState Tester = PROState.GetProfileByAddress(txtSearchAddress.Text, txtLogin.Text, txtPassword.Text, txtUrl.Text, txtVersionByte.Text, checkBox1.Checked,int.Parse(txtSkip.Text));
             DateTime tmendCall = DateTime.UtcNow;
             lblTotalBytes.Text = "bytes: ";
             lblTotalTime.Text = "time: ";
@@ -815,7 +780,7 @@ namespace SUP
         {
 
             DateTime tmbeginCall = DateTime.UtcNow;
-            PROState createdObject = PROState.GetProfileByURN(txtSearchAddress.Text, txtLogin.Text, txtPassword.Text, txtUrl.Text);
+            PROState createdObject = PROState.GetProfileByURN(txtSearchAddress.Text, txtLogin.Text, txtPassword.Text, txtUrl.Text, txtVersionByte.Text,int.Parse(txtSkip.Text));
             DateTime tmendCall = DateTime.UtcNow;
             lblTotalBytes.Text = "bytes: ";
             lblTotalTime.Text = "time: ";

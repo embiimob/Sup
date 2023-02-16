@@ -34,12 +34,12 @@ namespace SUP.P2FK
     }
     public class OBJState
     {
+        public int Id { get; set; }
         public string URN { get; set; }
         public string URI { get; set; }
         public string Image { get; set; }
         public string Name { get; set; }
         public string Description { get; set; }
-
         public Dictionary<string, string> Attributes { get; set; }
         public string License { get; set; }
         public Dictionary<string, DateTime> Creators { get; set; }
@@ -87,6 +87,7 @@ namespace SUP.P2FK
             objectTransactions = Root.GetRootsByAddress(objectaddress, username, password, url, intProcessHeight, 300, versionByte);
 
             if (intProcessHeight > 0 && objectTransactions.Count() == 1) { return objectState; }
+
 
             foreach (Root transaction in objectTransactions)
             {
@@ -678,7 +679,7 @@ namespace SUP.P2FK
                 }
                 if (isBlocked == "true") { return objectState; }
             }
-
+            int depth = skip;
             //return all roots found at address
             objectTransactions = Root.GetRootsByAddress(objectaddress, username, password, url, skip, 300, versionByte);
             foreach (Root transaction in objectTransactions)
@@ -695,7 +696,7 @@ namespace SUP.P2FK
                     {
                         if (isObject.Creators.ElementAt(0).Key == findObject)
                         {
-
+                            isObject.Id = depth;
                             return isObject;
 
                         }
@@ -705,7 +706,7 @@ namespace SUP.P2FK
 
                 }
 
-
+                depth++;
             }
             return objectState;
 
@@ -737,7 +738,7 @@ namespace SUP.P2FK
                 }
                 if (isBlocked == "true") { return objectState; }
             }
-
+            int depth = skip;
             //return all roots found at address
             objectTransactions = Root.GetRootsByAddress(objectaddress, username, password, url, skip, 300, versionByte);
             foreach (Root transaction in objectTransactions)
@@ -826,7 +827,7 @@ namespace SUP.P2FK
                     {
                         if (isObject.Creators.ElementAt(0).Key == findObject)
                         {
-
+                            isObject.Id = depth;
                             return isObject;
 
                         }
@@ -836,12 +837,12 @@ namespace SUP.P2FK
 
                 }
 
-
+                depth++;
             }
             return objectState;
 
         }
-        public static List<OBJState> GetObjectsByAddress(string objectaddress, string username, string password, string url, string versionByte = "111", int skip = 0)
+        public static List<OBJState> GetObjectsByAddress(string objectaddress, string username, string password, string url, string versionByte = "111", int skip = 0, int qty = -1)
         {
             List<OBJState> objectStates = new List<OBJState> { };
 
@@ -856,14 +857,15 @@ namespace SUP.P2FK
                 if (isBlocked == "true") { return objectStates; }
             }
             Root[] objectTransactions;
-
+            int depth = skip;
+            int _qty = 0;
             //return all roots found at address
             objectTransactions = Root.GetRootsByAddress(objectaddress, username, password, url, skip, 300, versionByte);
             HashSet<string> addedValues = new HashSet<string>();
             foreach (Root transaction in objectTransactions)
             {
 
-
+                
                 //ignore any transaction that is not signed
                 if (transaction.Signed && transaction.Keyword != null && (transaction.File.ContainsKey("OBJ") || transaction.File.ContainsKey("GIV")))
                 {
@@ -876,8 +878,14 @@ namespace SUP.P2FK
                             OBJState isObject = GetObjectByAddress(key, username, password, url, versionByte);
                             if (isObject.URN != null && !addedValues.Contains(key))
                             {
+                                isObject.Id = depth;
                                 objectStates.Add(isObject);
                                 addedValues.Add(key);
+                                _qty++;
+                                if (_qty == qty)
+                                {
+                                    return objectStates;
+                                }
 
                             }
                         }
@@ -886,14 +894,14 @@ namespace SUP.P2FK
 
 
                 }
-
+                depth++;
             }
 
             return objectStates;
 
 
         }
-        public static List<OBJState> GetObjectsOwnedByAddress(string objectaddress, string username, string password, string url, string versionByte = "111", int skip = 0)
+        public static List<OBJState> GetObjectsOwnedByAddress(string objectaddress, string username, string password, string url, string versionByte = "111", int skip = 0, int qty = -1)
         {
 
             List<OBJState> objectStates = new List<OBJState> { };
@@ -910,7 +918,8 @@ namespace SUP.P2FK
             }
 
             Root[] objectTransactions;
-
+            int depth = skip;
+            int _qty = 0;
             //return all roots found at address
             objectTransactions = Root.GetRootsByAddress(objectaddress, username, password, url, skip, 300, versionByte);
             HashSet<string> addedValues = new HashSet<string>();
@@ -936,9 +945,14 @@ namespace SUP.P2FK
 
                                     if ((isObject.Owners.ContainsKey(objectaddress) || (isObject.Creators.ContainsKey(objectaddress) && isObject.Owners.ContainsKey(isObject.Creators.First().Key))))
                                     {
-
+                                        isObject.Id = depth;
                                         objectStates.Add(isObject);
                                         addedValues.Add(key);
+                                        _qty++;
+                                        if (_qty == qty)
+                                        {
+                                            return objectStates;
+                                        }
 
                                     }
 
@@ -951,7 +965,7 @@ namespace SUP.P2FK
 
 
                 }
-
+                depth++;
 
             }
 
@@ -960,7 +974,7 @@ namespace SUP.P2FK
 
 
         }
-        public static List<OBJState> GetObjectsCreatedByAddress(string objectaddress, string username, string password, string url, string versionByte = "111", int skip = 0)
+        public static List<OBJState> GetObjectsCreatedByAddress(string objectaddress, string username, string password, string url, string versionByte = "111", int skip = 0, int qty = -1)
         {
             List<OBJState> objectStates = new List<OBJState> { };
 
@@ -976,7 +990,8 @@ namespace SUP.P2FK
             }
 
             Root[] objectTransactions;
-
+            int depth = skip;
+            int _qty = 0;
             //return all roots found at address
             objectTransactions = Root.GetRootsByAddress(objectaddress, username, password, url, skip, 300, versionByte);
             HashSet<string> addedValues = new HashSet<string>();
@@ -1002,10 +1017,14 @@ namespace SUP.P2FK
 
                                     if (isObject.Creators.ContainsKey(objectaddress) && isObject.Creators[objectaddress].Year > 1)
                                     {
-
+                                        isObject.Id = depth;
                                         objectStates.Add(isObject);
                                         addedValues.Add(key);
-
+                                        _qty++;
+                                        if (_qty == qty)
+                                        {
+                                            return objectStates;
+                                        }
                                     }
 
                                 }
@@ -1018,16 +1037,14 @@ namespace SUP.P2FK
 
                 }
 
-
+                depth++;
             }
 
             return objectStates;
 
 
-
-
         }
-        public static List<OBJState> GetObjectsByKeyword(List<string> searchstrings, string username, string password, string url, string versionByte = "111", int skip = 0)
+        public static List<OBJState> GetObjectsByKeyword(List<string> searchstrings, string username, string password, string url, string versionByte = "111", int skip = 0, int qty = -1)
         {
             List<OBJState> totalSearch = new List<OBJState>();
 
@@ -1051,7 +1068,8 @@ namespace SUP.P2FK
                 {
 
                     Root[] objectTransactions;
-
+                    int depth = skip;
+                    int _qty = 0;
                     //return all roots found at address
                     objectTransactions = Root.GetRootsByAddress(objectaddress, username, password, url, skip, 300, versionByte);
                     HashSet<string> addedValues = new HashSet<string>();
@@ -1069,9 +1087,14 @@ namespace SUP.P2FK
                                 {
                                     if (isObject.Creators.ElementAt(0).Key == findObject)
                                     {
-
+                                        isObject.Id = depth;
                                         objectStates.Add(isObject);
                                         addedValues.Add(findObject);
+                                        _qty++;
+                                        if (_qty == qty)
+                                        {
+                                            return objectStates;
+                                        }
 
                                     }
 
@@ -1080,7 +1103,7 @@ namespace SUP.P2FK
 
                             }
                         }
-
+                        depth++;
                     }
 
 
