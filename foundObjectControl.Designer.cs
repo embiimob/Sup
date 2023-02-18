@@ -41,6 +41,7 @@
             this.ObjectCreators = new System.Windows.Forms.LinkLabel();
             this.ObjectCreators2 = new System.Windows.Forms.LinkLabel();
             this.flowLayoutPanel1 = new System.Windows.Forms.FlowLayoutPanel();
+            this.ObjectId = new System.Windows.Forms.TextBox();
             ((System.ComponentModel.ISupportInitialize)(this.ObjectImage)).BeginInit();
             this.panel1.SuspendLayout();
             this.flowLayoutPanel1.SuspendLayout();
@@ -213,6 +214,13 @@
             this.flowLayoutPanel1.TabIndex = 12;
             this.flowLayoutPanel1.Click += new System.EventHandler(this.foundObjectControl_Click);
             // 
+            // ObjectId
+            // 
+            this.ObjectId.Location = new System.Drawing.Point(45, 86);
+            this.ObjectId.Name = "ObjectId";
+            this.ObjectId.Size = new System.Drawing.Size(79, 20);
+            this.ObjectId.TabIndex = 13;
+            // 
             // FoundObjectControl
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -226,6 +234,7 @@
             this.Controls.Add(this.ObjectImage);
             this.Controls.Add(this.ObjectAddress);
             this.Controls.Add(this.ObjectDescription);
+            this.Controls.Add(this.ObjectId);
             this.DoubleBuffered = true;
             this.Margin = new System.Windows.Forms.Padding(1, 2, 2, 2);
             this.MaximumSize = new System.Drawing.Size(208, 367);
@@ -239,6 +248,7 @@
             this.flowLayoutPanel1.ResumeLayout(false);
             this.flowLayoutPanel1.PerformLayout();
             this.ResumeLayout(false);
+            this.PerformLayout();
 
         }
 
@@ -256,5 +266,6 @@
         public System.Windows.Forms.LinkLabel ObjectCreators;
         public System.Windows.Forms.LinkLabel ObjectCreators2;
         private System.Windows.Forms.FlowLayoutPanel flowLayoutPanel1;
+        public System.Windows.Forms.TextBox ObjectId;
     }
 }

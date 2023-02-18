@@ -236,6 +236,18 @@ namespace SUP
             {
                 Directory.Delete(subfolder, true);
             }
+
+            string userProfilePath = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
+            string folderPath = Path.Combine(userProfilePath, ".ipfs");
+
+            if (Directory.Exists(folderPath))
+            {
+                try
+                {
+                    Directory.Delete(folderPath, true);
+                }
+                catch { }
+            }
         }
 
         private void btnPurge_Click(object sender, EventArgs e)

@@ -126,7 +126,7 @@ namespace SUP.P2FK
                                 try
                                 {
                                     objectinspector = JsonConvert.DeserializeObject<OBJ>(File.ReadAllText(@"root\" + transaction.TransactionId + @"\OBJ"));
-                                    
+
                                 }
                                 catch
                                 {
@@ -844,6 +844,7 @@ namespace SUP.P2FK
         }
         public static List<OBJState> GetObjectsByAddress(string objectaddress, string username, string password, string url, string versionByte = "111", int skip = 0, int qty = -1)
         {
+
             List<OBJState> objectStates = new List<OBJState> { };
 
             var OBJ = new Options { CreateIfMissing = true };
@@ -857,7 +858,7 @@ namespace SUP.P2FK
                 if (isBlocked == "true") { return objectStates; }
             }
             Root[] objectTransactions;
-            int depth = skip;
+
             int _qty = 0;
             //return all roots found at address
             objectTransactions = Root.GetRootsByAddress(objectaddress, username, password, url, skip, 300, versionByte);
@@ -865,36 +866,102 @@ namespace SUP.P2FK
             foreach (Root transaction in objectTransactions)
             {
 
-                
+
                 //ignore any transaction that is not signed
-                if (transaction.Signed && transaction.Keyword != null && (transaction.File.ContainsKey("OBJ") || transaction.File.ContainsKey("GIV")))
+                if (transaction.Signed)
                 {
+                    string findObject;
+                    string findId;
 
-                    foreach (string key in transaction.Keyword.Keys)
+                    if (transaction.File.ContainsKey("OBJ") || transaction.File.ContainsKey("GIV") || transaction.File.ContainsKey("MSG"))
                     {
+                        findObject = transaction.Keyword.Last().Key;
 
-                        if (!addedValues.Contains(key))
+                        if (!addedValues.Contains(findObject))
                         {
-                            OBJState isObject = GetObjectByAddress(key, username, password, url, versionByte);
-                            if (isObject.URN != null && !addedValues.Contains(key))
+                            addedValues.Add(findObject);
+
+
+
+
+                            OBJState isObject = GetObjectByAddress(findObject, username, password, url, versionByte);
+
+                            if (isObject.URN != null && findObject != objectaddress)
                             {
-                                isObject.Id = depth;
+
+                                using (var db = new DB(OBJ, @"root\obj"))
+                                {
+                                    findId = db.Get(objectaddress + "!" + findObject);
+                                }
+
+                                if (findId == transaction.Id.ToString() || findId == null)
+                                {
+                                    if (findId == null)
+                                    {
+                                        using (var db = new DB(OBJ, @"root\obj"))
+                                        {
+                                            db.Put(objectaddress + "!" + findObject, transaction.Id.ToString());
+                                        }
+                                    }
+                                }
+
+                                isObject.Id = transaction.Id;
                                 objectStates.Add(isObject);
-                                addedValues.Add(key);
                                 _qty++;
                                 if (_qty == qty)
                                 {
                                     return objectStates;
                                 }
+                            }
 
+
+                        }
+                        else if (transaction.File.ContainsKey("GIV"))
+                        {
+
+
+                            foreach (string key in transaction.Keyword.Keys)
+                            {
+
+                                if (!addedValues.Contains(key))
+                                {
+                                    addedValues.Add(key);
+
+                                    OBJState isObject = GetObjectByAddress(key, username, password, url, versionByte);
+
+                                    if (isObject.URN != null && key != objectaddress)
+                                    {
+                                        using (var db = new DB(OBJ, @"root\obj"))
+                                        {
+                                            findId = db.Get(objectaddress + "!" + findObject);
+                                        }
+
+                                        if (findId == transaction.Id.ToString() || findId == null)
+                                        {
+                                            if (findId == null)
+                                            {
+                                                using (var db = new DB(OBJ, @"root\obj"))
+                                                {
+                                                    db.Put(objectaddress + "!" + findObject, transaction.Id.ToString());
+                                                }
+                                            }
+                                        }
+
+                                        isObject.Id = transaction.Id;
+                                        objectStates.Add(isObject);
+                                        _qty++;
+                                        if (_qty == qty)
+                                        {
+                                            return objectStates;
+                                        }
+                                    }
+                                }
                             }
                         }
-
                     }
-
-
                 }
-                depth++;
+
+
             }
 
             return objectStates;
@@ -916,9 +983,8 @@ namespace SUP.P2FK
                 }
                 if (isBlocked == "true") { return objectStates; }
             }
-
             Root[] objectTransactions;
-            int depth = skip;
+
             int _qty = 0;
             //return all roots found at address
             objectTransactions = Root.GetRootsByAddress(objectaddress, username, password, url, skip, 300, versionByte);
@@ -928,44 +994,55 @@ namespace SUP.P2FK
 
 
                 //ignore any transaction that is not signed
-                if (transaction.Signed && (transaction.File.ContainsKey("OBJ") || transaction.File.ContainsKey("GIV")))
+                if (transaction.Signed)
                 {
+                    string findId;
 
-
-                    foreach (string key in transaction.Keyword.Keys)
+                    if (transaction.File.ContainsKey("OBJ") || transaction.File.ContainsKey("GIV"))
                     {
 
-                        if (!addedValues.Contains(key))
+
+                        foreach (string key in transaction.Keyword.Keys)
                         {
-                            OBJState isObject = GetObjectByAddress(key, username, password, url, versionByte);
-                            if (isObject.URN != null)
+
+                            if (!addedValues.Contains(key) && key != objectaddress)
                             {
-                                if (isObject.Creators.ElementAt(0).Key == key)
+                                addedValues.Add(key);
+
+                                OBJState isObject = GetObjectByAddress(key, username, password, url, versionByte);
+
+                                if (isObject.URN != null & isObject.Owners != null && (     isObject.Owners.ContainsKey(objectaddress)   ||  (  isObject.Owners.ContainsKey(key) & isObject.Creators != null && isObject.Creators.ContainsKey(objectaddress))  ) )
                                 {
-
-                                    if ((isObject.Owners.ContainsKey(objectaddress) || (isObject.Creators.ContainsKey(objectaddress) && isObject.Owners.ContainsKey(isObject.Creators.First().Key))))
+                                    using (var db = new DB(OBJ, @"root\obj"))
                                     {
-                                        isObject.Id = depth;
-                                        objectStates.Add(isObject);
-                                        addedValues.Add(key);
-                                        _qty++;
-                                        if (_qty == qty)
-                                        {
-                                            return objectStates;
-                                        }
-
+                                        findId = db.Get(objectaddress + "!" + key);
                                     }
 
+                                    if (findId == transaction.Id.ToString() || findId == null)
+                                    {
+                                        if (findId == null)
+                                        {
+                                            using (var db = new DB(OBJ, @"root\obj"))
+                                            {
+                                                db.Put(objectaddress + "!" + key, transaction.Id.ToString());
+                                            }
+                                        }
+                                    }
 
+                                    isObject.Id = transaction.Id;
+                                    objectStates.Add(isObject);
+                                    _qty++;
+                                    if (_qty == qty)
+                                    {
+                                        return objectStates;
+                                    }
                                 }
-
                             }
                         }
+
                     }
-
-
                 }
-                depth++;
+
 
             }
 
@@ -976,6 +1053,7 @@ namespace SUP.P2FK
         }
         public static List<OBJState> GetObjectsCreatedByAddress(string objectaddress, string username, string password, string url, string versionByte = "111", int skip = 0, int qty = -1)
         {
+
             List<OBJState> objectStates = new List<OBJState> { };
 
             var OBJ = new Options { CreateIfMissing = true };
@@ -988,9 +1066,8 @@ namespace SUP.P2FK
                 }
                 if (isBlocked == "true") { return objectStates; }
             }
-
             Root[] objectTransactions;
-            int depth = skip;
+
             int _qty = 0;
             //return all roots found at address
             objectTransactions = Root.GetRootsByAddress(objectaddress, username, password, url, skip, 300, versionByte);
@@ -1000,47 +1077,59 @@ namespace SUP.P2FK
 
 
                 //ignore any transaction that is not signed
-                if (transaction.Signed && (transaction.File.ContainsKey("OBJ") || transaction.File.ContainsKey("GIV")))
+                if (transaction.Signed)
                 {
+                    string findObject;
+                    string findId;
 
-
-                    foreach (string key in transaction.Keyword.Keys)
+                    if (transaction.File.ContainsKey("OBJ"))
                     {
-                        if (!addedValues.Contains(key))
+                        findObject = transaction.Keyword.Last().Key;
+
+                        if (!addedValues.Contains(findObject))
                         {
-                            OBJState isObject = GetObjectByAddress(key, username, password, url, versionByte);
-                            if (isObject.URN != null)
+                            addedValues.Add(findObject);
+
+
+                            OBJState isObject = GetObjectByAddress(findObject, username, password, url, versionByte);
+
+                            if (isObject.URN != null && findObject != objectaddress && isObject.Creators.TryGet(objectaddress).Year > 1)
                             {
-                                if (isObject.Creators.ElementAt(0).Key == key)
+
+                                using (var db = new DB(OBJ, @"root\obj"))
                                 {
-
-
-                                    if (isObject.Creators.ContainsKey(objectaddress) && isObject.Creators[objectaddress].Year > 1)
-                                    {
-                                        isObject.Id = depth;
-                                        objectStates.Add(isObject);
-                                        addedValues.Add(key);
-                                        _qty++;
-                                        if (_qty == qty)
-                                        {
-                                            return objectStates;
-                                        }
-                                    }
-
+                                    findId = db.Get(objectaddress + "!" + findObject);
                                 }
 
+                                if (findId == transaction.Id.ToString() || findId == null)
+                                {
+                                    if (findId == null)
+                                    {
+                                        using (var db = new DB(OBJ, @"root\obj"))
+                                        {
+                                            db.Put(objectaddress + "!" + findObject, transaction.Id.ToString());
+                                        }
+                                    }
+                                }
+
+                                isObject.Id = transaction.Id;
+                                objectStates.Add(isObject);
+                                _qty++;
+                                if (_qty == qty)
+                                {
+                                    return objectStates;
+                                }
                             }
+
                         }
-
                     }
-
-
                 }
 
-                depth++;
+
             }
 
             return objectStates;
+
 
 
         }
@@ -1050,75 +1139,11 @@ namespace SUP.P2FK
 
             foreach (string search in searchstrings)
             {
-
-
-                List<OBJState> objectStates = new List<OBJState> { };
                 string objectaddress = Root.GetPublicAddressByKeyword(search, versionByte);
-
-                var OBJ = new Options { CreateIfMissing = true };
-                string isBlocked;
-                lock (levelDBLocker)
-                {
-                    using (var db = new DB(OBJ, @"root\block"))
-                    {
-                        isBlocked = db.Get(objectaddress);
-                    }
-                }
-                if (isBlocked != "true")
-                {
-
-                    Root[] objectTransactions;
-                    int depth = skip;
-                    int _qty = 0;
-                    //return all roots found at address
-                    objectTransactions = Root.GetRootsByAddress(objectaddress, username, password, url, skip, 300, versionByte);
-                    HashSet<string> addedValues = new HashSet<string>();
-                    foreach (Root transaction in objectTransactions)
-                    {
-                        string findObject = transaction.Keyword.Last().Key;
-                        if (!addedValues.Contains(findObject))
-                        {
-                            //ignore any transaction that is not signed
-                            if (transaction.Signed && transaction.File.ContainsKey("OBJ"))
-                            {
-
-                                OBJState isObject = GetObjectByAddress(findObject, username, password, url, versionByte);
-                                if (isObject.URN != null && !addedValues.Contains(findObject))
-                                {
-                                    if (isObject.Creators.ElementAt(0).Key == findObject)
-                                    {
-                                        isObject.Id = depth;
-                                        objectStates.Add(isObject);
-                                        addedValues.Add(findObject);
-                                        _qty++;
-                                        if (_qty == qty)
-                                        {
-                                            return objectStates;
-                                        }
-
-                                    }
-
-                                }
-
-
-                            }
-                        }
-                        depth++;
-                    }
-
-
-                    foreach (OBJState found in objectStates)
-                    {
-                        totalSearch.Add(found);
-                    }
-                }
+                List<OBJState> keySearch = GetObjectsByAddress(objectaddress, username, password, url, versionByte, skip, qty);
+                totalSearch = totalSearch.Concat(keySearch).ToList();
             }
-
             return totalSearch;
-
-
-
-
 
         }
 

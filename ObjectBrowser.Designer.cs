@@ -43,6 +43,8 @@
             this.btnHistoryBack = new System.Windows.Forms.Button();
             this.btnHistoryForward = new System.Windows.Forms.Button();
             this.btnMint = new System.Windows.Forms.Button();
+            this.txtQty = new System.Windows.Forms.TextBox();
+            this.txtLast = new System.Windows.Forms.TextBox();
             this.SuspendLayout();
             // 
             // btnCreated
@@ -101,8 +103,9 @@
             this.flowLayoutPanel1.BackColor = System.Drawing.SystemColors.InactiveCaption;
             this.flowLayoutPanel1.Location = new System.Drawing.Point(0, 28);
             this.flowLayoutPanel1.Name = "flowLayoutPanel1";
-            this.flowLayoutPanel1.Size = new System.Drawing.Size(652, 334);
+            this.flowLayoutPanel1.Size = new System.Drawing.Size(652, 595);
             this.flowLayoutPanel1.TabIndex = 69;
+            this.flowLayoutPanel1.Scroll += new System.Windows.Forms.ScrollEventHandler(this.flowLayoutPanel1_Scroll);
             this.flowLayoutPanel1.SizeChanged += new System.EventHandler(this.flowLayoutPanel1_SizeChanged);
             this.flowLayoutPanel1.DragEnter += flowLayoutPanel1_DragEnter;
             this.flowLayoutPanel1.DragDrop += flowLayoutPanel1_DragDrop;
@@ -214,11 +217,29 @@
             this.btnMint.UseVisualStyleBackColor = false;
             this.btnMint.Click += new System.EventHandler(this.btnMint_Click);
             // 
+            // txtQty
+            // 
+            this.txtQty.Enabled = false;
+            this.txtQty.Location = new System.Drawing.Point(457, 53);
+            this.txtQty.Name = "txtQty";
+            this.txtQty.Size = new System.Drawing.Size(43, 20);
+            this.txtQty.TabIndex = 77;
+            this.txtQty.Text = "6";
+            // 
+            // txtLast
+            // 
+            this.txtLast.Enabled = false;
+            this.txtLast.Location = new System.Drawing.Point(506, 53);
+            this.txtLast.Name = "txtLast";
+            this.txtLast.Size = new System.Drawing.Size(43, 20);
+            this.txtLast.TabIndex = 78;
+            this.txtLast.Text = "0";
+            // 
             // ObjectBrowser
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(652, 362);
+            this.ClientSize = new System.Drawing.Size(652, 623);
             this.Controls.Add(this.btnMint);
             this.Controls.Add(this.btnHistoryForward);
             this.Controls.Add(this.btnHistoryBack);
@@ -234,6 +255,8 @@
             this.Controls.Add(this.txtUrl);
             this.Controls.Add(this.txtPassword);
             this.Controls.Add(this.txtLogin);
+            this.Controls.Add(this.txtLast);
+            this.Controls.Add(this.txtQty);
             this.MinimumSize = new System.Drawing.Size(668, 401);
             this.Name = "ObjectBrowser";
             this.RightToLeft = System.Windows.Forms.RightToLeft.No;
@@ -260,5 +283,7 @@
         private System.Windows.Forms.Button btnHistoryBack;
         private System.Windows.Forms.Button btnHistoryForward;
         private System.Windows.Forms.Button btnMint;
+        private System.Windows.Forms.TextBox txtQty;
+        private System.Windows.Forms.TextBox txtLast;
     }
 }

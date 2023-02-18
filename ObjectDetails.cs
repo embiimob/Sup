@@ -2,6 +2,7 @@
 using Ganss.Xss;
 using LevelDB;
 using NBitcoin;
+using NBitcoin.Protocol;
 using Newtonsoft.Json;
 using SUP.P2FK;
 using System;
@@ -23,6 +24,8 @@ namespace SUP
     {
         private readonly string _objectaddress;
         private bool isVerbose = false;
+        private int numMessagesDisplayed = 0;
+        private int numChangesDisplayed = 0;
         public ObjectDetails(string objectaddress)
         {
             InitializeComponent();
@@ -262,8 +265,12 @@ namespace SUP
 
         private void RefreshSupMessages(object sender, EventArgs e)
         {
-            supFlow.SuspendLayout();
-            supFlow.Controls.Clear();
+            // Clear controls if no messages have been displayed yet
+            if (numMessagesDisplayed == 0)
+            {
+                supFlow.Controls.Clear();
+            }
+            supPanel.Visible = true;
 
             Dictionary<string, string[]> profileAddress = new Dictionary<string, string[]> { };
             OBJState objstate = OBJState.GetObjectByAddress(_objectaddress, "good-user", "better-password", "http://127.0.0.1:18332");
@@ -276,116 +283,118 @@ namespace SUP
                 LevelDB.Iterator it = db.CreateIterator();
                 for (
                    it.Seek(this._objectaddress);
-                   it.IsValid() && it.KeyAsString().StartsWith(_objectaddress);
+                   it.IsValid() && it.KeyAsString().StartsWith(_objectaddress) && rownum <= numMessagesDisplayed + 10; // Only display next 10 messages
                     it.Next()
                  )
-
-
                 {
-
-
-                    string process = it.ValueAsString();
-
-                    List<string> supMessagePacket = JsonConvert.DeserializeObject<List<string>>(process);
-
-                    string message = System.IO.File.ReadAllText(@"root/" + supMessagePacket[1] + @"/MSG").Replace("@" + _objectaddress, "");
-
-                    string fromAddress = supMessagePacket[0];
-                    string imagelocation = "";
-
-
-                    if (!profileAddress.ContainsKey(fromAddress))
+                    // Display only if rownum > numMessagesDisplayed to skip already displayed messages
+                    if (rownum > numMessagesDisplayed)
                     {
+                        string process = it.ValueAsString();
 
-                        PROState profile = PROState.GetProfileByAddress(fromAddress, "good-user", "better-password", "http://127.0.0.1:18332");
+                        List<string> supMessagePacket = JsonConvert.DeserializeObject<List<string>>(process);
 
-                        if (profile.URN != null)
+                        string message = System.IO.File.ReadAllText(@"root/" + supMessagePacket[1] + @"/MSG").Replace("@" + _objectaddress, "");
+
+                        string fromAddress = supMessagePacket[0];
+                        string imagelocation = "";
+
+
+                        if (!profileAddress.ContainsKey(fromAddress))
                         {
-                            fromAddress = TruncateAddress(profile.URN);
-                            imagelocation = profile.Image;
 
+                            PROState profile = PROState.GetProfileByAddress(fromAddress, "good-user", "better-password", "http://127.0.0.1:18332");
 
-                            if (imagelocation.StartsWith("BTC:") || imagelocation.StartsWith("MZC:"))
+                            if (profile.URN != null)
                             {
-                                if (imagelocation.Length > 64)
+                                fromAddress = TruncateAddress(profile.URN);
+                                imagelocation = profile.Image;
+
+
+                                if (imagelocation.StartsWith("BTC:") || imagelocation.StartsWith("MZC:"))
                                 {
-                                    string transid = imagelocation.Substring(4, 64);
-                                    imagelocation = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + @"\root\" + imagelocation.Replace("BTC:", "").Replace("MZC:", "").Replace(@"/", @"\");
-
-
-                                    if (!System.IO.Directory.Exists("root/" + transid))
+                                    if (imagelocation.Length > 64)
                                     {
-                                        if (profile.Image.StartsWith("BTC:"))
+                                        string transid = imagelocation.Substring(4, 64);
+                                        imagelocation = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + @"\root\" + imagelocation.Replace("BTC:", "").Replace("MZC:", "").Replace(@"/", @"\");
+
+
+                                        if (!System.IO.Directory.Exists("root/" + transid))
                                         {
-                                            Root.GetRootByTransactionId(transid, "good-user", "better-password", "http://127.0.0.1:8332", "0");
+                                            if (profile.Image.StartsWith("BTC:"))
+                                            {
+                                                Root.GetRootByTransactionId(transid, "good-user", "better-password", "http://127.0.0.1:8332", "0");
+                                            }
+                                            else
+                                            {
+                                                Root.GetRootByTransactionId(transid, "good-user", "better-password", @"http://127.0.0.1:12832", "50");
+
+                                            }
                                         }
-                                        else
+                                    }
+
+                                }
+                                else
+                                {
+                                    if (imagelocation.Length > 64)
+                                    {
+                                        string transid = imagelocation.Substring(0, 64);
+                                        imagelocation = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + @"\root\" + imagelocation.Replace(@" / ", @"\");
+                                        if (!System.IO.Directory.Exists("root/" + transid))
                                         {
-                                            Root.GetRootByTransactionId(transid, "good-user", "better-password", @"http://127.0.0.1:12832", "50");
+                                            Root.GetRootByTransactionId(transid, "good-user", "better-password", "http://127.0.0.1:18332");
 
                                         }
                                     }
                                 }
+
 
                             }
                             else
-                            {
-                                if (imagelocation.Length > 64)
-                                {
-                                    string transid = imagelocation.Substring(0, 64);
-                                    imagelocation = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + @"\root\" + imagelocation.Replace(@" / ", @"\");
-                                    if (!System.IO.Directory.Exists("root/" + transid))
-                                    {
-                                        Root.GetRootByTransactionId(transid, "good-user", "better-password", "http://127.0.0.1:18332");
+                            { fromAddress = TruncateAddress(fromAddress); }
 
-                                    }
-                                }
-                            }
+                            string[] profilePacket = new string[2];
 
+                            profilePacket[0] = fromAddress;
+                            profilePacket[1] = imagelocation;
+                            profileAddress.Add(supMessagePacket[0], profilePacket);
 
                         }
                         else
-                        { fromAddress = TruncateAddress(fromAddress); }
+                        {
+                            string[] profilePacket = new string[] { };
+                            profileAddress.TryGetValue(fromAddress, out profilePacket);
+                            fromAddress = profilePacket[0];
+                            imagelocation = profilePacket[1];
 
-                        string[] profilePacket = new string[2];
+                        }
 
-                        profilePacket[0] = fromAddress;
-                        profilePacket[1] = imagelocation;
-                        profileAddress.Add(supMessagePacket[0], profilePacket);
+
+                        string tstamp = it.KeyAsString().Split('!')[1];
+                        System.Drawing.Color bgcolor;
+
+                        if (rownum % 2 == 0)
+                        {
+                            bgcolor = System.Drawing.Color.White;
+                        }
+                        else
+                        {
+                            bgcolor = System.Drawing.Color.LightGray;
+                        }
+
+                        CreateRow(imagelocation, fromAddress, supMessagePacket[0], DateTime.ParseExact(tstamp, "yyyyMMddHHmmss", CultureInfo.InvariantCulture), message, bgcolor, supFlow);
 
                     }
-                    else
-                    {
-                        string[] profilePacket = new string[] { };
-                        profileAddress.TryGetValue(fromAddress, out profilePacket);
-                        fromAddress = profilePacket[0];
-                        imagelocation = profilePacket[1];
-
-                    }
-
-
-                    string tstamp = it.KeyAsString().Split('!')[1];
-                    System.Drawing.Color bgcolor;
-
-                    if (rownum % 2 == 0)
-                    {
-                        bgcolor = System.Drawing.Color.White;
-                    }
-                    else
-                    {
-                        bgcolor = System.Drawing.Color.LightGray;
-                    }
-
                     rownum++;
-
-                    CreateRow(imagelocation, fromAddress, supMessagePacket[0], DateTime.ParseExact(tstamp, "yyyyMMddHHmmss", CultureInfo.InvariantCulture), message, bgcolor, supFlow);
-
                 }
                 it.Dispose();
             }
 
+            // Update number of messages displayed
+            numMessagesDisplayed += 10;
+
             supFlow.ResumeLayout();
-            supPanel.Visible = true;
+          
         }
 
         void CreateRow(string imageLocation, string ownerName, string ownerId, DateTime timestamp, string messageText, System.Drawing.Color bgcolor, FlowLayoutPanel layoutPanel)
@@ -1340,7 +1349,13 @@ namespace SUP
         {
 
             transFlow.SuspendLayout();
-            transFlow.Controls.Clear();
+          
+
+            // Clear controls if no messages have been displayed yet
+            if (numChangesDisplayed == 0)
+            {
+                transFlow.Controls.Clear();
+            }
 
             Dictionary<string, string> profileAddress = new Dictionary<string, string> { };
             int rownum = 1;
@@ -1369,46 +1384,49 @@ namespace SUP
                 LevelDB.Iterator it = db.CreateIterator();
                 for (
                    it.Seek(this._objectaddress);
-                   it.IsValid() && it.KeyAsString().StartsWith(this._objectaddress);
+                  it.IsValid() && it.KeyAsString().StartsWith(_objectaddress) && rownum <= numChangesDisplayed + 10;
                     it.Next()
                  )
 
 
                 {
-
-
-                    string process = it.ValueAsString();
-
-                    List<string> transMessagePacket = JsonConvert.DeserializeObject<List<string>>(process);
-
-                    string fromAddress = TruncateAddress(transMessagePacket[0]);
-                    string toAddress = TruncateAddress(transMessagePacket[1]);
-                    string action = transMessagePacket[2];
-                    string qty = transMessagePacket[3];
-                    string amount = transMessagePacket[4];
-                    string status = transMessagePacket[5];
-                    string tstamp = it.KeyAsString().Split('!')[1];
-
-                    System.Drawing.Color bgcolor;
-                    if (rownum % 2 == 0)
+                    if (rownum > numChangesDisplayed)
                     {
-                        bgcolor = System.Drawing.Color.White;
-                    }
-                    else
-                    {
-                        bgcolor = System.Drawing.Color.LightGray;
-                    }
 
+                        string process = it.ValueAsString();
+
+                        List<string> transMessagePacket = JsonConvert.DeserializeObject<List<string>>(process);
+
+                        string fromAddress = TruncateAddress(transMessagePacket[0]);
+                        string toAddress = TruncateAddress(transMessagePacket[1]);
+                        string action = transMessagePacket[2];
+                        string qty = transMessagePacket[3];
+                        string amount = transMessagePacket[4];
+                        string status = transMessagePacket[5];
+                        string tstamp = it.KeyAsString().Split('!')[1];
+
+                        System.Drawing.Color bgcolor;
+                        if (rownum % 2 == 0)
+                        {
+                            bgcolor = System.Drawing.Color.White;
+                        }
+                        else
+                        {
+                            bgcolor = System.Drawing.Color.LightGray;
+                        }
+
+                        
+
+
+                        CreateTransRow(fromAddress, transMessagePacket[0], toAddress, transMessagePacket[1], action, qty, amount, DateTime.ParseExact(tstamp, "yyyyMMddHHmmss", CultureInfo.InvariantCulture), status, bgcolor, transFlow);
+
+                    }
                     rownum++;
-
-
-                    CreateTransRow(fromAddress, transMessagePacket[0], toAddress, transMessagePacket[1], action, qty, amount, DateTime.ParseExact(tstamp, "yyyyMMddHHmmss", CultureInfo.InvariantCulture), status, bgcolor, transFlow);
-
                 }
                 it.Dispose();
             }
-            if (transFlow.Controls.Count > 0) { transFlow.ScrollControlIntoView(transFlow.Controls[transFlow.Controls.Count - 1]); }
-
+            
+            numChangesDisplayed += 10;
             transFlow.ResumeLayout();
             transFlow.Visible = true;
 

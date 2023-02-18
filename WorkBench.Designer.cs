@@ -99,6 +99,7 @@ namespace SUP
             this.txtSkip = new System.Windows.Forms.TextBox();
             this.label1 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
+            this.btnPurge = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.dgTransactions)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
@@ -139,7 +140,7 @@ namespace SUP
             // 
             this.txtlevelDBKey.Location = new System.Drawing.Point(51, 121);
             this.txtlevelDBKey.Name = "txtlevelDBKey";
-            this.txtlevelDBKey.Size = new System.Drawing.Size(200, 20);
+            this.txtlevelDBKey.Size = new System.Drawing.Size(133, 20);
             this.txtlevelDBKey.TabIndex = 7;
             // 
             // lbTableName
@@ -484,6 +485,7 @@ namespace SUP
             // 
             // splitContainer1.Panel1
             // 
+            this.splitContainer1.Panel1.Controls.Add(this.btnPurge);
             this.splitContainer1.Panel1.Controls.Add(this.label2);
             this.splitContainer1.Panel1.Controls.Add(this.label1);
             this.splitContainer1.Panel1.Controls.Add(this.txtSkip);
@@ -649,7 +651,7 @@ namespace SUP
             // checkBox1
             // 
             this.checkBox1.AutoSize = true;
-            this.checkBox1.Location = new System.Drawing.Point(257, 124);
+            this.checkBox1.Location = new System.Drawing.Point(190, 124);
             this.checkBox1.Name = "checkBox1";
             this.checkBox1.Size = new System.Drawing.Size(64, 17);
             this.checkBox1.TabIndex = 55;
@@ -769,6 +771,16 @@ namespace SUP
             this.label2.TabIndex = 69;
             this.label2.Text = "skip";
             // 
+            // btnPurge
+            // 
+            this.btnPurge.Location = new System.Drawing.Point(269, 118);
+            this.btnPurge.Name = "btnPurge";
+            this.btnPurge.Size = new System.Drawing.Size(74, 23);
+            this.btnPurge.TabIndex = 70;
+            this.btnPurge.Text = "purge all";
+            this.btnPurge.UseVisualStyleBackColor = true;
+            this.btnPurge.Click += new System.EventHandler(this.ButtonPurgeClick);
+            // 
             // WorkBench
             // 
             this.AllowDrop = true;
@@ -857,6 +869,7 @@ namespace SUP
         private Label label1;
         private TextBox txtSkip;
         private TextBox txtQty;
+        private Button btnPurge;
     }
 }
 
