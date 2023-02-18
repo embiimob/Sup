@@ -1608,12 +1608,7 @@ namespace SUP
 
         private void button2_Click(object sender, EventArgs e)
         {
-            if (lastClickedButton != null)
-                lastClickedButton.BackColor = Color.White;
-
-            var button = (Button)sender;
-            lastClickedButton = button;
-            button.BackColor = Color.Yellow;
+           
         }
 
         private void btnHistoryBack_Click(object sender, EventArgs e)
@@ -1644,13 +1639,7 @@ namespace SUP
 
         private void btnMint_Click(object sender, EventArgs e)
         {
-            if (lastClickedButton != null)
-                lastClickedButton.BackColor = Color.White;
-
-            var button = (Button)sender;
-            lastClickedButton = button;
-            button.BackColor = Color.Yellow;
-
+            
         }
 
         private void flowLayoutPanel1_DragEnter(object sender, System.Windows.Forms.DragEventArgs e)

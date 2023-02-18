@@ -76,33 +76,33 @@ namespace SUP
 
         private void Connections_Load(object sender, EventArgs e)
         {
-           
-                var process = new Process
-                {
-                    StartInfo = new ProcessStartInfo
-                    {
-                        FileName = @"ipfs\ipfs.exe",
-                        Arguments = "swarm peers",
-                        UseShellExecute = false,
-                        RedirectStandardOutput = true,
-                        CreateNoWindow = true
-                    }
-                };
-                process.Start();
 
-                string output = process.StandardOutput.ReadToEnd();
-                if (output.Length > 0)
+            var process = new Process
+            {
+                StartInfo = new ProcessStartInfo
                 {
-                    button1.Text = "disable IPFS pinning";
+                    FileName = @"ipfs\ipfs.exe",
+                    Arguments = "swarm peers",
+                    UseShellExecute = false,
+                    RedirectStandardOutput = true,
+                    CreateNoWindow = true
+                }
+            };
+            process.Start();
+
+            string output = process.StandardOutput.ReadToEnd();
+            if (output.Length > 0)
+            {
+                button1.Text = "disable IPFS pinning";
                 btnPinIPFS.Enabled = true;
                 btnUnpinIPFS.Enabled = true;
-               
+
             }
-                else
-                {
-                    button1.Text = "enable IPFS pinning";
-                }
-            
+            else
+            {
+                button1.Text = "enable IPFS pinning";
+            }
+
         }
 
         private void button1_Click(object sender, EventArgs e)
@@ -111,16 +111,16 @@ namespace SUP
             {
                 button1.Text = "enable IPFS pinning";
 
-                     var process = new Process
-                     {
-                         StartInfo = new ProcessStartInfo
-                         {
-                             FileName = @"ipfs\ipfs.exe",
-                             Arguments = "shutdown",
-                             UseShellExecute = false,
-                             CreateNoWindow = true
-                         }
-                     };
+                var process = new Process
+                {
+                    StartInfo = new ProcessStartInfo
+                    {
+                        FileName = @"ipfs\ipfs.exe",
+                        Arguments = "shutdown",
+                        UseShellExecute = false,
+                        CreateNoWindow = true
+                    }
+                };
                 process.Start();
 
                 btnPinIPFS.Enabled = false;
@@ -136,7 +136,8 @@ namespace SUP
 
 
             }
-            else {
+            else
+            {
                 button1.Text = "disable IPFS pinning";
 
                 var init = new Process
@@ -175,8 +176,8 @@ namespace SUP
 
                 }
 
-                }
             }
+        }
 
         private void button2_Click(object sender, EventArgs e)
         {
@@ -237,17 +238,6 @@ namespace SUP
                 Directory.Delete(subfolder, true);
             }
 
-            string userProfilePath = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
-            string folderPath = Path.Combine(userProfilePath, ".ipfs");
-
-            if (Directory.Exists(folderPath))
-            {
-                try
-                {
-                    Directory.Delete(folderPath, true);
-                }
-                catch { }
-            }
         }
 
         private void btnPurge_Click(object sender, EventArgs e)

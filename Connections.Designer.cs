@@ -30,6 +30,7 @@
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Connections));
             this.panel1 = new System.Windows.Forms.Panel();
+            this.btnPurge = new System.Windows.Forms.Button();
             this.btnPurgeIPFS = new System.Windows.Forms.Button();
             this.btnUnpinIPFS = new System.Windows.Forms.Button();
             this.btnPinIPFS = new System.Windows.Forms.Button();
@@ -72,7 +73,6 @@
             this.txtPort = new System.Windows.Forms.TextBox();
             this.btnMainConnection = new System.Windows.Forms.Button();
             this.label1 = new System.Windows.Forms.Label();
-            this.btnPurge = new System.Windows.Forms.Button();
             this.panel1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -126,6 +126,16 @@
             this.panel1.Size = new System.Drawing.Size(644, 365);
             this.panel1.TabIndex = 1;
             // 
+            // btnPurge
+            // 
+            this.btnPurge.Location = new System.Drawing.Point(528, 182);
+            this.btnPurge.Name = "btnPurge";
+            this.btnPurge.Size = new System.Drawing.Size(104, 23);
+            this.btnPurge.TabIndex = 129;
+            this.btnPurge.Text = "purge sup!? cache";
+            this.btnPurge.UseVisualStyleBackColor = true;
+            this.btnPurge.Click += new System.EventHandler(this.btnPurge_Click);
+            // 
             // btnPurgeIPFS
             // 
             this.btnPurgeIPFS.Location = new System.Drawing.Point(399, 182);
@@ -175,7 +185,7 @@
             this.label15.Name = "label15";
             this.label15.Size = new System.Drawing.Size(210, 13);
             this.label15.TabIndex = 124;
-            this.label15.Text = "Sup!? Object Browser  v0.1.11-beta";
+            this.label15.Text = "Sup!? Object Browser  v0.1.12-beta";
             // 
             // label14
             // 
@@ -524,16 +534,6 @@
             this.label1.Size = new System.Drawing.Size(68, 13);
             this.label1.TabIndex = 50;
             this.label1.Text = "main chain";
-            // 
-            // btnPurge
-            // 
-            this.btnPurge.Location = new System.Drawing.Point(528, 182);
-            this.btnPurge.Name = "btnPurge";
-            this.btnPurge.Size = new System.Drawing.Size(104, 23);
-            this.btnPurge.TabIndex = 129;
-            this.btnPurge.Text = "purge sup!? cache";
-            this.btnPurge.UseVisualStyleBackColor = true;
-            this.btnPurge.Click += new System.EventHandler(this.btnPurge_Click);
             // 
             // Connections
             // 
