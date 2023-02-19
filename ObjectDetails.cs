@@ -1319,9 +1319,8 @@ namespace SUP
                         break;
                     default:
 
-
                         pictureBox1.ImageLocation = imgurn;
-
+                        button1.Visible = true;
                         break;
                 }
                 imgPicture.SuspendLayout();

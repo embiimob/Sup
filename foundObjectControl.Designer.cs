@@ -147,9 +147,9 @@
             this.ObjectQty.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.ObjectQty.BackColor = System.Drawing.Color.Transparent;
             this.ObjectQty.Font = new System.Drawing.Font("Microsoft Sans Serif", 6.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.ObjectQty.Location = new System.Drawing.Point(151, 213);
+            this.ObjectQty.Location = new System.Drawing.Point(127, 213);
             this.ObjectQty.Name = "ObjectQty";
-            this.ObjectQty.Size = new System.Drawing.Size(54, 20);
+            this.ObjectQty.Size = new System.Drawing.Size(78, 20);
             this.ObjectQty.TabIndex = 7;
             this.ObjectQty.Text = "10000x";
             this.ObjectQty.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
@@ -174,7 +174,7 @@
             this.ObjectName.Location = new System.Drawing.Point(2, 215);
             this.ObjectName.Margin = new System.Windows.Forms.Padding(0);
             this.ObjectName.Name = "ObjectName";
-            this.ObjectName.Size = new System.Drawing.Size(146, 18);
+            this.ObjectName.Size = new System.Drawing.Size(122, 18);
             this.ObjectName.TabIndex = 9;
             this.ObjectName.Text = "FakeUFO Keywords this hoy sdgfd";
             this.ObjectName.Click += new System.EventHandler(this.foundObjectControl_Click);

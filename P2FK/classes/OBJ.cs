@@ -29,7 +29,7 @@ namespace SUP.P2FK
         public Dictionary<string, string> atr { get; set; }
         public string lic { get; set; }
         public int[] cre { get; set; }
-        public Dictionary<int, int> own { get; set; }
+        public Dictionary<int, long> own { get; set; }
 
     }
     public class OBJState
@@ -128,9 +128,9 @@ namespace SUP.P2FK
                                     objectinspector = JsonConvert.DeserializeObject<OBJ>(File.ReadAllText(@"root\" + transaction.TransactionId + @"\OBJ"));
 
                                 }
-                                catch
+                                catch(Exception e)
                                 {
-
+                                    
                                     logstatus = "[\"" + transaction.SignedBy + "\",\"" + objectaddress + "\",\"inspect\",\"\",\"\",\"failed due to invalid format\"]";
                                     break;
                                 }
