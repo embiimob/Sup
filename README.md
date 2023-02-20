@@ -110,6 +110,10 @@ navigates to requested url in browser.
   SUP.EXE --address mwJDUTXksGKUmU3z9nKeMvnjNnWjEXj5rW --versionbyte 111 --getkeywordsbyaddress --password better-password --url http://127.0.0.1:18332 --username good-user<br />
 <br />
 
+**get public messages by address:**<br />
+  SUP.EXE --address muVrFVk3ErfrnmWosLF4WixxRtDKfMx9bs --versionbyte 111 --getpublicmessagesyaddress --password better-password --qty 10 --url http://127.0.0.1:18332 --username good-user --skip 0<br />
+<br />
+
 **get profile by address:**<br />
   SUP.EXE --address muVrFVk3ErfrnmWosLF4WixxRtDKfMx9bs --versionbyte 111 --getprofilebyaddress --password  better-password --url http://127.0.0.1:18332 --username good-user --skip 0<br />
 <br />
