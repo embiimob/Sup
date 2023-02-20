@@ -11,7 +11,7 @@ P2FK was directly inspired by the satoshi uploader  see --> https://cirosantilli
 
 ## **Installation**
 
-1. Download the Sup.v0.1.13-beta.zip file
+1. Download the Sup.v0.1.14-beta.zip file
 2. Create a folder on your **fastest** disk drive with at least **700GB** free (it will be storing the bitcoin prod and testnet blockchains)
 3. Unzip all contents into the folder.
 4. Create a shortcut to SUP.exe and launch.
@@ -106,6 +106,14 @@ navigates to requested url in browser.
   SUP.EXE --versionbyte 111 --getobjectsbykeyword --keyword flowersofwar --password better-password --url  http://127.0.0.1:18332 --username good-user --skip 0 --qty -1<br />
 <br />
 
+**get keywords by address:**<br />
+  SUP.EXE --address mwJDUTXksGKUmU3z9nKeMvnjNnWjEXj5rW --versionbyte 111 --getkeywordsbyaddress --password better-password --url http://127.0.0.1:18332 --username good-user<br />
+<br />
+
+**get public messages by address:**<br />
+  SUP.EXE --address muVrFVk3ErfrnmWosLF4WixxRtDKfMx9bs --versionbyte 111 --getpublicmessagesyaddress --password better-password --qty 10 --url http://127.0.0.1:18332 --username good-user --skip 0<br />
+<br />
+
 **get profile by address:**<br />
   SUP.EXE --address muVrFVk3ErfrnmWosLF4WixxRtDKfMx9bs --versionbyte 111 --getprofilebyaddress --password  better-password --url http://127.0.0.1:18332 --username good-user --skip 0<br />
 <br />
@@ -116,31 +124,31 @@ navigates to requested url in browser.
 
 **parameters:**
 
-  --getrootbytransactionid        Get root by transaction ID
+  --getrootbytransactionid        
 
-  --getrootsbyaddress             Get roots by address
+  --getrootsbyaddress            
 
-  --getpublicaddressbykeyword     Get public address by keyword
+  --getpublicaddressbykeyword     
 
-  --getkeywordbypublicaddress     Get keyword by public address
+  --getkeywordbypublicaddress     
 
-  --getobjectbyaddress            Get object by address
+  --getobjectbyaddress            
 
-  --getobjectbyurn                Get object by urn
+  --getobjectbyurn                
 
-  --getobjectbyfile               Get object by file
+  --getobjectbyfile               
 
-  --getobjectsbyaddress           Get object by address
+  --getobjectsbyaddress           
 
-  --getobjectsownedbyaddress      Get objects owned by address
+  --getobjectsownedbyaddress      
 
-  --getobjectscreatedbyaddress    Get objects created by address
+  --getobjectscreatedbyaddress    
 
-  --getobjectsbykeyword           Get objects by keyword
+  --getobjectsbykeyword           
 
-  --getprofilebyaddress           Get profile by address
+  --getprofilebyaddress           
 
-  --getprofilebyurn               Get profile by urn
+  --getprofilebyurn               
 
   -u, --username                  RPC username for authentication
 
