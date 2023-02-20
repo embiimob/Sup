@@ -12,8 +12,10 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Web.NBitcoin;
 using System.Windows.Forms;
 using Label = System.Windows.Forms.Label;
@@ -346,6 +348,85 @@ namespace SUP
 
                                         }
                                     }
+
+
+                                    if (imagelocation.StartsWith("IPFS:"))
+                                    {
+                                        
+                                        string transid = imagelocation.Substring(5, 46);
+                                        if (!System.IO.Directory.Exists("ipfs/" + transid))
+                                        {
+                                            
+                                            string isLoading;
+                                            using (var db2 = new DB(SUP, @"ipfs"))
+                                            {
+                                                isLoading = db2.Get(transid);
+
+                                            }
+
+                                            if (isLoading != "loading")
+                                            {
+                                                using (var db2 = new DB(SUP, @"ipfs"))
+                                                {
+
+                                                    db2.Put(transid, "loading");
+
+                                                }
+
+                                                Task ipfsTask = Task.Run(() =>
+                                                {
+                                                    Process process2 = new Process();
+                                                    process2.StartInfo.FileName = @"ipfs\ipfs.exe";
+                                                    process2.StartInfo.Arguments = "get " + transid + @"-p -o ipfs\" + transid;
+                                                    process2.Start();
+                                                    process2.WaitForExit();
+
+                                                    if (System.IO.File.Exists("ipfs/" + transid))
+                                                    {
+                                                        System.IO.File.Move("ipfs/" + transid, "ipfs/" + transid + "_tmp");
+                                                        System.IO.Directory.CreateDirectory("ipfs/" + transid);
+                                                        string fileName = objstate.Image.Replace(@"//", "").Replace(@"\\", "").Substring(51);
+                                                        if (fileName == "")
+                                                        {
+                                                            fileName = "artifact";
+                                                           
+                                                        }
+                                                        else { fileName = fileName.Replace(@"/", "").Replace(@"\", ""); }
+                                                        System.IO.File.Move("ipfs/" + transid + "_tmp", @"ipfs/" + transid + @"/" + fileName);
+                                                    }
+
+
+                                                    //attempt to pin fails silently if daemon is not running
+                                                    Process process3 = new Process
+                                                    {
+                                                        StartInfo = new ProcessStartInfo
+                                                        {
+                                                            FileName = @"ipfs\ipfs.exe",
+                                                            Arguments = "pin add " + transid,
+                                                            UseShellExecute = false,
+                                                            CreateNoWindow = true
+                                                        }
+                                                    };
+                                                    process3.Start();
+
+
+                                                    using (var db2 = new DB(SUP, @"ipfs"))
+                                                    {
+                                                        db2.Delete(transid);
+
+                                                    }
+                                                });
+                                            }
+
+                                        }
+                                        
+                                    }
+
+
+
+
+
+
                                 }
 
 
@@ -394,7 +475,7 @@ namespace SUP
             numMessagesDisplayed += 10;
 
             supFlow.ResumeLayout();
-          
+
         }
 
         void CreateRow(string imageLocation, string ownerName, string ownerId, DateTime timestamp, string messageText, System.Drawing.Color bgcolor, FlowLayoutPanel layoutPanel)
@@ -659,6 +740,8 @@ namespace SUP
         private async void MainRefreshClick(object sender, EventArgs e)
         {
             transFlow.Visible = false;
+            KeysFlow.Visible = false;
+            KeysFlow.Controls.Clear();
 
             OBJState objstate = OBJState.GetObjectByAddress(_objectaddress, "good-user", "better-password", "http://127.0.0.1:18332");
 
@@ -718,41 +801,67 @@ namespace SUP
                             string transid = objstate.Image.Substring(5, 46);
                             if (!System.IO.Directory.Exists("ipfs/" + transid))
                             {
-                                Process process2 = new Process();
-                                process2.StartInfo.FileName = @"ipfs\ipfs.exe";
-                                process2.StartInfo.Arguments = "get " + transid + @" -o ipfs\" + transid;
-                                process2.StartInfo.UseShellExecute = false;
-                                process2.StartInfo.CreateNoWindow = true;
-                                process2.Start();
-                                process2.WaitForExit();
-
-                                if (System.IO.File.Exists("ipfs/" + transid))
+                                var SUP = new Options { CreateIfMissing = true };
+                                string isLoading;
+                                using (var db = new DB(SUP, @"ipfs"))
                                 {
-                                    System.IO.File.Move("ipfs/" + transid, "ipfs/" + transid + "_tmp");
-                                    System.IO.Directory.CreateDirectory("ipfs/" + transid);
-                                    string fileName = objstate.Image.Replace(@"//", "").Replace(@"\\", "").Substring(51);
-                                    if (fileName == "")
-                                    {
-                                        fileName = "artifact";
-                                        imgurn += @"\artifact";
-                                    }
-                                    else { fileName = fileName.Replace(@"/", "").Replace(@"\", ""); }
-                                    System.IO.File.Move("ipfs/" + transid + "_tmp", @"ipfs/" + transid + @"/" + fileName);
+                                    isLoading = db.Get(transid);
+
                                 }
 
-
-                                //attempt to pin fails silently if daemon is not running
-                                Process process3 = new Process
+                                if (isLoading != "loading")
                                 {
-                                    StartInfo = new ProcessStartInfo
+                                    using (var db = new DB(SUP, @"ipfs"))
                                     {
-                                        FileName = @"ipfs\ipfs.exe",
-                                        Arguments = "pin add " + transid,
-                                        UseShellExecute = false,
-                                        CreateNoWindow = true
+
+                                        db.Put(transid, "loading");
+
                                     }
-                                };
-                                process3.Start();
+
+                                    Task ipfsTask = Task.Run(() =>
+                                {
+                                    Process process2 = new Process();
+                                    process2.StartInfo.FileName = @"ipfs\ipfs.exe";
+                                    process2.StartInfo.Arguments = "get " + transid + @"-p -o ipfs\" + transid;
+                                    process2.Start();
+                                    process2.WaitForExit();
+
+                                    if (System.IO.File.Exists("ipfs/" + transid))
+                                    {
+                                        System.IO.File.Move("ipfs/" + transid, "ipfs/" + transid + "_tmp");
+                                        System.IO.Directory.CreateDirectory("ipfs/" + transid);
+                                        string fileName = objstate.Image.Replace(@"//", "").Replace(@"\\", "").Substring(51);
+                                        if (fileName == "")
+                                        {
+                                            fileName = "artifact";
+                                            imgurn += @"\artifact";
+                                        }
+                                        else { fileName = fileName.Replace(@"/", "").Replace(@"\", ""); }
+                                        System.IO.File.Move("ipfs/" + transid + "_tmp", @"ipfs/" + transid + @"/" + fileName);
+                                    }
+
+
+                                    //attempt to pin fails silently if daemon is not running
+                                    Process process3 = new Process
+                                    {
+                                        StartInfo = new ProcessStartInfo
+                                        {
+                                            FileName = @"ipfs\ipfs.exe",
+                                            Arguments = "pin add " + transid,
+                                            UseShellExecute = false,
+                                            CreateNoWindow = true
+                                        }
+                                    };
+                                    process3.Start();
+
+
+                                    using (var db = new DB(SUP, @"ipfs"))
+                                    {
+                                        db.Delete(transid);
+
+                                    }
+                                });
+                                }
 
                             }
                             if (objstate.Image.Length == 51) { imgurn += @"\artifact"; }
@@ -826,51 +935,75 @@ namespace SUP
                             string transid = objstate.URN.Substring(5, 46);
                             if (!System.IO.Directory.Exists("ipfs/" + transid))
                             {
-                                Process process2 = new Process();
-                                process2.StartInfo.FileName = @"ipfs\ipfs.exe";
-                                process2.StartInfo.Arguments = "get " + objstate.URN.Substring(5, 46) + @" -o ipfs\" + transid;
-                                process2.StartInfo.UseShellExecute = false;
-                                process2.StartInfo.CreateNoWindow = true;
-                                process2.Start();
-                                process2.WaitForExit();
-
-                                if (System.IO.File.Exists("ipfs/" + transid))
-                                {
-                                    System.IO.File.Move("ipfs/" + transid, "ipfs/" + transid + "_tmp");
-                                    System.IO.Directory.CreateDirectory("ipfs/" + transid);
-                                    string fileName = objstate.URN.Replace(@"//", "").Replace(@"\\", "").Substring(51);
-                                    if (fileName == "")
-                                    {
-                                        fileName = "artifact";
-                                        urn += @"\artifact";
-                                    }
-                                    else { fileName = fileName.Replace(@"/", "").Replace(@"\", ""); }
-                                    System.IO.File.Move("ipfs/" + transid + "_tmp", @"ipfs/" + transid + @"/" + fileName);
-                                }
-
-
-                                //attempt to pin fails silently if daemon is not running
                                 var SUP = new Options { CreateIfMissing = true };
-
+                                string isLoading;
                                 using (var db = new DB(SUP, @"ipfs"))
                                 {
+                                    isLoading = db.Get(transid);
 
-                                    string ipfsdaemon = db.Get("ipfs-daemon");
+                                }
 
-                                    if (ipfsdaemon == "true")
+                                if (isLoading != "loading")
+                                {
+                                    using (var db = new DB(SUP, @"ipfs"))
                                     {
-                                        Process process3 = new Process
-                                        {
-                                            StartInfo = new ProcessStartInfo
-                                            {
-                                                FileName = @"ipfs\ipfs.exe",
-                                                Arguments = "pin add " + transid,
-                                                UseShellExecute = false,
-                                                CreateNoWindow = true
-                                            }
-                                        };
-                                        process3.Start();
+
+                                        db.Put(transid, "loading");
+
                                     }
+
+                                    Task ipfsTask = Task.Run(() =>
+                                {
+                                    Process process2 = new Process();
+                                    process2.StartInfo.FileName = @"ipfs\ipfs.exe";
+                                    process2.StartInfo.Arguments = "get " + objstate.URN.Substring(5, 46) + @" -o ipfs\" + transid;
+                                    process2.Start();
+                                    process2.WaitForExit();
+
+                                    if (System.IO.File.Exists("ipfs/" + transid))
+                                    {
+                                        System.IO.File.Move("ipfs/" + transid, "ipfs/" + transid + "_tmp");
+                                        System.IO.Directory.CreateDirectory("ipfs/" + transid);
+                                        string fileName = objstate.URN.Replace(@"//", "").Replace(@"\\", "").Substring(51);
+                                        if (fileName == "")
+                                        {
+                                            fileName = "artifact";
+                                            urn += @"\artifact";
+                                        }
+                                        else { fileName = fileName.Replace(@"/", "").Replace(@"\", ""); }
+                                        System.IO.File.Move("ipfs/" + transid + "_tmp", @"ipfs/" + transid + @"/" + fileName);
+                                    }
+
+
+
+
+                                    using (var db = new DB(SUP, @"ipfs"))
+                                    {
+
+                                        string ipfsdaemon = db.Get("ipfs-daemon");
+
+                                        if (ipfsdaemon == "true")
+                                        {
+                                            Process process3 = new Process
+                                            {
+                                                StartInfo = new ProcessStartInfo
+                                                {
+                                                    FileName = @"ipfs\ipfs.exe",
+                                                    Arguments = "pin add " + transid,
+                                                    UseShellExecute = false,
+                                                    CreateNoWindow = true
+                                                }
+                                            };
+                                            process3.Start();
+                                        }
+                                    }
+
+                                    using (var db = new DB(SUP, @"ipfs"))
+                                    {
+                                        db.Delete(transid);
+
+                                    }
+                                });
                                 }
 
                             }
@@ -951,52 +1084,74 @@ namespace SUP
                             string transid = objstate.URI.Substring(5, 46);
                             if (!System.IO.Directory.Exists("ipfs/" + transid))
                             {
-                                Process process2 = new Process();
-                                process2.StartInfo.FileName = @"ipfs\ipfs.exe";
-                                process2.StartInfo.Arguments = "get " + objstate.URI.Substring(5, 46) + @" -o ipfs\" + transid;
-                                process2.StartInfo.UseShellExecute = false;
-                                process2.StartInfo.CreateNoWindow = true;
-                                process2.Start();
-                                process2.WaitForExit();
-
-                                if (System.IO.File.Exists("ipfs/" + transid))
-                                {
-                                    System.IO.File.Move("ipfs/" + transid, "ipfs/" + transid + "_tmp");
-                                    System.IO.Directory.CreateDirectory("ipfs/" + transid);
-                                    string fileName = objstate.URI.Replace(@"//", "").Replace(@"\\", "").Substring(51);
-                                    if (fileName == "")
-                                    {
-                                        fileName = "artifact";
-                                        uriurn += @"\artifact";
-                                    }
-                                    else { fileName = fileName.Replace(@"/", "").Replace(@"\", ""); }
-                                    System.IO.File.Move("ipfs/" + transid + "_tmp", @"ipfs/" + transid + @"/" + fileName);
-                                }
-
-                                //attempt to pin fails silently if daemon is not running
                                 var SUP = new Options { CreateIfMissing = true };
-
+                                string isLoading;
                                 using (var db = new DB(SUP, @"ipfs"))
                                 {
+                                    isLoading = db.Get(transid);
 
-                                    string ipfsdaemon = db.Get("ipfs-daemon");
-
-                                    if (ipfsdaemon == "true")
-                                    {
-                                        Process process3 = new Process
-                                        {
-                                            StartInfo = new ProcessStartInfo
-                                            {
-                                                FileName = @"ipfs\ipfs.exe",
-                                                Arguments = "pin add " + transid,
-                                                UseShellExecute = false,
-                                                CreateNoWindow = true
-                                            }
-                                        };
-                                        process3.Start();
-                                    }
                                 }
 
+                                if (isLoading != "loading")
+                                {
+                                    using (var db = new DB(SUP, @"ipfs"))
+                                    {
+
+                                        db.Put(transid, "loading");
+
+                                    }
+                                    Task ipfsTask = Task.Run(() =>
+                                {
+                                    Process process2 = new Process();
+                                    process2.StartInfo.FileName = @"ipfs\ipfs.exe";
+                                    process2.StartInfo.Arguments = "get " + objstate.URI.Substring(5, 46) + @" -o ipfs\" + transid;
+                                    process2.Start();
+                                    process2.WaitForExit();
+
+                                    if (System.IO.File.Exists("ipfs/" + transid))
+                                    {
+                                        System.IO.File.Move("ipfs/" + transid, "ipfs/" + transid + "_tmp");
+                                        System.IO.Directory.CreateDirectory("ipfs/" + transid);
+                                        string fileName = objstate.URI.Replace(@"//", "").Replace(@"\\", "").Substring(51);
+                                        if (fileName == "")
+                                        {
+                                            fileName = "artifact";
+                                            uriurn += @"\artifact";
+                                        }
+                                        else { fileName = fileName.Replace(@"/", "").Replace(@"\", ""); }
+                                        System.IO.File.Move("ipfs/" + transid + "_tmp", @"ipfs/" + transid + @"/" + fileName);
+                                    }
+
+
+
+                                    using (var db = new DB(SUP, @"ipfs"))
+                                    {
+
+                                        string ipfsdaemon = db.Get("ipfs-daemon");
+
+                                        if (ipfsdaemon == "true")
+                                        {
+                                            Process process3 = new Process
+                                            {
+                                                StartInfo = new ProcessStartInfo
+                                                {
+                                                    FileName = @"ipfs\ipfs.exe",
+                                                    Arguments = "pin add " + transid,
+                                                    UseShellExecute = false,
+                                                    CreateNoWindow = true
+                                                }
+                                            };
+                                            process3.Start();
+                                        }
+                                    }
+
+                                    using (var db = new DB(SUP, @"ipfs"))
+                                    {
+                                        db.Delete(transid);
+
+                                    }
+                                });
+                                }
                             }
 
                             if (objstate.URI.Length == 51) { uriurn += @"\artifact"; }
@@ -1067,7 +1222,52 @@ namespace SUP
                 txtIMG.Text = objstate.Image;
                 txtURI.Text = objstate.URI;
                 lblLicense.Text = objstate.License;
-                lblProcessHeight.Text = objstate.ProcessHeight.ToString();
+
+
+
+                var KEY = new Options { CreateIfMissing = true };
+
+                using (var db = new DB(KEY, @"root\obj"))
+                {
+                    LevelDB.Iterator it = db.CreateIterator();
+                    for (
+                       it.Seek(this._objectaddress);
+                       it.IsValid() && it.KeyAsString().StartsWith(_objectaddress + "!");  // && rownum <= numMessagesDisplayed + 10; // Only display next 10 messages
+                        it.Next()
+                     )
+                    {
+                        string keyaddress = it.KeyAsString().Substring(it.KeyAsString().IndexOf('!') + 1);
+                        Base58.DecodeWithCheckSum(keyaddress, out byte[] payloadBytes);
+                        keyaddress = IsAsciiText(payloadBytes);
+                        
+                        if (keyaddress != null)
+                        {
+
+                            LinkLabel keyword = new LinkLabel
+                            {
+                                Text = keyaddress,
+                                AutoSize = true
+                            };
+
+
+                            keyword.LinkClicked += (Ksender, b) => { Owner_LinkClicked("#" + keyaddress); };
+                            keyword.Font = new System.Drawing.Font("Microsoft Sans Serif", 7.7F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+                            keyword.Margin = new System.Windows.Forms.Padding(0);
+                            keyword.Dock = DockStyle.Bottom;
+                            KeysFlow.Controls.Add(keyword);
+
+                        }
+
+
+                    }
+                    it.Dispose();
+                }
+               
+
+
+
+
+                        lblProcessHeight.Text = objstate.ProcessHeight.ToString();
                 lblLastChangedDate.Text = objstate.ChangeDate.ToString("ddd, dd MMM yyyy hh:mm:ss"); ;
                 if (urnblockdate.Year > 1)
                 {
@@ -1176,51 +1376,71 @@ namespace SUP
                                     transid = objstate.URN.Substring(5, 46);
                                     try { System.IO.Directory.Delete(@"ipfs/" + transid, true); } catch { }
 
-
-                                    Process process2 = new Process();
-                                    process2.StartInfo.FileName = @"ipfs\ipfs.exe";
-                                    process2.StartInfo.Arguments = "get " + objstate.URN.Substring(5, 46) + @" -o ipfs\" + transid;
-                                    process2.StartInfo.UseShellExecute = false;
-                                    process2.StartInfo.CreateNoWindow = true;
-                                    process2.Start();
-                                    process2.WaitForExit();
-
-                                    if (System.IO.File.Exists("ipfs/" + transid))
-                                    {
-                                        System.IO.File.Move("ipfs/" + transid, "ipfs/" + transid + "_tmp");
-                                        System.IO.Directory.CreateDirectory("ipfs/" + transid);
-                                        string fileName = objstate.URN.Replace(@"//", "").Replace(@"\\", "").Substring(51);
-                                        if (fileName == "")
-                                        {
-                                            fileName = "artifact";
-                                            urn += @"\artifact";
-                                        }
-                                        else { fileName = fileName.Replace(@"/", "").Replace(@"\", ""); }
-                                        System.IO.File.Move("ipfs/" + transid + "_tmp", @"ipfs/" + transid + @"/" + fileName);
-                                    }
-
-                                    //attempt to pin fails silently if daemon is not running
                                     var SUP = new Options { CreateIfMissing = true };
-
+                                    string isLoading;
                                     using (var db = new DB(SUP, @"ipfs"))
                                     {
+                                        isLoading = db.Get(transid);
 
-                                        string ipfsdaemon = db.Get("ipfs-daemon");
+                                    }
 
-                                        if (ipfsdaemon == "true")
+                                    if (isLoading != "loading")
+                                    {
+                                        using (var db = new DB(SUP, @"ipfs"))
                                         {
-                                            Process process3 = new Process
-                                            {
-                                                StartInfo = new ProcessStartInfo
-                                                {
-                                                    FileName = @"ipfs\ipfs.exe",
-                                                    Arguments = "pin add " + transid,
-                                                    UseShellExecute = false,
-                                                    CreateNoWindow = true
-                                                }
-                                            };
-                                            process3.Start();
+
+                                            db.Put(transid, "loading");
+
                                         }
+                                        Task ipfsTask = Task.Run(() =>
+                                    {
+                                        Process process2 = new Process();
+                                        process2.StartInfo.FileName = @"ipfs\ipfs.exe";
+                                        process2.StartInfo.Arguments = "get " + objstate.URN.Substring(5, 46) + @" -o ipfs\" + transid;
+                                        process2.Start();
+                                        process2.WaitForExit();
+
+                                        if (System.IO.File.Exists("ipfs/" + transid))
+                                        {
+                                            System.IO.File.Move("ipfs/" + transid, "ipfs/" + transid + "_tmp");
+                                            System.IO.Directory.CreateDirectory("ipfs/" + transid);
+                                            string fileName = objstate.URN.Replace(@"//", "").Replace(@"\\", "").Substring(51);
+                                            if (fileName == "")
+                                            {
+                                                fileName = "artifact";
+                                                urn += @"\artifact";
+                                            }
+                                            else { fileName = fileName.Replace(@"/", "").Replace(@"\", ""); }
+                                            System.IO.File.Move("ipfs/" + transid + "_tmp", @"ipfs/" + transid + @"/" + fileName);
+                                        }
+
+                                        using (var db = new DB(SUP, @"ipfs"))
+                                        {
+
+                                            string ipfsdaemon = db.Get("ipfs-daemon");
+
+                                            if (ipfsdaemon == "true")
+                                            {
+                                                Process process3 = new Process
+                                                {
+                                                    StartInfo = new ProcessStartInfo
+                                                    {
+                                                        FileName = @"ipfs\ipfs.exe",
+                                                        Arguments = "pin add " + transid,
+                                                        UseShellExecute = false,
+                                                        CreateNoWindow = true
+                                                    }
+                                                };
+                                                process3.Start();
+                                            }
+                                        }
+
+                                        using (var db = new DB(SUP, @"ipfs"))
+                                        {
+                                            db.Delete(transid);
+
+                                        }
+                                    });
                                     }
 
                                     if (objstate.URN.Length == 51) { urn += @"\artifact"; }
@@ -1348,7 +1568,7 @@ namespace SUP
         {
 
             transFlow.SuspendLayout();
-          
+
 
             // Clear controls if no messages have been displayed yet
             if (numChangesDisplayed == 0)
@@ -1414,7 +1634,7 @@ namespace SUP
                             bgcolor = System.Drawing.Color.LightGray;
                         }
 
-                        
+
 
 
                         CreateTransRow(fromAddress, transMessagePacket[0], toAddress, transMessagePacket[1], action, qty, amount, DateTime.ParseExact(tstamp, "yyyyMMddHHmmss", CultureInfo.InvariantCulture), status, bgcolor, transFlow);
@@ -1424,14 +1644,32 @@ namespace SUP
                 }
                 it.Dispose();
             }
-            
+
             numChangesDisplayed += 10;
             transFlow.ResumeLayout();
             transFlow.Visible = true;
+            KeysFlow.Visible = true;
 
 
 
         }
+
+
+         public static string IsAsciiText(byte[] data)
+        {
+            // Check each byte to see if it's in the ASCII range
+            for (int i = 0; i < 20; i++)
+            {
+                if (data[i] < 0x20 || data[i] > 0x7E)
+                {
+                    return null;
+                }
+            }
+
+            return Encoding.ASCII.GetString(data).Replace("#", "").Substring(1);
+        }
+
+
     }
 
 }

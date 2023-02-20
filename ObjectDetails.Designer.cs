@@ -72,6 +72,7 @@
             this.label5 = new System.Windows.Forms.Label();
             this.lblLicense = new System.Windows.Forms.Label();
             this.transFlow = new System.Windows.Forms.FlowLayoutPanel();
+            this.KeysFlow = new System.Windows.Forms.FlowLayoutPanel();
             this.flowPanel.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.webviewer)).BeginInit();
@@ -541,8 +542,18 @@
             this.transFlow.Location = new System.Drawing.Point(19, 110);
             this.transFlow.Margin = new System.Windows.Forms.Padding(0);
             this.transFlow.Name = "transFlow";
-            this.transFlow.Size = new System.Drawing.Size(270, 408);
+            this.transFlow.Size = new System.Drawing.Size(270, 370);
             this.transFlow.TabIndex = 58;
+            // 
+            // KeysFlow
+            // 
+            this.KeysFlow.AutoScroll = true;
+            this.KeysFlow.Location = new System.Drawing.Point(18, 483);
+            this.KeysFlow.Name = "KeysFlow";
+            this.KeysFlow.Padding = new System.Windows.Forms.Padding(0, 5, 0, 0);
+            this.KeysFlow.Size = new System.Drawing.Size(270, 87);
+            this.KeysFlow.TabIndex = 0;
+            this.KeysFlow.Visible = false;
             // 
             // ObjectDetails
             // 
@@ -550,6 +561,7 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.SystemColors.InactiveCaption;
             this.ClientSize = new System.Drawing.Size(1192, 642);
+            this.Controls.Add(this.KeysFlow);
             this.Controls.Add(this.imgPicture);
             this.Controls.Add(this.transFlow);
             this.Controls.Add(this.lblLicense);
@@ -659,5 +671,6 @@
         private System.Windows.Forms.Label lblLicense;
         private System.Windows.Forms.FlowLayoutPanel transFlow;
         public System.Windows.Forms.Label txtName;
+        private System.Windows.Forms.FlowLayoutPanel KeysFlow;
     }
 }

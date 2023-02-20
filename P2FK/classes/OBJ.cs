@@ -6,9 +6,12 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Net.NetworkInformation;
+using System.Reflection;
 using System.Security.Cryptography;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -128,12 +131,25 @@ namespace SUP.P2FK
                                     objectinspector = JsonConvert.DeserializeObject<OBJ>(File.ReadAllText(@"root\" + transaction.TransactionId + @"\OBJ"));
 
                                 }
-                                catch(Exception e)
+                                catch (Exception e)
                                 {
-                                    
+
                                     logstatus = "[\"" + transaction.SignedBy + "\",\"" + objectaddress + "\",\"inspect\",\"\",\"\",\"failed due to invalid format\"]";
                                     break;
                                 }
+
+
+                                foreach (string key in transaction.Keyword.Keys)
+                                // Check each byte to see if it's in the ASCII range
+                                {
+
+                                    using (var db = new DB(OBJ, @"root\obj"))
+                                    {
+                                        db.Put(transaction.SignedBy + "!" + key, transaction.TransactionId);
+                                    }
+
+                                }
+
 
 
                                 if (objectinspector.cre != null && objectState.Creators == null && transaction.SignedBy == objectaddress)
@@ -970,6 +986,7 @@ namespace SUP.P2FK
         }
         public static List<OBJState> GetObjectsOwnedByAddress(string objectaddress, string username, string password, string url, string versionByte = "111", int skip = 0, int qty = -1)
         {
+            //                                if (isObject.URN != null & isObject.Owners != null && (     isObject.Owners.ContainsKey(objectaddress)   ||  (  isObject.Owners.ContainsKey(key) & isObject.Creators != null && isObject.Creators.ContainsKey(objectaddress))  ) )
 
             List<OBJState> objectStates = new List<OBJState> { };
 
@@ -996,50 +1013,51 @@ namespace SUP.P2FK
                 //ignore any transaction that is not signed
                 if (transaction.Signed)
                 {
+                    string findObject;
                     string findId;
 
                     if (transaction.File.ContainsKey("OBJ") || transaction.File.ContainsKey("GIV"))
                     {
+                        findObject = transaction.Keyword.Last().Key;
 
+                        if (transaction.File.ContainsKey("GIV")) { findObject = transaction.Keyword.ElementAt(1).Key; }
 
-                        foreach (string key in transaction.Keyword.Keys)
+                        if (!addedValues.Contains(findObject))
                         {
+                            addedValues.Add(findObject);
 
-                            if (!addedValues.Contains(key) && key != objectaddress)
+
+                            OBJState isObject = GetObjectByAddress(findObject, username, password, url, versionByte);
+
+                            if (isObject.URN != null && findObject != objectaddress && isObject.Owners.ContainsKey(objectaddress) || (isObject.URN != null && findObject != objectaddress && isObject.Owners.ContainsKey(findObject) && isObject.Creators.ContainsKey(objectaddress)))
                             {
-                                addedValues.Add(key);
 
-                                OBJState isObject = GetObjectByAddress(key, username, password, url, versionByte);
-
-                                if (isObject.URN != null & isObject.Owners != null && (     isObject.Owners.ContainsKey(objectaddress)   ||  (  isObject.Owners.ContainsKey(key) & isObject.Creators != null && isObject.Creators.ContainsKey(objectaddress))  ) )
+                                using (var db = new DB(OBJ, @"root\obj"))
                                 {
-                                    using (var db = new DB(OBJ, @"root\obj"))
-                                    {
-                                        findId = db.Get(objectaddress + "!" + key);
-                                    }
+                                    findId = db.Get(objectaddress + "!" + findObject);
+                                }
 
-                                    if (findId == transaction.Id.ToString() || findId == null)
+                                if (findId == transaction.Id.ToString() || findId == null)
+                                {
+                                    if (findId == null)
                                     {
-                                        if (findId == null)
+                                        using (var db = new DB(OBJ, @"root\obj"))
                                         {
-                                            using (var db = new DB(OBJ, @"root\obj"))
-                                            {
-                                                db.Put(objectaddress + "!" + key, transaction.Id.ToString());
-                                            }
+                                            db.Put(objectaddress + "!" + findObject, transaction.Id.ToString());
                                         }
                                     }
+                                }
 
-                                    isObject.Id = transaction.Id;
-                                    objectStates.Add(isObject);
-                                    _qty++;
-                                    if (_qty == qty)
-                                    {
-                                        return objectStates;
-                                    }
+                                isObject.Id = transaction.Id;
+                                objectStates.Add(isObject);
+                                _qty++;
+                                if (_qty == qty)
+                                {
+                                    return objectStates;
                                 }
                             }
-                        }
 
+                        }
                     }
                 }
 
@@ -1146,9 +1164,106 @@ namespace SUP.P2FK
             return totalSearch;
 
         }
+        public static List<string> GetKeywordsByAddress(string objectaddress , string username, string password, string url, string versionByte = "111")
+        {
+
+            GetObjectByAddress(objectaddress, username, password, url, versionByte);
+
+            List<string> keywords = new List<string>();
+
+            var KEY = new Options { CreateIfMissing = true };
+
+            using (var db = new DB(KEY, @"root\obj"))
+            {
+                LevelDB.Iterator it = db.CreateIterator();
+                for (
+                   it.Seek(objectaddress);
+                   it.IsValid() && it.KeyAsString().StartsWith(objectaddress + "!");  // && rownum <= numMessagesDisplayed + 10; // Only display next 10 messages
+                    it.Next()
+                 )
+                {
+                    string keyaddress = it.KeyAsString().Substring(it.KeyAsString().IndexOf('!') + 1);
+                    Base58.DecodeWithCheckSum(keyaddress, out byte[] payloadBytes);
+                    keyaddress = IsAsciiText(payloadBytes);
+
+                    if (keyaddress != null)
+                    {
+
+                       keywords.Add(keyaddress);
+
+                    }
+
+                }
+                it.Dispose();
+            }
+
+
+            return keywords;
+        }
+        public static object GetPublicMessagesByAddress(string objectaddress, string username, string password, string url, string versionByte = "111", int skip = 0, int qty = 10)
+        {
+            GetObjectByAddress(objectaddress, username, password, url, versionByte);
+
+            List<object> messages = new List<object>();
+
+            int rownum = 1;
+            var SUP = new Options { CreateIfMissing = true };
+
+            using (var db = new DB(SUP, @"root\sup"))
+            {
+                LevelDB.Iterator it = db.CreateIterator();
+                for (
+                   it.Seek(objectaddress);
+                   it.IsValid() && it.KeyAsString().StartsWith(objectaddress) && rownum <= skip + qty; // Only display next 10 messages
+                    it.Next()
+                 )
+                {
+                    // Display only if rownum > numMessagesDisplayed to skip already displayed messages
+                    if (rownum > skip)
+                    {
+                        string process = it.ValueAsString();
+
+                        List<string> supMessagePacket = JsonConvert.DeserializeObject<List<string>>(process);
+
+                        string message = System.IO.File.ReadAllText(@"root/" + supMessagePacket[1] + @"/MSG").Replace("@" + objectaddress, "").Replace('“', '"').Replace('”', '"');
+
+                        string fromAddress = supMessagePacket[0];
+                       
+                        string tstamp = it.KeyAsString().Split('!')[1];
+                        
+                        // Add the message data to the messages list
+                        messages.Add(new
+                        {
+                            Message = message,
+                            FromAddress = fromAddress,
+                            BlockDate = tstamp
+                                                   });
+                    }
+                    rownum++;
+                }
+                it.Dispose();
+            }
+
+            return new { Messages = messages };
+        }
+        private static string IsAsciiText(byte[] data)
+        {
+            // Check each byte to see if it's in the ASCII range
+            for (int i = 0; i < data.Length; i++)
+            {
+                if (data[i] < 0x20 || data[i] > 0x7E)
+                {
+                    return null;
+                }
+            }
+
+            return Encoding.ASCII.GetString(data).Replace("#", "").Substring(1);
+        }
 
     }
-}
+        
+    }
+
 
 
 
