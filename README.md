@@ -120,31 +120,31 @@ navigates to requested url in browser.
 
 **parameters:**
 
-  --getrootbytransactionid        Get root by transaction ID
+  --getrootbytransactionid        
 
-  --getrootsbyaddress             Get roots by address
+  --getrootsbyaddress            
 
-  --getpublicaddressbykeyword     Get public address by keyword
+  --getpublicaddressbykeyword     
 
-  --getkeywordbypublicaddress     Get keyword by public address
+  --getkeywordbypublicaddress     
 
-  --getobjectbyaddress            Get object by address
+  --getobjectbyaddress            
 
-  --getobjectbyurn                Get object by urn
+  --getobjectbyurn                
 
-  --getobjectbyfile               Get object by file
+  --getobjectbyfile               
 
-  --getobjectsbyaddress           Get object by address
+  --getobjectsbyaddress           
 
-  --getobjectsownedbyaddress      Get objects owned by address
+  --getobjectsownedbyaddress      
 
-  --getobjectscreatedbyaddress    Get objects created by address
+  --getobjectscreatedbyaddress    
 
-  --getobjectsbykeyword           Get objects by keyword
+  --getobjectsbykeyword           
 
-  --getprofilebyaddress           Get profile by address
+  --getprofilebyaddress           
 
-  --getprofilebyurn               Get profile by urn
+  --getprofilebyurn               
 
   -u, --username                  RPC username for authentication
 
