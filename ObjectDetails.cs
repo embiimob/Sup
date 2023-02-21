@@ -1,8 +1,6 @@
-﻿using AngleSharp.Dom;
-using Ganss.Xss;
+﻿using Ganss.Xss;
 using LevelDB;
 using NBitcoin;
-using NBitcoin.Protocol;
 using Newtonsoft.Json;
 using SUP.P2FK;
 using System;
@@ -1647,7 +1645,6 @@ namespace SUP
                 transFlow.Controls.Clear();
             }
 
-            Dictionary<string, string> profileAddress = new Dictionary<string, string> { };
             int rownum = 1;
             bool isverbose;
 

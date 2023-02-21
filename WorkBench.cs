@@ -618,9 +618,7 @@ namespace SUP
             // Loop through each subdirectory
             foreach (string subdirectory in subdirectories)
             {
-                // Get the name of the subdirectory
-                string subdirectoryName = Path.GetFileName(subdirectory);
-
+             
                // Delete the subdirectory and all its contents
                Directory.Delete(subdirectory, true);
               
@@ -975,14 +973,7 @@ namespace SUP
             }
         }
 
-        private void button3_Click(object sender, EventArgs e)
-        {
-
-           
-
-        }
-
-        private void button3_Click_1(object sender, EventArgs e)
+        private void ButtonGetFoundObjectsClick(object sender, EventArgs e)
         {
             DateTime tmbeginCall = DateTime.UtcNow;
             List<OBJState> ownedObjects = OBJState.GetFoundObjects(txtLogin.Text, txtPassword.Text, txtUrl.Text, txtVersionByte.Text, int.Parse(txtSkip.Text), int.Parse(txtQty.Text));
@@ -1005,6 +996,25 @@ namespace SUP
                 ObjectArray[objectcount++] = JObject.FromObject(obj);
             }
             DisplayRootJSON(ObjectArray);
+        }
+
+        private void ButtonGetObjectByTransactionId_Click(object sender, EventArgs e)
+        {
+
+            DateTime tmbeginCall = DateTime.UtcNow;
+            OBJState Tester = OBJState.GetObjectByTransactionId(txtTransactionId.Text, txtLogin.Text, txtPassword.Text, txtUrl.Text, txtVersionByte.Text, checkBox1.Checked);
+            DateTime tmendCall = DateTime.UtcNow;
+            lblTotalBytes.Text = "bytes: ";
+            lblTotalTime.Text = "time: ";
+            lblKbs.Text = "kb/s: ";
+            lblTotal.Text = "total:";
+            TimeSpan elapsedTime = tmendCall - tmbeginCall;
+            double elapsedMilliseconds = elapsedTime.TotalMilliseconds;
+
+            lblTotalTime.Text = "time: " + Math.Truncate(elapsedMilliseconds);
+            lblTotal.Text = "total: " + Tester.ProcessHeight.ToString();
+
+            DisplayRootJSON(new JObject[] { JObject.FromObject(Tester) });
         }
     }
 }

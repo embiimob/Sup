@@ -694,6 +694,7 @@ namespace SUP.P2FK
             return objectState;
 
         }
+        //required for in-memory object discovery and creation. get object by address information is not available until after confirmation... added to workbench for testing
         public static OBJState GetObjectByTransactionId(string transactionid, string username, string password, string url, string versionByte = "111", bool verbose = false)
         {
 

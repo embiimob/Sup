@@ -502,7 +502,6 @@ namespace SUP.P2FK
             var rootList = new List<Root>();
             var credentials = new NetworkCredential(username, password);
             var rpcClient = new RPCClient(credentials, new Uri(url));
-            var synchronousData = new Dictionary<int, Root>();
             dynamic deserializedObject = null;
             while (true)
             {
@@ -514,7 +513,6 @@ namespace SUP.P2FK
                 if (deserializedObject.Count == 0)
                     break;
 
-                var concurrentData = new ConcurrentDictionary<int, Root>();
 
                 for (int i = 0; i < deserializedObject.Count; i++)
                 {
