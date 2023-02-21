@@ -11,7 +11,7 @@ P2FK was directly inspired by the satoshi uploader  see --> https://cirosantilli
 
 ## **Installation**
 
-1. Download the Sup.v0.1.14-beta.zip file
+1. Download the Sup.v0.1.15-beta.zip file
 2. Create a folder on your **fastest** disk drive with at least **700GB** free (it will be storing the bitcoin prod and testnet blockchains)
 3. Unzip all contents into the folder.
 4. Create a shortcut to SUP.exe and launch.
@@ -58,10 +58,28 @@ searches mainchain by  urn shows currently registered object with uri redirectio
 navigates to requested url in browser.
 <br />
 <br />
-## **Command Line Interface Examples:**<br />
+## **Official / Unofficial Indicator**
+When a Sup!? urn is registered a small symbol appears on the top left corner of the object's thumbnail on the main browser screen and replaces the URN label on the object details screen. following registration, any other Sup!? objects referencing the same URN will display a [ SEE OFFICIAL ] button that redirects them to the officialy registered urn.  the unofficial urn reference can still be opened by clicking anywhere elese on the object.  
 <br />
+<br />
+## **File Lookup**
+Drag and drop any file onto the main Sup!? browser screen.  Sup!? will search the mainchain for a current file registration with owner.  if found the registered object will be returned in the main browser window. to obtain a file registration keyword necessary to register a file, drag and drop the file onto the workbench, the reference key will be displayed in the workbench output window.  see the example transaction JSON files https://github.com/embiimob/Sup/tree/master/P2FK/samples to begin experimenting with Sup!? file lookups and urn registration
+<br />
+<br />
+## **Block \ Mute**
+blocking addresses and transactions ignores any associations to them going forward preventing a transaction or any transactions signed by the blocked address from outputting to disk. a purge and reinspection is required to completely eliminate all data. if a group of collectors decides to block an address or transaction they can technically ignore them out of existence.
 
-**get root by transaction id:** <br/>
+muting an address prevents any further transaction comments signed by the address from outputting onto disk.  a purge and reinspection is required to completely elimninate all transactions comments
+<br />
+<br />
+## **Web Applet Querystring Data**
+trusted index.html and index.htm files are sent the following Sup!? object information via querystring on load
+"address=", "creator=", "viewer=", "viewer-name=", "owner=", "owner-name=", "urn=", "uri=", "url=", "height="
+<br />
+<br />
+## **Command Line Interface**
+
+**get root by transaction id:**
   SUP.EXE --versionbyte 111 --getrootbytransactionid --password better-password --url http://127.0.0.1:18332 --tid 6d14b0dc526a431f611f16f29d684f73e6b01f0a59a0b7b3d9b8d951091c2422 --username good-user<br />
 <br />
 
@@ -106,6 +124,10 @@ navigates to requested url in browser.
   SUP.EXE --versionbyte 111 --getobjectsbykeyword --keyword flowersofwar --password better-password --url  http://127.0.0.1:18332 --username good-user --skip 0 --qty -1<br />
 <br />
 
+**get found objects:**<br />
+  SUP.EXE --versionbyte 111 --getfoundobjects --password better-password --skip 5 --qty 100 --url http://127.0.0.1:18332 --username good-user<br />
+<br />
+
 **get keywords by address:**<br />
   SUP.EXE --address mwJDUTXksGKUmU3z9nKeMvnjNnWjEXj5rW --versionbyte 111 --getkeywordsbyaddress --password better-password --url http://127.0.0.1:18332 --username good-user<br />
 <br />
@@ -144,7 +166,9 @@ navigates to requested url in browser.
 
   --getobjectscreatedbyaddress    
 
-  --getobjectsbykeyword           
+  --getobjectsbykeyword  
+
+  --getfoundobjects
 
   --getprofilebyaddress           
 
@@ -178,18 +202,6 @@ navigates to requested url in browser.
 
   --version                       Display version information.
 
-## **Block \ Mute**
-
-- blocking addresses and transactions ignores any associations to them going forward preventing a transaction or any transactions signed by the blocked address from outputting to disk. a purge and reinspection is required to completely eliminate all data. if a group of collectors decides to block an address or transaction they can technically ignore them out of existence.
-
-- muting an address prevents any further transaction comments signed by the address from outputting onto disk.  a purge and reinspection is required to completely elimninate all transactions comments<br />
-<br /> <br />
-## **Web Applet Querystring Data**
-
-<br />
-trusted index.html and index.htm files are sent the following Sup!? object information via querystring on load
-"address=", "creator=", "viewer=", "viewer-name=", "owner=", "owner-name=", "urn=", "uri=", "url=", "height="<br />
-<br /> <br />
 
 ## **URN IMG & URI Referencing Standards**<br />
 <br />
