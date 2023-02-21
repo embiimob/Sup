@@ -24,6 +24,9 @@ using static System.Windows.Forms.VisualStyles.VisualStyleElement.StartPanel;
 using System.Text;
 using Org.BouncyCastle.Utilities.Net;
 using System.Threading.Tasks;
+using AngleSharp.Common;
+using System.Threading;
+using System.Timers;
 
 namespace SUP
 {
@@ -36,6 +39,9 @@ namespace SUP
         private int SearchId = 0;
         private HashSet<string> loadedObjects = new HashSet<string>();
         private bool isBuilding = false;
+        private IEnumerable<string> BTCMempool = new List<string>();
+        private IEnumerable<string> BTCTMempool = new List<string>();
+        private IEnumerable<string> MZCMempool = new List<string>();
         public ObjectBrowser(string objectaddress)
         {
             InitializeComponent();
@@ -45,6 +51,7 @@ namespace SUP
             }
             else
             { _objectaddress = ""; }
+
         }
 
         private void GetObjectsbyAddress(string address)
@@ -82,6 +89,8 @@ namespace SUP
 
             flowLayoutPanel1.SuspendLayout();
             List<OBJState> createdObjects = new List<OBJState>();
+
+
             if (btnCreated.BackColor == Color.Yellow)
             {
                 createdObjects = OBJState.GetObjectsCreatedByAddress(profileCheck, txtLogin.Text, txtPassword.Text, txtUrl.Text, txtVersionByte.Text, int.Parse(txtLast.Text), int.Parse(txtQty.Text));
@@ -92,8 +101,15 @@ namespace SUP
             }
             else
             {
-                createdObjects = OBJState.GetObjectsByAddress(profileCheck, txtLogin.Text, txtPassword.Text, txtUrl.Text, txtVersionByte.Text, int.Parse(txtLast.Text), int.Parse(txtQty.Text));
+                if (txtSearchAddress.Text == "") { createdObjects = OBJState.GetFoundObjects( txtLogin.Text, txtPassword.Text, txtUrl.Text, txtVersionByte.Text, int.Parse(txtLast.Text), int.Parse(txtQty.Text)); }
+                else
+                {
+                    createdObjects = OBJState.GetObjectsByAddress(profileCheck, txtLogin.Text, txtPassword.Text, txtUrl.Text, txtVersionByte.Text, int.Parse(txtLast.Text), int.Parse(txtQty.Text));
+
+                }
             }
+
+
 
 
 
@@ -252,6 +268,21 @@ namespace SUP
                     if (!loadedObjects.Contains(foundObject.ObjectAddress.Text))
                     {
                         txtLast.Text = objstate.Id.ToString();
+                        OBJState isOfficial = OBJState.GetObjectByURN(objstate.URN, txtLogin.Text, txtPassword.Text, @"http://127.0.0.1:18332");
+                        if (isOfficial.URN != null)
+                        {
+                            if (isOfficial.Creators.First().Key == foundObject.ObjectAddress.Text)
+                            {
+                                foundObject.lblOfficial.Visible = true;
+                            }
+                            else
+                            {
+                                foundObject.txtOfficialURN.Text = isOfficial.Creators.First().Key;
+                                foundObject.btnOfficial.Visible = true;
+                            }
+                        }
+
+
                         loadedObjects.Add(foundObject.ObjectAddress.Text);
                         flowLayoutPanel1.Controls.Add(foundObject);
                     }
@@ -429,6 +460,22 @@ namespace SUP
                     if (!loadedObjects.Contains(foundObject.ObjectAddress.Text))
                     {
                         txtLast.Text = objstate.Id.ToString();
+
+
+                        OBJState isOfficial = OBJState.GetObjectByURN(objstate.URN, txtLogin.Text, txtPassword.Text, @"http://127.0.0.1:18332");
+                        if (isOfficial.URN != null)
+                        {
+                            if (isOfficial.Creators.First().Key == foundObject.ObjectAddress.Text)
+                            {
+                                foundObject.lblOfficial.Visible = true;
+                            }
+                            else
+                            {
+                                foundObject.txtOfficialURN.Text = isOfficial.Owners.First().Key;
+                                foundObject.btnOfficial.Visible = true;
+                            }
+                        }
+
                         loadedObjects.Add(foundObject.ObjectAddress.Text);
                         flowLayoutPanel1.Controls.Add(foundObject);
                     }
@@ -755,6 +802,22 @@ namespace SUP
                 }
                 foundObject.ObjectQty.Text = objstate.Owners.Values.Sum().ToString() + "x";
                 foundObject.ObjectAddress.Text = objstate.Creators.First().Key;
+                OBJState isOfficial = OBJState.GetObjectByURN(objstate.URN, txtLogin.Text, txtPassword.Text, @"http://127.0.0.1:18332");
+                if (isOfficial.URN != null)
+                {
+                    if (isOfficial.Creators.First().Key == foundObject.ObjectAddress.Text)
+                    {
+                        foundObject.lblOfficial.Visible = true;
+                    }
+                    else
+                    {
+                        foundObject.txtOfficialURN.Text = isOfficial.Owners.First().Key;
+                        foundObject.btnOfficial.Visible = true;
+                    }
+                }
+
+
+
                 flowLayoutPanel1.Controls.Add(foundObject);
             }
         }
@@ -764,7 +827,7 @@ namespace SUP
 
             btnOwned.BackColor = Color.Yellow;
             btnCreated.BackColor = Color.White;
-
+           
             BuildSearchResults();
 
 
@@ -772,8 +835,10 @@ namespace SUP
 
         private void ButtonGetCreatedClick(object sender, EventArgs e)
         {
+
             btnCreated.BackColor = Color.Yellow;
             btnOwned.BackColor = Color.White;
+            
             BuildSearchResults();
 
         }
@@ -825,6 +890,7 @@ namespace SUP
 
                 btnOwned.BackColor = Color.White;
                 btnCreated.BackColor = Color.White;
+                
                 BuildSearchResults();
 
             }
@@ -1033,7 +1099,7 @@ namespace SUP
                         }
                     }
                 }
-                isBuilding= false;
+                isBuilding = false;
             }
 
         }
@@ -1152,10 +1218,6 @@ namespace SUP
 
         }
 
-        private void button2_Click(object sender, EventArgs e)
-        {
-
-        }
 
         private void btnHistoryBack_Click(object sender, EventArgs e)
         {
@@ -1215,22 +1277,32 @@ namespace SUP
 
         private void flowLayoutPanel1_Scroll(object sender, ScrollEventArgs e)
         {
-            if (flowLayoutPanel1.VerticalScroll.Value == flowLayoutPanel1.VerticalScroll.Maximum - flowLayoutPanel1.VerticalScroll.LargeChange + 1)
+
+            int loadQty = 1 + (flowLayoutPanel1.Size.Width / 100 * (flowLayoutPanel1.Size.Height / 200) * 2);
+
+            txtQty.Text = loadQty.ToString();
+            SearchAddressUpdate();
+
+
+        }
+
+        private void flowLayoutPanel1_MouseWheel(object sender, System.Windows.Forms.MouseEventArgs e)
+        {
+
+            if (flowLayoutPanel1.VerticalScroll.Value + flowLayoutPanel1.Height >= flowLayoutPanel1.VerticalScroll.Maximum)
             {
                 int loadQty = 1 + (flowLayoutPanel1.Size.Width / 100 * (flowLayoutPanel1.Size.Height / 200) * 2);
 
                 txtQty.Text = loadQty.ToString();
 
-                if (btnCreated.BackColor == Color.Yellow) { }
-                else if (btnOwned.BackColor == Color.Yellow) { }
-                else
-                {
-
-                    SearchAddressUpdate();
-                }
-
+                SearchAddressUpdate();
 
             }
+
         }
+
+
+     
+
     }
 }

@@ -135,6 +135,14 @@ namespace SUP
                     Console.WriteLine(json);
 
                 }
+                else if (options.GetFoundObjects)
+                {
+
+                    var root = OBJState.GetFoundObjects(options.Username, options.Password, options.Url, options.VersionByte, options.Skip, options.Qty);
+                    var json = JsonConvert.SerializeObject(root);
+                    Console.WriteLine(json);
+
+                }
                 else if (options.GetKeywordsByAddress)
                 {
 
@@ -225,6 +233,9 @@ namespace SUP
         [Option("getobjectsbykeyword", Required = false, HelpText = "Get objects by keyword")]
         public bool GetObjectsByKeyword { get; set; }
 
+        [Option("getfoundobjects", Required = false, HelpText = "Get objects from levelDB cache")]
+        public bool GetFoundObjects { get; set; }
+
         [Option("getkeywordsbyaddress", Required = false, HelpText = "Get keywords by address")]
         public bool GetKeywordsByAddress { get; set; }
 
@@ -288,7 +299,7 @@ namespace SUP
                 yield return new Example("get objects by address", new CommandOptions { GetObjectsByAddress = true, Address = "muVrFVk3ErfrnmWosLF4WixxRtDKfMx9bs", Username = "good-user", Password = "better-password", Url = "http://127.0.0.1:18332", VersionByte = "111", Skip = 0, Qty = -1 });
                 yield return new Example("get objects owned by address", new CommandOptions { GetObjectsOwnedByAddress = true, Address = "muVrFVk3ErfrnmWosLF4WixxRtDKfMx9bs", Username = "good-user", Password = "better-password", Url = "http://127.0.0.1:18332", VersionByte = "111", Skip = 0, Qty = -1 });
                 yield return new Example("get objects created by address", new CommandOptions { GetObjectsCreatedByAddress = true, Address = "muVrFVk3ErfrnmWosLF4WixxRtDKfMx9bs", Username = "good-user", Password = "better-password", Url = "http://127.0.0.1:18332", VersionByte = "111", Skip = 0, Qty = -1 });
-                yield return new Example("get objects by keyword", new CommandOptions { GetObjectsByKeyword = true, Keyword = "flowersofwar", Username = "good-user", Password = "better-password", Url = "http://127.0.0.1:18332", VersionByte = "111", Skip = 0, Qty = -1 });
+                yield return new Example("get found objects", new CommandOptions { GetFoundObjects = true, Username = "good-user", Password = "better-password", Url = "http://127.0.0.1:18332", VersionByte = "111", Skip = 0, Qty = 100 });
                 yield return new Example("get keywords by address", new CommandOptions { GetKeywordsByAddress = true, Address = "mwJDUTXksGKUmU3z9nKeMvnjNnWjEXj5rW", Username = "good-user", Password = "better-password", Url = "http://127.0.0.1:18332", VersionByte = "111"});
                 yield return new Example("get public messages by address", new CommandOptions { GetPublicMessagesByAddress = true, Address = "muVrFVk3ErfrnmWosLF4WixxRtDKfMx9bs", Username = "good-user", Password = "better-password", Url = "http://127.0.0.1:18332", VersionByte = "111", Skip = 0, Qty = 10 });
                 yield return new Example("get profile by address", new CommandOptions { GetProfileByAddress = true, Address = "muVrFVk3ErfrnmWosLF4WixxRtDKfMx9bs", Username = "good-user", Password = "better-password", Url = "http://127.0.0.1:18332", VersionByte = "111", Skip = 0 });

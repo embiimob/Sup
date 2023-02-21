@@ -1262,12 +1262,9 @@ namespace SUP
                     }
                     it.Dispose();
                 }
-               
+              
 
-
-
-
-                        lblProcessHeight.Text = objstate.ProcessHeight.ToString();
+                lblProcessHeight.Text = objstate.ProcessHeight.ToString();
                 lblLastChangedDate.Text = objstate.ChangeDate.ToString("ddd, dd MMM yyyy hh:mm:ss"); ;
                 if (urnblockdate.Year > 1)
                 {
@@ -1300,12 +1297,82 @@ namespace SUP
 
                 lblTotalOwnedMain.Text = "x" + totalQty.ToString("N0");
 
+
+         
+                OBJState isOfficial = OBJState.GetObjectByURN(objstate.URN, "good-user", "better-password", "http://127.0.0.1:18332");
+                if (isOfficial.URN != null)
+                {
+                    if (isOfficial.Creators.First().Key != this._objectaddress)
+                    {
+                        txtOfficialURN.Text = isOfficial.Creators.First().Key;
+                        btnOfficial.Visible = true;
+                    }else
+                    {
+                        lblOfficial.Visible = true;
+                    }
+                }
+
+
                 switch (extension.ToLower())
                 {
+                    case ".exe":
+                    case ".dll":
+                    case ".bat":
+                    case ".cmd":
+                    case ".com":
+                    case ".msi":
+                    case ".scr":
+                    case ".vbs":
+                    case ".wsf":
+                    case ".ps1":
+                    case ".psm1":
+                    case ".psd1":
+                    case ".reg":
+                    case ".hta":
+                    case ".jar":
+                    case ".jse":
+                    case ".lnk":
+                    case ".mht":
+                    case ".mhtml":
+                    case ".msc":
+                    case ".msp":
+                    case ".mst":
+                    case ".pif":
+                    case ".py":
+                    case ".pyc":
+                    case ".pyo":
+                    case ".pyw":
+                    case ".pyz":
+                    case ".pyzw":
+                    case ".sct":
+                    case ".shb":
+                    case ".u3p":
+                    case ".vb":
+                    case ".vbe":
+                    case ".vbscript":
+                    case ".ws":
+                    case ".xla":
+                    case ".xlam":
+                    case ".xls":
+                    case ".xlsb":
+                    case ".xlsm":
+                    case ".xlsx":
+                    case ".xltm":
+                    case ".xltx":
+                    case ".xml":
+                    case ".xsl":
+                    case ".xslt":
+                        pictureBox1.ImageLocation = imgurn;
+                        if (btnOfficial.Visible == false) { 
+                            button1.Visible = true;
+                            lblWarning.Visible = true;
+                        }
+                        break;
+
                     case ".glb":
                         //Show image in main box and show open file button
                         pictureBox1.ImageLocation = imgurn;
-                        button1.Visible = true;
+                        if (btnOfficial.Visible == false) { button1.Visible = true; }
                         break;
                     case ".jpg":
                     case ".jpeg":
@@ -1313,7 +1380,7 @@ namespace SUP
                     case ".png":
                         // Create a new PictureBox
                         pictureBox1.ImageLocation = urn;
-
+                        if (btnOfficial.Visible == false) { button1.Visible = true; }
                         break;
                     case ".mp4":
                     case ".avi":
@@ -1331,7 +1398,7 @@ namespace SUP
                         try
                         {
                             System.IO.File.WriteAllText(@"root\" + transactionid + @"\urnviewer.html", htmlstring);
-                            button1.Visible = true;
+                            if (btnOfficial.Visible == false) { button1.Visible = true; }
                             await webviewer.EnsureCoreWebView2Async();
                             webviewer.CoreWebView2.Navigate(viewerPath);
                         }
@@ -1522,7 +1589,7 @@ namespace SUP
                         try
                         {
                             System.IO.File.WriteAllText(@"root\" + transactionid + @"\urnviewer.html", htmlembed);
-                            button1.Visible = true;
+                            if (btnOfficial.Visible == false) { button1.Visible = true; }
                             await webviewer.EnsureCoreWebView2Async();
                             webviewer.CoreWebView2.Navigate(browserPath);
                         }
@@ -1540,7 +1607,11 @@ namespace SUP
                     default:
 
                         pictureBox1.ImageLocation = imgurn;
-                        button1.Visible = true;
+                        if (btnOfficial.Visible == false)
+                        {
+                            button1.Visible = true;
+                            lblWarning.Visible = true;
+                        }
                         break;
                 }
                 imgPicture.SuspendLayout();
@@ -1669,7 +1740,10 @@ namespace SUP
             return Encoding.ASCII.GetString(data).Replace("#", "").Substring(1);
         }
 
-
+        private void btnOfficial_Click(object sender, EventArgs e)
+        {
+            new ObjectDetails(txtOfficialURN.Text).Show();
+        }
     }
 
 }

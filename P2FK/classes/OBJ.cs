@@ -54,7 +54,6 @@ namespace SUP.P2FK
         public bool Verbose { get; set; }
         //ensures levelDB is thread safely
         private readonly static object levelDBLocker = new object();
-
         public static OBJState GetObjectByAddress(string objectaddress, string username, string password, string url, string versionByte = "111", bool verbose = false)
         {
 
@@ -66,8 +65,10 @@ namespace SUP.P2FK
                 using (var db = new DB(OBJ, @"root\block"))
                 {
                     isBlocked = db.Get(objectaddress);
+                    db.Close();
                 }
                 if (isBlocked == "true") { return objectState; }
+
             }
             string JSONOBJ;
             string logstatus;
@@ -145,7 +146,7 @@ namespace SUP.P2FK
 
                                     using (var db = new DB(OBJ, @"root\obj"))
                                     {
-                                        db.Put(transaction.SignedBy + "!" + key, transaction.TransactionId);
+                                        db.Put(objectaddress + "!" + key, transaction.TransactionId);
                                     }
 
                                 }
@@ -156,18 +157,25 @@ namespace SUP.P2FK
                                 {
 
                                     objectState.Creators = new Dictionary<string, DateTime> { };
-                                    foreach (int keywordId in objectinspector.cre)
+                                    try
                                     {
-
-                                        string creator = transaction.Keyword.Reverse().ElementAt(keywordId).Key;
-
-                                        if (!objectState.Creators.ContainsKey(creator))
+                                        foreach (int keywordId in objectinspector.cre)
                                         {
-                                            objectState.Creators.Add(creator, new DateTime());
+
+                                            string creator = transaction.Keyword.Reverse().ElementAt(keywordId).Key;
+
+                                            if (!objectState.Creators.ContainsKey(creator))
+                                            {
+                                                objectState.Creators.Add(creator, new DateTime());
+                                            }
+
                                         }
-
                                     }
-
+                                    catch
+                                    {
+                                        logstatus = "[\"" + transaction.SignedBy + "\",\"" + objectaddress + "\",\"create\",\"\",\"\",\"failed due to invalid transaction format\"]";
+                                        break;
+                                    }
                                     objectState.ChangeDate = transaction.BlockDate;
                                     objectinspector.cre = null;
                                 }
@@ -228,7 +236,14 @@ namespace SUP.P2FK
                                                     objectState.CreatedDate = transaction.BlockDate;
                                                     objectState.Owners = new Dictionary<string, long>();
                                                     logstatus = "[\"" + transaction.SignedBy + "\",\"" + objectaddress + "\",\"create\",\"" + objectinspector.own.Values.Sum() + "\",\"\",\"success\"]";
+                                                    lock (levelDBLocker)
+                                                    {
 
+                                                        using (var db = new DB(OBJ, @"root\found"))
+                                                        {
+                                                            db.Put(objectaddress, "1");
+                                                        }
+                                                    }
                                                 }
 
 
@@ -679,6 +694,279 @@ namespace SUP.P2FK
             return objectState;
 
         }
+        public static OBJState GetObjectByTransactionId(string transactionid, string username, string password, string url, string versionByte = "111", bool verbose = false)
+        {
+
+            OBJState objectState = new OBJState();
+            var OBJ = new Options { CreateIfMissing = true };
+            string isBlocked;
+            lock (levelDBLocker)
+            {
+                using (var db = new DB(OBJ, @"root\block"))
+                {
+                    isBlocked = db.Get(transactionid);
+                }
+                if (isBlocked == "true") { return objectState; }
+            }
+            string JSONOBJ;
+            string logstatus;
+            string diskpath = "root\\" + transactionid + "\\";
+
+
+            // fetch current JSONOBJ from disk if it exists
+            try
+            {
+                JSONOBJ = System.IO.File.ReadAllText(diskpath + "OBJ");
+                objectState = JsonConvert.DeserializeObject<OBJState>(JSONOBJ);
+                verbose = objectState.Verbose;
+            }
+            catch { }
+
+            var intProcessHeight = 0;
+            Root objectTransaction;
+
+            //return all roots found at address
+            objectTransaction = Root.GetRootByTransactionId(transactionid, username, password, url, versionByte);
+
+
+
+
+            string sortableProcessHeight = intProcessHeight.ToString("X").PadLeft(9, '0');
+            logstatus = "";
+
+
+
+            //ignore any transaction that is not signed
+            if (objectTransaction.Signed && (objectTransaction.File.ContainsKey("OBJ")))
+            {
+
+                string sigSeen;
+
+                using (var db = new DB(OBJ, @"root\obj"))
+                {
+                    sigSeen = db.Get(objectTransaction.Signature);
+                }
+
+                if (sigSeen == null || sigSeen == objectTransaction.TransactionId)
+                {
+
+
+                    using (var db = new DB(OBJ, @"root\obj"))
+                    {
+                        db.Put(objectTransaction.Signature, objectTransaction.TransactionId);
+                    }
+
+
+                    switch (objectTransaction.File.Last().Key.ToString().Substring(objectTransaction.File.Last().Key.ToString().Length - 3))
+                    {
+                        case "OBJ":
+                            OBJ objectinspector = null;
+                            try
+                            {
+                                objectinspector = JsonConvert.DeserializeObject<OBJ>(File.ReadAllText(@"root\" + objectTransaction.TransactionId + @"\OBJ"));
+
+                            }
+                            catch (Exception e)
+                            {
+
+                                logstatus = "[\"" + objectTransaction.SignedBy + "\",\"" + objectTransaction.SignedBy + "\",\"inspect\",\"\",\"\",\"failed due to invalid format\"]";
+                                break;
+                            }
+
+
+                            foreach (string key in objectTransaction.Keyword.Keys)
+
+                            {
+
+                                using (var db = new DB(OBJ, @"root\obj"))
+                                {
+                                    db.Put(objectTransaction.SignedBy + "!" + key, objectTransaction.TransactionId);
+                                }
+
+                            }
+
+
+
+                            if (objectinspector.cre != null && objectState.Creators == null)
+                            {
+
+                                objectState.Creators = new Dictionary<string, DateTime> { };
+                                foreach (int keywordId in objectinspector.cre)
+                                {
+
+                                    string creator = objectTransaction.Keyword.Reverse().ElementAt(keywordId).Key;
+
+                                    if (!objectState.Creators.ContainsKey(creator))
+                                    {
+                                        objectState.Creators.Add(creator, new DateTime());
+                                    }
+
+                                }
+
+                                objectState.ChangeDate = objectTransaction.BlockDate;
+                                objectinspector.cre = null;
+                            }
+
+
+                            try
+                            {
+                                //has proper authority to make OBJ changes
+                                if (objectState.Creators.ContainsKey(objectTransaction.SignedBy))
+                                {
+
+                                    if (objectinspector.cre != null && objectState.Creators.TryGet(objectTransaction.SignedBy).Year == 1)
+                                    {
+                                        objectState.Creators[objectTransaction.SignedBy] = objectTransaction.BlockDate;
+                                        objectState.ChangeDate = objectTransaction.BlockDate;
+                                        if (verbose)
+                                        {
+
+                                            logstatus = "[\"" + objectTransaction.SignedBy + "\",\"" + objectTransaction.SignedBy + "\",\"grant\",\"\",\"\",\"success\"]";
+
+                                            lock (levelDBLocker)
+                                            {
+                                                var ROOT = new Options { CreateIfMissing = true };
+                                                var db = new DB(ROOT, @"root\event");
+                                                db.Put(objectTransaction.SignedBy + "!" + objectTransaction.BlockDate.ToString("yyyyMMddHHmmss") + "!" + sortableProcessHeight + "!", logstatus);
+                                                db.Close();
+                                            }
+
+
+                                        }
+
+                                    }
+
+
+
+                                    if (objectState.LockedDate.Year == 1)
+                                    {
+                                        if (objectinspector.urn != null) { objectState.ChangeDate = objectTransaction.BlockDate; objectState.URN = objectinspector.urn.Replace('“', '"').Replace('”', '"'); }
+                                        if (objectinspector.uri != null) { objectState.ChangeDate = objectTransaction.BlockDate; objectState.URI = objectinspector.uri.Replace('“', '"').Replace('”', '"'); ; }
+                                        if (objectinspector.img != null) { objectState.ChangeDate = objectTransaction.BlockDate; objectState.Image = objectinspector.img.Replace('“', '"').Replace('”', '"'); ; }
+                                        if (objectinspector.nme != null) { objectState.ChangeDate = objectTransaction.BlockDate; objectState.Name = objectinspector.nme.Replace('“', '"').Replace('”', '"'); ; }
+                                        if (objectinspector.dsc != null) { objectState.ChangeDate = objectTransaction.BlockDate; objectState.Description = objectinspector.dsc.Replace('“', '"').Replace('”', '"'); ; }
+                                        if (objectinspector.atr != null) { objectState.ChangeDate = objectTransaction.BlockDate; objectState.Attributes = objectinspector.atr; }
+                                        if (objectinspector.lic != null) { objectState.ChangeDate = objectTransaction.BlockDate; objectState.License = objectinspector.lic.Replace('“', '"').Replace('”', '"'); ; }
+                                        if (intProcessHeight > 0 && objectState.ChangeDate == objectTransaction.BlockDate)
+                                        {
+                                            if (!logstatus.Contains("grant"))
+                                            {
+
+                                                logstatus = "[\"" + objectTransaction.SignedBy + "\",\"" + objectTransaction.SignedBy + "\",\"update\",\"\",\"\",\"success\"]";
+                                            }
+                                            else { logstatus = ""; }
+                                        }
+                                        if (objectinspector.own != null)
+                                        {
+                                            if (objectState.Owners == null)
+                                            {
+                                                objectState.CreatedDate = objectTransaction.BlockDate;
+                                                objectState.Owners = new Dictionary<string, long>();
+                                                logstatus = "[\"" + objectTransaction.SignedBy + "\",\"" + objectTransaction.SignedBy + "\",\"create\",\"" + objectinspector.own.Values.Sum() + "\",\"\",\"success\"]";
+                                                lock (levelDBLocker)
+                                                {
+                                                    using (var db = new DB(OBJ, @"root\found"))
+                                                    {
+                                                        db.Put(objectTransaction.SignedBy, "1");
+                                                    }
+                                                }
+
+                                            }
+
+
+                                            foreach (var ownerId in objectinspector.own)
+                                            {
+                                                string owner = objectTransaction.Keyword.Reverse().ElementAt(ownerId.Key).Key;
+                                                if (!objectState.Owners.ContainsKey(owner))
+                                                {
+                                                    objectState.Owners.Add(owner, ownerId.Value);
+                                                }
+                                                else
+                                                {
+                                                    objectState.Owners[owner] = ownerId.Value;
+
+                                                    logstatus = "[\"" + objectTransaction.SignedBy + "\",\"" + objectTransaction.SignedBy + "\",\"update\",\"" + ownerId.Value + "\",\"\",\"success\"]";
+                                                }
+                                            }
+                                        }
+
+
+                                    }
+                                    else
+                                    {
+                                        logstatus = "[\"" + objectTransaction.SignedBy + "\",\"" + objectTransaction.SignedBy + "\",\"update\",\"\",\"\",\"failed due to object lock\"]";
+                                        break;
+                                    }
+                                }
+                                else
+                                {
+                                    logstatus = "[\"" + objectTransaction.SignedBy + "\",\"" + objectTransaction.SignedBy + "\",\"inspect\",\"\",\"\",\"failed due to insufficient privileges\"]";
+                                }
+                                break;
+
+
+
+                            }
+                            catch
+                            {
+                                logstatus = "[\"" + objectTransaction.SignedBy + "\",\"" + objectTransaction.SignedBy + "\",\"create\",\"\",\"\",\"failed due to invalid transaction format\"]";
+
+                                break;
+                            }
+
+
+                        default:
+                            // ignore
+
+                            break;
+                    }
+                }
+                else
+                {
+                    logstatus = "[\"" + objectTransaction.SignedBy + "\",\"" + objectTransaction.SignedBy + "\",\"burn\",\"\",\"\",\"failed due to duplicate signature\"]";
+                }
+
+
+
+            }
+            else { logstatus = ""; }
+
+            if (verbose)
+            {
+                if (logstatus != "")
+                {
+
+
+                    lock (levelDBLocker)
+                    {
+                        var ROOT = new Options { CreateIfMissing = true };
+                        var db = new DB(ROOT, @"root\event");
+                        db.Put(objectTransaction.SignedBy + "!" + objectTransaction.BlockDate.ToString("yyyyMMddHHmmss") + "!" + sortableProcessHeight, logstatus);
+                        db.Close();
+                    }
+
+
+                }
+            }
+
+
+
+            //used to determine where to begin object State processing when retrieved from cache
+            objectState.ProcessHeight = intProcessHeight;
+            objectState.Verbose = verbose;
+            var objectSerialized = JsonConvert.SerializeObject(objectState);
+
+
+            if (!Directory.Exists(@"root\" + objectTransaction.SignedBy))
+            {
+                Directory.CreateDirectory(@"root\" + objectTransaction.SignedBy);
+            }
+            System.IO.File.WriteAllText(@"root\" + objectTransaction.SignedBy + @"\" + "P2FK.json", objectSerialized);
+
+
+            return objectState;
+
+        }
         public static OBJState GetObjectByURN(string searchstring, string username, string password, string url, string versionByte = "111", int skip = 0)
         {
             OBJState objectState = new OBJState { };
@@ -689,11 +977,14 @@ namespace SUP.P2FK
             string isBlocked;
             lock (levelDBLocker)
             {
+
                 using (var db = new DB(OBJ, @"root\block"))
                 {
                     isBlocked = db.Get(objectaddress);
+                    db.Close();
                 }
                 if (isBlocked == "true") { return objectState; }
+
             }
             int depth = skip;
             //return all roots found at address
@@ -748,11 +1039,14 @@ namespace SUP.P2FK
             string isBlocked;
             lock (levelDBLocker)
             {
+
                 using (var db = new DB(OBJ, @"root\block"))
                 {
                     isBlocked = db.Get(objectaddress);
+                    db.Close();
                 }
                 if (isBlocked == "true") { return objectState; }
+
             }
             int depth = skip;
             //return all roots found at address
@@ -779,41 +1073,69 @@ namespace SUP.P2FK
                             string transid = isObject.URN.Substring(5, 46);
                             if (!System.IO.Directory.Exists("ipfs/" + transid))
                             {
-                                Process process2 = new Process();
-                                process2.StartInfo.FileName = @"ipfs\ipfs.exe";
-                                process2.StartInfo.Arguments = "get " + transid + @" -o ipfs\" + transid;
-                                process2.StartInfo.UseShellExecute = false;
-                                process2.StartInfo.CreateNoWindow = true;
-                                process2.Start();
-                                process2.WaitForExit();
 
-                                if (System.IO.File.Exists("ipfs/" + transid))
+                                var SUP = new Options { CreateIfMissing = true };
+                                string isLoading;
+                                using (var db = new DB(SUP, @"ipfs"))
                                 {
-                                    System.IO.File.Move("ipfs/" + transid, "ipfs/" + transid + "_tmp");
-                                    System.IO.Directory.CreateDirectory("ipfs/" + transid);
-                                    string fileName = isObject.URN.Replace(@"//", "").Replace(@"\\", "").Substring(51);
-                                    if (fileName == "")
+                                    isLoading = db.Get(transid);
+
+                                }
+
+                                if (isLoading != "loading")
+                                {
+                                    using (var db = new DB(SUP, @"ipfs"))
                                     {
-                                        fileName = "artifact";
-                                        file2 += @"\artifact";
+
+                                        db.Put(transid, "loading");
+
                                     }
-                                    else { fileName = fileName.Replace(@"/", "").Replace(@"\", ""); }
-                                    System.IO.File.Move("ipfs/" + transid + "_tmp", @"ipfs/" + transid + @"/" + fileName);
+                                    Task ipfsTask = Task.Run(() =>
+                                    {
+                                        Process process2 = new Process();
+                                        process2.StartInfo.FileName = @"ipfs\ipfs.exe";
+                                        process2.StartInfo.Arguments = "get " + transid + @" -o ipfs\" + transid;
+                                        process2.StartInfo.UseShellExecute = false;
+                                        process2.Start();
+                                        process2.WaitForExit();
+
+                                        if (System.IO.File.Exists("ipfs/" + transid))
+                                        {
+                                            System.IO.File.Move("ipfs/" + transid, "ipfs/" + transid + "_tmp");
+                                            System.IO.Directory.CreateDirectory("ipfs/" + transid);
+                                            string fileName = isObject.URN.Replace(@"//", "").Replace(@"\\", "").Substring(51);
+                                            if (fileName == "")
+                                            {
+                                                fileName = "artifact";
+                                                file2 += @"\artifact";
+                                            }
+                                            else { fileName = fileName.Replace(@"/", "").Replace(@"\", ""); }
+                                            System.IO.File.Move("ipfs/" + transid + "_tmp", @"ipfs/" + transid + @"/" + fileName);
+                                        }
+
+
+                                        //attempt to pin fails silently if daemon is not running
+                                        Process process3 = new Process
+                                        {
+                                            StartInfo = new ProcessStartInfo
+                                            {
+                                                FileName = @"ipfs\ipfs.exe",
+                                                Arguments = "pin add " + transid,
+                                                UseShellExecute = false,
+                                                CreateNoWindow = true
+                                            }
+                                        };
+                                        process3.Start();
+
+                                        using (var db = new DB(SUP, @"ipfs"))
+                                        {
+                                            db.Delete(transid);
+
+                                        }
+                                    });
                                 }
 
 
-                                //attempt to pin fails silently if daemon is not running
-                                Process process3 = new Process
-                                {
-                                    StartInfo = new ProcessStartInfo
-                                    {
-                                        FileName = @"ipfs\ipfs.exe",
-                                        Arguments = "pin add " + transid,
-                                        UseShellExecute = false,
-                                        CreateNoWindow = true
-                                    }
-                                };
-                                process3.Start();
                             }
 
                         }
@@ -867,11 +1189,14 @@ namespace SUP.P2FK
             string isBlocked;
             lock (levelDBLocker)
             {
+
                 using (var db = new DB(OBJ, @"root\block"))
                 {
                     isBlocked = db.Get(objectaddress);
+                    db.Close();
                 }
                 if (isBlocked == "true") { return objectStates; }
+
             }
             Root[] objectTransactions;
 
@@ -994,11 +1319,14 @@ namespace SUP.P2FK
             string isBlocked;
             lock (levelDBLocker)
             {
+
                 using (var db = new DB(OBJ, @"root\block"))
                 {
                     isBlocked = db.Get(objectaddress);
+                    db.Close();
                 }
                 if (isBlocked == "true") { return objectStates; }
+
             }
             Root[] objectTransactions;
 
@@ -1078,11 +1406,14 @@ namespace SUP.P2FK
             string isBlocked;
             lock (levelDBLocker)
             {
+
                 using (var db = new DB(OBJ, @"root\block"))
                 {
                     isBlocked = db.Get(objectaddress);
+                    db.Close();
                 }
                 if (isBlocked == "true") { return objectStates; }
+                
             }
             Root[] objectTransactions;
 
@@ -1164,7 +1495,54 @@ namespace SUP.P2FK
             return totalSearch;
 
         }
-        public static List<string> GetKeywordsByAddress(string objectaddress , string username, string password, string url, string versionByte = "111")
+        public static List<OBJState> GetFoundObjects(string username, string password, string url, string versionByte = "111", int skip = 0, int qty = 100)
+        {
+            List<OBJState> totalSearch = new List<OBJState>();
+            HashSet<string> addedValues = new HashSet<string>();
+            int rownum = 1;
+
+
+            lock (levelDBLocker)
+            {
+                var SUP = new Options { CreateIfMissing = true };
+
+                using (var db = new DB(SUP, @"root\found"))
+                {
+                    LevelDB.Iterator it = db.CreateIterator();
+                    for (
+                       it.SeekToLast();
+                       it.IsValid() && rownum <= skip + qty; // Only display next 10 messages
+                        it.Prev()
+                     )
+                    {
+                        // Display only if rownum > numMessagesDisplayed to skip already displayed messages
+                        if (rownum > skip)
+                        {
+
+                            if (!addedValues.Contains(it.KeyAsString()))
+                            {
+
+                                addedValues.Add(it.KeyAsString());
+                                OBJState isObject = GetObjectByAddress(it.KeyAsString(), username, password, url, versionByte);
+                                totalSearch.Add(isObject);
+
+                            }
+
+                        }
+                        rownum++;
+                    }
+                    it.Dispose();
+
+
+                }
+                
+            }
+
+
+            return totalSearch;
+
+        }
+        public static List<string> GetKeywordsByAddress(string objectaddress, string username, string password, string url, string versionByte = "111")
         {
 
             GetObjectByAddress(objectaddress, username, password, url, versionByte);
@@ -1189,7 +1567,7 @@ namespace SUP.P2FK
                     if (keyaddress != null)
                     {
 
-                       keywords.Add(keyaddress);
+                        keywords.Add(keyaddress);
 
                     }
 
@@ -1228,16 +1606,16 @@ namespace SUP.P2FK
                         string message = System.IO.File.ReadAllText(@"root/" + supMessagePacket[1] + @"/MSG").Replace("@" + objectaddress, "").Replace('“', '"').Replace('”', '"');
 
                         string fromAddress = supMessagePacket[0];
-                       
+
                         string tstamp = it.KeyAsString().Split('!')[1];
-                        
+
                         // Add the message data to the messages list
                         messages.Add(new
                         {
                             Message = message,
                             FromAddress = fromAddress,
                             BlockDate = tstamp
-                                                   });
+                        });
                     }
                     rownum++;
                 }
@@ -1261,8 +1639,8 @@ namespace SUP.P2FK
         }
 
     }
-        
-    }
+
+}
 
 
 

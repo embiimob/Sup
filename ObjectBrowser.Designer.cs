@@ -1,4 +1,6 @@
-﻿namespace SUP
+﻿using System.Timers;
+
+namespace SUP
 {
     partial class ObjectBrowser
     {
@@ -39,7 +41,6 @@
             this.txtPassword = new System.Windows.Forms.TextBox();
             this.txtLogin = new System.Windows.Forms.TextBox();
             this.button1 = new System.Windows.Forms.Button();
-            this.button2 = new System.Windows.Forms.Button();
             this.btnHistoryBack = new System.Windows.Forms.Button();
             this.btnHistoryForward = new System.Windows.Forms.Button();
             this.btnMint = new System.Windows.Forms.Button();
@@ -107,8 +108,9 @@
             this.flowLayoutPanel1.TabIndex = 69;
             this.flowLayoutPanel1.Scroll += new System.Windows.Forms.ScrollEventHandler(this.flowLayoutPanel1_Scroll);
             this.flowLayoutPanel1.SizeChanged += new System.EventHandler(this.flowLayoutPanel1_SizeChanged);
-            this.flowLayoutPanel1.DragEnter += flowLayoutPanel1_DragEnter;
-            this.flowLayoutPanel1.DragDrop += flowLayoutPanel1_DragDrop;
+            this.flowLayoutPanel1.DragDrop += new System.Windows.Forms.DragEventHandler(this.flowLayoutPanel1_DragDrop);
+            this.flowLayoutPanel1.DragEnter += new System.Windows.Forms.DragEventHandler(this.flowLayoutPanel1_DragEnter);
+            this.flowLayoutPanel1.MouseWheel += new System.Windows.Forms.MouseEventHandler(this.flowLayoutPanel1_MouseWheel);
             // 
             // linkLabel1
             // 
@@ -171,18 +173,6 @@
             this.button1.UseVisualStyleBackColor = false;
             this.button1.Click += new System.EventHandler(this.ButtonLoadConnections);
             // 
-            // button2
-            // 
-            this.button2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.button2.BackColor = System.Drawing.SystemColors.Control;
-            this.button2.Location = new System.Drawing.Point(382, 4);
-            this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(43, 20);
-            this.button2.TabIndex = 73;
-            this.button2.Text = "profile";
-            this.button2.UseVisualStyleBackColor = false;
-            this.button2.Click += new System.EventHandler(this.button2_Click);
-            // 
             // btnHistoryBack
             // 
             this.btnHistoryBack.BackColor = System.Drawing.SystemColors.Control;
@@ -243,7 +233,6 @@
             this.Controls.Add(this.btnMint);
             this.Controls.Add(this.btnHistoryForward);
             this.Controls.Add(this.btnHistoryBack);
-            this.Controls.Add(this.button2);
             this.Controls.Add(this.button1);
             this.Controls.Add(this.linkLabel1);
             this.Controls.Add(this.btnWorkBench);
@@ -279,11 +268,13 @@
         private System.Windows.Forms.TextBox txtPassword;
         private System.Windows.Forms.TextBox txtLogin;
         private System.Windows.Forms.Button button1;
-        private System.Windows.Forms.Button button2;
         private System.Windows.Forms.Button btnHistoryBack;
         private System.Windows.Forms.Button btnHistoryForward;
         private System.Windows.Forms.Button btnMint;
         private System.Windows.Forms.TextBox txtQty;
         private System.Windows.Forms.TextBox txtLast;
+
+
+
     }
 }

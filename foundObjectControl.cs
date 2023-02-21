@@ -39,5 +39,10 @@ namespace SUP
         {
             Clipboard.SetText(ObjectAddress.Text);
         }
+
+        private void btnOfficial_Click(object sender, EventArgs e)
+        {
+            new ObjectDetails(txtOfficialURN.Text).Show();
+        }
     }
 }

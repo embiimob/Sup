@@ -42,6 +42,9 @@
             this.ObjectCreators2 = new System.Windows.Forms.LinkLabel();
             this.flowLayoutPanel1 = new System.Windows.Forms.FlowLayoutPanel();
             this.ObjectId = new System.Windows.Forms.TextBox();
+            this.btnOfficial = new System.Windows.Forms.Button();
+            this.txtOfficialURN = new System.Windows.Forms.TextBox();
+            this.lblOfficial = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.ObjectImage)).BeginInit();
             this.panel1.SuspendLayout();
             this.flowLayoutPanel1.SuspendLayout();
@@ -221,12 +224,50 @@
             this.ObjectId.Size = new System.Drawing.Size(79, 20);
             this.ObjectId.TabIndex = 13;
             // 
+            // btnOfficial
+            // 
+            this.btnOfficial.BackColor = System.Drawing.Color.Yellow;
+            this.btnOfficial.Location = new System.Drawing.Point(88, 174);
+            this.btnOfficial.Name = "btnOfficial";
+            this.btnOfficial.Size = new System.Drawing.Size(113, 28);
+            this.btnOfficial.TabIndex = 14;
+            this.btnOfficial.Text = "SEE OFFICIAL";
+            this.btnOfficial.UseVisualStyleBackColor = false;
+            this.btnOfficial.Visible = false;
+            this.btnOfficial.Click += new System.EventHandler(this.btnOfficial_Click);
+            // 
+            // txtOfficialURN
+            // 
+            this.txtOfficialURN.Location = new System.Drawing.Point(4, 182);
+            this.txtOfficialURN.Name = "txtOfficialURN";
+            this.txtOfficialURN.Size = new System.Drawing.Size(83, 20);
+            this.txtOfficialURN.TabIndex = 15;
+            this.txtOfficialURN.Visible = false;
+            // 
+            // lblOfficial
+            // 
+            this.lblOfficial.AutoSize = true;
+            this.lblOfficial.BackColor = System.Drawing.SystemColors.HotTrack;
+            this.lblOfficial.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblOfficial.ForeColor = System.Drawing.Color.Yellow;
+            this.lblOfficial.Location = new System.Drawing.Point(2, 2);
+            this.lblOfficial.Margin = new System.Windows.Forms.Padding(0);
+            this.lblOfficial.Name = "lblOfficial";
+            this.lblOfficial.Padding = new System.Windows.Forms.Padding(1, 1, 1, 3);
+            this.lblOfficial.Size = new System.Drawing.Size(29, 22);
+            this.lblOfficial.TabIndex = 16;
+            this.lblOfficial.Text = "👑";
+            this.lblOfficial.Visible = false;
+            // 
             // FoundObjectControl
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
             this.BackColor = System.Drawing.SystemColors.ActiveCaption;
+            this.Controls.Add(this.lblOfficial);
+            this.Controls.Add(this.txtOfficialURN);
+            this.Controls.Add(this.btnOfficial);
             this.Controls.Add(this.ObjectName);
             this.Controls.Add(this.ObjectQty);
             this.Controls.Add(this.flowLayoutPanel1);
@@ -265,7 +306,10 @@
         public System.Windows.Forms.Label ObjectName;
         public System.Windows.Forms.LinkLabel ObjectCreators;
         public System.Windows.Forms.LinkLabel ObjectCreators2;
-        private System.Windows.Forms.FlowLayoutPanel flowLayoutPanel1;
         public System.Windows.Forms.TextBox ObjectId;
+        public System.Windows.Forms.Button btnOfficial;
+        public System.Windows.Forms.TextBox txtOfficialURN;
+        public System.Windows.Forms.FlowLayoutPanel flowLayoutPanel1;
+        public System.Windows.Forms.Label lblOfficial;
     }
 }

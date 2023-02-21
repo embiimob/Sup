@@ -60,10 +60,12 @@ namespace SUP.P2FK
                     //Check levelDB for P2FK transaction ID cache status
                     lock (levelDBLocker)
                     {
-                        var ROOT = new Options { CreateIfMissing = true };
-                        var db = new DB(ROOT, @"root\block");
-                        P2FKJSONString = db.Get(transactionid);
-                        db.Close();
+                        
+                            var ROOT = new Options { CreateIfMissing = true };
+                            var db = new DB(ROOT, @"root\block");
+                            P2FKJSONString = db.Get(transactionid);
+                            db.Close();
+                       
                     }
 
                 }
@@ -148,7 +150,13 @@ namespace SUP.P2FK
                     )
                     {
                         byte[] results = Array.Empty<byte>();
-                        P2FKSignatureAddress = v_out.scriptPubKey.addresses[0];
+                        try
+                        {
+                            P2FKSignatureAddress = v_out.scriptPubKey.addresses[0];
+                        }
+                        catch { break; }
+                    
+
 
                         //retreiving payload data from each address
                         Base58.DecodeWithCheckSum(P2FKSignatureAddress, out results);
@@ -184,11 +192,13 @@ namespace SUP.P2FK
                 {
                     var OBJ = new Options { CreateIfMissing = true };
                     string isBlocked;
-                    using (var db = new DB(OBJ, @"root\block"))
-                    {
-                        isBlocked = db.Get(P2FKSignatureAddress);
-                    }
-                    if (isBlocked == "true") { return null; }
+                    
+                        using (var db = new DB(OBJ, @"root\block"))
+                        {
+                            isBlocked = db.Get(P2FKSignatureAddress);
+                        }
+                        if (isBlocked == "true") { return null; }
+                   
                 }
             }
 
@@ -242,6 +252,7 @@ namespace SUP.P2FK
                 else
                 {
                     isValid = false;
+                   
 
                 }
 
@@ -340,6 +351,7 @@ namespace SUP.P2FK
                     }
                     else
                     {
+                        
                         break;
                     }
                 }
@@ -360,10 +372,12 @@ namespace SUP.P2FK
 
                 lock (levelDBLocker)
                 {
-                    var ROOT = new Options { CreateIfMissing = true };
-                    var db = new DB(ROOT, @"root\block");
-                    db.Put(transactionid, "invalid");
-                    db.Close();
+                  
+                        var ROOT = new Options { CreateIfMissing = true };
+                        var db = new DB(ROOT, @"root\block");
+                        db.Put(transactionid, "invalid");
+                        db.Close();
+                    
                 }
 
 

@@ -974,6 +974,38 @@ namespace SUP
 
             }
         }
+
+        private void button3_Click(object sender, EventArgs e)
+        {
+
+           
+
+        }
+
+        private void button3_Click_1(object sender, EventArgs e)
+        {
+            DateTime tmbeginCall = DateTime.UtcNow;
+            List<OBJState> ownedObjects = OBJState.GetFoundObjects(txtLogin.Text, txtPassword.Text, txtUrl.Text, txtVersionByte.Text, int.Parse(txtSkip.Text), int.Parse(txtQty.Text));
+            DateTime tmendCall = DateTime.UtcNow;
+            lblTotalBytes.Text = "bytes: ";
+            lblTotalTime.Text = "time: ";
+            lblKbs.Text = "kb/s: ";
+            lblTotal.Text = "total:";
+            TimeSpan elapsedTime = tmendCall - tmbeginCall;
+            double elapsedMilliseconds = elapsedTime.TotalMilliseconds;
+
+            lblTotalTime.Text = "time: " + Math.Truncate(elapsedMilliseconds);
+            lblTotal.Text = "total: " + ownedObjects.Count();
+
+            JObject[] ObjectArray = new JObject[ownedObjects.Count];
+            int objectcount = 0;
+            foreach (object obj in ownedObjects)
+            {
+
+                ObjectArray[objectcount++] = JObject.FromObject(obj);
+            }
+            DisplayRootJSON(ObjectArray);
+        }
     }
 }
 

@@ -73,6 +73,10 @@
             this.lblLicense = new System.Windows.Forms.Label();
             this.transFlow = new System.Windows.Forms.FlowLayoutPanel();
             this.KeysFlow = new System.Windows.Forms.FlowLayoutPanel();
+            this.btnOfficial = new System.Windows.Forms.Button();
+            this.txtOfficialURN = new System.Windows.Forms.TextBox();
+            this.lblOfficial = new System.Windows.Forms.Label();
+            this.lblWarning = new System.Windows.Forms.Label();
             this.flowPanel.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.webviewer)).BeginInit();
@@ -542,7 +546,7 @@
             this.transFlow.Location = new System.Drawing.Point(19, 110);
             this.transFlow.Margin = new System.Windows.Forms.Padding(0);
             this.transFlow.Name = "transFlow";
-            this.transFlow.Size = new System.Drawing.Size(270, 370);
+            this.transFlow.Size = new System.Drawing.Size(269, 370);
             this.transFlow.TabIndex = 58;
             // 
             // KeysFlow
@@ -555,15 +559,64 @@
             this.KeysFlow.TabIndex = 0;
             this.KeysFlow.Visible = false;
             // 
+            // btnOfficial
+            // 
+            this.btnOfficial.BackColor = System.Drawing.Color.Yellow;
+            this.btnOfficial.Location = new System.Drawing.Point(768, 577);
+            this.btnOfficial.Name = "btnOfficial";
+            this.btnOfficial.Size = new System.Drawing.Size(113, 28);
+            this.btnOfficial.TabIndex = 59;
+            this.btnOfficial.Text = "SEE OFFICIAL";
+            this.btnOfficial.UseVisualStyleBackColor = false;
+            this.btnOfficial.Visible = false;
+            this.btnOfficial.Click += new System.EventHandler(this.btnOfficial_Click);
+            // 
+            // txtOfficialURN
+            // 
+            this.txtOfficialURN.Location = new System.Drawing.Point(415, 624);
+            this.txtOfficialURN.Name = "txtOfficialURN";
+            this.txtOfficialURN.Size = new System.Drawing.Size(100, 20);
+            this.txtOfficialURN.TabIndex = 60;
+            this.txtOfficialURN.Visible = false;
+            // 
+            // lblOfficial
+            // 
+            this.lblOfficial.AutoSize = true;
+            this.lblOfficial.BackColor = System.Drawing.SystemColors.HotTrack;
+            this.lblOfficial.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblOfficial.ForeColor = System.Drawing.Color.Yellow;
+            this.lblOfficial.Location = new System.Drawing.Point(23, 341);
+            this.lblOfficial.Margin = new System.Windows.Forms.Padding(0);
+            this.lblOfficial.Name = "lblOfficial";
+            this.lblOfficial.Padding = new System.Windows.Forms.Padding(4, 1, 1, 3);
+            this.lblOfficial.Size = new System.Drawing.Size(32, 22);
+            this.lblOfficial.TabIndex = 61;
+            this.lblOfficial.Text = "👑";
+            this.lblOfficial.Visible = false;
+            // 
+            // lblWarning
+            // 
+            this.lblWarning.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblWarning.Location = new System.Drawing.Point(465, 580);
+            this.lblWarning.Name = "lblWarning";
+            this.lblWarning.Size = new System.Drawing.Size(373, 23);
+            this.lblWarning.TabIndex = 62;
+            this.lblWarning.Text = "WARNING THIS FILE WILL EXECUTE LOCALY";
+            this.lblWarning.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.lblWarning.Visible = false;
+            // 
             // ObjectDetails
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.SystemColors.InactiveCaption;
             this.ClientSize = new System.Drawing.Size(1192, 642);
+            this.Controls.Add(this.btnOfficial);
+            this.Controls.Add(this.lblWarning);
+            this.Controls.Add(this.transFlow);
+            this.Controls.Add(this.txtOfficialURN);
             this.Controls.Add(this.KeysFlow);
             this.Controls.Add(this.imgPicture);
-            this.Controls.Add(this.transFlow);
             this.Controls.Add(this.lblLicense);
             this.Controls.Add(this.label5);
             this.Controls.Add(this.lblImageFullPath);
@@ -579,7 +632,6 @@
             this.Controls.Add(this.label3);
             this.Controls.Add(this.txtIMG);
             this.Controls.Add(this.lblIMGBlockDate);
-            this.Controls.Add(this.label4);
             this.Controls.Add(this.txtURN);
             this.Controls.Add(this.lblURNBlockDate);
             this.Controls.Add(this.btnRefreshOwners);
@@ -603,6 +655,8 @@
             this.Controls.Add(this.flowPanel);
             this.Controls.Add(this.webviewer);
             this.Controls.Add(this.lblTotalOwnedDetail);
+            this.Controls.Add(this.lblOfficial);
+            this.Controls.Add(this.label4);
             this.MaximumSize = new System.Drawing.Size(1208, 681);
             this.MinimumSize = new System.Drawing.Size(1208, 681);
             this.Name = "ObjectDetails";
@@ -672,5 +726,9 @@
         private System.Windows.Forms.FlowLayoutPanel transFlow;
         public System.Windows.Forms.Label txtName;
         private System.Windows.Forms.FlowLayoutPanel KeysFlow;
+        public System.Windows.Forms.Button btnOfficial;
+        private System.Windows.Forms.TextBox txtOfficialURN;
+        public System.Windows.Forms.Label lblOfficial;
+        private System.Windows.Forms.Label lblWarning;
     }
 }

@@ -76,6 +76,12 @@ namespace SUP
             this.lblTotalTime = new System.Windows.Forms.Label();
             this.lblKbs = new System.Windows.Forms.Label();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
+            this.btnGetFoundObjects = new System.Windows.Forms.Button();
+            this.btnPurge = new System.Windows.Forms.Button();
+            this.label2 = new System.Windows.Forms.Label();
+            this.label1 = new System.Windows.Forms.Label();
+            this.txtSkip = new System.Windows.Forms.TextBox();
+            this.txtQty = new System.Windows.Forms.TextBox();
             this.btnUnblockTransaction = new System.Windows.Forms.Button();
             this.btnUnBlockAddress = new System.Windows.Forms.Button();
             this.btnUnMuteAddress = new System.Windows.Forms.Button();
@@ -95,11 +101,6 @@ namespace SUP
             this.btnGetObject = new System.Windows.Forms.Button();
             this.btnDecrypt = new System.Windows.Forms.Button();
             this.btnEncrypt = new System.Windows.Forms.Button();
-            this.txtQty = new System.Windows.Forms.TextBox();
-            this.txtSkip = new System.Windows.Forms.TextBox();
-            this.label1 = new System.Windows.Forms.Label();
-            this.label2 = new System.Windows.Forms.Label();
-            this.btnPurge = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.dgTransactions)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
@@ -247,7 +248,7 @@ namespace SUP
             // 
             // txtSearchAddress
             // 
-            this.txtSearchAddress.Location = new System.Drawing.Point(9, 257);
+            this.txtSearchAddress.Location = new System.Drawing.Point(9, 239);
             this.txtSearchAddress.Name = "txtSearchAddress";
             this.txtSearchAddress.Size = new System.Drawing.Size(270, 20);
             this.txtSearchAddress.TabIndex = 25;
@@ -256,7 +257,7 @@ namespace SUP
             // label11
             // 
             this.label11.AutoSize = true;
-            this.label11.Location = new System.Drawing.Point(6, 237);
+            this.label11.Location = new System.Drawing.Point(6, 219);
             this.label11.Name = "label11";
             this.label11.Size = new System.Drawing.Size(44, 13);
             this.label11.TabIndex = 26;
@@ -264,7 +265,7 @@ namespace SUP
             // 
             // btnSearch
             // 
-            this.btnSearch.Location = new System.Drawing.Point(285, 255);
+            this.btnSearch.Location = new System.Drawing.Point(285, 237);
             this.btnSearch.Name = "btnSearch";
             this.btnSearch.Size = new System.Drawing.Size(76, 23);
             this.btnSearch.TabIndex = 27;
@@ -396,7 +397,7 @@ namespace SUP
             // 
             // btnGetTransactionId
             // 
-            this.btnGetTransactionId.Location = new System.Drawing.Point(408, 187);
+            this.btnGetTransactionId.Location = new System.Drawing.Point(408, 179);
             this.btnGetTransactionId.Name = "btnGetTransactionId";
             this.btnGetTransactionId.Size = new System.Drawing.Size(43, 23);
             this.btnGetTransactionId.TabIndex = 33;
@@ -407,7 +408,7 @@ namespace SUP
             // label12
             // 
             this.label12.AutoSize = true;
-            this.label12.Location = new System.Drawing.Point(6, 174);
+            this.label12.Location = new System.Drawing.Point(6, 164);
             this.label12.Name = "label12";
             this.label12.Size = new System.Drawing.Size(23, 13);
             this.label12.TabIndex = 32;
@@ -415,7 +416,7 @@ namespace SUP
             // 
             // txtTransactionId
             // 
-            this.txtTransactionId.Location = new System.Drawing.Point(9, 190);
+            this.txtTransactionId.Location = new System.Drawing.Point(9, 180);
             this.txtTransactionId.Name = "txtTransactionId";
             this.txtTransactionId.Size = new System.Drawing.Size(393, 20);
             this.txtTransactionId.TabIndex = 31;
@@ -423,7 +424,7 @@ namespace SUP
             // 
             // btnGetKeyword
             // 
-            this.btnGetKeyword.Location = new System.Drawing.Point(367, 254);
+            this.btnGetKeyword.Location = new System.Drawing.Point(367, 236);
             this.btnGetKeyword.Name = "btnGetKeyword";
             this.btnGetKeyword.Size = new System.Drawing.Size(84, 23);
             this.btnGetKeyword.TabIndex = 36;
@@ -485,6 +486,7 @@ namespace SUP
             // 
             // splitContainer1.Panel1
             // 
+            this.splitContainer1.Panel1.Controls.Add(this.btnGetFoundObjects);
             this.splitContainer1.Panel1.Controls.Add(this.btnPurge);
             this.splitContainer1.Panel1.Controls.Add(this.label2);
             this.splitContainer1.Panel1.Controls.Add(this.label1);
@@ -547,9 +549,63 @@ namespace SUP
             this.splitContainer1.TabIndex = 42;
             this.splitContainer1.Resize += new System.EventHandler(this.OnContainerResize);
             // 
+            // btnGetFoundObjects
+            // 
+            this.btnGetFoundObjects.Location = new System.Drawing.Point(12, 271);
+            this.btnGetFoundObjects.Name = "btnGetFoundObjects";
+            this.btnGetFoundObjects.Size = new System.Drawing.Size(79, 23);
+            this.btnGetFoundObjects.TabIndex = 71;
+            this.btnGetFoundObjects.Text = "all found";
+            this.btnGetFoundObjects.UseVisualStyleBackColor = true;
+            this.btnGetFoundObjects.Click += new System.EventHandler(this.button3_Click_1);
+            // 
+            // btnPurge
+            // 
+            this.btnPurge.Location = new System.Drawing.Point(269, 118);
+            this.btnPurge.Name = "btnPurge";
+            this.btnPurge.Size = new System.Drawing.Size(74, 23);
+            this.btnPurge.TabIndex = 70;
+            this.btnPurge.Text = "purge all";
+            this.btnPurge.UseVisualStyleBackColor = true;
+            this.btnPurge.Click += new System.EventHandler(this.ButtonPurgeClick);
+            // 
+            // label2
+            // 
+            this.label2.AutoSize = true;
+            this.label2.Location = new System.Drawing.Point(357, 334);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(26, 13);
+            this.label2.TabIndex = 69;
+            this.label2.Text = "skip";
+            // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Location = new System.Drawing.Point(357, 305);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(21, 13);
+            this.label1.TabIndex = 68;
+            this.label1.Text = "qty";
+            // 
+            // txtSkip
+            // 
+            this.txtSkip.Location = new System.Drawing.Point(384, 332);
+            this.txtSkip.Name = "txtSkip";
+            this.txtSkip.Size = new System.Drawing.Size(66, 20);
+            this.txtSkip.TabIndex = 67;
+            this.txtSkip.Text = "0";
+            // 
+            // txtQty
+            // 
+            this.txtQty.Location = new System.Drawing.Point(385, 302);
+            this.txtQty.Name = "txtQty";
+            this.txtQty.Size = new System.Drawing.Size(66, 20);
+            this.txtQty.TabIndex = 66;
+            this.txtQty.Text = "-1";
+            // 
             // btnUnblockTransaction
             // 
-            this.btnUnblockTransaction.Location = new System.Drawing.Point(168, 161);
+            this.btnUnblockTransaction.Location = new System.Drawing.Point(168, 151);
             this.btnUnblockTransaction.Name = "btnUnblockTransaction";
             this.btnUnblockTransaction.Size = new System.Drawing.Size(83, 23);
             this.btnUnblockTransaction.TabIndex = 65;
@@ -559,7 +615,7 @@ namespace SUP
             // 
             // btnUnBlockAddress
             // 
-            this.btnUnBlockAddress.Location = new System.Drawing.Point(367, 225);
+            this.btnUnBlockAddress.Location = new System.Drawing.Point(367, 207);
             this.btnUnBlockAddress.Name = "btnUnBlockAddress";
             this.btnUnBlockAddress.Size = new System.Drawing.Size(83, 23);
             this.btnUnBlockAddress.TabIndex = 64;
@@ -569,7 +625,7 @@ namespace SUP
             // 
             // btnUnMuteAddress
             // 
-            this.btnUnMuteAddress.Location = new System.Drawing.Point(285, 225);
+            this.btnUnMuteAddress.Location = new System.Drawing.Point(285, 207);
             this.btnUnMuteAddress.Name = "btnUnMuteAddress";
             this.btnUnMuteAddress.Size = new System.Drawing.Size(76, 23);
             this.btnUnMuteAddress.TabIndex = 63;
@@ -579,7 +635,7 @@ namespace SUP
             // 
             // btnMuteAddress
             // 
-            this.btnMuteAddress.Location = new System.Drawing.Point(170, 228);
+            this.btnMuteAddress.Location = new System.Drawing.Point(170, 210);
             this.btnMuteAddress.Name = "btnMuteAddress";
             this.btnMuteAddress.Size = new System.Drawing.Size(109, 23);
             this.btnMuteAddress.TabIndex = 62;
@@ -589,7 +645,7 @@ namespace SUP
             // 
             // btnBlockTransaction
             // 
-            this.btnBlockTransaction.Location = new System.Drawing.Point(62, 161);
+            this.btnBlockTransaction.Location = new System.Drawing.Point(62, 151);
             this.btnBlockTransaction.Name = "btnBlockTransaction";
             this.btnBlockTransaction.Size = new System.Drawing.Size(102, 23);
             this.btnBlockTransaction.TabIndex = 61;
@@ -599,7 +655,7 @@ namespace SUP
             // 
             // btnBlockAddress
             // 
-            this.btnBlockAddress.Location = new System.Drawing.Point(62, 228);
+            this.btnBlockAddress.Location = new System.Drawing.Point(62, 210);
             this.btnBlockAddress.Name = "btnBlockAddress";
             this.btnBlockAddress.Size = new System.Drawing.Size(102, 23);
             this.btnBlockAddress.TabIndex = 60;
@@ -719,7 +775,7 @@ namespace SUP
             // 
             // btnDecrypt
             // 
-            this.btnDecrypt.Location = new System.Drawing.Point(267, 161);
+            this.btnDecrypt.Location = new System.Drawing.Point(267, 151);
             this.btnDecrypt.Name = "btnDecrypt";
             this.btnDecrypt.Size = new System.Drawing.Size(86, 23);
             this.btnDecrypt.TabIndex = 43;
@@ -729,57 +785,13 @@ namespace SUP
             // 
             // btnEncrypt
             // 
-            this.btnEncrypt.Location = new System.Drawing.Point(357, 161);
+            this.btnEncrypt.Location = new System.Drawing.Point(357, 151);
             this.btnEncrypt.Name = "btnEncrypt";
             this.btnEncrypt.Size = new System.Drawing.Size(93, 23);
             this.btnEncrypt.TabIndex = 42;
             this.btnEncrypt.Text = "encrypt";
             this.btnEncrypt.UseVisualStyleBackColor = true;
             this.btnEncrypt.Click += new System.EventHandler(this.ButtonEncryptTransactionIdClick);
-            // 
-            // txtQty
-            // 
-            this.txtQty.Location = new System.Drawing.Point(385, 302);
-            this.txtQty.Name = "txtQty";
-            this.txtQty.Size = new System.Drawing.Size(66, 20);
-            this.txtQty.TabIndex = 66;
-            this.txtQty.Text = "-1";
-            // 
-            // txtSkip
-            // 
-            this.txtSkip.Location = new System.Drawing.Point(384, 332);
-            this.txtSkip.Name = "txtSkip";
-            this.txtSkip.Size = new System.Drawing.Size(66, 20);
-            this.txtSkip.TabIndex = 67;
-            this.txtSkip.Text = "0";
-            // 
-            // label1
-            // 
-            this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(357, 305);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(21, 13);
-            this.label1.TabIndex = 68;
-            this.label1.Text = "qty";
-            // 
-            // label2
-            // 
-            this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(357, 334);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(26, 13);
-            this.label2.TabIndex = 69;
-            this.label2.Text = "skip";
-            // 
-            // btnPurge
-            // 
-            this.btnPurge.Location = new System.Drawing.Point(269, 118);
-            this.btnPurge.Name = "btnPurge";
-            this.btnPurge.Size = new System.Drawing.Size(74, 23);
-            this.btnPurge.TabIndex = 70;
-            this.btnPurge.Text = "purge all";
-            this.btnPurge.UseVisualStyleBackColor = true;
-            this.btnPurge.Click += new System.EventHandler(this.ButtonPurgeClick);
             // 
             // WorkBench
             // 
@@ -870,6 +882,7 @@ namespace SUP
         private TextBox txtSkip;
         private TextBox txtQty;
         private Button btnPurge;
+        private Button btnGetFoundObjects;
     }
 }
 

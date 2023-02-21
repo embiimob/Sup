@@ -201,6 +201,9 @@
     <Compile Include="FullScreenView.cs">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Include="MouseWheelFlowPanel.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="ObjectDetails.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -318,6 +321,9 @@
     <Content Include="includes\BouncyCastle.Crypto.xml" />
     <Content Include="includes\HtmlSanitizer.dll" />
     <Content Include="includes\HtmlSanitizer.xml" />
+    <Content Include="includes\HugPuddle.jpg">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="includes\LevelDB.NET.dll" />
     <Content Include="includes\Microsoft.Bcl.AsyncInterfaces.dll" />
     <Content Include="includes\Microsoft.Bcl.AsyncInterfaces.xml" />
