@@ -1212,53 +1212,15 @@ namespace SUP.P2FK
                 //ignore any transaction that is not signed
                 if (transaction.Signed)
                 {
-                    string findObject;
+                    
                     string findId;
 
                     if (transaction.File.ContainsKey("OBJ") || transaction.File.ContainsKey("GIV") || transaction.File.ContainsKey("MSG"))
                     {
-                        findObject = transaction.Keyword.Last().Key;
-
-                        if (!addedValues.Contains(findObject))
-                        {
-                            addedValues.Add(findObject);
 
 
 
-
-                            OBJState isObject = GetObjectByAddress(findObject, username, password, url, versionByte);
-
-                            if (isObject.URN != null && findObject != objectaddress)
-                            {
-
-                                using (var db = new DB(OBJ, @"root\obj"))
-                                {
-                                    findId = db.Get(objectaddress + "!" + findObject);
-                                }
-
-                                if (findId == transaction.Id.ToString() || findId == null)
-                                {
-                                    if (findId == null)
-                                    {
-                                        using (var db = new DB(OBJ, @"root\obj"))
-                                        {
-                                            db.Put(objectaddress + "!" + findObject, transaction.Id.ToString());
-                                        }
-                                    }
-                                }
-
-                                isObject.Id = transaction.Id;
-                                objectStates.Add(isObject);
-                                _qty++;
-                                if (_qty == qty)
-                                {
-                                    return objectStates;
-                                }
-                            }
-
-
-                        }
-                        else if (transaction.File.ContainsKey("GIV"))
+                        if (transaction.File.ContainsKey("GIV"))
                         {
 
 
@@ -1275,7 +1237,7 @@ namespace SUP.P2FK
                                     {
                                         using (var db = new DB(OBJ, @"root\obj"))
                                         {
-                                            findId = db.Get(objectaddress + "!" + findObject);
+                                            findId = db.Get(objectaddress + "!" + key);
                                         }
 
                                         if (findId == transaction.Id.ToString() || findId == null)
@@ -1284,7 +1246,7 @@ namespace SUP.P2FK
                                             {
                                                 using (var db = new DB(OBJ, @"root\obj"))
                                                 {
-                                                    db.Put(objectaddress + "!" + findObject, transaction.Id.ToString());
+                                                    db.Put(objectaddress + "!" + key, transaction.Id.ToString());
                                                 }
                                             }
                                         }
@@ -1300,6 +1262,49 @@ namespace SUP.P2FK
                                 }
                             }
                         }
+                        else if(transaction.File.ContainsKey("OBJ") || transaction.File.ContainsKey("MSG"))
+                        {
+                            string key;
+                            key = transaction.Keyword.Last().Key;
+
+                            if (!addedValues.Contains(key))
+                            {
+                                addedValues.Add(key);
+
+                                OBJState isObject = GetObjectByAddress(key, username, password, url, versionByte);
+
+                                if (isObject.URN != null && key != objectaddress)
+                                {
+
+                                    using (var db = new DB(OBJ, @"root\obj"))
+                                    {
+                                        findId = db.Get(objectaddress + "!" + key);
+                                    }
+
+                                    if (findId == transaction.Id.ToString() || findId == null)
+                                    {
+                                        if (findId == null)
+                                        {
+                                            using (var db = new DB(OBJ, @"root\obj"))
+                                            {
+                                                db.Put(objectaddress + "!" + key, transaction.Id.ToString());
+                                            }
+                                        }
+                                    }
+
+                                    isObject.Id = transaction.Id;
+                                    objectStates.Add(isObject);
+                                    _qty++;
+                                    if (_qty == qty)
+                                    {
+                                        return objectStates;
+                                    }
+                                }
+
+
+                            }
+                        }
+                        
                     }
                 }
 
@@ -1312,8 +1317,6 @@ namespace SUP.P2FK
         }
         public static List<OBJState> GetObjectsOwnedByAddress(string objectaddress, string username, string password, string url, string versionByte = "111", int skip = 0, int qty = -1)
         {
-            //                                if (isObject.URN != null & isObject.Owners != null && (     isObject.Owners.ContainsKey(objectaddress)   ||  (  isObject.Owners.ContainsKey(key) & isObject.Creators != null && isObject.Creators.ContainsKey(objectaddress))  ) )
-
             List<OBJState> objectStates = new List<OBJState> { };
 
             var OBJ = new Options { CreateIfMissing = true };
@@ -1342,51 +1345,99 @@ namespace SUP.P2FK
                 //ignore any transaction that is not signed
                 if (transaction.Signed)
                 {
-                    string findObject;
+                    
                     string findId;
 
                     if (transaction.File.ContainsKey("OBJ") || transaction.File.ContainsKey("GIV"))
                     {
-                        findObject = transaction.Keyword.Last().Key;
 
-                        if (transaction.File.ContainsKey("GIV")) { findObject = transaction.Keyword.ElementAt(1).Key; }
 
-                        if (!addedValues.Contains(findObject))
+
+                        if (transaction.File.ContainsKey("GIV"))
                         {
-                            addedValues.Add(findObject);
 
 
-                            OBJState isObject = GetObjectByAddress(findObject, username, password, url, versionByte);
-
-                            if (isObject.URN != null && findObject != objectaddress && isObject.Owners.ContainsKey(objectaddress) || (isObject.URN != null && findObject != objectaddress && isObject.Owners.ContainsKey(findObject) && isObject.Creators.ContainsKey(objectaddress)))
+                            foreach (string key in transaction.Keyword.Keys)
                             {
 
-                                using (var db = new DB(OBJ, @"root\obj"))
+                                if (!addedValues.Contains(key))
                                 {
-                                    findId = db.Get(objectaddress + "!" + findObject);
-                                }
+                                    addedValues.Add(key);
 
-                                if (findId == transaction.Id.ToString() || findId == null)
-                                {
-                                    if (findId == null)
+                                    OBJState isObject = GetObjectByAddress(key, username, password, url, versionByte);
+
+                                    //if (isObject.URN != null && key != objectaddress)
+                                    if (isObject.URN != null && key != objectaddress && isObject.Owners.ContainsKey(objectaddress) || (isObject.URN != null && key != objectaddress && isObject.Owners.ContainsKey(key) && isObject.Creators.ContainsKey(objectaddress)))
                                     {
                                         using (var db = new DB(OBJ, @"root\obj"))
                                         {
-                                            db.Put(objectaddress + "!" + findObject, transaction.Id.ToString());
+                                            findId = db.Get(objectaddress + "!" + key);
+                                        }
+
+                                        if (findId == transaction.Id.ToString() || findId == null)
+                                        {
+                                            if (findId == null)
+                                            {
+                                                using (var db = new DB(OBJ, @"root\obj"))
+                                                {
+                                                    db.Put(objectaddress + "!" + key, transaction.Id.ToString());
+                                                }
+                                            }
+                                        }
+
+                                        isObject.Id = transaction.Id;
+                                        objectStates.Add(isObject);
+                                        _qty++;
+                                        if (_qty == qty)
+                                        {
+                                            return objectStates;
                                         }
                                     }
                                 }
-
-                                isObject.Id = transaction.Id;
-                                objectStates.Add(isObject);
-                                _qty++;
-                                if (_qty == qty)
-                                {
-                                    return objectStates;
-                                }
                             }
-
                         }
+                        else if (transaction.File.ContainsKey("OBJ"))
+                        {
+                           string key = transaction.Keyword.Last().Key;
+
+                            if (!addedValues.Contains(key))
+                            {
+                                addedValues.Add(key);
+
+                                OBJState isObject = GetObjectByAddress(key, username, password, url, versionByte);
+
+                                if (isObject.URN != null && key != objectaddress && isObject.Owners.ContainsKey(objectaddress) || (isObject.URN != null && key != objectaddress && isObject.Owners.ContainsKey(key) && isObject.Creators.ContainsKey(objectaddress)))
+                                {
+
+                                    using (var db = new DB(OBJ, @"root\obj"))
+                                    {
+                                        findId = db.Get(objectaddress + "!" + key);
+                                    }
+
+                                    if (findId == transaction.Id.ToString() || findId == null)
+                                    {
+                                        if (findId == null)
+                                        {
+                                            using (var db = new DB(OBJ, @"root\obj"))
+                                            {
+                                                db.Put(objectaddress + "!" + key, transaction.Id.ToString());
+                                            }
+                                        }
+                                    }
+
+                                    isObject.Id = transaction.Id;
+                                    objectStates.Add(isObject);
+                                    _qty++;
+                                    if (_qty == qty)
+                                    {
+                                        return objectStates;
+                                    }
+                                }
+
+
+                            }
+                        }
+
                     }
                 }
 
@@ -1394,7 +1445,6 @@ namespace SUP.P2FK
             }
 
             return objectStates;
-
 
 
         }
@@ -1681,8 +1731,6 @@ namespace SUP.P2FK
 
             return new { Messages = messages };
         }
-
-
         private static string IsAsciiText(byte[] data)
         {
             // Check each byte to see if it's in the ASCII range
