@@ -238,7 +238,6 @@ http://bitfossil.org/7033eb8138de0d3f4be111a57dfb8319b400d3b6a6f5b387a22b334ebb9
 ( references a http(s) address )<br />
 <br />
 
-**ASCII free text urn registrations such as 'twitter.com' cannot begin with 'IPFS:',{transaction id},'MZC:','BTC:' or 'HTTP'**
 
 - this experiment uses a v0.13.2 full bitcoin core clone with address index change https://github.com/btcdrak/bitcoin/tree/addrindex-0.14
 
