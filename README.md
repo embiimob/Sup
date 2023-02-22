@@ -11,7 +11,7 @@ P2FK was directly inspired by the satoshi uploader  see --> https://cirosantilli
 
 ## **Installation**
 
-1. Download the Sup.v0.1.15-beta.zip file
+1. Download the Sup.v0.1.16-beta.zip file
 2. Create a folder on your **fastest** disk drive with at least **700GB** free (it will be storing the bitcoin prod and testnet blockchains)
 3. Unzip all contents into the folder.
 4. Create a shortcut to SUP.exe and launch.
@@ -133,7 +133,15 @@ trusted index.html and index.htm files are sent the following Sup!? object infor
 <br />
 
 **get public messages by address:**<br />
-  SUP.EXE --address muVrFVk3ErfrnmWosLF4WixxRtDKfMx9bs --versionbyte 111 --getpublicmessagesyaddress --password better-password --qty 10 --url http://127.0.0.1:18332 --username good-user --skip 0<br />
+  SUP.EXE --address muVrFVk3ErfrnmWosLF4WixxRtDKfMx9bs --versionbyte 111 --getpublicmessagesbyaddress --password better-password --qty 10 --url http://127.0.0.1:18332 --username good-user --skip 0<br />
+<br />
+
+**get private messages by address:**<br />
+  SUP.EXE --address muVrFVk3ErfrnmWosLF4WixxRtDKfMx9bs --versionbyte 111 --getprivatemessagesbyaddress --password better-password --qty 10 --url http://127.0.0.1:18332 --username good-user<br />
+<br />
+
+**get public keys by address:**<br />
+  SUP.EXE --address muVrFVk3ErfrnmWosLF4WixxRtDKfMx9bs --getpublickeysbyaddress --password better-password --url http://127.0.0.1:18332 --username good-user<br />
 <br />
 
 **get profile by address:**<br />
@@ -166,7 +174,13 @@ trusted index.html and index.htm files are sent the following Sup!? object infor
 
   --getobjectscreatedbyaddress    
 
-  --getobjectsbykeyword  
+  --getobjectsbykeyword 
+  
+  -getpublicmessagesbyaddress
+    
+  -getprivatemessagesbyaddress
+  
+  -getpublickeysbyaddress
 
   --getfoundobjects
 
