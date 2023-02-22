@@ -244,9 +244,7 @@ namespace SUP
 
                     }
                     foundObject.ObjectId.Text = objstate.Id.ToString();
-
-
-
+                    
 
                     if (!loadedObjects.Contains(foundObject.ObjectAddress.Text))
                     {
@@ -257,19 +255,21 @@ namespace SUP
                             if (isOfficial.Creators.First().Key == foundObject.ObjectAddress.Text)
                             {
                                 foundObject.lblOfficial.Visible = true;
+                                foundObject.lblOfficial.Text = TruncateAddress(isOfficial.URN);
                             }
                             else
                             {
                                 foundObject.txtOfficialURN.Text = isOfficial.Creators.First().Key;
                                 foundObject.btnOfficial.Visible = true;
+
                             }
                         }
 
 
-                        loadedObjects.Add(foundObject.ObjectAddress.Text);
+      
                         flowLayoutPanel1.Controls.Add(foundObject);
                     }
-
+                    loadedObjects.Add(foundObject.ObjectAddress.Text);
 
 
                 }
@@ -438,24 +438,23 @@ namespace SUP
 
                     }
                     foundObject.ObjectId.Text = objstate.Id.ToString();
-
-
                     if (!loadedObjects.Contains(foundObject.ObjectAddress.Text))
                     {
                         txtLast.Text = objstate.Id.ToString();
-
-
                         OBJState isOfficial = OBJState.GetObjectByURN(objstate.URN, txtLogin.Text, txtPassword.Text, @"http://127.0.0.1:18332");
                         if (isOfficial.URN != null)
                         {
                             if (isOfficial.Creators.First().Key == foundObject.ObjectAddress.Text)
                             {
                                 foundObject.lblOfficial.Visible = true;
+                                foundObject.lblOfficial.Text = TruncateAddress(isOfficial.URN);
+                                
                             }
                             else
                             {
                                 foundObject.txtOfficialURN.Text = isOfficial.Owners.First().Key;
                                 foundObject.btnOfficial.Visible = true;
+
                             }
                         }
 
@@ -521,10 +520,6 @@ namespace SUP
                                 if (fileName == "") { fileName = "artifact"; } else { fileName = fileName.Replace(@"/", "").Replace(@"\", ""); }
                                 System.IO.File.Move("ipfs/" + transid + "_tmp", @"ipfs/" + transid + @"/" + fileName);
                             }
-
-
-
-
 
 
                             var SUP = new Options { CreateIfMissing = true };
@@ -624,8 +619,27 @@ namespace SUP
 
 
                 }
+                txtLast.Text = objstate.Id.ToString();
                 foundObject.ObjectQty.Text = objstate.Owners.Values.Sum().ToString() + "x";
                 foundObject.ObjectAddress.Text = objstate.Creators.First().Key;
+                OBJState isOfficial = OBJState.GetObjectByURN(objstate.URN, txtLogin.Text, txtPassword.Text, @"http://127.0.0.1:18332");
+                
+                if (isOfficial.URN != null)
+                {
+                    if (isOfficial.Creators.ContainsKey(foundObject.ObjectAddress.Text))
+                    {
+                        foundObject.lblOfficial.Visible = true;
+                        foundObject.lblOfficial.Text = TruncateAddress(isOfficial.URN);
+                    }
+                    else
+                    {
+                        foundObject.txtOfficialURN.Text = isOfficial.Owners.First().Key;
+                        foundObject.btnOfficial.Visible = true;
+                       
+                    }
+                }
+
+
                 flowLayoutPanel1.Controls.Add(foundObject);
             }
         }
@@ -791,6 +805,8 @@ namespace SUP
                     if (isOfficial.Creators.First().Key == foundObject.ObjectAddress.Text)
                     {
                         foundObject.lblOfficial.Visible = true;
+
+                        foundObject.lblOfficial.Text = TruncateAddress(isOfficial.URN);
                     }
                     else
                     {
@@ -798,8 +814,6 @@ namespace SUP
                         foundObject.btnOfficial.Visible = true;
                     }
                 }
-
-
 
                 flowLayoutPanel1.Controls.Add(foundObject);
             }
