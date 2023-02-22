@@ -1,4 +1,5 @@
-﻿using LevelDB;
+﻿using AngleSharp.Common;
+using LevelDB;
 using NBitcoin;
 using NBitcoin.RPC;
 using Newtonsoft.Json;
@@ -495,6 +496,24 @@ namespace SUP.P2FK
                     }
                 }
             }
+
+            if (P2FKRoot.File.ContainsKey("SEC") && isMuted != "true")
+            {
+                lock (levelDBLocker)
+                {
+                    foreach (KeyValuePair<string, string> keyword in P2FKRoot.Keyword)
+                    {
+
+                        string msg = "[\"" + P2FKRoot.SignedBy + "\",\"" + P2FKRoot.TransactionId + "\"]";
+                        var ROOT = new Options { CreateIfMissing = true };
+                        var db = new DB(ROOT, @"root\sec");
+                        db.Put(keyword.Key + "!" + P2FKRoot.BlockDate.ToString("yyyyMMddHHmmss"), msg);
+                        db.Close();
+
+                    }
+                }
+            }
+
             return P2FKRoot;
         }
         public static Root[] GetRootsByAddress(string address, string username, string password, string url, int skip = 0, int qty = 300, string versionByte = "111")
@@ -626,6 +645,26 @@ namespace SUP.P2FK
                 joinedMessageBytes = joinedBytes;
             }
             return joinedMessageBytes;
+        }
+        public static List<String> GetPublicKeysByAddress(string address, string username, string password, string url)
+        {
+
+            NetworkCredential credentials = new NetworkCredential(username, password);
+            RPCClient rpcClient = new RPCClient(credentials, new Uri(url), Network.Main);
+            string privkey;
+            
+             privkey = rpcClient.SendCommand("dumpprivkey", address).ResultString;
+             
+
+            var privKeyHex = BitConverter.ToString(Base58.Decode(privkey)).Replace("-","");
+            privKeyHex = privKeyHex.Substring(2, 64);
+            BigInteger privateKey = Hex.HexToBigInteger(privKeyHex);
+            ECPoint publicKey = Secp256k1.G.Multiply(privateKey);
+            List < String > Keys = new List<String >();
+            Keys.Add(publicKey.X.ToHex());
+            Keys.Add(publicKey.Y.ToHex());
+
+            return Keys;
         }
         public static string GetPublicAddressByKeyword(string keyword, string versionbyte = "111")
         {

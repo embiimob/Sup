@@ -30,6 +30,7 @@
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Connections));
             this.panel1 = new System.Windows.Forms.Panel();
+            this.pictureBox1 = new System.Windows.Forms.PictureBox();
             this.btnPurge = new System.Windows.Forms.Button();
             this.btnPurgeIPFS = new System.Windows.Forms.Button();
             this.btnUnpinIPFS = new System.Windows.Forms.Button();
@@ -73,7 +74,6 @@
             this.txtPort = new System.Windows.Forms.TextBox();
             this.btnMainConnection = new System.Windows.Forms.Button();
             this.label1 = new System.Windows.Forms.Label();
-            this.pictureBox1 = new System.Windows.Forms.PictureBox();
             this.panel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.SuspendLayout();
@@ -128,6 +128,17 @@
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(644, 365);
             this.panel1.TabIndex = 1;
+            // 
+            // pictureBox1
+            // 
+            this.pictureBox1.Image = ((System.Drawing.Image)(resources.GetObject("pictureBox1.Image")));
+            this.pictureBox1.InitialImage = ((System.Drawing.Image)(resources.GetObject("pictureBox1.InitialImage")));
+            this.pictureBox1.Location = new System.Drawing.Point(358, 232);
+            this.pictureBox1.Name = "pictureBox1";
+            this.pictureBox1.Size = new System.Drawing.Size(40, 40);
+            this.pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
+            this.pictureBox1.TabIndex = 130;
+            this.pictureBox1.TabStop = false;
             // 
             // btnPurge
             // 
@@ -188,7 +199,7 @@
             this.label15.Name = "label15";
             this.label15.Size = new System.Drawing.Size(210, 13);
             this.label15.TabIndex = 124;
-            this.label15.Text = "Sup!? Object Browser  v0.1.15-beta";
+            this.label15.Text = "Sup!? Object Browser  v0.1.16-beta";
             // 
             // label14
             // 
@@ -537,17 +548,6 @@
             this.label1.Size = new System.Drawing.Size(68, 13);
             this.label1.TabIndex = 50;
             this.label1.Text = "main chain";
-            // 
-            // pictureBox1
-            // 
-            this.pictureBox1.Image = ((System.Drawing.Image)(resources.GetObject("pictureBox1.Image")));
-            this.pictureBox1.InitialImage = ((System.Drawing.Image)(resources.GetObject("pictureBox1.InitialImage")));
-            this.pictureBox1.Location = new System.Drawing.Point(358, 232);
-            this.pictureBox1.Name = "pictureBox1";
-            this.pictureBox1.Size = new System.Drawing.Size(40, 40);
-            this.pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
-            this.pictureBox1.TabIndex = 130;
-            this.pictureBox1.TabStop = false;
             // 
             // Connections
             // 

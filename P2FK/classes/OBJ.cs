@@ -1625,6 +1625,64 @@ namespace SUP.P2FK
 
             return new { Messages = messages };
         }
+        public static object GetPrivateMessagesByAddress(string objectaddress, string username, string password, string url, string versionByte = "111", int skip = 0, int qty = 10)
+        {
+            GetObjectByAddress(objectaddress, username, password, url, versionByte);
+
+            List<object> messages = new List<object>();
+
+            int rownum = 1;
+            var SUP = new Options { CreateIfMissing = true };
+
+            using (var db = new DB(SUP, @"root\sec"))
+            {
+                LevelDB.Iterator it = db.CreateIterator();
+                for (
+                   it.Seek(objectaddress);
+                   it.IsValid() && it.KeyAsString().StartsWith(objectaddress) && rownum <= skip + qty; // Only display next 10 messages
+                    it.Next()
+                 )
+                {
+                    // Display only if rownum > numMessagesDisplayed to skip already displayed messages
+                    if (rownum > skip)
+                    {
+                        string process = it.ValueAsString();
+
+                        List<string> supMessagePacket = JsonConvert.DeserializeObject<List<string>>(process);
+
+
+                        byte[] result = Root.GetRootBytesByFile(new string[] { @"root/" + supMessagePacket[1] + @"/SEC" });
+                        result = Root.DecryptRootBytes(username, password, url,objectaddress, result);
+
+                        Root root = Root.GetRootByTransactionId(supMessagePacket[1], null, null, null, versionByte, result);
+
+                        foreach (string message in root.Message)
+                        {
+         
+                            string fromAddress = supMessagePacket[0];
+
+                            string tstamp = it.KeyAsString().Split('!')[1];
+
+                            // Add the message data to the messages list
+                            messages.Add(new
+                            {
+                                Message = message,
+                                FromAddress = fromAddress,
+                                BlockDate = tstamp
+                            });
+                        }
+
+
+                    }
+                    rownum++;
+                }
+                it.Dispose();
+            }
+
+            return new { Messages = messages };
+        }
+
+
         private static string IsAsciiText(byte[] data)
         {
             // Check each byte to see if it's in the ASCII range

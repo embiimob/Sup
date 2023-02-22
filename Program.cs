@@ -161,6 +161,22 @@ namespace SUP
                     Console.WriteLine(json);
 
                 }
+                else if (options.GetPrivateMessagesByAddress)
+                {
+
+
+                    var root = OBJState.GetPrivateMessagesByAddress(options.Address, options.Username, options.Password, options.Url, options.VersionByte, options.Skip, options.Qty);
+                    var json = JsonConvert.SerializeObject(root);
+                    Console.WriteLine(json);
+
+                }
+                else if (options.GetPublicKeysByAddress)
+                {
+                    var root = Root.GetPublicKeysByAddress(options.Address, options.Username, options.Password, options.Url);
+                    var json = JsonConvert.SerializeObject(root);
+                    Console.WriteLine(json);
+
+                }
                 else if (options.GetProfileByAddress)
                 {
 
@@ -206,10 +222,10 @@ namespace SUP
         [Option("getrootsbyaddress", Required = false, HelpText = "Get roots by address")]
         public bool GetRootsByAddress { get; set; }
 
-        [Option("getpublicaddressbykeyword", Required = false, HelpText = "Get roots by address")]
+        [Option("getpublicaddressbykeyword", Required = false, HelpText = "Get public address by keyword")]
         public bool GetPublicAddressByKeyword { get; set; }
 
-        [Option("getkeywordbypublicaddress", Required = false, HelpText = "Get roots by address")]
+        [Option("getkeywordbypublicaddress", Required = false, HelpText = "Get keyword by public address")]
         public bool GetKeywordByPublicAddress { get; set; }
 
         [Option("getobjectbyaddress", Required = false, HelpText = "Get object by address")]
@@ -239,8 +255,14 @@ namespace SUP
         [Option("getkeywordsbyaddress", Required = false, HelpText = "Get keywords by address")]
         public bool GetKeywordsByAddress { get; set; }
 
-        [Option("getpublicmessagesyaddress", Required = false, HelpText = "Get public messages by address")]
+        [Option("getpublicmessagesbyaddress", Required = false, HelpText = "Get public messages by address")]
         public bool GetPublicMessagesByAddress { get; set; }
+
+        [Option("getprivatemessagesyaddress", Required = false, HelpText = "Get private messages by address")]
+        public bool GetPrivateMessagesByAddress { get; set; }
+
+        [Option("getpublickeysbyaddress", Required = false, HelpText = "Get public keys by address")]
+        public bool GetPublicKeysByAddress { get; set; }
 
         [Option("getprofilebyaddress", Required = false, HelpText = "Get profile by address")]
         public bool GetProfileByAddress { get; set; }
@@ -302,6 +324,8 @@ namespace SUP
                 yield return new Example("get found objects", new CommandOptions { GetFoundObjects = true, Username = "good-user", Password = "better-password", Url = "http://127.0.0.1:18332", VersionByte = "111", Skip = 0, Qty = 100 });
                 yield return new Example("get keywords by address", new CommandOptions { GetKeywordsByAddress = true, Address = "mwJDUTXksGKUmU3z9nKeMvnjNnWjEXj5rW", Username = "good-user", Password = "better-password", Url = "http://127.0.0.1:18332", VersionByte = "111"});
                 yield return new Example("get public messages by address", new CommandOptions { GetPublicMessagesByAddress = true, Address = "muVrFVk3ErfrnmWosLF4WixxRtDKfMx9bs", Username = "good-user", Password = "better-password", Url = "http://127.0.0.1:18332", VersionByte = "111", Skip = 0, Qty = 10 });
+                yield return new Example("get private messages by address", new CommandOptions { GetPrivateMessagesByAddress = true, Address = "muVrFVk3ErfrnmWosLF4WixxRtDKfMx9bs", Username = "good-user", Password = "better-password", Url = "http://127.0.0.1:18332", VersionByte = "111", Skip = 0, Qty = 10 });
+                yield return new Example("get public keys by address", new CommandOptions { GetPublicKeysByAddress = true, Address = "muVrFVk3ErfrnmWosLF4WixxRtDKfMx9bs", Username = "good-user", Password = "better-password", Url = "http://127.0.0.1:18332" });
                 yield return new Example("get profile by address", new CommandOptions { GetProfileByAddress = true, Address = "muVrFVk3ErfrnmWosLF4WixxRtDKfMx9bs", Username = "good-user", Password = "better-password", Url = "http://127.0.0.1:18332", VersionByte = "111", Skip = 0 });
                 yield return new Example("get profile by urn", new CommandOptions { GetProfileByURN = true, URN = "embii4u", Username = "good-user", Password = "better-password", Url = "http://127.0.0.1:18332", VersionByte = "111", Skip = 0 });
 

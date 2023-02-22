@@ -1016,6 +1016,87 @@ namespace SUP
 
             DisplayRootJSON(new JObject[] { JObject.FromObject(Tester) });
         }
+
+        private void ButtonGetPublicMessages_Click(object sender, EventArgs e)
+        {
+            DateTime tmbeginCall = DateTime.UtcNow;
+            dynamic deserializedObject= OBJState.GetPublicMessagesByAddress(txtSearchAddress.Text, txtLogin.Text, txtPassword.Text, txtUrl.Text, txtVersionByte.Text, int.Parse(txtSkip.Text), int.Parse(txtQty.Text));
+            DateTime tmendCall = DateTime.UtcNow;
+
+              // Cast deserializedObject to a specific type
+            var messages = ((List<object>)deserializedObject.Messages).Cast<dynamic>();
+
+            // Get the count of messages
+            int messageCount = messages.Count();
+
+
+
+            lblTotalBytes.Text = "bytes: ";
+            lblTotalTime.Text = "time: ";
+            lblKbs.Text = "kb/s: ";
+            lblTotal.Text = "total:";
+            TimeSpan elapsedTime = tmendCall - tmbeginCall;
+            double elapsedMilliseconds = elapsedTime.TotalMilliseconds;
+
+            lblTotalTime.Text = "time: " + Math.Truncate(elapsedMilliseconds);
+            lblTotal.Text = "total: " + messageCount.ToString();
+            //var json = JsonConvert.SerializeObject(deserializedObject);
+            DisplayRootJSON(new JObject[] { JObject.FromObject(deserializedObject) });
+        }
+
+        private void ButtonGetPrivateMessages_Click(object sender, EventArgs e)
+        {
+           
+
+            DateTime tmbeginCall = DateTime.UtcNow;
+            dynamic deserializedObject = OBJState.GetPrivateMessagesByAddress(txtSearchAddress.Text, txtLogin.Text, txtPassword.Text, txtUrl.Text, txtVersionByte.Text, int.Parse(txtSkip.Text), int.Parse(txtQty.Text));
+            DateTime tmendCall = DateTime.UtcNow;
+
+            // Cast deserializedObject to a specific type
+            var messages = ((List<object>)deserializedObject.Messages).Cast<dynamic>();
+
+            // Get the count of messages
+            int messageCount = messages.Count();
+
+
+
+            lblTotalBytes.Text = "bytes: ";
+            lblTotalTime.Text = "time: ";
+            lblKbs.Text = "kb/s: ";
+            lblTotal.Text = "total:";
+            TimeSpan elapsedTime = tmendCall - tmbeginCall;
+            double elapsedMilliseconds = elapsedTime.TotalMilliseconds;
+
+            lblTotalTime.Text = "time: " + Math.Truncate(elapsedMilliseconds);
+            lblTotal.Text = "total: " + messageCount.ToString();
+            //var json = JsonConvert.SerializeObject(deserializedObject);
+            DisplayRootJSON(new JObject[] { JObject.FromObject(deserializedObject) });
+
+
+
+
+        }
+
+        private void ButtonGetPublicKeys_Click(object sender, EventArgs e)
+        {
+            DateTime tmbeginCall = DateTime.UtcNow;
+            var root = Root.GetPublicKeysByAddress(txtSearchAddress.Text, txtLogin.Text, txtPassword.Text, txtUrl.Text);
+            var json = JsonConvert.SerializeObject(root);
+
+            DateTime tmendCall = DateTime.UtcNow;
+
+            lblTotalBytes.Text = "bytes: ";
+            lblTotalTime.Text = "time: ";
+            lblKbs.Text = "kb/s: ";
+            lblTotal.Text = "total:";
+
+            TimeSpan elapsedTime = tmendCall - tmbeginCall;
+            double elapsedMilliseconds = elapsedTime.TotalMilliseconds;
+
+            lblTotalTime.Text = "time: " + Math.Truncate(elapsedMilliseconds);
+
+            txtGetValue.Text = json;
+        }
     }
 }
 
