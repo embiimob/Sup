@@ -330,8 +330,8 @@ namespace SUP
         private void btnDTC_Click(object sender, EventArgs e)
         {
             string bitcoinDirectory = AppDomain.CurrentDomain.BaseDirectory + "\\datacoin";
-            string bitcoindPath = AppDomain.CurrentDomain.BaseDirectory + "\\includes\\datacoin-qt.exe";
-            System.IO.Directory.CreateDirectory("includes\\datacoin");
+            string bitcoindPath = AppDomain.CurrentDomain.BaseDirectory + "\\datacoin-qt.exe";
+            System.IO.Directory.CreateDirectory("datacoin");
 
             ProcessStartInfo startInfo = new ProcessStartInfo
             {
