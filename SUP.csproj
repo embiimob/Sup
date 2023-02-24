@@ -204,7 +204,7 @@
     <Compile Include="ObjectDetails.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="ObjectDetails.Designer.cs">
+    <Compile Include="ObjectDetails.designer.cs">
       <DependentUpon>ObjectDetails.cs</DependentUpon>
     </Compile>
     <Compile Include="WorkBench.cs">
@@ -310,6 +310,12 @@
     <Content Include="bitcoin-qt.exe">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <Content Include="includes\datacoin-qt.exe">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="dogecoin-qt.exe">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="includes\AngleSharp.Css.dll" />
     <Content Include="includes\AngleSharp.Css.xml" />
     <Content Include="includes\AngleSharp.dll" />
@@ -322,6 +328,18 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="includes\LevelDB.NET.dll" />
+    <Content Include="includes\libgcc_s_seh-1.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="includes\libprotobuf.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="includes\libstdc++-6.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="includes\libwinpthread-1.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="includes\Microsoft.Bcl.AsyncInterfaces.dll" />
     <Content Include="includes\Microsoft.Bcl.AsyncInterfaces.xml" />
     <Content Include="includes\Microsoft.Extensions.Configuration.Abstractions.dll" />
@@ -383,7 +401,13 @@
     <Content Include="includes\System.Xml.Linq.dll" />
     <Content Include="includes\WindowsBase.dll" />
     <Content Include="includes\WindowsFormsIntegration.dll" />
+    <Content Include="includes\zlib1.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="ipfs\ipfs.exe">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="litecoin-qt.exe">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="maza-qt.exe">

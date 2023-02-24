@@ -238,6 +238,17 @@ namespace SUP
                 Directory.Delete(subfolder, true);
             }
 
+            string[] files = Directory.GetFiles("ipfs");
+
+            // Loop through each file
+            foreach (string file in files)
+            {
+                // Delete the file
+                if (!file.Contains("ipfs.exe"))
+                {
+                    File.Delete(file);
+                }
+            }
         }
 
         private void btnPurge_Click(object sender, EventArgs e)
@@ -274,5 +285,87 @@ namespace SUP
 
         }
 
+
+
+        private void btnLTC_Click(object sender, EventArgs e)
+        {
+            string bitcoinDirectory = AppDomain.CurrentDomain.BaseDirectory + "\\litecoin";
+            string bitcoindPath = AppDomain.CurrentDomain.BaseDirectory + "\\litecoin-qt.exe";
+            System.IO.Directory.CreateDirectory("litecoin");
+
+            ProcessStartInfo startInfo = new ProcessStartInfo
+            {
+                CreateNoWindow = false,
+                UseShellExecute = false,
+                FileName = bitcoindPath,
+                RedirectStandardOutput = true,
+                RedirectStandardError = true,
+                WindowStyle = ProcessWindowStyle.Hidden,
+                Arguments = $"-txindex=1 -addrindex=1 -datadir={bitcoinDirectory} -server -rpcuser=good-user -rpcpassword=better-password -rpcport=9332"
+            };
+
+            Process.Start(startInfo);
+        }
+
+        private void btnDOGE_Click(object sender, EventArgs e)
+        {
+            string bitcoinDirectory = AppDomain.CurrentDomain.BaseDirectory + "\\dogecoin";
+            string bitcoindPath = AppDomain.CurrentDomain.BaseDirectory + "\\dogecoin-qt.exe";
+            System.IO.Directory.CreateDirectory("dogecoin");
+
+            ProcessStartInfo startInfo = new ProcessStartInfo
+            {
+                CreateNoWindow = false,
+                UseShellExecute = false,
+                FileName = bitcoindPath,
+                RedirectStandardOutput = true,
+                RedirectStandardError = true,
+                WindowStyle = ProcessWindowStyle.Hidden,
+                Arguments = $"-txindex=1 -addrindex=1 -datadir={bitcoinDirectory} -server -rpcuser=good-user -rpcpassword=better-password -rpcport=22555"
+            };
+
+            Process.Start(startInfo);
+        }
+
+        private void btnDTC_Click(object sender, EventArgs e)
+        {
+            string bitcoinDirectory = AppDomain.CurrentDomain.BaseDirectory + "\\datacoin";
+            string bitcoindPath = AppDomain.CurrentDomain.BaseDirectory + "\\includes\\datacoin-qt.exe";
+            System.IO.Directory.CreateDirectory("includes\\datacoin");
+
+            ProcessStartInfo startInfo = new ProcessStartInfo
+            {
+                CreateNoWindow = false,
+                UseShellExecute = false,
+                FileName = bitcoindPath,
+                RedirectStandardOutput = true,
+                RedirectStandardError = true,
+                WindowStyle = ProcessWindowStyle.Hidden,
+                Arguments = $"-txindex=1 -addrindex=1 -datadir={bitcoinDirectory} -server -rpcuser=good-user -rpcpassword=better-password -rpcport=11777"
+            };
+
+            Process.Start(startInfo);
+        }
+
+        private void btnORD_Click(object sender, EventArgs e)
+        {
+            string bitcoinDirectory = AppDomain.CurrentDomain.BaseDirectory + "\\ordinal";
+            string bitcoindPath = AppDomain.CurrentDomain.BaseDirectory + "\\ord.exe";
+            System.IO.Directory.CreateDirectory("ordinal");
+
+            ProcessStartInfo startInfo = new ProcessStartInfo
+            {
+                CreateNoWindow = false,
+                UseShellExecute = false,
+                FileName = bitcoindPath,
+                RedirectStandardOutput = true,
+                RedirectStandardError = true,
+                WindowStyle = ProcessWindowStyle.Hidden,
+                Arguments = $"-txindex=1 -datadir={bitcoinDirectory} -server -rpcuser=good-user -rpcpassword=better-password -rpcport=8333"
+            };
+
+            Process.Start(startInfo);
+        }
+  
     }
 }

@@ -302,6 +302,16 @@
         hZEVJyHxiNh+FqFHKbqyldVIYFSpX5a/8H//2Q==
 </value>
   </data>
+  <data name="label14.Text" xml:space="preserve">
+    <value>Copyright (C) 2009-2016 The Bitcoin Core developers
+Copyright (C) 2011-2018 The Litecoin Core developers
+Copyright (C) 2013-2022 The Dogecoin Core developers
+Copyright (C) 2013-2023 HugPuddle
+Copyright (C) 2009-2018 The Datacoin Core developers
+Copyright (C) 2014-2019 Juan Batiz-Benet ( IPFS )
+Copyright (C) 2018-2021 The Maza Core developers
+</value>
+  </data>
   <data name="label13.Text" xml:space="preserve">
     <value>This Sup!? read only experiment requires a 127.0.0.1 connection to the bitcoin production and test networks.
 

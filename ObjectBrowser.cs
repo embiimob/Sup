@@ -84,7 +84,7 @@ namespace SUP
             }
             else
             {
-                if (txtSearchAddress.Text == "") { createdObjects = OBJState.GetFoundObjects( txtLogin.Text, txtPassword.Text, txtUrl.Text, txtVersionByte.Text, int.Parse(txtLast.Text), int.Parse(txtQty.Text)); }
+                if (txtSearchAddress.Text == "") { createdObjects = OBJState.GetFoundObjects(txtLogin.Text, txtPassword.Text, txtUrl.Text, txtVersionByte.Text, int.Parse(txtLast.Text), int.Parse(txtQty.Text)); }
                 else
                 {
                     createdObjects = OBJState.GetObjectsByAddress(profileCheck, txtLogin.Text, txtPassword.Text, txtUrl.Text, txtVersionByte.Text, int.Parse(txtLast.Text), int.Parse(txtQty.Text));
@@ -109,7 +109,7 @@ namespace SUP
                             string transid = objstate.Image.Substring(4, 64);
                             if (!System.IO.Directory.Exists("root/" + transid))
                             {
-                                Root root = Root.GetRootByTransactionId(transid, txtLogin.Text, txtPassword.Text, @"http://127.0.0.1:8332", "0");
+                                Root.GetRootByTransactionId(transid, txtLogin.Text, txtPassword.Text, @"http://127.0.0.1:8332", "0");
                             }
                             foundObject.ObjectImage.ImageLocation = objstate.Image.Replace("BTC:", @"root/");
                             break;
@@ -117,9 +117,33 @@ namespace SUP
                             transid = objstate.Image.Substring(4, 64);
                             if (!System.IO.Directory.Exists("root/" + transid))
                             {
-                                Root root = Root.GetRootByTransactionId(transid, txtLogin.Text, txtPassword.Text, @"http://127.0.0.1:12832", "50");
+                                Root.GetRootByTransactionId(transid, txtLogin.Text, txtPassword.Text, @"http://127.0.0.1:12832", "50");
                             }
                             foundObject.ObjectImage.ImageLocation = objstate.Image.Replace("MZC:", @"root/");
+                            break;
+                        case "LTC:":
+                            transid = objstate.Image.Substring(4, 64);
+                            if (!System.IO.Directory.Exists("root/" + transid))
+                            {
+                                Root.GetRootByTransactionId(transid, txtLogin.Text, txtPassword.Text, @"http://127.0.0.1:9332", "48");
+                            }
+                            foundObject.ObjectImage.ImageLocation = objstate.Image.Replace("LTC:", @"root/");
+                            break;
+                        case "DOG:":
+                            transid = objstate.Image.Substring(4, 64);
+                            if (!System.IO.Directory.Exists("root/" + transid))
+                            {
+                                Root.GetRootByTransactionId(transid, txtLogin.Text, txtPassword.Text, @"http://127.0.0.1:22555", "30");
+                            }
+                            foundObject.ObjectImage.ImageLocation = objstate.Image.Replace("DOG:", @"root/");
+                            break;
+                        case "DTC:":
+                            transid = objstate.Image.Substring(4, 64);
+                            if (!System.IO.Directory.Exists("root/" + transid))
+                            {
+                                Root.GetRootByTransactionId(transid, txtLogin.Text, txtPassword.Text, @"http://127.0.0.1:11777", "30");
+                            }
+                            foundObject.ObjectImage.ImageLocation = objstate.Image.Replace("DTC:", @"root/");
                             break;
                         case "IPFS":
                             transid = objstate.Image.Substring(5, 46);
@@ -244,7 +268,7 @@ namespace SUP
 
                     }
                     foundObject.ObjectId.Text = objstate.Id.ToString();
-                    
+
 
                     if (!loadedObjects.Contains(foundObject.ObjectAddress.Text))
                     {
@@ -266,7 +290,7 @@ namespace SUP
                         }
 
 
-      
+
                         flowLayoutPanel1.Controls.Add(foundObject);
                     }
                     loadedObjects.Add(foundObject.ObjectAddress.Text);
@@ -303,7 +327,7 @@ namespace SUP
                             string transid = objstate.Image.Substring(4, 64);
                             if (!System.IO.Directory.Exists("root/" + transid))
                             {
-                                Root root = Root.GetRootByTransactionId(transid, txtLogin.Text, txtPassword.Text, @"http://127.0.0.1:8332", "0");
+                                Root.GetRootByTransactionId(transid, txtLogin.Text, txtPassword.Text, @"http://127.0.0.1:8332", "0");
                             }
                             foundObject.ObjectImage.ImageLocation = objstate.Image.Replace("BTC:", @"root/");
                             break;
@@ -311,9 +335,33 @@ namespace SUP
                             transid = objstate.Image.Substring(4, 64);
                             if (!System.IO.Directory.Exists("root/" + transid))
                             {
-                                Root root = Root.GetRootByTransactionId(transid, txtLogin.Text, txtPassword.Text, @"http://127.0.0.1:12832", "50");
+                                Root.GetRootByTransactionId(transid, txtLogin.Text, txtPassword.Text, @"http://127.0.0.1:12832", "50");
                             }
                             foundObject.ObjectImage.ImageLocation = objstate.Image.Replace("MZC:", @"root/");
+                            break;
+                        case "LTC:":
+                            transid = objstate.Image.Substring(4, 64);
+                            if (!System.IO.Directory.Exists("root/" + transid))
+                            {
+                                Root.GetRootByTransactionId(transid, txtLogin.Text, txtPassword.Text, @"http://127.0.0.1:9332", "48");
+                            }
+                            foundObject.ObjectImage.ImageLocation = objstate.Image.Replace("LTC:", @"root/");
+                            break;
+                        case "DOG:":
+                            transid = objstate.Image.Substring(4, 64);
+                            if (!System.IO.Directory.Exists("root/" + transid))
+                            {
+                                Root.GetRootByTransactionId(transid, txtLogin.Text, txtPassword.Text, @"http://127.0.0.1:22555", "30");
+                            }
+                            foundObject.ObjectImage.ImageLocation = objstate.Image.Replace("DOG:", @"root/");
+                            break;
+                        case "DTC:":
+                            transid = objstate.Image.Substring(4, 64);
+                            if (!System.IO.Directory.Exists("root/" + transid))
+                            {
+                                Root.GetRootByTransactionId(transid, txtLogin.Text, txtPassword.Text, @"http://127.0.0.1:11777", "30");
+                            }
+                            foundObject.ObjectImage.ImageLocation = objstate.Image.Replace("DTC:", @"root/");
                             break;
                         case "IPFS":
                             transid = objstate.Image.Substring(5, 46);
@@ -448,7 +496,7 @@ namespace SUP
                             {
                                 foundObject.lblOfficial.Visible = true;
                                 foundObject.lblOfficial.Text = TruncateAddress(isOfficial.URN);
-                                
+
                             }
                             else
                             {
@@ -498,6 +546,30 @@ namespace SUP
                             Root.GetRootByTransactionId(transid, txtLogin.Text, txtPassword.Text, @"http://127.0.0.1:12832", "50");
                         }
                         foundObject.ObjectImage.ImageLocation = objstate.Image.Replace("MZC:", @"root/");
+                        break;
+                    case "LTC:":
+                        transid = objstate.Image.Substring(4, 64);
+                        if (!System.IO.Directory.Exists("root/" + transid))
+                        {
+                            Root.GetRootByTransactionId(transid, txtLogin.Text, txtPassword.Text, @"http://127.0.0.1:9332", "48");
+                        }
+                        foundObject.ObjectImage.ImageLocation = objstate.Image.Replace("LTC:", @"root/");
+                        break;
+                    case "DOG:":
+                        transid = objstate.Image.Substring(4, 64);
+                        if (!System.IO.Directory.Exists("root/" + transid))
+                        {
+                            Root.GetRootByTransactionId(transid, txtLogin.Text, txtPassword.Text, @"http://127.0.0.1:22555", "30");
+                        }
+                        foundObject.ObjectImage.ImageLocation = objstate.Image.Replace("DOG:", @"root/");
+                        break;
+                    case "DTC:":
+                        transid = objstate.Image.Substring(4, 64);
+                        if (!System.IO.Directory.Exists("root/" + transid))
+                        {
+                            Root.GetRootByTransactionId(transid, txtLogin.Text, txtPassword.Text, @"http://127.0.0.1:11777", "30");
+                        }
+                        foundObject.ObjectImage.ImageLocation = objstate.Image.Replace("DTC:", @"root/");
                         break;
                     case "IPFS":
                         transid = objstate.Image.Substring(5, 46);
@@ -623,7 +695,7 @@ namespace SUP
                 foundObject.ObjectQty.Text = objstate.Owners.Values.Sum().ToString() + "x";
                 foundObject.ObjectAddress.Text = objstate.Creators.First().Key;
                 OBJState isOfficial = OBJState.GetObjectByURN(objstate.URN, txtLogin.Text, txtPassword.Text, @"http://127.0.0.1:18332");
-                
+
                 if (isOfficial.URN != null)
                 {
                     if (isOfficial.Creators.ContainsKey(foundObject.ObjectAddress.Text))
@@ -635,7 +707,7 @@ namespace SUP
                     {
                         foundObject.txtOfficialURN.Text = isOfficial.Owners.First().Key;
                         foundObject.btnOfficial.Visible = true;
-                       
+
                     }
                 }
 
@@ -673,6 +745,30 @@ namespace SUP
                             Root.GetRootByTransactionId(transid, txtLogin.Text, txtPassword.Text, @"http://127.0.0.1:12832", "50");
                         }
                         foundObject.ObjectImage.ImageLocation = objstate.Image.Replace("MZC:", @"root/");
+                        break;
+                    case "LTC:":
+                        transid = objstate.Image.Substring(4, 64);
+                        if (!System.IO.Directory.Exists("root/" + transid))
+                        {
+                            Root.GetRootByTransactionId(transid, txtLogin.Text, txtPassword.Text, @"http://127.0.0.1:9332", "48");
+                        }
+                        foundObject.ObjectImage.ImageLocation = objstate.Image.Replace("LTC:", @"root/");
+                        break;
+                    case "DOG:":
+                        transid = objstate.Image.Substring(4, 64);
+                        if (!System.IO.Directory.Exists("root/" + transid))
+                        {
+                            Root.GetRootByTransactionId(transid, txtLogin.Text, txtPassword.Text, @"http://127.0.0.1:22555", "30");
+                        }
+                        foundObject.ObjectImage.ImageLocation = objstate.Image.Replace("DOG:", @"root/");
+                        break;
+                    case "DTC:":
+                        transid = objstate.Image.Substring(4, 64);
+                        if (!System.IO.Directory.Exists("root/" + transid))
+                        {
+                            Root.GetRootByTransactionId(transid, txtLogin.Text, txtPassword.Text, @"http://127.0.0.1:11777", "30");
+                        }
+                        foundObject.ObjectImage.ImageLocation = objstate.Image.Replace("DTC:", @"root/");
                         break;
                     case "IPFS":
                         transid = objstate.Image.Substring(5, 46);
@@ -824,7 +920,7 @@ namespace SUP
 
             btnOwned.BackColor = Color.Yellow;
             btnCreated.BackColor = Color.White;
-           
+
             BuildSearchResults();
 
 
@@ -835,7 +931,7 @@ namespace SUP
 
             btnCreated.BackColor = Color.Yellow;
             btnOwned.BackColor = Color.White;
-            
+
             BuildSearchResults();
 
         }
@@ -887,7 +983,7 @@ namespace SUP
 
                 btnOwned.BackColor = Color.White;
                 btnCreated.BackColor = Color.White;
-                
+
                 BuildSearchResults();
 
             }
@@ -1057,21 +1153,26 @@ namespace SUP
 
                                 if (txtSearchAddress.Text.Count() > 64 && regexTransactionId.IsMatch(txtSearchAddress.Text) && txtSearchAddress.Text.Contains(".htm"))
                                 {
-                                    if (txtSearchAddress.Text.StartsWith("MZC:"))
+                                    switch (txtSearchAddress.Text.Substring(0, 4))
                                     {
-                                        Root.GetRootByTransactionId(txtSearchAddress.Text.Substring(4, 64), txtLogin.Text, txtPassword.Text, @"http://127.0.0.1:12832", "50");
-                                    }
-                                    else
-                                    {
-                                        if (txtSearchAddress.Text.StartsWith("BTC:"))
-                                        {
+                                        case "MZC:":
+                                            Root.GetRootByTransactionId(txtSearchAddress.Text.Substring(4, 64), txtLogin.Text, txtPassword.Text, @"http://127.0.0.1:12832", "50");
+                                            break;
+                                        case "BTC:":
                                             Root.GetRootByTransactionId(txtSearchAddress.Text.Substring(4, 64), txtLogin.Text, txtPassword.Text, @"http://127.0.0.1:8332", "0");
-                                        }
-                                        else
-                                        {
+                                            break;
+                                        case "LTC:":
+                                            Root.GetRootByTransactionId(txtSearchAddress.Text.Substring(4, 64), txtLogin.Text, txtPassword.Text, @"http://127.0.0.1:9332", "48");
+                                            break;
+                                        case "DOG:":
+                                            Root.GetRootByTransactionId(txtSearchAddress.Text.Substring(4, 64), txtLogin.Text, txtPassword.Text, @"http://127.0.0.1:22555", "30");
+                                            break;
+                                        case "DTC:":
+                                            Root.GetRootByTransactionId(txtSearchAddress.Text.Substring(4, 64), txtLogin.Text, txtPassword.Text, @"http://127.0.0.1:11777", "30");
+                                            break;
+                                        default:
                                             Root.GetRootByTransactionId(txtSearchAddress.Text.Substring(0, 64), txtLogin.Text, txtPassword.Text, @"http://127.0.0.1:18332");
-                                        }
-
+                                            break;
                                     }
                                     Match match = regexTransactionId.Match(txtSearchAddress.Text);
                                     string browserPath = System.IO.Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + @"\root\" + txtSearchAddress.Text.Replace("MZC:", "").Replace("BTC:", "");
@@ -1299,7 +1400,7 @@ namespace SUP
         }
 
 
-     
+
 
     }
 }
