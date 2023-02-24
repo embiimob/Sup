@@ -11,7 +11,7 @@ P2FK was directly inspired by the satoshi uploader  see --> https://cirosantilli
 
 ## **Installation**
 
-1. Download the Sup.v0.1.18-beta.zip file
+1. Download the Sup.v0.1.19-beta.zip file
 2. Create a folder on your **fastest** disk drive with at least **700GB** free (it will be storing the bitcoin prod and testnet blockchains)
 3. Unzip all contents into the folder.
 4. Create a shortcut to SUP.exe and launch.
@@ -241,7 +241,13 @@ http://bitfossil.org/7033eb8138de0d3f4be111a57dfb8319b400d3b6a6f5b387a22b334ebb9
 
 - this experiment uses a v0.13.2 full bitcoin core clone with address index change https://github.com/btcdrak/bitcoin/tree/addrindex-0.14
 
-- this experiment uses mazacoin their latest official release has been included in the deployment https://github.com/mazacoin/maza
+- this experiment uses litecoin core the following release is included in the deployment https://download.litecoin.org/litecoin-0.16.3/win/
+
+- this experiment uses dogecoin core the following release is included in the deployment https://github.com/dogecoin/dogecoin/releases/tag/v1.14.6
+
+- this experiment uses mazacoin core their latest official release has been included in the deployment https://github.com/mazacoin/maza
+
+- this experiment uses datacoin core the following release has been included in the deployment https://disk.yandex.com/d/eu7rJ9EN3VSYBF
 
 - this experiment uses oodrive's levelDB a stable release has been included in the deployment https://github.com/oodrive/leveldb.net
 
