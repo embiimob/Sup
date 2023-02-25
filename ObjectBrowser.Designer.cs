@@ -30,6 +30,7 @@ namespace SUP
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             this.btnCreated = new System.Windows.Forms.Button();
             this.btnOwned = new System.Windows.Forms.Button();
             this.txtSearchAddress = new System.Windows.Forms.TextBox();
@@ -40,18 +41,21 @@ namespace SUP
             this.txtUrl = new System.Windows.Forms.TextBox();
             this.txtPassword = new System.Windows.Forms.TextBox();
             this.txtLogin = new System.Windows.Forms.TextBox();
-            this.button1 = new System.Windows.Forms.Button();
+            this.btnConnections = new System.Windows.Forms.Button();
             this.btnHistoryBack = new System.Windows.Forms.Button();
             this.btnHistoryForward = new System.Windows.Forms.Button();
             this.btnMint = new System.Windows.Forms.Button();
             this.txtQty = new System.Windows.Forms.TextBox();
             this.txtLast = new System.Windows.Forms.TextBox();
+            this.btnLive = new System.Windows.Forms.Button();
+            this.tmrSearchMemoryPool = new System.Windows.Forms.Timer(this.components);
             this.SuspendLayout();
             // 
             // btnCreated
             // 
             this.btnCreated.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnCreated.BackColor = System.Drawing.SystemColors.Control;
+            this.btnCreated.BackColor = System.Drawing.Color.White;
+            this.btnCreated.ForeColor = System.Drawing.Color.Black;
             this.btnCreated.Location = new System.Drawing.Point(429, 4);
             this.btnCreated.Name = "btnCreated";
             this.btnCreated.Size = new System.Drawing.Size(55, 20);
@@ -63,7 +67,8 @@ namespace SUP
             // btnOwned
             // 
             this.btnOwned.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnOwned.BackColor = System.Drawing.SystemColors.Control;
+            this.btnOwned.BackColor = System.Drawing.Color.White;
+            this.btnOwned.ForeColor = System.Drawing.Color.Black;
             this.btnOwned.Location = new System.Drawing.Point(488, 4);
             this.btnOwned.Name = "btnOwned";
             this.btnOwned.Size = new System.Drawing.Size(49, 20);
@@ -85,7 +90,8 @@ namespace SUP
             // btnWorkBench
             // 
             this.btnWorkBench.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnWorkBench.BackColor = System.Drawing.SystemColors.Control;
+            this.btnWorkBench.BackColor = System.Drawing.Color.White;
+            this.btnWorkBench.ForeColor = System.Drawing.Color.Black;
             this.btnWorkBench.Location = new System.Drawing.Point(620, 4);
             this.btnWorkBench.Name = "btnWorkBench";
             this.btnWorkBench.Size = new System.Drawing.Size(30, 20);
@@ -161,21 +167,23 @@ namespace SUP
             this.txtLogin.TabIndex = 41;
             this.txtLogin.Text = "good-user";
             // 
-            // button1
+            // btnConnections
             // 
-            this.button1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.button1.BackColor = System.Drawing.SystemColors.Control;
-            this.button1.Location = new System.Drawing.Point(586, 4);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(30, 20);
-            this.button1.TabIndex = 72;
-            this.button1.Text = "🔑";
-            this.button1.UseVisualStyleBackColor = false;
-            this.button1.Click += new System.EventHandler(this.ButtonLoadConnections);
+            this.btnConnections.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnConnections.BackColor = System.Drawing.Color.White;
+            this.btnConnections.ForeColor = System.Drawing.Color.Black;
+            this.btnConnections.Location = new System.Drawing.Point(586, 4);
+            this.btnConnections.Name = "btnConnections";
+            this.btnConnections.Size = new System.Drawing.Size(30, 20);
+            this.btnConnections.TabIndex = 72;
+            this.btnConnections.Text = "🔑";
+            this.btnConnections.UseVisualStyleBackColor = false;
+            this.btnConnections.Click += new System.EventHandler(this.ButtonLoadConnections);
             // 
             // btnHistoryBack
             // 
-            this.btnHistoryBack.BackColor = System.Drawing.SystemColors.Control;
+            this.btnHistoryBack.BackColor = System.Drawing.Color.White;
+            this.btnHistoryBack.ForeColor = System.Drawing.Color.Black;
             this.btnHistoryBack.Location = new System.Drawing.Point(2, 4);
             this.btnHistoryBack.Name = "btnHistoryBack";
             this.btnHistoryBack.Size = new System.Drawing.Size(18, 20);
@@ -186,7 +194,8 @@ namespace SUP
             // 
             // btnHistoryForward
             // 
-            this.btnHistoryForward.BackColor = System.Drawing.SystemColors.Control;
+            this.btnHistoryForward.BackColor = System.Drawing.Color.White;
+            this.btnHistoryForward.ForeColor = System.Drawing.Color.Black;
             this.btnHistoryForward.Location = new System.Drawing.Point(21, 4);
             this.btnHistoryForward.Name = "btnHistoryForward";
             this.btnHistoryForward.Size = new System.Drawing.Size(18, 20);
@@ -198,7 +207,8 @@ namespace SUP
             // btnMint
             // 
             this.btnMint.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnMint.BackColor = System.Drawing.SystemColors.Control;
+            this.btnMint.BackColor = System.Drawing.Color.White;
+            this.btnMint.ForeColor = System.Drawing.Color.Black;
             this.btnMint.Location = new System.Drawing.Point(541, 4);
             this.btnMint.Name = "btnMint";
             this.btnMint.Size = new System.Drawing.Size(39, 20);
@@ -210,7 +220,7 @@ namespace SUP
             // txtQty
             // 
             this.txtQty.Enabled = false;
-            this.txtQty.Location = new System.Drawing.Point(457, 53);
+            this.txtQty.Location = new System.Drawing.Point(565, 52);
             this.txtQty.Name = "txtQty";
             this.txtQty.Size = new System.Drawing.Size(43, 20);
             this.txtQty.TabIndex = 77;
@@ -225,15 +235,34 @@ namespace SUP
             this.txtLast.TabIndex = 78;
             this.txtLast.Text = "0";
             // 
+            // btnLive
+            // 
+            this.btnLive.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnLive.BackColor = System.Drawing.Color.White;
+            this.btnLive.ForeColor = System.Drawing.Color.Black;
+            this.btnLive.Location = new System.Drawing.Point(384, 4);
+            this.btnLive.Name = "btnLive";
+            this.btnLive.Size = new System.Drawing.Size(39, 20);
+            this.btnLive.TabIndex = 79;
+            this.btnLive.Text = "live";
+            this.btnLive.UseVisualStyleBackColor = false;
+            this.btnLive.Click += new System.EventHandler(this.btnLive_Click);
+            // 
+            // tmrSearchMemoryPool
+            // 
+            this.tmrSearchMemoryPool.Interval = 5000;
+            this.tmrSearchMemoryPool.Tick += new System.EventHandler(this.tmrSearchMemoryPool_Tick);
+            // 
             // ObjectBrowser
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(652, 623);
+            this.Controls.Add(this.btnLive);
             this.Controls.Add(this.btnMint);
             this.Controls.Add(this.btnHistoryForward);
             this.Controls.Add(this.btnHistoryBack);
-            this.Controls.Add(this.button1);
+            this.Controls.Add(this.btnConnections);
             this.Controls.Add(this.linkLabel1);
             this.Controls.Add(this.btnWorkBench);
             this.Controls.Add(this.btnCreated);
@@ -267,14 +296,13 @@ namespace SUP
         private System.Windows.Forms.TextBox txtUrl;
         private System.Windows.Forms.TextBox txtPassword;
         private System.Windows.Forms.TextBox txtLogin;
-        private System.Windows.Forms.Button button1;
+        private System.Windows.Forms.Button btnConnections;
         private System.Windows.Forms.Button btnHistoryBack;
         private System.Windows.Forms.Button btnHistoryForward;
         private System.Windows.Forms.Button btnMint;
         private System.Windows.Forms.TextBox txtQty;
         private System.Windows.Forms.TextBox txtLast;
-
-
-
+        private System.Windows.Forms.Button btnLive;
+        private System.Windows.Forms.Timer tmrSearchMemoryPool;
     }
 }

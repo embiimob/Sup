@@ -30,15 +30,8 @@
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Connections));
             this.panel1 = new System.Windows.Forms.Panel();
+            this.btnClearIPFSisLoadingCache = new System.Windows.Forms.Button();
             this.label16 = new System.Windows.Forms.Label();
-            this.checkBox7 = new System.Windows.Forms.CheckBox();
-            this.textBox35 = new System.Windows.Forms.TextBox();
-            this.btnDTC = new System.Windows.Forms.Button();
-            this.textBox36 = new System.Windows.Forms.TextBox();
-            this.textBox37 = new System.Windows.Forms.TextBox();
-            this.textBox38 = new System.Windows.Forms.TextBox();
-            this.textBox39 = new System.Windows.Forms.TextBox();
-            this.textBox40 = new System.Windows.Forms.TextBox();
             this.checkBox4 = new System.Windows.Forms.CheckBox();
             this.textBox16 = new System.Windows.Forms.TextBox();
             this.btnDOGE = new System.Windows.Forms.Button();
@@ -99,21 +92,16 @@
             this.txtPort = new System.Windows.Forms.TextBox();
             this.btnMainConnection = new System.Windows.Forms.Button();
             this.label1 = new System.Windows.Forms.Label();
+            this.btnPurgeBlock = new System.Windows.Forms.Button();
             this.panel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.SuspendLayout();
             // 
             // panel1
             // 
+            this.panel1.Controls.Add(this.btnPurgeBlock);
+            this.panel1.Controls.Add(this.btnClearIPFSisLoadingCache);
             this.panel1.Controls.Add(this.label16);
-            this.panel1.Controls.Add(this.checkBox7);
-            this.panel1.Controls.Add(this.textBox35);
-            this.panel1.Controls.Add(this.btnDTC);
-            this.panel1.Controls.Add(this.textBox36);
-            this.panel1.Controls.Add(this.textBox37);
-            this.panel1.Controls.Add(this.textBox38);
-            this.panel1.Controls.Add(this.textBox39);
-            this.panel1.Controls.Add(this.textBox40);
             this.panel1.Controls.Add(this.checkBox4);
             this.panel1.Controls.Add(this.textBox16);
             this.panel1.Controls.Add(this.btnDOGE);
@@ -176,8 +164,18 @@
             this.panel1.Controls.Add(this.label1);
             this.panel1.Location = new System.Drawing.Point(9, 3);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(644, 495);
+            this.panel1.Size = new System.Drawing.Size(644, 480);
             this.panel1.TabIndex = 1;
+            // 
+            // btnClearIPFSisLoadingCache
+            // 
+            this.btnClearIPFSisLoadingCache.Location = new System.Drawing.Point(486, 255);
+            this.btnClearIPFSisLoadingCache.Name = "btnClearIPFSisLoadingCache";
+            this.btnClearIPFSisLoadingCache.Size = new System.Drawing.Size(146, 23);
+            this.btnClearIPFSisLoadingCache.TabIndex = 156;
+            this.btnClearIPFSisLoadingCache.Text = "clear ipfs isloading cache";
+            this.btnClearIPFSisLoadingCache.UseVisualStyleBackColor = true;
+            this.btnClearIPFSisLoadingCache.Click += new System.EventHandler(this.button2_Click_1);
             // 
             // label16
             // 
@@ -188,81 +186,6 @@
             this.label16.Size = new System.Drawing.Size(65, 13);
             this.label16.TabIndex = 155;
             this.label16.Text = "side chain";
-            // 
-            // checkBox7
-            // 
-            this.checkBox7.AutoSize = true;
-            this.checkBox7.Enabled = false;
-            this.checkBox7.Location = new System.Drawing.Point(505, 247);
-            this.checkBox7.Name = "checkBox7";
-            this.checkBox7.Size = new System.Drawing.Size(58, 17);
-            this.checkBox7.TabIndex = 154;
-            this.checkBox7.Text = "testnet";
-            this.checkBox7.UseVisualStyleBackColor = true;
-            // 
-            // textBox35
-            // 
-            this.textBox35.Enabled = false;
-            this.textBox35.Location = new System.Drawing.Point(371, 243);
-            this.textBox35.Name = "textBox35";
-            this.textBox35.Size = new System.Drawing.Size(55, 20);
-            this.textBox35.TabIndex = 153;
-            this.textBox35.Text = "11777";
-            // 
-            // btnDTC
-            // 
-            this.btnDTC.Location = new System.Drawing.Point(578, 241);
-            this.btnDTC.Name = "btnDTC";
-            this.btnDTC.Size = new System.Drawing.Size(54, 23);
-            this.btnDTC.TabIndex = 152;
-            this.btnDTC.Text = "launch";
-            this.btnDTC.UseVisualStyleBackColor = true;
-            this.btnDTC.Click += new System.EventHandler(this.btnDTC_Click);
-            // 
-            // textBox36
-            // 
-            this.textBox36.Enabled = false;
-            this.textBox36.Location = new System.Drawing.Point(80, 243);
-            this.textBox36.Name = "textBox36";
-            this.textBox36.Size = new System.Drawing.Size(65, 20);
-            this.textBox36.TabIndex = 148;
-            this.textBox36.Text = "good-user";
-            // 
-            // textBox37
-            // 
-            this.textBox37.Enabled = false;
-            this.textBox37.Location = new System.Drawing.Point(151, 243);
-            this.textBox37.Name = "textBox37";
-            this.textBox37.Size = new System.Drawing.Size(89, 20);
-            this.textBox37.TabIndex = 149;
-            this.textBox37.Text = "better-password";
-            // 
-            // textBox38
-            // 
-            this.textBox38.Enabled = false;
-            this.textBox38.Location = new System.Drawing.Point(246, 243);
-            this.textBox38.Name = "textBox38";
-            this.textBox38.Size = new System.Drawing.Size(100, 20);
-            this.textBox38.TabIndex = 150;
-            this.textBox38.Text = "datacoin-qt-exe";
-            // 
-            // textBox39
-            // 
-            this.textBox39.Enabled = false;
-            this.textBox39.Location = new System.Drawing.Point(437, 243);
-            this.textBox39.Name = "textBox39";
-            this.textBox39.Size = new System.Drawing.Size(43, 20);
-            this.textBox39.TabIndex = 151;
-            this.textBox39.Text = "30";
-            // 
-            // textBox40
-            // 
-            this.textBox40.Enabled = false;
-            this.textBox40.Location = new System.Drawing.Point(6, 245);
-            this.textBox40.Name = "textBox40";
-            this.textBox40.Size = new System.Drawing.Size(45, 20);
-            this.textBox40.TabIndex = 147;
-            this.textBox40.Text = "DTC";
             // 
             // checkBox4
             // 
@@ -418,7 +341,7 @@
             // 
             this.pictureBox1.Image = ((System.Drawing.Image)(resources.GetObject("pictureBox1.Image")));
             this.pictureBox1.InitialImage = ((System.Drawing.Image)(resources.GetObject("pictureBox1.InitialImage")));
-            this.pictureBox1.Location = new System.Drawing.Point(356, 328);
+            this.pictureBox1.Location = new System.Drawing.Point(356, 308);
             this.pictureBox1.Name = "pictureBox1";
             this.pictureBox1.Size = new System.Drawing.Size(40, 40);
             this.pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
@@ -427,9 +350,9 @@
             // 
             // btnPurge
             // 
-            this.btnPurge.Location = new System.Drawing.Point(528, 286);
+            this.btnPurge.Location = new System.Drawing.Point(6, 299);
             this.btnPurge.Name = "btnPurge";
-            this.btnPurge.Size = new System.Drawing.Size(104, 23);
+            this.btnPurge.Size = new System.Drawing.Size(143, 23);
             this.btnPurge.TabIndex = 129;
             this.btnPurge.Text = "purge sup!? cache";
             this.btnPurge.UseVisualStyleBackColor = true;
@@ -437,7 +360,7 @@
             // 
             // btnPurgeIPFS
             // 
-            this.btnPurgeIPFS.Location = new System.Drawing.Point(399, 286);
+            this.btnPurgeIPFS.Location = new System.Drawing.Point(376, 255);
             this.btnPurgeIPFS.Name = "btnPurgeIPFS";
             this.btnPurgeIPFS.Size = new System.Drawing.Size(104, 23);
             this.btnPurgeIPFS.TabIndex = 128;
@@ -448,9 +371,9 @@
             // btnUnpinIPFS
             // 
             this.btnUnpinIPFS.Enabled = false;
-            this.btnUnpinIPFS.Location = new System.Drawing.Point(289, 286);
+            this.btnUnpinIPFS.Location = new System.Drawing.Point(277, 255);
             this.btnUnpinIPFS.Name = "btnUnpinIPFS";
-            this.btnUnpinIPFS.Size = new System.Drawing.Size(104, 23);
+            this.btnUnpinIPFS.Size = new System.Drawing.Size(93, 23);
             this.btnUnpinIPFS.TabIndex = 127;
             this.btnUnpinIPFS.Text = "unpin ipfs cache";
             this.btnUnpinIPFS.UseVisualStyleBackColor = true;
@@ -459,9 +382,9 @@
             // btnPinIPFS
             // 
             this.btnPinIPFS.Enabled = false;
-            this.btnPinIPFS.Location = new System.Drawing.Point(178, 286);
+            this.btnPinIPFS.Location = new System.Drawing.Point(178, 255);
             this.btnPinIPFS.Name = "btnPinIPFS";
-            this.btnPinIPFS.Size = new System.Drawing.Size(104, 23);
+            this.btnPinIPFS.Size = new System.Drawing.Size(93, 23);
             this.btnPinIPFS.TabIndex = 126;
             this.btnPinIPFS.Text = "pin ipfs cache";
             this.btnPinIPFS.UseVisualStyleBackColor = true;
@@ -469,7 +392,7 @@
             // 
             // button1
             // 
-            this.button1.Location = new System.Drawing.Point(6, 286);
+            this.button1.Location = new System.Drawing.Point(6, 255);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(166, 23);
             this.button1.TabIndex = 125;
@@ -480,18 +403,18 @@
             // 
             this.label15.AutoSize = true;
             this.label15.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label15.Location = new System.Drawing.Point(404, 347);
+            this.label15.Location = new System.Drawing.Point(404, 323);
             this.label15.Name = "label15";
             this.label15.Size = new System.Drawing.Size(210, 13);
             this.label15.TabIndex = 124;
-            this.label15.Text = "Sup!? Object Browser  v0.1.20-beta";
+            this.label15.Text = "Sup!? Object Browser  v0.1.21-beta";
             // 
             // label14
             // 
             this.label14.AutoSize = true;
-            this.label14.Location = new System.Drawing.Point(354, 380);
+            this.label14.Location = new System.Drawing.Point(354, 363);
             this.label14.Name = "label14";
-            this.label14.Size = new System.Drawing.Size(272, 91);
+            this.label14.Size = new System.Drawing.Size(272, 78);
             this.label14.TabIndex = 123;
             this.label14.Text = resources.GetString("label14.Text");
             // 
@@ -609,7 +532,7 @@
             // label13
             // 
             this.label13.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label13.Location = new System.Drawing.Point(9, 350);
+            this.label13.Location = new System.Drawing.Point(9, 335);
             this.label13.Name = "label13";
             this.label13.Size = new System.Drawing.Size(303, 132);
             this.label13.TabIndex = 109;
@@ -832,13 +755,24 @@
             this.label1.TabIndex = 50;
             this.label1.Text = "main chain";
             // 
+            // btnPurgeBlock
+            // 
+            this.btnPurgeBlock.Location = new System.Drawing.Point(155, 299);
+            this.btnPurgeBlock.Name = "btnPurgeBlock";
+            this.btnPurgeBlock.Size = new System.Drawing.Size(143, 23);
+            this.btnPurgeBlock.TabIndex = 157;
+            this.btnPurgeBlock.Text = "purge sup!?  block / mute";
+            this.btnPurgeBlock.UseVisualStyleBackColor = true;
+            this.btnPurgeBlock.Click += new System.EventHandler(this.btnPurgeBlock_Click);
+            // 
             // Connections
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(659, 506);
+            this.ClientSize = new System.Drawing.Size(659, 481);
             this.Controls.Add(this.panel1);
-            this.MinimumSize = new System.Drawing.Size(675, 412);
+            this.MaximumSize = new System.Drawing.Size(675, 520);
+            this.MinimumSize = new System.Drawing.Size(675, 520);
             this.Name = "Connections";
             this.Text = "Sup!? Connections";
             this.Load += new System.EventHandler(this.Connections_Load);
@@ -896,14 +830,6 @@
         private System.Windows.Forms.Button btnUnpinIPFS;
         private System.Windows.Forms.Button btnPurge;
         private System.Windows.Forms.PictureBox pictureBox1;
-        private System.Windows.Forms.CheckBox checkBox7;
-        private System.Windows.Forms.TextBox textBox35;
-        private System.Windows.Forms.Button btnDTC;
-        private System.Windows.Forms.TextBox textBox36;
-        private System.Windows.Forms.TextBox textBox37;
-        private System.Windows.Forms.TextBox textBox38;
-        private System.Windows.Forms.TextBox textBox39;
-        private System.Windows.Forms.TextBox textBox40;
         private System.Windows.Forms.CheckBox checkBox4;
         private System.Windows.Forms.TextBox textBox16;
         private System.Windows.Forms.Button btnDOGE;
@@ -921,5 +847,7 @@
         private System.Windows.Forms.TextBox textBox27;
         private System.Windows.Forms.TextBox textBox28;
         private System.Windows.Forms.Label label16;
+        private System.Windows.Forms.Button btnClearIPFSisLoadingCache;
+        private System.Windows.Forms.Button btnPurgeBlock;
     }
 }

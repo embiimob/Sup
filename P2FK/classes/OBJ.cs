@@ -236,13 +236,25 @@ namespace SUP.P2FK
                                                     objectState.CreatedDate = transaction.BlockDate;
                                                     objectState.Owners = new Dictionary<string, long>();
                                                     logstatus = "[\"" + transaction.SignedBy + "\",\"" + objectaddress + "\",\"create\",\"" + objectinspector.own.Values.Sum() + "\",\"\",\"success\"]";
+
+
                                                     lock (levelDBLocker)
                                                     {
-
+                                                        string found;
+                                                        
                                                         using (var db = new DB(OBJ, @"root\found"))
                                                         {
-                                                            db.Put(objectaddress, "1");
+                                                            found = db.Get(objectaddress);
                                                         }
+
+                                                        if (found == null)
+                                                        {
+                                                            using (var db = new DB(OBJ, @"root\found"))
+                                                            {
+                                                                db.Put(objectaddress, "1");
+                                                            }
+                                                        }
+
                                                     }
                                                 }
 
@@ -957,13 +969,14 @@ namespace SUP.P2FK
             objectState.Verbose = verbose;
             var objectSerialized = JsonConvert.SerializeObject(objectState);
 
-
-            if (!Directory.Exists(@"root\" + objectTransaction.SignedBy))
+            if (objectTransaction.SignedBy != null)
             {
-                Directory.CreateDirectory(@"root\" + objectTransaction.SignedBy);
+                if (!Directory.Exists(@"root\" + objectTransaction.SignedBy))
+                {
+                    Directory.CreateDirectory(@"root\" + objectTransaction.SignedBy);
+                }
+                System.IO.File.WriteAllText(@"root\" + objectTransaction.SignedBy + @"\" + "P2FK.json", objectSerialized);
             }
-            System.IO.File.WriteAllText(@"root\" + objectTransaction.SignedBy + @"\" + "P2FK.json", objectSerialized);
-
 
             return objectState;
 
@@ -1212,7 +1225,7 @@ namespace SUP.P2FK
                 //ignore any transaction that is not signed
                 if (transaction.Signed)
                 {
-                    
+
                     string findId;
 
                     if (transaction.File.ContainsKey("OBJ") || transaction.File.ContainsKey("GIV") || transaction.File.ContainsKey("MSG"))
@@ -1262,7 +1275,7 @@ namespace SUP.P2FK
                                 }
                             }
                         }
-                        else if(transaction.File.ContainsKey("OBJ") || transaction.File.ContainsKey("MSG"))
+                        else if (transaction.File.ContainsKey("OBJ") || transaction.File.ContainsKey("MSG"))
                         {
                             string key;
                             key = transaction.Keyword.Last().Key;
@@ -1304,7 +1317,7 @@ namespace SUP.P2FK
 
                             }
                         }
-                        
+
                     }
                 }
 
@@ -1345,7 +1358,7 @@ namespace SUP.P2FK
                 //ignore any transaction that is not signed
                 if (transaction.Signed)
                 {
-                    
+
                     string findId;
 
                     if (transaction.File.ContainsKey("OBJ") || transaction.File.ContainsKey("GIV"))
@@ -1398,7 +1411,7 @@ namespace SUP.P2FK
                         }
                         else if (transaction.File.ContainsKey("OBJ"))
                         {
-                           string key = transaction.Keyword.Last().Key;
+                            string key = transaction.Keyword.Last().Key;
 
                             if (!addedValues.Contains(key))
                             {
@@ -1464,7 +1477,7 @@ namespace SUP.P2FK
                     db.Close();
                 }
                 if (isBlocked == "true") { return objectStates; }
-                
+
             }
             Root[] objectTransactions;
 
@@ -1550,7 +1563,7 @@ namespace SUP.P2FK
         {
             List<OBJState> totalSearch = new List<OBJState>();
             HashSet<string> addedValues = new HashSet<string>();
-            int rownum = 1;
+            int rownum = 0;
 
 
             lock (levelDBLocker)
@@ -1562,12 +1575,12 @@ namespace SUP.P2FK
                     LevelDB.Iterator it = db.CreateIterator();
                     for (
                        it.SeekToLast();
-                       it.IsValid() && rownum <= skip + qty; // Only display next 10 messages
+                       it.IsValid() && rownum < skip + qty; // Only display next 10 messages
                         it.Prev()
                      )
                     {
                         // Display only if rownum > numMessagesDisplayed to skip already displayed messages
-                        if (rownum > skip)
+                        if (rownum >= skip)
                         {
 
                             if (!addedValues.Contains(it.KeyAsString()))
@@ -1586,7 +1599,7 @@ namespace SUP.P2FK
 
 
                 }
-                
+
             }
 
 
@@ -1702,13 +1715,13 @@ namespace SUP.P2FK
 
 
                         byte[] result = Root.GetRootBytesByFile(new string[] { @"root/" + supMessagePacket[1] + @"/SEC" });
-                        result = Root.DecryptRootBytes(username, password, url,objectaddress, result);
+                        result = Root.DecryptRootBytes(username, password, url, objectaddress, result);
 
                         Root root = Root.GetRootByTransactionId(supMessagePacket[1], null, null, null, versionByte, result);
 
                         foreach (string message in root.Message)
                         {
-         
+
                             string fromAddress = supMessagePacket[0];
 
                             string tstamp = it.KeyAsString().Split('!')[1];

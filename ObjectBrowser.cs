@@ -10,6 +10,11 @@ using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using NBitcoin;
 using System.Threading.Tasks;
+using System.Threading;
+using System.Net;
+using NBitcoin.RPC;
+using Newtonsoft.Json;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement.StartPanel;
 
 namespace SUP
 {
@@ -21,10 +26,12 @@ namespace SUP
         private List<String> SearchHistory = new List<String>();
         private int SearchId = 0;
         private HashSet<string> loadedObjects = new HashSet<string>();
-        private bool isBuilding = false;
-        private IEnumerable<string> BTCMempool = new List<string>();
-        private IEnumerable<string> BTCTMempool = new List<string>();
-        private IEnumerable<string> MZCMempool = new List<string>();
+        private readonly static object levelDBLocker = new object();
+        private List<string> BTCMemPool = new List<string>();
+        private List<string> BTCTMemPool = new List<string>();
+        private List<string> MZCMemPool = new List<string>();
+        private List<string> LTCMemPool = new List<string>();
+        private List<string> DOGMemPool = new List<string>();
         public ObjectBrowser(string objectaddress)
         {
             InitializeComponent();
@@ -91,10 +98,6 @@ namespace SUP
 
                 }
             }
-
-
-
-
 
             foreach (OBJState objstate in createdObjects)
             {
@@ -292,6 +295,7 @@ namespace SUP
 
 
                         flowLayoutPanel1.Controls.Add(foundObject);
+                        if (txtSearchAddress.Text == "") { flowLayoutPanel1.Controls.SetChildIndex(foundObject, 0); }
                     }
                     loadedObjects.Add(foundObject.ObjectAddress.Text);
 
@@ -299,7 +303,6 @@ namespace SUP
                 }
             }
             flowLayoutPanel1.ResumeLayout();
-
 
         }
 
@@ -505,15 +508,15 @@ namespace SUP
 
                             }
                         }
-
                         loadedObjects.Add(foundObject.ObjectAddress.Text);
                         flowLayoutPanel1.Controls.Add(foundObject);
+                        flowLayoutPanel1.Controls.SetChildIndex(foundObject, 0);
+
                     }
 
                 }
             }
             flowLayoutPanel1.ResumeLayout();
-
 
         }
 
@@ -713,6 +716,7 @@ namespace SUP
 
 
                 flowLayoutPanel1.Controls.Add(foundObject);
+
             }
         }
 
@@ -913,6 +917,7 @@ namespace SUP
 
                 flowLayoutPanel1.Controls.Add(foundObject);
             }
+
         }
 
         private void ButtonGetOwnedClick(object sender, EventArgs e)
@@ -993,10 +998,30 @@ namespace SUP
         private async void BuildSearchResults()
         {
 
-            if (!isBuilding)
+
+            string isBuilding;
+
+            lock (levelDBLocker)
+            {
+                var MUTE = new Options { CreateIfMissing = true };
+                using (var db = new DB(MUTE, @"root\sup"))
+                {
+                    isBuilding = db.Get("isBuilding");
+                }
+            }
+
+
+            if (isBuilding != "true")
             {
 
-                isBuilding = true;
+                lock (levelDBLocker)
+                {
+                    var MUTE = new Options { CreateIfMissing = true };
+                    using (var db = new DB(MUTE, @"root\sup"))
+                    {
+                        db.Put("isBuilding", "true");
+                    }
+                }
                 flowLayoutPanel1.Controls.Clear();
 
                 loadedObjects.Clear();
@@ -1197,7 +1222,14 @@ namespace SUP
                         }
                     }
                 }
-                isBuilding = false;
+                lock (levelDBLocker)
+                {
+                    var MUTE = new Options { CreateIfMissing = true };
+                    using (var db = new DB(MUTE, @"root\sup"))
+                    {
+                        db.Delete("isBuilding");
+                    }
+                }
             }
 
         }
@@ -1205,10 +1237,27 @@ namespace SUP
 
         private void SearchAddressUpdate()
         {
+            string isBuilding;
 
-            if (!isBuilding)
+            lock (levelDBLocker)
             {
-                isBuilding = true;
+                var MUTE = new Options { CreateIfMissing = true };
+                using (var db = new DB(MUTE, @"root\sup"))
+                {
+                    isBuilding = db.Get("isBuilding");
+                }
+            }
+
+            if (isBuilding != "true")
+            {
+                lock (levelDBLocker)
+                {
+                    var MUTE = new Options { CreateIfMissing = true };
+                    using (var db = new DB(MUTE, @"root\sup"))
+                    {
+                        db.Put("isBuilding", "true");
+                    }
+                }
 
 
                 if (txtSearchAddress.Text.StartsWith("#"))
@@ -1223,54 +1272,103 @@ namespace SUP
 
                 }
 
-                isBuilding = false;
+                lock (levelDBLocker)
+                {
+                    var MUTE = new Options { CreateIfMissing = true };
+                    using (var db = new DB(MUTE, @"root\sup"))
+                    {
+                        db.Delete("isBuilding");
+                    }
+                }
+
             }
 
         }
 
         private void ObjectBrowserLoad(object sender, EventArgs e)
         {
-            if (_objectaddress.Length > 0)
+            string isBuilding;
+
+            lock (levelDBLocker)
             {
-                txtSearchAddress.Text = _objectaddress;
-
-                if (txtSearchAddress.Text.StartsWith("#"))
+                var MUTE = new Options { CreateIfMissing = true };
+                using (var db = new DB(MUTE, @"root\sup"))
                 {
-                    GetObjectsByKeyword(txtSearchAddress.Text.Replace("#", ""));
+                    isBuilding = db.Get("isBuilding");
+                }
+            }
 
+
+            if (isBuilding != "true")
+            {
+                lock (levelDBLocker)
+                {
+                    var MUTE = new Options { CreateIfMissing = true };
+                    using (var db = new DB(MUTE, @"root\sup"))
+                    {
+                        db.Put("isBuilding", "true");
+                    }
+                }
+                if (_objectaddress.Length > 0)
+                {
+                    txtSearchAddress.Text = _objectaddress;
+
+                    if (txtSearchAddress.Text.StartsWith("#"))
+                    {
+                        GetObjectsByKeyword(txtSearchAddress.Text.Replace("#", ""));
+
+                    }
+                    else
+                        GetObjectsbyAddress(txtSearchAddress.Text.Replace("@", ""));
                 }
                 else
-                    GetObjectsbyAddress(txtSearchAddress.Text.Replace("@", ""));
+                {
+                    var SUP = new Options { CreateIfMissing = true };
+
+                    using (var db = new DB(SUP, @"ipfs"))
+                    {
+
+                        string ipfsdaemon = db.Get("ipfs-daemon");
+
+                        if (ipfsdaemon == "true")
+                        {
+
+                            var process = new Process
+                            {
+                                StartInfo = new ProcessStartInfo
+                                {
+                                    FileName = @"ipfs\ipfs.exe",
+                                    Arguments = "daemon",
+                                    UseShellExecute = false,
+                                    CreateNoWindow = true
+                                }
+                            };
+                            process.Start();
+                        }
+
+                    }
+                }
+
+                lock (levelDBLocker)
+                {
+                    var MUTE = new Options { CreateIfMissing = true };
+                    using (var db = new DB(MUTE, @"root\sup"))
+                    {
+                        db.Delete("isBuilding");
+                    }
+                }
             }
             else
             {
-                var SUP = new Options { CreateIfMissing = true };
-
-                using (var db = new DB(SUP, @"ipfs"))
+                lock (levelDBLocker)
                 {
-
-                    string ipfsdaemon = db.Get("ipfs-daemon");
-
-                    if (ipfsdaemon == "true")
+                    var MUTE = new Options { CreateIfMissing = true };
+                    using (var db = new DB(MUTE, @"root\sup"))
                     {
-
-                        var process = new Process
-                        {
-                            StartInfo = new ProcessStartInfo
-                            {
-                                FileName = @"ipfs\ipfs.exe",
-                                Arguments = "daemon",
-                                UseShellExecute = false,
-                                CreateNoWindow = true
-                            }
-                        };
-                        process.Start();
+                        db.Delete("isBuilding");
                     }
-
                 }
             }
-
-
         }
 
         private void ButtonLoadWorkBench(object sender, EventArgs e)
@@ -1297,21 +1395,24 @@ namespace SUP
 
         private void flowLayoutPanel1_SizeChanged(object sender, EventArgs e)
         {
-            if (flowLayoutPanel1.Controls.Count > 0 && flowLayoutPanel1.Controls[0] is Microsoft.Web.WebView2.WinForms.WebView2)
+            if (btnLive.BackColor != Color.Blue)
             {
-                flowLayoutPanel1.Controls[0].Size = flowLayoutPanel1.Size;
-            }
+                if (flowLayoutPanel1.Controls.Count > 0 && flowLayoutPanel1.Controls[0] is Microsoft.Web.WebView2.WinForms.WebView2)
+                {
+                    flowLayoutPanel1.Controls[0].Size = flowLayoutPanel1.Size;
+                }
 
-            int loadQty = (flowLayoutPanel1.Size.Width / 100) * (flowLayoutPanel1.Size.Height / 200);
+                int loadQty = (flowLayoutPanel1.Size.Width / 100) * (flowLayoutPanel1.Size.Height / 200);
 
-            loadQty -= flowLayoutPanel1.Controls.Count;
+                loadQty -= flowLayoutPanel1.Controls.Count;
 
-            txtQty.Text = loadQty.ToString();
-            if (loadQty > 0)
-            {
+                txtQty.Text = loadQty.ToString();
+                if (loadQty > 0)
+                {
 
-                SearchAddressUpdate();
+                    SearchAddressUpdate();
 
+                }
             }
 
         }
@@ -1365,42 +1466,377 @@ namespace SUP
 
         private void flowLayoutPanel1_DragDrop(object sender, System.Windows.Forms.DragEventArgs e)
         {
-            // Get the file paths of the files being dropped
-            string[] filePaths = (string[])e.Data.GetData((System.Windows.Forms.DataFormats.FileDrop));
-            string filePath = filePaths[0];
+            string isBuilding;
 
-            GetObjectByFile(filePath);
+            lock (levelDBLocker)
+            {
+                var MUTE = new Options { CreateIfMissing = true };
+                using (var db = new DB(MUTE, @"root\sup"))
+                {
+                    isBuilding = db.Get("isBuilding");
+                }
+            }
+            if (isBuilding != "true")
+            {
+                lock (levelDBLocker)
+                {
+                    var MUTE = new Options { CreateIfMissing = true };
+                    using (var db = new DB(MUTE, @"root\sup"))
+                    {
+                        db.Put("isBuilding", "true");
+                    }
+                }
+                // Get the file paths of the files being dropped
+                string[] filePaths = (string[])e.Data.GetData((System.Windows.Forms.DataFormats.FileDrop));
+                string filePath = filePaths[0];
+
+                GetObjectByFile(filePath);
+
+                lock (levelDBLocker)
+                {
+                    var MUTE = new Options { CreateIfMissing = true };
+                    using (var db = new DB(MUTE, @"root\sup"))
+                    {
+                        db.Delete("isBuilding");
+                    }
+                }
+            }
 
         }
 
         private void flowLayoutPanel1_Scroll(object sender, ScrollEventArgs e)
         {
+            if (btnLive.BackColor != Color.Blue)
+            {
+                int loadQty = 1 + (flowLayoutPanel1.Size.Width / 100 * (flowLayoutPanel1.Size.Height / 200) * 2);
 
-            int loadQty = 1 + (flowLayoutPanel1.Size.Width / 100 * (flowLayoutPanel1.Size.Height / 200) * 2);
-
-            txtQty.Text = loadQty.ToString();
-            SearchAddressUpdate();
-
+                txtQty.Text = loadQty.ToString();
+                SearchAddressUpdate();
+            }
 
         }
 
         private void flowLayoutPanel1_MouseWheel(object sender, System.Windows.Forms.MouseEventArgs e)
         {
-
-            if (flowLayoutPanel1.VerticalScroll.Value + flowLayoutPanel1.Height >= flowLayoutPanel1.VerticalScroll.Maximum)
+            if (btnLive.BackColor != Color.Blue)
             {
-                int loadQty = 1 + (flowLayoutPanel1.Size.Width / 100 * (flowLayoutPanel1.Size.Height / 200) * 2);
+                if (flowLayoutPanel1.VerticalScroll.Value + flowLayoutPanel1.Height >= flowLayoutPanel1.VerticalScroll.Maximum)
+                {
+                    int loadQty = 1 + (flowLayoutPanel1.Size.Width / 100 * (flowLayoutPanel1.Size.Height / 200) * 2);
 
-                txtQty.Text = loadQty.ToString();
+                    txtQty.Text = loadQty.ToString();
 
-                SearchAddressUpdate();
+                    SearchAddressUpdate();
 
+                }
             }
 
         }
 
+        private void btnLive_Click(object sender, EventArgs e)
+        {
+            if (btnLive.BackColor == Color.White)
+            {
+                btnLive.BackColor = Color.Blue;
+                btnLive.ForeColor = Color.Yellow;
+                btnOwned.Enabled = false;
+                btnCreated.Enabled = false;
+                btnConnections.Enabled = false;
+                btnWorkBench.Enabled = false;
+                btnHistoryBack.Enabled = false;
+                btnHistoryForward.Enabled = false;
+                btnMint.Enabled = false;
+                txtSearchAddress.Text = string.Empty;
+                txtSearchAddress.Enabled = false;
+                BuildSearchResults();
+                tmrSearchMemoryPool.Enabled = true;
+
+            }
+            else
+            {
+                btnLive.BackColor = Color.White;
+                btnLive.ForeColor = Color.Black;
+                btnOwned.Enabled = true;
+                btnCreated.Enabled = true;
+                txtSearchAddress.Enabled = true;
+                btnWorkBench.Enabled = true;
+                btnConnections.Enabled = true;
+                btnHistoryBack.Enabled = true;
+                btnHistoryForward.Enabled = true;
+                btnMint.Enabled = true;
+                tmrSearchMemoryPool.Enabled = false;
+            }
+        }
+
+        private void tmrSearchMemoryPool_Tick(object sender, EventArgs e)
+        {
+            Task SearchMemoryTask = Task.Run(() =>
+            {
+            string isBuilding;
+            lock (levelDBLocker)
+            {
+                var MUTE = new Options { CreateIfMissing = true };
+                using (var db = new DB(MUTE, @"root\sup"))
+                {
+                    isBuilding = db.Get("isBuilding");
+                }
+            }
+                if (isBuilding != "true")
+                {
+                    lock (levelDBLocker)
+                    {
+                        var MUTE = new Options { CreateIfMissing = true };
+                        using (var db = new DB(MUTE, @"root\sup"))
+                        {
+                            db.Put("isBuilding", "true");
+                        }
+                    }
+                    int foundCount = 0;
+                    List<string> differenceQuery = new List<string>();
+                    List<string> newtransactions =  new List<string>();
+                    string flattransactions;
+                    OBJState isobject = new OBJState();
+                    NetworkCredential credentials = new NetworkCredential("good-user", "better-password");
+                    RPCClient rpcClient;
+                    try
+                    {
+                        rpcClient = new RPCClient(credentials, new Uri(@"http://127.0.0.1:18332"), Network.Main);
+                        flattransactions = rpcClient.SendCommand("getrawmempool").ResultString;
+                        flattransactions  = flattransactions.Replace("\"","").Replace("[", "").Replace("]", "").Replace("\r", "").Replace("\n", "").Replace(" ", "");
+                        newtransactions = flattransactions.Split(',').ToList();
+
+                        if (BTCTMemPool.Count == 0)
+                        {
+                            BTCTMemPool = newtransactions;
+                        }
+                        else
+                        {
+                            differenceQuery =
+                            (List<string>)newtransactions.Except(BTCTMemPool).ToList(); ;
+
+                            BTCTMemPool = newtransactions;
+                            
+                            foreach (var s in differenceQuery)
+                            {
+                                try
+                                {
+                                    isobject = OBJState.GetObjectByTransactionId(s, "good-user", "better-password", @"http://127.0.0.1:18332");
+                                }
+                                catch { } 
+                                
+                                if (isobject.URN != null) {foundCount++; }
+                                
+                            }
+
+                        }
+                    }
+                    catch{ }
+                    newtransactions = new List<string>();
+
+                    try
+                    {
+                        rpcClient = new RPCClient(credentials, new Uri(@"http://127.0.0.1:8332"), Network.Main);
+                        flattransactions = rpcClient.SendCommand("getrawmempool").ResultString;
+                        flattransactions = flattransactions.Replace("\"", "").Replace("[", "").Replace("]", "").Replace("\r", "").Replace("\n", "").Replace(" ", "");
+                        newtransactions = flattransactions.Split(',').ToList();
+                        
+                        if (BTCMemPool.Count == 0)
+                        {
+                            BTCMemPool = newtransactions;
+                        }
+                        else
+                        {
+                            differenceQuery =
+                            (List<string>)newtransactions.Except(BTCMemPool).ToList(); ;
+
+                            BTCMemPool = newtransactions;
+
+                            foreach (var s in differenceQuery)
+                            {
+                                try { 
+                                    isobject = OBJState.GetObjectByTransactionId(s, "good-user", "better-password", @"http://127.0.0.1:8332", "0");
+                                }
+                                catch { }
+                                if (isobject.URN != null) { 
+                                    
+                                    foundCount++; }
+                                
+                            }
+
+                        }
+                    }
+                    catch { }
+                    newtransactions = new List<string>();
+
+                    try
+                    {
+                        rpcClient = new RPCClient(credentials, new Uri(@"http://127.0.0.1:12832"), Network.Main);
+                        flattransactions = rpcClient.SendCommand("getrawmempool").ResultString;
+                        flattransactions = flattransactions.Replace("\"", "").Replace("[", "").Replace("]", "").Replace("\r", "").Replace("\n", "").Replace(" ", "");
+                        newtransactions = flattransactions.Split(',').ToList();
+                        if (MZCMemPool.Count == 0)
+                        {
+                            MZCMemPool = newtransactions;
+                        }
+                        else
+                        {
+                            differenceQuery =
+                            (List<string>)newtransactions.Except(MZCMemPool).ToList(); ;
+
+                            MZCMemPool = newtransactions;
+
+                            foreach (var s in differenceQuery)
+                            {
+                                try { 
+                                    isobject = OBJState.GetObjectByTransactionId(s, "good-user", "better-password", @"http://127.0.0.1:12832", "50");
+                                }
+                                catch { }
+                                if (isobject.URN != null) { foundCount++; }
+                               
+                            }
+
+                        }
+                    }
+                    catch { }
+                    newtransactions = new List<string>();
+
+                    try
+                    {
+                        rpcClient = new RPCClient(credentials, new Uri(@"http://127.0.0.1:9332"), Network.Main);
+                        flattransactions = rpcClient.SendCommand("getrawmempool").ResultString;
+                        flattransactions = flattransactions.Replace("\"", "").Replace("[", "").Replace("]", "").Replace("\r", "").Replace("\n", "").Replace(" ", "");
+                        newtransactions = flattransactions.Split(',').ToList();
+                        if (LTCMemPool.Count == 0)
+                        {
+                            LTCMemPool = newtransactions;
+                        }
+                        else
+                        {
+                            differenceQuery =
+                            (List<string>)newtransactions.Except(LTCMemPool).ToList(); ;
+
+                            LTCMemPool = newtransactions;
+
+                            foreach (var s in differenceQuery)
+                            {
+                                try { 
+                                    isobject = OBJState.GetObjectByTransactionId(s, "good-user", "better-password", @"http://127.0.0.1:9332", "48");
+                                }
+                                catch { }
+                                if (isobject.URN != null) { foundCount++; }
+                                
+                            }
+
+                        }
+                    }
+                    catch { }
+                    newtransactions = new List<string>();
+
+                    try
+                    {
+                        rpcClient = new RPCClient(credentials, new Uri(@"http://127.0.0.1:22555"), Network.Main);
+                        flattransactions = rpcClient.SendCommand("getrawmempool").ResultString;
+                        flattransactions = flattransactions.Replace("\"", "").Replace("[", "").Replace("]", "").Replace("\r", "").Replace("\n", "").Replace(" ", "");
+                        newtransactions = flattransactions.Split(',').ToList();
+
+                        if (DOGMemPool.Count == 0)
+                        {
+                            DOGMemPool = newtransactions;
+                        }
+                        else
+                        {
+                            differenceQuery =
+                            (List<string>)newtransactions.Except(DOGMemPool).ToList(); ;
+
+                            DOGMemPool = newtransactions;
+
+                            foreach (var s in differenceQuery)
+                            {
+                                try
+                                {
+                                    isobject = OBJState.GetObjectByTransactionId(s, "good-user", "better-password", @"http://127.0.0.1:22555", "30");
+                                }
+                                catch { }
+                                if (isobject.URN != null) { foundCount++; }
+
+                            }
+
+                        }
+                    }
+                    catch { }
+                    newtransactions = new List<string>();
+
+                    if (foundCount > 0)
+                    {
+
+                        int lastQty = 0;
+                        int totalQty = 0;
+
+                        // Update the txtQty control using Invoke to run it on the UI thread.
+                        flowLayoutPanel1.Invoke((MethodInvoker)delegate
+                        {
+                            totalQty = flowLayoutPanel1.Controls.Count + ((foundCount * 2)+2);
+                        });
 
 
+                        // Update the txtQty control using Invoke to run it on the UI thread.
+                        txtQty.Invoke((MethodInvoker)delegate
+                        {
+                            txtQty.Text = totalQty.ToString();                         totalQty = flowLayoutPanel1.Controls.Count + ((foundCount * 2)+2);
+;
+                          });
+
+
+                        // Update the txtQty control using Invoke to run it on the UI thread.
+                        txtLast.Invoke((MethodInvoker)delegate
+                        {
+                            txtLast.Text = "0";
+                        });
+
+                        // Call the SearchAddressUpdate method using Invoke to run it on the UI thread.
+                        this.Invoke((MethodInvoker)delegate
+                        {
+                            lock (levelDBLocker)
+                            {
+                                var MUTE = new Options { CreateIfMissing = true };
+                                using (var db = new DB(MUTE, @"root\sup"))
+                                {
+                                    db.Delete("isBuilding");
+                                }
+                            }
+
+                            SearchAddressUpdate();
+
+
+                            lock (levelDBLocker)
+                            {
+                                var MUTE = new Options { CreateIfMissing = true };
+                                using (var db = new DB(MUTE, @"root\sup"))
+                                {
+                                    db.Put("isBuilding","1");
+                                }
+                            }
+
+                                           
+  
+                        });
+
+                    }
+                    lock (levelDBLocker)
+                    {
+                        var MUTE = new Options { CreateIfMissing = true };
+                        using (var db = new DB(MUTE, @"root\sup"))
+                        {
+                            db.Delete("isBuilding");
+                        }
+                    }
+
+
+
+                }
+            });
+        
+        }
 
     }
 }

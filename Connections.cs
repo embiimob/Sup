@@ -347,25 +347,42 @@ namespace SUP
             Process.Start(startInfo);
         }
 
-        private void btnORD_Click(object sender, EventArgs e)
+        private void button2_Click_1(object sender, EventArgs e)
         {
-            string bitcoinDirectory = AppDomain.CurrentDomain.BaseDirectory + "\\ordinal";
-            string bitcoindPath = AppDomain.CurrentDomain.BaseDirectory + "\\ord.exe";
-            System.IO.Directory.CreateDirectory("ordinal");
+            string[] files = Directory.GetFiles("ipfs");
 
-            ProcessStartInfo startInfo = new ProcessStartInfo
+            foreach (string file in files)
             {
-                CreateNoWindow = false,
-                UseShellExecute = false,
-                FileName = bitcoindPath,
-                RedirectStandardOutput = true,
-                RedirectStandardError = true,
-                WindowStyle = ProcessWindowStyle.Hidden,
-                Arguments = $"-txindex=1 -datadir={bitcoinDirectory} -server -rpcuser=good-user -rpcpassword=better-password -rpcport=8333"
-            };
-
-            Process.Start(startInfo);
+                // Delete the file
+                if (!file.Contains("ipfs.exe"))
+                {
+                    File.Delete(file);
+                }
+            }
         }
-  
+
+        private void btnPurgeBlock_Click(object sender, EventArgs e)
+        {
+            string directoryPath = @"root";
+
+            // Get a list of all the subdirectories in the directory
+            string[] subdirectories = Directory.GetDirectories(directoryPath);
+
+            // Loop through each subdirectory
+            foreach (string subdirectory in subdirectories)
+            {
+                // Get the name of the subdirectory
+                string subdirectoryName = Path.GetFileName(subdirectory);
+
+                // Check if the subdirectory name is "mute" or "block"
+                if (subdirectoryName == "mute" || subdirectoryName == "block")
+                {
+                    // Delete the subdirectory and all its contents
+                    Directory.Delete(subdirectory, true);
+                }
+            }
+
+            
+        }
     }
 }

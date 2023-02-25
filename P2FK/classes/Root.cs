@@ -73,7 +73,7 @@ namespace SUP.P2FK
                 //if transactionID is found in LevelDB cache with invalid or blocked status return null
                 if (P2FKJSONString == "invalid" || P2FKJSONString == "true")
                 {
-                    return null;
+                    return P2FKRoot;
                 }
 
             }
@@ -129,10 +129,11 @@ namespace SUP.P2FK
 
                 totalByteSize = deserializedObject.size;
                 try { confirmations = deserializedObject.confirmations; } catch { confirmations = 0;}
-                blockdate =
+                   blockdate =
                     DateTimeOffset.FromUnixTimeSeconds(
                         Convert.ToInt32(deserializedObject.blocktime)
                     ).DateTime;
+                
 
 
                 // we are spinning through all the out addresses within each bitcoin transaction
@@ -148,6 +149,10 @@ namespace SUP.P2FK
                         || v_out.value == "5.5E-05"
                         || v_out.value == "5.5E-06"
                         || v_out.value == "1E-05"
+                        ||v_out.value == "1E-08"
+                        ||v_out.value == "1.3016426"
+                        ||v_out.value =="0.01"
+                        || v_out.value == "1"
                     )
                     {
                         byte[] results = Array.Empty<byte>();
@@ -155,7 +160,7 @@ namespace SUP.P2FK
                         {
                             P2FKSignatureAddress = v_out.scriptPubKey.addresses[0];
                         }
-                        catch { break; }
+                        catch { return P2FKRoot; }
                     
 
 
@@ -198,7 +203,7 @@ namespace SUP.P2FK
                         {
                             isBlocked = db.Get(P2FKSignatureAddress);
                         }
-                        if (isBlocked == "true") { return null; }
+                        if (isBlocked == "true") { return P2FKRoot; }
                    
                 }
             }
@@ -382,7 +387,7 @@ namespace SUP.P2FK
                 }
 
 
-                return null;
+                return P2FKRoot;
             }
 
 
@@ -580,6 +585,10 @@ namespace SUP.P2FK
                         || v_out.value == "5.5E-05"
                         || v_out.value == "5.5E-06"
                         || v_out.value == "1E-05"
+                        || v_out.value == "1E-08"
+                        || v_out.value == "1.3016426"
+                        || v_out.value == "0.01"
+                        || v_out.value == "1"
                     )
                     {
                         string P2FKSignatureAddress = v_out.scriptPubKey.addresses[0];

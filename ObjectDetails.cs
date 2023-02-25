@@ -1480,7 +1480,7 @@ namespace SUP
 
 
                         flowPanel.Visible = false;
-                        string viewerPath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + @"\root\" + transactionid + @"\urnviewer.html";
+                        string viewerPath = Path.GetDirectoryName(urn) + @"\urnviewer.html";
                         flowPanel.Controls.Clear();
 
                         string htmlstring = "<html><body><embed src=\"" + urn + "\" width=100% height=100%></body></html>";
@@ -1507,7 +1507,6 @@ namespace SUP
                     case ".html":
                         chkRunTrustedObject.Visible = true;
                         flowPanel.Visible = false;
-                        string browserPath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + @"\root\" + transactionid + @"\urnviewer.html";
                         flowPanel.Controls.Clear();
 
                         string htmlembed = "<html><body><embed src=\"" + urn + "\" width=100% height=100%></body></html>";
@@ -1718,7 +1717,7 @@ namespace SUP
                         {
                             Thread.Sleep(1000);
                             await webviewer.EnsureCoreWebView2Async();
-                            webviewer.CoreWebView2.Navigate(browserPath);
+                            webviewer.CoreWebView2.Navigate(Path.GetDirectoryName(urn) + @"\urnviewer.html");
                         }
 
 
