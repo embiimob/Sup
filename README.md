@@ -11,7 +11,7 @@ P2FK was directly inspired by the satoshi uploader  see --> https://cirosantilli
 
 ## **Installation**
 
-1. Download the Sup.v0.1.19-beta.zip file
+1. Download the Sup.v0.1.21-beta.zip file
 2. Create a folder on your **fastest** disk drive with at least **700GB** free (it will be storing the bitcoin prod and testnet blockchains)
 3. Unzip all contents into the folder.
 4. Create a shortcut to SUP.exe and launch.
@@ -56,6 +56,10 @@ searches mainchain by  urn shows currently registered object with uri redirectio
 
 ### **http(s)://embii.org**
 navigates to requested url in browser.
+<br />
+<br />
+## **Live Monitor**
+Click the live button and watch in realtime as other Sup!? user's mint their objects.  all new objects will be added to the top of your browser window pushing the older objects down the screen. A maximized Sup!? monitor that shows a constant stream of new objects makes for a great display.  Sup!? montiors the in memory pool allowing it to display new objects before they are confirmed in the blockchain.  your Sup!? objects will appear in every curently live Sup!? montior around the world in about 10 - 30 seconds after you have etch the object's metadata. all blockhains included with this experiment are monitored for new objects if they are running and fully synced 
 <br />
 <br />
 ## **Official / Unofficial Indicator**
@@ -246,8 +250,6 @@ http://bitfossil.org/7033eb8138de0d3f4be111a57dfb8319b400d3b6a6f5b387a22b334ebb9
 - this experiment uses dogecoin core the following release is included in the deployment https://github.com/dogecoin/dogecoin/releases/tag/v1.14.6
 
 - this experiment uses mazacoin core their latest official release has been included in the deployment https://github.com/mazacoin/maza
-
-- this experiment uses datacoin core the following release has been included in the deployment https://disk.yandex.com/d/eu7rJ9EN3VSYBF
 
 - this experiment uses oodrive's levelDB a stable release has been included in the deployment https://github.com/oodrive/leveldb.net
 
