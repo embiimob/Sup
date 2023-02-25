@@ -18,6 +18,7 @@ namespace SUP
 {
     public partial class WorkBench : Form
     {
+        private readonly static object levelDBLocker = new object();
         public WorkBench()
         {
             InitializeComponent();
@@ -35,57 +36,66 @@ namespace SUP
                 case "ROOT":
                     var ROOT = new Options { CreateIfMissing = true };
                     txtGetValue.Text = "";
-                    using (var db = new DB(ROOT, @"root"))
+                    lock (levelDBLocker)
                     {
-                        LevelDB.Iterator it = db.CreateIterator();
-                        for (
-                            it.Seek(txtlevelDBKey.Text);
-                            it.IsValid() && it.KeyAsString().StartsWith(txtlevelDBKey.Text);
-                            it.Next()
-                        )
+                        using (var db = new DB(ROOT, @"root"))
                         {
-                            txtGetValue.Text =
-                                txtGetValue.Text + it.ValueAsString() + Environment.NewLine;
+                            LevelDB.Iterator it = db.CreateIterator();
+                            for (
+                                it.Seek(txtlevelDBKey.Text);
+                                it.IsValid() && it.KeyAsString().StartsWith(txtlevelDBKey.Text);
+                                it.Next()
+                            )
+                            {
+                                txtGetValue.Text =
+                                    txtGetValue.Text + it.ValueAsString() + Environment.NewLine;
+                            }
+                            it.Dispose();
                         }
-                        it.Dispose();
                     }
                     break;
 
                 case "SUP":
                     var SUP = new Options { CreateIfMissing = true };
                     txtGetValue.Text = "";
-                    using (var db = new DB(SUP, @"root\sup"))
+                    lock (levelDBLocker)
                     {
-                        LevelDB.Iterator it = db.CreateIterator();
-                        for (
-                            it.Seek(txtlevelDBKey.Text);
-                            it.IsValid() && it.KeyAsString().StartsWith(txtlevelDBKey.Text);
-                            it.Next()
-                        )
+                        using (var db = new DB(SUP, @"root\sup"))
                         {
-                            txtGetValue.Text =
-                                txtGetValue.Text + it.ValueAsString() + Environment.NewLine;
+                            LevelDB.Iterator it = db.CreateIterator();
+                            for (
+                                it.Seek(txtlevelDBKey.Text);
+                                it.IsValid() && it.KeyAsString().StartsWith(txtlevelDBKey.Text);
+                                it.Next()
+                            )
+                            {
+                                txtGetValue.Text =
+                                    txtGetValue.Text + it.ValueAsString() + Environment.NewLine;
+                            }
+                            it.Dispose();
                         }
-                        it.Dispose();
                     }
                     break;
 
                 case "PRO":
                     var PRO = new Options { CreateIfMissing = true };
                     txtGetValue.Text = "";
-                    using (var db = new DB(PRO, @"root\pro"))
+                    lock (levelDBLocker)
                     {
-                        LevelDB.Iterator it = db.CreateIterator();
-                        for (
-                            it.Seek(txtlevelDBKey.Text);
-                            it.IsValid() && it.KeyAsString().StartsWith(txtlevelDBKey.Text);
-                            it.Next()
-                        )
+                        using (var db = new DB(PRO, @"root\pro"))
                         {
-                            txtGetValue.Text =
-                                txtGetValue.Text + it.ValueAsString() + Environment.NewLine;
+                            LevelDB.Iterator it = db.CreateIterator();
+                            for (
+                                it.Seek(txtlevelDBKey.Text);
+                                it.IsValid() && it.KeyAsString().StartsWith(txtlevelDBKey.Text);
+                                it.Next()
+                            )
+                            {
+                                txtGetValue.Text =
+                                    txtGetValue.Text + it.ValueAsString() + Environment.NewLine;
+                            }
+                            it.Dispose();
                         }
-                        it.Dispose();
                     }
                     break;
 
@@ -212,7 +222,7 @@ namespace SUP
             string walletUsername = txtLogin.Text;
             string walletPassword = txtPassword.Text;
             NetworkCredential credentials = new NetworkCredential(walletUsername, walletPassword);
-            RPCClient rpcClient = new RPCClient(credentials, new Uri(walletUrl),NBitcoin.Network.Main);
+            RPCClient rpcClient = new RPCClient(credentials, new Uri(walletUrl), NBitcoin.Network.Main);
 
             try
             {
@@ -257,7 +267,7 @@ namespace SUP
                 txtSearchAddress.Text,
                 txtLogin.Text,
                 txtPassword.Text,
-                txtUrl.Text,0,300,
+                txtUrl.Text, 0, 300,
                 txtVersionByte.Text
             );
             DateTime tmendCall = DateTime.UtcNow;
@@ -475,7 +485,7 @@ namespace SUP
             string jobId = Guid.NewGuid().ToString();
             Root root = Root.GetRootByTransactionId(jobId, null, null, null, txtVersionByte.Text, result);
             txtTransactionId.Text = jobId;
-            
+
             dgTransactions.Rows.Clear();
             int totalbytes;
 
@@ -593,7 +603,7 @@ namespace SUP
         private void ButtonGetObjectByAddressClick(object sender, EventArgs e)
         {
             DateTime tmbeginCall = DateTime.UtcNow;
-            OBJState Tester = OBJState.GetObjectByAddress(txtSearchAddress.Text, txtLogin.Text, txtPassword.Text, txtUrl.Text, txtVersionByte.Text,checkBox1.Checked);
+            OBJState Tester = OBJState.GetObjectByAddress(txtSearchAddress.Text, txtLogin.Text, txtPassword.Text, txtUrl.Text, txtVersionByte.Text, checkBox1.Checked);
             DateTime tmendCall = DateTime.UtcNow;
             lblTotalBytes.Text = "bytes: ";
             lblTotalTime.Text = "time: ";
@@ -604,8 +614,8 @@ namespace SUP
 
             lblTotalTime.Text = "time: " + Math.Truncate(elapsedMilliseconds);
             lblTotal.Text = "total: " + Tester.ProcessHeight.ToString();
-                       
-            DisplayRootJSON(new JObject[] { JObject.FromObject(Tester)});
+
+            DisplayRootJSON(new JObject[] { JObject.FromObject(Tester) });
         }
 
         private void ButtonPurgeClick(object sender, EventArgs e)
@@ -618,10 +628,10 @@ namespace SUP
             // Loop through each subdirectory
             foreach (string subdirectory in subdirectories)
             {
-             
-               // Delete the subdirectory and all its contents
-               Directory.Delete(subdirectory, true);
-              
+
+                // Delete the subdirectory and all its contents
+                Directory.Delete(subdirectory, true);
+
             }
 
             // Get a list of all the files in the directory
@@ -656,7 +666,7 @@ namespace SUP
             int objectcount = 0;
             foreach (object obj in ownedObjects)
             {
-                
+
                 ObjectArray[objectcount++] = JObject.FromObject(obj);
             }
             DisplayRootJSON(ObjectArray);
@@ -690,7 +700,7 @@ namespace SUP
         private void ButtonGetObjectsByAddressClick(object sender, EventArgs e)
         {
             DateTime tmbeginCall = DateTime.UtcNow;
-            List<OBJState> createdObjects = OBJState.GetObjectsByAddress(txtSearchAddress.Text, txtLogin.Text, txtPassword.Text, txtUrl.Text,txtVersionByte.Text, int.Parse(txtSkip.Text), int.Parse(txtQty.Text));
+            List<OBJState> createdObjects = OBJState.GetObjectsByAddress(txtSearchAddress.Text, txtLogin.Text, txtPassword.Text, txtUrl.Text, txtVersionByte.Text, int.Parse(txtSkip.Text), int.Parse(txtQty.Text));
             DateTime tmendCall = DateTime.UtcNow;
             lblTotalBytes.Text = "bytes: ";
             lblTotalTime.Text = "time: ";
@@ -704,7 +714,7 @@ namespace SUP
             JObject[] ObjectArray = new JObject[createdObjects.Count];
             int objectcount = 0;
 
-     
+
             foreach (object obj in createdObjects)
             {
 
@@ -750,16 +760,16 @@ namespace SUP
                 {
 
                     string transactionID = dgTransactions.Rows[e.RowIndex].Cells[9].Value.ToString();
-                    
+
                     DisplayRootJSON(new JObject[] { JObject.Parse(System.IO.File.ReadAllText(@"root\" + transactionID + @"\P2Fk.json")) });
-                                   }
-                catch{ }
+                }
+                catch { }
             }
         }
 
         private void ButtonGetObjectByURNClick(object sender, EventArgs e)
         {
-                    
+
             DateTime tmbeginCall = DateTime.UtcNow;
             OBJState createdObject = OBJState.GetObjectByURN(txtSearchAddress.Text, txtLogin.Text, txtPassword.Text, txtUrl.Text);
             DateTime tmendCall = DateTime.UtcNow;
@@ -771,11 +781,11 @@ namespace SUP
             double elapsedMilliseconds = elapsedTime.TotalMilliseconds;
 
             lblTotalTime.Text = "time: " + Math.Truncate(elapsedMilliseconds);
-           
+
             JObject[] ObjectArray = new JObject[1];
-                  
-           ObjectArray[0] = JObject.FromObject(createdObject);
-           
+
+            ObjectArray[0] = JObject.FromObject(createdObject);
+
             DisplayRootJSON(ObjectArray);
 
         }
@@ -783,7 +793,7 @@ namespace SUP
         private void ButtonGetProfileByAddressClick(object sender, EventArgs e)
         {
             DateTime tmbeginCall = DateTime.UtcNow;
-            PROState Tester = PROState.GetProfileByAddress(txtSearchAddress.Text, txtLogin.Text, txtPassword.Text, txtUrl.Text, txtVersionByte.Text, checkBox1.Checked,int.Parse(txtSkip.Text));
+            PROState Tester = PROState.GetProfileByAddress(txtSearchAddress.Text, txtLogin.Text, txtPassword.Text, txtUrl.Text, txtVersionByte.Text, checkBox1.Checked, int.Parse(txtSkip.Text));
             DateTime tmendCall = DateTime.UtcNow;
             lblTotalBytes.Text = "bytes: ";
             lblTotalTime.Text = "time: ";
@@ -802,7 +812,7 @@ namespace SUP
         {
 
             DateTime tmbeginCall = DateTime.UtcNow;
-            PROState createdObject = PROState.GetProfileByURN(txtSearchAddress.Text, txtLogin.Text, txtPassword.Text, txtUrl.Text, txtVersionByte.Text,int.Parse(txtSkip.Text));
+            PROState createdObject = PROState.GetProfileByURN(txtSearchAddress.Text, txtLogin.Text, txtPassword.Text, txtUrl.Text, txtVersionByte.Text, int.Parse(txtSkip.Text));
             DateTime tmendCall = DateTime.UtcNow;
             lblTotalBytes.Text = "bytes: ";
             lblTotalTime.Text = "time: ";
@@ -842,14 +852,14 @@ namespace SUP
 
         private void ButtonBlockAddressClick(object sender, EventArgs e)
         {
-            
-                var WORK = new Options { CreateIfMissing = true };
-                using (var db = new DB(WORK, @"root\block"))
-                {
-                    db.Put(txtSearchAddress.Text,"true");
-                }
 
-            
+            var WORK = new Options { CreateIfMissing = true };
+            using (var db = new DB(WORK, @"root\block"))
+            {
+                db.Put(txtSearchAddress.Text, "true");
+            }
+
+
         }
 
         private void ButtonUnBlockAddressClick(object sender, EventArgs e)
@@ -945,8 +955,8 @@ namespace SUP
 
         private void WorkBench_DragEnter(object sender, DragEventArgs e)
         {
-            if(e.Data.GetDataPresent(DataFormats.FileDrop))
-    {
+            if (e.Data.GetDataPresent(DataFormats.FileDrop))
+            {
                 e.Effect = DragDropEffects.Copy;
             }
         }
@@ -968,7 +978,7 @@ namespace SUP
                 payload[0] = Byte.Parse("111");
                 string objectaddress = Base58.EncodeWithCheckSum(payload);
 
-                txtGetValue.Text = @"Use the following keyword to register this file --> @"+objectaddress;
+                txtGetValue.Text = @"Use the following keyword to register this file --> @" + objectaddress;
 
             }
         }
@@ -1020,10 +1030,10 @@ namespace SUP
         private void ButtonGetPublicMessages_Click(object sender, EventArgs e)
         {
             DateTime tmbeginCall = DateTime.UtcNow;
-            dynamic deserializedObject= OBJState.GetPublicMessagesByAddress(txtSearchAddress.Text, txtLogin.Text, txtPassword.Text, txtUrl.Text, txtVersionByte.Text, int.Parse(txtSkip.Text), int.Parse(txtQty.Text));
+            dynamic deserializedObject = OBJState.GetPublicMessagesByAddress(txtSearchAddress.Text, txtLogin.Text, txtPassword.Text, txtUrl.Text, txtVersionByte.Text, int.Parse(txtSkip.Text), int.Parse(txtQty.Text));
             DateTime tmendCall = DateTime.UtcNow;
 
-              // Cast deserializedObject to a specific type
+            // Cast deserializedObject to a specific type
             var messages = ((List<object>)deserializedObject.Messages).Cast<dynamic>();
 
             // Get the count of messages
@@ -1046,7 +1056,7 @@ namespace SUP
 
         private void ButtonGetPrivateMessages_Click(object sender, EventArgs e)
         {
-           
+
 
             DateTime tmbeginCall = DateTime.UtcNow;
             dynamic deserializedObject = OBJState.GetPrivateMessagesByAddress(txtSearchAddress.Text, txtLogin.Text, txtPassword.Text, txtUrl.Text, txtVersionByte.Text, int.Parse(txtSkip.Text), int.Parse(txtQty.Text));

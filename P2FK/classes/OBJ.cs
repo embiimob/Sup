@@ -107,21 +107,24 @@ namespace SUP.P2FK
                 {
 
                     string sigSeen;
-
-                    using (var db = new DB(OBJ, @"root\obj"))
+                    lock (levelDBLocker)
                     {
-                        sigSeen = db.Get(transaction.Signature);
+                        using (var db = new DB(OBJ, @"root\obj"))
+                        {
+                            sigSeen = db.Get(transaction.Signature);
+                        }
                     }
 
                     if (sigSeen == null || sigSeen == transaction.TransactionId)
                     {
 
-
-                        using (var db = new DB(OBJ, @"root\obj"))
+                        lock (levelDBLocker)
                         {
-                            db.Put(transaction.Signature, transaction.TransactionId);
+                            using (var db = new DB(OBJ, @"root\obj"))
+                            {
+                                db.Put(transaction.Signature, transaction.TransactionId);
+                            }
                         }
-
 
                         switch (transaction.File.Last().Key.ToString().Substring(transaction.File.Last().Key.ToString().Length - 3))
                         {
@@ -143,10 +146,12 @@ namespace SUP.P2FK
                                 foreach (string key in transaction.Keyword.Keys)
                                 // Check each byte to see if it's in the ASCII range
                                 {
-
-                                    using (var db = new DB(OBJ, @"root\obj"))
+                                    lock (levelDBLocker)
                                     {
-                                        db.Put(objectaddress + "!" + key, transaction.TransactionId);
+                                        using (var db = new DB(OBJ, @"root\obj"))
+                                        {
+                                            db.Put(objectaddress + "!" + key, transaction.TransactionId);
+                                        }
                                     }
 
                                 }
@@ -754,21 +759,24 @@ namespace SUP.P2FK
             {
 
                 string sigSeen;
-
-                using (var db = new DB(OBJ, @"root\obj"))
+                lock (levelDBLocker)
                 {
-                    sigSeen = db.Get(objectTransaction.Signature);
+                    using (var db = new DB(OBJ, @"root\obj"))
+                    {
+                        sigSeen = db.Get(objectTransaction.Signature);
+                    }
                 }
 
                 if (sigSeen == null || sigSeen == objectTransaction.TransactionId)
                 {
 
-
-                    using (var db = new DB(OBJ, @"root\obj"))
+                    lock (levelDBLocker)
                     {
-                        db.Put(objectTransaction.Signature, objectTransaction.TransactionId);
+                        using (var db = new DB(OBJ, @"root\obj"))
+                        {
+                            db.Put(objectTransaction.Signature, objectTransaction.TransactionId);
+                        }
                     }
-
 
                     switch (objectTransaction.File.Last().Key.ToString().Substring(objectTransaction.File.Last().Key.ToString().Length - 3))
                     {
@@ -790,10 +798,12 @@ namespace SUP.P2FK
                             foreach (string key in objectTransaction.Keyword.Keys)
 
                             {
-
-                                using (var db = new DB(OBJ, @"root\obj"))
+                                lock (levelDBLocker)
                                 {
-                                    db.Put(objectTransaction.SignedBy + "!" + key, objectTransaction.TransactionId);
+                                    using (var db = new DB(OBJ, @"root\obj"))
+                                    {
+                                        db.Put(objectTransaction.SignedBy + "!" + key, objectTransaction.TransactionId);
+                                    }
                                 }
 
                             }
@@ -1090,19 +1100,25 @@ namespace SUP.P2FK
 
                                 var SUP = new Options { CreateIfMissing = true };
                                 string isLoading;
-                                using (var db = new DB(SUP, @"ipfs"))
+                                lock (levelDBLocker)
                                 {
-                                    isLoading = db.Get(transid);
+                                    using (var db = new DB(SUP, @"ipfs"))
+                                    {
+                                        isLoading = db.Get(transid);
 
+                                    }
                                 }
 
                                 if (isLoading != "loading")
                                 {
-                                    using (var db = new DB(SUP, @"ipfs"))
+                                    lock (levelDBLocker)
                                     {
+                                        using (var db = new DB(SUP, @"ipfs"))
+                                        {
 
-                                        db.Put(transid, "loading");
+                                            db.Put(transid, "loading");
 
+                                        }
                                     }
                                     Task ipfsTask = Task.Run(() =>
                                     {
@@ -1140,11 +1156,13 @@ namespace SUP.P2FK
                                             }
                                         };
                                         process3.Start();
-
-                                        using (var db = new DB(SUP, @"ipfs"))
+                                        lock (levelDBLocker)
                                         {
-                                            db.Delete(transid);
+                                            using (var db = new DB(SUP, @"ipfs"))
+                                            {
+                                                db.Delete(transid);
 
+                                            }
                                         }
                                     });
                                 }
@@ -1248,18 +1266,24 @@ namespace SUP.P2FK
 
                                     if (isObject.URN != null && key != objectaddress)
                                     {
-                                        using (var db = new DB(OBJ, @"root\obj"))
+                                        lock (levelDBLocker)
                                         {
-                                            findId = db.Get(objectaddress + "!" + key);
+                                            using (var db = new DB(OBJ, @"root\obj"))
+                                            {
+                                                findId = db.Get(objectaddress + "!" + key);
+                                            }
                                         }
 
                                         if (findId == transaction.Id.ToString() || findId == null)
                                         {
                                             if (findId == null)
                                             {
-                                                using (var db = new DB(OBJ, @"root\obj"))
+                                                lock (levelDBLocker)
                                                 {
-                                                    db.Put(objectaddress + "!" + key, transaction.Id.ToString());
+                                                    using (var db = new DB(OBJ, @"root\obj"))
+                                                    {
+                                                        db.Put(objectaddress + "!" + key, transaction.Id.ToString());
+                                                    }
                                                 }
                                             }
                                         }
@@ -1288,19 +1312,24 @@ namespace SUP.P2FK
 
                                 if (isObject.URN != null && key != objectaddress)
                                 {
-
-                                    using (var db = new DB(OBJ, @"root\obj"))
+                                    lock (levelDBLocker)
                                     {
-                                        findId = db.Get(objectaddress + "!" + key);
+                                        using (var db = new DB(OBJ, @"root\obj"))
+                                        {
+                                            findId = db.Get(objectaddress + "!" + key);
+                                        }
                                     }
 
                                     if (findId == transaction.Id.ToString() || findId == null)
                                     {
                                         if (findId == null)
                                         {
-                                            using (var db = new DB(OBJ, @"root\obj"))
+                                            lock (levelDBLocker)
                                             {
-                                                db.Put(objectaddress + "!" + key, transaction.Id.ToString());
+                                                using (var db = new DB(OBJ, @"root\obj"))
+                                                {
+                                                    db.Put(objectaddress + "!" + key, transaction.Id.ToString());
+                                                }
                                             }
                                         }
                                     }
@@ -1382,18 +1411,24 @@ namespace SUP.P2FK
                                     //if (isObject.URN != null && key != objectaddress)
                                     if (isObject.URN != null && key != objectaddress && isObject.Owners.ContainsKey(objectaddress) || (isObject.URN != null && key != objectaddress && isObject.Owners.ContainsKey(key) && isObject.Creators.ContainsKey(objectaddress)))
                                     {
-                                        using (var db = new DB(OBJ, @"root\obj"))
+                                        lock (levelDBLocker)
                                         {
-                                            findId = db.Get(objectaddress + "!" + key);
+                                            using (var db = new DB(OBJ, @"root\obj"))
+                                            {
+                                                findId = db.Get(objectaddress + "!" + key);
+                                            }
                                         }
 
                                         if (findId == transaction.Id.ToString() || findId == null)
                                         {
                                             if (findId == null)
                                             {
-                                                using (var db = new DB(OBJ, @"root\obj"))
+                                                lock (levelDBLocker)
                                                 {
-                                                    db.Put(objectaddress + "!" + key, transaction.Id.ToString());
+                                                    using (var db = new DB(OBJ, @"root\obj"))
+                                                    {
+                                                        db.Put(objectaddress + "!" + key, transaction.Id.ToString());
+                                                    }
                                                 }
                                             }
                                         }
@@ -1421,19 +1456,24 @@ namespace SUP.P2FK
 
                                 if (isObject.URN != null && key != objectaddress && isObject.Owners.ContainsKey(objectaddress) || (isObject.URN != null && key != objectaddress && isObject.Owners.ContainsKey(key) && isObject.Creators.ContainsKey(objectaddress)))
                                 {
-
-                                    using (var db = new DB(OBJ, @"root\obj"))
+                                    lock (levelDBLocker)
                                     {
-                                        findId = db.Get(objectaddress + "!" + key);
+                                        using (var db = new DB(OBJ, @"root\obj"))
+                                        {
+                                            findId = db.Get(objectaddress + "!" + key);
+                                        }
                                     }
 
                                     if (findId == transaction.Id.ToString() || findId == null)
                                     {
                                         if (findId == null)
                                         {
-                                            using (var db = new DB(OBJ, @"root\obj"))
+                                            lock (levelDBLocker)
                                             {
-                                                db.Put(objectaddress + "!" + key, transaction.Id.ToString());
+                                                using (var db = new DB(OBJ, @"root\obj"))
+                                                {
+                                                    db.Put(objectaddress + "!" + key, transaction.Id.ToString());
+                                                }
                                             }
                                         }
                                     }
@@ -1508,19 +1548,24 @@ namespace SUP.P2FK
 
                             if (isObject.URN != null && findObject != objectaddress && isObject.Creators.TryGet(objectaddress).Year > 1)
                             {
-
-                                using (var db = new DB(OBJ, @"root\obj"))
+                                lock (levelDBLocker)
                                 {
-                                    findId = db.Get(objectaddress + "!" + findObject);
+                                    using (var db = new DB(OBJ, @"root\obj"))
+                                    {
+                                        findId = db.Get(objectaddress + "!" + findObject);
+                                    }
                                 }
 
                                 if (findId == transaction.Id.ToString() || findId == null)
                                 {
                                     if (findId == null)
                                     {
-                                        using (var db = new DB(OBJ, @"root\obj"))
+                                        lock (levelDBLocker)
                                         {
-                                            db.Put(objectaddress + "!" + findObject, transaction.Id.ToString());
+                                            using (var db = new DB(OBJ, @"root\obj"))
+                                            {
+                                                db.Put(objectaddress + "!" + findObject, transaction.Id.ToString());
+                                            }
                                         }
                                     }
                                 }
@@ -1614,31 +1659,32 @@ namespace SUP.P2FK
             List<string> keywords = new List<string>();
 
             var KEY = new Options { CreateIfMissing = true };
-
-            using (var db = new DB(KEY, @"root\obj"))
+            lock (levelDBLocker)
             {
-                LevelDB.Iterator it = db.CreateIterator();
-                for (
-                   it.Seek(objectaddress);
-                   it.IsValid() && it.KeyAsString().StartsWith(objectaddress + "!");  // && rownum <= numMessagesDisplayed + 10; // Only display next 10 messages
-                    it.Next()
-                 )
+                using (var db = new DB(KEY, @"root\obj"))
                 {
-                    string keyaddress = it.KeyAsString().Substring(it.KeyAsString().IndexOf('!') + 1);
-                    Base58.DecodeWithCheckSum(keyaddress, out byte[] payloadBytes);
-                    keyaddress = IsAsciiText(payloadBytes);
-
-                    if (keyaddress != null)
+                    LevelDB.Iterator it = db.CreateIterator();
+                    for (
+                       it.Seek(objectaddress);
+                       it.IsValid() && it.KeyAsString().StartsWith(objectaddress + "!");  // && rownum <= numMessagesDisplayed + 10; // Only display next 10 messages
+                        it.Next()
+                     )
                     {
+                        string keyaddress = it.KeyAsString().Substring(it.KeyAsString().IndexOf('!') + 1);
+                        Base58.DecodeWithCheckSum(keyaddress, out byte[] payloadBytes);
+                        keyaddress = IsAsciiText(payloadBytes);
 
-                        keywords.Add(keyaddress);
+                        if (keyaddress != null)
+                        {
+
+                            keywords.Add(keyaddress);
+
+                        }
 
                     }
-
+                    it.Dispose();
                 }
-                it.Dispose();
             }
-
 
             return keywords;
         }
@@ -1650,77 +1696,25 @@ namespace SUP.P2FK
 
             int rownum = 1;
             var SUP = new Options { CreateIfMissing = true };
-
-            using (var db = new DB(SUP, @"root\sup"))
+            lock (levelDBLocker)
             {
-                LevelDB.Iterator it = db.CreateIterator();
-                for (
-                   it.Seek(objectaddress);
-                   it.IsValid() && it.KeyAsString().StartsWith(objectaddress) && rownum <= skip + qty; // Only display next 10 messages
-                    it.Next()
-                 )
+                using (var db = new DB(SUP, @"root\sup"))
                 {
-                    // Display only if rownum > numMessagesDisplayed to skip already displayed messages
-                    if (rownum > skip)
+                    LevelDB.Iterator it = db.CreateIterator();
+                    for (
+                       it.Seek(objectaddress);
+                       it.IsValid() && it.KeyAsString().StartsWith(objectaddress) && rownum <= skip + qty; // Only display next 10 messages
+                        it.Next()
+                     )
                     {
-                        string process = it.ValueAsString();
-
-                        List<string> supMessagePacket = JsonConvert.DeserializeObject<List<string>>(process);
-
-                        string message = System.IO.File.ReadAllText(@"root/" + supMessagePacket[1] + @"/MSG").Replace("@" + objectaddress, "").Replace('“', '"').Replace('”', '"');
-
-                        string fromAddress = supMessagePacket[0];
-
-                        string tstamp = it.KeyAsString().Split('!')[1];
-
-                        // Add the message data to the messages list
-                        messages.Add(new
+                        // Display only if rownum > numMessagesDisplayed to skip already displayed messages
+                        if (rownum > skip)
                         {
-                            Message = message,
-                            FromAddress = fromAddress,
-                            BlockDate = tstamp
-                        });
-                    }
-                    rownum++;
-                }
-                it.Dispose();
-            }
+                            string process = it.ValueAsString();
 
-            return new { Messages = messages };
-        }
-        public static object GetPrivateMessagesByAddress(string objectaddress, string username, string password, string url, string versionByte = "111", int skip = 0, int qty = 10)
-        {
-            GetObjectByAddress(objectaddress, username, password, url, versionByte);
+                            List<string> supMessagePacket = JsonConvert.DeserializeObject<List<string>>(process);
 
-            List<object> messages = new List<object>();
-
-            int rownum = 1;
-            var SUP = new Options { CreateIfMissing = true };
-
-            using (var db = new DB(SUP, @"root\sec"))
-            {
-                LevelDB.Iterator it = db.CreateIterator();
-                for (
-                   it.Seek(objectaddress);
-                   it.IsValid() && it.KeyAsString().StartsWith(objectaddress) && rownum <= skip + qty; // Only display next 10 messages
-                    it.Next()
-                 )
-                {
-                    // Display only if rownum > numMessagesDisplayed to skip already displayed messages
-                    if (rownum > skip)
-                    {
-                        string process = it.ValueAsString();
-
-                        List<string> supMessagePacket = JsonConvert.DeserializeObject<List<string>>(process);
-
-
-                        byte[] result = Root.GetRootBytesByFile(new string[] { @"root/" + supMessagePacket[1] + @"/SEC" });
-                        result = Root.DecryptRootBytes(username, password, url, objectaddress, result);
-
-                        Root root = Root.GetRootByTransactionId(supMessagePacket[1], null, null, null, versionByte, result);
-
-                        foreach (string message in root.Message)
-                        {
+                            string message = System.IO.File.ReadAllText(@"root/" + supMessagePacket[1] + @"/MSG").Replace("@" + objectaddress, "").Replace('“', '"').Replace('”', '"');
 
                             string fromAddress = supMessagePacket[0];
 
@@ -1734,14 +1728,69 @@ namespace SUP.P2FK
                                 BlockDate = tstamp
                             });
                         }
-
-
+                        rownum++;
                     }
-                    rownum++;
+                    it.Dispose();
                 }
-                it.Dispose();
             }
 
+            return new { Messages = messages };
+        }
+        public static object GetPrivateMessagesByAddress(string objectaddress, string username, string password, string url, string versionByte = "111", int skip = 0, int qty = 10)
+        {
+            GetObjectByAddress(objectaddress, username, password, url, versionByte);
+
+            List<object> messages = new List<object>();
+
+            int rownum = 1;
+            var SUP = new Options { CreateIfMissing = true };
+            lock (levelDBLocker)
+            {
+                using (var db = new DB(SUP, @"root\sec"))
+                {
+                    LevelDB.Iterator it = db.CreateIterator();
+                    for (
+                       it.Seek(objectaddress);
+                       it.IsValid() && it.KeyAsString().StartsWith(objectaddress) && rownum <= skip + qty; // Only display next 10 messages
+                        it.Next()
+                     )
+                    {
+                        // Display only if rownum > numMessagesDisplayed to skip already displayed messages
+                        if (rownum > skip)
+                        {
+                            string process = it.ValueAsString();
+
+                            List<string> supMessagePacket = JsonConvert.DeserializeObject<List<string>>(process);
+                            Root root = Root.GetRootByTransactionId(supMessagePacket[1],username,password,url, versionByte);
+                            byte[] result = Root.GetRootBytesByFile(new string[] { @"root/" + supMessagePacket[1] + @"/SEC" });
+                            result = Root.DecryptRootBytes(username, password, url, objectaddress, result);
+
+                            root = Root.GetRootByTransactionId(supMessagePacket[1],null,null,null, versionByte, result);
+                           
+                                foreach (string message in root.Message)
+                                {
+
+                                    string fromAddress = supMessagePacket[0];
+
+                                    string tstamp = it.KeyAsString().Split('!')[1];
+
+                                    // Add the message data to the messages list
+                                    messages.Add(new
+                                    {
+                                        Message = message,
+                                        FromAddress = fromAddress,
+                                        BlockDate = tstamp
+                                    });
+                                }
+                            
+
+
+                        }
+                        rownum++;
+                    }
+                    it.Dispose();
+                }
+            }
             return new { Messages = messages };
         }
         private static string IsAsciiText(byte[] data)

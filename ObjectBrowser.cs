@@ -25,6 +25,7 @@ namespace SUP
         private readonly string _objectaddress;
         private List<String> SearchHistory = new List<String>();
         private int SearchId = 0;
+        private int isBuildingCounter = 0;
         private HashSet<string> loadedObjects = new HashSet<string>();
         private readonly static object levelDBLocker = new object();
         private List<string> BTCMemPool = new List<string>();
@@ -172,27 +173,31 @@ namespace SUP
 
 
                                 var SUP = new Options { CreateIfMissing = true };
-
-                                using (var db = new DB(SUP, @"ipfs"))
+                                lock (levelDBLocker)
                                 {
-
-                                    string ipfsdaemon = db.Get("ipfs-daemon");
-
-                                    if (ipfsdaemon == "true")
+                                    using (var db = new DB(SUP, @"ipfs"))
                                     {
-                                        Process process3 = new Process
+
+                                        string ipfsdaemon = db.Get("ipfs-daemon");
+
+                                        if (ipfsdaemon == "true")
                                         {
-                                            StartInfo = new ProcessStartInfo
+                                            Process process3 = new Process
                                             {
-                                                FileName = @"ipfs\ipfs.exe",
-                                                Arguments = "pin add " + transid,
-                                                UseShellExecute = false,
-                                                CreateNoWindow = true
-                                            }
-                                        };
-                                        process3.Start();
+                                                StartInfo = new ProcessStartInfo
+                                                {
+                                                    FileName = @"ipfs\ipfs.exe",
+                                                    Arguments = "pin add " + transid,
+                                                    UseShellExecute = false,
+                                                    CreateNoWindow = true
+                                                }
+                                            };
+                                            process3.Start();
+                                        }
                                     }
+
                                 }
+
                             }
                             if (objstate.Image.Length == 51)
                             { foundObject.ObjectImage.ImageLocation = objstate.Image.Replace("IPFS:", @"ipfs/") + @"/artifact"; }
@@ -390,25 +395,27 @@ namespace SUP
 
 
                                 var SUP = new Options { CreateIfMissing = true };
-
-                                using (var db = new DB(SUP, @"ipfs"))
+                                lock (levelDBLocker)
+                                {
+                                    using (var db = new DB(SUP, @"ipfs"))
                                 {
 
                                     string ipfsdaemon = db.Get("ipfs-daemon");
 
-                                    if (ipfsdaemon == "true")
-                                    {
-                                        Process process3 = new Process
+                                        if (ipfsdaemon == "true")
                                         {
-                                            StartInfo = new ProcessStartInfo
+                                            Process process3 = new Process
                                             {
-                                                FileName = @"ipfs\ipfs.exe",
-                                                Arguments = "pin add " + transid,
-                                                UseShellExecute = false,
-                                                CreateNoWindow = true
-                                            }
-                                        };
-                                        process3.Start();
+                                                StartInfo = new ProcessStartInfo
+                                                {
+                                                    FileName = @"ipfs\ipfs.exe",
+                                                    Arguments = "pin add " + transid,
+                                                    UseShellExecute = false,
+                                                    CreateNoWindow = true
+                                                }
+                                            };
+                                            process3.Start();
+                                        }
                                     }
                                 }
                             }
@@ -598,25 +605,27 @@ namespace SUP
 
 
                             var SUP = new Options { CreateIfMissing = true };
-
-                            using (var db = new DB(SUP, @"ipfs"))
+                            lock (levelDBLocker)
                             {
-
-                                string ipfsdaemon = db.Get("ipfs-daemon");
-
-                                if (ipfsdaemon == "true")
+                                using (var db = new DB(SUP, @"ipfs"))
                                 {
-                                    Process process3 = new Process
+
+                                    string ipfsdaemon = db.Get("ipfs-daemon");
+
+                                    if (ipfsdaemon == "true")
                                     {
-                                        StartInfo = new ProcessStartInfo
+                                        Process process3 = new Process
                                         {
-                                            FileName = @"ipfs\ipfs.exe",
-                                            Arguments = "pin add " + transid,
-                                            UseShellExecute = false,
-                                            CreateNoWindow = true
-                                        }
-                                    };
-                                    process3.Start();
+                                            StartInfo = new ProcessStartInfo
+                                            {
+                                                FileName = @"ipfs\ipfs.exe",
+                                                Arguments = "pin add " + transid,
+                                                UseShellExecute = false,
+                                                CreateNoWindow = true
+                                            }
+                                        };
+                                        process3.Start();
+                                    }
                                 }
                             }
 
@@ -799,25 +808,27 @@ namespace SUP
 
 
                             var SUP = new Options { CreateIfMissing = true };
-
-                            using (var db = new DB(SUP, @"ipfs"))
+                            lock (levelDBLocker)
                             {
-
-                                string ipfsdaemon = db.Get("ipfs-daemon");
-
-                                if (ipfsdaemon == "true")
+                                using (var db = new DB(SUP, @"ipfs"))
                                 {
-                                    Process process3 = new Process
+
+                                    string ipfsdaemon = db.Get("ipfs-daemon");
+
+                                    if (ipfsdaemon == "true")
                                     {
-                                        StartInfo = new ProcessStartInfo
+                                        Process process3 = new Process
                                         {
-                                            FileName = @"ipfs\ipfs.exe",
-                                            Arguments = "pin add " + transid,
-                                            UseShellExecute = false,
-                                            CreateNoWindow = true
-                                        }
-                                    };
-                                    process3.Start();
+                                            StartInfo = new ProcessStartInfo
+                                            {
+                                                FileName = @"ipfs\ipfs.exe",
+                                                Arguments = "pin add " + transid,
+                                                UseShellExecute = false,
+                                                CreateNoWindow = true
+                                            }
+                                        };
+                                        process3.Start();
+                                    }
                                 }
                             }
 
@@ -1084,19 +1095,25 @@ namespace SUP
 
                                 var SUP = new Options { CreateIfMissing = true };
                                 string isLoading;
-                                using (var db = new DB(SUP, @"ipfs"))
+                                lock (levelDBLocker)
                                 {
-                                    isLoading = db.Get(ipfsHash);
+                                    using (var db = new DB(SUP, @"ipfs"))
+                                    {
+                                        isLoading = db.Get(ipfsHash);
 
+                                    }
                                 }
 
                                 if (isLoading != "loading")
                                 {
-                                    using (var db = new DB(SUP, @"ipfs"))
+                                    lock (levelDBLocker)
                                     {
+                                        using (var db = new DB(SUP, @"ipfs"))
+                                        {
 
-                                        db.Put(ipfsHash, "loading");
+                                            db.Put(ipfsHash, "loading");
 
+                                        }
                                     }
                                     Task ipfsTask = Task.Run(() =>
                                 {
@@ -1119,28 +1136,29 @@ namespace SUP
                                     }
 
 
-
-                                    using (var db = new DB(SUP, @"ipfs"))
+                                    lock (levelDBLocker)
                                     {
-
-                                        string ipfsdaemon = db.Get("ipfs-daemon");
-
-                                        if (ipfsdaemon == "true")
+                                        using (var db = new DB(SUP, @"ipfs"))
                                         {
-                                            Process process3 = new Process
+
+                                            string ipfsdaemon = db.Get("ipfs-daemon");
+
+                                            if (ipfsdaemon == "true")
                                             {
-                                                StartInfo = new ProcessStartInfo
+                                                Process process3 = new Process
                                                 {
-                                                    FileName = @"ipfs\ipfs.exe",
-                                                    Arguments = "pin add " + ipfsHash,
-                                                    UseShellExecute = false,
-                                                    CreateNoWindow = true
-                                                }
-                                            };
-                                            process3.Start();
+                                                    StartInfo = new ProcessStartInfo
+                                                    {
+                                                        FileName = @"ipfs\ipfs.exe",
+                                                        Arguments = "pin add " + ipfsHash,
+                                                        UseShellExecute = false,
+                                                        CreateNoWindow = true
+                                                    }
+                                                };
+                                                process3.Start();
+                                            }
                                         }
                                     }
-
 
 
                                     if (System.IO.Directory.Exists(System.IO.Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + @"\ipfs\" + ipfsHash))
@@ -1148,11 +1166,13 @@ namespace SUP
                                         Process.Start("explorer.exe", System.IO.Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + @"\ipfs\" + ipfsHash);
                                     }
                                     else { Label filenotFound = new Label(); filenotFound.AutoSize = true; filenotFound.Text = "IPFS: Search failed! Verify IPFS pinning is enbaled"; flowLayoutPanel1.Controls.Clear(); flowLayoutPanel1.Controls.Add(filenotFound); }
-
-                                    using (var db = new DB(SUP, @"ipfs"))
+                                    lock (levelDBLocker)
                                     {
-                                        db.Delete(ipfsHash);
+                                        using (var db = new DB(SUP, @"ipfs"))
+                                        {
+                                            db.Delete(ipfsHash);
 
+                                        }
                                     }
                                 });
                                 }
@@ -1324,28 +1344,30 @@ namespace SUP
                 else
                 {
                     var SUP = new Options { CreateIfMissing = true };
-
-                    using (var db = new DB(SUP, @"ipfs"))
+                    lock (levelDBLocker)
                     {
-
-                        string ipfsdaemon = db.Get("ipfs-daemon");
-
-                        if (ipfsdaemon == "true")
+                        using (var db = new DB(SUP, @"ipfs"))
                         {
 
-                            var process = new Process
-                            {
-                                StartInfo = new ProcessStartInfo
-                                {
-                                    FileName = @"ipfs\ipfs.exe",
-                                    Arguments = "daemon",
-                                    UseShellExecute = false,
-                                    CreateNoWindow = true
-                                }
-                            };
-                            process.Start();
-                        }
+                            string ipfsdaemon = db.Get("ipfs-daemon");
 
+                            if (ipfsdaemon == "true")
+                            {
+
+                                var process = new Process
+                                {
+                                    StartInfo = new ProcessStartInfo
+                                    {
+                                        FileName = @"ipfs\ipfs.exe",
+                                        Arguments = "daemon",
+                                        UseShellExecute = false,
+                                        CreateNoWindow = true
+                                    }
+                                };
+                                process.Start();
+                            }
+
+                        }
                     }
                 }
 
@@ -1581,7 +1603,7 @@ namespace SUP
                     isBuilding = db.Get("isBuilding");
                 }
             }
-                if (isBuilding != "true")
+                if (isBuilding != "true" || isBuildingCounter > 11)
                 {
                     lock (levelDBLocker)
                     {
@@ -1589,6 +1611,7 @@ namespace SUP
                         using (var db = new DB(MUTE, @"root\sup"))
                         {
                             db.Put("isBuilding", "true");
+                            isBuildingCounter++;
                         }
                     }
                     int foundCount = 0;
@@ -1802,24 +1825,14 @@ namespace SUP
                                 using (var db = new DB(MUTE, @"root\sup"))
                                 {
                                     db.Delete("isBuilding");
+                                    
                                 }
                             }
 
-                            SearchAddressUpdate();
-
-
-                            lock (levelDBLocker)
-                            {
-                                var MUTE = new Options { CreateIfMissing = true };
-                                using (var db = new DB(MUTE, @"root\sup"))
-                                {
-                                    db.Put("isBuilding","1");
-                                }
-                            }
-
-                                           
+                            SearchAddressUpdate();                                              
   
                         });
+                        isBuildingCounter = 0;
 
                     }
                     lock (levelDBLocker)
@@ -1828,12 +1841,13 @@ namespace SUP
                         using (var db = new DB(MUTE, @"root\sup"))
                         {
                             db.Delete("isBuilding");
+                            isBuildingCounter = 0;
                         }
                     }
 
 
 
-                }
+                }else { isBuildingCounter++;}
             });
         
         }

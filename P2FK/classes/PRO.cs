@@ -91,19 +91,23 @@ namespace SUP.P2FK
                 {
 
                     string sigSeen;
-
-                    using (var db = new DB(OBJ, @"root\pro"))
+                    lock (levelDBLocker)
                     {
-                        sigSeen = db.Get(transaction.Signature);
+                        using (var db = new DB(OBJ, @"root\pro"))
+                        {
+                            sigSeen = db.Get(transaction.Signature);
+                        }
                     }
 
                     if (sigSeen == null || sigSeen == transaction.TransactionId)
                     {
 
-
-                        using (var db = new DB(OBJ, @"root\pro"))
+                        lock (levelDBLocker)
                         {
-                            db.Put(transaction.Signature, transaction.TransactionId);
+                            using (var db = new DB(OBJ, @"root\pro"))
+                            {
+                                db.Put(transaction.Signature, transaction.TransactionId);
+                            }
                         }
 
 

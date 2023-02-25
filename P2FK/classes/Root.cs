@@ -71,7 +71,7 @@ namespace SUP.P2FK
 
                 }
                 //if transactionID is found in LevelDB cache with invalid or blocked status return null
-                if (P2FKJSONString == "invalid" || P2FKJSONString == "true")
+                if (P2FKJSONString == "true")
                 {
                     return P2FKRoot;
                 }
@@ -192,21 +192,7 @@ namespace SUP.P2FK
             int transactionBytesSize = transactionBytes.Count();
             transactionASCII = Encoding.ASCII.GetString(transactionBytes);
 
-            if (P2FKSignatureAddress != null)
-            {
-                lock (levelDBLocker)
-                {
-                    var OBJ = new Options { CreateIfMissing = true };
-                    string isBlocked;
-                    
-                        using (var db = new DB(OBJ, @"root\block"))
-                        {
-                            isBlocked = db.Get(P2FKSignatureAddress);
-                        }
-                        if (isBlocked == "true") { return P2FKRoot; }
-                   
-                }
-            }
+            if (rootbytes == null && P2FKSignatureAddress == null) { return P2FKRoot;}
 
             // Perform the loop until no additional numbers are found and the regular expression fails to match
             while (regexSpecialChars.IsMatch(transactionASCII))
@@ -326,12 +312,6 @@ namespace SUP.P2FK
                         catch
                         {
 
-                            var ROOT = new Options { CreateIfMissing = true };
-                            var db = new DB(ROOT, @"root\block");
-                            db.Put(transactionid, "invalid");
-                            db.Close();
-
-
                             return null;
                         }
                     }
@@ -375,18 +355,6 @@ namespace SUP.P2FK
             //if no P2FK files or messages were found return Invalid object
             if (files.Count() + MessageList.Count() == 0)
             {
-
-                lock (levelDBLocker)
-                {
-                  
-                        var ROOT = new Options { CreateIfMissing = true };
-                        var db = new DB(ROOT, @"root\block");
-                        db.Put(transactionid, "invalid");
-                        db.Close();
-                    
-                }
-
-
                 return P2FKRoot;
             }
 
