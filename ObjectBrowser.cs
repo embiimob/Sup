@@ -1630,7 +1630,6 @@ namespace SUP
                 btnHistoryBack.Enabled = false;
                 btnHistoryForward.Enabled = false;
                 btnMint.Enabled = false;
-                txtSearchAddress.Text = string.Empty;
                 txtSearchAddress.Enabled = false;
                 BuildSearchResults();
                 tmrSearchMemoryPool.Enabled = true;
