@@ -703,7 +703,7 @@ namespace SUP.P2FK
 
         }
         //for in-memory object discovery and creation only. get object by address information is not available until after confirmation. do not use for general object verifiction
-        public static OBJState GetObjectByTransactionId(string transactionid, string username, string password, string url, string versionByte = "111", bool verbose = false)
+        public static OBJState GetObjectByTransactionId(string transactionid)
         {
 
             OBJState objectState = new OBJState();
@@ -717,164 +717,121 @@ namespace SUP.P2FK
             {
                 JSONOBJ = System.IO.File.ReadAllText(diskpath + "OBJ");
                 objectState = JsonConvert.DeserializeObject<OBJState>(JSONOBJ);
-                verbose = objectState.Verbose;
+
             }
-            catch { }
+            catch { return objectState; }
 
             var intProcessHeight = 0;
             Root objectTransaction;
+            string P2FKJSONString = System.IO.File.ReadAllText(diskpath + "P2FK.json");
+            objectTransaction = JsonConvert.DeserializeObject<Root>(P2FKJSONString);
+            OBJ objectinspector = null;
+            try
+            {
+                objectinspector = JsonConvert.DeserializeObject<OBJ>(File.ReadAllText(@"root\" + transactionid + @"\OBJ"));
 
-            //return all roots found at address
-            objectTransaction = Root.GetRootByTransactionId(transactionid, username, password, url, versionByte);
+            }
+            catch { return objectState; }
 
 
-            string sortableProcessHeight = intProcessHeight.ToString("X").PadLeft(9, '0');
-       
-
-
-            //ignore any transaction that is not signed
-            if (objectTransaction.Signed && (objectTransaction.File.ContainsKey("OBJ")))
+            if (objectinspector.cre != null && objectState.Creators == null)
             {
 
-
-
-                switch (objectTransaction.File.Last().Key.ToString().Substring(objectTransaction.File.Last().Key.ToString().Length - 3))
+                objectState.Creators = new Dictionary<string, DateTime> { };
+                foreach (int keywordId in objectinspector.cre)
                 {
-                    case "OBJ":
-                        OBJ objectinspector = null;
-                        try
+
+                    string creator = objectTransaction.Keyword.Reverse().ElementAt(keywordId).Key;
+
+                    if (!objectState.Creators.ContainsKey(creator))
+                    {
+                        objectState.Creators.Add(creator, new DateTime());
+                    }
+
+                }
+
+                objectState.ChangeDate = objectTransaction.BlockDate;
+                objectinspector.cre = null;
+            }
+
+
+            try
+            {
+                //has proper authority to make OBJ changes
+                if (objectState.Creators.ContainsKey(objectTransaction.SignedBy))
+                {
+
+                    if (objectinspector.cre != null && objectState.Creators.TryGet(objectTransaction.SignedBy).Year == 1)
+                    {
+                        objectState.Creators[objectTransaction.SignedBy] = objectTransaction.BlockDate;
+                        objectState.ChangeDate = objectTransaction.BlockDate;
+
+
+                    }
+
+
+
+                    if (objectState.LockedDate.Year == 1)
+                    {
+                        if (objectinspector.urn != null) { objectState.ChangeDate = objectTransaction.BlockDate; objectState.URN = objectinspector.urn.Replace('“', '"').Replace('”', '"'); }
+                        if (objectinspector.uri != null) { objectState.ChangeDate = objectTransaction.BlockDate; objectState.URI = objectinspector.uri.Replace('“', '"').Replace('”', '"'); ; }
+                        if (objectinspector.img != null) { objectState.ChangeDate = objectTransaction.BlockDate; objectState.Image = objectinspector.img.Replace('“', '"').Replace('”', '"'); ; }
+                        if (objectinspector.nme != null) { objectState.ChangeDate = objectTransaction.BlockDate; objectState.Name = objectinspector.nme.Replace('“', '"').Replace('”', '"'); ; }
+                        if (objectinspector.dsc != null) { objectState.ChangeDate = objectTransaction.BlockDate; objectState.Description = objectinspector.dsc.Replace('“', '"').Replace('”', '"'); ; }
+                        if (objectinspector.atr != null) { objectState.ChangeDate = objectTransaction.BlockDate; objectState.Attributes = objectinspector.atr; }
+                        if (objectinspector.lic != null) { objectState.ChangeDate = objectTransaction.BlockDate; objectState.License = objectinspector.lic.Replace('“', '"').Replace('”', '"'); ; }
+
+                        if (objectinspector.own != null)
                         {
-                            objectinspector = JsonConvert.DeserializeObject<OBJ>(File.ReadAllText(@"root\" + transactionid + @"\OBJ"));
-
-                        }
-                        catch 
-                        {
-                            break;
-                        }
-
-
-                        if (objectinspector.cre != null && objectState.Creators == null)
-                        {
-
-                            objectState.Creators = new Dictionary<string, DateTime> { };
-                            foreach (int keywordId in objectinspector.cre)
+                            if (objectState.Owners == null)
                             {
-
-                                string creator = objectTransaction.Keyword.Reverse().ElementAt(keywordId).Key;
-
-                                if (!objectState.Creators.ContainsKey(creator))
-                                {
-                                    objectState.Creators.Add(creator, new DateTime());
-                                }
+                                objectState.CreatedDate = objectTransaction.BlockDate;
+                                objectState.Owners = new Dictionary<string, long>();
+                                                               
 
                             }
 
-                            objectState.ChangeDate = objectTransaction.BlockDate;
-                            objectinspector.cre = null;
-                        }
 
-
-                        try
-                        {
-                            //has proper authority to make OBJ changes
-                            if (objectState.Creators.ContainsKey(objectTransaction.SignedBy))
+                            foreach (var ownerId in objectinspector.own)
                             {
-
-                                if (objectinspector.cre != null && objectState.Creators.TryGet(objectTransaction.SignedBy).Year == 1)
+                                string owner = objectTransaction.Keyword.Reverse().ElementAt(ownerId.Key).Key;
+                                if (!objectState.Owners.ContainsKey(owner))
                                 {
-                                    objectState.Creators[objectTransaction.SignedBy] = objectTransaction.BlockDate;
-                                    objectState.ChangeDate = objectTransaction.BlockDate;
-
-
-                                }
-
-
-
-                                if (objectState.LockedDate.Year == 1)
-                                {
-                                    if (objectinspector.urn != null) { objectState.ChangeDate = objectTransaction.BlockDate; objectState.URN = objectinspector.urn.Replace('“', '"').Replace('”', '"'); }
-                                    if (objectinspector.uri != null) { objectState.ChangeDate = objectTransaction.BlockDate; objectState.URI = objectinspector.uri.Replace('“', '"').Replace('”', '"'); ; }
-                                    if (objectinspector.img != null) { objectState.ChangeDate = objectTransaction.BlockDate; objectState.Image = objectinspector.img.Replace('“', '"').Replace('”', '"'); ; }
-                                    if (objectinspector.nme != null) { objectState.ChangeDate = objectTransaction.BlockDate; objectState.Name = objectinspector.nme.Replace('“', '"').Replace('”', '"'); ; }
-                                    if (objectinspector.dsc != null) { objectState.ChangeDate = objectTransaction.BlockDate; objectState.Description = objectinspector.dsc.Replace('“', '"').Replace('”', '"'); ; }
-                                    if (objectinspector.atr != null) { objectState.ChangeDate = objectTransaction.BlockDate; objectState.Attributes = objectinspector.atr; }
-                                    if (objectinspector.lic != null) { objectState.ChangeDate = objectTransaction.BlockDate; objectState.License = objectinspector.lic.Replace('“', '"').Replace('”', '"'); ; }
-
-                                    if (objectinspector.own != null)
-                                    {
-                                        if (objectState.Owners == null)
-                                        {
-                                            objectState.CreatedDate = objectTransaction.BlockDate;
-                                            objectState.Owners = new Dictionary<string, long>();
-
-                                        }
-
-
-                                        foreach (var ownerId in objectinspector.own)
-                                        {
-                                            string owner = objectTransaction.Keyword.Reverse().ElementAt(ownerId.Key).Key;
-                                            if (!objectState.Owners.ContainsKey(owner))
-                                            {
-                                                objectState.Owners.Add(owner, ownerId.Value);
-                                            }
-                                            else
-                                            {
-                                                objectState.Owners[owner] = ownerId.Value;
-
-                                            }
-                                        }
-                                    }
-
-
+                                    objectState.Owners.Add(owner, ownerId.Value);
                                 }
                                 else
                                 {
-                                    break;
+                                    objectState.Owners[owner] = ownerId.Value;
+
                                 }
                             }
-                            else
-                            {
-                            }
-                            break;
-
-
-
-                        }
-                        catch
-                        {
-
-                            break;
                         }
 
 
-                    default:
-                        // ignore
+                    }
 
-                        break;
                 }
 
 
 
 
             }
+            catch
+            {
+                return objectState;
+            }
+
+            var objectSerialized = JsonConvert.SerializeObject(objectState);
 
 
-
+            if (!Directory.Exists(@"root\" + objectTransaction.SignedBy))
+            {
+                Directory.CreateDirectory(@"root\" + objectTransaction.SignedBy);
+            }
+            System.IO.File.WriteAllText(@"root\" + objectTransaction.SignedBy + @"\" + "P2FK.json", objectSerialized);
 
             //used to determine where to begin object State processing when retrieved from cache
             objectState.ProcessHeight = intProcessHeight;
-            objectState.Verbose = verbose;
-            var objectSerialized = JsonConvert.SerializeObject(objectState);
-
-            if (objectTransaction.SignedBy != null)
-            {
-                if (!Directory.Exists(@"root\" + objectTransaction.SignedBy))
-                {
-                    Directory.CreateDirectory(@"root\" + objectTransaction.SignedBy);
-                }
-                System.IO.File.WriteAllText(@"root\" + objectTransaction.SignedBy + @"\" + "P2FK.json", objectSerialized);
-            }
-
             return objectState;
 
         }

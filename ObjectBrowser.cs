@@ -27,6 +27,7 @@ namespace SUP
         private int isBuildingCounter = 0;
         private HashSet<string> loadedObjects = new HashSet<string>();
         private readonly static object levelDBLocker = new object();
+        private readonly static object liveMonitorLocker = new object();
         private List<string> BTCMemPool = new List<string>();
         private List<string> BTCTMemPool = new List<string>();
         private List<string> MZCMemPool = new List<string>();
@@ -1489,7 +1490,7 @@ namespace SUP
 
         private void flowLayoutPanel1_SizeChanged(object sender, EventArgs e)
         {
-           
+
 
         }
 
@@ -1605,7 +1606,7 @@ namespace SUP
                 if (btnLive.BackColor != Color.Blue)
                 {
                     int loadQty = ((flowLayoutPanel1.Size.Width / 208) * (flowLayoutPanel1.Size.Height / 309) + ((flowLayoutPanel1.Size.Width / 208) * 2) + ((flowLayoutPanel1.Size.Height / 309) * 2));
-             
+
                     if (loadQty > 1)
                     {
                         SearchAddressUpdate();
@@ -1652,347 +1653,579 @@ namespace SUP
 
         private void tmrSearchMemoryPool_Tick(object sender, EventArgs e)
         {
-            try
+            lock (liveMonitorLocker)
             {
-                Task SearchMemoryTask = Task.Run(() =>
+                try
                 {
-                    string isBuilding;
-                    lock (levelDBLocker)
+                    Task SearchMemoryTask = Task.Run(() =>
                     {
-                        var MUTE = new Options { CreateIfMissing = true };
-                        using (var db = new DB(MUTE, @"root\monitor"))
-                        {
-                            isBuilding = db.Get("isBuilding");
-                        }
-                    }
-                    if (isBuilding != "true" || isBuildingCounter > 11)
-                    {
+                        string isBuilding;
                         lock (levelDBLocker)
                         {
                             var MUTE = new Options { CreateIfMissing = true };
                             using (var db = new DB(MUTE, @"root\monitor"))
                             {
-                                db.Put("isBuilding", "true");
-                                isBuildingCounter++;
+                                isBuilding = db.Get("isBuilding");
                             }
                         }
-                        int foundCount = 0;
-                        List<string> differenceQuery = new List<string>();
-                        List<string> newtransactions = new List<string>();
-                        string flattransactions;
-                        OBJState isobject = new OBJState();
-                        NetworkCredential credentials = new NetworkCredential("good-user", "better-password");
-                        RPCClient rpcClient;
-                        try
+                        if (isBuilding != "true" || isBuildingCounter > 11)
                         {
-                            rpcClient = new RPCClient(credentials, new Uri(@"http://127.0.0.1:18332"), Network.Main);
-                            flattransactions = rpcClient.SendCommand("getrawmempool").ResultString;
-                            flattransactions = flattransactions.Replace("\"", "").Replace("[", "").Replace("]", "").Replace("\r", "").Replace("\n", "").Replace(" ", "");
-                            newtransactions = flattransactions.Split(',').ToList();
-
-                            if (BTCTMemPool.Count == 0)
+                            lock (levelDBLocker)
                             {
-                                BTCTMemPool = newtransactions;
-                            }
-                            else
-                            {
-                                differenceQuery =
-                                (List<string>)newtransactions.Except(BTCTMemPool).ToList(); ;
-
-                                BTCTMemPool = newtransactions;
-
-                                foreach (var s in differenceQuery)
+                                var MUTE = new Options { CreateIfMissing = true };
+                                using (var db = new DB(MUTE, @"root\monitor"))
                                 {
-                                    try
-                                    {
-                                        isobject = OBJState.GetObjectByTransactionId(s, "good-user", "better-password", @"http://127.0.0.1:18332");
-                                    }
-                                    catch { }
-
-                                    if (isobject.URN != null) {
-
-                                        lock (levelDBLocker)
-                                        {
-                                            var FOUND = new Options { CreateIfMissing = true };
-                                            using (var db = new DB(FOUND, @"root\found"))
-                                            {
-                                                db.Put("found!" + isobject.CreatedDate.ToString("yyyyMMddHHmmss") + "!" + isobject.Creators.First().Key, "1");
-                                            }
-
-                                        }
-
-                                        foundCount++; }
-
+                                    db.Put("isBuilding", "true");
+                                    isBuildingCounter++;
                                 }
-
                             }
-                        }
-                        catch { }
-                        newtransactions = new List<string>();
+                            int foundCount = 0;
+                            List<string> differenceQuery = new List<string>();
+                            List<string> newtransactions = new List<string>();
+                            string flattransactions;
+                            OBJState isobject = new OBJState();
+                            NetworkCredential credentials = new NetworkCredential("good-user", "better-password");
+                            RPCClient rpcClient;
 
-                        try
-                        {
-                            rpcClient = new RPCClient(credentials, new Uri(@"http://127.0.0.1:8332"), Network.Main);
-                            flattransactions = rpcClient.SendCommand("getrawmempool").ResultString;
-                            flattransactions = flattransactions.Replace("\"", "").Replace("[", "").Replace("]", "").Replace("\r", "").Replace("\n", "").Replace(" ", "");
-                            newtransactions = flattransactions.Split(',').ToList();
-
-                            if (BTCMemPool.Count == 0)
-                            {
-                                BTCMemPool = newtransactions;
-                            }
-                            else
-                            {
-                                differenceQuery =
-                                (List<string>)newtransactions.Except(BTCMemPool).ToList(); ;
-
-                                BTCMemPool = newtransactions;
-
-                                foreach (var s in differenceQuery)
-                                {
-                                    try
-                                    {
-                                        isobject = OBJState.GetObjectByTransactionId(s, "good-user", "better-password", @"http://127.0.0.1:8332", "0");
-                                    }
-                                    catch { }
-                                    if (isobject.URN != null)
-                                    {
-
-                                        lock (levelDBLocker)
-                                        {
-                                            var FOUND = new Options { CreateIfMissing = true };
-                                            using (var db = new DB(FOUND, @"root\found"))
-                                            {
-                                                db.Put("found!" + isobject.CreatedDate.ToString("yyyyMMddHHmmss") + "!" + isobject.Creators.First().Key, "1");
-                                            }
-
-                                        }
-
-                                        foundCount++;
-                                    }
-
-                                }
-
-                            }
-                        }
-                        catch { }
-                        newtransactions = new List<string>();
-
-                        try
-                        {
-                            rpcClient = new RPCClient(credentials, new Uri(@"http://127.0.0.1:12832"), Network.Main);
-                            flattransactions = rpcClient.SendCommand("getrawmempool").ResultString;
-                            flattransactions = flattransactions.Replace("\"", "").Replace("[", "").Replace("]", "").Replace("\r", "").Replace("\n", "").Replace(" ", "");
-                            newtransactions = flattransactions.Split(',').ToList();
-                            if (MZCMemPool.Count == 0)
-                            {
-                                MZCMemPool = newtransactions;
-                            }
-                            else
-                            {
-                                differenceQuery =
-                                (List<string>)newtransactions.Except(MZCMemPool).ToList(); ;
-
-                                MZCMemPool = newtransactions;
-
-                                foreach (var s in differenceQuery)
-                                {
-                                    try
-                                    {
-                                        isobject = OBJState.GetObjectByTransactionId(s, "good-user", "better-password", @"http://127.0.0.1:12832", "50");
-                                    }
-                                    catch { }
-                                    if (isobject.URN != null)
-                                    {
-
-                                        lock (levelDBLocker)
-                                        {
-                                            var FOUND = new Options { CreateIfMissing = true };
-                                            using (var db = new DB(FOUND, @"root\found"))
-                                            {
-                                                db.Put("found!" + isobject.CreatedDate.ToString("yyyyMMddHHmmss") + "!" + isobject.Creators.First().Key, "1");
-                                            }
-
-                                        }
-
-                                        foundCount++;
-                                    }
-
-                                }
-
-                            }
-                        }
-                        catch { }
-                        newtransactions = new List<string>();
-
-                        try
-                        {
-                            rpcClient = new RPCClient(credentials, new Uri(@"http://127.0.0.1:9332"), Network.Main);
-                            flattransactions = rpcClient.SendCommand("getrawmempool").ResultString;
-                            flattransactions = flattransactions.Replace("\"", "").Replace("[", "").Replace("]", "").Replace("\r", "").Replace("\n", "").Replace(" ", "");
-                            newtransactions = flattransactions.Split(',').ToList();
-                            if (LTCMemPool.Count == 0)
-                            {
-                                LTCMemPool = newtransactions;
-                            }
-                            else
-                            {
-                                differenceQuery =
-                                (List<string>)newtransactions.Except(LTCMemPool).ToList(); ;
-
-                                LTCMemPool = newtransactions;
-
-                                foreach (var s in differenceQuery)
-                                {
-                                    try
-                                    {
-                                        isobject = OBJState.GetObjectByTransactionId(s, "good-user", "better-password", @"http://127.0.0.1:9332", "48");
-                                    }
-                                    catch { }
-                                    if (isobject.URN != null)
-                                    {
-
-                                        lock (levelDBLocker)
-                                        {
-                                            var FOUND = new Options { CreateIfMissing = true };
-                                            using (var db = new DB(FOUND, @"root\found"))
-                                            {
-                                                db.Put("found!" + isobject.CreatedDate.ToString("yyyyMMddHHmmss") + "!" + isobject.Creators.First().Key, "1");
-                                            }
-
-                                        }
-
-                                        foundCount++;
-                                    }
-
-                                }
-
-                            }
-                        }
-                        catch { }
-                        newtransactions = new List<string>();
-
-                        try
-                        {
-                            rpcClient = new RPCClient(credentials, new Uri(@"http://127.0.0.1:22555"), Network.Main);
-                            flattransactions = rpcClient.SendCommand("getrawmempool").ResultString;
-                            flattransactions = flattransactions.Replace("\"", "").Replace("[", "").Replace("]", "").Replace("\r", "").Replace("\n", "").Replace(" ", "");
-                            newtransactions = flattransactions.Split(',').ToList();
-
-                            if (DOGMemPool.Count == 0)
-                            {
-                                DOGMemPool = newtransactions;
-                            }
-                            else
-                            {
-                                differenceQuery =
-                                (List<string>)newtransactions.Except(DOGMemPool).ToList(); ;
-
-                                DOGMemPool = newtransactions;
-
-                                foreach (var s in differenceQuery)
-                                {
-                                    try
-                                    {
-                                        isobject = OBJState.GetObjectByTransactionId(s, "good-user", "better-password", @"http://127.0.0.1:22555", "30");
-                                    }
-                                    catch { }
-                                    if (isobject.URN != null)
-                                    {
-
-                                        lock (levelDBLocker)
-                                        {
-                                            var FOUND = new Options { CreateIfMissing = true };
-                                            using (var db = new DB(FOUND, @"root\found"))
-                                            {
-                                                db.Put("found!" + isobject.CreatedDate.ToString("yyyyMMddHHmmss") + "!" + isobject.Creators.First().Key, "1");
-                                            }
-
-                                        }
-
-                                        foundCount++;
-                                    }
-
-                                }
-
-                            }
-                        }
-                        catch { }
-                        newtransactions = new List<string>();
-
-                        if (foundCount > 0)
-                        {
-
-                            int totalQty = 0;
+                            string filter="";
 
                             // Update the txtQty control using Invoke to run it on the UI thread.
-                            flowLayoutPanel1.Invoke((MethodInvoker)delegate
+                            txtSearchAddress.Invoke((MethodInvoker)delegate
                             {
-                                totalQty = flowLayoutPanel1.Controls.Count + ((foundCount * 2) + 2);
+                                filter = txtSearchAddress.Text;
+
+
                             });
 
-
-                            // Update the txtQty control using Invoke to run it on the UI thread.
-                            txtQty.Invoke((MethodInvoker)delegate
+                            try
                             {
-                                txtQty.Text = totalQty.ToString(); totalQty = flowLayoutPanel1.Controls.Count + ((foundCount * 2) + 2);
-                                ;
-                            });
+                                rpcClient = new RPCClient(credentials, new Uri(@"http://127.0.0.1:18332"), Network.Main);
+                                flattransactions = rpcClient.SendCommand("getrawmempool").ResultString;
+                                flattransactions = flattransactions.Replace("\"", "").Replace("[", "").Replace("]", "").Replace("\r", "").Replace("\n", "").Replace(" ", "");
+                                newtransactions = flattransactions.Split(',').ToList();
+
+                                if (BTCTMemPool.Count == 0)
+                                {
+                                    BTCTMemPool = newtransactions;
+                                }
+                                else
+                                {
+                                    differenceQuery =
+                                    (List<string>)newtransactions.Except(BTCTMemPool).ToList(); ;
+
+                                    BTCTMemPool = newtransactions;
+
+                                    foreach (var s in differenceQuery)
+                                    {
+                                        try
+                                        {
+
+                                            Root root = Root.GetRootByTransactionId(s, "good-user", "better-password", @"http://127.0.0.1:18332");
+                                            if (root.Signed == true)
+                                            {
+                                                string block;
+
+                                                lock (levelDBLocker)
+                                                {
+                                                    var WORK = new Options { CreateIfMissing = true };
+                                                    using (var db = new DB(WORK, @"root\block"))
+                                                    {
+                                                        block = db.Get(root.SignedBy);
+                                                    }
+                                                }
+
+                                                if (block != "true")
+                                                {
+                                                    bool find = false;
+
+                                                    if (filter != "")
+                                                    {
+
+                                                        if (filter.StartsWith("#"))
+                                                        {
+                                                            find = root.Keyword.ContainsKey(Root.GetPublicAddressByKeyword(filter.Substring(1)));
+                                                        }
+                                                        else
+                                                        {
+
+                                                            find = root.Keyword.ContainsKey(filter);
 
 
-                            // Update the txtQty control using Invoke to run it on the UI thread.
-                            txtLast.Invoke((MethodInvoker)delegate
+                                                        }
+                                                    }
+                                                    else { find = true; }
+
+                                                    isobject = OBJState.GetObjectByTransactionId(s);
+                                                    if (isobject.URN != null && find == true)
+                                                    {
+                                                        lock (levelDBLocker)
+                                                        {
+                                                            var WORK = new Options { CreateIfMissing = true };
+                                                            using (var db = new DB(WORK, @"root\found"))
+                                                            {
+                                                                db.Put("found!" + root.BlockDate.ToString("yyyyMMddHHmmss") + "!" + root.SignedBy, "1");
+                                                            }
+
+                                                        }
+
+                                                        foundCount++;
+                                                    }
+
+
+                                                }
+                                                else { }
+
+                                            }else
+                                            {
+                                               
+                                            }
+
+                                        }
+                                        catch(Exception ex) { 
+                                            string error = ex.Message; }
+                                    }
+
+                                }
+                            }
+                            catch { }
+                            newtransactions = new List<string>();
+
+                            try
                             {
-                                txtLast.Text = "0";
-                            });
+                                rpcClient = new RPCClient(credentials, new Uri(@"http://127.0.0.1:8332"), Network.Main);
+                                flattransactions = rpcClient.SendCommand("getrawmempool").ResultString;
+                                flattransactions = flattransactions.Replace("\"", "").Replace("[", "").Replace("]", "").Replace("\r", "").Replace("\n", "").Replace(" ", "");
+                                newtransactions = flattransactions.Split(',').ToList();
 
+                                if (BTCMemPool.Count == 0)
+                                {
+                                    BTCMemPool = newtransactions;
+                                }
+                                else
+                                {
+                                    differenceQuery =
+                                    (List<string>)newtransactions.Except(BTCMemPool).ToList(); ;
+
+                                    BTCMemPool = newtransactions;
+
+                                    foreach (var s in differenceQuery)
+                                    {
+                                        try
+                                        {
+
+                                            Root root = Root.GetRootByTransactionId(s, "good-user", "better-password", @"http://127.0.0.1:8332","0");
+                                            if (root.Signed == true)
+                                            {
+                                                string block;
+
+                                                lock (levelDBLocker)
+                                                {
+                                                    var WORK = new Options { CreateIfMissing = true };
+                                                    using (var db = new DB(WORK, @"root\block"))
+                                                    {
+                                                        block = db.Get(root.SignedBy);
+                                                    }
+                                                }
+
+                                                if (block != "true")
+                                                {
+                                                    bool find = false;
+
+                                                    if (filter != "")
+                                                    {
+
+                                                        if (filter.StartsWith("#"))
+                                                        {
+                                                            find = root.Keyword.ContainsKey(Root.GetPublicAddressByKeyword(filter.Substring(1)));
+                                                        }
+                                                        else
+                                                        {
+
+                                                            find = root.Keyword.ContainsKey(filter);
+
+
+                                                        }
+                                                    }
+                                                    else { find = true; }
+
+                                                    isobject = OBJState.GetObjectByTransactionId(s);
+                                                    if (isobject.URN != null && find == true)
+                                                    {
+
+                                                        lock (levelDBLocker)
+                                                        {
+                                                            var WORK = new Options { CreateIfMissing = true };
+                                                            using (var db = new DB(WORK, @"root\found"))
+                                                            {
+                                                                db.Put("found!" + root.BlockDate.ToString("yyyyMMddHHmmss") + "!" + root.SignedBy, "1");
+                                                            }
+
+                                                        }
+                                                        foundCount++;
+                                                    }
+
+
+                                                }
+                                                else { }
+
+                                            }
+                                            else { }
+
+                                        }
+                                        catch { }
+
+                                    }
+
+                                }
+                            }
+                            catch { }
+                            newtransactions = new List<string>();
+
+                            try
+                            {
+                                rpcClient = new RPCClient(credentials, new Uri(@"http://127.0.0.1:12832"), Network.Main);
+                                flattransactions = rpcClient.SendCommand("getrawmempool").ResultString;
+                                flattransactions = flattransactions.Replace("\"", "").Replace("[", "").Replace("]", "").Replace("\r", "").Replace("\n", "").Replace(" ", "");
+                                newtransactions = flattransactions.Split(',').ToList();
+                                if (MZCMemPool.Count == 0)
+                                {
+                                    MZCMemPool = newtransactions;
+                                }
+                                else
+                                {
+                                    differenceQuery =
+                                    (List<string>)newtransactions.Except(MZCMemPool).ToList(); ;
+
+                                    MZCMemPool = newtransactions;
+
+                                    foreach (var s in differenceQuery)
+                                    {
+                                        try
+                                        {
+
+                                            Root root = Root.GetRootByTransactionId(s, "good-user", "better-password", @"http://127.0.0.1:12832","50");
+                                            if (root.Signed == true)
+                                            {
+                                                string block;
+
+                                                lock (levelDBLocker)
+                                                {
+                                                    var WORK = new Options { CreateIfMissing = true };
+                                                    using (var db = new DB(WORK, @"root\block"))
+                                                    {
+                                                        block = db.Get(root.SignedBy);
+                                                    }
+                                                }
+
+                                                if (block != "true")
+                                                {
+                                                    bool find = false;
+
+                                                    if (filter != "")
+                                                    {
+
+                                                        if (filter.StartsWith("#"))
+                                                        {
+                                                            find = root.Keyword.ContainsKey(Root.GetPublicAddressByKeyword(filter.Substring(1)));
+                                                        }
+                                                        else
+                                                        {
+
+                                                            find = root.Keyword.ContainsKey(filter);
+
+
+                                                        }
+                                                    }
+                                                    else { find = true; }
+
+                                                    isobject = OBJState.GetObjectByTransactionId(s);
+                                                    if (isobject.URN != null && find == true)
+                                                    {
+
+                                                        lock (levelDBLocker)
+                                                        {
+                                                            var WORK = new Options { CreateIfMissing = true };
+                                                            using (var db = new DB(WORK, @"root\found"))
+                                                            {
+                                                                db.Put("found!" + root.BlockDate.ToString("yyyyMMddHHmmss") + "!" + root.SignedBy, "1");
+                                                            }
+
+                                                        }
+                                                        foundCount++;
+                                                    }
+
+
+                                                }
+                                                else { }
+
+                                            }
+                                            else { }
+
+                                        }
+                                        catch { }
+
+                                    }
+
+                                }
+                            }
+                            catch { }
+                            newtransactions = new List<string>();
+
+                            try
+                            {
+                                rpcClient = new RPCClient(credentials, new Uri(@"http://127.0.0.1:9332"), Network.Main);
+                                flattransactions = rpcClient.SendCommand("getrawmempool").ResultString;
+                                flattransactions = flattransactions.Replace("\"", "").Replace("[", "").Replace("]", "").Replace("\r", "").Replace("\n", "").Replace(" ", "");
+                                newtransactions = flattransactions.Split(',').ToList();
+                                if (LTCMemPool.Count == 0)
+                                {
+                                    LTCMemPool = newtransactions;
+                                }
+                                else
+                                {
+                                    differenceQuery =
+                                    (List<string>)newtransactions.Except(LTCMemPool).ToList(); ;
+
+                                    LTCMemPool = newtransactions;
+
+                                    foreach (var s in differenceQuery)
+                                    {
+                                        try
+                                        {
+
+                                            Root root = Root.GetRootByTransactionId(s, "good-user", "better-password", @"http://127.0.0.1:9332","48");
+                                            if (root.Signed == true)
+                                            {
+                                                string block;
+
+                                                lock (levelDBLocker)
+                                                {
+                                                    var WORK = new Options { CreateIfMissing = true };
+                                                    using (var db = new DB(WORK, @"root\block"))
+                                                    {
+                                                        block = db.Get(root.SignedBy);
+                                                    }
+                                                }
+
+                                                if (block != "true")
+                                                {
+                                                    bool find = false;
+
+                                                    if (filter != "")
+                                                    {
+
+                                                        if (filter.StartsWith("#"))
+                                                        {
+                                                            find = root.Keyword.ContainsKey(Root.GetPublicAddressByKeyword(filter.Substring(1)));
+                                                        }
+                                                        else
+                                                        {
+
+                                                            find = root.Keyword.ContainsKey(filter);
+
+
+                                                        }
+                                                    }
+                                                    else { find = true; }
+
+                                                    isobject = OBJState.GetObjectByTransactionId(s);
+                                                    if (isobject.URN != null && find == true)
+                                                    {
+
+                                                        lock (levelDBLocker)
+                                                        {
+                                                            var WORK = new Options { CreateIfMissing = true };
+                                                            using (var db = new DB(WORK, @"root\found"))
+                                                            {
+                                                                db.Put("found!" + root.BlockDate.ToString("yyyyMMddHHmmss") + "!" + root.SignedBy, "1");
+                                                            }
+
+                                                        }
+                                                        foundCount++;
+                                                    }
+
+
+                                                }
+                                                else { }
+
+                                            }
+                                            else {  }
+
+                                        }
+                                        catch { }
+
+                                    }
+
+                                }
+                            }
+                            catch { }
+                            newtransactions = new List<string>();
+
+                            try
+                            {
+                                rpcClient = new RPCClient(credentials, new Uri(@"http://127.0.0.1:22555"), Network.Main);
+                                flattransactions = rpcClient.SendCommand("getrawmempool").ResultString;
+                                flattransactions = flattransactions.Replace("\"", "").Replace("[", "").Replace("]", "").Replace("\r", "").Replace("\n", "").Replace(" ", "");
+                                newtransactions = flattransactions.Split(',').ToList();
+
+                                if (DOGMemPool.Count == 0)
+                                {
+                                    DOGMemPool = newtransactions;
+                                }
+                                else
+                                {
+                                    differenceQuery =
+                                    (List<string>)newtransactions.Except(DOGMemPool).ToList(); ;
+
+                                    DOGMemPool = newtransactions;
+
+                                    foreach (var s in differenceQuery)
+                                    {
+                                        try
+                                        {
+
+                                            Root root = Root.GetRootByTransactionId(s, "good-user", "better-password", @"http://127.0.0.1:22555","30");
+                                            if (root.Signed == true)
+                                            {
+                                                string block;
+
+                                                lock (levelDBLocker)
+                                                {
+                                                    var WORK = new Options { CreateIfMissing = true };
+                                                    using (var db = new DB(WORK, @"root\block"))
+                                                    {
+                                                        block = db.Get(root.SignedBy);
+                                                    }
+                                                }
+
+                                                if (block != "true")
+                                                {
+                                                    bool find = false;
+
+                                                    if (filter.Length > 0)
+                                                    {
+
+                                                        if (filter.StartsWith("#"))
+                                                        {
+                                                            find = root.Keyword.ContainsKey(Root.GetPublicAddressByKeyword(filter.Substring(1)));
+                                                        }
+                                                        else
+                                                        {
+
+                                                            find = root.Keyword.ContainsKey(filter);
+
+
+                                                        }
+                                                    }
+                                                    else { find = true; }
+
+                                                    isobject = OBJState.GetObjectByTransactionId(s);
+                                                    if (isobject.URN != null && find == true)
+                                                    {
+                                                        lock (levelDBLocker)
+                                                        {
+                                                            var WORK = new Options { CreateIfMissing = true };
+                                                            using (var db = new DB(WORK, @"root\found"))
+                                                            {
+                                                                db.Put("found!" + root.BlockDate.ToString("yyyyMMddHHmmss") + "!" + root.SignedBy, "1");
+                                                            }
+
+                                                        }
+                                                        foundCount++;
+                                                    }
+
+
+                                                }
+                                                else { }
+
+                                            }
+                                            else { }
+
+                                        }
+                                        catch { }
+
+                                    }
+
+                                }
+                            }
+                            catch { }
+                            newtransactions = new List<string>();
+
+                            if (foundCount > 0)
+                            {
+
+                                int totalQty = 0;
+
+                                // Update the txtQty control using Invoke to run it on the UI thread.
+                                flowLayoutPanel1.Invoke((MethodInvoker)delegate
+                                {
+                                    totalQty = flowLayoutPanel1.Controls.Count + ((foundCount * 2) + 2);
+                                });
+
+
+                                // Update the txtQty control using Invoke to run it on the UI thread.
+                                txtQty.Invoke((MethodInvoker)delegate
+                                {
+                                    txtQty.Text = totalQty.ToString(); totalQty = flowLayoutPanel1.Controls.Count + ((foundCount * 2) + 2);
+                                    ;
+                                });
+
+
+                                // Update the txtQty control using Invoke to run it on the UI thread.
+                                txtLast.Invoke((MethodInvoker)delegate
+                                {
+                                    txtLast.Text = "0";
+                                });
+
+                                lock (levelDBLocker)
+                                {
+                                    var MUTE = new Options { CreateIfMissing = true };
+                                    using (var db = new DB(MUTE, @"root\monitor"))
+                                    {
+                                        db.Delete("isBuilding");
+
+                                    }
+                                }
+
+                                this.Invoke((MethodInvoker)delegate
+                                {
+
+                                    SearchAddressUpdate();
+
+                                });
+
+                                isBuildingCounter = 0;
+
+                            }
                             lock (levelDBLocker)
                             {
                                 var MUTE = new Options { CreateIfMissing = true };
                                 using (var db = new DB(MUTE, @"root\monitor"))
                                 {
                                     db.Delete("isBuilding");
-
+                                    isBuildingCounter = 0;
                                 }
                             }
 
-                            this.Invoke((MethodInvoker)delegate
-                            {                                
 
-                                SearchAddressUpdate();
-
-                            });
-
-                            isBuildingCounter = 0;
 
                         }
-                        lock (levelDBLocker)
-                        {
-                            var MUTE = new Options { CreateIfMissing = true };
-                            using (var db = new DB(MUTE, @"root\monitor"))
-                            {
-                                db.Delete("isBuilding");
-                                isBuildingCounter = 0;
-                            }
-                        }
-
-
-
-                    }
-                    else { isBuildingCounter++; }
-                });
-            }
-            catch {
-                lock (levelDBLocker)
-                {
-                    var MUTE = new Options { CreateIfMissing = true };
-                    using (var db = new DB(MUTE, @"root\monitor"))
-                    {
-                        db.Delete("isBuilding");
-
-                    }
+                        else { isBuildingCounter++; }
+                    });
                 }
+                catch
+                {
+                    lock (levelDBLocker)
+                    {
+                        var MUTE = new Options { CreateIfMissing = true };
+                        using (var db = new DB(MUTE, @"root\monitor"))
+                        {
+                            db.Delete("isBuilding");
 
+                        }
+                    }
+
+                }
             }
         }
 

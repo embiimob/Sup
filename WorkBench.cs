@@ -1012,7 +1012,7 @@ namespace SUP
         {
 
             DateTime tmbeginCall = DateTime.UtcNow;
-            OBJState Tester = OBJState.GetObjectByTransactionId(txtTransactionId.Text, txtLogin.Text, txtPassword.Text, txtUrl.Text, txtVersionByte.Text, checkBox1.Checked);
+            OBJState Tester = OBJState.GetObjectByTransactionId(txtTransactionId.Text);
             DateTime tmendCall = DateTime.UtcNow;
             lblTotalBytes.Text = "bytes: ";
             lblTotalTime.Text = "time: ";
