@@ -227,11 +227,11 @@
             // btnOfficial
             // 
             this.btnOfficial.BackColor = System.Drawing.Color.Yellow;
-            this.btnOfficial.Location = new System.Drawing.Point(88, 174);
+            this.btnOfficial.Location = new System.Drawing.Point(67, 174);
             this.btnOfficial.Name = "btnOfficial";
-            this.btnOfficial.Size = new System.Drawing.Size(113, 28);
+            this.btnOfficial.Size = new System.Drawing.Size(134, 28);
             this.btnOfficial.TabIndex = 14;
-            this.btnOfficial.Text = "SEE OFFICIAL";
+            this.btnOfficial.Text = "SEE OFFICIAL URN";
             this.btnOfficial.UseVisualStyleBackColor = false;
             this.btnOfficial.Visible = false;
             this.btnOfficial.Click += new System.EventHandler(this.btnOfficial_Click);
@@ -265,9 +265,9 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
             this.BackColor = System.Drawing.SystemColors.ActiveCaption;
+            this.Controls.Add(this.btnOfficial);
             this.Controls.Add(this.lblOfficial);
             this.Controls.Add(this.txtOfficialURN);
-            this.Controls.Add(this.btnOfficial);
             this.Controls.Add(this.ObjectName);
             this.Controls.Add(this.ObjectQty);
             this.Controls.Add(this.flowLayoutPanel1);

@@ -42,6 +42,16 @@ namespace SUP.P2FK
         public static Root GetRootByTransactionId(string transactionid, string username, string password, string url, string versionbyte = "111", byte[] rootbytes = null, string signatureaddress = null)
         {
             Root P2FKRoot = new Root();
+            string isblock;
+            lock (levelDBLocker)
+            {
+                var ROOT = new Options { CreateIfMissing = true };
+                var db = new DB(ROOT, @"root\tblock");
+                isblock = db.Get(transactionid);
+                db.Close();
+            }
+            //if transactionID is found in LevelDB cache with invalid or blocked status return null
+            if (isblock == "true"){return P2FKRoot; }
             string diskpath = "root\\" + transactionid + "\\";
             string P2FKJSONString = null;
             if (rootbytes == null)
@@ -56,26 +66,7 @@ namespace SUP.P2FK
 
                 }
                 //Throws exception if P2FK.json file cache does not exist
-                catch
-                {
-                    //Check levelDB for P2FK transaction ID cache status
-                    lock (levelDBLocker)
-                    {
-                        
-                            var ROOT = new Options { CreateIfMissing = true };
-                            var db = new DB(ROOT, @"root\block");
-                            P2FKJSONString = db.Get(transactionid);
-                            db.Close();
-                       
-                    }
-
-                }
-                //if transactionID is found in LevelDB cache with invalid or blocked status return null
-                if (P2FKJSONString == "true")
-                {
-                    return P2FKRoot;
-                }
-
+                catch { }         
             }
 
             //P2FK Object Cache does not exist

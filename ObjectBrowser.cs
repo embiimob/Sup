@@ -48,6 +48,7 @@ namespace SUP
         private void GetObjectsbyAddress(string address)
         {
 
+
             string profileCheck = address;
             PROState searchprofile = PROState.GetProfileByAddress(address, txtLogin.Text, txtPassword.Text, txtUrl.Text);
 
@@ -77,27 +78,276 @@ namespace SUP
             }
 
 
-
-            flowLayoutPanel1.SuspendLayout();
             List<OBJState> createdObjects = new List<OBJState>();
 
+            int loadQty = ((flowLayoutPanel1.Size.Width / 208) * (flowLayoutPanel1.Size.Height / 309) + ((flowLayoutPanel1.Size.Width / 208) * 2) + ((flowLayoutPanel1.Size.Height / 309) * 2));
 
-            if (btnCreated.BackColor == Color.Yellow)
+            if (loadQty > 1)
             {
-                createdObjects = OBJState.GetObjectsCreatedByAddress(profileCheck, txtLogin.Text, txtPassword.Text, txtUrl.Text, txtVersionByte.Text, int.Parse(txtLast.Text), int.Parse(txtQty.Text));
-            }
-            else if (btnOwned.BackColor == Color.Yellow)
-            {
-                createdObjects = OBJState.GetObjectsOwnedByAddress(profileCheck, txtLogin.Text, txtPassword.Text, txtUrl.Text, txtVersionByte.Text, int.Parse(txtLast.Text), int.Parse(txtQty.Text));
-            }
-            else
-            {
-                if (txtSearchAddress.Text == "") { createdObjects = OBJState.GetFoundObjects(txtLogin.Text, txtPassword.Text, txtUrl.Text, txtVersionByte.Text, int.Parse(txtLast.Text), int.Parse(txtQty.Text)); }
-                else
+
+                txtQty.Text = (flowLayoutPanel1.Controls.Count + loadQty).ToString();
+
+                flowLayoutPanel1.SuspendLayout();
+
+                if (btnCreated.BackColor == Color.Yellow)
                 {
-                    createdObjects = OBJState.GetObjectsByAddress(profileCheck, txtLogin.Text, txtPassword.Text, txtUrl.Text, txtVersionByte.Text, int.Parse(txtLast.Text), int.Parse(txtQty.Text));
+
+                    createdObjects = OBJState.GetObjectsCreatedByAddress(profileCheck, txtLogin.Text, txtPassword.Text, txtUrl.Text, txtVersionByte.Text, int.Parse(txtLast.Text), int.Parse(txtQty.Text));
 
                 }
+                else if (btnOwned.BackColor == Color.Yellow)
+                {
+                    createdObjects = OBJState.GetObjectsOwnedByAddress(profileCheck, txtLogin.Text, txtPassword.Text, txtUrl.Text, txtVersionByte.Text, int.Parse(txtLast.Text), int.Parse(txtQty.Text));
+                }
+                else
+                {
+                    if (txtSearchAddress.Text == "")
+                    {
+
+                        createdObjects = OBJState.GetFoundObjects(txtLogin.Text, txtPassword.Text, txtUrl.Text, txtVersionByte.Text, int.Parse(txtLast.Text), int.Parse(txtQty.Text));
+                        if (btnLive.BackColor == Color.Blue) { createdObjects.Reverse(); }
+
+                    }
+                    else
+                    {
+                        createdObjects = OBJState.GetObjectsByAddress(profileCheck, txtLogin.Text, txtPassword.Text, txtUrl.Text, txtVersionByte.Text, int.Parse(txtLast.Text), int.Parse(txtQty.Text));
+
+                    }
+                }
+
+
+                foreach (OBJState objstate in createdObjects)
+                {
+
+                    if (objstate.Owners != null)
+                    {
+
+                        FoundObjectControl foundObject = new FoundObjectControl();
+
+                        switch (objstate.Image.ToUpper().Substring(0, 4))
+                        {
+                            case "BTC:":
+                                string transid = objstate.Image.Substring(4, 64);
+                                if (!System.IO.Directory.Exists("root/" + transid))
+                                {
+                                    Root.GetRootByTransactionId(transid, txtLogin.Text, txtPassword.Text, @"http://127.0.0.1:8332", "0");
+                                }
+                                foundObject.ObjectImage.ImageLocation = objstate.Image.Replace("BTC:", @"root/");
+                                break;
+                            case "MZC:":
+                                transid = objstate.Image.Substring(4, 64);
+                                if (!System.IO.Directory.Exists("root/" + transid))
+                                {
+                                    Root.GetRootByTransactionId(transid, txtLogin.Text, txtPassword.Text, @"http://127.0.0.1:12832", "50");
+                                }
+                                foundObject.ObjectImage.ImageLocation = objstate.Image.Replace("MZC:", @"root/");
+                                break;
+                            case "LTC:":
+                                transid = objstate.Image.Substring(4, 64);
+                                if (!System.IO.Directory.Exists("root/" + transid))
+                                {
+                                    Root.GetRootByTransactionId(transid, txtLogin.Text, txtPassword.Text, @"http://127.0.0.1:9332", "48");
+                                }
+                                foundObject.ObjectImage.ImageLocation = objstate.Image.Replace("LTC:", @"root/");
+                                break;
+                            case "DOG:":
+                                transid = objstate.Image.Substring(4, 64);
+                                if (!System.IO.Directory.Exists("root/" + transid))
+                                {
+                                    Root.GetRootByTransactionId(transid, txtLogin.Text, txtPassword.Text, @"http://127.0.0.1:22555", "30");
+                                }
+                                foundObject.ObjectImage.ImageLocation = objstate.Image.Replace("DOG:", @"root/");
+                                break;
+                            case "DTC:":
+                                transid = objstate.Image.Substring(4, 64);
+                                if (!System.IO.Directory.Exists("root/" + transid))
+                                {
+                                    Root.GetRootByTransactionId(transid, txtLogin.Text, txtPassword.Text, @"http://127.0.0.1:11777", "30");
+                                }
+                                foundObject.ObjectImage.ImageLocation = objstate.Image.Replace("DTC:", @"root/");
+                                break;
+                            case "IPFS":
+                                transid = objstate.Image.Substring(5, 46);
+
+                                if (!System.IO.Directory.Exists("ipfs/" + transid))
+                                {
+                                    Process process2 = new Process();
+                                    process2.StartInfo.FileName = @"ipfs\ipfs.exe";
+                                    process2.StartInfo.Arguments = "get " + objstate.Image.Substring(5, 46) + @" -o ipfs\" + transid;
+                                    process2.StartInfo.UseShellExecute = false;
+                                    process2.StartInfo.CreateNoWindow = true;
+                                    process2.Start();
+                                    process2.WaitForExit();
+                                    string fileName;
+                                    if (System.IO.File.Exists("ipfs/" + transid))
+                                    {
+                                        System.IO.File.Move("ipfs/" + transid, "ipfs/" + transid + "_tmp");
+                                        System.IO.Directory.CreateDirectory("ipfs/" + transid);
+                                        fileName = objstate.Image.Replace(@"//", "").Replace(@"\\", "").Substring(51);
+                                        if (fileName == "") { fileName = "artifact"; } else { fileName = fileName.Replace(@"/", "").Replace(@"\", ""); }
+                                        System.IO.File.Move("ipfs/" + transid + "_tmp", @"ipfs/" + transid + @"/" + fileName);
+                                    }
+
+
+                                    var SUP = new Options { CreateIfMissing = true };
+                                    lock (levelDBLocker)
+                                    {
+                                        using (var db = new DB(SUP, @"ipfs"))
+                                        {
+
+                                            string ipfsdaemon = db.Get("ipfs-daemon");
+
+                                            if (ipfsdaemon == "true")
+                                            {
+                                                Process process3 = new Process
+                                                {
+                                                    StartInfo = new ProcessStartInfo
+                                                    {
+                                                        FileName = @"ipfs\ipfs.exe",
+                                                        Arguments = "pin add " + transid,
+                                                        UseShellExecute = false,
+                                                        CreateNoWindow = true
+                                                    }
+                                                };
+                                                process3.Start();
+                                            }
+                                        }
+
+                                    }
+
+                                }
+                                if (objstate.Image.Length == 51)
+                                { foundObject.ObjectImage.ImageLocation = objstate.Image.Replace("IPFS:", @"ipfs/") + @"/artifact"; }
+                                else { foundObject.ObjectImage.ImageLocation = objstate.Image.Replace("IPFS:", @"ipfs/"); }
+
+                                break;
+                            case "HTTP":
+                                foundObject.ObjectImage.ImageLocation = objstate.Image;
+                                break;
+
+
+                            default:
+                                transid = objstate.Image.Substring(0, 64);
+                                if (!System.IO.Directory.Exists("root/" + transid))
+                                {
+                                    Root root = Root.GetRootByTransactionId(transid, txtLogin.Text, txtPassword.Text, @"http://127.0.0.1:18332");
+                                }
+                                foundObject.ObjectImage.ImageLocation = @"root/" + objstate.Image;
+
+                                break;
+                        }
+
+                        foundObject.ObjectName.Text = objstate.Name;
+                        foundObject.ObjectDescription.Text = objstate.Description;
+                        foundObject.ObjectAddress.Text = objstate.Creators.First().Key;
+                        foundObject.ObjectQty.Text = objstate.Owners.Values.Sum().ToString() + "x";
+
+                        foreach (KeyValuePair<string, DateTime> creator in objstate.Creators.Skip(1))
+                        {
+
+                            if (creator.Value.Year > 1)
+                            {
+                                PROState profile = PROState.GetProfileByAddress(creator.Key, txtLogin.Text, txtPassword.Text, txtUrl.Text);
+
+                                if (profile.URN != null && foundObject.ObjectCreators.Text == "")
+                                {
+
+
+                                    foundObject.ObjectCreators.Text = TruncateAddress(profile.URN);
+                                    foundObject.ObjectCreators.Links.Add(0, creator.Key.Length, creator.Key);
+                                }
+                                else
+                                {
+
+
+                                    if (profile.URN != null && foundObject.ObjectCreators2.Text == "")
+                                    {
+                                        foundObject.ObjectCreators2.Text = TruncateAddress(profile.URN);
+                                        foundObject.ObjectCreators2.Links.Add(0, creator.Key.Length, creator.Key);
+                                    }
+
+                                }
+                            }
+                            else
+                            {
+
+                                if (foundObject.ObjectCreators.Text == "")
+                                {
+
+
+                                    foundObject.ObjectCreators.Text = TruncateAddress(creator.Key);
+                                    foundObject.ObjectCreators.Links.Add(0, creator.Key.Length, creator.Key);
+                                }
+                                else
+                                {
+
+
+                                    if (foundObject.ObjectCreators2.Text == "")
+                                    {
+                                        foundObject.ObjectCreators2.Text = TruncateAddress(creator.Key);
+                                        foundObject.ObjectCreators2.Links.Add(0, creator.Key.Length, creator.Key);
+                                    }
+
+                                }
+
+                            }
+
+                        }
+                        foundObject.ObjectId.Text = objstate.Id.ToString();
+
+
+                        if (!loadedObjects.Contains(foundObject.ObjectAddress.Text))
+                        {
+                            txtLast.Text = objstate.Id.ToString();
+                            OBJState isOfficial = OBJState.GetObjectByURN(objstate.URN, txtLogin.Text, txtPassword.Text, @"http://127.0.0.1:18332");
+                            if (isOfficial.URN != null)
+                            {
+                                if (isOfficial.Creators.First().Key == foundObject.ObjectAddress.Text)
+                                {
+                                    foundObject.lblOfficial.Visible = true;
+                                    foundObject.lblOfficial.Text = TruncateAddress(isOfficial.URN);
+                                }
+                                else
+                                {
+                                    foundObject.txtOfficialURN.Text = isOfficial.Creators.First().Key;
+                                    foundObject.btnOfficial.Visible = true;
+
+                                }
+                            }
+
+
+
+                            flowLayoutPanel1.Controls.Add(foundObject);
+                            if (btnLive.BackColor == Color.Blue) { flowLayoutPanel1.Controls.SetChildIndex(foundObject, 0); }
+
+
+                        }
+                        loadedObjects.Add(foundObject.ObjectAddress.Text);
+
+
+                    }
+                }
+
+                flowLayoutPanel1.ResumeLayout();
+            }
+        }
+
+        private void GetObjectsByKeyword(string keyword)
+        {
+
+            List<string> keywords = keyword.Split(',').ToList();
+            List<OBJState> createdObjects = new List<OBJState>();
+
+            flowLayoutPanel1.SuspendLayout();
+
+            int loadQty = (flowLayoutPanel1.Size.Width / 100) * (flowLayoutPanel1.Size.Height / 200) + (flowLayoutPanel1.Size.Width / 100);
+
+            loadQty -= flowLayoutPanel1.Controls.Count;
+
+            txtQty.Text = loadQty.ToString();
+            if (loadQty > 0)
+            {
+                createdObjects = OBJState.GetObjectsByKeyword(keywords, txtLogin.Text, txtPassword.Text, txtUrl.Text, txtVersionByte.Text, int.Parse(txtLast.Text), int.Parse(txtQty.Text));
             }
 
             foreach (OBJState objstate in createdObjects)
@@ -106,6 +356,7 @@ namespace SUP
                 {
 
                     FoundObjectControl foundObject = new FoundObjectControl();
+
 
                     switch (objstate.Image.ToUpper().Substring(0, 4))
                     {
@@ -195,228 +446,6 @@ namespace SUP
                                             process3.Start();
                                         }
                                     }
-
-                                }
-
-                            }
-                            if (objstate.Image.Length == 51)
-                            { foundObject.ObjectImage.ImageLocation = objstate.Image.Replace("IPFS:", @"ipfs/") + @"/artifact"; }
-                            else { foundObject.ObjectImage.ImageLocation = objstate.Image.Replace("IPFS:", @"ipfs/"); }
-
-                            break;
-                        case "HTTP":
-                            foundObject.ObjectImage.ImageLocation = objstate.Image;
-                            break;
-
-
-                        default:
-                            transid = objstate.Image.Substring(0, 64);
-                            if (!System.IO.Directory.Exists("root/" + transid))
-                            {
-                                Root root = Root.GetRootByTransactionId(transid, txtLogin.Text, txtPassword.Text, @"http://127.0.0.1:18332");
-                            }
-                            foundObject.ObjectImage.ImageLocation = @"root/" + objstate.Image;
-
-                            break;
-                    }
-                    foundObject.ObjectName.Text = objstate.Name;
-                    foundObject.ObjectDescription.Text = objstate.Description;
-                    foundObject.ObjectAddress.Text = objstate.Creators.First().Key;
-                    foundObject.ObjectQty.Text = objstate.Owners.Values.Sum().ToString() + "x";
-
-                    foreach (KeyValuePair<string, DateTime> creator in objstate.Creators.Skip(1))
-                    {
-
-                        if (creator.Value.Year > 1)
-                        {
-                            PROState profile = PROState.GetProfileByAddress(creator.Key, txtLogin.Text, txtPassword.Text, txtUrl.Text);
-
-                            if (profile.URN != null && foundObject.ObjectCreators.Text == "")
-                            {
-
-
-                                foundObject.ObjectCreators.Text = TruncateAddress(profile.URN);
-                                foundObject.ObjectCreators.Links.Add(0, creator.Key.Length, creator.Key);
-                            }
-                            else
-                            {
-
-
-                                if (profile.URN != null && foundObject.ObjectCreators2.Text == "")
-                                {
-                                    foundObject.ObjectCreators2.Text = TruncateAddress(profile.URN);
-                                    foundObject.ObjectCreators2.Links.Add(0, creator.Key.Length, creator.Key);
-                                }
-
-                            }
-                        }
-                        else
-                        {
-
-                            if (foundObject.ObjectCreators.Text == "")
-                            {
-
-
-                                foundObject.ObjectCreators.Text = TruncateAddress(creator.Key);
-                                foundObject.ObjectCreators.Links.Add(0, creator.Key.Length, creator.Key);
-                            }
-                            else
-                            {
-
-
-                                if (foundObject.ObjectCreators2.Text == "")
-                                {
-                                    foundObject.ObjectCreators2.Text = TruncateAddress(creator.Key);
-                                    foundObject.ObjectCreators2.Links.Add(0, creator.Key.Length, creator.Key);
-                                }
-
-                            }
-
-                        }
-
-                    }
-                    foundObject.ObjectId.Text = objstate.Id.ToString();
-
-
-                    if (!loadedObjects.Contains(foundObject.ObjectAddress.Text))
-                    {
-                        txtLast.Text = objstate.Id.ToString();
-                        OBJState isOfficial = OBJState.GetObjectByURN(objstate.URN, txtLogin.Text, txtPassword.Text, @"http://127.0.0.1:18332");
-                        if (isOfficial.URN != null)
-                        {
-                            if (isOfficial.Creators.First().Key == foundObject.ObjectAddress.Text)
-                            {
-                                foundObject.lblOfficial.Visible = true;
-                                foundObject.lblOfficial.Text = TruncateAddress(isOfficial.URN);
-                            }
-                            else
-                            {
-                                foundObject.txtOfficialURN.Text = isOfficial.Creators.First().Key;
-                                foundObject.btnOfficial.Visible = true;
-
-                            }
-                        }
-
-
-
-                        flowLayoutPanel1.Controls.Add(foundObject);
-                        if (txtSearchAddress.Text == "") { flowLayoutPanel1.Controls.SetChildIndex(foundObject, 0); }
-                    }
-                    loadedObjects.Add(foundObject.ObjectAddress.Text);
-
-
-                }
-            }
-            flowLayoutPanel1.ResumeLayout();
-
-        }
-
-        private void GetObjectsByKeyword(string keyword)
-        {
-
-            List<string> keywords = keyword.Split(',').ToList();
-
-            flowLayoutPanel1.SuspendLayout();
-
-
-            List<OBJState> createdObjects = OBJState.GetObjectsByKeyword(keywords, txtLogin.Text, txtPassword.Text, txtUrl.Text, txtVersionByte.Text, int.Parse(txtLast.Text), int.Parse(txtQty.Text));
-
-
-            foreach (OBJState objstate in createdObjects)
-            {
-                if (objstate.Owners != null)
-                {
-
-                    FoundObjectControl foundObject = new FoundObjectControl();
-
-                    switch (objstate.Image.ToUpper().Substring(0, 4))
-                    {
-                        case "BTC:":
-                            string transid = objstate.Image.Substring(4, 64);
-                            if (!System.IO.Directory.Exists("root/" + transid))
-                            {
-                                Root.GetRootByTransactionId(transid, txtLogin.Text, txtPassword.Text, @"http://127.0.0.1:8332", "0");
-                            }
-                            foundObject.ObjectImage.ImageLocation = objstate.Image.Replace("BTC:", @"root/");
-                            break;
-                        case "MZC:":
-                            transid = objstate.Image.Substring(4, 64);
-                            if (!System.IO.Directory.Exists("root/" + transid))
-                            {
-                                Root.GetRootByTransactionId(transid, txtLogin.Text, txtPassword.Text, @"http://127.0.0.1:12832", "50");
-                            }
-                            foundObject.ObjectImage.ImageLocation = objstate.Image.Replace("MZC:", @"root/");
-                            break;
-                        case "LTC:":
-                            transid = objstate.Image.Substring(4, 64);
-                            if (!System.IO.Directory.Exists("root/" + transid))
-                            {
-                                Root.GetRootByTransactionId(transid, txtLogin.Text, txtPassword.Text, @"http://127.0.0.1:9332", "48");
-                            }
-                            foundObject.ObjectImage.ImageLocation = objstate.Image.Replace("LTC:", @"root/");
-                            break;
-                        case "DOG:":
-                            transid = objstate.Image.Substring(4, 64);
-                            if (!System.IO.Directory.Exists("root/" + transid))
-                            {
-                                Root.GetRootByTransactionId(transid, txtLogin.Text, txtPassword.Text, @"http://127.0.0.1:22555", "30");
-                            }
-                            foundObject.ObjectImage.ImageLocation = objstate.Image.Replace("DOG:", @"root/");
-                            break;
-                        case "DTC:":
-                            transid = objstate.Image.Substring(4, 64);
-                            if (!System.IO.Directory.Exists("root/" + transid))
-                            {
-                                Root.GetRootByTransactionId(transid, txtLogin.Text, txtPassword.Text, @"http://127.0.0.1:11777", "30");
-                            }
-                            foundObject.ObjectImage.ImageLocation = objstate.Image.Replace("DTC:", @"root/");
-                            break;
-                        case "IPFS":
-                            transid = objstate.Image.Substring(5, 46);
-
-                            if (!System.IO.Directory.Exists("ipfs/" + transid))
-                            {
-                                Process process2 = new Process();
-                                process2.StartInfo.FileName = @"ipfs\ipfs.exe";
-                                process2.StartInfo.Arguments = "get " + objstate.Image.Substring(5, 46) + @" -o ipfs\" + transid;
-                                process2.StartInfo.UseShellExecute = false;
-                                process2.StartInfo.CreateNoWindow = true;
-                                process2.Start();
-                                process2.WaitForExit();
-                                string fileName;
-                                if (System.IO.File.Exists("ipfs/" + transid))
-                                {
-                                    System.IO.File.Move("ipfs/" + transid, "ipfs/" + transid + "_tmp");
-                                    System.IO.Directory.CreateDirectory("ipfs/" + transid);
-                                    fileName = objstate.Image.Replace(@"//", "").Replace(@"\\", "").Substring(51);
-                                    if (fileName == "") { fileName = "artifact"; } else { fileName = fileName.Replace(@"/", "").Replace(@"\", ""); }
-                                    System.IO.File.Move("ipfs/" + transid + "_tmp", @"ipfs/" + transid + @"/" + fileName);
-                                }
-
-
-                                var SUP = new Options { CreateIfMissing = true };
-                                lock (levelDBLocker)
-                                {
-                                    using (var db = new DB(SUP, @"ipfs"))
-                                {
-
-                                    string ipfsdaemon = db.Get("ipfs-daemon");
-
-                                        if (ipfsdaemon == "true")
-                                        {
-                                            Process process3 = new Process
-                                            {
-                                                StartInfo = new ProcessStartInfo
-                                                {
-                                                    FileName = @"ipfs\ipfs.exe",
-                                                    Arguments = "pin add " + transid,
-                                                    UseShellExecute = false,
-                                                    CreateNoWindow = true
-                                                }
-                                            };
-                                            process3.Start();
-                                        }
-                                    }
                                 }
                             }
                             if (objstate.Image.Length == 51)
@@ -466,6 +495,7 @@ namespace SUP
                                 {
                                     foundObject.ObjectCreators2.Text = TruncateAddress(profile.URN);
                                     foundObject.ObjectCreators2.Links.Add(0, creator.Key.Length, creator.Key);
+
                                 }
 
                             }
@@ -478,7 +508,9 @@ namespace SUP
 
 
                                 foundObject.ObjectCreators.Text = TruncateAddress(creator.Key);
+
                                 foundObject.ObjectCreators.Links.Add(0, creator.Key.Length, creator.Key);
+
                             }
                             else
                             {
@@ -487,7 +519,9 @@ namespace SUP
                                 if (foundObject.ObjectCreators2.Text == "")
                                 {
                                     foundObject.ObjectCreators2.Text = TruncateAddress(creator.Key);
+
                                     foundObject.ObjectCreators2.Links.Add(0, creator.Key.Length, creator.Key);
+
                                 }
 
                             }
@@ -510,6 +544,7 @@ namespace SUP
                             }
                             else
                             {
+
                                 foundObject.txtOfficialURN.Text = isOfficial.Owners.First().Key;
                                 foundObject.btnOfficial.Visible = true;
 
@@ -517,7 +552,7 @@ namespace SUP
                         }
                         loadedObjects.Add(foundObject.ObjectAddress.Text);
                         flowLayoutPanel1.Controls.Add(foundObject);
-                        flowLayoutPanel1.Controls.SetChildIndex(foundObject, 0);
+
 
                     }
 
@@ -531,6 +566,13 @@ namespace SUP
         {
 
             flowLayoutPanel1.Controls.Clear();
+
+            int loadQty = (flowLayoutPanel1.Size.Width / 100) * (flowLayoutPanel1.Size.Height / 200) + 3;
+
+            loadQty -= flowLayoutPanel1.Controls.Count;
+
+            txtQty.Text = loadQty.ToString();
+
 
             OBJState objstate = OBJState.GetObjectByURN(urn, txtLogin.Text, txtPassword.Text, txtUrl.Text);
 
@@ -733,6 +775,11 @@ namespace SUP
         {
 
             flowLayoutPanel1.Controls.Clear();
+            int loadQty = (flowLayoutPanel1.Size.Width / 100) * (flowLayoutPanel1.Size.Height / 200) + 3;
+
+            loadQty -= flowLayoutPanel1.Controls.Count;
+
+            txtQty.Text = loadQty.ToString();
 
             OBJState objstate = OBJState.GetObjectByFile(filePath, txtLogin.Text, txtPassword.Text, txtUrl.Text);
 
@@ -1307,87 +1354,113 @@ namespace SUP
 
         private void ObjectBrowserLoad(object sender, EventArgs e)
         {
-            string isBuilding;
 
-            lock (levelDBLocker)
+            Form parentForm = this.Owner;
+            bool isBlue = false;
+
+            // Check if the parent form has a button named "btnLive" with blue background color
+            try
             {
-                var MUTE = new Options { CreateIfMissing = true };
-                using (var db = new DB(MUTE, @"root\sup"))
-                {
-                    isBuilding = db.Get("isBuilding");
-                }
+                isBlue = parentForm.Controls.OfType<Button>().Any(b => b.Name == "btnLive" && b.BackColor == System.Drawing.Color.Blue);
             }
+            catch { }
 
-
-            if (isBuilding != "true")
+            if (isBlue)
             {
-                lock (levelDBLocker)
+                // If there is a button with blue background color, show a message box
+                DialogResult result = MessageBox.Show("disable Live monitoring to browse sup!? objects.\r\nignoring this warning may cause temporary data corruption that could require a full purge of the cache", "Warning", MessageBoxButtons.OKCancel, MessageBoxIcon.Warning);
+                if (result == DialogResult.OK)
                 {
-                    var MUTE = new Options { CreateIfMissing = true };
-                    using (var db = new DB(MUTE, @"root\sup"))
-                    {
-                        db.Put("isBuilding", "true");
-                    }
-                }
-                if (_objectaddress.Length > 0)
-                {
-                    txtSearchAddress.Text = _objectaddress;
-
-                    if (txtSearchAddress.Text.StartsWith("#"))
-                    {
-                        GetObjectsByKeyword(txtSearchAddress.Text.Replace("#", ""));
-
-                    }
-                    else
-                        GetObjectsbyAddress(txtSearchAddress.Text.Replace("@", ""));
-                }
-                else
-                {
-                    var SUP = new Options { CreateIfMissing = true };
-                    lock (levelDBLocker)
-                    {
-                        using (var db = new DB(SUP, @"ipfs"))
-                        {
-
-                            string ipfsdaemon = db.Get("ipfs-daemon");
-
-                            if (ipfsdaemon == "true")
-                            {
-
-                                var process = new Process
-                                {
-                                    StartInfo = new ProcessStartInfo
-                                    {
-                                        FileName = @"ipfs\ipfs.exe",
-                                        Arguments = "daemon",
-                                        UseShellExecute = false,
-                                        CreateNoWindow = true
-                                    }
-                                };
-                                process.Start();
-                            }
-
-                        }
-                    }
-                }
-
-                lock (levelDBLocker)
-                {
-                    var MUTE = new Options { CreateIfMissing = true };
-                    using (var db = new DB(MUTE, @"root\sup"))
-                    {
-                        db.Delete("isBuilding");
-                    }
+                    // If the user clicks OK, close the form
+                    this.Close();
                 }
             }
             else
             {
+
+
+                string isBuilding;
+
                 lock (levelDBLocker)
                 {
                     var MUTE = new Options { CreateIfMissing = true };
                     using (var db = new DB(MUTE, @"root\sup"))
                     {
-                        db.Delete("isBuilding");
+                        isBuilding = db.Get("isBuilding");
+                    }
+                }
+
+
+                if (isBuilding != "true")
+                {
+                    lock (levelDBLocker)
+                    {
+                        var MUTE = new Options { CreateIfMissing = true };
+                        using (var db = new DB(MUTE, @"root\sup"))
+                        {
+                            db.Put("isBuilding", "true");
+                        }
+                    }
+                    if (_objectaddress.Length > 0)
+                    {
+                        txtSearchAddress.Text = _objectaddress;
+
+                        if (txtSearchAddress.Text.StartsWith("#"))
+                        {
+                            GetObjectsByKeyword(txtSearchAddress.Text.Replace("#", ""));
+
+                        }
+                        else
+                            GetObjectsbyAddress(txtSearchAddress.Text.Replace("@", ""));
+                    }
+                    else
+                    {
+                        var SUP = new Options { CreateIfMissing = true };
+                        lock (levelDBLocker)
+                        {
+                            using (var db = new DB(SUP, @"ipfs"))
+                            {
+
+                                string ipfsdaemon = db.Get("ipfs-daemon");
+
+                                if (ipfsdaemon == "true")
+                                {
+
+                                    var process = new Process
+                                    {
+                                        StartInfo = new ProcessStartInfo
+                                        {
+                                            FileName = @"ipfs\ipfs.exe",
+                                            Arguments = "daemon",
+                                            UseShellExecute = false,
+                                            CreateNoWindow = true
+                                        }
+                                    };
+                                    process.Start();
+                                }
+
+                            }
+                        }
+                    }
+
+                    lock (levelDBLocker)
+                    {
+                        var MUTE = new Options { CreateIfMissing = true };
+                        using (var db = new DB(MUTE, @"root\sup"))
+                        {
+                            db.Delete("isBuilding");
+                        }
+                    }
+                }
+                else
+                {
+                    lock (levelDBLocker)
+                    {
+                        var MUTE = new Options { CreateIfMissing = true };
+                        using (var db = new DB(MUTE, @"root\sup"))
+                        {
+                            db.Delete("isBuilding");
+                        }
                     }
                 }
             }
@@ -1417,25 +1490,7 @@ namespace SUP
 
         private void flowLayoutPanel1_SizeChanged(object sender, EventArgs e)
         {
-            if (btnLive.BackColor != Color.Blue)
-            {
-                if (flowLayoutPanel1.Controls.Count > 0 && flowLayoutPanel1.Controls[0] is Microsoft.Web.WebView2.WinForms.WebView2)
-                {
-                    flowLayoutPanel1.Controls[0].Size = flowLayoutPanel1.Size;
-                }
-
-                int loadQty = (flowLayoutPanel1.Size.Width / 100) * (flowLayoutPanel1.Size.Height / 200);
-
-                loadQty -= flowLayoutPanel1.Controls.Count;
-
-                txtQty.Text = loadQty.ToString();
-                if (loadQty > 0)
-                {
-
-                    SearchAddressUpdate();
-
-                }
-            }
+           
 
         }
 
@@ -1528,31 +1583,36 @@ namespace SUP
 
         private void flowLayoutPanel1_Scroll(object sender, ScrollEventArgs e)
         {
-            if (btnLive.BackColor != Color.Blue)
+            if (flowLayoutPanel1.VerticalScroll.Value + flowLayoutPanel1.VerticalScroll.LargeChange >= flowLayoutPanel1.VerticalScroll.Maximum)
             {
-                int loadQty = 1 + (flowLayoutPanel1.Size.Width / 100 * (flowLayoutPanel1.Size.Height / 200) * 2);
 
-                txtQty.Text = loadQty.ToString();
-                SearchAddressUpdate();
-            }
-
-        }
-
-        private void flowLayoutPanel1_MouseWheel(object sender, System.Windows.Forms.MouseEventArgs e)
-        {
-            if (btnLive.BackColor != Color.Blue)
-            {
-                if (flowLayoutPanel1.VerticalScroll.Value + flowLayoutPanel1.Height >= flowLayoutPanel1.VerticalScroll.Maximum)
+                if (btnLive.BackColor != Color.Blue)
                 {
-                    int loadQty = 1 + (flowLayoutPanel1.Size.Width / 100 * (flowLayoutPanel1.Size.Height / 200) * 2);
+                    int loadQty = ((flowLayoutPanel1.Size.Width / 208) * (flowLayoutPanel1.Size.Height / 309) + ((flowLayoutPanel1.Size.Width / 208) * 2) + ((flowLayoutPanel1.Size.Height / 309) * 2));
 
-                    txtQty.Text = loadQty.ToString();
-
-                    SearchAddressUpdate();
-
+                    if (loadQty > 1)
+                    {
+                        SearchAddressUpdate();
+                    };
                 }
             }
 
+        }
+        private void flowLayoutPanel1_MouseWheel(object sender, System.Windows.Forms.MouseEventArgs e)
+        {
+            // Check if the scrollbar position is at the bottom
+            if (flowLayoutPanel1.VerticalScroll.Value + flowLayoutPanel1.VerticalScroll.LargeChange >= flowLayoutPanel1.VerticalScroll.Maximum)
+            {
+                if (btnLive.BackColor != Color.Blue)
+                {
+                    int loadQty = ((flowLayoutPanel1.Size.Width / 208) * (flowLayoutPanel1.Size.Height / 309) + ((flowLayoutPanel1.Size.Width / 208) * 2) + ((flowLayoutPanel1.Size.Height / 309) * 2));
+             
+                    if (loadQty > 1)
+                    {
+                        SearchAddressUpdate();
+                    }
+                }
+            }
         }
 
         private void btnLive_Click(object sender, EventArgs e)
@@ -1561,6 +1621,8 @@ namespace SUP
             {
                 btnLive.BackColor = Color.Blue;
                 btnLive.ForeColor = Color.Yellow;
+                btnCreated.BackColor = Color.White;
+                btnOwned.BackColor = Color.White;
                 btnOwned.Enabled = false;
                 btnCreated.Enabled = false;
                 btnConnections.Enabled = false;
@@ -1592,265 +1654,293 @@ namespace SUP
 
         private void tmrSearchMemoryPool_Tick(object sender, EventArgs e)
         {
-            Task SearchMemoryTask = Task.Run(() =>
+            try
             {
-            string isBuilding;
-            lock (levelDBLocker)
-            {
-                var MUTE = new Options { CreateIfMissing = true };
-                using (var db = new DB(MUTE, @"root\sup"))
+                Task SearchMemoryTask = Task.Run(() =>
                 {
-                    isBuilding = db.Get("isBuilding");
-                }
-            }
-                if (isBuilding != "true" || isBuildingCounter > 11)
-                {
+                    string isBuilding;
                     lock (levelDBLocker)
                     {
                         var MUTE = new Options { CreateIfMissing = true };
                         using (var db = new DB(MUTE, @"root\sup"))
                         {
-                            db.Put("isBuilding", "true");
-                            isBuildingCounter++;
+                            isBuilding = db.Get("isBuilding");
                         }
                     }
-                    int foundCount = 0;
-                    List<string> differenceQuery = new List<string>();
-                    List<string> newtransactions =  new List<string>();
-                    string flattransactions;
-                    OBJState isobject = new OBJState();
-                    NetworkCredential credentials = new NetworkCredential("good-user", "better-password");
-                    RPCClient rpcClient;
-                    try
+                    if (isBuilding != "true" || isBuildingCounter > 11)
                     {
-                        rpcClient = new RPCClient(credentials, new Uri(@"http://127.0.0.1:18332"), Network.Main);
-                        flattransactions = rpcClient.SendCommand("getrawmempool").ResultString;
-                        flattransactions  = flattransactions.Replace("\"","").Replace("[", "").Replace("]", "").Replace("\r", "").Replace("\n", "").Replace(" ", "");
-                        newtransactions = flattransactions.Split(',').ToList();
-
-                        if (BTCTMemPool.Count == 0)
+                        lock (levelDBLocker)
                         {
-                            BTCTMemPool = newtransactions;
-                        }
-                        else
-                        {
-                            differenceQuery =
-                            (List<string>)newtransactions.Except(BTCTMemPool).ToList(); ;
-
-                            BTCTMemPool = newtransactions;
-                            
-                            foreach (var s in differenceQuery)
+                            var MUTE = new Options { CreateIfMissing = true };
+                            using (var db = new DB(MUTE, @"root\sup"))
                             {
-                                try
+                                db.Put("isBuilding", "true");
+                                isBuildingCounter++;
+                            }
+                        }
+                        int foundCount = 0;
+                        List<string> differenceQuery = new List<string>();
+                        List<string> newtransactions = new List<string>();
+                        string flattransactions;
+                        OBJState isobject = new OBJState();
+                        NetworkCredential credentials = new NetworkCredential("good-user", "better-password");
+                        RPCClient rpcClient;
+                        try
+                        {
+                            rpcClient = new RPCClient(credentials, new Uri(@"http://127.0.0.1:18332"), Network.Main);
+                            flattransactions = rpcClient.SendCommand("getrawmempool").ResultString;
+                            flattransactions = flattransactions.Replace("\"", "").Replace("[", "").Replace("]", "").Replace("\r", "").Replace("\n", "").Replace(" ", "");
+                            newtransactions = flattransactions.Split(',').ToList();
+
+                            if (BTCTMemPool.Count == 0)
+                            {
+                                BTCTMemPool = newtransactions;
+                            }
+                            else
+                            {
+                                differenceQuery =
+                                (List<string>)newtransactions.Except(BTCTMemPool).ToList(); ;
+
+                                BTCTMemPool = newtransactions;
+
+                                foreach (var s in differenceQuery)
                                 {
-                                    isobject = OBJState.GetObjectByTransactionId(s, "good-user", "better-password", @"http://127.0.0.1:18332");
+                                    try
+                                    {
+                                        isobject = OBJState.GetObjectByTransactionId(s, "good-user", "better-password", @"http://127.0.0.1:18332");
+                                    }
+                                    catch { }
+
+                                    if (isobject.URN != null) { foundCount++; }
+
                                 }
-                                catch { } 
-                                
-                                if (isobject.URN != null) {foundCount++; }
-                                
+
                             }
-
                         }
-                    }
-                    catch{ }
-                    newtransactions = new List<string>();
+                        catch { }
+                        newtransactions = new List<string>();
 
-                    try
-                    {
-                        rpcClient = new RPCClient(credentials, new Uri(@"http://127.0.0.1:8332"), Network.Main);
-                        flattransactions = rpcClient.SendCommand("getrawmempool").ResultString;
-                        flattransactions = flattransactions.Replace("\"", "").Replace("[", "").Replace("]", "").Replace("\r", "").Replace("\n", "").Replace(" ", "");
-                        newtransactions = flattransactions.Split(',').ToList();
-                        
-                        if (BTCMemPool.Count == 0)
+                        try
                         {
-                            BTCMemPool = newtransactions;
-                        }
-                        else
-                        {
-                            differenceQuery =
-                            (List<string>)newtransactions.Except(BTCMemPool).ToList(); ;
+                            rpcClient = new RPCClient(credentials, new Uri(@"http://127.0.0.1:8332"), Network.Main);
+                            flattransactions = rpcClient.SendCommand("getrawmempool").ResultString;
+                            flattransactions = flattransactions.Replace("\"", "").Replace("[", "").Replace("]", "").Replace("\r", "").Replace("\n", "").Replace(" ", "");
+                            newtransactions = flattransactions.Split(',').ToList();
 
-                            BTCMemPool = newtransactions;
-
-                            foreach (var s in differenceQuery)
+                            if (BTCMemPool.Count == 0)
                             {
-                                try { 
-                                    isobject = OBJState.GetObjectByTransactionId(s, "good-user", "better-password", @"http://127.0.0.1:8332", "0");
-                                }
-                                catch { }
-                                if (isobject.URN != null) { 
-                                    
-                                    foundCount++; }
-                                
+                                BTCMemPool = newtransactions;
                             }
-
-                        }
-                    }
-                    catch { }
-                    newtransactions = new List<string>();
-
-                    try
-                    {
-                        rpcClient = new RPCClient(credentials, new Uri(@"http://127.0.0.1:12832"), Network.Main);
-                        flattransactions = rpcClient.SendCommand("getrawmempool").ResultString;
-                        flattransactions = flattransactions.Replace("\"", "").Replace("[", "").Replace("]", "").Replace("\r", "").Replace("\n", "").Replace(" ", "");
-                        newtransactions = flattransactions.Split(',').ToList();
-                        if (MZCMemPool.Count == 0)
-                        {
-                            MZCMemPool = newtransactions;
-                        }
-                        else
-                        {
-                            differenceQuery =
-                            (List<string>)newtransactions.Except(MZCMemPool).ToList(); ;
-
-                            MZCMemPool = newtransactions;
-
-                            foreach (var s in differenceQuery)
+                            else
                             {
-                                try { 
-                                    isobject = OBJState.GetObjectByTransactionId(s, "good-user", "better-password", @"http://127.0.0.1:12832", "50");
-                                }
-                                catch { }
-                                if (isobject.URN != null) { foundCount++; }
-                               
-                            }
+                                differenceQuery =
+                                (List<string>)newtransactions.Except(BTCMemPool).ToList(); ;
 
-                        }
-                    }
-                    catch { }
-                    newtransactions = new List<string>();
+                                BTCMemPool = newtransactions;
 
-                    try
-                    {
-                        rpcClient = new RPCClient(credentials, new Uri(@"http://127.0.0.1:9332"), Network.Main);
-                        flattransactions = rpcClient.SendCommand("getrawmempool").ResultString;
-                        flattransactions = flattransactions.Replace("\"", "").Replace("[", "").Replace("]", "").Replace("\r", "").Replace("\n", "").Replace(" ", "");
-                        newtransactions = flattransactions.Split(',').ToList();
-                        if (LTCMemPool.Count == 0)
-                        {
-                            LTCMemPool = newtransactions;
-                        }
-                        else
-                        {
-                            differenceQuery =
-                            (List<string>)newtransactions.Except(LTCMemPool).ToList(); ;
-
-                            LTCMemPool = newtransactions;
-
-                            foreach (var s in differenceQuery)
-                            {
-                                try { 
-                                    isobject = OBJState.GetObjectByTransactionId(s, "good-user", "better-password", @"http://127.0.0.1:9332", "48");
-                                }
-                                catch { }
-                                if (isobject.URN != null) { foundCount++; }
-                                
-                            }
-
-                        }
-                    }
-                    catch { }
-                    newtransactions = new List<string>();
-
-                    try
-                    {
-                        rpcClient = new RPCClient(credentials, new Uri(@"http://127.0.0.1:22555"), Network.Main);
-                        flattransactions = rpcClient.SendCommand("getrawmempool").ResultString;
-                        flattransactions = flattransactions.Replace("\"", "").Replace("[", "").Replace("]", "").Replace("\r", "").Replace("\n", "").Replace(" ", "");
-                        newtransactions = flattransactions.Split(',').ToList();
-
-                        if (DOGMemPool.Count == 0)
-                        {
-                            DOGMemPool = newtransactions;
-                        }
-                        else
-                        {
-                            differenceQuery =
-                            (List<string>)newtransactions.Except(DOGMemPool).ToList(); ;
-
-                            DOGMemPool = newtransactions;
-
-                            foreach (var s in differenceQuery)
-                            {
-                                try
+                                foreach (var s in differenceQuery)
                                 {
-                                    isobject = OBJState.GetObjectByTransactionId(s, "good-user", "better-password", @"http://127.0.0.1:22555", "30");
+                                    try
+                                    {
+                                        isobject = OBJState.GetObjectByTransactionId(s, "good-user", "better-password", @"http://127.0.0.1:8332", "0");
+                                    }
+                                    catch { }
+                                    if (isobject.URN != null)
+                                    {
+
+                                        foundCount++;
+                                    }
+
                                 }
-                                catch { }
-                                if (isobject.URN != null) { foundCount++; }
 
                             }
-
                         }
-                    }
-                    catch { }
-                    newtransactions = new List<string>();
+                        catch { }
+                        newtransactions = new List<string>();
 
-                    if (foundCount > 0)
-                    {
-
-                        int lastQty = 0;
-                        int totalQty = 0;
-
-                        // Update the txtQty control using Invoke to run it on the UI thread.
-                        flowLayoutPanel1.Invoke((MethodInvoker)delegate
+                        try
                         {
-                            totalQty = flowLayoutPanel1.Controls.Count + ((foundCount * 2)+2);
-                        });
-
-
-                        // Update the txtQty control using Invoke to run it on the UI thread.
-                        txtQty.Invoke((MethodInvoker)delegate
-                        {
-                            txtQty.Text = totalQty.ToString();                         totalQty = flowLayoutPanel1.Controls.Count + ((foundCount * 2)+2);
-;
-                          });
-
-
-                        // Update the txtQty control using Invoke to run it on the UI thread.
-                        txtLast.Invoke((MethodInvoker)delegate
-                        {
-                            txtLast.Text = "0";
-                        });
-
-                        // Call the SearchAddressUpdate method using Invoke to run it on the UI thread.
-                        this.Invoke((MethodInvoker)delegate
-                        {
-                            lock (levelDBLocker)
+                            rpcClient = new RPCClient(credentials, new Uri(@"http://127.0.0.1:12832"), Network.Main);
+                            flattransactions = rpcClient.SendCommand("getrawmempool").ResultString;
+                            flattransactions = flattransactions.Replace("\"", "").Replace("[", "").Replace("]", "").Replace("\r", "").Replace("\n", "").Replace(" ", "");
+                            newtransactions = flattransactions.Split(',').ToList();
+                            if (MZCMemPool.Count == 0)
                             {
-                                var MUTE = new Options { CreateIfMissing = true };
-                                using (var db = new DB(MUTE, @"root\sup"))
-                                {
-                                    db.Delete("isBuilding");
-                                    
-                                }
+                                MZCMemPool = newtransactions;
                             }
+                            else
+                            {
+                                differenceQuery =
+                                (List<string>)newtransactions.Except(MZCMemPool).ToList(); ;
 
-                            SearchAddressUpdate();                                              
-  
-                        });
-                        isBuildingCounter = 0;
+                                MZCMemPool = newtransactions;
 
-                    }
-                    lock (levelDBLocker)
-                    {
-                        var MUTE = new Options { CreateIfMissing = true };
-                        using (var db = new DB(MUTE, @"root\sup"))
+                                foreach (var s in differenceQuery)
+                                {
+                                    try
+                                    {
+                                        isobject = OBJState.GetObjectByTransactionId(s, "good-user", "better-password", @"http://127.0.0.1:12832", "50");
+                                    }
+                                    catch { }
+                                    if (isobject.URN != null) { foundCount++; }
+
+                                }
+
+                            }
+                        }
+                        catch { }
+                        newtransactions = new List<string>();
+
+                        try
                         {
-                            db.Delete("isBuilding");
+                            rpcClient = new RPCClient(credentials, new Uri(@"http://127.0.0.1:9332"), Network.Main);
+                            flattransactions = rpcClient.SendCommand("getrawmempool").ResultString;
+                            flattransactions = flattransactions.Replace("\"", "").Replace("[", "").Replace("]", "").Replace("\r", "").Replace("\n", "").Replace(" ", "");
+                            newtransactions = flattransactions.Split(',').ToList();
+                            if (LTCMemPool.Count == 0)
+                            {
+                                LTCMemPool = newtransactions;
+                            }
+                            else
+                            {
+                                differenceQuery =
+                                (List<string>)newtransactions.Except(LTCMemPool).ToList(); ;
+
+                                LTCMemPool = newtransactions;
+
+                                foreach (var s in differenceQuery)
+                                {
+                                    try
+                                    {
+                                        isobject = OBJState.GetObjectByTransactionId(s, "good-user", "better-password", @"http://127.0.0.1:9332", "48");
+                                    }
+                                    catch { }
+                                    if (isobject.URN != null) { foundCount++; }
+
+                                }
+
+                            }
+                        }
+                        catch { }
+                        newtransactions = new List<string>();
+
+                        try
+                        {
+                            rpcClient = new RPCClient(credentials, new Uri(@"http://127.0.0.1:22555"), Network.Main);
+                            flattransactions = rpcClient.SendCommand("getrawmempool").ResultString;
+                            flattransactions = flattransactions.Replace("\"", "").Replace("[", "").Replace("]", "").Replace("\r", "").Replace("\n", "").Replace(" ", "");
+                            newtransactions = flattransactions.Split(',').ToList();
+
+                            if (DOGMemPool.Count == 0)
+                            {
+                                DOGMemPool = newtransactions;
+                            }
+                            else
+                            {
+                                differenceQuery =
+                                (List<string>)newtransactions.Except(DOGMemPool).ToList(); ;
+
+                                DOGMemPool = newtransactions;
+
+                                foreach (var s in differenceQuery)
+                                {
+                                    try
+                                    {
+                                        isobject = OBJState.GetObjectByTransactionId(s, "good-user", "better-password", @"http://127.0.0.1:22555", "30");
+                                    }
+                                    catch { }
+                                    if (isobject.URN != null) { foundCount++; }
+
+                                }
+
+                            }
+                        }
+                        catch { }
+                        newtransactions = new List<string>();
+
+                        if (foundCount > 0)
+                        {
+
+                            int lastQty = 0;
+                            int totalQty = 0;
+
+                            // Update the txtQty control using Invoke to run it on the UI thread.
+                            flowLayoutPanel1.Invoke((MethodInvoker)delegate
+                            {
+                                totalQty = flowLayoutPanel1.Controls.Count + ((foundCount * 2) + 2);
+                            });
+
+
+                            // Update the txtQty control using Invoke to run it on the UI thread.
+                            txtQty.Invoke((MethodInvoker)delegate
+                            {
+                                txtQty.Text = totalQty.ToString(); totalQty = flowLayoutPanel1.Controls.Count + ((foundCount * 2) + 2);
+                                ;
+                            });
+
+
+                            // Update the txtQty control using Invoke to run it on the UI thread.
+                            txtLast.Invoke((MethodInvoker)delegate
+                            {
+                                txtLast.Text = "0";
+                            });
+
+                            // Call the SearchAddressUpdate method using Invoke to run it on the UI thread.
+                            this.Invoke((MethodInvoker)delegate
+                            {
+                                lock (levelDBLocker)
+                                {
+                                    var MUTE = new Options { CreateIfMissing = true };
+                                    using (var db = new DB(MUTE, @"root\sup"))
+                                    {
+                                        db.Delete("isBuilding");
+
+                                    }
+                                }
+
+                                SearchAddressUpdate();
+
+                            });
                             isBuildingCounter = 0;
+
                         }
+                        lock (levelDBLocker)
+                        {
+                            var MUTE = new Options { CreateIfMissing = true };
+                            using (var db = new DB(MUTE, @"root\sup"))
+                            {
+                                db.Delete("isBuilding");
+                                isBuildingCounter = 0;
+                            }
+                        }
+
+
+
                     }
-
-
-
-                }else { isBuildingCounter++;}
-            });
-        
+                    else { isBuildingCounter++; }
+                });
+            }
+            catch { }
         }
 
+
+        private void flowLayoutPanel1_Resize(object sender, EventArgs e)
+        {
+            if (btnLive.BackColor != Color.Blue)
+            {
+                if (flowLayoutPanel1.Controls.Count > 0 && flowLayoutPanel1.Controls[0] is Microsoft.Web.WebView2.WinForms.WebView2)
+                {
+                    flowLayoutPanel1.Controls[0].Size = flowLayoutPanel1.Size;
+                }
+
+                int loadQty = ((flowLayoutPanel1.Size.Width / 208) * (flowLayoutPanel1.Size.Height / 309) + ((flowLayoutPanel1.Size.Width / 208)) + ((flowLayoutPanel1.Size.Height / 309))) - flowLayoutPanel1.Controls.Count;
+
+                if (loadQty > 1)
+                {
+                    SearchAddressUpdate();
+                };
+
+            }
+        }
     }
 }

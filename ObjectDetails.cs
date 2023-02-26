@@ -34,8 +34,37 @@ namespace SUP
 
         private void ObjectDetails_Load(object sender, EventArgs e)
         {
-            this.Text = "Sup!? Object Details [ " + _objectaddress + " ]";
-            btnReloadObject.PerformClick();
+            // Check if the parent form has a button named "btnLive" with blue background color
+            // Get a reference to the parent form
+            Form parentForm = this.Owner;
+            bool isBlue = false;
+  
+            // Check if the parent form has a button named "btnLive" with blue background color
+           try
+                {
+                    isBlue = parentForm.Controls.OfType<Button>().Any(b => b.Name == "btnLive" && b.BackColor == System.Drawing.Color.Blue);
+                }
+                catch { }
+
+            if (isBlue)
+            {
+                // If there is a button with blue background color, show a message box
+                DialogResult result = MessageBox.Show("disable Live monitoring to browse sup!? objects.\r\nignoring this warning may cause temporary data corruption that could require a full purge of the cache", "Warning", MessageBoxButtons.OKCancel, MessageBoxIcon.Warning);
+                if (result == DialogResult.OK)
+                {
+                    // If the user clicks OK, close the form
+                    this.Close();
+                }
+            }
+            else
+            {
+
+                this.Text = "Sup!? Object Details [ " + _objectaddress + " ]";
+                btnReloadObject.PerformClick();
+
+            }
+
+
 
         }
         private string TruncateAddress(string input)

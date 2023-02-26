@@ -12,17 +12,28 @@ namespace SUP
 
         private void foundObjectControl_Click(object sender, EventArgs e)
         {
-            new ObjectDetails(ObjectAddress.Text).Show();
+
+            Form parentForm = this.FindForm();
+            ObjectDetails childForm = new ObjectDetails(ObjectAddress.Text);
+            childForm.Owner = parentForm;
+            childForm.Show();
+
         }
 
         private void ObjectCreators_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
-            new ObjectBrowser(ObjectCreators.Links[0].LinkData.ToString()).Show();
+            Form parentForm = this.FindForm();
+            ObjectBrowser childForm = new ObjectBrowser(ObjectCreators.Links[0].LinkData.ToString());
+            childForm.Owner = parentForm;
+            childForm.Show();
         }
 
         private void ObjectCreators2_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
-            new ObjectBrowser(ObjectCreators2.Links[0].LinkData.ToString()).Show();
+            Form parentForm = this.FindForm();
+            ObjectBrowser childForm = new ObjectBrowser(ObjectCreators2.Links[0].LinkData.ToString());
+            childForm.Owner = parentForm;
+            childForm.Show();
         }
 
         private void ObjectPrice_TextChanged(object sender, EventArgs e)
@@ -42,7 +53,10 @@ namespace SUP
 
         private void btnOfficial_Click(object sender, EventArgs e)
         {
-            new ObjectDetails(txtOfficialURN.Text).Show();
+            Form parentForm = this.FindForm();
+            ObjectDetails childForm = new ObjectDetails(txtOfficialURN.Text);
+            childForm.Owner = parentForm;
+            childForm.Show();
         }
     }
 }

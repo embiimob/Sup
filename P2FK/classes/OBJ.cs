@@ -62,7 +62,7 @@ namespace SUP.P2FK
             string isBlocked;
             lock (levelDBLocker)
             {
-                using (var db = new DB(OBJ, @"root\block"))
+                using (var db = new DB(OBJ, @"root\oblock"))
                 {
                     isBlocked = db.Get(objectaddress);
                     db.Close();
@@ -109,7 +109,7 @@ namespace SUP.P2FK
                     string sigSeen;
                     lock (levelDBLocker)
                     {
-                        using (var db = new DB(OBJ, @"root\obj"))
+                        using (var db = new DB(OBJ, @"root\sig"))
                         {
                             sigSeen = db.Get(transaction.Signature);
                         }
@@ -120,7 +120,7 @@ namespace SUP.P2FK
 
                         lock (levelDBLocker)
                         {
-                            using (var db = new DB(OBJ, @"root\obj"))
+                            using (var db = new DB(OBJ, @"root\sig"))
                             {
                                 db.Put(transaction.Signature, transaction.TransactionId);
                             }
@@ -245,19 +245,10 @@ namespace SUP.P2FK
 
                                                     lock (levelDBLocker)
                                                     {
-                                                        string found;
-                                                        
+
                                                         using (var db = new DB(OBJ, @"root\found"))
                                                         {
-                                                            found = db.Get(objectaddress);
-                                                        }
-
-                                                        if (found == null)
-                                                        {
-                                                            using (var db = new DB(OBJ, @"root\found"))
-                                                            {
-                                                                db.Put(objectaddress, "1");
-                                                            }
+                                                            db.Put("found!" + transaction.BlockDate.ToString("yyyyMMddHHmmss") + "!" + transaction.SignedBy, "1");
                                                         }
 
                                                     }
@@ -720,7 +711,7 @@ namespace SUP.P2FK
             string isBlocked;
             lock (levelDBLocker)
             {
-                using (var db = new DB(OBJ, @"root\block"))
+                using (var db = new DB(OBJ, @"root\oblock"))
                 {
                     isBlocked = db.Get(transactionid);
                 }
@@ -761,7 +752,7 @@ namespace SUP.P2FK
                 string sigSeen;
                 lock (levelDBLocker)
                 {
-                    using (var db = new DB(OBJ, @"root\obj"))
+                    using (var db = new DB(OBJ, @"root\sig"))
                     {
                         sigSeen = db.Get(objectTransaction.Signature);
                     }
@@ -772,7 +763,7 @@ namespace SUP.P2FK
 
                     lock (levelDBLocker)
                     {
-                        using (var db = new DB(OBJ, @"root\obj"))
+                        using (var db = new DB(OBJ, @"root\sig"))
                         {
                             db.Put(objectTransaction.Signature, objectTransaction.TransactionId);
                         }
@@ -890,7 +881,7 @@ namespace SUP.P2FK
                                                 {
                                                     using (var db = new DB(OBJ, @"root\found"))
                                                     {
-                                                        db.Put(objectTransaction.SignedBy, "1");
+                                                        db.Put("found!" + objectTransaction.BlockDate.ToString("yyyyMMddHHmmss") + "!" + objectTransaction.SignedBy, "1");
                                                     }
                                                 }
 
@@ -1002,7 +993,7 @@ namespace SUP.P2FK
             lock (levelDBLocker)
             {
 
-                using (var db = new DB(OBJ, @"root\block"))
+                using (var db = new DB(OBJ, @"root\oblock"))
                 {
                     isBlocked = db.Get(objectaddress);
                     db.Close();
@@ -1064,7 +1055,7 @@ namespace SUP.P2FK
             lock (levelDBLocker)
             {
 
-                using (var db = new DB(OBJ, @"root\block"))
+                using (var db = new DB(OBJ, @"root\oblock"))
                 {
                     isBlocked = db.Get(objectaddress);
                     db.Close();
@@ -1222,7 +1213,7 @@ namespace SUP.P2FK
             lock (levelDBLocker)
             {
 
-                using (var db = new DB(OBJ, @"root\block"))
+                using (var db = new DB(OBJ, @"root\oblock"))
                 {
                     isBlocked = db.Get(objectaddress);
                     db.Close();
@@ -1366,7 +1357,7 @@ namespace SUP.P2FK
             lock (levelDBLocker)
             {
 
-                using (var db = new DB(OBJ, @"root\block"))
+                using (var db = new DB(OBJ, @"root\oblock"))
                 {
                     isBlocked = db.Get(objectaddress);
                     db.Close();
@@ -1511,7 +1502,7 @@ namespace SUP.P2FK
             lock (levelDBLocker)
             {
 
-                using (var db = new DB(OBJ, @"root\block"))
+                using (var db = new DB(OBJ, @"root\oblock"))
                 {
                     isBlocked = db.Get(objectaddress);
                     db.Close();
@@ -1618,24 +1609,23 @@ namespace SUP.P2FK
                 using (var db = new DB(SUP, @"root\found"))
                 {
                     LevelDB.Iterator it = db.CreateIterator();
+
                     for (
                        it.SeekToLast();
-                       it.IsValid() && rownum < skip + qty; // Only display next 10 messages
+                      it.IsValid() && it.KeyAsString().StartsWith("found!") && rownum < skip + qty;
                         it.Prev()
-                     )
+                 )
+
                     {
+                        string whatis = it.KeyAsString().Split('!')[2];
                         // Display only if rownum > numMessagesDisplayed to skip already displayed messages
                         if (rownum >= skip)
                         {
-
-                            if (!addedValues.Contains(it.KeyAsString()))
-                            {
-
-                                addedValues.Add(it.KeyAsString());
-                                OBJState isObject = GetObjectByAddress(it.KeyAsString(), username, password, url, versionByte);
+                           
+                                addedValues.Add(it.KeyAsString().Split('!')[2]);
+                                OBJState isObject = GetObjectByAddress(it.KeyAsString().Split('!')[2], username, password, url, versionByte);
                                 totalSearch.Add(isObject);
-
-                            }
+                            
 
                         }
                         rownum++;
@@ -1761,28 +1751,28 @@ namespace SUP.P2FK
                             string process = it.ValueAsString();
 
                             List<string> supMessagePacket = JsonConvert.DeserializeObject<List<string>>(process);
-                            Root root = Root.GetRootByTransactionId(supMessagePacket[1],username,password,url, versionByte);
+                            Root root = Root.GetRootByTransactionId(supMessagePacket[1], username, password, url, versionByte);
                             byte[] result = Root.GetRootBytesByFile(new string[] { @"root/" + supMessagePacket[1] + @"/SEC" });
                             result = Root.DecryptRootBytes(username, password, url, objectaddress, result);
 
-                            root = Root.GetRootByTransactionId(supMessagePacket[1],null,null,null, versionByte, result);
-                           
-                                foreach (string message in root.Message)
+                            root = Root.GetRootByTransactionId(supMessagePacket[1], null, null, null, versionByte, result);
+
+                            foreach (string message in root.Message)
+                            {
+
+                                string fromAddress = supMessagePacket[0];
+
+                                string tstamp = it.KeyAsString().Split('!')[1];
+
+                                // Add the message data to the messages list
+                                messages.Add(new
                                 {
+                                    Message = message,
+                                    FromAddress = fromAddress,
+                                    BlockDate = tstamp
+                                });
+                            }
 
-                                    string fromAddress = supMessagePacket[0];
-
-                                    string tstamp = it.KeyAsString().Split('!')[1];
-
-                                    // Add the message data to the messages list
-                                    messages.Add(new
-                                    {
-                                        Message = message,
-                                        FromAddress = fromAddress,
-                                        BlockDate = tstamp
-                                    });
-                                }
-                            
 
 
                         }
