@@ -21,7 +21,6 @@ namespace SUP
 
     public partial class ObjectBrowser : Form
     {
-        Button lastClickedButton;
         private readonly string _objectaddress;
         private List<String> SearchHistory = new List<String>();
         private int SearchId = 0;
@@ -1661,7 +1660,7 @@ namespace SUP
                     lock (levelDBLocker)
                     {
                         var MUTE = new Options { CreateIfMissing = true };
-                        using (var db = new DB(MUTE, @"root\sup"))
+                        using (var db = new DB(MUTE, @"root\monitor"))
                         {
                             isBuilding = db.Get("isBuilding");
                         }
@@ -1671,7 +1670,7 @@ namespace SUP
                         lock (levelDBLocker)
                         {
                             var MUTE = new Options { CreateIfMissing = true };
-                            using (var db = new DB(MUTE, @"root\sup"))
+                            using (var db = new DB(MUTE, @"root\monitor"))
                             {
                                 db.Put("isBuilding", "true");
                                 isBuildingCounter++;
@@ -1710,7 +1709,19 @@ namespace SUP
                                     }
                                     catch { }
 
-                                    if (isobject.URN != null) { foundCount++; }
+                                    if (isobject.URN != null) {
+
+                                        lock (levelDBLocker)
+                                        {
+                                            var FOUND = new Options { CreateIfMissing = true };
+                                            using (var db = new DB(FOUND, @"root\found"))
+                                            {
+                                                db.Put("found!" + isobject.CreatedDate.ToString("yyyyMMddHHmmss") + "!" + isobject.Creators.First().Key, "1");
+                                            }
+
+                                        }
+
+                                        foundCount++; }
 
                                 }
 
@@ -1747,6 +1758,16 @@ namespace SUP
                                     if (isobject.URN != null)
                                     {
 
+                                        lock (levelDBLocker)
+                                        {
+                                            var FOUND = new Options { CreateIfMissing = true };
+                                            using (var db = new DB(FOUND, @"root\found"))
+                                            {
+                                                db.Put("found!" + isobject.CreatedDate.ToString("yyyyMMddHHmmss") + "!" + isobject.Creators.First().Key, "1");
+                                            }
+
+                                        }
+
                                         foundCount++;
                                     }
 
@@ -1781,7 +1802,21 @@ namespace SUP
                                         isobject = OBJState.GetObjectByTransactionId(s, "good-user", "better-password", @"http://127.0.0.1:12832", "50");
                                     }
                                     catch { }
-                                    if (isobject.URN != null) { foundCount++; }
+                                    if (isobject.URN != null)
+                                    {
+
+                                        lock (levelDBLocker)
+                                        {
+                                            var FOUND = new Options { CreateIfMissing = true };
+                                            using (var db = new DB(FOUND, @"root\found"))
+                                            {
+                                                db.Put("found!" + isobject.CreatedDate.ToString("yyyyMMddHHmmss") + "!" + isobject.Creators.First().Key, "1");
+                                            }
+
+                                        }
+
+                                        foundCount++;
+                                    }
 
                                 }
 
@@ -1814,7 +1849,21 @@ namespace SUP
                                         isobject = OBJState.GetObjectByTransactionId(s, "good-user", "better-password", @"http://127.0.0.1:9332", "48");
                                     }
                                     catch { }
-                                    if (isobject.URN != null) { foundCount++; }
+                                    if (isobject.URN != null)
+                                    {
+
+                                        lock (levelDBLocker)
+                                        {
+                                            var FOUND = new Options { CreateIfMissing = true };
+                                            using (var db = new DB(FOUND, @"root\found"))
+                                            {
+                                                db.Put("found!" + isobject.CreatedDate.ToString("yyyyMMddHHmmss") + "!" + isobject.Creators.First().Key, "1");
+                                            }
+
+                                        }
+
+                                        foundCount++;
+                                    }
 
                                 }
 
@@ -1848,7 +1897,21 @@ namespace SUP
                                         isobject = OBJState.GetObjectByTransactionId(s, "good-user", "better-password", @"http://127.0.0.1:22555", "30");
                                     }
                                     catch { }
-                                    if (isobject.URN != null) { foundCount++; }
+                                    if (isobject.URN != null)
+                                    {
+
+                                        lock (levelDBLocker)
+                                        {
+                                            var FOUND = new Options { CreateIfMissing = true };
+                                            using (var db = new DB(FOUND, @"root\found"))
+                                            {
+                                                db.Put("found!" + isobject.CreatedDate.ToString("yyyyMMddHHmmss") + "!" + isobject.Creators.First().Key, "1");
+                                            }
+
+                                        }
+
+                                        foundCount++;
+                                    }
 
                                 }
 
@@ -1860,7 +1923,6 @@ namespace SUP
                         if (foundCount > 0)
                         {
 
-                            int lastQty = 0;
                             int totalQty = 0;
 
                             // Update the txtQty control using Invoke to run it on the UI thread.
@@ -1884,29 +1946,30 @@ namespace SUP
                                 txtLast.Text = "0";
                             });
 
-                            // Call the SearchAddressUpdate method using Invoke to run it on the UI thread.
-                            this.Invoke((MethodInvoker)delegate
+                            lock (levelDBLocker)
                             {
-                                lock (levelDBLocker)
+                                var MUTE = new Options { CreateIfMissing = true };
+                                using (var db = new DB(MUTE, @"root\monitor"))
                                 {
-                                    var MUTE = new Options { CreateIfMissing = true };
-                                    using (var db = new DB(MUTE, @"root\sup"))
-                                    {
-                                        db.Delete("isBuilding");
+                                    db.Delete("isBuilding");
 
-                                    }
                                 }
+                            }
+
+                            this.Invoke((MethodInvoker)delegate
+                            {                                
 
                                 SearchAddressUpdate();
 
                             });
+
                             isBuildingCounter = 0;
 
                         }
                         lock (levelDBLocker)
                         {
                             var MUTE = new Options { CreateIfMissing = true };
-                            using (var db = new DB(MUTE, @"root\sup"))
+                            using (var db = new DB(MUTE, @"root\monitor"))
                             {
                                 db.Delete("isBuilding");
                                 isBuildingCounter = 0;
@@ -1919,7 +1982,18 @@ namespace SUP
                     else { isBuildingCounter++; }
                 });
             }
-            catch { }
+            catch {
+                lock (levelDBLocker)
+                {
+                    var MUTE = new Options { CreateIfMissing = true };
+                    using (var db = new DB(MUTE, @"root\monitor"))
+                    {
+                        db.Delete("isBuilding");
+
+                    }
+                }
+
+            }
         }
 
 
