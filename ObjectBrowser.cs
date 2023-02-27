@@ -1621,8 +1621,6 @@ namespace SUP
             {
                 btnLive.BackColor = Color.Blue;
                 btnLive.ForeColor = Color.Yellow;
-                btnCreated.BackColor = Color.White;
-                btnOwned.BackColor = Color.White;
                 btnOwned.Enabled = false;
                 btnCreated.Enabled = false;
                 btnConnections.Enabled = false;
@@ -1773,7 +1771,7 @@ namespace SUP
 
 
                                                 }
-                                                else { }
+                                                else { try { System.IO.Directory.Delete(@"root\" + s, true); } catch { } }
 
                                             }else
                                             {
@@ -1866,7 +1864,7 @@ namespace SUP
 
 
                                                 }
-                                                else { }
+                                                else { try { System.IO.Directory.Delete(@"root\" + s, true); } catch { } }
 
                                             }
                                             else { }
@@ -1956,7 +1954,7 @@ namespace SUP
 
 
                                                 }
-                                                else { }
+                                                else { try { System.IO.Directory.Delete(@"root\" + s, true); } catch { } }
 
                                             }
                                             else { }
@@ -2046,7 +2044,7 @@ namespace SUP
 
 
                                                 }
-                                                else { }
+                                                else { try { System.IO.Directory.Delete(@"root\" + s, true); } catch { } }
 
                                             }
                                             else {  }
@@ -2136,7 +2134,7 @@ namespace SUP
 
 
                                                 }
-                                                else { }
+                                                else { try { System.IO.Directory.Delete(@"root\" + s, true); } catch { } }
 
                                             }
                                             else { }

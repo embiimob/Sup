@@ -218,7 +218,7 @@ namespace SUP.P2FK
                 {
                     Directory.CreateDirectory(diskpath);
                 }
-                if (fileName.Length > 1 & fileName != "BTC" & fileName != "MZC" & fileName != "IPFS")
+                if (fileName.Length > 1 & fileName != "BTC" & fileName != "MZC" & fileName != "LTC" & fileName != "DOG" & fileName != "IPFS")
                 {
                     try
                     {

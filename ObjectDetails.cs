@@ -1498,7 +1498,7 @@ namespace SUP
                     case ".gif":
                     case ".png":
                         // Create a new PictureBox
-                        pictureBox1.ImageLocation = imgurn;
+                        pictureBox1.ImageLocation = urn;
                         if (btnOfficial.Visible == false) { button1.Visible = true; }
                         break;
                     case ".mp4":

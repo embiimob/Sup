@@ -45,6 +45,7 @@
             this.btnOfficial = new System.Windows.Forms.Button();
             this.txtOfficialURN = new System.Windows.Forms.TextBox();
             this.lblOfficial = new System.Windows.Forms.Label();
+            this.lblTrash = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.ObjectImage)).BeginInit();
             this.panel1.SuspendLayout();
             this.flowLayoutPanel1.SuspendLayout();
@@ -163,12 +164,12 @@
             this.ObjectAddress.BackColor = System.Drawing.Color.Transparent;
             this.ObjectAddress.Font = new System.Drawing.Font("Microsoft Sans Serif", 5.75F);
             this.ObjectAddress.ImageAlign = System.Drawing.ContentAlignment.BottomCenter;
-            this.ObjectAddress.Location = new System.Drawing.Point(3, 303);
+            this.ObjectAddress.Location = new System.Drawing.Point(5, 305);
             this.ObjectAddress.Name = "ObjectAddress";
-            this.ObjectAddress.Size = new System.Drawing.Size(202, 21);
+            this.ObjectAddress.Size = new System.Drawing.Size(176, 21);
             this.ObjectAddress.TabIndex = 8;
             this.ObjectAddress.Text = "@";
-            this.ObjectAddress.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.ObjectAddress.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             this.ObjectAddress.Click += new System.EventHandler(this.ObjectAddress_Click);
             // 
             // ObjectName
@@ -259,12 +260,23 @@
             this.lblOfficial.Text = "👑";
             this.lblOfficial.Visible = false;
             // 
+            // lblTrash
+            // 
+            this.lblTrash.AutoSize = true;
+            this.lblTrash.Location = new System.Drawing.Point(188, 312);
+            this.lblTrash.Name = "lblTrash";
+            this.lblTrash.Size = new System.Drawing.Size(19, 13);
+            this.lblTrash.TabIndex = 17;
+            this.lblTrash.Text = "🗑️";
+            this.lblTrash.Click += new System.EventHandler(this.lblTrash_Click);
+            // 
             // FoundObjectControl
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
             this.BackColor = System.Drawing.SystemColors.ActiveCaption;
+            this.Controls.Add(this.lblTrash);
             this.Controls.Add(this.btnOfficial);
             this.Controls.Add(this.lblOfficial);
             this.Controls.Add(this.txtOfficialURN);
@@ -311,5 +323,6 @@
         public System.Windows.Forms.TextBox txtOfficialURN;
         public System.Windows.Forms.FlowLayoutPanel flowLayoutPanel1;
         public System.Windows.Forms.Label lblOfficial;
+        public System.Windows.Forms.Label lblTrash;
     }
 }

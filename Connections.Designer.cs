@@ -30,6 +30,7 @@
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Connections));
             this.panel1 = new System.Windows.Forms.Panel();
+            this.btnPurgeBlock = new System.Windows.Forms.Button();
             this.btnClearIPFSisLoadingCache = new System.Windows.Forms.Button();
             this.label16 = new System.Windows.Forms.Label();
             this.checkBox4 = new System.Windows.Forms.CheckBox();
@@ -92,13 +93,16 @@
             this.txtPort = new System.Windows.Forms.TextBox();
             this.btnMainConnection = new System.Windows.Forms.Button();
             this.label1 = new System.Windows.Forms.Label();
-            this.btnPurgeBlock = new System.Windows.Forms.Button();
+            this.brnPurgeMute = new System.Windows.Forms.Button();
+            this.btnPurgeFound = new System.Windows.Forms.Button();
             this.panel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.SuspendLayout();
             // 
             // panel1
             // 
+            this.panel1.Controls.Add(this.btnPurgeFound);
+            this.panel1.Controls.Add(this.brnPurgeMute);
             this.panel1.Controls.Add(this.btnPurgeBlock);
             this.panel1.Controls.Add(this.btnClearIPFSisLoadingCache);
             this.panel1.Controls.Add(this.label16);
@@ -166,6 +170,16 @@
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(644, 480);
             this.panel1.TabIndex = 1;
+            // 
+            // btnPurgeBlock
+            // 
+            this.btnPurgeBlock.Location = new System.Drawing.Point(94, 299);
+            this.btnPurgeBlock.Name = "btnPurgeBlock";
+            this.btnPurgeBlock.Size = new System.Drawing.Size(63, 23);
+            this.btnPurgeBlock.TabIndex = 157;
+            this.btnPurgeBlock.Text = "block";
+            this.btnPurgeBlock.UseVisualStyleBackColor = true;
+            this.btnPurgeBlock.Click += new System.EventHandler(this.btnPurgeBlock_Click);
             // 
             // btnClearIPFSisLoadingCache
             // 
@@ -352,9 +366,9 @@
             // 
             this.btnPurge.Location = new System.Drawing.Point(6, 299);
             this.btnPurge.Name = "btnPurge";
-            this.btnPurge.Size = new System.Drawing.Size(143, 23);
+            this.btnPurge.Size = new System.Drawing.Size(82, 23);
             this.btnPurge.TabIndex = 129;
-            this.btnPurge.Text = "purge sup!? cache";
+            this.btnPurge.Text = "purge cache";
             this.btnPurge.UseVisualStyleBackColor = true;
             this.btnPurge.Click += new System.EventHandler(this.btnPurge_Click);
             // 
@@ -755,15 +769,25 @@
             this.label1.TabIndex = 50;
             this.label1.Text = "main chain";
             // 
-            // btnPurgeBlock
+            // brnPurgeMute
             // 
-            this.btnPurgeBlock.Location = new System.Drawing.Point(155, 299);
-            this.btnPurgeBlock.Name = "btnPurgeBlock";
-            this.btnPurgeBlock.Size = new System.Drawing.Size(143, 23);
-            this.btnPurgeBlock.TabIndex = 157;
-            this.btnPurgeBlock.Text = "purge sup!?  block / mute";
-            this.btnPurgeBlock.UseVisualStyleBackColor = true;
-            this.btnPurgeBlock.Click += new System.EventHandler(this.btnPurgeBlock_Click);
+            this.brnPurgeMute.Location = new System.Drawing.Point(163, 299);
+            this.brnPurgeMute.Name = "brnPurgeMute";
+            this.brnPurgeMute.Size = new System.Drawing.Size(63, 23);
+            this.brnPurgeMute.TabIndex = 158;
+            this.brnPurgeMute.Text = "mute";
+            this.brnPurgeMute.UseVisualStyleBackColor = true;
+            this.brnPurgeMute.Click += new System.EventHandler(this.brnPurgeMute_Click);
+            // 
+            // btnPurgeFound
+            // 
+            this.btnPurgeFound.Location = new System.Drawing.Point(232, 299);
+            this.btnPurgeFound.Name = "btnPurgeFound";
+            this.btnPurgeFound.Size = new System.Drawing.Size(63, 23);
+            this.btnPurgeFound.TabIndex = 159;
+            this.btnPurgeFound.Text = "found";
+            this.btnPurgeFound.UseVisualStyleBackColor = true;
+            this.btnPurgeFound.Click += new System.EventHandler(this.btnPurgeFound_Click);
             // 
             // Connections
             // 
@@ -849,5 +873,7 @@
         private System.Windows.Forms.Label label16;
         private System.Windows.Forms.Button btnClearIPFSisLoadingCache;
         private System.Windows.Forms.Button btnPurgeBlock;
+        private System.Windows.Forms.Button btnPurgeFound;
+        private System.Windows.Forms.Button brnPurgeMute;
     }
 }

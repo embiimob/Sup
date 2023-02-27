@@ -837,6 +837,11 @@ namespace SUP
             {
                 db.Put(txtTransactionId.Text, "true");
             }
+
+            if (txtTransactionId.Text.Length > 42)
+            {
+                try { System.IO.Directory.Delete(@"root\" + txtTransactionId.Text, true); } catch { }
+            }
         }
 
         private void ButtonUnblockTransactionIdClick(object sender, EventArgs e)
@@ -853,14 +858,98 @@ namespace SUP
         private void ButtonBlockAddressClick(object sender, EventArgs e)
         {
 
-            var WORK = new Options { CreateIfMissing = true };
-            using (var db = new DB(WORK, @"root\block"))
+            try
             {
-                db.Put(txtSearchAddress.Text, "true");
+                var WORK = new Options { CreateIfMissing = true };
+                using (var db = new DB(WORK, @"root\oblock"))
+                {
+                    db.Put(txtSearchAddress.Text, "true");
+
+                }
+
+                var SUP = new Options { CreateIfMissing = true };
+                var keysToDelete = new HashSet<string>(); // Create a new HashSet to store the keys to delete
+
+                using (var db = new DB(SUP, @"root\found"))
+                {
+                    LevelDB.Iterator it = db.CreateIterator();
+
+                    for (
+                        it.SeekToLast();
+                        it.IsValid();
+                        it.Prev()
+                    )
+                    {
+                        string key = it.KeyAsString();
+                        if (key.Contains(txtSearchAddress.Text))
+                        {
+                            keysToDelete.Add(key); // Add the key to the HashSet
+                        }
+                    }
+
+                    it.Dispose();
+
+                    var batch = new WriteBatch(); // Create a new WriteBatch to delete the keys
+                    foreach (var key in keysToDelete)
+                    {
+                        batch.Delete(key); // Add a delete operation for each key in the HashSet
+                    }
+                    db.Write(batch); // Execute the batch to delete the keys from the database
+                }
+
+
+                Root[] root = Root.GetRootsByAddress(txtSearchAddress.Text, "good-user", "better-password", @"http://127.0.0.1:18332");
+
+                foreach (Root rootItem in root)
+                {
+
+                    using (var db = new DB(WORK, @"root\tblock"))
+                    {
+                        db.Put(rootItem.TransactionId, "true");
+
+                    }
+                    try
+                    {
+                        Directory.Delete(@"root\" + rootItem.TransactionId, true);
+                    }
+                    catch { }
+                }
+                try
+                {
+
+                    string diskpath = "root\\" + txtSearchAddress.Text + "\\";
+
+                    // fetch current JSONOBJ from disk if it exists
+                    try
+                    {
+                        string JSONOBJ = System.IO.File.ReadAllText(diskpath + "P2FK.json");
+                        OBJState objectState = JsonConvert.DeserializeObject<OBJState>(JSONOBJ);
+                        try
+                        {
+                            if (objectState.URN != null)
+                            {
+                                try { Directory.Delete(@"root\" + GetTransactionId(objectState.URN), true); } catch { }
+                                try { Directory.Delete(@"ipfs\" + GetTransactionId(objectState.URN), true); } catch { }
+                            }
+                            if (objectState.Image != null)
+                            {
+                                try { Directory.Delete(@"root\" + GetTransactionId(objectState.Image), true); } catch { }
+                                try { Directory.Delete(@"ipfs\" + GetTransactionId(objectState.Image), true); } catch { }
+                            }
+                        }
+                        catch { }
+                    }
+                    catch { }
+
+                    Directory.Delete(@"root\" + txtSearchAddress.Text, true);
+
+                }
+                catch { }
             }
+            catch { }
 
 
-        }
+            }
 
         private void ButtonUnBlockAddressClick(object sender, EventArgs e)
         {
@@ -1106,6 +1195,27 @@ namespace SUP
             lblTotalTime.Text = "time: " + Math.Truncate(elapsedMilliseconds);
 
             txtGetValue.Text = json;
+        }
+
+
+        public string GetTransactionId(string input)
+        {
+            int startIndex = input.IndexOf(":") + 1;
+            if (startIndex == 0)
+            {
+                // No colon found, return the original string
+                startIndex = 0;
+            }
+
+            int endIndex = input.IndexOf("/");
+            if (endIndex == -1)
+            {
+                // No slash found, return the substring starting from the start index
+                return input.Substring(startIndex);
+            }
+
+            // Return the substring between the colon and the slash
+            return input.Substring(startIndex, endIndex - startIndex);
         }
     }
 }

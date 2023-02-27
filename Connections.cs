@@ -375,7 +375,7 @@ namespace SUP
                 string subdirectoryName = Path.GetFileName(subdirectory);
 
                 // Check if the subdirectory name is "mute" or "block"
-                if (subdirectoryName == "mute" || subdirectoryName == "block")
+                if (subdirectoryName == "block")
                 {
                     // Delete the subdirectory and all its contents
                     Directory.Delete(subdirectory, true);
@@ -383,6 +383,50 @@ namespace SUP
             }
 
             
+        }
+
+        private void brnPurgeMute_Click(object sender, EventArgs e)
+        {
+            string directoryPath = @"root";
+
+            // Get a list of all the subdirectories in the directory
+            string[] subdirectories = Directory.GetDirectories(directoryPath);
+
+            // Loop through each subdirectory
+            foreach (string subdirectory in subdirectories)
+            {
+                // Get the name of the subdirectory
+                string subdirectoryName = Path.GetFileName(subdirectory);
+
+                // Check if the subdirectory name is "mute" or "block"
+                if (subdirectoryName == "mute")
+                {
+                    // Delete the subdirectory and all its contents
+                    Directory.Delete(subdirectory, true);
+                }
+            }
+        }
+
+        private void btnPurgeFound_Click(object sender, EventArgs e)
+        {
+            string directoryPath = @"root";
+
+            // Get a list of all the subdirectories in the directory
+            string[] subdirectories = Directory.GetDirectories(directoryPath);
+
+            // Loop through each subdirectory
+            foreach (string subdirectory in subdirectories)
+            {
+                // Get the name of the subdirectory
+                string subdirectoryName = Path.GetFileName(subdirectory);
+
+                // Check if the subdirectory name is "mute" or "block"
+                if (subdirectoryName == "found")
+                {
+                    // Delete the subdirectory and all its contents
+                    Directory.Delete(subdirectory, true);
+                }
+            }
         }
     }
 }
