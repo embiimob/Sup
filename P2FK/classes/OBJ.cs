@@ -1017,8 +1017,49 @@ namespace SUP.P2FK
                         }
                         else
                         {
-                            Root.GetRootByTransactionId(isObject.URN.Replace("MZC:", "").Replace("BTC:", "").Substring(0, 64), username, password, url, versionByte);
-                            file2 = @"root\" + isObject.URN.Replace("MZC:", "").Replace("BTC:", "").Replace(@"/", @"\");
+
+                            string transid = isObject.URN.Replace("MZC:", "").Replace("BTC:", "").Replace("LTC:", "").Replace("DOG:", "").Substring(0, 64);
+                            switch (isObject.URN.ToUpper().Substring(0, 4))
+                            {
+                                case "BTC:":
+                                    if (!System.IO.Directory.Exists("root/" + transid))
+                                    {
+                                        Root.GetRootByTransactionId(transid, "good-user","better-password", @"http://127.0.0.1:8332", "0");
+                                    }
+                                    break;
+                                case "MZC:":
+                                    if (!System.IO.Directory.Exists("root/" + transid))
+                                    {
+                                        Root.GetRootByTransactionId(transid, "good-user", "better-password", @"http://127.0.0.1:12832", "50");
+                                    }
+                                    break;
+                                case "LTC:":
+                                    if (!System.IO.Directory.Exists("root/" + transid))
+                                    {
+                                        Root.GetRootByTransactionId(transid, "good-user", "better-password", @"http://127.0.0.1:9332", "48");
+                                    }
+                                    break;
+                                case "DOG:":
+                                    if (!System.IO.Directory.Exists("root/" + transid))
+                                    {
+                                        Root.GetRootByTransactionId(transid, "good-user", "better-password", @"http://127.0.0.1:22555", "30");
+                                    }
+                                    break;
+                                case "DTC:":
+                                    if (!System.IO.Directory.Exists("root/" + transid))
+                                    {
+                                        Root.GetRootByTransactionId(transid, "good-user", "better-password", @"http://127.0.0.1:11777", "30");
+                                    }
+                                    break;
+                                default:
+                                    if (!System.IO.Directory.Exists("root/" + transid))
+                                    {
+                                        Root root = Root.GetRootByTransactionId(transid,"good-user", "better-password", @"http://127.0.0.1:18332");
+                                    }
+                                    break;
+                            }
+
+                            file2 = @"root\" + isObject.URN.Replace("MZC:", "").Replace("BTC:", "").Replace("LTC:", "").Replace("DOG:", "").Replace(@"/", @"\");
                         }
 
 
