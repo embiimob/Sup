@@ -78,19 +78,23 @@ namespace SUP.P2FK
             // fetch current JSONOBJ from disk if it exists
             try
             {
-                JSONOBJ = System.IO.File.ReadAllText(diskpath + "P2FK.json");
+                JSONOBJ = System.IO.File.ReadAllText(diskpath + "OBJ.json");
                 objectState = JsonConvert.DeserializeObject<OBJState>(JSONOBJ);
                 verbose = objectState.Verbose;
             }
             catch { }
 
+            if (objectState.URN != null && objectState.ChangeDate.Year.ToString() == "1970") { objectState = new OBJState();}
+
             var intProcessHeight = objectState.ProcessHeight;
             Root[] objectTransactions;
 
             //return all roots found at address
-            objectTransactions = Root.GetRootsByAddress(objectaddress, username, password, url, intProcessHeight, 300, versionByte);
+            objectTransactions = Root.GetRootsByAddress(objectaddress, username, password, url, intProcessHeight, 2, versionByte);
 
-            if (intProcessHeight > 0 && objectTransactions.Count() == 1) { return objectState; }
+            if (objectTransactions.Count() == 1) { return objectState; }
+
+            objectTransactions = Root.GetRootsByAddress(objectaddress, username, password, url, intProcessHeight, 300, versionByte);
 
 
             foreach (Root transaction in objectTransactions)
@@ -696,7 +700,7 @@ namespace SUP.P2FK
             {
                 Directory.CreateDirectory(@"root\" + objectaddress);
             }
-            System.IO.File.WriteAllText(@"root\" + objectaddress + @"\" + "P2FK.json", objectSerialized);
+            System.IO.File.WriteAllText(@"root\" + objectaddress + @"\" + "OBJ.json", objectSerialized);
 
 
             return objectState;
@@ -723,7 +727,7 @@ namespace SUP.P2FK
 
             var intProcessHeight = 0;
             Root objectTransaction;
-            string P2FKJSONString = System.IO.File.ReadAllText(diskpath + "P2FK.json");
+            string P2FKJSONString = System.IO.File.ReadAllText(diskpath + "GetObjectByTransactionId.json");
             objectTransaction = JsonConvert.DeserializeObject<Root>(P2FKJSONString);
             OBJ objectinspector = null;
             try
@@ -828,7 +832,7 @@ namespace SUP.P2FK
             {
                 Directory.CreateDirectory(@"root\" + objectTransaction.SignedBy);
             }
-            System.IO.File.WriteAllText(@"root\" + objectTransaction.SignedBy + @"\" + "P2FK.json", objectSerialized);
+            System.IO.File.WriteAllText(@"root\" + objectTransaction.SignedBy + @"\" + "GetObjectByTransactionId.json", objectSerialized);
 
             //used to determine where to begin object State processing when retrieved from cache
             objectState.ProcessHeight = intProcessHeight;
@@ -837,15 +841,14 @@ namespace SUP.P2FK
         }
         public static OBJState GetObjectByURN(string searchstring, string username, string password, string url, string versionByte = "111", int skip = 0)
         {
-            OBJState objectState = new OBJState { };
-            Root[] objectTransactions;
-            string objectaddress = Root.GetPublicAddressByKeyword(searchstring, versionByte);
-            var OBJ = new Options { CreateIfMissing = true };
 
+            OBJState objectState = new OBJState();
+            string objectaddress = Root.GetPublicAddressByKeyword(searchstring, versionByte);
+
+            var OBJ = new Options { CreateIfMissing = true };
             string isBlocked;
             lock (levelDBLocker)
             {
-
                 using (var db = new DB(OBJ, @"root\oblock"))
                 {
                     isBlocked = db.Get(objectaddress);
@@ -854,7 +857,30 @@ namespace SUP.P2FK
                 if (isBlocked == "true") { return objectState; }
 
             }
-            int depth = skip;
+            string JSONOBJ;
+            string diskpath = "root\\" + objectaddress + "\\";
+
+
+            // fetch current JSONOBJ from disk if it exists
+            try
+            {
+                JSONOBJ = System.IO.File.ReadAllText(diskpath + "GetObjectByURN.json");
+                objectState = JsonConvert.DeserializeObject<OBJState>(JSONOBJ);
+
+            }
+            catch { }
+
+            if (objectState.URN != null && objectState.ChangeDate.Year.ToString() == "1970") { objectState = new OBJState(); }
+
+            var intProcessHeight = objectState.Id;
+            Root[] objectTransactions;
+
+            //return all roots found at address
+            objectTransactions = Root.GetRootsByAddress(objectaddress, username, password, url, intProcessHeight, 2, versionByte);
+
+            if (objectTransactions.Count() == 1) { return objectState; }
+     
+    
             //return all roots found at address
             objectTransactions = Root.GetRootsByAddress(objectaddress, username, password, url, skip, 300, versionByte);
             foreach (Root transaction in objectTransactions)
@@ -871,7 +897,28 @@ namespace SUP.P2FK
                     {
                         if (isObject.Creators.ElementAt(0).Key == findObject)
                         {
-                            isObject.Id = depth;
+                            isObject.Id = objectTransactions.Count()-1;
+                            var profileSerialized = JsonConvert.SerializeObject(isObject);
+                            try
+                            {
+                                System.IO.File.WriteAllText(@"root\" + objectaddress + @"\" + "GetObjectByURN.json", profileSerialized);
+                            }
+                            catch
+                            {
+
+                                try
+                                {
+                                    if (!Directory.Exists(@"root\" + objectaddress))
+
+                                    {
+                                        Directory.CreateDirectory(@"root\" + objectaddress);
+                                    }
+                                    System.IO.File.WriteAllText(@"root\" + objectaddress + @"\" + "GetObjectByURN.json", profileSerialized);
+                                }
+                                catch { };
+                            }
+
+
                             return isObject;
 
                         }
@@ -881,7 +928,7 @@ namespace SUP.P2FK
 
                 }
 
-                depth++;
+                
             }
             return objectState;
 
@@ -899,7 +946,7 @@ namespace SUP.P2FK
             }
 
 
-            payload[0] = Byte.Parse("111");
+            payload[0] = Byte.Parse(versionByte);
             string objectaddress = Base58.EncodeWithCheckSum(payload);
 
             var OBJ = new Options { CreateIfMissing = true };
@@ -922,7 +969,6 @@ namespace SUP.P2FK
             foreach (Root transaction in objectTransactions)
             {
 
-
                 //ignore any transaction that is not signed
                 if (transaction.Signed && transaction.File.ContainsKey("OBJ"))
                 {
@@ -936,7 +982,7 @@ namespace SUP.P2FK
                     {
                         if (isObject.URN.Contains("IPFS:"))
                         {
-                            file2 = @"ipfs\" + isObject.URN.Replace("IPFS:", "");
+                            file2 = @"ipfs\" + isObject.URN.Replace("IPFS:", "").Replace(@"/", @"\");
 
                             string transid = isObject.URN.Substring(5, 46);
                             if (!System.IO.Directory.Exists("ipfs/" + transid))
@@ -1099,9 +1145,7 @@ namespace SUP.P2FK
         }
         public static List<OBJState> GetObjectsByAddress(string objectaddress, string username, string password, string url, string versionByte = "111", int skip = 0, int qty = -1)
         {
-
             List<OBJState> objectStates = new List<OBJState> { };
-
             var OBJ = new Options { CreateIfMissing = true };
             string isBlocked;
             lock (levelDBLocker)
@@ -1115,11 +1159,38 @@ namespace SUP.P2FK
                 if (isBlocked == "true") { return objectStates; }
 
             }
+            string JSONOBJ;
+            string diskpath = "root\\" + objectaddress + "\\";
+
+
+            // fetch current JSONOBJ from disk if it exists
+            try
+            {
+                JSONOBJ = System.IO.File.ReadAllText(diskpath + "GetObjectsByAddress"+skip.ToString() +".json");
+                objectStates = JsonConvert.DeserializeObject<List<OBJState>>(JSONOBJ);
+
+            }
+            catch { }
+
+            int intProcessHeight = 0;
+            try { intProcessHeight = objectStates.Max(state => state.Id); } catch { }
             Root[] objectTransactions;
 
-            int _qty = 0;
             //return all roots found at address
-            objectTransactions = Root.GetRootsByAddress(objectaddress, username, password, url, skip, 300, versionByte);
+            objectTransactions = Root.GetRootsByAddress(objectaddress, username, password, url, intProcessHeight, 2, versionByte);
+            if (objectTransactions.Count() == 0) { return objectStates; }
+
+            if (intProcessHeight > 0 && objectTransactions.Count() == 1) {
+
+                if (qty == -1) { return objectStates.Skip(skip).ToList(); }
+                else { return objectStates.Skip(skip).Take(qty).ToList(); }
+
+            }
+            objectStates = new List<OBJState> { };
+         
+            //return all roots found at address
+            
+            objectTransactions = Root.GetRootsByAddress(objectaddress, username, password, url, 0, 300, versionByte);
             HashSet<string> addedValues = new HashSet<string>();
             foreach (Root transaction in objectTransactions)
             {
@@ -1175,11 +1246,7 @@ namespace SUP.P2FK
 
                                         isObject.Id = transaction.Id;
                                         objectStates.Add(isObject);
-                                        _qty++;
-                                        if (_qty == qty)
-                                        {
-                                            return objectStates;
-                                        }
+                                        
                                     }
                                 }
                             }
@@ -1221,11 +1288,7 @@ namespace SUP.P2FK
 
                                     isObject.Id = transaction.Id;
                                     objectStates.Add(isObject);
-                                    _qty++;
-                                    if (_qty == qty)
-                                    {
-                                        return objectStates;
-                                    }
+                              
                                 }
 
 
@@ -1238,14 +1301,25 @@ namespace SUP.P2FK
 
             }
 
-            return objectStates;
+            //used to determine where to begin object State processing when retrieved from cache
+            objectStates.First().Id = objectTransactions.Last().Id;
+            var objectSerialized = JsonConvert.SerializeObject(objectStates);
+
+            if (!Directory.Exists(@"root\" + objectaddress))
+            {
+                Directory.CreateDirectory(@"root\" + objectaddress);
+            }
+            System.IO.File.WriteAllText(@"root\" + objectaddress + @"\" + "GetObjectsByAddress"+skip.ToString() +".json", objectSerialized);
+
+            if (qty == -1) { return objectStates.Skip(skip).ToList(); }
+            else { return objectStates.Skip(skip).Take(qty).ToList(); }
+        
 
 
         }
         public static List<OBJState> GetObjectsOwnedByAddress(string objectaddress, string username, string password, string url, string versionByte = "111", int skip = 0, int qty = -1)
         {
             List<OBJState> objectStates = new List<OBJState> { };
-
             var OBJ = new Options { CreateIfMissing = true };
             string isBlocked;
             lock (levelDBLocker)
@@ -1259,11 +1333,34 @@ namespace SUP.P2FK
                 if (isBlocked == "true") { return objectStates; }
 
             }
+            string JSONOBJ;
+            string diskpath = "root\\" + objectaddress + "\\";
+
+
+            // fetch current JSONOBJ from disk if it exists
+            try
+            {
+                JSONOBJ = System.IO.File.ReadAllText(diskpath + "GetObjectsOwnedByAddress.json");
+                objectStates = JsonConvert.DeserializeObject<List<OBJState>>(JSONOBJ);
+
+            }
+            catch { }
+            int intProcessHeight = 0;
+            try { intProcessHeight = objectStates.Max(state => state.Id); } catch { }
             Root[] objectTransactions;
 
-            int _qty = 0;
             //return all roots found at address
-            objectTransactions = Root.GetRootsByAddress(objectaddress, username, password, url, skip, 300, versionByte);
+            objectTransactions = Root.GetRootsByAddress(objectaddress, username, password, url, intProcessHeight, 2, versionByte);
+            if (objectTransactions.Count() == 0) { return objectStates; }
+            if (objectTransactions.Count() == 1) {
+
+                if (qty == -1) { return objectStates.Skip(skip).ToList(); }
+                else { return objectStates.Skip(skip).Take(qty).ToList(); }
+            }
+            objectStates = new List<OBJState> { };
+        
+            //return all roots found at address
+            objectTransactions = Root.GetRootsByAddress(objectaddress, username, password, url, 0, 300, versionByte);
             HashSet<string> addedValues = new HashSet<string>();
             foreach (Root transaction in objectTransactions)
             {
@@ -1320,11 +1417,7 @@ namespace SUP.P2FK
 
                                         isObject.Id = transaction.Id;
                                         objectStates.Add(isObject);
-                                        _qty++;
-                                        if (_qty == qty)
-                                        {
-                                            return objectStates;
-                                        }
+                                        
                                     }
                                 }
                             }
@@ -1365,11 +1458,7 @@ namespace SUP.P2FK
 
                                     isObject.Id = transaction.Id;
                                     objectStates.Add(isObject);
-                                    _qty++;
-                                    if (_qty == qty)
-                                    {
-                                        return objectStates;
-                                    }
+                                    
                                 }
 
 
@@ -1381,16 +1470,23 @@ namespace SUP.P2FK
 
 
             }
+            objectStates.First().Id = objectTransactions.Last().Id;
+            var objectSerialized = JsonConvert.SerializeObject(objectStates);
 
-            return objectStates;
+            if (!Directory.Exists(@"root\" + objectaddress))
+            {
+                Directory.CreateDirectory(@"root\" + objectaddress);
+            }
+            System.IO.File.WriteAllText(@"root\" + objectaddress + @"\" + "GetObjectsOwnedByAddress.json", objectSerialized);
 
+
+            if (qty == -1) { return objectStates.Skip(skip).ToList(); }
+            else { return objectStates.Skip(skip).Take(qty).ToList(); }
 
         }
         public static List<OBJState> GetObjectsCreatedByAddress(string objectaddress, string username, string password, string url, string versionByte = "111", int skip = 0, int qty = -1)
         {
-
             List<OBJState> objectStates = new List<OBJState> { };
-
             var OBJ = new Options { CreateIfMissing = true };
             string isBlocked;
             lock (levelDBLocker)
@@ -1404,15 +1500,41 @@ namespace SUP.P2FK
                 if (isBlocked == "true") { return objectStates; }
 
             }
+            string JSONOBJ;
+            string diskpath = "root\\" + objectaddress + "\\";
+
+
+            // fetch current JSONOBJ from disk if it exists
+            try
+            {
+                JSONOBJ = System.IO.File.ReadAllText(diskpath + "GetObjectsCreatedByAddress.json");
+                objectStates = JsonConvert.DeserializeObject<List<OBJState>>(JSONOBJ);
+
+            }
+            catch { }
+            int intProcessHeight = 0;
+            try { intProcessHeight = objectStates.Max(state => state.Id); } catch { }
             Root[] objectTransactions;
 
-            int _qty = 0;
             //return all roots found at address
-            objectTransactions = Root.GetRootsByAddress(objectaddress, username, password, url, skip, 300, versionByte);
-            HashSet<string> addedValues = new HashSet<string>();
-            foreach (Root transaction in objectTransactions)
+            objectTransactions = Root.GetRootsByAddress(objectaddress, username, password, url, intProcessHeight, 2, versionByte);
+            if (objectTransactions.Count() == 0) { return objectStates; }
+            if (objectTransactions.Count() == 1)
             {
 
+                if (qty == -1) { return objectStates.Skip(skip).ToList(); }
+                else { return objectStates.Skip(skip).Take(qty).ToList(); }
+            }
+
+            objectStates = new List<OBJState> { };
+
+            //return all roots found at address
+            objectTransactions = Root.GetRootsByAddress(objectaddress, username, password, url, 0, 300, versionByte);
+            HashSet<string> addedValues = new HashSet<string>();
+            intProcessHeight = objectTransactions.Last().Id;
+
+            foreach (Root transaction in objectTransactions)
+            {
 
                 //ignore any transaction that is not signed
                 if (transaction.Signed)
@@ -1457,11 +1579,7 @@ namespace SUP.P2FK
 
                                 isObject.Id = transaction.Id;
                                 objectStates.Add(isObject);
-                                _qty++;
-                                if (_qty == qty)
-                                {
-                                    return objectStates;
-                                }
+
                             }
 
                         }
@@ -1470,10 +1588,18 @@ namespace SUP.P2FK
 
 
             }
+            objectStates.First().Id = objectTransactions.Last().Id;
+            var objectSerialized = JsonConvert.SerializeObject(objectStates);
 
-            return objectStates;
+            if (!Directory.Exists(@"root\" + objectaddress))
+            {
+                Directory.CreateDirectory(@"root\" + objectaddress);
+            }
+            System.IO.File.WriteAllText(@"root\" + objectaddress + @"\" + "GetObjectsCreatedByAddress.json", objectSerialized);
 
 
+            if (qty == -1) { return objectStates.Skip(skip).ToList(); }
+            else { return objectStates.Skip(skip).Take(qty).ToList(); }
 
         }
         public static List<OBJState> GetObjectsByKeyword(List<string> searchstrings, string username, string password, string url, string versionByte = "111", int skip = 0, int qty = -1)
@@ -1482,10 +1608,68 @@ namespace SUP.P2FK
 
             foreach (string search in searchstrings)
             {
+                               
                 string objectaddress = Root.GetPublicAddressByKeyword(search, versionByte);
-                List<OBJState> keySearch = GetObjectsByAddress(objectaddress, username, password, url, versionByte, skip, qty);
+
+                List<OBJState> objectStates = new List<OBJState> { };
+                var OBJ = new Options { CreateIfMissing = true };
+                string isBlocked;
+                lock (levelDBLocker)
+                {
+
+                    using (var db = new DB(OBJ, @"root\oblock"))
+                    {
+                        isBlocked = db.Get(objectaddress);
+                        db.Close();
+                    }
+                    if (isBlocked == "true") { return objectStates; }
+
+                }
+                string JSONOBJ;
+                string diskpath = "root\\" + objectaddress + "\\";
+
+
+                // fetch current JSONOBJ from disk if it exists
+                try
+                {
+                    JSONOBJ = System.IO.File.ReadAllText(diskpath + "GetObjectsByKeyword.json");
+                    objectStates = JsonConvert.DeserializeObject<List<OBJState>>(JSONOBJ);
+
+                }
+                catch { }
+
+                int intProcessHeight = 0;
+                try { intProcessHeight = objectStates.Max(state => state.Id); } catch { }
+                Root[] objectTransactions;
+
+                //return all roots found at address
+                objectTransactions = Root.GetRootsByAddress(objectaddress, username, password, url, intProcessHeight, 2, versionByte);
+                if (objectTransactions.Count() == 0) { return objectStates; }
+                if (objectTransactions.Count() == 1)
+                {
+
+                    if (qty == -1) { return objectStates.Skip(skip).ToList(); }
+                    else { return objectStates.Skip(skip).Take(qty).ToList(); }
+                }
+                objectStates = new List<OBJState> { };
+                intProcessHeight = skip;
+
+                List<OBJState> keySearch = GetObjectsByAddress(objectaddress, username, password, url, versionByte, intProcessHeight, qty);
                 totalSearch = totalSearch.Concat(keySearch).ToList();
+
+                keySearch.First().Id = objectTransactions.Last().Id;
+                var objectSerialized = JsonConvert.SerializeObject(keySearch);
+
+                if (!Directory.Exists(@"root\" + objectaddress))
+                {
+                    Directory.CreateDirectory(@"root\" + objectaddress);
+                }
+                System.IO.File.WriteAllText(@"root\" + objectaddress + @"\" + "GetObjectsByKeyword.json", objectSerialized);
+
             }
+            
+
+            
             return totalSearch;
 
         }

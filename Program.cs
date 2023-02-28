@@ -192,7 +192,7 @@ namespace SUP
 
                     List<string> keywords = new List<string>();
                     keywords.Add(options.Keyword);
-                    var root = PROState.GetProfileByURN(options.URN, options.Username, options.Password, options.Url, options.VersionByte, options.Skip);
+                    var root = PROState.GetProfileByURN(options.URN, options.Username, options.Password, options.Url, options.VersionByte, options.Verbose, options.Skip);
                     var json = JsonConvert.SerializeObject(root);
                     Console.WriteLine(json);
 

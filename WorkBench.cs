@@ -812,7 +812,7 @@ namespace SUP
         {
 
             DateTime tmbeginCall = DateTime.UtcNow;
-            PROState createdObject = PROState.GetProfileByURN(txtSearchAddress.Text, txtLogin.Text, txtPassword.Text, txtUrl.Text, txtVersionByte.Text, int.Parse(txtSkip.Text));
+            PROState createdObject = PROState.GetProfileByURN(txtSearchAddress.Text, txtLogin.Text, txtPassword.Text, txtUrl.Text, txtVersionByte.Text, checkBox1.Checked, int.Parse(txtSkip.Text));
             DateTime tmendCall = DateTime.UtcNow;
             lblTotalBytes.Text = "bytes: ";
             lblTotalTime.Text = "time: ";
@@ -922,7 +922,7 @@ namespace SUP
                     // fetch current JSONOBJ from disk if it exists
                     try
                     {
-                        string JSONOBJ = System.IO.File.ReadAllText(diskpath + "P2FK.json");
+                        string JSONOBJ = System.IO.File.ReadAllText(diskpath + "OBJ.json");
                         OBJState objectState = JsonConvert.DeserializeObject<OBJState>(JSONOBJ);
                         try
                         {
@@ -1064,7 +1064,7 @@ namespace SUP
                     fileStream.Read(payload, 1, 20);
                 }
 
-                payload[0] = Byte.Parse("111");
+                payload[0] = Byte.Parse(txtVersionByte.Text);
                 string objectaddress = Base58.EncodeWithCheckSum(payload);
 
                 txtGetValue.Text = @"Use the following keyword to register this file --> @" + objectaddress;

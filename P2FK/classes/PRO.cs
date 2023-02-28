@@ -65,7 +65,7 @@ namespace SUP.P2FK
             // fetch current JSONOBJ from disk if it exists
             try
             {
-                JSONOBJ = System.IO.File.ReadAllText(diskpath + "PRO.json");
+                JSONOBJ = System.IO.File.ReadAllText(diskpath + "GetProfileByAddress.json");
                 profileState = JsonConvert.DeserializeObject<PROState>(JSONOBJ);
             }
             catch { }
@@ -74,7 +74,7 @@ namespace SUP.P2FK
             Root[] profileTransactions;
             int depth = skip;
             //return all roots found at address
-            profileTransactions = Root.GetRootsByAddress(profileaddress, username, password, url, intProcessHeight, 300, versionByte);
+            profileTransactions = Root.GetRootsByAddress(profileaddress, username, password, url, intProcessHeight, 2, versionByte);
 
             if (intProcessHeight > 0 && profileTransactions.Count() == 1) { return profileState; }
 
@@ -228,7 +228,7 @@ namespace SUP.P2FK
 
             try
             {
-                System.IO.File.WriteAllText(@"root\" + profileaddress + @"\" + "PRO.json", profileSerialized);
+                System.IO.File.WriteAllText(@"root\" + profileaddress + @"\" + "GetProfileByAddress.json", profileSerialized);
             }
             catch
             {
@@ -240,7 +240,7 @@ namespace SUP.P2FK
                     {
                         Directory.CreateDirectory(@"root\" + profileaddress);
                     }
-                    System.IO.File.WriteAllText(@"root\" + profileaddress + @"\" + "PRO.json", profileSerialized);
+                    System.IO.File.WriteAllText(@"root\" + profileaddress + @"\" + "GetProfileByAddress.json", profileSerialized);
                 }
                 catch { };
             }
@@ -249,12 +249,31 @@ namespace SUP.P2FK
             return profileState;
 
         }
-        public static PROState GetProfileByURN(string searchstring, string username, string password, string url, string versionByte = "111", int skip = 0)
+        public static PROState GetProfileByURN(string searchstring, string username, string password, string url, string versionByte = "111", bool verbose = false, int skip = 0)
         {
             PROState profileState = new PROState { };
-
-            Root[] profileTransactions;
+            var OBJ = new Options { CreateIfMissing = true };
+            string JSONOBJ;
+        
             string profileaddress = Root.GetPublicAddressByKeyword(searchstring, versionByte);
+            string diskpath = "root\\" + profileaddress + "\\";
+
+            // fetch current JSONOBJ from disk if it exists
+            try
+            {
+                JSONOBJ = System.IO.File.ReadAllText(diskpath + "GetProfileByURN.json");
+                profileState = JsonConvert.DeserializeObject<PROState>(JSONOBJ);
+            }
+            catch { }
+
+            var intProcessHeight = profileState.Id;
+            Root[] profileTransactions;
+      
+            //return all roots found at address
+            profileTransactions = Root.GetRootsByAddress(profileaddress, username, password, url, intProcessHeight, 2, versionByte);
+
+            if (intProcessHeight > 0 && profileTransactions.Count() == 1 && skip == 0) { return profileState; }
+                     
 
             //return all roots found at address
             profileTransactions = Root.GetRootsByAddress(profileaddress, username, password, url, skip, 300, versionByte);
@@ -273,6 +292,27 @@ namespace SUP.P2FK
                     {
                         if (isObject.Creators.ElementAt(0) == findObject)
                         {
+                            isObject.Id = profileTransactions.Count()-1;
+
+                            var profileSerialized = JsonConvert.SerializeObject(isObject);
+                            try
+                            {
+                                System.IO.File.WriteAllText(@"root\" + profileaddress + @"\" + "GetProfileByURN.json", profileSerialized);
+                            }
+                            catch
+                            {
+
+                                try
+                                {
+                                    if (!Directory.Exists(@"root\" + profileaddress))
+
+                                    {
+                                        Directory.CreateDirectory(@"root\" + profileaddress);
+                                    }
+                                    System.IO.File.WriteAllText(@"root\" + profileaddress + @"\" + "GetProfileByURN.json", profileSerialized);
+                                }
+                                catch { };
+                            }
 
                             return isObject;
 
@@ -285,6 +325,7 @@ namespace SUP.P2FK
 
 
             }
+           
             return profileState;
 
         }

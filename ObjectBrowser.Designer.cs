@@ -49,6 +49,7 @@ namespace SUP
             this.txtLast = new System.Windows.Forms.TextBox();
             this.btnLive = new System.Windows.Forms.Button();
             this.tmrSearchMemoryPool = new System.Windows.Forms.Timer(this.components);
+            this.txtCntrlCalc = new System.Windows.Forms.TextBox();
             this.SuspendLayout();
             // 
             // btnCreated
@@ -56,7 +57,7 @@ namespace SUP
             this.btnCreated.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.btnCreated.BackColor = System.Drawing.Color.White;
             this.btnCreated.ForeColor = System.Drawing.Color.Black;
-            this.btnCreated.Location = new System.Drawing.Point(429, 4);
+            this.btnCreated.Location = new System.Drawing.Point(639, 4);
             this.btnCreated.Name = "btnCreated";
             this.btnCreated.Size = new System.Drawing.Size(55, 20);
             this.btnCreated.TabIndex = 62;
@@ -69,7 +70,7 @@ namespace SUP
             this.btnOwned.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.btnOwned.BackColor = System.Drawing.Color.White;
             this.btnOwned.ForeColor = System.Drawing.Color.Black;
-            this.btnOwned.Location = new System.Drawing.Point(488, 4);
+            this.btnOwned.Location = new System.Drawing.Point(698, 4);
             this.btnOwned.Name = "btnOwned";
             this.btnOwned.Size = new System.Drawing.Size(49, 20);
             this.btnOwned.TabIndex = 61;
@@ -83,7 +84,7 @@ namespace SUP
             | System.Windows.Forms.AnchorStyles.Right)));
             this.txtSearchAddress.Location = new System.Drawing.Point(42, 4);
             this.txtSearchAddress.Name = "txtSearchAddress";
-            this.txtSearchAddress.Size = new System.Drawing.Size(227, 20);
+            this.txtSearchAddress.Size = new System.Drawing.Size(344, 20);
             this.txtSearchAddress.TabIndex = 58;
             this.txtSearchAddress.KeyDown += new System.Windows.Forms.KeyEventHandler(this.SearchAddressKeyDown);
             // 
@@ -92,7 +93,7 @@ namespace SUP
             this.btnWorkBench.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.btnWorkBench.BackColor = System.Drawing.Color.White;
             this.btnWorkBench.ForeColor = System.Drawing.Color.Black;
-            this.btnWorkBench.Location = new System.Drawing.Point(620, 4);
+            this.btnWorkBench.Location = new System.Drawing.Point(830, 4);
             this.btnWorkBench.Name = "btnWorkBench";
             this.btnWorkBench.Size = new System.Drawing.Size(30, 20);
             this.btnWorkBench.TabIndex = 68;
@@ -110,7 +111,7 @@ namespace SUP
             this.flowLayoutPanel1.BackColor = System.Drawing.SystemColors.InactiveCaption;
             this.flowLayoutPanel1.Location = new System.Drawing.Point(0, 28);
             this.flowLayoutPanel1.Name = "flowLayoutPanel1";
-            this.flowLayoutPanel1.Size = new System.Drawing.Size(652, 595);
+            this.flowLayoutPanel1.Size = new System.Drawing.Size(862, 666);
             this.flowLayoutPanel1.TabIndex = 69;
             this.flowLayoutPanel1.Scroll += new System.Windows.Forms.ScrollEventHandler(this.flowLayoutPanel1_Scroll);
             this.flowLayoutPanel1.DragDrop += new System.Windows.Forms.DragEventHandler(this.flowLayoutPanel1_DragDrop);
@@ -122,7 +123,7 @@ namespace SUP
             // 
             this.linkLabel1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.linkLabel1.LinkColor = System.Drawing.SystemColors.GradientActiveCaption;
-            this.linkLabel1.Location = new System.Drawing.Point(278, 4);
+            this.linkLabel1.Location = new System.Drawing.Point(490, 4);
             this.linkLabel1.Name = "linkLabel1";
             this.linkLabel1.Size = new System.Drawing.Size(98, 21);
             this.linkLabel1.TabIndex = 71;
@@ -172,7 +173,7 @@ namespace SUP
             this.btnConnections.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.btnConnections.BackColor = System.Drawing.Color.White;
             this.btnConnections.ForeColor = System.Drawing.Color.Black;
-            this.btnConnections.Location = new System.Drawing.Point(586, 4);
+            this.btnConnections.Location = new System.Drawing.Point(796, 4);
             this.btnConnections.Name = "btnConnections";
             this.btnConnections.Size = new System.Drawing.Size(30, 20);
             this.btnConnections.TabIndex = 72;
@@ -209,7 +210,7 @@ namespace SUP
             this.btnMint.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.btnMint.BackColor = System.Drawing.Color.White;
             this.btnMint.ForeColor = System.Drawing.Color.Black;
-            this.btnMint.Location = new System.Drawing.Point(541, 4);
+            this.btnMint.Location = new System.Drawing.Point(751, 4);
             this.btnMint.Name = "btnMint";
             this.btnMint.Size = new System.Drawing.Size(39, 20);
             this.btnMint.TabIndex = 76;
@@ -219,17 +220,17 @@ namespace SUP
             // 
             // txtQty
             // 
-            this.txtQty.Enabled = false;
-            this.txtQty.Location = new System.Drawing.Point(565, 52);
+            this.txtQty.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.txtQty.Location = new System.Drawing.Point(441, 5);
             this.txtQty.Name = "txtQty";
             this.txtQty.Size = new System.Drawing.Size(43, 20);
             this.txtQty.TabIndex = 77;
-            this.txtQty.Text = "6";
+            this.txtQty.Text = "8";
             // 
             // txtLast
             // 
-            this.txtLast.Enabled = false;
-            this.txtLast.Location = new System.Drawing.Point(506, 53);
+            this.txtLast.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.txtLast.Location = new System.Drawing.Point(392, 5);
             this.txtLast.Name = "txtLast";
             this.txtLast.Size = new System.Drawing.Size(43, 20);
             this.txtLast.TabIndex = 78;
@@ -240,7 +241,7 @@ namespace SUP
             this.btnLive.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.btnLive.BackColor = System.Drawing.Color.White;
             this.btnLive.ForeColor = System.Drawing.Color.Black;
-            this.btnLive.Location = new System.Drawing.Point(384, 4);
+            this.btnLive.Location = new System.Drawing.Point(594, 4);
             this.btnLive.Name = "btnLive";
             this.btnLive.Size = new System.Drawing.Size(39, 20);
             this.btnLive.TabIndex = 79;
@@ -253,11 +254,22 @@ namespace SUP
             this.tmrSearchMemoryPool.Interval = 5000;
             this.tmrSearchMemoryPool.Tick += new System.EventHandler(this.tmrSearchMemoryPool_Tick);
             // 
+            // txtCntrlCalc
+            // 
+            this.txtCntrlCalc.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.txtCntrlCalc.Location = new System.Drawing.Point(669, 39);
+            this.txtCntrlCalc.Name = "txtCntrlCalc";
+            this.txtCntrlCalc.Size = new System.Drawing.Size(43, 20);
+            this.txtCntrlCalc.TabIndex = 80;
+            // 
             // ObjectBrowser
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(652, 623);
+            this.ClientSize = new System.Drawing.Size(862, 694);
+            this.Controls.Add(this.txtCntrlCalc);
+            this.Controls.Add(this.txtLast);
+            this.Controls.Add(this.txtQty);
             this.Controls.Add(this.btnLive);
             this.Controls.Add(this.btnMint);
             this.Controls.Add(this.btnHistoryForward);
@@ -273,8 +285,6 @@ namespace SUP
             this.Controls.Add(this.txtUrl);
             this.Controls.Add(this.txtPassword);
             this.Controls.Add(this.txtLogin);
-            this.Controls.Add(this.txtLast);
-            this.Controls.Add(this.txtQty);
             this.MinimumSize = new System.Drawing.Size(668, 401);
             this.Name = "ObjectBrowser";
             this.RightToLeft = System.Windows.Forms.RightToLeft.No;
@@ -304,5 +314,6 @@ namespace SUP
         private System.Windows.Forms.TextBox txtLast;
         private System.Windows.Forms.Button btnLive;
         private System.Windows.Forms.Timer tmrSearchMemoryPool;
+        private System.Windows.Forms.TextBox txtCntrlCalc;
     }
 }

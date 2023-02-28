@@ -59,14 +59,22 @@ namespace SUP.P2FK
                 try
                 {
 
-                    P2FKJSONString = System.IO.File.ReadAllText(diskpath + "P2FK.json");
+                    P2FKJSONString = System.IO.File.ReadAllText(diskpath + "OBJ.json");
                     P2FKRoot = JsonConvert.DeserializeObject<Root>(P2FKJSONString);
-                    return P2FKRoot;
 
+                    if (P2FKRoot.Confirmations == 0)
+                    {
+                        P2FKRoot = new Root();
+                    }
+                    else
+                    {
+                        return P2FKRoot;
+                    }
 
                 }
-                //Throws exception if P2FK.json file cache does not exist
-                catch { }         
+                //Throws exception if OBJ.json file cache does not exist
+                catch { }   
+                
             }
 
             //P2FK Object Cache does not exist
@@ -289,7 +297,7 @@ namespace SUP.P2FK
                     if (isledger)
                     {
                         var rootLedger = JsonConvert.SerializeObject(P2FKRoot);
-                        System.IO.File.WriteAllText(@"root\" + P2FKRoot.TransactionId + @"\" + "P2FK.json", rootLedger);
+                        System.IO.File.WriteAllText(@"root\" + P2FKRoot.TransactionId + @"\" + "OBJ.json", rootLedger);
                         return P2FKRoot;
                     }
 
@@ -429,7 +437,7 @@ namespace SUP.P2FK
             //Cache Root to disk to speed up future crawls
 
             var rootSerialized = JsonConvert.SerializeObject(P2FKRoot);
-            System.IO.File.WriteAllText(@"root\" + P2FKRoot.TransactionId + @"\" + "P2FK.json", rootSerialized);
+            System.IO.File.WriteAllText(@"root\" + P2FKRoot.TransactionId + @"\" + "OBJ.json", rootSerialized);
 
 
             string isMuted;

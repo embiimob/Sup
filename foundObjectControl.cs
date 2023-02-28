@@ -18,11 +18,13 @@ namespace SUP
             InitializeComponent();
         }
 
+     
         private void foundObjectControl_Click(object sender, EventArgs e)
         {
 
             Form parentForm = this.FindForm();
             ObjectDetails childForm = new ObjectDetails(ObjectAddress.Text);
+            
             childForm.Owner = parentForm;
             childForm.Show();
 
@@ -143,7 +145,7 @@ namespace SUP
                         // fetch current JSONOBJ from disk if it exists
                         try
                         {
-                            string JSONOBJ = System.IO.File.ReadAllText(diskpath + "P2FK.json");
+                            string JSONOBJ = System.IO.File.ReadAllText(diskpath + "OBJ.json");
                             OBJState objectState = JsonConvert.DeserializeObject<OBJState>(JSONOBJ);
                             try
                             {
