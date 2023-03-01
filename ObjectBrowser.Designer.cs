@@ -35,12 +35,7 @@ namespace SUP
             this.btnOwned = new System.Windows.Forms.Button();
             this.txtSearchAddress = new System.Windows.Forms.TextBox();
             this.btnWorkBench = new System.Windows.Forms.Button();
-            this.flowLayoutPanel1 = new System.Windows.Forms.FlowLayoutPanel();
             this.linkLabel1 = new System.Windows.Forms.LinkLabel();
-            this.txtVersionByte = new System.Windows.Forms.TextBox();
-            this.txtUrl = new System.Windows.Forms.TextBox();
-            this.txtPassword = new System.Windows.Forms.TextBox();
-            this.txtLogin = new System.Windows.Forms.TextBox();
             this.btnConnections = new System.Windows.Forms.Button();
             this.btnHistoryBack = new System.Windows.Forms.Button();
             this.btnHistoryForward = new System.Windows.Forms.Button();
@@ -50,6 +45,13 @@ namespace SUP
             this.btnLive = new System.Windows.Forms.Button();
             this.tmrSearchMemoryPool = new System.Windows.Forms.Timer(this.components);
             this.txtCntrlCalc = new System.Windows.Forms.TextBox();
+            this.imgLoading = new System.Windows.Forms.PictureBox();
+            this.flowLayoutPanel1 = new System.Windows.Forms.FlowLayoutPanel();
+            this.tmrPerformSearch = new System.Windows.Forms.Timer(this.components);
+            this.pages = new System.Windows.Forms.TrackBar();
+            this.txtTotal = new System.Windows.Forms.TextBox();
+            ((System.ComponentModel.ISupportInitialize)(this.imgLoading)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pages)).BeginInit();
             this.SuspendLayout();
             // 
             // btnCreated
@@ -101,24 +103,6 @@ namespace SUP
             this.btnWorkBench.UseVisualStyleBackColor = false;
             this.btnWorkBench.Click += new System.EventHandler(this.ButtonLoadWorkBench);
             // 
-            // flowLayoutPanel1
-            // 
-            this.flowLayoutPanel1.AllowDrop = true;
-            this.flowLayoutPanel1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.flowLayoutPanel1.AutoScroll = true;
-            this.flowLayoutPanel1.BackColor = System.Drawing.SystemColors.InactiveCaption;
-            this.flowLayoutPanel1.Location = new System.Drawing.Point(0, 28);
-            this.flowLayoutPanel1.Name = "flowLayoutPanel1";
-            this.flowLayoutPanel1.Size = new System.Drawing.Size(862, 666);
-            this.flowLayoutPanel1.TabIndex = 69;
-            this.flowLayoutPanel1.Scroll += new System.Windows.Forms.ScrollEventHandler(this.flowLayoutPanel1_Scroll);
-            this.flowLayoutPanel1.DragDrop += new System.Windows.Forms.DragEventHandler(this.flowLayoutPanel1_DragDrop);
-            this.flowLayoutPanel1.DragEnter += new System.Windows.Forms.DragEventHandler(this.flowLayoutPanel1_DragEnter);
-            this.flowLayoutPanel1.MouseWheel += new System.Windows.Forms.MouseEventHandler(this.flowLayoutPanel1_MouseWheel);
-            this.flowLayoutPanel1.Resize += new System.EventHandler(this.flowLayoutPanel1_Resize);
-            // 
             // linkLabel1
             // 
             this.linkLabel1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
@@ -131,42 +115,6 @@ namespace SUP
             this.linkLabel1.Text = "anon";
             this.linkLabel1.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             this.linkLabel1.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.MainUserNameClick);
-            // 
-            // txtVersionByte
-            // 
-            this.txtVersionByte.Enabled = false;
-            this.txtVersionByte.Location = new System.Drawing.Point(369, 53);
-            this.txtVersionByte.Name = "txtVersionByte";
-            this.txtVersionByte.Size = new System.Drawing.Size(43, 20);
-            this.txtVersionByte.TabIndex = 49;
-            this.txtVersionByte.Text = "111";
-            // 
-            // txtUrl
-            // 
-            this.txtUrl.Enabled = false;
-            this.txtUrl.Location = new System.Drawing.Point(178, 53);
-            this.txtUrl.Name = "txtUrl";
-            this.txtUrl.Size = new System.Drawing.Size(100, 20);
-            this.txtUrl.TabIndex = 45;
-            this.txtUrl.Text = "http://127.0.0.1:18332";
-            // 
-            // txtPassword
-            // 
-            this.txtPassword.Enabled = false;
-            this.txtPassword.Location = new System.Drawing.Point(83, 53);
-            this.txtPassword.Name = "txtPassword";
-            this.txtPassword.Size = new System.Drawing.Size(89, 20);
-            this.txtPassword.TabIndex = 43;
-            this.txtPassword.Text = "better-password";
-            // 
-            // txtLogin
-            // 
-            this.txtLogin.Enabled = false;
-            this.txtLogin.Location = new System.Drawing.Point(12, 53);
-            this.txtLogin.Name = "txtLogin";
-            this.txtLogin.Size = new System.Drawing.Size(65, 20);
-            this.txtLogin.TabIndex = 41;
-            this.txtLogin.Text = "good-user";
             // 
             // btnConnections
             // 
@@ -221,16 +169,17 @@ namespace SUP
             // txtQty
             // 
             this.txtQty.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.txtQty.Location = new System.Drawing.Point(441, 5);
+            this.txtQty.Location = new System.Drawing.Point(739, 95);
             this.txtQty.Name = "txtQty";
             this.txtQty.Size = new System.Drawing.Size(43, 20);
             this.txtQty.TabIndex = 77;
             this.txtQty.Text = "8";
+            this.txtQty.Visible = false;
             // 
             // txtLast
             // 
             this.txtLast.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.txtLast.Location = new System.Drawing.Point(392, 5);
+            this.txtLast.Location = new System.Drawing.Point(391, 4);
             this.txtLast.Name = "txtLast";
             this.txtLast.Size = new System.Drawing.Size(43, 20);
             this.txtLast.TabIndex = 78;
@@ -257,16 +206,67 @@ namespace SUP
             // txtCntrlCalc
             // 
             this.txtCntrlCalc.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.txtCntrlCalc.Location = new System.Drawing.Point(669, 39);
+            this.txtCntrlCalc.Location = new System.Drawing.Point(738, 70);
             this.txtCntrlCalc.Name = "txtCntrlCalc";
             this.txtCntrlCalc.Size = new System.Drawing.Size(43, 20);
             this.txtCntrlCalc.TabIndex = 80;
+            // 
+            // imgLoading
+            // 
+            this.imgLoading.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.imgLoading.ImageLocation = "";
+            this.imgLoading.Location = new System.Drawing.Point(0, 28);
+            this.imgLoading.Name = "imgLoading";
+            this.imgLoading.Size = new System.Drawing.Size(862, 668);
+            this.imgLoading.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
+            this.imgLoading.TabIndex = 81;
+            this.imgLoading.TabStop = false;
+            // 
+            // flowLayoutPanel1
+            // 
+            this.flowLayoutPanel1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.flowLayoutPanel1.Location = new System.Drawing.Point(0, 28);
+            this.flowLayoutPanel1.Name = "flowLayoutPanel1";
+            this.flowLayoutPanel1.Size = new System.Drawing.Size(862, 668);
+            this.flowLayoutPanel1.TabIndex = 82;
+            this.flowLayoutPanel1.Scroll += new System.Windows.Forms.ScrollEventHandler(this.flowLayoutPanel1_Scroll);
+            this.flowLayoutPanel1.SizeChanged += new System.EventHandler(this.flowLayoutPanel1_SizeChanged);
+            // 
+            // pages
+            // 
+            this.pages.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.pages.Location = new System.Drawing.Point(2, 648);
+            this.pages.Name = "pages";
+            this.pages.Size = new System.Drawing.Size(858, 45);
+            this.pages.TabIndex = 84;
+            this.pages.TickStyle = System.Windows.Forms.TickStyle.Both;
+            this.pages.Visible = false;
+            this.pages.Scroll += new System.EventHandler(this.pages_Scroll);
+            this.pages.ValueChanged += new System.EventHandler(this.pages_ValueChanged);
+            this.pages.MouseUp += new System.Windows.Forms.MouseEventHandler(this.pages_MouseUp);
+            // 
+            // txtTotal
+            // 
+            this.txtTotal.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.txtTotal.Enabled = false;
+            this.txtTotal.Location = new System.Drawing.Point(440, 4);
+            this.txtTotal.Name = "txtTotal";
+            this.txtTotal.Size = new System.Drawing.Size(43, 20);
+            this.txtTotal.TabIndex = 85;
+            this.txtTotal.Text = "0";
             // 
             // ObjectBrowser
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(862, 694);
+            this.Controls.Add(this.txtTotal);
+            this.Controls.Add(this.pages);
             this.Controls.Add(this.txtCntrlCalc);
             this.Controls.Add(this.txtLast);
             this.Controls.Add(this.txtQty);
@@ -281,15 +281,16 @@ namespace SUP
             this.Controls.Add(this.btnOwned);
             this.Controls.Add(this.txtSearchAddress);
             this.Controls.Add(this.flowLayoutPanel1);
-            this.Controls.Add(this.txtVersionByte);
-            this.Controls.Add(this.txtUrl);
-            this.Controls.Add(this.txtPassword);
-            this.Controls.Add(this.txtLogin);
+            this.Controls.Add(this.imgLoading);
             this.MinimumSize = new System.Drawing.Size(668, 401);
             this.Name = "ObjectBrowser";
             this.RightToLeft = System.Windows.Forms.RightToLeft.No;
             this.Text = "Sup!? Object Browser";
             this.Load += new System.EventHandler(this.ObjectBrowserLoad);
+            this.ResizeEnd += new System.EventHandler(this.ObjectBrowser_ResizeEnd);
+            this.Resize += new System.EventHandler(this.ObjectBrowser_Resize);
+            ((System.ComponentModel.ISupportInitialize)(this.imgLoading)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pages)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -300,12 +301,7 @@ namespace SUP
         private System.Windows.Forms.Button btnOwned;
         private System.Windows.Forms.TextBox txtSearchAddress;
         private System.Windows.Forms.Button btnWorkBench;
-        private System.Windows.Forms.FlowLayoutPanel flowLayoutPanel1;
         private System.Windows.Forms.LinkLabel linkLabel1;
-        private System.Windows.Forms.TextBox txtVersionByte;
-        private System.Windows.Forms.TextBox txtUrl;
-        private System.Windows.Forms.TextBox txtPassword;
-        private System.Windows.Forms.TextBox txtLogin;
         private System.Windows.Forms.Button btnConnections;
         private System.Windows.Forms.Button btnHistoryBack;
         private System.Windows.Forms.Button btnHistoryForward;
@@ -315,5 +311,10 @@ namespace SUP
         private System.Windows.Forms.Button btnLive;
         private System.Windows.Forms.Timer tmrSearchMemoryPool;
         private System.Windows.Forms.TextBox txtCntrlCalc;
+        private System.Windows.Forms.PictureBox imgLoading;
+        private System.Windows.Forms.FlowLayoutPanel flowLayoutPanel1;
+        private System.Windows.Forms.Timer tmrPerformSearch;
+        private System.Windows.Forms.TrackBar pages;
+        private System.Windows.Forms.TextBox txtTotal;
     }
 }

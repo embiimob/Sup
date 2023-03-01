@@ -1166,7 +1166,7 @@ namespace SUP.P2FK
             // fetch current JSONOBJ from disk if it exists
             try
             {
-                JSONOBJ = System.IO.File.ReadAllText(diskpath + "GetObjectsByAddress"+skip.ToString() +".json");
+                JSONOBJ = System.IO.File.ReadAllText(diskpath + "GetObjectsByAddress.json");
                 objectStates = JsonConvert.DeserializeObject<List<OBJState>>(JSONOBJ);
 
             }
@@ -1199,6 +1199,11 @@ namespace SUP.P2FK
                 //ignore any transaction that is not signed
                 if (transaction.Signed)
                 {
+
+
+
+
+
 
                     string findId;
 
@@ -1309,13 +1314,11 @@ namespace SUP.P2FK
             {
                 Directory.CreateDirectory(@"root\" + objectaddress);
             }
-            System.IO.File.WriteAllText(@"root\" + objectaddress + @"\" + "GetObjectsByAddress"+skip.ToString() +".json", objectSerialized);
+            System.IO.File.WriteAllText(@"root\" + objectaddress + @"\" + "GetObjectsByAddress.json", objectSerialized);
 
             if (qty == -1) { return objectStates.Skip(skip).ToList(); }
             else { return objectStates.Skip(skip).Take(qty).ToList(); }
         
-
-
         }
         public static List<OBJState> GetObjectsOwnedByAddress(string objectaddress, string username, string password, string url, string versionByte = "111", int skip = 0, int qty = -1)
         {
