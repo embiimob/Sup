@@ -54,21 +54,40 @@ namespace SUP.P2FK
         public bool Verbose { get; set; }
         //ensures levelDB is thread safely
         private readonly static object levelDBLocker = new object();
-        public static OBJState GetObjectByAddress(string objectaddress, string username, string password, string url, string versionByte = "111", bool verbose = false)
+        public static OBJState GetObjectByAddress(string objectaddress, string username, string password, string url, string versionByte = "111", bool verbose = false, int Id = -1)
         {
 
             OBJState objectState = new OBJState();
             var OBJ = new Options { CreateIfMissing = true };
             string isBlocked;
             lock (levelDBLocker)
-            {
+            {  try { 
                 using (var db = new DB(OBJ, @"root\oblock"))
                 {
                     isBlocked = db.Get(objectaddress);
                     db.Close();
                 }
                 if (isBlocked == "true") { return objectState; }
+                }
+                catch
+                {
 
+
+                    try
+                    {
+                        using (var db = new DB(OBJ, @"root\oblock2"))
+                        {
+                            isBlocked = db.Get(objectaddress);
+                            db.Close();
+                        }
+                        Directory.Move(@"root\oblock2", @"root\oblock");
+                        if (isBlocked == "true") { return objectState; }
+
+                    }
+                    catch { }
+
+
+                }
             }
             string JSONOBJ;
             string logstatus;
@@ -87,6 +106,7 @@ namespace SUP.P2FK
             if (objectState.URN != null && objectState.ChangeDate.Year.ToString() == "1970") { objectState = new OBJState();}
 
             var intProcessHeight = objectState.ProcessHeight;
+            if (Id != -1) { intProcessHeight = Id; }
             Root[] objectTransactions;
 
             //return all roots found at address
@@ -706,139 +726,6 @@ namespace SUP.P2FK
             return objectState;
 
         }
-        //for in-memory object discovery and creation only. get object by address information is not available until after confirmation. do not use for general object verifiction
-        public static OBJState GetObjectByTransactionId(string transactionid)
-        {
-
-            OBJState objectState = new OBJState();
-            var OBJ = new Options { CreateIfMissing = true };
-            string JSONOBJ;
-            string diskpath = "root\\" + transactionid + "\\";
-
-
-            // fetch current JSONOBJ from disk if it exists
-            try
-            {
-                JSONOBJ = System.IO.File.ReadAllText(diskpath + "OBJ");
-                objectState = JsonConvert.DeserializeObject<OBJState>(JSONOBJ);
-
-            }
-            catch { return objectState; }
-
-            var intProcessHeight = 0;
-            Root objectTransaction;
-            string P2FKJSONString = System.IO.File.ReadAllText(diskpath + "GetObjectByTransactionId.json");
-            objectTransaction = JsonConvert.DeserializeObject<Root>(P2FKJSONString);
-            OBJ objectinspector = null;
-            try
-            {
-                objectinspector = JsonConvert.DeserializeObject<OBJ>(File.ReadAllText(@"root\" + transactionid + @"\OBJ"));
-
-            }
-            catch { return objectState; }
-
-
-            if (objectinspector.cre != null && objectState.Creators == null)
-            {
-
-                objectState.Creators = new Dictionary<string, DateTime> { };
-                foreach (int keywordId in objectinspector.cre)
-                {
-
-                    string creator = objectTransaction.Keyword.Reverse().ElementAt(keywordId).Key;
-
-                    if (!objectState.Creators.ContainsKey(creator))
-                    {
-                        objectState.Creators.Add(creator, new DateTime());
-                    }
-
-                }
-
-                objectState.ChangeDate = objectTransaction.BlockDate;
-                objectinspector.cre = null;
-            }
-
-
-            try
-            {
-                //has proper authority to make OBJ changes
-                if (objectState.Creators.ContainsKey(objectTransaction.SignedBy))
-                {
-
-                    if (objectinspector.cre != null && objectState.Creators.TryGet(objectTransaction.SignedBy).Year == 1)
-                    {
-                        objectState.Creators[objectTransaction.SignedBy] = objectTransaction.BlockDate;
-                        objectState.ChangeDate = objectTransaction.BlockDate;
-
-
-                    }
-
-
-
-                    if (objectState.LockedDate.Year == 1)
-                    {
-                        if (objectinspector.urn != null) { objectState.ChangeDate = objectTransaction.BlockDate; objectState.URN = objectinspector.urn.Replace('“', '"').Replace('”', '"'); }
-                        if (objectinspector.uri != null) { objectState.ChangeDate = objectTransaction.BlockDate; objectState.URI = objectinspector.uri.Replace('“', '"').Replace('”', '"'); ; }
-                        if (objectinspector.img != null) { objectState.ChangeDate = objectTransaction.BlockDate; objectState.Image = objectinspector.img.Replace('“', '"').Replace('”', '"'); ; }
-                        if (objectinspector.nme != null) { objectState.ChangeDate = objectTransaction.BlockDate; objectState.Name = objectinspector.nme.Replace('“', '"').Replace('”', '"'); ; }
-                        if (objectinspector.dsc != null) { objectState.ChangeDate = objectTransaction.BlockDate; objectState.Description = objectinspector.dsc.Replace('“', '"').Replace('”', '"'); ; }
-                        if (objectinspector.atr != null) { objectState.ChangeDate = objectTransaction.BlockDate; objectState.Attributes = objectinspector.atr; }
-                        if (objectinspector.lic != null) { objectState.ChangeDate = objectTransaction.BlockDate; objectState.License = objectinspector.lic.Replace('“', '"').Replace('”', '"'); ; }
-
-                        if (objectinspector.own != null)
-                        {
-                            if (objectState.Owners == null)
-                            {
-                                objectState.CreatedDate = objectTransaction.BlockDate;
-                                objectState.Owners = new Dictionary<string, long>();
-                                                               
-
-                            }
-
-
-                            foreach (var ownerId in objectinspector.own)
-                            {
-                                string owner = objectTransaction.Keyword.Reverse().ElementAt(ownerId.Key).Key;
-                                if (!objectState.Owners.ContainsKey(owner))
-                                {
-                                    objectState.Owners.Add(owner, ownerId.Value);
-                                }
-                                else
-                                {
-                                    objectState.Owners[owner] = ownerId.Value;
-
-                                }
-                            }
-                        }
-
-
-                    }
-
-                }
-
-
-
-
-            }
-            catch
-            {
-                return objectState;
-            }
-
-            var objectSerialized = JsonConvert.SerializeObject(objectState);
-
-
-            if (!Directory.Exists(@"root\" + objectTransaction.SignedBy))
-            {
-                Directory.CreateDirectory(@"root\" + objectTransaction.SignedBy);
-            }
-            System.IO.File.WriteAllText(@"root\" + objectTransaction.SignedBy + @"\" + "GetObjectByTransactionId.json", objectSerialized);
-
-            //used to determine where to begin object State processing when retrieved from cache
-            objectState.ProcessHeight = intProcessHeight;
-            return objectState;
-
-        }
         public static OBJState GetObjectByURN(string searchstring, string username, string password, string url, string versionByte = "111", int skip = 0)
         {
 
@@ -849,13 +736,33 @@ namespace SUP.P2FK
             string isBlocked;
             lock (levelDBLocker)
             {
+                try { 
                 using (var db = new DB(OBJ, @"root\oblock"))
                 {
                     isBlocked = db.Get(objectaddress);
                     db.Close();
                 }
                 if (isBlocked == "true") { return objectState; }
+                }
+                catch
+                {
 
+
+                    try
+                    {
+                        using (var db = new DB(OBJ, @"root\oblock2"))
+                        {
+                            isBlocked = db.Get(objectaddress);
+                            db.Close();
+                        }
+                        Directory.Move(@"root\oblock2", @"root\oblock");
+                        if (isBlocked == "true") { return objectState; }
+
+                    }
+                    catch { }
+
+
+                }
             }
             string JSONOBJ;
             string diskpath = "root\\" + objectaddress + "\\";
@@ -878,7 +785,7 @@ namespace SUP.P2FK
             //return all roots found at address
             objectTransactions = Root.GetRootsByAddress(objectaddress, username, password, url, intProcessHeight, 2, versionByte);
 
-            if (objectTransactions.Count() == 1) { return objectState; }
+            if (objectState.URN != null & objectTransactions.Count() == 1) { return objectState; }
      
     
             //return all roots found at address
@@ -954,14 +861,33 @@ namespace SUP.P2FK
             string isBlocked;
             lock (levelDBLocker)
             {
-
+                try { 
                 using (var db = new DB(OBJ, @"root\oblock"))
                 {
                     isBlocked = db.Get(objectaddress);
                     db.Close();
                 }
                 if (isBlocked == "true") { return objectState; }
+                }
+                catch
+                {
 
+
+                    try
+                    {
+                        using (var db = new DB(OBJ, @"root\oblock2"))
+                        {
+                            isBlocked = db.Get(objectaddress);
+                            db.Close();
+                        }
+                        Directory.Move(@"root\oblock2", @"root\oblock");
+                        if (isBlocked == "true") { return objectState; }
+
+                    }
+                    catch { }
+
+
+                }
             }
             int depth = skip;
             //return all roots found at address
@@ -1150,14 +1076,34 @@ namespace SUP.P2FK
             string isBlocked;
             lock (levelDBLocker)
             {
-
-                using (var db = new DB(OBJ, @"root\oblock"))
+                try
                 {
-                    isBlocked = db.Get(objectaddress);
-                    db.Close();
+                    using (var db = new DB(OBJ, @"root\oblock"))
+                    {
+                        isBlocked = db.Get(objectaddress);
+                        db.Close();
+                    }
+                    if (isBlocked == "true") { return objectStates; }
                 }
-                if (isBlocked == "true") { return objectStates; }
+                catch
+                {
 
+
+                    try
+                    {
+                        using (var db = new DB(OBJ, @"root\oblock2"))
+                        {
+                            isBlocked = db.Get(objectaddress);
+                            db.Close();
+                        }
+                        Directory.Move(@"root\oblock2", @"root\oblock");
+                        if (isBlocked == "true") { return objectStates; }
+
+                    }
+                    catch { }
+
+
+                }
             }
             string JSONOBJ;
             string diskpath = "root\\" + objectaddress + "\\";
@@ -1225,7 +1171,7 @@ namespace SUP.P2FK
 
                                     OBJState isObject = GetObjectByAddress(key, username, password, url, versionByte);
 
-                                    if (isObject.URN != null && key != objectaddress)
+                                    if (isObject.URN != null)
                                     {
                                         lock (levelDBLocker)
                                         {
@@ -1267,7 +1213,7 @@ namespace SUP.P2FK
 
                                 OBJState isObject = GetObjectByAddress(key, username, password, url, versionByte);
 
-                                if (isObject.URN != null && key != objectaddress)
+                                if (isObject.URN != null)
                                 {
                                     lock (levelDBLocker)
                                     {
@@ -1327,14 +1273,33 @@ namespace SUP.P2FK
             string isBlocked;
             lock (levelDBLocker)
             {
-
+                try { 
                 using (var db = new DB(OBJ, @"root\oblock"))
                 {
                     isBlocked = db.Get(objectaddress);
                     db.Close();
                 }
                 if (isBlocked == "true") { return objectStates; }
+                }
+                catch
+                {
 
+
+                    try
+                    {
+                        using (var db = new DB(OBJ, @"root\oblock2"))
+                        {
+                            isBlocked = db.Get(objectaddress);
+                            db.Close();
+                        }
+                        Directory.Move(@"root\oblock2", @"root\oblock");
+                        if (isBlocked == "true") { return objectStates; }
+
+                    }
+                    catch { }
+
+
+                }
             }
             string JSONOBJ;
             string diskpath = "root\\" + objectaddress + "\\";
@@ -1494,14 +1459,33 @@ namespace SUP.P2FK
             string isBlocked;
             lock (levelDBLocker)
             {
-
+                try { 
                 using (var db = new DB(OBJ, @"root\oblock"))
                 {
                     isBlocked = db.Get(objectaddress);
                     db.Close();
                 }
                 if (isBlocked == "true") { return objectStates; }
+                }
+                catch
+                {
 
+
+                    try
+                    {
+                        using (var db = new DB(OBJ, @"root\oblock2"))
+                        {
+                            isBlocked = db.Get(objectaddress);
+                            db.Close();
+                        }
+                        Directory.Move(@"root\oblock2", @"root\oblock");
+                        if (isBlocked == "true") { return objectStates; }
+
+                    }
+                    catch { }
+
+
+                }
             }
             string JSONOBJ;
             string diskpath = "root\\" + objectaddress + "\\";
@@ -1619,14 +1603,33 @@ namespace SUP.P2FK
                 string isBlocked;
                 lock (levelDBLocker)
                 {
-
+                    try { 
                     using (var db = new DB(OBJ, @"root\oblock"))
                     {
                         isBlocked = db.Get(objectaddress);
                         db.Close();
                     }
                     if (isBlocked == "true") { return objectStates; }
+                    }
+                    catch
+                    {
 
+
+                        try
+                        {
+                            using (var db = new DB(OBJ, @"root\oblock2"))
+                            {
+                                isBlocked = db.Get(objectaddress);
+                                db.Close();
+                            }
+                            Directory.Move(@"root\oblock2", @"root\oblock");
+                            if (isBlocked == "true") { return objectStates; }
+
+                        }
+                        catch { }
+
+
+                    }
                 }
                 string JSONOBJ;
                 string diskpath = "root\\" + objectaddress + "\\";
@@ -1863,6 +1866,140 @@ namespace SUP.P2FK
                 }
             }
             return new { Messages = messages };
+        }
+        
+        //for in-memory object discovery and cache. get object by address information is not available until after confirmation. do not use for general object verifiction
+        public static OBJState GetObjectByTransactionId(string transactionid)
+        {
+
+            OBJState objectState = new OBJState();
+            var OBJ = new Options { CreateIfMissing = true };
+            string JSONOBJ;
+            string diskpath = "root\\" + transactionid + "\\";
+
+
+            // fetch current JSONOBJ from disk if it exists
+            try
+            {
+                JSONOBJ = System.IO.File.ReadAllText(diskpath + "OBJ");
+                objectState = JsonConvert.DeserializeObject<OBJState>(JSONOBJ);
+
+            }
+            catch { return objectState; }
+
+            var intProcessHeight = 0;
+            Root objectTransaction;
+            string P2FKJSONString = System.IO.File.ReadAllText(diskpath + "GetObjectByTransactionId.json");
+            objectTransaction = JsonConvert.DeserializeObject<Root>(P2FKJSONString);
+            OBJ objectinspector = null;
+            try
+            {
+                objectinspector = JsonConvert.DeserializeObject<OBJ>(File.ReadAllText(@"root\" + transactionid + @"\OBJ"));
+
+            }
+            catch { return objectState; }
+
+
+            if (objectinspector.cre != null && objectState.Creators == null)
+            {
+
+                objectState.Creators = new Dictionary<string, DateTime> { };
+                foreach (int keywordId in objectinspector.cre)
+                {
+
+                    string creator = objectTransaction.Keyword.Reverse().ElementAt(keywordId).Key;
+
+                    if (!objectState.Creators.ContainsKey(creator))
+                    {
+                        objectState.Creators.Add(creator, new DateTime());
+                    }
+
+                }
+
+                objectState.ChangeDate = objectTransaction.BlockDate;
+                objectinspector.cre = null;
+            }
+
+
+            try
+            {
+                //has proper authority to make OBJ changes
+                if (objectState.Creators.ContainsKey(objectTransaction.SignedBy))
+                {
+
+                    if (objectinspector.cre != null && objectState.Creators.TryGet(objectTransaction.SignedBy).Year == 1)
+                    {
+                        objectState.Creators[objectTransaction.SignedBy] = objectTransaction.BlockDate;
+                        objectState.ChangeDate = objectTransaction.BlockDate;
+
+
+                    }
+
+
+
+                    if (objectState.LockedDate.Year == 1)
+                    {
+                        if (objectinspector.urn != null) { objectState.ChangeDate = objectTransaction.BlockDate; objectState.URN = objectinspector.urn.Replace('“', '"').Replace('”', '"'); }
+                        if (objectinspector.uri != null) { objectState.ChangeDate = objectTransaction.BlockDate; objectState.URI = objectinspector.uri.Replace('“', '"').Replace('”', '"'); ; }
+                        if (objectinspector.img != null) { objectState.ChangeDate = objectTransaction.BlockDate; objectState.Image = objectinspector.img.Replace('“', '"').Replace('”', '"'); ; }
+                        if (objectinspector.nme != null) { objectState.ChangeDate = objectTransaction.BlockDate; objectState.Name = objectinspector.nme.Replace('“', '"').Replace('”', '"'); ; }
+                        if (objectinspector.dsc != null) { objectState.ChangeDate = objectTransaction.BlockDate; objectState.Description = objectinspector.dsc.Replace('“', '"').Replace('”', '"'); ; }
+                        if (objectinspector.atr != null) { objectState.ChangeDate = objectTransaction.BlockDate; objectState.Attributes = objectinspector.atr; }
+                        if (objectinspector.lic != null) { objectState.ChangeDate = objectTransaction.BlockDate; objectState.License = objectinspector.lic.Replace('“', '"').Replace('”', '"'); ; }
+
+                        if (objectinspector.own != null)
+                        {
+                            if (objectState.Owners == null)
+                            {
+                                objectState.CreatedDate = objectTransaction.BlockDate;
+                                objectState.Owners = new Dictionary<string, long>();
+
+
+                            }
+
+
+                            foreach (var ownerId in objectinspector.own)
+                            {
+                                string owner = objectTransaction.Keyword.Reverse().ElementAt(ownerId.Key).Key;
+                                if (!objectState.Owners.ContainsKey(owner))
+                                {
+                                    objectState.Owners.Add(owner, ownerId.Value);
+                                }
+                                else
+                                {
+                                    objectState.Owners[owner] = ownerId.Value;
+
+                                }
+                            }
+                        }
+
+
+                    }
+
+                }
+
+
+
+
+            }
+            catch
+            {
+                return objectState;
+            }
+
+            var objectSerialized = JsonConvert.SerializeObject(objectState);
+
+
+            if (!Directory.Exists(@"root\" + objectTransaction.SignedBy))
+            {
+                Directory.CreateDirectory(@"root\" + objectTransaction.SignedBy);
+            }
+            System.IO.File.WriteAllText(@"root\" + objectTransaction.SignedBy + @"\" + "GetObjectByTransactionId.json", objectSerialized);
+
+            //used to determine where to begin object State processing when retrieved from cache
+            objectState.ProcessHeight = intProcessHeight;
+            return objectState;
+
         }
         private static string IsAsciiText(byte[] data)
         {

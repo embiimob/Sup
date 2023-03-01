@@ -44,7 +44,6 @@ namespace SUP
             this.txtLast = new System.Windows.Forms.TextBox();
             this.btnLive = new System.Windows.Forms.Button();
             this.tmrSearchMemoryPool = new System.Windows.Forms.Timer(this.components);
-            this.txtCntrlCalc = new System.Windows.Forms.TextBox();
             this.imgLoading = new System.Windows.Forms.PictureBox();
             this.flowLayoutPanel1 = new System.Windows.Forms.FlowLayoutPanel();
             this.tmrPerformSearch = new System.Windows.Forms.Timer(this.components);
@@ -84,6 +83,7 @@ namespace SUP
             // 
             this.txtSearchAddress.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.txtSearchAddress.CausesValidation = false;
             this.txtSearchAddress.Location = new System.Drawing.Point(42, 4);
             this.txtSearchAddress.Name = "txtSearchAddress";
             this.txtSearchAddress.Size = new System.Drawing.Size(344, 20);
@@ -184,6 +184,7 @@ namespace SUP
             this.txtLast.Size = new System.Drawing.Size(43, 20);
             this.txtLast.TabIndex = 78;
             this.txtLast.Text = "0";
+            this.txtLast.KeyDown += new System.Windows.Forms.KeyEventHandler(this.txtLast_KeyDown);
             // 
             // btnLive
             // 
@@ -203,14 +204,6 @@ namespace SUP
             this.tmrSearchMemoryPool.Interval = 5000;
             this.tmrSearchMemoryPool.Tick += new System.EventHandler(this.tmrSearchMemoryPool_Tick);
             // 
-            // txtCntrlCalc
-            // 
-            this.txtCntrlCalc.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.txtCntrlCalc.Location = new System.Drawing.Point(738, 70);
-            this.txtCntrlCalc.Name = "txtCntrlCalc";
-            this.txtCntrlCalc.Size = new System.Drawing.Size(43, 20);
-            this.txtCntrlCalc.TabIndex = 80;
-            // 
             // imgLoading
             // 
             this.imgLoading.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
@@ -226,6 +219,7 @@ namespace SUP
             // 
             // flowLayoutPanel1
             // 
+            this.flowLayoutPanel1.AllowDrop = true;
             this.flowLayoutPanel1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
@@ -233,8 +227,8 @@ namespace SUP
             this.flowLayoutPanel1.Name = "flowLayoutPanel1";
             this.flowLayoutPanel1.Size = new System.Drawing.Size(862, 668);
             this.flowLayoutPanel1.TabIndex = 82;
-            this.flowLayoutPanel1.Scroll += new System.Windows.Forms.ScrollEventHandler(this.flowLayoutPanel1_Scroll);
-            this.flowLayoutPanel1.SizeChanged += new System.EventHandler(this.flowLayoutPanel1_SizeChanged);
+            this.flowLayoutPanel1.DragDrop += new System.Windows.Forms.DragEventHandler(this.flowLayoutPanel1_DragDrop);
+            this.flowLayoutPanel1.DragEnter += new System.Windows.Forms.DragEventHandler(this.flowLayoutPanel1_DragEnter);
             // 
             // pages
             // 
@@ -247,7 +241,6 @@ namespace SUP
             this.pages.TickStyle = System.Windows.Forms.TickStyle.Both;
             this.pages.Visible = false;
             this.pages.Scroll += new System.EventHandler(this.pages_Scroll);
-            this.pages.ValueChanged += new System.EventHandler(this.pages_ValueChanged);
             this.pages.MouseUp += new System.Windows.Forms.MouseEventHandler(this.pages_MouseUp);
             // 
             // txtTotal
@@ -267,7 +260,6 @@ namespace SUP
             this.ClientSize = new System.Drawing.Size(862, 694);
             this.Controls.Add(this.txtTotal);
             this.Controls.Add(this.pages);
-            this.Controls.Add(this.txtCntrlCalc);
             this.Controls.Add(this.txtLast);
             this.Controls.Add(this.txtQty);
             this.Controls.Add(this.btnLive);
@@ -310,7 +302,6 @@ namespace SUP
         private System.Windows.Forms.TextBox txtLast;
         private System.Windows.Forms.Button btnLive;
         private System.Windows.Forms.Timer tmrSearchMemoryPool;
-        private System.Windows.Forms.TextBox txtCntrlCalc;
         private System.Windows.Forms.PictureBox imgLoading;
         private System.Windows.Forms.FlowLayoutPanel flowLayoutPanel1;
         private System.Windows.Forms.Timer tmrPerformSearch;

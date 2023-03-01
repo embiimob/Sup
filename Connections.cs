@@ -375,7 +375,7 @@ namespace SUP
                 string subdirectoryName = Path.GetFileName(subdirectory);
 
                 // Check if the subdirectory name is "mute" or "block"
-                if (subdirectoryName == "block")
+                if (subdirectoryName == "oblock" || subdirectoryName == "tblock")
                 {
                     // Delete the subdirectory and all its contents
                     Directory.Delete(subdirectory, true);

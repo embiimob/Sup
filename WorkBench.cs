@@ -866,6 +866,12 @@ namespace SUP
                     db.Put(txtSearchAddress.Text, "true");
 
                 }
+                var WORK2 = new Options { CreateIfMissing = true };
+                using (var db = new DB(WORK2, @"root\oblock2"))
+                {
+                    db.Put(txtSearchAddress.Text, "true");
+
+                }
 
                 var SUP = new Options { CreateIfMissing = true };
                 var keysToDelete = new HashSet<string>(); // Create a new HashSet to store the keys to delete
