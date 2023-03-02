@@ -37,21 +37,12 @@ namespace SUP.P2FK
 
 
         //ensures levelDB is thread safely
-        private readonly static object levelDBLocker = new object();
+        private readonly static object SupLocker = new object();
 
         public static Root GetRootByTransactionId(string transactionid, string username, string password, string url, string versionbyte = "111", byte[] rootbytes = null, string signatureaddress = null)
         {
             Root P2FKRoot = new Root();
-            string isblock;
-            lock (levelDBLocker)
-            {
-                var ROOT = new Options { CreateIfMissing = true };
-                var db = new DB(ROOT, @"root\tblock");
-                isblock = db.Get(transactionid);
-                db.Close();
-            }
-            //if transactionID is found in LevelDB cache with invalid or blocked status return null
-            if (isblock == "true"){return P2FKRoot; }
+     
             string diskpath = "root\\" + transactionid + "\\";
             string P2FKJSONString = null;
             if (rootbytes == null)
@@ -73,8 +64,8 @@ namespace SUP.P2FK
 
                 }
                 //Throws exception if OBJ.json file cache does not exist
-                catch { }   
-                
+                catch { }
+
             }
 
             //P2FK Object Cache does not exist
@@ -127,12 +118,12 @@ namespace SUP.P2FK
                 }
 
                 totalByteSize = deserializedObject.size;
-                try { confirmations = deserializedObject.confirmations; } catch { confirmations = 0;}
-                   blockdate =
-                    DateTimeOffset.FromUnixTimeSeconds(
-                        Convert.ToInt32(deserializedObject.blocktime)
-                    ).DateTime;
-                
+                try { confirmations = deserializedObject.confirmations; } catch { confirmations = 0; }
+                blockdate =
+                 DateTimeOffset.FromUnixTimeSeconds(
+                     Convert.ToInt32(deserializedObject.blocktime)
+                 ).DateTime;
+
 
 
                 // we are spinning through all the out addresses within each bitcoin transaction
@@ -148,9 +139,9 @@ namespace SUP.P2FK
                         || v_out.value == "5.5E-05"
                         || v_out.value == "5.5E-06"
                         || v_out.value == "1E-05"
-                        ||v_out.value == "1E-08"
-                        ||v_out.value == "1.3016426"
-                        ||v_out.value =="0.01"
+                        || v_out.value == "1E-08"
+                        || v_out.value == "1.3016426"
+                        || v_out.value == "0.01"
                         || v_out.value == "1"
                     )
                     {
@@ -160,7 +151,7 @@ namespace SUP.P2FK
                             P2FKSignatureAddress = v_out.scriptPubKey.addresses[0];
                         }
                         catch { return P2FKRoot; }
-                    
+
 
 
                         //retreiving payload data from each address
@@ -191,7 +182,7 @@ namespace SUP.P2FK
             int transactionBytesSize = transactionBytes.Count();
             transactionASCII = Encoding.ASCII.GetString(transactionBytes);
 
-            if (rootbytes == null && P2FKSignatureAddress == null) { return P2FKRoot;}
+            if (rootbytes == null && P2FKSignatureAddress == null) { return P2FKRoot; }
 
             // Perform the loop until no additional numbers are found and the regular expression fails to match
             while (regexSpecialChars.IsMatch(transactionASCII))
@@ -243,54 +234,57 @@ namespace SUP.P2FK
                 else
                 {
                     isValid = false;
-                   
+
 
                 }
 
                 if (isValid)
                 {
 
-
-                    //Process Ledger files until reaching Root
-                    while (regexTransactionId.IsMatch(fileName))
+                    lock (SupLocker)
                     {
-
-                        // supports older objects where the file ledger name was repeated inside filecontents
-                        byte[] removeStringBytes = Encoding.ASCII.GetBytes(fileName);
-                        if (fileBytes.Take(removeStringBytes.Length).SequenceEqual(removeStringBytes))
+                        //Process Ledger files until reaching Root
+                        while (regexTransactionId.IsMatch(fileName))
                         {
-                            byte[] truncatedBytes = new byte[fileBytes.Length - removeStringBytes.Length];
-                            Buffer.BlockCopy(fileBytes, removeStringBytes.Length, truncatedBytes, 0, truncatedBytes.Length);
-                            fileBytes = truncatedBytes;
-                        }
 
-                        isledger = true;
+                            // supports older objects where the file ledger name was repeated inside filecontents
+                            byte[] removeStringBytes = Encoding.ASCII.GetBytes(fileName);
+                            if (fileBytes.Take(removeStringBytes.Length).SequenceEqual(removeStringBytes))
+                            {
+                                byte[] truncatedBytes = new byte[fileBytes.Length - removeStringBytes.Length];
+                                Buffer.BlockCopy(fileBytes, removeStringBytes.Length, truncatedBytes, 0, truncatedBytes.Length);
+                                fileBytes = truncatedBytes;
+                            }
 
-                        P2FKRoot = GetRootByTransactionId(
-                        transactionid,
-                        username,
-                        password,
-                        url,
-                        versionbyte,
-                        GetRootBytesByLedger(
-                            fileName
-                                + Environment.NewLine
-                                + Encoding.ASCII.GetString(fileBytes),
+                            isledger = true;
+
+                            P2FKRoot = GetRootByTransactionId(
+                            transactionid,
                             username,
                             password,
-                            url
-                        ), P2FKSignatureAddress
-                    );
+                            url,
+                            versionbyte,
+                            GetRootBytesByLedger(
+                                fileName
+                                    + Environment.NewLine
+                                    + Encoding.ASCII.GetString(fileBytes),
+                                username,
+                                password,
+                                url
+                            ), P2FKSignatureAddress
+                        );
 
-                        if (P2FKRoot.File.Count > 0)
-                        {
-                            fileName = P2FKRoot.File.Keys.First();
-                            fileBytes = System.IO.File.ReadAllBytes(@"root\" + P2FKRoot.TransactionId + @"\" + fileName); ;
+                            if (P2FKRoot.File.Count > 0)
+                            {
+                                fileName = P2FKRoot.File.Keys.First();
+                                fileBytes = System.IO.File.ReadAllBytes(@"root\" + P2FKRoot.TransactionId + @"\" + fileName); ;
+                            }
+                            else { fileName = ""; fileBytes = Array.Empty<byte>(); }
+                            P2FKRoot.TotalByteSize += totalByteSize;
+                            P2FKRoot.Confirmations = confirmations;
+                            P2FKRoot.BlockDate = blockdate;
+
                         }
-                        else { fileName = ""; fileBytes = Array.Empty<byte>(); }
-                        P2FKRoot.TotalByteSize += totalByteSize;
-                        P2FKRoot.Confirmations = confirmations;
-                        P2FKRoot.BlockDate = blockdate;
 
                     }
 
@@ -336,7 +330,7 @@ namespace SUP.P2FK
                     }
                     else
                     {
-                        
+
                         break;
                     }
                 }
@@ -442,20 +436,19 @@ namespace SUP.P2FK
 
             string isMuted;
 
-            lock (levelDBLocker)
+            lock (SupLocker)
             {
                 var MUTE = new Options { CreateIfMissing = true };
                 using (var db = new DB(MUTE, @"root\mute"))
                 {
                     isMuted = db.Get(P2FKRoot.SignedBy);
                 }
-            }
 
 
-            if (P2FKRoot.Message.Count() > 0 && isMuted != "true")
-            {
-                lock (levelDBLocker)
+
+                if (P2FKRoot.Message.Count() > 0 && isMuted != "true")
                 {
+
                     foreach (KeyValuePair<string, string> keyword in P2FKRoot.Keyword)
                     {
 
@@ -466,13 +459,12 @@ namespace SUP.P2FK
                         db.Close();
 
                     }
-                }
-            }
 
-            if (P2FKRoot.File.ContainsKey("SEC") && isMuted != "true")
-            {
-                lock (levelDBLocker)
+                }
+
+                if (P2FKRoot.File.ContainsKey("SEC") && isMuted != "true")
                 {
+
                     foreach (KeyValuePair<string, string> keyword in P2FKRoot.Keyword)
                     {
 
@@ -483,6 +475,7 @@ namespace SUP.P2FK
                         db.Close();
 
                     }
+
                 }
             }
 
@@ -499,8 +492,9 @@ namespace SUP.P2FK
                 try
                 {
                     deserializedObject = JsonConvert.DeserializeObject(rpcClient.SendCommand("searchrawtransactions", address, 0, skip, qty).ResultString);
-                }catch { break; }
-                
+                }
+                catch { break; }
+
                 if (deserializedObject.Count == 0)
                     break;
 
@@ -513,11 +507,11 @@ namespace SUP.P2FK
                     var root = Root.GetRootByTransactionId(hexId, username, password, url, versionByte);
 
                     if (root != null && root.TotalByteSize > 0)
-                    {  
+                    {
                         root.Id = rootId + skip;
                         rootList.Add(root);
                     }
-                   
+
                 }
                 skip += qty;
 
@@ -628,15 +622,15 @@ namespace SUP.P2FK
             NetworkCredential credentials = new NetworkCredential(username, password);
             RPCClient rpcClient = new RPCClient(credentials, new Uri(url), Network.Main);
             string privkey;
-            
-             privkey = rpcClient.SendCommand("dumpprivkey", address).ResultString;
-             
 
-            var privKeyHex = BitConverter.ToString(Base58.Decode(privkey)).Replace("-","");
+            privkey = rpcClient.SendCommand("dumpprivkey", address).ResultString;
+
+
+            var privKeyHex = BitConverter.ToString(Base58.Decode(privkey)).Replace("-", "");
             privKeyHex = privKeyHex.Substring(2, 64);
             BigInteger privateKey = Hex.HexToBigInteger(privKeyHex);
             ECPoint publicKey = Secp256k1.G.Multiply(privateKey);
-            List < String > Keys = new List<String >();
+            List<String> Keys = new List<String>();
             Keys.Add(publicKey.X.ToHex());
             Keys.Add(publicKey.Y.ToHex());
 

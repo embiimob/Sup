@@ -50,7 +50,7 @@ namespace SUP.P2FK
         public int ProcessHeight { get; set; }
         public DateTime ChangeDate { get; set; }
         //ensures levelDB is thread safely
-        private readonly static object levelDBLocker = new object();
+        private readonly static object SupLocker = new object();
 
         public static PROState GetProfileByAddress(string profileaddress, string username, string password, string url, string versionByte = "111", bool verbose = false, int skip = 0)
         {
@@ -91,7 +91,7 @@ namespace SUP.P2FK
                 {
 
                     string sigSeen;
-                    lock (levelDBLocker)
+                    lock (SupLocker)
                     {
                         using (var db = new DB(OBJ, @"root\pro"))
                         {
@@ -102,7 +102,7 @@ namespace SUP.P2FK
                     if (sigSeen == null || sigSeen == transaction.TransactionId)
                     {
 
-                        lock (levelDBLocker)
+                        lock (SupLocker)
                         {
                             using (var db = new DB(OBJ, @"root\pro"))
                             {
@@ -208,7 +208,7 @@ namespace SUP.P2FK
                         if (logstatus != "")
                         {
 
-                            lock (levelDBLocker)
+                            lock (SupLocker)
                             {
                                 using (var db = new DB(OBJ, @"root\event"))
                                 {

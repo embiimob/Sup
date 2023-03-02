@@ -46,7 +46,6 @@ namespace SUP
             this.tmrSearchMemoryPool = new System.Windows.Forms.Timer(this.components);
             this.imgLoading = new System.Windows.Forms.PictureBox();
             this.flowLayoutPanel1 = new System.Windows.Forms.FlowLayoutPanel();
-            this.tmrPerformSearch = new System.Windows.Forms.Timer(this.components);
             this.pages = new System.Windows.Forms.TrackBar();
             this.txtTotal = new System.Windows.Forms.TextBox();
             ((System.ComponentModel.ISupportInitialize)(this.imgLoading)).BeginInit();
@@ -305,7 +304,6 @@ namespace SUP
         private System.Windows.Forms.Timer tmrSearchMemoryPool;
         private System.Windows.Forms.PictureBox imgLoading;
         private System.Windows.Forms.FlowLayoutPanel flowLayoutPanel1;
-        private System.Windows.Forms.Timer tmrPerformSearch;
         private System.Windows.Forms.TrackBar pages;
         private System.Windows.Forms.TextBox txtTotal;
     }

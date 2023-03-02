@@ -76,6 +76,9 @@ namespace SUP
             this.lblTotalTime = new System.Windows.Forms.Label();
             this.lblKbs = new System.Windows.Forms.Label();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
+            this.ButtonGetPublicKeys = new System.Windows.Forms.Button();
+            this.ButtonGetPrivateMessages = new System.Windows.Forms.Button();
+            this.ButtonGetPublicMessages = new System.Windows.Forms.Button();
             this.ButtonGetObjectByTransactionId = new System.Windows.Forms.Button();
             this.btnGetFoundObjects = new System.Windows.Forms.Button();
             this.btnPurge = new System.Windows.Forms.Button();
@@ -83,7 +86,6 @@ namespace SUP
             this.label1 = new System.Windows.Forms.Label();
             this.txtSkip = new System.Windows.Forms.TextBox();
             this.txtQty = new System.Windows.Forms.TextBox();
-            this.btnUnblockTransaction = new System.Windows.Forms.Button();
             this.btnUnBlockAddress = new System.Windows.Forms.Button();
             this.btnUnMuteAddress = new System.Windows.Forms.Button();
             this.btnMuteAddress = new System.Windows.Forms.Button();
@@ -102,9 +104,6 @@ namespace SUP
             this.btnGetObject = new System.Windows.Forms.Button();
             this.btnDecrypt = new System.Windows.Forms.Button();
             this.btnEncrypt = new System.Windows.Forms.Button();
-            this.ButtonGetPublicMessages = new System.Windows.Forms.Button();
-            this.ButtonGetPrivateMessages = new System.Windows.Forms.Button();
-            this.ButtonGetPublicKeys = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.dgTransactions)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
@@ -500,7 +499,6 @@ namespace SUP
             this.splitContainer1.Panel1.Controls.Add(this.label1);
             this.splitContainer1.Panel1.Controls.Add(this.txtSkip);
             this.splitContainer1.Panel1.Controls.Add(this.txtQty);
-            this.splitContainer1.Panel1.Controls.Add(this.btnUnblockTransaction);
             this.splitContainer1.Panel1.Controls.Add(this.btnUnBlockAddress);
             this.splitContainer1.Panel1.Controls.Add(this.btnUnMuteAddress);
             this.splitContainer1.Panel1.Controls.Add(this.btnMuteAddress);
@@ -556,6 +554,36 @@ namespace SUP
             this.splitContainer1.SplitterWidth = 1;
             this.splitContainer1.TabIndex = 42;
             this.splitContainer1.Resize += new System.EventHandler(this.OnContainerResize);
+            // 
+            // ButtonGetPublicKeys
+            // 
+            this.ButtonGetPublicKeys.Location = new System.Drawing.Point(391, 151);
+            this.ButtonGetPublicKeys.Name = "ButtonGetPublicKeys";
+            this.ButtonGetPublicKeys.Size = new System.Drawing.Size(60, 23);
+            this.ButtonGetPublicKeys.TabIndex = 75;
+            this.ButtonGetPublicKeys.Text = "pubkey";
+            this.ButtonGetPublicKeys.UseVisualStyleBackColor = true;
+            this.ButtonGetPublicKeys.Click += new System.EventHandler(this.ButtonGetPublicKeys_Click);
+            // 
+            // ButtonGetPrivateMessages
+            // 
+            this.ButtonGetPrivateMessages.Location = new System.Drawing.Point(269, 330);
+            this.ButtonGetPrivateMessages.Name = "ButtonGetPrivateMessages";
+            this.ButtonGetPrivateMessages.Size = new System.Drawing.Size(79, 23);
+            this.ButtonGetPrivateMessages.TabIndex = 74;
+            this.ButtonGetPrivateMessages.Text = "private  msgs";
+            this.ButtonGetPrivateMessages.UseVisualStyleBackColor = true;
+            this.ButtonGetPrivateMessages.Click += new System.EventHandler(this.ButtonGetPrivateMessages_Click);
+            // 
+            // ButtonGetPublicMessages
+            // 
+            this.ButtonGetPublicMessages.Location = new System.Drawing.Point(182, 330);
+            this.ButtonGetPublicMessages.Name = "ButtonGetPublicMessages";
+            this.ButtonGetPublicMessages.Size = new System.Drawing.Size(79, 23);
+            this.ButtonGetPublicMessages.TabIndex = 73;
+            this.ButtonGetPublicMessages.Text = "public msgs";
+            this.ButtonGetPublicMessages.UseVisualStyleBackColor = true;
+            this.ButtonGetPublicMessages.Click += new System.EventHandler(this.ButtonGetPublicMessages_Click);
             // 
             // ButtonGetObjectByTransactionId
             // 
@@ -621,16 +649,6 @@ namespace SUP
             this.txtQty.TabIndex = 66;
             this.txtQty.Text = "-1";
             // 
-            // btnUnblockTransaction
-            // 
-            this.btnUnblockTransaction.Location = new System.Drawing.Point(159, 151);
-            this.btnUnblockTransaction.Name = "btnUnblockTransaction";
-            this.btnUnblockTransaction.Size = new System.Drawing.Size(83, 23);
-            this.btnUnblockTransaction.TabIndex = 65;
-            this.btnUnblockTransaction.Text = "unblock";
-            this.btnUnblockTransaction.UseVisualStyleBackColor = true;
-            this.btnUnblockTransaction.Click += new System.EventHandler(this.ButtonUnblockTransactionIdClick);
-            // 
             // btnUnBlockAddress
             // 
             this.btnUnBlockAddress.Location = new System.Drawing.Point(367, 207);
@@ -663,11 +681,11 @@ namespace SUP
             // 
             // btnBlockTransaction
             // 
-            this.btnBlockTransaction.Location = new System.Drawing.Point(51, 151);
+            this.btnBlockTransaction.Location = new System.Drawing.Point(62, 151);
             this.btnBlockTransaction.Name = "btnBlockTransaction";
             this.btnBlockTransaction.Size = new System.Drawing.Size(102, 23);
             this.btnBlockTransaction.TabIndex = 61;
-            this.btnBlockTransaction.Text = "block transaction";
+            this.btnBlockTransaction.Text = "delete transaction";
             this.btnBlockTransaction.UseVisualStyleBackColor = true;
             this.btnBlockTransaction.Click += new System.EventHandler(this.ButtonBlockTransactionIdClick);
             // 
@@ -811,36 +829,6 @@ namespace SUP
             this.btnEncrypt.UseVisualStyleBackColor = true;
             this.btnEncrypt.Click += new System.EventHandler(this.ButtonEncryptTransactionIdClick);
             // 
-            // ButtonGetPublicMessages
-            // 
-            this.ButtonGetPublicMessages.Location = new System.Drawing.Point(182, 330);
-            this.ButtonGetPublicMessages.Name = "ButtonGetPublicMessages";
-            this.ButtonGetPublicMessages.Size = new System.Drawing.Size(79, 23);
-            this.ButtonGetPublicMessages.TabIndex = 73;
-            this.ButtonGetPublicMessages.Text = "public msgs";
-            this.ButtonGetPublicMessages.UseVisualStyleBackColor = true;
-            this.ButtonGetPublicMessages.Click += new System.EventHandler(this.ButtonGetPublicMessages_Click);
-            // 
-            // ButtonGetPrivateMessages
-            // 
-            this.ButtonGetPrivateMessages.Location = new System.Drawing.Point(269, 330);
-            this.ButtonGetPrivateMessages.Name = "ButtonGetPrivateMessages";
-            this.ButtonGetPrivateMessages.Size = new System.Drawing.Size(79, 23);
-            this.ButtonGetPrivateMessages.TabIndex = 74;
-            this.ButtonGetPrivateMessages.Text = "private  msgs";
-            this.ButtonGetPrivateMessages.UseVisualStyleBackColor = true;
-            this.ButtonGetPrivateMessages.Click += new System.EventHandler(this.ButtonGetPrivateMessages_Click);
-            // 
-            // ButtonGetPublicKeys
-            // 
-            this.ButtonGetPublicKeys.Location = new System.Drawing.Point(391, 151);
-            this.ButtonGetPublicKeys.Name = "ButtonGetPublicKeys";
-            this.ButtonGetPublicKeys.Size = new System.Drawing.Size(60, 23);
-            this.ButtonGetPublicKeys.TabIndex = 75;
-            this.ButtonGetPublicKeys.Text = "pubkey";
-            this.ButtonGetPublicKeys.UseVisualStyleBackColor = true;
-            this.ButtonGetPublicKeys.Click += new System.EventHandler(this.ButtonGetPublicKeys_Click);
-            // 
             // WorkBench
             // 
             this.AllowDrop = true;
@@ -922,7 +910,6 @@ namespace SUP
         private Button btnMuteAddress;
         private Button btnBlockTransaction;
         private Button btnBlockAddress;
-        private Button btnUnblockTransaction;
         private Button btnUnBlockAddress;
         private Button btnUnMuteAddress;
         private Label label2;

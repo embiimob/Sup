@@ -18,7 +18,7 @@ namespace SUP
 {
     public partial class WorkBench : Form
     {
-        private readonly static object levelDBLocker = new object();
+        private readonly static object SupLocker = new object();
         public WorkBench()
         {
             InitializeComponent();
@@ -36,7 +36,7 @@ namespace SUP
                 case "ROOT":
                     var ROOT = new Options { CreateIfMissing = true };
                     txtGetValue.Text = "";
-                    lock (levelDBLocker)
+                    lock (SupLocker)
                     {
                         using (var db = new DB(ROOT, @"root"))
                         {
@@ -58,7 +58,7 @@ namespace SUP
                 case "SUP":
                     var SUP = new Options { CreateIfMissing = true };
                     txtGetValue.Text = "";
-                    lock (levelDBLocker)
+                    lock (SupLocker)
                     {
                         using (var db = new DB(SUP, @"root\sup"))
                         {
@@ -80,7 +80,7 @@ namespace SUP
                 case "PRO":
                     var PRO = new Options { CreateIfMissing = true };
                     txtGetValue.Text = "";
-                    lock (levelDBLocker)
+                    lock (SupLocker)
                     {
                         using (var db = new DB(PRO, @"root\pro"))
                         {
@@ -832,28 +832,14 @@ namespace SUP
 
         private void ButtonBlockTransactionIdClick(object sender, EventArgs e)
         {
-            var WORK = new Options { CreateIfMissing = true };
-            using (var db = new DB(WORK, @"root\block"))
-            {
-                db.Put(txtTransactionId.Text, "true");
-            }
-
+           
             if (txtTransactionId.Text.Length > 42)
             {
                 try { System.IO.Directory.Delete(@"root\" + txtTransactionId.Text, true); } catch { }
             }
         }
 
-        private void ButtonUnblockTransactionIdClick(object sender, EventArgs e)
-        {
-
-            var WORK = new Options { CreateIfMissing = true };
-            using (var db = new DB(WORK, @"root\block"))
-            {
-                db.Delete(txtTransactionId.Text);
-            }
-
-        }
+       
 
         private void ButtonBlockAddressClick(object sender, EventArgs e)
         {
@@ -960,7 +946,7 @@ namespace SUP
         private void ButtonUnBlockAddressClick(object sender, EventArgs e)
         {
             var WORK = new Options { CreateIfMissing = true };
-            using (var db = new DB(WORK, @"root\block"))
+            using (var db = new DB(WORK, @"root\oblock"))
             {
                 db.Delete(txtSearchAddress.Text);
             }
