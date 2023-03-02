@@ -136,11 +136,12 @@ namespace SUP
 
                     createdObjects = OBJState.GetFoundObjects("good-user", "better-password", @"http://127.0.0.1:18332", "111", 0, -1);
 
-                    if (btnLive.BackColor == Color.Blue) { createdObjects.Reverse(); }
 
                 }
                 else
                 {
+
+
                     if (!System.IO.File.Exists("root\\" + profileCheck + "\\GetObjectsByAddress.json"))
                     {
                         this.Invoke((Action)(() =>
@@ -495,6 +496,7 @@ namespace SUP
             {
                 pages.Maximum = 1;
                 txtTotal.Text = "1";
+                txtLast.Text = "0";
 
             }));
 
@@ -924,7 +926,7 @@ namespace SUP
                         foundObject.lblOfficial.Visible = true;
 
                         foundObject.lblOfficial.Text = TruncateAddress(isOfficial.URN);
-               
+
                         System.Windows.Forms.ToolTip myTooltip = new System.Windows.Forms.ToolTip();
                         myTooltip.SetToolTip(foundObject.lblOfficial, isOfficial.URN);
 
@@ -1048,9 +1050,8 @@ namespace SUP
 
         private async void BuildSearchResults()
         {
-
-
             string isBuilding;
+            DateTime timestamp = DateTime.UtcNow;
 
             lock (levelDBLocker)
             {
@@ -1061,235 +1062,263 @@ namespace SUP
                 }
             }
 
-
-            if (isBuilding != "true")
+            DateTime lastTimestamp;
+            if (DateTime.TryParse(isBuilding, out lastTimestamp) && (timestamp - lastTimestamp).TotalSeconds <= 300)
             {
 
-                lock (levelDBLocker)
+                return;
+            }
+
+
+            lock (levelDBLocker)
+            {
+                var options = new Options { CreateIfMissing = true };
+                using (var db = new DB(options, @"root\sup"))
                 {
-                    var MUTE = new Options { CreateIfMissing = true };
-                    using (var db = new DB(MUTE, @"root\sup"))
-                    {
-                        db.Put("isBuilding", "true");
-                    }
+                    db.Put("isBuilding", timestamp.ToString("o"));
+                }
+            }
+
+
+
+            lock (levelDBLocker)
+            {
+                var MUTE = new Options { CreateIfMissing = true };
+                using (var db = new DB(MUTE, @"root\sup"))
+                {
+                    db.Put("isBuilding", "true");
+                }
+            }
+
+            try
+            {
+                this.Invoke((Action)(() =>
+                {
+                    flowLayoutPanel1.Controls.Clear();
+
+                }));
+
+                loadedObjects.Clear();
+
+
+                int loadQty = (flowLayoutPanel1.Size.Width / 213) * (flowLayoutPanel1.Size.Height / 336);
+                loadQty -= flowLayoutPanel1.Controls.Count;
+
+
+                if (SearchId == SearchHistory.Count)
+                {
+                    SearchHistory.Add(txtSearchAddress.Text);
+                    SearchId++;
+                }
+                else
+                {
+
+                    if (SearchId > SearchHistory.Count - 1) { SearchId = SearchHistory.Count - 1; }
+                    SearchHistory[SearchId] = txtSearchAddress.Text;
+
                 }
 
-                try
+
+                if (txtSearchAddress.Text.ToLower().StartsWith("http"))
+                {
+                    flowLayoutPanel1.Controls.Clear();
+                    flowLayoutPanel1.AutoScroll = false;
+                    var webBrowser1 = new Microsoft.Web.WebView2.WinForms.WebView2();
+                    webBrowser1.Size = flowLayoutPanel1.Size;
+
+                    this.Invoke((Action)(async () =>
+                    {
+                        flowLayoutPanel1.Controls.Add(webBrowser1);
+
+                        await webBrowser1.EnsureCoreWebView2Async();
+                        webBrowser1.CoreWebView2.Navigate(txtSearchAddress.Text);
+                    }));
+
+                }
+                else
                 {
                     this.Invoke((Action)(() =>
                     {
-                        flowLayoutPanel1.Controls.Clear();
-
+                        flowLayoutPanel1.AutoScroll = true;
                     }));
 
-                    loadedObjects.Clear();
-
-
-                    int loadQty = (flowLayoutPanel1.Size.Width / 213) * (flowLayoutPanel1.Size.Height / 336);
-                    loadQty -= flowLayoutPanel1.Controls.Count;
-
-
-                    if (SearchId == SearchHistory.Count)
+                    if (txtSearchAddress.Text.StartsWith("#"))
                     {
-                        SearchHistory.Add(txtSearchAddress.Text);
-                        SearchId++;
+
+                        GetObjectsByAddress(Root.GetPublicAddressByKeyword(txtSearchAddress.Text.Substring(1), "111"));
+
                     }
                     else
                     {
 
-                        if (SearchId > SearchHistory.Count - 1) { SearchId = SearchHistory.Count - 1; }
-                        SearchHistory[SearchId] = txtSearchAddress.Text;
-
-                    }
-
-
-
-                    if (txtSearchAddress.Text.ToLower().StartsWith("http"))
-                    {
-                        flowLayoutPanel1.Controls.Clear();
-                        flowLayoutPanel1.AutoScroll = false;
-                        var webBrowser1 = new Microsoft.Web.WebView2.WinForms.WebView2();
-                        webBrowser1.Size = flowLayoutPanel1.Size;
-
-                        this.Invoke((Action)(async () =>
+                        if (txtSearchAddress.Text.ToLower().StartsWith(@"ipfs:") && txtSearchAddress.Text.Replace(@"//", "").Replace(@"\\", "").Length >= 51)
                         {
-                            flowLayoutPanel1.Controls.Add(webBrowser1);
+                            string ipfsHash = txtSearchAddress.Text.Replace(@"//", "").Replace(@"\\", "").Substring(5, 46);
 
-                            await webBrowser1.EnsureCoreWebView2Async();
-                            webBrowser1.CoreWebView2.Navigate(txtSearchAddress.Text);
-                        }));
-
-                    }
-                    else
-                    {
-                        this.Invoke((Action)(() =>
-                        {
-                            flowLayoutPanel1.AutoScroll = true;
-                        }));
-
-                        if (txtSearchAddress.Text.StartsWith("#"))
-                        {
-
-                            GetObjectsByAddress(Root.GetPublicAddressByKeyword(txtSearchAddress.Text.Substring(1), "111"));
-
-                        }
-                        else
-                        {
-
-                            if (txtSearchAddress.Text.ToLower().StartsWith(@"ipfs:") && txtSearchAddress.Text.Replace(@"//", "").Replace(@"\\", "").Length >= 51)
+                            if (!System.IO.Directory.Exists("ipfs/" + ipfsHash))
                             {
-                                string ipfsHash = txtSearchAddress.Text.Replace(@"//", "").Replace(@"\\", "").Substring(5, 46);
 
-                                if (!System.IO.Directory.Exists("ipfs/" + ipfsHash))
+                                var SUP = new Options { CreateIfMissing = true };
+                                string isLoading;
+                                lock (levelDBLocker)
                                 {
+                                    using (var db = new DB(SUP, @"ipfs"))
+                                    {
+                                        isLoading = db.Get(ipfsHash);
 
-                                    var SUP = new Options { CreateIfMissing = true };
-                                    string isLoading;
+                                    }
+                                }
+
+                                if (isLoading != "loading")
+                                {
                                     lock (levelDBLocker)
                                     {
                                         using (var db = new DB(SUP, @"ipfs"))
                                         {
-                                            isLoading = db.Get(ipfsHash);
+
+                                            db.Put(ipfsHash, "loading");
 
                                         }
                                     }
-
-                                    if (isLoading != "loading")
+                                    Task ipfsTask = Task.Run(() =>
                                     {
+                                        Process process2 = new Process();
+                                        process2.StartInfo.FileName = @"ipfs\ipfs.exe";
+                                        process2.StartInfo.Arguments = "get " + ipfsHash + @" -o ipfs\" + ipfsHash;
+                                        process2.Start();
+                                        process2.WaitForExit();
+
+                                        if (System.IO.File.Exists("ipfs/" + ipfsHash))
+                                        {
+                                            System.IO.File.Move("ipfs/" + ipfsHash, "ipfs/" + ipfsHash + "_tmp");
+                                            System.IO.Directory.CreateDirectory("ipfs/" + ipfsHash);
+                                            string fileName = txtSearchAddress.Text.Replace(@"//", "").Replace(@"\\", "").Substring(51);
+                                            if (fileName == "") { fileName = "artifact"; } else { fileName = fileName.Replace(@"/", "").Replace(@"\", ""); }
+                                            System.IO.File.Move("ipfs/" + ipfsHash + "_tmp", @"ipfs/" + ipfsHash + @"/" + fileName);
+
+                                        }
+
+
                                         lock (levelDBLocker)
                                         {
                                             using (var db = new DB(SUP, @"ipfs"))
                                             {
 
-                                                db.Put(ipfsHash, "loading");
+                                                string ipfsdaemon = db.Get("ipfs-daemon");
+
+                                                if (ipfsdaemon == "true")
+                                                {
+                                                    Process process3 = new Process
+                                                    {
+                                                        StartInfo = new ProcessStartInfo
+                                                        {
+                                                            FileName = @"ipfs\ipfs.exe",
+                                                            Arguments = "pin add " + ipfsHash,
+                                                            UseShellExecute = false,
+                                                            CreateNoWindow = true
+                                                        }
+                                                    };
+                                                    process3.Start();
+                                                }
+                                            }
+                                        }
+
+
+                                        if (System.IO.Directory.Exists(System.IO.Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + @"\ipfs\" + ipfsHash))
+                                        {
+                                            Process.Start("explorer.exe", System.IO.Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + @"\ipfs\" + ipfsHash);
+                                        }
+                                        else { System.Windows.Forms.Label filenotFound = new System.Windows.Forms.Label(); filenotFound.AutoSize = true; filenotFound.Text = "IPFS: Search failed! Verify IPFS pinning is enbaled"; flowLayoutPanel1.Controls.Clear(); flowLayoutPanel1.Controls.Add(filenotFound); }
+                                        lock (levelDBLocker)
+                                        {
+                                            using (var db = new DB(SUP, @"ipfs"))
+                                            {
+                                                db.Delete(ipfsHash);
 
                                             }
                                         }
-                                        Task ipfsTask = Task.Run(() =>
-                                        {
-                                            Process process2 = new Process();
-                                            process2.StartInfo.FileName = @"ipfs\ipfs.exe";
-                                            process2.StartInfo.Arguments = "get " + ipfsHash + @" -o ipfs\" + ipfsHash;
-                                            process2.Start();
-                                            process2.WaitForExit();
-
-                                            if (System.IO.File.Exists("ipfs/" + ipfsHash))
-                                            {
-                                                System.IO.File.Move("ipfs/" + ipfsHash, "ipfs/" + ipfsHash + "_tmp");
-                                                System.IO.Directory.CreateDirectory("ipfs/" + ipfsHash);
-                                                string fileName = txtSearchAddress.Text.Replace(@"//", "").Replace(@"\\", "").Substring(51);
-                                                if (fileName == "") { fileName = "artifact"; } else { fileName = fileName.Replace(@"/", "").Replace(@"\", ""); }
-                                                System.IO.File.Move("ipfs/" + ipfsHash + "_tmp", @"ipfs/" + ipfsHash + @"/" + fileName);
-
-                                            }
-
-
-                                            lock (levelDBLocker)
-                                            {
-                                                using (var db = new DB(SUP, @"ipfs"))
-                                                {
-
-                                                    string ipfsdaemon = db.Get("ipfs-daemon");
-
-                                                    if (ipfsdaemon == "true")
-                                                    {
-                                                        Process process3 = new Process
-                                                        {
-                                                            StartInfo = new ProcessStartInfo
-                                                            {
-                                                                FileName = @"ipfs\ipfs.exe",
-                                                                Arguments = "pin add " + ipfsHash,
-                                                                UseShellExecute = false,
-                                                                CreateNoWindow = true
-                                                            }
-                                                        };
-                                                        process3.Start();
-                                                    }
-                                                }
-                                            }
-
-
-                                            if (System.IO.Directory.Exists(System.IO.Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + @"\ipfs\" + ipfsHash))
-                                            {
-                                                Process.Start("explorer.exe", System.IO.Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + @"\ipfs\" + ipfsHash);
-                                            }
-                                            else { System.Windows.Forms.Label filenotFound = new System.Windows.Forms.Label(); filenotFound.AutoSize = true; filenotFound.Text = "IPFS: Search failed! Verify IPFS pinning is enbaled"; flowLayoutPanel1.Controls.Clear(); flowLayoutPanel1.Controls.Add(filenotFound); }
-                                            lock (levelDBLocker)
-                                            {
-                                                using (var db = new DB(SUP, @"ipfs"))
-                                                {
-                                                    db.Delete(ipfsHash);
-
-                                                }
-                                            }
-                                        });
-                                    }
+                                    });
                                 }
-                                else
-                                {
-
-                                    Process.Start("explorer.exe", System.IO.Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + @"\ipfs\" + ipfsHash);
-                                }
-
-
                             }
                             else
                             {
-                                if (txtSearchAddress.Text.ToUpper().StartsWith(@"SUP:"))
+
+                                Process.Start("explorer.exe", System.IO.Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + @"\ipfs\" + ipfsHash);
+                            }
+
+
+                        }
+                        else
+                        {
+                            if (txtSearchAddress.Text.ToUpper().StartsWith(@"SUP:"))
+                            {
+
+                                GetObjectByURN(txtSearchAddress.Text.Replace(@"sup://", "").Replace(@"sup:\\", "").Replace("sup:", "").Replace(@"SUP://", "").Replace(@"SUP:\\", "").Replace("SUP:", ""));
+                            }
+                            else
+                            {
+
+                                Regex regexTransactionId = new Regex(@"\b[0-9a-f]{64}\b");
+
+                                if (txtSearchAddress.Text.Count() > 64 && regexTransactionId.IsMatch(txtSearchAddress.Text) && txtSearchAddress.Text.Contains(".htm"))
                                 {
-                                    GetObjectByURN(txtSearchAddress.Text.ToUpper().Replace("SUP:", "").Replace(@"\\", "").Replace(@"//", ""));
+                                    switch (txtSearchAddress.Text.Substring(0, 4))
+                                    {
+                                        case "MZC:":
+                                            Root.GetRootByTransactionId(txtSearchAddress.Text.Substring(4, 64), "good-user", "better-password", @"http://127.0.0.1:12832", "50");
+                                            break;
+                                        case "BTC:":
+                                            Root.GetRootByTransactionId(txtSearchAddress.Text.Substring(4, 64), "good-user", "better-password", @"http://127.0.0.1:8332", "0");
+                                            break;
+                                        case "LTC:":
+                                            Root.GetRootByTransactionId(txtSearchAddress.Text.Substring(4, 64), "good-user", "better-password", @"http://127.0.0.1:9332", "48");
+                                            break;
+                                        case "DOG:":
+                                            Root.GetRootByTransactionId(txtSearchAddress.Text.Substring(4, 64), "good-user", "better-password", @"http://127.0.0.1:22555", "30");
+                                            break;
+                                        case "DTC:":
+                                            Root.GetRootByTransactionId(txtSearchAddress.Text.Substring(4, 64), "good-user", "better-password", @"http://127.0.0.1:11777", "30");
+                                            break;
+                                        default:
+                                            Root.GetRootByTransactionId(txtSearchAddress.Text.Substring(0, 64), "good-user", "better-password", @"http://127.0.0.1:18332");
+                                            break;
+                                    }
+                                    Match match = regexTransactionId.Match(txtSearchAddress.Text);
+                                    string browserPath = System.IO.Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + @"\root\" + txtSearchAddress.Text.Replace("MZC:", "").Replace("BTC:", "");
+                                    browserPath = @"file:///" + browserPath.Replace(@"\", @"/");
+                                    flowLayoutPanel1.Controls.Clear();
+                                    flowLayoutPanel1.AutoScroll = false;
+                                    var webBrowser1 = new Microsoft.Web.WebView2.WinForms.WebView2();
+                                    webBrowser1.Size = flowLayoutPanel1.Size;
+                                    flowLayoutPanel1.Controls.Add(webBrowser1);
+
+                                    await webBrowser1.EnsureCoreWebView2Async();
+                                    webBrowser1.CoreWebView2.Navigate(browserPath.Replace(@"/", @"\"));
                                 }
                                 else
                                 {
-
-                                    Regex regexTransactionId = new Regex(@"\b[0-9a-f]{64}\b");
-
-                                    if (txtSearchAddress.Text.Count() > 64 && regexTransactionId.IsMatch(txtSearchAddress.Text) && txtSearchAddress.Text.Contains(".htm"))
-                                    {
-                                        switch (txtSearchAddress.Text.Substring(0, 4))
-                                        {
-                                            case "MZC:":
-                                                Root.GetRootByTransactionId(txtSearchAddress.Text.Substring(4, 64), "good-user", "better-password", @"http://127.0.0.1:12832", "50");
-                                                break;
-                                            case "BTC:":
-                                                Root.GetRootByTransactionId(txtSearchAddress.Text.Substring(4, 64), "good-user", "better-password", @"http://127.0.0.1:8332", "0");
-                                                break;
-                                            case "LTC:":
-                                                Root.GetRootByTransactionId(txtSearchAddress.Text.Substring(4, 64), "good-user", "better-password", @"http://127.0.0.1:9332", "48");
-                                                break;
-                                            case "DOG:":
-                                                Root.GetRootByTransactionId(txtSearchAddress.Text.Substring(4, 64), "good-user", "better-password", @"http://127.0.0.1:22555", "30");
-                                                break;
-                                            case "DTC:":
-                                                Root.GetRootByTransactionId(txtSearchAddress.Text.Substring(4, 64), "good-user", "better-password", @"http://127.0.0.1:11777", "30");
-                                                break;
-                                            default:
-                                                Root.GetRootByTransactionId(txtSearchAddress.Text.Substring(0, 64), "good-user", "better-password", @"http://127.0.0.1:18332");
-                                                break;
-                                        }
-                                        Match match = regexTransactionId.Match(txtSearchAddress.Text);
-                                        string browserPath = System.IO.Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + @"\root\" + txtSearchAddress.Text.Replace("MZC:", "").Replace("BTC:", "");
-                                        browserPath = @"file:///" + browserPath.Replace(@"\", @"/");
-                                        flowLayoutPanel1.Controls.Clear();
-                                        flowLayoutPanel1.AutoScroll = false;
-                                        var webBrowser1 = new Microsoft.Web.WebView2.WinForms.WebView2();
-                                        webBrowser1.Size = flowLayoutPanel1.Size;
-                                        flowLayoutPanel1.Controls.Add(webBrowser1);
-
-                                        await webBrowser1.EnsureCoreWebView2Async();
-                                        webBrowser1.CoreWebView2.Navigate(browserPath.Replace(@"/", @"\"));
-                                    }
-                                    else
-                                    {
-
-                                        GetObjectsByAddress(txtSearchAddress.Text.Replace("@", ""));
-
-                                    }
+                                    GetObjectsByAddress(txtSearchAddress.Text.Replace("@", ""));
 
                                 }
+
                             }
                         }
                     }
+                }
+                lock (levelDBLocker)
+                {
+                    var MUTE = new Options { CreateIfMissing = true };
+                    using (var db = new DB(MUTE, @"root\sup"))
+                    {
+                        db.Delete("isBuilding");
+                    }
+                }
+            }
+            catch { }
+            finally
+            {
+                try
+                {
                     lock (levelDBLocker)
                     {
                         var MUTE = new Options { CreateIfMissing = true };
@@ -1299,23 +1328,10 @@ namespace SUP
                         }
                     }
                 }
-                catch { }
-                finally
-                {
-                    try
-                    {
-                        lock (levelDBLocker)
-                        {
-                            var MUTE = new Options { CreateIfMissing = true };
-                            using (var db = new DB(MUTE, @"root\sup"))
-                            {
-                                db.Delete("isBuilding");
-                            }
-                        }
-                    }
-                    catch { try { Directory.Delete(@"root\sup", true); } catch { } }
-                }
+                catch { try { Directory.Delete(@"root\sup", true); } catch { } }
             }
+
+
 
         }
 
@@ -1577,6 +1593,7 @@ namespace SUP
         private async void btnLive_Click(object sender, EventArgs e)
         {
             pages.Visible = false;
+            pages.Minimum = 0;
             pages.Value = 0;
             if (btnLive.BackColor == Color.White)
             {

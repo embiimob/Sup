@@ -61,13 +61,15 @@ namespace SUP.P2FK
             var OBJ = new Options { CreateIfMissing = true };
             string isBlocked;
             lock (levelDBLocker)
-            {  try { 
-                using (var db = new DB(OBJ, @"root\oblock"))
+            {
+                try
                 {
-                    isBlocked = db.Get(objectaddress);
-                    db.Close();
-                }
-                if (isBlocked == "true") { return objectState; }
+                    using (var db = new DB(OBJ, @"root\oblock"))
+                    {
+                        isBlocked = db.Get(objectaddress);
+                        db.Close();
+                    }
+                    if (isBlocked == "true") { return objectState; }
                 }
                 catch
                 {
@@ -103,7 +105,7 @@ namespace SUP.P2FK
             }
             catch { }
 
-            if (objectState.URN != null && objectState.ChangeDate.Year.ToString() == "1970") { objectState = new OBJState();}
+            if (objectState.URN != null && objectState.ChangeDate.Year.ToString() == "1970") { objectState = new OBJState(); }
 
             var intProcessHeight = objectState.ProcessHeight;
             if (Id != -1) { intProcessHeight = Id; }
@@ -736,13 +738,14 @@ namespace SUP.P2FK
             string isBlocked;
             lock (levelDBLocker)
             {
-                try { 
-                using (var db = new DB(OBJ, @"root\oblock"))
+                try
                 {
-                    isBlocked = db.Get(objectaddress);
-                    db.Close();
-                }
-                if (isBlocked == "true") { return objectState; }
+                    using (var db = new DB(OBJ, @"root\oblock"))
+                    {
+                        isBlocked = db.Get(objectaddress);
+                        db.Close();
+                    }
+                    if (isBlocked == "true") { return objectState; }
                 }
                 catch
                 {
@@ -786,8 +789,8 @@ namespace SUP.P2FK
             objectTransactions = Root.GetRootsByAddress(objectaddress, username, password, url, intProcessHeight, 2, versionByte);
 
             if (objectState.URN != null & objectTransactions.Count() == 1) { return objectState; }
-     
-    
+
+
             //return all roots found at address
             objectTransactions = Root.GetRootsByAddress(objectaddress, username, password, url, skip, 300, versionByte);
             foreach (Root transaction in objectTransactions)
@@ -804,7 +807,7 @@ namespace SUP.P2FK
                     {
                         if (isObject.Creators.ElementAt(0).Key == findObject)
                         {
-                            isObject.Id = objectTransactions.Count()-1;
+                            isObject.Id = objectTransactions.Count() - 1;
                             var profileSerialized = JsonConvert.SerializeObject(isObject);
                             try
                             {
@@ -835,7 +838,7 @@ namespace SUP.P2FK
 
                 }
 
-                
+
             }
             return objectState;
 
@@ -861,13 +864,14 @@ namespace SUP.P2FK
             string isBlocked;
             lock (levelDBLocker)
             {
-                try { 
-                using (var db = new DB(OBJ, @"root\oblock"))
+                try
                 {
-                    isBlocked = db.Get(objectaddress);
-                    db.Close();
-                }
-                if (isBlocked == "true") { return objectState; }
+                    using (var db = new DB(OBJ, @"root\oblock"))
+                    {
+                        isBlocked = db.Get(objectaddress);
+                        db.Close();
+                    }
+                    if (isBlocked == "true") { return objectState; }
                 }
                 catch
                 {
@@ -996,7 +1000,7 @@ namespace SUP.P2FK
                                 case "BTC:":
                                     if (!System.IO.Directory.Exists("root/" + transid))
                                     {
-                                        Root.GetRootByTransactionId(transid, "good-user","better-password", @"http://127.0.0.1:8332", "0");
+                                        Root.GetRootByTransactionId(transid, "good-user", "better-password", @"http://127.0.0.1:8332", "0");
                                     }
                                     break;
                                 case "MZC:":
@@ -1026,7 +1030,7 @@ namespace SUP.P2FK
                                 default:
                                     if (!System.IO.Directory.Exists("root/" + transid))
                                     {
-                                        Root root = Root.GetRootByTransactionId(transid,"good-user", "better-password", @"http://127.0.0.1:18332");
+                                        Root root = Root.GetRootByTransactionId(transid, "good-user", "better-password", @"http://127.0.0.1:18332");
                                     }
                                     break;
                             }
@@ -1126,16 +1130,17 @@ namespace SUP.P2FK
             objectTransactions = Root.GetRootsByAddress(objectaddress, username, password, url, intProcessHeight, 2, versionByte);
             if (objectTransactions.Count() == 0) { return objectStates; }
 
-            if (intProcessHeight > 0 && objectTransactions.Count() == 1) {
+            if (intProcessHeight > 0 && objectTransactions.Count() == 1)
+            {
 
                 if (qty == -1) { return objectStates.Skip(skip).ToList(); }
                 else { return objectStates.Skip(skip).Take(qty).ToList(); }
 
             }
             objectStates = new List<OBJState> { };
-         
+
             //return all roots found at address
-            
+
             objectTransactions = Root.GetRootsByAddress(objectaddress, username, password, url, 0, 300, versionByte);
             HashSet<string> addedValues = new HashSet<string>();
             foreach (Root transaction in objectTransactions)
@@ -1197,7 +1202,7 @@ namespace SUP.P2FK
 
                                         isObject.Id = transaction.Id;
                                         objectStates.Add(isObject);
-                                        
+
                                     }
                                 }
                             }
@@ -1239,7 +1244,7 @@ namespace SUP.P2FK
 
                                     isObject.Id = transaction.Id;
                                     objectStates.Add(isObject);
-                              
+
                                 }
 
 
@@ -1264,7 +1269,7 @@ namespace SUP.P2FK
 
             if (qty == -1) { return objectStates.Skip(skip).ToList(); }
             else { return objectStates.Skip(skip).Take(qty).ToList(); }
-        
+
         }
         public static List<OBJState> GetObjectsOwnedByAddress(string objectaddress, string username, string password, string url, string versionByte = "111", int skip = 0, int qty = -1)
         {
@@ -1273,13 +1278,14 @@ namespace SUP.P2FK
             string isBlocked;
             lock (levelDBLocker)
             {
-                try { 
-                using (var db = new DB(OBJ, @"root\oblock"))
+                try
                 {
-                    isBlocked = db.Get(objectaddress);
-                    db.Close();
-                }
-                if (isBlocked == "true") { return objectStates; }
+                    using (var db = new DB(OBJ, @"root\oblock"))
+                    {
+                        isBlocked = db.Get(objectaddress);
+                        db.Close();
+                    }
+                    if (isBlocked == "true") { return objectStates; }
                 }
                 catch
                 {
@@ -1320,13 +1326,14 @@ namespace SUP.P2FK
             //return all roots found at address
             objectTransactions = Root.GetRootsByAddress(objectaddress, username, password, url, intProcessHeight, 2, versionByte);
             if (objectTransactions.Count() == 0) { return objectStates; }
-            if (objectTransactions.Count() == 1) {
+            if (objectTransactions.Count() == 1)
+            {
 
                 if (qty == -1) { return objectStates.Skip(skip).ToList(); }
                 else { return objectStates.Skip(skip).Take(qty).ToList(); }
             }
             objectStates = new List<OBJState> { };
-        
+
             //return all roots found at address
             objectTransactions = Root.GetRootsByAddress(objectaddress, username, password, url, 0, 300, versionByte);
             HashSet<string> addedValues = new HashSet<string>();
@@ -1385,7 +1392,7 @@ namespace SUP.P2FK
 
                                         isObject.Id = transaction.Id;
                                         objectStates.Add(isObject);
-                                        
+
                                     }
                                 }
                             }
@@ -1426,7 +1433,7 @@ namespace SUP.P2FK
 
                                     isObject.Id = transaction.Id;
                                     objectStates.Add(isObject);
-                                    
+
                                 }
 
 
@@ -1459,13 +1466,14 @@ namespace SUP.P2FK
             string isBlocked;
             lock (levelDBLocker)
             {
-                try { 
-                using (var db = new DB(OBJ, @"root\oblock"))
+                try
                 {
-                    isBlocked = db.Get(objectaddress);
-                    db.Close();
-                }
-                if (isBlocked == "true") { return objectStates; }
+                    using (var db = new DB(OBJ, @"root\oblock"))
+                    {
+                        isBlocked = db.Get(objectaddress);
+                        db.Close();
+                    }
+                    if (isBlocked == "true") { return objectStates; }
                 }
                 catch
                 {
@@ -1595,7 +1603,7 @@ namespace SUP.P2FK
 
             foreach (string search in searchstrings)
             {
-                               
+
                 string objectaddress = Root.GetPublicAddressByKeyword(search, versionByte);
 
                 List<OBJState> objectStates = new List<OBJState> { };
@@ -1603,13 +1611,14 @@ namespace SUP.P2FK
                 string isBlocked;
                 lock (levelDBLocker)
                 {
-                    try { 
-                    using (var db = new DB(OBJ, @"root\oblock"))
+                    try
                     {
-                        isBlocked = db.Get(objectaddress);
-                        db.Close();
-                    }
-                    if (isBlocked == "true") { return objectStates; }
+                        using (var db = new DB(OBJ, @"root\oblock"))
+                        {
+                            isBlocked = db.Get(objectaddress);
+                            db.Close();
+                        }
+                        if (isBlocked == "true") { return objectStates; }
                     }
                     catch
                     {
@@ -1673,22 +1682,56 @@ namespace SUP.P2FK
                 System.IO.File.WriteAllText(@"root\" + objectaddress + @"\" + "GetObjectsByKeyword.json", objectSerialized);
 
             }
-            
 
-            
+
+
             return totalSearch;
 
         }
-        public static List<OBJState> GetFoundObjects(string username, string password, string url, string versionByte = "111", int skip = 0, int qty = 100)
+        public static List<OBJState> GetFoundObjects(string username, string password, string url, string versionByte = "111", int skip = 0, int qty = -1)
         {
-            List<OBJState> totalSearch = new List<OBJState>();
+            List<OBJState> objectStates = new List<OBJState> { };
+            var OBJ = new Options { CreateIfMissing = true };
+            string JSONOBJ;
+            string diskpath = "root\\";
+
+
+            // fetch current JSONOBJ from disk if it exists
+            try
+            {
+                JSONOBJ = System.IO.File.ReadAllText(diskpath + "GetFoundObjects.json");
+                objectStates = JsonConvert.DeserializeObject<List<OBJState>>(JSONOBJ);
+
+            }
+            catch { }
+
+            int foundCount = 0;
+            var SUP = new Options { CreateIfMissing = true };
+
+            using (var db = new DB(SUP, @"root\found"))
+            {
+                LevelDB.Iterator it = db.CreateIterator();
+
+                for (
+                       it.SeekToLast();
+                      it.IsValid();
+                        it.Prev()
+                 ) { foundCount++; }
+
+                    it.Dispose();
+            }
+
+         if (objectStates.Count() == foundCount) { return objectStates; }
+
+        
             HashSet<string> addedValues = new HashSet<string>();
             int rownum = 0;
+            if (qty == -1) { qty = 99999999; }
 
 
             lock (levelDBLocker)
             {
-                var SUP = new Options { CreateIfMissing = true };
+
 
                 using (var db = new DB(SUP, @"root\found"))
                 {
@@ -1708,7 +1751,7 @@ namespace SUP.P2FK
 
                             addedValues.Add(it.KeyAsString().Split('!')[2]);
                             OBJState isObject = GetObjectByAddress(it.KeyAsString().Split('!')[2], username, password, url, versionByte);
-                            totalSearch.Add(isObject);
+                            objectStates.Add(isObject);
 
 
                         }
@@ -1720,9 +1763,15 @@ namespace SUP.P2FK
                 }
 
             }
+            var objectSerialized = JsonConvert.SerializeObject(objectStates);
 
+            if (!Directory.Exists(@"root"))
+            {
+                Directory.CreateDirectory(@"root");
+            }
+            System.IO.File.WriteAllText(@"root\GetFoundObjects.json", objectSerialized);
 
-            return totalSearch;
+            return objectStates;
 
         }
         public static List<string> GetKeywordsByAddress(string objectaddress, string username, string password, string url, string versionByte = "111")
@@ -1867,7 +1916,7 @@ namespace SUP.P2FK
             }
             return new { Messages = messages };
         }
-        
+
         //for in-memory object discovery and cache. get object by address information is not available until after confirmation. do not use for general object verifiction
         public static OBJState GetObjectByTransactionId(string transactionid)
         {

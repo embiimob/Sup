@@ -30,6 +30,8 @@
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Connections));
             this.panel1 = new System.Windows.Forms.Panel();
+            this.btnPurgeFound = new System.Windows.Forms.Button();
+            this.brnPurgeMute = new System.Windows.Forms.Button();
             this.btnPurgeBlock = new System.Windows.Forms.Button();
             this.btnClearIPFSisLoadingCache = new System.Windows.Forms.Button();
             this.label16 = new System.Windows.Forms.Label();
@@ -93,8 +95,6 @@
             this.txtPort = new System.Windows.Forms.TextBox();
             this.btnMainConnection = new System.Windows.Forms.Button();
             this.label1 = new System.Windows.Forms.Label();
-            this.brnPurgeMute = new System.Windows.Forms.Button();
-            this.btnPurgeFound = new System.Windows.Forms.Button();
             this.panel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.SuspendLayout();
@@ -171,6 +171,26 @@
             this.panel1.Size = new System.Drawing.Size(644, 480);
             this.panel1.TabIndex = 1;
             // 
+            // btnPurgeFound
+            // 
+            this.btnPurgeFound.Location = new System.Drawing.Point(232, 299);
+            this.btnPurgeFound.Name = "btnPurgeFound";
+            this.btnPurgeFound.Size = new System.Drawing.Size(63, 23);
+            this.btnPurgeFound.TabIndex = 159;
+            this.btnPurgeFound.Text = "found";
+            this.btnPurgeFound.UseVisualStyleBackColor = true;
+            this.btnPurgeFound.Click += new System.EventHandler(this.btnPurgeFound_Click);
+            // 
+            // brnPurgeMute
+            // 
+            this.brnPurgeMute.Location = new System.Drawing.Point(163, 299);
+            this.brnPurgeMute.Name = "brnPurgeMute";
+            this.brnPurgeMute.Size = new System.Drawing.Size(63, 23);
+            this.brnPurgeMute.TabIndex = 158;
+            this.brnPurgeMute.Text = "mute";
+            this.brnPurgeMute.UseVisualStyleBackColor = true;
+            this.brnPurgeMute.Click += new System.EventHandler(this.brnPurgeMute_Click);
+            // 
             // btnPurgeBlock
             // 
             this.btnPurgeBlock.Location = new System.Drawing.Point(94, 299);
@@ -187,7 +207,7 @@
             this.btnClearIPFSisLoadingCache.Name = "btnClearIPFSisLoadingCache";
             this.btnClearIPFSisLoadingCache.Size = new System.Drawing.Size(146, 23);
             this.btnClearIPFSisLoadingCache.TabIndex = 156;
-            this.btnClearIPFSisLoadingCache.Text = "clear ipfs isloading cache";
+            this.btnClearIPFSisLoadingCache.Text = "clear isloading cache";
             this.btnClearIPFSisLoadingCache.UseVisualStyleBackColor = true;
             this.btnClearIPFSisLoadingCache.Click += new System.EventHandler(this.button2_Click_1);
             // 
@@ -768,26 +788,6 @@
             this.label1.Size = new System.Drawing.Size(68, 13);
             this.label1.TabIndex = 50;
             this.label1.Text = "main chain";
-            // 
-            // brnPurgeMute
-            // 
-            this.brnPurgeMute.Location = new System.Drawing.Point(163, 299);
-            this.brnPurgeMute.Name = "brnPurgeMute";
-            this.brnPurgeMute.Size = new System.Drawing.Size(63, 23);
-            this.brnPurgeMute.TabIndex = 158;
-            this.brnPurgeMute.Text = "mute";
-            this.brnPurgeMute.UseVisualStyleBackColor = true;
-            this.brnPurgeMute.Click += new System.EventHandler(this.brnPurgeMute_Click);
-            // 
-            // btnPurgeFound
-            // 
-            this.btnPurgeFound.Location = new System.Drawing.Point(232, 299);
-            this.btnPurgeFound.Name = "btnPurgeFound";
-            this.btnPurgeFound.Size = new System.Drawing.Size(63, 23);
-            this.btnPurgeFound.TabIndex = 159;
-            this.btnPurgeFound.Text = "found";
-            this.btnPurgeFound.UseVisualStyleBackColor = true;
-            this.btnPurgeFound.Click += new System.EventHandler(this.btnPurgeFound_Click);
             // 
             // Connections
             // 
