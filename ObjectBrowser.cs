@@ -416,7 +416,7 @@ namespace SUP
                                 }
                                 foundObject.ResumeLayout();
                                 flowLayoutPanel1.Controls.Add(foundObject);
-                                if (btnLive.BackColor == Color.Blue) { flowLayoutPanel1.Controls.SetChildIndex(foundObject, 0); }
+                               
 
 
                             }
@@ -707,7 +707,7 @@ namespace SUP
                                 }
                                 foundObject.ResumeLayout();
                                 flowLayoutPanel1.Controls.Add(foundObject);
-                                if (btnLive.BackColor == Color.Blue) { flowLayoutPanel1.Controls.SetChildIndex(foundObject, 0); }
+                               
 
 
                             }
@@ -956,7 +956,7 @@ namespace SUP
                 pages.Visible = false;
                 pages.Value = 0;
                 Random rnd = new Random();
-                int randomNum = rnd.Next(1, 12); // generates a random integer between 1 and 11 (inclusive)
+                int randomNum = rnd.Next(1, 30); // generates a random integer between 1 and 11 (inclusive)
                 string imagePath = string.Format("includes\\sup{0}.gif", randomNum);
                 imgLoading.ImageLocation = imagePath;
                 await Task.Run(() => BuildSearchResults());
@@ -981,7 +981,7 @@ namespace SUP
                 pages.Visible = false;
                 pages.Value = 0;
                 Random rnd = new Random();
-                int randomNum = rnd.Next(1, 12); // generates a random integer between 1 and 11 (inclusive)
+                int randomNum = rnd.Next(1, 30); // generates a random integer between 1 and 11 (inclusive)
                 string imagePath = string.Format("includes\\sup{0}.gif", randomNum);
                 imgLoading.ImageLocation = imagePath;
 
@@ -1034,10 +1034,11 @@ namespace SUP
 
             if (e.KeyCode == Keys.Enter)
             {
+                if (txtSearchAddress.Text == "") { btnCreated.BackColor = Color.White;btnOwned.BackColor = Color.White; }
                 e.Handled = true;
                 e.SuppressKeyPress = true;
                 Random rnd = new Random();
-                int randomNum = rnd.Next(1, 12); // generates a random integer between 1 and 11 (inclusive)
+                int randomNum = rnd.Next(1, 30); // generates a random integer between 1 and 11 (inclusive)
                 string imagePath = string.Format("includes\\sup{0}.gif", randomNum);
                 imgLoading.ImageLocation = imagePath;
 
@@ -1079,16 +1080,6 @@ namespace SUP
                 }
             }
 
-
-
-            lock (levelDBLocker)
-            {
-                var MUTE = new Options { CreateIfMissing = true };
-                using (var db = new DB(MUTE, @"root\sup"))
-                {
-                    db.Put("isBuilding", "true");
-                }
-            }
 
             try
             {
@@ -1335,73 +1326,227 @@ namespace SUP
 
         }
 
-        private void SearchAddressUpdate()
+        private void AddToSearchResults(List<OBJState> objects)
         {
-            string isBuilding;
 
-            lock (levelDBLocker)
-            {
-                var MUTE = new Options { CreateIfMissing = true };
-                using (var db = new DB(MUTE, @"root\sup"))
-                {
-                    isBuilding = db.Get("isBuilding");
-                }
-            }
-
-            if (isBuilding != "true")
-            {
-                lock (levelDBLocker)
-                {
-                    var MUTE = new Options { CreateIfMissing = true };
-                    using (var db = new DB(MUTE, @"root\sup"))
+                    foreach (OBJState objstate in objects)
                     {
-                        db.Put("isBuilding", "true");
-                    }
-                }
-                try
-                {
-
-
-
-                    //implement search address update
-
-
-
-
-
-                    lock (levelDBLocker)
-                    {
-                        var MUTE = new Options { CreateIfMissing = true };
-                        using (var db = new DB(MUTE, @"root\sup"))
+                        try
                         {
-                            db.Delete("isBuilding");
-                        }
-                    }
-                }
-                catch { }
-                finally
-                {
-
-                    try
-                    {
-
-                        lock (levelDBLocker)
-                        {
-                            var MUTE = new Options { CreateIfMissing = true };
-                            using (var db = new DB(MUTE, @"root\sup"))
+                            flowLayoutPanel1.Invoke((MethodInvoker)delegate
                             {
-                                db.Delete("isBuilding");
-                            }
+                                flowLayoutPanel1.SuspendLayout();
+                                if (objstate.Owners != null)
+                                {
+                                    string transid;
+                                    FoundObjectControl foundObject = new FoundObjectControl();
+                                    foundObject.SuspendLayout();
+                                    try { transid = objstate.Image.Substring(4, 64); } catch { transid = objstate.Image.Substring(5, 46); }
+                                    foundObject.ObjectImage.ImageLocation = @"root/" + objstate.Image.Replace("BTC:", "").Replace("MZC:", "").Replace("LTC:", "").Replace("DOG:", "");
+                                    foundObject.ObjectName.Text = objstate.Name;
+                                    foundObject.ObjectDescription.Text = objstate.Description;
+                                    foundObject.ObjectAddress.Text = objstate.Creators.First().Key;
+                                    foundObject.ObjectQty.Text = objstate.Owners.Values.Sum().ToString() + "x";
+
+                                    switch (objstate.Image.ToUpper().Substring(0, 4))
+                                    {
+                                        case "BTC:":
+
+                                            if (!System.IO.Directory.Exists("root/" + transid))
+                                            {
+                                                Root.GetRootByTransactionId(transid, "good-user", "better-password", @"http://127.0.0.1:8332", "0");
+                                            }
+                                            break;
+                                        case "MZC:":
+
+                                            if (!System.IO.Directory.Exists("root/" + transid))
+                                            {
+                                                Root.GetRootByTransactionId(transid, "good-user", "better-password", @"http://127.0.0.1:12832", "50");
+                                            }
+
+                                            break;
+                                        case "LTC:":
+
+                                            if (!System.IO.Directory.Exists("root/" + transid))
+                                            {
+                                                Root.GetRootByTransactionId(transid, "good-user", "better-password", @"http://127.0.0.1:9332", "48");
+                                            }
+
+                                            break;
+                                        case "DOG:":
+
+                                            if (!System.IO.Directory.Exists("root/" + transid))
+                                            {
+                                                Root.GetRootByTransactionId(transid, "good-user", "better-password", @"http://127.0.0.1:22555", "30");
+                                            }
+                                            break;
+                                        case "IPFS":
+
+                                            if (!System.IO.Directory.Exists("ipfs/" + transid))
+                                            {
+                                                Process process2 = new Process();
+                                                process2.StartInfo.FileName = @"ipfs\ipfs.exe";
+                                                process2.StartInfo.Arguments = "get " + objstate.Image.Substring(5, 46) + @" -o ipfs\" + transid;
+                                                process2.StartInfo.UseShellExecute = false;
+                                                process2.StartInfo.CreateNoWindow = true;
+                                                process2.Start();
+                                                process2.WaitForExit();
+                                                string fileName;
+                                                if (System.IO.File.Exists("ipfs/" + transid))
+                                                {
+                                                    System.IO.File.Move("ipfs/" + transid, "ipfs/" + transid + "_tmp");
+                                                    System.IO.Directory.CreateDirectory("ipfs/" + transid);
+                                                    fileName = objstate.Image.Replace(@"//", "").Replace(@"\\", "").Substring(51);
+                                                    if (fileName == "") { fileName = "artifact"; } else { fileName = fileName.Replace(@"/", "").Replace(@"\", ""); }
+                                                    System.IO.File.Move("ipfs/" + transid + "_tmp", @"ipfs/" + transid + @"/" + fileName);
+                                                }
+
+
+                                                var SUP = new Options { CreateIfMissing = true };
+                                                lock (levelDBLocker)
+                                                {
+                                                    using (var db = new DB(SUP, @"ipfs"))
+                                                    {
+
+                                                        string ipfsdaemon = db.Get("ipfs-daemon");
+
+                                                        if (ipfsdaemon == "true")
+                                                        {
+                                                            Process process3 = new Process
+                                                            {
+                                                                StartInfo = new ProcessStartInfo
+                                                                {
+                                                                    FileName = @"ipfs\ipfs.exe",
+                                                                    Arguments = "pin add " + transid,
+                                                                    UseShellExecute = false,
+                                                                    CreateNoWindow = true
+                                                                }
+                                                            };
+                                                            process3.Start();
+                                                        }
+                                                    }
+
+                                                }
+
+                                            }
+                                            if (objstate.Image.Length == 51)
+                                            { foundObject.ObjectImage.ImageLocation = objstate.Image.Replace("IPFS:", @"ipfs/") + @"/artifact"; }
+                                            else { foundObject.ObjectImage.ImageLocation = objstate.Image.Replace("IPFS:", @"ipfs/"); }
+
+                                            break;
+                                        case "HTTP":
+                                            foundObject.ObjectImage.ImageLocation = objstate.Image;
+                                            break;
+
+
+                                        default:
+                                            transid = objstate.Image.Substring(0, 64);
+                                            if (!System.IO.Directory.Exists("root/" + transid))
+                                            {
+                                                Root root = Root.GetRootByTransactionId(transid, "good-user", "better-password", @"http://127.0.0.1:18332");
+                                            }
+                                            foundObject.ObjectImage.ImageLocation = @"root/" + objstate.Image;
+
+                                            break;
+                                    }
+
+
+                                    foreach (KeyValuePair<string, DateTime> creator in objstate.Creators.Skip(1))
+                                    {
+
+                                        if (creator.Value.Year > 1)
+                                        {
+                                            PROState profile = PROState.GetProfileByAddress(creator.Key, "good-user", "better-password", @"http://127.0.0.1:18332");
+
+                                            if (profile.URN != null && foundObject.ObjectCreators.Text == "")
+                                            {
+
+
+                                                foundObject.ObjectCreators.Text = TruncateAddress(profile.URN);
+                                                foundObject.ObjectCreators.Links.Add(0, creator.Key.Length, creator.Key);
+                                                System.Windows.Forms.ToolTip myTooltip = new System.Windows.Forms.ToolTip();
+                                                myTooltip.SetToolTip(foundObject.ObjectCreators, profile.URN);
+                                            }
+                                            else
+                                            {
+
+
+                                                if (profile.URN != null && foundObject.ObjectCreators2.Text == "")
+                                                {
+                                                    foundObject.ObjectCreators2.Text = TruncateAddress(profile.URN);
+                                                    foundObject.ObjectCreators2.Links.Add(0, creator.Key.Length, creator.Key);
+                                                    System.Windows.Forms.ToolTip myTooltip = new System.Windows.Forms.ToolTip();
+                                                    myTooltip.SetToolTip(foundObject.ObjectCreators2, profile.URN);
+                                                }
+
+                                            }
+                                        }
+                                        else
+                                        {
+
+                                            if (foundObject.ObjectCreators.Text == "")
+                                            {
+
+
+                                                foundObject.ObjectCreators.Text = TruncateAddress(creator.Key);
+                                                foundObject.ObjectCreators.Links.Add(0, creator.Key.Length, creator.Key);
+                                                System.Windows.Forms.ToolTip myTooltip = new System.Windows.Forms.ToolTip();
+                                                myTooltip.SetToolTip(foundObject.ObjectCreators, creator.Key);
+                                            }
+                                            else
+                                            {
+
+
+                                                if (foundObject.ObjectCreators2.Text == "")
+                                                {
+                                                    foundObject.ObjectCreators2.Text = TruncateAddress(creator.Key);
+                                                    foundObject.ObjectCreators2.Links.Add(0, creator.Key.Length, creator.Key);
+                                                    System.Windows.Forms.ToolTip myTooltip = new System.Windows.Forms.ToolTip();
+                                                    myTooltip.SetToolTip(foundObject.ObjectCreators2, creator.Key);
+                                                }
+
+                                            }
+
+                                        }
+
+                                    }
+                                    foundObject.ObjectId.Text = objstate.Id.ToString();
+
+                                        OBJState isOfficial = OBJState.GetObjectByURN(objstate.URN, "good-user", "better-password", @"http://127.0.0.1:18332");
+                                        if (isOfficial.URN != null)
+                                        {
+                                            if (isOfficial.Creators.First().Key == foundObject.ObjectAddress.Text)
+                                            {
+                                                foundObject.lblOfficial.Visible = true;
+                                                foundObject.lblOfficial.Text = TruncateAddress(isOfficial.URN);
+                                                System.Windows.Forms.ToolTip myTooltip = new System.Windows.Forms.ToolTip();
+                                                myTooltip.SetToolTip(foundObject.lblOfficial, isOfficial.URN);
+                                            }
+                                            else
+                                            {
+                                                foundObject.txtOfficialURN.Text = isOfficial.Creators.First().Key;
+                                                foundObject.btnOfficial.Visible = true;
+
+                                            }
+                                        }
+                                        foundObject.ResumeLayout();
+
+
+
+                                        flowLayoutPanel1.Controls.Add(foundObject);
+                                        flowLayoutPanel1.Controls.SetChildIndex(foundObject, 0);
+
+
+                                   
+
+
+                                }
+                                flowLayoutPanel1.ResumeLayout();
+                            });
                         }
-
-                    }
-                    catch { try { Directory.Delete(@"root\sup", true); } catch { } }
-
-
-
-
-                }
-            }
+                        catch { }
+                    }            
+            
 
         }
 
@@ -1437,9 +1582,9 @@ namespace SUP
                 {
                     txtSearchAddress.Text = _objectaddress;
                     txtLast.Text = "0";
-                    txtQty.Text = "9";
+                    txtQty.Text = "12";
                     Random rnd = new Random();
-                    int randomNum = rnd.Next(1, 12); // generates a random integer between 1 and 11 (inclusive)
+                    int randomNum = rnd.Next(1, 30); // generates a random integer between 1 and 11 (inclusive)
                     string imagePath = string.Format("includes\\sup{0}.gif", randomNum);
                     imgLoading.ImageLocation = imagePath;
                     await Task.Run(() => BuildSearchResults());
@@ -1609,7 +1754,7 @@ namespace SUP
                 txtSearchAddress.Enabled = false;
                 tmrSearchMemoryPool.Enabled = true;
                 Random rnd = new Random();
-                int randomNum = rnd.Next(1, 12); // generates a random integer between 1 and 11 (inclusive)
+                int randomNum = rnd.Next(1, 30); // generates a random integer between 1 and 11 (inclusive)
                 string imagePath = string.Format("includes\\sup{0}.gif", randomNum);
                 imgLoading.ImageLocation = imagePath;
                 await Task.Run(() => BuildSearchResults());
@@ -1642,30 +1787,42 @@ namespace SUP
                     Task SearchMemoryTask = Task.Run(() =>
                     {
                         string isBuilding;
+                        DateTime timestamp = DateTime.UtcNow;
+
                         lock (levelDBLocker)
                         {
                             var MUTE = new Options { CreateIfMissing = true };
-                            using (var db = new DB(MUTE, @"root\monitor"))
+                            using (var db = new DB(MUTE, @"root\sup"))
                             {
                                 isBuilding = db.Get("isBuilding");
                             }
                         }
-                        if (isBuilding != "true" || isBuildingCounter > 11)
+
+                        DateTime lastTimestamp;
+                        if (DateTime.TryParse(isBuilding, out lastTimestamp) && (timestamp - lastTimestamp).TotalSeconds <= 60)
                         {
-                            lock (levelDBLocker)
+
+                            return;
+                        }
+
+
+                        lock (levelDBLocker)
+                        {
+                            var options = new Options { CreateIfMissing = true };
+                            using (var db = new DB(options, @"root\sup"))
                             {
-                                var MUTE = new Options { CreateIfMissing = true };
-                                using (var db = new DB(MUTE, @"root\monitor"))
-                                {
-                                    db.Put("isBuilding", "true");
-                                    isBuildingCounter++;
-                                }
+                                db.Put("isBuilding", timestamp.ToString("o"));
                             }
-                            int foundCount = 0;
+                        }
+
+
+                            
                             List<string> differenceQuery = new List<string>();
                             List<string> newtransactions = new List<string>();
                             string flattransactions;
                             OBJState isobject = new OBJState();
+                            List<OBJState> foundobjects = new List<OBJState>(); 
+
                             NetworkCredential credentials = new NetworkCredential("good-user", "better-password");
                             RPCClient rpcClient;
 
@@ -1739,8 +1896,9 @@ namespace SUP
 
                                                     isobject = OBJState.GetObjectByTransactionId(s);
                                                     if (isobject.URN != null && find == true)
-                                                    {
-                                                        lock (levelDBLocker)
+                                                {
+                                                    foundobjects.Add(isobject);
+                                                    lock (levelDBLocker)
                                                         {
                                                             var WORK = new Options { CreateIfMissing = true };
                                                             using (var db = new DB(WORK, @"root\found"))
@@ -1750,7 +1908,7 @@ namespace SUP
 
                                                         }
 
-                                                        foundCount++;
+                                                     
                                                     }
 
 
@@ -1836,6 +1994,7 @@ namespace SUP
                                                     isobject = OBJState.GetObjectByTransactionId(s);
                                                     if (isobject.URN != null && find == true)
                                                     {
+                                                    foundobjects.Add(isobject);
 
                                                         lock (levelDBLocker)
                                                         {
@@ -1846,7 +2005,6 @@ namespace SUP
                                                             }
 
                                                         }
-                                                        foundCount++;
                                                     }
 
 
@@ -1928,15 +2086,16 @@ namespace SUP
                                                     {
 
                                                         lock (levelDBLocker)
-                                                        {
-                                                            var WORK = new Options { CreateIfMissing = true };
+                                                    {
+                                                        foundobjects.Add(isobject);
+                                                        var WORK = new Options { CreateIfMissing = true };
                                                             using (var db = new DB(WORK, @"root\found"))
                                                             {
                                                                 db.Put("found!" + root.BlockDate.ToString("yyyyMMddHHmmss") + "!" + root.SignedBy, "1");
                                                             }
 
                                                         }
-                                                        foundCount++;
+                                                       
                                                     }
 
 
@@ -2015,9 +2174,10 @@ namespace SUP
 
                                                     isobject = OBJState.GetObjectByTransactionId(s);
                                                     if (isobject.URN != null && find == true)
-                                                    {
+                                                {
+                                                    foundobjects.Add(isobject);
 
-                                                        lock (levelDBLocker)
+                                                    lock (levelDBLocker)
                                                         {
                                                             var WORK = new Options { CreateIfMissing = true };
                                                             using (var db = new DB(WORK, @"root\found"))
@@ -2026,7 +2186,6 @@ namespace SUP
                                                             }
 
                                                         }
-                                                        foundCount++;
                                                     }
 
 
@@ -2106,8 +2265,9 @@ namespace SUP
 
                                                     isobject = OBJState.GetObjectByTransactionId(s);
                                                     if (isobject.URN != null && find == true)
-                                                    {
-                                                        lock (levelDBLocker)
+                                                {
+                                                    foundobjects.Add(isobject);
+                                                    lock (levelDBLocker)
                                                         {
                                                             var WORK = new Options { CreateIfMissing = true };
                                                             using (var db = new DB(WORK, @"root\found"))
@@ -2116,7 +2276,7 @@ namespace SUP
                                                             }
 
                                                         }
-                                                        foundCount++;
+                                                        
                                                     }
 
 
@@ -2136,36 +2296,13 @@ namespace SUP
                             catch { }
                             newtransactions = new List<string>();
 
-                            if (foundCount > 0)
+                            if (foundobjects.Count > 0)
                             {
-
-                                int totalQty = 0;
-
-                                // Update the txtQty control using Invoke to run it on the UI thread.
-                                flowLayoutPanel1.Invoke((MethodInvoker)delegate
-                                {
-                                    totalQty = flowLayoutPanel1.Controls.Count + ((foundCount * 2) + 2);
-                                });
-
-
-                                // Update the txtQty control using Invoke to run it on the UI thread.
-                                txtQty.Invoke((MethodInvoker)delegate
-                                {
-                                    txtQty.Text = totalQty.ToString(); totalQty = flowLayoutPanel1.Controls.Count + ((foundCount * 2) + 2);
-                                    ;
-                                });
-
-
-                                // Update the txtQty control using Invoke to run it on the UI thread.
-                                txtLast.Invoke((MethodInvoker)delegate
-                                {
-                                    txtLast.Text = "0";
-                                });
 
                                 lock (levelDBLocker)
                                 {
                                     var MUTE = new Options { CreateIfMissing = true };
-                                    using (var db = new DB(MUTE, @"root\monitor"))
+                                    using (var db = new DB(MUTE, @"root\sup"))
                                     {
                                         db.Delete("isBuilding");
 
@@ -2175,27 +2312,25 @@ namespace SUP
                                 this.Invoke((MethodInvoker)delegate
                                 {
 
-                                    SearchAddressUpdate();
+                                    AddToSearchResults(foundobjects);
 
                                 });
 
-                                isBuildingCounter = 0;
+                                
 
                             }
                             lock (levelDBLocker)
                             {
                                 var MUTE = new Options { CreateIfMissing = true };
-                                using (var db = new DB(MUTE, @"root\monitor"))
+                                using (var db = new DB(MUTE, @"root\sup"))
                                 {
                                     db.Delete("isBuilding");
-                                    isBuildingCounter = 0;
+                    
                                 }
                             }
 
 
 
-                        }
-                        else { isBuildingCounter++; }
                     });
                 }
                 catch
@@ -2203,7 +2338,7 @@ namespace SUP
                     lock (levelDBLocker)
                     {
                         var MUTE = new Options { CreateIfMissing = true };
-                        using (var db = new DB(MUTE, @"root\monitor"))
+                        using (var db = new DB(MUTE, @"root\sup"))
                         {
                             db.Delete("isBuilding");
 
@@ -2211,26 +2346,31 @@ namespace SUP
                     }
 
                 }
+                
             }
         }
 
         private async void ObjectBrowser_ResizeEnd(object sender, EventArgs e)
         {
-            if (pages.LargeChange != ((flowLayoutPanel1.Width / 211) * 3))
-            {
-                pages.LargeChange = ((flowLayoutPanel1.Width / 211) * 3);
+           
 
-                txtLast.Text = pages.Value.ToString();
-                txtQty.Text = pages.LargeChange.ToString();
-                Random rnd = new Random();
-                int randomNum = rnd.Next(1, 12); // generates a random integer between 1 and 11 (inclusive)
-                string imagePath = string.Format("includes\\sup{0}.gif", randomNum);
-                imgLoading.ImageLocation = imagePath;
+                if (pages.LargeChange != ((flowLayoutPanel1.Width / 211) * 3))
+                {
+                    pages.LargeChange = ((flowLayoutPanel1.Width / 211) * 3);
 
-                await Task.Run(() => BuildSearchResults());
-                flowLayoutPanel1.Visible = true;
+                    txtLast.Text = pages.Value.ToString();
+                    txtQty.Text = pages.LargeChange.ToString();
+                    Random rnd = new Random();
+                    int randomNum = rnd.Next(1, 30); // generates a random integer between 1 and 11 (inclusive)
+                    string imagePath = string.Format("includes\\sup{0}.gif", randomNum);
+                    imgLoading.ImageLocation = imagePath;
 
-            }
+                    await Task.Run(() => BuildSearchResults());
+                    flowLayoutPanel1.Visible = true;
+
+                }
+            
+
         }
 
         private async void ObjectBrowser_Resize(object sender, EventArgs e)
@@ -2245,7 +2385,7 @@ namespace SUP
                     txtLast.Text = pages.Value.ToString();
                     txtQty.Text = pages.LargeChange.ToString();
                     Random rnd = new Random();
-                    int randomNum = rnd.Next(1, 12); // generates a random integer between 1 and 11 (inclusive)
+                    int randomNum = rnd.Next(1, 30); // generates a random integer between 1 and 11 (inclusive)
                     string imagePath = string.Format("includes\\sup{0}.gif", randomNum);
                     imgLoading.ImageLocation = imagePath;
 
@@ -2265,7 +2405,7 @@ namespace SUP
         {
 
             Random rnd = new Random();
-            int randomNum = rnd.Next(1, 12); // generates a random integer between 1 and 11 (inclusive)
+            int randomNum = rnd.Next(1, 30); // generates a random integer between 1 and 11 (inclusive)
             string imagePath = string.Format("includes\\sup{0}.gif", randomNum);
             imgLoading.ImageLocation = imagePath;
             await Task.Run(() => BuildSearchResults());

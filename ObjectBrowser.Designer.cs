@@ -173,7 +173,7 @@ namespace SUP
             this.txtQty.Name = "txtQty";
             this.txtQty.Size = new System.Drawing.Size(43, 20);
             this.txtQty.TabIndex = 77;
-            this.txtQty.Text = "8";
+            this.txtQty.Text = "12";
             this.txtQty.Visible = false;
             // 
             // txtLast
@@ -234,6 +234,7 @@ namespace SUP
             // 
             this.pages.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.pages.LargeChange = 12;
             this.pages.Location = new System.Drawing.Point(2, 648);
             this.pages.Name = "pages";
             this.pages.Size = new System.Drawing.Size(858, 45);

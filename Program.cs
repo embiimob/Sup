@@ -80,7 +80,7 @@ namespace SUP
                 else if (options.GetObjectByAddress)
                 {
 
-                    var root = OBJState.GetObjectByAddress(options.Address,options.Username,options.Password,options.Url, options.VersionByte, options.Verbose, options.ObjectId);
+                    var root = OBJState.GetObjectByAddress(options.Address,options.Username,options.Password,options.Url, options.VersionByte, options.Verbose);
                     var json = JsonConvert.SerializeObject(root);
                     Console.WriteLine(json);
 
@@ -291,9 +291,6 @@ namespace SUP
         [Option('t', "tid", Required = false, HelpText = "The transaction ID to query")]
         public string TransactionId { get; set; }
 
-        [Option('o', "oid", Required = false, HelpText = "The Object ID to query")]
-        public int ObjectId { get; set; }
-
         [Option('a', "address", Required = false, HelpText = "The address to query")]
         public string Address { get; set; }
 
@@ -318,7 +315,7 @@ namespace SUP
                 yield return new Example("get roots by address", new CommandOptions { GetRootsByAddress = true, Address = "muVrFVk3ErfrnmWosLF4WixxRtDKfMx9bs", Username = "good-user", Password = "better-password", Url = "http://127.0.0.1:18332", VersionByte = "111" });
                 yield return new Example("get public address by keyword", new CommandOptions { GetPublicAddressByKeyword = true, Keyword = "20 BYTE ASCII STRING", VersionByte = "111" });
                 yield return new Example("get keyword by public address", new CommandOptions { GetKeywordByPublicAddress = true, Address = "mmw6JJrmsEZ1bwyVPKvfRFwpoJ62nJJCsV" });
-                yield return new Example("get object by address", new CommandOptions { GetObjectByAddress = true, Address = "muVrFVk3ErfrnmWosLF4WixxRtDKfMx9bs", Username = "good-user", Password = "better-password", Url = "http://127.0.0.1:18332", VersionByte = "111", Verbose = true, ObjectId = -1 });
+                yield return new Example("get object by address", new CommandOptions { GetObjectByAddress = true, Address = "muVrFVk3ErfrnmWosLF4WixxRtDKfMx9bs", Username = "good-user", Password = "better-password", Url = "http://127.0.0.1:18332", VersionByte = "111", Verbose = true });
                 yield return new Example("get object by urn", new CommandOptions { GetObjectByURN = true, URN = "twitter.com", Username = "good-user", Password = "better-password", Url = "http://127.0.0.1:18332", VersionByte = "111", Skip = 0 });
                 yield return new Example("get object by file", new CommandOptions { GetObjectByFile = true, FilePath = @"C:\folder\test.jpg", Username = "good-user", Password = "better-password", Url = "http://127.0.0.1:18332", VersionByte = "111", Skip = 0 });
                 yield return new Example("get objects by address", new CommandOptions { GetObjectsByAddress = true, Address = "muVrFVk3ErfrnmWosLF4WixxRtDKfMx9bs", Username = "good-user", Password = "better-password", Url = "http://127.0.0.1:18332", VersionByte = "111", Skip = 0, Qty = -1 });

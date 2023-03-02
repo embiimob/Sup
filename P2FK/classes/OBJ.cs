@@ -5,6 +5,7 @@ using Newtonsoft.Json;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Data;
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;
@@ -12,6 +13,7 @@ using System.Linq;
 using System.Net;
 using System.Net.NetworkInformation;
 using System.Reflection;
+using System.Runtime.InteropServices;
 using System.Security.Cryptography;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -54,7 +56,7 @@ namespace SUP.P2FK
         public bool Verbose { get; set; }
         //ensures levelDB is thread safely
         private readonly static object levelDBLocker = new object();
-        public static OBJState GetObjectByAddress(string objectaddress, string username, string password, string url, string versionByte = "111", bool verbose = false, int Id = -1)
+        public static OBJState GetObjectByAddress(string objectaddress, string username, string password, string url, string versionByte = "111", bool verbose = false)
         {
 
             OBJState objectState = new OBJState();
@@ -102,13 +104,25 @@ namespace SUP.P2FK
                 JSONOBJ = System.IO.File.ReadAllText(diskpath + "OBJ.json");
                 objectState = JsonConvert.DeserializeObject<OBJState>(JSONOBJ);
                 verbose = objectState.Verbose;
+      
             }
             catch { }
 
-            if (objectState.URN != null && objectState.ChangeDate.Year.ToString() == "1970") { objectState = new OBJState(); }
+            if (objectState.URN != null && objectState.ChangeDate.Year.ToString() == "1970") {
+                Root unconfimredobj = new Root();
+                try
+                {
+                    JSONOBJ = System.IO.File.ReadAllText(diskpath + "GetRootByTransctionId.json");
+                    unconfimredobj = JsonConvert.DeserializeObject<Root>(JSONOBJ);
+                    return OBJState.GetObjectByTransactionId(unconfimredobj.TransactionId);
+
+                }
+                catch { return objectState; }           
+
+            }
 
             var intProcessHeight = objectState.ProcessHeight;
-            if (Id != -1) { intProcessHeight = Id; }
+           
             Root[] objectTransactions;
 
             //return all roots found at address
@@ -1922,8 +1936,13 @@ namespace SUP.P2FK
         {
 
             OBJState objectState = new OBJState();
-            var OBJ = new Options { CreateIfMissing = true };
+            OBJ objectinspector = new OBJ();
+
+            var intProcessHeight = 0;
+            Root objectTransaction = Root.GetRootByTransactionId(transactionid, "good-user", "better-password", @"http://127.0.0.1:18332");
+
             string JSONOBJ;
+        
             string diskpath = "root\\" + transactionid + "\\";
 
 
@@ -1931,22 +1950,11 @@ namespace SUP.P2FK
             try
             {
                 JSONOBJ = System.IO.File.ReadAllText(diskpath + "OBJ");
-                objectState = JsonConvert.DeserializeObject<OBJState>(JSONOBJ);
+                objectinspector = JsonConvert.DeserializeObject<OBJ>(JSONOBJ);
 
+                
             }
-            catch { return objectState; }
-
-            var intProcessHeight = 0;
-            Root objectTransaction;
-            string P2FKJSONString = System.IO.File.ReadAllText(diskpath + "GetObjectByTransactionId.json");
-            objectTransaction = JsonConvert.DeserializeObject<Root>(P2FKJSONString);
-            OBJ objectinspector = null;
-            try
-            {
-                objectinspector = JsonConvert.DeserializeObject<OBJ>(File.ReadAllText(@"root\" + transactionid + @"\OBJ"));
-
-            }
-            catch { return objectState; }
+            catch(Exception ex){return objectState; }
 
 
             if (objectinspector.cre != null && objectState.Creators == null)
@@ -1983,7 +1991,6 @@ namespace SUP.P2FK
 
 
                     }
-
 
 
                     if (objectState.LockedDate.Year == 1)
@@ -2035,15 +2042,27 @@ namespace SUP.P2FK
             {
                 return objectState;
             }
-
-            var objectSerialized = JsonConvert.SerializeObject(objectState);
+            
+            
+            
+            
+           var objectSerialized = JsonConvert.SerializeObject(objectState);
 
 
             if (!Directory.Exists(@"root\" + objectTransaction.SignedBy))
             {
                 Directory.CreateDirectory(@"root\" + objectTransaction.SignedBy);
             }
-            System.IO.File.WriteAllText(@"root\" + objectTransaction.SignedBy + @"\" + "GetObjectByTransactionId.json", objectSerialized);
+            System.IO.File.WriteAllText(@"root\" + objectTransaction.SignedBy + @"\" + "OBJ.json", objectSerialized);
+
+
+            objectSerialized = JsonConvert.SerializeObject(objectTransaction);
+
+            if (!Directory.Exists(@"root\" + objectTransaction.SignedBy))
+            {
+                Directory.CreateDirectory(@"root\" + objectTransaction.SignedBy);
+            }
+            System.IO.File.WriteAllText(@"root\" + objectTransaction.SignedBy + @"\" + "GetRootByTransactionId.json", objectSerialized);
 
             //used to determine where to begin object State processing when retrieved from cache
             objectState.ProcessHeight = intProcessHeight;
