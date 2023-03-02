@@ -11,7 +11,7 @@ P2FK was directly inspired by the satoshi uploader  see --> https://cirosantilli
 
 ## **Installation**
 
-1. Download the Sup.v0.1.22-beta.zip file
+1. Download the Sup.v0.1.23-beta.zip file
 2. Create a folder on your **fastest** disk drive with at least **700GB** free (it will be storing the bitcoin prod and testnet blockchains)
 3. Unzip all contents into the folder.
 4. Create a shortcut to SUP.exe and launch.
@@ -101,7 +101,7 @@ trusted index.html and index.htm files are sent the following Sup!? object infor
 <br />
 
 **get object by address:**<br />
-  SUP.EXE --address muVrFVk3ErfrnmWosLF4WixxRtDKfMx9bs --versionbyte 111 --getobjectbyaddress --password better-password  --url http://127.0.0.1:18332 --username good-user --verbose<br />
+  SUP.EXE --address muVrFVk3ErfrnmWosLF4WixxRtDKfMx9bs --oid 0 --versionbyte 111 --getobjectbyaddress --password better-password  --url http://127.0.0.1:18332 --username good-user --verbose<br />
 <br />
 
 **get object owner by urn registration:**<br />
@@ -209,6 +209,8 @@ trusted index.html and index.htm files are sent the following Sup!? object infor
   -a, --address                   The address to query
 
   -k, --keyword                   The keyword to query
+  
+  -o, --oid                       the object id
 
   --urn                           The urn to query
 
