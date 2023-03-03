@@ -211,8 +211,6 @@ SUP.EXE --tid 69ae3a76a9de22ffad7bfb9249824512fc38e01d82e2010877ead179b50f0f77 -
   -a, --address                   The address to query
 
   -k, --keyword                   The keyword to query
-  
-  -o, --oid                       the object id
 
   --urn                           The urn to query
 
