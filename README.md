@@ -218,7 +218,7 @@ SUP.EXE --tid 69ae3a76a9de22ffad7bfb9249824512fc38e01d82e2010877ead179b50f0f77 -
 
   -f, --filepath                  The full path of file to query
 
-  --verbose                       Get roots by address
+  --verbose                       output event information to leveldb
 
   --help                          Display this help screen.
 
