@@ -129,7 +129,7 @@ namespace SUP.P2FK
                 //return all roots found at address
                 objectTransactions = Root.GetRootsByAddress(objectaddress, username, password, url, intProcessHeight, 2, versionByte);
 
-                if (objectTransactions.Count() == 1) { return objectState; }
+                if (objectTransactions.Count() == 1 && intProcessHeight > 0 ) { return objectState; }
 
                 objectTransactions = Root.GetRootsByAddress(objectaddress, username, password, url, intProcessHeight, 300, versionByte);
 
@@ -1273,11 +1273,6 @@ namespace SUP.P2FK
                     //ignore any transaction that is not signed
                     if (transaction.Signed)
                     {
-
-
-
-
-
 
                         string findId;
 
