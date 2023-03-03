@@ -88,8 +88,7 @@ trusted index.html and index.htm files are sent the following Sup!? object infor
 <br />
 
 **get roots by address:**<br />
-  SUP.EXE --address muVrFVk3ErfrnmWosLF4WixxRtDKfMx9bs --versionbyte 111 --getrootsbyaddress --password better-password
-  --url http://127.0.0.1:18332 --username good-user<br />
+  SUP.EXE --address muVrFVk3ErfrnmWosLF4WixxRtDKfMx9bs --versionbyte 111 --getrootsbyaddress --password better-password --url http://127.0.0.1:18332 --username good-user<br />
 <br />
 
 **get public address by keyword:**<br />
@@ -103,6 +102,11 @@ trusted index.html and index.htm files are sent the following Sup!? object infor
 **get object by address:**<br />
   SUP.EXE --address muVrFVk3ErfrnmWosLF4WixxRtDKfMx9bs --oid 0 --versionbyte 111 --getobjectbyaddress --password better-password  --url http://127.0.0.1:18332 --username good-user --verbose<br />
 <br />
+
+**get object by transaction id:**<br />
+SUP.EXE --tid 69ae3a76a9de22ffad7bfb9249824512fc38e01d82e2010877ead179b50f0f77 --versionbyte 111 --getobjectbytransactionid --password better-password --url http://127.0.0.1:18332 --username good-user<br />
+<br />
+
 
 **get object owner by urn registration:**<br />
   SUP.EXE --versionbyte 111 --getobjectbyurn --password better-password --url https://127.0.0.1:18332 --username  good-user --urn twitter.com --skip 0<br />
@@ -167,6 +171,8 @@ trusted index.html and index.htm files are sent the following Sup!? object infor
   --getkeywordbypublicaddress     
 
   --getobjectbyaddress            
+
+  --getobjectbytransactionid
 
   --getobjectbyurn                
 
