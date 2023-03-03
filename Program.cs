@@ -85,6 +85,14 @@ namespace SUP
                     Console.WriteLine(json);
 
                 }
+                else if (options.GetObjectByTransactionId)
+                {
+
+                    var root = OBJState.GetObjectByTransactionId(options.TransactionId, options.Username, options.Password, options.Url, options.VersionByte);
+                    var json = JsonConvert.SerializeObject(root);
+                    Console.WriteLine(json);
+
+                }
                 else if (options.GetObjectByURN)
                 {
 
@@ -231,6 +239,9 @@ namespace SUP
         [Option("getobjectbyaddress", Required = false, HelpText = "Get object by address")]
         public bool GetObjectByAddress { get; set; }
 
+        [Option("getobjectbytransactionid", Required = false, HelpText = "Get object by transaction id")]
+        public bool GetObjectByTransactionId { get; set; }
+
         [Option("getobjectbyurn", Required = false, HelpText = "Get object by urn")]
         public bool GetObjectByURN { get; set; }
 
@@ -258,7 +269,7 @@ namespace SUP
         [Option("getpublicmessagesbyaddress", Required = false, HelpText = "Get public messages by address")]
         public bool GetPublicMessagesByAddress { get; set; }
 
-        [Option("getprivatemessagesyaddress", Required = false, HelpText = "Get private messages by address")]
+        [Option("getprivatemessagesbyaddress", Required = false, HelpText = "Get private messages by address")]
         public bool GetPrivateMessagesByAddress { get; set; }
 
         [Option("getpublickeysbyaddress", Required = false, HelpText = "Get public keys by address")]
@@ -303,7 +314,7 @@ namespace SUP
         [Option('f', "filepath", Required = false, HelpText = "The full path of file to query")]
         public string FilePath { get; set; }
 
-        [Option("verbose", Required = false, HelpText = "Get roots by address")]
+        [Option("verbose", Required = false, HelpText = "output event information to leveldb")]
         public bool Verbose { get; set; }
 
         [Usage(ApplicationAlias = "SUP.EXE")]
@@ -316,18 +327,19 @@ namespace SUP
                 yield return new Example("get public address by keyword", new CommandOptions { GetPublicAddressByKeyword = true, Keyword = "20 BYTE ASCII STRING", VersionByte = "111" });
                 yield return new Example("get keyword by public address", new CommandOptions { GetKeywordByPublicAddress = true, Address = "mmw6JJrmsEZ1bwyVPKvfRFwpoJ62nJJCsV" });
                 yield return new Example("get object by address", new CommandOptions { GetObjectByAddress = true, Address = "muVrFVk3ErfrnmWosLF4WixxRtDKfMx9bs", Username = "good-user", Password = "better-password", Url = "http://127.0.0.1:18332", VersionByte = "111", Verbose = true });
-                yield return new Example("get object by urn", new CommandOptions { GetObjectByURN = true, URN = "twitter.com", Username = "good-user", Password = "better-password", Url = "http://127.0.0.1:18332", VersionByte = "111", Skip = 0 });
-                yield return new Example("get object by file", new CommandOptions { GetObjectByFile = true, FilePath = @"C:\folder\test.jpg", Username = "good-user", Password = "better-password", Url = "http://127.0.0.1:18332", VersionByte = "111", Skip = 0 });
+                yield return new Example("get object by transaction id", new CommandOptions { GetObjectByTransactionId = true, TransactionId = "69ae3a76a9de22ffad7bfb9249824512fc38e01d82e2010877ead179b50f0f77", Username = "good-user", Password = "better-password", Url = "http://127.0.0.1:18332", VersionByte = "111" });
+                yield return new Example("get object by urn", new CommandOptions { GetObjectByURN = true, URN = "twitter.com", Username = "good-user", Password = "better-password", Url = "http://127.0.0.1:18332", VersionByte = "111" });
+                yield return new Example("get object by file", new CommandOptions { GetObjectByFile = true, FilePath = @"C:\folder\test.jpg", Username = "good-user", Password = "better-password", Url = "http://127.0.0.1:18332", VersionByte = "111" });
                 yield return new Example("get objects by address", new CommandOptions { GetObjectsByAddress = true, Address = "muVrFVk3ErfrnmWosLF4WixxRtDKfMx9bs", Username = "good-user", Password = "better-password", Url = "http://127.0.0.1:18332", VersionByte = "111", Skip = 0, Qty = -1 });
                 yield return new Example("get objects owned by address", new CommandOptions { GetObjectsOwnedByAddress = true, Address = "muVrFVk3ErfrnmWosLF4WixxRtDKfMx9bs", Username = "good-user", Password = "better-password", Url = "http://127.0.0.1:18332", VersionByte = "111", Skip = 0, Qty = -1 });
                 yield return new Example("get objects created by address", new CommandOptions { GetObjectsCreatedByAddress = true, Address = "muVrFVk3ErfrnmWosLF4WixxRtDKfMx9bs", Username = "good-user", Password = "better-password", Url = "http://127.0.0.1:18332", VersionByte = "111", Skip = 0, Qty = -1 });
                 yield return new Example("get found objects", new CommandOptions { GetFoundObjects = true, Username = "good-user", Password = "better-password", Url = "http://127.0.0.1:18332", VersionByte = "111", Skip = 0, Qty = 9 });
                 yield return new Example("get keywords by address", new CommandOptions { GetKeywordsByAddress = true, Address = "mwJDUTXksGKUmU3z9nKeMvnjNnWjEXj5rW", Username = "good-user", Password = "better-password", Url = "http://127.0.0.1:18332", VersionByte = "111"});
-                yield return new Example("get public messages by address", new CommandOptions { GetPublicMessagesByAddress = true, Address = "muVrFVk3ErfrnmWosLF4WixxRtDKfMx9bs", Username = "good-user", Password = "better-password", Url = "http://127.0.0.1:18332", VersionByte = "111", Skip = 0, Qty = 9 });
-                yield return new Example("get private messages by address", new CommandOptions { GetPrivateMessagesByAddress = true, Address = "muVrFVk3ErfrnmWosLF4WixxRtDKfMx9bs", Username = "good-user", Password = "better-password", Url = "http://127.0.0.1:18332", VersionByte = "111", Skip = 0, Qty = 9 });
+                yield return new Example("get public messages by address", new CommandOptions { GetPublicMessagesByAddress = true, Address = "muVrFVk3ErfrnmWosLF4WixxRtDKfMx9bs", Username = "good-user", Password = "better-password", Url = "http://127.0.0.1:18332", VersionByte = "111", Skip = 0, Qty = 12 });
+                yield return new Example("get private messages by address", new CommandOptions { GetPrivateMessagesByAddress = true, Address = "muVrFVk3ErfrnmWosLF4WixxRtDKfMx9bs", Username = "good-user", Password = "better-password", Url = "http://127.0.0.1:18332", VersionByte = "111", Skip = 0, Qty = 12 });
                 yield return new Example("get public keys by address", new CommandOptions { GetPublicKeysByAddress = true, Address = "muVrFVk3ErfrnmWosLF4WixxRtDKfMx9bs", Username = "good-user", Password = "better-password", Url = "http://127.0.0.1:18332" });
-                yield return new Example("get profile by address", new CommandOptions { GetProfileByAddress = true, Address = "muVrFVk3ErfrnmWosLF4WixxRtDKfMx9bs", Username = "good-user", Password = "better-password", Url = "http://127.0.0.1:18332", VersionByte = "111", Skip = 0 });
-                yield return new Example("get profile by urn", new CommandOptions { GetProfileByURN = true, URN = "embii4u", Username = "good-user", Password = "better-password", Url = "http://127.0.0.1:18332", VersionByte = "111", Skip = 0 });
+                yield return new Example("get profile by address", new CommandOptions { GetProfileByAddress = true, Address = "muVrFVk3ErfrnmWosLF4WixxRtDKfMx9bs", Username = "good-user", Password = "better-password", Url = "http://127.0.0.1:18332", VersionByte = "111" });
+                yield return new Example("get profile by urn", new CommandOptions { GetProfileByURN = true, URN = "embii4u", Username = "good-user", Password = "better-password", Url = "http://127.0.0.1:18332", VersionByte = "111"});
 
             }
         }

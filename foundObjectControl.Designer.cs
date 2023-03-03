@@ -82,6 +82,7 @@
             // 
             // ObjectPrice
             // 
+            this.ObjectPrice.BackColor = System.Drawing.SystemColors.GradientInactiveCaption;
             this.ObjectPrice.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.ObjectPrice.Location = new System.Drawing.Point(2, 19);
             this.ObjectPrice.Name = "ObjectPrice";
@@ -137,6 +138,7 @@
             // 
             // ObjectDescription
             // 
+            this.ObjectDescription.BackColor = System.Drawing.SystemColors.ActiveCaption;
             this.ObjectDescription.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.ObjectDescription.Location = new System.Drawing.Point(3, 257);
             this.ObjectDescription.Name = "ObjectDescription";
@@ -149,7 +151,7 @@
             // ObjectQty
             // 
             this.ObjectQty.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.ObjectQty.BackColor = System.Drawing.Color.Transparent;
+            this.ObjectQty.BackColor = System.Drawing.SystemColors.ActiveCaption;
             this.ObjectQty.Font = new System.Drawing.Font("Microsoft Sans Serif", 6.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.ObjectQty.Location = new System.Drawing.Point(127, 213);
             this.ObjectQty.Name = "ObjectQty";
@@ -161,7 +163,7 @@
             // 
             // ObjectAddress
             // 
-            this.ObjectAddress.BackColor = System.Drawing.Color.Transparent;
+            this.ObjectAddress.BackColor = System.Drawing.SystemColors.ActiveCaption;
             this.ObjectAddress.Font = new System.Drawing.Font("Microsoft Sans Serif", 5.75F);
             this.ObjectAddress.ImageAlign = System.Drawing.ContentAlignment.BottomCenter;
             this.ObjectAddress.Location = new System.Drawing.Point(5, 305);
@@ -174,6 +176,7 @@
             // 
             // ObjectName
             // 
+            this.ObjectName.BackColor = System.Drawing.SystemColors.ActiveCaption;
             this.ObjectName.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.ObjectName.Location = new System.Drawing.Point(2, 215);
             this.ObjectName.Margin = new System.Windows.Forms.Padding(0);
@@ -209,6 +212,7 @@
             // 
             // flowLayoutPanel1
             // 
+            this.flowLayoutPanel1.BackColor = System.Drawing.SystemColors.ActiveCaption;
             this.flowLayoutPanel1.Controls.Add(this.ObjectCreators);
             this.flowLayoutPanel1.Controls.Add(this.ObjectCreators2);
             this.flowLayoutPanel1.Location = new System.Drawing.Point(0, 238);
@@ -263,6 +267,7 @@
             // lblTrash
             // 
             this.lblTrash.AutoSize = true;
+            this.lblTrash.BackColor = System.Drawing.SystemColors.ActiveCaption;
             this.lblTrash.Location = new System.Drawing.Point(188, 312);
             this.lblTrash.Name = "lblTrash";
             this.lblTrash.Size = new System.Drawing.Size(19, 13);

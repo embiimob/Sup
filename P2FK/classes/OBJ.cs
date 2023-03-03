@@ -54,7 +54,7 @@ namespace SUP.P2FK
         public DateTime CreatedDate { get; set; }
         public DateTime ChangeDate { get; set; }
         public bool Verbose { get; set; }
-        //ensures levelDB is thread safely
+      
         private readonly static object SupLocker = new object();
         public static OBJState GetObjectByAddress(string objectaddress, string username, string password, string url, string versionByte = "111", bool verbose = false)
         {
@@ -115,7 +115,7 @@ namespace SUP.P2FK
                     {
                         JSONOBJ = System.IO.File.ReadAllText(diskpath + "GetRootByTransctionId.json");
                         unconfimredobj = JsonConvert.DeserializeObject<Root>(JSONOBJ);
-                        return OBJState.GetObjectByTransactionId(unconfimredobj.TransactionId);
+                        return OBJState.GetObjectByTransactionId(unconfimredobj.TransactionId,username,password,url,versionByte);
 
                     }
                     catch { return objectState; }
@@ -725,14 +725,14 @@ namespace SUP.P2FK
                 return objectState;
             }
         }
-        public static OBJState GetObjectByTransactionId(string transactionid)
+        public static OBJState GetObjectByTransactionId(string transactionid, string username, string password, string url, string versionByte = "111")
         {
 
             OBJState objectState = new OBJState();
             OBJ objectinspector = new OBJ();
 
             var intProcessHeight = 0;
-            Root objectTransaction = Root.GetRootByTransactionId(transactionid, "good-user", "better-password", @"http://127.0.0.1:18332");
+            Root objectTransaction = Root.GetRootByTransactionId(transactionid, username, password, url, versionByte);
 
             string JSONOBJ;
 
@@ -1129,37 +1129,31 @@ namespace SUP.P2FK
                                 case "BTC:":
                                     if (!System.IO.Directory.Exists("root/" + transid))
                                     {
-                                        Root.GetRootByTransactionId(transid, "good-user", "better-password", @"http://127.0.0.1:8332", "0");
+                                        Root.GetRootByTransactionId(transid, username, password, @"http://127.0.0.1:8332", "0");
                                     }
                                     break;
                                 case "MZC:":
                                     if (!System.IO.Directory.Exists("root/" + transid))
                                     {
-                                        Root.GetRootByTransactionId(transid, "good-user", "better-password", @"http://127.0.0.1:12832", "50");
+                                        Root.GetRootByTransactionId(transid, username, password, @"http://127.0.0.1:12832", "50");
                                     }
                                     break;
                                 case "LTC:":
                                     if (!System.IO.Directory.Exists("root/" + transid))
                                     {
-                                        Root.GetRootByTransactionId(transid, "good-user", "better-password", @"http://127.0.0.1:9332", "48");
+                                        Root.GetRootByTransactionId(transid, username, password, @"http://127.0.0.1:9332", "48");
                                     }
                                     break;
                                 case "DOG:":
                                     if (!System.IO.Directory.Exists("root/" + transid))
                                     {
-                                        Root.GetRootByTransactionId(transid, "good-user", "better-password", @"http://127.0.0.1:22555", "30");
-                                    }
-                                    break;
-                                case "DTC:":
-                                    if (!System.IO.Directory.Exists("root/" + transid))
-                                    {
-                                        Root.GetRootByTransactionId(transid, "good-user", "better-password", @"http://127.0.0.1:11777", "30");
+                                        Root.GetRootByTransactionId(transid, username, password, @"http://127.0.0.1:22555", "30");
                                     }
                                     break;
                                 default:
                                     if (!System.IO.Directory.Exists("root/" + transid))
                                     {
-                                        Root root = Root.GetRootByTransactionId(transid, "good-user", "better-password", @"http://127.0.0.1:18332");
+                                        Root root = Root.GetRootByTransactionId(transid, username, password, @"http://127.0.0.1:18332");
                                     }
                                     break;
                             }
@@ -1848,10 +1842,7 @@ namespace SUP.P2FK
 
                 HashSet<string> addedValues = new HashSet<string>();
                 int rownum = 0;
-                if (qty == -1) { qty = 99999999; }
-
-
-
+                if (qty == -1) { qty = foundCount; }
 
 
                 using (var db = new DB(SUP, @"root\found"))
@@ -1917,10 +1908,18 @@ namespace SUP.P2FK
                     {
                         string keyaddress = it.KeyAsString().Substring(it.KeyAsString().IndexOf('!') + 1);
                         Base58.DecodeWithCheckSum(keyaddress, out byte[] payloadBytes);
-                        keyaddress = IsAsciiText(payloadBytes);
-
+                        // Check each byte to see if it's in the ASCII range
+                        for (int i = 0; i < payloadBytes.Length; i++)
+                        {
+                            if (payloadBytes[i] < 0x20 || payloadBytes[i] > 0x7E)
+                            {
+                                keyaddress = null;
+                            }
+                        }
+                        
                         if (keyaddress != null)
                         {
+                            keyaddress = Encoding.ASCII.GetString(payloadBytes).Replace("#", "").Substring(1);
 
                             keywords.Add(keyaddress);
 
@@ -2040,20 +2039,7 @@ namespace SUP.P2FK
                 return new { Messages = messages };
             }
         }
-        private static string IsAsciiText(byte[] data)
-        {
-            // Check each byte to see if it's in the ASCII range
-            for (int i = 0; i < data.Length; i++)
-            {
-                if (data[i] < 0x20 || data[i] > 0x7E)
-                {
-                    return null;
-                }
-            }
-
-            return Encoding.ASCII.GetString(data).Replace("#", "").Substring(1);
-        }
-
+       
     }
 
 }

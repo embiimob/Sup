@@ -10,17 +10,9 @@ using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using NBitcoin;
 using System.Threading.Tasks;
-using System.Threading;
 using System.Net;
 using NBitcoin.RPC;
-using Newtonsoft.Json;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement.StartPanel;
 using System.IO;
-using static System.Net.WebRequestMethods;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement;
-using System.Windows.Controls;
-using System.Linq.Expressions;
-using System.Data;
 
 namespace SUP
 {
@@ -30,10 +22,8 @@ namespace SUP
         private readonly string _objectaddress;
         private List<String> SearchHistory = new List<String>();
         private int SearchId = 0;
-        private int isBuildingCounter = 0;
         private HashSet<string> loadedObjects = new HashSet<string>();
         private readonly static object SupLocker = new object();
-        private readonly static object liveMonitorLocker = new object();
         private List<string> BTCMemPool = new List<string>();
         private List<string> BTCTMemPool = new List<string>();
         private List<string> MZCMemPool = new List<string>();
@@ -217,8 +207,6 @@ namespace SUP
 
             }));
 
-
-
             createdObjects.Reverse();
             foreach (OBJState objstate in createdObjects.Skip(skip).Take(qty))
             {
@@ -238,7 +226,6 @@ namespace SUP
                             foundObject.ObjectDescription.Text = objstate.Description;
                             foundObject.ObjectAddress.Text = objstate.Creators.First().Key;
                             foundObject.ObjectQty.Text = objstate.Owners.Values.Sum().ToString() + "x";
-
                             switch (objstate.Image.ToUpper().Substring(0, 4))
                             {
                                 case "BTC:":
@@ -339,8 +326,6 @@ namespace SUP
 
                                     break;
                             }
-
-
                             foreach (KeyValuePair<string, DateTime> creator in objstate.Creators.Skip(1))
                             {
 
@@ -401,8 +386,6 @@ namespace SUP
 
                             }
                             foundObject.ObjectId.Text = objstate.Id.ToString();
-
-
                             if (!loadedObjects.Contains(foundObject.ObjectAddress.Text))
                             {
 
@@ -431,15 +414,12 @@ namespace SUP
                             }
                             loadedObjects.Add(foundObject.ObjectAddress.Text);
 
-
                         }
                         flowLayoutPanel1.ResumeLayout();
                     });
                 }
                 catch { }
             }
-
-
 
         }
 
@@ -773,14 +753,6 @@ namespace SUP
                         }
                         foundObject.ObjectImage.ImageLocation = objstate.Image.Replace("DOG:", @"root/");
                         break;
-                    case "DTC:":
-                        transid = objstate.Image.Substring(4, 64);
-                        if (!System.IO.Directory.Exists("root/" + transid))
-                        {
-                            Root.GetRootByTransactionId(transid, "good-user", "better-password", @"http://127.0.0.1:11777", "30");
-                        }
-                        foundObject.ObjectImage.ImageLocation = objstate.Image.Replace("DTC:", @"root/");
-                        break;
                     case "IPFS":
                         transid = objstate.Image.Substring(5, 46);
 
@@ -790,7 +762,7 @@ namespace SUP
                             process2.StartInfo.FileName = @"ipfs\ipfs.exe";
                             process2.StartInfo.Arguments = "get " + objstate.Image.Substring(5, 46) + @" -o ipfs\" + transid;
                             process2.StartInfo.UseShellExecute = false;
-                            process2.StartInfo.CreateNoWindow = true;
+                            //process2.StartInfo.CreateNoWindow = true;
                             process2.Start();
                             process2.WaitForExit();
 
@@ -956,9 +928,17 @@ namespace SUP
                 pages.Visible = false;
                 pages.Value = 0;
                 Random rnd = new Random();
-                int randomNum = rnd.Next(1, 30); // generates a random integer between 1 and 11 (inclusive)
-                string imagePath = string.Format("includes\\sup{0}.gif", randomNum);
-                imgLoading.ImageLocation = imagePath;
+                string[] gifFiles = Directory.GetFiles("includes", "*.gif");
+                if (gifFiles.Length > 0)
+                {
+                    int randomIndex = rnd.Next(gifFiles.Length);
+                    string randomGifFile = gifFiles[randomIndex];
+                    imgLoading.ImageLocation = randomGifFile;
+                }
+                else
+                {
+                    imgLoading.ImageLocation = @"includes\HugPuddle.jpg";
+                }
                 await Task.Run(() => BuildSearchResults());
                 flowLayoutPanel1.Visible = true;
                 EnableSupInput();
@@ -983,9 +963,17 @@ namespace SUP
                 pages.Visible = false;
                 pages.Value = 0;
                 Random rnd = new Random();
-                int randomNum = rnd.Next(1, 30); // generates a random integer between 1 and 11 (inclusive)
-                string imagePath = string.Format("includes\\sup{0}.gif", randomNum);
-                imgLoading.ImageLocation = imagePath;
+                string[] gifFiles = Directory.GetFiles("includes", "*.gif");
+                if (gifFiles.Length > 0)
+                {
+                    int randomIndex = rnd.Next(gifFiles.Length);
+                    string randomGifFile = gifFiles[randomIndex];
+                    imgLoading.ImageLocation = randomGifFile;
+                }
+                else
+                {
+                    imgLoading.ImageLocation = @"includes\HugPuddle.jpg";
+                }
                 await Task.Run(() => BuildSearchResults());
                 flowLayoutPanel1.Visible = true;
                 EnableSupInput();
@@ -1036,16 +1024,24 @@ namespace SUP
 
             if (e.KeyCode == Keys.Enter)
             {
-                if (txtSearchAddress.Text == "") { btnCreated.BackColor = Color.White; btnOwned.BackColor = Color.White; }
+                if (txtSearchAddress.Text == "" || txtSearchAddress.Text.StartsWith("#") || txtSearchAddress.Text.ToUpper().StartsWith("SUP:") || txtSearchAddress.Text.ToUpper().StartsWith("HTTP") || txtSearchAddress.Text.ToUpper().StartsWith("BTC:") || txtSearchAddress.Text.ToUpper().StartsWith("MZC:") || txtSearchAddress.Text.ToUpper().StartsWith("LTC:") || txtSearchAddress.Text.ToUpper().StartsWith("DOG:") || txtSearchAddress.Text.ToUpper().StartsWith("IPFS:")) { btnCreated.BackColor = Color.White; btnOwned.BackColor = Color.White; }
                 e.Handled = true;
                 e.SuppressKeyPress = true;
                 DisableSupInput();
                 pages.Visible = false;
                 pages.Value = 0;
                 Random rnd = new Random();
-                int randomNum = rnd.Next(1, 30); // generates a random integer between 1 and 11 (inclusive)
-                string imagePath = string.Format("includes\\sup{0}.gif", randomNum);
-                imgLoading.ImageLocation = imagePath;
+                string[] gifFiles = Directory.GetFiles("includes", "*.gif");
+                if (gifFiles.Length > 0)
+                {
+                    int randomIndex = rnd.Next(gifFiles.Length);
+                    string randomGifFile = gifFiles[randomIndex];
+                    imgLoading.ImageLocation = randomGifFile;
+                }
+                else
+                {
+                    imgLoading.ImageLocation = @"includes\HugPuddle.jpg";
+                }
                 await Task.Run(() => BuildSearchResults());
                 flowLayoutPanel1.Visible = true;
                 EnableSupInput();
@@ -1267,9 +1263,6 @@ namespace SUP
                                                 break;
                                             case "DOG:":
                                                 Root.GetRootByTransactionId(txtSearchAddress.Text.Substring(4, 64), "good-user", "better-password", @"http://127.0.0.1:22555", "30");
-                                                break;
-                                            case "DTC:":
-                                                Root.GetRootByTransactionId(txtSearchAddress.Text.Substring(4, 64), "good-user", "better-password", @"http://127.0.0.1:11777", "30");
                                                 break;
                                             default:
                                                 Root.GetRootByTransactionId(txtSearchAddress.Text.Substring(0, 64), "good-user", "better-password", @"http://127.0.0.1:18332");
@@ -1581,9 +1574,17 @@ namespace SUP
                     txtQty.Text = "12";
                     DisableSupInput();
                     Random rnd = new Random();
-                    int randomNum = rnd.Next(1, 30); // generates a random integer between 1 and 11 (inclusive)
-                    string imagePath = string.Format("includes\\sup{0}.gif", randomNum);
-                    imgLoading.ImageLocation = imagePath;
+                    string[] gifFiles = Directory.GetFiles("includes", "*.gif");
+                    if (gifFiles.Length > 0)
+                    {
+                        int randomIndex = rnd.Next(gifFiles.Length);
+                        string randomGifFile = gifFiles[randomIndex];
+                        imgLoading.ImageLocation = randomGifFile;
+                    }
+                    else
+                    {
+                        imgLoading.ImageLocation = @"includes\HugPuddle.jpg";
+                    }
                     await Task.Run(() => BuildSearchResults());
                     flowLayoutPanel1.Visible = true;
                     EnableSupInput();
@@ -1673,7 +1674,7 @@ namespace SUP
 
         private void btnMint_Click(object sender, EventArgs e)
         {
-            //to be implemented
+            //to be implemented soon
         }
 
         private void flowLayoutPanel1_DragEnter(object sender, System.Windows.Forms.DragEventArgs e)
@@ -1697,11 +1698,19 @@ namespace SUP
             pages.Visible = false;
             pages.Value = 0;
             Random rnd = new Random();
-            int randomNum = rnd.Next(1, 30);
-            string imagePath = string.Format("includes\\sup{0}.gif", randomNum);
+            string[] gifFiles = Directory.GetFiles("includes", "*.gif");
+            if (gifFiles.Length > 0)
+            {
+                int randomIndex = rnd.Next(gifFiles.Length);
+                string randomGifFile = gifFiles[randomIndex];
+                imgLoading.ImageLocation = randomGifFile;
+            }
+            else
+            {
+                imgLoading.ImageLocation = @"includes\HugPuddle.jpg";
+            }
             string[] filePaths = (string[])e.Data.GetData((System.Windows.Forms.DataFormats.FileDrop));
             string filePath = filePaths[0];
-            imgLoading.ImageLocation = imagePath;
             await Task.Run(() => GetObjectByFile(filePath));
             flowLayoutPanel1.Visible = true;
             EnableSupInput();
@@ -1719,6 +1728,7 @@ namespace SUP
             btnMint.Enabled = false;
             txtSearchAddress.Enabled = false;
             pages.Enabled = false;
+            btnLive.Enabled = false;
         }
 
         private void EnableSupInput()
@@ -1732,7 +1742,7 @@ namespace SUP
             btnHistoryForward.Enabled = true;
             btnMint.Enabled = true;
             pages.Enabled = true;
-
+            btnLive.Enabled= true;
         }
 
         private async void btnLive_Click(object sender, EventArgs e)
@@ -1746,12 +1756,20 @@ namespace SUP
                 DisableSupInput();
                 tmrSearchMemoryPool.Enabled = true;
                 Random rnd = new Random();
-                int randomNum = rnd.Next(1, 30); // generates a random integer between 1 and 11 (inclusive)
-                string imagePath = string.Format("includes\\sup{0}.gif", randomNum);
-                imgLoading.ImageLocation = imagePath;
+                string[] gifFiles = Directory.GetFiles("includes", "*.gif");
+                if (gifFiles.Length > 0)
+                {
+                    int randomIndex = rnd.Next(gifFiles.Length);
+                    string randomGifFile = gifFiles[randomIndex];
+                    imgLoading.ImageLocation = randomGifFile;
+                }
+                else
+                {
+                    imgLoading.ImageLocation = @"includes\HugPuddle.jpg";
+                }
                 await Task.Run(() => BuildSearchResults());
                 flowLayoutPanel1.Visible = true;
-
+                btnLive.Enabled = true;
             }
             else
             {
@@ -1895,7 +1913,7 @@ namespace SUP
                                                 }
                                                 else { find = true; }
 
-                                                isobject = OBJState.GetObjectByTransactionId(s);
+                                                isobject = OBJState.GetObjectByTransactionId(s, "good-user", "better-password", @"http://127.0.0.1:18332");
                                                 if (isobject.URN != null && find == true)
                                                 {
                                                     foundobjects.Add(isobject);
@@ -2009,7 +2027,7 @@ namespace SUP
                                                 }
                                                 else { find = true; }
 
-                                                isobject = OBJState.GetObjectByTransactionId(s);
+                                                isobject = OBJState.GetObjectByTransactionId(s, "good-user", "better-password", @"http://127.0.0.1:8332", "0");
                                                 if (isobject.URN != null && find == true)
                                                 {
                                                     foundobjects.Add(isobject);
@@ -2116,7 +2134,7 @@ namespace SUP
                                                 }
                                                 else { find = true; }
 
-                                                isobject = OBJState.GetObjectByTransactionId(s);
+                                                isobject = OBJState.GetObjectByTransactionId(s, "good-user", "better-password", @"http://127.0.0.1:12832", "50");
                                                 if (isobject.URN != null && find == true)
                                                 {
 
@@ -2223,7 +2241,7 @@ namespace SUP
                                                 }
                                                 else { find = true; }
 
-                                                isobject = OBJState.GetObjectByTransactionId(s);
+                                                isobject = OBJState.GetObjectByTransactionId(s, "good-user", "better-password", @"http://127.0.0.1:9332", "48");
                                                 if (isobject.URN != null && find == true)
                                                 {
                                                     foundobjects.Add(isobject);
@@ -2330,7 +2348,7 @@ namespace SUP
                                                 }
                                                 else { find = true; }
 
-                                                isobject = OBJState.GetObjectByTransactionId(s);
+                                                isobject = OBJState.GetObjectByTransactionId(s, "good-user", "better-password", @"http://127.0.0.1:22555", "30");
                                                 if (isobject.URN != null && find == true)
                                                 {
                                                     foundobjects.Add(isobject);
@@ -2412,9 +2430,17 @@ namespace SUP
                 txtLast.Text = pages.Value.ToString();
                 txtQty.Text = pages.LargeChange.ToString();
                 Random rnd = new Random();
-                int randomNum = rnd.Next(1, 30); // generates a random integer between 1 and 11 (inclusive)
-                string imagePath = string.Format("includes\\sup{0}.gif", randomNum);
-                imgLoading.ImageLocation = imagePath;
+                string[] gifFiles = Directory.GetFiles("includes", "*.gif");
+                if (gifFiles.Length > 0)
+                {
+                    int randomIndex = rnd.Next(gifFiles.Length);
+                    string randomGifFile = gifFiles[randomIndex];
+                    imgLoading.ImageLocation = randomGifFile;
+                }
+                else
+                {
+                    imgLoading.ImageLocation = @"includes\HugPuddle.jpg";
+                }
 
                 await Task.Run(() => BuildSearchResults());
                 flowLayoutPanel1.Visible = true;
@@ -2436,9 +2462,17 @@ namespace SUP
                     txtLast.Text = pages.Value.ToString();
                     txtQty.Text = pages.LargeChange.ToString();
                     Random rnd = new Random();
-                    int randomNum = rnd.Next(1, 30); // generates a random integer between 1 and 11 (inclusive)
-                    string imagePath = string.Format("includes\\sup{0}.gif", randomNum);
-                    imgLoading.ImageLocation = imagePath;
+                    string[] gifFiles = Directory.GetFiles("includes", "*.gif");
+                    if (gifFiles.Length > 0)
+                    {
+                        int randomIndex = rnd.Next(gifFiles.Length);
+                        string randomGifFile = gifFiles[randomIndex];
+                        imgLoading.ImageLocation = randomGifFile;
+                    }
+                    else
+                    {
+                        imgLoading.ImageLocation = @"includes\HugPuddle.jpg";
+                    }
 
                     await Task.Run(() => BuildSearchResults());
                     flowLayoutPanel1.Visible = true;
@@ -2456,9 +2490,17 @@ namespace SUP
         {
 
             Random rnd = new Random();
-            int randomNum = rnd.Next(1, 30); // generates a random integer between 1 and 11 (inclusive)
-            string imagePath = string.Format("includes\\sup{0}.gif", randomNum);
-            imgLoading.ImageLocation = imagePath;
+            string[] gifFiles = Directory.GetFiles("includes", "*.gif");
+            if (gifFiles.Length > 0)
+            {
+                int randomIndex = rnd.Next(gifFiles.Length);
+                string randomGifFile = gifFiles[randomIndex];
+                imgLoading.ImageLocation = randomGifFile;
+            }
+            else
+            {
+                imgLoading.ImageLocation = @"includes\HugPuddle.jpg";
+            }
             await Task.Run(() => BuildSearchResults());
             flowLayoutPanel1.Visible = true;
         }
@@ -2471,7 +2513,6 @@ namespace SUP
                 SendKeys.SendWait("{Enter}");
             }
         }
-
 
     }
 }

@@ -252,6 +252,7 @@
     </EmbeddedResource>
     <EmbeddedResource Include="WorkBench.resx">
       <DependentUpon>WorkBench.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="ObjectBrowser.resx">
       <DependentUpon>ObjectBrowser.cs</DependentUpon>

@@ -18,7 +18,7 @@ namespace SUP
 {
     public partial class WorkBench : Form
     {
-        private readonly static object SupLocker = new object();
+       
         public WorkBench()
         {
             InitializeComponent();
@@ -30,36 +30,14 @@ namespace SUP
             {
                 lbTableName.SelectedIndex = 0;
             }
+            var SUP = new Options { CreateIfMissing = true };
 
             switch (lbTableName.SelectedItem.ToString().Trim())
             {
-                case "ROOT":
-                    var ROOT = new Options { CreateIfMissing = true };
+                case "sup":
+                   
                     txtGetValue.Text = "";
-                    lock (SupLocker)
-                    {
-                        using (var db = new DB(ROOT, @"root"))
-                        {
-                            LevelDB.Iterator it = db.CreateIterator();
-                            for (
-                                it.Seek(txtlevelDBKey.Text);
-                                it.IsValid() && it.KeyAsString().StartsWith(txtlevelDBKey.Text);
-                                it.Next()
-                            )
-                            {
-                                txtGetValue.Text =
-                                    txtGetValue.Text + it.ValueAsString() + Environment.NewLine;
-                            }
-                            it.Dispose();
-                        }
-                    }
-                    break;
-
-                case "SUP":
-                    var SUP = new Options { CreateIfMissing = true };
-                    txtGetValue.Text = "";
-                    lock (SupLocker)
-                    {
+                    
                         using (var db = new DB(SUP, @"root\sup"))
                         {
                             LevelDB.Iterator it = db.CreateIterator();
@@ -70,39 +48,18 @@ namespace SUP
                             )
                             {
                                 txtGetValue.Text =
-                                    txtGetValue.Text + it.ValueAsString() + Environment.NewLine;
+                                    txtGetValue.Text + "[ " + it.KeyAsString() + " | "+ it.ValueAsString() +" ]" + Environment.NewLine;
                             }
                             it.Dispose();
                         }
-                    }
+                    
                     break;
 
-                case "PRO":
-                    var PRO = new Options { CreateIfMissing = true };
-                    txtGetValue.Text = "";
-                    lock (SupLocker)
-                    {
-                        using (var db = new DB(PRO, @"root\pro"))
-                        {
-                            LevelDB.Iterator it = db.CreateIterator();
-                            for (
-                                it.Seek(txtlevelDBKey.Text);
-                                it.IsValid() && it.KeyAsString().StartsWith(txtlevelDBKey.Text);
-                                it.Next()
-                            )
-                            {
-                                txtGetValue.Text =
-                                    txtGetValue.Text + it.ValueAsString() + Environment.NewLine;
-                            }
-                            it.Dispose();
-                        }
-                    }
-                    break;
+                case "sig":
 
-                case "COL":
-                    var COL = new Options { CreateIfMissing = true };
                     txtGetValue.Text = "";
-                    using (var db = new DB(COL, @"root\col"))
+
+                    using (var db = new DB(SUP, @"root\sig"))
                     {
                         LevelDB.Iterator it = db.CreateIterator();
                         for (
@@ -112,16 +69,18 @@ namespace SUP
                         )
                         {
                             txtGetValue.Text =
-                                txtGetValue.Text + it.ValueAsString() + Environment.NewLine;
+                                    txtGetValue.Text + "[ " + it.KeyAsString() + " | " + it.ValueAsString() + " ]" + Environment.NewLine;
                         }
                         it.Dispose();
                     }
+
                     break;
 
-                case "OBJ":
-                    var OBJ = new Options { CreateIfMissing = true };
+                case "sec":
+
                     txtGetValue.Text = "";
-                    using (var db = new DB(OBJ, @"root\obj"))
+
+                    using (var db = new DB(SUP, @"root\sec"))
                     {
                         LevelDB.Iterator it = db.CreateIterator();
                         for (
@@ -131,13 +90,117 @@ namespace SUP
                         )
                         {
                             txtGetValue.Text =
-                                txtGetValue.Text + it.ValueAsString() + Environment.NewLine;
+                                    txtGetValue.Text + "[ " + it.KeyAsString() + " | " + it.ValueAsString() + " ]" + Environment.NewLine;
                         }
                         it.Dispose();
                     }
+
                     break;
 
-                case "EVENT":
+                case "pro":
+
+                    txtGetValue.Text = "";
+
+                    using (var db = new DB(SUP, @"root\pro"))
+                    {
+                        LevelDB.Iterator it = db.CreateIterator();
+                        for (
+                            it.Seek(txtlevelDBKey.Text);
+                            it.IsValid() && it.KeyAsString().StartsWith(txtlevelDBKey.Text);
+                            it.Next()
+                        )
+                        {
+                            txtGetValue.Text =
+                                    txtGetValue.Text + "[ " + it.KeyAsString() + " | " + it.ValueAsString() + " ]" + Environment.NewLine;
+                        }
+                        it.Dispose();
+                    }
+
+                    break;
+
+                case "oblock":
+
+                    txtGetValue.Text = "";
+
+                    using (var db = new DB(SUP, @"root\oblock"))
+                    {
+                        LevelDB.Iterator it = db.CreateIterator();
+                        for (
+                            it.Seek(txtlevelDBKey.Text);
+                            it.IsValid() && it.KeyAsString().StartsWith(txtlevelDBKey.Text);
+                            it.Next()
+                        )
+                        {
+                            txtGetValue.Text =
+                                    txtGetValue.Text + "[ " + it.KeyAsString() + " | " + it.ValueAsString() + " ]" + Environment.NewLine;
+                        }
+                        it.Dispose();
+                    }
+
+                    break;
+
+                case "obj":
+
+                    txtGetValue.Text = "";
+
+                    using (var db = new DB(SUP, @"root\obj"))
+                    {
+                        LevelDB.Iterator it = db.CreateIterator();
+                        for (
+                            it.Seek(txtlevelDBKey.Text);
+                            it.IsValid() && it.KeyAsString().StartsWith(txtlevelDBKey.Text);
+                            it.Next()
+                        )
+                        {
+                            txtGetValue.Text =
+                                    txtGetValue.Text + "[ " + it.KeyAsString() + " | " + it.ValueAsString() + " ]" + Environment.NewLine;
+                        }
+                        it.Dispose();
+                    }
+
+                    break;
+                case "mute":
+
+                    txtGetValue.Text = "";
+
+                    using (var db = new DB(SUP, @"root\mute"))
+                    {
+                        LevelDB.Iterator it = db.CreateIterator();
+                        for (
+                            it.Seek(txtlevelDBKey.Text);
+                            it.IsValid() && it.KeyAsString().StartsWith(txtlevelDBKey.Text);
+                            it.Next()
+                        )
+                        {
+                            txtGetValue.Text =
+                                    txtGetValue.Text + "[ " + it.KeyAsString() + " | " + it.ValueAsString() + " ]" + Environment.NewLine;
+                        }
+                        it.Dispose();
+                    }
+
+                    break;
+                case "found":
+
+                    txtGetValue.Text = "";
+
+                    using (var db = new DB(SUP, @"root\found"))
+                    {
+                        LevelDB.Iterator it = db.CreateIterator();
+                        for (
+                            it.Seek(txtlevelDBKey.Text);
+                            it.IsValid() && it.KeyAsString().StartsWith(txtlevelDBKey.Text);
+                            it.Next()
+                        )
+                        {
+                            txtGetValue.Text =
+                                    txtGetValue.Text + "[ " + it.KeyAsString() + " | " + it.ValueAsString() + " ]" + Environment.NewLine;
+                        }
+                        it.Dispose();
+                    }
+
+                    break;
+
+                case "event":
                     var LOG = new Options { CreateIfMissing = true };
                     txtGetValue.Text = "";
                     using (var db = new DB(LOG, @"root\event"))
@@ -150,7 +213,7 @@ namespace SUP
                         )
                         {
                             txtGetValue.Text =
-                                txtGetValue.Text + it.ValueAsString() + Environment.NewLine;
+                                    txtGetValue.Text + "[ " + it.KeyAsString() + " | " + it.ValueAsString() + " ]" + Environment.NewLine;
                         }
                         it.Dispose();
                     }
@@ -168,43 +231,72 @@ namespace SUP
             {
                 lbTableName.SelectedIndex = 0;
             }
-
+            var SUP = new Options { CreateIfMissing = true };
             switch (lbTableName.SelectedItem.ToString().Trim())
             {
-                case "ROOT":
-                    var ROOT = new Options { CreateIfMissing = true };
-                    using (var db = new DB(ROOT, @"root"))
+                case "sup":
+                    
+                    using (var db = new DB(SUP, @"root\sup"))
                     {
                         db.Delete(txtlevelDBKey.Text);
                     }
                     break;
-                case "PRO":
-                    var PRO = new Options { CreateIfMissing = true };
-                    using (var db = new DB(PRO, @"root\pro"))
+                case "sig":
+
+                    using (var db = new DB(SUP, @"root\sig"))
                     {
                         db.Delete(txtlevelDBKey.Text);
                     }
                     break;
 
-                case "COL":
-                    var COL = new Options { CreateIfMissing = true };
-                    using (var db = new DB(COL, @"root\col"))
+                case "sec":
+
+                    using (var db = new DB(SUP, @"root\sec"))
                     {
                         db.Delete(txtlevelDBKey.Text);
                     }
                     break;
 
-                case "OBJ":
-                    var OBJ = new Options { CreateIfMissing = true };
-                    using (var db = new DB(OBJ, @"root\obj"))
+                case "pro":
+
+                    using (var db = new DB(SUP, @"root\pro"))
                     {
                         db.Delete(txtlevelDBKey.Text);
                     }
                     break;
 
-                case "EVENT":
-                    var LOG = new Options { CreateIfMissing = true };
-                    using (var db = new DB(LOG, @"root\event"))
+                case "oblock":
+
+                    using (var db = new DB(SUP, @"root\sup"))
+                    {
+                        db.Delete(txtlevelDBKey.Text);
+                    }
+                    break;
+                case "obj":
+
+                    using (var db = new DB(SUP, @"root\obj"))
+                    {
+                        db.Delete(txtlevelDBKey.Text);
+                    }
+                    break;
+                case "mute":
+
+                    using (var db = new DB(SUP, @"root\mute"))
+                    {
+                        db.Delete(txtlevelDBKey.Text);
+                    }
+                    break;
+                case "found":
+
+                    using (var db = new DB(SUP, @"root\found"))
+                    {
+                        db.Delete(txtlevelDBKey.Text);
+                    }
+                    break;
+
+                case "event":
+
+                    using (var db = new DB(SUP, @"root\event"))
                     {
                         db.Delete(txtlevelDBKey.Text);
                     }
@@ -761,7 +853,7 @@ namespace SUP
 
                     string transactionID = dgTransactions.Rows[e.RowIndex].Cells[9].Value.ToString();
 
-                    DisplayRootJSON(new JObject[] { JObject.Parse(System.IO.File.ReadAllText(@"root\" + transactionID + @"\P2Fk.json")) });
+                    DisplayRootJSON(new JObject[] { JObject.Parse(System.IO.File.ReadAllText(@"root\" + transactionID + @"\OBJ.json")) });
                 }
                 catch { }
             }
@@ -839,8 +931,6 @@ namespace SUP
             }
         }
 
-       
-
         private void ButtonBlockAddressClick(object sender, EventArgs e)
         {
 
@@ -914,7 +1004,7 @@ namespace SUP
                     // fetch current JSONOBJ from disk if it exists
                     try
                     {
-                        string JSONOBJ = System.IO.File.ReadAllText(diskpath + "OBJ.json");
+                        string JSONOBJ = System.IO.File.ReadAllText(diskpath + "GetRootByTransactionId.json");
                         OBJState objectState = JsonConvert.DeserializeObject<OBJState>(JSONOBJ);
                         try
                         {
@@ -1093,7 +1183,7 @@ namespace SUP
         {
 
             DateTime tmbeginCall = DateTime.UtcNow;
-            OBJState Tester = OBJState.GetObjectByTransactionId(txtTransactionId.Text);
+            OBJState Tester = OBJState.GetObjectByTransactionId(txtTransactionId.Text,txtLogin.Text,txtPassword.Text,txtUrl.Text,txtVersionByte.Text);
             DateTime tmendCall = DateTime.UtcNow;
             lblTotalBytes.Text = "bytes: ";
             lblTotalTime.Text = "time: ";
@@ -1188,7 +1278,6 @@ namespace SUP
 
             txtGetValue.Text = json;
         }
-
 
         public string GetTransactionId(string input)
         {

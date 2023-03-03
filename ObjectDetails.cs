@@ -784,7 +784,7 @@ namespace SUP
 
                     if (!objstate.URN.ToLower().StartsWith("http"))
                     {
-                        urn = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + @"\root\" + objstate.URN.Replace("BTC:", "").Replace("MZC:", "").Replace("LTC:", "").Replace("DOG:", "").Replace("DTC:", "").Replace("IPFS:", "").Replace(@"/", @"\");
+                        urn = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + @"\root\" + objstate.URN.Replace("BTC:", "").Replace("MZC:", "").Replace("LTC:", "").Replace("DOG:", "").Replace("IPFS:", "").Replace(@"/", @"\");
                     }
                 }
 
@@ -796,7 +796,7 @@ namespace SUP
 
                     if (!objstate.Image.ToLower().StartsWith("http"))
                     {
-                        imgurn = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + @"\root\" + objstate.Image.Replace("BTC:", "").Replace("MZC:", "").Replace("LTC:", "").Replace("DOG:", "").Replace("DTC:", "").Replace("IPFS:", "").Replace(@"/", @"\");
+                        imgurn = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + @"\root\" + objstate.Image.Replace("BTC:", "").Replace("MZC:", "").Replace("LTC:", "").Replace("DOG:", "").Replace("IPFS:", "").Replace(@"/", @"\");
                     }
                 }
 
@@ -808,7 +808,7 @@ namespace SUP
 
                     if (!objstate.URI.ToLower().StartsWith("http"))
                     {
-                        uriurn = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + @"\root\" + objstate.URI.Replace("BTC:", "").Replace("MZC:", "").Replace("LTC:", "").Replace("DOG:", "").Replace("DTC:", "").Replace("IPFS:", "").Replace(@"/", @"\");
+                        uriurn = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + @"\root\" + objstate.URI.Replace("BTC:", "").Replace("MZC:", "").Replace("LTC:", "").Replace("DOG:", "").Replace("IPFS:", "").Replace(@"/", @"\");
                     }
                 }
 
@@ -870,19 +870,6 @@ namespace SUP
                             if (!System.IO.Directory.Exists(@"root/" + transactionid))
                             {
                                 Root root = Root.GetRootByTransactionId(transactionid, "good-user", "better-password", @"http://127.0.0.1:22555", "30");
-                                imgblockdate = root.BlockDate;
-                            }
-                            else
-                            {
-                                string P2FKJSONString = System.IO.File.ReadAllText(@"root/" + transactionid + @"/OBJ.json");
-                                Root root = JsonConvert.DeserializeObject<Root>(P2FKJSONString);
-                                imgblockdate = root.BlockDate;
-                            }
-                            break;
-                        case "DTC:":
-                            if (!System.IO.Directory.Exists(@"root/" + transactionid))
-                            {
-                                Root root = Root.GetRootByTransactionId(transactionid, "good-user", "better-password", @"http://127.0.0.1:11777", "30");
                                 imgblockdate = root.BlockDate;
                             }
                             else
@@ -1051,19 +1038,6 @@ namespace SUP
                                 urnblockdate = root.BlockDate;
                             }
                             break;
-                        case "DTC:":
-                            if (!System.IO.Directory.Exists(@"root/" + transactionid))
-                            {
-                                Root root = Root.GetRootByTransactionId(transactionid, "good-user", "better-password", @"http://127.0.0.1:11777", "30");
-                                urnblockdate = root.BlockDate;
-                            }
-                            else
-                            {
-                                string P2FKJSONString = System.IO.File.ReadAllText(@"root/" + transactionid + @"/OBJ.json");
-                                Root root = JsonConvert.DeserializeObject<Root>(P2FKJSONString);
-                                urnblockdate = root.BlockDate;
-                            }
-                            break;
                         case "IPFS":
                             urn = urn.Replace(@"\root\", @"\ipfs\");
                             
@@ -1211,19 +1185,6 @@ namespace SUP
                             if (!System.IO.Directory.Exists(@"root/" + transactionid))
                             {
                                 Root root = Root.GetRootByTransactionId(transactionid, "good-user", "better-password", @"http://127.0.0.1:22555", "30");
-                                uriblockdate = root.BlockDate;
-                            }
-                            else
-                            {
-                                string P2FKJSONString = System.IO.File.ReadAllText(@"root/" + transactionid + @"/OBJ.json");
-                                Root root = JsonConvert.DeserializeObject<Root>(P2FKJSONString);
-                                uriblockdate = root.BlockDate;
-                            }
-                            break;
-                        case "DTC:":
-                            if (!System.IO.Directory.Exists(@"root/" + transactionid))
-                            {
-                                Root root = Root.GetRootByTransactionId(transactionid, "good-user", "better-password", @"http://127.0.0.1:11777", "30");
                                 uriblockdate = root.BlockDate;
                             }
                             else
@@ -1581,12 +1542,6 @@ namespace SUP
                                             Root.GetRootByTransactionId(transactionid, "good-user", "better-password", @"http://127.0.0.1:22555", "30");
                                         }
                                         break;
-                                    case "DTC:":
-                                        if (!System.IO.Directory.Exists(@"root/" + transactionid))
-                                        {
-                                            Root.GetRootByTransactionId(transactionid, "good-user", "better-password", @"http://127.0.0.1:11777", "30");
-                                        }
-                                        break;
                                     case "IPFS":
 
                                         if (objstate.URN.Length == 51) { urn += @"\artifact"; }
@@ -1700,12 +1655,6 @@ namespace SUP
                                             if (!System.IO.Directory.Exists(@"root/" + transactionID.Value))
                                             {
                                                 Root.GetRootByTransactionId(transactionID.Value, "good-user", "better-password", @"http://127.0.0.1:22555", "30");
-                                            }
-                                            break;
-                                        case "DTC:":
-                                            if (!System.IO.Directory.Exists(@"root/" + transactionID.Value))
-                                            {
-                                                Root.GetRootByTransactionId(transactionID.Value, "good-user", "better-password", @"http://127.0.0.1:11777", "30");
                                             }
                                             break;
                                         default:
