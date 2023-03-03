@@ -11,7 +11,7 @@ P2FK was directly inspired by the satoshi uploader  see --> https://cirosantilli
 
 ## **Installation**
 
-1. Download the Sup.v0.1.23-beta.zip file
+1. Download the Sup.v0.1.24-beta.zip file
 2. Create a folder on your **fastest** disk drive with at least **700GB** free (it will be storing the bitcoin prod and testnet blockchains)
 3. Unzip all contents into the folder.
 4. Create a shortcut to SUP.exe and launch.
@@ -44,10 +44,6 @@ searches mainchain for up to a 20 character case sensitive keyword and shows all
 ### **@UserName**
 searches mainchain by urn shows currently registered profile object associated with @userName and shows all object associations.  profile registrations are transferable and expire after 3 years of no activity allowing them to be claimed by other registrants in the future
 
-### **Search by File**
-(drag and drop the file anywhere on the main Sup!? browser screen)<br />
-searches mainchain and returns first object discovered with an owner where a hash of the search file equals a hash of the referenced urn file.  Sup!? file registrations do not expire and are transfereable to other owners. all urn file types and urn locations can be discovered in this manner. this includes IPFS files, mainchain files and sidechain files. 
-
 ### **ipfs://QmU42aLJToYmshwJu26iprH9RsX6SfJDw3FTf6senJEdF1**
 performs a ipfs get, archives ipfs file(s) locally, pins file(s) if pinning is enabled, opens a system folder dioluge allowing you to explore any files found
 
@@ -62,7 +58,7 @@ navigates to requested url in browser.
 Click the live button and watch in realtime as other Sup!? user's mint their objects.  all new objects will be added to the top of your browser window pushing the older objects down the screen. A maximized Sup!? monitor that shows a constant stream of new objects makes for a great display.  Sup!? montiors the in memory pool allowing it to display new objects before they are confirmed in the blockchain.  your Sup!? objects will appear in every curently live Sup!? montior around the world in about 10 - 30 seconds after you have etch the object's metadata. all blockhains included with this experiment are monitored for new objects if they are running and fully synced 
 <br />
 <br />
-## **Official / Unofficial Indicator**
+## **Official / Unofficial Registration Indicator**
 When a Sup!? urn is registered a small symbol appears on the top left corner of the object's thumbnail on the main browser screen and replaces the URN label on the object details screen. following registration, any other Sup!? objects referencing the same URN will display a [ SEE OFFICIAL ] button that redirects them to the officialy registered urn.  the unofficial urn reference can still be opened by clicking anywhere elese on the object.  
 <br />
 <br />
@@ -71,7 +67,7 @@ Drag and drop any file onto the main Sup!? browser screen.  Sup!? will search th
 <br />
 <br />
 ## **Block \ Mute**
-blocking addresses and transactions ignores any associations to them going forward preventing a transaction or any transactions signed by the blocked address from outputting to disk. a purge and reinspection is required to completely eliminate all data. if a group of collectors decides to block an address or transaction they can technically ignore them out of existence.
+blocking addresses ignores any associations to them going forward preventing a transaction or any transactions signed by the blocked address from outputting to disk. a purge and reinspection is required to completely eliminate all data. if a group of collectors decides to block an address they can technically ignore them out of existence.
 
 muting an address prevents any further transaction comments signed by the address from outputting onto disk.  a purge and reinspection is required to completely elimninate all transactions comments
 <br />
@@ -88,8 +84,7 @@ trusted index.html and index.htm files are sent the following Sup!? object infor
 <br />
 
 **get roots by address:**<br />
-  SUP.EXE --address muVrFVk3ErfrnmWosLF4WixxRtDKfMx9bs --versionbyte 111 --getrootsbyaddress --password better-password
-  --url http://127.0.0.1:18332 --username good-user<br />
+  SUP.EXE --address muVrFVk3ErfrnmWosLF4WixxRtDKfMx9bs --versionbyte 111 --getrootsbyaddress --password better-password --url http://127.0.0.1:18332 --username good-user<br />
 <br />
 
 **get public address by keyword:**<br />
@@ -101,15 +96,20 @@ trusted index.html and index.htm files are sent the following Sup!? object infor
 <br />
 
 **get object by address:**<br />
-  SUP.EXE --address muVrFVk3ErfrnmWosLF4WixxRtDKfMx9bs --oid 0 --versionbyte 111 --getobjectbyaddress --password better-password  --url http://127.0.0.1:18332 --username good-user --verbose<br />
+  SUP.EXE --address muVrFVk3ErfrnmWosLF4WixxRtDKfMx9bs --versionbyte 111 --getobjectbyaddress --password better-password  --url http://127.0.0.1:18332 --username good-user --verbose<br />
 <br />
+
+**get object by transaction id:**<br />
+SUP.EXE --tid 69ae3a76a9de22ffad7bfb9249824512fc38e01d82e2010877ead179b50f0f77 --versionbyte 111 --getobjectbytransactionid --password better-password --url http://127.0.0.1:18332 --username good-user<br />
+<br />
+
 
 **get object owner by urn registration:**<br />
-  SUP.EXE --versionbyte 111 --getobjectbyurn --password better-password --url https://127.0.0.1:18332 --username  good-user --urn twitter.com --skip 0<br />
+  SUP.EXE --versionbyte 111 --getobjectbyurn --password better-password --url https://127.0.0.1:18332 --username  good-user --urn twitter.com<br />
 <br />
 
-**get object owner by file registration:**<br />
-  SUP.EXE --versionbyte 111 --filepath C:\\folder\\test.jpg --getobjectbyfile --password better-password --url  http://127.0.0.1:18332 --username good-user --skip 0<br />
+**get object owner by file :**<br />
+  SUP.EXE --versionbyte 111 --filepath C:\\folder\\test.jpg --getobjectbyfile --password better-password --url  http://127.0.0.1:18332 --username good-user<br />
 <br />
 
 **get objects by address:**<br />
@@ -129,7 +129,7 @@ trusted index.html and index.htm files are sent the following Sup!? object infor
 <br />
 
 **get found objects:**<br />
-  SUP.EXE --versionbyte 111 --getfoundobjects --password better-password --skip 5 --qty 100 --url http://127.0.0.1:18332 --username good-user<br />
+  SUP.EXE --versionbyte 111 --getfoundobjects --password better-password --skip 0 --qty -1 --url http://127.0.0.1:18332 --username good-user<br />
 <br />
 
 **get keywords by address:**<br />
@@ -137,11 +137,11 @@ trusted index.html and index.htm files are sent the following Sup!? object infor
 <br />
 
 **get public messages by address:**<br />
-  SUP.EXE --address muVrFVk3ErfrnmWosLF4WixxRtDKfMx9bs --versionbyte 111 --getpublicmessagesbyaddress --password better-password --qty 10 --url http://127.0.0.1:18332 --username good-user --skip 0<br />
+  SUP.EXE --address muVrFVk3ErfrnmWosLF4WixxRtDKfMx9bs --versionbyte 111 --getpublicmessagesbyaddress --password better-password --skip 0 --qty 10 --url http://127.0.0.1:18332 --username good-user<br />
 <br />
 
 **get private messages by address:**<br />
-  SUP.EXE --address muVrFVk3ErfrnmWosLF4WixxRtDKfMx9bs --versionbyte 111 --getprivatemessagesbyaddress --password better-password --qty 10 --url http://127.0.0.1:18332 --username good-user<br />
+  SUP.EXE --address muVrFVk3ErfrnmWosLF4WixxRtDKfMx9bs --versionbyte 111 --getprivatemessagesbyaddress --password better-password --skip 0 --qty 10 --url http://127.0.0.1:18332 --username good-user<br />
 <br />
 
 **get public keys by address:**<br />
@@ -149,11 +149,11 @@ trusted index.html and index.htm files are sent the following Sup!? object infor
 <br />
 
 **get profile by address:**<br />
-  SUP.EXE --address muVrFVk3ErfrnmWosLF4WixxRtDKfMx9bs --versionbyte 111 --getprofilebyaddress --password  better-password --url http://127.0.0.1:18332 --username good-user --skip 0<br />
+  SUP.EXE --address muVrFVk3ErfrnmWosLF4WixxRtDKfMx9bs --versionbyte 111 --getprofilebyaddress --password  better-password --url http://127.0.0.1:18332 --username good-user<br />
 <br />
 
 **get profile by urn:**<br />
-  SUP.EXE --versionbyte 111 --getprofilebyurn --password better-password --url http://127.0.0.1:18332 --username  good-user --urn embii4u --skip 0<br />
+  SUP.EXE --versionbyte 111 --getprofilebyurn --password better-password --url http://127.0.0.1:18332 --username  good-user --urn embii4u <br />
 <br />
 
 **parameters:**
@@ -167,6 +167,8 @@ trusted index.html and index.htm files are sent the following Sup!? object infor
   --getkeywordbypublicaddress     
 
   --getobjectbyaddress            
+
+  --getobjectbytransactionid
 
   --getobjectbyurn                
 
@@ -216,7 +218,7 @@ trusted index.html and index.htm files are sent the following Sup!? object infor
 
   -f, --filepath                  The full path of file to query
 
-  --verbose                       Get roots by address
+  --verbose                       output event information to leveldb
 
   --help                          Display this help screen.
 
