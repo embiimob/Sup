@@ -1050,7 +1050,7 @@ namespace SUP
 
         }
 
-        private void BuildSearchResults()
+        private async void BuildSearchResults()
         {
             lock (SupLocker)
             {
@@ -1269,14 +1269,20 @@ namespace SUP
                                                 break;
                                         }
                                         Match match = regexTransactionId.Match(txtSearchAddress.Text);
-                                        string browserPath = System.IO.Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + @"\root\" + txtSearchAddress.Text.Replace("MZC:", "").Replace("BTC:", "");
+                                        string browserPath = System.IO.Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + @"\root\" + txtSearchAddress.Text.Replace("MZC:", "").Replace("BTC:", "").Replace("LTC:", "").Replace("DOG:", "");
                                         browserPath = @"file:///" + browserPath.Replace(@"\", @"/");
                                         flowLayoutPanel1.Controls.Clear();
                                         flowLayoutPanel1.AutoScroll = false;
                                         var webBrowser1 = new Microsoft.Web.WebView2.WinForms.WebView2();
                                         webBrowser1.Size = flowLayoutPanel1.Size;
-                                        flowLayoutPanel1.Controls.Add(webBrowser1);
-                                        webBrowser1.CoreWebView2.Navigate(browserPath.Replace(@"/", @"\"));
+                                        this.Invoke((Action)(async () =>
+                                        {
+                                            flowLayoutPanel1.Controls.Add(webBrowser1);
+
+                                            await webBrowser1.EnsureCoreWebView2Async();
+                                            webBrowser1.CoreWebView2.Navigate(browserPath.Replace(@"/", @"\"));
+                                        }));
+
                                     }
                                     else
                                     {
