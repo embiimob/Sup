@@ -207,6 +207,12 @@
     <Compile Include="ObjectDetails.designer.cs">
       <DependentUpon>ObjectDetails.cs</DependentUpon>
     </Compile>
+    <Compile Include="ObjectDetailsControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="ObjectDetailsControl.Designer.cs">
+      <DependentUpon>ObjectDetailsControl.cs</DependentUpon>
+    </Compile>
     <Compile Include="WorkBench.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -249,6 +255,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="ObjectDetails.resx">
       <DependentUpon>ObjectDetails.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ObjectDetailsControl.resx">
+      <DependentUpon>ObjectDetailsControl.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="WorkBench.resx">
       <DependentUpon>WorkBench.cs</DependentUpon>

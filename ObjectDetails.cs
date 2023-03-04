@@ -15,6 +15,8 @@ using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Web.NBitcoin;
+using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Forms;
 using Label = System.Windows.Forms.Label;
 
@@ -26,10 +28,29 @@ namespace SUP
         private bool isVerbose = false;
         private int numMessagesDisplayed = 0;
         private int numChangesDisplayed = 0;
-        public ObjectDetails(string objectaddress)
+        private bool isUserControl = false;
+        private bool isInitializing = true;
+        public ObjectDetails(string objectaddress, bool isusercontrol = false)
         {
             InitializeComponent();
             _objectaddress = objectaddress;
+            isUserControl = isusercontrol;
+
+            if (isusercontrol)
+            {
+
+                // Calculate aspect ratio of control
+                float aspectRatio = (float)this.Width / (float)this.Height;
+
+                // Set desired width for scaled form
+                int desiredWidth = 600;
+
+                // Calculate new height while keeping aspect ratio
+                int desiredHeight = (int)(desiredWidth / aspectRatio);
+                this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
+                this.AutoScaleDimensions = new System.Drawing.SizeF(desiredWidth, desiredHeight);
+                this.Size = new System.Drawing.Size(desiredWidth, desiredHeight);
+            }
         }
 
         private void ObjectDetails_Load(object sender, EventArgs e)
@@ -38,18 +59,18 @@ namespace SUP
             // Get a reference to the parent form
             Form parentForm = this.Owner;
             bool isBlue = false;
-  
+
             // Check if the parent form has a button named "btnLive" with blue background color
-           try
-                {
-                    isBlue = parentForm.Controls.OfType<Button>().Any(b => b.Name == "btnLive" && b.BackColor == System.Drawing.Color.Blue);
-                }
-                catch { }
+            try
+            {
+                isBlue = parentForm.Controls.OfType<System.Windows.Forms.Button>().Any(b => b.Name == "btnLive" && b.BackColor == System.Drawing.Color.Blue);
+            }
+            catch { }
 
             if (isBlue)
             {
                 // If there is a button with blue background color, show a message box
-                DialogResult result = MessageBox.Show("disable Live monitoring to browse sup!? objects.\r\nignoring this warning may cause temporary data corruption that could require a full purge of the cache", "Warning", MessageBoxButtons.OKCancel, MessageBoxIcon.Warning);
+                DialogResult result = System.Windows.Forms.MessageBox.Show("disable Live monitoring to browse sup!? objects.\r\nignoring this warning may cause temporary data corruption that could require a full purge of the cache", "Warning", MessageBoxButtons.OKCancel, MessageBoxIcon.Warning);
                 if (result == DialogResult.OK)
                 {
                     // If the user clicks OK, close the form
@@ -58,8 +79,13 @@ namespace SUP
             }
             else
             {
+                if (isUserControl)
+                {
+                    this.Text = string.Empty;
 
-                this.Text = "Sup!? Object Details [ " + _objectaddress + " ]";
+                }
+                else { this.Text = "Sup!? Object Details [ " + _objectaddress + " ]"; }
+
                 btnReloadObject.PerformClick();
 
             }
@@ -827,83 +853,119 @@ namespace SUP
                     switch (objstate.Image.Substring(0, 4))
                     {
                         case "MZC:":
-
-                            if (!System.IO.Directory.Exists(@"root/" + transactionid))
+                            Task.Run(() =>
                             {
-                                Root root = Root.GetRootByTransactionId(transactionid, "good-user", "better-password", @"http://127.0.0.1:12832", "50");
-                                imgblockdate = root.BlockDate;
-                            }
-                            else
-                            {
-                                string P2FKJSONString = System.IO.File.ReadAllText(@"root/" + transactionid + @"/OBJ.json");
-                                Root root = JsonConvert.DeserializeObject<Root>(P2FKJSONString);
-                                imgblockdate = root.BlockDate;
-                            }
+                                if (!System.IO.Directory.Exists("root/" + transactionid))
+                                {
+                                    Root root = Root.GetRootByTransactionId(transactionid, "good-user", "better-password", @"http://127.0.0.1:12832", "50");
+                                    try { lblIMGBlockDate.Invoke(new Action(() => lblIMGBlockDate.Text = root.BlockDate.ToString("ddd, dd MMM yyyy hh:mm:ss"))); }
+                                    catch { }
+                                }
+                                else
+                                {
+                                    try
+                                    {
+                                        string P2FKJSONString = System.IO.File.ReadAllText(@"root/" + transactionid + @"/OBJ.json");
+                                        Root root = JsonConvert.DeserializeObject<Root>(P2FKJSONString);
+                                        
+                                            lblIMGBlockDate.Invoke(new Action(() => lblIMGBlockDate.Text = root.BlockDate.ToString("ddd, dd MMM yyyy hh:mm:ss")));
+                                       
+                                    }
+                                    catch { }
+                                }
+                            });
                             break;
                         case "BTC:":
-                            if (!System.IO.Directory.Exists(@"root/" + transactionid))
+                            Task.Run(() =>
                             {
-                                Root root = Root.GetRootByTransactionId(transactionid, "good-user", "better-password", @"http://127.0.0.1:8332", "0");
-                                imgblockdate = root.BlockDate;
-                            }
-                            else
-                            {
-                                string P2FKJSONString = System.IO.File.ReadAllText(@"root/" + transactionid + @"/OBJ.json");
-                                Root root = JsonConvert.DeserializeObject<Root>(P2FKJSONString);
-                                imgblockdate = root.BlockDate;
-                            }
+                                if (!System.IO.Directory.Exists("root/" + transactionid))
+                                {
+                                    Root root = Root.GetRootByTransactionId(transactionid, "good-user", "better-password", @"http://127.0.0.1:8332", "0");
+                                    try
+                                    {
+                                        lblIMGBlockDate.Invoke(new Action(() => lblIMGBlockDate.Text = root.BlockDate.ToString("ddd, dd MMM yyyy hh:mm:ss")));
+                                    }
+                                    catch { }
+                                }
+                                else
+                                {
+                                    try
+                                    {
+
+                                        string P2FKJSONString = System.IO.File.ReadAllText(@"root/" + transactionid + @"/OBJ.json");
+                                    Root root = JsonConvert.DeserializeObject<Root>(P2FKJSONString);
+                                     lblIMGBlockDate.Invoke(new Action(() => lblIMGBlockDate.Text = root.BlockDate.ToString("ddd, dd MMM yyyy hh:mm:ss")));
+                                    }
+                                    catch { }
+                                }
+                            });
                             break;
                         case "LTC:":
-                            if (!System.IO.Directory.Exists(@"root/" + transactionid))
+                            Task.Run(() =>
                             {
-                                Root root = Root.GetRootByTransactionId(transactionid, "good-user", "better-password", @"http://127.0.0.1:9332", "48");
-                                imgblockdate = root.BlockDate;
-                            }
-                            else
-                            {
-                                string P2FKJSONString = System.IO.File.ReadAllText(@"root/" + transactionid + @"/OBJ.json");
-                                Root root = JsonConvert.DeserializeObject<Root>(P2FKJSONString);
-                                imgblockdate = root.BlockDate;
-                            }
+                                if (!System.IO.Directory.Exists("root/" + transactionid))
+                                {
+                                    Root root = Root.GetRootByTransactionId(transactionid, "good-user", "better-password", @"http://127.0.0.1:9332", "48");
+                                    try
+                                    {
+                                        lblIMGBlockDate.Invoke(new Action(() => lblIMGBlockDate.Text = root.BlockDate.ToString("ddd, dd MMM yyyy hh:mm:ss")));
+                                    }
+                                    catch { }
+                                }
+                                else
+                                {
+                                    try
+                                    {
+                                        string P2FKJSONString = System.IO.File.ReadAllText(@"root/" + transactionid + @"/OBJ.json");
+                                        Root root = JsonConvert.DeserializeObject<Root>(P2FKJSONString);
+                                        
+                                            lblIMGBlockDate.Invoke(new Action(() => lblIMGBlockDate.Text = root.BlockDate.ToString("ddd, dd MMM yyyy hh:mm:ss")));
+                                       
+                                    }
+                                    catch { }
+                                }
+                            });
                             break;
                         case "DOG:":
-                            if (!System.IO.Directory.Exists(@"root/" + transactionid))
+                            Task.Run(() =>
                             {
-                                Root root = Root.GetRootByTransactionId(transactionid, "good-user", "better-password", @"http://127.0.0.1:22555", "30");
-                                imgblockdate = root.BlockDate;
-                            }
-                            else
-                            {
-                                string P2FKJSONString = System.IO.File.ReadAllText(@"root/" + transactionid + @"/OBJ.json");
-                                Root root = JsonConvert.DeserializeObject<Root>(P2FKJSONString);
-                                imgblockdate = root.BlockDate;
-                            }
+                                if (!System.IO.Directory.Exists("root/" + transactionid))
+                                {
+                                    Root root = Root.GetRootByTransactionId(transactionid, "good-user", "better-password", @"http://127.0.0.1:22555", "30");
+                                    try
+                                    {
+                                        lblIMGBlockDate.Invoke(new Action(() => lblIMGBlockDate.Text = root.BlockDate.ToString("ddd, dd MMM yyyy hh:mm:ss")));
+                                    }
+                                    catch { }
+                                }
+                                else
+                                {
+                                    try
+                                    {
+                                        string P2FKJSONString = System.IO.File.ReadAllText(@"root/" + transactionid + @"/OBJ.json");
+                                        Root root = JsonConvert.DeserializeObject<Root>(P2FKJSONString);
+                                      
+                                       
+                                            lblIMGBlockDate.Invoke(new Action(() => lblIMGBlockDate.Text = root.BlockDate.ToString("ddd, dd MMM yyyy hh:mm:ss")));
+                                     
+                                    }
+                                    catch { }
+                                }
+
+                            });
                             break;
                         case "IPFS":
                             imgurn = imgurn.Replace(@"\root\", @"\ipfs\");
                             transactionid = objstate.Image.Substring(5, 46);
                             if (objstate.Image.Length == 51) { imgurn += @"\artifact"; }
 
-                            if (!System.IO.Directory.Exists(@"ipfs/" + objstate.Image.Substring(5, 46)))
+                            if (!System.IO.Directory.Exists(@"ipfs/" + objstate.Image.Substring(5, 46) + "-build") && !System.IO.Directory.Exists(@"ipfs/" + objstate.Image.Substring(5, 46)))
                             {
-                                var SUP = new Options { CreateIfMissing = true };
-                                string isLoading;
-                                using (var db = new DB(SUP, @"ipfs"))
-                                {
-                                    isLoading = db.Get(objstate.Image.Substring(5, 46));
-
-                                }
-
-                                if (isLoading != "loading")
-                                {
-                                    using (var db = new DB(SUP, @"ipfs"))
-                                    {
-
-                                        db.Put(objstate.Image.Substring(5, 46), "loading");
-
-                                    }
+                                
+                               
                                     Task ipfsTask = Task.Run(() =>
                                     {
+                                        Directory.CreateDirectory(@"ipfs/" + objstate.Image.Substring(5, 46) + "-build");
                                         Process process2 = new Process();
                                         process2.StartInfo.FileName = @"ipfs\ipfs.exe";
                                         process2.StartInfo.Arguments = "get " + objstate.Image.Substring(5, 46) + @" -o ipfs\" + objstate.Image.Substring(5, 46);
@@ -913,7 +975,7 @@ namespace SUP
                                         if (System.IO.File.Exists("ipfs/" + objstate.Image.Substring(5, 46)))
                                         {
                                             System.IO.File.Move("ipfs/" + objstate.Image.Substring(5, 46), "ipfs/" + objstate.Image.Substring(5, 46) + "_tmp");
-                                            System.IO.Directory.CreateDirectory("ipfs/" + objstate.Image.Substring(5, 46));
+                                            
                                             string fileName = objstate.Image.Replace(@"//", "").Replace(@"\\", "").Substring(51);
                                             if (fileName == "")
                                             {
@@ -921,52 +983,49 @@ namespace SUP
 
                                             }
                                             else { fileName = fileName.Replace(@"/", "").Replace(@"\", ""); }
-                                            System.IO.File.Move("ipfs/" + objstate.Image.Substring(5, 46) + "_tmp", @"ipfs/" + objstate.Image.Substring(5, 46) + @"/" + fileName);
+                                            Directory.CreateDirectory(@"ipfs/" + objstate.Image.Substring(5, 46));
+                                            System.IO.File.Move("ipfs/" + objstate.Image.Substring(5, 46) + "_tmp", imgurn);
                                         }
-
-                                        using (var db = new DB(SUP, @"ipfs"))
+                                        Process process3 = new Process
                                         {
-
-                                            string ipfsdaemon = db.Get("ipfs-daemon");
-
-                                            if (ipfsdaemon == "true")
+                                            StartInfo = new ProcessStartInfo
                                             {
-                                                Process process3 = new Process
-                                                {
-                                                    StartInfo = new ProcessStartInfo
-                                                    {
-                                                        FileName = @"ipfs\ipfs.exe",
-                                                        Arguments = "pin add " + objstate.Image.Substring(5, 46),
-                                                        UseShellExecute = false,
-                                                        CreateNoWindow = true
-                                                    }
-                                                };
-                                                process3.Start();
+                                                FileName = @"ipfs\ipfs.exe",
+                                                Arguments = "pin add " + objstate.Image.Substring(5, 46),
+                                                UseShellExecute = false,
+                                                CreateNoWindow = true
                                             }
-                                        }
+                                        };
+                                        process3.Start();
+                                        try { btnReloadObject.Invoke(new Action(() => btnReloadObject.PerformClick())); } catch { }
+                                        Directory.Delete(@"ipfs/" + objstate.Image.Substring(5, 46) + "-build");
 
-                                        using (var db = new DB(SUP, @"ipfs"))
-                                        {
-                                            db.Delete(objstate.Image.Substring(5, 46));
-
-                                        }
                                     });
                                 }
 
 
-                            }
+                           
                             break;
                         default:
-                            if (!System.IO.Directory.Exists(@"root/" + imgurnmatch.Value))
+                            Task.Run(() =>
                             {
-                                Root.GetRootByTransactionId(imgurnmatch.Value, "good-user", "better-password", @"http://127.0.0.1:18332");
-                            }
-                            else
-                            {
-                                string P2FKJSONString = System.IO.File.ReadAllText(@"root/" + imgurnmatch.Value + @"/OBJ.json");
-                                Root root = JsonConvert.DeserializeObject<Root>(P2FKJSONString);
-                                imgblockdate = root.BlockDate;
-                            }
+                                if (!System.IO.Directory.Exists(@"root/" + imgurnmatch.Value))
+                                {
+                                    Root.GetRootByTransactionId(imgurnmatch.Value, "good-user", "better-password", @"http://127.0.0.1:18332");
+                                }
+                                else
+                                {
+                                    try
+                                    {
+                                        string P2FKJSONString = System.IO.File.ReadAllText(@"root/" + imgurnmatch.Value + @"/OBJ.json");
+                                        Root root = JsonConvert.DeserializeObject<Root>(P2FKJSONString);
+                                        lblIMGBlockDate.Invoke(new Action(() => lblIMGBlockDate.Text = root.BlockDate.ToString("ddd, dd MMM yyyy hh:mm:ss")));
+                                    }
+                                    catch { }
+
+
+                                }
+                            });
                             break;
                     }
 
@@ -986,83 +1045,122 @@ namespace SUP
                     switch (objstate.URN.Substring(0, 4))
                     {
                         case "MZC:":
-
-                            if (!System.IO.Directory.Exists(@"root/" + transactionid))
+                            Task.Run(() =>
                             {
-                                Root root = Root.GetRootByTransactionId(transactionid, "good-user", "better-password", @"http://127.0.0.1:12832", "50");
-                                urnblockdate = root.BlockDate;
-                            }
-                            else
-                            {
-                                string P2FKJSONString = System.IO.File.ReadAllText(@"root/" + transactionid + @"/OBJ.json");
-                                Root root = JsonConvert.DeserializeObject<Root>(P2FKJSONString);
-                                urnblockdate = root.BlockDate;
-                            }
+                                if (!System.IO.Directory.Exists(@"root/" + transactionid))
+                                {
+                                    Root root = Root.GetRootByTransactionId(transactionid, "good-user", "better-password", @"http://127.0.0.1:12832", "50");
+                                    try
+                                    {
+                                        lblURNBlockDate.Invoke(new Action(() => lblURNBlockDate.Text = root.BlockDate.ToString("ddd, dd MMM yyyy hh:mm:ss")));
+                                    }
+                                    catch { }
+                                }
+                                else
+                                {
+                                    try
+                                    {
+                                        string P2FKJSONString = System.IO.File.ReadAllText(@"root/" + transactionid + @"/OBJ.json");
+                                        Root root = JsonConvert.DeserializeObject<Root>(P2FKJSONString);
+                                        
+                                            lblURNBlockDate.Invoke(new Action(() => lblURNBlockDate.Text = root.BlockDate.ToString("ddd, dd MMM yyyy hh:mm:ss")));
+                                       
+                                    }
+                                    catch { }
+                                }
+                            });
                             break;
                         case "BTC:":
-                            if (!System.IO.Directory.Exists(@"root/" + transactionid))
+                            Task.Run(() =>
                             {
-                                Root root = Root.GetRootByTransactionId(transactionid, "good-user", "better-password", @"http://127.0.0.1:8332", "0");
-                                urnblockdate = root.BlockDate;
-                            }
-                            else
-                            {
-                                string P2FKJSONString = System.IO.File.ReadAllText(@"root/" + transactionid + @"/OBJ.json");
-                                Root root = JsonConvert.DeserializeObject<Root>(P2FKJSONString);
-                                urnblockdate = root.BlockDate;
-                            }
+                                if (!System.IO.Directory.Exists(@"root/" + transactionid))
+                                {
+                                    Root root = Root.GetRootByTransactionId(transactionid, "good-user", "better-password", @"http://127.0.0.1:8332", "0");
+                                    try
+                                    {
+                                        lblURNBlockDate.Invoke(new Action(() => lblURNBlockDate.Text = root.BlockDate.ToString("ddd, dd MMM yyyy hh:mm:ss")));
+                                    }
+                                    catch { }
+                                }
+                                else
+                                {
+                                    try
+                                    {
+                                        string P2FKJSONString = System.IO.File.ReadAllText(@"root/" + transactionid + @"/OBJ.json");
+                                        Root root = JsonConvert.DeserializeObject<Root>(P2FKJSONString);
+                                      
+                                            lblURNBlockDate.Invoke(new Action(() => lblURNBlockDate.Text = root.BlockDate.ToString("ddd, dd MMM yyyy hh:mm:ss")));
+                                        
+                                    }
+                                    catch { }
+                                }
+                            });
                             break;
                         case "LTC:":
-                            if (!System.IO.Directory.Exists(@"root/" + transactionid))
+                            Task.Run(() =>
                             {
-                                Root root = Root.GetRootByTransactionId(transactionid, "good-user", "better-password", @"http://127.0.0.1:9332", "48");
-                                urnblockdate = root.BlockDate;
-                            }
-                            else
-                            {
-                                string P2FKJSONString = System.IO.File.ReadAllText(@"root/" + transactionid + @"/OBJ.json");
-                                Root root = JsonConvert.DeserializeObject<Root>(P2FKJSONString);
-                                urnblockdate = root.BlockDate;
-                            }
+                                if (!System.IO.Directory.Exists(@"root/" + transactionid))
+                                {
+                                    Root root = Root.GetRootByTransactionId(transactionid, "good-user", "better-password", @"http://127.0.0.1:9332", "48");
+                                    try
+                                    {
+                                        lblURNBlockDate.Invoke(new Action(() => lblURNBlockDate.Text = root.BlockDate.ToString("ddd, dd MMM yyyy hh:mm:ss")));
+                                    }
+                                    catch { }
+                                }
+                                else
+                                {
+                                    try
+                                    {
+                                        string P2FKJSONString = System.IO.File.ReadAllText(@"root/" + transactionid + @"/OBJ.json");
+                                        Root root = JsonConvert.DeserializeObject<Root>(P2FKJSONString);
+                                     
+                                            lblURNBlockDate.Invoke(new Action(() => lblURNBlockDate.Text = root.BlockDate.ToString("ddd, dd MMM yyyy hh:mm:ss")));
+                                       
+                                    }
+                                    catch { }
+                                }
+                            });
                             break;
                         case "DOG:":
-                            if (!System.IO.Directory.Exists(@"root/" + transactionid))
+                            Task.Run(() =>
                             {
-                                Root root = Root.GetRootByTransactionId(transactionid, "good-user", "better-password", @"http://127.0.0.1:22555", "30");
-                                urnblockdate = root.BlockDate;
-                            }
-                            else
-                            {
-                                string P2FKJSONString = System.IO.File.ReadAllText(@"root/" + transactionid + @"/OBJ.json");
-                                Root root = JsonConvert.DeserializeObject<Root>(P2FKJSONString);
-                                urnblockdate = root.BlockDate;
-                            }
+                                if (!System.IO.Directory.Exists(@"root/" + transactionid))
+                                {
+                                    Root root = Root.GetRootByTransactionId(transactionid, "good-user", "better-password", @"http://127.0.0.1:22555", "30");
+                                    try
+                                    {
+                                        lblURNBlockDate.Invoke(new Action(() => lblURNBlockDate.Text = root.BlockDate.ToString("ddd, dd MMM yyyy hh:mm:ss")));
+                                    }
+                                    catch { }
+                                }
+                                else
+                                {
+                                    try
+                                    {
+                                        string P2FKJSONString = System.IO.File.ReadAllText(@"root/" + transactionid + @"/OBJ.json");
+                                        Root root = JsonConvert.DeserializeObject<Root>(P2FKJSONString);
+                                        
+                                            lblURNBlockDate.Invoke(new Action(() => lblURNBlockDate.Text = root.BlockDate.ToString("ddd, dd MMM yyyy hh:mm:ss")));
+                                       
+                                        
+                                    }
+                                    catch { }
+                                }
+                            });
                             break;
                         case "IPFS":
                             urn = urn.Replace(@"\root\", @"\ipfs\");
-                            
+
                             if (objstate.URN.Length == 51) { urn += @"\artifact"; }
 
-                            if (!System.IO.Directory.Exists(@"ipfs/" + objstate.URN.Substring(5, 46)))
+                            if (!System.IO.Directory.Exists(@"ipfs/" + objstate.URN.Substring(5, 46) + "-build") && !System.IO.Directory.Exists(@"ipfs/" + objstate.URN.Substring(5, 46)))
                             {
-                                var SUP = new Options { CreateIfMissing = true };
-                                string isLoading;
-                                using (var db = new DB(SUP, @"ipfs"))
-                                {
-                                    isLoading = db.Get(objstate.URN.Substring(5, 46));
-
-                                }
-
-                                if (isLoading != "loading")
-                                {
-                                    using (var db = new DB(SUP, @"ipfs"))
-                                    {
-
-                                        db.Put(objstate.URN.Substring(5, 46), "loading");
-
-                                    }
+                               
+                               
                                     Task ipfsTask = Task.Run(() =>
                                     {
+                                        Directory.CreateDirectory(@"ipfs/" + objstate.URN.Substring(5, 46) + "-build");
                                         Process process2 = new Process();
                                         process2.StartInfo.FileName = @"ipfs\ipfs.exe";
                                         process2.StartInfo.Arguments = "get " + objstate.URN.Substring(5, 46) + @" -o ipfs\" + objstate.URN.Substring(5, 46);
@@ -1072,15 +1170,18 @@ namespace SUP
                                         if (System.IO.File.Exists("ipfs/" + objstate.URN.Substring(5, 46)))
                                         {
                                             System.IO.File.Move("ipfs/" + objstate.URN.Substring(5, 46), "ipfs/" + objstate.URN.Substring(5, 46) + "_tmp");
-                                            System.IO.Directory.CreateDirectory("ipfs/" + objstate.URN.Substring(5, 46));
+
                                             string fileName = objstate.URN.Replace(@"//", "").Replace(@"\\", "").Substring(51);
                                             if (fileName == "")
                                             {
                                                 fileName = "artifact";
                                             }
                                             else { fileName = fileName.Replace(@"/", "").Replace(@"\", ""); }
-                                            System.IO.File.Move("ipfs/" + objstate.URN.Substring(5, 46) + "_tmp", @"ipfs/" + objstate.URN.Substring(5, 46) + @"/" + fileName);
+                                            Directory.CreateDirectory(@"ipfs/" + objstate.URN.Substring(5, 46));
+                                            System.IO.File.Move("ipfs/" + objstate.URN.Substring(5, 46) + "_tmp", urn);
                                         }
+
+                                        var SUP = new Options { CreateIfMissing = true };
 
                                         using (var db = new DB(SUP, @"ipfs"))
                                         {
@@ -1103,28 +1204,41 @@ namespace SUP
                                             }
                                         }
 
-                                        using (var db = new DB(SUP, @"ipfs"))
-                                        {
-                                            db.Delete(objstate.URN.Substring(5, 46));
+                                        try { btnReloadObject.Invoke(new Action(() => btnReloadObject.PerformClick())); } catch { }
+                                        Directory.Delete(@"ipfs/" + objstate.URN.Substring(5, 46) + "-build");
 
-                                        }
                                     });
                                 }
 
 
-                            }
+                            
                             break;
                         default:
-                            if (!System.IO.Directory.Exists(@"root/" + urnmatch.Value))
+                            Task.Run(() =>
                             {
-                                Root.GetRootByTransactionId(urnmatch.Value, "good-user", "better-password", @"http://127.0.0.1:18332");
-                            }
-                            else
-                            {
-                                string P2FKJSONString = System.IO.File.ReadAllText(@"root/" + urnmatch.Value + @"/OBJ.json");
-                                Root root = JsonConvert.DeserializeObject<Root>(P2FKJSONString);
-                                urnblockdate = root.BlockDate;
-                            }
+                                if (!System.IO.Directory.Exists(@"root/" + urnmatch.Value))
+                                {
+                                    Root root = Root.GetRootByTransactionId(urnmatch.Value, "good-user", "better-password", @"http://127.0.0.1:18332");
+                                    try
+                                    {
+                                        lblURNBlockDate.Invoke(new Action(() => lblURNBlockDate.Text = root.BlockDate.ToString("ddd, dd MMM yyyy hh:mm:ss")));
+                                    }
+                                    catch { }
+                                }
+                                else
+                                {
+                                    
+                                        try
+                                        {
+                                            string P2FKJSONString = System.IO.File.ReadAllText(@"root/" + urnmatch.Value + @"/OBJ.json");
+                                        Root root = JsonConvert.DeserializeObject<Root>(P2FKJSONString);
+                                        
+                                            lblURNBlockDate.Invoke(new Action(() => lblURNBlockDate.Text = root.BlockDate.ToString("ddd, dd MMM yyyy hh:mm:ss")));
+                                        }
+                                        catch { }
+                                   
+                                }
+                            });
                             break;
                     }
 
@@ -1142,83 +1256,117 @@ namespace SUP
                     switch (objstate.URI.Substring(0, 4))
                     {
                         case "MZC:":
+                            Task.Run(() =>
+                            {
+                                if (!System.IO.Directory.Exists(@"root/" + transactionid))
+                                {
+                                    Root root = Root.GetRootByTransactionId(transactionid, "good-user", "better-password", @"http://127.0.0.1:12832", "50");
+                                    try
+                                    {
+                                        lblURIBlockDate.Invoke(new Action(() => lblURIBlockDate.Text = root.BlockDate.ToString("ddd, dd MMM yyyy hh:mm:ss")));
+                                    }
+                                    catch { }
+                                }
+                                else
+                                {
+                                    try
+                                    {
+                                        string P2FKJSONString = System.IO.File.ReadAllText(@"root/" + transactionid + @"/OBJ.json");
+                                        Root root = JsonConvert.DeserializeObject<Root>(P2FKJSONString);
 
-                            if (!System.IO.Directory.Exists(@"root/" + transactionid))
-                            {
-                                Root root = Root.GetRootByTransactionId(transactionid, "good-user", "better-password", @"http://127.0.0.1:12832", "50");
-                                uriblockdate = root.BlockDate;
-                            }
-                            else
-                            {
-                                string P2FKJSONString = System.IO.File.ReadAllText(@"root/" + transactionid + @"/OBJ.json");
-                                Root root = JsonConvert.DeserializeObject<Root>(P2FKJSONString);
-                                uriblockdate = root.BlockDate;
-                            }
+                                        lblURIBlockDate.Invoke(new Action(() => lblURIBlockDate.Text = root.BlockDate.ToString("ddd, dd MMM yyyy hh:mm:ss")));
+                                    }
+                                    catch { }
+                                }
+                            });
                             break;
                         case "BTC:":
-                            if (!System.IO.Directory.Exists(@"root/" + transactionid))
+                            Task.Run(() =>
                             {
-                                Root root = Root.GetRootByTransactionId(transactionid, "good-user", "better-password", @"http://127.0.0.1:8332", "0");
-                                uriblockdate = root.BlockDate;
-                            }
-                            else
-                            {
-                                string P2FKJSONString = System.IO.File.ReadAllText(@"root/" + transactionid + @"/OBJ.json");
-                                Root root = JsonConvert.DeserializeObject<Root>(P2FKJSONString);
-                                uriblockdate = root.BlockDate;
-                            }
+                                if (!System.IO.Directory.Exists(@"root/" + transactionid))
+                                {
+                                    Root root = Root.GetRootByTransactionId(transactionid, "good-user", "better-password", @"http://127.0.0.1:8332", "0");
+                                    try
+                                    {
+                                        lblURIBlockDate.Invoke(new Action(() => lblURIBlockDate.Text = root.BlockDate.ToString("ddd, dd MMM yyyy hh:mm:ss")));
+                                    }
+                                    catch { }
+                                }
+                                else
+                                {
+                                    try
+                                    {
+                                        string P2FKJSONString = System.IO.File.ReadAllText(@"root/" + transactionid + @"/OBJ.json");
+                                        Root root = JsonConvert.DeserializeObject<Root>(P2FKJSONString);
+
+                                        lblURIBlockDate.Invoke(new Action(() => lblURIBlockDate.Text = root.BlockDate.ToString("ddd, dd MMM yyyy hh:mm:ss")));
+                                    }
+                                    catch { }
+                                }
+                            });
                             break;
                         case "LTC:":
-                            if (!System.IO.Directory.Exists(@"root/" + transactionid))
+                            Task.Run(() =>
                             {
-                                Root root = Root.GetRootByTransactionId(transactionid, "good-user", "better-password", @"http://127.0.0.1:9332", "48");
-                                uriblockdate = root.BlockDate;
-                            }
-                            else
-                            {
-                                string P2FKJSONString = System.IO.File.ReadAllText(@"root/" + transactionid + @"/OBJ.json");
-                                Root root = JsonConvert.DeserializeObject<Root>(P2FKJSONString);
-                                uriblockdate = root.BlockDate;
-                            }
+                                if (!System.IO.Directory.Exists(@"root/" + transactionid))
+                                {
+                                    Root root = Root.GetRootByTransactionId(transactionid, "good-user", "better-password", @"http://127.0.0.1:9332", "48");
+                                    try
+                                    {
+                                        lblURIBlockDate.Invoke(new Action(() => lblURIBlockDate.Text = root.BlockDate.ToString("ddd, dd MMM yyyy hh:mm:ss")));
+                                    }
+                                    catch { }
+                                }
+                                else
+                                {
+                                    try
+                                    {
+                                        string P2FKJSONString = System.IO.File.ReadAllText(@"root/" + transactionid + @"/OBJ.json");
+                                        Root root = JsonConvert.DeserializeObject<Root>(P2FKJSONString);
+
+                                        lblURIBlockDate.Invoke(new Action(() => lblURIBlockDate.Text = root.BlockDate.ToString("ddd, dd MMM yyyy hh:mm:ss")));
+                                    }
+                                    catch { }
+                                }
+                            });
                             break;
                         case "DOG:":
-                            if (!System.IO.Directory.Exists(@"root/" + transactionid))
+                            Task.Run(() =>
                             {
-                                Root root = Root.GetRootByTransactionId(transactionid, "good-user", "better-password", @"http://127.0.0.1:22555", "30");
-                                uriblockdate = root.BlockDate;
-                            }
-                            else
-                            {
-                                string P2FKJSONString = System.IO.File.ReadAllText(@"root/" + transactionid + @"/OBJ.json");
-                                Root root = JsonConvert.DeserializeObject<Root>(P2FKJSONString);
-                                uriblockdate = root.BlockDate;
-                            }
+                                if (!System.IO.Directory.Exists(@"root/" + transactionid))
+                                {
+                                    Root root = Root.GetRootByTransactionId(transactionid, "good-user", "better-password", @"http://127.0.0.1:22555", "30");
+                                    try
+                                    {
+                                        lblURIBlockDate.Invoke(new Action(() => lblURIBlockDate.Text = root.BlockDate.ToString("ddd, dd MMM yyyy hh:mm:ss")));
+                                    }
+                                    catch { }
+                                }
+                                else
+                                {
+
+                                    try
+                                    {
+                                        string P2FKJSONString = System.IO.File.ReadAllText(@"root/" + transactionid + @"/OBJ.json");
+                                        Root root = JsonConvert.DeserializeObject<Root>(P2FKJSONString);
+
+                                        lblURIBlockDate.Invoke(new Action(() => lblURIBlockDate.Text = root.BlockDate.ToString("ddd, dd MMM yyyy hh:mm:ss")));
+                                    }
+                                    catch { }
+
+                                }
+                            });
                             break;
                         case "IPFS":
                             uriurn = uriurn.Replace(@"\root\", @"\ipfs\");
                             transactionid = objstate.URI.Substring(5, 46);
                             if (objstate.URI.Length == 51) { uriurn += @"\artifact"; }
 
-                            if (!System.IO.Directory.Exists(@"ipfs/" + objstate.URI.Substring(5, 46)))
+                            if (!System.IO.Directory.Exists(@"ipfs/" + objstate.URI.Substring(5, 46)+"-build") && !System.IO.Directory.Exists(@"ipfs/" + objstate.URI.Substring(5, 46)))
                             {
-                                var SUP = new Options { CreateIfMissing = true };
-                                string isLoading;
-                                using (var db = new DB(SUP, @"ipfs"))
-                                {
-                                    isLoading = db.Get(objstate.URI.Substring(5, 46));
-
-                                }
-
-                                if (isLoading != "loading")
-                                {
-                                    using (var db = new DB(SUP, @"ipfs"))
-                                    {
-
-                                        db.Put(objstate.URI.Substring(5, 46), "loading");
-
-                                    }
                                     Task ipfsTask = Task.Run(() =>
                                     {
+                                        Directory.CreateDirectory(@"ipfs/" + objstate.URI.Substring(5, 46) + "-build");
                                         Process process2 = new Process();
                                         process2.StartInfo.FileName = @"ipfs\ipfs.exe";
                                         process2.StartInfo.Arguments = "get " + objstate.URI.Substring(5, 46) + @" -o ipfs\" + objstate.URI.Substring(5, 46);
@@ -1228,7 +1376,6 @@ namespace SUP
                                         if (System.IO.File.Exists("ipfs/" + objstate.URI.Substring(5, 46)))
                                         {
                                             System.IO.File.Move("ipfs/" + objstate.URI.Substring(5, 46), "ipfs/" + objstate.URI.Substring(5, 46) + "_tmp");
-                                            System.IO.Directory.CreateDirectory("ipfs/" + objstate.URI.Substring(5, 46));
                                             string fileName = objstate.URI.Replace(@"//", "").Replace(@"\\", "").Substring(51);
                                             if (fileName == "")
                                             {
@@ -1236,8 +1383,11 @@ namespace SUP
 
                                             }
                                             else { fileName = fileName.Replace(@"/", "").Replace(@"\", ""); }
+                                            Directory.CreateDirectory(@"ipfs/" + objstate.URI.Substring(5, 46));
                                             System.IO.File.Move("ipfs/" + objstate.URI.Substring(5, 46) + "_tmp", @"ipfs/" + objstate.URI.Substring(5, 46) + @"/" + fileName);
                                         }
+
+                                        var SUP = new Options { CreateIfMissing = true };
 
                                         using (var db = new DB(SUP, @"ipfs"))
                                         {
@@ -1260,28 +1410,42 @@ namespace SUP
                                             }
                                         }
 
-                                        using (var db = new DB(SUP, @"ipfs"))
-                                        {
-                                            db.Delete(objstate.URI.Substring(5, 46));
-
-                                        }
+                                        btnReloadObject.Invoke(new Action(() => btnReloadObject.PerformClick()));
+                                        Directory.Delete(@"ipfs/" + objstate.URI.Substring(5, 46) + "-build");
                                     });
                                 }
 
 
-                            }
+                            
                             break;
                         default:
-                            if (!System.IO.Directory.Exists(@"root/" + transactionid))
+                            Task.Run(() =>
                             {
-                                Root.GetRootByTransactionId(transactionid, "good-user", "better-password", @"http://127.0.0.1:18332");
-                            }
-                            else
-                            {
-                                string P2FKJSONString = System.IO.File.ReadAllText(@"root/" + transactionid + @"/OBJ.json");
-                                Root root = JsonConvert.DeserializeObject<Root>(P2FKJSONString);
-                                uriblockdate = root.BlockDate;
-                            }
+                                if (!System.IO.Directory.Exists(@"root/" + transactionid))
+                                {
+                                    Root root = Root.GetRootByTransactionId(transactionid, "good-user", "better-password", @"http://127.0.0.1:18332");
+                                    try
+                                    {
+                                        lblURIBlockDate.Invoke(new Action(() => lblURIBlockDate.Text = root.BlockDate.ToString("ddd, dd MMM yyyy hh:mm:ss")));
+                                    }
+                                    catch { }
+                                }
+                                else
+                                {
+
+                                  
+                                        try
+                                        {
+                                            string P2FKJSONString = System.IO.File.ReadAllText(@"root/" + transactionid + @"/OBJ.json");
+
+                                        Root root = JsonConvert.DeserializeObject<Root>(P2FKJSONString);
+                                       
+                                            lblURIBlockDate.Invoke(new Action(() => lblURIBlockDate.Text = root.BlockDate.ToString("ddd, dd MMM yyyy hh:mm:ss")));
+                                        }
+                                        catch { }
+                                    
+                                }
+                            });
                             break;
                     }
 
@@ -1343,18 +1507,18 @@ namespace SUP
 
 
                 lblProcessHeight.Text = objstate.ProcessHeight.ToString();
-                lblLastChangedDate.Text = objstate.ChangeDate.ToString("ddd, dd MMM yyyy hh:mm:ss"); ;
+                lblLastChangedDate.Text = objstate.ChangeDate.ToString("ddd, dd MMM yyyy hh:mm:ss");
                 if (urnblockdate.Year > 1)
                 {
-                    lblURNBlockDate.Text = urnblockdate.ToString("ddd, dd MMM yyyy hh:mm:ss"); ;
+                    lblURNBlockDate.Text = urnblockdate.ToString("ddd, dd MMM yyyy hh:mm:ss");
                 }
                 if (imgblockdate.Year > 1)
                 {
-                    lblIMGBlockDate.Text = imgblockdate.ToString("ddd, dd MMM yyyy hh:mm:ss"); ;
+                    lblIMGBlockDate.Text = imgblockdate.ToString("ddd, dd MMM yyyy hh:mm:ss");
                 }
                 if (uriblockdate.Year > 1)
                 {
-                    lblURIBlockDate.Text = uriblockdate.ToString("ddd, dd MMM yyyy hh:mm:ss"); ;
+                    lblURIBlockDate.Text = uriblockdate.ToString("ddd, dd MMM yyyy hh:mm:ss");
                 }
 
                 txtdesc.Text = objstate.Description;
@@ -1362,35 +1526,39 @@ namespace SUP
                 long totalQty = objstate.Owners.Values.Sum();
 
 
-                if (supPanel.Visible)
+                if (supPanel.Visible && isInitializing == false)
                 {
                     btnRefreshSup.PerformClick();
                 }
                 else
                 {
 
-                    btnRefreshOwners.PerformClick();
+                    if (!isInitializing) { btnRefreshOwners.PerformClick(); }
+                    isInitializing = false;
                 }
 
 
                 lblTotalOwnedMain.Text = "x" + totalQty.ToString("N0");
 
 
-
-                OBJState isOfficial = OBJState.GetObjectByURN(objstate.URN, "good-user", "better-password", "http://127.0.0.1:18332");
-                if (isOfficial.URN != null)
+                Task.Run(() =>
                 {
-                    if (isOfficial.Creators.First().Key != this._objectaddress)
+                    OBJState isOfficial = OBJState.GetObjectByURN(objstate.URN, "good-user", "better-password", "http://127.0.0.1:18332");
+                    if (isOfficial.URN != null)
                     {
-                        txtOfficialURN.Text = isOfficial.Creators.First().Key;
-                        btnOfficial.Visible = true;
-                    }
-                    else
-                    {
-                        lblOfficial.Visible = true;
-                    }
-                }
+                        if (isOfficial.Creators.First().Key != this._objectaddress)
+                        {
+                            txtOfficialURN.Invoke(new Action(() => txtOfficialURN.Text = isOfficial.Creators.First().Key));
+                            btnOfficial.Invoke(new Action(() => btnOfficial.Visible = true));
 
+                        }
+                        else
+                        {
+
+                            lblOfficial.Invoke(new Action(() => lblOfficial.Visible = true));
+                        }
+                    }
+                });
 
                 switch (extension.ToLower())
                 {
@@ -1504,7 +1672,7 @@ namespace SUP
                         try
                         {
                             potentialyUnsafeHtml = System.IO.File.ReadAllText(urn);
-                            
+
                         }
                         catch { }
 
@@ -1545,27 +1713,14 @@ namespace SUP
                                     case "IPFS":
 
                                         if (objstate.URN.Length == 51) { urn += @"\artifact"; }
-                                        if (!System.IO.Directory.Exists(@"ipfs/" + objstate.URN.Substring(5, 46)))
+                                        if (!System.IO.Directory.Exists(@"ipfs/" + objstate.URN.Substring(5, 46)+"-build") && !System.IO.Directory.Exists(@"ipfs/" + objstate.URN.Substring(5, 46)))
 
                                         {
-                                            var SUP = new Options { CreateIfMissing = true };
-                                            string isLoading;
-                                            using (var db = new DB(SUP, @"ipfs"))
-                                            {
-                                                isLoading = db.Get(objstate.URN.Substring(5, 46));
-
-                                            }
-
-                                            if (isLoading != "loading")
-                                            {
-                                                using (var db = new DB(SUP, @"ipfs"))
-                                                {
-
-                                                    db.Put(objstate.URN.Substring(5, 46), "loading");
-
-                                                }
+                                         
+                                            
                                                 Task ipfsTask = Task.Run(() =>
                                                 {
+                                                    Directory.CreateDirectory(@"ipfs/" + objstate.URN.Substring(5, 46) + "-build");
                                                     Process process2 = new Process();
                                                     process2.StartInfo.FileName = @"ipfs\ipfs.exe";
                                                     process2.StartInfo.Arguments = "get " + objstate.URN.Substring(5, 46) + @" -o ipfs\" + objstate.URN.Substring(5, 46);
@@ -1575,7 +1730,6 @@ namespace SUP
                                                     if (System.IO.File.Exists("ipfs/" + objstate.URN.Substring(5, 46)))
                                                     {
                                                         System.IO.File.Move("ipfs/" + objstate.URN.Substring(5, 46), "ipfs/" + objstate.URN.Substring(5, 46) + "_tmp");
-                                                        System.IO.Directory.CreateDirectory("ipfs/" + objstate.URN.Substring(5, 46));
                                                         string fileName = objstate.URN.Replace(@"//", "").Replace(@"\\", "").Substring(51);
                                                         if (fileName == "")
                                                         {
@@ -1583,8 +1737,11 @@ namespace SUP
 
                                                         }
                                                         else { fileName = fileName.Replace(@"/", "").Replace(@"\", ""); }
+                                                        Directory.CreateDirectory(@"ipfs/" + objstate.URN.Substring(5, 46));
                                                         System.IO.File.Move("ipfs/" + objstate.URN.Substring(5, 46) + "_tmp", @"ipfs/" + objstate.URN.Substring(5, 46) + @"/" + fileName);
                                                     }
+
+                                                    var SUP = new Options { CreateIfMissing = true };
 
                                                     using (var db = new DB(SUP, @"ipfs"))
                                                     {
@@ -1607,15 +1764,13 @@ namespace SUP
                                                         }
                                                     }
 
-                                                    using (var db = new DB(SUP, @"ipfs"))
-                                                    {
-                                                        db.Delete(objstate.URN.Substring(5, 46));
-
-                                                    }
+                                                    btnReloadObject.Invoke(new Action(() => btnReloadObject.PerformClick()));
+                                                    Directory.Delete(@"ipfs/" + objstate.URN.Substring(5, 46) + "-build");
                                                 });
+
                                             }
 
-                                        }
+                                        
                                         break;
                                     default:
                                         if (!System.IO.Directory.Exists(@"root/" + transactionid))
@@ -1636,31 +1791,46 @@ namespace SUP
                                         case "MZC:":
                                             if (!System.IO.Directory.Exists(@"root/" + transactionID.Value))
                                             {
-                                                Root.GetRootByTransactionId(transactionID.Value, "good-user", "better-password", @"http://127.0.0.1:12832", "50");
+                                                Task.Run(() =>
+                                                {
+                                                    Root.GetRootByTransactionId(transactionID.Value, "good-user", "better-password", @"http://127.0.0.1:12832", "50");
+                                                });
                                             }
                                             break;
                                         case "BTC:":
                                             if (!System.IO.Directory.Exists(@"root/" + transactionID.Value))
                                             {
-                                                Root.GetRootByTransactionId(transactionID.Value, "good-user", "better-password", @"http://127.0.0.1:8332", "0");
+                                                Task.Run(() =>
+                                                {
+                                                    Root.GetRootByTransactionId(transactionID.Value, "good-user", "better-password", @"http://127.0.0.1:8332", "0");
+                                                });
                                             }
                                             break;
                                         case "LTC:":
                                             if (!System.IO.Directory.Exists(@"root/" + transactionID.Value))
                                             {
-                                                Root.GetRootByTransactionId(transactionID.Value, "good-user", "better-password", @"http://127.0.0.1:9332", "48");
+                                                Task.Run(() =>
+                                                {
+                                                    Root.GetRootByTransactionId(transactionID.Value, "good-user", "better-password", @"http://127.0.0.1:9332", "48");
+                                                });
                                             }
                                             break;
                                         case "DOG:":
                                             if (!System.IO.Directory.Exists(@"root/" + transactionID.Value))
                                             {
-                                                Root.GetRootByTransactionId(transactionID.Value, "good-user", "better-password", @"http://127.0.0.1:22555", "30");
+                                                Task.Run(() =>
+                                                {
+                                                    Root.GetRootByTransactionId(transactionID.Value, "good-user", "better-password", @"http://127.0.0.1:22555", "30");
+                                                });
                                             }
                                             break;
                                         default:
                                             if (!System.IO.Directory.Exists(@"root/" + transactionID.Value))
                                             {
-                                                Root.GetRootByTransactionId(transactionID.Value, "good-user", "better-password", @"http://127.0.0.1:18332");
+                                                Task.Run(() =>
+                                                {
+                                                    Root.GetRootByTransactionId(transactionID.Value, "good-user", "better-password", @"http://127.0.0.1:18332");
+                                                });
                                             }
                                             break;
                                     }
@@ -1721,7 +1891,7 @@ namespace SUP
                         }
                         break;
                 }
-                
+
 
                 imgPicture.SuspendLayout();
                 imgPicture.ImageLocation = imgurn;
@@ -1852,6 +2022,8 @@ namespace SUP
         {
             new ObjectDetails(txtOfficialURN.Text).Show();
         }
+
+       
     }
 
 }

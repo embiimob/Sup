@@ -28,8 +28,6 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.flowPanel = new System.Windows.Forms.FlowLayoutPanel();
-            this.pictureBox1 = new System.Windows.Forms.PictureBox();
             this.webviewer = new Microsoft.Web.WebView2.WinForms.WebView2();
             this.button1 = new System.Windows.Forms.Button();
             this.OwnersPanel = new System.Windows.Forms.FlowLayoutPanel();
@@ -45,7 +43,6 @@
             this.button6 = new System.Windows.Forms.Button();
             this.supPanel = new System.Windows.Forms.Panel();
             this.supFlow = new System.Windows.Forms.FlowLayoutPanel();
-            this.txtSupMessage = new System.Windows.Forms.TextBox();
             this.btnRefreshSup = new System.Windows.Forms.Button();
             this.txtName = new System.Windows.Forms.Label();
             this.lblTotalOwnedDetail = new System.Windows.Forms.Label();
@@ -73,56 +70,40 @@
             this.lblLicense = new System.Windows.Forms.Label();
             this.transFlow = new System.Windows.Forms.FlowLayoutPanel();
             this.KeysFlow = new System.Windows.Forms.FlowLayoutPanel();
-            this.btnOfficial = new System.Windows.Forms.Button();
             this.txtOfficialURN = new System.Windows.Forms.TextBox();
             this.lblOfficial = new System.Windows.Forms.Label();
             this.lblWarning = new System.Windows.Forms.Label();
-            this.flowPanel.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
+            this.btnOfficial = new System.Windows.Forms.Button();
+            this.flowPanel = new System.Windows.Forms.Panel();
+            this.pictureBox1 = new System.Windows.Forms.PictureBox();
             ((System.ComponentModel.ISupportInitialize)(this.webviewer)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.imgPicture)).BeginInit();
             this.supPanel.SuspendLayout();
+            this.flowPanel.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.SuspendLayout();
-            // 
-            // flowPanel
-            // 
-            this.flowPanel.Controls.Add(this.pictureBox1);
-            this.flowPanel.Location = new System.Drawing.Point(295, 21);
-            this.flowPanel.Margin = new System.Windows.Forms.Padding(0);
-            this.flowPanel.Name = "flowPanel";
-            this.flowPanel.Size = new System.Drawing.Size(600, 600);
-            this.flowPanel.TabIndex = 0;
-            // 
-            // pictureBox1
-            // 
-            this.pictureBox1.BackColor = System.Drawing.SystemColors.ControlDark;
-            this.pictureBox1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.pictureBox1.Location = new System.Drawing.Point(3, 3);
-            this.pictureBox1.MinimumSize = new System.Drawing.Size(600, 600);
-            this.pictureBox1.Name = "pictureBox1";
-            this.pictureBox1.Size = new System.Drawing.Size(600, 600);
-            this.pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
-            this.pictureBox1.TabIndex = 0;
-            this.pictureBox1.TabStop = false;
-            this.pictureBox1.Click += new System.EventHandler(this.ShowFullScreenModeClick);
             // 
             // webviewer
             // 
             this.webviewer.AllowExternalDrop = true;
+            this.webviewer.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.webviewer.BackColor = System.Drawing.SystemColors.ControlDark;
             this.webviewer.CreationProperties = null;
             this.webviewer.DefaultBackgroundColor = System.Drawing.SystemColors.ControlDark;
-            this.webviewer.Location = new System.Drawing.Point(295, 21);
+            this.webviewer.Location = new System.Drawing.Point(344, 15);
             this.webviewer.Name = "webviewer";
-            this.webviewer.Size = new System.Drawing.Size(600, 600);
+            this.webviewer.Size = new System.Drawing.Size(500, 500);
             this.webviewer.TabIndex = 1;
             this.webviewer.ZoomFactor = 1D;
             // 
             // button1
             // 
+            this.button1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.button1.BackColor = System.Drawing.SystemColors.ControlDark;
             this.button1.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.button1.Location = new System.Drawing.Point(847, 576);
+            this.button1.Location = new System.Drawing.Point(799, 473);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(34, 31);
             this.button1.TabIndex = 2;
@@ -133,17 +114,20 @@
             // 
             // OwnersPanel
             // 
+            this.OwnersPanel.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.OwnersPanel.AutoScroll = true;
             this.OwnersPanel.BackColor = System.Drawing.SystemColors.InactiveCaption;
-            this.OwnersPanel.Location = new System.Drawing.Point(919, 41);
+            this.OwnersPanel.Location = new System.Drawing.Point(853, 41);
             this.OwnersPanel.Name = "OwnersPanel";
-            this.OwnersPanel.Size = new System.Drawing.Size(272, 317);
+            this.OwnersPanel.Size = new System.Drawing.Size(338, 212);
             this.OwnersPanel.TabIndex = 5;
             // 
             // label1
             // 
+            this.label1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(916, 25);
+            this.label1.Location = new System.Drawing.Point(850, 25);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(41, 13);
             this.label1.TabIndex = 6;
@@ -151,8 +135,9 @@
             // 
             // label2
             // 
+            this.label2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(915, 404);
+            this.label2.Location = new System.Drawing.Point(850, 289);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(45, 13);
             this.label2.TabIndex = 8;
@@ -160,11 +145,12 @@
             // 
             // CreatorsPanel
             // 
+            this.CreatorsPanel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.CreatorsPanel.AutoScroll = true;
             this.CreatorsPanel.BackColor = System.Drawing.SystemColors.InactiveCaption;
-            this.CreatorsPanel.Location = new System.Drawing.Point(911, 420);
+            this.CreatorsPanel.Location = new System.Drawing.Point(850, 305);
             this.CreatorsPanel.Name = "CreatorsPanel";
-            this.CreatorsPanel.Size = new System.Drawing.Size(157, 150);
+            this.CreatorsPanel.Size = new System.Drawing.Size(227, 150);
             this.CreatorsPanel.TabIndex = 7;
             // 
             // lblTotalOwnedMain
@@ -174,7 +160,7 @@
             this.lblTotalOwnedMain.Location = new System.Drawing.Point(92, 61);
             this.lblTotalOwnedMain.Name = "lblTotalOwnedMain";
             this.lblTotalOwnedMain.Padding = new System.Windows.Forms.Padding(3);
-            this.lblTotalOwnedMain.Size = new System.Drawing.Size(198, 23);
+            this.lblTotalOwnedMain.Size = new System.Drawing.Size(246, 23);
             this.lblTotalOwnedMain.TabIndex = 9;
             this.lblTotalOwnedMain.Text = "x";
             this.lblTotalOwnedMain.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
@@ -182,8 +168,9 @@
             // 
             // button2
             // 
+            this.button2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.button2.Enabled = false;
-            this.button2.Location = new System.Drawing.Point(1069, 420);
+            this.button2.Location = new System.Drawing.Point(1083, 305);
             this.button2.Name = "button2";
             this.button2.Size = new System.Drawing.Size(103, 33);
             this.button2.TabIndex = 10;
@@ -192,8 +179,9 @@
             // 
             // button4
             // 
+            this.button4.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.button4.Enabled = false;
-            this.button4.Location = new System.Drawing.Point(1069, 537);
+            this.button4.Location = new System.Drawing.Point(1083, 422);
             this.button4.Name = "button4";
             this.button4.Size = new System.Drawing.Size(103, 33);
             this.button4.TabIndex = 12;
@@ -212,22 +200,24 @@
             // 
             // txtdesc
             // 
+            this.txtdesc.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left)));
             this.txtdesc.BackColor = System.Drawing.SystemColors.InactiveCaption;
             this.txtdesc.BorderStyle = System.Windows.Forms.BorderStyle.None;
             this.txtdesc.Location = new System.Drawing.Point(19, 110);
             this.txtdesc.Multiline = true;
             this.txtdesc.Name = "txtdesc";
             this.txtdesc.ReadOnly = true;
-            this.txtdesc.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.txtdesc.Size = new System.Drawing.Size(256, 206);
+            this.txtdesc.Size = new System.Drawing.Size(319, 91);
             this.txtdesc.TabIndex = 22;
             this.txtdesc.Text = "description";
             this.txtdesc.Click += new System.EventHandler(this.CopyDescriptionByDescriptionClick);
             // 
             // button5
             // 
+            this.button5.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.button5.Enabled = false;
-            this.button5.Location = new System.Drawing.Point(1069, 457);
+            this.button5.Location = new System.Drawing.Point(1083, 342);
             this.button5.Name = "button5";
             this.button5.Size = new System.Drawing.Size(103, 33);
             this.button5.TabIndex = 28;
@@ -236,8 +226,9 @@
             // 
             // button6
             // 
+            this.button6.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.button6.Enabled = false;
-            this.button6.Location = new System.Drawing.Point(1069, 498);
+            this.button6.Location = new System.Drawing.Point(1083, 382);
             this.button6.Name = "button6";
             this.button6.Size = new System.Drawing.Size(103, 33);
             this.button6.TabIndex = 29;
@@ -246,39 +237,28 @@
             // 
             // supPanel
             // 
+            this.supPanel.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.supPanel.Controls.Add(this.supFlow);
-            this.supPanel.Controls.Add(this.txtSupMessage);
-            this.supPanel.Location = new System.Drawing.Point(909, 18);
+            this.supPanel.Location = new System.Drawing.Point(853, 15);
             this.supPanel.Name = "supPanel";
-            this.supPanel.Size = new System.Drawing.Size(282, 559);
+            this.supPanel.Size = new System.Drawing.Size(338, 238);
             this.supPanel.TabIndex = 31;
             // 
             // supFlow
             // 
             this.supFlow.AutoScroll = true;
-            this.supFlow.Location = new System.Drawing.Point(5, 6);
+            this.supFlow.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.supFlow.Location = new System.Drawing.Point(0, 0);
             this.supFlow.Name = "supFlow";
-            this.supFlow.Size = new System.Drawing.Size(270, 478);
+            this.supFlow.Size = new System.Drawing.Size(338, 238);
             this.supFlow.TabIndex = 3;
-            // 
-            // txtSupMessage
-            // 
-            this.txtSupMessage.BackColor = System.Drawing.SystemColors.GradientInactiveCaption;
-            this.txtSupMessage.ForeColor = System.Drawing.SystemColors.WindowFrame;
-            this.txtSupMessage.Location = new System.Drawing.Point(8, 490);
-            this.txtSupMessage.Multiline = true;
-            this.txtSupMessage.Name = "txtSupMessage";
-            this.txtSupMessage.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.txtSupMessage.Size = new System.Drawing.Size(252, 62);
-            this.txtSupMessage.TabIndex = 1;
-            this.txtSupMessage.Text = "This experimental Sup!? browser is read only\r\n\r\nUse the apertus.io @address featu" +
-    "re to direct your messages to this object\'s address\r\n\r\n* Only signed P2FK messag" +
-    "es are inspected.";
             // 
             // btnRefreshSup
             // 
+            this.btnRefreshSup.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.btnRefreshSup.Font = new System.Drawing.Font("Microsoft Sans Serif", 21.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnRefreshSup.Location = new System.Drawing.Point(1069, 579);
+            this.btnRefreshSup.Location = new System.Drawing.Point(1086, 473);
             this.btnRefreshSup.Name = "btnRefreshSup";
             this.btnRefreshSup.Size = new System.Drawing.Size(100, 42);
             this.btnRefreshSup.TabIndex = 2;
@@ -292,27 +272,29 @@
             this.txtName.Location = new System.Drawing.Point(92, 25);
             this.txtName.Margin = new System.Windows.Forms.Padding(0);
             this.txtName.Name = "txtName";
-            this.txtName.Size = new System.Drawing.Size(203, 38);
+            this.txtName.Size = new System.Drawing.Size(246, 38);
             this.txtName.TabIndex = 33;
             this.txtName.Text = "Title";
             this.txtName.Click += new System.EventHandler(this.CopyAddressByNameClick);
             // 
             // lblTotalOwnedDetail
             // 
+            this.lblTotalOwnedDetail.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.lblTotalOwnedDetail.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lblTotalOwnedDetail.ForeColor = System.Drawing.SystemColors.ControlText;
-            this.lblTotalOwnedDetail.Location = new System.Drawing.Point(948, 371);
+            this.lblTotalOwnedDetail.Location = new System.Drawing.Point(862, 256);
             this.lblTotalOwnedDetail.Name = "lblTotalOwnedDetail";
             this.lblTotalOwnedDetail.Padding = new System.Windows.Forms.Padding(3);
-            this.lblTotalOwnedDetail.Size = new System.Drawing.Size(221, 23);
+            this.lblTotalOwnedDetail.Size = new System.Drawing.Size(307, 23);
             this.lblTotalOwnedDetail.TabIndex = 34;
             this.lblTotalOwnedDetail.Text = "total";
             this.lblTotalOwnedDetail.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
             // chkRunTrustedObject
             // 
+            this.chkRunTrustedObject.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.chkRunTrustedObject.AutoSize = true;
-            this.chkRunTrustedObject.Location = new System.Drawing.Point(229, 347);
+            this.chkRunTrustedObject.Location = new System.Drawing.Point(229, 232);
             this.chkRunTrustedObject.Name = "chkRunTrustedObject";
             this.chkRunTrustedObject.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
             this.chkRunTrustedObject.Size = new System.Drawing.Size(46, 17);
@@ -323,8 +305,9 @@
             // 
             // btnRefreshOwners
             // 
+            this.btnRefreshOwners.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.btnRefreshOwners.Font = new System.Drawing.Font("Microsoft Sans Serif", 21.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnRefreshOwners.Location = new System.Drawing.Point(917, 580);
+            this.btnRefreshOwners.Location = new System.Drawing.Point(859, 473);
             this.btnRefreshOwners.Margin = new System.Windows.Forms.Padding(0);
             this.btnRefreshOwners.Name = "btnRefreshOwners";
             this.btnRefreshOwners.Size = new System.Drawing.Size(100, 42);
@@ -336,8 +319,9 @@
             // 
             // btnReloadObject
             // 
+            this.btnReloadObject.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.btnReloadObject.Font = new System.Drawing.Font("Microsoft Sans Serif", 21.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnReloadObject.Location = new System.Drawing.Point(177, 579);
+            this.btnReloadObject.Location = new System.Drawing.Point(230, 473);
             this.btnReloadObject.Name = "btnReloadObject";
             this.btnReloadObject.Size = new System.Drawing.Size(100, 42);
             this.btnReloadObject.TabIndex = 4;
@@ -347,8 +331,9 @@
             // 
             // btnRefreshTransactions
             // 
+            this.btnRefreshTransactions.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.btnRefreshTransactions.Font = new System.Drawing.Font("Microsoft Sans Serif", 21.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnRefreshTransactions.Location = new System.Drawing.Point(19, 579);
+            this.btnRefreshTransactions.Location = new System.Drawing.Point(6, 473);
             this.btnRefreshTransactions.Name = "btnRefreshTransactions";
             this.btnRefreshTransactions.Size = new System.Drawing.Size(100, 42);
             this.btnRefreshTransactions.TabIndex = 38;
@@ -358,8 +343,9 @@
             // 
             // lblURNBlockDate
             // 
+            this.lblURNBlockDate.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.lblURNBlockDate.AutoSize = true;
-            this.lblURNBlockDate.Location = new System.Drawing.Point(60, 351);
+            this.lblURNBlockDate.Location = new System.Drawing.Point(60, 236);
             this.lblURNBlockDate.Name = "lblURNBlockDate";
             this.lblURNBlockDate.Size = new System.Drawing.Size(103, 13);
             this.lblURNBlockDate.TabIndex = 39;
@@ -368,11 +354,12 @@
             // 
             // txtURN
             // 
-            this.txtURN.Location = new System.Drawing.Point(19, 367);
+            this.txtURN.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.txtURN.Location = new System.Drawing.Point(19, 252);
             this.txtURN.Multiline = true;
             this.txtURN.Name = "txtURN";
             this.txtURN.ScrollBars = System.Windows.Forms.ScrollBars.Horizontal;
-            this.txtURN.Size = new System.Drawing.Size(256, 34);
+            this.txtURN.Size = new System.Drawing.Size(311, 34);
             this.txtURN.TabIndex = 40;
             // 
             // label4
@@ -388,9 +375,10 @@
             // 
             // label3
             // 
+            this.label3.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.label3.AutoSize = true;
             this.label3.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label3.Location = new System.Drawing.Point(19, 409);
+            this.label3.Location = new System.Drawing.Point(19, 294);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(37, 15);
             this.label3.TabIndex = 44;
@@ -399,17 +387,19 @@
             // 
             // txtIMG
             // 
-            this.txtIMG.Location = new System.Drawing.Point(19, 427);
+            this.txtIMG.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.txtIMG.Location = new System.Drawing.Point(19, 312);
             this.txtIMG.Multiline = true;
             this.txtIMG.Name = "txtIMG";
             this.txtIMG.ScrollBars = System.Windows.Forms.ScrollBars.Horizontal;
-            this.txtIMG.Size = new System.Drawing.Size(256, 33);
+            this.txtIMG.Size = new System.Drawing.Size(311, 33);
             this.txtIMG.TabIndex = 43;
             // 
             // lblIMGBlockDate
             // 
+            this.lblIMGBlockDate.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.lblIMGBlockDate.AutoSize = true;
-            this.lblIMGBlockDate.Location = new System.Drawing.Point(60, 411);
+            this.lblIMGBlockDate.Location = new System.Drawing.Point(60, 296);
             this.lblIMGBlockDate.Name = "lblIMGBlockDate";
             this.lblIMGBlockDate.Size = new System.Drawing.Size(103, 13);
             this.lblIMGBlockDate.TabIndex = 42;
@@ -418,9 +408,10 @@
             // 
             // label6
             // 
+            this.label6.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.label6.AutoSize = true;
             this.label6.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label6.Location = new System.Drawing.Point(19, 465);
+            this.label6.Location = new System.Drawing.Point(19, 350);
             this.label6.Name = "label6";
             this.label6.Size = new System.Drawing.Size(35, 15);
             this.label6.TabIndex = 47;
@@ -429,17 +420,19 @@
             // 
             // txtURI
             // 
-            this.txtURI.Location = new System.Drawing.Point(19, 483);
+            this.txtURI.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.txtURI.Location = new System.Drawing.Point(19, 368);
             this.txtURI.Multiline = true;
             this.txtURI.Name = "txtURI";
             this.txtURI.ScrollBars = System.Windows.Forms.ScrollBars.Horizontal;
-            this.txtURI.Size = new System.Drawing.Size(256, 35);
+            this.txtURI.Size = new System.Drawing.Size(311, 35);
             this.txtURI.TabIndex = 46;
             // 
             // lblURIBlockDate
             // 
+            this.lblURIBlockDate.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.lblURIBlockDate.AutoSize = true;
-            this.lblURIBlockDate.Location = new System.Drawing.Point(60, 467);
+            this.lblURIBlockDate.Location = new System.Drawing.Point(60, 352);
             this.lblURIBlockDate.Name = "lblURIBlockDate";
             this.lblURIBlockDate.Size = new System.Drawing.Size(103, 13);
             this.lblURIBlockDate.TabIndex = 45;
@@ -449,7 +442,7 @@
             // lblImageFullPath
             // 
             this.lblImageFullPath.AutoSize = true;
-            this.lblImageFullPath.Location = new System.Drawing.Point(295, 621);
+            this.lblImageFullPath.Location = new System.Drawing.Point(292, 810);
             this.lblImageFullPath.Name = "lblImageFullPath";
             this.lblImageFullPath.Size = new System.Drawing.Size(71, 13);
             this.lblImageFullPath.TabIndex = 50;
@@ -470,8 +463,9 @@
             // 
             // lblphtitle
             // 
+            this.lblphtitle.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.lblphtitle.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblphtitle.Location = new System.Drawing.Point(15, 526);
+            this.lblphtitle.Location = new System.Drawing.Point(15, 411);
             this.lblphtitle.Name = "lblphtitle";
             this.lblphtitle.Size = new System.Drawing.Size(102, 15);
             this.lblphtitle.TabIndex = 52;
@@ -480,9 +474,10 @@
             // 
             // lbllcdtitle
             // 
+            this.lbllcdtitle.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.lbllcdtitle.AutoSize = true;
             this.lbllcdtitle.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lbllcdtitle.Location = new System.Drawing.Point(23, 546);
+            this.lbllcdtitle.Location = new System.Drawing.Point(23, 431);
             this.lbllcdtitle.Name = "lbllcdtitle";
             this.lbllcdtitle.Size = new System.Drawing.Size(94, 15);
             this.lbllcdtitle.TabIndex = 53;
@@ -491,8 +486,9 @@
             // 
             // lblProcessHeight
             // 
+            this.lblProcessHeight.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.lblProcessHeight.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblProcessHeight.Location = new System.Drawing.Point(120, 526);
+            this.lblProcessHeight.Location = new System.Drawing.Point(120, 411);
             this.lblProcessHeight.Name = "lblProcessHeight";
             this.lblProcessHeight.Size = new System.Drawing.Size(168, 15);
             this.lblProcessHeight.TabIndex = 54;
@@ -500,8 +496,9 @@
             // 
             // lblLastChangedDate
             // 
+            this.lblLastChangedDate.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.lblLastChangedDate.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblLastChangedDate.Location = new System.Drawing.Point(120, 546);
+            this.lblLastChangedDate.Location = new System.Drawing.Point(120, 431);
             this.lblLastChangedDate.Name = "lblLastChangedDate";
             this.lblLastChangedDate.Size = new System.Drawing.Size(168, 15);
             this.lblLastChangedDate.TabIndex = 55;
@@ -510,7 +507,7 @@
             // lblURNFullPath
             // 
             this.lblURNFullPath.AutoSize = true;
-            this.lblURNFullPath.Location = new System.Drawing.Point(295, 634);
+            this.lblURNFullPath.Location = new System.Drawing.Point(590, 810);
             this.lblURNFullPath.Name = "lblURNFullPath";
             this.lblURNFullPath.Size = new System.Drawing.Size(75, 13);
             this.lblURNFullPath.TabIndex = 48;
@@ -519,9 +516,10 @@
             // 
             // label5
             // 
+            this.label5.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.label5.AutoSize = true;
             this.label5.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label5.Location = new System.Drawing.Point(19, 319);
+            this.label5.Location = new System.Drawing.Point(19, 204);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(72, 15);
             this.label5.TabIndex = 56;
@@ -530,9 +528,10 @@
             // 
             // lblLicense
             // 
+            this.lblLicense.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.lblLicense.AutoSize = true;
             this.lblLicense.Font = new System.Drawing.Font("Microsoft Sans Serif", 6.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblLicense.Location = new System.Drawing.Point(90, 322);
+            this.lblLicense.Location = new System.Drawing.Point(90, 207);
             this.lblLicense.Margin = new System.Windows.Forms.Padding(0, 0, 3, 0);
             this.lblLicense.Name = "lblLicense";
             this.lblLicense.Size = new System.Drawing.Size(88, 12);
@@ -542,38 +541,29 @@
             // 
             // transFlow
             // 
+            this.transFlow.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left)));
             this.transFlow.AutoScroll = true;
-            this.transFlow.Location = new System.Drawing.Point(19, 110);
+            this.transFlow.Location = new System.Drawing.Point(3, 110);
             this.transFlow.Margin = new System.Windows.Forms.Padding(0);
             this.transFlow.Name = "transFlow";
-            this.transFlow.Size = new System.Drawing.Size(269, 370);
+            this.transFlow.Size = new System.Drawing.Size(335, 176);
             this.transFlow.TabIndex = 58;
             // 
             // KeysFlow
             // 
+            this.KeysFlow.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.KeysFlow.AutoScroll = true;
-            this.KeysFlow.Location = new System.Drawing.Point(18, 483);
+            this.KeysFlow.Location = new System.Drawing.Point(3, 292);
             this.KeysFlow.Name = "KeysFlow";
             this.KeysFlow.Padding = new System.Windows.Forms.Padding(0, 5, 0, 0);
-            this.KeysFlow.Size = new System.Drawing.Size(270, 87);
+            this.KeysFlow.Size = new System.Drawing.Size(335, 163);
             this.KeysFlow.TabIndex = 0;
             this.KeysFlow.Visible = false;
             // 
-            // btnOfficial
-            // 
-            this.btnOfficial.BackColor = System.Drawing.Color.Yellow;
-            this.btnOfficial.Location = new System.Drawing.Point(768, 577);
-            this.btnOfficial.Name = "btnOfficial";
-            this.btnOfficial.Size = new System.Drawing.Size(113, 28);
-            this.btnOfficial.TabIndex = 59;
-            this.btnOfficial.Text = "SEE OFFICIAL";
-            this.btnOfficial.UseVisualStyleBackColor = false;
-            this.btnOfficial.Visible = false;
-            this.btnOfficial.Click += new System.EventHandler(this.btnOfficial_Click);
-            // 
             // txtOfficialURN
             // 
-            this.txtOfficialURN.Location = new System.Drawing.Point(415, 624);
+            this.txtOfficialURN.Location = new System.Drawing.Point(834, 810);
             this.txtOfficialURN.Name = "txtOfficialURN";
             this.txtOfficialURN.Size = new System.Drawing.Size(100, 20);
             this.txtOfficialURN.TabIndex = 60;
@@ -581,11 +571,12 @@
             // 
             // lblOfficial
             // 
+            this.lblOfficial.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.lblOfficial.AutoSize = true;
             this.lblOfficial.BackColor = System.Drawing.SystemColors.HotTrack;
             this.lblOfficial.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lblOfficial.ForeColor = System.Drawing.Color.Yellow;
-            this.lblOfficial.Location = new System.Drawing.Point(23, 341);
+            this.lblOfficial.Location = new System.Drawing.Point(23, 226);
             this.lblOfficial.Margin = new System.Windows.Forms.Padding(0);
             this.lblOfficial.Name = "lblOfficial";
             this.lblOfficial.Padding = new System.Windows.Forms.Padding(4, 1, 1, 3);
@@ -596,24 +587,63 @@
             // 
             // lblWarning
             // 
+            this.lblWarning.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.lblWarning.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblWarning.Location = new System.Drawing.Point(465, 580);
+            this.lblWarning.Location = new System.Drawing.Point(8, 465);
             this.lblWarning.Name = "lblWarning";
-            this.lblWarning.Size = new System.Drawing.Size(373, 23);
+            this.lblWarning.Size = new System.Drawing.Size(363, 23);
             this.lblWarning.TabIndex = 62;
             this.lblWarning.Text = "WARNING THIS FILE WILL EXECUTE LOCALY";
             this.lblWarning.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             this.lblWarning.Visible = false;
+            // 
+            // btnOfficial
+            // 
+            this.btnOfficial.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnOfficial.BackColor = System.Drawing.Color.Yellow;
+            this.btnOfficial.Location = new System.Drawing.Point(721, 466);
+            this.btnOfficial.Name = "btnOfficial";
+            this.btnOfficial.Size = new System.Drawing.Size(113, 40);
+            this.btnOfficial.TabIndex = 63;
+            this.btnOfficial.Text = "SEE OFFICIAL";
+            this.btnOfficial.UseVisualStyleBackColor = false;
+            this.btnOfficial.Visible = false;
+            this.btnOfficial.Click += new System.EventHandler(this.btnOfficial_Click);
+            // 
+            // flowPanel
+            // 
+            this.flowPanel.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.flowPanel.Controls.Add(this.lblWarning);
+            this.flowPanel.Controls.Add(this.pictureBox1);
+            this.flowPanel.Location = new System.Drawing.Point(344, 15);
+            this.flowPanel.Name = "flowPanel";
+            this.flowPanel.Size = new System.Drawing.Size(500, 500);
+            this.flowPanel.TabIndex = 62;
+            // 
+            // pictureBox1
+            // 
+            this.pictureBox1.BackColor = System.Drawing.SystemColors.ControlDark;
+            this.pictureBox1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.pictureBox1.Location = new System.Drawing.Point(0, 0);
+            this.pictureBox1.Name = "pictureBox1";
+            this.pictureBox1.Size = new System.Drawing.Size(500, 500);
+            this.pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
+            this.pictureBox1.TabIndex = 1;
+            this.pictureBox1.TabStop = false;
             // 
             // ObjectDetails
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.SystemColors.InactiveCaption;
-            this.ClientSize = new System.Drawing.Size(1192, 642);
+            this.ClientSize = new System.Drawing.Size(1192, 527);
             this.Controls.Add(this.btnOfficial);
-            this.Controls.Add(this.lblWarning);
             this.Controls.Add(this.transFlow);
+            this.Controls.Add(this.button1);
+            this.Controls.Add(this.flowPanel);
+            this.Controls.Add(this.lblOfficial);
             this.Controls.Add(this.txtOfficialURN);
             this.Controls.Add(this.KeysFlow);
             this.Controls.Add(this.imgPicture);
@@ -650,25 +680,19 @@
             this.Controls.Add(this.label2);
             this.Controls.Add(this.CreatorsPanel);
             this.Controls.Add(this.label1);
-            this.Controls.Add(this.button1);
             this.Controls.Add(this.OwnersPanel);
-            this.Controls.Add(this.flowPanel);
             this.Controls.Add(this.webviewer);
             this.Controls.Add(this.lblTotalOwnedDetail);
-            this.Controls.Add(this.lblOfficial);
             this.Controls.Add(this.label4);
-            this.MaximumSize = new System.Drawing.Size(1208, 681);
-            this.MinimumSize = new System.Drawing.Size(1208, 681);
             this.Name = "ObjectDetails";
             this.Padding = new System.Windows.Forms.Padding(3);
             this.Text = "ObjectDetails";
             this.Load += new System.EventHandler(this.ObjectDetails_Load);
-            this.flowPanel.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.webviewer)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.imgPicture)).EndInit();
             this.supPanel.ResumeLayout(false);
-            this.supPanel.PerformLayout();
+            this.flowPanel.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -680,9 +704,6 @@
         }
 
         #endregion
-
-        private System.Windows.Forms.FlowLayoutPanel flowPanel;
-        private System.Windows.Forms.PictureBox pictureBox1;
         private Microsoft.Web.WebView2.WinForms.WebView2 webviewer;
         private System.Windows.Forms.Button button1;
         private System.Windows.Forms.FlowLayoutPanel OwnersPanel;
@@ -698,7 +719,6 @@
         private System.Windows.Forms.Button button6;
         private System.Windows.Forms.Panel supPanel;
         private System.Windows.Forms.Button btnRefreshSup;
-        private System.Windows.Forms.TextBox txtSupMessage;
         private System.Windows.Forms.FlowLayoutPanel supFlow;
         private System.Windows.Forms.Label lblTotalOwnedDetail;
         private System.Windows.Forms.CheckBox chkRunTrustedObject;
@@ -726,9 +746,11 @@
         private System.Windows.Forms.FlowLayoutPanel transFlow;
         public System.Windows.Forms.Label txtName;
         private System.Windows.Forms.FlowLayoutPanel KeysFlow;
-        public System.Windows.Forms.Button btnOfficial;
         private System.Windows.Forms.TextBox txtOfficialURN;
         public System.Windows.Forms.Label lblOfficial;
         private System.Windows.Forms.Label lblWarning;
+        public System.Windows.Forms.Button btnOfficial;
+        private System.Windows.Forms.Panel flowPanel;
+        private System.Windows.Forms.PictureBox pictureBox1;
     }
 }
