@@ -106,6 +106,7 @@ namespace SUP
                     this.Invoke((Action)(() =>
                     {
                         flowLayoutPanel1.Visible = false;
+                        pages.Visible = false;
                     }));
 
                 }
@@ -120,6 +121,7 @@ namespace SUP
                     this.Invoke((Action)(() =>
                     {
                         flowLayoutPanel1.Visible = false;
+                        pages.Visible = false;
                     }));
 
                 }
@@ -135,6 +137,7 @@ namespace SUP
                         this.Invoke((Action)(() =>
                         {
                             flowLayoutPanel1.Visible = false;
+                            pages.Visible = false;
                         }));
 
                     }
@@ -151,6 +154,7 @@ namespace SUP
                         this.Invoke((Action)(() =>
                         {
                             flowLayoutPanel1.Visible = false;
+                            pages.Visible = false;
                         }));
 
                     }
@@ -494,10 +498,13 @@ namespace SUP
                                 {
                                     foundObject.Height = 221;
                                     flowLayoutPanel1.Controls.Add(foundObject);
+                                    this.MinimumSize = new System.Drawing.Size(709, 558);
+
                                 }
                                 if (_viewMode == 1)
                                 {
                                     flowLayoutPanel1.Controls.Add(foundObject);
+                                    this.MinimumSize = new System.Drawing.Size(709, 558);
                                 }
 
                                 if (_viewMode == 2)
@@ -505,6 +512,8 @@ namespace SUP
 
                                     ObjectDetailsControl control = new ObjectDetailsControl(foundObject.ObjectAddress.Text);
                                     flowLayoutPanel1.Controls.Add(control);
+                                    this.MinimumSize = new System.Drawing.Size(1101, 521);
+                                    this.Size = new System.Drawing.Size(1101, 521);
                                 }
 
 
@@ -532,6 +541,7 @@ namespace SUP
                 this.Invoke((Action)(() =>
                 {
                     flowLayoutPanel1.Visible = false;
+                    pages.Visible = false;
                 }));
 
             }
@@ -828,7 +838,27 @@ namespace SUP
                                     }
                                 }
                                 foundObject.ResumeLayout();
-                                flowLayoutPanel1.Controls.Add(foundObject);
+                                if (_viewMode == 0)
+                                {
+                                    foundObject.Height = 221;
+                                    flowLayoutPanel1.Controls.Add(foundObject);
+                                    this.MinimumSize = new System.Drawing.Size(709, 558);
+
+                                }
+                                if (_viewMode == 1)
+                                {
+                                    flowLayoutPanel1.Controls.Add(foundObject);
+                                    this.MinimumSize = new System.Drawing.Size(709, 558);
+                                }
+
+                                if (_viewMode == 2)
+                                {
+
+                                    ObjectDetailsControl control = new ObjectDetailsControl(foundObject.ObjectAddress.Text);
+                                    flowLayoutPanel1.Controls.Add(control);
+                                    this.MinimumSize = new System.Drawing.Size(1101, 521);
+                                    this.Size = new System.Drawing.Size(1101, 521);
+                                }
 
 
 
@@ -1096,7 +1126,27 @@ namespace SUP
                     }
                 }
 
-                flowLayoutPanel1.Controls.Add(foundObject);
+                if (_viewMode == 0)
+                {
+                    foundObject.Height = 221;
+                    flowLayoutPanel1.Controls.Add(foundObject);
+                    this.MinimumSize = new System.Drawing.Size(709, 558);
+
+                }
+                if (_viewMode == 1)
+                {
+                    flowLayoutPanel1.Controls.Add(foundObject);
+                    this.MinimumSize = new System.Drawing.Size(709, 558);
+                }
+
+                if (_viewMode == 2)
+                {
+
+                    ObjectDetailsControl control = new ObjectDetailsControl(foundObject.ObjectAddress.Text);
+                    flowLayoutPanel1.Controls.Add(control);
+                    this.MinimumSize = new System.Drawing.Size(1101, 521);
+                    this.Size = new System.Drawing.Size(1101, 521);
+                }
             }
 
         }
@@ -1127,6 +1177,7 @@ namespace SUP
                 }
                 await Task.Run(() => BuildSearchResults());
                 flowLayoutPanel1.Visible = true;
+                 pages.Visible = true;
                 EnableSupInput();
 
             }
@@ -1146,7 +1197,6 @@ namespace SUP
             if (txtSearchAddress.Text != "" && !txtSearchAddress.Text.StartsWith("#") && !txtSearchAddress.Text.ToUpper().StartsWith("BTC:") && !txtSearchAddress.Text.ToUpper().StartsWith("MZC:") && !txtSearchAddress.Text.ToUpper().StartsWith("LTC:") && !txtSearchAddress.Text.ToUpper().StartsWith("IPFS:") && !txtSearchAddress.Text.ToUpper().StartsWith("HTTP") && !txtSearchAddress.Text.ToUpper().StartsWith("SUP:"))
             {
                 DisableSupInput();
-                pages.Visible = false;
                 pages.Value = 0;
                 Random rnd = new Random();
                 string[] gifFiles = Directory.GetFiles("includes", "*.gif");
@@ -1162,6 +1212,7 @@ namespace SUP
                 }
                 await Task.Run(() => BuildSearchResults());
                 flowLayoutPanel1.Visible = true;
+                pages.Visible = true;
                 EnableSupInput();
 
             }
@@ -1214,7 +1265,6 @@ namespace SUP
                 e.Handled = true;
                 e.SuppressKeyPress = true;
                 DisableSupInput();
-                pages.Visible = false;
                 pages.Value = int.Parse(txtLast.Text);
                 Random rnd = new Random();
                 string[] gifFiles = Directory.GetFiles("includes", "*.gif");
@@ -1230,6 +1280,7 @@ namespace SUP
                 }
                 await Task.Run(() => BuildSearchResults());
                 flowLayoutPanel1.Visible = true;
+                pages.Visible = true;
                 EnableSupInput();
 
             }
@@ -1713,9 +1764,33 @@ namespace SUP
                             foundObject.ResumeLayout();
 
 
+                            if (_viewMode == 0)
+                            {
+                                foundObject.Height = 221;
+                                flowLayoutPanel1.Controls.Add(foundObject);
+                                this.MinimumSize = new System.Drawing.Size(709, 558);
+                                flowLayoutPanel1.Controls.SetChildIndex(foundObject, 0);
 
-                            flowLayoutPanel1.Controls.Add(foundObject);
-                            flowLayoutPanel1.Controls.SetChildIndex(foundObject, 0);
+                            }
+                            if (_viewMode == 1)
+                            {
+                                flowLayoutPanel1.Controls.Add(foundObject);
+                                this.MinimumSize = new System.Drawing.Size(709, 558);
+                                flowLayoutPanel1.Controls.SetChildIndex(foundObject, 0);
+                            }
+
+                            if (_viewMode == 2)
+                            {
+
+                                ObjectDetailsControl control = new ObjectDetailsControl(foundObject.ObjectAddress.Text);
+                                flowLayoutPanel1.Controls.Add(control);
+                                this.MinimumSize = new System.Drawing.Size(1101, 521);
+                                this.Size = new System.Drawing.Size(1101, 521);
+                                flowLayoutPanel1.Controls.SetChildIndex(control, 0);
+                            }
+
+
+                           
 
 
 
@@ -1779,6 +1854,7 @@ namespace SUP
                     }
                     await Task.Run(() => BuildSearchResults());
                     flowLayoutPanel1.Visible = true;
+                    pages.Visible = true;
                     EnableSupInput();
 
                 }
@@ -1887,7 +1963,6 @@ namespace SUP
         private async void flowLayoutPanel1_DragDrop(object sender, System.Windows.Forms.DragEventArgs e)
         {
             DisableSupInput();
-            pages.Visible = false;
             pages.Value = 0;
             Random rnd = new Random();
             string[] gifFiles = Directory.GetFiles("includes", "*.gif");
@@ -1905,6 +1980,7 @@ namespace SUP
             string filePath = filePaths[0];
             await Task.Run(() => GetObjectByFile(filePath));
             flowLayoutPanel1.Visible = true;
+            pages.Visible = true;
             EnableSupInput();
 
         }
@@ -1939,8 +2015,8 @@ namespace SUP
 
         private async void btnLive_Click(object sender, EventArgs e)
         {
-            pages.Visible = false;
-            pages.Value = 0;
+           
+         
             if (btnLive.BackColor == Color.White)
             {
                 btnLive.BackColor = Color.Blue;
@@ -1961,6 +2037,7 @@ namespace SUP
                 }
                 await Task.Run(() => BuildSearchResults());
                 flowLayoutPanel1.Visible = true;
+                pages.Visible = true;
                 btnLive.Enabled = true;
             }
             else
@@ -2611,37 +2688,6 @@ namespace SUP
             }
         }
 
-        private async void ObjectBrowser_ResizeEnd(object sender, EventArgs e)
-        {
-
-
-            //if (pages.LargeChange != ((flowLayoutPanel1.Width / 211) * 3))
-            //{
-            //    pages.LargeChange = ((flowLayoutPanel1.Width / 211) * 3);
-
-            //    txtLast.Text = pages.Value.ToString();
-            //    txtQty.Text = pages.LargeChange.ToString();
-            //    Random rnd = new Random();
-            //    string[] gifFiles = Directory.GetFiles("includes", "*.gif");
-            //    if (gifFiles.Length > 0)
-            //    {
-            //        int randomIndex = rnd.Next(gifFiles.Length);
-            //        string randomGifFile = gifFiles[randomIndex];
-            //        imgLoading.ImageLocation = randomGifFile;
-            //    }
-            //    else
-            //    {
-            //        imgLoading.ImageLocation = @"includes\HugPuddle.jpg";
-            //    }
-
-            //    await Task.Run(() => BuildSearchResults());
-            //    flowLayoutPanel1.Visible = true;
-
-            //}
-
-
-        }
-
         private async void ObjectBrowser_Resize(object sender, EventArgs e)
         {
             if (this.WindowState == FormWindowState.Maximized)
@@ -2668,6 +2714,7 @@ namespace SUP
 
                     await Task.Run(() => BuildSearchResults());
                     flowLayoutPanel1.Visible = true;
+                    pages.Visible = true;
 
                 }
             }
@@ -2697,6 +2744,7 @@ namespace SUP
                 }
                 await Task.Run(() => BuildSearchResults());
                 flowLayoutPanel1.Visible = true;
+                pages.Visible = true;
             }
         }
 
@@ -2750,6 +2798,7 @@ namespace SUP
 
             await Task.Run(() => BuildSearchResults());
             flowLayoutPanel1.Visible = true;
+            pages.Visible = true;
         }
 
 

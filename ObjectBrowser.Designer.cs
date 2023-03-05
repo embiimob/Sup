@@ -212,7 +212,7 @@ namespace SUP
             this.imgLoading.ImageLocation = "";
             this.imgLoading.Location = new System.Drawing.Point(0, 28);
             this.imgLoading.Name = "imgLoading";
-            this.imgLoading.Size = new System.Drawing.Size(693, 451);
+            this.imgLoading.Size = new System.Drawing.Size(693, 493);
             this.imgLoading.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
             this.imgLoading.TabIndex = 81;
             this.imgLoading.TabStop = false;
@@ -225,7 +225,7 @@ namespace SUP
             | System.Windows.Forms.AnchorStyles.Right)));
             this.flowLayoutPanel1.Location = new System.Drawing.Point(0, 28);
             this.flowLayoutPanel1.Name = "flowLayoutPanel1";
-            this.flowLayoutPanel1.Size = new System.Drawing.Size(693, 451);
+            this.flowLayoutPanel1.Size = new System.Drawing.Size(693, 448);
             this.flowLayoutPanel1.TabIndex = 82;
             this.flowLayoutPanel1.DragDrop += new System.Windows.Forms.DragEventHandler(this.flowLayoutPanel1_DragDrop);
             this.flowLayoutPanel1.DragEnter += new System.Windows.Forms.DragEventHandler(this.flowLayoutPanel1_DragEnter);
@@ -234,10 +234,11 @@ namespace SUP
             // 
             this.pages.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.pages.AutoSize = false;
             this.pages.LargeChange = 12;
-            this.pages.Location = new System.Drawing.Point(2, 431);
+            this.pages.Location = new System.Drawing.Point(0, 476);
             this.pages.Name = "pages";
-            this.pages.Size = new System.Drawing.Size(689, 45);
+            this.pages.Size = new System.Drawing.Size(692, 45);
             this.pages.TabIndex = 84;
             this.pages.TickStyle = System.Windows.Forms.TickStyle.Both;
             this.pages.Scroll += new System.EventHandler(this.pages_Scroll);
@@ -262,9 +263,9 @@ namespace SUP
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(693, 477);
-            this.Controls.Add(this.txtTotal);
+            this.ClientSize = new System.Drawing.Size(693, 519);
             this.Controls.Add(this.pages);
+            this.Controls.Add(this.txtTotal);
             this.Controls.Add(this.txtLast);
             this.Controls.Add(this.txtQty);
             this.Controls.Add(this.btnLive);
@@ -279,12 +280,11 @@ namespace SUP
             this.Controls.Add(this.txtSearchAddress);
             this.Controls.Add(this.flowLayoutPanel1);
             this.Controls.Add(this.imgLoading);
-            this.MinimumSize = new System.Drawing.Size(709, 516);
+            this.MinimumSize = new System.Drawing.Size(709, 558);
             this.Name = "ObjectBrowser";
             this.RightToLeft = System.Windows.Forms.RightToLeft.No;
             this.Text = "Sup!? Object Browser";
             this.Load += new System.EventHandler(this.ObjectBrowserLoad);
-            this.ResizeEnd += new System.EventHandler(this.ObjectBrowser_ResizeEnd);
             this.Resize += new System.EventHandler(this.ObjectBrowser_Resize);
             ((System.ComponentModel.ISupportInitialize)(this.imgLoading)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pages)).EndInit();
