@@ -460,6 +460,7 @@ namespace SUP.P2FK
                             
                             var db = new DB(ROOT, @"root\sup");
                             db.Put(keyword.Key + "!" + P2FKRoot.BlockDate.ToString("yyyyMMddHHmmss"), msg);
+                            db.Put("lastkey!" + keyword.Key, keyword.Key + "!" + P2FKRoot.BlockDate.ToString("yyyyMMddHHmmss"));
                             db.Close();
                         }
                         catch {
@@ -470,6 +471,7 @@ namespace SUP.P2FK
                             {
                                 var db = new DB(ROOT, @"root\sup");
                                 db.Put(keyword.Key + "!" + P2FKRoot.BlockDate.ToString("yyyyMMddHHmmss"), msg);
+                                db.Put("lastkey!" + keyword.Key ,keyword.Key + "!" + P2FKRoot.BlockDate.ToString("yyyyMMddHHmmss"));
                                 db.Close();
                             
                             }
@@ -479,6 +481,7 @@ namespace SUP.P2FK
                         try { 
                             var db2 = new DB(ROOT, @"root\sup2");
                             db2.Put(keyword.Key + "!" + P2FKRoot.BlockDate.ToString("yyyyMMddHHmmss"), msg);
+                            db2.Put("lastkey!" + keyword.Key, keyword.Key + "!" + P2FKRoot.BlockDate.ToString("yyyyMMddHHmmss"));
                             db2.Close();
                         }
                         catch {
@@ -488,6 +491,7 @@ namespace SUP.P2FK
                             {
                                 var db2 = new DB(ROOT, @"root\sup2");
                                 db2.Put(keyword.Key + "!" + P2FKRoot.BlockDate.ToString("yyyyMMddHHmmss"), msg);
+                                db2.Put("lastkey!" + keyword.Key, keyword.Key + "!" + P2FKRoot.BlockDate.ToString("yyyyMMddHHmmss"));
                                 db2.Close();
                             }
                             catch { Directory.Delete(@"root\sup",true); Directory.Delete(@"root\sup2",true); }
@@ -509,6 +513,7 @@ namespace SUP.P2FK
                         var ROOT = new Options { CreateIfMissing = true };
                         var db = new DB(ROOT, @"root\sec");
                         db.Put(keyword.Key + "!" + P2FKRoot.BlockDate.ToString("yyyyMMddHHmmss"), msg);
+                        db.Put("lastkey!"+keyword.Key,keyword.Key + "!" + P2FKRoot.BlockDate.ToString("yyyyMMddHHmmss"));
                         db.Close();
 
                     }

@@ -57,7 +57,7 @@
             this.ObjectImage.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.ObjectImage.ImageLocation = "";
             this.ObjectImage.InitialImage = null;
-            this.ObjectImage.Location = new System.Drawing.Point(0, 0);
+            this.ObjectImage.Location = new System.Drawing.Point(7, 5);
             this.ObjectImage.Margin = new System.Windows.Forms.Padding(0);
             this.ObjectImage.Name = "ObjectImage";
             this.ObjectImage.Size = new System.Drawing.Size(208, 208);
@@ -74,7 +74,7 @@
             this.panel1.Controls.Add(this.label4);
             this.panel1.Controls.Add(this.ObjectOffer);
             this.panel1.Controls.Add(this.label3);
-            this.panel1.Location = new System.Drawing.Point(-1, 327);
+            this.panel1.Location = new System.Drawing.Point(3, 336);
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(210, 40);
             this.panel1.TabIndex = 5;
@@ -96,7 +96,7 @@
             // 
             this.label4.AutoSize = true;
             this.label4.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label4.Location = new System.Drawing.Point(174, 0);
+            this.label4.Location = new System.Drawing.Point(175, 6);
             this.label4.MaximumSize = new System.Drawing.Size(170, 0);
             this.label4.Name = "label4";
             this.label4.Padding = new System.Windows.Forms.Padding(0, 3, 0, 0);
@@ -124,7 +124,7 @@
             // 
             this.label3.AutoSize = true;
             this.label3.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label3.Location = new System.Drawing.Point(2, -1);
+            this.label3.Location = new System.Drawing.Point(3, 5);
             this.label3.MaximumSize = new System.Drawing.Size(170, 0);
             this.label3.Name = "label3";
             this.label3.Padding = new System.Windows.Forms.Padding(0, 3, 0, 0);
@@ -140,7 +140,7 @@
             // 
             this.ObjectDescription.BackColor = System.Drawing.SystemColors.ActiveCaption;
             this.ObjectDescription.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.ObjectDescription.Location = new System.Drawing.Point(3, 257);
+            this.ObjectDescription.Location = new System.Drawing.Point(4, 263);
             this.ObjectDescription.Name = "ObjectDescription";
             this.ObjectDescription.Size = new System.Drawing.Size(202, 51);
             this.ObjectDescription.TabIndex = 6;
@@ -153,7 +153,7 @@
             this.ObjectQty.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.ObjectQty.BackColor = System.Drawing.SystemColors.ActiveCaption;
             this.ObjectQty.Font = new System.Drawing.Font("Microsoft Sans Serif", 6.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.ObjectQty.Location = new System.Drawing.Point(127, 213);
+            this.ObjectQty.Location = new System.Drawing.Point(138, 219);
             this.ObjectQty.Name = "ObjectQty";
             this.ObjectQty.Size = new System.Drawing.Size(78, 20);
             this.ObjectQty.TabIndex = 7;
@@ -166,7 +166,7 @@
             this.ObjectAddress.BackColor = System.Drawing.SystemColors.ActiveCaption;
             this.ObjectAddress.Font = new System.Drawing.Font("Microsoft Sans Serif", 5.75F);
             this.ObjectAddress.ImageAlign = System.Drawing.ContentAlignment.BottomCenter;
-            this.ObjectAddress.Location = new System.Drawing.Point(5, 305);
+            this.ObjectAddress.Location = new System.Drawing.Point(6, 311);
             this.ObjectAddress.Name = "ObjectAddress";
             this.ObjectAddress.Size = new System.Drawing.Size(176, 21);
             this.ObjectAddress.TabIndex = 8;
@@ -178,7 +178,7 @@
             // 
             this.ObjectName.BackColor = System.Drawing.SystemColors.ActiveCaption;
             this.ObjectName.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.ObjectName.Location = new System.Drawing.Point(2, 215);
+            this.ObjectName.Location = new System.Drawing.Point(3, 221);
             this.ObjectName.Margin = new System.Windows.Forms.Padding(0);
             this.ObjectName.Name = "ObjectName";
             this.ObjectName.Size = new System.Drawing.Size(122, 18);
@@ -215,7 +215,7 @@
             this.flowLayoutPanel1.BackColor = System.Drawing.SystemColors.ActiveCaption;
             this.flowLayoutPanel1.Controls.Add(this.ObjectCreators);
             this.flowLayoutPanel1.Controls.Add(this.ObjectCreators2);
-            this.flowLayoutPanel1.Location = new System.Drawing.Point(0, 238);
+            this.flowLayoutPanel1.Location = new System.Drawing.Point(1, 244);
             this.flowLayoutPanel1.Margin = new System.Windows.Forms.Padding(10, 3, 10, 3);
             this.flowLayoutPanel1.Name = "flowLayoutPanel1";
             this.flowLayoutPanel1.Size = new System.Drawing.Size(207, 20);
@@ -255,7 +255,7 @@
             this.lblOfficial.BackColor = System.Drawing.SystemColors.HotTrack;
             this.lblOfficial.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lblOfficial.ForeColor = System.Drawing.Color.Yellow;
-            this.lblOfficial.Location = new System.Drawing.Point(2, 2);
+            this.lblOfficial.Location = new System.Drawing.Point(0, 0);
             this.lblOfficial.Margin = new System.Windows.Forms.Padding(0);
             this.lblOfficial.Name = "lblOfficial";
             this.lblOfficial.Padding = new System.Windows.Forms.Padding(1, 1, 1, 3);
@@ -268,7 +268,7 @@
             // 
             this.lblTrash.AutoSize = true;
             this.lblTrash.BackColor = System.Drawing.SystemColors.ActiveCaption;
-            this.lblTrash.Location = new System.Drawing.Point(188, 312);
+            this.lblTrash.Location = new System.Drawing.Point(196, 317);
             this.lblTrash.Name = "lblTrash";
             this.lblTrash.Size = new System.Drawing.Size(19, 13);
             this.lblTrash.TabIndex = 17;
@@ -295,10 +295,9 @@
             this.Controls.Add(this.ObjectId);
             this.DoubleBuffered = true;
             this.Margin = new System.Windows.Forms.Padding(1, 2, 2, 2);
-            this.MaximumSize = new System.Drawing.Size(208, 367);
             this.Name = "FoundObjectControl";
             this.Padding = new System.Windows.Forms.Padding(0, 10, 0, 0);
-            this.Size = new System.Drawing.Size(208, 329);
+            this.Size = new System.Drawing.Size(221, 336);
             this.Click += new System.EventHandler(this.foundObjectControl_Click);
             ((System.ComponentModel.ISupportInitialize)(this.ObjectImage)).EndInit();
             this.panel1.ResumeLayout(false);

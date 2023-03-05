@@ -266,6 +266,7 @@ namespace SUP.P2FK
             }
             catch { }
 
+            if (profileState.URN == null && diskpath.Length > 5) { try { Directory.Delete(diskpath); } catch { } }
             var intProcessHeight = profileState.Id;
             Root[] profileTransactions;
       

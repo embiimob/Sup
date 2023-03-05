@@ -495,6 +495,7 @@ namespace SUP
 
 
                                 //ObjectDetailsControl control = new ObjectDetailsControl(foundObject.ObjectAddress.Text);
+                                
                                 //flowLayoutPanel1.Controls.Add(control);
 
                                 flowLayoutPanel1.Controls.Add(foundObject);

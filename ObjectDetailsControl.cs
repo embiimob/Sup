@@ -22,6 +22,7 @@ namespace SUP
             control.Visible = true;
             control.ControlBox = false; // Remove minimize, maximize, and close buttons
             panel1.Controls.Add(control);
+      
 
         }
     }

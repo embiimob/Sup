@@ -36,21 +36,6 @@ namespace SUP
             _objectaddress = objectaddress;
             isUserControl = isusercontrol;
 
-            if (isusercontrol)
-            {
-
-                // Calculate aspect ratio of control
-                float aspectRatio = (float)this.Width / (float)this.Height;
-
-                // Set desired width for scaled form
-                int desiredWidth = 600;
-
-                // Calculate new height while keeping aspect ratio
-                int desiredHeight = (int)(desiredWidth / aspectRatio);
-                this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
-                this.AutoScaleDimensions = new System.Drawing.SizeF(desiredWidth, desiredHeight);
-                this.Size = new System.Drawing.Size(desiredWidth, desiredHeight);
-            }
         }
 
         private void ObjectDetails_Load(object sender, EventArgs e)
@@ -79,13 +64,14 @@ namespace SUP
             }
             else
             {
-                if (isUserControl)
+                this.Text = String.Empty;
+
+                if (!isUserControl)
                 {
-                    this.Text = string.Empty;
-
+                    this.Text = "[ " + _objectaddress + " ]";
+                    this.Height = this.Height + 210;
+                    this.Width = this.Width + 210;
                 }
-                else { this.Text = "Sup!? Object Details [ " + _objectaddress + " ]"; }
-
                 btnReloadObject.PerformClick();
 
             }
@@ -132,6 +118,8 @@ namespace SUP
             OwnersPanel.SuspendLayout();
             CreatorsPanel.Controls.Clear();
             OwnersPanel.Controls.Clear();
+            supPanel.Visible = false;
+           
 
             OBJState objstate = OBJState.GetObjectByAddress(_objectaddress, "good-user", "better-password", "http://127.0.0.1:18332");
             Dictionary<string, string> profileAddress = new Dictionary<string, string> { };
@@ -236,7 +224,6 @@ namespace SUP
 
                 long totalQty = objstate.Owners.Values.Sum();
 
-                lblTotalOwnedMain.Text = "x" + totalQty.ToString("N0");
                 lblTotalOwnedDetail.Text = "total: " + totalQty.ToString("N0");
 
 
@@ -310,6 +297,7 @@ namespace SUP
             CreatorsPanel.ResumeLayout();
             OwnersPanel.ResumeLayout();
             supPanel.Visible = false;
+            OwnersPanel.Visible = true;
 
         }
 
@@ -326,6 +314,7 @@ namespace SUP
                 supFlow.Controls.Clear();
             }
             supPanel.Visible = true;
+            OwnersPanel.Visible = false;
 
             Dictionary<string, string[]> profileAddress = new Dictionary<string, string[]> { };
             OBJState objstate = OBJState.GetObjectByAddress(_objectaddress, "good-user", "better-password", "http://127.0.0.1:18332");
@@ -335,11 +324,12 @@ namespace SUP
 
             using (var db = new DB(SUP, @"root\sup"))
             {
+                string lastKey = db.Get("lastkey!" + _objectaddress);
                 LevelDB.Iterator it = db.CreateIterator();
                 for (
-                   it.Seek(this._objectaddress);
+                   it.Seek(lastKey);
                    it.IsValid() && it.KeyAsString().StartsWith(_objectaddress) && rownum <= numMessagesDisplayed + 10; // Only display next 10 messages
-                    it.Next()
+                    it.Prev()
                  )
                 {
                     // Display only if rownum > numMessagesDisplayed to skip already displayed messages
@@ -525,7 +515,7 @@ namespace SUP
             }
 
             // Update number of messages displayed
-            numMessagesDisplayed += 10;
+            numMessagesDisplayed += 20;
 
             supFlow.ResumeLayout();
 
@@ -540,12 +530,12 @@ namespace SUP
                 RowCount = 1,
                 ColumnCount = 3,
                 AutoSize = true,
-                BackColor = bgcolor,
+                BackColor = System.Drawing.SystemColors.InactiveCaption,
                 Padding = new System.Windows.Forms.Padding(0),
                 Margin = new System.Windows.Forms.Padding(0)
             };
             // Add the width of the first column to fixed value and second to fill remaining space
-            row.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 50));
+            row.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 80));
             row.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 90));
             row.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 112));
             layoutPanel.Controls.Add(row);
@@ -556,11 +546,37 @@ namespace SUP
             {
                 PictureBox picture = new PictureBox
                 {
-                    Size = new System.Drawing.Size(50, 50),
-                    SizeMode = PictureBoxSizeMode.Zoom,
+                    Size = new System.Drawing.Size(70, 70),
+                    SizeMode = PictureBoxSizeMode.StretchImage,
                     ImageLocation = imageLocation,
                     Margin = new System.Windows.Forms.Padding(0),
-                    Dock = DockStyle.Bottom
+
+                };
+                row.Controls.Add(picture, 0, 0);
+            }
+            else
+            {
+                Random rnd = new Random();
+                string randomGifFile;
+                string[] gifFiles = Directory.GetFiles("includes", "*.gif");
+                if (gifFiles.Length > 0)
+                {
+                    int randomIndex = rnd.Next(gifFiles.Length);
+                    randomGifFile = gifFiles[randomIndex];
+                }
+                else
+                {
+                    randomGifFile = @"includes\HugPuddle.jpg";
+                }
+
+
+
+                PictureBox picture = new PictureBox
+                {
+                    Size = new System.Drawing.Size(70, 70),
+                    SizeMode = PictureBoxSizeMode.StretchImage,
+                    ImageLocation = randomGifFile,
+                    Margin = new System.Windows.Forms.Padding(0),
                 };
                 row.Controls.Add(picture, 0, 0);
             }
@@ -603,7 +619,7 @@ namespace SUP
                 Padding = new System.Windows.Forms.Padding(0)
             };
             // Add the width of the first column to fixed value and second to fill remaining space
-            msg.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 252));
+            msg.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 282));
             layoutPanel.Controls.Add(msg);
 
             // Create a Label with the message text
@@ -653,9 +669,9 @@ namespace SUP
                 BackColor = bgcolor,
                 Margin = new System.Windows.Forms.Padding(0)
             };
-            row.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 90));
-            row.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 72));
-            row.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 90));
+            row.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 107));
+            row.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 62));
+            row.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 107));
             layoutPanel.Controls.Add(row);
 
 
@@ -708,8 +724,8 @@ namespace SUP
                     Margin = new System.Windows.Forms.Padding(0)
                 };
                 // Add the width of the first column to fixed value and second to fill remaining space
-                stats.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 126));
-                stats.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 126));
+                stats.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 138));
+                stats.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 138));
                 layoutPanel.Controls.Add(stats);
 
 
@@ -745,7 +761,7 @@ namespace SUP
                 Margin = new System.Windows.Forms.Padding(0)
             };
             // Add the width of the first column to fixed value and second to fill remaining space
-            msg.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 252));
+            msg.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 276));
             layoutPanel.Controls.Add(msg);
 
             Label lstatus = new Label
@@ -794,6 +810,7 @@ namespace SUP
         {
             transFlow.Visible = false;
             KeysFlow.Visible = false;
+            txtdesc.Visible = true;
             KeysFlow.Controls.Clear();
             string transactionid;
             Regex regexTransactionId = new Regex(@"\b[0-9a-f]{64}\b");
@@ -867,9 +884,9 @@ namespace SUP
                                     {
                                         string P2FKJSONString = System.IO.File.ReadAllText(@"root/" + transactionid + @"/OBJ.json");
                                         Root root = JsonConvert.DeserializeObject<Root>(P2FKJSONString);
-                                        
-                                            lblIMGBlockDate.Invoke(new Action(() => lblIMGBlockDate.Text = root.BlockDate.ToString("ddd, dd MMM yyyy hh:mm:ss")));
-                                       
+
+                                        lblIMGBlockDate.Invoke(new Action(() => lblIMGBlockDate.Text = root.BlockDate.ToString("ddd, dd MMM yyyy hh:mm:ss")));
+
                                     }
                                     catch { }
                                 }
@@ -893,8 +910,8 @@ namespace SUP
                                     {
 
                                         string P2FKJSONString = System.IO.File.ReadAllText(@"root/" + transactionid + @"/OBJ.json");
-                                    Root root = JsonConvert.DeserializeObject<Root>(P2FKJSONString);
-                                     lblIMGBlockDate.Invoke(new Action(() => lblIMGBlockDate.Text = root.BlockDate.ToString("ddd, dd MMM yyyy hh:mm:ss")));
+                                        Root root = JsonConvert.DeserializeObject<Root>(P2FKJSONString);
+                                        lblIMGBlockDate.Invoke(new Action(() => lblIMGBlockDate.Text = root.BlockDate.ToString("ddd, dd MMM yyyy hh:mm:ss")));
                                     }
                                     catch { }
                                 }
@@ -918,9 +935,9 @@ namespace SUP
                                     {
                                         string P2FKJSONString = System.IO.File.ReadAllText(@"root/" + transactionid + @"/OBJ.json");
                                         Root root = JsonConvert.DeserializeObject<Root>(P2FKJSONString);
-                                        
-                                            lblIMGBlockDate.Invoke(new Action(() => lblIMGBlockDate.Text = root.BlockDate.ToString("ddd, dd MMM yyyy hh:mm:ss")));
-                                       
+
+                                        lblIMGBlockDate.Invoke(new Action(() => lblIMGBlockDate.Text = root.BlockDate.ToString("ddd, dd MMM yyyy hh:mm:ss")));
+
                                     }
                                     catch { }
                                 }
@@ -944,10 +961,10 @@ namespace SUP
                                     {
                                         string P2FKJSONString = System.IO.File.ReadAllText(@"root/" + transactionid + @"/OBJ.json");
                                         Root root = JsonConvert.DeserializeObject<Root>(P2FKJSONString);
-                                      
-                                       
-                                            lblIMGBlockDate.Invoke(new Action(() => lblIMGBlockDate.Text = root.BlockDate.ToString("ddd, dd MMM yyyy hh:mm:ss")));
-                                     
+
+
+                                        lblIMGBlockDate.Invoke(new Action(() => lblIMGBlockDate.Text = root.BlockDate.ToString("ddd, dd MMM yyyy hh:mm:ss")));
+
                                     }
                                     catch { }
                                 }
@@ -961,50 +978,50 @@ namespace SUP
 
                             if (!System.IO.Directory.Exists(@"ipfs/" + objstate.Image.Substring(5, 46) + "-build") && !System.IO.Directory.Exists(@"ipfs/" + objstate.Image.Substring(5, 46)))
                             {
-                                
-                               
-                                    Task ipfsTask = Task.Run(() =>
+
+
+                                Task ipfsTask = Task.Run(() =>
+                                {
+                                    Directory.CreateDirectory(@"ipfs/" + objstate.Image.Substring(5, 46) + "-build");
+                                    Process process2 = new Process();
+                                    process2.StartInfo.FileName = @"ipfs\ipfs.exe";
+                                    process2.StartInfo.Arguments = "get " + objstate.Image.Substring(5, 46) + @" -o ipfs\" + objstate.Image.Substring(5, 46);
+                                    process2.Start();
+                                    process2.WaitForExit();
+
+                                    if (System.IO.File.Exists("ipfs/" + objstate.Image.Substring(5, 46)))
                                     {
-                                        Directory.CreateDirectory(@"ipfs/" + objstate.Image.Substring(5, 46) + "-build");
-                                        Process process2 = new Process();
-                                        process2.StartInfo.FileName = @"ipfs\ipfs.exe";
-                                        process2.StartInfo.Arguments = "get " + objstate.Image.Substring(5, 46) + @" -o ipfs\" + objstate.Image.Substring(5, 46);
-                                        process2.Start();
-                                        process2.WaitForExit();
+                                        System.IO.File.Move("ipfs/" + objstate.Image.Substring(5, 46), "ipfs/" + objstate.Image.Substring(5, 46) + "_tmp");
 
-                                        if (System.IO.File.Exists("ipfs/" + objstate.Image.Substring(5, 46)))
+                                        string fileName = objstate.Image.Replace(@"//", "").Replace(@"\\", "").Substring(51);
+                                        if (fileName == "")
                                         {
-                                            System.IO.File.Move("ipfs/" + objstate.Image.Substring(5, 46), "ipfs/" + objstate.Image.Substring(5, 46) + "_tmp");
-                                            
-                                            string fileName = objstate.Image.Replace(@"//", "").Replace(@"\\", "").Substring(51);
-                                            if (fileName == "")
-                                            {
-                                                fileName = "artifact";
+                                            fileName = "artifact";
 
-                                            }
-                                            else { fileName = fileName.Replace(@"/", "").Replace(@"\", ""); }
-                                            Directory.CreateDirectory(@"ipfs/" + objstate.Image.Substring(5, 46));
-                                            System.IO.File.Move("ipfs/" + objstate.Image.Substring(5, 46) + "_tmp", imgurn);
                                         }
-                                        Process process3 = new Process
+                                        else { fileName = fileName.Replace(@"/", "").Replace(@"\", ""); }
+                                        Directory.CreateDirectory(@"ipfs/" + objstate.Image.Substring(5, 46));
+                                        System.IO.File.Move("ipfs/" + objstate.Image.Substring(5, 46) + "_tmp", imgurn);
+                                    }
+                                    Process process3 = new Process
+                                    {
+                                        StartInfo = new ProcessStartInfo
                                         {
-                                            StartInfo = new ProcessStartInfo
-                                            {
-                                                FileName = @"ipfs\ipfs.exe",
-                                                Arguments = "pin add " + objstate.Image.Substring(5, 46),
-                                                UseShellExecute = false,
-                                                CreateNoWindow = true
-                                            }
-                                        };
-                                        process3.Start();
-                                        try { btnReloadObject.Invoke(new Action(() => btnReloadObject.PerformClick())); } catch { }
-                                        Directory.Delete(@"ipfs/" + objstate.Image.Substring(5, 46) + "-build");
+                                            FileName = @"ipfs\ipfs.exe",
+                                            Arguments = "pin add " + objstate.Image.Substring(5, 46),
+                                            UseShellExecute = false,
+                                            CreateNoWindow = true
+                                        }
+                                    };
+                                    process3.Start();
+                                    try { btnReloadObject.Invoke(new Action(() => btnReloadObject.PerformClick())); } catch { }
+                                    Directory.Delete(@"ipfs/" + objstate.Image.Substring(5, 46) + "-build");
 
-                                    });
-                                }
+                                });
+                            }
 
 
-                           
+
                             break;
                         default:
                             Task.Run(() =>
@@ -1062,9 +1079,9 @@ namespace SUP
                                     {
                                         string P2FKJSONString = System.IO.File.ReadAllText(@"root/" + transactionid + @"/OBJ.json");
                                         Root root = JsonConvert.DeserializeObject<Root>(P2FKJSONString);
-                                        
-                                            lblURNBlockDate.Invoke(new Action(() => lblURNBlockDate.Text = root.BlockDate.ToString("ddd, dd MMM yyyy hh:mm:ss")));
-                                       
+
+                                        lblURNBlockDate.Invoke(new Action(() => lblURNBlockDate.Text = root.BlockDate.ToString("ddd, dd MMM yyyy hh:mm:ss")));
+
                                     }
                                     catch { }
                                 }
@@ -1088,9 +1105,9 @@ namespace SUP
                                     {
                                         string P2FKJSONString = System.IO.File.ReadAllText(@"root/" + transactionid + @"/OBJ.json");
                                         Root root = JsonConvert.DeserializeObject<Root>(P2FKJSONString);
-                                      
-                                            lblURNBlockDate.Invoke(new Action(() => lblURNBlockDate.Text = root.BlockDate.ToString("ddd, dd MMM yyyy hh:mm:ss")));
-                                        
+
+                                        lblURNBlockDate.Invoke(new Action(() => lblURNBlockDate.Text = root.BlockDate.ToString("ddd, dd MMM yyyy hh:mm:ss")));
+
                                     }
                                     catch { }
                                 }
@@ -1114,9 +1131,9 @@ namespace SUP
                                     {
                                         string P2FKJSONString = System.IO.File.ReadAllText(@"root/" + transactionid + @"/OBJ.json");
                                         Root root = JsonConvert.DeserializeObject<Root>(P2FKJSONString);
-                                     
-                                            lblURNBlockDate.Invoke(new Action(() => lblURNBlockDate.Text = root.BlockDate.ToString("ddd, dd MMM yyyy hh:mm:ss")));
-                                       
+
+                                        lblURNBlockDate.Invoke(new Action(() => lblURNBlockDate.Text = root.BlockDate.ToString("ddd, dd MMM yyyy hh:mm:ss")));
+
                                     }
                                     catch { }
                                 }
@@ -1140,10 +1157,10 @@ namespace SUP
                                     {
                                         string P2FKJSONString = System.IO.File.ReadAllText(@"root/" + transactionid + @"/OBJ.json");
                                         Root root = JsonConvert.DeserializeObject<Root>(P2FKJSONString);
-                                        
-                                            lblURNBlockDate.Invoke(new Action(() => lblURNBlockDate.Text = root.BlockDate.ToString("ddd, dd MMM yyyy hh:mm:ss")));
-                                       
-                                        
+
+                                        lblURNBlockDate.Invoke(new Action(() => lblURNBlockDate.Text = root.BlockDate.ToString("ddd, dd MMM yyyy hh:mm:ss")));
+
+
                                     }
                                     catch { }
                                 }
@@ -1156,62 +1173,62 @@ namespace SUP
 
                             if (!System.IO.Directory.Exists(@"ipfs/" + objstate.URN.Substring(5, 46) + "-build") && !System.IO.Directory.Exists(@"ipfs/" + objstate.URN.Substring(5, 46)))
                             {
-                               
-                               
-                                    Task ipfsTask = Task.Run(() =>
+
+
+                                Task ipfsTask = Task.Run(() =>
+                                {
+                                    Directory.CreateDirectory(@"ipfs/" + objstate.URN.Substring(5, 46) + "-build");
+                                    Process process2 = new Process();
+                                    process2.StartInfo.FileName = @"ipfs\ipfs.exe";
+                                    process2.StartInfo.Arguments = "get " + objstate.URN.Substring(5, 46) + @" -o ipfs\" + objstate.URN.Substring(5, 46);
+                                    process2.Start();
+                                    process2.WaitForExit();
+
+                                    if (System.IO.File.Exists("ipfs/" + objstate.URN.Substring(5, 46)))
                                     {
-                                        Directory.CreateDirectory(@"ipfs/" + objstate.URN.Substring(5, 46) + "-build");
-                                        Process process2 = new Process();
-                                        process2.StartInfo.FileName = @"ipfs\ipfs.exe";
-                                        process2.StartInfo.Arguments = "get " + objstate.URN.Substring(5, 46) + @" -o ipfs\" + objstate.URN.Substring(5, 46);
-                                        process2.Start();
-                                        process2.WaitForExit();
+                                        System.IO.File.Move("ipfs/" + objstate.URN.Substring(5, 46), "ipfs/" + objstate.URN.Substring(5, 46) + "_tmp");
 
-                                        if (System.IO.File.Exists("ipfs/" + objstate.URN.Substring(5, 46)))
+                                        string fileName = objstate.URN.Replace(@"//", "").Replace(@"\\", "").Substring(51);
+                                        if (fileName == "")
                                         {
-                                            System.IO.File.Move("ipfs/" + objstate.URN.Substring(5, 46), "ipfs/" + objstate.URN.Substring(5, 46) + "_tmp");
-
-                                            string fileName = objstate.URN.Replace(@"//", "").Replace(@"\\", "").Substring(51);
-                                            if (fileName == "")
-                                            {
-                                                fileName = "artifact";
-                                            }
-                                            else { fileName = fileName.Replace(@"/", "").Replace(@"\", ""); }
-                                            Directory.CreateDirectory(@"ipfs/" + objstate.URN.Substring(5, 46));
-                                            System.IO.File.Move("ipfs/" + objstate.URN.Substring(5, 46) + "_tmp", urn);
+                                            fileName = "artifact";
                                         }
+                                        else { fileName = fileName.Replace(@"/", "").Replace(@"\", ""); }
+                                        Directory.CreateDirectory(@"ipfs/" + objstate.URN.Substring(5, 46));
+                                        System.IO.File.Move("ipfs/" + objstate.URN.Substring(5, 46) + "_tmp", urn);
+                                    }
 
-                                        var SUP = new Options { CreateIfMissing = true };
+                                    var SUP = new Options { CreateIfMissing = true };
 
-                                        using (var db = new DB(SUP, @"ipfs"))
+                                    using (var db = new DB(SUP, @"ipfs"))
+                                    {
+
+                                        string ipfsdaemon = db.Get("ipfs-daemon");
+
+                                        if (ipfsdaemon == "true")
                                         {
-
-                                            string ipfsdaemon = db.Get("ipfs-daemon");
-
-                                            if (ipfsdaemon == "true")
+                                            Process process3 = new Process
                                             {
-                                                Process process3 = new Process
+                                                StartInfo = new ProcessStartInfo
                                                 {
-                                                    StartInfo = new ProcessStartInfo
-                                                    {
-                                                        FileName = @"ipfs\ipfs.exe",
-                                                        Arguments = "pin add " + objstate.URN.Substring(5, 46),
-                                                        UseShellExecute = false,
-                                                        CreateNoWindow = true
-                                                    }
-                                                };
-                                                process3.Start();
-                                            }
+                                                    FileName = @"ipfs\ipfs.exe",
+                                                    Arguments = "pin add " + objstate.URN.Substring(5, 46),
+                                                    UseShellExecute = false,
+                                                    CreateNoWindow = true
+                                                }
+                                            };
+                                            process3.Start();
                                         }
+                                    }
 
-                                        try { btnReloadObject.Invoke(new Action(() => btnReloadObject.PerformClick())); } catch { }
-                                        Directory.Delete(@"ipfs/" + objstate.URN.Substring(5, 46) + "-build");
+                                    try { btnReloadObject.Invoke(new Action(() => btnReloadObject.PerformClick())); } catch { }
+                                    Directory.Delete(@"ipfs/" + objstate.URN.Substring(5, 46) + "-build");
 
-                                    });
-                                }
+                                });
+                            }
 
 
-                            
+
                             break;
                         default:
                             Task.Run(() =>
@@ -1227,16 +1244,16 @@ namespace SUP
                                 }
                                 else
                                 {
-                                    
-                                        try
-                                        {
-                                            string P2FKJSONString = System.IO.File.ReadAllText(@"root/" + urnmatch.Value + @"/OBJ.json");
+
+                                    try
+                                    {
+                                        string P2FKJSONString = System.IO.File.ReadAllText(@"root/" + urnmatch.Value + @"/OBJ.json");
                                         Root root = JsonConvert.DeserializeObject<Root>(P2FKJSONString);
-                                        
-                                            lblURNBlockDate.Invoke(new Action(() => lblURNBlockDate.Text = root.BlockDate.ToString("ddd, dd MMM yyyy hh:mm:ss")));
-                                        }
-                                        catch { }
-                                   
+
+                                        lblURNBlockDate.Invoke(new Action(() => lblURNBlockDate.Text = root.BlockDate.ToString("ddd, dd MMM yyyy hh:mm:ss")));
+                                    }
+                                    catch { }
+
                                 }
                             });
                             break;
@@ -1362,61 +1379,61 @@ namespace SUP
                             transactionid = objstate.URI.Substring(5, 46);
                             if (objstate.URI.Length == 51) { uriurn += @"\artifact"; }
 
-                            if (!System.IO.Directory.Exists(@"ipfs/" + objstate.URI.Substring(5, 46)+"-build") && !System.IO.Directory.Exists(@"ipfs/" + objstate.URI.Substring(5, 46)))
+                            if (!System.IO.Directory.Exists(@"ipfs/" + objstate.URI.Substring(5, 46) + "-build") && !System.IO.Directory.Exists(@"ipfs/" + objstate.URI.Substring(5, 46)))
                             {
-                                    Task ipfsTask = Task.Run(() =>
+                                Task ipfsTask = Task.Run(() =>
+                                {
+                                    Directory.CreateDirectory(@"ipfs/" + objstate.URI.Substring(5, 46) + "-build");
+                                    Process process2 = new Process();
+                                    process2.StartInfo.FileName = @"ipfs\ipfs.exe";
+                                    process2.StartInfo.Arguments = "get " + objstate.URI.Substring(5, 46) + @" -o ipfs\" + objstate.URI.Substring(5, 46);
+                                    process2.Start();
+                                    process2.WaitForExit();
+
+                                    if (System.IO.File.Exists("ipfs/" + objstate.URI.Substring(5, 46)))
                                     {
-                                        Directory.CreateDirectory(@"ipfs/" + objstate.URI.Substring(5, 46) + "-build");
-                                        Process process2 = new Process();
-                                        process2.StartInfo.FileName = @"ipfs\ipfs.exe";
-                                        process2.StartInfo.Arguments = "get " + objstate.URI.Substring(5, 46) + @" -o ipfs\" + objstate.URI.Substring(5, 46);
-                                        process2.Start();
-                                        process2.WaitForExit();
-
-                                        if (System.IO.File.Exists("ipfs/" + objstate.URI.Substring(5, 46)))
+                                        System.IO.File.Move("ipfs/" + objstate.URI.Substring(5, 46), "ipfs/" + objstate.URI.Substring(5, 46) + "_tmp");
+                                        string fileName = objstate.URI.Replace(@"//", "").Replace(@"\\", "").Substring(51);
+                                        if (fileName == "")
                                         {
-                                            System.IO.File.Move("ipfs/" + objstate.URI.Substring(5, 46), "ipfs/" + objstate.URI.Substring(5, 46) + "_tmp");
-                                            string fileName = objstate.URI.Replace(@"//", "").Replace(@"\\", "").Substring(51);
-                                            if (fileName == "")
-                                            {
-                                                fileName = "artifact";
+                                            fileName = "artifact";
 
-                                            }
-                                            else { fileName = fileName.Replace(@"/", "").Replace(@"\", ""); }
-                                            Directory.CreateDirectory(@"ipfs/" + objstate.URI.Substring(5, 46));
-                                            System.IO.File.Move("ipfs/" + objstate.URI.Substring(5, 46) + "_tmp", @"ipfs/" + objstate.URI.Substring(5, 46) + @"/" + fileName);
                                         }
+                                        else { fileName = fileName.Replace(@"/", "").Replace(@"\", ""); }
+                                        Directory.CreateDirectory(@"ipfs/" + objstate.URI.Substring(5, 46));
+                                        System.IO.File.Move("ipfs/" + objstate.URI.Substring(5, 46) + "_tmp", @"ipfs/" + objstate.URI.Substring(5, 46) + @"/" + fileName);
+                                    }
 
-                                        var SUP = new Options { CreateIfMissing = true };
+                                    var SUP = new Options { CreateIfMissing = true };
 
-                                        using (var db = new DB(SUP, @"ipfs"))
+                                    using (var db = new DB(SUP, @"ipfs"))
+                                    {
+
+                                        string ipfsdaemon = db.Get("ipfs-daemon");
+
+                                        if (ipfsdaemon == "true")
                                         {
-
-                                            string ipfsdaemon = db.Get("ipfs-daemon");
-
-                                            if (ipfsdaemon == "true")
+                                            Process process3 = new Process
                                             {
-                                                Process process3 = new Process
+                                                StartInfo = new ProcessStartInfo
                                                 {
-                                                    StartInfo = new ProcessStartInfo
-                                                    {
-                                                        FileName = @"ipfs\ipfs.exe",
-                                                        Arguments = "pin add " + objstate.URI.Substring(5, 46),
-                                                        UseShellExecute = false,
-                                                        CreateNoWindow = true
-                                                    }
-                                                };
-                                                process3.Start();
-                                            }
+                                                    FileName = @"ipfs\ipfs.exe",
+                                                    Arguments = "pin add " + objstate.URI.Substring(5, 46),
+                                                    UseShellExecute = false,
+                                                    CreateNoWindow = true
+                                                }
+                                            };
+                                            process3.Start();
                                         }
+                                    }
 
-                                        btnReloadObject.Invoke(new Action(() => btnReloadObject.PerformClick()));
-                                        Directory.Delete(@"ipfs/" + objstate.URI.Substring(5, 46) + "-build");
-                                    });
-                                }
+                                    btnReloadObject.Invoke(new Action(() => btnReloadObject.PerformClick()));
+                                    Directory.Delete(@"ipfs/" + objstate.URI.Substring(5, 46) + "-build");
+                                });
+                            }
 
 
-                            
+
                             break;
                         default:
                             Task.Run(() =>
@@ -1433,17 +1450,17 @@ namespace SUP
                                 else
                                 {
 
-                                  
-                                        try
-                                        {
-                                            string P2FKJSONString = System.IO.File.ReadAllText(@"root/" + transactionid + @"/OBJ.json");
+
+                                    try
+                                    {
+                                        string P2FKJSONString = System.IO.File.ReadAllText(@"root/" + transactionid + @"/OBJ.json");
 
                                         Root root = JsonConvert.DeserializeObject<Root>(P2FKJSONString);
-                                       
-                                            lblURIBlockDate.Invoke(new Action(() => lblURIBlockDate.Text = root.BlockDate.ToString("ddd, dd MMM yyyy hh:mm:ss")));
-                                        }
-                                        catch { }
-                                    
+
+                                        lblURIBlockDate.Invoke(new Action(() => lblURIBlockDate.Text = root.BlockDate.ToString("ddd, dd MMM yyyy hh:mm:ss")));
+                                    }
+                                    catch { }
+
                                 }
                             });
                             break;
@@ -1526,19 +1543,18 @@ namespace SUP
                 long totalQty = objstate.Owners.Values.Sum();
 
 
-                if (supPanel.Visible && isInitializing == false)
+                if (OwnersPanel.Visible)
                 {
-                    btnRefreshSup.PerformClick();
+
+                    btnRefreshOwners.PerformClick();
+
                 }
                 else
                 {
+                    btnRefreshSup.PerformClick();
 
-                    if (!isInitializing) { btnRefreshOwners.PerformClick(); }
-                    isInitializing = false;
                 }
-
-
-                lblTotalOwnedMain.Text = "x" + totalQty.ToString("N0");
+               
 
 
                 Task.Run(() =>
@@ -1549,8 +1565,8 @@ namespace SUP
                         if (isOfficial.Creators.First().Key != this._objectaddress)
                         {
                             txtOfficialURN.Invoke(new Action(() => txtOfficialURN.Text = isOfficial.Creators.First().Key));
+                            btnLaunchURN.Invoke(new Action(() => btnLaunchURN.Visible = false));
                             btnOfficial.Invoke(new Action(() => btnOfficial.Visible = true));
-
                         }
                         else
                         {
@@ -1612,7 +1628,7 @@ namespace SUP
                         pictureBox1.ImageLocation = imgurn;
                         if (btnOfficial.Visible == false)
                         {
-                            button1.Visible = true;
+                            btnLaunchURN.Visible = true;
                             lblWarning.Visible = true;
                         }
                         break;
@@ -1620,7 +1636,7 @@ namespace SUP
                     case ".glb":
                         //Show image in main box and show open file button
                         pictureBox1.ImageLocation = imgurn;
-                        if (btnOfficial.Visible == false) { button1.Visible = true; }
+                        if (btnOfficial.Visible == false) { btnLaunchURN.Visible = true; }
                         break;
                     case ".jpg":
                     case ".jpeg":
@@ -1628,7 +1644,7 @@ namespace SUP
                     case ".png":
                         // Create a new PictureBox
                         pictureBox1.ImageLocation = urn;
-                        if (btnOfficial.Visible == false) { button1.Visible = true; }
+                        if (btnOfficial.Visible == false) { btnLaunchURN.Visible = true; }
                         break;
                     case ".mp4":
                     case ".avi":
@@ -1646,7 +1662,7 @@ namespace SUP
                         try
                         {
                             System.IO.File.WriteAllText(Path.GetDirectoryName(urn) + @"\urnviewer.html", htmlstring);
-                            if (btnOfficial.Visible == false) { button1.Visible = true; }
+                            if (btnOfficial.Visible == false) { btnLaunchURN.Visible = true; }
                             await webviewer.EnsureCoreWebView2Async();
                             webviewer.CoreWebView2.Navigate(viewerPath);
                         }
@@ -1713,64 +1729,64 @@ namespace SUP
                                     case "IPFS":
 
                                         if (objstate.URN.Length == 51) { urn += @"\artifact"; }
-                                        if (!System.IO.Directory.Exists(@"ipfs/" + objstate.URN.Substring(5, 46)+"-build") && !System.IO.Directory.Exists(@"ipfs/" + objstate.URN.Substring(5, 46)))
+                                        if (!System.IO.Directory.Exists(@"ipfs/" + objstate.URN.Substring(5, 46) + "-build") && !System.IO.Directory.Exists(@"ipfs/" + objstate.URN.Substring(5, 46)))
 
                                         {
-                                         
-                                            
-                                                Task ipfsTask = Task.Run(() =>
+
+
+                                            Task ipfsTask = Task.Run(() =>
+                                            {
+                                                Directory.CreateDirectory(@"ipfs/" + objstate.URN.Substring(5, 46) + "-build");
+                                                Process process2 = new Process();
+                                                process2.StartInfo.FileName = @"ipfs\ipfs.exe";
+                                                process2.StartInfo.Arguments = "get " + objstate.URN.Substring(5, 46) + @" -o ipfs\" + objstate.URN.Substring(5, 46);
+                                                process2.Start();
+                                                process2.WaitForExit();
+
+                                                if (System.IO.File.Exists("ipfs/" + objstate.URN.Substring(5, 46)))
                                                 {
-                                                    Directory.CreateDirectory(@"ipfs/" + objstate.URN.Substring(5, 46) + "-build");
-                                                    Process process2 = new Process();
-                                                    process2.StartInfo.FileName = @"ipfs\ipfs.exe";
-                                                    process2.StartInfo.Arguments = "get " + objstate.URN.Substring(5, 46) + @" -o ipfs\" + objstate.URN.Substring(5, 46);
-                                                    process2.Start();
-                                                    process2.WaitForExit();
-
-                                                    if (System.IO.File.Exists("ipfs/" + objstate.URN.Substring(5, 46)))
+                                                    System.IO.File.Move("ipfs/" + objstate.URN.Substring(5, 46), "ipfs/" + objstate.URN.Substring(5, 46) + "_tmp");
+                                                    string fileName = objstate.URN.Replace(@"//", "").Replace(@"\\", "").Substring(51);
+                                                    if (fileName == "")
                                                     {
-                                                        System.IO.File.Move("ipfs/" + objstate.URN.Substring(5, 46), "ipfs/" + objstate.URN.Substring(5, 46) + "_tmp");
-                                                        string fileName = objstate.URN.Replace(@"//", "").Replace(@"\\", "").Substring(51);
-                                                        if (fileName == "")
-                                                        {
-                                                            fileName = "artifact";
+                                                        fileName = "artifact";
 
-                                                        }
-                                                        else { fileName = fileName.Replace(@"/", "").Replace(@"\", ""); }
-                                                        Directory.CreateDirectory(@"ipfs/" + objstate.URN.Substring(5, 46));
-                                                        System.IO.File.Move("ipfs/" + objstate.URN.Substring(5, 46) + "_tmp", @"ipfs/" + objstate.URN.Substring(5, 46) + @"/" + fileName);
                                                     }
+                                                    else { fileName = fileName.Replace(@"/", "").Replace(@"\", ""); }
+                                                    Directory.CreateDirectory(@"ipfs/" + objstate.URN.Substring(5, 46));
+                                                    System.IO.File.Move("ipfs/" + objstate.URN.Substring(5, 46) + "_tmp", @"ipfs/" + objstate.URN.Substring(5, 46) + @"/" + fileName);
+                                                }
 
-                                                    var SUP = new Options { CreateIfMissing = true };
+                                                var SUP = new Options { CreateIfMissing = true };
 
-                                                    using (var db = new DB(SUP, @"ipfs"))
+                                                using (var db = new DB(SUP, @"ipfs"))
+                                                {
+
+                                                    string ipfsdaemon = db.Get("ipfs-daemon");
+
+                                                    if (ipfsdaemon == "true")
                                                     {
-
-                                                        string ipfsdaemon = db.Get("ipfs-daemon");
-
-                                                        if (ipfsdaemon == "true")
+                                                        Process process3 = new Process
                                                         {
-                                                            Process process3 = new Process
+                                                            StartInfo = new ProcessStartInfo
                                                             {
-                                                                StartInfo = new ProcessStartInfo
-                                                                {
-                                                                    FileName = @"ipfs\ipfs.exe",
-                                                                    Arguments = "pin add " + objstate.URN.Substring(5, 46),
-                                                                    UseShellExecute = false,
-                                                                    CreateNoWindow = true
-                                                                }
-                                                            };
-                                                            process3.Start();
-                                                        }
+                                                                FileName = @"ipfs\ipfs.exe",
+                                                                Arguments = "pin add " + objstate.URN.Substring(5, 46),
+                                                                UseShellExecute = false,
+                                                                CreateNoWindow = true
+                                                            }
+                                                        };
+                                                        process3.Start();
                                                     }
+                                                }
 
-                                                    btnReloadObject.Invoke(new Action(() => btnReloadObject.PerformClick()));
-                                                    Directory.Delete(@"ipfs/" + objstate.URN.Substring(5, 46) + "-build");
-                                                });
+                                                btnReloadObject.Invoke(new Action(() => btnReloadObject.PerformClick()));
+                                                Directory.Delete(@"ipfs/" + objstate.URN.Substring(5, 46) + "-build");
+                                            });
 
-                                            }
+                                        }
 
-                                        
+
                                         break;
                                     default:
                                         if (!System.IO.Directory.Exists(@"root/" + transactionid))
@@ -1866,7 +1882,7 @@ namespace SUP
                         try
                         {
                             System.IO.File.WriteAllText(Path.GetDirectoryName(urn) + @"\urnviewer.html", htmlembed);
-                            if (btnOfficial.Visible == false) { button1.Visible = true; }
+                            if (btnOfficial.Visible == false) { btnLaunchURN.Visible = true; }
                             await webviewer.EnsureCoreWebView2Async();
                             webviewer.CoreWebView2.Navigate(Path.GetDirectoryName(urn) + @"\urnviewer.html");
                         }
@@ -1878,15 +1894,13 @@ namespace SUP
                         }
 
 
-
-
                         break;
                     default:
 
                         pictureBox1.ImageLocation = imgurn;
                         if (btnOfficial.Visible == false)
                         {
-                            button1.Visible = true;
+                            btnLaunchURN.Visible = true;
                             lblWarning.Visible = true;
                         }
                         break;
@@ -1913,12 +1927,11 @@ namespace SUP
         }
 
 
-
         private void ButtonRefreshTransactionsClick(object sender, EventArgs e)
         {
 
             transFlow.SuspendLayout();
-
+            txtdesc.Visible = false;
 
             // Clear controls if no messages have been displayed yet
             if (numChangesDisplayed == 0)
@@ -1949,11 +1962,13 @@ namespace SUP
 
             using (var db = new DB(trans, @"root\event"))
             {
+                string lastKey = db.Get("lastkey!" + _objectaddress);
+
                 LevelDB.Iterator it = db.CreateIterator();
                 for (
-                   it.Seek(this._objectaddress);
-                  it.IsValid() && it.KeyAsString().StartsWith(_objectaddress) && rownum <= numChangesDisplayed + 10;
-                    it.Next()
+                   it.Seek(lastKey);
+                  it.IsValid() && it.KeyAsString().StartsWith(_objectaddress) && rownum <= numChangesDisplayed + 20;
+                    it.Prev()
                  )
 
 
@@ -2023,7 +2038,10 @@ namespace SUP
             new ObjectDetails(txtOfficialURN.Text).Show();
         }
 
-       
+        private void imgPicture_Validated(object sender, EventArgs e)
+        {
+            lblOfficial.Refresh();
+        }
     }
 
 }

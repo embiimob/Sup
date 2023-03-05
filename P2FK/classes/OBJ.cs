@@ -244,6 +244,7 @@ namespace SUP.P2FK
                                                         var ROOT = new Options { CreateIfMissing = true };
                                                         var db = new DB(ROOT, @"root\event");
                                                         db.Put(objectaddress + "!" + transaction.BlockDate.ToString("yyyyMMddHHmmss") + "!" + sortableProcessHeight + "!", logstatus);
+                                                        db.Put("lastkey!"+ objectaddress, objectaddress + "!" + transaction.BlockDate.ToString("yyyyMMddHHmmss") + "!" + sortableProcessHeight + "!");
                                                         db.Close();
                                                     }
 
@@ -394,6 +395,8 @@ namespace SUP.P2FK
                                                 var ROOT = new Options { CreateIfMissing = true };
                                                 var db = new DB(ROOT, @"root\event");
                                                 db.Put(objectaddress + "!" + transaction.BlockDate.ToString("yyyyMMddHHmmss") + "!" + sortableProcessHeight + "!" + sortableGiveCount, logstatus);
+                                                db.Put("lastkey!"+ objectaddress, objectaddress + "!" + transaction.BlockDate.ToString("yyyyMMddHHmmss") + "!" + sortableProcessHeight + "!" + sortableGiveCount);
+
                                                 db.Close();
 
                                                 logstatus = "";
@@ -419,6 +422,8 @@ namespace SUP.P2FK
                                                     var ROOT = new Options { CreateIfMissing = true };
                                                     var db = new DB(ROOT, @"root\event");
                                                     db.Put(objectaddress + "!" + transaction.BlockDate.ToString("yyyyMMddHHmmss") + "!" + sortableProcessHeight + "!" + sortableGiveCount, logstatus);
+                                                    db.Put("lastkey!"+ objectaddress, objectaddress + "!" + transaction.BlockDate.ToString("yyyyMMddHHmmss") + "!" + sortableProcessHeight + "!" + sortableGiveCount);
+
                                                     db.Close();
 
                                                     logstatus = "";
@@ -474,6 +479,8 @@ namespace SUP.P2FK
                                                 var ROOT = new Options { CreateIfMissing = true };
                                                 var db = new DB(ROOT, @"root\event");
                                                 db.Put(objectaddress + "!" + transaction.BlockDate.ToString("yyyyMMddHHmmss") + "!" + sortableProcessHeight + "!" + sortableGiveCount, logstatus);
+                                                db.Put("lastkey!"+ objectaddress, objectaddress + "!" + transaction.BlockDate.ToString("yyyyMMddHHmmss") + "!" + sortableProcessHeight + "!" + sortableGiveCount);
+
                                                 db.Close();
 
                                                 logstatus = "";
@@ -491,6 +498,7 @@ namespace SUP.P2FK
                                                     var ROOT = new Options { CreateIfMissing = true };
                                                     var db = new DB(ROOT, @"root\event");
                                                     db.Put(objectaddress + "!" + transaction.BlockDate.ToString("yyyyMMddHHmmss") + "!" + sortableProcessHeight + "!" + sortableGiveCount, logstatus);
+                                                    db.Put("lastkey!"+ objectaddress, objectaddress + "!" + transaction.BlockDate.ToString("yyyyMMddHHmmss") + "!" + sortableProcessHeight + "!" + sortableGiveCount);
                                                     db.Close();
 
                                                     logstatus = "";
@@ -511,6 +519,7 @@ namespace SUP.P2FK
                                                     var ROOT = new Options { CreateIfMissing = true };
                                                     var db = new DB(ROOT, @"root\event");
                                                     db.Put(objectaddress + "!" + transaction.BlockDate.ToString("yyyyMMddHHmmss") + "!" + sortableProcessHeight + "!" + sortableGiveCount, logstatus);
+                                                    db.Put("lastkey!" + objectaddress,objectaddress + "!" + transaction.BlockDate.ToString("yyyyMMddHHmmss") + "!" + sortableProcessHeight + "!" + sortableGiveCount);
                                                     db.Close();
                                                 }
                                                 logstatus = "";
@@ -559,6 +568,7 @@ namespace SUP.P2FK
                                                 var ROOT = new Options { CreateIfMissing = true };
                                                 var db = new DB(ROOT, @"root\event");
                                                 db.Put(objectaddress + "!" + transaction.BlockDate.ToString("yyyyMMddHHmmss") + "!" + sortableProcessHeight + "!" + sortableBurnCount, logstatus);
+                                                db.Put("lastkey!"+ objectaddress,objectaddress + "!" + transaction.BlockDate.ToString("yyyyMMddHHmmss") + "!" + sortableProcessHeight + "!" + sortableBurnCount);
                                                 db.Close();
 
                                                 logstatus = "";
@@ -583,6 +593,8 @@ namespace SUP.P2FK
                                                     var ROOT = new Options { CreateIfMissing = true };
                                                     var db = new DB(ROOT, @"root\event");
                                                     db.Put(objectaddress + "!" + transaction.BlockDate.ToString("yyyyMMddHHmmss") + "!" + sortableProcessHeight + "!" + sortableBurnCount, logstatus);
+                                                    db.Put("lastkey!"+objectaddress,objectaddress + "!" + transaction.BlockDate.ToString("yyyyMMddHHmmss") + "!" + sortableProcessHeight + "!" + sortableBurnCount);
+
                                                     db.Close();
 
                                                     logstatus = "";
@@ -628,6 +640,7 @@ namespace SUP.P2FK
                                                     var ROOT = new Options { CreateIfMissing = true };
                                                     var db = new DB(ROOT, @"root\event");
                                                     db.Put(objectaddress + "!" + transaction.BlockDate.ToString("yyyyMMddHHmmss") + "!" + sortableProcessHeight + "!" + sortableBurnCount, logstatus);
+                                                    db.Put("lastkey!"+ objectaddress,objectaddress + "!" + transaction.BlockDate.ToString("yyyyMMddHHmmss") + "!" + sortableProcessHeight + "!" + sortableBurnCount);
                                                     db.Close();
                                                 }
                                                 logstatus = "";
@@ -645,6 +658,7 @@ namespace SUP.P2FK
                                                     var ROOT = new Options { CreateIfMissing = true };
                                                     var db = new DB(ROOT, @"root\event");
                                                     db.Put(objectaddress + "!" + transaction.BlockDate.ToString("yyyyMMddHHmmss") + "!" + sortableProcessHeight + "!" + sortableBurnCount, logstatus);
+                                                    db.Put("lastkey!"+objectaddress,objectaddress + "!" + transaction.BlockDate.ToString("yyyyMMddHHmmss") + "!" + sortableProcessHeight + "!" + sortableBurnCount);
                                                     db.Close();
 
                                                     logstatus = "";
@@ -663,6 +677,8 @@ namespace SUP.P2FK
                                                 var ROOT = new Options { CreateIfMissing = true };
                                                 var db = new DB(ROOT, @"root\event");
                                                 db.Put(objectaddress + "!" + transaction.BlockDate.ToString("yyyyMMddHHmmss") + "!" + sortableProcessHeight + "!" + sortableBurnCount, logstatus);
+                                                db.Put("lastkey!"+objectaddress,objectaddress + "!" + transaction.BlockDate.ToString("yyyyMMddHHmmss") + "!" + sortableProcessHeight + "!" + sortableBurnCount);
+
                                                 db.Close();
 
                                                 logstatus = "";
@@ -700,9 +716,8 @@ namespace SUP.P2FK
                             var ROOT = new Options { CreateIfMissing = true };
                             var db = new DB(ROOT, @"root\event");
                             db.Put(objectaddress + "!" + transaction.BlockDate.ToString("yyyyMMddHHmmss") + "!" + sortableProcessHeight, logstatus);
+                            db.Put("lastkey!"+objectaddress,objectaddress + "!" + transaction.BlockDate.ToString("yyyyMMddHHmmss") + "!" + sortableProcessHeight);
                             db.Close();
-
-
 
                         }
                     }
@@ -1927,7 +1942,7 @@ namespace SUP.P2FK
                 return keywords;
             }
         }
-        public static object GetPublicMessagesByAddress(string objectaddress, string username, string password, string url, string versionByte = "111", int skip = 0, int qty = 10)
+        public static object GetPublicMessagesByAddress(string objectaddress, string username, string password, string url, string versionByte = "111", int skip = 0, int qty = 20)
         {
             GetObjectByAddress(objectaddress, username, password, url, versionByte);
             lock (SupLocker)
@@ -1940,10 +1955,11 @@ namespace SUP.P2FK
                 using (var db = new DB(SUP, @"root\sup"))
                 {
                     LevelDB.Iterator it = db.CreateIterator();
+                    string lastKey = db.Get("lastkey!" + objectaddress);
                     for (
-                       it.Seek(objectaddress);
-                       it.IsValid() && it.KeyAsString().StartsWith(objectaddress) && rownum <= skip + qty; // Only display next 10 messages
-                        it.Next()
+                       it.Seek(lastKey);
+                       it.IsValid() && it.KeyAsString().StartsWith(objectaddress) && rownum <= skip + qty; // Only display next 20 messages
+                        it.Prev()
                      )
                     {
                         // Display only if rownum > numMessagesDisplayed to skip already displayed messages
@@ -1988,11 +2004,12 @@ namespace SUP.P2FK
 
                 using (var db = new DB(SUP, @"root\sec"))
                 {
+                    string lastKey = db.Get("lastkey!" + objectaddress);
                     LevelDB.Iterator it = db.CreateIterator();
                     for (
-                       it.Seek(objectaddress);
+                       it.Seek(lastKey);
                        it.IsValid() && it.KeyAsString().StartsWith(objectaddress) && rownum <= skip + qty; // Only display next 10 messages
-                        it.Next()
+                        it.Prev()
                      )
                     {
                         // Display only if rownum > numMessagesDisplayed to skip already displayed messages
