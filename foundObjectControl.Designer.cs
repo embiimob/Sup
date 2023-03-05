@@ -153,7 +153,7 @@
             this.ObjectQty.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.ObjectQty.BackColor = System.Drawing.SystemColors.ActiveCaption;
             this.ObjectQty.Font = new System.Drawing.Font("Microsoft Sans Serif", 6.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.ObjectQty.Location = new System.Drawing.Point(138, 219);
+            this.ObjectQty.Location = new System.Drawing.Point(128, 219);
             this.ObjectQty.Name = "ObjectQty";
             this.ObjectQty.Size = new System.Drawing.Size(78, 20);
             this.ObjectQty.TabIndex = 7;
@@ -255,7 +255,7 @@
             this.lblOfficial.BackColor = System.Drawing.SystemColors.HotTrack;
             this.lblOfficial.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lblOfficial.ForeColor = System.Drawing.Color.Yellow;
-            this.lblOfficial.Location = new System.Drawing.Point(0, 0);
+            this.lblOfficial.Location = new System.Drawing.Point(10, 0);
             this.lblOfficial.Margin = new System.Windows.Forms.Padding(0);
             this.lblOfficial.Name = "lblOfficial";
             this.lblOfficial.Padding = new System.Windows.Forms.Padding(1, 1, 1, 3);
@@ -268,7 +268,7 @@
             // 
             this.lblTrash.AutoSize = true;
             this.lblTrash.BackColor = System.Drawing.SystemColors.ActiveCaption;
-            this.lblTrash.Location = new System.Drawing.Point(196, 317);
+            this.lblTrash.Location = new System.Drawing.Point(206, 317);
             this.lblTrash.Name = "lblTrash";
             this.lblTrash.Size = new System.Drawing.Size(19, 13);
             this.lblTrash.TabIndex = 17;
@@ -296,7 +296,7 @@
             this.DoubleBuffered = true;
             this.Margin = new System.Windows.Forms.Padding(1, 2, 2, 2);
             this.Name = "FoundObjectControl";
-            this.Padding = new System.Windows.Forms.Padding(0, 10, 0, 0);
+            this.Padding = new System.Windows.Forms.Padding(10);
             this.Size = new System.Drawing.Size(221, 336);
             this.Click += new System.EventHandler(this.foundObjectControl_Click);
             ((System.ComponentModel.ISupportInitialize)(this.ObjectImage)).EndInit();

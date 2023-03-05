@@ -815,6 +815,9 @@ namespace SUP
             txtdesc.Visible = true;
             KeysFlow.Controls.Clear();
             string transactionid;
+            string ipfsurn = null;
+            string ipfsimg = null;
+            string ipfsuri = null;
             Regex regexTransactionId = new Regex(@"\b[0-9a-f]{64}\b");
 
             OBJState objstate = OBJState.GetObjectByAddress(_objectaddress, "good-user", "better-password", "http://127.0.0.1:18332");
@@ -830,6 +833,8 @@ namespace SUP
                     if (!objstate.URN.ToLower().StartsWith("http"))
                     {
                         urn = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + @"\root\" + objstate.URN.Replace("BTC:", "").Replace("MZC:", "").Replace("LTC:", "").Replace("DOG:", "").Replace("IPFS:", "").Replace(@"/", @"\");
+                        if (objstate.URN.ToLower().StartsWith("ipfs:")) { urn = urn.Replace(@"\root\", @"\ipfs\"); }
+
                     }
                 }
 
@@ -842,6 +847,7 @@ namespace SUP
                     if (!objstate.Image.ToLower().StartsWith("http"))
                     {
                         imgurn = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + @"\root\" + objstate.Image.Replace("BTC:", "").Replace("MZC:", "").Replace("LTC:", "").Replace("DOG:", "").Replace("IPFS:", "").Replace(@"/", @"\");
+                        if (objstate.Image.ToLower().StartsWith("ipfs:")) { imgurn = imgurn.Replace(@"\root\", @"\ipfs\"); }
                     }
                 }
 
@@ -854,6 +860,8 @@ namespace SUP
                     if (!objstate.URI.ToLower().StartsWith("http"))
                     {
                         uriurn = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + @"\root\" + objstate.URI.Replace("BTC:", "").Replace("MZC:", "").Replace("LTC:", "").Replace("DOG:", "").Replace("IPFS:", "").Replace(@"/", @"\");
+                        if (objstate.URI.ToLower().StartsWith("ipfs:")) { uriurn = uriurn.Replace(@"\root\", @"\ipfs\"); }
+
                     }
                 }
 
@@ -862,325 +870,147 @@ namespace SUP
                 DateTime imgblockdate = new DateTime();
                 DateTime uriblockdate = new DateTime();
                 lblObjectCreatedDate.Text = objstate.CreatedDate.ToString("ddd, dd MMM yyyy hh:mm:ss");
-
-                try
+                if (!File.Exists(imgurn))
                 {
-
-                    Match imgurnmatch = regexTransactionId.Match(imgurn);
-                    transactionid = imgurnmatch.Value;
-
-                    switch (objstate.Image.Substring(0, 4))
+                    try
                     {
-                        case "MZC:":
-                            Task.Run(() =>
-                            {
-                                if (!System.IO.Directory.Exists("root/" + transactionid))
+
+                        Match imgurnmatch = regexTransactionId.Match(imgurn);
+                        transactionid = imgurnmatch.Value;
+
+                        switch (objstate.Image.ToUpper().Substring(0, 4))
+                        {
+                            case "MZC:":
+                                Task.Run(() =>
                                 {
                                     Root root = Root.GetRootByTransactionId(transactionid, "good-user", "better-password", @"http://127.0.0.1:12832", "50");
-                                    if (!System.IO.Directory.Exists("root/" + transactionid))
-                                    {
-                                        Random rnd = new Random();
-                                        string[] gifFiles = Directory.GetFiles("includes", "*.gif");
-                                        if (gifFiles.Length > 0)
-                                        {
-                                            int randomIndex = rnd.Next(gifFiles.Length);
-                                            imgurn = gifFiles[randomIndex];
+                                    if (File.Exists(imgurn)) { imgPicture.Invoke(new Action(() => imgPicture.ImageLocation = imgurn)); }
 
-                                        }
-                                        else
-                                        {
-                                            try
-                                            {
-
-                                                imgurn = @"includes\HugPuddle.jpg";
-                                            }
-                                            catch { }
-                                        }
-                                        imgPicture.Invoke(new Action(() => imgPicture.ImageLocation = imgurn));
-                                    }
-
-                                    try { lblIMGBlockDate.Invoke(new Action(() => lblIMGBlockDate.Text = root.BlockDate.ToString("ddd, dd MMM yyyy hh:mm:ss"))); }
-                                    catch { }
-                                }
-                                else
-                                {
-                                    try
-                                    {
-                                        string P2FKJSONString = System.IO.File.ReadAllText(@"root/" + transactionid + @"/OBJ.json");
-                                        Root root = JsonConvert.DeserializeObject<Root>(P2FKJSONString);
-
-                                        lblIMGBlockDate.Invoke(new Action(() => lblIMGBlockDate.Text = root.BlockDate.ToString("ddd, dd MMM yyyy hh:mm:ss")));
-
-                                    }
-                                    catch { }
-                                }
-                            });
-                            break;
-                        case "BTC:":
-                            Task.Run(() =>
-                            {
-                                if (!System.IO.Directory.Exists("root/" + transactionid))
-                                {
-                                    Root root = Root.GetRootByTransactionId(transactionid, "good-user", "better-password", @"http://127.0.0.1:8332", "0");
-                                    if (!System.IO.Directory.Exists("root/" + transactionid))
-                                    {
-                                        Random rnd = new Random();
-                                        string[] gifFiles = Directory.GetFiles("includes", "*.gif");
-                                        if (gifFiles.Length > 0)
-                                        {
-                                            int randomIndex = rnd.Next(gifFiles.Length);
-                                            imgurn = gifFiles[randomIndex];
-
-                                        }
-                                        else
-                                        {
-                                            try
-                                            {
-
-                                                imgurn = @"includes\HugPuddle.jpg";
-                                            }
-                                            catch { }
-                                        }
-                                        imgPicture.Invoke(new Action(() => imgPicture.ImageLocation = imgurn));
-                                    }
                                     try
                                     {
                                         lblIMGBlockDate.Invoke(new Action(() => lblIMGBlockDate.Text = root.BlockDate.ToString("ddd, dd MMM yyyy hh:mm:ss")));
                                     }
                                     catch { }
-                                }
-                                else
-                                {
-                                    try
-                                    {
 
-                                        string P2FKJSONString = System.IO.File.ReadAllText(@"root/" + transactionid + @"/OBJ.json");
-                                        Root root = JsonConvert.DeserializeObject<Root>(P2FKJSONString);
-                                        lblIMGBlockDate.Invoke(new Action(() => lblIMGBlockDate.Text = root.BlockDate.ToString("ddd, dd MMM yyyy hh:mm:ss")));
-                                    }
-                                    catch { }
-                                }
-                            });
-                            break;
-                        case "LTC:":
-                            Task.Run(() =>
-                            {
-                                if (!System.IO.Directory.Exists("root/" + transactionid))
-                                {
-                                    Root root = Root.GetRootByTransactionId(transactionid, "good-user", "better-password", @"http://127.0.0.1:9332", "48");
-                                    if (!System.IO.Directory.Exists("root/" + transactionid))
-                                    {
-                                        Random rnd = new Random();
-                                        string[] gifFiles = Directory.GetFiles("includes", "*.gif");
-                                        if (gifFiles.Length > 0)
-                                        {
-                                            int randomIndex = rnd.Next(gifFiles.Length);
-                                            imgurn = gifFiles[randomIndex];
-
-                                        }
-                                        else
-                                        {
-                                            try
-                                            {
-
-                                                imgurn = @"includes\HugPuddle.jpg";
-                                            }
-                                            catch { }
-                                        }
-                                        imgPicture.Invoke(new Action(() => imgPicture.ImageLocation = imgurn));
-                                    }
-                                    try
-                                    {
-                                        lblIMGBlockDate.Invoke(new Action(() => lblIMGBlockDate.Text = root.BlockDate.ToString("ddd, dd MMM yyyy hh:mm:ss")));
-                                    }
-                                    catch { }
-                                }
-                                else
-                                {
-                                    try
-                                    {
-                                        string P2FKJSONString = System.IO.File.ReadAllText(@"root/" + transactionid + @"/OBJ.json");
-                                        Root root = JsonConvert.DeserializeObject<Root>(P2FKJSONString);
-
-                                        lblIMGBlockDate.Invoke(new Action(() => lblIMGBlockDate.Text = root.BlockDate.ToString("ddd, dd MMM yyyy hh:mm:ss")));
-
-                                    }
-                                    catch { }
-                                }
-                            });
-                            break;
-                        case "DOG:":
-                            Task.Run(() =>
-                            {
-                                if (!System.IO.Directory.Exists("root/" + transactionid))
-                                {
-                                    Root root = Root.GetRootByTransactionId(transactionid, "good-user", "better-password", @"http://127.0.0.1:22555", "30");
-                                    if (!System.IO.Directory.Exists("root/" + transactionid))
-                                    {
-                                        Random rnd = new Random();
-                                        string[] gifFiles = Directory.GetFiles("includes", "*.gif");
-                                        if (gifFiles.Length > 0)
-                                        {
-                                            int randomIndex = rnd.Next(gifFiles.Length);
-                                            imgurn = gifFiles[randomIndex];
-
-                                        }
-                                        else
-                                        {
-                                            try
-                                            {
-
-                                                imgurn = @"includes\HugPuddle.jpg";
-                                            }
-                                            catch { }
-                                        }
-                                        imgPicture.Invoke(new Action(() => imgPicture.ImageLocation = imgurn));
-                                    }
-                                    try
-                                    {
-                                        lblIMGBlockDate.Invoke(new Action(() => lblIMGBlockDate.Text = root.BlockDate.ToString("ddd, dd MMM yyyy hh:mm:ss")));
-                                    }
-                                    catch { }
-                                }
-                                else
-                                {
-                                    try
-                                    {
-                                        string P2FKJSONString = System.IO.File.ReadAllText(@"root/" + transactionid + @"/OBJ.json");
-                                        Root root = JsonConvert.DeserializeObject<Root>(P2FKJSONString);
-
-
-                                        lblIMGBlockDate.Invoke(new Action(() => lblIMGBlockDate.Text = root.BlockDate.ToString("ddd, dd MMM yyyy hh:mm:ss")));
-
-                                    }
-                                    catch { }
-                                }
-
-                            });
-                            break;
-                        case "IPFS":
-                            imgurn = imgurn.Replace(@"\root\", @"\ipfs\");
-                            transactionid = objstate.Image.Substring(5, 46);
-                            if (objstate.Image.Length == 51) { imgurn += @"\artifact"; }
-
-                            if (!System.IO.Directory.Exists(@"ipfs/" + objstate.Image.Substring(5, 46) + "-build") && !System.IO.Directory.Exists(@"ipfs/" + objstate.Image.Substring(5, 46)))
-                            {
-
-
-                                Task ipfsTask = Task.Run(() =>
-                                {
-                                    Directory.CreateDirectory(@"ipfs/" + objstate.Image.Substring(5, 46) + "-build");
-                                    Process process2 = new Process();
-                                    process2.StartInfo.FileName = @"ipfs\ipfs.exe";
-                                    process2.StartInfo.Arguments = "get " + objstate.Image.Substring(5, 46) + @" -o ipfs\" + objstate.Image.Substring(5, 46);
-                                    process2.Start();
-                                    process2.WaitForExit();
-
-                                    if (System.IO.File.Exists("ipfs/" + objstate.Image.Substring(5, 46)))
-                                    {
-                                        System.IO.File.Move("ipfs/" + objstate.Image.Substring(5, 46), "ipfs/" + objstate.Image.Substring(5, 46) + "_tmp");
-
-                                        string fileName = objstate.Image.Replace(@"//", "").Replace(@"\\", "").Substring(51);
-                                        if (fileName == "")
-                                        {
-                                            fileName = "artifact";
-
-                                        }
-                                        else { fileName = fileName.Replace(@"/", "").Replace(@"\", ""); }
-                                        Directory.CreateDirectory(@"ipfs/" + objstate.Image.Substring(5, 46));
-                                        System.IO.File.Move("ipfs/" + objstate.Image.Substring(5, 46) + "_tmp", imgurn);
-                                    }
-                                    Process process3 = new Process
-                                    {
-                                        StartInfo = new ProcessStartInfo
-                                        {
-                                            FileName = @"ipfs\ipfs.exe",
-                                            Arguments = "pin add " + objstate.Image.Substring(5, 46),
-                                            UseShellExecute = false,
-                                            CreateNoWindow = true
-                                        }
-                                    };
-                                    process3.Start();
-                                    try { btnReloadObject.Invoke(new Action(() => btnReloadObject.PerformClick())); } catch { }
-                                    Directory.Delete(@"ipfs/" + objstate.Image.Substring(5, 46) + "-build");
 
                                 });
-
-                                if (!System.IO.Directory.Exists(@"ipfs/" + objstate.Image.Substring(5, 46)))
+                                break;
+                            case "BTC:":
+                                Task.Run(() =>
                                 {
-                                    Random rnd = new Random();
-                                    string[] gifFiles = Directory.GetFiles("includes", "*.gif");
-                                    if (gifFiles.Length > 0)
-                                    {
-                                        int randomIndex = rnd.Next(gifFiles.Length);
-                                        imgurn = gifFiles[randomIndex];
 
-                                    }
-                                    else
-                                    {
-                                        try
-                                        {
+                                    Root root = Root.GetRootByTransactionId(transactionid, "good-user", "better-password", @"http://127.0.0.1:8332", "0");
+                                    if (File.Exists(imgurn)) { imgPicture.Invoke(new Action(() => imgPicture.ImageLocation = imgurn)); }
 
-                                            imgurn = @"includes\HugPuddle.jpg";
-                                        }
-                                        catch { }
-                                    }
-                                    imgPicture.Invoke(new Action(() => imgPicture.ImageLocation = imgurn));
-
-                                }
-                            }
-
-
-
-                            break;
-                        default:
-                            Task.Run(() =>
-                            {
-                                if (!System.IO.Directory.Exists(@"root/" + imgurnmatch.Value))
-                                {
-                                    Root.GetRootByTransactionId(imgurnmatch.Value, "good-user", "better-password", @"http://127.0.0.1:18332");
-                                    if (!System.IO.Directory.Exists(@"root/" + imgurnmatch.Value))
-                                    {
-                                        Random rnd = new Random();
-                                        string[] gifFiles = Directory.GetFiles("includes", "*.gif");
-                                        if (gifFiles.Length > 0)
-                                        {
-                                            int randomIndex = rnd.Next(gifFiles.Length);
-                                            imgurn = gifFiles[randomIndex];
-
-                                        }
-                                        else
-                                        {
-                                            try
-                                            {
-
-                                                imgurn = @"includes\HugPuddle.jpg";
-                                            }
-                                            catch { }
-                                        }
-                                        imgPicture.Invoke(new Action(() => imgPicture.ImageLocation = imgurn));
-                                    }
-                                }
-                                else
-                                {
                                     try
                                     {
-                                        string P2FKJSONString = System.IO.File.ReadAllText(@"root/" + imgurnmatch.Value + @"/OBJ.json");
-                                        Root root = JsonConvert.DeserializeObject<Root>(P2FKJSONString);
+                                        lblIMGBlockDate.Invoke(new Action(() => lblIMGBlockDate.Text = root.BlockDate.ToString("ddd, dd MMM yyyy hh:mm:ss")));
+                                    }
+                                    catch { }
+
+                                });
+                                break;
+                            case "LTC:":
+                                Task.Run(() =>
+                                {
+
+                                    Root root = Root.GetRootByTransactionId(transactionid, "good-user", "better-password", @"http://127.0.0.1:9332", "48");
+                                    if (File.Exists(imgurn)) { imgPicture.Invoke(new Action(() => imgPicture.ImageLocation = imgurn)); }
+
+                                    try
+                                    {
+                                        lblIMGBlockDate.Invoke(new Action(() => lblIMGBlockDate.Text = root.BlockDate.ToString("ddd, dd MMM yyyy hh:mm:ss")));
+                                    }
+                                    catch { }
+
+                                });
+                                break;
+                            case "DOG:":
+                                Task.Run(() =>
+                                {
+                                    Root root = Root.GetRootByTransactionId(transactionid, "good-user", "better-password", @"http://127.0.0.1:22555", "30");
+                                    if (File.Exists(imgurn)) { imgPicture.Invoke(new Action(() => imgPicture.ImageLocation = imgurn)); }
+
+                                    try
+                                    {
                                         lblIMGBlockDate.Invoke(new Action(() => lblIMGBlockDate.Text = root.BlockDate.ToString("ddd, dd MMM yyyy hh:mm:ss")));
                                     }
                                     catch { }
 
 
+                                });
+                                break;
+                            case "IPFS":
+
+                                transactionid = objstate.Image.Substring(5, 46);
+                                if (objstate.Image.Length == 51) { imgurn += @"\artifact"; }
+
+                                if (!System.IO.Directory.Exists(@"ipfs/" + objstate.Image.Substring(5, 46) + "-build") && !System.IO.Directory.Exists(@"ipfs/" + objstate.Image.Substring(5, 46)))
+                                {
+
+                                    Task ipfsTask = Task.Run(() =>
+                                    {
+                                        Directory.CreateDirectory(@"ipfs/" + objstate.Image.Substring(5, 46) + "-build");
+                                        Process process2 = new Process();
+                                        process2.StartInfo.FileName = @"ipfs\ipfs.exe";
+                                        process2.StartInfo.Arguments = "get " + objstate.Image.Substring(5, 46) + @" -o ipfs\" + objstate.Image.Substring(5, 46);
+                                        process2.Start();
+                                        process2.WaitForExit();
+
+                                        if (System.IO.File.Exists("ipfs/" + objstate.Image.Substring(5, 46)))
+                                        {
+                                            System.IO.File.Move("ipfs/" + objstate.Image.Substring(5, 46), "ipfs/" + objstate.Image.Substring(5, 46) + "_tmp");
+
+                                            string fileName = objstate.Image.Replace(@"//", "").Replace(@"\\", "").Substring(51);
+                                            if (fileName == "")
+                                            {
+                                                fileName = "artifact";
+
+                                            }
+                                            else { fileName = fileName.Replace(@"/", "").Replace(@"\", ""); }
+                                            Directory.CreateDirectory(@"ipfs/" + objstate.Image.Substring(5, 46));
+                                            try { System.IO.File.Move("ipfs/" + objstate.Image.Substring(5, 46) + "_tmp", imgurn); } catch { }
+                                        }
+                                        Process process3 = new Process
+                                        {
+                                            StartInfo = new ProcessStartInfo
+                                            {
+                                                FileName = @"ipfs\ipfs.exe",
+                                                Arguments = "pin add " + objstate.Image.Substring(5, 46),
+                                                UseShellExecute = false,
+                                                CreateNoWindow = true
+                                            }
+                                        };
+                                        process3.Start();
+                                        Directory.Delete(@"ipfs/" + objstate.Image.Substring(5, 46) + "-build");
+                                        if (File.Exists(imgurn)) { imgPicture.Invoke(new Action(() => imgPicture.ImageLocation = imgurn)); }
+
+                                    });
+
                                 }
-                            });
-                            break;
+
+                                break;
+                            default:
+                                Task.Run(() =>
+                                {
+                                    Root root = Root.GetRootByTransactionId(transactionid, "good-user", "better-password", @"http://127.0.0.1:18332");
+                                    if (File.Exists(imgurn)) { imgPicture.Invoke(new Action(() => imgPicture.ImageLocation = imgurn)); }
+
+
+                                    try
+                                    {
+                                        lblIMGBlockDate.Invoke(new Action(() => lblIMGBlockDate.Text = root.BlockDate.ToString("ddd, dd MMM yyyy hh:mm:ss")));
+                                    }
+                                    catch { }
+
+                                });
+                                break;
+                        }
+
+
                     }
-
-
+                    catch { }
                 }
-                catch { }
-
 
 
                 try
@@ -1188,317 +1018,135 @@ namespace SUP
 
                     Match urnmatch = regexTransactionId.Match(urn);
                     transactionid = urnmatch.Value;
-
-
-                    switch (objstate.URN.Substring(0, 4))
+                    Root root = new Root();
+                    if (!File.Exists(urn))
                     {
-                        case "MZC:":
-                            Task.Run(() =>
-                            {
-                                if (!System.IO.Directory.Exists(@"root/" + transactionid))
+                        switch (objstate.URN.Substring(0, 4))
+                        {
+                            case "MZC:":
+
+                                root = Root.GetRootByTransactionId(transactionid, "good-user", "better-password", @"http://127.0.0.1:12832", "50");
+                                if (File.Exists(urn)) { btnReloadObject.Invoke(new Action(() => btnReloadObject.PerformClick())); }
+                                try { lblURNBlockDate.Text = root.BlockDate.ToString("ddd, dd MMM yyyy hh:mm:ss"); } catch { }
+
+
+                                break;
+                            case "BTC:":
+
+                                root = Root.GetRootByTransactionId(transactionid, "good-user", "better-password", @"http://127.0.0.1:8332", "0");
+                                if (File.Exists(urn)) { btnReloadObject.Invoke(new Action(() => btnReloadObject.PerformClick())); }
+
+                                try
                                 {
-                                    Root root = Root.GetRootByTransactionId(transactionid, "good-user", "better-password", @"http://127.0.0.1:12832", "50");
-                                    if (!System.IO.Directory.Exists(@"root/" + transactionid))
+                                    lblURNBlockDate.Text = root.BlockDate.ToString("ddd, dd MMM yyyy hh:mm:ss");
+                                }
+                                catch { }
+
+
+                                break;
+                            case "LTC:":
+
+                                root = Root.GetRootByTransactionId(transactionid, "good-user", "better-password", @"http://127.0.0.1:9332", "48");
+                                if (File.Exists(urn)) { btnReloadObject.Invoke(new Action(() => btnReloadObject.PerformClick())); }
+                                try
+                                {
+                                    lblURNBlockDate.Text = root.BlockDate.ToString("ddd, dd MMM yyyy hh:mm:ss");
+                                }
+                                catch { }
+
+
+                                break;
+                            case "DOG:":
+
+                                root = Root.GetRootByTransactionId(transactionid, "good-user", "better-password", @"http://127.0.0.1:22555", "30");
+                                if (File.Exists(urn)) { btnReloadObject.Invoke(new Action(() => btnReloadObject.PerformClick())); }
+
+                                try
+                                {
+                                    lblURNBlockDate.Text = root.BlockDate.ToString("ddd, dd MMM yyyy hh:mm:ss");
+                                }
+                                catch { }
+
+                                break;
+                            case "IPFS":
+
+                                if (objstate.URN.Length == 51) { urn += @"\artifact"; }
+
+                                if (!System.IO.Directory.Exists(@"ipfs/" + objstate.URN.Substring(5, 46) + "-build") && !System.IO.Directory.Exists(@"ipfs/" + objstate.URN.Substring(5, 46)))
+                                {
+
+
+                                    Task ipfsTask = Task.Run(() =>
                                     {
-                                        Random rnd = new Random();
-                                        string[] gifFiles = Directory.GetFiles("includes", "*.gif");
-                                        if (gifFiles.Length > 0)
-                                        {
-                                            int randomIndex = rnd.Next(gifFiles.Length);
-                                            imgurn = gifFiles[randomIndex];
+                                        Directory.CreateDirectory(@"ipfs/" + objstate.URN.Substring(5, 46) + "-build");
+                                        Process process2 = new Process();
+                                        process2.StartInfo.FileName = @"ipfs\ipfs.exe";
+                                        process2.StartInfo.Arguments = "get " + objstate.URN.Substring(5, 46) + @" -o ipfs\" + objstate.URN.Substring(5, 46);
+                                        process2.Start();
+                                        process2.WaitForExit();
 
-                                        }
-                                        else
+                                        if (System.IO.File.Exists("ipfs/" + objstate.URN.Substring(5, 46)))
                                         {
-                                            try
+                                            System.IO.File.Move("ipfs/" + objstate.URN.Substring(5, 46), "ipfs/" + objstate.URN.Substring(5, 46) + "_tmp");
+
+                                            string fileName = objstate.URN.Replace(@"//", "").Replace(@"\\", "").Substring(51);
+                                            if (fileName == "")
                                             {
-
-                                                imgurn = @"includes\HugPuddle.jpg";
+                                                fileName = "artifact";
                                             }
-                                            catch { }
+                                            else { fileName = fileName.Replace(@"/", "").Replace(@"\", ""); }
+                                            Directory.CreateDirectory(@"ipfs/" + objstate.URN.Substring(5, 46));
+                                            try { System.IO.File.Move("ipfs/" + objstate.URN.Substring(5, 46) + "_tmp", urn); } catch { }
                                         }
-                                        imgPicture.Invoke(new Action(() => imgPicture.ImageLocation = imgurn));
-                                        pictureBox1.Invoke(new Action(() => pictureBox1.ImageLocation = imgurn));
-                                    }
-                                    try
-                                    {
-                                        lblURNBlockDate.Invoke(new Action(() => lblURNBlockDate.Text = root.BlockDate.ToString("ddd, dd MMM yyyy hh:mm:ss")));
-                                    }
-                                    catch { }
-                                }
-                                else
-                                {
-                                    try
-                                    {
-                                        string P2FKJSONString = System.IO.File.ReadAllText(@"root/" + transactionid + @"/OBJ.json");
-                                        Root root = JsonConvert.DeserializeObject<Root>(P2FKJSONString);
 
-                                        lblURNBlockDate.Invoke(new Action(() => lblURNBlockDate.Text = root.BlockDate.ToString("ddd, dd MMM yyyy hh:mm:ss")));
+                                        var SUP = new Options { CreateIfMissing = true };
 
-                                    }
-                                    catch { }
-                                }
-                            });
-                            break;
-                        case "BTC:":
-                            Task.Run(() =>
-                            {
-                                if (!System.IO.Directory.Exists(@"root/" + transactionid))
-                                {
-                                    Root root = Root.GetRootByTransactionId(transactionid, "good-user", "better-password", @"http://127.0.0.1:8332", "0");
-                                    if (!System.IO.Directory.Exists(@"root/" + transactionid))
-                                    {
-                                        Random rnd = new Random();
-                                        string[] gifFiles = Directory.GetFiles("includes", "*.gif");
-                                        if (gifFiles.Length > 0)
+                                        using (var db = new DB(SUP, @"ipfs"))
                                         {
-                                            int randomIndex = rnd.Next(gifFiles.Length);
-                                            imgurn = gifFiles[randomIndex];
 
-                                        }
-                                        else
-                                        {
-                                            try
+                                            string ipfsdaemon = db.Get("ipfs-daemon");
+
+                                            if (ipfsdaemon == "true")
                                             {
-
-                                                imgurn = @"includes\HugPuddle.jpg";
-                                            }
-                                            catch { }
-                                        }
-                                        imgPicture.Invoke(new Action(() => imgPicture.ImageLocation = imgurn));
-                                        pictureBox1.Invoke(new Action(() => pictureBox1.ImageLocation = imgurn));
-                                    }
-                                    try
-                                    {
-                                        lblURNBlockDate.Invoke(new Action(() => lblURNBlockDate.Text = root.BlockDate.ToString("ddd, dd MMM yyyy hh:mm:ss")));
-                                    }
-                                    catch { }
-                                }
-                                else
-                                {
-                                    try
-                                    {
-                                        string P2FKJSONString = System.IO.File.ReadAllText(@"root/" + transactionid + @"/OBJ.json");
-                                        Root root = JsonConvert.DeserializeObject<Root>(P2FKJSONString);
-
-                                        lblURNBlockDate.Invoke(new Action(() => lblURNBlockDate.Text = root.BlockDate.ToString("ddd, dd MMM yyyy hh:mm:ss")));
-
-                                    }
-                                    catch { }
-                                }
-                            });
-                            break;
-                        case "LTC:":
-                            Task.Run(() =>
-                            {
-                                if (!System.IO.Directory.Exists(@"root/" + transactionid))
-                                {
-                                    Root root = Root.GetRootByTransactionId(transactionid, "good-user", "better-password", @"http://127.0.0.1:9332", "48");
-                                    if (!System.IO.Directory.Exists(@"root/" + transactionid))
-                                    {
-                                        Random rnd = new Random();
-                                        string[] gifFiles = Directory.GetFiles("includes", "*.gif");
-                                        if (gifFiles.Length > 0)
-                                        {
-                                            int randomIndex = rnd.Next(gifFiles.Length);
-                                            imgurn = gifFiles[randomIndex];
-
-                                        }
-                                        else
-                                        {
-                                            try
-                                            {
-
-                                                imgurn = @"includes\HugPuddle.jpg";
-                                            }
-                                            catch { }
-                                        }
-                                        imgPicture.Invoke(new Action(() => imgPicture.ImageLocation = imgurn));
-                                        pictureBox1.Invoke(new Action(() => pictureBox1.ImageLocation = imgurn));
-                                    }
-                                    try
-                                    {
-                                        lblURNBlockDate.Invoke(new Action(() => lblURNBlockDate.Text = root.BlockDate.ToString("ddd, dd MMM yyyy hh:mm:ss")));
-                                    }
-                                    catch { }
-                                }
-                                else
-                                {
-                                    try
-                                    {
-                                        string P2FKJSONString = System.IO.File.ReadAllText(@"root/" + transactionid + @"/OBJ.json");
-                                        Root root = JsonConvert.DeserializeObject<Root>(P2FKJSONString);
-
-                                        lblURNBlockDate.Invoke(new Action(() => lblURNBlockDate.Text = root.BlockDate.ToString("ddd, dd MMM yyyy hh:mm:ss")));
-
-                                    }
-                                    catch { }
-                                }
-                            });
-                            break;
-                        case "DOG:":
-                            Task.Run(() =>
-                            {
-                                if (!System.IO.Directory.Exists(@"root/" + transactionid))
-                                {
-                                    Root root = Root.GetRootByTransactionId(transactionid, "good-user", "better-password", @"http://127.0.0.1:22555", "30");
-                                    if (!System.IO.Directory.Exists(@"root/" + transactionid))
-                                    {
-                                        Random rnd = new Random();
-                                        string[] gifFiles = Directory.GetFiles("includes", "*.gif");
-                                        if (gifFiles.Length > 0)
-                                        {
-                                            int randomIndex = rnd.Next(gifFiles.Length);
-                                            imgurn = gifFiles[randomIndex];
-
-                                        }
-                                        else
-                                        {
-                                            try
-                                            {
-
-                                                imgurn = @"includes\HugPuddle.jpg";
-                                            }
-                                            catch { }
-                                        }
-                                        imgPicture.Invoke(new Action(() => imgPicture.ImageLocation = imgurn));
-                                        pictureBox1.Invoke(new Action(() => pictureBox1.ImageLocation = imgurn));
-                                    }
-                                    try
-                                    {
-                                        lblURNBlockDate.Invoke(new Action(() => lblURNBlockDate.Text = root.BlockDate.ToString("ddd, dd MMM yyyy hh:mm:ss")));
-                                    }
-                                    catch { }
-                                }
-                                else
-                                {
-                                    try
-                                    {
-                                        string P2FKJSONString = System.IO.File.ReadAllText(@"root/" + transactionid + @"/OBJ.json");
-                                        Root root = JsonConvert.DeserializeObject<Root>(P2FKJSONString);
-
-                                        lblURNBlockDate.Invoke(new Action(() => lblURNBlockDate.Text = root.BlockDate.ToString("ddd, dd MMM yyyy hh:mm:ss")));
-
-
-                                    }
-                                    catch { }
-                                }
-                            });
-                            break;
-                        case "IPFS":
-                            urn = urn.Replace(@"\root\", @"\ipfs\");
-
-                            if (objstate.URN.Length == 51) { urn += @"\artifact"; }
-
-                            if (!System.IO.Directory.Exists(@"ipfs/" + objstate.URN.Substring(5, 46) + "-build") && !System.IO.Directory.Exists(@"ipfs/" + objstate.URN.Substring(5, 46)))
-                            {
-
-
-                                Task ipfsTask = Task.Run(() =>
-                                {
-                                    Directory.CreateDirectory(@"ipfs/" + objstate.URN.Substring(5, 46) + "-build");
-                                    Process process2 = new Process();
-                                    process2.StartInfo.FileName = @"ipfs\ipfs.exe";
-                                    process2.StartInfo.Arguments = "get " + objstate.URN.Substring(5, 46) + @" -o ipfs\" + objstate.URN.Substring(5, 46);
-                                    process2.Start();
-                                    process2.WaitForExit();
-
-                                    if (System.IO.File.Exists("ipfs/" + objstate.URN.Substring(5, 46)))
-                                    {
-                                        System.IO.File.Move("ipfs/" + objstate.URN.Substring(5, 46), "ipfs/" + objstate.URN.Substring(5, 46) + "_tmp");
-
-                                        string fileName = objstate.URN.Replace(@"//", "").Replace(@"\\", "").Substring(51);
-                                        if (fileName == "")
-                                        {
-                                            fileName = "artifact";
-                                        }
-                                        else { fileName = fileName.Replace(@"/", "").Replace(@"\", ""); }
-                                        Directory.CreateDirectory(@"ipfs/" + objstate.URN.Substring(5, 46));
-                                        System.IO.File.Move("ipfs/" + objstate.URN.Substring(5, 46) + "_tmp", urn);
-                                    }
-
-                                    var SUP = new Options { CreateIfMissing = true };
-
-                                    using (var db = new DB(SUP, @"ipfs"))
-                                    {
-
-                                        string ipfsdaemon = db.Get("ipfs-daemon");
-
-                                        if (ipfsdaemon == "true")
-                                        {
-                                            Process process3 = new Process
-                                            {
-                                                StartInfo = new ProcessStartInfo
+                                                Process process3 = new Process
                                                 {
-                                                    FileName = @"ipfs\ipfs.exe",
-                                                    Arguments = "pin add " + objstate.URN.Substring(5, 46),
-                                                    UseShellExecute = false,
-                                                    CreateNoWindow = true
-                                                }
-                                            };
-                                            process3.Start();
-                                        }
-                                    }
-
-                                    try { btnReloadObject.Invoke(new Action(() => btnReloadObject.PerformClick())); } catch { }
-                                    Directory.Delete(@"ipfs/" + objstate.URN.Substring(5, 46) + "-build");
-
-                                });
-                            }
-
-
-
-                            break;
-                        default:
-                            Task.Run(() =>
-                            {
-                                if (!System.IO.Directory.Exists(@"root/" + urnmatch.Value))
-                                {
-                                    Root root = Root.GetRootByTransactionId(urnmatch.Value, "good-user", "better-password", @"http://127.0.0.1:18332");
-                                    if (!System.IO.Directory.Exists(@"root/" + urnmatch.Value))
-                                    {
-                                        Random rnd = new Random();
-                                        string[] gifFiles = Directory.GetFiles("includes", "*.gif");
-                                        if (gifFiles.Length > 0)
-                                        {
-                                            int randomIndex = rnd.Next(gifFiles.Length);
-                                            imgurn = gifFiles[randomIndex];
-
-                                        }
-                                        else
-                                        {
-                                            try
-                                            {
-
-                                                imgurn = @"includes\HugPuddle.jpg";
+                                                    StartInfo = new ProcessStartInfo
+                                                    {
+                                                        FileName = @"ipfs\ipfs.exe",
+                                                        Arguments = "pin add " + objstate.URN.Substring(5, 46),
+                                                        UseShellExecute = false,
+                                                        CreateNoWindow = true
+                                                    }
+                                                };
+                                                process3.Start();
                                             }
-                                            catch { }
                                         }
-                                        imgPicture.Invoke(new Action(() => imgPicture.ImageLocation = imgurn));
-                                    }
-                                    try
-                                    {
-                                        lblURNBlockDate.Invoke(new Action(() => lblURNBlockDate.Text = root.BlockDate.ToString("ddd, dd MMM yyyy hh:mm:ss")));
-                                    }
-                                    catch { }
+
+
+                                        Directory.Delete(@"ipfs/" + objstate.URN.Substring(5, 46) + "-build");
+
+                                        if (File.Exists(urn)) { btnReloadObject.Invoke(new Action(() => btnReloadObject.PerformClick())); }
+
+
+                                    });
                                 }
-                                else
+
+                                break;
+                            default:
+
+                                root = Root.GetRootByTransactionId(transactionid, "good-user", "better-password", @"http://127.0.0.1:18332");
+                                if (File.Exists(urn)) { btnReloadObject.Invoke(new Action(() => btnReloadObject.PerformClick())); }
+                                try
                                 {
-
-                                    try
-                                    {
-                                        string P2FKJSONString = System.IO.File.ReadAllText(@"root/" + urnmatch.Value + @"/OBJ.json");
-                                        Root root = JsonConvert.DeserializeObject<Root>(P2FKJSONString);
-
-                                        lblURNBlockDate.Invoke(new Action(() => lblURNBlockDate.Text = root.BlockDate.ToString("ddd, dd MMM yyyy hh:mm:ss")));
-                                    }
-                                    catch { }
-
+                                    lblURNBlockDate.Text = root.BlockDate.ToString("ddd, dd MMM yyyy hh:mm:ss");
                                 }
-                            });
-                            break;
-                    }
+                                catch { }
 
+
+                                break;
+                        }
+
+                    }
 
                 }
                 catch { urn = imgurn; }
@@ -1615,9 +1263,9 @@ namespace SUP
                             });
                             break;
                         case "IPFS":
-                            uriurn = uriurn.Replace(@"\root\", @"\ipfs\");
+                            ipfsuri = uriurn.Replace(@"\root\", @"\ipfs\");
                             transactionid = objstate.URI.Substring(5, 46);
-                            if (objstate.URI.Length == 51) { uriurn += @"\artifact"; }
+                            if (objstate.URI.Length == 51) { ipfsuri += @"\artifact"; }
 
                             if (!System.IO.Directory.Exists(@"ipfs/" + objstate.URI.Substring(5, 46) + "-build") && !System.IO.Directory.Exists(@"ipfs/" + objstate.URI.Substring(5, 46)))
                             {
@@ -1710,6 +1358,7 @@ namespace SUP
                 catch { }
 
 
+
                 // Get the file extension
                 string extension = Path.GetExtension(urn).ToLower();
                 Match match = regexTransactionId.Match(urn);
@@ -1798,26 +1447,22 @@ namespace SUP
                 if (!isUserControl) { registrationPanel.Visible = true; }
 
 
-
-                Task.Run(() =>
+                OBJState isOfficial = OBJState.GetObjectByURN(objstate.URN, "good-user", "better-password", "http://127.0.0.1:18332");
+                if (isOfficial.URN != null)
                 {
-                    OBJState isOfficial = OBJState.GetObjectByURN(objstate.URN, "good-user", "better-password", "http://127.0.0.1:18332");
-                    if (isOfficial.URN != null)
+                    if (isOfficial.Creators.First().Key != this._objectaddress)
                     {
-                        if (isOfficial.Creators.First().Key != this._objectaddress)
-                        {
-                            txtOfficialURN.Invoke(new Action(() => txtOfficialURN.Text = isOfficial.Creators.First().Key));
-                            btnLaunchURN.Invoke(new Action(() => btnLaunchURN.Visible = false));
-                            btnOfficial.Invoke(new Action(() => btnOfficial.Visible = true));
-                        }
-                        else
-                        {
-
-
-                            lblOfficial.Invoke(new Action(() => lblOfficial.Visible = true));
-                        }
+                        txtOfficialURN.Text = isOfficial.Creators.First().Key;
+                        btnLaunchURN.Visible = false;
+                        btnOfficial.Visible = true;
                     }
-                });
+                    else
+                    {
+
+                        lblOfficial.Visible = true;
+                    }
+                }
+
 
                 switch (extension.ToLower())
                 {
@@ -1868,7 +1513,36 @@ namespace SUP
                     case ".xml":
                     case ".xsl":
                     case ".xslt":
-                        pictureBox1.Invoke(new Action(() => pictureBox1.ImageLocation = imgurn));
+                        pictureBox1.SuspendLayout();
+                        if (File.Exists(imgurn))
+                        {
+
+                            pictureBox1.ImageLocation = imgurn;
+                        }
+                        else
+                        {
+                            Random rnd = new Random();
+                            string[] gifFiles = Directory.GetFiles("includes", "*.gif");
+                            if (gifFiles.Length > 0)
+                            {
+                                int randomIndex = rnd.Next(gifFiles.Length);
+                                string randomGifFile = gifFiles[randomIndex];
+
+                                pictureBox1.ImageLocation = randomGifFile;
+
+                            }
+                            else
+                            {
+                                try
+                                {
+                                    pictureBox1.ImageLocation = @"includes\HugPuddle.jpg";
+                                }
+                                catch { }
+                            }
+
+
+                        }
+                        pictureBox1.ResumeLayout();
 
 
                         if (btnOfficial.Visible == false)
@@ -1880,7 +1554,36 @@ namespace SUP
 
                     case ".glb":
                         //Show image in main box and show open file button
-                        pictureBox1.Invoke(new Action(() => pictureBox1.ImageLocation = imgurn));
+                        pictureBox1.SuspendLayout();
+                        if (File.Exists(imgurn))
+                        {
+
+                            pictureBox1.ImageLocation = imgurn;
+                        }
+                        else
+                        {
+                            Random rnd = new Random();
+                            string[] gifFiles = Directory.GetFiles("includes", "*.gif");
+                            if (gifFiles.Length > 0)
+                            {
+                                int randomIndex = rnd.Next(gifFiles.Length);
+                                string randomGifFile = gifFiles[randomIndex];
+
+                                pictureBox1.ImageLocation = randomGifFile;
+
+                            }
+                            else
+                            {
+                                try
+                                {
+                                    pictureBox1.ImageLocation = @"includes\HugPuddle.jpg";
+                                }
+                                catch { }
+                            }
+
+
+                        }
+                        pictureBox1.ResumeLayout();
                         if (btnOfficial.Visible == false) { btnLaunchURN.Visible = true; }
                         break;
                     case ".bmp":
@@ -1892,7 +1595,38 @@ namespace SUP
                     case ".tif":
                     case ".tiff":
                         // Create a new PictureBox
-                        pictureBox1.Invoke(new Action(() => pictureBox1.ImageLocation = urn));
+                        pictureBox1.SuspendLayout();
+                        if (File.Exists(urn))
+                        {
+
+                            pictureBox1.ImageLocation = urn;
+                        }
+                        else
+                        {
+                            Random rnd = new Random();
+                            string[] gifFiles = Directory.GetFiles("includes", "*.gif");
+                            if (gifFiles.Length > 0)
+                            {
+                                int randomIndex = rnd.Next(gifFiles.Length);
+                                string randomGifFile = gifFiles[randomIndex];
+
+                                pictureBox1.ImageLocation = randomGifFile;
+
+                            }
+                            else
+                            {
+                                try
+                                {
+                                    pictureBox1.ImageLocation = @"includes\HugPuddle.jpg";
+                                }
+                                catch { }
+                            }
+
+
+                        }
+                        pictureBox1.ResumeLayout();
+
+
                         if (btnOfficial.Visible == false) { btnLaunchURN.Visible = true; }
                         break;
                     case ".mp4":
@@ -1976,10 +1710,10 @@ namespace SUP
                                         }
                                         break;
                                     case "IPFS":
+                                        ipfsurn = urn;
+                                        if (objstate.URN.Length == 51) { ipfsurn += @"\artifact"; }
 
-                                        if (objstate.URN.Length == 51) { urn += @"\artifact"; }
                                         if (!System.IO.Directory.Exists(@"ipfs/" + objstate.URN.Substring(5, 46) + "-build") && !System.IO.Directory.Exists(@"ipfs/" + objstate.URN.Substring(5, 46)))
-
                                         {
 
 
@@ -1995,15 +1729,15 @@ namespace SUP
                                                 if (System.IO.File.Exists("ipfs/" + objstate.URN.Substring(5, 46)))
                                                 {
                                                     System.IO.File.Move("ipfs/" + objstate.URN.Substring(5, 46), "ipfs/" + objstate.URN.Substring(5, 46) + "_tmp");
+
                                                     string fileName = objstate.URN.Replace(@"//", "").Replace(@"\\", "").Substring(51);
                                                     if (fileName == "")
                                                     {
                                                         fileName = "artifact";
-
                                                     }
                                                     else { fileName = fileName.Replace(@"/", "").Replace(@"\", ""); }
                                                     Directory.CreateDirectory(@"ipfs/" + objstate.URN.Substring(5, 46));
-                                                    System.IO.File.Move("ipfs/" + objstate.URN.Substring(5, 46) + "_tmp", @"ipfs/" + objstate.URN.Substring(5, 46) + @"/" + fileName);
+                                                    try { System.IO.File.Move("ipfs/" + objstate.URN.Substring(5, 46) + "_tmp", ipfsurn); } catch { }
                                                 }
 
                                                 var SUP = new Options { CreateIfMissing = true };
@@ -2029,12 +1763,10 @@ namespace SUP
                                                     }
                                                 }
 
-                                                btnReloadObject.Invoke(new Action(() => btnReloadObject.PerformClick()));
                                                 Directory.Delete(@"ipfs/" + objstate.URN.Substring(5, 46) + "-build");
+
                                             });
-
                                         }
-
 
                                         break;
                                     default:
@@ -2157,7 +1889,35 @@ namespace SUP
 
 
                 imgPicture.SuspendLayout();
-                imgPicture.ImageLocation = imgurn;
+                if (File.Exists(imgurn))
+                {
+
+                    imgPicture.ImageLocation = imgurn;
+                }
+                else
+                {
+                    Random rnd = new Random();
+                    string[] gifFiles = Directory.GetFiles("includes", "*.gif");
+                    if (gifFiles.Length > 0)
+                    {
+                        int randomIndex = rnd.Next(gifFiles.Length);
+                        string randomGifFile = gifFiles[randomIndex];
+
+                        imgPicture.ImageLocation = randomGifFile;
+
+                    }
+                    else
+                    {
+                        try
+                        {
+                            imgPicture.ImageLocation = @"includes\HugPuddle.jpg";
+                        }
+                        catch { }
+                    }
+
+
+                }
+
                 imgPicture.ResumeLayout();
 
 

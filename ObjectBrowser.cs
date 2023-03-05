@@ -1265,6 +1265,7 @@ namespace SUP
                 e.Handled = true;
                 e.SuppressKeyPress = true;
                 DisableSupInput();
+                if (pages.Value == -1) { pages.Maximum = 0; }
                 pages.Value = int.Parse(txtLast.Text);
                 Random rnd = new Random();
                 string[] gifFiles = Directory.GetFiles("includes", "*.gif");
