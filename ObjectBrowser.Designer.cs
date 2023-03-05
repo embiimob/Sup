@@ -240,7 +240,6 @@ namespace SUP
             this.pages.Size = new System.Drawing.Size(689, 45);
             this.pages.TabIndex = 84;
             this.pages.TickStyle = System.Windows.Forms.TickStyle.Both;
-            this.pages.Visible = false;
             this.pages.Scroll += new System.EventHandler(this.pages_Scroll);
             this.pages.MouseDown += new System.Windows.Forms.MouseEventHandler(this.pages_MouseDown);
             this.pages.MouseUp += new System.Windows.Forms.MouseEventHandler(this.pages_MouseUp);

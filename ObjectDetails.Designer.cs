@@ -132,7 +132,7 @@
             this.transFlow.Location = new System.Drawing.Point(9, 84);
             this.transFlow.Margin = new System.Windows.Forms.Padding(3, 0, 0, 0);
             this.transFlow.Name = "transFlow";
-            this.transFlow.Size = new System.Drawing.Size(293, 23);
+            this.transFlow.Size = new System.Drawing.Size(293, 121);
             this.transFlow.TabIndex = 102;
             // 
             // btnLaunchURN
@@ -188,10 +188,10 @@
             // 
             this.KeysFlow.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.KeysFlow.AutoScroll = true;
-            this.KeysFlow.Location = new System.Drawing.Point(9, 110);
+            this.KeysFlow.Location = new System.Drawing.Point(9, 208);
             this.KeysFlow.Name = "KeysFlow";
             this.KeysFlow.Padding = new System.Windows.Forms.Padding(0, 5, 0, 0);
-            this.KeysFlow.Size = new System.Drawing.Size(293, 206);
+            this.KeysFlow.Size = new System.Drawing.Size(293, 108);
             this.KeysFlow.TabIndex = 64;
             this.KeysFlow.Visible = false;
             // 
@@ -472,7 +472,7 @@
             this.txtdesc.Multiline = true;
             this.txtdesc.Name = "txtdesc";
             this.txtdesc.ReadOnly = true;
-            this.txtdesc.Size = new System.Drawing.Size(270, 225);
+            this.txtdesc.Size = new System.Drawing.Size(270, 228);
             this.txtdesc.TabIndex = 77;
             this.txtdesc.Text = "description";
             // 
@@ -606,7 +606,7 @@
             this.registrationPanel.Controls.Add(this.lblProcessHeight);
             this.registrationPanel.Controls.Add(this.lblLastChangedDate);
             this.registrationPanel.Controls.Add(this.label4);
-            this.registrationPanel.Location = new System.Drawing.Point(6, 80);
+            this.registrationPanel.Location = new System.Drawing.Point(0, 82);
             this.registrationPanel.Name = "registrationPanel";
             this.registrationPanel.Size = new System.Drawing.Size(294, 237);
             this.registrationPanel.TabIndex = 106;
@@ -633,6 +633,7 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.SystemColors.InactiveCaption;
             this.ClientSize = new System.Drawing.Size(1043, 372);
+            this.Controls.Add(this.registrationPanel);
             this.Controls.Add(this.supPanel);
             this.Controls.Add(this.lblOfficial);
             this.Controls.Add(this.lblObjectCreatedDate);
@@ -663,7 +664,6 @@
             this.Controls.Add(this.txtOfficialURN);
             this.Controls.Add(this.lblImageFullPath);
             this.Controls.Add(this.lblURNFullPath);
-            this.Controls.Add(this.registrationPanel);
             this.MinimumSize = new System.Drawing.Size(1059, 411);
             this.Name = "ObjectDetails";
             this.Padding = new System.Windows.Forms.Padding(3);

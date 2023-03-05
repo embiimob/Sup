@@ -71,6 +71,7 @@ namespace SUP
                     this.Text = "[ " + _objectaddress + " ]";
                     this.Height = this.Height + 210;
                     this.Width = this.Width + 210;
+                    registrationPanel.Visible= true;
                 }
                 btnReloadObject.PerformClick();
 
@@ -325,6 +326,7 @@ namespace SUP
             using (var db = new DB(SUP, @"root\sup"))
             {
                 string lastKey = db.Get("lastkey!" + _objectaddress);
+                if (lastKey == null) { return; }
                 LevelDB.Iterator it = db.CreateIterator();
                 for (
                    it.Seek(lastKey);
@@ -875,6 +877,28 @@ namespace SUP
                                 if (!System.IO.Directory.Exists("root/" + transactionid))
                                 {
                                     Root root = Root.GetRootByTransactionId(transactionid, "good-user", "better-password", @"http://127.0.0.1:12832", "50");
+                                    if (!System.IO.Directory.Exists("root/" + transactionid))
+                                    {
+                                        Random rnd = new Random();
+                                        string[] gifFiles = Directory.GetFiles("includes", "*.gif");
+                                        if (gifFiles.Length > 0)
+                                        {
+                                            int randomIndex = rnd.Next(gifFiles.Length);
+                                            imgurn = gifFiles[randomIndex];
+
+                                        }
+                                        else
+                                        {
+                                            try
+                                            {
+
+                                                imgurn = @"includes\HugPuddle.jpg";
+                                            }
+                                            catch { }
+                                        }
+                                        imgPicture.Invoke(new Action(() => imgPicture.ImageLocation = imgurn));
+                                    }
+
                                     try { lblIMGBlockDate.Invoke(new Action(() => lblIMGBlockDate.Text = root.BlockDate.ToString("ddd, dd MMM yyyy hh:mm:ss"))); }
                                     catch { }
                                 }
@@ -888,7 +912,7 @@ namespace SUP
                                         lblIMGBlockDate.Invoke(new Action(() => lblIMGBlockDate.Text = root.BlockDate.ToString("ddd, dd MMM yyyy hh:mm:ss")));
 
                                     }
-                                    catch { }
+                                    catch {}
                                 }
                             });
                             break;
@@ -898,6 +922,27 @@ namespace SUP
                                 if (!System.IO.Directory.Exists("root/" + transactionid))
                                 {
                                     Root root = Root.GetRootByTransactionId(transactionid, "good-user", "better-password", @"http://127.0.0.1:8332", "0");
+                                    if (!System.IO.Directory.Exists("root/" + transactionid))
+                                    {
+                                        Random rnd = new Random();
+                                        string[] gifFiles = Directory.GetFiles("includes", "*.gif");
+                                        if (gifFiles.Length > 0)
+                                        {
+                                            int randomIndex = rnd.Next(gifFiles.Length);
+                                            imgurn = gifFiles[randomIndex];
+
+                                        }
+                                        else
+                                        {
+                                            try
+                                            {
+
+                                                imgurn = @"includes\HugPuddle.jpg";
+                                            }
+                                            catch { }
+                                        }
+                                        imgPicture.Invoke(new Action(() => imgPicture.ImageLocation = imgurn));
+                                    }
                                     try
                                     {
                                         lblIMGBlockDate.Invoke(new Action(() => lblIMGBlockDate.Text = root.BlockDate.ToString("ddd, dd MMM yyyy hh:mm:ss")));
@@ -923,6 +968,27 @@ namespace SUP
                                 if (!System.IO.Directory.Exists("root/" + transactionid))
                                 {
                                     Root root = Root.GetRootByTransactionId(transactionid, "good-user", "better-password", @"http://127.0.0.1:9332", "48");
+                                    if (!System.IO.Directory.Exists("root/" + transactionid))
+                                    {
+                                        Random rnd = new Random();
+                                        string[] gifFiles = Directory.GetFiles("includes", "*.gif");
+                                        if (gifFiles.Length > 0)
+                                        {
+                                            int randomIndex = rnd.Next(gifFiles.Length);
+                                            imgurn = gifFiles[randomIndex];
+
+                                        }
+                                        else
+                                        {
+                                            try
+                                            {
+
+                                                imgurn = @"includes\HugPuddle.jpg";
+                                            }
+                                            catch { }
+                                        }
+                                        imgPicture.Invoke(new Action(() => imgPicture.ImageLocation = imgurn));
+                                    }
                                     try
                                     {
                                         lblIMGBlockDate.Invoke(new Action(() => lblIMGBlockDate.Text = root.BlockDate.ToString("ddd, dd MMM yyyy hh:mm:ss")));
@@ -949,6 +1015,27 @@ namespace SUP
                                 if (!System.IO.Directory.Exists("root/" + transactionid))
                                 {
                                     Root root = Root.GetRootByTransactionId(transactionid, "good-user", "better-password", @"http://127.0.0.1:22555", "30");
+                                    if (!System.IO.Directory.Exists("root/" + transactionid))
+                                    {
+                                        Random rnd = new Random();
+                                        string[] gifFiles = Directory.GetFiles("includes", "*.gif");
+                                        if (gifFiles.Length > 0)
+                                        {
+                                            int randomIndex = rnd.Next(gifFiles.Length);
+                                            imgurn = gifFiles[randomIndex];
+
+                                        }
+                                        else
+                                        {
+                                            try
+                                            {
+
+                                                imgurn = @"includes\HugPuddle.jpg";
+                                            }
+                                            catch { }
+                                        }
+                                        imgPicture.Invoke(new Action(() => imgPicture.ImageLocation = imgurn));
+                                    }
                                     try
                                     {
                                         lblIMGBlockDate.Invoke(new Action(() => lblIMGBlockDate.Text = root.BlockDate.ToString("ddd, dd MMM yyyy hh:mm:ss")));
@@ -1018,6 +1105,29 @@ namespace SUP
                                     Directory.Delete(@"ipfs/" + objstate.Image.Substring(5, 46) + "-build");
 
                                 });
+
+                                if (!System.IO.Directory.Exists(@"ipfs/" + objstate.Image.Substring(5, 46)))
+                                {
+                                    Random rnd = new Random();
+                                    string[] gifFiles = Directory.GetFiles("includes", "*.gif");
+                                    if (gifFiles.Length > 0)
+                                    {
+                                        int randomIndex = rnd.Next(gifFiles.Length);
+                                        imgurn = gifFiles[randomIndex];
+
+                                    }
+                                    else
+                                    {
+                                        try
+                                        {
+
+                                            imgurn = @"includes\HugPuddle.jpg";
+                                        }
+                                        catch { }
+                                    }
+                                    imgPicture.Invoke(new Action(() => imgPicture.ImageLocation = imgurn));
+
+                                }
                             }
 
 
@@ -1554,6 +1664,8 @@ namespace SUP
                     btnRefreshSup.PerformClick();
 
                 }
+
+                if (!isUserControl) { registrationPanel.Visible = true; }
                
 
 
@@ -1570,7 +1682,8 @@ namespace SUP
                         }
                         else
                         {
-
+                                                      
+         
                             lblOfficial.Invoke(new Action(() => lblOfficial.Visible = true));
                         }
                     }
@@ -1912,6 +2025,7 @@ namespace SUP
                 imgPicture.ResumeLayout();
 
 
+
             }
         }
 
@@ -1932,7 +2046,7 @@ namespace SUP
 
             transFlow.SuspendLayout();
             txtdesc.Visible = false;
-
+            registrationPanel.Visible = false;
             // Clear controls if no messages have been displayed yet
             if (numChangesDisplayed == 0)
             {
