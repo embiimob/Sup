@@ -67,7 +67,6 @@
             this.button2 = new System.Windows.Forms.Button();
             this.label2 = new System.Windows.Forms.Label();
             this.CreatorsPanel = new System.Windows.Forms.FlowLayoutPanel();
-            this.label1 = new System.Windows.Forms.Label();
             this.OwnersPanel = new System.Windows.Forms.FlowLayoutPanel();
             this.webviewer = new Microsoft.Web.WebView2.WinForms.WebView2();
             this.lblTotalOwnedDetail = new System.Windows.Forms.Label();
@@ -203,6 +202,7 @@
             this.imgPicture.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
             this.imgPicture.TabIndex = 76;
             this.imgPicture.TabStop = false;
+            this.imgPicture.Click += new System.EventHandler(this.imgPicture_Click);
             this.imgPicture.Validated += new System.EventHandler(this.imgPicture_Validated);
             // 
             // lblLicense
@@ -351,7 +351,7 @@
             // 
             this.btnRefreshOwners.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.btnRefreshOwners.Font = new System.Drawing.Font("Microsoft Sans Serif", 21.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnRefreshOwners.Location = new System.Drawing.Point(673, 323);
+            this.btnRefreshOwners.Location = new System.Drawing.Point(833, 322);
             this.btnRefreshOwners.Margin = new System.Windows.Forms.Padding(0);
             this.btnRefreshOwners.Name = "btnRefreshOwners";
             this.btnRefreshOwners.Size = new System.Drawing.Size(100, 42);
@@ -365,7 +365,7 @@
             // 
             this.btnRefreshSup.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.btnRefreshSup.Font = new System.Drawing.Font("Microsoft Sans Serif", 21.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnRefreshSup.Location = new System.Drawing.Point(928, 323);
+            this.btnRefreshSup.Location = new System.Drawing.Point(936, 322);
             this.btnRefreshSup.Name = "btnRefreshSup";
             this.btnRefreshSup.Size = new System.Drawing.Size(100, 42);
             this.btnRefreshSup.TabIndex = 67;
@@ -377,7 +377,7 @@
             // 
             this.btnRefreshTransactions.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.btnRefreshTransactions.Font = new System.Drawing.Font("Microsoft Sans Serif", 21.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnRefreshTransactions.Location = new System.Drawing.Point(192, 323);
+            this.btnRefreshTransactions.Location = new System.Drawing.Point(13, 323);
             this.btnRefreshTransactions.Name = "btnRefreshTransactions";
             this.btnRefreshTransactions.Size = new System.Drawing.Size(100, 42);
             this.btnRefreshTransactions.TabIndex = 85;
@@ -389,7 +389,7 @@
             // 
             this.btnReloadObject.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.btnReloadObject.Font = new System.Drawing.Font("Microsoft Sans Serif", 21.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnReloadObject.Location = new System.Drawing.Point(6, 323);
+            this.btnReloadObject.Location = new System.Drawing.Point(188, 323);
             this.btnReloadObject.Name = "btnReloadObject";
             this.btnReloadObject.Size = new System.Drawing.Size(100, 42);
             this.btnReloadObject.TabIndex = 68;
@@ -418,15 +418,16 @@
             this.txtName.Size = new System.Drawing.Size(220, 38);
             this.txtName.TabIndex = 81;
             this.txtName.Text = "Title";
+            this.txtName.Click += new System.EventHandler(this.txtName_Click);
             // 
             // supPanel
             // 
             this.supPanel.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.supPanel.Controls.Add(this.supFlow);
-            this.supPanel.Location = new System.Drawing.Point(673, 13);
+            this.supPanel.Location = new System.Drawing.Point(662, 13);
             this.supPanel.Name = "supPanel";
-            this.supPanel.Size = new System.Drawing.Size(363, 253);
+            this.supPanel.Size = new System.Drawing.Size(374, 279);
             this.supPanel.TabIndex = 80;
             this.supPanel.Visible = false;
             // 
@@ -436,25 +437,26 @@
             this.supFlow.Dock = System.Windows.Forms.DockStyle.Fill;
             this.supFlow.Location = new System.Drawing.Point(0, 0);
             this.supFlow.Name = "supFlow";
-            this.supFlow.Size = new System.Drawing.Size(363, 253);
+            this.supFlow.Size = new System.Drawing.Size(374, 279);
             this.supFlow.TabIndex = 3;
             // 
             // button6
             // 
             this.button6.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.button6.Enabled = false;
-            this.button6.Location = new System.Drawing.Point(928, 233);
+            this.button6.Font = new System.Drawing.Font("Microsoft Sans Serif", 21.75F);
+            this.button6.Location = new System.Drawing.Point(673, 323);
             this.button6.Name = "button6";
-            this.button6.Size = new System.Drawing.Size(103, 33);
+            this.button6.Size = new System.Drawing.Size(100, 42);
             this.button6.TabIndex = 79;
-            this.button6.Text = "buy";
+            this.button6.Text = "💎";
             this.button6.UseVisualStyleBackColor = true;
             // 
             // button5
             // 
             this.button5.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.button5.Enabled = false;
-            this.button5.Location = new System.Drawing.Point(928, 193);
+            this.button5.Location = new System.Drawing.Point(933, 209);
             this.button5.Name = "button5";
             this.button5.Size = new System.Drawing.Size(103, 33);
             this.button5.TabIndex = 78;
@@ -480,7 +482,7 @@
             // 
             this.button4.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.button4.Enabled = false;
-            this.button4.Location = new System.Drawing.Point(928, 154);
+            this.button4.Location = new System.Drawing.Point(933, 170);
             this.button4.Name = "button4";
             this.button4.Size = new System.Drawing.Size(103, 33);
             this.button4.TabIndex = 75;
@@ -491,7 +493,7 @@
             // 
             this.button2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.button2.Enabled = false;
-            this.button2.Location = new System.Drawing.Point(928, 274);
+            this.button2.Location = new System.Drawing.Point(933, 248);
             this.button2.Name = "button2";
             this.button2.Size = new System.Drawing.Size(103, 33);
             this.button2.TabIndex = 74;
@@ -502,7 +504,7 @@
             // 
             this.label2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(676, 140);
+            this.label2.Location = new System.Drawing.Point(676, 156);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(45, 13);
             this.label2.TabIndex = 72;
@@ -513,20 +515,10 @@
             this.CreatorsPanel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.CreatorsPanel.AutoScroll = true;
             this.CreatorsPanel.BackColor = System.Drawing.SystemColors.InactiveCaption;
-            this.CreatorsPanel.Location = new System.Drawing.Point(673, 156);
+            this.CreatorsPanel.Location = new System.Drawing.Point(662, 172);
             this.CreatorsPanel.Name = "CreatorsPanel";
-            this.CreatorsPanel.Size = new System.Drawing.Size(249, 110);
+            this.CreatorsPanel.Size = new System.Drawing.Size(260, 110);
             this.CreatorsPanel.TabIndex = 71;
-            // 
-            // label1
-            // 
-            this.label1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(676, 23);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(41, 13);
-            this.label1.TabIndex = 70;
-            this.label1.Text = "owners";
             // 
             // OwnersPanel
             // 
@@ -534,9 +526,9 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.OwnersPanel.AutoScroll = true;
             this.OwnersPanel.BackColor = System.Drawing.SystemColors.InactiveCaption;
-            this.OwnersPanel.Location = new System.Drawing.Point(673, 38);
+            this.OwnersPanel.Location = new System.Drawing.Point(662, 13);
             this.OwnersPanel.Name = "OwnersPanel";
-            this.OwnersPanel.Size = new System.Drawing.Size(363, 99);
+            this.OwnersPanel.Size = new System.Drawing.Size(374, 133);
             this.OwnersPanel.TabIndex = 69;
             // 
             // webviewer
@@ -559,10 +551,10 @@
             this.lblTotalOwnedDetail.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.lblTotalOwnedDetail.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lblTotalOwnedDetail.ForeColor = System.Drawing.SystemColors.ControlText;
-            this.lblTotalOwnedDetail.Location = new System.Drawing.Point(673, 279);
+            this.lblTotalOwnedDetail.Location = new System.Drawing.Point(673, 295);
             this.lblTotalOwnedDetail.Name = "lblTotalOwnedDetail";
             this.lblTotalOwnedDetail.Padding = new System.Windows.Forms.Padding(3);
-            this.lblTotalOwnedDetail.Size = new System.Drawing.Size(252, 23);
+            this.lblTotalOwnedDetail.Size = new System.Drawing.Size(157, 23);
             this.lblTotalOwnedDetail.TabIndex = 82;
             this.lblTotalOwnedDetail.Text = "total";
             this.lblTotalOwnedDetail.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
@@ -658,7 +650,6 @@
             this.Controls.Add(this.button2);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.CreatorsPanel);
-            this.Controls.Add(this.label1);
             this.Controls.Add(this.webviewer);
             this.Controls.Add(this.lblTotalOwnedDetail);
             this.Controls.Add(this.txtOfficialURN);
@@ -726,7 +717,6 @@
         private System.Windows.Forms.Button button2;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.FlowLayoutPanel CreatorsPanel;
-        private System.Windows.Forms.Label label1;
         private System.Windows.Forms.FlowLayoutPanel OwnersPanel;
         private Microsoft.Web.WebView2.WinForms.WebView2 webviewer;
         private System.Windows.Forms.Label lblTotalOwnedDetail;

@@ -1849,11 +1849,11 @@ namespace SUP.P2FK
 
                 if (objectStates.Count() == foundCount) { return objectStates; }
 
-
+                objectStates.Clear();
                 HashSet<string> addedValues = new HashSet<string>();
                 int rownum = 0;
                 if (qty == -1) { qty = foundCount; }
-
+               
 
                 using (var db = new DB(SUP, @"root\found"))
                 {
@@ -1868,7 +1868,7 @@ namespace SUP.P2FK
                     {
                         string whatis = it.KeyAsString().Split('!')[2];
                         // Display only if rownum > numMessagesDisplayed to skip already displayed messages
-                        if (rownum >= skip)
+                        if (rownum >= skip && !addedValues.Contains(it.KeyAsString().Split('!')[2]))
                         {
 
                             addedValues.Add(it.KeyAsString().Split('!')[2]);

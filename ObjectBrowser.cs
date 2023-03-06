@@ -2723,10 +2723,14 @@ namespace SUP
 
         private void pages_Scroll(object sender, EventArgs e)
         {
-            txtLast.Text = (pages.Value).ToString();
+            if (flowLayoutPanel1.Controls.Count > 0)
+            {
+
+                txtLast.Text = (pages.Value).ToString();
+            }
         }
 
-        private async void pages_MouseUp(object sender, MouseEventArgs e)
+            private async void pages_MouseUp(object sender, MouseEventArgs e)
         {
             if (_mouseLock == false)
             {
@@ -2760,7 +2764,7 @@ namespace SUP
 
         private void pages_MouseDown(object sender, MouseEventArgs e)
         {
-
+          
             if (_mouseClicked)
             {
                 doubleClickTimer.Stop();
