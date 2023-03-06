@@ -1961,27 +1961,15 @@ namespace SUP
             }
         }
 
-        private async void flowLayoutPanel1_DragDrop(object sender, System.Windows.Forms.DragEventArgs e)
+        private void flowLayoutPanel1_DragDrop(object sender, System.Windows.Forms.DragEventArgs e)
         {
             DisableSupInput();
+            pages.Minimum = 0;
             pages.Value = 0;
-            Random rnd = new Random();
-            string[] gifFiles = Directory.GetFiles("includes", "*.gif");
-            if (gifFiles.Length > 0)
-            {
-                int randomIndex = rnd.Next(gifFiles.Length);
-                string randomGifFile = gifFiles[randomIndex];
-                imgLoading.ImageLocation = randomGifFile;
-            }
-            else
-            {
-                imgLoading.ImageLocation = @"includes\HugPuddle.jpg";
-            }
             string[] filePaths = (string[])e.Data.GetData((System.Windows.Forms.DataFormats.FileDrop));
             string filePath = filePaths[0];
-            await Task.Run(() => GetObjectByFile(filePath));
+            GetObjectByFile(filePath);
             flowLayoutPanel1.Visible = true;
-            pages.Visible = true;
             EnableSupInput();
 
         }
