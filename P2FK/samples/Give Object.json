@@ -1,9 +1,22 @@
+//variable format
+
 [
   [ 8, 1 ],
   [ 9, 2 ],
   [ 10, 3 ]
 ]
 
+
+//defined format
+
+[
+  [ "muVrFVk3ErfrnmWosLF4WixxRtDKfMx9bs", "1" ],
+  [ "AtomSea", "1" ]
+]
+
+
+
+//variable format
 //assume keyword order id 0 is the authorization address
 //assume keyword order id 1-?  list of objects to give ( the max amount of objects to give in batch is #unknown but there is one )
 //[new owner keyword order id, qty to give]

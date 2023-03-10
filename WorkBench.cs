@@ -1121,7 +1121,7 @@ namespace SUP
 
         private void OnContainerResize(object sender, EventArgs e)
         {
-            splitContainer1.SplitterDistance = 0;
+            try { splitContainer1.SplitterDistance = 0; } catch { }
         }
 
         private void WorkBench_DragEnter(object sender, DragEventArgs e)
@@ -1297,6 +1297,11 @@ namespace SUP
 
             // Return the substring between the colon and the slash
             return input.Substring(startIndex, endIndex - startIndex);
+        }
+
+        private void btnEditProfile_Click(object sender, EventArgs e)
+        {
+            new ObjectMint().Show();
         }
     }
 }

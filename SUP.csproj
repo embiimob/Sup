@@ -66,6 +66,9 @@
       <HintPath>includes\CommandLine.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="Gma.QrCodeNet.Encoding, Version=0.4.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>packages\QrCode.Net.0.4.0.0\lib\net45\Gma.QrCodeNet.Encoding.dll</HintPath>
+    </Reference>
     <Reference Include="HtmlSanitizer, Version=8.0.0.0, Culture=neutral, PublicKeyToken=61c49a1a9e79cc28, processorArchitecture=MSIL">
       <HintPath>..includes\HtmlSanitizer.dll</HintPath>
     </Reference>
@@ -213,6 +216,12 @@
     <Compile Include="ObjectDetailsControl.Designer.cs">
       <DependentUpon>ObjectDetailsControl.cs</DependentUpon>
     </Compile>
+    <Compile Include="ObjectMint.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ObjectMint.Designer.cs">
+      <DependentUpon>ObjectMint.cs</DependentUpon>
+    </Compile>
     <Compile Include="WorkBench.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -258,6 +267,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="ObjectDetailsControl.resx">
       <DependentUpon>ObjectDetailsControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ObjectMint.resx">
+      <DependentUpon>ObjectMint.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="WorkBench.resx">
       <DependentUpon>WorkBench.cs</DependentUpon>
@@ -363,6 +375,9 @@
     <Content Include="includes\NBitcoin.xml" />
     <Content Include="includes\Newtonsoft.Json.dll" />
     <Content Include="includes\Newtonsoft.Json.xml" />
+    <Content Include="includes\QRCoder.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="includes\Sup1.gif">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>

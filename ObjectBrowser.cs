@@ -163,53 +163,53 @@ namespace SUP
             }
 
             List<OBJState> reviewedObjects = new List<OBJState>();
-            foreach (OBJState objstate in createdObjects)
-            {
+            //foreach (OBJState objstate in createdObjects)
+            //{
 
-                string isBlocked = "";
-                var OBJ = new Options { CreateIfMissing = true };
-                try
-                {
-                    using (var db = new DB(OBJ, @"root\oblock"))
-                    {
-                        isBlocked = db.Get(objstate.Creators.First().Key);
-                        db.Close();
-                    }
-                }
-                catch
-                {
-                    try
-                    {
-                        using (var db = new DB(OBJ, @"root\oblock2"))
-                        {
-                            isBlocked = db.Get(objstate.Creators.First().Key);
-                            db.Close();
-                        }
-                        Directory.Move(@"root\oblock2", @"root\oblock");
-                    }
-                    catch
-                    {
-                        try { Directory.Delete(@"root\oblock", true); }
-                        catch { }
-                    }
+            //    string isBlocked = "";
+            //    var OBJ = new Options { CreateIfMissing = true };
+            //    try
+            //    {
+            //        using (var db = new DB(OBJ, @"root\oblock"))
+            //        {
+            //            isBlocked = db.Get(objstate.Creators.First().Key);
+            //            db.Close();
+            //        }
+            //    }
+            //    catch
+            //    {
+            //        try
+            //        {
+            //            using (var db = new DB(OBJ, @"root\oblock2"))
+            //            {
+            //                isBlocked = db.Get(objstate.Creators.First().Key);
+            //                db.Close();
+            //            }
+            //            Directory.Move(@"root\oblock2", @"root\oblock");
+            //        }
+            //        catch
+            //        {
+            //            try { Directory.Delete(@"root\oblock", true); }
+            //            catch { }
+            //        }
 
-                }
+            //    }
 
 
-                if (isBlocked != "true")
-                {
-                    reviewedObjects.Add(objstate);
-                }
+            //    if (isBlocked != "true")
+            //    {
+            //        reviewedObjects.Add(objstate);
+            //    }
 
-            }
-            createdObjects = reviewedObjects;
+            //}
+            //createdObjects = reviewedObjects;
 
 
             this.Invoke((Action)(() =>
             {
-                pages.Maximum = createdObjects.Count -1;
-                txtTotal.Text = (createdObjects.Count -1).ToString();
-                pages.Visible = true;                
+                pages.Maximum = createdObjects.Count - 1;
+                txtTotal.Text = (createdObjects.Count - 1).ToString();
+                pages.Visible = true;
 
             }));
 
@@ -229,8 +229,6 @@ namespace SUP
                             FoundObjectControl foundObject = new FoundObjectControl();
 
                             try { transid = objstate.Image.Substring(4, 64); } catch { transid = objstate.Image.Substring(5, 46); }
-                            //foundObject.ObjectImage.ImageLocation = @"root/" + objstate.Image.Replace("BTC:", "").Replace("MZC:", "").Replace("LTC:", "").Replace("DOG:", "");
-
                             string imgurl = objstate.Image.Replace("BTC:", "").Replace("MZC:", "").Replace("LTC:", "").Replace("DOG:", "").Replace("IPFS:", "");
                             if (objstate.Image.ToUpper().StartsWith("IPFS:")) { imgurl = @"ipfs/" + imgurl; } else { imgurl = @"root/" + imgurl; }
 
@@ -1197,6 +1195,7 @@ namespace SUP
             if (txtSearchAddress.Text != "" && !txtSearchAddress.Text.StartsWith("#") && !txtSearchAddress.Text.ToUpper().StartsWith("BTC:") && !txtSearchAddress.Text.ToUpper().StartsWith("MZC:") && !txtSearchAddress.Text.ToUpper().StartsWith("LTC:") && !txtSearchAddress.Text.ToUpper().StartsWith("IPFS:") && !txtSearchAddress.Text.ToUpper().StartsWith("HTTP") && !txtSearchAddress.Text.ToUpper().StartsWith("SUP:"))
             {
                 DisableSupInput();
+                pages.Maximum = 0;
                 pages.Value = 0;
                 Random rnd = new Random();
                 string[] gifFiles = Directory.GetFiles("includes", "*.gif");

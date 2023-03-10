@@ -43,6 +43,7 @@ namespace SUP
             Form parentForm = this.Owner;
             bool isBlue = false;
 
+
             // Check if the parent form has a button named "btnLive" with blue background color
             try
             {
@@ -62,6 +63,9 @@ namespace SUP
             }
             else
             {
+               
+
+
                 this.Text = String.Empty;
 
                 if (!isUserControl)
@@ -72,6 +76,7 @@ namespace SUP
                     registrationPanel.Visible = true;
                 }
                 btnReloadObject.PerformClick();
+                lblPleaseStandBy.Visible = false;
 
             }
 

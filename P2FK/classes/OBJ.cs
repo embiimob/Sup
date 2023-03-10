@@ -1,10 +1,13 @@
-﻿using LevelDB;
+﻿using AngleSharp.Common;
+using LevelDB;
 using NBitcoin;
 using NBitcoin.RPC;
 using Newtonsoft.Json;
+using Org.BouncyCastle.Utilities;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Data;
 using System.Diagnostics;
 using System.Globalization;
@@ -33,10 +36,14 @@ namespace SUP.P2FK
         public string dsc { get; set; }
         public Dictionary<string, string> atr { get; set; }
         public string lic { get; set; }
-        public int[] cre { get; set; }
-        public Dictionary<int, long> own { get; set; }
+        public string[] cre { get; set; }
+        public Dictionary<string, long> own { get; set; }
+        public int max { get; set; }
+    
+
 
     }
+
     public class OBJState
     {
         public int Id { get; set; }
@@ -49,12 +56,13 @@ namespace SUP.P2FK
         public string License { get; set; }
         public Dictionary<string, DateTime> Creators { get; set; }
         public Dictionary<string, long> Owners { get; set; }
+        public long Maximum { get; set; }
         public DateTime LockedDate { get; set; }
         public int ProcessHeight { get; set; }
         public DateTime CreatedDate { get; set; }
         public DateTime ChangeDate { get; set; }
         public bool Verbose { get; set; }
-      
+
         private readonly static object SupLocker = new object();
         public static OBJState GetObjectByAddress(string objectaddress, string username, string password, string url, string versionByte = "111", bool verbose = false)
         {
@@ -115,7 +123,7 @@ namespace SUP.P2FK
                     {
                         JSONOBJ = System.IO.File.ReadAllText(diskpath + "GetRootByTransctionId.json");
                         unconfimredobj = JsonConvert.DeserializeObject<Root>(JSONOBJ);
-                        return OBJState.GetObjectByTransactionId(unconfimredobj.TransactionId,username,password,url,versionByte);
+                        return OBJState.GetObjectByTransactionId(unconfimredobj.TransactionId, username, password, url, versionByte);
 
                     }
                     catch { return objectState; }
@@ -129,7 +137,7 @@ namespace SUP.P2FK
                 //return all roots found at address
                 objectTransactions = Root.GetRootsByAddress(objectaddress, username, password, url, intProcessHeight, 2, versionByte);
 
-                if (objectTransactions.Count() == 1 && intProcessHeight > 0 ) { return objectState; }
+                if (objectTransactions.Count() == 1 && intProcessHeight > 0) { return objectState; }
 
                 objectTransactions = Root.GetRootsByAddress(objectaddress, username, password, url, intProcessHeight, 300, versionByte);
 
@@ -196,16 +204,20 @@ namespace SUP.P2FK
 
 
 
-                                    if (objectinspector.cre != null && objectState.Creators == null && transaction.SignedBy == objectaddress)
+                                    if (objectinspector.cre != null && objectState.Creators == null && ( transaction.SignedBy == objectaddress || objectinspector.cre.Contains(transaction.SignedBy)))
                                     {
 
                                         objectState.Creators = new Dictionary<string, DateTime> { };
                                         try
                                         {
-                                            foreach (int keywordId in objectinspector.cre)
+                                            foreach (string keywordId in objectinspector.cre)
                                             {
+                                                string creator = "";
 
-                                                string creator = transaction.Keyword.Reverse().ElementAt(keywordId).Key;
+                                                if (int.TryParse(keywordId, out int intId))
+                                                {
+                                                    creator = transaction.Keyword.Reverse().ElementAt(intId).Key;
+                                                }else { creator = keywordId; }
 
                                                 if (!objectState.Creators.ContainsKey(creator))
                                                 {
@@ -244,7 +256,7 @@ namespace SUP.P2FK
                                                         var ROOT = new Options { CreateIfMissing = true };
                                                         var db = new DB(ROOT, @"root\event");
                                                         db.Put(objectaddress + "!" + transaction.BlockDate.ToString("yyyyMMddHHmmss") + "!" + sortableProcessHeight + "!", logstatus);
-                                                        db.Put("lastkey!"+ objectaddress, objectaddress + "!" + transaction.BlockDate.ToString("yyyyMMddHHmmss") + "!" + sortableProcessHeight + "!");
+                                                        db.Put("lastkey!" + objectaddress, objectaddress + "!" + transaction.BlockDate.ToString("yyyyMMddHHmmss") + "!" + sortableProcessHeight + "!");
                                                         db.Close();
                                                     }
 
@@ -293,8 +305,14 @@ namespace SUP.P2FK
 
                                                     foreach (var ownerId in objectinspector.own)
                                                     {
-                                                        string owner = transaction.Keyword.Reverse().ElementAt(ownerId.Key).Key;
-                                                        if (!objectState.Owners.ContainsKey(owner))
+                                                        string owner = "";
+                                                        if (int.TryParse(ownerId.Key, out int intId))
+                                                        {
+                                                            owner = transaction.Keyword.Reverse().ElementAt(intId).Key;
+                                                        }
+                                                        else { owner = ownerId.Key; }
+
+                                                            if (!objectState.Owners.ContainsKey(owner))
                                                         {
                                                             objectState.Owners.Add(owner, ownerId.Value);
                                                         }
@@ -336,9 +354,20 @@ namespace SUP.P2FK
                                 case "GIV":
 
                                     List<List<int>> givinspector = new List<List<int>> { };
+                                    List<List<string>> sinspector = new List<List<string>> { };
                                     try
                                     {
-                                        givinspector = JsonConvert.DeserializeObject<List<List<int>>>(File.ReadAllText(@"root\" + transaction.TransactionId + @"\GIV"));
+
+                                        try
+                                        {
+                                            givinspector = JsonConvert.DeserializeObject<List<List<int>>>(File.ReadAllText(@"root\" + transaction.TransactionId + @"\GIV"));
+                                            sinspector = givinspector.ConvertAll(innerList => innerList.ConvertAll(i => i.ToString())
+);
+                                        }
+                                        catch
+                                        {
+                                            sinspector = JsonConvert.DeserializeObject<List<List<string>>>(File.ReadAllText(@"root\" + transaction.TransactionId + @"\GIV"));
+                                        }
                                     }
                                     catch
                                     {
@@ -347,13 +376,13 @@ namespace SUP.P2FK
                                         break;
                                     }
 
-                                    if (givinspector == null)
+                                    if (sinspector == null)
                                     {
                                         logstatus = "[\"" + transaction.SignedBy + "\",\"" + objectaddress + "\",\"give\",\"\",\"\",\"failed due to no data\"]";
                                         break;
                                     }
                                     int giveCount = 0;
-                                    foreach (var give in givinspector)
+                                    foreach (var give in sinspector)
                                     {
                                         int qtyToGive = 0;
                                         string giver = transaction.SignedBy;
@@ -361,7 +390,11 @@ namespace SUP.P2FK
 
                                         try
                                         {
-                                            reciever = transaction.Keyword.Reverse().ElementAt(give[0]).Key;
+                                            if (int.TryParse(give[0], out int isintKey))
+                                            {
+                                                reciever = transaction.Keyword.Reverse().ElementAt(isintKey).Key;
+                                            }
+                                            else { reciever = give[0]; }
 
                                         }
                                         catch
@@ -371,7 +404,7 @@ namespace SUP.P2FK
                                         }
                                         try
                                         {
-                                            qtyToGive = give[1];
+                                            qtyToGive = int.Parse(give[1]);
                                         }
                                         catch
                                         {
@@ -395,7 +428,7 @@ namespace SUP.P2FK
                                                 var ROOT = new Options { CreateIfMissing = true };
                                                 var db = new DB(ROOT, @"root\event");
                                                 db.Put(objectaddress + "!" + transaction.BlockDate.ToString("yyyyMMddHHmmss") + "!" + sortableProcessHeight + "!" + sortableGiveCount, logstatus);
-                                                db.Put("lastkey!"+ objectaddress, objectaddress + "!" + transaction.BlockDate.ToString("yyyyMMddHHmmss") + "!" + sortableProcessHeight + "!" + sortableGiveCount);
+                                                db.Put("lastkey!" + objectaddress, objectaddress + "!" + transaction.BlockDate.ToString("yyyyMMddHHmmss") + "!" + sortableProcessHeight + "!" + sortableGiveCount);
 
                                                 db.Close();
 
@@ -407,6 +440,18 @@ namespace SUP.P2FK
                                         // no sense checking any further
                                         if (objectState.Owners == null) { break; }
 
+                                        if (objectState.Maximum > 0)
+                                        {
+                                            if (qtyToGive > objectState.Maximum) {
+                                                logstatus = "[\"" + transaction.SignedBy + "\",\"" + reciever + "\",\"give\",\"" + qtyToGive + "\",\"\",\"failed due to over maximum qty\"]";
+
+                                                break; }
+
+                                            if (objectState.Owners.TryGetValue(reciever, out long value) && value + qtyToGive >= objectState.Maximum) {
+                                                logstatus = "[\"" + transaction.SignedBy + "\",\"" + reciever + "\",\"give\",\"" + qtyToGive + "\",\"\",\"failed due to over maximum qty\"]";
+
+                                                break; }
+                                        }
 
                                         //is transaction signer not on the Owners list
                                         if (!objectState.Owners.TryGetValue(transaction.SignedBy, out long qtyOwnedG))
@@ -422,7 +467,7 @@ namespace SUP.P2FK
                                                     var ROOT = new Options { CreateIfMissing = true };
                                                     var db = new DB(ROOT, @"root\event");
                                                     db.Put(objectaddress + "!" + transaction.BlockDate.ToString("yyyyMMddHHmmss") + "!" + sortableProcessHeight + "!" + sortableGiveCount, logstatus);
-                                                    db.Put("lastkey!"+ objectaddress, objectaddress + "!" + transaction.BlockDate.ToString("yyyyMMddHHmmss") + "!" + sortableProcessHeight + "!" + sortableGiveCount);
+                                                    db.Put("lastkey!" + objectaddress, objectaddress + "!" + transaction.BlockDate.ToString("yyyyMMddHHmmss") + "!" + sortableProcessHeight + "!" + sortableGiveCount);
 
                                                     db.Close();
 
@@ -479,7 +524,7 @@ namespace SUP.P2FK
                                                 var ROOT = new Options { CreateIfMissing = true };
                                                 var db = new DB(ROOT, @"root\event");
                                                 db.Put(objectaddress + "!" + transaction.BlockDate.ToString("yyyyMMddHHmmss") + "!" + sortableProcessHeight + "!" + sortableGiveCount, logstatus);
-                                                db.Put("lastkey!"+ objectaddress, objectaddress + "!" + transaction.BlockDate.ToString("yyyyMMddHHmmss") + "!" + sortableProcessHeight + "!" + sortableGiveCount);
+                                                db.Put("lastkey!" + objectaddress, objectaddress + "!" + transaction.BlockDate.ToString("yyyyMMddHHmmss") + "!" + sortableProcessHeight + "!" + sortableGiveCount);
 
                                                 db.Close();
 
@@ -498,7 +543,7 @@ namespace SUP.P2FK
                                                     var ROOT = new Options { CreateIfMissing = true };
                                                     var db = new DB(ROOT, @"root\event");
                                                     db.Put(objectaddress + "!" + transaction.BlockDate.ToString("yyyyMMddHHmmss") + "!" + sortableProcessHeight + "!" + sortableGiveCount, logstatus);
-                                                    db.Put("lastkey!"+ objectaddress, objectaddress + "!" + transaction.BlockDate.ToString("yyyyMMddHHmmss") + "!" + sortableProcessHeight + "!" + sortableGiveCount);
+                                                    db.Put("lastkey!" + objectaddress, objectaddress + "!" + transaction.BlockDate.ToString("yyyyMMddHHmmss") + "!" + sortableProcessHeight + "!" + sortableGiveCount);
                                                     db.Close();
 
                                                     logstatus = "";
@@ -519,7 +564,7 @@ namespace SUP.P2FK
                                                     var ROOT = new Options { CreateIfMissing = true };
                                                     var db = new DB(ROOT, @"root\event");
                                                     db.Put(objectaddress + "!" + transaction.BlockDate.ToString("yyyyMMddHHmmss") + "!" + sortableProcessHeight + "!" + sortableGiveCount, logstatus);
-                                                    db.Put("lastkey!" + objectaddress,objectaddress + "!" + transaction.BlockDate.ToString("yyyyMMddHHmmss") + "!" + sortableProcessHeight + "!" + sortableGiveCount);
+                                                    db.Put("lastkey!" + objectaddress, objectaddress + "!" + transaction.BlockDate.ToString("yyyyMMddHHmmss") + "!" + sortableProcessHeight + "!" + sortableGiveCount);
                                                     db.Close();
                                                 }
                                                 logstatus = "";
@@ -568,7 +613,7 @@ namespace SUP.P2FK
                                                 var ROOT = new Options { CreateIfMissing = true };
                                                 var db = new DB(ROOT, @"root\event");
                                                 db.Put(objectaddress + "!" + transaction.BlockDate.ToString("yyyyMMddHHmmss") + "!" + sortableProcessHeight + "!" + sortableBurnCount, logstatus);
-                                                db.Put("lastkey!"+ objectaddress,objectaddress + "!" + transaction.BlockDate.ToString("yyyyMMddHHmmss") + "!" + sortableProcessHeight + "!" + sortableBurnCount);
+                                                db.Put("lastkey!" + objectaddress, objectaddress + "!" + transaction.BlockDate.ToString("yyyyMMddHHmmss") + "!" + sortableProcessHeight + "!" + sortableBurnCount);
                                                 db.Close();
 
                                                 logstatus = "";
@@ -593,7 +638,7 @@ namespace SUP.P2FK
                                                     var ROOT = new Options { CreateIfMissing = true };
                                                     var db = new DB(ROOT, @"root\event");
                                                     db.Put(objectaddress + "!" + transaction.BlockDate.ToString("yyyyMMddHHmmss") + "!" + sortableProcessHeight + "!" + sortableBurnCount, logstatus);
-                                                    db.Put("lastkey!"+objectaddress,objectaddress + "!" + transaction.BlockDate.ToString("yyyyMMddHHmmss") + "!" + sortableProcessHeight + "!" + sortableBurnCount);
+                                                    db.Put("lastkey!" + objectaddress, objectaddress + "!" + transaction.BlockDate.ToString("yyyyMMddHHmmss") + "!" + sortableProcessHeight + "!" + sortableBurnCount);
 
                                                     db.Close();
 
@@ -640,7 +685,7 @@ namespace SUP.P2FK
                                                     var ROOT = new Options { CreateIfMissing = true };
                                                     var db = new DB(ROOT, @"root\event");
                                                     db.Put(objectaddress + "!" + transaction.BlockDate.ToString("yyyyMMddHHmmss") + "!" + sortableProcessHeight + "!" + sortableBurnCount, logstatus);
-                                                    db.Put("lastkey!"+ objectaddress,objectaddress + "!" + transaction.BlockDate.ToString("yyyyMMddHHmmss") + "!" + sortableProcessHeight + "!" + sortableBurnCount);
+                                                    db.Put("lastkey!" + objectaddress, objectaddress + "!" + transaction.BlockDate.ToString("yyyyMMddHHmmss") + "!" + sortableProcessHeight + "!" + sortableBurnCount);
                                                     db.Close();
                                                 }
                                                 logstatus = "";
@@ -658,7 +703,7 @@ namespace SUP.P2FK
                                                     var ROOT = new Options { CreateIfMissing = true };
                                                     var db = new DB(ROOT, @"root\event");
                                                     db.Put(objectaddress + "!" + transaction.BlockDate.ToString("yyyyMMddHHmmss") + "!" + sortableProcessHeight + "!" + sortableBurnCount, logstatus);
-                                                    db.Put("lastkey!"+objectaddress,objectaddress + "!" + transaction.BlockDate.ToString("yyyyMMddHHmmss") + "!" + sortableProcessHeight + "!" + sortableBurnCount);
+                                                    db.Put("lastkey!" + objectaddress, objectaddress + "!" + transaction.BlockDate.ToString("yyyyMMddHHmmss") + "!" + sortableProcessHeight + "!" + sortableBurnCount);
                                                     db.Close();
 
                                                     logstatus = "";
@@ -677,7 +722,7 @@ namespace SUP.P2FK
                                                 var ROOT = new Options { CreateIfMissing = true };
                                                 var db = new DB(ROOT, @"root\event");
                                                 db.Put(objectaddress + "!" + transaction.BlockDate.ToString("yyyyMMddHHmmss") + "!" + sortableProcessHeight + "!" + sortableBurnCount, logstatus);
-                                                db.Put("lastkey!"+objectaddress,objectaddress + "!" + transaction.BlockDate.ToString("yyyyMMddHHmmss") + "!" + sortableProcessHeight + "!" + sortableBurnCount);
+                                                db.Put("lastkey!" + objectaddress, objectaddress + "!" + transaction.BlockDate.ToString("yyyyMMddHHmmss") + "!" + sortableProcessHeight + "!" + sortableBurnCount);
 
                                                 db.Close();
 
@@ -716,7 +761,7 @@ namespace SUP.P2FK
                             var ROOT = new Options { CreateIfMissing = true };
                             var db = new DB(ROOT, @"root\event");
                             db.Put(objectaddress + "!" + transaction.BlockDate.ToString("yyyyMMddHHmmss") + "!" + sortableProcessHeight, logstatus);
-                            db.Put("lastkey!"+objectaddress,objectaddress + "!" + transaction.BlockDate.ToString("yyyyMMddHHmmss") + "!" + sortableProcessHeight);
+                            db.Put("lastkey!" + objectaddress, objectaddress + "!" + transaction.BlockDate.ToString("yyyyMMddHHmmss") + "!" + sortableProcessHeight);
                             db.Close();
 
                         }
@@ -769,11 +814,13 @@ namespace SUP.P2FK
             {
 
                 objectState.Creators = new Dictionary<string, DateTime> { };
-                foreach (int keywordId in objectinspector.cre)
+                foreach (string keywordId in objectinspector.cre)
                 {
-
-                    string creator = objectTransaction.Keyword.Reverse().ElementAt(keywordId).Key;
-
+                    string creator = "";
+                    if (int.TryParse(keywordId, out int intId))
+                    {
+                        creator = objectTransaction.Keyword.Reverse().ElementAt(intId).Key;
+                    }else { creator = keywordId; }
                     if (!objectState.Creators.ContainsKey(creator))
                     {
                         objectState.Creators.Add(creator, new DateTime());
@@ -824,7 +871,12 @@ namespace SUP.P2FK
 
                             foreach (var ownerId in objectinspector.own)
                             {
-                                string owner = objectTransaction.Keyword.Reverse().ElementAt(ownerId.Key).Key;
+                                string owner = "";
+                                if (int.TryParse(ownerId.Key, out int intId))
+                                {
+                                    owner = objectTransaction.Keyword.Reverse().ElementAt(intId).Key;
+                                }
+                                else { owner = ownerId.Key; }
                                 if (!objectState.Owners.ContainsKey(owner))
                                 {
                                     objectState.Owners.Add(owner, ownerId.Value);
@@ -1294,12 +1346,6 @@ namespace SUP.P2FK
                         if (transaction.File.ContainsKey("OBJ") || transaction.File.ContainsKey("GIV") || transaction.File.ContainsKey("MSG"))
                         {
 
-
-
-                            if (transaction.File.ContainsKey("GIV"))
-                            {
-
-
                                 foreach (string key in transaction.Keyword.Keys)
                                 {
 
@@ -1337,47 +1383,7 @@ namespace SUP.P2FK
                                         }
                                     }
                                 }
-                            }
-                            else if (transaction.File.ContainsKey("OBJ") || transaction.File.ContainsKey("MSG"))
-                            {
-                                string key;
-                                key = transaction.Keyword.Last().Key;
-
-                                if (!addedValues.Contains(key))
-                                {
-                                    addedValues.Add(key);
-
-                                    OBJState isObject = GetObjectByAddress(key, username, password, url, versionByte);
-
-                                    if (isObject.URN != null)
-                                    {
-
-                                        using (var db = new DB(OBJ, @"root\obj"))
-                                        {
-                                            findId = db.Get(objectaddress + "!" + key);
-                                        }
-
-
-                                        if (findId == transaction.Id.ToString() || findId == null)
-                                        {
-                                            if (findId == null)
-                                            {
-                                                using (var db = new DB(OBJ, @"root\obj"))
-                                                {
-                                                    db.Put(objectaddress + "!" + key, transaction.Id.ToString());
-                                                }
-
-                                            }
-                                        }
-
-                                        isObject.Id = transaction.Id;
-                                        objectStates.Add(isObject);
-
-                                    }
-
-
-                                }
-                            }
+                 
 
                         }
                     }
@@ -1455,7 +1461,7 @@ namespace SUP.P2FK
                 //return all roots found at address
                 objectTransactions = Root.GetRootsByAddress(objectaddress, username, password, url, intProcessHeight, 2, versionByte);
                 if (objectTransactions.Count() == 0) { return objectStates; }
-                if (objectTransactions.Count() == 1)
+                if (intProcessHeight > 0 && objectTransactions.Count() == 1)
                 {
 
                     if (qty == -1) { return objectStates.Skip(skip).ToList(); }
@@ -1478,12 +1484,6 @@ namespace SUP.P2FK
 
                         if (transaction.File.ContainsKey("OBJ") || transaction.File.ContainsKey("GIV"))
                         {
-
-
-
-                            if (transaction.File.ContainsKey("GIV"))
-                            {
-
 
                                 foreach (string key in transaction.Keyword.Keys)
                                 {
@@ -1523,47 +1523,7 @@ namespace SUP.P2FK
                                         }
                                     }
                                 }
-                            }
-                            else if (transaction.File.ContainsKey("OBJ"))
-                            {
-                                string key = transaction.Keyword.Last().Key;
-
-                                if (!addedValues.Contains(key))
-                                {
-                                    addedValues.Add(key);
-
-                                    OBJState isObject = GetObjectByAddress(key, username, password, url, versionByte);
-
-                                    if (isObject.URN != null && key != objectaddress && isObject.Owners.ContainsKey(objectaddress) || (isObject.URN != null && key != objectaddress && isObject.Owners.ContainsKey(key) && isObject.Creators.ContainsKey(objectaddress)))
-                                    {
-
-                                        using (var db = new DB(OBJ, @"root\obj"))
-                                        {
-                                            findId = db.Get(objectaddress + "!" + key);
-                                        }
-
-
-                                        if (findId == transaction.Id.ToString() || findId == null)
-                                        {
-                                            if (findId == null)
-                                            {
-
-                                                using (var db = new DB(OBJ, @"root\obj"))
-                                                {
-                                                    db.Put(objectaddress + "!" + key, transaction.Id.ToString());
-                                                }
-
-                                            }
-                                        }
-
-                                        isObject.Id = transaction.Id;
-                                        objectStates.Add(isObject);
-
-                                    }
-
-
-                                }
-                            }
+                         
 
                         }
                     }
@@ -1618,7 +1578,7 @@ namespace SUP.P2FK
                     }
 
                 }
-                if(isBlocked == "true") { return objectStates;}
+                if (isBlocked == "true") { return objectStates; }
 
                 string JSONOBJ;
                 string diskpath = "root\\" + objectaddress + "\\";
@@ -1639,7 +1599,7 @@ namespace SUP.P2FK
                 //return all roots found at address
                 objectTransactions = Root.GetRootsByAddress(objectaddress, username, password, url, intProcessHeight, 2, versionByte);
                 if (objectTransactions.Count() == 0) { return objectStates; }
-                if (objectTransactions.Count() == 1)
+                if (intProcessHeight > 0 && objectTransactions.Count() == 1)
                 {
 
                     if (qty == -1) { return objectStates.Skip(skip).ToList(); }
@@ -1662,46 +1622,56 @@ namespace SUP.P2FK
                         string findObject;
                         string findId;
 
+
+
+
+
                         if (transaction.File.ContainsKey("OBJ"))
                         {
-                            findObject = transaction.Keyword.Last().Key;
 
-                            if (!addedValues.Contains(findObject))
+                            foreach (string key in transaction.Keyword.Keys)
                             {
-                                addedValues.Add(findObject);
 
-
-                                OBJState isObject = GetObjectByAddress(findObject, username, password, url, versionByte);
-
-                                if (isObject.URN != null && findObject != objectaddress && isObject.Creators.TryGet(objectaddress).Year > 1)
+                                if (!addedValues.Contains(key))
                                 {
+                                    addedValues.Add(key);
 
-                                    using (var db = new DB(OBJ, @"root\obj"))
+                                    OBJState isObject = GetObjectByAddress(key, username, password, url, versionByte);
+
+                                    //if (isObject.URN != null && key != objectaddress)
+                                    if (isObject.URN != null && key != objectaddress && isObject.Creators.TryGet(objectaddress).Year > 1)
                                     {
-                                        findId = db.Get(objectaddress + "!" + findObject);
-                                    }
 
-
-                                    if (findId == transaction.Id.ToString() || findId == null)
-                                    {
-                                        if (findId == null)
+                                        using (var db = new DB(OBJ, @"root\obj"))
                                         {
-
-                                            using (var db = new DB(OBJ, @"root\obj"))
-                                            {
-                                                db.Put(objectaddress + "!" + findObject, transaction.Id.ToString());
-                                            }
-
+                                            findId = db.Get(objectaddress + "!" + key);
                                         }
+
+
+                                        if (findId == transaction.Id.ToString() || findId == null)
+                                        {
+                                            if (findId == null)
+                                            {
+
+                                                using (var db = new DB(OBJ, @"root\obj"))
+                                                {
+                                                    db.Put(objectaddress + "!" + key, transaction.Id.ToString());
+                                                }
+
+                                            }
+                                        }
+
+                                        isObject.Id = transaction.Id;
+                                        objectStates.Add(isObject);
+
                                     }
-
-                                    isObject.Id = transaction.Id;
-                                    objectStates.Add(isObject);
-
                                 }
-
                             }
+
+
                         }
+
+
                     }
 
 
@@ -1726,14 +1696,14 @@ namespace SUP.P2FK
         {
             lock (SupLocker)
             {
-                
-                
+
+
                 List<OBJState> totalSearch = new List<OBJState>();
 
                 foreach (string search in searchstrings)
                 {
 
-                   string objectaddress = Root.GetPublicAddressByKeyword(search, versionByte);
+                    string objectaddress = Root.GetPublicAddressByKeyword(search, versionByte);
                     string isBlocked = "";
                     var OBJ = new Options { CreateIfMissing = true };
                     try
@@ -1785,7 +1755,7 @@ namespace SUP.P2FK
                         //return all roots found at address
                         objectTransactions = Root.GetRootsByAddress(objectaddress, username, password, url, intProcessHeight, 2, versionByte);
                         if (objectTransactions.Count() == 0) { return objectStates; }
-                        if (objectTransactions.Count() == 1)
+                        if (intProcessHeight > 0 && objectTransactions.Count() == 1)
                         {
 
                             if (qty == -1) { return objectStates.Skip(skip).ToList(); }
@@ -1853,7 +1823,7 @@ namespace SUP.P2FK
                 HashSet<string> addedValues = new HashSet<string>();
                 int rownum = 0;
                 if (qty == -1) { qty = foundCount; }
-               
+
 
                 using (var db = new DB(SUP, @"root\found"))
                 {
@@ -1926,7 +1896,7 @@ namespace SUP.P2FK
                                 keyaddress = null;
                             }
                         }
-                        
+
                         if (keyaddress != null)
                         {
                             keyaddress = Encoding.ASCII.GetString(payloadBytes).Replace("#", "").Substring(1);
@@ -2051,7 +2021,7 @@ namespace SUP.P2FK
                 return new { Messages = messages };
             }
         }
-       
+
     }
 
 }

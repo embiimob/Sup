@@ -74,6 +74,7 @@
             this.lblObjectCreatedDate = new System.Windows.Forms.Label();
             this.registrationPanel = new System.Windows.Forms.Panel();
             this.lblOfficial = new System.Windows.Forms.Label();
+            this.lblPleaseStandBy = new System.Windows.Forms.Label();
             this.flowPanel.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.imgPicture)).BeginInit();
@@ -619,12 +620,27 @@
             this.lblOfficial.Text = "👑";
             this.lblOfficial.Visible = false;
             // 
+            // lblPleaseStandBy
+            // 
+            this.lblPleaseStandBy.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.lblPleaseStandBy.Font = new System.Drawing.Font("Microsoft Sans Serif", 24F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblPleaseStandBy.Location = new System.Drawing.Point(306, 13);
+            this.lblPleaseStandBy.Name = "lblPleaseStandBy";
+            this.lblPleaseStandBy.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
+            this.lblPleaseStandBy.Size = new System.Drawing.Size(350, 350);
+            this.lblPleaseStandBy.TabIndex = 108;
+            this.lblPleaseStandBy.Text = "please stand by... locked for loading";
+            this.lblPleaseStandBy.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
             // ObjectDetails
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.SystemColors.InactiveCaption;
             this.ClientSize = new System.Drawing.Size(1043, 372);
+            this.Controls.Add(this.lblPleaseStandBy);
             this.Controls.Add(this.registrationPanel);
             this.Controls.Add(this.supPanel);
             this.Controls.Add(this.lblOfficial);
@@ -724,5 +740,6 @@
         private System.Windows.Forms.Label lblObjectCreatedDate;
         private System.Windows.Forms.Panel registrationPanel;
         public System.Windows.Forms.Label lblOfficial;
+        private System.Windows.Forms.Label lblPleaseStandBy;
     }
 }
