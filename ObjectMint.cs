@@ -25,6 +25,7 @@ using System.Net;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement.StartPanel;
 using System.Security.Cryptography;
 using System.Text;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement.Window;
 
 namespace SUP
 {
@@ -67,6 +68,15 @@ namespace SUP
                 maxsize = maxsize - (control.Text.Length + 5);
 
 
+            }
+            string License = "";
+            foreach (RadioButton control in PanelLicense.Controls)
+            {
+                if (control.Checked)
+                {
+                    maxsize = maxsize - (control.Text.Length + 5);
+                    License = control.Text;
+                }
             }
 
             maxsize = maxsize - (flowCreators.Controls.Count * 5) + 5;
@@ -111,7 +121,8 @@ namespace SUP
             if (btnObjectURN.BackColor == Color.Blue) { OBJJson.urn = txtURN.Text; }
             if (btnObjectURI.BackColor == Color.Blue) { OBJJson.uri = txtURI.Text; }
             if (btnObjectDescription.BackColor == Color.Blue) { OBJJson.dsc = txtDescription.Text; }
-            if (btnObjectMaximum.BackColor == Color.Blue) { if (txtMaximum.Text == "") { } else { OBJJson.max = int.Parse(txtMaximum.Text); } }
+            if (License != "No License / All Rights Reserved") { OBJJson.lic = License; }
+            if (btnObjectMaximum.BackColor == Color.Blue) { if (txtMaximum.Text == "") { } else { try { OBJJson.max = int.Parse(txtMaximum.Text); } catch { OBJJson.max = 0; } } }
 
             Dictionary<string, string> mintAttributes = new Dictionary<string, string>();
             foreach (Button attributeControl in flowAttribute.Controls)
@@ -144,11 +155,12 @@ namespace SUP
             {
                 NullValueHandling = NullValueHandling.Ignore
             };
+
+            // Serialize the modified JObject back into a JSON string
             var objectSerialized = JsonConvert.SerializeObject(OBJJson, Formatting.None, settings);
-            txtOBJJSON.Text = objectSerialized;
-
+            txtOBJJSON.Text = objectSerialized.Replace(",\"max\":0","").Replace(",\"atr\":{}","");
         }
-
+        
 
         private Bitmap GenerateQRCode(string qrData)
         {
@@ -302,6 +314,7 @@ namespace SUP
                 btnObjectOwners.Enabled = false;
                 btnObjectAddress.Enabled = false;
                 txtDescription.Enabled = false;
+                PanelLicense.Enabled = false;
                 txtIMG.Enabled = false;
                 txtURN.Enabled = false;
                 txtURI.Enabled = false;
@@ -326,7 +339,7 @@ namespace SUP
                 else
                 {
                     lblASCIIURN.Visible = false;
-                 
+
                     btnObjectAttributes.Enabled = true;
                     btnObjectDescription.Enabled = true;
                     btnObjectImage.Enabled = true;
@@ -334,6 +347,7 @@ namespace SUP
                     btnObjectName.Enabled = true;
                     btnObjectURI.Enabled = true;
                     btnObjectURN.Enabled = true;
+                    PanelLicense.Enabled = true;
                     btnObjectCreators.Enabled = true;
                     btnObjectOwners.Enabled = true;
                     btnObjectAddress.Enabled = true;
@@ -409,6 +423,7 @@ namespace SUP
                 btnObjectAddress.Enabled = true;
                 btnObjectMaximum.Enabled = true;
                 txtDescription.Enabled = true;
+                PanelLicense.Enabled = true;
                 txtIMG.Enabled = true;
                 txtURN.Enabled = true;
                 txtURI.Enabled = true;
@@ -441,6 +456,7 @@ namespace SUP
                 btnObjectOwners.Enabled = false;
                 btnObjectMaximum.Enabled = false;
                 txtDescription.Enabled = false;
+                PanelLicense.Enabled = false;
                 txtIMG.Enabled = false;
                 txtURN.Enabled = false;
                 txtURI.Enabled = false;
@@ -1239,24 +1255,24 @@ namespace SUP
                         _creator = flowCreators.Controls[0].Text;
                     }
 
-                        string querystring = "?address=" + _address + "&viewer=" + _viewer + "&viewername=" + _viewername + "&creator=" + _creator + "&owner=" + _owner + "&urn=" + _urn + "&uri=" + _uri + "&img=" + _img;
-                        string htmlstring = "<html><body><embed src=\"" + urn + querystring + "\" width=100% height=100%></body></html>";
-                        string viewerPath = Path.GetDirectoryName(urn) + @"\urnviewer.html";
-                        webviewer.Visible = true;
+                    string querystring = "?address=" + _address + "&viewer=" + _viewer + "&viewername=" + _viewername + "&creator=" + _creator + "&owner=" + _owner + "&urn=" + _urn + "&uri=" + _uri + "&img=" + _img;
+                    string htmlstring = "<html><body><embed src=\"" + urn + querystring + "\" width=100% height=100%></body></html>";
+                    string viewerPath = Path.GetDirectoryName(urn) + @"\urnviewer.html";
+                    webviewer.Visible = true;
 
-                        try
-                        {
-                            System.IO.File.WriteAllText(Path.GetDirectoryName(urn) + @"\urnviewer.html", htmlstring);
-                            await webviewer.EnsureCoreWebView2Async();
-                            webviewer.CoreWebView2.Navigate(viewerPath);
-                        }
-                        catch
-                        {
-                            Thread.Sleep(1000);
-                            await webviewer.EnsureCoreWebView2Async();
-                            webviewer.CoreWebView2.Navigate(viewerPath);
-                        }
-                   
+                    try
+                    {
+                        System.IO.File.WriteAllText(Path.GetDirectoryName(urn) + @"\urnviewer.html", htmlstring);
+                        await webviewer.EnsureCoreWebView2Async();
+                        webviewer.CoreWebView2.Navigate(viewerPath);
+                    }
+                    catch
+                    {
+                        Thread.Sleep(1000);
+                        await webviewer.EnsureCoreWebView2Async();
+                        webviewer.CoreWebView2.Navigate(viewerPath);
+                    }
+
                     break;
                 case ".mp4":
                 case ".avi":
@@ -1806,5 +1822,323 @@ namespace SUP
             lblRemainingChars.Visible = true;
 
         }
+
+        private void radioButton4_CheckedChanged(object sender, EventArgs e)
+        {
+            RadioButton radioButton = sender as RadioButton;
+
+            if (radioButton != null && radioButton.Checked)
+            {
+                // Uncheck all other radio buttons in the panel
+                foreach (Control control in radioButton.Parent.Controls)
+                {
+                    RadioButton otherRadioButton = control as RadioButton;
+
+                    if (otherRadioButton != null && otherRadioButton != radioButton)
+                    {
+                        otherRadioButton.Checked = false;
+                    }
+                }
+            }
+            UpdateRemainingChars();
+        }
+
+        private void radioButton3_CheckedChanged(object sender, EventArgs e)
+        {
+            RadioButton radioButton = sender as RadioButton;
+
+            if (radioButton != null && radioButton.Checked)
+            {
+                // Uncheck all other radio buttons in the panel
+                foreach (Control control in radioButton.Parent.Controls)
+                {
+                    RadioButton otherRadioButton = control as RadioButton;
+
+                    if (otherRadioButton != null && otherRadioButton != radioButton)
+                    {
+                        otherRadioButton.Checked = false;
+                    }
+                }
+            }
+            UpdateRemainingChars();
+        }
+
+        private void radioButton2_CheckedChanged(object sender, EventArgs e)
+        {
+            RadioButton radioButton = sender as RadioButton;
+
+            if (radioButton != null && radioButton.Checked)
+            {
+                // Uncheck all other radio buttons in the panel
+                foreach (Control control in radioButton.Parent.Controls)
+                {
+                    RadioButton otherRadioButton = control as RadioButton;
+
+                    if (otherRadioButton != null && otherRadioButton != radioButton)
+                    {
+                        otherRadioButton.Checked = false;
+                    }
+                }
+            }
+            UpdateRemainingChars();
+        }
+
+        private void radioButton1_CheckedChanged(object sender, EventArgs e)
+        {
+            RadioButton radioButton = sender as RadioButton;
+
+            if (radioButton != null && radioButton.Checked)
+            {
+                // Uncheck all other radio buttons in the panel
+                foreach (Control control in radioButton.Parent.Controls)
+                {
+                    RadioButton otherRadioButton = control as RadioButton;
+
+                    if (otherRadioButton != null && otherRadioButton != radioButton)
+                    {
+                        otherRadioButton.Checked = false;
+                    }
+                }
+            }
+            UpdateRemainingChars();
+        }
+
+        private void btnScan_Click(object sender, EventArgs e)
+        {
+            // Create a new form for the address input dialog
+            Form addressForm = new Form();
+            addressForm.Text = "Enter an Address or Scan a Mint";
+            addressForm.StartPosition = FormStartPosition.CenterParent;
+            addressForm.ControlBox = false;
+            addressForm.FormBorderStyle = FormBorderStyle.FixedDialog;
+            addressForm.Width = 410;
+            addressForm.Height = 210;
+            // Create a label with instructions for the user
+            Label instructionLabel = new Label();
+            instructionLabel.Text = "Enter an Address or Scan a Mint";
+            instructionLabel.Font = new Font(instructionLabel.Font.FontFamily, 16, System.Drawing.FontStyle.Bold);
+            instructionLabel.AutoSize = true;
+            instructionLabel.Location = new Point(20, 20);
+            addressForm.Controls.Add(instructionLabel);
+
+            // Create a text box for the user to input the address
+            TextBox addressTextBox = new TextBox();
+            addressTextBox.Location = new Point(20, 70);
+            addressTextBox.Width = 300;
+            addressTextBox.Height = 50;
+            addressTextBox.Multiline = true;
+            addressForm.Controls.Add(addressTextBox);
+
+            // Create a button for the user to click to search for the address
+            Button searchButton = new Button();
+            searchButton.Text = "Search";
+            searchButton.Location = new Point(20, 120);
+            searchButton.Width = 100;
+            searchButton.Click += new EventHandler((searchSender, searchE) =>
+            {
+                // Perform the search function here
+                string address = addressTextBox.Text;
+                OBJState foundObject = OBJState.GetObjectByAddress(address, "good-user", "better-password", "http://127.0.0.1:18332");
+                if (foundObject.URN != null)
+                {
+                    txtTitle.Text = foundObject.Name;
+                    txtIMG.Text = foundObject.Image;
+                    txtURN.Text = foundObject.URN;
+                    txtURI.Text = foundObject.URI;
+                    txtObjectAddress.Text = address;
+                    txtDescription.Text = foundObject.Description;
+                    try { txtMaximum.Text = foundObject.Maximum.ToString(); } catch { txtMaximum.Text = ""; }
+
+                    flowAttribute.Controls.Clear();
+
+                    try
+                    {
+                        // Iterate through all attributes of foundObject and create a button for each
+                        foreach (var attrib in foundObject.Attributes)
+                        {
+                            // Create a new button with the attribute key and value separated by ':'
+                            Button attribButton = new Button();
+                            attribButton.AutoSize = true;
+                            attribButton.Text = attrib.Key + ":" + attrib.Value;
+
+                            // Add an event handler to the button that removes it from the flowAttribute panel when clicked
+                            attribButton.Click += new EventHandler((sender2, e2) =>
+                            {
+                                flowAttribute.Controls.Remove(attribButton);
+                            });
+
+                            // Add the button to the flowAttribute panel
+                            flowAttribute.Controls.Add(attribButton);
+                        }
+
+                    }
+                    catch { }
+
+                    // Clear any existing buttons from the flowKeywords panel
+                    flowKeywords.Controls.Clear();
+
+                   List<string> keywords = new List<string>();
+                    keywords = OBJState.GetKeywordsByAddress(address, "good-user", "better-password", "http://127.0.0.1:18332");
+
+                    // Iterate through all attributes of foundObject and create a button for each
+                    foreach (string attrib in keywords)
+                    {
+                        // Create a new button with the attribute key and value separated by ':'
+                        Button attribButton = new Button();
+                        attribButton.AutoSize = true;
+                        attribButton.Text = attrib;
+
+                        // Add an event handler to the button that removes it from the flowKeywords panel when clicked
+                        attribButton.Click += new EventHandler((sender2, e2) =>
+                        {
+                            flowKeywords.Controls.Remove(attribButton);
+                        });
+
+                        // Add an event handler to the button that opens the ObjectBrowser form with the button text
+                        attribButton.MouseDown += new MouseEventHandler((sender2, e2) =>
+                        {
+                            if (e2.Button == MouseButtons.Right)
+                            {
+                                ObjectBrowser objectBrowserForm = new ObjectBrowser("#" + attribButton.Text);
+                                objectBrowserForm.Show();
+                            }
+                        });
+
+                        // Add the button to the flowKeywords panel
+                        flowKeywords.Controls.Add(attribButton);
+                    }
+
+
+                    // Clear any existing buttons from the flowCreators panel
+                    flowCreators.Controls.Clear();
+
+                    // Iterate through all attributes of foundObject and create a button for each
+                    foreach (KeyValuePair<string, DateTime> attrib in foundObject.Creators)
+                    {
+                        // Create a new button with the attribute key and value separated by ':'
+                        Button attribButton = new Button();
+                        attribButton.AutoSize= true;
+                        attribButton.Text = attrib.Key;
+
+                        // Add an event handler to the button that removes it from the flowCreators panel when clicked
+                        attribButton.Click += new EventHandler((sender2, e2) =>
+                        {
+                            flowCreators.Controls.Remove(attribButton);
+                        });
+
+                        // Add an event handler to the button that opens the ObjectBrowser form on right click if the value is not an int
+                        attribButton.MouseUp += new MouseEventHandler((sender2, e2) =>
+                        {
+                            if (e2.Button == MouseButtons.Right && !int.TryParse(attrib.Value.ToString(), out _))
+                            {
+                                ObjectBrowser form = new ObjectBrowser(attribButton.Text);
+                                form.Show();
+                            }
+                            else if (e2.Button == MouseButtons.Left)
+                            {
+                                flowCreators.Controls.Remove(attribButton);
+                            }
+                        });
+
+                        // Add the button to the flowCreators panel
+                        flowCreators.Controls.Add(attribButton);
+                    }
+
+
+
+
+
+                    flowOwners.Controls.Clear();
+
+                    try
+                    {
+                        // Iterate through all attributes of foundObject and create a button for each
+                        foreach (KeyValuePair<string, long> attrib in foundObject.Owners)
+                        {
+                            // Split the key and value and create a new button with the attribute key and value separated by ':'
+                            string buttonText = attrib.Key + ":" + attrib.Value.ToString();
+                            Button attribButton = new Button();
+                            attribButton.AutoSize= true;
+                            attribButton.Text = buttonText;
+
+                            // Add an event handler to the button that removes it from the flowAttribute panel when clicked
+                            attribButton.Click += new EventHandler((sender2, e2) =>
+                            {
+                                flowOwners.Controls.Remove(attribButton);
+                            });
+
+                            // Add an event handler to the button that opens the ObjectBrowser form on right click using the key value
+                            attribButton.MouseUp += new MouseEventHandler((sender2, e2) =>
+                            {
+                                if (e2.Button == MouseButtons.Right)
+                                {
+                                    string[] keyValuePair = attribButton.Text.Split(':');
+                                    string key = keyValuePair[0].Trim();
+                                    ObjectBrowser form = new ObjectBrowser(key);
+                                    form.Show();
+                                }
+                                else if (e2.Button == MouseButtons.Left)
+                                {
+                                    flowOwners.Controls.Remove(attribButton);
+                                }
+                            });
+
+                            // Add the button to the flowOwners panel
+                            flowOwners.Controls.Add(attribButton);
+                        }
+
+                    }
+                    catch { }
+
+                    if (foundObject.License != null)
+                    {
+                        // If the license field is not null, check the radio button in the panel based on the text passed
+                        string licenseText = foundObject.License;
+
+                        // Assuming you have a panel named "paneLicense" and a group of radio buttons inside it
+                        RadioButton rb = PanelLicense.Controls.OfType<RadioButton>().FirstOrDefault(x => x.Text == licenseText);
+
+                        if (rb != null)
+                        {
+                            rb.Checked = true;
+                        }
+                        else
+                        {
+                            // If the license text doesn't match any of the radio buttons, do nothing
+                        }
+                    }
+                    else
+                    {
+                        // If the license field is null, check the radio button in the panel with the text "All Rights Reserved"
+                        RadioButton rb = PanelLicense.Controls.OfType<RadioButton>().FirstOrDefault(x => x.Text == "No License / All Rights Reserved");
+
+                        if (rb != null)
+                        {
+                            rb.Checked = true;
+                        }
+                        else
+                        {
+                            // If there is no radio button with the text "All Rights Reserved", do nothing
+                        }
+                    }
+                }
+
+
+
+                addressForm.Close(); 
+                // ...
+            }); addressForm.Controls.Add(searchButton);
+
+
+            // Set the default button to be the search button
+            addressForm.AcceptButton = searchButton;
+
+            // Show the dialog and set focus to the address text box
+            addressForm.ShowDialog();
+          
+            btnObjectImage.PerformClick();
+            btnObjectURN.PerformClick();
+        }
+
     }
 }

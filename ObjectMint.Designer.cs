@@ -28,7 +28,6 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(ObjectMint));
             this.lblIMGBlockDate = new System.Windows.Forms.Label();
             this.lblURNBlockDate = new System.Windows.Forms.Label();
             this.label1 = new System.Windows.Forms.Label();
@@ -66,9 +65,15 @@
             this.txtIMG = new System.Windows.Forms.TextBox();
             this.pictureBox2 = new System.Windows.Forms.PictureBox();
             this.txtDescription = new System.Windows.Forms.TextBox();
+            this.PanelLicense = new System.Windows.Forms.Panel();
+            this.radioButton4 = new System.Windows.Forms.RadioButton();
+            this.radioButton3 = new System.Windows.Forms.RadioButton();
+            this.radioButton2 = new System.Windows.Forms.RadioButton();
+            this.radioButton1 = new System.Windows.Forms.RadioButton();
             ((System.ComponentModel.ISupportInitialize)(this.webviewer)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).BeginInit();
+            this.PanelLicense.SuspendLayout();
             this.SuspendLayout();
             // 
             // lblIMGBlockDate
@@ -91,6 +96,7 @@
             // 
             // label1
             // 
+            this.label1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.label1.AutoSize = true;
             this.label1.Location = new System.Drawing.Point(573, 574);
             this.label1.Name = "label1";
@@ -102,7 +108,7 @@
             // 
             this.txtOBJJSON.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.txtOBJJSON.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.txtOBJJSON.Location = new System.Drawing.Point(583, 328);
+            this.txtOBJJSON.Location = new System.Drawing.Point(804, 217);
             this.txtOBJJSON.Multiline = true;
             this.txtOBJJSON.Name = "txtOBJJSON";
             this.txtOBJJSON.Size = new System.Drawing.Size(344, 153);
@@ -112,12 +118,11 @@
             // 
             this.txtAddressListJSON.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.txtAddressListJSON.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.txtAddressListJSON.Location = new System.Drawing.Point(639, 550);
+            this.txtAddressListJSON.Location = new System.Drawing.Point(801, 380);
             this.txtAddressListJSON.Multiline = true;
             this.txtAddressListJSON.Name = "txtAddressListJSON";
             this.txtAddressListJSON.Size = new System.Drawing.Size(344, 153);
             this.txtAddressListJSON.TabIndex = 289;
-            this.txtAddressListJSON.Text = resources.GetString("txtAddressListJSON.Text");
             // 
             // btnObjectKeywords
             // 
@@ -136,6 +141,7 @@
             // 
             this.flowKeywords.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.flowKeywords.AutoScroll = true;
             this.flowKeywords.Cursor = System.Windows.Forms.Cursors.Default;
             this.flowKeywords.FlowDirection = System.Windows.Forms.FlowDirection.RightToLeft;
             this.flowKeywords.Location = new System.Drawing.Point(22, 756);
@@ -181,7 +187,7 @@
             // 
             // btnObjectMaximum
             // 
-            this.btnObjectMaximum.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnObjectMaximum.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.btnObjectMaximum.Enabled = false;
             this.btnObjectMaximum.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold);
             this.btnObjectMaximum.Location = new System.Drawing.Point(441, 600);
@@ -204,17 +210,16 @@
             this.txtMaximum.Size = new System.Drawing.Size(410, 57);
             this.txtMaximum.TabIndex = 265;
             this.txtMaximum.Tag = "";
-            this.txtMaximum.Text = "0";
             this.txtMaximum.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
             this.txtMaximum.WordWrap = false;
             this.txtMaximum.TextChanged += new System.EventHandler(this.txtMaximum_TextChanged);
             // 
             // lblRemainingChars
             // 
-            this.lblRemainingChars.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.lblRemainingChars.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.lblRemainingChars.AutoSize = true;
             this.lblRemainingChars.Font = new System.Drawing.Font("Microsoft Sans Serif", 18F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblRemainingChars.Location = new System.Drawing.Point(448, 550);
+            this.lblRemainingChars.Location = new System.Drawing.Point(438, 496);
             this.lblRemainingChars.Name = "lblRemainingChars";
             this.lblRemainingChars.Size = new System.Drawing.Size(52, 29);
             this.lblRemainingChars.TabIndex = 288;
@@ -223,6 +228,7 @@
             // flowOwners
             // 
             this.flowOwners.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.flowOwners.AutoScroll = true;
             this.flowOwners.FlowDirection = System.Windows.Forms.FlowDirection.RightToLeft;
             this.flowOwners.Location = new System.Drawing.Point(576, 680);
             this.flowOwners.Name = "flowOwners";
@@ -259,6 +265,7 @@
             // flowCreators
             // 
             this.flowCreators.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.flowCreators.AutoScroll = true;
             this.flowCreators.FlowDirection = System.Windows.Forms.FlowDirection.RightToLeft;
             this.flowCreators.Location = new System.Drawing.Point(576, 602);
             this.flowCreators.Name = "flowCreators";
@@ -303,6 +310,7 @@
             this.btnScan.TabIndex = 272;
             this.btnScan.Text = "🔍";
             this.btnScan.UseVisualStyleBackColor = true;
+            this.btnScan.Click += new System.EventHandler(this.btnScan_Click);
             // 
             // flowPanel
             // 
@@ -394,6 +402,7 @@
             // 
             this.flowAttribute.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.flowAttribute.AutoScroll = true;
             this.flowAttribute.Cursor = System.Windows.Forms.Cursors.Default;
             this.flowAttribute.FlowDirection = System.Windows.Forms.FlowDirection.RightToLeft;
             this.flowAttribute.Location = new System.Drawing.Point(22, 676);
@@ -504,26 +513,83 @@
             // 
             // txtDescription
             // 
-            this.txtDescription.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
+            this.txtDescription.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.txtDescription.Enabled = false;
             this.txtDescription.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.txtDescription.Location = new System.Drawing.Point(22, 430);
             this.txtDescription.Multiline = true;
             this.txtDescription.Name = "txtDescription";
-            this.txtDescription.Size = new System.Drawing.Size(410, 141);
+            this.txtDescription.Size = new System.Drawing.Size(410, 95);
             this.txtDescription.TabIndex = 264;
             this.txtDescription.TextChanged += new System.EventHandler(this.txtDescription_TextChanged);
+            // 
+            // PanelLicense
+            // 
+            this.PanelLicense.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.PanelLicense.Controls.Add(this.radioButton4);
+            this.PanelLicense.Controls.Add(this.radioButton3);
+            this.PanelLicense.Controls.Add(this.radioButton2);
+            this.PanelLicense.Controls.Add(this.radioButton1);
+            this.PanelLicense.Enabled = false;
+            this.PanelLicense.Location = new System.Drawing.Point(24, 532);
+            this.PanelLicense.Name = "PanelLicense";
+            this.PanelLicense.Size = new System.Drawing.Size(525, 58);
+            this.PanelLicense.TabIndex = 294;
+            // 
+            // radioButton4
+            // 
+            this.radioButton4.AutoSize = true;
+            this.radioButton4.Location = new System.Drawing.Point(12, 23);
+            this.radioButton4.Name = "radioButton4";
+            this.radioButton4.Size = new System.Drawing.Size(39, 17);
+            this.radioButton4.TabIndex = 3;
+            this.radioButton4.Text = "CC";
+            this.radioButton4.UseVisualStyleBackColor = true;
+            this.radioButton4.CheckedChanged += new System.EventHandler(this.radioButton4_CheckedChanged);
+            // 
+            // radioButton3
+            // 
+            this.radioButton3.AutoSize = true;
+            this.radioButton3.Location = new System.Drawing.Point(87, 23);
+            this.radioButton3.Name = "radioButton3";
+            this.radioButton3.Size = new System.Drawing.Size(73, 17);
+            this.radioButton3.TabIndex = 2;
+            this.radioButton3.Text = "CC BY-SA";
+            this.radioButton3.UseVisualStyleBackColor = true;
+            this.radioButton3.CheckedChanged += new System.EventHandler(this.radioButton3_CheckedChanged);
+            // 
+            // radioButton2
+            // 
+            this.radioButton2.AutoSize = true;
+            this.radioButton2.Location = new System.Drawing.Point(200, 23);
+            this.radioButton2.Name = "radioButton2";
+            this.radioButton2.Size = new System.Drawing.Size(56, 17);
+            this.radioButton2.TabIndex = 1;
+            this.radioButton2.Text = "CC-BY";
+            this.radioButton2.UseVisualStyleBackColor = true;
+            this.radioButton2.CheckedChanged += new System.EventHandler(this.radioButton2_CheckedChanged);
+            // 
+            // radioButton1
+            // 
+            this.radioButton1.AutoSize = true;
+            this.radioButton1.Checked = true;
+            this.radioButton1.Location = new System.Drawing.Point(330, 23);
+            this.radioButton1.Name = "radioButton1";
+            this.radioButton1.Size = new System.Drawing.Size(183, 17);
+            this.radioButton1.TabIndex = 0;
+            this.radioButton1.TabStop = true;
+            this.radioButton1.Text = "No License / All Rights Reserved";
+            this.radioButton1.UseVisualStyleBackColor = true;
+            this.radioButton1.CheckedChanged += new System.EventHandler(this.radioButton1_CheckedChanged);
             // 
             // ObjectMint
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1152, 835);
+            this.Controls.Add(this.PanelLicense);
             this.Controls.Add(this.label1);
-            this.Controls.Add(this.txtOBJJSON);
-            this.Controls.Add(this.txtAddressListJSON);
             this.Controls.Add(this.btnObjectKeywords);
             this.Controls.Add(this.flowKeywords);
             this.Controls.Add(this.lblASCIIURN);
@@ -558,12 +624,17 @@
             this.Controls.Add(this.txtDescription);
             this.Controls.Add(this.lblURNBlockDate);
             this.Controls.Add(this.lblIMGBlockDate);
+            this.Controls.Add(this.txtOBJJSON);
+            this.Controls.Add(this.txtAddressListJSON);
+            this.MinimumSize = new System.Drawing.Size(1168, 874);
             this.Name = "ObjectMint";
             this.Text = "Sup!? Object Mint";
             this.Load += new System.EventHandler(this.ObjectMint_Load);
             ((System.ComponentModel.ISupportInitialize)(this.webviewer)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).EndInit();
+            this.PanelLicense.ResumeLayout(false);
+            this.PanelLicense.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -607,5 +678,10 @@
         private System.Windows.Forms.TextBox txtIMG;
         private System.Windows.Forms.PictureBox pictureBox2;
         private System.Windows.Forms.TextBox txtDescription;
+        private System.Windows.Forms.Panel PanelLicense;
+        private System.Windows.Forms.RadioButton radioButton4;
+        private System.Windows.Forms.RadioButton radioButton3;
+        private System.Windows.Forms.RadioButton radioButton2;
+        private System.Windows.Forms.RadioButton radioButton1;
     }
 }
