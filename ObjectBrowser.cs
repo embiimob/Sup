@@ -208,7 +208,7 @@ namespace SUP
             this.Invoke((Action)(() =>
             {
                 pages.Maximum = createdObjects.Count - 1;
-                txtTotal.Text = (createdObjects.Count - 1).ToString();
+                txtTotal.Text = (createdObjects.Count).ToString();
                 pages.Visible = true;
 
             }));
@@ -1838,7 +1838,23 @@ namespace SUP
                 {
                     txtSearchAddress.Text = _objectaddress;
                     txtLast.Text = "0";
-                    txtQty.Text = "12";
+
+                    switch (_viewMode)
+                    {
+                        case 0:
+                            txtQty.Text = "9";
+                            break;
+                        case 1:
+                            txtQty.Text = "6";
+                            break;
+                        case 2:
+                            txtQty.Text = "3";
+                            break;
+                        default:
+                            // Handle any other cases here
+                            break;
+                    }
+                   
                     DisableSupInput();
                     Random rnd = new Random();
                     string[] gifFiles = Directory.GetFiles("includes", "*.gif");
@@ -1942,7 +1958,7 @@ namespace SUP
 
         private void btnMint_Click(object sender, EventArgs e)
         {
-            //to be implemented soon
+              new ObjectMint().Show();
         }
 
         private void flowLayoutPanel1_DragEnter(object sender, System.Windows.Forms.DragEventArgs e)
@@ -2085,7 +2101,7 @@ namespace SUP
 
                         string filter = "";
 
-                        // Update the txtQty control using Invoke to run it on the UI thread.
+         
                         txtSearchAddress.Invoke((MethodInvoker)delegate
                         {
                             filter = txtSearchAddress.Text;
@@ -2681,30 +2697,91 @@ namespace SUP
             if (this.WindowState == FormWindowState.Maximized)
             {
 
-                if (pages.LargeChange != ((flowLayoutPanel1.Width / 211) * 3))
+                switch (_viewMode)
                 {
-                    pages.LargeChange = ((flowLayoutPanel1.Width / 211) * 3);
+                    case 0:
+                        if (pages.LargeChange != ((flowLayoutPanel1.Width / 200) * (flowLayoutPanel1.Height / 200)) + (flowLayoutPanel1.Width / 200))
+                        {
+                            pages.LargeChange = ((flowLayoutPanel1.Width / 200) * (flowLayoutPanel1.Height / 200)) + (flowLayoutPanel1.Width / 200);
 
-                    txtQty.Text = pages.LargeChange.ToString();
+                            txtQty.Text = pages.LargeChange.ToString();
 
-                    Random rnd = new Random();
-                    string[] gifFiles = Directory.GetFiles("includes", "*.gif");
-                    if (gifFiles.Length > 0)
-                    {
-                        int randomIndex = rnd.Next(gifFiles.Length);
-                        string randomGifFile = gifFiles[randomIndex];
-                        imgLoading.ImageLocation = randomGifFile;
-                    }
-                    else
-                    {
-                        imgLoading.ImageLocation = @"includes\HugPuddle.jpg";
-                    }
+                            Random rnd = new Random();
+                            string[] gifFiles = Directory.GetFiles("includes", "*.gif");
+                            if (gifFiles.Length > 0)
+                            {
+                                int randomIndex = rnd.Next(gifFiles.Length);
+                                string randomGifFile = gifFiles[randomIndex];
+                                imgLoading.ImageLocation = randomGifFile;
+                            }
+                            else
+                            {
+                                imgLoading.ImageLocation = @"includes\HugPuddle.jpg";
+                            }
 
-                    await Task.Run(() => BuildSearchResults());
-                    flowLayoutPanel1.Visible = true;
-                    pages.Visible = true;
+                            await Task.Run(() => BuildSearchResults());
+                            flowLayoutPanel1.Visible = true;
+                            pages.Visible = true;
+                        }
+                        break;
 
+                    case 2:
+                        if (pages.LargeChange != ((flowLayoutPanel1.Width / 1059) * (flowLayoutPanel1.Height / 411)) + (flowLayoutPanel1.Width / 1059))
+                        {
+                            pages.LargeChange = ((flowLayoutPanel1.Width / 1059) * (flowLayoutPanel1.Height / 411)) + (flowLayoutPanel1.Width / 1059);
+
+                            txtQty.Text = pages.LargeChange.ToString();
+
+                            Random rnd = new Random();
+                            string[] gifFiles = Directory.GetFiles("includes", "*.gif");
+                            if (gifFiles.Length > 0)
+                            {
+                                int randomIndex = rnd.Next(gifFiles.Length);
+                                string randomGifFile = gifFiles[randomIndex];
+                                imgLoading.ImageLocation = randomGifFile;
+                            }
+                            else
+                            {
+                                imgLoading.ImageLocation = @"includes\HugPuddle.jpg";
+                            }
+
+                            await Task.Run(() => BuildSearchResults());
+                            flowLayoutPanel1.Visible = true;
+                            pages.Visible = true;
+                        }
+                        break;
+                    case 1:
+                        if (pages.LargeChange != ((flowLayoutPanel1.Width / 221) * (flowLayoutPanel1.Height / 336)))
+                        {
+                            pages.LargeChange = ((flowLayoutPanel1.Width / 221) * (flowLayoutPanel1.Height / 336)) + (flowLayoutPanel1.Width / 221);
+
+                            txtQty.Text = pages.LargeChange.ToString();
+
+                            Random rnd = new Random();
+                            string[] gifFiles = Directory.GetFiles("includes", "*.gif");
+                            if (gifFiles.Length > 0)
+                            {
+                                int randomIndex = rnd.Next(gifFiles.Length);
+                                string randomGifFile = gifFiles[randomIndex];
+                                imgLoading.ImageLocation = randomGifFile;
+                            }
+                            else
+                            {
+                                imgLoading.ImageLocation = @"includes\HugPuddle.jpg";
+                            }
+
+                            await Task.Run(() => BuildSearchResults());
+                            flowLayoutPanel1.Visible = true;
+                            pages.Visible = true;
+                        }
+                        break;
+                    default:
+                        // Handle any other cases here
+                        break;
                 }
+
+
+
             }
         }
 

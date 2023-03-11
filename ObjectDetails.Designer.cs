@@ -75,6 +75,7 @@
             this.registrationPanel = new System.Windows.Forms.Panel();
             this.lblOfficial = new System.Windows.Forms.Label();
             this.lblPleaseStandBy = new System.Windows.Forms.Label();
+            this.lblLaunchURI = new System.Windows.Forms.Label();
             this.flowPanel.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.imgPicture)).BeginInit();
@@ -280,7 +281,7 @@
             this.txtURI.Multiline = true;
             this.txtURI.Name = "txtURI";
             this.txtURI.ScrollBars = System.Windows.Forms.ScrollBars.Horizontal;
-            this.txtURI.Size = new System.Drawing.Size(279, 35);
+            this.txtURI.Size = new System.Drawing.Size(232, 35);
             this.txtURI.TabIndex = 93;
             // 
             // lblURIBlockDate
@@ -586,6 +587,7 @@
             // registrationPanel
             // 
             this.registrationPanel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.registrationPanel.Controls.Add(this.lblLaunchURI);
             this.registrationPanel.Controls.Add(this.lblURNBlockDate);
             this.registrationPanel.Controls.Add(this.txtURN);
             this.registrationPanel.Controls.Add(this.lblIMGBlockDate);
@@ -634,16 +636,30 @@
             this.lblPleaseStandBy.Text = "please stand by... locked for loading";
             this.lblPleaseStandBy.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
+            // lblLaunchURI
+            // 
+            this.lblLaunchURI.Anchor = System.Windows.Forms.AnchorStyles.Right;
+            this.lblLaunchURI.BackColor = System.Drawing.SystemColors.ScrollBar;
+            this.lblLaunchURI.Font = new System.Drawing.Font("Microsoft Sans Serif", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblLaunchURI.Location = new System.Drawing.Point(251, 146);
+            this.lblLaunchURI.Name = "lblLaunchURI";
+            this.lblLaunchURI.Padding = new System.Windows.Forms.Padding(2, 0, 0, 4);
+            this.lblLaunchURI.Size = new System.Drawing.Size(37, 35);
+            this.lblLaunchURI.TabIndex = 109;
+            this.lblLaunchURI.Text = "[  ]";
+            this.lblLaunchURI.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.lblLaunchURI.Click += new System.EventHandler(this.lblLaunchURI_Click);
+            // 
             // ObjectDetails
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.SystemColors.InactiveCaption;
             this.ClientSize = new System.Drawing.Size(1043, 372);
+            this.Controls.Add(this.lblOfficial);
             this.Controls.Add(this.lblPleaseStandBy);
             this.Controls.Add(this.registrationPanel);
             this.Controls.Add(this.supPanel);
-            this.Controls.Add(this.lblOfficial);
             this.Controls.Add(this.lblObjectCreatedDate);
             this.Controls.Add(this.lblLicense);
             this.Controls.Add(this.txtdesc);
@@ -741,5 +757,6 @@
         private System.Windows.Forms.Panel registrationPanel;
         public System.Windows.Forms.Label lblOfficial;
         private System.Windows.Forms.Label lblPleaseStandBy;
+        private System.Windows.Forms.Label lblLaunchURI;
     }
 }

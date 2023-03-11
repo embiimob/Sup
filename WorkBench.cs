@@ -1301,7 +1301,7 @@ namespace SUP
 
         private void btnEditProfile_Click(object sender, EventArgs e)
         {
-            new ObjectMint().Show();
+          
         }
     }
 }

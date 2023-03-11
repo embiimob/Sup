@@ -4,16 +4,27 @@
   "uri": "https://realms.gg/p73fB2YgSQA",
   "nme": "CLOUDCITY4U",
   "dsc": "Cloud City begins where minecraft ended a long long time ago in the future\n\nHave you beaten Minecraft and are looking for something new to do with your favorite avatars? Check out #CloudCity4U a brand new questing game built inside the #Minecraft World.\n\nYou will begin your quest in the humble town of barnsville. search carefully for things you will need on your journey.\n\nMission 1 - Find the home of embii (#strange wizard of the realms)\nMission 2 - Find Cloud City\nMission 3 - activate the portals Complete these missions and the real fun begins.\n\nCloud City 4U contains many advanced multiplayer games and private apartments that you must find to own and or participate.\n\nNOTE: You must leave the city limits for Survival mode play. Structures built in survival mode will persist until at least 2025\n\nAre you up to the challenge!? https://realms.gg/p73fB2YgSQA\n\n*to claim a private apartment you must post the building number and a picture of the unclaimed apartment number along with your gamerID in our discord server. an operator will program the keys for you to enter it at their earliest convivence. \n\nhttps://discord.gg/pwpfWRRNh2\n\n#CloudCity4U is an Open Source Realm.\nDownload, share and play",
-  "atr": { "rad": "yes" ,"hard": "yes"},
+  "atr": {
+    "rad": "yes",
+    "hard": "yes"
+  },
   "lic": "CC0",
   "cre": [ 0 ],
-  "own": { "0": 1 }
+  "own": { "0": 1 },
+  "max": 1
 }
 
 
+//variable format
 //assume keyword order id 0 is the authorization address
 //"cre": [ 0, 1 ] assume keyword order id 0 is the object address, keyword order id 1 is a creator address
 //"own": { 0: 10000} assume keyword order id 0 owns a qty of 10000
+
+//defined format
+{
+  "cre": [ "mpwoff3ut1DJzomKaH69PWdfheXqKpYTcz", "mxyo2qyUo9h7wzDYbudcyC2VWxaTfTeCZr" ],
+  "own": { "mpwoff3ut1DJzomKaH69PWdfheXqKpYTcz": 1 }
+}
 
 
 //urn img & uri reference naming standards
@@ -38,11 +49,13 @@
 //click the apertus.io etch button
 
 
-// confirm creator deligation transaction example with numeric salt
+// acknowledge creator deligation example with alphanumeric salt
 
-{ "cre": [ 1234 ] }
+{ "cre": [ "a1" ] }
 
 
-// object element update transaction example
+// object element update transaction examples
 
 { "lic": "CC0" }
+
+{"max": 100}

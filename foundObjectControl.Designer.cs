@@ -232,7 +232,7 @@
             // btnOfficial
             // 
             this.btnOfficial.BackColor = System.Drawing.Color.Yellow;
-            this.btnOfficial.Location = new System.Drawing.Point(67, 174);
+            this.btnOfficial.Location = new System.Drawing.Point(67, 172);
             this.btnOfficial.Name = "btnOfficial";
             this.btnOfficial.Size = new System.Drawing.Size(134, 28);
             this.btnOfficial.TabIndex = 14;
@@ -255,7 +255,7 @@
             this.lblOfficial.BackColor = System.Drawing.SystemColors.HotTrack;
             this.lblOfficial.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lblOfficial.ForeColor = System.Drawing.Color.Yellow;
-            this.lblOfficial.Location = new System.Drawing.Point(10, 0);
+            this.lblOfficial.Location = new System.Drawing.Point(0, 0);
             this.lblOfficial.Margin = new System.Windows.Forms.Padding(0);
             this.lblOfficial.Name = "lblOfficial";
             this.lblOfficial.Padding = new System.Windows.Forms.Padding(1, 1, 1, 3);
@@ -268,7 +268,7 @@
             // 
             this.lblTrash.AutoSize = true;
             this.lblTrash.BackColor = System.Drawing.SystemColors.ActiveCaption;
-            this.lblTrash.Location = new System.Drawing.Point(206, 317);
+            this.lblTrash.Location = new System.Drawing.Point(201, 319);
             this.lblTrash.Name = "lblTrash";
             this.lblTrash.Size = new System.Drawing.Size(19, 13);
             this.lblTrash.TabIndex = 17;

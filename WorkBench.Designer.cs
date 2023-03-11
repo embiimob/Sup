@@ -103,7 +103,6 @@ namespace SUP
             this.btnGetObject = new System.Windows.Forms.Button();
             this.btnDecrypt = new System.Windows.Forms.Button();
             this.btnEncrypt = new System.Windows.Forms.Button();
-            this.btnEditProfile = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.dgTransactions)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
@@ -493,7 +492,6 @@ namespace SUP
             // 
             // splitContainer1.Panel1
             // 
-            this.splitContainer1.Panel1.Controls.Add(this.btnEditProfile);
             this.splitContainer1.Panel1.Controls.Add(this.ButtonGetPublicKeys);
             this.splitContainer1.Panel1.Controls.Add(this.ButtonGetPrivateMessages);
             this.splitContainer1.Panel1.Controls.Add(this.ButtonGetPublicMessages);
@@ -823,16 +821,6 @@ namespace SUP
             this.btnEncrypt.UseVisualStyleBackColor = true;
             this.btnEncrypt.Click += new System.EventHandler(this.ButtonEncryptTransactionIdClick);
             // 
-            // btnEditProfile
-            // 
-            this.btnEditProfile.Location = new System.Drawing.Point(317, 151);
-            this.btnEditProfile.Name = "btnEditProfile";
-            this.btnEditProfile.Size = new System.Drawing.Size(75, 23);
-            this.btnEditProfile.TabIndex = 76;
-            this.btnEditProfile.Text = "edit profile";
-            this.btnEditProfile.UseVisualStyleBackColor = true;
-            this.btnEditProfile.Click += new System.EventHandler(this.btnEditProfile_Click);
-            // 
             // WorkBench
             // 
             this.AllowDrop = true;
@@ -925,7 +913,6 @@ namespace SUP
         private Button ButtonGetPrivateMessages;
         private Button ButtonGetPublicMessages;
         private Button ButtonGetPublicKeys;
-        private Button btnEditProfile;
     }
 }
 

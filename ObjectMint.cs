@@ -19,6 +19,12 @@ using System.Threading;
 using System.Web.NBitcoin;
 using AngleSharp.Css.Dom;
 using System.Linq;
+using NBitcoin.RPC;
+using Newtonsoft.Json;
+using System.Net;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement.StartPanel;
+using System.Security.Cryptography;
+using System.Text;
 
 namespace SUP
 {
@@ -43,17 +49,14 @@ namespace SUP
         private void UpdateRemainingChars()
         {
 
-            int maxsize = 880;
+            int maxsize = 888;
 
-            maxsize = maxsize - txtDescription.Text.Length - txtIMG.Text.Length - txtTitle.Text.Length - txtURI.Text.Length - txtURN.Text.Length;
+            maxsize = maxsize - txtDescription.Text.Length - txtIMG.Text.Length - txtTitle.Text.Length - txtURI.Text.Length - txtURN.Text.Length - txtMaximum.Text.Length;
             maxsize = maxsize - 40; ///estimated json chars required.
 
             foreach (System.Windows.Forms.Control control in flowAttribute.Controls)
             {
-
                 maxsize = maxsize - (control.Text.Length + 5);
-
-
             }
 
             maxsize = maxsize - (flowKeywords.Controls.Count * 20) + 5;
@@ -89,6 +92,60 @@ namespace SUP
 
             pictureBox1.ImageLocation = "qrcode.png";
 
+            if (txtURN.Text != "" && txtTitle.Text != "" & txtObjectAddress.Text != "")
+            {
+                btnPrint.Enabled = true;
+                btnMint.Enabled = true;
+            }
+
+            if (maxsize < 0)
+            {
+                btnPrint.Enabled = false;
+                btnMint.Enabled = false;
+            }
+
+
+            OBJ OBJJson = new OBJ();
+            if (btnObjectName.BackColor == Color.Blue) { OBJJson.nme = txtTitle.Text; }
+            if (btnObjectImage.BackColor == Color.Blue) { OBJJson.img = txtIMG.Text; }
+            if (btnObjectURN.BackColor == Color.Blue) { OBJJson.urn = txtURN.Text; }
+            if (btnObjectURI.BackColor == Color.Blue) { OBJJson.uri = txtURI.Text; }
+            if (btnObjectDescription.BackColor == Color.Blue) { OBJJson.dsc = txtDescription.Text; }
+            if (btnObjectMaximum.BackColor == Color.Blue) { if (txtMaximum.Text == "") { } else { OBJJson.max = int.Parse(txtMaximum.Text); } }
+
+            Dictionary<string, string> mintAttributes = new Dictionary<string, string>();
+            foreach (Button attributeControl in flowAttribute.Controls)
+            {
+                string[] parts = attributeControl.Text.Split(':');
+                mintAttributes.Add(parts[0], parts[1]);
+            }
+            OBJJson.atr = mintAttributes;
+
+            if (btnObjectAddress.BackColor == Color.Blue)
+            {
+                List<string> mintCreators = new List<string>();
+                mintCreators.Add(txtObjectAddress.Text);
+                foreach (Button creatorControl in flowCreators.Controls) { mintCreators.Add(creatorControl.Text); }
+                OBJJson.cre = mintCreators.ToArray();
+            }
+
+            if (btnObjectOwners.BackColor == Color.Blue)
+            {
+                Dictionary<string, long> mintOwners = new Dictionary<string, long>();
+                foreach (Button ownerControl in flowOwners.Controls)
+                {
+                    string[] parts = ownerControl.Text.Split(':');
+                    mintOwners.Add(parts[0], long.Parse(parts[1]));
+                }
+                OBJJson.own = mintOwners;
+            }
+
+            var settings = new JsonSerializerSettings
+            {
+                NullValueHandling = NullValueHandling.Ignore
+            };
+            var objectSerialized = JsonConvert.SerializeObject(OBJJson, Formatting.None, settings);
+            txtOBJJSON.Text = objectSerialized;
 
         }
 
@@ -185,7 +242,8 @@ namespace SUP
             {
                 btnObjectURN.BackColor = Color.Blue;
                 btnObjectURN.ForeColor = Color.Yellow;
-            }else
+            }
+            else
             {
                 btnObjectURN.BackColor = Color.White;
                 btnObjectURN.ForeColor = Color.Black;
@@ -196,6 +254,17 @@ namespace SUP
         private void txtURI_TextChanged(object sender, EventArgs e)
         {
             UpdateRemainingChars();
+
+            if (txtURI.Text != "")
+            {
+                btnObjectURI.BackColor = Color.Blue;
+                btnObjectURI.ForeColor = Color.Yellow;
+            }
+            else
+            {
+                btnObjectURI.BackColor = Color.White;
+                btnObjectURI.ForeColor = Color.Black;
+            }
         }
 
         private void flowAttribute_ControlAdded(object sender, ControlEventArgs e)
@@ -228,6 +297,7 @@ namespace SUP
                 btnObjectName.Enabled = false;
                 btnObjectURI.Enabled = false;
                 btnObjectURN.Enabled = false;
+                btnObjectMaximum.Enabled = false;
                 btnObjectCreators.Enabled = false;
                 btnObjectOwners.Enabled = false;
                 btnObjectAddress.Enabled = false;
@@ -242,6 +312,8 @@ namespace SUP
             else
             {
                 UpdateRemainingChars();
+                btnObjectName.BackColor = Color.Blue;
+                btnObjectName.ForeColor = Color.Yellow;
 
                 if (txtObjectAddress.Text == "")
                 {
@@ -254,7 +326,7 @@ namespace SUP
                 else
                 {
                     lblASCIIURN.Visible = false;
-
+                 
                     btnObjectAttributes.Enabled = true;
                     btnObjectDescription.Enabled = true;
                     btnObjectImage.Enabled = true;
@@ -265,15 +337,15 @@ namespace SUP
                     btnObjectCreators.Enabled = true;
                     btnObjectOwners.Enabled = true;
                     btnObjectAddress.Enabled = true;
+                    btnObjectMaximum.Enabled = true;
                     txtDescription.Enabled = true;
                     txtIMG.Enabled = true;
                     txtURN.Enabled = true;
                     txtURI.Enabled = true;
                     txtMaximum.Enabled = true;
-                    btnMaximum.Enabled = true;
+                    btnObjectMaximum.Enabled = true;
                     txtObjectAddress.Enabled = true;
-                    btnObjectName.BackColor = Color.Blue;
-                    btnObjectName.ForeColor = Color.Yellow;
+
                 }
 
             }
@@ -286,16 +358,30 @@ namespace SUP
         private void txtDescription_TextChanged(object sender, EventArgs e)
         {
             UpdateRemainingChars();
+            if (txtDescription.Text != "")
+            {
+                btnObjectDescription.BackColor = Color.Blue;
+                btnObjectDescription.ForeColor = Color.Yellow;
+            }
+            else
+            {
+                btnObjectDescription.BackColor = Color.White;
+                btnObjectDescription.ForeColor = Color.Black;
+            }
         }
 
         private void flowCreators_ControlAdded(object sender, ControlEventArgs e)
         {
             UpdateRemainingChars();
+            btnObjectCreators.BackColor = Color.Blue;
+            btnObjectCreators.ForeColor = Color.Yellow;
         }
 
         private void flowOwners_ControlAdded(object sender, ControlEventArgs e)
         {
             UpdateRemainingChars();
+            btnObjectOwners.BackColor = Color.Blue;
+            btnObjectOwners.ForeColor = Color.Yellow;
         }
 
         private void txtObjectAddress_TextChanged(object sender, EventArgs e)
@@ -303,7 +389,12 @@ namespace SUP
             UpdateRemainingChars();
             if (txtObjectAddress.Text != "")
             {
-                lblASCIIURN.Visible = false;
+                if (txtURN.Text == "")
+                {
+                    lblASCIIURN.Text = "Click URN to import a file to IPFS\r\n IMG thumbnails are optional";
+                    lblASCIIURN.Visible = true;
+                }
+                else { lblASCIIURN.Visible = false; }
                 btnObjectAddress.BackColor = Color.Blue;
                 btnObjectAddress.ForeColor = Color.Yellow;
                 btnObjectAttributes.Enabled = true;
@@ -316,12 +407,13 @@ namespace SUP
                 btnObjectCreators.Enabled = true;
                 btnObjectOwners.Enabled = true;
                 btnObjectAddress.Enabled = true;
+                btnObjectMaximum.Enabled = true;
                 txtDescription.Enabled = true;
                 txtIMG.Enabled = true;
                 txtURN.Enabled = true;
                 txtURI.Enabled = true;
                 txtMaximum.Enabled = true;
-                btnMaximum.Enabled = true;
+                btnObjectMaximum.Enabled = true;
                 txtObjectAddress.Enabled = true;
                 btnObjectName.BackColor = Color.Blue;
                 btnObjectName.ForeColor = Color.Yellow;
@@ -332,6 +424,10 @@ namespace SUP
             {
                 lblASCIIURN.Text = "push 💎 to obtain a new object address";
                 lblASCIIURN.Visible = true;
+                txtTitle.Enabled = true;
+                txtObjectAddress.Enabled = true;
+                btnObjectAddress.Enabled = true;
+                btnObjectName.Enabled = true;
                 btnObjectAddress.BackColor = Color.White;
                 btnObjectAddress.ForeColor = Color.Black;
                 btnObjectAttributes.Enabled = false;
@@ -343,7 +439,7 @@ namespace SUP
                 btnObjectURN.Enabled = false;
                 btnObjectCreators.Enabled = false;
                 btnObjectOwners.Enabled = false;
-                btnObjectAddress.Enabled = false;
+                btnObjectMaximum.Enabled = false;
                 txtDescription.Enabled = false;
                 txtIMG.Enabled = false;
                 txtURN.Enabled = false;
@@ -351,68 +447,72 @@ namespace SUP
                 txtMaximum.Enabled = false;
                 txtObjectAddress.Enabled = false;
 
+
             }
         }
 
         private void btnObjectAddress_Click(object sender, EventArgs e)
         {
-            if (txtObjectAddress.Text != null)
+            UpdateRemainingChars();
+            if (txtObjectAddress.Text != "")
             {
 
             }
             else
             {
-
+                NetworkCredential credentials = new NetworkCredential("good-user", "better-password");
+                RPCClient rpcClient = new RPCClient(credentials, new Uri("http://127.0.0.1:18332"), Network.Main);
+                string newAddress = rpcClient.SendCommand("getnewaddress", txtTitle.Text + "!" + DateTime.UtcNow.ToString("yyyyMMddHHmmss")).ResultString;
+                txtObjectAddress.Text = newAddress;
+                txtTitle.Enabled = false;
+                btnObjectName.Enabled = false;
             }
-        }
 
-        private void button12_Click(object sender, EventArgs e)
-        {
-            lblRemainingChars.Visible = false;
-            System.Drawing.Bitmap bitmap = new Bitmap(this.Width - 22, this.Height - 44);
-            Graphics graphics = Graphics.FromImage(bitmap);
-            graphics.CopyFromScreen(this.PointToScreen(new Point(0, 0)), new Point(0, 0), this.Size);
-            bitmap.RotateFlip(RotateFlipType.Rotate90FlipNone);
-            PrintImage(bitmap);
-            lblRemainingChars.Visible = true;
+
+
 
         }
+
 
         private void btnObjectName_Click(object sender, EventArgs e)
         {
+            UpdateRemainingChars();
             if (txtTitle.Text != "") { btnObjectName.BackColor = Color.Blue; btnObjectName.ForeColor = Color.Yellow; } else { btnObjectName.BackColor = Color.White; btnObjectName.ForeColor = Color.Black; }
 
         }
 
         private void btnMaximum_Click(object sender, EventArgs e)
         {
-            if (txtMaximum.Text != "") { btnMaximum.BackColor = Color.Blue; btnMaximum.ForeColor = Color.Yellow; }
+            UpdateRemainingChars();
+            if (txtMaximum.Text != "") { btnObjectMaximum.BackColor = Color.Blue; btnObjectMaximum.ForeColor = Color.Yellow; }
             else
             {
                 try
                 {
-                    if (long.Parse(txtMaximum.Text.Replace(",", "")) <= 5149219112448) { btnMaximum.BackColor = Color.Blue; btnMaximum.ForeColor = Color.Yellow; } else { btnMaximum.BackColor = Color.White; btnMaximum.ForeColor = Color.Black; }
+                    if (long.Parse(txtMaximum.Text.Replace(",", "")) <= 5149219112448) { btnObjectMaximum.BackColor = Color.Blue; btnObjectMaximum.ForeColor = Color.Yellow; } else { btnObjectMaximum.BackColor = Color.White; btnObjectMaximum.ForeColor = Color.Black; }
 
                 }
-                catch { btnMaximum.BackColor = Color.White; btnMaximum.ForeColor = Color.Black; }
+                catch { btnObjectMaximum.BackColor = Color.White; btnObjectMaximum.ForeColor = Color.Black; }
             }
         }
 
         private void btnObjectDescription_Click(object sender, EventArgs e)
         {
+            UpdateRemainingChars();
             if (txtDescription.Text != "")
             {
                 btnObjectDescription.BackColor = Color.Blue; btnObjectDescription.ForeColor = Color.Yellow;
             }
         }
 
-        private void btnObjectImage_Click(object sender, EventArgs e)
+        private async void btnObjectImage_Click(object sender, EventArgs e)
         {
+            UpdateRemainingChars();
             webviewer.Visible = false;
             string imgurn = "";
             lblIMGBlockDate.Text = "[ unable to verify ]";
 
-            if (txtIMG.Text != null)
+            if (txtIMG.Text != "")
             {
                 imgurn = txtIMG.Text;
 
@@ -422,6 +522,39 @@ namespace SUP
 
                     if (txtIMG.Text.ToLower().StartsWith("ipfs:")) { imgurn = imgurn.Replace(@"\root\", @"\ipfs\"); }
                 }
+            }
+            else
+            {
+
+                // Open file dialog and get file path and name
+                OpenFileDialog openFileDialog1 = new OpenFileDialog();
+                if (openFileDialog1.ShowDialog() == DialogResult.OK)
+                {
+                    string filePath = openFileDialog1.FileName;
+                    string fileName = openFileDialog1.SafeFileName;
+
+                    // Add file to IPFS
+                    Task<string> addTask = Task.Run(() =>
+                        {
+                            Process process = new Process();
+                            process.StartInfo.FileName = @"ipfs\ipfs.exe";
+                            process.StartInfo.Arguments = "add \"" + filePath + "\"";
+                            process.StartInfo.UseShellExecute = false;
+                            process.StartInfo.RedirectStandardOutput = true;
+                            process.Start();
+                            string output = process.StandardOutput.ReadToEnd();
+                            process.WaitForExit();
+                            string hash = output.Split(' ')[1];
+                            return "IPFS:" + hash;
+                        });
+                    string ipfsHash = await addTask;
+
+
+                    // Update text box with IPFS hash
+                    txtIMG.Text = ipfsHash + @"\" + fileName;
+                }
+
+
             }
 
 
@@ -502,7 +635,14 @@ namespace SUP
 
                                     if (System.IO.File.Exists("ipfs/" + txtIMG.Text.Substring(5, 46)))
                                     {
-                                        System.IO.File.Move("ipfs/" + txtIMG.Text.Substring(5, 46), "ipfs/" + txtIMG.Text.Substring(5, 46) + "_tmp");
+                                        try { System.IO.File.Move("ipfs/" + txtIMG.Text.Substring(5, 46), "ipfs/" + txtIMG.Text.Substring(5, 46) + "_tmp"); }
+                                        catch
+                                        {
+
+                                            System.IO.File.Delete("ipfs/" + txtIMG.Text.Substring(5, 46) + "_tmp");
+                                            System.IO.File.Move("ipfs/" + txtIMG.Text.Substring(5, 46), "ipfs/" + txtIMG.Text.Substring(5, 46) + "_tmp");
+
+                                        }
 
                                         string fileName = txtIMG.Text.Replace(@"//", "").Replace(@"\\", "").Substring(51);
                                         if (fileName == "")
@@ -628,11 +768,12 @@ namespace SUP
 
         private async void btnObjectURN_Click(object sender, EventArgs e)
         {
+            UpdateRemainingChars();
             string urn = "";
             lblURNBlockDate.Text = "[ unable to verify ]";
             webviewer.Visible = false;
             lblASCIIURN.Visible = false;
-            if (txtURN.Text != null)
+            if (txtURN.Text != "")
             {
                 urn = txtURN.Text;
 
@@ -651,6 +792,39 @@ namespace SUP
                     btnObjectURN.ForeColor = Color.Yellow;
                     return;
                 }
+            }
+            else
+            {
+                // Open file dialog and get file path and name
+                OpenFileDialog openFileDialog1 = new OpenFileDialog();
+                if (openFileDialog1.ShowDialog() == DialogResult.OK)
+                {
+                    string filePath = openFileDialog1.FileName;
+                    string fileName = openFileDialog1.SafeFileName;
+                    openFileDialog1.Title = "Select File";
+
+                    // Add file to IPFS
+                    Task<string> addTask = Task.Run(() =>
+                    {
+                        Process process = new Process();
+                        process.StartInfo.FileName = @"ipfs\ipfs.exe";
+                        process.StartInfo.Arguments = "add \"" + filePath + "\"";
+                        process.StartInfo.UseShellExecute = false;
+                        process.StartInfo.RedirectStandardOutput = true;
+                        process.Start();
+                        string output = process.StandardOutput.ReadToEnd();
+                        process.WaitForExit();
+                        string hash = output.Split(' ')[1];
+                        return "IPFS:" + hash;
+                    });
+                    string ipfsHash = await addTask;
+
+
+                    // Update text box with IPFS hash
+                    txtURN.Text = ipfsHash + @"\" + fileName;
+                }
+
+
             }
 
 
@@ -727,7 +901,13 @@ namespace SUP
 
                                 if (System.IO.File.Exists("ipfs/" + txtURN.Text.Substring(5, 46)))
                                 {
-                                    System.IO.File.Move("ipfs/" + txtURN.Text.Substring(5, 46), "ipfs/" + txtURN.Text.Substring(5, 46) + "_tmp");
+                                    try { System.IO.File.Move("ipfs/" + txtURN.Text.Substring(5, 46), "ipfs/" + txtURN.Text.Substring(5, 46) + "_tmp"); }
+                                    catch
+                                    {
+                                        System.IO.File.Delete("ipfs/" + txtURN.Text.Substring(5, 46) + "_tmp");
+                                        System.IO.File.Move("ipfs/" + txtURN.Text.Substring(5, 46), "ipfs/" + txtURN.Text.Substring(5, 46) + "_tmp");
+
+                                    }
 
                                     string fileName = txtURN.Text.Replace(@"//", "").Replace(@"\\", "").Substring(51);
                                     if (fileName == "")
@@ -902,6 +1082,7 @@ namespace SUP
                     break;
 
                 case ".glb":
+                case ".fbx":
                     //Show image in main box and show open file button
                     pictureBox1.SuspendLayout();
                     if (File.Exists(urn))
@@ -1039,33 +1220,43 @@ namespace SUP
                     }
 
                     string _address = txtObjectAddress.Text;
-                    string _viewer = flowOwners.Controls[0].Text;
+                    string _viewer = null;
                     string _viewername = null; //to be implemented
-                    string _creator = flowCreators.Controls[0].Text;
-                    int _owner = flowOwners.Controls.Count;
+                    string _creator = null;
+                    int _owner = 0;
                     string _urn = HttpUtility.UrlEncode(txtURN.Text);
                     string _uri = HttpUtility.UrlEncode(txtURI.Text);
                     string _img = HttpUtility.UrlEncode(txtIMG.Text);
 
-                    string querystring = "?address=" + _address + "&viewer=" + _viewer + "&viewername=" + _viewername + "&creator=" + _creator + "&owner=" + _owner + "&urn=" + _urn + "&uri=" + _uri + "&img=" + _img;
-                    string htmlstring = "<html><body><embed src=\"" + urn + querystring + "\" width=100% height=100%></body></html>";
-                    string viewerPath = Path.GetDirectoryName(urn) + @"\urnviewer.html";
-                    webviewer.Visible = true;
-
-                    try
+                    if (flowOwners.Controls.Count > 0)
                     {
-                        System.IO.File.WriteAllText(Path.GetDirectoryName(urn) + @"\urnviewer.html", htmlstring);
-                        await webviewer.EnsureCoreWebView2Async();
-                        webviewer.CoreWebView2.Navigate(viewerPath);
-                    }
-                    catch
-                    {
-                        Thread.Sleep(1000);
-                        await webviewer.EnsureCoreWebView2Async();
-                        webviewer.CoreWebView2.Navigate(viewerPath);
+                        _viewer = flowOwners.Controls[0].Text;
+                        _owner = flowOwners.Controls.Count;
                     }
 
+                    if (flowCreators.Controls.Count > 0)
+                    {
+                        _creator = flowCreators.Controls[0].Text;
+                    }
 
+                        string querystring = "?address=" + _address + "&viewer=" + _viewer + "&viewername=" + _viewername + "&creator=" + _creator + "&owner=" + _owner + "&urn=" + _urn + "&uri=" + _uri + "&img=" + _img;
+                        string htmlstring = "<html><body><embed src=\"" + urn + querystring + "\" width=100% height=100%></body></html>";
+                        string viewerPath = Path.GetDirectoryName(urn) + @"\urnviewer.html";
+                        webviewer.Visible = true;
+
+                        try
+                        {
+                            System.IO.File.WriteAllText(Path.GetDirectoryName(urn) + @"\urnviewer.html", htmlstring);
+                            await webviewer.EnsureCoreWebView2Async();
+                            webviewer.CoreWebView2.Navigate(viewerPath);
+                        }
+                        catch
+                        {
+                            Thread.Sleep(1000);
+                            await webviewer.EnsureCoreWebView2Async();
+                            webviewer.CoreWebView2.Navigate(viewerPath);
+                        }
+                   
                     break;
                 case ".mp4":
                 case ".avi":
@@ -1073,20 +1264,20 @@ namespace SUP
                 case ".wav":
                 case ".pdf":
                     webviewer.Visible = true;
-                    viewerPath = Path.GetDirectoryName(urn) + @"\urnviewer.html";
-                    htmlstring = "<html><body><embed src=\"" + urn + "\" width=100% height=100%></body></html>";
+                    string viewerPath2 = Path.GetDirectoryName(urn) + @"\urnviewer.html";
+                    string htmlstring2 = "<html><body><embed src=\"" + urn + "\" width=100% height=100%></body></html>";
 
                     try
                     {
-                        System.IO.File.WriteAllText(Path.GetDirectoryName(urn) + @"\urnviewer.html", htmlstring);
+                        System.IO.File.WriteAllText(Path.GetDirectoryName(urn) + @"\urnviewer.html", htmlstring2);
                         await webviewer.EnsureCoreWebView2Async();
-                        webviewer.CoreWebView2.Navigate(viewerPath);
+                        webviewer.CoreWebView2.Navigate(viewerPath2);
                     }
                     catch
                     {
                         Thread.Sleep(1000);
                         await webviewer.EnsureCoreWebView2Async();
-                        webviewer.CoreWebView2.Navigate(viewerPath);
+                        webviewer.CoreWebView2.Navigate(viewerPath2);
                     }
 
 
@@ -1094,7 +1285,36 @@ namespace SUP
 
                 default:
 
-                    pictureBox1.Invoke(new Action(() => pictureBox1.ImageLocation = urn));
+                    pictureBox1.SuspendLayout();
+                    if (File.Exists(urn))
+                    {
+
+                        pictureBox1.ImageLocation = pictureBox2.ImageLocation;
+                    }
+                    else
+                    {
+                        Random rnd = new Random();
+                        string[] gifFiles = Directory.GetFiles("includes", "*.gif");
+                        if (gifFiles.Length > 0)
+                        {
+                            int randomIndex = rnd.Next(gifFiles.Length);
+                            string randomGifFile = gifFiles[randomIndex];
+
+                            pictureBox1.ImageLocation = randomGifFile;
+
+                        }
+                        else
+                        {
+                            try
+                            {
+                                pictureBox1.ImageLocation = @"includes\HugPuddle.jpg";
+                            }
+                            catch { }
+                        }
+
+
+                    }
+                    pictureBox1.ResumeLayout();
 
                     break;
             }
@@ -1104,15 +1324,23 @@ namespace SUP
 
         private void btnObjectURI_Click(object sender, EventArgs e)
         {
+            UpdateRemainingChars();
             if (txtURI.Text != "")
             {
                 btnObjectURI.ForeColor = Color.Yellow;
                 btnObjectURI.BackColor = Color.Blue;
+
+                string src = txtURI.Text;
+                try
+                { System.Diagnostics.Process.Start(src); }
+                catch { System.Media.SystemSounds.Exclamation.Play(); }
             }
         }
         //GPT3
         private void btnObjectAttributes_Click(object sender, EventArgs e)
         {
+            UpdateRemainingChars();
+
             using (var dialog = new Form())
             {
                 dialog.Text = String.Empty;
@@ -1187,6 +1415,7 @@ namespace SUP
         //GPT3
         private void btnObjectKeywords_Click(object sender, EventArgs e)
         {
+            UpdateRemainingChars();
             using (var dialog = new Form())
             {
                 dialog.Text = String.Empty;
@@ -1276,6 +1505,7 @@ namespace SUP
         //GPT3
         private void btnObjectCreators_Click(object sender, EventArgs e)
         {
+            UpdateRemainingChars();
             using (var dialog = new Form())
             {
                 dialog.Text = String.Empty;
@@ -1366,6 +1596,7 @@ namespace SUP
         //GPT3
         private void btnObjectOwners_Click(object sender, EventArgs e)
         {
+            UpdateRemainingChars();
             using (var dialog = new Form())
             {
                 dialog.Text = String.Empty;
@@ -1493,6 +1724,7 @@ namespace SUP
                 btnObjectAttributes.BackColor = Color.White;
                 btnObjectAttributes.ForeColor = Color.Black;
             }
+            UpdateRemainingChars();
         }
         //GPT3
         private void flowKeyword_ControlRemoved(object sender, ControlEventArgs e)
@@ -1503,6 +1735,75 @@ namespace SUP
                 btnObjectKeywords.BackColor = Color.White;
                 btnObjectKeywords.ForeColor = Color.Black;
             }
+            UpdateRemainingChars();
+
+        }
+
+        private void txtMaximum_TextChanged(object sender, EventArgs e)
+        {
+            UpdateRemainingChars();
+            if (txtMaximum.Text != "")
+            {
+                btnObjectMaximum.BackColor = Color.Blue;
+                btnObjectMaximum.ForeColor = Color.Yellow;
+                if (!int.TryParse(txtMaximum.Text, out int value)) { txtMaximum.Text = "0"; }
+            }
+        }
+
+        private void flowOwners_ControlRemoved(object sender, ControlEventArgs e)
+        {
+
+            if (flowOwners.Controls.Count < 1)
+            {
+                btnObjectOwners.BackColor = Color.White;
+                btnObjectOwners.ForeColor = Color.Black;
+            }
+            UpdateRemainingChars();
+        }
+
+        private void flowCreators_ControlRemoved(object sender, ControlEventArgs e)
+        {
+
+            if (flowCreators.Controls.Count < 1)
+            {
+                btnObjectCreators.BackColor = Color.White;
+                btnObjectCreators.ForeColor = Color.Black;
+            }
+            UpdateRemainingChars();
+        }
+
+        private void btnMint_Click(object sender, EventArgs e)
+        {
+            UpdateRemainingChars();
+            NetworkCredential credentials = new NetworkCredential("good-user", "better-password");
+            RPCClient rpcClient = new RPCClient(credentials, new Uri("http://127.0.0.1:18332"), Network.Main);
+
+
+            System.Security.Cryptography.SHA256 mySHA256 = SHA256Managed.Create();
+            byte[] hashValue = mySHA256.ComputeHash(Encoding.UTF8.GetBytes(txtOBJJSON.Text));
+            string signatureAddress;
+
+            if (flowCreators.Controls.Count > 0)
+            { signatureAddress = flowCreators.Controls[0].Text; }
+            else { signatureAddress = txtObjectAddress.Text; }
+
+            string signature = rpcClient.SendCommand("signmessage", signatureAddress, BitConverter.ToString(hashValue).Replace("-", String.Empty)).ResultString;
+            txtAddressListJSON.Text = signature;
+
+
+        }
+
+        private void btnPrint_Click(object sender, EventArgs e)
+        {
+            UpdateRemainingChars();
+
+            lblRemainingChars.Visible = false;
+            System.Drawing.Bitmap bitmap = new Bitmap(this.Width - 22, this.Height - 44);
+            Graphics graphics = Graphics.FromImage(bitmap);
+            graphics.CopyFromScreen(this.PointToScreen(new Point(0, 0)), new Point(0, 0), this.Size);
+            bitmap.RotateFlip(RotateFlipType.Rotate90FlipNone);
+            PrintImage(bitmap);
+            lblRemainingChars.Visible = true;
 
         }
     }

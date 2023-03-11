@@ -3,6 +3,7 @@ using LevelDB;
 using NBitcoin;
 using NBitcoin.RPC;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using Org.BouncyCastle.Utilities;
 using System;
 using System.Collections;
@@ -204,7 +205,7 @@ namespace SUP.P2FK
 
 
 
-                                    if (objectinspector.cre != null && objectState.Creators == null && ( transaction.SignedBy == objectaddress || objectinspector.cre.Contains(transaction.SignedBy)))
+                                    if (objectinspector.cre != null && objectState.Creators == null && (transaction.SignedBy == objectaddress || objectinspector.cre.Contains(transaction.SignedBy)))
                                     {
 
                                         objectState.Creators = new Dictionary<string, DateTime> { };
@@ -217,7 +218,8 @@ namespace SUP.P2FK
                                                 if (int.TryParse(keywordId, out int intId))
                                                 {
                                                     creator = transaction.Keyword.Reverse().ElementAt(intId).Key;
-                                                }else { creator = keywordId; }
+                                                }
+                                                else { creator = keywordId; }
 
                                                 if (!objectState.Creators.ContainsKey(creator))
                                                 {
@@ -312,7 +314,7 @@ namespace SUP.P2FK
                                                         }
                                                         else { owner = ownerId.Key; }
 
-                                                            if (!objectState.Owners.ContainsKey(owner))
+                                                        if (!objectState.Owners.ContainsKey(owner))
                                                         {
                                                             objectState.Owners.Add(owner, ownerId.Value);
                                                         }
@@ -442,15 +444,19 @@ namespace SUP.P2FK
 
                                         if (objectState.Maximum > 0)
                                         {
-                                            if (qtyToGive > objectState.Maximum) {
+                                            if (qtyToGive > objectState.Maximum)
+                                            {
                                                 logstatus = "[\"" + transaction.SignedBy + "\",\"" + reciever + "\",\"give\",\"" + qtyToGive + "\",\"\",\"failed due to over maximum qty\"]";
 
-                                                break; }
+                                                break;
+                                            }
 
-                                            if (objectState.Owners.TryGetValue(reciever, out long value) && value + qtyToGive >= objectState.Maximum) {
+                                            if (objectState.Owners.TryGetValue(reciever, out long value) && value + qtyToGive >= objectState.Maximum)
+                                            {
                                                 logstatus = "[\"" + transaction.SignedBy + "\",\"" + reciever + "\",\"give\",\"" + qtyToGive + "\",\"\",\"failed due to over maximum qty\"]";
 
-                                                break; }
+                                                break;
+                                            }
                                         }
 
                                         //is transaction signer not on the Owners list
@@ -820,7 +826,8 @@ namespace SUP.P2FK
                     if (int.TryParse(keywordId, out int intId))
                     {
                         creator = objectTransaction.Keyword.Reverse().ElementAt(intId).Key;
-                    }else { creator = keywordId; }
+                    }
+                    else { creator = keywordId; }
                     if (!objectState.Creators.ContainsKey(creator))
                     {
                         objectState.Creators.Add(creator, new DateTime());
@@ -1346,44 +1353,44 @@ namespace SUP.P2FK
                         if (transaction.File.ContainsKey("OBJ") || transaction.File.ContainsKey("GIV") || transaction.File.ContainsKey("MSG"))
                         {
 
-                                foreach (string key in transaction.Keyword.Keys)
+                            foreach (string key in transaction.Keyword.Keys)
+                            {
+
+                                if (!addedValues.Contains(key))
                                 {
+                                    addedValues.Add(key);
 
-                                    if (!addedValues.Contains(key))
+                                    OBJState isObject = GetObjectByAddress(key, username, password, url, versionByte);
+
+                                    if (isObject.URN != null)
                                     {
-                                        addedValues.Add(key);
 
-                                        OBJState isObject = GetObjectByAddress(key, username, password, url, versionByte);
-
-                                        if (isObject.URN != null)
+                                        using (var db = new DB(OBJ, @"root\obj"))
                                         {
-
-                                            using (var db = new DB(OBJ, @"root\obj"))
-                                            {
-                                                findId = db.Get(objectaddress + "!" + key);
-                                            }
-
-
-                                            if (findId == transaction.Id.ToString() || findId == null)
-                                            {
-                                                if (findId == null)
-                                                {
-
-                                                    using (var db = new DB(OBJ, @"root\obj"))
-                                                    {
-                                                        db.Put(objectaddress + "!" + key, transaction.Id.ToString());
-                                                    }
-
-                                                }
-                                            }
-
-                                            isObject.Id = transaction.Id;
-                                            objectStates.Add(isObject);
-
+                                            findId = db.Get(objectaddress + "!" + key);
                                         }
+
+
+                                        if (findId == transaction.Id.ToString() || findId == null)
+                                        {
+                                            if (findId == null)
+                                            {
+
+                                                using (var db = new DB(OBJ, @"root\obj"))
+                                                {
+                                                    db.Put(objectaddress + "!" + key, transaction.Id.ToString());
+                                                }
+
+                                            }
+                                        }
+
+                                        isObject.Id = transaction.Id;
+                                        objectStates.Add(isObject);
+
                                     }
                                 }
-                 
+                            }
+
 
                         }
                     }
@@ -1485,45 +1492,45 @@ namespace SUP.P2FK
                         if (transaction.File.ContainsKey("OBJ") || transaction.File.ContainsKey("GIV"))
                         {
 
-                                foreach (string key in transaction.Keyword.Keys)
+                            foreach (string key in transaction.Keyword.Keys)
+                            {
+
+                                if (!addedValues.Contains(key))
                                 {
+                                    addedValues.Add(key);
 
-                                    if (!addedValues.Contains(key))
+                                    OBJState isObject = GetObjectByAddress(key, username, password, url, versionByte);
+
+                                    //if (isObject.URN != null && key != objectaddress)
+                                    if (isObject.URN != null && key != objectaddress && isObject.Owners.ContainsKey(objectaddress) || (isObject.URN != null && key != objectaddress && isObject.Owners.ContainsKey(key) && isObject.Creators.ContainsKey(objectaddress)))
                                     {
-                                        addedValues.Add(key);
 
-                                        OBJState isObject = GetObjectByAddress(key, username, password, url, versionByte);
-
-                                        //if (isObject.URN != null && key != objectaddress)
-                                        if (isObject.URN != null && key != objectaddress && isObject.Owners.ContainsKey(objectaddress) || (isObject.URN != null && key != objectaddress && isObject.Owners.ContainsKey(key) && isObject.Creators.ContainsKey(objectaddress)))
+                                        using (var db = new DB(OBJ, @"root\obj"))
                                         {
-
-                                            using (var db = new DB(OBJ, @"root\obj"))
-                                            {
-                                                findId = db.Get(objectaddress + "!" + key);
-                                            }
-
-
-                                            if (findId == transaction.Id.ToString() || findId == null)
-                                            {
-                                                if (findId == null)
-                                                {
-
-                                                    using (var db = new DB(OBJ, @"root\obj"))
-                                                    {
-                                                        db.Put(objectaddress + "!" + key, transaction.Id.ToString());
-                                                    }
-
-                                                }
-                                            }
-
-                                            isObject.Id = transaction.Id;
-                                            objectStates.Add(isObject);
-
+                                            findId = db.Get(objectaddress + "!" + key);
                                         }
+
+
+                                        if (findId == transaction.Id.ToString() || findId == null)
+                                        {
+                                            if (findId == null)
+                                            {
+
+                                                using (var db = new DB(OBJ, @"root\obj"))
+                                                {
+                                                    db.Put(objectaddress + "!" + key, transaction.Id.ToString());
+                                                }
+
+                                            }
+                                        }
+
+                                        isObject.Id = transaction.Id;
+                                        objectStates.Add(isObject);
+
                                     }
                                 }
-                         
+                            }
+
 
                         }
                     }
@@ -2022,7 +2029,35 @@ namespace SUP.P2FK
             }
         }
 
-    }
+
+        public static string MintObjectByJSON(string objectjson, string username, string password, string url, string versionByte = "111")
+        {
+            try
+            {
+                // Parse the JSON string into a JObject
+                var jsonObject = JObject.Parse(objectjson);
+
+                // Check if the "cre" element exists and is a non-empty string array
+                if (jsonObject["cre"] != null && jsonObject["cre"].Type == JTokenType.Array && jsonObject["cre"].Values<string>().Any())
+                {
+                    // Get the first element of the "cre" array
+                    string firstCre = jsonObject["cre"][0].Value<string>();
+
+                    // Do something with the JSON object
+                    // ...
+
+                    return firstCre;
+                }
+            }
+            catch (Exception ex)
+            {
+                return null;
+            }
+
+            // Return null if the "cre" element doesn't exist or is an empty string array
+            return null;
+        }
+    }   
 
 }
 
