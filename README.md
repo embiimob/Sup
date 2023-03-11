@@ -1,7 +1,7 @@
 # Sup!? 
 experimental decentralized state engine browser
 
-Sup!? is a READ ONLY demonstration of establishing a decentralized identity and tracking state changes with comments on immutable blockchain objects in a format familiar to NFT enthusiasts. the experimental Sup!? object browser is currently hardcoded to reference the bitcoin testnet mainchain ONLY. a production read / write deployment will be released December 2023, our goal is to give #teamworld ample time for testing and integrations
+Sup!? is a demonstration of establishing a decentralized identity and tracking state changes with comments on immutable blockchain objects in a format familiar to NFT enthusiasts. the experimental Sup!? object browser is currently hardcoded to reference the bitcoin testnet mainchain ONLY. a production deployment will be released December 2023, our goal is to give #teamworld ample time for testing and integrations
 
 This experiment is using an ancient blockchain protocol called P2FK (Pay to Future Key) invented by http://HugPuddle.org in 2013.
 
@@ -11,7 +11,7 @@ P2FK was directly inspired by the satoshi uploader  see --> https://cirosantilli
 
 ## **Installation**
 
-1. Download the Sup.v0.1.26-beta.zip file
+1. Download the Sup.v0.1.27-beta.zip file
 2. Create a folder on your **fastest** disk drive with at least **700GB** free (it will be storing the bitcoin prod and testnet blockchains)
 3. Unzip all contents into the folder.
 4. Create a shortcut to SUP.exe and launch.
@@ -52,6 +52,12 @@ searches mainchain by  urn shows currently registered object with uri redirectio
 
 ### **http(s)://embii.org**
 navigates to requested url in browser.
+<br />
+<br />
+## **Object Minting / Printing**
+Click the mint button and a minting form will be displayed.  Enter a title, objectaddress and URN these fields are required. if no creator address is entered the object will be self signed using a new address generated at your minting station. if no collection address is entered it can be entered again later via an update transaction.  to create a Sup collection first mint a ASCII Urn to reference it by.  URN's are case sensitive with no length restrictions. example SPACE QUEEN.  copy the object address associated with SPACE QUEEN and add it to the creators field.   Searching for SPACE QUEEN in the Sup!? browser will display just your tagged collection in the created and owned search results.  
+
+Click Print instead of Mint and you can use a paper transaction alone to prove ownership.  Any person can scan a paper mint & send a small confirmation transaction to the addresses within the QR code printed on the paper to make the paper transaction public.  A Sup!? paper transaction can be used in lieu of a public confirmation as it contains all the necessary signature and transaction data necessary to confirm it against a current scan of the object address it is associated with.  if no address is found and the transaction is a valid object mint, Sup!? will build and display the object it represents on screen with the latest ownership information about it if any exists.
 <br />
 <br />
 ## **Live Monitor**
