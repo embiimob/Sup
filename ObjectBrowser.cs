@@ -15,6 +15,7 @@ using NBitcoin.RPC;
 using System.IO;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 using System.Threading;
+using Org.BouncyCastle.Asn1.X509;
 
 namespace SUP
 {
@@ -1958,7 +1959,9 @@ namespace SUP
 
         private void btnMint_Click(object sender, EventArgs e)
         {
-              new ObjectMint().Show();
+            ObjectMint mintform = new ObjectMint();
+            mintform.StartPosition = FormStartPosition.CenterScreen;
+            mintform.Show();
         }
 
         private void flowLayoutPanel1_DragEnter(object sender, System.Windows.Forms.DragEventArgs e)

@@ -30,7 +30,7 @@
         {
             this.lblIMGBlockDate = new System.Windows.Forms.Label();
             this.lblURNBlockDate = new System.Windows.Forms.Label();
-            this.label1 = new System.Windows.Forms.Label();
+            this.lblObjectStatus = new System.Windows.Forms.Label();
             this.txtOBJJSON = new System.Windows.Forms.TextBox();
             this.txtAddressListJSON = new System.Windows.Forms.TextBox();
             this.btnObjectKeywords = new System.Windows.Forms.Button();
@@ -94,15 +94,14 @@
             this.lblURNBlockDate.TabIndex = 185;
             this.lblURNBlockDate.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
-            // label1
+            // lblObjectStatus
             // 
-            this.label1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(573, 574);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(70, 13);
-            this.label1.TabIndex = 293;
-            this.label1.Text = "transaction id";
+            this.lblObjectStatus.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.lblObjectStatus.AutoSize = true;
+            this.lblObjectStatus.Location = new System.Drawing.Point(573, 574);
+            this.lblObjectStatus.Name = "lblObjectStatus";
+            this.lblObjectStatus.Size = new System.Drawing.Size(0, 13);
+            this.lblObjectStatus.TabIndex = 293;
             // 
             // txtOBJJSON
             // 
@@ -542,9 +541,9 @@
             this.radioButton4.AutoSize = true;
             this.radioButton4.Location = new System.Drawing.Point(12, 23);
             this.radioButton4.Name = "radioButton4";
-            this.radioButton4.Size = new System.Drawing.Size(39, 17);
+            this.radioButton4.Size = new System.Drawing.Size(45, 17);
             this.radioButton4.TabIndex = 3;
-            this.radioButton4.Text = "CC";
+            this.radioButton4.Text = "CC0";
             this.radioButton4.UseVisualStyleBackColor = true;
             this.radioButton4.CheckedChanged += new System.EventHandler(this.radioButton4_CheckedChanged);
             // 
@@ -589,7 +588,7 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1152, 835);
             this.Controls.Add(this.PanelLicense);
-            this.Controls.Add(this.label1);
+            this.Controls.Add(this.lblObjectStatus);
             this.Controls.Add(this.btnObjectKeywords);
             this.Controls.Add(this.flowKeywords);
             this.Controls.Add(this.lblASCIIURN);
@@ -643,7 +642,7 @@
         #endregion
         private System.Windows.Forms.Label lblIMGBlockDate;
         private System.Windows.Forms.Label lblURNBlockDate;
-        private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.Label lblObjectStatus;
         private System.Windows.Forms.TextBox txtOBJJSON;
         private System.Windows.Forms.TextBox txtAddressListJSON;
         private System.Windows.Forms.Button btnObjectKeywords;

@@ -1246,7 +1246,7 @@ namespace SUP
 
                     if (flowOwners.Controls.Count > 0)
                     {
-                        _viewer = flowOwners.Controls[0].Text;
+                        _viewer = flowOwners.Controls[0].Text.Split(':')[0];
                         _owner = flowOwners.Controls.Count;
                     }
 
@@ -1941,6 +1941,7 @@ namespace SUP
                 OBJState foundObject = OBJState.GetObjectByAddress(address, "good-user", "better-password", "http://127.0.0.1:18332");
                 if (foundObject.URN != null)
                 {
+                    lblObjectStatus.Text = "created:[" + foundObject.CreatedDate.ToLongDateString() + "]  locked:[" + foundObject.LockedDate.ToLongDateString() + "]  last seen:[" + foundObject.ChangeDate.ToLongDateString() + "]";
                     txtTitle.Text = foundObject.Name;
                     txtIMG.Text = foundObject.Image;
                     txtURN.Text = foundObject.URN;
