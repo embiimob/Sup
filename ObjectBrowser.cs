@@ -429,33 +429,7 @@ namespace SUP
 
                                     }
                                 }
-                                //else
-                                //{
-
-                                //    if (foundObject.ObjectCreators.Text == "")
-                                //    {
-
-
-                                //        foundObject.ObjectCreators.Text = TruncateAddress(creator.Key);
-                                //        foundObject.ObjectCreators.Links.Add(0, creator.Key.Length, creator.Key);
-                                //        System.Windows.Forms.ToolTip myTooltip = new System.Windows.Forms.ToolTip();
-                                //        myTooltip.SetToolTip(foundObject.ObjectCreators, creator.Key);
-                                //    }
-                                //    else
-                                //    {
-
-
-                                //        if (foundObject.ObjectCreators2.Text == "")
-                                //        {
-                                //            foundObject.ObjectCreators2.Text = TruncateAddress(creator.Key);
-                                //            foundObject.ObjectCreators2.Links.Add(0, creator.Key.Length, creator.Key);
-                                //            System.Windows.Forms.ToolTip myTooltip = new System.Windows.Forms.ToolTip();
-                                //            myTooltip.SetToolTip(foundObject.ObjectCreators2, creator.Key);
-                                //        }
-
-                                //    }
-
-                                //}
+                                
 
                             }
                             foundObject.ObjectId.Text = objstate.Id.ToString();

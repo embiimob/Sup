@@ -814,7 +814,7 @@ namespace SUP
                                 break;
                             case "IPFS":
                                 if (txtIMG.Text.Length == 51) { imgurn += @"\artifact"; }
-                                if (!System.IO.Directory.Exists(@"ipfs/" + txtIMG.Text.Substring(5, 46) + "-build") && !System.IO.Directory.Exists(@"ipfs/" + txtIMG.Text.Substring(5, 46)))
+                                if (!System.IO.Directory.Exists(@"ipfs/" + txtIMG.Text.Substring(5, 46) + "-build") && !System.IO.File.Exists(@"ipfs/" + txtIMG.Text.Substring(5, 46)))
                                 {
 
 
@@ -881,6 +881,10 @@ namespace SUP
 
 
                                     });
+                                    lblIMGBlockDate.Text = "ipfs verified: " + System.DateTime.UtcNow.ToString("ddd, dd MMM yyyy hh:mm:ss");
+                                    btnObjectImage.BackColor = Color.Blue;
+                                    btnObjectImage.ForeColor = Color.Yellow;
+
                                 }
                                 else
                                 {
