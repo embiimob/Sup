@@ -67,7 +67,7 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="Gma.QrCodeNet.Encoding, Version=0.4.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>packages\QrCode.Net.0.4.0.0\lib\net45\Gma.QrCodeNet.Encoding.dll</HintPath>
+      <HintPath>..includes\Gma.QrCodeNet.Encoding.dll</HintPath>
     </Reference>
     <Reference Include="HtmlSanitizer, Version=8.0.0.0, Culture=neutral, PublicKeyToken=61c49a1a9e79cc28, processorArchitecture=MSIL">
       <HintPath>..includes\HtmlSanitizer.dll</HintPath>
@@ -347,6 +347,9 @@
     <Content Include="includes\AngleSharp.xml" />
     <Content Include="includes\BouncyCastle.Crypto.dll" />
     <Content Include="includes\BouncyCastle.Crypto.xml" />
+    <Content Include="includes\Gma.QrCodeNet.Encoding.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="includes\HtmlSanitizer.dll" />
     <Content Include="includes\HtmlSanitizer.xml" />
     <Content Include="includes\HugPuddle.jpg">
@@ -381,9 +384,6 @@
     <Content Include="includes\NBitcoin.xml" />
     <Content Include="includes\Newtonsoft.Json.dll" />
     <Content Include="includes\Newtonsoft.Json.xml" />
-    <Content Include="includes\QRCoder.dll">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
     <Content Include="includes\Sup1.gif">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
