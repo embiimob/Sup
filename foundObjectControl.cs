@@ -1,13 +1,10 @@
 ﻿using LevelDB;
-using NBitcoin;
 using Newtonsoft.Json;
 using SUP.P2FK;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Windows.Forms;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement.StartPanel;
 
 namespace SUP
 {

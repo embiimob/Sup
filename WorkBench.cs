@@ -1,5 +1,4 @@
 ﻿using LevelDB;
-using NBitcoin.Protocol;
 using NBitcoin.RPC;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
@@ -11,7 +10,6 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Numerics;
-using System.Windows.Controls;
 using System.Windows.Forms;
 
 namespace SUP
