@@ -16,6 +16,7 @@ using System.IO;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 using System.Threading;
 using Org.BouncyCastle.Asn1.X509;
+using Org.BouncyCastle.Bcpg.OpenPgp;
 
 namespace SUP
 {
@@ -163,47 +164,7 @@ namespace SUP
                 }
             }
 
-            List<OBJState> reviewedObjects = new List<OBJState>();
-            //foreach (OBJState objstate in createdObjects)
-            //{
-
-            //    string isBlocked = "";
-            //    var OBJ = new Options { CreateIfMissing = true };
-            //    try
-            //    {
-            //        using (var db = new DB(OBJ, @"root\oblock"))
-            //        {
-            //            isBlocked = db.Get(objstate.Creators.First().Key);
-            //            db.Close();
-            //        }
-            //    }
-            //    catch
-            //    {
-            //        try
-            //        {
-            //            using (var db = new DB(OBJ, @"root\oblock2"))
-            //            {
-            //                isBlocked = db.Get(objstate.Creators.First().Key);
-            //                db.Close();
-            //            }
-            //            Directory.Move(@"root\oblock2", @"root\oblock");
-            //        }
-            //        catch
-            //        {
-            //            try { Directory.Delete(@"root\oblock", true); }
-            //            catch { }
-            //        }
-
-            //    }
-
-
-            //    if (isBlocked != "true")
-            //    {
-            //        reviewedObjects.Add(objstate);
-            //    }
-
-            //}
-            //createdObjects = reviewedObjects;
+            
 
 
             this.Invoke((Action)(() =>
@@ -226,12 +187,14 @@ namespace SUP
 
                         if (objstate.Owners != null)
                         {
-                            string transid;
+                            string transid = "";
+                            string imgurl = "";
                             FoundObjectControl foundObject = new FoundObjectControl();
 
+
                             try { transid = objstate.Image.Substring(4, 64); } catch { transid = objstate.Image.Substring(5, 46); }
-                            string imgurl = objstate.Image.Replace("BTC:", "").Replace("MZC:", "").Replace("LTC:", "").Replace("DOG:", "").Replace("IPFS:", "");
-                            if (objstate.Image.ToUpper().StartsWith("IPFS:")) { imgurl = @"ipfs/" + imgurl; } else { imgurl = @"root/" + imgurl; }
+                           imgurl = objstate.Image.Replace("BTC:", "").Replace("MZC:", "").Replace("LTC:", "").Replace("DOG:", "").Replace("IPFS:", ""); 
+                           if (objstate.Image.ToUpper().StartsWith("IPFS:")) { imgurl = @"ipfs/" + imgurl; } else { imgurl = @"root/" + imgurl; } 
 
                             if (File.Exists(imgurl))
                             {
@@ -268,150 +231,151 @@ namespace SUP
                             foundObject.ObjectAddress.Text = objstate.Creators.First().Key;
                             foundObject.ObjectQty.Text = objstate.Owners.Values.Sum().ToString() + "x";
 
-                            switch (objstate.Image.ToUpper().Substring(0, 4))
-                            {
-                                case "BTC:":
-                                    Task.Run(() =>
-                                    {
-                                        if (!System.IO.Directory.Exists("root/" + transid))
+                          
+                                switch (objstate.Image.ToUpper().Substring(0, 4))
+                                {
+                                    case "BTC:":
+                                        Task.Run(() =>
                                         {
-                                            Root.GetRootByTransactionId(transid, "good-user", "better-password", @"http://127.0.0.1:8332", "0");
-
-                                            if (File.Exists(imgurl))
+                                            if (!System.IO.Directory.Exists("root/" + transid))
                                             {
+                                                Root.GetRootByTransactionId(transid, "good-user", "better-password", @"http://127.0.0.1:8332", "0");
 
-                                                foundObject.ObjectImage.ImageLocation = imgurl;
-                                            }
-                                        }
-                                    });
-                                    break;
-                                case "MZC:":
-                                    Task.Run(() =>
-                                    {
-                                        if (!System.IO.Directory.Exists("root/" + transid))
-                                        {
-                                            Root.GetRootByTransactionId(transid, "good-user", "better-password", @"http://127.0.0.1:12832", "50");
-
-                                            if (File.Exists(imgurl))
-                                            {
-
-                                                foundObject.ObjectImage.ImageLocation = imgurl;
-                                            }
-                                        }
-                                    });
-                                    break;
-                                case "LTC:":
-                                    Task.Run(() =>
-                                    {
-                                        if (!System.IO.Directory.Exists("root/" + transid))
-                                        {
-                                            Root.GetRootByTransactionId(transid, "good-user", "better-password", @"http://127.0.0.1:9332", "48");
-
-                                            if (File.Exists(imgurl))
-                                            {
-
-                                                foundObject.ObjectImage.ImageLocation = imgurl;
-                                            }
-                                        }
-                                    });
-                                    break;
-                                case "DOG:":
-                                    Task.Run(() =>
-                                    {
-                                        if (!System.IO.Directory.Exists("root/" + transid))
-                                        {
-                                            Root.GetRootByTransactionId(transid, "good-user", "better-password", @"http://127.0.0.1:22555", "30");
-
-                                            if (File.Exists(imgurl))
-                                            {
-
-                                                foundObject.ObjectImage.ImageLocation = imgurl;
-                                            }
-                                        }
-                                    });
-                                    break;
-                                case "IPFS":
-                                    Task.Run(() =>
-                                    {
-                                        if (!System.IO.Directory.Exists("ipfs/" + transid) && !System.IO.Directory.Exists("ipfs/" + transid + "-build"))
-                                        {
-                                            Directory.CreateDirectory("ipfs/" + transid + "-build");
-                                            Process process2 = new Process();
-                                            process2.StartInfo.FileName = @"ipfs\ipfs.exe";
-                                            process2.StartInfo.Arguments = "get " + objstate.Image.Substring(5, 46) + @" -o ipfs\" + transid;
-                                            process2.StartInfo.UseShellExecute = false;
-                                            process2.StartInfo.CreateNoWindow = true;
-                                            process2.Start();
-                                            process2.WaitForExit();
-                                            string fileName;
-                                            if (System.IO.File.Exists("ipfs/" + transid))
-                                            {
-                                                System.IO.File.Move("ipfs/" + transid, "ipfs/" + transid + "_tmp");
-                                                System.IO.Directory.CreateDirectory("ipfs/" + transid);
-                                                fileName = objstate.Image.Replace(@"//", "").Replace(@"\\", "").Substring(51);
-                                                if (fileName == "") { fileName = "artifact"; } else { fileName = fileName.Replace(@"/", "").Replace(@"\", ""); }
-                                                Directory.CreateDirectory("ipfs/" + transid);
-                                                System.IO.File.Move("ipfs/" + transid + "_tmp", @"ipfs/" + transid + @"/" + fileName);
-                                            }
-
-
-                                            var SUP = new Options { CreateIfMissing = true };
-
-                                            using (var db = new DB(SUP, @"ipfs"))
-                                            {
-
-                                                string ipfsdaemon = db.Get("ipfs-daemon");
-
-                                                if (ipfsdaemon == "true")
+                                                if (File.Exists(imgurl))
                                                 {
-                                                    Process process3 = new Process
-                                                    {
-                                                        StartInfo = new ProcessStartInfo
-                                                        {
-                                                            FileName = @"ipfs\ipfs.exe",
-                                                            Arguments = "pin add " + transid,
-                                                            UseShellExecute = false,
-                                                            CreateNoWindow = true
-                                                        }
-                                                    };
-                                                    process3.Start();
+
+                                                    foundObject.ObjectImage.ImageLocation = imgurl;
                                                 }
                                             }
-
-                                            Directory.Delete("ipfs/" + transid + "-build", true);
-
-
-                                        }
-                                        if (objstate.Image.Length == 51)
-                                        { foundObject.ObjectImage.ImageLocation = objstate.Image.Replace("IPFS:", @"ipfs/") + @"/artifact"; }
-                                        else { foundObject.ObjectImage.ImageLocation = objstate.Image.Replace("IPFS:", @"ipfs/"); }
-                                    });
-                                    break;
-                                case "HTTP":
-                                    Task.Run(() =>
-                                    {
-                                        foundObject.ObjectImage.ImageLocation = objstate.Image;
-                                    });
-                                    break;
-
-
-                                default:
-                                    transid = objstate.Image.Substring(0, 64);
-                                    Task.Run(() =>
-                                    {
-                                        if (!System.IO.Directory.Exists("root/" + transid))
+                                        });
+                                        break;
+                                    case "MZC:":
+                                        Task.Run(() =>
                                         {
-                                            Root root = Root.GetRootByTransactionId(transid, "good-user", "better-password", @"http://127.0.0.1:18332");
-                                        }
-                                        if (File.Exists(imgurl))
+                                            if (!System.IO.Directory.Exists("root/" + transid))
+                                            {
+                                                Root.GetRootByTransactionId(transid, "good-user", "better-password", @"http://127.0.0.1:12832", "50");
+
+                                                if (File.Exists(imgurl))
+                                                {
+
+                                                    foundObject.ObjectImage.ImageLocation = imgurl;
+                                                }
+                                            }
+                                        });
+                                        break;
+                                    case "LTC:":
+                                        Task.Run(() =>
                                         {
+                                            if (!System.IO.Directory.Exists("root/" + transid))
+                                            {
+                                                Root.GetRootByTransactionId(transid, "good-user", "better-password", @"http://127.0.0.1:9332", "48");
 
-                                            foundObject.ObjectImage.ImageLocation = imgurl;
-                                        }
-                                    });
-                                    break;
-                            }
+                                                if (File.Exists(imgurl))
+                                                {
 
+                                                    foundObject.ObjectImage.ImageLocation = imgurl;
+                                                }
+                                            }
+                                        });
+                                        break;
+                                    case "DOG:":
+                                        Task.Run(() =>
+                                        {
+                                            if (!System.IO.Directory.Exists("root/" + transid))
+                                            {
+                                                Root.GetRootByTransactionId(transid, "good-user", "better-password", @"http://127.0.0.1:22555", "30");
+
+                                                if (File.Exists(imgurl))
+                                                {
+
+                                                    foundObject.ObjectImage.ImageLocation = imgurl;
+                                                }
+                                            }
+                                        });
+                                        break;
+                                    case "IPFS":
+                                        Task.Run(() =>
+                                        {
+                                            if (!System.IO.Directory.Exists("ipfs/" + transid) && !System.IO.Directory.Exists("ipfs/" + transid + "-build"))
+                                            {
+                                                Directory.CreateDirectory("ipfs/" + transid + "-build");
+                                                Process process2 = new Process();
+                                                process2.StartInfo.FileName = @"ipfs\ipfs.exe";
+                                                process2.StartInfo.Arguments = "get " + objstate.Image.Substring(5, 46) + @" -o ipfs\" + transid;
+                                                process2.StartInfo.UseShellExecute = false;
+                                                process2.StartInfo.CreateNoWindow = true;
+                                                process2.Start();
+                                                process2.WaitForExit();
+                                                string fileName;
+                                                if (System.IO.File.Exists("ipfs/" + transid))
+                                                {
+                                                    System.IO.File.Move("ipfs/" + transid, "ipfs/" + transid + "_tmp");
+                                                    System.IO.Directory.CreateDirectory("ipfs/" + transid);
+                                                    fileName = objstate.Image.Replace(@"//", "").Replace(@"\\", "").Substring(51);
+                                                    if (fileName == "") { fileName = "artifact"; } else { fileName = fileName.Replace(@"/", "").Replace(@"\", ""); }
+                                                    Directory.CreateDirectory("ipfs/" + transid);
+                                                    System.IO.File.Move("ipfs/" + transid + "_tmp", @"ipfs/" + transid + @"/" + fileName);
+                                                }
+
+
+                                                var SUP = new Options { CreateIfMissing = true };
+
+                                                using (var db = new DB(SUP, @"ipfs"))
+                                                {
+
+                                                    string ipfsdaemon = db.Get("ipfs-daemon");
+
+                                                    if (ipfsdaemon == "true")
+                                                    {
+                                                        Process process3 = new Process
+                                                        {
+                                                            StartInfo = new ProcessStartInfo
+                                                            {
+                                                                FileName = @"ipfs\ipfs.exe",
+                                                                Arguments = "pin add " + transid,
+                                                                UseShellExecute = false,
+                                                                CreateNoWindow = true
+                                                            }
+                                                        };
+                                                        process3.Start();
+                                                    }
+                                                }
+
+                                                Directory.Delete("ipfs/" + transid + "-build", true);
+
+
+                                            }
+                                            if (objstate.Image.Length == 51)
+                                            { foundObject.ObjectImage.ImageLocation = objstate.Image.Replace("IPFS:", @"ipfs/") + @"/artifact"; }
+                                            else { foundObject.ObjectImage.ImageLocation = objstate.Image.Replace("IPFS:", @"ipfs/"); }
+                                        });
+                                        break;
+                                    case "HTTP":
+                                        Task.Run(() =>
+                                        {
+                                            foundObject.ObjectImage.ImageLocation = objstate.Image;
+                                        });
+                                        break;
+
+
+                                    default:
+                                        transid = objstate.Image.Substring(0, 64);
+                                        Task.Run(() =>
+                                        {
+                                            if (!System.IO.Directory.Exists("root/" + transid))
+                                            {
+                                                Root root = Root.GetRootByTransactionId(transid, "good-user", "better-password", @"http://127.0.0.1:18332");
+                                            }
+                                            if (File.Exists(imgurl))
+                                            {
+
+                                                foundObject.ObjectImage.ImageLocation = imgurl;
+                                            }
+                                        });
+                                        break;
+                                }
+                           
                             foreach (KeyValuePair<string, DateTime> creator in objstate.Creators.Skip(1))
                             {
 
@@ -440,35 +404,58 @@ namespace SUP
                                             myTooltip.SetToolTip(foundObject.ObjectCreators2, profile.URN);
                                         }
 
-                                    }
-                                }
-                                else
-                                {
-
-                                    if (foundObject.ObjectCreators.Text == "")
-                                    {
-
-
-                                        foundObject.ObjectCreators.Text = TruncateAddress(creator.Key);
-                                        foundObject.ObjectCreators.Links.Add(0, creator.Key.Length, creator.Key);
-                                        System.Windows.Forms.ToolTip myTooltip = new System.Windows.Forms.ToolTip();
-                                        myTooltip.SetToolTip(foundObject.ObjectCreators, creator.Key);
-                                    }
-                                    else
-                                    {
-
-
-                                        if (foundObject.ObjectCreators2.Text == "")
+                                        if (foundObject.ObjectCreators.Text == "")
                                         {
-                                            foundObject.ObjectCreators2.Text = TruncateAddress(creator.Key);
-                                            foundObject.ObjectCreators2.Links.Add(0, creator.Key.Length, creator.Key);
+
+
+                                            foundObject.ObjectCreators.Text = TruncateAddress(creator.Key);
+                                            foundObject.ObjectCreators.Links.Add(0, creator.Key.Length, creator.Key);
                                             System.Windows.Forms.ToolTip myTooltip = new System.Windows.Forms.ToolTip();
-                                            myTooltip.SetToolTip(foundObject.ObjectCreators2, creator.Key);
+                                            myTooltip.SetToolTip(foundObject.ObjectCreators, creator.Key);
+                                        }
+                                        else
+                                        {
+
+
+                                            if (foundObject.ObjectCreators2.Text == "")
+                                            {
+                                                foundObject.ObjectCreators2.Text = TruncateAddress(creator.Key);
+                                                foundObject.ObjectCreators2.Links.Add(0, creator.Key.Length, creator.Key);
+                                                System.Windows.Forms.ToolTip myTooltip = new System.Windows.Forms.ToolTip();
+                                                myTooltip.SetToolTip(foundObject.ObjectCreators2, creator.Key);
+                                            }
+
                                         }
 
                                     }
-
                                 }
+                                //else
+                                //{
+
+                                //    if (foundObject.ObjectCreators.Text == "")
+                                //    {
+
+
+                                //        foundObject.ObjectCreators.Text = TruncateAddress(creator.Key);
+                                //        foundObject.ObjectCreators.Links.Add(0, creator.Key.Length, creator.Key);
+                                //        System.Windows.Forms.ToolTip myTooltip = new System.Windows.Forms.ToolTip();
+                                //        myTooltip.SetToolTip(foundObject.ObjectCreators, creator.Key);
+                                //    }
+                                //    else
+                                //    {
+
+
+                                //        if (foundObject.ObjectCreators2.Text == "")
+                                //        {
+                                //            foundObject.ObjectCreators2.Text = TruncateAddress(creator.Key);
+                                //            foundObject.ObjectCreators2.Links.Add(0, creator.Key.Length, creator.Key);
+                                //            System.Windows.Forms.ToolTip myTooltip = new System.Windows.Forms.ToolTip();
+                                //            myTooltip.SetToolTip(foundObject.ObjectCreators2, creator.Key);
+                                //        }
+
+                                //    }
+
+                                //}
 
                             }
                             foundObject.ObjectId.Text = objstate.Id.ToString();
@@ -524,7 +511,9 @@ namespace SUP
                         flowLayoutPanel1.ResumeLayout();
                     });
                 }
-                catch { }
+                catch(Exception ex) {
+                    string error = ex.Message;
+                }
             }
 
         }
@@ -1571,118 +1560,120 @@ namespace SUP
                         flowLayoutPanel1.SuspendLayout();
                         if (objstate.Owners != null)
                         {
-                            string transid;
+                            string transid = "";
                             FoundObjectControl foundObject = new FoundObjectControl();
                             foundObject.SuspendLayout();
-                            try { transid = objstate.Image.Substring(4, 64); } catch { transid = objstate.Image.Substring(5, 46); }
-                            foundObject.ObjectImage.ImageLocation = @"root/" + objstate.Image.Replace("BTC:", "").Replace("MZC:", "").Replace("LTC:", "").Replace("DOG:", "");
+                            try { transid = objstate.Image.Substring(4, 64); } catch { try { transid = objstate.Image.Substring(5, 46); } catch { } }
+                            try { foundObject.ObjectImage.ImageLocation = @"root/" + objstate.Image.Replace("BTC:", "").Replace("MZC:", "").Replace("LTC:", "").Replace("DOG:", ""); } catch { }
                             foundObject.ObjectName.Text = objstate.Name;
                             foundObject.ObjectDescription.Text = objstate.Description;
                             foundObject.ObjectAddress.Text = objstate.Creators.First().Key;
                             foundObject.ObjectQty.Text = objstate.Owners.Values.Sum().ToString() + "x";
-
-                            switch (objstate.Image.ToUpper().Substring(0, 4))
+                            try
                             {
-                                case "BTC:":
+                                switch (objstate.Image.ToUpper().Substring(0, 4))
+                                {
+                                    case "BTC:":
 
-                                    if (!System.IO.Directory.Exists("root/" + transid))
-                                    {
-                                        Root.GetRootByTransactionId(transid, "good-user", "better-password", @"http://127.0.0.1:8332", "0");
-                                    }
-                                    break;
-                                case "MZC:":
-
-                                    if (!System.IO.Directory.Exists("root/" + transid))
-                                    {
-                                        Root.GetRootByTransactionId(transid, "good-user", "better-password", @"http://127.0.0.1:12832", "50");
-                                    }
-
-                                    break;
-                                case "LTC:":
-
-                                    if (!System.IO.Directory.Exists("root/" + transid))
-                                    {
-                                        Root.GetRootByTransactionId(transid, "good-user", "better-password", @"http://127.0.0.1:9332", "48");
-                                    }
-
-                                    break;
-                                case "DOG:":
-
-                                    if (!System.IO.Directory.Exists("root/" + transid))
-                                    {
-                                        Root.GetRootByTransactionId(transid, "good-user", "better-password", @"http://127.0.0.1:22555", "30");
-                                    }
-                                    break;
-                                case "IPFS":
-
-                                    if (!System.IO.Directory.Exists("ipfs/" + transid))
-                                    {
-                                        Process process2 = new Process();
-                                        process2.StartInfo.FileName = @"ipfs\ipfs.exe";
-                                        process2.StartInfo.Arguments = "get " + objstate.Image.Substring(5, 46) + @" -o ipfs\" + transid;
-                                        process2.StartInfo.UseShellExecute = false;
-                                        process2.StartInfo.CreateNoWindow = true;
-                                        process2.Start();
-                                        process2.WaitForExit();
-                                        string fileName;
-                                        if (System.IO.File.Exists("ipfs/" + transid))
+                                        if (!System.IO.Directory.Exists("root/" + transid))
                                         {
-                                            System.IO.File.Move("ipfs/" + transid, "ipfs/" + transid + "_tmp");
-                                            System.IO.Directory.CreateDirectory("ipfs/" + transid);
-                                            fileName = objstate.Image.Replace(@"//", "").Replace(@"\\", "").Substring(51);
-                                            if (fileName == "") { fileName = "artifact"; } else { fileName = fileName.Replace(@"/", "").Replace(@"\", ""); }
-                                            System.IO.File.Move("ipfs/" + transid + "_tmp", @"ipfs/" + transid + @"/" + fileName);
+                                            Root.GetRootByTransactionId(transid, "good-user", "better-password", @"http://127.0.0.1:8332", "0");
+                                        }
+                                        break;
+                                    case "MZC:":
+
+                                        if (!System.IO.Directory.Exists("root/" + transid))
+                                        {
+                                            Root.GetRootByTransactionId(transid, "good-user", "better-password", @"http://127.0.0.1:12832", "50");
                                         }
 
+                                        break;
+                                    case "LTC:":
 
-                                        var SUP = new Options { CreateIfMissing = true };
-                                        lock (SupLocker)
+                                        if (!System.IO.Directory.Exists("root/" + transid))
                                         {
-                                            using (var db = new DB(SUP, @"ipfs"))
+                                            Root.GetRootByTransactionId(transid, "good-user", "better-password", @"http://127.0.0.1:9332", "48");
+                                        }
+
+                                        break;
+                                    case "DOG:":
+
+                                        if (!System.IO.Directory.Exists("root/" + transid))
+                                        {
+                                            Root.GetRootByTransactionId(transid, "good-user", "better-password", @"http://127.0.0.1:22555", "30");
+                                        }
+                                        break;
+                                    case "IPFS":
+
+                                        if (!System.IO.Directory.Exists("ipfs/" + transid))
+                                        {
+                                            Process process2 = new Process();
+                                            process2.StartInfo.FileName = @"ipfs\ipfs.exe";
+                                            process2.StartInfo.Arguments = "get " + objstate.Image.Substring(5, 46) + @" -o ipfs\" + transid;
+                                            process2.StartInfo.UseShellExecute = false;
+                                            process2.StartInfo.CreateNoWindow = true;
+                                            process2.Start();
+                                            process2.WaitForExit();
+                                            string fileName;
+                                            if (System.IO.File.Exists("ipfs/" + transid))
                                             {
+                                                System.IO.File.Move("ipfs/" + transid, "ipfs/" + transid + "_tmp");
+                                                System.IO.Directory.CreateDirectory("ipfs/" + transid);
+                                                fileName = objstate.Image.Replace(@"//", "").Replace(@"\\", "").Substring(51);
+                                                if (fileName == "") { fileName = "artifact"; } else { fileName = fileName.Replace(@"/", "").Replace(@"\", ""); }
+                                                System.IO.File.Move("ipfs/" + transid + "_tmp", @"ipfs/" + transid + @"/" + fileName);
+                                            }
 
-                                                string ipfsdaemon = db.Get("ipfs-daemon");
 
-                                                if (ipfsdaemon == "true")
+                                            var SUP = new Options { CreateIfMissing = true };
+                                            lock (SupLocker)
+                                            {
+                                                using (var db = new DB(SUP, @"ipfs"))
                                                 {
-                                                    Process process3 = new Process
+
+                                                    string ipfsdaemon = db.Get("ipfs-daemon");
+
+                                                    if (ipfsdaemon == "true")
                                                     {
-                                                        StartInfo = new ProcessStartInfo
+                                                        Process process3 = new Process
                                                         {
-                                                            FileName = @"ipfs\ipfs.exe",
-                                                            Arguments = "pin add " + transid,
-                                                            UseShellExecute = false,
-                                                            CreateNoWindow = true
-                                                        }
-                                                    };
-                                                    process3.Start();
+                                                            StartInfo = new ProcessStartInfo
+                                                            {
+                                                                FileName = @"ipfs\ipfs.exe",
+                                                                Arguments = "pin add " + transid,
+                                                                UseShellExecute = false,
+                                                                CreateNoWindow = true
+                                                            }
+                                                        };
+                                                        process3.Start();
+                                                    }
                                                 }
+
                                             }
 
                                         }
+                                        if (objstate.Image.Length == 51)
+                                        { foundObject.ObjectImage.ImageLocation = objstate.Image.Replace("IPFS:", @"ipfs/") + @"/artifact"; }
+                                        else { foundObject.ObjectImage.ImageLocation = objstate.Image.Replace("IPFS:", @"ipfs/"); }
 
-                                    }
-                                    if (objstate.Image.Length == 51)
-                                    { foundObject.ObjectImage.ImageLocation = objstate.Image.Replace("IPFS:", @"ipfs/") + @"/artifact"; }
-                                    else { foundObject.ObjectImage.ImageLocation = objstate.Image.Replace("IPFS:", @"ipfs/"); }
-
-                                    break;
-                                case "HTTP":
-                                    foundObject.ObjectImage.ImageLocation = objstate.Image;
-                                    break;
+                                        break;
+                                    case "HTTP":
+                                        foundObject.ObjectImage.ImageLocation = objstate.Image;
+                                        break;
 
 
-                                default:
-                                    transid = objstate.Image.Substring(0, 64);
-                                    if (!System.IO.Directory.Exists("root/" + transid))
-                                    {
-                                        Root root = Root.GetRootByTransactionId(transid, "good-user", "better-password", @"http://127.0.0.1:18332");
-                                    }
-                                    foundObject.ObjectImage.ImageLocation = @"root/" + objstate.Image;
+                                    default:
+                                        transid = objstate.Image.Substring(0, 64);
+                                        if (!System.IO.Directory.Exists("root/" + transid))
+                                        {
+                                            Root root = Root.GetRootByTransactionId(transid, "good-user", "better-password", @"http://127.0.0.1:18332");
+                                        }
+                                        foundObject.ObjectImage.ImageLocation = @"root/" + objstate.Image;
 
-                                    break;
+                                        break;
+                                }
                             }
-
+                            catch { }
 
                             foreach (KeyValuePair<string, DateTime> creator in objstate.Creators.Skip(1))
                             {

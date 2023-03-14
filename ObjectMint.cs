@@ -12,6 +12,7 @@ using System.Windows.Forms;
 using Gma.QrCodeNet.Encoding;
 using Gma.QrCodeNet.Encoding.Windows.Render;
 using NBitcoin;
+using NBitcoin.RPC;
 using SUP.P2FK;
 using System.Collections.Generic;
 using Ganss.Xss;
@@ -26,6 +27,11 @@ using static System.Windows.Forms.VisualStyles.VisualStyleElement.StartPanel;
 using System.Security.Cryptography;
 using System.Text;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement.Window;
+using System.Windows.Media.TextFormatting;
+using Org.BouncyCastle.Utilities.Net;
+using static System.Net.Mime.MediaTypeNames;
+using Org.BouncyCastle.Cms;
+using BitcoinNET.RPCClient;
 
 namespace SUP
 {
@@ -33,7 +39,7 @@ namespace SUP
     {
         private QrEncoder encoder = new QrEncoder();
         private GraphicsRenderer renderer = new GraphicsRenderer(new FixedModuleSize(2, QuietZoneModules.Two));
-
+        private bool ismint = false;
 
         public ObjectMint()
         {
@@ -49,6 +55,11 @@ namespace SUP
 
         private void UpdateRemainingChars()
         {
+            if (txtURN.Text != "" && txtTitle.Text != "" && txtObjectAddress.Text != "" && flowOwners.Controls.Count > 0)
+            {
+                if (!btnEdit.Enabled && (btnObjectName.BackColor == Color.Blue || btnObjectURN.BackColor == Color.Blue || btnObjectURI.BackColor == Color.Blue || btnObjectOwners.BackColor == Color.Blue || btnObjectCreators.BackColor == Color.Blue || btnObjectAttributes.BackColor == Color.Blue || btnObjectImage.BackColor == Color.Blue || btnObjectMaximum.BackColor == Color.Blue || btnObjectDescription.BackColor == Color.Blue || btnObjectKeywords.BackColor == Color.Blue)) { btnMint.Enabled = true; btnPrint.Enabled = true; }
+            }
+
 
             int maxsize = 888;
 
@@ -82,31 +93,7 @@ namespace SUP
             maxsize = maxsize - (flowCreators.Controls.Count * 5) + 5;
 
             lblRemainingChars.Text = maxsize.ToString();
-            txtAddressListJSON.Text = txtAddressListJSON.Text + lblRemainingChars.Text;
 
-            try
-            {
-
-                using (Bitmap qrCode = GenerateQRCode(txtAddressListJSON.Text))
-                {
-                    if (qrCode != null)
-                    {
-                        qrCode.Save(@"qrcode.png", ImageFormat.Png);
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                string error = ex.Message;
-            }
-
-            pictureBox1.ImageLocation = "qrcode.png";
-
-            if (txtURN.Text != "" && txtTitle.Text != "" & txtObjectAddress.Text != "")
-            {
-                btnPrint.Enabled = true;
-                btnMint.Enabled = true;
-            }
 
             if (maxsize < 0)
             {
@@ -146,7 +133,7 @@ namespace SUP
                 foreach (Button ownerControl in flowOwners.Controls)
                 {
                     string[] parts = ownerControl.Text.Split(':');
-                    mintOwners.Add(parts[0], long.Parse(parts[1]));
+                    try { mintOwners.Add(parts[0], long.Parse(parts[1])); } catch { }
                 }
                 OBJJson.own = mintOwners;
             }
@@ -158,9 +145,149 @@ namespace SUP
 
             // Serialize the modified JObject back into a JSON string
             var objectSerialized = JsonConvert.SerializeObject(OBJJson, Formatting.None, settings);
-            txtOBJJSON.Text = objectSerialized.Replace(",\"max\":0","").Replace(",\"atr\":{}","");
+            if (btnEdit.Enabled) { txtOBJJSON.Text = objectSerialized; }
+            else
+            {
+                txtOBJJSON.Text = objectSerialized.Replace(",\"max\":0", "").Replace(",\"atr\":{}", "").Replace(",\"own\":{}", "").Replace(",\"uri\":\"\"", "").Replace(",\"dsc\":\"\"", "").Replace(",\"img\":\"\"", "").Replace(",\"lic\":\"\"", "");
+            }
+
+            txtOBJP2FK.Text = "OBJ" + ":" + txtOBJJSON.Text.Length + ":" + txtOBJJSON.Text;
+
+            if (btnMint.Enabled)
+            {
+                NetworkCredential credentials = new NetworkCredential("good-user", "better-password");
+                RPCClient rpcClient = new RPCClient(credentials, new Uri("http://127.0.0.1:18332"), Network.Main);
+                System.Security.Cryptography.SHA256 mySHA256 = SHA256Managed.Create();
+                byte[] hashValue = mySHA256.ComputeHash(Encoding.UTF8.GetBytes(txtOBJP2FK.Text));
+                string signatureAddress;
+
+                if (flowCreators.Controls.Count > 0)
+                { signatureAddress = flowCreators.Controls[0].Text; }
+                else { signatureAddress = txtObjectAddress.Text; }
+                string signature = "";
+                try { signature = rpcClient.SendCommand("signmessage", signatureAddress, BitConverter.ToString(hashValue).Replace("-", String.Empty)).ResultString; } catch { }
+                txtOBJP2FK.Text = "SIG" + ":" + "88" + ">" + signature + txtOBJP2FK.Text;
+
+                List<string> encodedList = new List<string>();
+                for (int i = 0; i < txtOBJP2FK.Text.Length; i += 20)
+                {
+                    string chunk = txtOBJP2FK.Text.Substring(i, Math.Min(20, txtOBJP2FK.Text.Length - i));
+                    if (chunk.Any())
+                    {
+                        encodedList.Add(Root.GetPublicAddressByKeyword(chunk));
+                    }
+                }
+
+                //add URN registration
+                encodedList.Add(Root.GetPublicAddressByKeyword(txtURN.Text));
+
+
+                //attempt file registration
+                string fileSource = txtURN.Text.Trim();
+                byte[] fileBytes;
+
+                if (fileSource.ToUpper().StartsWith("IPFS:"))
+                {
+
+                    string ipfsHash = fileSource.Substring(5);
+
+                    fileSource = @"ipfs\" + ipfsHash;
+                }
+                else
+                {
+                    // extract the remaining string after the colon, or use the full string if there is no colon
+                    int colonIndex = fileSource.IndexOf(':');
+                    if (colonIndex >= 0)
+                    {
+                        fileSource = fileSource.Substring(colonIndex + 1);
+                    }
+                    // concatenate with "root\"
+                    fileSource = @"root\" + fileSource;
+                }
+
+                // attempt to read the first 20 bytes of the urn file into a base 58 encoded byte array with version and checksum
+                try
+                {
+
+                    byte[] payload = new byte[21];
+
+                    using (FileStream fileStream = new FileStream(fileSource, FileMode.Open))
+                    {
+                        fileStream.Read(payload, 1, 20);
+                    }
+
+                    payload[0] = Byte.Parse("111");
+                    string objectaddress = Base58.EncodeWithCheckSum(payload);
+
+                    encodedList.Add(objectaddress);
+
+                }
+                catch { }
+
+
+
+                foreach (Button keywordbtn in flowKeywords.Controls)
+                {
+                    encodedList.Add(Root.GetPublicAddressByKeyword(keywordbtn.Text));
+                }
+
+                foreach (Button ownerbtn in flowOwners.Controls)
+                {
+                    if (ownerbtn.Text.Split(':')[0] != signatureAddress)
+                    {
+                        encodedList.Add(ownerbtn.Text.Split(':')[0]);
+                    }
+                }
+
+                foreach (Button creatorbtn in flowCreators.Controls)
+                {
+
+                    if (creatorbtn.Text != signatureAddress)
+                    {
+                        encodedList.Add(creatorbtn.Text);
+                    }
+                }
+
+                if (!encodedList.Contains(txtObjectAddress.Text)) { encodedList.Add(txtObjectAddress.Text); }
+                encodedList.Add(signatureAddress);
+                txtAddressListJSON.Text = JsonConvert.SerializeObject(encodedList.Distinct());
+
+                lblCost.Text = "cost: " + (0.00000546 * encodedList.Count).ToString("0.00000000") + "  + miner fee";
+
+                if (ismint)
+                {
+                    var recipients = new Dictionary<string, decimal>();
+                    foreach (var encodedAddress in encodedList)
+                    {
+
+                        try { recipients.Add(encodedAddress, 0.00000546m); } catch {}
+
+                    }
+
+                    CoinRPC a = new CoinRPC(new Uri("http://127.0.0.1:18332"), new NetworkCredential("good-user", "better-password"));
+
+                    try
+                    {
+                        string accountsString = "";
+                        try { accountsString = rpcClient.SendCommand("listaccounts").ResultString; } catch { }
+                        var accounts = JsonConvert.DeserializeObject<Dictionary<string, decimal>>(accountsString);
+                        var keyWithLargestValue = accounts.Aggregate((x, y) => x.Value > y.Value ? x : y).Key;
+                        var results = a.SendMany(keyWithLargestValue, recipients);
+                        lblTransactionID.Text = results;
+                    }
+                    catch (Exception ex) { lblObjectStatus.Text = ex.Message; }
+
+
+                    ismint = false;
+                }
+
+
+            }
+
+
+
         }
-        
+
 
         private Bitmap GenerateQRCode(string qrData)
         {
@@ -252,6 +379,14 @@ namespace SUP
 
             if (txtURN.Text != "")
             {
+                if (flowOwners.Controls.Count < 1)
+                {
+
+                    lblASCIIURN.Text = "Add 1 or more owners each with a qty of 1 or more";
+                    lblASCIIURN.Visible = true;
+
+                }
+
                 btnObjectURN.BackColor = Color.Blue;
                 btnObjectURN.ForeColor = Color.Yellow;
             }
@@ -298,7 +433,7 @@ namespace SUP
 
             if (txtTitle.Text == "")
             {
-                lblASCIIURN.Text = "enter name to begin";
+                lblASCIIURN.Text = "enter object name to begin";
                 lblASCIIURN.Visible = true;
                 btnObjectName.BackColor = Color.White;
                 btnObjectName.ForeColor = Color.Black;
@@ -376,6 +511,26 @@ namespace SUP
             {
                 btnObjectDescription.BackColor = Color.Blue;
                 btnObjectDescription.ForeColor = Color.Yellow;
+                if (btnMint.Enabled)
+                {
+                    try
+                    {
+                        using (Bitmap qrCode = GenerateQRCode(txtAddressListJSON.Text))
+                        {
+                            if (qrCode != null)
+                            {
+                                Directory.CreateDirectory(@"root\" + txtObjectAddress.Text);
+                                qrCode.Save(@"root\" + txtObjectAddress.Text + @"\OBJPrint.png", ImageFormat.Png);
+                                pictureBox1.ImageLocation = @"root\" + txtObjectAddress.Text + @"\OBJPrint.png";
+                            }
+                        }
+                    }
+                    catch { }
+
+
+
+
+                }
             }
             else
             {
@@ -394,6 +549,7 @@ namespace SUP
         private void flowOwners_ControlAdded(object sender, ControlEventArgs e)
         {
             UpdateRemainingChars();
+            lblASCIIURN.Visible = false;
             btnObjectOwners.BackColor = Color.Blue;
             btnObjectOwners.ForeColor = Color.Yellow;
         }
@@ -405,7 +561,7 @@ namespace SUP
             {
                 if (txtURN.Text == "")
                 {
-                    lblASCIIURN.Text = "Click URN to import a file to IPFS\r\n IMG thumbnails are optional";
+                    lblASCIIURN.Text = "click the urn and img buttons to upload your file with thumbnail to the interplanetary file system\r\n\r\n\r\n click them again for interplanetary file system verification!";
                     lblASCIIURN.Visible = true;
                 }
                 else { lblASCIIURN.Visible = false; }
@@ -418,6 +574,7 @@ namespace SUP
                 btnObjectName.Enabled = true;
                 btnObjectURI.Enabled = true;
                 btnObjectURN.Enabled = true;
+
                 btnObjectCreators.Enabled = true;
                 btnObjectOwners.Enabled = true;
                 btnObjectAddress.Enabled = true;
@@ -469,88 +626,384 @@ namespace SUP
 
         private void btnObjectAddress_Click(object sender, EventArgs e)
         {
-            UpdateRemainingChars();
+
             if (txtObjectAddress.Text != "")
             {
+                lblObjectStatus.Text = "";
+                LoadFormByAddress(txtObjectAddress.Text);
+
+
 
             }
             else
             {
                 NetworkCredential credentials = new NetworkCredential("good-user", "better-password");
                 RPCClient rpcClient = new RPCClient(credentials, new Uri("http://127.0.0.1:18332"), Network.Main);
-                string newAddress = rpcClient.SendCommand("getnewaddress", txtTitle.Text + "!" + DateTime.UtcNow.ToString("yyyyMMddHHmmss")).ResultString;
+                string newAddress = "";
+                try { newAddress = rpcClient.SendCommand("getnewaddress", txtTitle.Text + "!" + DateTime.UtcNow.ToString("yyyyMMddHHmmss")).ResultString; } catch { }
                 txtObjectAddress.Text = newAddress;
                 txtTitle.Enabled = false;
                 btnObjectName.Enabled = false;
+                lblObjectStatus.Text = "";
+                lblCost.Text = "";
+                btnEdit.Enabled = false;
+                UpdateRemainingChars();
             }
-
-
-
 
         }
 
 
         private void btnObjectName_Click(object sender, EventArgs e)
         {
+            if (btnObjectName.BackColor == Color.Blue) { btnObjectName.BackColor = Color.White; btnObjectName.ForeColor = Color.Black; }
+            else
+            {
+                if (txtTitle.Text != "") { btnObjectName.BackColor = Color.Blue; btnObjectName.ForeColor = Color.Yellow; } else { btnObjectName.BackColor = Color.White; btnObjectName.ForeColor = Color.Black; }
+            }
             UpdateRemainingChars();
-            if (txtTitle.Text != "") { btnObjectName.BackColor = Color.Blue; btnObjectName.ForeColor = Color.Yellow; } else { btnObjectName.BackColor = Color.White; btnObjectName.ForeColor = Color.Black; }
-
         }
 
         private void btnMaximum_Click(object sender, EventArgs e)
         {
-            UpdateRemainingChars();
-            if (txtMaximum.Text != "") { btnObjectMaximum.BackColor = Color.Blue; btnObjectMaximum.ForeColor = Color.Yellow; }
+
+            if (btnObjectMaximum.BackColor == Color.Blue) { btnObjectMaximum.BackColor = Color.White; btnObjectMaximum.ForeColor = Color.Black; }
             else
             {
-                try
+                if (txtMaximum.Text != "") { btnObjectMaximum.BackColor = Color.Blue; btnObjectMaximum.ForeColor = Color.Yellow; }
+                else
                 {
-                    if (long.Parse(txtMaximum.Text.Replace(",", "")) <= 5149219112448) { btnObjectMaximum.BackColor = Color.Blue; btnObjectMaximum.ForeColor = Color.Yellow; } else { btnObjectMaximum.BackColor = Color.White; btnObjectMaximum.ForeColor = Color.Black; }
+                    try
+                    {
+                        if (long.Parse(txtMaximum.Text.Replace(",", "")) <= 5149219112448) { btnObjectMaximum.BackColor = Color.Blue; btnObjectMaximum.ForeColor = Color.Yellow; } else { btnObjectMaximum.BackColor = Color.White; btnObjectMaximum.ForeColor = Color.Black; }
 
+                    }
+                    catch { btnObjectMaximum.BackColor = Color.White; btnObjectMaximum.ForeColor = Color.Black; }
                 }
-                catch { btnObjectMaximum.BackColor = Color.White; btnObjectMaximum.ForeColor = Color.Black; }
             }
+
+            UpdateRemainingChars();
         }
 
         private void btnObjectDescription_Click(object sender, EventArgs e)
         {
-            UpdateRemainingChars();
-            if (txtDescription.Text != "")
+
+            if (btnObjectDescription.BackColor == Color.Blue) { btnObjectDescription.BackColor = Color.White; btnObjectDescription.ForeColor = Color.Black; }
+            else
             {
-                btnObjectDescription.BackColor = Color.Blue; btnObjectDescription.ForeColor = Color.Yellow;
+                if (txtTitle.Text != "") { btnObjectDescription.BackColor = Color.Blue; btnObjectDescription.ForeColor = Color.Yellow; } else { btnObjectDescription.BackColor = Color.White; btnObjectDescription.ForeColor = Color.Black; }
             }
+            UpdateRemainingChars();
         }
 
         private async void btnObjectImage_Click(object sender, EventArgs e)
         {
-            UpdateRemainingChars();
-            webviewer.Visible = false;
-            string imgurn = "";
-            lblIMGBlockDate.Text = "[ unable to verify ]";
-
-            if (txtIMG.Text != "")
-            {
-                imgurn = txtIMG.Text;
-
-                if (!txtIMG.Text.ToLower().StartsWith("http"))
-                {
-                    imgurn = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + @"\root\" + txtIMG.Text.Replace("BTC:", "").Replace("MZC:", "").Replace("LTC:", "").Replace("DOG:", "").Replace("IPFS:", "").Replace("btc:", "").Replace("mzc:", "").Replace("ltc:", "").Replace("dog:", "").Replace("ipfs:", "").Replace(@"/", @"\");
-
-                    if (txtIMG.Text.ToLower().StartsWith("ipfs:")) { imgurn = imgurn.Replace(@"\root\", @"\ipfs\"); }
-                }
-            }
+            if (btnObjectImage.BackColor == Color.Blue) { btnObjectImage.BackColor = Color.White; btnObjectImage.ForeColor = Color.Black; }
             else
             {
 
-                // Open file dialog and get file path and name
-                OpenFileDialog openFileDialog1 = new OpenFileDialog();
-                if (openFileDialog1.ShowDialog() == DialogResult.OK)
-                {
-                    string filePath = openFileDialog1.FileName;
-                    string fileName = openFileDialog1.SafeFileName;
 
-                    // Add file to IPFS
-                    Task<string> addTask = Task.Run(() =>
+                webviewer.Visible = false;
+                string imgurn = "";
+                lblIMGBlockDate.Text = "[ unable to verify ]";
+
+                if (txtIMG.Text != "")
+                {
+                    imgurn = txtIMG.Text;
+
+                    if (!txtIMG.Text.ToLower().StartsWith("http"))
+                    {
+                        imgurn = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + @"\root\" + txtIMG.Text.Replace("BTC:", "").Replace("MZC:", "").Replace("LTC:", "").Replace("DOG:", "").Replace("IPFS:", "").Replace("btc:", "").Replace("mzc:", "").Replace("ltc:", "").Replace("dog:", "").Replace("ipfs:", "").Replace(@"/", @"\");
+
+                        if (txtIMG.Text.ToLower().StartsWith("ipfs:")) { imgurn = imgurn.Replace(@"\root\", @"\ipfs\"); }
+                    }
+                }
+                else
+                {
+
+                    // Open file dialog and get file path and name
+                    OpenFileDialog openFileDialog1 = new OpenFileDialog();
+                    if (openFileDialog1.ShowDialog() == DialogResult.OK)
+                    {
+                        string filePath = openFileDialog1.FileName;
+                        string fileName = openFileDialog1.SafeFileName;
+
+                        // Add file to IPFS
+                        Task<string> addTask = Task.Run(() =>
+                            {
+                                Process process = new Process();
+                                process.StartInfo.FileName = @"ipfs\ipfs.exe";
+                                process.StartInfo.Arguments = "add \"" + filePath + "\"";
+                                process.StartInfo.UseShellExecute = false;
+                                process.StartInfo.RedirectStandardOutput = true;
+                                process.Start();
+                                string output = process.StandardOutput.ReadToEnd();
+                                process.WaitForExit();
+                                string hash = output.Split(' ')[1];
+                                return "IPFS:" + hash;
+                            });
+                        string ipfsHash = await addTask;
+
+
+                        // Update text box with IPFS hash
+                        txtIMG.Text = ipfsHash + @"\" + fileName;
+                    }
+
+
+                }
+
+
+                List<string> allowedExtensions = new List<string> { ".bmp", ".gif", ".ico", ".jpeg", ".jpg", ".png", ".tif", ".tiff", "" };
+                string extension = Path.GetExtension(imgurn).ToLower();
+                if (allowedExtensions.Contains(extension))
+                {
+
+
+
+                    try
+                    {
+                        Root root = new Root();
+                        Match urimatch = regexTransactionId.Match(txtIMG.Text);
+                        string transactionid = urimatch.Value;
+                        switch (txtIMG.Text.Substring(0, 4).ToUpper())
+                        {
+                            case "MZC:":
+
+                                root = Root.GetRootByTransactionId(transactionid, "good-user", "better-password", @"http://127.0.0.1:12832", "50");
+                                try
+                                {
+                                    lblIMGBlockDate.Text = "mazacoin verified: " + root.BlockDate.ToString("ddd, dd MMM yyyy hh:mm:ss");
+                                    btnObjectImage.BackColor = Color.Blue;
+                                    btnObjectImage.ForeColor = Color.Yellow;
+                                }
+                                catch { }
+                                break;
+                            case "BTC:":
+
+                                root = Root.GetRootByTransactionId(transactionid, "good-user", "better-password", @"http://127.0.0.1:8332", "0");
+                                try
+                                {
+                                    lblIMGBlockDate.Text = "bitcoin verified: " + root.BlockDate.ToString("ddd, dd MMM yyyy hh:mm:ss");
+                                    btnObjectImage.BackColor = Color.Blue;
+                                    btnObjectImage.ForeColor = Color.Yellow;
+                                }
+                                catch { }
+                                break;
+                            case "LTC:":
+
+                                root = Root.GetRootByTransactionId(transactionid, "good-user", "better-password", @"http://127.0.0.1:9332", "48");
+                                try
+                                {
+                                    lblIMGBlockDate.Text = "litecoin verified: " + root.BlockDate.ToString("ddd, dd MMM yyyy hh:mm:ss");
+                                    btnObjectImage.BackColor = Color.Blue;
+                                    btnObjectImage.ForeColor = Color.Yellow;
+                                }
+                                catch { }
+                                break;
+                            case "DOG:":
+
+                                root = Root.GetRootByTransactionId(transactionid, "good-user", "better-password", @"http://127.0.0.1:22555", "30");
+
+                                try
+                                {
+                                    lblIMGBlockDate.Text = "dogecoin verified: " + root.BlockDate.ToString("ddd, dd MMM yyyy hh:mm:ss");
+                                    btnObjectImage.BackColor = Color.Blue;
+                                    btnObjectImage.ForeColor = Color.Yellow;
+                                }
+                                catch { }
+
+                                break;
+                            case "IPFS":
+                                if (txtIMG.Text.Length == 51) { imgurn += @"\artifact"; }
+                                if (!System.IO.Directory.Exists(@"ipfs/" + txtIMG.Text.Substring(5, 46) + "-build") && !System.IO.Directory.Exists(@"ipfs/" + txtIMG.Text.Substring(5, 46)))
+                                {
+
+
+                                    Task ipfsTask = Task.Run(() =>
+                                    {
+                                        Directory.CreateDirectory(@"ipfs/" + txtIMG.Text.Substring(5, 46) + "-build");
+                                        Process process2 = new Process();
+                                        process2.StartInfo.FileName = @"ipfs\ipfs.exe";
+                                        process2.StartInfo.Arguments = "get " + txtIMG.Text.Substring(5, 46) + @" -o ipfs\" + txtIMG.Text.Substring(5, 46);
+                                        process2.Start();
+                                        process2.WaitForExit();
+
+                                        if (System.IO.File.Exists("ipfs/" + txtIMG.Text.Substring(5, 46)))
+                                        {
+                                            try { System.IO.File.Move("ipfs/" + txtIMG.Text.Substring(5, 46), "ipfs/" + txtIMG.Text.Substring(5, 46) + "_tmp"); }
+                                            catch
+                                            {
+
+                                                System.IO.File.Delete("ipfs/" + txtIMG.Text.Substring(5, 46) + "_tmp");
+                                                System.IO.File.Move("ipfs/" + txtIMG.Text.Substring(5, 46), "ipfs/" + txtIMG.Text.Substring(5, 46) + "_tmp");
+
+                                            }
+
+                                            string fileName = txtIMG.Text.Replace(@"//", "").Replace(@"\\", "").Substring(51);
+                                            if (fileName == "")
+                                            {
+                                                fileName = "artifact";
+                                            }
+                                            else { fileName = fileName.Replace(@"/", "").Replace(@"\", ""); }
+                                            Directory.CreateDirectory(@"ipfs/" + txtIMG.Text.Substring(5, 46));
+                                            try { System.IO.File.Move("ipfs/" + txtIMG.Text.Substring(5, 46) + "_tmp", imgurn); } catch { }
+                                        }
+
+                                        var SUP = new Options { CreateIfMissing = true };
+
+                                        using (var db = new DB(SUP, @"ipfs"))
+                                        {
+
+                                            string ipfsdaemon = db.Get("ipfs-daemon");
+
+                                            if (ipfsdaemon == "true")
+                                            {
+                                                Process process3 = new Process
+                                                {
+                                                    StartInfo = new ProcessStartInfo
+                                                    {
+                                                        FileName = @"ipfs\ipfs.exe",
+                                                        Arguments = "pin add " + txtIMG.Text.Substring(5, 46),
+                                                        UseShellExecute = false,
+                                                        CreateNoWindow = true
+                                                    }
+                                                };
+                                                process3.Start();
+                                            }
+                                        }
+
+                                        try { Directory.Delete(@"ipfs/" + txtIMG.Text.Substring(5, 46)); } catch { }
+                                        try
+                                        {
+                                            Directory.Delete(@"ipfs/" + txtIMG.Text.Substring(5, 46) + "-build");
+                                        }
+                                        catch { }
+
+
+
+                                    });
+                                }
+                                else
+                                {
+                                    lblIMGBlockDate.Text = "ipfs verified: " + System.DateTime.UtcNow.ToString("ddd, dd MMM yyyy hh:mm:ss");
+                                    btnObjectImage.BackColor = Color.Blue;
+                                    btnObjectImage.ForeColor = Color.Yellow;
+                                }
+                                break;
+                            default:
+
+                                root = Root.GetRootByTransactionId(transactionid, "good-user", "better-password", @"http://127.0.0.1:18332");
+                                try
+                                {
+                                    lblIMGBlockDate.Text = "bitcoin-t verified: " + root.BlockDate.ToString("ddd, dd MMM yyyy hh:mm:ss");
+                                    btnObjectImage.BackColor = Color.Blue;
+                                    btnObjectImage.ForeColor = Color.Yellow;
+                                }
+                                catch { }
+
+
+                                break;
+                        }
+
+                        if (lblIMGBlockDate.Text.Contains("Mon, 01 Jan 0001 12:00:00"))
+                        {
+                            btnObjectImage.BackColor = Color.Blue;
+                            btnObjectImage.ForeColor = Color.Black;
+                            lblIMGBlockDate.Text = "[ unable to verify ]";
+                        }
+
+
+                    }
+                    catch { }
+                    pictureBox1.SuspendLayout();
+                    if (File.Exists(imgurn) || imgurn.ToUpper().StartsWith("HTTP"))
+                    {
+
+                        pictureBox1.ImageLocation = imgurn;
+                        pictureBox2.ImageLocation = imgurn;
+                    }
+                    else
+                    {
+                        Random rnd = new Random();
+                        string[] gifFiles = Directory.GetFiles("includes", "*.gif");
+                        if (gifFiles.Length > 0)
+                        {
+                            int randomIndex = rnd.Next(gifFiles.Length);
+                            string randomGifFile = gifFiles[randomIndex];
+
+                            pictureBox1.ImageLocation = randomGifFile;
+                            pictureBox2.ImageLocation = randomGifFile;
+
+                        }
+                        else
+                        {
+                            try
+                            {
+                                pictureBox1.ImageLocation = @"includes\HugPuddle.jpg";
+                                pictureBox2.ImageLocation = @"includes\HugPuddle.jpg";
+                            }
+                            catch { }
+                        }
+
+
+                    }
+                    pictureBox1.ResumeLayout();
+
+
+
+
+                }
+                else
+                {
+                    lblIMGBlockDate.Text = "[ unsported image type ]";
+                    btnObjectImage.BackColor = Color.White;
+                    btnObjectImage.ForeColor = Color.Black;
+                }
+
+            }
+            UpdateRemainingChars();
+        }
+
+        private async void btnObjectURN_Click(object sender, EventArgs e)
+        {
+            if (btnObjectURN.BackColor == Color.Blue) { btnObjectURN.BackColor = Color.White; btnObjectURN.ForeColor = Color.Black; }
+            else
+            {
+                string urn = "";
+                lblURNBlockDate.Text = "[ unable to verify ]";
+                webviewer.Visible = false;
+                lblASCIIURN.Visible = false;
+                if (txtURN.Text != "")
+                {
+                    urn = txtURN.Text;
+
+                    if (!txtURN.Text.ToLower().StartsWith("http"))
+                    {
+                        urn = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + @"\root\" + txtURN.Text.Replace("BTC:", "").Replace("MZC:", "").Replace("LTC:", "").Replace("DOG:", "").Replace("IPFS:", "").Replace("btc:", "").Replace("mzc:", "").Replace("ltc:", "").Replace("dog:", "").Replace("ipfs:", "").Replace(@"/", @"\");
+                        if (txtURN.Text.ToLower().StartsWith("ipfs:")) { urn = urn.Replace(@"\root\", @"\ipfs\"); }
+                    }
+                    else
+                    {
+                        webviewer.Visible = true;
+                        await webviewer.EnsureCoreWebView2Async();
+                        webviewer.CoreWebView2.Navigate(txtURN.Text);
+                        lblURNBlockDate.Text = "http get: " + DateTime.UtcNow.ToString("ddd, dd MMM yyyy hh:mm:ss");
+                        btnObjectURN.BackColor = Color.Blue;
+                        btnObjectURN.ForeColor = Color.Yellow;
+                        return;
+                    }
+                }
+                else
+                {
+                    // Open file dialog and get file path and name
+                    OpenFileDialog openFileDialog1 = new OpenFileDialog();
+                    if (openFileDialog1.ShowDialog() == DialogResult.OK)
+                    {
+                        string filePath = openFileDialog1.FileName;
+                        string fileName = openFileDialog1.SafeFileName;
+                        openFileDialog1.Title = "Select File";
+
+                        // Add file to IPFS
+                        Task<string> addTask = Task.Run(() =>
                         {
                             Process process = new Process();
                             process.StartInfo.FileName = @"ipfs\ipfs.exe";
@@ -563,39 +1016,35 @@ namespace SUP
                             string hash = output.Split(' ')[1];
                             return "IPFS:" + hash;
                         });
-                    string ipfsHash = await addTask;
+                        string ipfsHash = await addTask;
 
 
-                    // Update text box with IPFS hash
-                    txtIMG.Text = ipfsHash + @"\" + fileName;
+                        // Update text box with IPFS hash
+                        txtURN.Text = ipfsHash + @"\" + fileName;
+                    }
+
+
                 }
 
 
-            }
-
-
-            List<string> allowedExtensions = new List<string> { ".bmp", ".gif", ".ico", ".jpeg", ".jpg", ".png", ".tif", ".tiff", "" };
-            string extension = Path.GetExtension(imgurn).ToLower();
-            if (allowedExtensions.Contains(extension))
-            {
-
-
+                string extension = "";
 
                 try
                 {
+                    extension = Path.GetExtension(urn).ToLower();
                     Root root = new Root();
-                    Match urimatch = regexTransactionId.Match(txtIMG.Text);
+                    Match urimatch = regexTransactionId.Match(txtURN.Text);
                     string transactionid = urimatch.Value;
-                    switch (txtIMG.Text.Substring(0, 4).ToUpper())
+                    switch (txtURN.Text.Substring(0, 4).ToUpper())
                     {
                         case "MZC:":
 
                             root = Root.GetRootByTransactionId(transactionid, "good-user", "better-password", @"http://127.0.0.1:12832", "50");
                             try
                             {
-                                lblIMGBlockDate.Text = "mazacoin verified: " + root.BlockDate.ToString("ddd, dd MMM yyyy hh:mm:ss");
-                                btnObjectImage.BackColor = Color.Blue;
-                                btnObjectImage.ForeColor = Color.Yellow;
+                                lblURNBlockDate.Text = "mazacoin verified: " + root.BlockDate.ToString("ddd, dd MMM yyyy hh:mm:ss");
+                                btnObjectURN.BackColor = Color.Blue;
+                                btnObjectURN.ForeColor = Color.Yellow;
                             }
                             catch { }
                             break;
@@ -604,9 +1053,9 @@ namespace SUP
                             root = Root.GetRootByTransactionId(transactionid, "good-user", "better-password", @"http://127.0.0.1:8332", "0");
                             try
                             {
-                                lblIMGBlockDate.Text = "bitcoin verified: " + root.BlockDate.ToString("ddd, dd MMM yyyy hh:mm:ss");
-                                btnObjectImage.BackColor = Color.Blue;
-                                btnObjectImage.ForeColor = Color.Yellow;
+                                lblURNBlockDate.Text = "bitcoin verified: " + root.BlockDate.ToString("ddd, dd MMM yyyy hh:mm:ss");
+                                btnObjectURN.BackColor = Color.Blue;
+                                btnObjectURN.ForeColor = Color.Yellow;
                             }
                             catch { }
                             break;
@@ -615,9 +1064,9 @@ namespace SUP
                             root = Root.GetRootByTransactionId(transactionid, "good-user", "better-password", @"http://127.0.0.1:9332", "48");
                             try
                             {
-                                lblIMGBlockDate.Text = "litecoin verified: " + root.BlockDate.ToString("ddd, dd MMM yyyy hh:mm:ss");
-                                btnObjectImage.BackColor = Color.Blue;
-                                btnObjectImage.ForeColor = Color.Yellow;
+                                lblURNBlockDate.Text = "litecoin verified: " + root.BlockDate.ToString("ddd, dd MMM yyyy hh:mm:ss");
+                                btnObjectURN.BackColor = Color.Blue;
+                                btnObjectURN.ForeColor = Color.Yellow;
                             }
                             catch { }
                             break;
@@ -627,47 +1076,46 @@ namespace SUP
 
                             try
                             {
-                                lblIMGBlockDate.Text = "dogecoin verified: " + root.BlockDate.ToString("ddd, dd MMM yyyy hh:mm:ss");
-                                btnObjectImage.BackColor = Color.Blue;
-                                btnObjectImage.ForeColor = Color.Yellow;
+                                lblURNBlockDate.Text = "dogecoin verified: " + root.BlockDate.ToString("ddd, dd MMM yyyy hh:mm:ss");
+                                btnObjectURN.BackColor = Color.Blue;
+                                btnObjectURN.ForeColor = Color.Yellow;
                             }
                             catch { }
 
                             break;
                         case "IPFS":
-                            if (txtIMG.Text.Length == 51) { imgurn += @"\artifact"; }
-                            if (!System.IO.Directory.Exists(@"ipfs/" + txtIMG.Text.Substring(5, 46) + "-build") && !System.IO.Directory.Exists(@"ipfs/" + txtIMG.Text.Substring(5, 46)))
+                            if (txtURN.Text.Length == 51) { urn += @"\artifact"; }
+                            if (!System.IO.Directory.Exists(@"ipfs/" + txtURN.Text.Substring(5, 46) + "-build") && !System.IO.Directory.Exists(@"ipfs/" + txtURN.Text.Substring(5, 46)))
                             {
 
 
                                 Task ipfsTask = Task.Run(() =>
                                 {
-                                    Directory.CreateDirectory(@"ipfs/" + txtIMG.Text.Substring(5, 46) + "-build");
+                                    Directory.CreateDirectory(@"ipfs/" + txtURN.Text.Substring(5, 46) + "-build");
                                     Process process2 = new Process();
                                     process2.StartInfo.FileName = @"ipfs\ipfs.exe";
-                                    process2.StartInfo.Arguments = "get " + txtIMG.Text.Substring(5, 46) + @" -o ipfs\" + txtIMG.Text.Substring(5, 46);
+                                    process2.StartInfo.Arguments = "get " + txtURN.Text.Substring(5, 46) + @" -o ipfs\" + txtURN.Text.Substring(5, 46);
                                     process2.Start();
                                     process2.WaitForExit();
 
-                                    if (System.IO.File.Exists("ipfs/" + txtIMG.Text.Substring(5, 46)))
+                                    if (System.IO.File.Exists("ipfs/" + txtURN.Text.Substring(5, 46)))
                                     {
-                                        try { System.IO.File.Move("ipfs/" + txtIMG.Text.Substring(5, 46), "ipfs/" + txtIMG.Text.Substring(5, 46) + "_tmp"); }
+                                        try { System.IO.File.Move("ipfs/" + txtURN.Text.Substring(5, 46), "ipfs/" + txtURN.Text.Substring(5, 46) + "_tmp"); }
                                         catch
                                         {
-
-                                            System.IO.File.Delete("ipfs/" + txtIMG.Text.Substring(5, 46) + "_tmp");
-                                            System.IO.File.Move("ipfs/" + txtIMG.Text.Substring(5, 46), "ipfs/" + txtIMG.Text.Substring(5, 46) + "_tmp");
+                                            System.IO.File.Delete("ipfs/" + txtURN.Text.Substring(5, 46) + "_tmp");
+                                            System.IO.File.Move("ipfs/" + txtURN.Text.Substring(5, 46), "ipfs/" + txtURN.Text.Substring(5, 46) + "_tmp");
 
                                         }
 
-                                        string fileName = txtIMG.Text.Replace(@"//", "").Replace(@"\\", "").Substring(51);
+                                        string fileName = txtURN.Text.Replace(@"//", "").Replace(@"\\", "").Substring(51);
                                         if (fileName == "")
                                         {
                                             fileName = "artifact";
                                         }
                                         else { fileName = fileName.Replace(@"/", "").Replace(@"\", ""); }
-                                        Directory.CreateDirectory(@"ipfs/" + txtIMG.Text.Substring(5, 46));
-                                        try { System.IO.File.Move("ipfs/" + txtIMG.Text.Substring(5, 46) + "_tmp", imgurn); } catch { }
+                                        Directory.CreateDirectory(@"ipfs/" + txtURN.Text.Substring(5, 46));
+                                        try { System.IO.File.Move("ipfs/" + txtURN.Text.Substring(5, 46) + "_tmp", urn); } catch { }
                                     }
 
                                     var SUP = new Options { CreateIfMissing = true };
@@ -684,7 +1132,7 @@ namespace SUP
                                                 StartInfo = new ProcessStartInfo
                                                 {
                                                     FileName = @"ipfs\ipfs.exe",
-                                                    Arguments = "pin add " + txtIMG.Text.Substring(5, 46),
+                                                    Arguments = "pin add " + txtURN.Text.Substring(5, 46),
                                                     UseShellExecute = false,
                                                     CreateNoWindow = true
                                                 }
@@ -693,10 +1141,10 @@ namespace SUP
                                         }
                                     }
 
-                                    try { Directory.Delete(@"ipfs/" + txtIMG.Text.Substring(5, 46)); } catch { }
+                                    try { Directory.Delete(@"ipfs/" + txtURN.Text.Substring(5, 46)); } catch { }
                                     try
                                     {
-                                        Directory.Delete(@"ipfs/" + txtIMG.Text.Substring(5, 46) + "-build");
+                                        Directory.Delete(@"ipfs/" + txtURN.Text.Substring(5, 46) + "-build");
                                     }
                                     catch { }
 
@@ -706,656 +1154,387 @@ namespace SUP
                             }
                             else
                             {
-                                lblIMGBlockDate.Text = "ipfs verified: " + System.DateTime.UtcNow.ToString("ddd, dd MMM yyyy hh:mm:ss");
-                                btnObjectImage.BackColor = Color.Blue;
-                                btnObjectImage.ForeColor = Color.Yellow;
+                                lblURNBlockDate.Text = "ipfs verified: " + System.DateTime.UtcNow.ToString("ddd, dd MMM yyyy hh:mm:ss");
+                                btnObjectURN.BackColor = Color.Blue;
+                                btnObjectURN.ForeColor = Color.Yellow;
                             }
                             break;
                         default:
 
                             root = Root.GetRootByTransactionId(transactionid, "good-user", "better-password", @"http://127.0.0.1:18332");
-                            try
+                            if (transactionid != "")
                             {
-                                lblIMGBlockDate.Text = "bitcoin-t verified: " + root.BlockDate.ToString("ddd, dd MMM yyyy hh:mm:ss");
-                                btnObjectImage.BackColor = Color.Blue;
-                                btnObjectImage.ForeColor = Color.Yellow;
-                            }
-                            catch { }
+                                if (Directory.Exists(@"root\" + transactionid))
+                                {
+                                    try
+                                    {
 
+                                        lblURNBlockDate.Text = "bitcoin-t verified: " + root.BlockDate.ToString("ddd, dd MMM yyyy hh:mm:ss");
+                                        btnObjectURN.BackColor = Color.Blue;
+                                        btnObjectURN.ForeColor = Color.Yellow;
+                                    }
+                                    catch { }
+                                }
+                            }
+                            else
+                            {
+                                lblASCIIURN.Text = txtURN.Text;
+                                lblASCIIURN.Visible = true;
+                                btnObjectURN.BackColor = Color.Blue;
+                                btnObjectURN.ForeColor = Color.Yellow;
+                            }
 
                             break;
                     }
 
-                    if (lblIMGBlockDate.Text.Contains("Mon, 01 Jan 0001 12:00:00"))
+                    if (lblURNBlockDate.Text.Contains("Mon, 01 Jan 0001 12:00:00"))
                     {
-                        btnObjectImage.BackColor = Color.Blue;
-                        btnObjectImage.ForeColor = Color.Black;
-                        lblIMGBlockDate.Text = "[ unable to verify ]";
+                        btnObjectURN.BackColor = Color.Blue;
+                        btnObjectURN.ForeColor = Color.Black;
+                        lblURNBlockDate.Text = "[ unable to verify ]";
                     }
 
 
                 }
                 catch { }
-                pictureBox1.SuspendLayout();
-                if (File.Exists(imgurn) || imgurn.ToUpper().StartsWith("HTTP"))
+
+                switch (extension.ToLower())
                 {
-
-                    pictureBox1.ImageLocation = imgurn;
-                    pictureBox2.ImageLocation = imgurn;
-                }
-                else
-                {
-                    Random rnd = new Random();
-                    string[] gifFiles = Directory.GetFiles("includes", "*.gif");
-                    if (gifFiles.Length > 0)
-                    {
-                        int randomIndex = rnd.Next(gifFiles.Length);
-                        string randomGifFile = gifFiles[randomIndex];
-
-                        pictureBox1.ImageLocation = randomGifFile;
-                        pictureBox2.ImageLocation = randomGifFile;
-
-                    }
-                    else
-                    {
-                        try
-                        {
-                            pictureBox1.ImageLocation = @"includes\HugPuddle.jpg";
-                            pictureBox2.ImageLocation = @"includes\HugPuddle.jpg";
-                        }
-                        catch { }
-                    }
-
-
-                }
-                pictureBox1.ResumeLayout();
-
-
-
-
-            }
-            else
-            {
-                lblIMGBlockDate.Text = "[ unsported image type ]";
-                btnObjectImage.BackColor = Color.White;
-                btnObjectImage.ForeColor = Color.Black;
-            }
-        }
-
-        private async void btnObjectURN_Click(object sender, EventArgs e)
-        {
-            UpdateRemainingChars();
-            string urn = "";
-            lblURNBlockDate.Text = "[ unable to verify ]";
-            webviewer.Visible = false;
-            lblASCIIURN.Visible = false;
-            if (txtURN.Text != "")
-            {
-                urn = txtURN.Text;
-
-                if (!txtURN.Text.ToLower().StartsWith("http"))
-                {
-                    urn = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + @"\root\" + txtURN.Text.Replace("BTC:", "").Replace("MZC:", "").Replace("LTC:", "").Replace("DOG:", "").Replace("IPFS:", "").Replace("btc:", "").Replace("mzc:", "").Replace("ltc:", "").Replace("dog:", "").Replace("ipfs:", "").Replace(@"/", @"\");
-                    if (txtURN.Text.ToLower().StartsWith("ipfs:")) { urn = urn.Replace(@"\root\", @"\ipfs\"); }
-                }
-                else
-                {
-                    webviewer.Visible = true;
-                    await webviewer.EnsureCoreWebView2Async();
-                    webviewer.CoreWebView2.Navigate(txtURN.Text);
-                    lblURNBlockDate.Text = "http verified: " + DateTime.UtcNow.ToString("ddd, dd MMM yyyy hh:mm:ss");
-                    btnObjectURN.BackColor = Color.Blue;
-                    btnObjectURN.ForeColor = Color.Yellow;
-                    return;
-                }
-            }
-            else
-            {
-                // Open file dialog and get file path and name
-                OpenFileDialog openFileDialog1 = new OpenFileDialog();
-                if (openFileDialog1.ShowDialog() == DialogResult.OK)
-                {
-                    string filePath = openFileDialog1.FileName;
-                    string fileName = openFileDialog1.SafeFileName;
-                    openFileDialog1.Title = "Select File";
-
-                    // Add file to IPFS
-                    Task<string> addTask = Task.Run(() =>
-                    {
-                        Process process = new Process();
-                        process.StartInfo.FileName = @"ipfs\ipfs.exe";
-                        process.StartInfo.Arguments = "add \"" + filePath + "\"";
-                        process.StartInfo.UseShellExecute = false;
-                        process.StartInfo.RedirectStandardOutput = true;
-                        process.Start();
-                        string output = process.StandardOutput.ReadToEnd();
-                        process.WaitForExit();
-                        string hash = output.Split(' ')[1];
-                        return "IPFS:" + hash;
-                    });
-                    string ipfsHash = await addTask;
-
-
-                    // Update text box with IPFS hash
-                    txtURN.Text = ipfsHash + @"\" + fileName;
-                }
-
-
-            }
-
-
-            string extension = "";
-
-            try
-            {
-                extension = Path.GetExtension(urn).ToLower();
-                Root root = new Root();
-                Match urimatch = regexTransactionId.Match(txtURN.Text);
-                string transactionid = urimatch.Value;
-                switch (txtURN.Text.Substring(0, 4).ToUpper())
-                {
-                    case "MZC:":
-
-                        root = Root.GetRootByTransactionId(transactionid, "good-user", "better-password", @"http://127.0.0.1:12832", "50");
-                        try
-                        {
-                            lblURNBlockDate.Text = "mazacoin verified: " + root.BlockDate.ToString("ddd, dd MMM yyyy hh:mm:ss");
-                            btnObjectURN.BackColor = Color.Blue;
-                            btnObjectURN.ForeColor = Color.Yellow;
-                        }
-                        catch { }
-                        break;
-                    case "BTC:":
-
-                        root = Root.GetRootByTransactionId(transactionid, "good-user", "better-password", @"http://127.0.0.1:8332", "0");
-                        try
-                        {
-                            lblURNBlockDate.Text = "bitcoin verified: " + root.BlockDate.ToString("ddd, dd MMM yyyy hh:mm:ss");
-                            btnObjectURN.BackColor = Color.Blue;
-                            btnObjectURN.ForeColor = Color.Yellow;
-                        }
-                        catch { }
-                        break;
-                    case "LTC:":
-
-                        root = Root.GetRootByTransactionId(transactionid, "good-user", "better-password", @"http://127.0.0.1:9332", "48");
-                        try
-                        {
-                            lblURNBlockDate.Text = "litecoin verified: " + root.BlockDate.ToString("ddd, dd MMM yyyy hh:mm:ss");
-                            btnObjectURN.BackColor = Color.Blue;
-                            btnObjectURN.ForeColor = Color.Yellow;
-                        }
-                        catch { }
-                        break;
-                    case "DOG:":
-
-                        root = Root.GetRootByTransactionId(transactionid, "good-user", "better-password", @"http://127.0.0.1:22555", "30");
-
-                        try
-                        {
-                            lblURNBlockDate.Text = "dogecoin verified: " + root.BlockDate.ToString("ddd, dd MMM yyyy hh:mm:ss");
-                            btnObjectURN.BackColor = Color.Blue;
-                            btnObjectURN.ForeColor = Color.Yellow;
-                        }
-                        catch { }
-
-                        break;
-                    case "IPFS":
-                        if (txtURN.Text.Length == 51) { urn += @"\artifact"; }
-                        if (!System.IO.Directory.Exists(@"ipfs/" + txtURN.Text.Substring(5, 46) + "-build") && !System.IO.Directory.Exists(@"ipfs/" + txtURN.Text.Substring(5, 46)))
+                    case ".exe":
+                    case ".dll":
+                    case ".bat":
+                    case ".cmd":
+                    case ".com":
+                    case ".msi":
+                    case ".scr":
+                    case ".vbs":
+                    case ".wsf":
+                    case ".ps1":
+                    case ".psm1":
+                    case ".psd1":
+                    case ".reg":
+                    case ".hta":
+                    case ".jar":
+                    case ".jse":
+                    case ".lnk":
+                    case ".mht":
+                    case ".mhtml":
+                    case ".msc":
+                    case ".msp":
+                    case ".mst":
+                    case ".pif":
+                    case ".py":
+                    case ".pyc":
+                    case ".pyo":
+                    case ".pyw":
+                    case ".pyz":
+                    case ".pyzw":
+                    case ".sct":
+                    case ".shb":
+                    case ".u3p":
+                    case ".vb":
+                    case ".vbe":
+                    case ".vbscript":
+                    case ".ws":
+                    case ".xla":
+                    case ".xlam":
+                    case ".xls":
+                    case ".xlsb":
+                    case ".xlsm":
+                    case ".xlsx":
+                    case ".xltm":
+                    case ".xltx":
+                    case ".xml":
+                    case ".xsl":
+                    case ".xslt":
+                        pictureBox1.SuspendLayout();
+                        if (File.Exists(urn))
                         {
 
-
-                            Task ipfsTask = Task.Run(() =>
-                            {
-                                Directory.CreateDirectory(@"ipfs/" + txtURN.Text.Substring(5, 46) + "-build");
-                                Process process2 = new Process();
-                                process2.StartInfo.FileName = @"ipfs\ipfs.exe";
-                                process2.StartInfo.Arguments = "get " + txtURN.Text.Substring(5, 46) + @" -o ipfs\" + txtURN.Text.Substring(5, 46);
-                                process2.Start();
-                                process2.WaitForExit();
-
-                                if (System.IO.File.Exists("ipfs/" + txtURN.Text.Substring(5, 46)))
-                                {
-                                    try { System.IO.File.Move("ipfs/" + txtURN.Text.Substring(5, 46), "ipfs/" + txtURN.Text.Substring(5, 46) + "_tmp"); }
-                                    catch
-                                    {
-                                        System.IO.File.Delete("ipfs/" + txtURN.Text.Substring(5, 46) + "_tmp");
-                                        System.IO.File.Move("ipfs/" + txtURN.Text.Substring(5, 46), "ipfs/" + txtURN.Text.Substring(5, 46) + "_tmp");
-
-                                    }
-
-                                    string fileName = txtURN.Text.Replace(@"//", "").Replace(@"\\", "").Substring(51);
-                                    if (fileName == "")
-                                    {
-                                        fileName = "artifact";
-                                    }
-                                    else { fileName = fileName.Replace(@"/", "").Replace(@"\", ""); }
-                                    Directory.CreateDirectory(@"ipfs/" + txtURN.Text.Substring(5, 46));
-                                    try { System.IO.File.Move("ipfs/" + txtURN.Text.Substring(5, 46) + "_tmp", urn); } catch { }
-                                }
-
-                                var SUP = new Options { CreateIfMissing = true };
-
-                                using (var db = new DB(SUP, @"ipfs"))
-                                {
-
-                                    string ipfsdaemon = db.Get("ipfs-daemon");
-
-                                    if (ipfsdaemon == "true")
-                                    {
-                                        Process process3 = new Process
-                                        {
-                                            StartInfo = new ProcessStartInfo
-                                            {
-                                                FileName = @"ipfs\ipfs.exe",
-                                                Arguments = "pin add " + txtURN.Text.Substring(5, 46),
-                                                UseShellExecute = false,
-                                                CreateNoWindow = true
-                                            }
-                                        };
-                                        process3.Start();
-                                    }
-                                }
-
-                                try { Directory.Delete(@"ipfs/" + txtURN.Text.Substring(5, 46)); } catch { }
-                                try
-                                {
-                                    Directory.Delete(@"ipfs/" + txtURN.Text.Substring(5, 46) + "-build");
-                                }
-                                catch { }
-
-
-
-                            });
+                            pictureBox1.ImageLocation = urn;
                         }
                         else
                         {
-                            lblURNBlockDate.Text = "ipfs verified: " + System.DateTime.UtcNow.ToString("ddd, dd MMM yyyy hh:mm:ss");
-                            btnObjectURN.BackColor = Color.Blue;
-                            btnObjectURN.ForeColor = Color.Yellow;
+                            Random rnd = new Random();
+                            string[] gifFiles = Directory.GetFiles("includes", "*.gif");
+                            if (gifFiles.Length > 0)
+                            {
+                                int randomIndex = rnd.Next(gifFiles.Length);
+                                string randomGifFile = gifFiles[randomIndex];
+
+                                pictureBox1.ImageLocation = randomGifFile;
+
+                            }
+                            else
+                            {
+                                try
+                                {
+                                    pictureBox1.ImageLocation = @"includes\HugPuddle.jpg";
+                                }
+                                catch { }
+                            }
+
+
                         }
+                        pictureBox1.ResumeLayout();
+
                         break;
+
+                    case ".glb":
+                    case ".fbx":
+                        //Show image in main box and show open file button
+                        pictureBox1.SuspendLayout();
+                        if (File.Exists(urn))
+                        {
+
+                            pictureBox1.ImageLocation = pictureBox2.ImageLocation;
+                        }
+                        else
+                        {
+                            Random rnd = new Random();
+                            string[] gifFiles = Directory.GetFiles("includes", "*.gif");
+                            if (gifFiles.Length > 0)
+                            {
+                                int randomIndex = rnd.Next(gifFiles.Length);
+                                string randomGifFile = gifFiles[randomIndex];
+
+                                pictureBox1.ImageLocation = randomGifFile;
+
+                            }
+                            else
+                            {
+                                try
+                                {
+                                    pictureBox1.ImageLocation = @"includes\HugPuddle.jpg";
+                                }
+                                catch { }
+                            }
+
+
+                        }
+                        pictureBox1.ResumeLayout();
+
+                        break;
+                    case ".bmp":
+                    case ".gif":
+                    case ".ico":
+                    case ".jpeg":
+                    case ".jpg":
+                    case ".png":
+                    case ".tif":
+                    case ".tiff":
+                        // Create a new PictureBox
+                        pictureBox1.SuspendLayout();
+                        if (File.Exists(urn))
+                        {
+
+                            pictureBox1.ImageLocation = urn;
+                        }
+                        else
+                        {
+                            Random rnd = new Random();
+                            string[] gifFiles = Directory.GetFiles("includes", "*.gif");
+                            if (gifFiles.Length > 0)
+                            {
+                                int randomIndex = rnd.Next(gifFiles.Length);
+                                string randomGifFile = gifFiles[randomIndex];
+
+                                pictureBox1.ImageLocation = randomGifFile;
+
+                            }
+                            else
+                            {
+                                try
+                                {
+                                    pictureBox1.ImageLocation = @"includes\HugPuddle.jpg";
+                                }
+                                catch { }
+                            }
+
+
+                        }
+                        pictureBox1.ResumeLayout();
+
+
+                        break;
+                    case ".htm":
+                    case ".html":
+
+                        string potentialyUnsafeHtml = "";
+                        try { potentialyUnsafeHtml = System.IO.File.ReadAllText(urn); } catch { }
+
+                        var matches = regexTransactionId.Matches(potentialyUnsafeHtml);
+                        foreach (Match transactionID in matches)
+                        {
+
+                            switch (txtURN.Text.Substring(0, 4))
+                            {
+                                case "MZC:":
+                                    if (!System.IO.Directory.Exists(@"root/" + transactionID.Value))
+                                    {
+                                        Task.Run(() =>
+                                        {
+                                            Root.GetRootByTransactionId(transactionID.Value, "good-user", "better-password", @"http://127.0.0.1:12832", "50");
+                                        });
+                                    }
+                                    break;
+                                case "BTC:":
+                                    if (!System.IO.Directory.Exists(@"root/" + transactionID.Value))
+                                    {
+                                        Task.Run(() =>
+                                        {
+                                            Root.GetRootByTransactionId(transactionID.Value, "good-user", "better-password", @"http://127.0.0.1:8332", "0");
+                                        });
+                                    }
+                                    break;
+                                case "LTC:":
+                                    if (!System.IO.Directory.Exists(@"root/" + transactionID.Value))
+                                    {
+                                        Task.Run(() =>
+                                        {
+                                            Root.GetRootByTransactionId(transactionID.Value, "good-user", "better-password", @"http://127.0.0.1:9332", "48");
+                                        });
+                                    }
+                                    break;
+                                case "DOG:":
+                                    if (!System.IO.Directory.Exists(@"root/" + transactionID.Value))
+                                    {
+                                        Task.Run(() =>
+                                        {
+                                            Root.GetRootByTransactionId(transactionID.Value, "good-user", "better-password", @"http://127.0.0.1:22555", "30");
+                                        });
+                                    }
+                                    break;
+                                default:
+                                    if (!System.IO.Directory.Exists(@"root/" + transactionID.Value))
+                                    {
+                                        Task.Run(() =>
+                                        {
+                                            Root.GetRootByTransactionId(transactionID.Value, "good-user", "better-password", @"http://127.0.0.1:18332");
+                                        });
+                                    }
+                                    break;
+                            }
+
+                        }
+
+                        string _address = txtObjectAddress.Text;
+                        string _viewer = null;
+                        string _viewername = null; //to be implemented
+                        string _creator = null;
+                        int _owner = 0;
+                        string _urn = HttpUtility.UrlEncode(txtURN.Text);
+                        string _uri = HttpUtility.UrlEncode(txtURI.Text);
+                        string _img = HttpUtility.UrlEncode(txtIMG.Text);
+
+                        if (flowOwners.Controls.Count > 0)
+                        {
+                            _viewer = flowOwners.Controls[0].Text.Split(':')[0];
+                            _owner = flowOwners.Controls.Count;
+                        }
+
+                        if (flowCreators.Controls.Count > 0)
+                        {
+                            _creator = flowCreators.Controls[0].Text;
+                        }
+
+                        string querystring = "?address=" + _address + "&viewer=" + _viewer + "&viewername=" + _viewername + "&creator=" + _creator + "&owner=" + _owner + "&urn=" + _urn + "&uri=" + _uri + "&img=" + _img;
+                        string htmlstring = "<html><body><embed src=\"" + urn + querystring + "\" width=100% height=100%></body></html>";
+                        string viewerPath = Path.GetDirectoryName(urn) + @"\urnviewer.html";
+                        webviewer.Visible = true;
+
+                        try
+                        {
+                            System.IO.File.WriteAllText(Path.GetDirectoryName(urn) + @"\urnviewer.html", htmlstring);
+                            await webviewer.EnsureCoreWebView2Async();
+                            webviewer.CoreWebView2.Navigate(viewerPath);
+                        }
+                        catch
+                        {
+                            Thread.Sleep(1000);
+                            await webviewer.EnsureCoreWebView2Async();
+                            webviewer.CoreWebView2.Navigate(viewerPath);
+                        }
+
+                        break;
+                    case ".mp4":
+                    case ".avi":
+                    case ".mp3":
+                    case ".wav":
+                    case ".pdf":
+                        webviewer.Visible = true;
+                        string viewerPath2 = Path.GetDirectoryName(urn) + @"\urnviewer.html";
+                        string htmlstring2 = "<html><body><embed src=\"" + urn + "\" width=100% height=100%></body></html>";
+
+                        try
+                        {
+                            System.IO.File.WriteAllText(Path.GetDirectoryName(urn) + @"\urnviewer.html", htmlstring2);
+                            await webviewer.EnsureCoreWebView2Async();
+                            webviewer.CoreWebView2.Navigate(viewerPath2);
+                        }
+                        catch
+                        {
+                            Thread.Sleep(1000);
+                            await webviewer.EnsureCoreWebView2Async();
+                            webviewer.CoreWebView2.Navigate(viewerPath2);
+                        }
+
+
+                        break;
+
                     default:
 
-                        root = Root.GetRootByTransactionId(transactionid, "good-user", "better-password", @"http://127.0.0.1:18332");
-                        if (transactionid != "")
+                        pictureBox1.SuspendLayout();
+                        if (File.Exists(urn))
                         {
-                            if (Directory.Exists(@"root\" + transactionid))
+
+                            pictureBox1.ImageLocation = pictureBox2.ImageLocation;
+                        }
+                        else
+                        {
+                            Random rnd = new Random();
+                            string[] gifFiles = Directory.GetFiles("includes", "*.gif");
+                            if (gifFiles.Length > 0)
+                            {
+                                int randomIndex = rnd.Next(gifFiles.Length);
+                                string randomGifFile = gifFiles[randomIndex];
+
+                                pictureBox1.ImageLocation = randomGifFile;
+
+                            }
+                            else
                             {
                                 try
                                 {
-
-                                    lblURNBlockDate.Text = "bitcoin-t verified: " + root.BlockDate.ToString("ddd, dd MMM yyyy hh:mm:ss");
-                                    btnObjectURN.BackColor = Color.Blue;
-                                    btnObjectURN.ForeColor = Color.Yellow;
+                                    pictureBox1.ImageLocation = @"includes\HugPuddle.jpg";
                                 }
                                 catch { }
                             }
+
+
                         }
-                        else
-                        {
-                            lblASCIIURN.Text = txtURN.Text;
-                            lblASCIIURN.Visible = true;
-                            btnObjectURN.BackColor = Color.Blue;
-                            btnObjectURN.ForeColor = Color.Yellow;
-                        }
+                        pictureBox1.ResumeLayout();
 
                         break;
                 }
-
-                if (lblURNBlockDate.Text.Contains("Mon, 01 Jan 0001 12:00:00"))
-                {
-                    btnObjectURN.BackColor = Color.Blue;
-                    btnObjectURN.ForeColor = Color.Black;
-                    lblURNBlockDate.Text = "[ unable to verify ]";
-                }
-
-
             }
-            catch { }
-
-            switch (extension.ToLower())
-            {
-                case ".exe":
-                case ".dll":
-                case ".bat":
-                case ".cmd":
-                case ".com":
-                case ".msi":
-                case ".scr":
-                case ".vbs":
-                case ".wsf":
-                case ".ps1":
-                case ".psm1":
-                case ".psd1":
-                case ".reg":
-                case ".hta":
-                case ".jar":
-                case ".jse":
-                case ".lnk":
-                case ".mht":
-                case ".mhtml":
-                case ".msc":
-                case ".msp":
-                case ".mst":
-                case ".pif":
-                case ".py":
-                case ".pyc":
-                case ".pyo":
-                case ".pyw":
-                case ".pyz":
-                case ".pyzw":
-                case ".sct":
-                case ".shb":
-                case ".u3p":
-                case ".vb":
-                case ".vbe":
-                case ".vbscript":
-                case ".ws":
-                case ".xla":
-                case ".xlam":
-                case ".xls":
-                case ".xlsb":
-                case ".xlsm":
-                case ".xlsx":
-                case ".xltm":
-                case ".xltx":
-                case ".xml":
-                case ".xsl":
-                case ".xslt":
-                    pictureBox1.SuspendLayout();
-                    if (File.Exists(urn))
-                    {
-
-                        pictureBox1.ImageLocation = urn;
-                    }
-                    else
-                    {
-                        Random rnd = new Random();
-                        string[] gifFiles = Directory.GetFiles("includes", "*.gif");
-                        if (gifFiles.Length > 0)
-                        {
-                            int randomIndex = rnd.Next(gifFiles.Length);
-                            string randomGifFile = gifFiles[randomIndex];
-
-                            pictureBox1.ImageLocation = randomGifFile;
-
-                        }
-                        else
-                        {
-                            try
-                            {
-                                pictureBox1.ImageLocation = @"includes\HugPuddle.jpg";
-                            }
-                            catch { }
-                        }
-
-
-                    }
-                    pictureBox1.ResumeLayout();
-
-                    break;
-
-                case ".glb":
-                case ".fbx":
-                    //Show image in main box and show open file button
-                    pictureBox1.SuspendLayout();
-                    if (File.Exists(urn))
-                    {
-
-                        pictureBox1.ImageLocation = pictureBox2.ImageLocation;
-                    }
-                    else
-                    {
-                        Random rnd = new Random();
-                        string[] gifFiles = Directory.GetFiles("includes", "*.gif");
-                        if (gifFiles.Length > 0)
-                        {
-                            int randomIndex = rnd.Next(gifFiles.Length);
-                            string randomGifFile = gifFiles[randomIndex];
-
-                            pictureBox1.ImageLocation = randomGifFile;
-
-                        }
-                        else
-                        {
-                            try
-                            {
-                                pictureBox1.ImageLocation = @"includes\HugPuddle.jpg";
-                            }
-                            catch { }
-                        }
-
-
-                    }
-                    pictureBox1.ResumeLayout();
-
-                    break;
-                case ".bmp":
-                case ".gif":
-                case ".ico":
-                case ".jpeg":
-                case ".jpg":
-                case ".png":
-                case ".tif":
-                case ".tiff":
-                    // Create a new PictureBox
-                    pictureBox1.SuspendLayout();
-                    if (File.Exists(urn))
-                    {
-
-                        pictureBox1.ImageLocation = urn;
-                    }
-                    else
-                    {
-                        Random rnd = new Random();
-                        string[] gifFiles = Directory.GetFiles("includes", "*.gif");
-                        if (gifFiles.Length > 0)
-                        {
-                            int randomIndex = rnd.Next(gifFiles.Length);
-                            string randomGifFile = gifFiles[randomIndex];
-
-                            pictureBox1.ImageLocation = randomGifFile;
-
-                        }
-                        else
-                        {
-                            try
-                            {
-                                pictureBox1.ImageLocation = @"includes\HugPuddle.jpg";
-                            }
-                            catch { }
-                        }
-
-
-                    }
-                    pictureBox1.ResumeLayout();
-
-
-                    break;
-                case ".htm":
-                case ".html":
-
-                    string potentialyUnsafeHtml = "";
-                    try { potentialyUnsafeHtml = System.IO.File.ReadAllText(urn); } catch { }
-
-                    var matches = regexTransactionId.Matches(potentialyUnsafeHtml);
-                    foreach (Match transactionID in matches)
-                    {
-
-                        switch (txtURN.Text.Substring(0, 4))
-                        {
-                            case "MZC:":
-                                if (!System.IO.Directory.Exists(@"root/" + transactionID.Value))
-                                {
-                                    Task.Run(() =>
-                                    {
-                                        Root.GetRootByTransactionId(transactionID.Value, "good-user", "better-password", @"http://127.0.0.1:12832", "50");
-                                    });
-                                }
-                                break;
-                            case "BTC:":
-                                if (!System.IO.Directory.Exists(@"root/" + transactionID.Value))
-                                {
-                                    Task.Run(() =>
-                                    {
-                                        Root.GetRootByTransactionId(transactionID.Value, "good-user", "better-password", @"http://127.0.0.1:8332", "0");
-                                    });
-                                }
-                                break;
-                            case "LTC:":
-                                if (!System.IO.Directory.Exists(@"root/" + transactionID.Value))
-                                {
-                                    Task.Run(() =>
-                                    {
-                                        Root.GetRootByTransactionId(transactionID.Value, "good-user", "better-password", @"http://127.0.0.1:9332", "48");
-                                    });
-                                }
-                                break;
-                            case "DOG:":
-                                if (!System.IO.Directory.Exists(@"root/" + transactionID.Value))
-                                {
-                                    Task.Run(() =>
-                                    {
-                                        Root.GetRootByTransactionId(transactionID.Value, "good-user", "better-password", @"http://127.0.0.1:22555", "30");
-                                    });
-                                }
-                                break;
-                            default:
-                                if (!System.IO.Directory.Exists(@"root/" + transactionID.Value))
-                                {
-                                    Task.Run(() =>
-                                    {
-                                        Root.GetRootByTransactionId(transactionID.Value, "good-user", "better-password", @"http://127.0.0.1:18332");
-                                    });
-                                }
-                                break;
-                        }
-
-                    }
-
-                    string _address = txtObjectAddress.Text;
-                    string _viewer = null;
-                    string _viewername = null; //to be implemented
-                    string _creator = null;
-                    int _owner = 0;
-                    string _urn = HttpUtility.UrlEncode(txtURN.Text);
-                    string _uri = HttpUtility.UrlEncode(txtURI.Text);
-                    string _img = HttpUtility.UrlEncode(txtIMG.Text);
-
-                    if (flowOwners.Controls.Count > 0)
-                    {
-                        _viewer = flowOwners.Controls[0].Text.Split(':')[0];
-                        _owner = flowOwners.Controls.Count;
-                    }
-
-                    if (flowCreators.Controls.Count > 0)
-                    {
-                        _creator = flowCreators.Controls[0].Text;
-                    }
-
-                    string querystring = "?address=" + _address + "&viewer=" + _viewer + "&viewername=" + _viewername + "&creator=" + _creator + "&owner=" + _owner + "&urn=" + _urn + "&uri=" + _uri + "&img=" + _img;
-                    string htmlstring = "<html><body><embed src=\"" + urn + querystring + "\" width=100% height=100%></body></html>";
-                    string viewerPath = Path.GetDirectoryName(urn) + @"\urnviewer.html";
-                    webviewer.Visible = true;
-
-                    try
-                    {
-                        System.IO.File.WriteAllText(Path.GetDirectoryName(urn) + @"\urnviewer.html", htmlstring);
-                        await webviewer.EnsureCoreWebView2Async();
-                        webviewer.CoreWebView2.Navigate(viewerPath);
-                    }
-                    catch
-                    {
-                        Thread.Sleep(1000);
-                        await webviewer.EnsureCoreWebView2Async();
-                        webviewer.CoreWebView2.Navigate(viewerPath);
-                    }
-
-                    break;
-                case ".mp4":
-                case ".avi":
-                case ".mp3":
-                case ".wav":
-                case ".pdf":
-                    webviewer.Visible = true;
-                    string viewerPath2 = Path.GetDirectoryName(urn) + @"\urnviewer.html";
-                    string htmlstring2 = "<html><body><embed src=\"" + urn + "\" width=100% height=100%></body></html>";
-
-                    try
-                    {
-                        System.IO.File.WriteAllText(Path.GetDirectoryName(urn) + @"\urnviewer.html", htmlstring2);
-                        await webviewer.EnsureCoreWebView2Async();
-                        webviewer.CoreWebView2.Navigate(viewerPath2);
-                    }
-                    catch
-                    {
-                        Thread.Sleep(1000);
-                        await webviewer.EnsureCoreWebView2Async();
-                        webviewer.CoreWebView2.Navigate(viewerPath2);
-                    }
-
-
-                    break;
-
-                default:
-
-                    pictureBox1.SuspendLayout();
-                    if (File.Exists(urn))
-                    {
-
-                        pictureBox1.ImageLocation = pictureBox2.ImageLocation;
-                    }
-                    else
-                    {
-                        Random rnd = new Random();
-                        string[] gifFiles = Directory.GetFiles("includes", "*.gif");
-                        if (gifFiles.Length > 0)
-                        {
-                            int randomIndex = rnd.Next(gifFiles.Length);
-                            string randomGifFile = gifFiles[randomIndex];
-
-                            pictureBox1.ImageLocation = randomGifFile;
-
-                        }
-                        else
-                        {
-                            try
-                            {
-                                pictureBox1.ImageLocation = @"includes\HugPuddle.jpg";
-                            }
-                            catch { }
-                        }
-
-
-                    }
-                    pictureBox1.ResumeLayout();
-
-                    break;
-            }
-
+            UpdateRemainingChars();
 
         }
 
         private void btnObjectURI_Click(object sender, EventArgs e)
         {
-            UpdateRemainingChars();
-            if (txtURI.Text != "")
+            if (btnObjectURI.BackColor == Color.Blue) { btnObjectURI.BackColor = Color.White; btnObjectURI.ForeColor = Color.Black; }
+            else
             {
-                btnObjectURI.ForeColor = Color.Yellow;
-                btnObjectURI.BackColor = Color.Blue;
-
-                string src = txtURI.Text;
-                try
-                { System.Diagnostics.Process.Start(src); }
-                catch { System.Media.SystemSounds.Exclamation.Play(); }
+                if (txtTitle.Text != "") { btnObjectURI.BackColor = Color.Blue; btnObjectURI.ForeColor = Color.Yellow; } else { btnObjectURI.BackColor = Color.White; btnObjectURI.ForeColor = Color.Black; }
             }
+            UpdateRemainingChars();
         }
         //GPT3
         private void btnObjectAttributes_Click(object sender, EventArgs e)
         {
-            UpdateRemainingChars();
+
 
             using (var dialog = new Form())
             {
@@ -1426,12 +1605,13 @@ namespace SUP
                     flowAttribute.Controls.Add(button);
                 }
             }
+            UpdateRemainingChars();
         }
 
         //GPT3
         private void btnObjectKeywords_Click(object sender, EventArgs e)
         {
-            UpdateRemainingChars();
+
             using (var dialog = new Form())
             {
                 dialog.Text = String.Empty;
@@ -1516,12 +1696,13 @@ namespace SUP
                     flowKeywords.Controls.Add(button);
                 }
             }
+            UpdateRemainingChars();
         }
 
         //GPT3
         private void btnObjectCreators_Click(object sender, EventArgs e)
         {
-            UpdateRemainingChars();
+
             using (var dialog = new Form())
             {
                 dialog.Text = String.Empty;
@@ -1607,12 +1788,13 @@ namespace SUP
                     flowCreators.Controls.Add(button);
                 }
             }
+            UpdateRemainingChars();
         }
 
         //GPT3
         private void btnObjectOwners_Click(object sender, EventArgs e)
         {
-            UpdateRemainingChars();
+
             using (var dialog = new Form())
             {
                 dialog.Text = String.Empty;
@@ -1721,6 +1903,7 @@ namespace SUP
                     }
                 }
             }
+            UpdateRemainingChars();
         }
 
         private void qtyTextBox_KeyPress(object sender, KeyPressEventArgs e)
@@ -1773,6 +1956,8 @@ namespace SUP
             {
                 btnObjectOwners.BackColor = Color.White;
                 btnObjectOwners.ForeColor = Color.Black;
+                lblASCIIURN.Visible = true;
+
             }
             UpdateRemainingChars();
         }
@@ -1790,30 +1975,61 @@ namespace SUP
 
         private void btnMint_Click(object sender, EventArgs e)
         {
+
+            try
+            {
+
+                using (Bitmap qrCode = GenerateQRCode(txtAddressListJSON.Text))
+                {
+                    if (qrCode != null)
+                    {
+
+                        Directory.CreateDirectory(@"root\" + txtObjectAddress.Text);
+                        qrCode.Save(@"root\" + txtObjectAddress.Text + @"\OBJPrint.png", ImageFormat.Png);
+
+                    }
+                }
+            }
+            catch { }
+
+            pictureBox1.ImageLocation = @"root\" + txtObjectAddress.Text + @"\OBJPrint.png";
+            ismint = true;
             UpdateRemainingChars();
-            NetworkCredential credentials = new NetworkCredential("good-user", "better-password");
-            RPCClient rpcClient = new RPCClient(credentials, new Uri("http://127.0.0.1:18332"), Network.Main);
 
+            OBJState OBJ = OBJState.GetObjectByAddress(txtObjectAddress.Text, "good-user", "better-password", @"http://127.0.0.1:18332");
 
-            System.Security.Cryptography.SHA256 mySHA256 = SHA256Managed.Create();
-            byte[] hashValue = mySHA256.ComputeHash(Encoding.UTF8.GetBytes(txtOBJJSON.Text));
-            string signatureAddress;
-
-            if (flowCreators.Controls.Count > 0)
-            { signatureAddress = flowCreators.Controls[0].Text; }
-            else { signatureAddress = txtObjectAddress.Text; }
-
-            string signature = rpcClient.SendCommand("signmessage", signatureAddress, BitConverter.ToString(hashValue).Replace("-", String.Empty)).ResultString;
-            txtAddressListJSON.Text = signature;
-
-
+            if (OBJ.URN != null)
+            {
+                lblObjectStatus.Text = "created:[" + OBJ.CreatedDate.ToString("MM/dd/yyyy hh:mm:ss") + "]  locked:[" + OBJ.LockedDate.ToString("MM/dd/yyyy hh:mm:ss") + "]  last seen:[" + OBJ.ChangeDate.ToString("MM/dd/yyyy hh:mm:ss") + "]";
+                lblObjectStatus.Text = lblObjectStatus.Text.Replace("Monday, January 1, 0001", " unconfirmed ");
+               
+            }
         }
 
-        private void btnPrint_Click(object sender, EventArgs e)
+        private async void btnPrint_Click(object sender, EventArgs e)
         {
             UpdateRemainingChars();
 
+            try
+            {
+                using (Bitmap qrCode = GenerateQRCode(txtAddressListJSON.Text))
+                {
+                    if (qrCode != null)
+                    {
+                        Directory.CreateDirectory(@"root\" + txtObjectAddress.Text);
+                        qrCode.Save(@"root\" + txtObjectAddress.Text + @"\OBJPrint.png", ImageFormat.Png);
+                        pictureBox1.LoadCompleted += PictureBox_LoadCompleted;
+                        pictureBox1.ImageLocation = @"root\" + txtObjectAddress.Text + @"\OBJPrint.png";
+                    }
+                }
+            }
+            catch { }
+        }
+
+        private void PictureBox_LoadCompleted(object sender, EventArgs e)
+        {
             lblRemainingChars.Visible = false;
+            pictureBox1.Refresh();
             System.Drawing.Bitmap bitmap = new Bitmap(this.Width - 22, this.Height - 44);
             Graphics graphics = Graphics.FromImage(bitmap);
             graphics.CopyFromScreen(this.PointToScreen(new Point(0, 0)), new Point(0, 0), this.Size);
@@ -1821,6 +2037,8 @@ namespace SUP
             PrintImage(bitmap);
             lblRemainingChars.Visible = true;
 
+            // unsubscribe from LoadCompleted event
+            pictureBox1.LoadCompleted -= PictureBox_LoadCompleted;
         }
 
         private void radioButton4_CheckedChanged(object sender, EventArgs e)
@@ -1937,196 +2155,10 @@ namespace SUP
             searchButton.Click += new EventHandler((searchSender, searchE) =>
             {
                 // Perform the search function here
-                string address = addressTextBox.Text;
-                OBJState foundObject = OBJState.GetObjectByAddress(address, "good-user", "better-password", "http://127.0.0.1:18332");
-                if (foundObject.URN != null)
-                {
-                    lblObjectStatus.Text = "created:[" + foundObject.CreatedDate.ToLongDateString() + "]  locked:[" + foundObject.LockedDate.ToLongDateString() + "]  last seen:[" + foundObject.ChangeDate.ToLongDateString() + "]";
-                    txtTitle.Text = foundObject.Name;
-                    txtIMG.Text = foundObject.Image;
-                    txtURN.Text = foundObject.URN;
-                    txtURI.Text = foundObject.URI;
-                    txtObjectAddress.Text = address;
-                    txtDescription.Text = foundObject.Description;
-                    try { txtMaximum.Text = foundObject.Maximum.ToString(); } catch { txtMaximum.Text = ""; }
-
-                    flowAttribute.Controls.Clear();
-
-                    try
-                    {
-                        // Iterate through all attributes of foundObject and create a button for each
-                        foreach (var attrib in foundObject.Attributes)
-                        {
-                            // Create a new button with the attribute key and value separated by ':'
-                            Button attribButton = new Button();
-                            attribButton.AutoSize = true;
-                            attribButton.Text = attrib.Key + ":" + attrib.Value;
-
-                            // Add an event handler to the button that removes it from the flowAttribute panel when clicked
-                            attribButton.Click += new EventHandler((sender2, e2) =>
-                            {
-                                flowAttribute.Controls.Remove(attribButton);
-                            });
-
-                            // Add the button to the flowAttribute panel
-                            flowAttribute.Controls.Add(attribButton);
-                        }
-
-                    }
-                    catch { }
-
-                    // Clear any existing buttons from the flowKeywords panel
-                    flowKeywords.Controls.Clear();
-
-                   List<string> keywords = new List<string>();
-                    keywords = OBJState.GetKeywordsByAddress(address, "good-user", "better-password", "http://127.0.0.1:18332");
-
-                    // Iterate through all attributes of foundObject and create a button for each
-                    foreach (string attrib in keywords)
-                    {
-                        // Create a new button with the attribute key and value separated by ':'
-                        Button attribButton = new Button();
-                        attribButton.AutoSize = true;
-                        attribButton.Text = attrib;
-
-                        // Add an event handler to the button that removes it from the flowKeywords panel when clicked
-                        attribButton.Click += new EventHandler((sender2, e2) =>
-                        {
-                            flowKeywords.Controls.Remove(attribButton);
-                        });
-
-                        // Add an event handler to the button that opens the ObjectBrowser form with the button text
-                        attribButton.MouseDown += new MouseEventHandler((sender2, e2) =>
-                        {
-                            if (e2.Button == MouseButtons.Right)
-                            {
-                                ObjectBrowser objectBrowserForm = new ObjectBrowser("#" + attribButton.Text);
-                                objectBrowserForm.Show();
-                            }
-                        });
-
-                        // Add the button to the flowKeywords panel
-                        flowKeywords.Controls.Add(attribButton);
-                    }
+                LoadFormByAddress(addressTextBox.Text);
 
 
-                    // Clear any existing buttons from the flowCreators panel
-                    flowCreators.Controls.Clear();
-
-                    // Iterate through all attributes of foundObject and create a button for each
-                    foreach (KeyValuePair<string, DateTime> attrib in foundObject.Creators)
-                    {
-                        // Create a new button with the attribute key and value separated by ':'
-                        Button attribButton = new Button();
-                        attribButton.AutoSize= true;
-                        attribButton.Text = attrib.Key;
-
-                        // Add an event handler to the button that removes it from the flowCreators panel when clicked
-                        attribButton.Click += new EventHandler((sender2, e2) =>
-                        {
-                            flowCreators.Controls.Remove(attribButton);
-                        });
-
-                        // Add an event handler to the button that opens the ObjectBrowser form on right click if the value is not an int
-                        attribButton.MouseUp += new MouseEventHandler((sender2, e2) =>
-                        {
-                            if (e2.Button == MouseButtons.Right && !int.TryParse(attrib.Value.ToString(), out _))
-                            {
-                                ObjectBrowser form = new ObjectBrowser(attribButton.Text);
-                                form.Show();
-                            }
-                            else if (e2.Button == MouseButtons.Left)
-                            {
-                                flowCreators.Controls.Remove(attribButton);
-                            }
-                        });
-
-                        // Add the button to the flowCreators panel
-                        flowCreators.Controls.Add(attribButton);
-                    }
-
-
-
-
-
-                    flowOwners.Controls.Clear();
-
-                    try
-                    {
-                        // Iterate through all attributes of foundObject and create a button for each
-                        foreach (KeyValuePair<string, long> attrib in foundObject.Owners)
-                        {
-                            // Split the key and value and create a new button with the attribute key and value separated by ':'
-                            string buttonText = attrib.Key + ":" + attrib.Value.ToString();
-                            Button attribButton = new Button();
-                            attribButton.AutoSize= true;
-                            attribButton.Text = buttonText;
-
-                            // Add an event handler to the button that removes it from the flowAttribute panel when clicked
-                            attribButton.Click += new EventHandler((sender2, e2) =>
-                            {
-                                flowOwners.Controls.Remove(attribButton);
-                            });
-
-                            // Add an event handler to the button that opens the ObjectBrowser form on right click using the key value
-                            attribButton.MouseUp += new MouseEventHandler((sender2, e2) =>
-                            {
-                                if (e2.Button == MouseButtons.Right)
-                                {
-                                    string[] keyValuePair = attribButton.Text.Split(':');
-                                    string key = keyValuePair[0].Trim();
-                                    ObjectBrowser form = new ObjectBrowser(key);
-                                    form.Show();
-                                }
-                                else if (e2.Button == MouseButtons.Left)
-                                {
-                                    flowOwners.Controls.Remove(attribButton);
-                                }
-                            });
-
-                            // Add the button to the flowOwners panel
-                            flowOwners.Controls.Add(attribButton);
-                        }
-
-                    }
-                    catch { }
-
-                    if (foundObject.License != null)
-                    {
-                        // If the license field is not null, check the radio button in the panel based on the text passed
-                        string licenseText = foundObject.License;
-
-                        // Assuming you have a panel named "paneLicense" and a group of radio buttons inside it
-                        RadioButton rb = PanelLicense.Controls.OfType<RadioButton>().FirstOrDefault(x => x.Text == licenseText);
-
-                        if (rb != null)
-                        {
-                            rb.Checked = true;
-                        }
-                        else
-                        {
-                            // If the license text doesn't match any of the radio buttons, do nothing
-                        }
-                    }
-                    else
-                    {
-                        // If the license field is null, check the radio button in the panel with the text "All Rights Reserved"
-                        RadioButton rb = PanelLicense.Controls.OfType<RadioButton>().FirstOrDefault(x => x.Text == "No License / All Rights Reserved");
-
-                        if (rb != null)
-                        {
-                            rb.Checked = true;
-                        }
-                        else
-                        {
-                            // If there is no radio button with the text "All Rights Reserved", do nothing
-                        }
-                    }
-                }
-
-
-
-                addressForm.Close(); 
+                addressForm.Close();
                 // ...
             }); addressForm.Controls.Add(searchButton);
 
@@ -2136,10 +2168,216 @@ namespace SUP
 
             // Show the dialog and set focus to the address text box
             addressForm.ShowDialog();
-          
+
             btnObjectImage.PerformClick();
             btnObjectURN.PerformClick();
         }
 
+        public void LoadFormByAddress(string address)
+        {
+
+            OBJState foundObject = OBJState.GetObjectByAddress(address, "good-user", "better-password", "http://127.0.0.1:18332");
+            if (foundObject.URN != null)
+            {
+                lblObjectStatus.Text = "created:[" + foundObject.CreatedDate.ToString("MM/dd/yyyy hh:mm:ss") + "]  locked:[" + foundObject.LockedDate.ToString("MM/dd/yyyy hh:mm:ss") + "]  last seen:[" + foundObject.ChangeDate.ToString("MM/dd/yyyy hh:mm:ss") + "]";
+
+
+                if (lblObjectStatus.Text.Contains("Monday, January 1, 0001"))
+                {
+                    lblObjectStatus.Text = lblObjectStatus.Text.Replace("Monday, January 1, 0001", " unconfirmed ");
+                    NetworkCredential credentials = new NetworkCredential("good-user", "better-password");
+                    RPCClient rpcClient = new RPCClient(credentials, new Uri("http://127.0.0.1:18332"), Network.Main);
+                    string accountName = "";
+                    try { accountName = rpcClient.SendCommand("getaccount", address).ResultString; } catch { }
+                    if (accountName != "") { btnEdit.Enabled = true; btnMint.Enabled = false; }
+                }
+                else { btnEdit.Enabled = false; }
+
+
+                txtTitle.Text = foundObject.Name;
+                txtIMG.Text = foundObject.Image;
+                txtURN.Text = foundObject.URN;
+                txtURI.Text = foundObject.URI;
+                txtObjectAddress.Text = address;
+                txtDescription.Text = foundObject.Description;
+                try { txtMaximum.Text = foundObject.Maximum.ToString(); } catch { txtMaximum.Text = ""; }
+
+                flowAttribute.Controls.Clear();
+
+                try
+                {
+                    // Iterate through all attributes of foundObject and create a button for each
+                    foreach (var attrib in foundObject.Attributes)
+                    {
+                        // Create a new button with the attribute key and value separated by ':'
+                        Button attribButton = new Button();
+                        attribButton.AutoSize = true;
+                        attribButton.Text = attrib.Key + ":" + attrib.Value;
+
+                        // Add an event handler to the button that removes it from the flowAttribute panel when clicked
+                        attribButton.Click += new EventHandler((sender2, e2) =>
+                        {
+                            flowAttribute.Controls.Remove(attribButton);
+                        });
+
+                        // Add the button to the flowAttribute panel
+                        flowAttribute.Controls.Add(attribButton);
+                    }
+
+                }
+                catch { }
+
+                // Clear any existing buttons from the flowKeywords panel
+                flowKeywords.Controls.Clear();
+
+                List<string> keywords = new List<string>();
+                keywords = OBJState.GetKeywordsByAddress(address, "good-user", "better-password", "http://127.0.0.1:18332");
+
+                // Iterate through all attributes of foundObject and create a button for each
+                foreach (string attrib in keywords)
+                {
+                    // Create a new button with the attribute key and value separated by ':'
+                    Button attribButton = new Button();
+                    attribButton.AutoSize = true;
+                    attribButton.Text = attrib;
+
+                    // Add an event handler to the button that removes it from the flowKeywords panel when clicked
+                    attribButton.Click += new EventHandler((sender2, e2) =>
+                    {
+                        flowKeywords.Controls.Remove(attribButton);
+                    });
+
+                    // Add an event handler to the button that opens the ObjectBrowser form with the button text
+                    attribButton.MouseDown += new MouseEventHandler((sender2, e2) =>
+                    {
+                        if (e2.Button == MouseButtons.Right)
+                        {
+                            ObjectBrowser objectBrowserForm = new ObjectBrowser("#" + attribButton.Text);
+                            objectBrowserForm.Show();
+                        }
+                    });
+
+                    // Add the button to the flowKeywords panel
+                    flowKeywords.Controls.Add(attribButton);
+                }
+
+
+                // Clear any existing buttons from the flowCreators panel
+                flowCreators.Controls.Clear();
+
+                // Iterate through all attributes of foundObject and create a button for each
+                foreach (KeyValuePair<string, DateTime> attrib in foundObject.Creators)
+                {
+                    // Create a new button with the attribute key and value separated by ':'
+                    Button attribButton = new Button();
+                    attribButton.AutoSize = true;
+                    attribButton.Text = attrib.Key;
+
+                    // Add an event handler to the button that removes it from the flowCreators panel when clicked
+                    attribButton.Click += new EventHandler((sender2, e2) =>
+                    {
+                        flowCreators.Controls.Remove(attribButton);
+                    });
+
+                    // Add an event handler to the button that opens the ObjectBrowser form on right click if the value is not an int
+                    attribButton.MouseUp += new MouseEventHandler((sender2, e2) =>
+                    {
+                        if (e2.Button == MouseButtons.Right && !int.TryParse(attrib.Value.ToString(), out _))
+                        {
+                            ObjectBrowser form = new ObjectBrowser(attribButton.Text);
+                            form.Show();
+                        }
+                        else if (e2.Button == MouseButtons.Left)
+                        {
+                            flowCreators.Controls.Remove(attribButton);
+                        }
+                    });
+
+                    // Add the button to the flowCreators panel
+                    flowCreators.Controls.Add(attribButton);
+                }
+
+                flowOwners.Controls.Clear();
+
+                try
+                {
+                    // Iterate through all attributes of foundObject and create a button for each
+                    foreach (KeyValuePair<string, long> attrib in foundObject.Owners)
+                    {
+                        // Split the key and value and create a new button with the attribute key and value separated by ':'
+                        string buttonText = attrib.Key + ":" + attrib.Value.ToString();
+                        Button attribButton = new Button();
+                        attribButton.AutoSize = true;
+                        attribButton.Text = buttonText;
+
+                        // Add an event handler to the button that removes it from the flowAttribute panel when clicked
+                        attribButton.Click += new EventHandler((sender2, e2) =>
+                        {
+                            flowOwners.Controls.Remove(attribButton);
+                        });
+
+                        // Add an event handler to the button that opens the ObjectBrowser form on right click using the key value
+                        attribButton.MouseUp += new MouseEventHandler((sender2, e2) =>
+                        {
+                            if (e2.Button == MouseButtons.Right)
+                            {
+                                string[] keyValuePair = attribButton.Text.Split(':');
+                                string key = keyValuePair[0].Trim();
+                                ObjectBrowser form = new ObjectBrowser(key);
+                                form.Show();
+                            }
+                            else if (e2.Button == MouseButtons.Left)
+                            {
+                                flowOwners.Controls.Remove(attribButton);
+                            }
+                        });
+
+                        // Add the button to the flowOwners panel
+                        flowOwners.Controls.Add(attribButton);
+                    }
+
+                }
+                catch { }
+
+                if (foundObject.License != null)
+                {
+                    // If the license field is not null, check the radio button in the panel based on the text passed
+                    string licenseText = foundObject.License;
+
+                    // Assuming you have a panel named "paneLicense" and a group of radio buttons inside it
+                    RadioButton rb = PanelLicense.Controls.OfType<RadioButton>().FirstOrDefault(x => x.Text == licenseText);
+
+                    if (rb != null)
+                    {
+                        rb.Checked = true;
+                    }
+                    else
+                    {
+                        // If the license text doesn't match any of the radio buttons, do nothing
+                    }
+                }
+                else
+                {
+                    // If the license field is null, check the radio button in the panel with the text "All Rights Reserved"
+                    RadioButton rb = PanelLicense.Controls.OfType<RadioButton>().FirstOrDefault(x => x.Text == "No License / All Rights Reserved");
+
+                    if (rb != null)
+                    {
+                        rb.Checked = true;
+                    }
+                    else
+                    {
+                        // If there is no radio button with the text "All Rights Reserved", do nothing
+                    }
+                }
+            }
+
+        }
+
+        private void btnEdit_Click(object sender, EventArgs e)
+        {
+
+        }
     }
+
 }

@@ -70,6 +70,9 @@
             this.radioButton3 = new System.Windows.Forms.RadioButton();
             this.radioButton2 = new System.Windows.Forms.RadioButton();
             this.radioButton1 = new System.Windows.Forms.RadioButton();
+            this.txtOBJP2FK = new System.Windows.Forms.TextBox();
+            this.lblCost = new System.Windows.Forms.Label();
+            this.lblTransactionID = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.webviewer)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).BeginInit();
@@ -107,21 +110,23 @@
             // 
             this.txtOBJJSON.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.txtOBJJSON.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.txtOBJJSON.Location = new System.Drawing.Point(804, 217);
+            this.txtOBJJSON.Location = new System.Drawing.Point(804, 31);
             this.txtOBJJSON.Multiline = true;
             this.txtOBJJSON.Name = "txtOBJJSON";
-            this.txtOBJJSON.Size = new System.Drawing.Size(344, 153);
+            this.txtOBJJSON.Size = new System.Drawing.Size(344, 117);
             this.txtOBJJSON.TabIndex = 292;
+            this.txtOBJJSON.Visible = false;
             // 
             // txtAddressListJSON
             // 
             this.txtAddressListJSON.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.txtAddressListJSON.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.txtAddressListJSON.Location = new System.Drawing.Point(801, 380);
+            this.txtAddressListJSON.Location = new System.Drawing.Point(801, 351);
             this.txtAddressListJSON.Multiline = true;
             this.txtAddressListJSON.Name = "txtAddressListJSON";
             this.txtAddressListJSON.Size = new System.Drawing.Size(344, 153);
             this.txtAddressListJSON.TabIndex = 289;
+            this.txtAddressListJSON.Visible = false;
             // 
             // btnObjectKeywords
             // 
@@ -158,7 +163,7 @@
             this.lblASCIIURN.Name = "lblASCIIURN";
             this.lblASCIIURN.Size = new System.Drawing.Size(550, 550);
             this.lblASCIIURN.TabIndex = 291;
-            this.lblASCIIURN.Text = "enter a object name \r\nor click 🔍 to begin";
+            this.lblASCIIURN.Text = "Enter object name \r\nor click 🔍 to begin";
             this.lblASCIIURN.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // webviewer
@@ -241,12 +246,14 @@
             this.btnEdit.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.btnEdit.Enabled = false;
             this.btnEdit.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold);
-            this.btnEdit.Location = new System.Drawing.Point(574, 760);
+            this.btnEdit.Location = new System.Drawing.Point(706, 760);
             this.btnEdit.Name = "btnEdit";
             this.btnEdit.Size = new System.Drawing.Size(109, 53);
             this.btnEdit.TabIndex = 273;
             this.btnEdit.Text = "EDIT";
             this.btnEdit.UseVisualStyleBackColor = true;
+            this.btnEdit.Visible = false;
+            this.btnEdit.Click += new System.EventHandler(this.btnEdit_Click);
             // 
             // btnObjectCreators
             // 
@@ -303,7 +310,7 @@
             // 
             this.btnScan.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.btnScan.Font = new System.Drawing.Font("Microsoft Sans Serif", 24F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnScan.Location = new System.Drawing.Point(710, 760);
+            this.btnScan.Location = new System.Drawing.Point(576, 760);
             this.btnScan.Name = "btnScan";
             this.btnScan.Size = new System.Drawing.Size(109, 53);
             this.btnScan.TabIndex = 272;
@@ -338,7 +345,7 @@
             this.txtObjectAddress.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.txtObjectAddress.Enabled = false;
-            this.txtObjectAddress.Font = new System.Drawing.Font("Microsoft Sans Serif", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.txtObjectAddress.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.txtObjectAddress.Location = new System.Drawing.Point(194, 120);
             this.txtObjectAddress.Multiline = true;
             this.txtObjectAddress.Name = "txtObjectAddress";
@@ -351,7 +358,7 @@
             this.btnMint.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.btnMint.Enabled = false;
             this.btnMint.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold);
-            this.btnMint.Location = new System.Drawing.Point(884, 760);
+            this.btnMint.Location = new System.Drawing.Point(870, 760);
             this.btnMint.Name = "btnMint";
             this.btnMint.Size = new System.Drawing.Size(109, 53);
             this.btnMint.TabIndex = 271;
@@ -455,7 +462,7 @@
             this.txtURI.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.txtURI.Enabled = false;
-            this.txtURI.Font = new System.Drawing.Font("Microsoft Sans Serif", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.txtURI.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.txtURI.Location = new System.Drawing.Point(22, 350);
             this.txtURI.Multiline = true;
             this.txtURI.Name = "txtURI";
@@ -468,7 +475,7 @@
             this.txtURN.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.txtURN.Enabled = false;
-            this.txtURN.Font = new System.Drawing.Font("Microsoft Sans Serif", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.txtURN.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.txtURN.Location = new System.Drawing.Point(22, 270);
             this.txtURN.Multiline = true;
             this.txtURN.Name = "txtURN";
@@ -493,7 +500,7 @@
             this.txtIMG.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.txtIMG.Enabled = false;
-            this.txtIMG.Font = new System.Drawing.Font("Microsoft Sans Serif", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.txtIMG.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.txtIMG.Location = new System.Drawing.Point(19, 190);
             this.txtIMG.Multiline = true;
             this.txtIMG.Name = "txtIMG";
@@ -582,11 +589,42 @@
             this.radioButton1.UseVisualStyleBackColor = true;
             this.radioButton1.CheckedChanged += new System.EventHandler(this.radioButton1_CheckedChanged);
             // 
+            // txtOBJP2FK
+            // 
+            this.txtOBJP2FK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.txtOBJP2FK.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.txtOBJP2FK.Location = new System.Drawing.Point(802, 170);
+            this.txtOBJP2FK.Multiline = true;
+            this.txtOBJP2FK.Name = "txtOBJP2FK";
+            this.txtOBJP2FK.Size = new System.Drawing.Size(344, 157);
+            this.txtOBJP2FK.TabIndex = 295;
+            this.txtOBJP2FK.Visible = false;
+            // 
+            // lblCost
+            // 
+            this.lblCost.AutoSize = true;
+            this.lblCost.Location = new System.Drawing.Point(890, 817);
+            this.lblCost.Name = "lblCost";
+            this.lblCost.Size = new System.Drawing.Size(0, 13);
+            this.lblCost.TabIndex = 296;
+            this.lblCost.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            // 
+            // lblTransactionID
+            // 
+            this.lblTransactionID.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.lblTransactionID.AutoSize = true;
+            this.lblTransactionID.Location = new System.Drawing.Point(578, 743);
+            this.lblTransactionID.Name = "lblTransactionID";
+            this.lblTransactionID.Size = new System.Drawing.Size(0, 13);
+            this.lblTransactionID.TabIndex = 297;
+            // 
             // ObjectMint
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1152, 835);
+            this.Controls.Add(this.lblTransactionID);
+            this.Controls.Add(this.lblCost);
             this.Controls.Add(this.PanelLicense);
             this.Controls.Add(this.lblObjectStatus);
             this.Controls.Add(this.btnObjectKeywords);
@@ -624,6 +662,7 @@
             this.Controls.Add(this.lblURNBlockDate);
             this.Controls.Add(this.lblIMGBlockDate);
             this.Controls.Add(this.txtOBJJSON);
+            this.Controls.Add(this.txtOBJP2FK);
             this.Controls.Add(this.txtAddressListJSON);
             this.MinimumSize = new System.Drawing.Size(1168, 874);
             this.Name = "ObjectMint";
@@ -682,5 +721,8 @@
         private System.Windows.Forms.RadioButton radioButton3;
         private System.Windows.Forms.RadioButton radioButton2;
         private System.Windows.Forms.RadioButton radioButton1;
+        private System.Windows.Forms.TextBox txtOBJP2FK;
+        private System.Windows.Forms.Label lblCost;
+        private System.Windows.Forms.Label lblTransactionID;
     }
 }

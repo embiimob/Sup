@@ -859,8 +859,8 @@ namespace SUP
                     {
                         webviewer.Visible = true;
                         await webviewer.EnsureCoreWebView2Async();
-                        webviewer.CoreWebView2.Navigate(txtURN.Text);
-                        lblURNBlockDate.Text = "http verified: " + DateTime.UtcNow.ToString("ddd, dd MMM yyyy hh:mm:ss");
+                        webviewer.CoreWebView2.Navigate(objstate.URN);
+                        lblURNBlockDate.Text = "http get: " + DateTime.UtcNow.ToString("ddd, dd MMM yyyy hh:mm:ss");
                         isWWW = true;
                     }
                 }
