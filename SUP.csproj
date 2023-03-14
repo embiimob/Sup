@@ -347,9 +347,7 @@
     <Content Include="includes\AngleSharp.xml" />
     <Content Include="includes\BouncyCastle.Crypto.dll" />
     <Content Include="includes\BouncyCastle.Crypto.xml" />
-    <Content Include="includes\Gma.QrCodeNet.Encoding.dll">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
+    <Content Include="includes\Gma.QrCodeNet.Encoding.dll" />
     <Content Include="includes\HtmlSanitizer.dll" />
     <Content Include="includes\HtmlSanitizer.xml" />
     <Content Include="includes\HugPuddle.jpg">
