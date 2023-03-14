@@ -1,4 +1,5 @@
 ﻿using AngleSharp.Common;
+using BitcoinNET.RPCClient;
 using LevelDB;
 using NBitcoin;
 using NBitcoin.RPC;
@@ -42,7 +43,7 @@ namespace SUP.P2FK
         public static Root GetRootByTransactionId(string transactionid, string username, string password, string url, string versionbyte = "111", byte[] rootbytes = null, string signatureaddress = null)
         {
             Root P2FKRoot = new Root();
-     
+
             string diskpath = "root\\" + transactionid + "\\";
             string P2FKJSONString = null;
             if (rootbytes == null)
@@ -397,16 +398,20 @@ namespace SUP.P2FK
                         )
                     )
                     .Replace("-", String.Empty);
+
                 NetworkCredential credentials = new NetworkCredential(username, password);
                 RPCClient rpcClient = new RPCClient(credentials, new Uri(url), Network.Main);
-
-                var result = rpcClient.SendCommand(
-                    "verifymessage",
-                    P2FKSignatureAddress,
-                    signature,
-                    P2FKRoot.Hash
-                );
-                P2FKRoot.Signed = Convert.ToBoolean(result.Result);
+                try
+                {
+                    var result = rpcClient.SendCommand(
+                        "verifymessage",
+                        P2FKSignatureAddress,
+                        signature,
+                        P2FKRoot.Hash
+                    );
+                    P2FKRoot.Signed = Convert.ToBoolean(result.Result);
+                }
+                catch { } // default to false if any issues with signature
             }
             else
             {
@@ -452,18 +457,19 @@ namespace SUP.P2FK
                     foreach (KeyValuePair<string, string> keyword in P2FKRoot.Keyword)
                     {
 
-                       
+
                         string msg = "[\"" + P2FKRoot.SignedBy + "\",\"" + P2FKRoot.TransactionId + "\"]";
                         var ROOT = new Options { CreateIfMissing = true };
                         try
                         {
-                            
+
                             var db = new DB(ROOT, @"root\sup");
                             db.Put(keyword.Key + "!" + P2FKRoot.BlockDate.ToString("yyyyMMddHHmmss"), msg);
                             db.Put("lastkey!" + keyword.Key, keyword.Key + "!" + P2FKRoot.BlockDate.ToString("yyyyMMddHHmmss"));
                             db.Close();
                         }
-                        catch {
+                        catch
+                        {
                             try { Directory.Delete(@"root\sup", true); } catch { System.Threading.Thread.Sleep(250); try { Directory.Delete(@"root\sup", true); } catch { } }
 
                             Directory.Move(@"root\sup2", @"root\sup");
@@ -471,20 +477,22 @@ namespace SUP.P2FK
                             {
                                 var db = new DB(ROOT, @"root\sup");
                                 db.Put(keyword.Key + "!" + P2FKRoot.BlockDate.ToString("yyyyMMddHHmmss"), msg);
-                                db.Put("lastkey!" + keyword.Key ,keyword.Key + "!" + P2FKRoot.BlockDate.ToString("yyyyMMddHHmmss"));
+                                db.Put("lastkey!" + keyword.Key, keyword.Key + "!" + P2FKRoot.BlockDate.ToString("yyyyMMddHHmmss"));
                                 db.Close();
-                            
+
                             }
-                            catch { Directory.Delete(@"root\sup",true); Directory.Delete(@"root\sup2",true); }
+                            catch { Directory.Delete(@"root\sup", true); Directory.Delete(@"root\sup2", true); }
                         }
 
-                        try { 
+                        try
+                        {
                             var db2 = new DB(ROOT, @"root\sup2");
                             db2.Put(keyword.Key + "!" + P2FKRoot.BlockDate.ToString("yyyyMMddHHmmss"), msg);
                             db2.Put("lastkey!" + keyword.Key, keyword.Key + "!" + P2FKRoot.BlockDate.ToString("yyyyMMddHHmmss"));
                             db2.Close();
                         }
-                        catch {
+                        catch
+                        {
                             try { Directory.Delete(@"root\sup2", true); } catch { System.Threading.Thread.Sleep(250); try { Directory.Delete(@"root\sup2", true); } catch { } }
                             Directory.Move(@"root\sup", @"root\sup2");
                             try
@@ -494,9 +502,9 @@ namespace SUP.P2FK
                                 db2.Put("lastkey!" + keyword.Key, keyword.Key + "!" + P2FKRoot.BlockDate.ToString("yyyyMMddHHmmss"));
                                 db2.Close();
                             }
-                            catch { Directory.Delete(@"root\sup",true); Directory.Delete(@"root\sup2",true); }
-                        
-                        
+                            catch { Directory.Delete(@"root\sup", true); Directory.Delete(@"root\sup2", true); }
+
+
                         }
 
                     }
@@ -513,7 +521,7 @@ namespace SUP.P2FK
                         var ROOT = new Options { CreateIfMissing = true };
                         var db = new DB(ROOT, @"root\sec");
                         db.Put(keyword.Key + "!" + P2FKRoot.BlockDate.ToString("yyyyMMddHHmmss"), msg);
-                        db.Put("lastkey!"+keyword.Key,keyword.Key + "!" + P2FKRoot.BlockDate.ToString("yyyyMMddHHmmss"));
+                        db.Put("lastkey!" + keyword.Key, keyword.Key + "!" + P2FKRoot.BlockDate.ToString("yyyyMMddHHmmss"));
                         db.Close();
 
                     }

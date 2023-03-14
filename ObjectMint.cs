@@ -156,7 +156,11 @@ namespace SUP
                 { signatureAddress = flowCreators.Controls[0].Text; }
                 else { signatureAddress = txtObjectAddress.Text; }
                 string signature = "";
-                try { signature = rpcClient.SendCommand("signmessage", signatureAddress, BitConverter.ToString(hashValue).Replace("-", String.Empty)).ResultString; } catch { }
+                try { signature = rpcClient.SendCommand("signmessage", signatureAddress, BitConverter.ToString(hashValue).Replace("-", String.Empty)).ResultString; }catch(Exception ex) 
+                { lblObjectStatus.Text = ex.Message;
+                    return;
+                }
+                
                 txtOBJP2FK.Text = "SIG" + ":" + "88" + ">" + signature + txtOBJP2FK.Text;
 
                 List<string> encodedList = new List<string>();

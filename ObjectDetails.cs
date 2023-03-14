@@ -1937,7 +1937,7 @@ namespace SUP
 
 
                 imgPicture.SuspendLayout();
-                if (File.Exists(imgurn))
+                if (imgurn != "" && File.Exists(imgurn))
                 {
 
                     imgPicture.ImageLocation = imgurn;

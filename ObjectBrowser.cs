@@ -187,8 +187,32 @@ namespace SUP
                             string imgurl = "";
                             FoundObjectControl foundObject = new FoundObjectControl();
 
+                            if (objstate.Image == null)
+                            {
 
-                            try { transid = objstate.Image.Substring(4, 64); } catch { transid = objstate.Image.Substring(5, 46); }
+
+                                Random rnd = new Random();
+                                string[] gifFiles = Directory.GetFiles("includes", "*.gif");
+                                if (gifFiles.Length > 0)
+                                {
+                                    int randomIndex = rnd.Next(gifFiles.Length);
+                                    objstate.Image = gifFiles[randomIndex];
+                                  
+                                }
+                                else
+                                {
+                                    try
+                                    {
+
+                                        objstate.Image = @"includes\HugPuddle.jpg";
+                                    }
+                                    catch { }
+                                }
+
+
+                            }
+
+                            try { transid = objstate.Image.Substring(4, 64).Replace(":",""); } catch { try { transid = objstate.Image.Substring(5, 46); } catch { } }
                            imgurl = objstate.Image.Replace("BTC:", "").Replace("MZC:", "").Replace("LTC:", "").Replace("DOG:", "").Replace("IPFS:", ""); 
                            if (objstate.Image.ToUpper().StartsWith("IPFS:")) { imgurl = @"ipfs/" + imgurl; } else { imgurl = @"root/" + imgurl; } 
 
@@ -356,7 +380,7 @@ namespace SUP
 
 
                                     default:
-                                        transid = objstate.Image.Substring(0, 64);
+                                    try { transid = objstate.Image.Substring(0, 64); } catch { }
                                         Task.Run(() =>
                                         {
                                             if (!System.IO.Directory.Exists("root/" + transid))
@@ -556,10 +580,38 @@ namespace SUP
                     flowLayoutPanel1.SuspendLayout();
                     if (objstate.Owners != null)
                     {
-                        string transid;
+                        string transid ="";
                         FoundObjectControl foundObject = new FoundObjectControl();
                         foundObject.SuspendLayout();
-                        try { transid = objstate.Image.Substring(4, 64); } catch { transid = objstate.Image.Substring(5, 46); }
+
+
+
+                            if (objstate.Image == null)
+                            {
+
+                                Random rnd = new Random();
+                                string[] gifFiles = Directory.GetFiles("includes", "*.gif");
+                                if (gifFiles.Length > 0)
+                                {
+                                    int randomIndex = rnd.Next(gifFiles.Length);
+                                    objstate.Image = gifFiles[randomIndex];
+
+                                }
+                                else
+                                {
+                                    try
+                                    {
+
+                                        objstate.Image = @"includes\HugPuddle.jpg";
+                                    }
+                                    catch { }
+                                }
+
+
+                            }
+
+                            
+                        try { transid = objstate.Image.Substring(4, 64).Replace(":",""); } catch { try { transid = objstate.Image.Substring(5, 46); } catch { } }
                         string imgurl = objstate.Image.Replace("BTC:", "").Replace("MZC:", "").Replace("LTC:", "").Replace("IPFS:", "");
                         if (objstate.Image.ToUpper().StartsWith("IPFS:")) { imgurl = @"ipfs/" + imgurl; } else { imgurl = @"root/" + imgurl; }
 
@@ -696,7 +748,7 @@ namespace SUP
 
 
                                 default:
-                                    transid = objstate.Image.Substring(0, 64);
+                                    try { transid = objstate.Image.Substring(0, 64); } catch { foundObject.ObjectImage.ImageLocation = transid; } 
                                     Task.Run(() =>
                                     {
                                         if (!System.IO.Directory.Exists("root/" + transid))
@@ -849,8 +901,33 @@ namespace SUP
             {
 
                 FoundObjectControl foundObject = new FoundObjectControl();
-                string transid;
-                try { transid = objstate.Image.Substring(4, 64); } catch { transid = objstate.Image.Substring(5, 46); }
+                string transid ="";
+
+                if (objstate.Image == null)
+                {
+
+                    Random rnd = new Random();
+                    string[] gifFiles = Directory.GetFiles("includes", "*.gif");
+                    if (gifFiles.Length > 0)
+                    {
+                        int randomIndex = rnd.Next(gifFiles.Length);
+                        objstate.Image = gifFiles[randomIndex];
+
+                    }
+                    else
+                    {
+                        try
+                        {
+
+                            objstate.Image = @"includes\HugPuddle.jpg";
+                        }
+                        catch { }
+                    }
+
+
+                }
+
+                try { transid = objstate.Image.Substring(4, 64).Replace(":", ""); } catch { try { transid = objstate.Image.Substring(5, 46); } catch { } }
                 string imgurl = objstate.Image.Replace("BTC:", "").Replace("MZC:", "").Replace("LTC:", "").Replace("IPFS:", "");
                 if (objstate.Image.ToUpper().StartsWith("IPFS:")) { imgurl = @"ipfs/" + imgurl; } else { imgurl = @"root/" + imgurl; }
 
@@ -1533,7 +1610,7 @@ namespace SUP
                             string transid = "";
                             FoundObjectControl foundObject = new FoundObjectControl();
                             foundObject.SuspendLayout();
-                            try { transid = objstate.Image.Substring(4, 64); } catch { try { transid = objstate.Image.Substring(5, 46); } catch { } }
+                            try { transid = objstate.Image.Substring(4, 64).Replace(":", ""); } catch { try { transid = objstate.Image.Substring(5, 46); } catch { } }
                             try { foundObject.ObjectImage.ImageLocation = @"root/" + objstate.Image.Replace("BTC:", "").Replace("MZC:", "").Replace("LTC:", "").Replace("DOG:", ""); } catch { }
                             foundObject.ObjectName.Text = objstate.Name;
                             foundObject.ObjectDescription.Text = objstate.Description;

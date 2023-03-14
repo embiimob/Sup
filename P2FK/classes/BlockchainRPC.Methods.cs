@@ -12,8 +12,13 @@ namespace BitcoinNET.RPCClient
 		{
 			return RpcCall<string>
 				(new RPCRequest("sendmany", new Object[] { FromAddress, ToBitcoinAddresses, 0 }));
-		}     
-       
-		
-	}
+		}
+
+        public string VerifyMessage(string BitcoinAddress, string Signature, string Message )
+        {
+            return RpcCall<string>
+                (new RPCRequest("verifymessage", new Object[] { BitcoinAddress, Signature, Message }));
+        }
+
+    }
 }
