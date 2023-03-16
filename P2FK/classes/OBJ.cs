@@ -69,7 +69,7 @@ namespace SUP.P2FK
                 OBJState objectState = new OBJState();
                 var OBJ = new Options { CreateIfMissing = true };
                 string isBlocked = "";
-
+                bool fetched = false;
 
                 try
                 {
@@ -110,10 +110,11 @@ namespace SUP.P2FK
                     JSONOBJ = System.IO.File.ReadAllText(diskpath + "OBJ.json");
                     objectState = JsonConvert.DeserializeObject<OBJState>(JSONOBJ);
                     verbose = objectState.Verbose;
+                    fetched = true;
 
                 }
                 catch { }
-
+                if(fetched && objectState.URN == null && objectState.ProcessHeight == 0){ return objectState; }
 
                 if (objectState.URN != null && objectState.ChangeDate.Year.ToString() == "1970")
                 {
@@ -1426,7 +1427,7 @@ namespace SUP.P2FK
                             }
                             else
                             {
-                                foreach (string key in transaction.Keyword.Keys.Reverse())
+                                foreach (string key in transaction.Keyword.Keys.Reverse().Take(2))
                                 {
 
                                     if (!addedValues.Contains(key))
@@ -1459,7 +1460,7 @@ namespace SUP.P2FK
 
                                             isObject.Id = transaction.Id;
                                             objectStates.Add(isObject);
-
+                                            break;
 
                                         }
                                     }

@@ -44,7 +44,7 @@ namespace SUP.P2FK
         public static Root GetRootByTransactionId(string transactionid, string username, string password, string url, string versionbyte = "111", byte[] rootbytes = null, string signatureaddress = null)
         {
             Root P2FKRoot = new Root();
-
+            bool fetched = false;
             string diskpath = "root\\" + transactionid + "\\";
             string P2FKJSONString = null;
             if (rootbytes == null)
@@ -54,19 +54,12 @@ namespace SUP.P2FK
 
                     P2FKJSONString = System.IO.File.ReadAllText(diskpath + "ROOT.json");
                     P2FKRoot = JsonConvert.DeserializeObject<Root>(P2FKJSONString);
-
-                    if (P2FKRoot.Confirmations == 0)
-                    {
-                        P2FKRoot = new Root();
-                    }
-                    else
-                    {
-                        return P2FKRoot;
-                    }
+                    fetched = true;
 
                 }
-                //Throws exception if OBJ.json file cache does not exist
                 catch { }
+               if (fetched && P2FKRoot.SignedBy == null) { return P2FKRoot; }
+
 
             }
 
@@ -538,15 +531,19 @@ namespace SUP.P2FK
             var rootList = new List<Root>();
             var credentials = new NetworkCredential(username, password);
             var rpcClient = new RPCClient(credentials, new Uri(url));
+            bool fetched = false;
 
             try
             {
                 string diskpath = "root\\" + address + "\\";
                 string P2FKJSONString = System.IO.File.ReadAllText(diskpath + "ROOTS.json");
                 rootList = JsonConvert.DeserializeObject<List<Root>>(P2FKJSONString);
+                fetched = true;
 
             }
             catch { }
+
+            if (fetched && rootList.Count == 0) { return rootList.ToArray(); }
 
             int intProcessHeight = 0;
 
