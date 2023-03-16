@@ -1,4 +1,5 @@
 ﻿using AngleSharp.Common;
+using AngleSharp.Css.Dom;
 using BitcoinNET.RPCClient;
 using LevelDB;
 using NBitcoin;
@@ -51,7 +52,7 @@ namespace SUP.P2FK
                 try
                 {
 
-                    P2FKJSONString = System.IO.File.ReadAllText(diskpath + "OBJ.json");
+                    P2FKJSONString = System.IO.File.ReadAllText(diskpath + "ROOT.json");
                     P2FKRoot = JsonConvert.DeserializeObject<Root>(P2FKJSONString);
 
                     if (P2FKRoot.Confirmations == 0)
@@ -292,7 +293,8 @@ namespace SUP.P2FK
                     if (isledger)
                     {
                         var rootLedger = JsonConvert.SerializeObject(P2FKRoot);
-                        System.IO.File.WriteAllText(@"root\" + P2FKRoot.TransactionId + @"\" + "OBJ.json", rootLedger);
+
+                        System.IO.File.WriteAllText(@"root\" + P2FKRoot.TransactionId + @"\" + "ROOT.json", rootLedger);
                         return P2FKRoot;
                     }
 
@@ -436,7 +438,7 @@ namespace SUP.P2FK
             //Cache Root to disk to speed up future crawls
 
             var rootSerialized = JsonConvert.SerializeObject(P2FKRoot);
-            System.IO.File.WriteAllText(@"root\" + P2FKRoot.TransactionId + @"\" + "OBJ.json", rootSerialized);
+            System.IO.File.WriteAllText(@"root\" + P2FKRoot.TransactionId + @"\" + "ROOT.json", rootSerialized);
 
 
             string isMuted;
@@ -531,17 +533,51 @@ namespace SUP.P2FK
 
             return P2FKRoot;
         }
-        public static Root[] GetRootsByAddress(string address, string username, string password, string url, int skip = 0, int qty = 300, string versionByte = "111")
+        public static Root[] GetRootsByAddress(string address, string username, string password, string url, int skip = 0, int qty = -1, string versionByte = "111")
         {
             var rootList = new List<Root>();
             var credentials = new NetworkCredential(username, password);
             var rpcClient = new RPCClient(credentials, new Uri(url));
+
+            try
+            {
+                string diskpath = "root\\" + address + "\\";
+                string P2FKJSONString = System.IO.File.ReadAllText(diskpath + "ROOTS.json");
+                rootList = JsonConvert.DeserializeObject<List<Root>>(P2FKJSONString);
+
+            }
+            catch { }
+
+            int intProcessHeight = 0;
+
             dynamic deserializedObject = null;
+
+            try { intProcessHeight = rootList.Max(state => state.Id); } catch { }
+   ;
+            try
+            {
+                deserializedObject = JsonConvert.DeserializeObject(rpcClient.SendCommand("searchrawtransactions", address, 0, intProcessHeight, 2).ResultString);
+            }
+            catch { return rootList.ToArray(); }
+
+            if (deserializedObject.Count == 0) {
+                if (qty == -1) { return rootList.ToArray(); } else { return rootList.Skip(skip).Take(qty).ToArray(); }
+                 }
+
+            if (intProcessHeight > 0 && deserializedObject.Count == 1)
+            {
+
+                if (qty == -1) { return rootList.ToArray(); } else { return rootList.Skip(skip).Take(qty).ToArray(); }
+
+            }
+
+            int innerskip = 0;
+            intProcessHeight = 0;
             while (true)
             {
                 try
                 {
-                    deserializedObject = JsonConvert.DeserializeObject(rpcClient.SendCommand("searchrawtransactions", address, 0, skip, qty).ResultString);
+                    deserializedObject = JsonConvert.DeserializeObject(rpcClient.SendCommand("searchrawtransactions", address, 0, innerskip, 300).ResultString);
                 }
                 catch { break; }
 
@@ -552,22 +588,28 @@ namespace SUP.P2FK
                 for (int i = 0; i < deserializedObject.Count; i++)
                 {
                     int rootId = i;
+                    intProcessHeight++;
                     string hexId = GetTransactionIdByHexString(deserializedObject[i].ToString());
 
                     var root = Root.GetRootByTransactionId(hexId, username, password, url, versionByte);
 
                     if (root != null && root.TotalByteSize > 0)
                     {
-                        root.Id = rootId + skip;
+                        root.Id = intProcessHeight;
                         rootList.Add(root);
                     }
 
                 }
-                skip += qty;
+                innerskip += 300;
 
             }
 
-            return rootList.ToArray();
+            try { Directory.CreateDirectory(@"root\" + address); } catch { }
+            var rootSerialized = JsonConvert.SerializeObject(rootList);
+            System.IO.File.WriteAllText(@"root\" + address + @"\" + "ROOTS.json", rootSerialized);
+
+            if (qty == -1) { return rootList.ToArray(); } else { return rootList.Skip(skip).Take(qty).ToArray(); }
+
         }
         public static byte[] GetRootBytesByLedger(string ledger, string username, string password, string url)
         {

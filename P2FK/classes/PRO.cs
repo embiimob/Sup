@@ -78,6 +78,8 @@ namespace SUP.P2FK
 
             if (intProcessHeight > 0 && profileTransactions.Count() == 1) { return profileState; }
 
+            profileTransactions = Root.GetRootsByAddress(profileaddress, username, password, url, intProcessHeight, -1, versionByte);
+
             foreach (Root transaction in profileTransactions)
             {
 
@@ -277,7 +279,7 @@ namespace SUP.P2FK
                      
 
             //return all roots found at address
-            profileTransactions = Root.GetRootsByAddress(profileaddress, username, password, url, skip, 300, versionByte);
+            profileTransactions = Root.GetRootsByAddress(profileaddress, username, password, url, skip, -1, versionByte);
             HashSet<string> addedValues = new HashSet<string>();
             foreach (Root transaction in profileTransactions)
             {

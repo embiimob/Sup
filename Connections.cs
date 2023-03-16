@@ -361,7 +361,14 @@ namespace SUP
                     File.Delete(file);
                 }
             }
-            try { Directory.Delete(@"root\sup"); } catch { }
+
+            foreach (string directory in Directory.GetDirectories("ipfs"))
+            {
+                try { Directory.Delete(directory, false); } catch { }
+               
+            }
+
+
 
         }
 

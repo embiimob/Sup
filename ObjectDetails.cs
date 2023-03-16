@@ -1051,7 +1051,7 @@ namespace SUP
 
                 try
                 {
-
+                    transactionid = "";
                     Match urnmatch = regexTransactionId.Match(urn);
                     transactionid = urnmatch.Value;
                     Root root = new Root();
@@ -1221,6 +1221,7 @@ namespace SUP
 
                 try
                 {
+                    transactionid = "";
                     Root root = new Root();
                     Match urimatch = regexTransactionId.Match(uriurn);
                     transactionid = urimatch.Value;
@@ -1680,8 +1681,12 @@ namespace SUP
                         catch
                         {
                             Thread.Sleep(1000);
-                            await webviewer.EnsureCoreWebView2Async();
-                            webviewer.CoreWebView2.Navigate(viewerPath);
+                            try
+                            {
+                                await webviewer.EnsureCoreWebView2Async();
+                                webviewer.CoreWebView2.Navigate(viewerPath);
+                            }
+                            catch { }
                         }
 
 
@@ -1937,7 +1942,7 @@ namespace SUP
 
 
                 imgPicture.SuspendLayout();
-                if (imgurn != "" && File.Exists(imgurn))
+                if (File.Exists(imgurn))
                 {
 
                     imgPicture.ImageLocation = imgurn;

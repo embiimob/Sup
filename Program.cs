@@ -46,7 +46,7 @@ namespace SUP
                 // If the user provided the required arguments for a function, execute that function
                 if (options.GetRootsByAddress)
                 {
-                    int _Qty = 300;
+                    int _Qty = -1;
                     if (options.Qty != 0) { _Qty = options.Qty; }
                     var roots = Root.GetRootsByAddress(options.Address, options.Username, options.Password, options.Url, options.Skip, _Qty, options.VersionByte);
                     var json = JsonConvert.SerializeObject(roots);
@@ -293,7 +293,7 @@ namespace SUP
         [Option('s', "skip", Required = false, HelpText = "The number of roots to skip [default: 0]")]
         public int Skip { get; set; }
 
-        [Option('q', "qty", Required = false, HelpText = "The number of roots to retrieve per processing batch [default: 300]")]
+        [Option('q', "qty", Required = false, HelpText = "The number of items to return [default: -1 all]")]
         public int Qty { get; set; }
 
         [Option('b', "versionbyte", Required = false, HelpText = "The version byte")]
