@@ -54,11 +54,11 @@ namespace SUP.P2FK
 
                     P2FKJSONString = System.IO.File.ReadAllText(diskpath + "ROOT.json");
                     P2FKRoot = JsonConvert.DeserializeObject<Root>(P2FKJSONString);
-                    fetched = true;
+                    return P2FKRoot;
 
                 }
                 catch { }
-               if (fetched && P2FKRoot.SignedBy == null) { return P2FKRoot; }
+             
 
 
             }

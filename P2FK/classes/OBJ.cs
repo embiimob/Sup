@@ -805,7 +805,6 @@ namespace SUP.P2FK
                 JSONOBJ = System.IO.File.ReadAllText(diskpath + "OBJ");
                 objectinspector = JsonConvert.DeserializeObject<OBJ>(JSONOBJ);
 
-
             }
             catch (Exception ex) { return objectState; }
 

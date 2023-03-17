@@ -1176,7 +1176,7 @@ namespace SUP
                                     }
 
 
-                                    Directory.Delete(@"ipfs/" + objstate.URN.Substring(5, 46) + "-build");
+                                    try { Directory.Delete(@"ipfs/" + objstate.URN.Substring(5, 46) + "-build"); } catch { }
 
 
 
@@ -1717,7 +1717,7 @@ namespace SUP
                                 try
                                 {
 
-                                    System.IO.Directory.Delete(Path.GetDirectoryName(urn), true);
+                                    try { System.IO.Directory.Delete(Path.GetDirectoryName(urn), true); } catch { }
 
                                     switch (objstate.URN.Substring(0, 4))
                                     {
@@ -1917,6 +1917,7 @@ namespace SUP
                             {
                                 System.IO.File.WriteAllText(Path.GetDirectoryName(urn) + @"\urnviewer.html", htmlembed);
                                 if (btnOfficial.Visible == false) { btnLaunchURN.Visible = true; }
+
                                 await webviewer.EnsureCoreWebView2Async();
                                 webviewer.CoreWebView2.Navigate(Path.GetDirectoryName(urn) + @"\urnviewer.html");
                             }
