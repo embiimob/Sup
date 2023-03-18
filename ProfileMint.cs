@@ -44,7 +44,7 @@ namespace SUP
         {
             if (txtURN.Text != "" && txtFirstName.Text != "" && txtObjectAddress.Text != "" && flowLocation.Controls.Count > 0)
             {
-                if (!btnEdit.Enabled && (btnFirstName.BackColor == Color.Blue || btnObjectURN.BackColor == Color.Blue || btnMiddleName.BackColor == Color.Blue || btnLocation.BackColor == Color.Blue || btnURL.BackColor == Color.Blue || btnObjectImage.BackColor == Color.Blue || btnLastName.BackColor == Color.Blue || btnBio.BackColor == Color.Blue || btnObjectKeywords.BackColor == Color.Blue)) { btnMint.Enabled = true; btnPrint.Enabled = true; }
+                if ((btnFirstName.BackColor == Color.Blue || btnObjectURN.BackColor == Color.Blue || btnMiddleName.BackColor == Color.Blue || btnLocation.BackColor == Color.Blue || btnURL.BackColor == Color.Blue || btnObjectImage.BackColor == Color.Blue || btnLastName.BackColor == Color.Blue || btnBio.BackColor == Color.Blue || btnObjectKeywords.BackColor == Color.Blue)) { btnMint.Enabled = true; }
             }
 
 
@@ -75,7 +75,7 @@ namespace SUP
 
             if (maxsize < 0)
             {
-                btnPrint.Enabled = false;
+              
                 btnMint.Enabled = false;
             }
 
@@ -121,11 +121,9 @@ namespace SUP
 
             // Serialize the modified JObject back into a JSON string
             var objectSerialized = JsonConvert.SerializeObject(PROJson, Formatting.None, settings);
-            if (btnEdit.Enabled) { txtOBJJSON.Text = objectSerialized; }
-            else
-            {
-                txtOBJJSON.Text = objectSerialized.Replace(",\"url\":{}", "").Replace(",\"loc\":{}", "").Replace(",\"urn\":\"\"", "").Replace(",\"fnm\":\"\"", "").Replace(",\"mnm\":\"\"", "").Replace(",\"lnm\":\"\"", "").Replace(",\"sfx\":\"\"", "").Replace(",\"bio\":\"\"", "").Replace(",\"img\":\"\"", "");
-            }
+            
+            txtOBJJSON.Text = objectSerialized.Replace(",\"url\":{}", "").Replace(",\"loc\":{}", "").Replace(",\"urn\":\"\"", "").Replace(",\"fnm\":\"\"", "").Replace(",\"mnm\":\"\"", "").Replace(",\"lnm\":\"\"", "").Replace(",\"sfx\":\"\"", "").Replace(",\"bio\":\"\"", "").Replace(",\"img\":\"\"", "");
+    
 
             txtOBJP2FK.Text = "PRO" + ":" + txtOBJJSON.Text.Length + ":" + txtOBJJSON.Text;
 
@@ -569,7 +567,6 @@ namespace SUP
                 btnFirstName.Enabled = false;
                 lblObjectStatus.Text = "";
                 lblCost.Text = "";
-                btnEdit.Enabled = false;
                 UpdateRemainingChars();
             }
 
@@ -1352,9 +1349,9 @@ namespace SUP
                 RPCClient rpcClient = new RPCClient(credentials, new Uri("http://127.0.0.1:18332"), Network.Main);
                 string accountName = "";
                 try { accountName = rpcClient.SendCommand("getaccount", address).ResultString; } catch { }
-                if (accountName != "") { btnEdit.Enabled = true; btnMint.Enabled = false; }
+                if (accountName != "") { btnMint.Enabled = false; }
             }
-            else { btnEdit.Enabled = false; }
+            else { }
 
 
             txtFirstName.Text = foundObject.Name;
