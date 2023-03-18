@@ -851,7 +851,7 @@ namespace SUP
 
                     string transactionID = dgTransactions.Rows[e.RowIndex].Cells[9].Value.ToString();
 
-                    DisplayRootJSON(new JObject[] { JObject.Parse(System.IO.File.ReadAllText(@"root\" + transactionID + @"\OBJ.json")) });
+                    DisplayRootJSON(new JObject[] { JObject.Parse(System.IO.File.ReadAllText(@"root\" + transactionID + @"\ROOT.json")) });
                 }
                 catch { }
             }

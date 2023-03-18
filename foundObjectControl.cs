@@ -84,7 +84,11 @@ namespace SUP
                     using (var db = new DB(WORK, @"root\oblock"))
                     {
                         db.Put(ObjectAddress.Text, "true");
+                    }
 
+                    using (var db = new DB(WORK, @"root\oblock2"))
+                    {
+                        db.Put(ObjectAddress.Text, "true");
                     }
 
                     var SUP = new Options { CreateIfMissing = true };
@@ -133,6 +137,12 @@ namespace SUP
                             Directory.Delete(@"root\" + rootItem.TransactionId, true);
                         }
                         catch { }
+
+                        foreach (string key in rootItem.Keyword.Keys)
+                        {
+                            try { File.Delete(@"root\" + key + @"\GetObjectsByAddress.json"); }catch { }
+                        }
+
                     }
                     try
                     {
@@ -162,6 +172,8 @@ namespace SUP
                         catch { }
 
                         Directory.Delete(@"root\" + ObjectAddress.Text, true);
+
+                        
 
                     }
                     catch { }
