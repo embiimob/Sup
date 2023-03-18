@@ -37,13 +37,7 @@ namespace SUP
             InitializeComponent();
         }
 
-        private void textBox1_TextChanged(object sender, EventArgs e)
-        {
-
-            UpdateRemainingChars();
-
-        }
-
+    
         private void UpdateRemainingChars()
         {
             if (txtURN.Text != "" && txtTitle.Text != "" && txtObjectAddress.Text != "" && flowOwners.Controls.Count > 0)

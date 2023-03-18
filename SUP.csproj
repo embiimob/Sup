@@ -228,6 +228,12 @@
     <Compile Include="p2fk\classes\RPCError.cs" />
     <Compile Include="p2fk\classes\RPCRequest.cs" />
     <Compile Include="p2fk\classes\RPCResponse.cs" />
+    <Compile Include="ProfileMint.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ProfileMint.Designer.cs">
+      <DependentUpon>ProfileMint.cs</DependentUpon>
+    </Compile>
     <Compile Include="WorkBench.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -276,6 +282,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="ObjectMint.resx">
       <DependentUpon>ObjectMint.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ProfileMint.resx">
+      <DependentUpon>ProfileMint.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="WorkBench.resx">
       <DependentUpon>WorkBench.cs</DependentUpon>
