@@ -63,7 +63,10 @@ To edit an unlocked object click on the magnifying glass enter the object addres
 <br />
 <br />
 ## **Live Monitor**
-Click the live button and watch in realtime as other Sup!? user's mint their objects.  all new objects will be added to the top of your browser window pushing the older objects down the screen. A maximized Sup!? monitor that shows a constant stream of new objects makes for a great display.  Sup!? montiors the in memory pool allowing it to display new objects before they are confirmed in the blockchain.  your Sup!? objects will appear in every curently live Sup!? montior around the world in about 10 - 30 seconds after you have etch the object's metadata. all blockhains included with this experiment are monitored for new objects if they are running and fully synced 
+Click the live button and watch in realtime as other Sup!? user's mint their objects.  all new objects will be added to the top of your browser window pushing the older objects down the screen. A maximized Sup!? monitor that shows a constant stream of new objects makes for a great display.  Sup!? montiors the in memory pool allowing it to display new objects before they are confirmed in the blockchain.  your Sup!? objects will appear in every curently live Sup!? montior around the world in about 10 - 30 seconds after you have etch the object's metadata. all blockhains included with this experiment are monitored for new objects if they are running and fully synced.  with Live monitor enable you never know what might pop into the window. because of this objects that are discovered in live mode are not fully inspected  deleting them from the live preview panel will attempt to remove any trace of them from your system.  if you are concerned clearing the Sup!? caches will without a doubt remove them.
+
+## **NOTICE**
+Sup!? is an experiment in decentralization. it was made for #adults.  The Sup!? experiment is not suiteable for children. 
 <br />
 <br />
 ## **Official / Unofficial Registration Indicator**
