@@ -449,51 +449,55 @@ namespace SUP
 
                                             this.Invoke((Action)(() =>
                                             {
-                                                if (profile.URN != null && foundObject.ObjectCreators.Text == "")
+                                                try
                                                 {
-
-
-                                                    foundObject.ObjectCreators.Text = TruncateAddress(profile.URN);
-                                                    foundObject.ObjectCreators.Links.Add(0, creator.Key.Length, creator.Key);
-                                                    System.Windows.Forms.ToolTip myTooltip = new System.Windows.Forms.ToolTip();
-                                                    myTooltip.SetToolTip(foundObject.ObjectCreators, profile.URN);
-                                                }
-                                                else
-                                                {
-
-
-                                                    if (profile.URN != null && foundObject.ObjectCreators2.Text == "")
-                                                    {
-                                                        foundObject.ObjectCreators2.Text = TruncateAddress(profile.URN);
-                                                        foundObject.ObjectCreators2.Links.Add(0, creator.Key.Length, creator.Key);
-                                                        System.Windows.Forms.ToolTip myTooltip = new System.Windows.Forms.ToolTip();
-                                                        myTooltip.SetToolTip(foundObject.ObjectCreators2, profile.URN);
-                                                    }
-
-                                                    if (foundObject.ObjectCreators.Text == "")
+                                                    if (profile.URN != null && foundObject.ObjectCreators.Text == "")
                                                     {
 
 
-                                                        foundObject.ObjectCreators.Text = TruncateAddress(creator.Key);
+                                                        foundObject.ObjectCreators.Text = TruncateAddress(profile.URN);
                                                         foundObject.ObjectCreators.Links.Add(0, creator.Key.Length, creator.Key);
                                                         System.Windows.Forms.ToolTip myTooltip = new System.Windows.Forms.ToolTip();
-                                                        myTooltip.SetToolTip(foundObject.ObjectCreators, creator.Key);
+                                                        myTooltip.SetToolTip(foundObject.ObjectCreators, profile.URN);
                                                     }
                                                     else
                                                     {
 
 
-                                                        if (foundObject.ObjectCreators2.Text == "")
+                                                        if (profile.URN != null && foundObject.ObjectCreators2.Text == "")
                                                         {
-                                                            foundObject.ObjectCreators2.Text = TruncateAddress(creator.Key);
+                                                            foundObject.ObjectCreators2.Text = TruncateAddress(profile.URN);
                                                             foundObject.ObjectCreators2.Links.Add(0, creator.Key.Length, creator.Key);
                                                             System.Windows.Forms.ToolTip myTooltip = new System.Windows.Forms.ToolTip();
-                                                            myTooltip.SetToolTip(foundObject.ObjectCreators2, creator.Key);
+                                                            myTooltip.SetToolTip(foundObject.ObjectCreators2, profile.URN);
+                                                        }
+
+                                                        if (foundObject.ObjectCreators.Text == "")
+                                                        {
+
+
+                                                            foundObject.ObjectCreators.Text = TruncateAddress(creator.Key);
+                                                            foundObject.ObjectCreators.Links.Add(0, creator.Key.Length, creator.Key);
+                                                            System.Windows.Forms.ToolTip myTooltip = new System.Windows.Forms.ToolTip();
+                                                            myTooltip.SetToolTip(foundObject.ObjectCreators, creator.Key);
+                                                        }
+                                                        else
+                                                        {
+
+
+                                                            if (foundObject.ObjectCreators2.Text == "")
+                                                            {
+                                                                foundObject.ObjectCreators2.Text = TruncateAddress(creator.Key);
+                                                                foundObject.ObjectCreators2.Links.Add(0, creator.Key.Length, creator.Key);
+                                                                System.Windows.Forms.ToolTip myTooltip = new System.Windows.Forms.ToolTip();
+                                                                myTooltip.SetToolTip(foundObject.ObjectCreators2, creator.Key);
+                                                            }
+
                                                         }
 
                                                     }
-
                                                 }
+                                                catch { }
                                             }));
                                         });
                                     }
@@ -2908,7 +2912,7 @@ namespace SUP
                         pages.LargeChange = ((flowLayoutPanel1.Width / 200) * (flowLayoutPanel1.Height / 200)) + (flowLayoutPanel1.Width / 200);
 
                         txtQty.Text = pages.LargeChange.ToString();
-
+                       
 
 
                         if (this.WindowState == FormWindowState.Maximized)

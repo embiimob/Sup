@@ -1,12 +1,9 @@
 ﻿using AngleSharp.Common;
-using AngleSharp.Css.Dom;
-using BitcoinNET.RPCClient;
 using LevelDB;
 using NBitcoin;
 using NBitcoin.RPC;
 using Newtonsoft.Json;
 using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;

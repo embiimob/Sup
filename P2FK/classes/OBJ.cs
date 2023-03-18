@@ -1,29 +1,15 @@
 ﻿using LevelDB;
 using NBitcoin;
-using NBitcoin.RPC;
 using Newtonsoft.Json;
-using Org.BouncyCastle.Crypto.Operators;
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.ComponentModel.Design;
-using System.Data;
 using System.Diagnostics;
-using System.Globalization;
 using System.IO;
 using System.Linq;
-using System.Net;
-using System.Net.NetworkInformation;
-using System.Reflection;
-using System.Runtime.InteropServices;
 using System.Security.Cryptography;
 using System.Text;
-using System.Text.RegularExpressions;
-using System.Threading;
 using System.Threading.Tasks;
-using System.Windows.Forms;
-using System.Windows.Input;
-using System.Windows.Navigation;
 
 namespace SUP.P2FK
 {
@@ -147,8 +133,6 @@ namespace SUP.P2FK
                     logstatus = "";
 
 
-
-                    //ignore any transaction that is not signed
                     if (transaction.Signed && (transaction.File.ContainsKey("OBJ") || transaction.File.ContainsKey("GIV") || transaction.File.ContainsKey("BRN")))
                     {
 
@@ -188,7 +172,6 @@ namespace SUP.P2FK
 
 
                                     foreach (string key in transaction.Keyword.Keys)
-                                    // Check each byte to see if it's in the ASCII range
                                     {
 
                                         using (var db = new DB(OBJ, @"root\obj"))
@@ -446,11 +429,6 @@ namespace SUP.P2FK
                                                 break;
                                             }
                                         }
-
-
-
-
-
 
 
                                         //is transaction signer not on the Owners list

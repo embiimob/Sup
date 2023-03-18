@@ -58,7 +58,7 @@ namespace SUP
             this.btnCreated.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.btnCreated.BackColor = System.Drawing.Color.White;
             this.btnCreated.ForeColor = System.Drawing.Color.Black;
-            this.btnCreated.Location = new System.Drawing.Point(470, 4);
+            this.btnCreated.Location = new System.Drawing.Point(507, 4);
             this.btnCreated.Name = "btnCreated";
             this.btnCreated.Size = new System.Drawing.Size(55, 20);
             this.btnCreated.TabIndex = 62;
@@ -71,7 +71,7 @@ namespace SUP
             this.btnOwned.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.btnOwned.BackColor = System.Drawing.Color.White;
             this.btnOwned.ForeColor = System.Drawing.Color.Black;
-            this.btnOwned.Location = new System.Drawing.Point(529, 4);
+            this.btnOwned.Location = new System.Drawing.Point(566, 4);
             this.btnOwned.Name = "btnOwned";
             this.btnOwned.Size = new System.Drawing.Size(49, 20);
             this.btnOwned.TabIndex = 61;
@@ -86,7 +86,7 @@ namespace SUP
             this.txtSearchAddress.CausesValidation = false;
             this.txtSearchAddress.Location = new System.Drawing.Point(42, 4);
             this.txtSearchAddress.Name = "txtSearchAddress";
-            this.txtSearchAddress.Size = new System.Drawing.Size(175, 20);
+            this.txtSearchAddress.Size = new System.Drawing.Size(212, 20);
             this.txtSearchAddress.TabIndex = 58;
             this.txtSearchAddress.KeyDown += new System.Windows.Forms.KeyEventHandler(this.SearchAddressKeyDown);
             // 
@@ -95,7 +95,7 @@ namespace SUP
             this.btnWorkBench.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.btnWorkBench.BackColor = System.Drawing.Color.White;
             this.btnWorkBench.ForeColor = System.Drawing.Color.Black;
-            this.btnWorkBench.Location = new System.Drawing.Point(661, 4);
+            this.btnWorkBench.Location = new System.Drawing.Point(698, 4);
             this.btnWorkBench.Name = "btnWorkBench";
             this.btnWorkBench.Size = new System.Drawing.Size(30, 20);
             this.btnWorkBench.TabIndex = 68;
@@ -107,7 +107,7 @@ namespace SUP
             // 
             this.linkLabel1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.linkLabel1.LinkColor = System.Drawing.SystemColors.GradientActiveCaption;
-            this.linkLabel1.Location = new System.Drawing.Point(321, 4);
+            this.linkLabel1.Location = new System.Drawing.Point(358, 4);
             this.linkLabel1.Name = "linkLabel1";
             this.linkLabel1.Size = new System.Drawing.Size(98, 21);
             this.linkLabel1.TabIndex = 71;
@@ -121,7 +121,7 @@ namespace SUP
             this.btnConnections.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.btnConnections.BackColor = System.Drawing.Color.White;
             this.btnConnections.ForeColor = System.Drawing.Color.Black;
-            this.btnConnections.Location = new System.Drawing.Point(627, 4);
+            this.btnConnections.Location = new System.Drawing.Point(664, 4);
             this.btnConnections.Name = "btnConnections";
             this.btnConnections.Size = new System.Drawing.Size(30, 20);
             this.btnConnections.TabIndex = 72;
@@ -158,7 +158,7 @@ namespace SUP
             this.btnMint.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.btnMint.BackColor = System.Drawing.Color.White;
             this.btnMint.ForeColor = System.Drawing.Color.Black;
-            this.btnMint.Location = new System.Drawing.Point(582, 4);
+            this.btnMint.Location = new System.Drawing.Point(619, 4);
             this.btnMint.Name = "btnMint";
             this.btnMint.Size = new System.Drawing.Size(39, 20);
             this.btnMint.TabIndex = 76;
@@ -169,7 +169,7 @@ namespace SUP
             // txtQty
             // 
             this.txtQty.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.txtQty.Location = new System.Drawing.Point(570, 95);
+            this.txtQty.Location = new System.Drawing.Point(607, 95);
             this.txtQty.Name = "txtQty";
             this.txtQty.Size = new System.Drawing.Size(43, 20);
             this.txtQty.TabIndex = 77;
@@ -179,7 +179,7 @@ namespace SUP
             // txtLast
             // 
             this.txtLast.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.txtLast.Location = new System.Drawing.Point(222, 4);
+            this.txtLast.Location = new System.Drawing.Point(259, 4);
             this.txtLast.Name = "txtLast";
             this.txtLast.Size = new System.Drawing.Size(43, 20);
             this.txtLast.TabIndex = 78;
@@ -192,7 +192,7 @@ namespace SUP
             this.btnLive.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.btnLive.BackColor = System.Drawing.Color.White;
             this.btnLive.ForeColor = System.Drawing.Color.Black;
-            this.btnLive.Location = new System.Drawing.Point(425, 4);
+            this.btnLive.Location = new System.Drawing.Point(462, 4);
             this.btnLive.Name = "btnLive";
             this.btnLive.Size = new System.Drawing.Size(39, 20);
             this.btnLive.TabIndex = 79;
@@ -213,7 +213,7 @@ namespace SUP
             this.imgLoading.ImageLocation = "";
             this.imgLoading.Location = new System.Drawing.Point(0, 28);
             this.imgLoading.Name = "imgLoading";
-            this.imgLoading.Size = new System.Drawing.Size(693, 493);
+            this.imgLoading.Size = new System.Drawing.Size(730, 515);
             this.imgLoading.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
             this.imgLoading.TabIndex = 81;
             this.imgLoading.TabStop = false;
@@ -224,11 +224,11 @@ namespace SUP
             this.flowLayoutPanel1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.flowLayoutPanel1.BackColor = System.Drawing.SystemColors.Control;
+            this.flowLayoutPanel1.BackColor = System.Drawing.SystemColors.ActiveCaptionText;
             this.flowLayoutPanel1.Location = new System.Drawing.Point(0, 28);
             this.flowLayoutPanel1.Margin = new System.Windows.Forms.Padding(0);
             this.flowLayoutPanel1.Name = "flowLayoutPanel1";
-            this.flowLayoutPanel1.Size = new System.Drawing.Size(693, 448);
+            this.flowLayoutPanel1.Size = new System.Drawing.Size(730, 470);
             this.flowLayoutPanel1.TabIndex = 82;
             this.flowLayoutPanel1.DragDrop += new System.Windows.Forms.DragEventHandler(this.flowLayoutPanel1_DragDrop);
             this.flowLayoutPanel1.DragEnter += new System.Windows.Forms.DragEventHandler(this.flowLayoutPanel1_DragEnter);
@@ -240,9 +240,9 @@ namespace SUP
             this.pages.AutoSize = false;
             this.pages.BackColor = System.Drawing.SystemColors.Control;
             this.pages.LargeChange = 12;
-            this.pages.Location = new System.Drawing.Point(0, 476);
+            this.pages.Location = new System.Drawing.Point(0, 498);
             this.pages.Name = "pages";
-            this.pages.Size = new System.Drawing.Size(692, 45);
+            this.pages.Size = new System.Drawing.Size(729, 45);
             this.pages.TabIndex = 84;
             this.pages.TickStyle = System.Windows.Forms.TickStyle.Both;
             this.pages.Scroll += new System.EventHandler(this.pages_Scroll);
@@ -253,7 +253,7 @@ namespace SUP
             // 
             this.txtTotal.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.txtTotal.Enabled = false;
-            this.txtTotal.Location = new System.Drawing.Point(271, 4);
+            this.txtTotal.Location = new System.Drawing.Point(308, 4);
             this.txtTotal.Name = "txtTotal";
             this.txtTotal.Size = new System.Drawing.Size(43, 20);
             this.txtTotal.TabIndex = 85;
@@ -267,7 +267,7 @@ namespace SUP
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(693, 519);
+            this.ClientSize = new System.Drawing.Size(730, 541);
             this.Controls.Add(this.pages);
             this.Controls.Add(this.txtTotal);
             this.Controls.Add(this.txtLast);
