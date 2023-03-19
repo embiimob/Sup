@@ -704,19 +704,19 @@ namespace SUP.P2FK
         }
         public static List<String> GetPublicKeysByAddress(string address, string username, string password, string url)
         {
-
+            List<String> Keys = new List<String>();
             NetworkCredential credentials = new NetworkCredential(username, password);
             RPCClient rpcClient = new RPCClient(credentials, new Uri(url), Network.Main);
             string privkey;
 
-            privkey = rpcClient.SendCommand("dumpprivkey", address).ResultString;
+            try { privkey = rpcClient.SendCommand("dumpprivkey", address).ResultString; } catch { return Keys; }
 
 
             var privKeyHex = BitConverter.ToString(Base58.Decode(privkey)).Replace("-", "");
             privKeyHex = privKeyHex.Substring(2, 64);
             BigInteger privateKey = Hex.HexToBigInteger(privKeyHex);
             ECPoint publicKey = Secp256k1.G.Multiply(privateKey);
-            List<String> Keys = new List<String>();
+           
             Keys.Add(publicKey.X.ToHex());
             Keys.Add(publicKey.Y.ToHex());
 
@@ -724,6 +724,7 @@ namespace SUP.P2FK
         }
         public static string GetPublicAddressByKeyword(string keyword, string versionbyte = "111")
         {
+            if (keyword == null) { return null; }
             // Cut the string at 20 characters
             if (keyword.Length > 20)
             {

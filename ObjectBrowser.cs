@@ -445,13 +445,15 @@ namespace SUP
                                         Task.Run(() =>
                                         {
                                             PROState profile = PROState.GetProfileByAddress(creator.Key, "good-user", "better-password", @"http://127.0.0.1:18332");
-
+                                            PROState IsRegistered = PROState.GetProfileByURN(profile.URN, "good-user", "better-password", @"http://127.0.0.1:18332");
 
                                             this.Invoke((Action)(() =>
                                             {
                                                 try
                                                 {
-                                                    if (profile.URN != null && foundObject.ObjectCreators.Text == "")
+                                                    
+
+                                                    if (profile.URN != null && foundObject.ObjectCreators.Text == "" && IsRegistered.Creators.Contains(creator.Key))
                                                     {
 
 
@@ -464,7 +466,7 @@ namespace SUP
                                                     {
 
 
-                                                        if (profile.URN != null && foundObject.ObjectCreators2.Text == "")
+                                                        if (profile.URN != null && foundObject.ObjectCreators2.Text == "" && IsRegistered.Creators.Contains(creator.Key))
                                                         {
                                                             foundObject.ObjectCreators2.Text = TruncateAddress(profile.URN);
                                                             foundObject.ObjectCreators2.Links.Add(0, creator.Key.Length, creator.Key);
@@ -831,8 +833,11 @@ namespace SUP
                                 if (creator.Value.Year > 1)
                                 {
                                     PROState profile = PROState.GetProfileByAddress(creator.Key, "good-user", "better-password", @"http://127.0.0.1:18332");
+                                    PROState IsRegistered = PROState.GetProfileByURN(profile.URN, "good-user", "better-password", @"http://127.0.0.1:18332");
 
-                                    if (profile.URN != null && foundObject.ObjectCreators.Text == "")
+
+
+                                    if (profile.URN != null && foundObject.ObjectCreators.Text == "" && IsRegistered.Creators.Contains(creator.Key))
                                     {
 
 
@@ -845,7 +850,7 @@ namespace SUP
                                     {
 
 
-                                        if (profile.URN != null && foundObject.ObjectCreators2.Text == "")
+                                        if (profile.URN != null && foundObject.ObjectCreators2.Text == "" && IsRegistered.Creators.Contains(creator.Key))
                                         {
                                             foundObject.ObjectCreators2.Text = TruncateAddress(profile.URN);
                                             foundObject.ObjectCreators2.Links.Add(0, creator.Key.Length, creator.Key);
@@ -1173,8 +1178,9 @@ namespace SUP
                     if (creator.Value.Year > 1)
                     {
                         PROState profile = PROState.GetProfileByAddress(creator.Key, "good-user", "better-password", @"http://127.0.0.1:18332");
+                        PROState IsRegistered = PROState.GetProfileByURN(profile.URN, "good-user", "better-password", @"http://127.0.0.1:18332");
 
-                        if (profile.URN != null && foundObject.ObjectCreators.Text == "")
+                        if (profile.URN != null && foundObject.ObjectCreators.Text == "" && IsRegistered.Creators.Contains(creator.Key))
                         {
 
 
@@ -1187,7 +1193,7 @@ namespace SUP
                         {
 
 
-                            if (profile.URN != null && foundObject.ObjectCreators2.Text == "")
+                            if (profile.URN != null && foundObject.ObjectCreators2.Text == "" && IsRegistered.Creators.Contains(creator.Key))
                             {
                                 foundObject.ObjectCreators2.Text = TruncateAddress(profile.URN);
                                 foundObject.ObjectCreators2.Links.Add(0, creator.Key.Length, creator.Key);
@@ -1202,7 +1208,6 @@ namespace SUP
 
                         if (foundObject.ObjectCreators.Text == "")
                         {
-
 
                             foundObject.ObjectCreators.Text = TruncateAddress(creator.Key);
                             foundObject.ObjectCreators.Links.Add(0, creator.Key.Length, creator.Key);
@@ -1391,7 +1396,7 @@ namespace SUP
                 e.SuppressKeyPress = true;
                 DisableSupInput();
                 pages.Maximum = 0; pages.Value = 0;
-                               
+                txtTotal.Text = "0";           
                 Random rnd = new Random();
                 string[] gifFiles = Directory.GetFiles("includes", "*.gif");
                 if (gifFiles.Length > 0)
@@ -1814,8 +1819,9 @@ namespace SUP
                                 if (creator.Value.Year > 1)
                                 {
                                     PROState profile = PROState.GetProfileByAddress(creator.Key, "good-user", "better-password", @"http://127.0.0.1:18332");
+                                    PROState IsRegistered = PROState.GetProfileByURN(profile.URN, "good-user", "better-password", @"http://127.0.0.1:18332");
 
-                                    if (profile.URN != null && foundObject.ObjectCreators.Text == "")
+                                    if (profile.URN != null && foundObject.ObjectCreators.Text == "" && IsRegistered.Creators.Contains(creator.Key))
                                     {
 
 
@@ -1828,7 +1834,7 @@ namespace SUP
                                     {
 
 
-                                        if (profile.URN != null && foundObject.ObjectCreators2.Text == "")
+                                        if (profile.URN != null && foundObject.ObjectCreators2.Text == "" && IsRegistered.Creators.Contains(creator.Key))
                                         {
                                             foundObject.ObjectCreators2.Text = TruncateAddress(profile.URN);
                                             foundObject.ObjectCreators2.Links.Add(0, creator.Key.Length, creator.Key);
@@ -2014,7 +2020,10 @@ namespace SUP
                         try
                         {
                             string isActive = rpcClient.GetBalance().ToString();
-                            btctActive = true;
+                            this.Invoke((MethodInvoker)delegate
+                            {
+                                btctActive = true;
+                            });
                            
                         }
                         catch { }
@@ -2028,7 +2037,10 @@ namespace SUP
                             walletUrl = @"http://127.0.0.1:8332";
                             rpcClient = new RPCClient(credentials, new Uri(walletUrl), NBitcoin.Network.Main);
                             string isActive = rpcClient.GetBalance().ToString();
-                            btcActive = true;
+                            this.Invoke((MethodInvoker)delegate
+                            {
+                                btcActive = true;
+                            });
 
                         }
                         catch { }
@@ -2044,8 +2056,10 @@ namespace SUP
                             rpcClient = new RPCClient(credentials, new Uri(walletUrl), NBitcoin.Network.Main);
                             string isActive = rpcClient.GetBalance().ToString();
                             if (decimal.TryParse(isActive, out decimal _)) {
-                             
+                                this.Invoke((MethodInvoker)delegate
+                                {
                                     ltcActive = true;
+                                });
                                
                             }
                         }
@@ -2062,8 +2076,10 @@ namespace SUP
                             string isActive = rpcClient.GetBalance().ToString();
                             if (decimal.TryParse(isActive, out decimal _))
                             {
-
-                                mzcActive = true;
+                                this.Invoke((MethodInvoker)delegate
+                                {
+                                    mzcActive = true;
+                                    });
 
                             }
                         }
@@ -2079,8 +2095,10 @@ namespace SUP
                             string isActive = rpcClient.GetBalance().ToString();
                             if (decimal.TryParse(isActive, out decimal _))
                             {
-
-                                dogActive = true;
+                                this.Invoke((MethodInvoker)delegate
+                                {
+                                    dogActive = true;
+                                });
 
                             }
                         }
@@ -2098,7 +2116,10 @@ namespace SUP
 
                         if (ipfsdaemon == "true")
                         {
-                            ipfsActive = true;
+                            this.Invoke((MethodInvoker)delegate
+                            {
+                                ipfsActive = true;
+                            });
                             var process = new Process
                             {
                                 StartInfo = new ProcessStartInfo
@@ -2170,12 +2191,59 @@ namespace SUP
             }
         }
 
+        //GPT3
         private void btnMint_Click(object sender, EventArgs e)
         {
-            ObjectMint mintform = new ObjectMint();
-            mintform.StartPosition = FormStartPosition.CenterScreen;
-            mintform.Show();
+            // Create the form that will contain the buttons
+            Form buttonForm = new Form();
+            buttonForm.FormBorderStyle = FormBorderStyle.None;
+            buttonForm.BackColor = Color.White;
+            buttonForm.Size = new Size(300, 150);
+
+            // Create the "Object Mint" button
+            Button objectMintButton = new Button();
+            objectMintButton.Text = @"Object Mint \ Update";
+            objectMintButton.Font = new Font("Arial", 16, FontStyle.Bold);
+            objectMintButton.Size = new Size(250, 50);
+            objectMintButton.Location = new Point(25, 25);
+            objectMintButton.Click += (s, ev) =>
+            {
+                // Close the button form
+                buttonForm.Close();
+
+                // Show the "ObjectMint" form and set focus to it
+                ObjectMint mintform = new ObjectMint();
+                mintform.StartPosition = FormStartPosition.CenterParent;
+                mintform.Show(this);
+                mintform.Focus();
+            };
+            buttonForm.Controls.Add(objectMintButton);
+
+            // Create the "Mint Profile" button
+            Button mintProfileButton = new Button();
+            mintProfileButton.Text = @"Profile Mint \ Update";
+            mintProfileButton.Font = new Font("Arial", 16, FontStyle.Bold);
+            mintProfileButton.Size = new Size(250, 50);
+            mintProfileButton.Location = new Point(25, 85);
+            mintProfileButton.Click += (s, ev) =>
+            {
+                // Close the button form
+                buttonForm.Close();
+
+                // Show the "ProfileMint" form and set focus to it
+                ProfileMint mintprofile = new ProfileMint();
+                mintprofile.StartPosition = FormStartPosition.CenterParent;
+                mintprofile.Show(this);
+                mintprofile.Focus();
+            };
+            buttonForm.Controls.Add(mintProfileButton);
+
+            // Show the button form centered on the launching program and set focus to it
+            buttonForm.StartPosition = FormStartPosition.CenterParent;
+            buttonForm.ShowDialog(this);
+            buttonForm.Focus();
         }
+
 
         private void flowLayoutPanel1_DragEnter(object sender, System.Windows.Forms.DragEventArgs e)
         {
@@ -2286,12 +2354,10 @@ namespace SUP
                         string flattransactions;
                         OBJState isobject = new OBJState();
                         List<OBJState> foundobjects = new List<OBJState>();
-
                         NetworkCredential credentials = new NetworkCredential("good-user", "better-password");
                         RPCClient rpcClient;
 
                         string filter = "";
-
 
                         txtSearchAddress.Invoke((MethodInvoker)delegate
                         {
@@ -2886,9 +2952,9 @@ namespace SUP
            
 
                 }
-                catch
+                catch(Exception ex)
                 {
-
+                    string error = ex.Message;
                     this.Invoke((MethodInvoker)delegate
                     {
                         tmrSearchMemoryPool.Start();

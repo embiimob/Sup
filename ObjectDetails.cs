@@ -475,8 +475,6 @@ namespace SUP
 
 
 
-
-
                                 }
 
 
@@ -540,7 +538,7 @@ namespace SUP
 
             // Create a PictureBox with the specified image
 
-            if (imageLocation != "")
+            if (File.Exists(imageLocation)  || imageLocation.ToUpper().StartsWith("HTTP"))
             {
                 PictureBox picture = new PictureBox
                 {

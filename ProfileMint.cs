@@ -42,15 +42,15 @@ namespace SUP
 
         private void UpdateRemainingChars()
         {
-            if (txtURN.Text != "" && txtFirstName.Text != "" && txtObjectAddress.Text != "" && flowLocation.Controls.Count > 0)
+            if (txtURN.Text != "" && txtObjectAddress.Text != "")
             {
-                if ((btnFirstName.BackColor == Color.Blue || btnObjectURN.BackColor == Color.Blue || btnMiddleName.BackColor == Color.Blue || btnLocation.BackColor == Color.Blue || btnURL.BackColor == Color.Blue || btnObjectImage.BackColor == Color.Blue || btnLastName.BackColor == Color.Blue || btnBio.BackColor == Color.Blue || btnObjectKeywords.BackColor == Color.Blue)) { btnMint.Enabled = true; }
+                if ((btnFirstName.BackColor == Color.Blue || btnObjectURN.BackColor == Color.Blue || btnMiddleName.BackColor == Color.Blue || btnSuffix.BackColor == Color.Blue || btnLocation.BackColor == Color.Blue || btnURL.BackColor == Color.Blue || btnObjectImage.BackColor == Color.Blue || btnLastName.BackColor == Color.Blue || btnBio.BackColor == Color.Blue || btnObjectKeywords.BackColor == Color.Blue)) { btnMint.Enabled = true; }
             }
 
 
             int maxsize = 888;
 
-            maxsize = maxsize - txtBio.Text.Length - txtIMG.Text.Length - txtFirstName.Text.Length - txtMiddleName.Text.Length - txtURN.Text.Length - txtLastName.Text.Length;
+            maxsize = maxsize - txtBio.Text.Length - txtIMG.Text.Length - txtFirstName.Text.Length - txtMiddleName.Text.Length - txtURN.Text.Length - txtLastName.Text.Length - txtSuffix.Text.Length;
             maxsize = maxsize - 40; ///estimated json chars required.
 
             foreach (System.Windows.Forms.Control control in flowURL.Controls)
@@ -69,13 +69,12 @@ namespace SUP
             }
 
 
-         
             lblRemainingChars.Text = maxsize.ToString();
 
 
             if (maxsize < 0)
             {
-              
+
                 btnMint.Enabled = false;
             }
 
@@ -87,6 +86,8 @@ namespace SUP
             if (btnMiddleName.BackColor == Color.Blue) { PROJson.mnm = txtMiddleName.Text; }
             if (btnBio.BackColor == Color.Blue) { PROJson.bio = txtBio.Text; }
             if (btnLastName.BackColor == Color.Blue) { PROJson.lnm = txtLastName.Text; }
+            if (btnSuffix.BackColor == Color.Blue) { PROJson.sfx = txtSuffix.Text; }
+
 
             Dictionary<string, string> mintURL = new Dictionary<string, string>();
             foreach (Button attributeControl in flowURL.Controls)
@@ -99,7 +100,6 @@ namespace SUP
 
             List<int> mintCreators = new List<int>();
             mintCreators.Add(0);
-
             PROJson.cre = mintCreators;
 
 
@@ -114,6 +114,14 @@ namespace SUP
                 PROJson.loc = mintLocation;
             }
 
+            try
+            {
+                List<string> pubkeys = Root.GetPublicKeysByAddress(txtObjectAddress.Text, "good-user", "better-password", @"http://127.0.0.1:18332");
+                PROJson.pkx = pubkeys[0];
+                PROJson.pky = pubkeys[1];
+            }
+            catch { }
+
             var settings = new JsonSerializerSettings
             {
                 NullValueHandling = NullValueHandling.Ignore
@@ -121,21 +129,21 @@ namespace SUP
 
             // Serialize the modified JObject back into a JSON string
             var objectSerialized = JsonConvert.SerializeObject(PROJson, Formatting.None, settings);
-            
+
             txtOBJJSON.Text = objectSerialized.Replace(",\"url\":{}", "").Replace(",\"loc\":{}", "").Replace(",\"urn\":\"\"", "").Replace(",\"fnm\":\"\"", "").Replace(",\"mnm\":\"\"", "").Replace(",\"lnm\":\"\"", "").Replace(",\"sfx\":\"\"", "").Replace(",\"bio\":\"\"", "").Replace(",\"img\":\"\"", "");
-    
+
 
             txtOBJP2FK.Text = "PRO" + ":" + txtOBJJSON.Text.Length + ":" + txtOBJJSON.Text;
 
             if (btnMint.Enabled)
             {
                 NetworkCredential credentials = new NetworkCredential("good-user", "better-password");
-                RPCClient rpcClient = new RPCClient(credentials, new Uri("http://127.0.0.1:18332"), Network.Main);
+                RPCClient rpcClient = new RPCClient(credentials, new Uri(@"http://127.0.0.1:18332"), Network.Main);
                 System.Security.Cryptography.SHA256 mySHA256 = SHA256Managed.Create();
                 byte[] hashValue = mySHA256.ComputeHash(Encoding.UTF8.GetBytes(txtOBJP2FK.Text));
                 string signatureAddress;
 
-                signatureAddress = txtObjectAddress.Text; 
+                signatureAddress = txtObjectAddress.Text;
                 string signature = "";
                 try { signature = rpcClient.SendCommand("signmessage", signatureAddress, BitConverter.ToString(hashValue).Replace("-", String.Empty)).ResultString; }
                 catch (Exception ex)
@@ -159,67 +167,11 @@ namespace SUP
                 //add URN registration
                 encodedList.Add(Root.GetPublicAddressByKeyword(txtURN.Text));
 
-
-                //attempt file registration
-                string fileSource = txtURN.Text.Trim();
-                byte[] fileBytes;
-
-                if (fileSource.ToUpper().StartsWith("IPFS:"))
-                {
-
-                    string ipfsHash = fileSource.Substring(5);
-
-                    fileSource = @"ipfs\" + ipfsHash;
-                }
-                else
-                {
-                    // extract the remaining string after the colon, or use the full string if there is no colon
-                    int colonIndex = fileSource.IndexOf(':');
-                    if (colonIndex >= 0)
-                    {
-                        fileSource = fileSource.Substring(colonIndex + 1);
-                    }
-                    // concatenate with "root\"
-                    fileSource = @"root\" + fileSource;
-                }
-
-                // attempt to read the first 20 bytes of the urn file into a base 58 encoded byte array with version and checksum
-                try
-                {
-
-                    byte[] payload = new byte[21];
-
-                    using (FileStream fileStream = new FileStream(fileSource, FileMode.Open))
-                    {
-                        fileStream.Read(payload, 1, 20);
-                    }
-
-                    payload[0] = Byte.Parse("111");
-                    string objectaddress = Base58.EncodeWithCheckSum(payload);
-
-                    encodedList.Add(objectaddress);
-
-                }
-                catch { }
-
-
-
                 foreach (Button keywordbtn in flowKeywords.Controls)
                 {
                     encodedList.Add(Root.GetPublicAddressByKeyword(keywordbtn.Text));
                 }
 
-                foreach (Button ownerbtn in flowLocation.Controls)
-                {
-                    if (ownerbtn.Text.Split(':')[0] != signatureAddress)
-                    {
-                        encodedList.Add(ownerbtn.Text.Split(':')[0]);
-                    }
-                }
-
-        
-
-                if (!encodedList.Contains(txtObjectAddress.Text)) { encodedList.Add(txtObjectAddress.Text); }
                 encodedList.Add(signatureAddress);
                 txtAddressListJSON.Text = JsonConvert.SerializeObject(encodedList.Distinct());
 
@@ -260,84 +212,12 @@ namespace SUP
         }
 
 
-        private Bitmap GenerateQRCode(string qrData)
-        {
-            QrCode qrCode = encoder.Encode(qrData);
-            Graphics g = null;
-            try
-            {
-                int height = qrCode.Matrix.Height;
-                Bitmap qrCodeImage = new Bitmap((height * 2) + 9, (height * 2) + 9);
-                g = Graphics.FromImage(qrCodeImage);
-                renderer.Draw(g, qrCode.Matrix);
-                return qrCodeImage;
-            }
-            finally
-            {
-                if (g != null)
-                {
-                    g.Dispose();
-                }
-            }
-        }
 
 
 
 
 
-        private void button12_Click_1(object sender, EventArgs e)
-        {
-
-            System.Drawing.Bitmap bitmap = new Bitmap(this.Width - 22, this.Height - 44);
-            Graphics graphics = Graphics.FromImage(bitmap);
-            graphics.CopyFromScreen(this.PointToScreen(new Point(0, 0)), new Point(0, 0), this.Size);
-            bitmap.RotateFlip(RotateFlipType.Rotate90FlipNone);
-            PrintImage(bitmap);
-
-        }
         Regex regexTransactionId = new Regex(@"\b[0-9a-f]{64}\b");
-        System.Drawing.Image bmIm;
-
-        private void PrintImage(System.Drawing.Image img)
-        {
-            bmIm = img;
-            PrintDocument pd = new PrintDocument();
-            pd.PrintPage += this.pd_PrintPage;
-            pd.OriginAtMargins = false;
-            pd.DefaultPageSettings.Landscape = false;
-            pd.Print();
-        }
-        void pd_PrintPage(object sender, PrintPageEventArgs e)
-        {
-
-            System.Drawing.Image i = bmIm;
-
-            float newWidth = i.Width * 100 / i.HorizontalResolution;
-            float newHeight = i.Height * 100 / i.VerticalResolution;
-
-            float widthFactor = newWidth / e.PageBounds.Width;
-            float heightFactor = newHeight / e.PageBounds.Height;
-
-            if (widthFactor > 1 || heightFactor > 1)
-            {
-                if (widthFactor > heightFactor)
-                {
-                    newWidth = newWidth / widthFactor;
-                    newHeight = newHeight / widthFactor;
-                }
-                else
-                {
-                    newWidth = newWidth / heightFactor;
-                    newHeight = newHeight / heightFactor;
-                }
-            }
-
-            // Calculate the x and y coordinates of the top-left corner of the image
-            float x = (e.PageBounds.Width - newWidth) / 2;
-            float y = (e.PageBounds.Height - newHeight) / 2;
-
-            e.Graphics.DrawImage(i, x, y, (int)newWidth, (int)newHeight);
-        }
 
         private void txtIMG_TextChanged(object sender, EventArgs e)
         {
@@ -346,25 +226,63 @@ namespace SUP
 
         private void txtURN_TextChanged(object sender, EventArgs e)
         {
-            UpdateRemainingChars();
+            
 
-            if (txtURN.Text != "")
+            btnObjectURN.BackColor = Color.Blue;
+            btnObjectURN.ForeColor = Color.Yellow;
+
+            if (txtURN.Text != "" && txtObjectAddress.Text != "")
             {
-                
-                btnObjectURN.BackColor = Color.Blue;
-                btnObjectURN.ForeColor = Color.Yellow;
+
+                btnURL.Enabled = true;
+                btnBio.Enabled = true;
+                btnObjectImage.Enabled = true;
+                btnObjectKeywords.Enabled = true;
+                btnFirstName.Enabled = true;
+                btnMiddleName.Enabled = true;
+                btnLastName.Enabled = true;
+                btnSuffix.Enabled = true;
+                btnLocation.Enabled = true;
+                txtBio.Enabled = true;
+                txtIMG.Enabled = true;
+                txtFirstName.Enabled = true;
+                txtMiddleName.Enabled = true;
+                txtLastName.Enabled = true;
+                txtSuffix.Enabled = true;
+              
             }
             else
             {
-                btnObjectURN.BackColor = Color.White;
-                btnObjectURN.ForeColor = Color.Black;
-            }
+                if (txtURN.Text == "")
+                {
+                    btnObjectURN.BackColor = Color.White;
+                    btnObjectURN.ForeColor = Color.Black;
+                }
 
+                btnURL.Enabled = false;
+                btnBio.Enabled = false;
+                btnObjectImage.Enabled = false;
+                btnObjectKeywords.Enabled = false;
+                btnFirstName.Enabled = false;
+                btnMiddleName.Enabled = false;
+                btnLastName.Enabled = false;
+                btnSuffix.Enabled = false;
+                btnLocation.Enabled = false;
+                txtBio.Enabled = false;
+                txtIMG.Enabled = false;
+                txtFirstName.Enabled = false;
+                txtMiddleName.Enabled = false;
+                txtLastName.Enabled = false;
+                txtSuffix.Enabled = false;
+
+
+            }
+            UpdateRemainingChars();
         }
 
         private void txtURI_TextChanged(object sender, EventArgs e)
         {
-            UpdateRemainingChars();
+           
 
             if (txtMiddleName.Text != "")
             {
@@ -376,86 +294,38 @@ namespace SUP
                 btnMiddleName.BackColor = Color.White;
                 btnMiddleName.ForeColor = Color.Black;
             }
+            UpdateRemainingChars();
         }
 
         private void flowAttribute_ControlAdded(object sender, ControlEventArgs e)
         {
-            UpdateRemainingChars();
+           
             btnURL.BackColor = Color.Blue;
             btnURL.ForeColor = Color.Yellow;
+            UpdateRemainingChars();
         }
 
         private void flowKeyword_ControlAdded(object sender, ControlEventArgs e)
         {
-            UpdateRemainingChars();
+            
             btnObjectKeywords.BackColor = Color.Blue;
             btnObjectKeywords.ForeColor = Color.Yellow;
+            UpdateRemainingChars();
         }
 
         private void txtTitle_TextChanged(object sender, EventArgs e)
         {
-
-            if (txtFirstName.Text == "")
+            if (txtFirstName.Text != "")
             {
-              
-                btnFirstName.BackColor = Color.White;
-                btnFirstName.ForeColor = Color.Black;
-                btnURL.Enabled = false;
-                btnBio.Enabled = false;
-                btnObjectImage.Enabled = false;
-                btnObjectKeywords.Enabled = false;
-                btnFirstName.Enabled = false;
-                btnMiddleName.Enabled = false;
-                btnObjectURN.Enabled = false;
-                btnLastName.Enabled = false;
-                btnLocation.Enabled = false;
-                btnObjectAddress.Enabled = false;
-                txtBio.Enabled = false;
-                txtIMG.Enabled = false;
-                txtURN.Enabled = false;
-                txtMiddleName.Enabled = false;
-                txtLastName.Enabled = false;
-                txtObjectAddress.Enabled = false;
-
+                btnFirstName.BackColor = Color.Blue;
+                btnFirstName.ForeColor = Color.Yellow;
             }
             else
             {
-                UpdateRemainingChars();
-                btnFirstName.BackColor = Color.Blue;
-                btnFirstName.ForeColor = Color.Yellow;
-
-                if (txtObjectAddress.Text == "")
-                {
-                    
-                    txtObjectAddress.Enabled = true;
-                    btnObjectAddress.Enabled = true;
-
-                }
-                else
-                {
-                   
-
-                    btnURL.Enabled = true;
-                    btnBio.Enabled = true;
-                    btnObjectImage.Enabled = true;
-                    btnObjectKeywords.Enabled = true;
-                    btnFirstName.Enabled = true;
-                    btnMiddleName.Enabled = true;
-                    btnObjectURN.Enabled = true;
-                    btnLocation.Enabled = true;
-                    btnObjectAddress.Enabled = true;
-                    btnLastName.Enabled = true;
-                    txtBio.Enabled = true;
-                    txtIMG.Enabled = true;
-                    txtURN.Enabled = true;
-                    txtMiddleName.Enabled = true;
-                    txtLastName.Enabled = true;
-                    btnLastName.Enabled = true;
-                    txtObjectAddress.Enabled = true;
-
-                }
-
+                btnFirstName.BackColor = Color.White;
+                btnFirstName.ForeColor = Color.Black;
             }
+            UpdateRemainingChars();
         }
 
         private void ObjectMint_Load(object sender, EventArgs e)
@@ -464,7 +334,7 @@ namespace SUP
 
         private void txtDescription_TextChanged(object sender, EventArgs e)
         {
-            UpdateRemainingChars();
+            
             if (txtBio.Text != "")
             {
                 btnBio.BackColor = Color.Blue;
@@ -476,73 +346,72 @@ namespace SUP
                 btnBio.BackColor = Color.White;
                 btnBio.ForeColor = Color.Black;
             }
+
+            UpdateRemainingChars();
         }
 
 
         private void flowOwners_ControlAdded(object sender, ControlEventArgs e)
         {
-            UpdateRemainingChars();
+           
             btnLocation.BackColor = Color.Blue;
             btnLocation.ForeColor = Color.Yellow;
+            UpdateRemainingChars();
         }
 
         private void txtObjectAddress_TextChanged(object sender, EventArgs e)
         {
-            UpdateRemainingChars();
-            if (txtObjectAddress.Text != "")
+            btnObjectAddress.BackColor = Color.Blue;
+            btnObjectAddress.ForeColor = Color.Yellow;
+
+            if (txtURN.Text != "" && txtObjectAddress.Text != "")
             {
-               
-                btnObjectAddress.BackColor = Color.Blue;
-                btnObjectAddress.ForeColor = Color.Yellow;
+
                 btnURL.Enabled = true;
                 btnBio.Enabled = true;
                 btnObjectImage.Enabled = true;
                 btnObjectKeywords.Enabled = true;
                 btnFirstName.Enabled = true;
                 btnMiddleName.Enabled = true;
-                btnObjectURN.Enabled = true;
-                btnLocation.Enabled = true;
-                btnObjectAddress.Enabled = true;
                 btnLastName.Enabled = true;
+                btnSuffix.Enabled = true;
+                btnLocation.Enabled = true;
                 txtBio.Enabled = true;
                 txtIMG.Enabled = true;
-                txtURN.Enabled = true;
+                txtFirstName.Enabled = true;
                 txtMiddleName.Enabled = true;
                 txtLastName.Enabled = true;
-                btnLastName.Enabled = true;
-                txtObjectAddress.Enabled = true;
-                btnFirstName.BackColor = Color.Blue;
-                btnFirstName.ForeColor = Color.Yellow;
-
+                txtSuffix.Enabled = true;
 
             }
             else
             {
-                
-                txtFirstName.Enabled = true;
-                txtObjectAddress.Enabled = true;
-                btnObjectAddress.Enabled = true;
-                btnFirstName.Enabled = true;
-                btnObjectAddress.BackColor = Color.White;
-                btnObjectAddress.ForeColor = Color.Black;
+                if (txtObjectAddress.Text == "")
+                {
+                    btnObjectAddress.BackColor = Color.White;
+                    btnObjectAddress.ForeColor = Color.Black;
+                }
+
                 btnURL.Enabled = false;
                 btnBio.Enabled = false;
                 btnObjectImage.Enabled = false;
                 btnObjectKeywords.Enabled = false;
                 btnFirstName.Enabled = false;
                 btnMiddleName.Enabled = false;
-                btnObjectURN.Enabled = false;
-                btnLocation.Enabled = false;
                 btnLastName.Enabled = false;
+                btnSuffix.Enabled = false;
+                btnLocation.Enabled = false;
                 txtBio.Enabled = false;
                 txtIMG.Enabled = false;
-                txtURN.Enabled = false;
+                txtFirstName.Enabled = false;
                 txtMiddleName.Enabled = false;
                 txtLastName.Enabled = false;
-                txtObjectAddress.Enabled = false;
+                txtSuffix.Enabled = false;
 
 
             }
+            UpdateRemainingChars();
+
         }
 
         private void btnObjectAddress_Click(object sender, EventArgs e)
@@ -553,8 +422,6 @@ namespace SUP
                 lblObjectStatus.Text = "";
                 LoadFormByAddress(txtObjectAddress.Text);
 
-
-
             }
             else
             {
@@ -563,8 +430,6 @@ namespace SUP
                 string newAddress = "";
                 try { newAddress = rpcClient.SendCommand("getnewaddress", txtFirstName.Text + "!" + DateTime.UtcNow.ToString("yyyyMMddHHmmss")).ResultString; } catch { }
                 txtObjectAddress.Text = newAddress;
-                txtFirstName.Enabled = false;
-                btnFirstName.Enabled = false;
                 lblObjectStatus.Text = "";
                 lblCost.Text = "";
                 UpdateRemainingChars();
@@ -583,26 +448,6 @@ namespace SUP
             UpdateRemainingChars();
         }
 
-        private void btnMaximum_Click(object sender, EventArgs e)
-        {
-
-            if (btnLastName.BackColor == Color.Blue) { btnLastName.BackColor = Color.White; btnLastName.ForeColor = Color.Black; }
-            else
-            {
-                if (txtLastName.Text != "") { btnLastName.BackColor = Color.Blue; btnLastName.ForeColor = Color.Yellow; }
-                else
-                {
-                    try
-                    {
-                        if (long.Parse(txtLastName.Text.Replace(",", "")) <= 5149219112448) { btnLastName.BackColor = Color.Blue; btnLastName.ForeColor = Color.Yellow; } else { btnLastName.BackColor = Color.White; btnLastName.ForeColor = Color.Black; }
-
-                    }
-                    catch { btnLastName.BackColor = Color.White; btnLastName.ForeColor = Color.Black; }
-                }
-            }
-
-            UpdateRemainingChars();
-        }
 
         private void btnObjectDescription_Click(object sender, EventArgs e)
         {
@@ -610,7 +455,7 @@ namespace SUP
             if (btnBio.BackColor == Color.Blue) { btnBio.BackColor = Color.White; btnBio.ForeColor = Color.Black; }
             else
             {
-                if (txtFirstName.Text != "") { btnBio.BackColor = Color.Blue; btnBio.ForeColor = Color.Yellow; } else { btnBio.BackColor = Color.White; btnBio.ForeColor = Color.Black; }
+                btnBio.BackColor = Color.Blue; btnBio.ForeColor = Color.Yellow;
             }
             UpdateRemainingChars();
         }
@@ -919,11 +764,11 @@ namespace SUP
                 tableLayout.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50F));
 
                 var keyLabel = new Label();
-                keyLabel.Text = "Key";
+                keyLabel.Text = "Label";
                 keyLabel.TextAlign = ContentAlignment.MiddleCenter;
 
                 var valueLabel = new Label();
-                valueLabel.Text = "Value";
+                valueLabel.Text = "URL";
                 valueLabel.TextAlign = ContentAlignment.MiddleCenter;
 
                 var keyTextBox = new TextBox();
@@ -967,10 +812,38 @@ namespace SUP
                     var value = valueTextBox.Text;
 
                     var button = new Button();
-                    button.Text = $"{key}: {value}";
+                    button.Text = $"{key}:{value}";
                     button.AutoSize = true;
-                    button.Click += (s, ev) => flowURL.Controls.Remove(button);
+
+                    button.MouseClick += (s, ev) =>
+                    {
+                        // only proceed if left mouse button is clicked
+                        if (ev.Button == MouseButtons.Left)
+                        {
+                            // disable the button to prevent double-clicks
+                            button.Enabled = false;
+
+                            // remove the button from the flow layout panel and dispose of it
+                            flowURL.Controls.Remove(button);
+                            button.Dispose();
+                        }
+                    };
+
+                    // add event handler for right click
+                    button.MouseDown += (s, ev) =>
+                    {
+                        // only proceed if right mouse button is clicked
+                        if (ev.Button == MouseButtons.Right)
+                        {
+                            // create the object browser form and show it
+                            string labelText = button.Text;
+                            ObjectBrowser form = new ObjectBrowser(value);
+                            form.Show();
+                        }
+                    };
+
                     flowURL.Controls.Add(button);
+
                 }
             }
             UpdateRemainingChars();
@@ -1088,11 +961,11 @@ namespace SUP
                 tableLayout.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50F));
 
                 var ownerLabel = new Label();
-                ownerLabel.Text = "Owner";
+                ownerLabel.Text = "Key";
                 ownerLabel.TextAlign = ContentAlignment.MiddleCenter;
 
                 var qtyLabel = new Label();
-                qtyLabel.Text = "Qty";
+                qtyLabel.Text = "Value";
                 qtyLabel.TextAlign = ContentAlignment.MiddleCenter;
 
                 var ownerTextBox = new TextBox();
@@ -1104,8 +977,7 @@ namespace SUP
                 qtyTextBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
                 qtyTextBox.Size = new Size(170, 70);
                 qtyTextBox.Multiline = true;
-                qtyTextBox.KeyPress += new KeyPressEventHandler(qtyTextBox_KeyPress);
-
+                
                 tableLayout.Controls.Add(ownerLabel, 0, 0);
                 tableLayout.Controls.Add(qtyLabel, 1, 0);
                 tableLayout.Controls.Add(ownerTextBox, 0, 1);
@@ -1137,12 +1009,9 @@ namespace SUP
                     var owner = ownerTextBox.Text;
                     var qty = qtyTextBox.Text;
 
-                    var isNumeric = int.TryParse(qty, out _);
-
-                    if (isNumeric)
-                    {
+                   
                         var button = new Button();
-                        button.Text = $"{owner}: {qty}";
+                        button.Text = $"{owner}:{qty}";
                         button.AutoSize = true;
                         button.MouseClick += (s, ev) =>
                         {
@@ -1156,41 +1025,17 @@ namespace SUP
                                 flowLocation.Controls.Remove(button);
                                 button.Dispose();
                             }
-                        };
-
-                        // add event handler for right click
-                        button.MouseDown += (s, ev) =>
-                        {
-                            // only proceed if right mouse button is clicked
-                            if (ev.Button == MouseButtons.Right)
-                            {
-                                // create the object browser form and show it
-                                string labelText = button.Text;
-                                ObjectBrowser form = new ObjectBrowser(labelText.Split(':')[0]);
-                                form.Show();
-                            }
-                        };
-
-
+                        };                       
 
                         flowLocation.Controls.Add(button);
-                    }
-                    else
-                    {
-                        MessageBox.Show("Qty field only accepts numeric input.");
-                    }
+                   
                 }
             }
             UpdateRemainingChars();
         }
 
-        private void qtyTextBox_KeyPress(object sender, KeyPressEventArgs e)
-        {
-            if (!char.IsControl(e.KeyChar) && !char.IsDigit(e.KeyChar))
-            {
-                e.Handled = true;
-            }
-        }
+
+     
 
 
         //GPT3
@@ -1234,7 +1079,7 @@ namespace SUP
             {
                 btnLocation.BackColor = Color.White;
                 btnLocation.ForeColor = Color.Black;
-               
+
 
             }
             UpdateRemainingChars();
@@ -1243,22 +1088,6 @@ namespace SUP
 
         private void btnMint_Click(object sender, EventArgs e)
         {
-
-            try
-            {
-
-                using (Bitmap qrCode = GenerateQRCode(txtAddressListJSON.Text))
-                {
-                    if (qrCode != null)
-                    {
-
-                        Directory.CreateDirectory(@"root\" + txtObjectAddress.Text);
-                        qrCode.Save(@"root\" + txtObjectAddress.Text + @"\OBJPrint.png", ImageFormat.Png);
-
-                    }
-                }
-            }
-            catch { }
 
             ismint = true;
             UpdateRemainingChars();
@@ -1272,218 +1101,292 @@ namespace SUP
 
             }
         }
-    
-
-
-
-    
 
 
 
 
-    private void btnScan_Click(object sender, EventArgs e)
-    {
-        // Create a new form for the address input dialog
-        Form addressForm = new Form();
-        addressForm.Text = "Enter an Address or Scan a Mint";
-        addressForm.StartPosition = FormStartPosition.CenterParent;
-        addressForm.ControlBox = false;
-        addressForm.FormBorderStyle = FormBorderStyle.FixedDialog;
-        addressForm.Width = 410;
-        addressForm.Height = 210;
-        // Create a label with instructions for the user
-        Label instructionLabel = new Label();
-        instructionLabel.Text = "Enter an Address or Scan a Mint";
-        instructionLabel.Font = new Font(instructionLabel.Font.FontFamily, 16, System.Drawing.FontStyle.Bold);
-        instructionLabel.AutoSize = true;
-        instructionLabel.Location = new Point(20, 20);
-        addressForm.Controls.Add(instructionLabel);
 
-        // Create a text box for the user to input the address
-        TextBox addressTextBox = new TextBox();
-        addressTextBox.Location = new Point(20, 70);
-        addressTextBox.Width = 300;
-        addressTextBox.Height = 50;
-        addressTextBox.Multiline = true;
-        addressForm.Controls.Add(addressTextBox);
 
-        // Create a button for the user to click to search for the address
-        Button searchButton = new Button();
-        searchButton.Text = "Search";
-        searchButton.Location = new Point(20, 120);
-        searchButton.Width = 100;
-        searchButton.Click += new EventHandler((searchSender, searchE) =>
+
+
+
+        private void btnScan_Click(object sender, EventArgs e)
         {
-            // Perform the search function here
-            LoadFormByAddress(addressTextBox.Text);
 
+        }
 
-            addressForm.Close();
-            // ...
-        }); addressForm.Controls.Add(searchButton);
-
-
-        // Set the default button to be the search button
-        addressForm.AcceptButton = searchButton;
-
-        // Show the dialog and set focus to the address text box
-        addressForm.ShowDialog();
-
-        btnObjectImage.PerformClick();
-        btnObjectURN.PerformClick();
-    }
-
-    public void LoadFormByAddress(string address)
-    {
-
-        OBJState foundObject = OBJState.GetObjectByAddress(address, "good-user", "better-password", "http://127.0.0.1:18332");
-        if (foundObject.URN != null)
+        public void LoadFormByAddress(string address)
         {
-            lblObjectStatus.Text = "created:[" + foundObject.CreatedDate.ToString("MM/dd/yyyy hh:mm:ss") + "]  locked:[" + foundObject.LockedDate.ToString("MM/dd/yyyy hh:mm:ss") + "]  last seen:[" + foundObject.ChangeDate.ToString("MM/dd/yyyy hh:mm:ss") + "]";
 
-
-            if (lblObjectStatus.Text.Contains("Monday, January 1, 0001"))
+            PROState foundObject = PROState.GetProfileByAddress(address, "good-user", "better-password", "http://127.0.0.1:18332");
+            if (foundObject.URN != null)
             {
-                lblObjectStatus.Text = lblObjectStatus.Text.Replace("Monday, January 1, 0001", " unconfirmed ");
+                lblObjectStatus.Text = "last seen:[" + foundObject.ChangeDate.ToString("MM/dd/yyyy hh:mm:ss") + "]";
+
+
+                if (lblObjectStatus.Text.Contains("Monday, January 1, 0001"))
+                {
+                    lblObjectStatus.Text = lblObjectStatus.Text.Replace("Monday, January 1, 0001", " unconfirmed ");
+
+                }
+                else { }
+
                 NetworkCredential credentials = new NetworkCredential("good-user", "better-password");
                 RPCClient rpcClient = new RPCClient(credentials, new Uri("http://127.0.0.1:18332"), Network.Main);
                 string accountName = "";
                 try { accountName = rpcClient.SendCommand("getaccount", address).ResultString; } catch { }
                 if (accountName != "") { btnMint.Enabled = false; }
-            }
-            else { }
 
 
-            txtFirstName.Text = foundObject.Name;
-            txtIMG.Text = foundObject.Image;
-            txtURN.Text = foundObject.URN;
-            txtMiddleName.Text = foundObject.URI;
-            txtObjectAddress.Text = address;
-            txtBio.Text = foundObject.Description;
-            try { txtLastName.Text = foundObject.Maximum.ToString(); } catch { txtLastName.Text = ""; }
+                txtFirstName.Text = foundObject.FirstName;
+                txtIMG.Text = foundObject.Image;
+                txtURN.Text = foundObject.URN;
+                txtMiddleName.Text = foundObject.MiddleName;
+                txtLastName.Text = foundObject.LastName;
+                txtSuffix.Text = foundObject.Suffix;
+                txtObjectAddress.Text = address;
+                txtBio.Text = foundObject.Bio;
 
-            flowURL.Controls.Clear();
+                flowURL.Controls.Clear();
 
-            try
-            {
+                try
+                {
+                    // Iterate through all attributes of foundObject and create a button for each
+                    foreach (var attrib in foundObject.URL)
+                    {
+                        // Create a new button with the attribute key and value separated by ':'
+                        Button attribButton = new Button();
+                        attribButton.AutoSize = true;
+                        attribButton.Text = attrib.Key + ":" + attrib.Value;
+
+                        // Add an event handler to the button that removes it from the flowAttribute panel when clicked
+                        attribButton.Click += new EventHandler((sender2, e2) =>
+                        {
+                            flowURL.Controls.Remove(attribButton);
+                        });
+
+                        // Add the button to the flowAttribute panel
+                        flowURL.Controls.Add(attribButton);
+                    }
+
+                }
+                catch { }
+
+                // Clear any existing buttons from the flowKeywords panel
+                flowKeywords.Controls.Clear();
+
+                List<string> keywords = new List<string>();
+                keywords = OBJState.GetKeywordsByAddress(address, "good-user", "better-password", "http://127.0.0.1:18332");
+
                 // Iterate through all attributes of foundObject and create a button for each
-                foreach (var attrib in foundObject.Attributes)
+                foreach (string attrib in keywords)
                 {
                     // Create a new button with the attribute key and value separated by ':'
                     Button attribButton = new Button();
                     attribButton.AutoSize = true;
-                    attribButton.Text = attrib.Key + ":" + attrib.Value;
+                    attribButton.Text = attrib;
 
-                    // Add an event handler to the button that removes it from the flowAttribute panel when clicked
+                    // Add an event handler to the button that removes it from the flowKeywords panel when clicked
                     attribButton.Click += new EventHandler((sender2, e2) =>
                     {
-                        flowURL.Controls.Remove(attribButton);
+                        flowKeywords.Controls.Remove(attribButton);
                     });
 
-                    // Add the button to the flowAttribute panel
-                    flowURL.Controls.Add(attribButton);
-                }
-
-            }
-            catch { }
-
-            // Clear any existing buttons from the flowKeywords panel
-            flowKeywords.Controls.Clear();
-
-            List<string> keywords = new List<string>();
-            keywords = OBJState.GetKeywordsByAddress(address, "good-user", "better-password", "http://127.0.0.1:18332");
-
-            // Iterate through all attributes of foundObject and create a button for each
-            foreach (string attrib in keywords)
-            {
-                // Create a new button with the attribute key and value separated by ':'
-                Button attribButton = new Button();
-                attribButton.AutoSize = true;
-                attribButton.Text = attrib;
-
-                // Add an event handler to the button that removes it from the flowKeywords panel when clicked
-                attribButton.Click += new EventHandler((sender2, e2) =>
-                {
-                    flowKeywords.Controls.Remove(attribButton);
-                });
-
-                // Add an event handler to the button that opens the ObjectBrowser form with the button text
-                attribButton.MouseDown += new MouseEventHandler((sender2, e2) =>
-                {
-                    if (e2.Button == MouseButtons.Right)
-                    {
-                        ObjectBrowser objectBrowserForm = new ObjectBrowser("#" + attribButton.Text);
-                        objectBrowserForm.Show();
-                    }
-                });
-
-                // Add the button to the flowKeywords panel
-                flowKeywords.Controls.Add(attribButton);
-            }
-
-                      
-
-            flowLocation.Controls.Clear();
-
-            try
-            {
-                // Iterate through all attributes of foundObject and create a button for each
-                foreach (KeyValuePair<string, long> attrib in foundObject.Owners)
-                {
-                    // Split the key and value and create a new button with the attribute key and value separated by ':'
-                    string buttonText = attrib.Key + ":" + attrib.Value.ToString();
-                    Button attribButton = new Button();
-                    attribButton.AutoSize = true;
-                    attribButton.Text = buttonText;
-
-                    // Add an event handler to the button that removes it from the flowAttribute panel when clicked
-                    attribButton.Click += new EventHandler((sender2, e2) =>
-                    {
-                        flowLocation.Controls.Remove(attribButton);
-                    });
-
-                    // Add an event handler to the button that opens the ObjectBrowser form on right click using the key value
-                    attribButton.MouseUp += new MouseEventHandler((sender2, e2) =>
+                    // Add an event handler to the button that opens the ObjectBrowser form with the button text
+                    attribButton.MouseDown += new MouseEventHandler((sender2, e2) =>
                     {
                         if (e2.Button == MouseButtons.Right)
                         {
-                            string[] keyValuePair = attribButton.Text.Split(':');
-                            string key = keyValuePair[0].Trim();
-                            ObjectBrowser form = new ObjectBrowser(key);
-                            form.Show();
-                        }
-                        else if (e2.Button == MouseButtons.Left)
-                        {
-                            flowLocation.Controls.Remove(attribButton);
+                            ObjectBrowser objectBrowserForm = new ObjectBrowser("#" + attribButton.Text);
+                            objectBrowserForm.Show();
                         }
                     });
 
-                    // Add the button to the flowOwners panel
-                    flowLocation.Controls.Add(attribButton);
+                    // Add the button to the flowKeywords panel
+                    flowKeywords.Controls.Add(attribButton);
                 }
 
-            }
-            catch { }
 
+
+                flowLocation.Controls.Clear();
+
+                try
+                {
+                    // Iterate through all attributes of foundObject and create a button for each
+                    foreach (KeyValuePair<string, string> attrib in foundObject.Location)
+                    {
+                        // Split the key and value and create a new button with the attribute key and value separated by ':'
+                        string buttonText = attrib.Key + ":" + attrib.Value.ToString();
+                        Button attribButton = new Button();
+                        attribButton.AutoSize = true;
+                        attribButton.Text = buttonText;
+
+                        // Add an event handler to the button that removes it from the flowAttribute panel when clicked
+                        attribButton.Click += new EventHandler((sender2, e2) =>
+                        {
+                            flowLocation.Controls.Remove(attribButton);
+                        });
+
+                        // Add an event handler to the button that opens the ObjectBrowser form on right click using the key value
+                        attribButton.MouseUp += new MouseEventHandler((sender2, e2) =>
+                        {
+                            if (e2.Button == MouseButtons.Right)
+                            {
+                                string[] keyValuePair = attribButton.Text.Split(':');
+                                string key = keyValuePair[0].Trim();
+                                ObjectBrowser form = new ObjectBrowser(key);
+                                form.Show();
+                            }
+                            else if (e2.Button == MouseButtons.Left)
+                            {
+                                flowLocation.Controls.Remove(attribButton);
+                            }
+                        });
+
+                        // Add the button to the flowOwners panel
+                        flowLocation.Controls.Add(attribButton);
+                    }
+
+                }
+                catch { }
+
+
+            }
 
         }
 
+        private void btnFirstName_Click(object sender, EventArgs e)
+        {
+            if (btnFirstName.BackColor == Color.Blue) { btnFirstName.BackColor = Color.White; btnFirstName.ForeColor = Color.Black; }
+            else
+            {
+                btnFirstName.BackColor = Color.Blue; btnFirstName.ForeColor = Color.Yellow;
+            }
+            UpdateRemainingChars();
+        }
+
+        private void txtMiddleName_TextChanged(object sender, EventArgs e)
+        {
+            if (txtMiddleName.Text != "")
+            {
+                btnMiddleName.BackColor = Color.Blue;
+                btnMiddleName.ForeColor = Color.Yellow;
+            }
+            else
+            {
+                btnMiddleName.BackColor = Color.White;
+                btnMiddleName.ForeColor = Color.Black;
+            }
+            UpdateRemainingChars();
+        }
+
+        private void txtLastName_TextChanged(object sender, EventArgs e)
+        {
+            UpdateRemainingChars();
+            if (txtLastName.Text != "")
+            {
+                btnLastName.BackColor = Color.Blue;
+                btnLastName.ForeColor = Color.Yellow;
+            }
+            else
+            {
+                btnLastName.BackColor = Color.White;
+                btnLastName.ForeColor = Color.Black;
+            }
+        }
+
+        private void txtSuffix_TextChanged(object sender, EventArgs e)
+        {
+            UpdateRemainingChars();
+            if (txtSuffix.Text != "")
+            {
+                btnSuffix.BackColor = Color.Blue;
+                btnSuffix.ForeColor = Color.Yellow;
+            }
+            else
+            {
+                btnSuffix.BackColor = Color.White;
+                btnSuffix.ForeColor = Color.Black;
+            }
+        }
+
+        private void btnScan_Click_1(object sender, EventArgs e)
+        {
+            // Create a new form for the address input dialog
+            Form addressForm = new Form();
+            addressForm.Text = "Enter address or URN";
+            addressForm.StartPosition = FormStartPosition.CenterParent;
+            addressForm.ControlBox = false;
+            addressForm.FormBorderStyle = FormBorderStyle.FixedDialog;
+            addressForm.Width = 410;
+            addressForm.Height = 210;
+            // Create a label with instructions for the user
+            Label instructionLabel = new Label();
+            instructionLabel.Text = "Enter address or URN";
+            instructionLabel.Font = new Font(instructionLabel.Font.FontFamily, 16, System.Drawing.FontStyle.Bold);
+            instructionLabel.AutoSize = true;
+            instructionLabel.Location = new Point(20, 20);
+            addressForm.Controls.Add(instructionLabel);
+
+            // Create a text box for the user to input the address
+            TextBox addressTextBox = new TextBox();
+            addressTextBox.Location = new Point(20, 70);
+            addressTextBox.Width = 300;
+            addressTextBox.Height = 50;
+            addressTextBox.Multiline = true;
+            addressForm.Controls.Add(addressTextBox);
+
+            // Create a button for the user to click to search for the address
+            Button searchButton = new Button();
+            searchButton.Text = "Search";
+            searchButton.Location = new Point(20, 120);
+            searchButton.Width = 100;
+            searchButton.Click += new EventHandler((searchSender, searchE) =>
+            {
+                // Perform the search function here
+                LoadFormByAddress(addressTextBox.Text);
+
+
+                addressForm.Close();
+                // ...
+            }); addressForm.Controls.Add(searchButton);
+
+
+            // Set the default button to be the search button
+            addressForm.AcceptButton = searchButton;
+
+            // Show the dialog and set focus to the address text box
+            addressForm.ShowDialog();
+
+            btnObjectImage.PerformClick();
+            btnObjectURN.PerformClick();
+
+        }
+
+        private void btnMiddleName_Click(object sender, EventArgs e)
+        {
+            if (btnMiddleName.BackColor == Color.Blue) { btnMiddleName.BackColor = Color.White; btnMiddleName.ForeColor = Color.Black; }
+            else
+            {
+                btnMiddleName.BackColor = Color.Blue; btnMiddleName.ForeColor = Color.Yellow;
+            }
+            UpdateRemainingChars();
+        }
+
+        private void btnMint_Click_1(object sender, EventArgs e)
+        {
+
+            ismint = true;
+            UpdateRemainingChars();
+
+            PROState PRO = PROState.GetProfileByAddress(txtObjectAddress.Text, "good-user", "better-password", @"http://127.0.0.1:18332");
+
+            if (PRO.URN != null)
+            {
+                lblObjectStatus.Text = "last seen:[" + PRO.ChangeDate.ToString("MM/dd/yyyy hh:mm:ss") + "]";
+                lblObjectStatus.Text = lblObjectStatus.Text.Replace("Monday, January 1, 0001", " unconfirmed ");
+
+            }
+        }
     }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-}
 }
