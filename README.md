@@ -60,6 +60,9 @@ Click the mint button and select the profile mint button.  Enter a urn and a pro
 Once you are satisfied with your profile information. click Mint. your profile will take effect following a successfull confirmation of the transaction.
 
 To edit a profile click on the magnifying glass enter the profile address to edit. if a prfile is found at the address Sup will build and display it on the screen.  modifying any of the fields will cause the corresponding fields modified indicator to turn blue.. remove any data that is not being updated from the transaction by clicking it's corresponding button until it is not blue. Click Mint when you have completed making updates.  your changes will take effect following a successfull confirmation of the transaction
+
+Your profile urn registration is valid for 3 years passed the last change in it's process height.  this means that in order for your profile to expire there must not be a single mention or transaction placed to it's holding address for a period of 3 years...should this occur the urn registration will be claimed by the next available registration that falls under the same time restriction.  if no claims exist the profile will no longer be discoverable and can be claimed by anyone.  an inactive profile can be reactivated by anyone by sending any type of transaction to it's previous holding address.
+
 <br />
 <br />
 ## **Object Minting / Printing / Editing**
