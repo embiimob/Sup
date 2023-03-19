@@ -11,7 +11,7 @@ P2FK was directly inspired by the satoshi uploader  see --> https://cirosantilli
 
 ## **Installation**
 
-1. Download the Sup.v0.1.30-beta.zip file
+1. Download the Sup.v0.1.31-beta.zip file
 2. Create a folder on your **fastest** disk drive with at least **700GB** free (it will be storing the bitcoin prod and testnet blockchains)
 3. Unzip all contents into the folder.
 4. Create a shortcut to SUP.exe and launch.
@@ -54,8 +54,16 @@ searches mainchain by  urn shows currently registered object with uri redirectio
 navigates to requested url in browser.
 <br />
 <br />
+## **Profile Minting / Editing**
+Click the mint button and select the profile mint button.  Enter a urn and a profile address or click the diamond button to generate a new profile address. these two fields are all that are required to register a profile urn. you may optionaly enter a PFP image url, your full name and suffix, web links, contact information and keywords. NOTE: Every profile becomes an entry point for which private messages may be delivered as every profile displays public keys to be used for Secp256k1 encrypted messaging.   
+
+Once you are satisfied with your profile information. click Mint. your profile will take effect following a successfull confirmation of the transaction.
+
+To edit a profile click on the magnifying glass enter the profile address to edit. if a prfile is found at the address Sup will build and display it on the screen.  modifying any of the fields will cause the corresponding fields modified indicator to turn blue.. remove any data that is not being updated from the transaction by clicking it's corresponding button until it is not blue. Click Mint when you have completed making updates.  your changes will take effect following a successfull confirmation of the transaction
+<br />
+<br />
 ## **Object Minting / Printing / Editing**
-Click the mint button and a minting form will be displayed.  Enter a object name, objectaddress and URN these fields are required and click Mint. if no creator address is entered the object will be self signed using a new address generated at your minting station wallet. if a collection address isn't entered it can be entered again later via an update transaction.  to create a Sup collection first mint a ASCII free text URN to reference it by.  ASCII Free text URN's are case sensitive with no length restrictions. example SPACE QUEEN.  Copy the new object address associated with the SPACE QUEEN URN and add it to the creators list prior to minting.  Now searching for SPACE QUEEN in the Sup!? browser will display just your objects in the created and owned search results. to further enhance your collector's experience a profile can also be setup for this new collection address.  (the profile mint \ edit screen is coming soon)
+Click the mint button and select the object mint button.  Enter a object name, objectaddress and URN these fields are required and click Mint. if no creator address is entered the object will be self signed using a new address generated at your minting station wallet. if a collection address isn't entered it can be entered again later via an update transaction.  to create a Sup collection first mint a ASCII free text URN to reference it by.  ASCII Free text URN's are case sensitive with no length restrictions. example SPACE QUEEN.  Copy the new object address associated with the SPACE QUEEN URN and add it to the creators list prior to minting.  Now searching for SPACE QUEEN in the Sup!? browser will display just your objects in the created and owned search results. to further enhance your collector's experience a profile can also be setup for this new collection address.  (the profile mint \ edit screen is coming soon)
 
 Click Print instead of Mint and you can use a paper transaction alone to prove ownership.  Any person can scan a paper mint & send a small confirmation transaction to the addresses within the QR code printed on the paper to make the paper transaction public.  A Sup!? paper transaction can be used in lieu of a public confirmation as it contains all the necessary signature and transaction data necessary to confirm it against a current scan of the object address it is associated with.  if no address is found and the transaction is a valid object mint, Sup!? will build and display the object it represents on screen with the latest ownership information about it if any exists.
 
