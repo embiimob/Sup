@@ -92,11 +92,15 @@ namespace SUP
             Dictionary<string, string> mintURL = new Dictionary<string, string>();
             foreach (Button attributeControl in flowURL.Controls)
             {
-                string[] parts = attributeControl.Text.Split(':');
-                mintURL.Add(parts[0], parts[1]);
+                int colonIndex = attributeControl.Text.IndexOf(':');
+                if (colonIndex >= 0 && colonIndex < attributeControl.Text.Length - 1)
+                {
+                    string key = attributeControl.Text.Substring(0, colonIndex);
+                    string value = attributeControl.Text.Substring(colonIndex + 1);
+                    mintURL.Add(key, value);
+                }
             }
             PROJson.url = mintURL;
-
 
             List<int> mintCreators = new List<int>();
             mintCreators.Add(0);

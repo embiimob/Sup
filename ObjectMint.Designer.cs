@@ -101,7 +101,7 @@
             // 
             this.lblObjectStatus.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.lblObjectStatus.AutoSize = true;
-            this.lblObjectStatus.Location = new System.Drawing.Point(573, 574);
+            this.lblObjectStatus.Location = new System.Drawing.Point(580, 578);
             this.lblObjectStatus.Name = "lblObjectStatus";
             this.lblObjectStatus.Size = new System.Drawing.Size(0, 13);
             this.lblObjectStatus.TabIndex = 293;
@@ -133,7 +133,7 @@
             this.btnObjectKeywords.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.btnObjectKeywords.Enabled = false;
             this.btnObjectKeywords.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold);
-            this.btnObjectKeywords.Location = new System.Drawing.Point(441, 760);
+            this.btnObjectKeywords.Location = new System.Drawing.Point(443, 681);
             this.btnObjectKeywords.Name = "btnObjectKeywords";
             this.btnObjectKeywords.Size = new System.Drawing.Size(109, 53);
             this.btnObjectKeywords.TabIndex = 267;
@@ -148,9 +148,9 @@
             this.flowKeywords.AutoScroll = true;
             this.flowKeywords.Cursor = System.Windows.Forms.Cursors.Default;
             this.flowKeywords.FlowDirection = System.Windows.Forms.FlowDirection.RightToLeft;
-            this.flowKeywords.Location = new System.Drawing.Point(22, 756);
+            this.flowKeywords.Location = new System.Drawing.Point(22, 684);
             this.flowKeywords.Name = "flowKeywords";
-            this.flowKeywords.Size = new System.Drawing.Size(410, 57);
+            this.flowKeywords.Size = new System.Drawing.Size(406, 59);
             this.flowKeywords.TabIndex = 280;
             this.flowKeywords.ControlAdded += new System.Windows.Forms.ControlEventHandler(this.flowKeyword_ControlAdded);
             this.flowKeywords.ControlRemoved += new System.Windows.Forms.ControlEventHandler(this.flowKeyword_ControlRemoved);
@@ -194,9 +194,9 @@
             this.btnObjectMaximum.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.btnObjectMaximum.Enabled = false;
             this.btnObjectMaximum.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold);
-            this.btnObjectMaximum.Location = new System.Drawing.Point(441, 600);
+            this.btnObjectMaximum.Location = new System.Drawing.Point(1019, 605);
             this.btnObjectMaximum.Name = "btnObjectMaximum";
-            this.btnObjectMaximum.Size = new System.Drawing.Size(109, 53);
+            this.btnObjectMaximum.Size = new System.Drawing.Size(109, 49);
             this.btnObjectMaximum.TabIndex = 290;
             this.btnObjectMaximum.Text = "✅ MAX";
             this.btnObjectMaximum.UseVisualStyleBackColor = true;
@@ -204,14 +204,13 @@
             // 
             // txtMaximum
             // 
-            this.txtMaximum.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
+            this.txtMaximum.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.txtMaximum.Enabled = false;
-            this.txtMaximum.Font = new System.Drawing.Font("Microsoft Sans Serif", 36F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.txtMaximum.Location = new System.Drawing.Point(22, 596);
+            this.txtMaximum.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
+            this.txtMaximum.Location = new System.Drawing.Point(576, 605);
             this.txtMaximum.Multiline = true;
             this.txtMaximum.Name = "txtMaximum";
-            this.txtMaximum.Size = new System.Drawing.Size(410, 57);
+            this.txtMaximum.Size = new System.Drawing.Size(432, 49);
             this.txtMaximum.TabIndex = 265;
             this.txtMaximum.Tag = "";
             this.txtMaximum.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
@@ -234,9 +233,10 @@
             this.flowOwners.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.flowOwners.AutoScroll = true;
             this.flowOwners.FlowDirection = System.Windows.Forms.FlowDirection.RightToLeft;
-            this.flowOwners.Location = new System.Drawing.Point(576, 680);
+            this.flowOwners.Location = new System.Drawing.Point(576, 684);
             this.flowOwners.Name = "flowOwners";
-            this.flowOwners.Size = new System.Drawing.Size(429, 53);
+            this.flowOwners.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
+            this.flowOwners.Size = new System.Drawing.Size(429, 59);
             this.flowOwners.TabIndex = 287;
             this.flowOwners.ControlAdded += new System.Windows.Forms.ControlEventHandler(this.flowOwners_ControlAdded);
             this.flowOwners.ControlRemoved += new System.Windows.Forms.ControlEventHandler(this.flowOwners_ControlRemoved);
@@ -246,7 +246,7 @@
             this.btnEdit.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.btnEdit.Enabled = false;
             this.btnEdit.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold);
-            this.btnEdit.Location = new System.Drawing.Point(706, 760);
+            this.btnEdit.Location = new System.Drawing.Point(706, 762);
             this.btnEdit.Name = "btnEdit";
             this.btnEdit.Size = new System.Drawing.Size(109, 53);
             this.btnEdit.TabIndex = 273;
@@ -260,7 +260,7 @@
             this.btnObjectCreators.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.btnObjectCreators.Enabled = false;
             this.btnObjectCreators.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold);
-            this.btnObjectCreators.Location = new System.Drawing.Point(1017, 598);
+            this.btnObjectCreators.Location = new System.Drawing.Point(443, 760);
             this.btnObjectCreators.Name = "btnObjectCreators";
             this.btnObjectCreators.Size = new System.Drawing.Size(109, 53);
             this.btnObjectCreators.TabIndex = 268;
@@ -270,12 +270,13 @@
             // 
             // flowCreators
             // 
-            this.flowCreators.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.flowCreators.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.flowCreators.AutoScroll = true;
             this.flowCreators.FlowDirection = System.Windows.Forms.FlowDirection.RightToLeft;
-            this.flowCreators.Location = new System.Drawing.Point(576, 602);
+            this.flowCreators.Location = new System.Drawing.Point(22, 762);
             this.flowCreators.Name = "flowCreators";
-            this.flowCreators.Size = new System.Drawing.Size(429, 49);
+            this.flowCreators.Size = new System.Drawing.Size(406, 59);
             this.flowCreators.TabIndex = 286;
             this.flowCreators.ControlAdded += new System.Windows.Forms.ControlEventHandler(this.flowCreators_ControlAdded);
             this.flowCreators.ControlRemoved += new System.Windows.Forms.ControlEventHandler(this.flowCreators_ControlRemoved);
@@ -285,7 +286,7 @@
             this.btnObjectOwners.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.btnObjectOwners.Enabled = false;
             this.btnObjectOwners.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold);
-            this.btnObjectOwners.Location = new System.Drawing.Point(1017, 680);
+            this.btnObjectOwners.Location = new System.Drawing.Point(1019, 681);
             this.btnObjectOwners.Name = "btnObjectOwners";
             this.btnObjectOwners.Size = new System.Drawing.Size(109, 53);
             this.btnObjectOwners.TabIndex = 269;
@@ -298,7 +299,7 @@
             this.btnObjectAttributes.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.btnObjectAttributes.Enabled = false;
             this.btnObjectAttributes.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold);
-            this.btnObjectAttributes.Location = new System.Drawing.Point(441, 680);
+            this.btnObjectAttributes.Location = new System.Drawing.Point(441, 601);
             this.btnObjectAttributes.Name = "btnObjectAttributes";
             this.btnObjectAttributes.Size = new System.Drawing.Size(109, 53);
             this.btnObjectAttributes.TabIndex = 266;
@@ -310,7 +311,7 @@
             // 
             this.btnScan.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.btnScan.Font = new System.Drawing.Font("Microsoft Sans Serif", 24F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnScan.Location = new System.Drawing.Point(576, 760);
+            this.btnScan.Location = new System.Drawing.Point(576, 762);
             this.btnScan.Name = "btnScan";
             this.btnScan.Size = new System.Drawing.Size(109, 53);
             this.btnScan.TabIndex = 272;
@@ -349,7 +350,7 @@
             this.txtObjectAddress.Location = new System.Drawing.Point(194, 120);
             this.txtObjectAddress.Multiline = true;
             this.txtObjectAddress.Name = "txtObjectAddress";
-            this.txtObjectAddress.Size = new System.Drawing.Size(238, 50);
+            this.txtObjectAddress.Size = new System.Drawing.Size(234, 50);
             this.txtObjectAddress.TabIndex = 260;
             this.txtObjectAddress.TextChanged += new System.EventHandler(this.txtObjectAddress_TextChanged);
             // 
@@ -358,7 +359,7 @@
             this.btnMint.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.btnMint.Enabled = false;
             this.btnMint.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold);
-            this.btnMint.Location = new System.Drawing.Point(870, 760);
+            this.btnMint.Location = new System.Drawing.Point(870, 762);
             this.btnMint.Name = "btnMint";
             this.btnMint.Size = new System.Drawing.Size(109, 53);
             this.btnMint.TabIndex = 271;
@@ -371,7 +372,7 @@
             this.btnPrint.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.btnPrint.Enabled = false;
             this.btnPrint.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold);
-            this.btnPrint.Location = new System.Drawing.Point(1017, 760);
+            this.btnPrint.Location = new System.Drawing.Point(1019, 762);
             this.btnPrint.Name = "btnPrint";
             this.btnPrint.Size = new System.Drawing.Size(109, 53);
             this.btnPrint.TabIndex = 270;
@@ -396,7 +397,7 @@
             // 
             this.btnObjectName.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.btnObjectName.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold);
-            this.btnObjectName.Location = new System.Drawing.Point(440, 44);
+            this.btnObjectName.Location = new System.Drawing.Point(440, 45);
             this.btnObjectName.Name = "btnObjectName";
             this.btnObjectName.Size = new System.Drawing.Size(109, 50);
             this.btnObjectName.TabIndex = 279;
@@ -411,9 +412,10 @@
             this.flowAttribute.AutoScroll = true;
             this.flowAttribute.Cursor = System.Windows.Forms.Cursors.Default;
             this.flowAttribute.FlowDirection = System.Windows.Forms.FlowDirection.RightToLeft;
-            this.flowAttribute.Location = new System.Drawing.Point(22, 676);
+            this.flowAttribute.Location = new System.Drawing.Point(22, 603);
             this.flowAttribute.Name = "flowAttribute";
-            this.flowAttribute.Size = new System.Drawing.Size(410, 57);
+            this.flowAttribute.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
+            this.flowAttribute.Size = new System.Drawing.Size(406, 59);
             this.flowAttribute.TabIndex = 278;
             this.flowAttribute.ControlAdded += new System.Windows.Forms.ControlEventHandler(this.flowAttribute_ControlAdded);
             this.flowAttribute.ControlRemoved += new System.Windows.Forms.ControlEventHandler(this.flowAttribute_ControlRemoved);
@@ -463,10 +465,10 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.txtURI.Enabled = false;
             this.txtURI.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.txtURI.Location = new System.Drawing.Point(22, 350);
+            this.txtURI.Location = new System.Drawing.Point(22, 351);
             this.txtURI.Multiline = true;
             this.txtURI.Name = "txtURI";
-            this.txtURI.Size = new System.Drawing.Size(410, 57);
+            this.txtURI.Size = new System.Drawing.Size(406, 56);
             this.txtURI.TabIndex = 263;
             this.txtURI.TextChanged += new System.EventHandler(this.txtURI_TextChanged);
             // 
@@ -476,10 +478,10 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.txtURN.Enabled = false;
             this.txtURN.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.txtURN.Location = new System.Drawing.Point(22, 270);
+            this.txtURN.Location = new System.Drawing.Point(22, 271);
             this.txtURN.Multiline = true;
             this.txtURN.Name = "txtURN";
-            this.txtURN.Size = new System.Drawing.Size(410, 57);
+            this.txtURN.Size = new System.Drawing.Size(406, 56);
             this.txtURN.TabIndex = 262;
             this.txtURN.TextChanged += new System.EventHandler(this.txtURN_TextChanged);
             // 
@@ -488,10 +490,10 @@
             this.txtTitle.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.txtTitle.Font = new System.Drawing.Font("Microsoft Sans Serif", 14.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.txtTitle.Location = new System.Drawing.Point(196, 44);
+            this.txtTitle.Location = new System.Drawing.Point(196, 45);
             this.txtTitle.Multiline = true;
             this.txtTitle.Name = "txtTitle";
-            this.txtTitle.Size = new System.Drawing.Size(238, 50);
+            this.txtTitle.Size = new System.Drawing.Size(232, 50);
             this.txtTitle.TabIndex = 259;
             this.txtTitle.TextChanged += new System.EventHandler(this.txtTitle_TextChanged);
             // 
@@ -501,10 +503,10 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.txtIMG.Enabled = false;
             this.txtIMG.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.txtIMG.Location = new System.Drawing.Point(19, 190);
+            this.txtIMG.Location = new System.Drawing.Point(22, 192);
             this.txtIMG.Multiline = true;
             this.txtIMG.Name = "txtIMG";
-            this.txtIMG.Size = new System.Drawing.Size(413, 57);
+            this.txtIMG.Size = new System.Drawing.Size(406, 55);
             this.txtIMG.TabIndex = 261;
             this.txtIMG.TextChanged += new System.EventHandler(this.txtIMG_TextChanged);
             // 
@@ -526,7 +528,7 @@
             this.txtDescription.Location = new System.Drawing.Point(22, 430);
             this.txtDescription.Multiline = true;
             this.txtDescription.Name = "txtDescription";
-            this.txtDescription.Size = new System.Drawing.Size(410, 95);
+            this.txtDescription.Size = new System.Drawing.Size(406, 95);
             this.txtDescription.TabIndex = 264;
             this.txtDescription.TextChanged += new System.EventHandler(this.txtDescription_TextChanged);
             // 

@@ -2285,6 +2285,7 @@ namespace SUP
             txtSearchAddress.Enabled = false;
             pages.Enabled = false;
             btnLive.Enabled = false;
+            txtLast.Enabled = false;
         }
 
         private void EnableSupInput()
@@ -2299,6 +2300,7 @@ namespace SUP
             btnMint.Enabled = true;
             pages.Enabled = true;
             btnLive.Enabled = true;
+            txtLast.Enabled = true;
         }
 
         private async void btnLive_Click(object sender, EventArgs e)

@@ -173,7 +173,7 @@ namespace SUP
             this.txtQty.Name = "txtQty";
             this.txtQty.Size = new System.Drawing.Size(43, 20);
             this.txtQty.TabIndex = 77;
-            this.txtQty.Text = "12";
+            this.txtQty.Text = "9";
             this.txtQty.Visible = false;
             // 
             // txtLast
