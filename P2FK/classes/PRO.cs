@@ -149,8 +149,6 @@ namespace SUP.P2FK
                         }
 
 
-
-
                         //has proper authority to make OBJ changes
                         if (logstatus == null && profileState.Creators != null && profileState.Creators.Contains(transaction.SignedBy))
                         {

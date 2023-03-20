@@ -1058,10 +1058,14 @@ namespace SUP.P2FK
 
             byte[] payload = new byte[21];
 
-            using (FileStream fileStream = new FileStream(filepath, FileMode.Open))
+            try
             {
-                fileStream.Read(payload, 1, 20);
+                using (FileStream fileStream = new FileStream(filepath, FileMode.Open))
+                {
+                    fileStream.Read(payload, 1, 20);
+                }
             }
+            catch { }
 
             payload[0] = Byte.Parse(versionByte);
             string objectaddress = Base58.EncodeWithCheckSum(payload);
