@@ -1495,12 +1495,17 @@ namespace SUP
                         var webBrowser1 = new Microsoft.Web.WebView2.WinForms.WebView2();
                         webBrowser1.Size = flowLayoutPanel1.Size;
 
+                        flowLayoutPanel1.SizeChanged += (sender, e) =>
+                        {
+                            webBrowser1.Size = flowLayoutPanel1.Size;
+                        };
+
                         this.Invoke((Action)(async () =>
                         {
-                            flowLayoutPanel1.Controls.Add(webBrowser1);
-
                             await webBrowser1.EnsureCoreWebView2Async();
                             webBrowser1.CoreWebView2.Navigate(txtSearchAddress.Text);
+                            flowLayoutPanel1.Controls.Add(webBrowser1);
+                       
                         }));
 
                     }
