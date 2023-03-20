@@ -1703,7 +1703,7 @@ namespace SUP.P2FK
                         // fetch current JSONOBJ from disk if it exists
                         try
                         {
-                            JSONOBJ = System.IO.File.ReadAllText(diskpath + "GetObjectsByKeyword.json");
+                            JSONOBJ = System.IO.File.ReadAllText(diskpath + "GetObjectsByAddress.json");
                             objectStates = JsonConvert.DeserializeObject<List<OBJState>>(JSONOBJ);
 
                         }
@@ -1725,17 +1725,16 @@ namespace SUP.P2FK
                         objectStates = new List<OBJState> { };
                         intProcessHeight = skip;
 
-                        List<OBJState> keySearch = GetObjectsByAddress(objectaddress, username, password, url, versionByte, intProcessHeight, qty);
+                        List<OBJState> keySearch = GetObjectsByAddress(objectaddress, username, password, url, versionByte, 0, -1);
                         totalSearch = totalSearch.Concat(keySearch).ToList();
-
-                        keySearch.First().Id = objectTransactions.Last().Id;
+                        
                         var objectSerialized = JsonConvert.SerializeObject(keySearch);
 
                         if (!Directory.Exists(@"root\" + objectaddress))
                         {
                             Directory.CreateDirectory(@"root\" + objectaddress);
                         }
-                        System.IO.File.WriteAllText(@"root\" + objectaddress + @"\" + "GetObjectsByKeyword.json", objectSerialized);
+                        System.IO.File.WriteAllText(@"root\" + objectaddress + @"\" + "GetObjectsByAddress.json", objectSerialized);
                     }
                 }
 
