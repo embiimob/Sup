@@ -1318,7 +1318,7 @@ namespace SUP
         {
             // Create a new form for the address input dialog
             Form addressForm = new Form();
-            addressForm.Text = "Enter address or URN";
+            addressForm.Text = "Search";
             addressForm.StartPosition = FormStartPosition.CenterParent;
             addressForm.ControlBox = false;
             addressForm.FormBorderStyle = FormBorderStyle.FixedDialog;
@@ -1326,7 +1326,7 @@ namespace SUP
             addressForm.Height = 210;
             // Create a label with instructions for the user
             Label instructionLabel = new Label();
-            instructionLabel.Text = "Enter address or URN";
+            instructionLabel.Text = "Enter profile address";
             instructionLabel.Font = new Font(instructionLabel.Font.FontFamily, 16, System.Drawing.FontStyle.Bold);
             instructionLabel.AutoSize = true;
             instructionLabel.Location = new Point(20, 20);
@@ -1362,9 +1362,11 @@ namespace SUP
             // Show the dialog and set focus to the address text box
             addressForm.ShowDialog();
 
-            btnObjectImage.PerformClick();
-            btnObjectURN.PerformClick();
-
+            if (txtIMG.Text != "")
+            {
+                btnObjectImage.PerformClick();
+            }
+         
         }
 
         private void btnMiddleName_Click(object sender, EventArgs e)
