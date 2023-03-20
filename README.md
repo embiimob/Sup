@@ -1,33 +1,33 @@
 # Sup!? 
 experimental decentralized state engine browser
 
-Sup!? is a demonstration of establishing a decentralized identity and tracking state changes with comments on immutable blockchain objects in a format familiar to NFT enthusiasts. the experimental Sup!? object browser is currently hardcoded to reference the bitcoin testnet mainchain ONLY. a production deployment will be released December 2023, our goal is to give #teamworld ample time for testing and integrations
+Sup!? is a demonstration of establishing a decentralized identity and tracking state changes with comments on immutable blockchain objects in a format familiar to NFT enthusiasts. The experimental Sup!? object browser is currently hardcoded to reference the bitcoin testnet mainchain. A production deployment will be released December 2023. Our goal is to give #teamworld ample time for testing and integrations.
 
 This experiment is using an ancient blockchain protocol called P2FK (Pay to Future Key) invented by http://HugPuddle.org in 2013.
 
 P2FK was directly inspired by the satoshi uploader  see --> https://cirosantilli.com/satoshi-uploader
 
- As of Sup?'s first release date all transactions and objects discoverable in the experiment were created by embii using http://apertus.io
+ As of Sup?'s first release date, all transactions and objects discoverable in the experiment were created by embii using http://apertus.io
 
 ## **Installation**
 
 1. Download the Sup.v0.1.31-beta.zip file
 2. Create a folder on your **fastest** disk drive with at least **700GB** free (it will be storing the bitcoin prod and testnet blockchains)
-3. Unzip all contents into the folder.
-4. Create a shortcut to SUP.exe and launch.
+3. Unzip all contents into the folder
+4. Create a shortcut to SUP.exe and launch
 
-**You will need to sync two blockchains to perform you first Sup!? object search**
+**You will need to sync two blockchains to perform your first Sup!? object search**
 1. Click the key button
-2. Launch a full bitcoin Production node AND a full Bitcoin testnet node using the buttons provided
-3. Wait until testnet is fully synched and production has synced passed at least 2014. ( this part could take several hours )
+2. Launch a full bitcoin production node AND a full bitcoin testnet node using the buttons provided
+3. Wait until testnet is fully synced and production has synced passed at least 2014. ( this part could take several hours )
 4. Type #flowersofwar in the main search box and hit enter
 <br />
 <br /> 
 
-## **Search Options**
+## **Search Examples**
 
 ### **muVrFVk3ErfrnmWosLF4WixxRtDKfMx9bs**
-searches mainchain - bitcoin testnet by address returns all object associations and or associated profile
+searches mainchain - bitcoin testnet by address returns all object associations and the associated profile
 
 ### **6d14b0dc526a431f611f16f29d684f73e6b01f0a59a0b7b3d9b8d951091c2422/index.html**
 searches mainchain - bitcoin testnet by transaction id returns referenced index.htm(l) in browser
@@ -42,59 +42,61 @@ searches sidechain - mazacoin production by transaction id returns referenced in
 searches mainchain for up to a 20 character case sensitive keyword and shows all object associations
 
 ### **@UserName**
-searches mainchain by urn shows currently registered profile object associated with @userName and shows all object associations.  profile registrations are transferable and expire after 3 years of no activity allowing them to be claimed by other registrants in the future
+searches mainchain by urn - shows currently registered profile object associated with @username and shows all object associations. profile registrations are transferable and expire after 3 years of no activity allowing them to be claimed by other registrants in the future.
 
 ### **ipfs://QmU42aLJToYmshwJu26iprH9RsX6SfJDw3FTf6senJEdF1**
-performs a ipfs get, archives ipfs file(s) locally, pins file(s) if pinning is enabled, opens a system folder dioluge allowing you to explore any files found
+performs a ipfs get, archives ipfs file(s) locally, pins file(s) if pinning is enabled, and opens a system folder dioluge allowing you to explore any files found
 
 ### **sup://twitter.com**
-searches mainchain by  urn shows currently registered object with uri redirection.  urn registrations are transferable and expire after 3 years of no activity allowing them to be claimed by other registrants in the future.  ( there are no urn character limits, uri redirects are NOT enabled )
+searches mainchain by urn - shows currently registered object with uri redirection.  urn registrations are transferable and expire after 3 years of inactivity allowing them to be claimed by other registrants in the future.  ( there are no urn character limits, uri redirects are NOT enabled )
 
 ### **http(s)://embii.org**
 navigates to requested url in browser.
 <br />
 <br />
 ## **Profile Minting / Editing**
-Click the mint button and select the profile mint button.  Enter a urn and a profile address or click the diamond button to generate a new profile address. these two fields are all that are required to register a profile urn. you may optionaly enter a PFP image url, your full name and suffix, web links, contact information and keywords. NOTE: Every profile becomes an entry point for which private messages may be delivered as every profile displays public keys to be used for Secp256k1 encrypted messaging.   
+Click the mint button and select the profile mint button. Enter a urn and a profile address or click the diamond button to generate a new profile address. These two fields are all that are required to register a profile urn. You may optionally enter a PFP image url, your full name and suffix, web links, contact information and keywords. NOTE: Every profile becomes an entry point for which private messages may be delivered as every profile displays public keys to be used for Secp256k1 encrypted messaging.   
 
-Once you are satisfied with your profile information. click Mint. your profile will take effect following a successfull confirmation of the transaction.
+Once you are satisfied with your profile information. click mint. Your profile will take effect following a successfull confirmation of the transaction.
 
-To edit a profile click on the magnifying glass enter the profile address to edit. if a prfile is found at the address Sup will build and display it on the screen.  modifying any of the fields will cause the corresponding fields modified indicator to turn blue.. remove any data that is not being updated from the transaction by clicking it's corresponding button until it is not blue. Click Mint when you have completed making updates.  your changes will take effect following a successfull confirmation of the transaction
+To edit a profile, click on the magnifying glass and enter the profile address to edit. If a profile is found at the address, Sup!? will build and display it on the screen. Modifying any of the fields will cause the corresponding fields' modified indicator to turn blue. Remove any data that is not being updated from the transaction by clicking its corresponding button until it is not blue. Click mint when you have completed making updates. Your changes will take effect following a successful confirmation of the transaction.
+
+Your profile urn registration is valid for 3 years past the last change in its process height. This means that in order for your profile to expire, there must not be a single mention or transaction placed to its holding address for a period of 3 years. Should this occur, the urn registration will be claimed by the next available registration that falls under the same time restriction. If no claims exist, the profile will no longer be discoverable and can be claimed by anyone. An inactive profile can be reactivated by anyone by sending any type of transaction to its previous holding address.
 <br />
 <br />
 ## **Object Minting / Printing / Editing**
-Click the mint button and select the object mint button.  Enter a object name, objectaddress and URN these fields are required and click Mint. if no creator address is entered the object will be self signed using a new address generated at your minting station wallet. if a collection address isn't entered it can be entered again later via an update transaction.  to create a Sup collection first mint a ASCII free text URN to reference it by.  ASCII Free text URN's are case sensitive with no length restrictions. example SPACE QUEEN.  Copy the new object address associated with the SPACE QUEEN URN and add it to the creators list prior to minting.  Now searching for SPACE QUEEN in the Sup!? browser will display just your objects in the created and owned search results. to further enhance your collector's experience a profile can also be setup for this new collection address.  (the profile mint \ edit screen is coming soon)
+Click the mint button and select the object mint button. Enter an object name, object address and urn. These fields are required. Click mint. If no creator address is entered, the object will be self-signed using a new address generated at your minting station wallet. If a collection address isn't entered, it can be entered again later via an update transaction. To create a Sup!? collection, first mint a ASCII free text urn to reference it by.  ASCII free text urns are case sensitive with no length restrictions. Example "SPACE QUEEN". Copy the new object address associated with the "SPACE QUEEN" urn and add it to the creators list prior to minting. Now searching for "SPACE QUEEN" in the Sup!? browser will display just your objects in the created and owned search results. To further enhance your collector's experience, a profile can also be setup for this new collection address. (the profile mint\edit screen is coming soon)
 
-Click Print instead of Mint and you can use a paper transaction alone to prove ownership.  Any person can scan a paper mint & send a small confirmation transaction to the addresses within the QR code printed on the paper to make the paper transaction public.  A Sup!? paper transaction can be used in lieu of a public confirmation as it contains all the necessary signature and transaction data necessary to confirm it against a current scan of the object address it is associated with.  if no address is found and the transaction is a valid object mint, Sup!? will build and display the object it represents on screen with the latest ownership information about it if any exists.
+Click print instead of mint and you can use a paper transaction alone to prove ownership. Any person can scan a paper mint & send a small confirmation transaction to the addresses within the QR code printed on the paper to make the paper transaction public. A Sup!? paper transaction can be used in lieu of a public confirmation as it contains all the necessary signature and transaction data necessary to confirm it against a current scan of the object address it is associated with. If no address is found and the transaction is a valid object mint, Sup!? will build and display the object it represents on screen with the latest ownership information about it if any exists.
 
-To edit an unlocked object click on the magnifying glass enter the object address to edit or scan a paper mint. if an address is found and or the paper transaction is a valid transaction Sup!? will build and display the object it represents on screen.  modifying any of the fields will cause the corresponding fields modified indicator to turn blue.. Click Mint Or Print when you have completed making updates and your changes will take effect following a successfull confirmation of the transaction
+To edit an unlocked object, click on the magnifying glass and enter the object address to edit or scan a paper mint. If an address is found and/or the paper transaction is a valid transaction, Sup!? will build and display the object it represents on screen. Modifying any of the fields will cause the corresponding fields' modified indicator to turn blue.. Click mint Or print when you have completed making updates and your changes will take effect following a successfull confirmation of the transaction.
 <br />
 <br />
 ## **Live Monitor**
-Click the live button and watch in realtime as other Sup!? user's mint their objects.  all new objects will be added to the top of your browser window pushing the older objects down the screen. A maximized Sup!? monitor that shows a constant stream of new objects makes for a great display.  Sup!? montiors the in memory pool allowing it to display new objects before they are confirmed in the blockchain.  your Sup!? objects will appear in every curently live Sup!? montior around the world in about 10 - 30 seconds after you have etch the object's metadata. all blockhains included with this experiment are monitored for new objects if they are running and fully synced.  
+Click the live button and watch in realtime as other Sup!? users mint their objects. All new objects will be added to the top of your browser window pushing the older objects down the screen. A maximized Sup!? monitor that shows a constant stream of new objects makes for a great display. Sup!? montiors the in-memory pool allowing it to display new objects before they are confirmed in the blockchain. Your Sup!? objects will appear in every curently live Sup!? montior around the world in about 10 - 30 seconds after you have etched the object's metadata. All blockhains included with this experiment are monitored for new objects if they are running and fully synced.  
 <br />
-With live monitoring enabled you never know what might pop into the window. the damage is limited to a thumbnail image and what can fit in a small description text box.  objects that are discovered in live mode are not fully inspected for safety reasons...you can delete one directly from the live preview panel by clicking on the object's small trash icon.  this will remove any trace of it from your system.  if you are still concerned clearing all Sup!? caches will without a doubt remove it.
+With live monitoring enabled, you never know what might pop into the window. The damage is limited to a thumbnail image and what can fit in a small description text box. Objects that are discovered in live mode are not fully inspected for safety reasons. You can delete one directly from the live preview panel by clicking on the object's small trash icon. This will remove any trace of it from your system. If you are still concerned, clearing all Sup!? caches will without a doubt remove it.
 
 ## **NOTICE**
-Sup!? is an experiment in decentralization. it was made for #adults.  The Sup!? experiment is not suiteable for children. 
+Sup!? is an experiment in decentralization. It was made for #adults. The Sup!? experiment is not suitable for children. 
 <br />
 <br />
 ## **Official / Unofficial Registration Indicator**
-When a Sup!? urn is registered a small symbol appears on the top left corner of the object's thumbnail on the main browser screen and replaces the URN label on the object details screen. following registration, any other Sup!? objects referencing the same URN will display a [ SEE OFFICIAL ] button that redirects them to the officialy registered urn.  the unofficial urn reference can still be opened by clicking anywhere elese on the object.  
+When a Sup!? urn is registered, a small symbol appears on the top left corner of the object's thumbnail on the main browser screen, replacing the urn label on the object details screen. Following registration, any other Sup!? objects referencing the same urn will display a [ SEE OFFICIAL ] button that redirects them to the officially registered urn. The unofficial urn reference can still be opened by clicking anywhere elese on the object.  
 <br />
 <br />
 ## **File Lookup**
-Drag and drop any file onto the main Sup!? browser screen.  Sup!? will search the mainchain for a current file registration with owner.  if found the registered object will be returned in the main browser window. to obtain a file registration keyword necessary to register a file, drag and drop the file onto the workbench, the reference key will be displayed in the workbench output window.  see the example transaction JSON files https://github.com/embiimob/Sup/tree/master/P2FK/samples to begin experimenting with Sup!? file lookups and urn registration
+Drag and drop any file onto the main Sup!? browser screen. Sup!? will search the mainchain for a current file registration with an owner. If found, the registered object will be returned in the main browser window. To obtain a file registration keyword necessary to register a file, drag and drop the file onto the workbench, the reference key will be displayed in the workbench output window. See the example transaction JSON files https://github.com/embiimob/Sup/tree/master/P2FK/samples to begin experimenting with Sup!? file lookups and urn registration.
 <br />
 <br />
 ## **Block \ Mute**
-blocking addresses ignores any associations to them going forward preventing a transaction or any transactions signed by the blocked address from outputting to disk. a purge and reinspection is required to completely eliminate all data. if a group of collectors decides to block an address they can technically ignore them out of existence.
+Blocking addresses ignores any associations to them going forward, preventing a transaction or any transactions signed by the blocked address from outputting to disk. A purge and reinspection is required to completely eliminate all data. If a group of collectors decides to block an address, they can technically ignore them out of existence.
 
-muting an address prevents any further transaction comments signed by the address from outputting onto disk.  a purge and reinspection is required to completely elimninate all transactions comments
+Muting an address prevents any further transaction comments signed by the address from outputting onto a disk. A purge and reinspection is required to completely elimninate all transaction comments.
 <br />
 <br />
 ## **Web Applet Querystring Data**
-trusted index.html and index.htm files are sent the following Sup!? object information via querystring on load
+Trusted index.html and index.htm files are sent the following Sup!? object information via querystring on load:
 "address=", "creator=", "viewer=", "viewer-name=", "owner=", "owner-name=", "urn=", "uri=", "url=", "height="
 <br />
 <br />
@@ -268,19 +270,19 @@ http://bitfossil.org/7033eb8138de0d3f4be111a57dfb8319b400d3b6a6f5b387a22b334ebb9
 
 - this experiment uses a v0.13.2 full bitcoin core clone with address index change https://github.com/btcdrak/bitcoin/tree/addrindex-0.14
 
-- this experiment uses litecoin core the following release is included in the deployment https://download.litecoin.org/litecoin-0.16.3/win/
+- this experiment uses litecoin core; the following release is included in the deployment https://download.litecoin.org/litecoin-0.16.3/win/
 
-- this experiment uses dogecoin core the following release is included in the deployment https://github.com/dogecoin/dogecoin/releases/tag/v1.14.6
+- this experiment uses dogecoin core; the following release is included in the deployment https://github.com/dogecoin/dogecoin/releases/tag/v1.14.6
 
-- this experiment uses mazacoin core their latest official release has been included in the deployment https://github.com/mazacoin/maza
+- this experiment uses mazacoin core; their latest official release has been included in the deployment https://github.com/mazacoin/maza
 
-- this experiment uses oodrive's levelDB a stable release has been included in the deployment https://github.com/oodrive/leveldb.net
+- this experiment uses oodrive's levelDB; a stable release has been included in the deployment https://github.com/oodrive/leveldb.net
 
 - this experiment uses the most recent ipfs kubo command line tool found here https://dist.ipfs.tech/kubo/v0.18.1/kubo_v0.18.1_windows-amd64.zip
 
 - see the example transaction JSON files https://github.com/embiimob/Sup/tree/master/P2FK/samples to begin experimenting with the entry and trading of your own Sup!? objects
 
-- Sup!? blockchain objects can be discovered and browsed without internet access because Sup!? is communicating with a local copy of the blockchain.
+- Sup!? blockchain objects can be discovered and browsed without internet access because Sup!? is communicating with a local copy of the blockchain
 
 ## **explore Sup!? on youtube**
  https://www.youtube.com/playlist?list=PLDNMoJ2rHmfoxt1AX417-lWt2zvWUnKUH
