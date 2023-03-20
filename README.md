@@ -263,6 +263,12 @@ MZC:c0c7fa9536e31e04a65252d8acec29af1c54cb0a44609af7fb9e3804065c7f19/chief-sitti
 BTC:3ff52882c93420c8fe4a90f6fa94b2a563316b5e7b83afe2ddd5bcadc86d3821/FakeUFO.png<br />
 ( references sidechain - bitcoin production P2FK )<br />
 <br />
+LTC:7f698f396cbad1d45ad5a5c474b1492172705ce532dbe1022a7bfe834d914fdf/creationLTCsm.jpg<br />
+( references sidechain - litecoin production P2FK )<br />
+<br />
+DOG:73e146c1b4c1ad9c05de733bbc8c9b682b25b69054492b84c090dd9b1cb0c58f/dodge-meme.gif<br />
+( references sidechain - dogecoin production P2FK )<br />
+<br />
 http://bitfossil.org/7033eb8138de0d3f4be111a57dfb8319b400d3b6a6f5b387a22b334ebb998e93/EMBII.jpg<br /> 
 ( references a http(s) address )<br />
 <br />
