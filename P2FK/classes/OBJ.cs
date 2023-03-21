@@ -1715,8 +1715,7 @@ namespace SUP.P2FK
 
                         //return all roots found at address
                         objectTransactions = Root.GetRootsByAddress(objectaddress, username, password, url, intProcessHeight, 2, versionByte);
-                        if (objectTransactions.Count() == 0) { return objectStates; }
-                        if (objectTransactions.Count() == 1)
+                        if (intProcessHeight > 0 && objectTransactions.Count() < 2)
                         {
 
                             if (qty == -1) { return objectStates.Skip(skip).ToList(); }
