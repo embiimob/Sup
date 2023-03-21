@@ -100,7 +100,7 @@ namespace SUP.P2FK
 
                 }
                 catch { }
-                if(fetched && objectState.URN == null && objectState.ProcessHeight == 0){ return objectState; }
+                if (fetched && objectState.URN == null && objectState.ProcessHeight == 0) { return objectState; }
 
                 if (objectState.URN != null && objectState.ChangeDate.Year.ToString() == "1970")
                 {
@@ -121,9 +121,11 @@ namespace SUP.P2FK
                 try { intProcessHeight = objectState.ProcessHeight; } catch { }
 
                 Root[] objectTransactions;
-                objectTransactions = Root.GetRootsByAddress(objectaddress, username, password, url, intProcessHeight, -1, versionByte);
+                objectTransactions = Root.GetRootsByAddress(objectaddress, username, password, url, intProcessHeight, 1, versionByte);
 
-                if (intProcessHeight == objectTransactions.Count()) { return objectState; }
+                if (intProcessHeight != 0 && objectTransactions.Count() == 0) { return objectState; }
+
+                objectTransactions = Root.GetRootsByAddress(objectaddress, username, password, url, intProcessHeight, -1, versionByte);
 
                 foreach (Root transaction in objectTransactions)
                 {
@@ -968,10 +970,10 @@ namespace SUP.P2FK
                 Root[] objectTransactions;
 
                 //return all roots found at address
-                objectTransactions = Root.GetRootsByAddress(objectaddress, username, password, url, intProcessHeight, 2, versionByte);
+                objectTransactions = Root.GetRootsByAddress(objectaddress, username, password, url, intProcessHeight, 1, versionByte);
 
-                if (objectState.URN != null & objectTransactions.Count() == 1) { return objectState; }
-                if (intProcessHeight > 0 && objectTransactions.Count() == 1)
+              
+                if (intProcessHeight > 0 && objectTransactions.Count() == 0)
                 {
 
                     return objectState;
@@ -979,7 +981,7 @@ namespace SUP.P2FK
                 }
 
                 //return all roots found at address
-                objectTransactions = Root.GetRootsByAddress(objectaddress, username, password, url, skip, -1, versionByte);
+                objectTransactions = Root.GetRootsByAddress(objectaddress, username, password, url, 0, -1, versionByte);
                 foreach (Root transaction in objectTransactions)
                 {
 
@@ -1339,9 +1341,9 @@ namespace SUP.P2FK
                 Root[] objectTransactions;
 
                 //return all roots found at address
-                objectTransactions = Root.GetRootsByAddress(objectaddress, username, password, url, 0, -1, versionByte);
+                objectTransactions = Root.GetRootsByAddress(objectaddress, username, password, url, intProcessHeight, 1, versionByte);
 
-                if (objectTransactions.Count() == intProcessHeight)
+                if (intProcessHeight !=0 && objectTransactions.Count() == 0)
                 {
 
                     if (qty == -1) { return objectStates.ToList(); }
@@ -1350,6 +1352,7 @@ namespace SUP.P2FK
                 }
 
                 objectStates = new List<OBJState> { };
+                objectTransactions = Root.GetRootsByAddress(objectaddress, username, password, url, 0, -1, versionByte);
 
                 //return all roots found at address
 
@@ -1524,8 +1527,8 @@ namespace SUP.P2FK
                 Root[] objectTransactions;
 
                 //return all roots found at address
-                objectTransactions = Root.GetRootsByAddress(objectaddress, username, password, url, intProcessHeight, 2, versionByte);
-                if (intProcessHeight > 0 && objectTransactions.Count() < 2)
+                objectTransactions = Root.GetRootsByAddress(objectaddress, username, password, url, intProcessHeight, 1, versionByte);
+                if (intProcessHeight > 0 && objectTransactions.Count() == 0)
                 {
 
                     if (qty == -1) { return objectStates.ToList(); }
@@ -1616,8 +1619,8 @@ namespace SUP.P2FK
                 Root[] objectTransactions;
 
                 //return all roots found at address
-                objectTransactions = Root.GetRootsByAddress(objectaddress, username, password, url, intProcessHeight, 2, versionByte);
-                if (intProcessHeight > 0 && objectTransactions.Count() < 2)
+                objectTransactions = Root.GetRootsByAddress(objectaddress, username, password, url, intProcessHeight, 1, versionByte);
+                if (intProcessHeight > 0 && objectTransactions.Count() == 0)
                 {
 
                     if (qty == -1) { return objectStates.ToList(); }
@@ -1696,48 +1699,22 @@ namespace SUP.P2FK
 
                     if (isBlocked != "true")
                     {
-                        List<OBJState> objectStates = new List<OBJState> { };
-                        string JSONOBJ;
-                        string diskpath = "root\\" + objectaddress + "\\";
-
-                        // fetch current JSONOBJ from disk if it exists
-                        try
-                        {
-                            JSONOBJ = System.IO.File.ReadAllText(diskpath + "GetObjectsByAddress.json");
-                            objectStates = JsonConvert.DeserializeObject<List<OBJState>>(JSONOBJ);
-
-                        }
-                        catch { }
-
-                        int intProcessHeight = 0;
-                        try { intProcessHeight = objectStates.Max(state => state.Id); } catch { }
-                        Root[] objectTransactions;
-
-                        //return all roots found at address
-                        objectTransactions = Root.GetRootsByAddress(objectaddress, username, password, url, intProcessHeight, 2, versionByte);
-                        if (intProcessHeight > 0 && objectTransactions.Count() < 2)
-                        {
-
-                            if (qty == -1) { return objectStates.Skip(skip).ToList(); }
-                            else { return objectStates.Skip(skip).Take(qty).ToList(); }
-                        }
-                        objectStates = new List<OBJState> { };
-                        intProcessHeight = skip;
 
                         List<OBJState> keySearch = GetObjectsByAddress(objectaddress, username, password, url, versionByte, 0, -1);
-                        totalSearch = totalSearch.Concat(keySearch).ToList();
-                        
-                        var objectSerialized = JsonConvert.SerializeObject(keySearch);
 
-                        if (!Directory.Exists(@"root\" + objectaddress))
+                        foreach (OBJState objstate in keySearch)
                         {
-                            Directory.CreateDirectory(@"root\" + objectaddress);
-                        }
-                        System.IO.File.WriteAllText(@"root\" + objectaddress + @"\" + "GetObjectsByAddress.json", objectSerialized);
+                            totalSearch.Add(GetObjectByAddress(objstate.Creators.First().Key, username, password, url));
+                                }
+
                     }
                 }
 
-                return totalSearch;
+                if (qty == -1) { return totalSearch.Skip(skip).ToList(); }
+                else
+                {
+                    return totalSearch.Skip(skip).Take(qty).ToList();
+                }
             }
 
         }

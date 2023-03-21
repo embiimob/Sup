@@ -71,9 +71,9 @@ namespace SUP.P2FK
             Root[] profileTransactions;
             int depth = skip;
             //return all roots found at address
-            profileTransactions = Root.GetRootsByAddress(profileaddress, username, password, url, intProcessHeight, 2, versionByte);
+            profileTransactions = Root.GetRootsByAddress(profileaddress, username, password, url, intProcessHeight, 1, versionByte);
 
-            if (intProcessHeight > 0 && profileTransactions.Count() == 1) { return profileState; }
+            if (intProcessHeight > 0 && profileTransactions.Count() == 0) { return profileState; }
 
             profileTransactions = Root.GetRootsByAddress(profileaddress, username, password, url, intProcessHeight, -1, versionByte);
 
@@ -269,13 +269,13 @@ namespace SUP.P2FK
             Root[] profileTransactions;
 
             //return all roots found at address
-            profileTransactions = Root.GetRootsByAddress(profileaddress, username, password, url, intProcessHeight, 2, versionByte);
+            profileTransactions = Root.GetRootsByAddress(profileaddress, username, password, url, intProcessHeight, 1, versionByte);
 
-            if (intProcessHeight > 0 && profileTransactions.Count() == 1 && skip == 0) { return profileState; }
+            if (intProcessHeight > 0 && profileTransactions.Count() == 0) { return profileState; }
 
 
             //return all roots found at address
-            profileTransactions = Root.GetRootsByAddress(profileaddress, username, password, url, skip, -1, versionByte);
+            profileTransactions = Root.GetRootsByAddress(profileaddress, username, password, url, 0, -1, versionByte);
             HashSet<string> addedValues = new HashSet<string>();
             foreach (Root transaction in profileTransactions)
             {
@@ -291,8 +291,8 @@ namespace SUP.P2FK
                     {
                         if (isObject.Creators.ElementAt(0) == findObject)
                         {
-                            isObject.Id = profileTransactions.Count() - 1;
 
+                            isObject.Id = profileTransactions.Count();
                             var profileSerialized = JsonConvert.SerializeObject(isObject);
                             try
                             {
@@ -313,6 +313,7 @@ namespace SUP.P2FK
                                 catch { };
                             }
 
+                        
                             return isObject;
 
                         }

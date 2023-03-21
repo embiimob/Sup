@@ -56,35 +56,39 @@ namespace SUP
         {
 
             string profileCheck = address;
-            PROState searchprofile = PROState.GetProfileByAddress(address, "good-user", "better-password", @"http://127.0.0.1:18332");
+            PROState searchprofile = new PROState();
+            try { searchprofile = PROState.GetProfileByAddress(address, "good-user", "better-password", @"http://127.0.0.1:18332"); } catch { }
 
-            if (searchprofile.URN != null)
-            {
-                this.Invoke((Action)(() =>
-                {
-                    linkLabel1.Text = searchprofile.URN;
-                    linkLabel1.LinkColor = System.Drawing.SystemColors.Highlight;
-                }));
-            }
-            else
-            {
-
-
-                searchprofile = PROState.GetProfileByURN(address, "good-user", "better-password", @"http://127.0.0.1:18332");
-
+            
                 if (searchprofile.URN != null)
                 {
-
                     this.Invoke((Action)(() =>
                     {
-
-                        linkLabel1.Text = TruncateAddress(searchprofile.Creators.First());
+                        linkLabel1.Text = searchprofile.URN;
                         linkLabel1.LinkColor = System.Drawing.SystemColors.Highlight;
-                        profileCheck = searchprofile.Creators.First();
                     }));
-
                 }
                 else
+                {
+
+                try
+                {
+                    searchprofile = PROState.GetProfileByURN(address, "good-user", "better-password", @"http://127.0.0.1:18332");
+
+                    if (searchprofile.URN != null)
+                    {
+
+                        this.Invoke((Action)(() =>
+                        {
+
+                            linkLabel1.Text = TruncateAddress(searchprofile.Creators.First());
+                            linkLabel1.LinkColor = System.Drawing.SystemColors.Highlight;
+                            profileCheck = searchprofile.Creators.First();
+                        }));
+
+                    }
+                }
+                catch
                 {
 
                     this.Invoke((Action)(() =>
@@ -94,9 +98,8 @@ namespace SUP
                         linkLabel1.LinkColor = System.Drawing.SystemColors.GradientActiveCaption;
                     }));
                 }
-            }
-
-
+                }
+          
             List<OBJState> createdObjects = new List<OBJState>();
 
             int skip = int.Parse(txtLast.Text);
