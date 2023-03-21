@@ -570,7 +570,7 @@ namespace SUP.P2FK
                 }
 
             }
-
+            rootList = new List<Root>();
             int innerskip = 0;
             intProcessHeight = 0;
             while (true)
