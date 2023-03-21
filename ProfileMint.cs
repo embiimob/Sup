@@ -432,7 +432,7 @@ namespace SUP
                 NetworkCredential credentials = new NetworkCredential("good-user", "better-password");
                 RPCClient rpcClient = new RPCClient(credentials, new Uri("http://127.0.0.1:18332"), Network.Main);
                 string newAddress = "";
-                try { newAddress = rpcClient.SendCommand("getnewaddress", txtFirstName.Text + "!" + DateTime.UtcNow.ToString("yyyyMMddHHmmss")).ResultString; } catch { }
+                try { newAddress = rpcClient.SendCommand("getnewaddress",txtURN.Text).ResultString; } catch { }
                 txtObjectAddress.Text = newAddress;
                 lblObjectStatus.Text = "";
                 lblCost.Text = "";
@@ -1384,7 +1384,7 @@ namespace SUP
 
             ismint = true;
             UpdateRemainingChars();
-
+            try { File.Delete(@"root\GetLocalProfiles.json"); } catch { }
             PROState PRO = PROState.GetProfileByAddress(txtObjectAddress.Text, "good-user", "better-password", @"http://127.0.0.1:18332");
 
             if (PRO.URN != null)

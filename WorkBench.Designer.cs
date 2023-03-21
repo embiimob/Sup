@@ -94,7 +94,7 @@ namespace SUP
             this.button4 = new System.Windows.Forms.Button();
             this.btnObjectURN = new System.Windows.Forms.Button();
             this.txtGetValue = new System.Windows.Forms.RichTextBox();
-            this.checkBox1 = new System.Windows.Forms.CheckBox();
+            this.chkVerbose = new System.Windows.Forms.CheckBox();
             this.button2 = new System.Windows.Forms.Button();
             this.button1 = new System.Windows.Forms.Button();
             this.btnGetCreated = new System.Windows.Forms.Button();
@@ -103,6 +103,7 @@ namespace SUP
             this.btnGetObject = new System.Windows.Forms.Button();
             this.btnDecrypt = new System.Windows.Forms.Button();
             this.btnEncrypt = new System.Windows.Forms.Button();
+            this.button3 = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.dgTransactions)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
@@ -492,6 +493,7 @@ namespace SUP
             // 
             // splitContainer1.Panel1
             // 
+            this.splitContainer1.Panel1.Controls.Add(this.button3);
             this.splitContainer1.Panel1.Controls.Add(this.ButtonGetPublicKeys);
             this.splitContainer1.Panel1.Controls.Add(this.ButtonGetPrivateMessages);
             this.splitContainer1.Panel1.Controls.Add(this.ButtonGetPublicMessages);
@@ -510,7 +512,7 @@ namespace SUP
             this.splitContainer1.Panel1.Controls.Add(this.button4);
             this.splitContainer1.Panel1.Controls.Add(this.btnObjectURN);
             this.splitContainer1.Panel1.Controls.Add(this.txtGetValue);
-            this.splitContainer1.Panel1.Controls.Add(this.checkBox1);
+            this.splitContainer1.Panel1.Controls.Add(this.chkVerbose);
             this.splitContainer1.Panel1.Controls.Add(this.button2);
             this.splitContainer1.Panel1.Controls.Add(this.button1);
             this.splitContainer1.Panel1.Controls.Add(this.btnGetCreated);
@@ -561,7 +563,7 @@ namespace SUP
             // 
             this.ButtonGetPublicKeys.Location = new System.Drawing.Point(300, 213);
             this.ButtonGetPublicKeys.Name = "ButtonGetPublicKeys";
-            this.ButtonGetPublicKeys.Size = new System.Drawing.Size(150, 23);
+            this.ButtonGetPublicKeys.Size = new System.Drawing.Size(72, 23);
             this.ButtonGetPublicKeys.TabIndex = 75;
             this.ButtonGetPublicKeys.Text = "pubkey";
             this.ButtonGetPublicKeys.UseVisualStyleBackColor = true;
@@ -732,15 +734,15 @@ namespace SUP
             this.txtGetValue.TabIndex = 56;
             this.txtGetValue.Text = "";
             // 
-            // checkBox1
+            // chkVerbose
             // 
-            this.checkBox1.AutoSize = true;
-            this.checkBox1.Location = new System.Drawing.Point(384, 275);
-            this.checkBox1.Name = "checkBox1";
-            this.checkBox1.Size = new System.Drawing.Size(64, 17);
-            this.checkBox1.TabIndex = 55;
-            this.checkBox1.Text = "verbose";
-            this.checkBox1.UseVisualStyleBackColor = true;
+            this.chkVerbose.AutoSize = true;
+            this.chkVerbose.Location = new System.Drawing.Point(384, 275);
+            this.chkVerbose.Name = "chkVerbose";
+            this.chkVerbose.Size = new System.Drawing.Size(64, 17);
+            this.chkVerbose.TabIndex = 55;
+            this.chkVerbose.Text = "verbose";
+            this.chkVerbose.UseVisualStyleBackColor = true;
             // 
             // button2
             // 
@@ -821,6 +823,16 @@ namespace SUP
             this.btnEncrypt.UseVisualStyleBackColor = true;
             this.btnEncrypt.Click += new System.EventHandler(this.ButtonEncryptTransactionIdClick);
             // 
+            // button3
+            // 
+            this.button3.Location = new System.Drawing.Point(377, 213);
+            this.button3.Name = "button3";
+            this.button3.Size = new System.Drawing.Size(72, 23);
+            this.button3.TabIndex = 76;
+            this.button3.Text = "profiles";
+            this.button3.UseVisualStyleBackColor = true;
+            this.button3.Click += new System.EventHandler(this.button3_Click);
+            // 
             // WorkBench
             // 
             this.AllowDrop = true;
@@ -894,7 +906,7 @@ namespace SUP
         private Button btnGetOwned;
         private Button button1;
         private Button button2;
-        private CheckBox checkBox1;
+        private CheckBox chkVerbose;
         private RichTextBox txtGetValue;
         private Button btnObjectURN;
         private Button button4;
@@ -913,6 +925,7 @@ namespace SUP
         private Button ButtonGetPrivateMessages;
         private Button ButtonGetPublicMessages;
         private Button ButtonGetPublicKeys;
+        private Button button3;
     }
 }
 

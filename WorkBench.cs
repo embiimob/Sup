@@ -693,7 +693,7 @@ namespace SUP
         private void ButtonGetObjectByAddressClick(object sender, EventArgs e)
         {
             DateTime tmbeginCall = DateTime.UtcNow;
-            OBJState Tester = OBJState.GetObjectByAddress(txtSearchAddress.Text, txtLogin.Text, txtPassword.Text, txtUrl.Text, txtVersionByte.Text, checkBox1.Checked);
+            OBJState Tester = OBJState.GetObjectByAddress(txtSearchAddress.Text, txtLogin.Text, txtPassword.Text, txtUrl.Text, txtVersionByte.Text, chkVerbose.Checked);
             DateTime tmendCall = DateTime.UtcNow;
             lblTotalBytes.Text = "bytes: ";
             lblTotalTime.Text = "time: ";
@@ -883,7 +883,7 @@ namespace SUP
         private void ButtonGetProfileByAddressClick(object sender, EventArgs e)
         {
             DateTime tmbeginCall = DateTime.UtcNow;
-            PROState Tester = PROState.GetProfileByAddress(txtSearchAddress.Text, txtLogin.Text, txtPassword.Text, txtUrl.Text, txtVersionByte.Text, checkBox1.Checked, int.Parse(txtSkip.Text));
+            PROState Tester = PROState.GetProfileByAddress(txtSearchAddress.Text, txtLogin.Text, txtPassword.Text, txtUrl.Text, txtVersionByte.Text, chkVerbose.Checked, int.Parse(txtSkip.Text));
             DateTime tmendCall = DateTime.UtcNow;
             lblTotalBytes.Text = "bytes: ";
             lblTotalTime.Text = "time: ";
@@ -902,7 +902,7 @@ namespace SUP
         {
 
             DateTime tmbeginCall = DateTime.UtcNow;
-            PROState createdObject = PROState.GetProfileByURN(txtSearchAddress.Text, txtLogin.Text, txtPassword.Text, txtUrl.Text, txtVersionByte.Text, checkBox1.Checked, int.Parse(txtSkip.Text));
+            PROState createdObject = PROState.GetProfileByURN(txtSearchAddress.Text, txtLogin.Text, txtPassword.Text, txtUrl.Text, txtVersionByte.Text, chkVerbose.Checked, int.Parse(txtSkip.Text));
             DateTime tmendCall = DateTime.UtcNow;
             lblTotalBytes.Text = "bytes: ";
             lblTotalTime.Text = "time: ";
@@ -1300,6 +1300,32 @@ namespace SUP
         private void btnEditProfile_Click(object sender, EventArgs e)
         {
           
+        }
+
+        private void button3_Click(object sender, EventArgs e)
+        {
+            if (chkVerbose.Checked)
+            {
+                try { File.Delete(@"root\GetLocalProfiles.json"); } catch { }
+            }
+
+            DateTime tmbeginCall = DateTime.UtcNow;
+            var profiles = PROState.GetLocalProfiles(txtLogin.Text, txtPassword.Text, txtUrl.Text);
+            var json = JsonConvert.SerializeObject(profiles);
+
+            DateTime tmendCall = DateTime.UtcNow;
+
+            lblTotalBytes.Text = "bytes: ";
+            lblTotalTime.Text = "time: ";
+            lblKbs.Text = "kb/s: ";
+            lblTotal.Text = "total:";
+
+            TimeSpan elapsedTime = tmendCall - tmbeginCall;
+            double elapsedMilliseconds = elapsedTime.TotalMilliseconds;
+
+            lblTotalTime.Text = "time: " + Math.Truncate(elapsedMilliseconds);
+
+            txtGetValue.Text = json;
         }
     }
 }

@@ -1,9 +1,12 @@
 ﻿using LevelDB;
+using NBitcoin;
+using NBitcoin.RPC;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Net;
 
 namespace SUP.P2FK
 {
@@ -26,7 +29,7 @@ namespace SUP.P2FK
 
     }
     public class PROState
-    { 
+    {
         public int Id { get; set; }
         public string URN { get; set; }
         public string ShortName { get; set; }
@@ -165,7 +168,7 @@ namespace SUP.P2FK
                             if (profileinspector.loc != null) { profileState.ChangeDate = transaction.BlockDate; profileState.Location = profileinspector.loc; }
                             if (profileinspector.pkx != null) { profileState.ChangeDate = transaction.BlockDate; profileState.PKX = profileinspector.pkx; }
                             if (profileinspector.pky != null) { profileState.ChangeDate = transaction.BlockDate; profileState.PKY = profileinspector.pky; }
-                            if (profileinspector.cre != null) 
+                            if (profileinspector.cre != null)
                             {
                                 profileState.Creators.Clear();
                                 foreach (int keywordId in profileinspector.cre)
@@ -178,8 +181,8 @@ namespace SUP.P2FK
                                     }
 
                                 }
-                                profileState.ChangeDate = transaction.BlockDate; 
-                            
+                                profileState.ChangeDate = transaction.BlockDate;
+
                             }
 
                             if (profileState.ChangeDate == transaction.BlockDate)
@@ -212,7 +215,8 @@ namespace SUP.P2FK
 
                         }
                     }
-                }else {  }///not sure why their is an else may not be necessary..
+                }
+                else { }///not sure why their is an else may not be necessary..
                 depth++;
             }
 
@@ -239,7 +243,7 @@ namespace SUP.P2FK
                 catch { };
             }
 
-            
+
             return profileState;
 
         }
@@ -248,7 +252,7 @@ namespace SUP.P2FK
             PROState profileState = new PROState { };
             var OBJ = new Options { CreateIfMissing = true };
             string JSONOBJ;
-        
+
             string profileaddress = Root.GetPublicAddressByKeyword(searchstring, versionByte);
             string diskpath = "root\\" + profileaddress + "\\";
 
@@ -263,12 +267,12 @@ namespace SUP.P2FK
             //if (profileState.URN == null && diskpath.Length > 5) { try { Directory.Delete(diskpath); } catch { } }
             var intProcessHeight = profileState.Id;
             Root[] profileTransactions;
-      
+
             //return all roots found at address
             profileTransactions = Root.GetRootsByAddress(profileaddress, username, password, url, intProcessHeight, 2, versionByte);
 
             if (intProcessHeight > 0 && profileTransactions.Count() == 1 && skip == 0) { return profileState; }
-                     
+
 
             //return all roots found at address
             profileTransactions = Root.GetRootsByAddress(profileaddress, username, password, url, skip, -1, versionByte);
@@ -287,7 +291,7 @@ namespace SUP.P2FK
                     {
                         if (isObject.Creators.ElementAt(0) == findObject)
                         {
-                            isObject.Id = profileTransactions.Count()-1;
+                            isObject.Id = profileTransactions.Count() - 1;
 
                             var profileSerialized = JsonConvert.SerializeObject(isObject);
                             try
@@ -320,10 +324,70 @@ namespace SUP.P2FK
 
 
             }
-           
+
             return profileState;
 
         }
+
+        public static List<PROState> GetLocalProfiles(string username, string password, string url, string versionByte = "111")
+        {
+            List<PROState> profileStates = new List<PROState> { };
+            var OBJ = new Options { CreateIfMissing = true };
+            string JSONOBJ;
+          
+            // fetch current JSONOBJ from disk if it exists
+            try
+            {
+                JSONOBJ = System.IO.File.ReadAllText(@"root\GetLocalProfiles.json");
+                profileStates = JsonConvert.DeserializeObject<List<PROState>>(JSONOBJ);
+                return profileStates;
+            }
+            catch { }
+
+            NetworkCredential credentials = new NetworkCredential("good-user", "better-password");
+            RPCClient rpcClient = new RPCClient(credentials, new Uri(@"http://127.0.0.1:18332"), Network.Main);
+            string accountsString = "";
+            try { accountsString = rpcClient.SendCommand("listaccounts").ResultString; } catch { }
+            var accounts = JsonConvert.DeserializeObject<Dictionary<string, decimal>>(accountsString);
+
+            foreach (string account in accounts.Keys)
+            {
+                               
+                PROState isObject = GetProfileByURN(account, username, password, url, versionByte);
+
+                if (isObject.URN != null)
+                {
+
+                    profileStates.Add(isObject);                                        
+
+                }
+
+            }
+
+            var profileSerialized = JsonConvert.SerializeObject(profileStates);
+            try
+            {
+                System.IO.File.WriteAllText(@"root\GetLocalProfiles.json", profileSerialized);
+            }
+            catch
+            {
+
+                try
+                {
+                    if (!Directory.Exists(@"root"))
+
+                    {
+                        Directory.CreateDirectory(@"root");
+                    }
+                    System.IO.File.WriteAllText(@"root\GetLocalProfiles.json", profileSerialized);
+                }
+                catch { };
+            }
+
+            return profileStates;
+
+        }
+
 
     }
 }
