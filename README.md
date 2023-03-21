@@ -65,7 +65,7 @@ Your profile urn registration is valid for 3 years past the last change in its p
 <br />
 <br />
 ## **Object Minting / Printing / Editing**
-Click the mint button and select the object mint button. Enter an object name, object address and urn. These fields are required. Click mint. If no creator address is entered, the object will be self-signed using a new address generated at your minting station wallet. If a collection address isn't entered, it can be entered again later via an update transaction. To create a Sup!? collection, first mint a ASCII free text urn to reference it by.  ASCII free text urns are case sensitive with no length restrictions. Example "SPACE QUEEN". Copy the new object address associated with the "SPACE QUEEN" urn and add it to the creators list prior to minting. Now searching for "SPACE QUEEN" in the Sup!? browser will display just your objects in the created and owned search results. To further enhance your collector's experience, a profile can also be setup for this new collection address. (the profile mint\edit screen is coming soon)
+Click the mint button and select the object mint button. Enter an object name, object address and urn. These fields are required. Click mint. If no creator address is entered, the object will be self-signed using a new address generated at your minting station wallet. To further enhance your collector's experience, a profile can be setup on a collection address and the collection addresss can be added as a creator. Now, both the collection shortname name and the creator short name will be discoverable in the browser. Searching for the creator shortname returns all objects.  Searching for the collection shortname returns just the collection.
 
 Click print instead of mint and you can use a paper transaction alone to prove ownership. Any person can scan a paper mint & send a small confirmation transaction to the addresses within the QR code printed on the paper to make the paper transaction public. A Sup!? paper transaction can be used in lieu of a public confirmation as it contains all the necessary signature and transaction data necessary to confirm it against a current scan of the object address it is associated with. If no address is found and the transaction is a valid object mint, Sup!? will build and display the object it represents on screen with the latest ownership information about it if any exists.
 
@@ -262,6 +262,12 @@ MZC:c0c7fa9536e31e04a65252d8acec29af1c54cb0a44609af7fb9e3804065c7f19/chief-sitti
 <br />
 BTC:3ff52882c93420c8fe4a90f6fa94b2a563316b5e7b83afe2ddd5bcadc86d3821/FakeUFO.png<br />
 ( references sidechain - bitcoin production P2FK )<br />
+<br />
+LTC:7f698f396cbad1d45ad5a5c474b1492172705ce532dbe1022a7bfe834d914fdf/creationLTCsm.jpg<br />
+( references sidechain - litecoin production P2FK )<br />
+<br />
+DOG:73e146c1b4c1ad9c05de733bbc8c9b682b25b69054492b84c090dd9b1cb0c58f/dodge-meme.gif<br />
+( references sidechain - dogecoin production P2FK )<br />
 <br />
 http://bitfossil.org/7033eb8138de0d3f4be111a57dfb8319b400d3b6a6f5b387a22b334ebb998e93/EMBII.jpg<br /> 
 ( references a http(s) address )<br />
