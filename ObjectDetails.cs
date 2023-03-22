@@ -538,7 +538,7 @@ namespace SUP
 
             // Create a PictureBox with the specified image
 
-            if (File.Exists(imageLocation)  || imageLocation.ToUpper().StartsWith("HTTP"))
+            if (File.Exists(imageLocation) || imageLocation.ToUpper().StartsWith("HTTP"))
             {
                 PictureBox picture = new PictureBox
                 {
@@ -1203,10 +1203,10 @@ namespace SUP
                                         catch { }
                                     }
                                 }
-                                
+
 
                             }
-                            
+
 
                             break;
                     }
@@ -1490,8 +1490,8 @@ namespace SUP
                 switch (extension.ToLower())
                 {
                     case "":
-                            lblPleaseStandBy.Text = txtURN.Text;
-                            lblPleaseStandBy.Visible = true;                       
+                        lblPleaseStandBy.Text = txtURN.Text;
+                        lblPleaseStandBy.Visible = true;
                         break;
                     case ".exe":
                     case ".dll":
@@ -1921,9 +1921,13 @@ namespace SUP
                             }
                             catch
                             {
-                                Thread.Sleep(1000);
-                                await webviewer.EnsureCoreWebView2Async();
-                                webviewer.CoreWebView2.Navigate(Path.GetDirectoryName(urn) + @"\urnviewer.html");
+                                Thread.Sleep(500);
+                                try
+                                {
+                                    await webviewer.EnsureCoreWebView2Async();
+                                    webviewer.CoreWebView2.Navigate(Path.GetDirectoryName(urn) + @"\urnviewer.html");
+                                }
+                                catch { }
                             }
 
                         }

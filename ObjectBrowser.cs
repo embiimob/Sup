@@ -59,17 +59,17 @@ namespace SUP
             PROState searchprofile = new PROState();
             try { searchprofile = PROState.GetProfileByAddress(address, "good-user", "better-password", @"http://127.0.0.1:18332"); } catch { }
 
-            
-                if (searchprofile.URN != null)
+
+            if (searchprofile.URN != null)
+            {
+                this.Invoke((Action)(() =>
                 {
-                    this.Invoke((Action)(() =>
-                    {
-                        linkLabel1.Text = searchprofile.URN;
-                        linkLabel1.LinkColor = System.Drawing.SystemColors.Highlight;
-                    }));
-                }
-                else
-                {
+                    linkLabel1.Text = searchprofile.URN;
+                    linkLabel1.LinkColor = System.Drawing.SystemColors.Highlight;
+                }));
+            }
+            else
+            {
 
                 try
                 {
@@ -98,8 +98,8 @@ namespace SUP
                         linkLabel1.LinkColor = System.Drawing.SystemColors.GradientActiveCaption;
                     }));
                 }
-                }
-          
+            }
+
             List<OBJState> createdObjects = new List<OBJState>();
 
             int skip = int.Parse(txtLast.Text);
@@ -174,21 +174,17 @@ namespace SUP
 
             this.Invoke((Action)(() =>
             {
+                flowLayoutPanel1.SuspendLayout();
                 pages.Maximum = createdObjects.Count - 1;
                 txtTotal.Text = (createdObjects.Count).ToString();
                 pages.Visible = true;
 
-            }));
+                createdObjects.Reverse();
 
-            createdObjects.Reverse();
-            foreach (OBJState objstate in createdObjects.Skip(skip).Take(qty))
-            {
-                try
+                foreach (OBJState objstate in createdObjects.Skip(skip).Take(qty))
                 {
-                    flowLayoutPanel1.Invoke((MethodInvoker)delegate
+                    try
                     {
-                        flowLayoutPanel1.SuspendLayout();
-
 
                         if (objstate.Owners != null)
                         {
@@ -201,34 +197,30 @@ namespace SUP
                             foundObject.ObjectQty.Text = objstate.Owners.Values.Sum().ToString() + "x";
                             foundObject.ObjectId.Text = objstate.Id.ToString();
 
-                            if (!loadedObjects.Contains(foundObject.ObjectAddress.Text))
+                   
+                            OBJState isOfficial = OBJState.GetObjectByURN(objstate.URN, "good-user", "better-password", @"http://127.0.0.1:18332");
+                            if (isOfficial.URN != null)
                             {
-                                Task.Run(() =>
+
+                                if (isOfficial.Creators.First().Key == foundObject.ObjectAddress.Text)
                                 {
-                                    OBJState isOfficial = OBJState.GetObjectByURN(objstate.URN, "good-user", "better-password", @"http://127.0.0.1:18332");
-                                    if (isOfficial.URN != null)
-                                    {
-                                        this.Invoke((Action)(() =>
-                                        {
-                                            if (isOfficial.Creators.First().Key == foundObject.ObjectAddress.Text)
-                                            {
-                                                foundObject.lblOfficial.Visible = true;
-                                                foundObject.lblOfficial.Text = TruncateAddress(isOfficial.URN);
-                                                System.Windows.Forms.ToolTip myTooltip = new System.Windows.Forms.ToolTip();
-                                                myTooltip.SetToolTip(foundObject.lblOfficial, isOfficial.URN);
-                                            }
-                                            else
-                                            {
-                                                foundObject.txtOfficialURN.Text = isOfficial.Creators.First().Key;
-                                                foundObject.btnOfficial.Visible = true;
+                                    foundObject.lblOfficial.Visible = true;
+                                    foundObject.lblOfficial.Text = TruncateAddress(isOfficial.URN);
+                                    System.Windows.Forms.ToolTip myTooltip = new System.Windows.Forms.ToolTip();
+                                    myTooltip.SetToolTip(foundObject.lblOfficial, isOfficial.URN);
+                                }
+                                else
+                                {
+                                    foundObject.txtOfficialURN.Text = isOfficial.Creators.First().Key;
+                                    foundObject.btnOfficial.Visible = true;
 
-                                            }
-                                        }));
-                                    }
-                                });
+                                }
+
+                            }
 
 
-                                if (objstate.Image == null)
+
+                            if (objstate.Image == null)
                             {
 
 
@@ -257,186 +249,186 @@ namespace SUP
                             imgurl = objstate.Image.Replace("BTC:", "").Replace("MZC:", "").Replace("LTC:", "").Replace("DOG:", "").Replace("IPFS:", "").Replace("btc:", "").Replace("mzc:", "").Replace("ltc:", "").Replace("dog:", "").Replace("ipfs:", "").Replace(@"\", @"/");
                             if (objstate.Image.ToUpper().StartsWith("IPFS:")) { imgurl = @"ipfs/" + imgurl; } else { imgurl = @"root/" + imgurl; }
 
-                                if (File.Exists(imgurl))
-                                {
+                            if (File.Exists(imgurl))
+                            {
 
-                                    foundObject.ObjectImage.ImageLocation = imgurl;
+                                foundObject.ObjectImage.ImageLocation = imgurl;
+                            }
+                            else
+                            {
+                                Random rnd = new Random();
+                                string[] gifFiles = Directory.GetFiles("includes", "*.gif");
+                                if (gifFiles.Length > 0)
+                                {
+                                    int randomIndex = rnd.Next(gifFiles.Length);
+                                    string randomGifFile = gifFiles[randomIndex];
+                                    foundObject.ObjectImage.SizeMode = PictureBoxSizeMode.StretchImage;
+                                    foundObject.ObjectImage.ImageLocation = randomGifFile;
+
                                 }
                                 else
                                 {
-                                    Random rnd = new Random();
-                                    string[] gifFiles = Directory.GetFiles("includes", "*.gif");
-                                    if (gifFiles.Length > 0)
+                                    try
                                     {
-                                        int randomIndex = rnd.Next(gifFiles.Length);
-                                        string randomGifFile = gifFiles[randomIndex];
-                                        foundObject.ObjectImage.SizeMode = PictureBoxSizeMode.StretchImage;
-                                        foundObject.ObjectImage.ImageLocation = randomGifFile;
 
+                                        foundObject.ObjectImage.SizeMode = PictureBoxSizeMode.StretchImage;
+                                        foundObject.ObjectImage.ImageLocation = @"includes\HugPuddle.jpg";
                                     }
-                                    else
-                                    {
-                                        try
+                                    catch { }
+                                }
+
+
+                                switch (objstate.Image.ToUpper().Substring(0, 4))
+                                {
+                                    case "BTC:":
+                                        if (btcActive)
                                         {
 
-                                            foundObject.ObjectImage.SizeMode = PictureBoxSizeMode.StretchImage;
-                                            foundObject.ObjectImage.ImageLocation = @"includes\HugPuddle.jpg";
-                                        }
-                                        catch { }
-                                    }
-
-
-                                    switch (objstate.Image.ToUpper().Substring(0, 4))
-                                    {
-                                        case "BTC:":
-                                            if (btcActive)
+                                            if (!System.IO.Directory.Exists("root/" + transid))
                                             {
+                                                Root.GetRootByTransactionId(transid, "good-user", "better-password", @"http://127.0.0.1:8332", "0");
 
-                                                if (!System.IO.Directory.Exists("root/" + transid))
-                                                {
-                                                    Root.GetRootByTransactionId(transid, "good-user", "better-password", @"http://127.0.0.1:8332", "0");
-
-                                                    if (File.Exists(imgurl))
-                                                    {
-
-                                                        foundObject.ObjectImage.ImageLocation = imgurl;
-
-                                                    }
-                                                }
-
-                                            }
-                                            break;
-                                        case "MZC:":
-                                            if (mzcActive)
-                                            {
-
-                                                if (!System.IO.Directory.Exists("root/" + transid))
-                                                {
-                                                    Root.GetRootByTransactionId(transid, "good-user", "better-password", @"http://127.0.0.1:12832", "50");
-
-                                                    if (File.Exists(imgurl))
-                                                    {
-
-                                                        foundObject.ObjectImage.ImageLocation = imgurl;
-
-                                                    }
-                                                }
-
-                                            }
-                                            break;
-                                        case "LTC:":
-                                            if (ltcActive)
-                                            {
-
-                                                if (!System.IO.Directory.Exists("root/" + transid))
-                                                {
-                                                    Root.GetRootByTransactionId(transid, "good-user", "better-password", @"http://127.0.0.1:9332", "48");
-
-                                                    if (File.Exists(imgurl))
-                                                    {
-
-                                                        foundObject.ObjectImage.ImageLocation = imgurl;
-
-                                                    }
-                                                }
-
-                                            }
-                                            break;
-                                        case "DOG:":
-                                            if (dogActive)
-                                            {
-
-                                                if (!System.IO.Directory.Exists("root/" + transid))
-                                                {
-                                                    Root.GetRootByTransactionId(transid, "good-user", "better-password", @"http://127.0.0.1:22555", "30");
-
-                                                    if (File.Exists(imgurl))
-                                                    {
-
-                                                        foundObject.ObjectImage.ImageLocation = imgurl;
-
-                                                    }
-                                                }
-
-                                            }
-                                            break;
-                                        case "IPFS":
-                                            if (ipfsActive)
-                                            {
-
-                                                if (!System.IO.Directory.Exists("ipfs/" + transid) && !System.IO.Directory.Exists("ipfs/" + transid + "-build"))
-                                                {
-                                                    Directory.CreateDirectory("ipfs/" + transid + "-build");
-                                                    Process process2 = new Process();
-                                                    process2.StartInfo.FileName = @"ipfs\ipfs.exe";
-                                                    process2.StartInfo.Arguments = "get " + objstate.Image.Substring(5, 46) + @" -o ipfs\" + transid;
-                                                    process2.StartInfo.UseShellExecute = false;
-                                                    process2.StartInfo.CreateNoWindow = true;
-                                                    process2.Start();
-                                                    process2.WaitForExit();
-                                                    string fileName;
-                                                    if (System.IO.File.Exists("ipfs/" + transid))
-                                                    {
-                                                        System.IO.File.Move("ipfs/" + transid, "ipfs/" + transid + "_tmp");
-                                                        System.IO.Directory.CreateDirectory("ipfs/" + transid);
-                                                        fileName = objstate.Image.Replace(@"//", "").Replace(@"\\", "").Substring(51);
-                                                        if (fileName == "") { fileName = "artifact"; } else { fileName = fileName.Replace(@"/", "").Replace(@"\", ""); }
-                                                        Directory.CreateDirectory("ipfs/" + transid);
-                                                        System.IO.File.Move("ipfs/" + transid + "_tmp", @"ipfs/" + transid + @"/" + fileName);
-                                                    }
-
-
-                                                    Process process3 = new Process
-                                                    {
-                                                        StartInfo = new ProcessStartInfo
-                                                        {
-                                                            FileName = @"ipfs\ipfs.exe",
-                                                            Arguments = "pin add " + transid,
-                                                            UseShellExecute = false,
-                                                            CreateNoWindow = true
-                                                        }
-                                                    };
-                                                    process3.Start();
-
-                                                    try { Directory.Delete("ipfs/" + transid + "-build", true); } catch { }
-
-
-                                                }
-
-                                                if (objstate.Image.Length == 51)
-                                                { foundObject.ObjectImage.ImageLocation = objstate.Image.Replace("IPFS:", @"ipfs/") + @"/artifact"; }
-                                                else { foundObject.ObjectImage.ImageLocation = objstate.Image.Replace("IPFS:", @"ipfs/"); }
-
-                                            }
-                                            break;
-                                        case "HTTP":
-                                            Task.Run(() =>
-                                            {
-                                                foundObject.ObjectImage.ImageLocation = objstate.Image;
-                                            });
-                                            break;
-
-
-                                        default:
-                                            if (btctActive)
-                                            {
-                                                try { transid = objstate.Image.Substring(0, 64); } catch { }
-                                                if (!System.IO.Directory.Exists("root/" + transid))
-                                                {
-                                                    Root root = Root.GetRootByTransactionId(transid, "good-user", "better-password", @"http://127.0.0.1:18332");
-                                                }
                                                 if (File.Exists(imgurl))
                                                 {
 
                                                     foundObject.ObjectImage.ImageLocation = imgurl;
 
                                                 }
+                                            }
+
+                                        }
+                                        break;
+                                    case "MZC:":
+                                        if (mzcActive)
+                                        {
+
+                                            if (!System.IO.Directory.Exists("root/" + transid))
+                                            {
+                                                Root.GetRootByTransactionId(transid, "good-user", "better-password", @"http://127.0.0.1:12832", "50");
+
+                                                if (File.Exists(imgurl))
+                                                {
+
+                                                    foundObject.ObjectImage.ImageLocation = imgurl;
+
+                                                }
+                                            }
+
+                                        }
+                                        break;
+                                    case "LTC:":
+                                        if (ltcActive)
+                                        {
+
+                                            if (!System.IO.Directory.Exists("root/" + transid))
+                                            {
+                                                Root.GetRootByTransactionId(transid, "good-user", "better-password", @"http://127.0.0.1:9332", "48");
+
+                                                if (File.Exists(imgurl))
+                                                {
+
+                                                    foundObject.ObjectImage.ImageLocation = imgurl;
+
+                                                }
+                                            }
+
+                                        }
+                                        break;
+                                    case "DOG:":
+                                        if (dogActive)
+                                        {
+
+                                            if (!System.IO.Directory.Exists("root/" + transid))
+                                            {
+                                                Root.GetRootByTransactionId(transid, "good-user", "better-password", @"http://127.0.0.1:22555", "30");
+
+                                                if (File.Exists(imgurl))
+                                                {
+
+                                                    foundObject.ObjectImage.ImageLocation = imgurl;
+
+                                                }
+                                            }
+
+                                        }
+                                        break;
+                                    case "IPFS":
+                                        if (ipfsActive)
+                                        {
+
+                                            if (!System.IO.Directory.Exists("ipfs/" + transid) && !System.IO.Directory.Exists("ipfs/" + transid + "-build"))
+                                            {
+                                                Directory.CreateDirectory("ipfs/" + transid + "-build");
+                                                Process process2 = new Process();
+                                                process2.StartInfo.FileName = @"ipfs\ipfs.exe";
+                                                process2.StartInfo.Arguments = "get " + objstate.Image.Substring(5, 46) + @" -o ipfs\" + transid;
+                                                process2.StartInfo.UseShellExecute = false;
+                                                process2.StartInfo.CreateNoWindow = true;
+                                                process2.Start();
+                                                process2.WaitForExit();
+                                                string fileName;
+                                                if (System.IO.File.Exists("ipfs/" + transid))
+                                                {
+                                                    System.IO.File.Move("ipfs/" + transid, "ipfs/" + transid + "_tmp");
+                                                    System.IO.Directory.CreateDirectory("ipfs/" + transid);
+                                                    fileName = objstate.Image.Replace(@"//", "").Replace(@"\\", "").Substring(51);
+                                                    if (fileName == "") { fileName = "artifact"; } else { fileName = fileName.Replace(@"/", "").Replace(@"\", ""); }
+                                                    Directory.CreateDirectory("ipfs/" + transid);
+                                                    System.IO.File.Move("ipfs/" + transid + "_tmp", @"ipfs/" + transid + @"/" + fileName);
+                                                }
+
+
+                                                Process process3 = new Process
+                                                {
+                                                    StartInfo = new ProcessStartInfo
+                                                    {
+                                                        FileName = @"ipfs\ipfs.exe",
+                                                        Arguments = "pin add " + transid,
+                                                        UseShellExecute = false,
+                                                        CreateNoWindow = true
+                                                    }
+                                                };
+                                                process3.Start();
+
+                                                try { Directory.Delete("ipfs/" + transid + "-build", true); } catch { }
+
 
                                             }
-                                            break;
-                                    }
 
+                                            if (objstate.Image.Length == 51)
+                                            { foundObject.ObjectImage.ImageLocation = objstate.Image.Replace("IPFS:", @"ipfs/") + @"/artifact"; }
+                                            else { foundObject.ObjectImage.ImageLocation = objstate.Image.Replace("IPFS:", @"ipfs/"); }
+
+                                        }
+                                        break;
+                                    case "HTTP":
+                                        Task.Run(() =>
+                                        {
+                                            foundObject.ObjectImage.ImageLocation = objstate.Image;
+                                        });
+                                        break;
+
+
+                                    default:
+                                        if (btctActive)
+                                        {
+                                            try { transid = objstate.Image.Substring(0, 64); } catch { }
+                                            if (!System.IO.Directory.Exists("root/" + transid))
+                                            {
+                                                Root root = Root.GetRootByTransactionId(transid, "good-user", "better-password", @"http://127.0.0.1:18332");
+                                            }
+                                            if (File.Exists(imgurl))
+                                            {
+
+                                                foundObject.ObjectImage.ImageLocation = imgurl;
+
+                                            }
+
+                                        }
+                                        break;
                                 }
+
+                            }
 
                             if (_viewMode > 0)
                             {
@@ -445,111 +437,105 @@ namespace SUP
 
                                     if (creator.Value.Year > 1)
                                     {
-                                        Task.Run(() =>
+                                        PROState profile = PROState.GetProfileByAddress(creator.Key, "good-user", "better-password", @"http://127.0.0.1:18332");
+                                        PROState IsRegistered = PROState.GetProfileByURN(profile.URN, "good-user", "better-password", @"http://127.0.0.1:18332");
+
+
+                                        try
                                         {
-                                            PROState profile = PROState.GetProfileByAddress(creator.Key, "good-user", "better-password", @"http://127.0.0.1:18332");
-                                            PROState IsRegistered = PROState.GetProfileByURN(profile.URN, "good-user", "better-password", @"http://127.0.0.1:18332");
 
-                                            this.Invoke((Action)(() =>
+
+                                            if (profile.URN != null && foundObject.ObjectCreators.Text == "" && IsRegistered.Creators.Contains(creator.Key))
                                             {
-                                                try
+
+
+                                                foundObject.ObjectCreators.Text = TruncateAddress(profile.URN);
+                                                foundObject.ObjectCreators.Links.Add(0, creator.Key.Length, creator.Key);
+                                                System.Windows.Forms.ToolTip myTooltip = new System.Windows.Forms.ToolTip();
+                                                myTooltip.SetToolTip(foundObject.ObjectCreators, profile.URN);
+                                            }
+                                            else
+                                            {
+
+
+                                                if (profile.URN != null && foundObject.ObjectCreators2.Text == "" && IsRegistered.Creators.Contains(creator.Key))
                                                 {
-                                                    
-
-                                                    if (profile.URN != null && foundObject.ObjectCreators.Text == "" && IsRegistered.Creators.Contains(creator.Key))
-                                                    {
-
-
-                                                        foundObject.ObjectCreators.Text = TruncateAddress(profile.URN);
-                                                        foundObject.ObjectCreators.Links.Add(0, creator.Key.Length, creator.Key);
-                                                        System.Windows.Forms.ToolTip myTooltip = new System.Windows.Forms.ToolTip();
-                                                        myTooltip.SetToolTip(foundObject.ObjectCreators, profile.URN);
-                                                    }
-                                                    else
-                                                    {
-
-
-                                                        if (profile.URN != null && foundObject.ObjectCreators2.Text == "" && IsRegistered.Creators.Contains(creator.Key))
-                                                        {
-                                                            foundObject.ObjectCreators2.Text = TruncateAddress(profile.URN);
-                                                            foundObject.ObjectCreators2.Links.Add(0, creator.Key.Length, creator.Key);
-                                                            System.Windows.Forms.ToolTip myTooltip = new System.Windows.Forms.ToolTip();
-                                                            myTooltip.SetToolTip(foundObject.ObjectCreators2, profile.URN);
-                                                        }
-
-                                                        if (foundObject.ObjectCreators.Text == "")
-                                                        {
-
-
-                                                            foundObject.ObjectCreators.Text = TruncateAddress(creator.Key);
-                                                            foundObject.ObjectCreators.Links.Add(0, creator.Key.Length, creator.Key);
-                                                            System.Windows.Forms.ToolTip myTooltip = new System.Windows.Forms.ToolTip();
-                                                            myTooltip.SetToolTip(foundObject.ObjectCreators, creator.Key);
-                                                        }
-                                                        else
-                                                        {
-
-
-                                                            if (foundObject.ObjectCreators2.Text == "")
-                                                            {
-                                                                foundObject.ObjectCreators2.Text = TruncateAddress(creator.Key);
-                                                                foundObject.ObjectCreators2.Links.Add(0, creator.Key.Length, creator.Key);
-                                                                System.Windows.Forms.ToolTip myTooltip = new System.Windows.Forms.ToolTip();
-                                                                myTooltip.SetToolTip(foundObject.ObjectCreators2, creator.Key);
-                                                            }
-
-                                                        }
-
-                                                    }
+                                                    foundObject.ObjectCreators2.Text = TruncateAddress(profile.URN);
+                                                    foundObject.ObjectCreators2.Links.Add(0, creator.Key.Length, creator.Key);
+                                                    System.Windows.Forms.ToolTip myTooltip = new System.Windows.Forms.ToolTip();
+                                                    myTooltip.SetToolTip(foundObject.ObjectCreators2, profile.URN);
                                                 }
-                                                catch { }
-                                            }));
-                                        });
+
+                                                if (foundObject.ObjectCreators.Text == "")
+                                                {
+
+
+                                                    foundObject.ObjectCreators.Text = TruncateAddress(creator.Key);
+                                                    foundObject.ObjectCreators.Links.Add(0, creator.Key.Length, creator.Key);
+                                                    System.Windows.Forms.ToolTip myTooltip = new System.Windows.Forms.ToolTip();
+                                                    myTooltip.SetToolTip(foundObject.ObjectCreators, creator.Key);
+                                                }
+                                                else
+                                                {
+
+
+                                                    if (foundObject.ObjectCreators2.Text == "")
+                                                    {
+                                                        foundObject.ObjectCreators2.Text = TruncateAddress(creator.Key);
+                                                        foundObject.ObjectCreators2.Links.Add(0, creator.Key.Length, creator.Key);
+                                                        System.Windows.Forms.ToolTip myTooltip = new System.Windows.Forms.ToolTip();
+                                                        myTooltip.SetToolTip(foundObject.ObjectCreators2, creator.Key);
+                                                    }
+
+                                                }
+
+                                            }
+                                        }
+                                        catch { }
+
+
                                     }
 
 
                                 }
                             }
-                            
-                           
 
-                                if (_viewMode == 0)
-                                {
-                                    foundObject.Height = 221;
-                                    flowLayoutPanel1.Controls.Add(foundObject);
-                                    this.MinimumSize = new System.Drawing.Size(709, 558);
 
-                                }
-                                if (_viewMode == 1)
-                                {
-                                    flowLayoutPanel1.Controls.Add(foundObject);
-                                    this.MinimumSize = new System.Drawing.Size(709, 558);
-                                }
 
-                                if (_viewMode == 2)
-                                {
-
-                                    ObjectDetailsControl control = new ObjectDetailsControl(foundObject.ObjectAddress.Text);
-                                    flowLayoutPanel1.Controls.Add(control);
-                                    this.MinimumSize = new System.Drawing.Size(1101, 521);
-                                    this.Size = new System.Drawing.Size(1101, 521);
-                                }
-
+                            if (_viewMode == 0)
+                            {
+                                foundObject.Height = 221;
+                                flowLayoutPanel1.Controls.Add(foundObject);
+                                this.MinimumSize = new System.Drawing.Size(709, 558);
 
                             }
-                            loadedObjects.Add(foundObject.ObjectAddress.Text);
+                            if (_viewMode == 1)
+                            {
+                                flowLayoutPanel1.Controls.Add(foundObject);
+                                this.MinimumSize = new System.Drawing.Size(709, 558);
+                            }
+
+                            if (_viewMode == 2)
+                            {
+
+                                ObjectDetailsControl control = new ObjectDetailsControl(foundObject.ObjectAddress.Text);
+                                flowLayoutPanel1.Controls.Add(control);
+                                this.MinimumSize = new System.Drawing.Size(1101, 521);
+                                this.Size = new System.Drawing.Size(1101, 521);
+                            }     
 
 
                         }
-                        flowLayoutPanel1.ResumeLayout();
-                    });
-                }
-                catch (Exception ex)
-                {
-                    string error = ex.Message;
-                }
-            }
 
+
+                    }
+                    catch (Exception ex)
+                    {
+                        string error = ex.Message;
+                    }
+                }
+                flowLayoutPanel1.ResumeLayout();
+            }));
         }
 
         private void GetObjectByURN(string searchstring)
@@ -956,8 +942,8 @@ namespace SUP
         private void GetObjectByFile(string filePath)
         {
             foreach (Control control in flowLayoutPanel1.Controls)
-            {                                 
-                    control.Dispose();               
+            {
+                control.Dispose();
             }
 
             flowLayoutPanel1.Controls.Clear();
@@ -1158,17 +1144,17 @@ namespace SUP
                         if (btctActive)
                         {
                             transid = objstate.Image.Substring(0, 64);
-                            
-                                if (!System.IO.Directory.Exists("root/" + transid))
-                                {
-                                    Root root = Root.GetRootByTransactionId(transid, "good-user", "better-password", @"http://127.0.0.1:18332");
-                                }
-                                if (File.Exists(imgurl))
-                                {
-                                        foundObject.ObjectImage.ImageLocation = imgurl;
-                                    
-                                }
-                            
+
+                            if (!System.IO.Directory.Exists("root/" + transid))
+                            {
+                                Root root = Root.GetRootByTransactionId(transid, "good-user", "better-password", @"http://127.0.0.1:18332");
+                            }
+                            if (File.Exists(imgurl))
+                            {
+                                foundObject.ObjectImage.ImageLocation = imgurl;
+
+                            }
+
                         }
                         break;
                 }
@@ -1399,7 +1385,7 @@ namespace SUP
                 e.SuppressKeyPress = true;
                 DisableSupInput();
                 pages.Maximum = 0; pages.Value = 0;
-                txtTotal.Text = "0";           
+                txtTotal.Text = "0";
                 Random rnd = new Random();
                 string[] gifFiles = Directory.GetFiles("includes", "*.gif");
                 if (gifFiles.Length > 0)
@@ -1456,21 +1442,22 @@ namespace SUP
 
                 try
                 {
-                   
+
                     this.Invoke((Action)(() =>
                     {
                         flowLayoutPanel1.SuspendLayout();
                         foreach (Control control in flowLayoutPanel1.Controls)
                         {
+                            foreach (Control _control in control.Controls)
+                            { _control.Dispose(); }
                             control.Dispose();
                         }
-
                         flowLayoutPanel1.Controls.Clear();
                         flowLayoutPanel1.ResumeLayout();
-
+                       
                     }));
 
-                    loadedObjects.Clear();
+                   // loadedObjects.Clear();
 
 
                     int loadQty = (flowLayoutPanel1.Size.Width / 213) * (flowLayoutPanel1.Size.Height / 336);
@@ -1508,7 +1495,7 @@ namespace SUP
                             await webBrowser1.EnsureCoreWebView2Async();
                             webBrowser1.CoreWebView2.Navigate(txtSearchAddress.Text);
                             flowLayoutPanel1.Controls.Add(webBrowser1);
-                       
+
                         }));
 
                     }
@@ -2017,7 +2004,7 @@ namespace SUP
                 {
 
 
-        
+
                     string walletUsername = "good-user";
                     string walletPassword = "better-password";
                     string walletUrl = @"http://127.0.0.1:18332";
@@ -2032,12 +2019,12 @@ namespace SUP
                             {
                                 btctActive = true;
                             });
-                           
+
                         }
                         catch { }
                     });
 
-                    
+
                     Task.Run(() =>
                     {
                         try
@@ -2054,7 +2041,7 @@ namespace SUP
                         catch { }
                     });
 
-                   
+
 
                     Task.Run(() =>
                     {
@@ -2063,18 +2050,19 @@ namespace SUP
                             walletUrl = @"http://127.0.0.1:9332";
                             rpcClient = new RPCClient(credentials, new Uri(walletUrl), NBitcoin.Network.Main);
                             string isActive = rpcClient.GetBalance().ToString();
-                            if (decimal.TryParse(isActive, out decimal _)) {
+                            if (decimal.TryParse(isActive, out decimal _))
+                            {
                                 this.Invoke((MethodInvoker)delegate
                                 {
                                     ltcActive = true;
                                 });
-                               
+
                             }
                         }
                         catch { }
                     });
 
-                   
+
                     Task.Run(() =>
                     {
                         try
@@ -2087,13 +2075,13 @@ namespace SUP
                                 this.Invoke((MethodInvoker)delegate
                                 {
                                     mzcActive = true;
-                                    });
+                                });
 
                             }
                         }
                         catch { }
                     });
-                   
+
                     Task.Run(() =>
                     {
                         try
@@ -2353,626 +2341,627 @@ namespace SUP
             lock (SupLocker)
             {
                 tmrSearchMemoryPool.Stop();
-   
+
                 try
                 {
-                   Task SearchMemoryTask = Task.Run(() =>
-                    {
-                        var SUP = new Options { CreateIfMissing = true };
-                        List<string> differenceQuery = new List<string>();
-                        List<string> newtransactions = new List<string>();
-                        string flattransactions;
-                        OBJState isobject = new OBJState();
-                        List<OBJState> foundobjects = new List<OBJState>();
-                        NetworkCredential credentials = new NetworkCredential("good-user", "better-password");
-                        RPCClient rpcClient;
-
-                        string filter = "";
-
-                        txtSearchAddress.Invoke((MethodInvoker)delegate
-                        {
-                            filter = txtSearchAddress.Text;
-
-
-                        });
-                        if (btctActive)
-                        {
-                            try
-                            {
-                                rpcClient = new RPCClient(credentials, new Uri(@"http://127.0.0.1:18332"), Network.Main);
-                                flattransactions = rpcClient.SendCommand("getrawmempool").ResultString;
-                                flattransactions = flattransactions.Replace("\"", "").Replace("[", "").Replace("]", "").Replace("\r", "").Replace("\n", "").Replace(" ", "");
-                                newtransactions = flattransactions.Split(',').ToList();
-
-                                if (BTCTMemPool.Count == 0)
-                                {
-                                    BTCTMemPool = newtransactions;
-                                }
-                                else
-                                {
-                                    differenceQuery =
-                                    (List<string>)newtransactions.Except(BTCTMemPool).ToList(); ;
-
-                                    BTCTMemPool = newtransactions;
-
-                                    foreach (var s in differenceQuery)
-                                    {
-                                        try
-                                        {
-
-                                            Root root = Root.GetRootByTransactionId(s, "good-user", "better-password", @"http://127.0.0.1:18332");
-                                            if (root.Signed == true)
-                                            {
-                                                string isBlocked = "";
-                                                var OBJ = new Options { CreateIfMissing = true };
-                                                try
-                                                {
-                                                    using (var db = new DB(OBJ, @"root\oblock"))
-                                                    {
-                                                        isBlocked = db.Get(root.Signature);
-                                                        db.Close();
-                                                    }
-                                                }
-                                                catch
-                                                {
-                                                    try
-                                                    {
-                                                        using (var db = new DB(OBJ, @"root\oblock2"))
-                                                        {
-                                                            isBlocked = db.Get(root.Signature);
-                                                            db.Close();
-                                                        }
-                                                        Directory.Move(@"root\oblock2", @"root\oblock");
-                                                    }
-                                                    catch
-                                                    {
-                                                        try { Directory.Delete(@"root\oblock", true); }
-                                                        catch { }
-                                                    }
-
-                                                }
-
-
-                                                if (isBlocked != "true")
-                                                {
-                                                    bool find = false;
-
-                                                    if (filter != "")
-                                                    {
-
-                                                        if (filter.StartsWith("#"))
-                                                        {
-                                                            find = root.Keyword.ContainsKey(Root.GetPublicAddressByKeyword(filter.Substring(1)));
-                                                        }
-                                                        else
-                                                        {
-
-                                                            find = root.Keyword.ContainsKey(filter);
-
-
-                                                        }
-                                                    }
-                                                    else { find = true; }
-
-                                                    isobject = OBJState.GetObjectByTransactionId(s, "good-user", "better-password", @"http://127.0.0.1:18332");
-                                                    if (isobject.URN != null && find == true)
-                                                    {
-                                                        foundobjects.Add(isobject);
-
-                                                        using (var db = new DB(SUP, @"root\found"))
-                                                        {
-                                                            db.Put("found!" + root.BlockDate.ToString("yyyyMMddHHmmss") + "!" + root.SignedBy, "1");
-                                                        }
-
-
-
-
-                                                    }
-
-
-                                                }
-                                                else { try { System.IO.Directory.Delete(@"root\" + s, true); } catch { } }
-
-                                            }
-                                            else
-                                            {
-
-                                            }
-
-                                        }
-                                        catch (Exception ex)
-                                        {
-                                            string error = ex.Message;
-                                        }
-                                    }
-
-                                }
-                            }
-                            catch {                    
-                            
-                            }
-                        }
-
-                        if (btcActive)
-                        {
-                            newtransactions = new List<string>();
-
-                            try
-                            {
-                                rpcClient = new RPCClient(credentials, new Uri(@"http://127.0.0.1:8332"), Network.Main);
-                                flattransactions = rpcClient.SendCommand("getrawmempool").ResultString;
-                                flattransactions = flattransactions.Replace("\"", "").Replace("[", "").Replace("]", "").Replace("\r", "").Replace("\n", "").Replace(" ", "");
-                                newtransactions = flattransactions.Split(',').ToList();
-
-                                if (BTCMemPool.Count == 0)
-                                {
-                                    BTCMemPool = newtransactions;
-                                }
-                                else
-                                {
-                                    differenceQuery =
-                                    (List<string>)newtransactions.Except(BTCMemPool).ToList(); ;
-
-                                    BTCMemPool = newtransactions;
-
-                                    foreach (var s in differenceQuery)
-                                    {
-                                        try
-                                        {
-
-                                            Root root = Root.GetRootByTransactionId(s, "good-user", "better-password", @"http://127.0.0.1:8332", "0");
-                                            if (root.Signed == true)
-                                            {
-                                                string isBlocked = "";
-                                                var OBJ = new Options { CreateIfMissing = true };
-                                                try
-                                                {
-                                                    using (var db = new DB(OBJ, @"root\oblock"))
-                                                    {
-                                                        isBlocked = db.Get(root.Signature);
-                                                        db.Close();
-                                                    }
-                                                }
-                                                catch
-                                                {
-                                                    try
-                                                    {
-                                                        using (var db = new DB(OBJ, @"root\oblock2"))
-                                                        {
-                                                            isBlocked = db.Get(root.Signature);
-                                                            db.Close();
-                                                        }
-                                                        Directory.Move(@"root\oblock2", @"root\oblock");
-                                                    }
-                                                    catch
-                                                    {
-                                                        try { Directory.Delete(@"root\oblock", true); }
-                                                        catch { }
-                                                    }
-
-                                                }
-
-
-                                                if (isBlocked != "true")
-                                                {
-                                                    bool find = false;
-
-                                                    if (filter != "")
-                                                    {
-
-                                                        if (filter.StartsWith("#"))
-                                                        {
-                                                            find = root.Keyword.ContainsKey(Root.GetPublicAddressByKeyword(filter.Substring(1)));
-                                                        }
-                                                        else
-                                                        {
-
-                                                            find = root.Keyword.ContainsKey(filter);
-
-
-                                                        }
-                                                    }
-                                                    else { find = true; }
-
-                                                    isobject = OBJState.GetObjectByTransactionId(s, "good-user", "better-password", @"http://127.0.0.1:8332", "0");
-                                                    if (isobject.URN != null && find == true)
-                                                    {
-                                                        foundobjects.Add(isobject);
-
-
-                                                        using (var db = new DB(SUP, @"root\found"))
-                                                        {
-                                                            db.Put("found!" + root.BlockDate.ToString("yyyyMMddHHmmss") + "!" + root.SignedBy, "1");
-                                                        }
-
-
-                                                    }
-
-
-                                                }
-                                                else { try { System.IO.Directory.Delete(@"root\" + s, true); } catch { } }
-
-                                            }
-                                            else { }
-
-                                        }
-                                        catch { }
-
-                                    }
-
-                                }
-                            }
-                            catch { }
-                        }
-
-                        if (mzcActive)
-                        {
-                            newtransactions = new List<string>();
-
-                            try
-                            {
-                                rpcClient = new RPCClient(credentials, new Uri(@"http://127.0.0.1:12832"), Network.Main);
-                                flattransactions = rpcClient.SendCommand("getrawmempool").ResultString;
-                                flattransactions = flattransactions.Replace("\"", "").Replace("[", "").Replace("]", "").Replace("\r", "").Replace("\n", "").Replace(" ", "");
-                                newtransactions = flattransactions.Split(',').ToList();
-                                if (MZCMemPool.Count == 0)
-                                {
-                                    MZCMemPool = newtransactions;
-                                }
-                                else
-                                {
-                                    differenceQuery =
-                                    (List<string>)newtransactions.Except(MZCMemPool).ToList(); ;
-
-                                    MZCMemPool = newtransactions;
-
-                                    foreach (var s in differenceQuery)
-                                    {
-                                        try
-                                        {
-
-                                            Root root = Root.GetRootByTransactionId(s, "good-user", "better-password", @"http://127.0.0.1:12832", "50");
-                                            if (root.Signed == true)
-                                            {
-                                                string isBlocked = "";
-                                                var OBJ = new Options { CreateIfMissing = true };
-                                                try
-                                                {
-                                                    using (var db = new DB(OBJ, @"root\oblock"))
-                                                    {
-                                                        isBlocked = db.Get(root.Signature);
-                                                        db.Close();
-                                                    }
-                                                }
-                                                catch
-                                                {
-                                                    try
-                                                    {
-                                                        using (var db = new DB(OBJ, @"root\oblock2"))
-                                                        {
-                                                            isBlocked = db.Get(root.Signature);
-                                                            db.Close();
-                                                        }
-                                                        Directory.Move(@"root\oblock2", @"root\oblock");
-                                                    }
-                                                    catch
-                                                    {
-                                                        try { Directory.Delete(@"root\oblock", true); }
-                                                        catch { }
-                                                    }
-
-                                                }
-
-
-                                                if (isBlocked != "true")
-                                                {
-                                                    bool find = false;
-
-                                                    if (filter != "")
-                                                    {
-
-                                                        if (filter.StartsWith("#"))
-                                                        {
-                                                            find = root.Keyword.ContainsKey(Root.GetPublicAddressByKeyword(filter.Substring(1)));
-                                                        }
-                                                        else
-                                                        {
-
-                                                            find = root.Keyword.ContainsKey(filter);
-
-
-                                                        }
-                                                    }
-                                                    else { find = true; }
-
-                                                    isobject = OBJState.GetObjectByTransactionId(s, "good-user", "better-password", @"http://127.0.0.1:12832", "50");
-                                                    if (isobject.URN != null && find == true)
-                                                    {
-
-
-                                                        foundobjects.Add(isobject);
-                                                        using (var db = new DB(SUP, @"root\found"))
-                                                        {
-                                                            db.Put("found!" + root.BlockDate.ToString("yyyyMMddHHmmss") + "!" + root.SignedBy, "1");
-                                                        }
-
-
-
-                                                    }
-
-
-                                                }
-                                                else { try { System.IO.Directory.Delete(@"root\" + s, true); } catch { } }
-
-                                            }
-                                            else { }
-
-                                        }
-                                        catch { }
-
-                                    }
-
-                                }
-                            }
-                            catch { }
-                        }
-
-                        if (ltcActive)
-                        {
-                            newtransactions = new List<string>();
-
-                            try
-                            {
-                                rpcClient = new RPCClient(credentials, new Uri(@"http://127.0.0.1:9332"), Network.Main);
-                                flattransactions = rpcClient.SendCommand("getrawmempool").ResultString;
-                                flattransactions = flattransactions.Replace("\"", "").Replace("[", "").Replace("]", "").Replace("\r", "").Replace("\n", "").Replace(" ", "");
-                                newtransactions = flattransactions.Split(',').ToList();
-                                if (LTCMemPool.Count == 0)
-                                {
-                                    LTCMemPool = newtransactions;
-                                }
-                                else
-                                {
-                                    differenceQuery =
-                                    (List<string>)newtransactions.Except(LTCMemPool).ToList(); ;
-
-                                    LTCMemPool = newtransactions;
-
-                                    foreach (var s in differenceQuery)
-                                    {
-                                        try
-                                        {
-
-                                            Root root = Root.GetRootByTransactionId(s, "good-user", "better-password", @"http://127.0.0.1:9332", "48");
-                                            if (root.Signed == true)
-                                            {
-                                                string isBlocked = "";
-                                                var OBJ = new Options { CreateIfMissing = true };
-                                                try
-                                                {
-                                                    using (var db = new DB(OBJ, @"root\oblock"))
-                                                    {
-                                                        isBlocked = db.Get(root.Signature);
-                                                        db.Close();
-                                                    }
-                                                }
-                                                catch
-                                                {
-                                                    try
-                                                    {
-                                                        using (var db = new DB(OBJ, @"root\oblock2"))
-                                                        {
-                                                            isBlocked = db.Get(root.Signature);
-                                                            db.Close();
-                                                        }
-                                                        Directory.Move(@"root\oblock2", @"root\oblock");
-                                                    }
-                                                    catch
-                                                    {
-                                                        try { Directory.Delete(@"root\oblock", true); }
-                                                        catch { }
-                                                    }
-
-                                                }
-
-                                                if (isBlocked != "true")
-                                                {
-                                                    bool find = false;
-
-                                                    if (filter != "")
-                                                    {
-
-                                                        if (filter.StartsWith("#"))
-                                                        {
-                                                            find = root.Keyword.ContainsKey(Root.GetPublicAddressByKeyword(filter.Substring(1)));
-                                                        }
-                                                        else
-                                                        {
-
-                                                            find = root.Keyword.ContainsKey(filter);
-
-
-                                                        }
-                                                    }
-                                                    else { find = true; }
-
-                                                    isobject = OBJState.GetObjectByTransactionId(s, "good-user", "better-password", @"http://127.0.0.1:9332", "48");
-                                                    if (isobject.URN != null && find == true)
-                                                    {
-                                                        foundobjects.Add(isobject);
-
-
-                                                        using (var db = new DB(SUP, @"root\found"))
-                                                        {
-                                                            db.Put("found!" + root.BlockDate.ToString("yyyyMMddHHmmss") + "!" + root.SignedBy, "1");
-                                                        }
-
-
-                                                    }
-
-
-                                                }
-                                                else { try { System.IO.Directory.Delete(@"root\" + s, true); } catch { } }
-
-                                            }
-                                            else { }
-
-                                        }
-                                        catch { }
-
-                                    }
-
-                                }
-                            }
-                            catch { }
-                        }
-
-                        if (dogActive)
-                        {
-                            newtransactions = new List<string>();
-
-                            try
-                            {
-                                rpcClient = new RPCClient(credentials, new Uri(@"http://127.0.0.1:22555"), Network.Main);
-                                flattransactions = rpcClient.SendCommand("getrawmempool").ResultString;
-                                flattransactions = flattransactions.Replace("\"", "").Replace("[", "").Replace("]", "").Replace("\r", "").Replace("\n", "").Replace(" ", "");
-                                newtransactions = flattransactions.Split(',').ToList();
-
-                                if (DOGMemPool.Count == 0)
-                                {
-                                    DOGMemPool = newtransactions;
-                                }
-                                else
-                                {
-                                    differenceQuery =
-                                    (List<string>)newtransactions.Except(DOGMemPool).ToList(); ;
-
-                                    DOGMemPool = newtransactions;
-
-                                    foreach (var s in differenceQuery)
-                                    {
-                                        try
-                                        {
-
-                                            Root root = Root.GetRootByTransactionId(s, "good-user", "better-password", @"http://127.0.0.1:22555", "30");
-                                            if (root.Signed == true)
-                                            {
-
-                                                string isBlocked = "";
-                                                var OBJ = new Options { CreateIfMissing = true };
-                                                try
-                                                {
-                                                    using (var db = new DB(OBJ, @"root\oblock"))
-                                                    {
-                                                        isBlocked = db.Get(root.Signature);
-                                                        db.Close();
-                                                    }
-                                                }
-                                                catch
-                                                {
-                                                    try
-                                                    {
-                                                        using (var db = new DB(OBJ, @"root\oblock2"))
-                                                        {
-                                                            isBlocked = db.Get(root.Signature);
-                                                        }
-                                                        Directory.Move(@"root\oblock2", @"root\oblock");
-                                                    }
-                                                    catch
-                                                    {
-                                                        try { Directory.Delete(@"root\oblock", true); }
-                                                        catch { }
-                                                    }
-
-                                                }
-
-                                                if (isBlocked != "true")
-                                                {
-                                                    bool find = false;
-
-                                                    if (filter.Length > 0)
-                                                    {
-
-                                                        if (filter.StartsWith("#"))
-                                                        {
-                                                            find = root.Keyword.ContainsKey(Root.GetPublicAddressByKeyword(filter.Substring(1)));
-                                                        }
-                                                        else
-                                                        {
-
-                                                            find = root.Keyword.ContainsKey(filter);
-
-
-                                                        }
-                                                    }
-                                                    else { find = true; }
-
-                                                    isobject = OBJState.GetObjectByTransactionId(s, "good-user", "better-password", @"http://127.0.0.1:22555", "30");
-                                                    if (isobject.URN != null && find == true)
-                                                    {
-                                                        foundobjects.Add(isobject);
-
-                                                        using (var db = new DB(SUP, @"root\found"))
-                                                        {
-                                                            db.Put("found!" + root.BlockDate.ToString("yyyyMMddHHmmss") + "!" + root.SignedBy, "1");
-                                                        }
-
-
-
-                                                    }
-
-
-                                                }
-                                                else { try { System.IO.Directory.Delete(@"root\" + s, true); } catch { } }
-
-                                            }
-                                            else { }
-
-                                        }
-                                        catch { }
-
-                                    }
-
-                                }
-                            }
-                            catch { }
-                        }
-
-
-
-
-                        if (foundobjects.Count > 0)
-                        {
-
-                            this.Invoke((MethodInvoker)delegate
-                            {
-                                AddToSearchResults(foundobjects);  
-                            });
-
-                        }
-
-
-                        this.Invoke((MethodInvoker)delegate
-                        {
-                            tmrSearchMemoryPool.Start();
-                        });
-
-                    });
-
-           
+                    Task SearchMemoryTask = Task.Run(() =>
+                     {
+                         var SUP = new Options { CreateIfMissing = true };
+                         List<string> differenceQuery = new List<string>();
+                         List<string> newtransactions = new List<string>();
+                         string flattransactions;
+                         OBJState isobject = new OBJState();
+                         List<OBJState> foundobjects = new List<OBJState>();
+                         NetworkCredential credentials = new NetworkCredential("good-user", "better-password");
+                         RPCClient rpcClient;
+
+                         string filter = "";
+
+                         txtSearchAddress.Invoke((MethodInvoker)delegate
+                         {
+                             filter = txtSearchAddress.Text;
+
+
+                         });
+                         if (btctActive)
+                         {
+                             try
+                             {
+                                 rpcClient = new RPCClient(credentials, new Uri(@"http://127.0.0.1:18332"), Network.Main);
+                                 flattransactions = rpcClient.SendCommand("getrawmempool").ResultString;
+                                 flattransactions = flattransactions.Replace("\"", "").Replace("[", "").Replace("]", "").Replace("\r", "").Replace("\n", "").Replace(" ", "");
+                                 newtransactions = flattransactions.Split(',').ToList();
+
+                                 if (BTCTMemPool.Count == 0)
+                                 {
+                                     BTCTMemPool = newtransactions;
+                                 }
+                                 else
+                                 {
+                                     differenceQuery =
+                                     (List<string>)newtransactions.Except(BTCTMemPool).ToList(); ;
+
+                                     BTCTMemPool = newtransactions;
+
+                                     foreach (var s in differenceQuery)
+                                     {
+                                         try
+                                         {
+
+                                             Root root = Root.GetRootByTransactionId(s, "good-user", "better-password", @"http://127.0.0.1:18332");
+                                             if (root.Signed == true)
+                                             {
+                                                 string isBlocked = "";
+                                                 var OBJ = new Options { CreateIfMissing = true };
+                                                 try
+                                                 {
+                                                     using (var db = new DB(OBJ, @"root\oblock"))
+                                                     {
+                                                         isBlocked = db.Get(root.Signature);
+                                                         db.Close();
+                                                     }
+                                                 }
+                                                 catch
+                                                 {
+                                                     try
+                                                     {
+                                                         using (var db = new DB(OBJ, @"root\oblock2"))
+                                                         {
+                                                             isBlocked = db.Get(root.Signature);
+                                                             db.Close();
+                                                         }
+                                                         Directory.Move(@"root\oblock2", @"root\oblock");
+                                                     }
+                                                     catch
+                                                     {
+                                                         try { Directory.Delete(@"root\oblock", true); }
+                                                         catch { }
+                                                     }
+
+                                                 }
+
+
+                                                 if (isBlocked != "true")
+                                                 {
+                                                     bool find = false;
+
+                                                     if (filter != "")
+                                                     {
+
+                                                         if (filter.StartsWith("#"))
+                                                         {
+                                                             find = root.Keyword.ContainsKey(Root.GetPublicAddressByKeyword(filter.Substring(1)));
+                                                         }
+                                                         else
+                                                         {
+
+                                                             find = root.Keyword.ContainsKey(filter);
+
+
+                                                         }
+                                                     }
+                                                     else { find = true; }
+
+                                                     isobject = OBJState.GetObjectByTransactionId(s, "good-user", "better-password", @"http://127.0.0.1:18332");
+                                                     if (isobject.URN != null && find == true)
+                                                     {
+                                                         foundobjects.Add(isobject);
+
+                                                         using (var db = new DB(SUP, @"root\found"))
+                                                         {
+                                                             db.Put("found!" + root.BlockDate.ToString("yyyyMMddHHmmss") + "!" + root.SignedBy, "1");
+                                                         }
+
+
+
+
+                                                     }
+
+
+                                                 }
+                                                 else { try { System.IO.Directory.Delete(@"root\" + s, true); } catch { } }
+
+                                             }
+                                             else
+                                             {
+
+                                             }
+
+                                         }
+                                         catch (Exception ex)
+                                         {
+                                             string error = ex.Message;
+                                         }
+                                     }
+
+                                 }
+                             }
+                             catch
+                             {
+
+                             }
+                         }
+
+                         if (btcActive)
+                         {
+                             newtransactions = new List<string>();
+
+                             try
+                             {
+                                 rpcClient = new RPCClient(credentials, new Uri(@"http://127.0.0.1:8332"), Network.Main);
+                                 flattransactions = rpcClient.SendCommand("getrawmempool").ResultString;
+                                 flattransactions = flattransactions.Replace("\"", "").Replace("[", "").Replace("]", "").Replace("\r", "").Replace("\n", "").Replace(" ", "");
+                                 newtransactions = flattransactions.Split(',').ToList();
+
+                                 if (BTCMemPool.Count == 0)
+                                 {
+                                     BTCMemPool = newtransactions;
+                                 }
+                                 else
+                                 {
+                                     differenceQuery =
+                                     (List<string>)newtransactions.Except(BTCMemPool).ToList(); ;
+
+                                     BTCMemPool = newtransactions;
+
+                                     foreach (var s in differenceQuery)
+                                     {
+                                         try
+                                         {
+
+                                             Root root = Root.GetRootByTransactionId(s, "good-user", "better-password", @"http://127.0.0.1:8332", "0");
+                                             if (root.Signed == true)
+                                             {
+                                                 string isBlocked = "";
+                                                 var OBJ = new Options { CreateIfMissing = true };
+                                                 try
+                                                 {
+                                                     using (var db = new DB(OBJ, @"root\oblock"))
+                                                     {
+                                                         isBlocked = db.Get(root.Signature);
+                                                         db.Close();
+                                                     }
+                                                 }
+                                                 catch
+                                                 {
+                                                     try
+                                                     {
+                                                         using (var db = new DB(OBJ, @"root\oblock2"))
+                                                         {
+                                                             isBlocked = db.Get(root.Signature);
+                                                             db.Close();
+                                                         }
+                                                         Directory.Move(@"root\oblock2", @"root\oblock");
+                                                     }
+                                                     catch
+                                                     {
+                                                         try { Directory.Delete(@"root\oblock", true); }
+                                                         catch { }
+                                                     }
+
+                                                 }
+
+
+                                                 if (isBlocked != "true")
+                                                 {
+                                                     bool find = false;
+
+                                                     if (filter != "")
+                                                     {
+
+                                                         if (filter.StartsWith("#"))
+                                                         {
+                                                             find = root.Keyword.ContainsKey(Root.GetPublicAddressByKeyword(filter.Substring(1)));
+                                                         }
+                                                         else
+                                                         {
+
+                                                             find = root.Keyword.ContainsKey(filter);
+
+
+                                                         }
+                                                     }
+                                                     else { find = true; }
+
+                                                     isobject = OBJState.GetObjectByTransactionId(s, "good-user", "better-password", @"http://127.0.0.1:8332", "0");
+                                                     if (isobject.URN != null && find == true)
+                                                     {
+                                                         foundobjects.Add(isobject);
+
+
+                                                         using (var db = new DB(SUP, @"root\found"))
+                                                         {
+                                                             db.Put("found!" + root.BlockDate.ToString("yyyyMMddHHmmss") + "!" + root.SignedBy, "1");
+                                                         }
+
+
+                                                     }
+
+
+                                                 }
+                                                 else { try { System.IO.Directory.Delete(@"root\" + s, true); } catch { } }
+
+                                             }
+                                             else { }
+
+                                         }
+                                         catch { }
+
+                                     }
+
+                                 }
+                             }
+                             catch { }
+                         }
+
+                         if (mzcActive)
+                         {
+                             newtransactions = new List<string>();
+
+                             try
+                             {
+                                 rpcClient = new RPCClient(credentials, new Uri(@"http://127.0.0.1:12832"), Network.Main);
+                                 flattransactions = rpcClient.SendCommand("getrawmempool").ResultString;
+                                 flattransactions = flattransactions.Replace("\"", "").Replace("[", "").Replace("]", "").Replace("\r", "").Replace("\n", "").Replace(" ", "");
+                                 newtransactions = flattransactions.Split(',').ToList();
+                                 if (MZCMemPool.Count == 0)
+                                 {
+                                     MZCMemPool = newtransactions;
+                                 }
+                                 else
+                                 {
+                                     differenceQuery =
+                                     (List<string>)newtransactions.Except(MZCMemPool).ToList(); ;
+
+                                     MZCMemPool = newtransactions;
+
+                                     foreach (var s in differenceQuery)
+                                     {
+                                         try
+                                         {
+
+                                             Root root = Root.GetRootByTransactionId(s, "good-user", "better-password", @"http://127.0.0.1:12832", "50");
+                                             if (root.Signed == true)
+                                             {
+                                                 string isBlocked = "";
+                                                 var OBJ = new Options { CreateIfMissing = true };
+                                                 try
+                                                 {
+                                                     using (var db = new DB(OBJ, @"root\oblock"))
+                                                     {
+                                                         isBlocked = db.Get(root.Signature);
+                                                         db.Close();
+                                                     }
+                                                 }
+                                                 catch
+                                                 {
+                                                     try
+                                                     {
+                                                         using (var db = new DB(OBJ, @"root\oblock2"))
+                                                         {
+                                                             isBlocked = db.Get(root.Signature);
+                                                             db.Close();
+                                                         }
+                                                         Directory.Move(@"root\oblock2", @"root\oblock");
+                                                     }
+                                                     catch
+                                                     {
+                                                         try { Directory.Delete(@"root\oblock", true); }
+                                                         catch { }
+                                                     }
+
+                                                 }
+
+
+                                                 if (isBlocked != "true")
+                                                 {
+                                                     bool find = false;
+
+                                                     if (filter != "")
+                                                     {
+
+                                                         if (filter.StartsWith("#"))
+                                                         {
+                                                             find = root.Keyword.ContainsKey(Root.GetPublicAddressByKeyword(filter.Substring(1)));
+                                                         }
+                                                         else
+                                                         {
+
+                                                             find = root.Keyword.ContainsKey(filter);
+
+
+                                                         }
+                                                     }
+                                                     else { find = true; }
+
+                                                     isobject = OBJState.GetObjectByTransactionId(s, "good-user", "better-password", @"http://127.0.0.1:12832", "50");
+                                                     if (isobject.URN != null && find == true)
+                                                     {
+
+
+                                                         foundobjects.Add(isobject);
+                                                         using (var db = new DB(SUP, @"root\found"))
+                                                         {
+                                                             db.Put("found!" + root.BlockDate.ToString("yyyyMMddHHmmss") + "!" + root.SignedBy, "1");
+                                                         }
+
+
+
+                                                     }
+
+
+                                                 }
+                                                 else { try { System.IO.Directory.Delete(@"root\" + s, true); } catch { } }
+
+                                             }
+                                             else { }
+
+                                         }
+                                         catch { }
+
+                                     }
+
+                                 }
+                             }
+                             catch { }
+                         }
+
+                         if (ltcActive)
+                         {
+                             newtransactions = new List<string>();
+
+                             try
+                             {
+                                 rpcClient = new RPCClient(credentials, new Uri(@"http://127.0.0.1:9332"), Network.Main);
+                                 flattransactions = rpcClient.SendCommand("getrawmempool").ResultString;
+                                 flattransactions = flattransactions.Replace("\"", "").Replace("[", "").Replace("]", "").Replace("\r", "").Replace("\n", "").Replace(" ", "");
+                                 newtransactions = flattransactions.Split(',').ToList();
+                                 if (LTCMemPool.Count == 0)
+                                 {
+                                     LTCMemPool = newtransactions;
+                                 }
+                                 else
+                                 {
+                                     differenceQuery =
+                                     (List<string>)newtransactions.Except(LTCMemPool).ToList(); ;
+
+                                     LTCMemPool = newtransactions;
+
+                                     foreach (var s in differenceQuery)
+                                     {
+                                         try
+                                         {
+
+                                             Root root = Root.GetRootByTransactionId(s, "good-user", "better-password", @"http://127.0.0.1:9332", "48");
+                                             if (root.Signed == true)
+                                             {
+                                                 string isBlocked = "";
+                                                 var OBJ = new Options { CreateIfMissing = true };
+                                                 try
+                                                 {
+                                                     using (var db = new DB(OBJ, @"root\oblock"))
+                                                     {
+                                                         isBlocked = db.Get(root.Signature);
+                                                         db.Close();
+                                                     }
+                                                 }
+                                                 catch
+                                                 {
+                                                     try
+                                                     {
+                                                         using (var db = new DB(OBJ, @"root\oblock2"))
+                                                         {
+                                                             isBlocked = db.Get(root.Signature);
+                                                             db.Close();
+                                                         }
+                                                         Directory.Move(@"root\oblock2", @"root\oblock");
+                                                     }
+                                                     catch
+                                                     {
+                                                         try { Directory.Delete(@"root\oblock", true); }
+                                                         catch { }
+                                                     }
+
+                                                 }
+
+                                                 if (isBlocked != "true")
+                                                 {
+                                                     bool find = false;
+
+                                                     if (filter != "")
+                                                     {
+
+                                                         if (filter.StartsWith("#"))
+                                                         {
+                                                             find = root.Keyword.ContainsKey(Root.GetPublicAddressByKeyword(filter.Substring(1)));
+                                                         }
+                                                         else
+                                                         {
+
+                                                             find = root.Keyword.ContainsKey(filter);
+
+
+                                                         }
+                                                     }
+                                                     else { find = true; }
+
+                                                     isobject = OBJState.GetObjectByTransactionId(s, "good-user", "better-password", @"http://127.0.0.1:9332", "48");
+                                                     if (isobject.URN != null && find == true)
+                                                     {
+                                                         foundobjects.Add(isobject);
+
+
+                                                         using (var db = new DB(SUP, @"root\found"))
+                                                         {
+                                                             db.Put("found!" + root.BlockDate.ToString("yyyyMMddHHmmss") + "!" + root.SignedBy, "1");
+                                                         }
+
+
+                                                     }
+
+
+                                                 }
+                                                 else { try { System.IO.Directory.Delete(@"root\" + s, true); } catch { } }
+
+                                             }
+                                             else { }
+
+                                         }
+                                         catch { }
+
+                                     }
+
+                                 }
+                             }
+                             catch { }
+                         }
+
+                         if (dogActive)
+                         {
+                             newtransactions = new List<string>();
+
+                             try
+                             {
+                                 rpcClient = new RPCClient(credentials, new Uri(@"http://127.0.0.1:22555"), Network.Main);
+                                 flattransactions = rpcClient.SendCommand("getrawmempool").ResultString;
+                                 flattransactions = flattransactions.Replace("\"", "").Replace("[", "").Replace("]", "").Replace("\r", "").Replace("\n", "").Replace(" ", "");
+                                 newtransactions = flattransactions.Split(',').ToList();
+
+                                 if (DOGMemPool.Count == 0)
+                                 {
+                                     DOGMemPool = newtransactions;
+                                 }
+                                 else
+                                 {
+                                     differenceQuery =
+                                     (List<string>)newtransactions.Except(DOGMemPool).ToList(); ;
+
+                                     DOGMemPool = newtransactions;
+
+                                     foreach (var s in differenceQuery)
+                                     {
+                                         try
+                                         {
+
+                                             Root root = Root.GetRootByTransactionId(s, "good-user", "better-password", @"http://127.0.0.1:22555", "30");
+                                             if (root.Signed == true)
+                                             {
+
+                                                 string isBlocked = "";
+                                                 var OBJ = new Options { CreateIfMissing = true };
+                                                 try
+                                                 {
+                                                     using (var db = new DB(OBJ, @"root\oblock"))
+                                                     {
+                                                         isBlocked = db.Get(root.Signature);
+                                                         db.Close();
+                                                     }
+                                                 }
+                                                 catch
+                                                 {
+                                                     try
+                                                     {
+                                                         using (var db = new DB(OBJ, @"root\oblock2"))
+                                                         {
+                                                             isBlocked = db.Get(root.Signature);
+                                                         }
+                                                         Directory.Move(@"root\oblock2", @"root\oblock");
+                                                     }
+                                                     catch
+                                                     {
+                                                         try { Directory.Delete(@"root\oblock", true); }
+                                                         catch { }
+                                                     }
+
+                                                 }
+
+                                                 if (isBlocked != "true")
+                                                 {
+                                                     bool find = false;
+
+                                                     if (filter.Length > 0)
+                                                     {
+
+                                                         if (filter.StartsWith("#"))
+                                                         {
+                                                             find = root.Keyword.ContainsKey(Root.GetPublicAddressByKeyword(filter.Substring(1)));
+                                                         }
+                                                         else
+                                                         {
+
+                                                             find = root.Keyword.ContainsKey(filter);
+
+
+                                                         }
+                                                     }
+                                                     else { find = true; }
+
+                                                     isobject = OBJState.GetObjectByTransactionId(s, "good-user", "better-password", @"http://127.0.0.1:22555", "30");
+                                                     if (isobject.URN != null && find == true)
+                                                     {
+                                                         foundobjects.Add(isobject);
+
+                                                         using (var db = new DB(SUP, @"root\found"))
+                                                         {
+                                                             db.Put("found!" + root.BlockDate.ToString("yyyyMMddHHmmss") + "!" + root.SignedBy, "1");
+                                                         }
+
+
+
+                                                     }
+
+
+                                                 }
+                                                 else { try { System.IO.Directory.Delete(@"root\" + s, true); } catch { } }
+
+                                             }
+                                             else { }
+
+                                         }
+                                         catch { }
+
+                                     }
+
+                                 }
+                             }
+                             catch { }
+                         }
+
+
+
+
+                         if (foundobjects.Count > 0)
+                         {
+
+                             this.Invoke((MethodInvoker)delegate
+                             {
+                                 AddToSearchResults(foundobjects);
+                             });
+
+                         }
+
+
+                         this.Invoke((MethodInvoker)delegate
+                         {
+                             tmrSearchMemoryPool.Start();
+                         });
+
+                     });
+
+
 
                 }
-                catch(Exception ex)
+                catch (Exception ex)
                 {
                     string error = ex.Message;
                     this.Invoke((MethodInvoker)delegate
                     {
                         tmrSearchMemoryPool.Start();
-                    });                   
+                    });
 
                 }
 
-               
+
 
             }
         }
@@ -2988,7 +2977,7 @@ namespace SUP
                         pages.LargeChange = ((flowLayoutPanel1.Width / 200) * (flowLayoutPanel1.Height / 200)) + (flowLayoutPanel1.Width / 200);
 
                         txtQty.Text = pages.LargeChange.ToString();
-                       
+
 
 
                         if (this.WindowState == FormWindowState.Maximized)
