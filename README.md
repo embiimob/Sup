@@ -12,14 +12,14 @@ P2FK was directly inspired by the satoshi uploader  see --> https://cirosantilli
 ## **Installation**
 
 1. Download the Sup.v0.1.32-beta.zip file
-2. Create a folder on your **fastest** disk drive with at least **700GB** free (it will be storing the bitcoin prod and testnet blockchains)
+2. Create a folder on your **fastest** disk drive with at least **80GB** free (it will be storing the bitcoin testnet blockchains)
 3. Unzip all contents into the folder
 4. Create a shortcut to SUP.exe and launch
 
 **You will need to sync two blockchains to perform your first Sup!? object search**
 1. Click the key button
-2. Launch a full bitcoin production node AND a full bitcoin testnet node using the buttons provided
-3. Wait until testnet is fully synced and production has synced passed at least 2014. ( this part could take several hours )
+2. Launch a full bitcoin testnet mainchain node using the button provided
+3. Wait until testnet is fully synced. ( this part will take several hours )
 4. Type #flowersofwar in the main search box and hit enter
 <br />
 <br /> 
