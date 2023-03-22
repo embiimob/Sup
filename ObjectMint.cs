@@ -2198,25 +2198,26 @@ namespace SUP
                 flowAttribute.Controls.Clear();
 
                 try
-                {
-                    // Iterate through all attributes of foundObject and create a button for each
-                    foreach (var attrib in foundObject.Attributes)
+                { if (foundObject.Attributes != null)
                     {
-                        // Create a new button with the attribute key and value separated by ':'
-                        Button attribButton = new Button();
-                        attribButton.AutoSize = true;
-                        attribButton.Text = attrib.Key + ":" + attrib.Value;
-
-                        // Add an event handler to the button that removes it from the flowAttribute panel when clicked
-                        attribButton.Click += new EventHandler((sender2, e2) =>
+                        // Iterate through all attributes of foundObject and create a button for each
+                        foreach (var attrib in foundObject.Attributes)
                         {
-                            flowAttribute.Controls.Remove(attribButton);
-                        });
+                            // Create a new button with the attribute key and value separated by ':'
+                            Button attribButton = new Button();
+                            attribButton.AutoSize = true;
+                            attribButton.Text = attrib.Key + ":" + attrib.Value;
 
-                        // Add the button to the flowAttribute panel
-                        flowAttribute.Controls.Add(attribButton);
+                            // Add an event handler to the button that removes it from the flowAttribute panel when clicked
+                            attribButton.Click += new EventHandler((sender2, e2) =>
+                            {
+                                flowAttribute.Controls.Remove(attribButton);
+                            });
+
+                            // Add the button to the flowAttribute panel
+                            flowAttribute.Controls.Add(attribButton);
+                        }
                     }
-
                 }
                 catch { }
 
