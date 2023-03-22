@@ -16,7 +16,7 @@ P2FK was directly inspired by the satoshi uploader  see --> https://cirosantilli
 3. Unzip all contents into the folder
 4. Create a shortcut to SUP.exe and launch
 
-**You will need to sync two blockchains to perform your first Sup!? object search**
+**You will need to sync a blockchains to perform your first Sup!? object search**
 1. Click the key button
 2. Launch a full bitcoin testnet mainchain node using the button provided
 3. Wait until testnet is fully synced. ( this part will take several hours )
