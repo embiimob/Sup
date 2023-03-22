@@ -1941,7 +1941,7 @@ namespace SUP
             // Check if the parent form has a button named "btnLive" with blue background color
             try
             {
-                isBlue = parentForm.Controls.OfType<System.Windows.Forms.Button>().Any(b => b.Name == "btnLive" && b.BackColor == System.Drawing.Color.Blue);
+                if (parentForm != null) { isBlue = parentForm.Controls.OfType<System.Windows.Forms.Button>().Any(b => b.Name == "btnLive" && b.BackColor == System.Drawing.Color.Blue); }
             }
             catch { }
 

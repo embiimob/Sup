@@ -229,7 +229,7 @@ namespace SUP.P2FK
                                     try
                                     {
                                         //has proper authority to make OBJ changes
-                                        if (objectState.Creators.ContainsKey(transaction.SignedBy))
+                                        if (objectState.Creators != null && objectState.Creators.ContainsKey(transaction.SignedBy))
                                         {
 
                                             if (objectState.Creators.TryGet(transaction.SignedBy).Year == 1)
