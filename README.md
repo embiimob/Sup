@@ -25,7 +25,7 @@ P2FK was directly inspired by the satoshi uploader  see --> https://cirosantilli
 <br /> 
 
 ## **NOTICE**
-Sup!? is an experiment in decentralization. It is an experimental tool made by adults for #adults. Sup!? is not suitable for children. 
+Sup!? is an experimental tool made by adults for #adults. Sup!? is not suitable for children. 
 <br />
 <br />
 ## **Search Examples**
