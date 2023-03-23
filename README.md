@@ -24,6 +24,10 @@ P2FK was directly inspired by the satoshi uploader  see --> https://cirosantilli
 <br />
 <br /> 
 
+## **NOTICE**
+Sup!? is an experiment in decentralization. It is an experimental tool made by adults for #adults. Sup!? is not suitable for children. 
+<br />
+<br />
 ## **Search Examples**
 
 ### **muVrFVk3ErfrnmWosLF4WixxRtDKfMx9bs**
@@ -76,9 +80,6 @@ To edit an unlocked object, click on the magnifying glass and enter the object a
 Click the live button and watch in realtime as other Sup!? users mint their objects. All new objects will be added to the top of your browser window pushing the older objects down the screen. A maximized Sup!? monitor that shows a constant stream of new objects makes for a great display. Sup!? montiors the in-memory pool allowing it to display new objects before they are confirmed in the blockchain. Your Sup!? objects will appear in every curently live Sup!? montior around the world in about 10 - 30 seconds after you have etched the object's metadata. All blockhains included with this experiment are monitored for new objects if they are running and fully synced.  
 <br />
 With live monitoring enabled, you never know what might pop into the window. The damage is limited to a thumbnail image and what can fit in a small description text box. Objects that are discovered in live mode are not fully inspected for safety reasons. You can delete one directly from the live preview panel by clicking on the object's small trash icon. This will remove any trace of it from your system. If you are still concerned, clearing all Sup!? caches will without a doubt remove it.
-
-## **NOTICE**
-Sup!? is an experiment in decentralization. It was made for #adults. The Sup!? experiment is not suitable for children. 
 <br />
 <br />
 ## **Official / Unofficial Registration Indicator**
