@@ -146,6 +146,7 @@
             this.flowKeywords.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.flowKeywords.AutoScroll = true;
+            this.flowKeywords.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
             this.flowKeywords.Cursor = System.Windows.Forms.Cursors.Default;
             this.flowKeywords.FlowDirection = System.Windows.Forms.FlowDirection.RightToLeft;
             this.flowKeywords.Location = new System.Drawing.Point(22, 684);
@@ -158,7 +159,9 @@
             // lblASCIIURN
             // 
             this.lblASCIIURN.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.lblASCIIURN.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
             this.lblASCIIURN.Font = new System.Drawing.Font("Microsoft Sans Serif", 24F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblASCIIURN.ForeColor = System.Drawing.Color.White;
             this.lblASCIIURN.Location = new System.Drawing.Point(576, 21);
             this.lblASCIIURN.Name = "lblASCIIURN";
             this.lblASCIIURN.Size = new System.Drawing.Size(550, 550);
@@ -205,8 +208,10 @@
             // txtMaximum
             // 
             this.txtMaximum.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.txtMaximum.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
             this.txtMaximum.Enabled = false;
             this.txtMaximum.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
+            this.txtMaximum.ForeColor = System.Drawing.Color.White;
             this.txtMaximum.Location = new System.Drawing.Point(576, 605);
             this.txtMaximum.Multiline = true;
             this.txtMaximum.Name = "txtMaximum";
@@ -232,6 +237,7 @@
             // 
             this.flowOwners.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.flowOwners.AutoScroll = true;
+            this.flowOwners.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
             this.flowOwners.FlowDirection = System.Windows.Forms.FlowDirection.RightToLeft;
             this.flowOwners.Location = new System.Drawing.Point(576, 684);
             this.flowOwners.Name = "flowOwners";
@@ -273,6 +279,7 @@
             this.flowCreators.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.flowCreators.AutoScroll = true;
+            this.flowCreators.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
             this.flowCreators.FlowDirection = System.Windows.Forms.FlowDirection.RightToLeft;
             this.flowCreators.Location = new System.Drawing.Point(22, 762);
             this.flowCreators.Name = "flowCreators";
@@ -345,8 +352,10 @@
             // 
             this.txtObjectAddress.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.txtObjectAddress.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
             this.txtObjectAddress.Enabled = false;
             this.txtObjectAddress.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.txtObjectAddress.ForeColor = System.Drawing.Color.White;
             this.txtObjectAddress.Location = new System.Drawing.Point(194, 120);
             this.txtObjectAddress.Multiline = true;
             this.txtObjectAddress.Name = "txtObjectAddress";
@@ -410,6 +419,7 @@
             this.flowAttribute.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.flowAttribute.AutoScroll = true;
+            this.flowAttribute.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
             this.flowAttribute.Cursor = System.Windows.Forms.Cursors.Default;
             this.flowAttribute.FlowDirection = System.Windows.Forms.FlowDirection.RightToLeft;
             this.flowAttribute.Location = new System.Drawing.Point(22, 603);
@@ -463,8 +473,10 @@
             // 
             this.txtURI.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.txtURI.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
             this.txtURI.Enabled = false;
             this.txtURI.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.txtURI.ForeColor = System.Drawing.Color.White;
             this.txtURI.Location = new System.Drawing.Point(22, 351);
             this.txtURI.Multiline = true;
             this.txtURI.Name = "txtURI";
@@ -476,8 +488,10 @@
             // 
             this.txtURN.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.txtURN.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
             this.txtURN.Enabled = false;
             this.txtURN.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.txtURN.ForeColor = System.Drawing.Color.White;
             this.txtURN.Location = new System.Drawing.Point(22, 271);
             this.txtURN.Multiline = true;
             this.txtURN.Name = "txtURN";
@@ -489,7 +503,9 @@
             // 
             this.txtTitle.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.txtTitle.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
             this.txtTitle.Font = new System.Drawing.Font("Microsoft Sans Serif", 14.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.txtTitle.ForeColor = System.Drawing.Color.White;
             this.txtTitle.Location = new System.Drawing.Point(196, 45);
             this.txtTitle.Multiline = true;
             this.txtTitle.Name = "txtTitle";
@@ -501,8 +517,10 @@
             // 
             this.txtIMG.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.txtIMG.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
             this.txtIMG.Enabled = false;
             this.txtIMG.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.txtIMG.ForeColor = System.Drawing.Color.White;
             this.txtIMG.Location = new System.Drawing.Point(22, 192);
             this.txtIMG.Multiline = true;
             this.txtIMG.Name = "txtIMG";
@@ -512,6 +530,7 @@
             // 
             // pictureBox2
             // 
+            this.pictureBox2.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
             this.pictureBox2.Location = new System.Drawing.Point(22, 20);
             this.pictureBox2.Name = "pictureBox2";
             this.pictureBox2.Size = new System.Drawing.Size(150, 150);
@@ -523,8 +542,10 @@
             // 
             this.txtDescription.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.txtDescription.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
             this.txtDescription.Enabled = false;
             this.txtDescription.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.txtDescription.ForeColor = System.Drawing.Color.White;
             this.txtDescription.Location = new System.Drawing.Point(22, 430);
             this.txtDescription.Multiline = true;
             this.txtDescription.Name = "txtDescription";
@@ -535,12 +556,14 @@
             // PanelLicense
             // 
             this.PanelLicense.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.PanelLicense.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
             this.PanelLicense.Controls.Add(this.radioButton4);
             this.PanelLicense.Controls.Add(this.radioButton3);
             this.PanelLicense.Controls.Add(this.radioButton2);
             this.PanelLicense.Controls.Add(this.radioButton1);
             this.PanelLicense.Enabled = false;
-            this.PanelLicense.Location = new System.Drawing.Point(24, 532);
+            this.PanelLicense.ForeColor = System.Drawing.Color.White;
+            this.PanelLicense.Location = new System.Drawing.Point(24, 535);
             this.PanelLicense.Name = "PanelLicense";
             this.PanelLicense.Size = new System.Drawing.Size(525, 58);
             this.PanelLicense.TabIndex = 294;
@@ -624,6 +647,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.BackColor = System.Drawing.Color.Black;
             this.ClientSize = new System.Drawing.Size(1152, 835);
             this.Controls.Add(this.lblTransactionID);
             this.Controls.Add(this.lblCost);

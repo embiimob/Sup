@@ -116,8 +116,10 @@
             // 
             // txtSuffix
             // 
+            this.txtSuffix.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
             this.txtSuffix.Enabled = false;
             this.txtSuffix.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
+            this.txtSuffix.ForeColor = System.Drawing.Color.White;
             this.txtSuffix.Location = new System.Drawing.Point(267, 118);
             this.txtSuffix.Multiline = true;
             this.txtSuffix.Name = "txtSuffix";
@@ -153,8 +155,10 @@
             this.flowKeywords.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.flowKeywords.AutoScroll = true;
+            this.flowKeywords.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
             this.flowKeywords.Cursor = System.Windows.Forms.Cursors.Default;
             this.flowKeywords.FlowDirection = System.Windows.Forms.FlowDirection.RightToLeft;
+            this.flowKeywords.ForeColor = System.Drawing.Color.White;
             this.flowKeywords.Location = new System.Drawing.Point(14, 543);
             this.flowKeywords.Name = "flowKeywords";
             this.flowKeywords.Size = new System.Drawing.Size(573, 50);
@@ -179,8 +183,10 @@
             // 
             this.txtLastName.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.txtLastName.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
             this.txtLastName.Enabled = false;
             this.txtLastName.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
+            this.txtLastName.ForeColor = System.Drawing.Color.White;
             this.txtLastName.Location = new System.Drawing.Point(510, 263);
             this.txtLastName.Multiline = true;
             this.txtLastName.Name = "txtLastName";
@@ -205,7 +211,9 @@
             this.flowLocation.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.flowLocation.AutoScroll = true;
+            this.flowLocation.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
             this.flowLocation.FlowDirection = System.Windows.Forms.FlowDirection.RightToLeft;
+            this.flowLocation.ForeColor = System.Drawing.Color.White;
             this.flowLocation.Location = new System.Drawing.Point(14, 413);
             this.flowLocation.Name = "flowLocation";
             this.flowLocation.Size = new System.Drawing.Size(820, 47);
@@ -268,7 +276,9 @@
             // 
             this.txtObjectAddress.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.txtObjectAddress.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
             this.txtObjectAddress.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.txtObjectAddress.ForeColor = System.Drawing.Color.White;
             this.txtObjectAddress.Location = new System.Drawing.Point(510, 118);
             this.txtObjectAddress.Multiline = true;
             this.txtObjectAddress.Name = "txtObjectAddress";
@@ -323,8 +333,10 @@
             this.flowURL.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.flowURL.AutoScroll = true;
+            this.flowURL.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
             this.flowURL.Cursor = System.Windows.Forms.Cursors.Default;
             this.flowURL.FlowDirection = System.Windows.Forms.FlowDirection.RightToLeft;
+            this.flowURL.ForeColor = System.Drawing.Color.White;
             this.flowURL.Location = new System.Drawing.Point(14, 479);
             this.flowURL.Name = "flowURL";
             this.flowURL.Size = new System.Drawing.Size(820, 47);
@@ -373,8 +385,10 @@
             // 
             // txtMiddleName
             // 
+            this.txtMiddleName.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
             this.txtMiddleName.Enabled = false;
             this.txtMiddleName.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.txtMiddleName.ForeColor = System.Drawing.Color.White;
             this.txtMiddleName.Location = new System.Drawing.Point(17, 263);
             this.txtMiddleName.Multiline = true;
             this.txtMiddleName.Name = "txtMiddleName";
@@ -386,7 +400,9 @@
             // 
             this.txtURN.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.txtURN.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
             this.txtURN.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.txtURN.ForeColor = System.Drawing.Color.White;
             this.txtURN.Location = new System.Drawing.Point(189, 48);
             this.txtURN.Multiline = true;
             this.txtURN.Name = "txtURN";
@@ -396,8 +412,10 @@
             // 
             // txtFirstName
             // 
+            this.txtFirstName.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
             this.txtFirstName.Enabled = false;
             this.txtFirstName.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
+            this.txtFirstName.ForeColor = System.Drawing.Color.White;
             this.txtFirstName.Location = new System.Drawing.Point(17, 191);
             this.txtFirstName.Multiline = true;
             this.txtFirstName.Name = "txtFirstName";
@@ -409,8 +427,10 @@
             // 
             this.txtIMG.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.txtIMG.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
             this.txtIMG.Enabled = false;
             this.txtIMG.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.txtIMG.ForeColor = System.Drawing.Color.White;
             this.txtIMG.Location = new System.Drawing.Point(510, 191);
             this.txtIMG.Multiline = true;
             this.txtIMG.Name = "txtIMG";
@@ -421,6 +441,7 @@
             // 
             // pictureBox2
             // 
+            this.pictureBox2.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
             this.pictureBox2.Location = new System.Drawing.Point(17, 18);
             this.pictureBox2.Name = "pictureBox2";
             this.pictureBox2.Size = new System.Drawing.Size(150, 150);
@@ -433,8 +454,10 @@
             this.txtBio.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.txtBio.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
             this.txtBio.Enabled = false;
             this.txtBio.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.txtBio.ForeColor = System.Drawing.Color.White;
             this.txtBio.Location = new System.Drawing.Point(14, 338);
             this.txtBio.Multiline = true;
             this.txtBio.Name = "txtBio";
@@ -479,6 +502,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.BackColor = System.Drawing.Color.Black;
             this.ClientSize = new System.Drawing.Size(967, 614);
             this.Controls.Add(this.btnSuffix);
             this.Controls.Add(this.txtSuffix);

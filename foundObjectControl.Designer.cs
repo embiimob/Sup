@@ -295,6 +295,8 @@
             this.Controls.Add(this.ObjectId);
             this.DoubleBuffered = true;
             this.Margin = new System.Windows.Forms.Padding(8, 7, 8, 7);
+            this.MaximumSize = new System.Drawing.Size(221, 400);
+            this.MinimumSize = new System.Drawing.Size(221, 336);
             this.Name = "FoundObjectControl";
             this.Padding = new System.Windows.Forms.Padding(10);
             this.Size = new System.Drawing.Size(221, 336);

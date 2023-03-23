@@ -1594,6 +1594,8 @@ namespace SUP
                     var button = new Button();
                     button.Text = $"{key}: {value}";
                     button.AutoSize = true;
+                    button.ForeColor = Color.White;
+                    button.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
                     button.Click += (s, ev) => flowAttribute.Controls.Remove(button);
                     flowAttribute.Controls.Add(button);
                 }
@@ -1655,6 +1657,8 @@ namespace SUP
                     var key = keyTextBox.Text;
 
                     var button = new Button();
+                    button.ForeColor = Color.White;
+                    button.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
                     button.Text = $"{key}";
                     button.AutoSize = true;
 
@@ -1747,6 +1751,8 @@ namespace SUP
                     var key = keyTextBox.Text;
 
                     var button = new Button();
+                    button.ForeColor = Color.White;
+                    button.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
                     button.Text = $"{key}";
                     button.AutoSize = true;
 
@@ -1857,6 +1863,8 @@ namespace SUP
                     if (isNumeric)
                     {
                         var button = new Button();
+                        button.ForeColor = Color.White;
+                        button.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
                         button.Text = $"{owner}: {qty}";
                         button.AutoSize = true;
                         button.MouseClick += (s, ev) =>
@@ -2118,7 +2126,7 @@ namespace SUP
         {
             // Create a new form for the address input dialog
             Form addressForm = new Form();
-            addressForm.Text = "Enter an Address or Scan a Mint";
+            addressForm.Text = "Enter an Object Address";
             addressForm.StartPosition = FormStartPosition.CenterParent;
             addressForm.ControlBox = false;
             addressForm.FormBorderStyle = FormBorderStyle.FixedDialog;
@@ -2126,7 +2134,7 @@ namespace SUP
             addressForm.Height = 210;
             // Create a label with instructions for the user
             Label instructionLabel = new Label();
-            instructionLabel.Text = "Enter an Address or Scan a Mint";
+            instructionLabel.Text = "Enter an Object Address";
             instructionLabel.Font = new Font(instructionLabel.Font.FontFamily, 16, System.Drawing.FontStyle.Bold);
             instructionLabel.AutoSize = true;
             instructionLabel.Location = new Point(20, 20);
@@ -2205,6 +2213,9 @@ namespace SUP
                         {
                             // Create a new button with the attribute key and value separated by ':'
                             Button attribButton = new Button();
+                            attribButton.ForeColor = Color.White;
+                            attribButton.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
+
                             attribButton.AutoSize = true;
                             attribButton.Text = attrib.Key + ":" + attrib.Value;
 
@@ -2234,6 +2245,8 @@ namespace SUP
                     Button attribButton = new Button();
                     attribButton.AutoSize = true;
                     attribButton.Text = attrib;
+                    attribButton.ForeColor = Color.White;
+                    attribButton.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
 
                     // Add an event handler to the button that removes it from the flowKeywords panel when clicked
                     attribButton.Click += new EventHandler((sender2, e2) =>
@@ -2266,6 +2279,8 @@ namespace SUP
                     Button attribButton = new Button();
                     attribButton.AutoSize = true;
                     attribButton.Text = attrib.Key;
+                    attribButton.ForeColor = Color.White;
+                    attribButton.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
 
                     // Add an event handler to the button that removes it from the flowCreators panel when clicked
                     attribButton.Click += new EventHandler((sender2, e2) =>
@@ -2303,6 +2318,8 @@ namespace SUP
                         Button attribButton = new Button();
                         attribButton.AutoSize = true;
                         attribButton.Text = buttonText;
+                        attribButton.ForeColor = Color.White;
+                        attribButton.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
 
                         // Add an event handler to the button that removes it from the flowAttribute panel when clicked
                         attribButton.Click += new EventHandler((sender2, e2) =>

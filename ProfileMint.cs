@@ -816,6 +816,9 @@ namespace SUP
                     var value = valueTextBox.Text;
 
                     var button = new Button();
+                    button.ForeColor = Color.White;
+                    button.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
+
                     button.Text = $"{key}:{value}";
                     button.AutoSize = true;
 
@@ -907,6 +910,9 @@ namespace SUP
                     var key = keyTextBox.Text;
 
                     var button = new Button();
+                    button.ForeColor = Color.White;
+                    button.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
+
                     button.Text = $"{key}";
                     button.AutoSize = true;
 
@@ -1015,7 +1021,11 @@ namespace SUP
 
                    
                         var button = new Button();
-                        button.Text = $"{owner}:{qty}";
+                    button.ForeColor = Color.White;
+                    button.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
+
+
+                    button.Text = $"{owner}:{qty}";
                         button.AutoSize = true;
                         button.MouseClick += (s, ev) =>
                         {
@@ -1160,6 +1170,9 @@ namespace SUP
                     {
                         // Create a new button with the attribute key and value separated by ':'
                         Button attribButton = new Button();
+                        attribButton.ForeColor = Color.White;
+                        attribButton.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
+
                         attribButton.AutoSize = true;
                         attribButton.Text = attrib.Key + ":" + attrib.Value;
 
@@ -1189,6 +1202,8 @@ namespace SUP
                     Button attribButton = new Button();
                     attribButton.AutoSize = true;
                     attribButton.Text = attrib;
+                    attribButton.ForeColor = Color.White;
+                    attribButton.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
 
                     // Add an event handler to the button that removes it from the flowKeywords panel when clicked
                     attribButton.Click += new EventHandler((sender2, e2) =>
@@ -1224,6 +1239,8 @@ namespace SUP
                         Button attribButton = new Button();
                         attribButton.AutoSize = true;
                         attribButton.Text = buttonText;
+                        attribButton.ForeColor = Color.White;
+                        attribButton.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
 
                         // Add an event handler to the button that removes it from the flowAttribute panel when clicked
                         attribButton.Click += new EventHandler((sender2, e2) =>
