@@ -20,6 +20,7 @@ namespace SUP
     public partial class ObjectBrowser : Form
     {
         private readonly string _objectaddress;
+        private bool _isUserControl;
         private List<String> SearchHistory = new List<String>();
         private int SearchId = 0;
         private HashSet<string> loadedObjects = new HashSet<string>();
@@ -40,7 +41,7 @@ namespace SUP
         private bool ltcActive;
         private bool dogActive;
         private readonly System.Windows.Forms.Timer _doubleClickTimer = new System.Windows.Forms.Timer();
-        public ObjectBrowser(string objectaddress)
+        public ObjectBrowser(string objectaddress, bool iscontrol = false)
         {
             InitializeComponent();
             if (objectaddress != null)
@@ -49,6 +50,7 @@ namespace SUP
             }
             else
             { _objectaddress = ""; }
+            _isUserControl = iscontrol;
 
         }
 
@@ -377,6 +379,14 @@ namespace SUP
                                                     System.IO.File.Move("ipfs/" + transid + "_tmp", @"ipfs/" + transid + @"/" + fileName);
                                                 }
 
+                                                if (System.IO.File.Exists("ipfs/" + transid + "/" + transid))
+                                                {
+                                                    fileName = objstate.Image.Replace(@"//", "").Replace(@"\\", "").Substring(51);
+                                                    if (fileName == "") { fileName = "artifact"; } else { fileName = fileName.Replace(@"/", "").Replace(@"\", ""); }
+
+                                                    System.IO.File.Move("ipfs/" + transid + "/" + transid, @"ipfs/" + transid + @"/" + fileName);
+                                                }
+
 
                                                 Process process3 = new Process
                                                 {
@@ -506,13 +516,13 @@ namespace SUP
                             {
                                 foundObject.Height = 221;
                                 flowLayoutPanel1.Controls.Add(foundObject);
-                                this.MinimumSize = new System.Drawing.Size(709, 558);
+                                //this.MinimumSize = new System.Drawing.Size(709, 558);
 
                             }
                             if (_viewMode == 1)
                             {
                                 flowLayoutPanel1.Controls.Add(foundObject);
-                                this.MinimumSize = new System.Drawing.Size(709, 558);
+                               // this.MinimumSize = new System.Drawing.Size(709, 558);
                             }
 
                             if (_viewMode == 2)
@@ -520,8 +530,8 @@ namespace SUP
 
                                 ObjectDetailsControl control = new ObjectDetailsControl(foundObject.ObjectAddress.Text);
                                 flowLayoutPanel1.Controls.Add(control);
-                                this.MinimumSize = new System.Drawing.Size(1101, 521);
-                                this.Size = new System.Drawing.Size(1101, 521);
+                                //this.MinimumSize = new System.Drawing.Size(1101, 521);
+                                //this.Size = new System.Drawing.Size(1101, 521);
                             }     
 
 
@@ -736,11 +746,10 @@ namespace SUP
                                 case "IPFS":
                                     if (ipfsActive)
                                     {
-                                        Task.Run(() =>
-                                    {
-                                        if (!System.IO.Directory.Exists("ipfs/" + transid))
+
+                                        if (!System.IO.Directory.Exists("ipfs/" + transid) && !System.IO.Directory.Exists("ipfs/" + transid + "-build"))
                                         {
-                                            Directory.CreateDirectory("ipfs/" + transid);
+                                            Directory.CreateDirectory("ipfs/" + transid + "-build");
                                             Process process2 = new Process();
                                             process2.StartInfo.FileName = @"ipfs\ipfs.exe";
                                             process2.StartInfo.Arguments = "get " + objstate.Image.Substring(5, 46) + @" -o ipfs\" + transid;
@@ -755,9 +764,17 @@ namespace SUP
                                                 System.IO.Directory.CreateDirectory("ipfs/" + transid);
                                                 fileName = objstate.Image.Replace(@"//", "").Replace(@"\\", "").Substring(51);
                                                 if (fileName == "") { fileName = "artifact"; } else { fileName = fileName.Replace(@"/", "").Replace(@"\", ""); }
+                                                Directory.CreateDirectory("ipfs/" + transid);
                                                 System.IO.File.Move("ipfs/" + transid + "_tmp", @"ipfs/" + transid + @"/" + fileName);
                                             }
 
+                                            if (System.IO.File.Exists("ipfs/" + transid + "/" + transid))
+                                            {
+                                                fileName = objstate.Image.Replace(@"//", "").Replace(@"\\", "").Substring(51);
+                                                if (fileName == "") { fileName = "artifact"; } else { fileName = fileName.Replace(@"/", "").Replace(@"\", ""); }
+
+                                                System.IO.File.Move("ipfs/" + transid + "/" + transid, @"ipfs/" + transid + @"/" + fileName);
+                                            }
 
 
                                             Process process3 = new Process
@@ -772,17 +789,15 @@ namespace SUP
                                             };
                                             process3.Start();
 
-
+                                            try { Directory.Delete("ipfs/" + transid + "-build", true); } catch { }
 
 
                                         }
-                                        this.Invoke((Action)(() =>
-                                        {
-                                            if (objstate.Image.Length == 51)
-                                            { foundObject.ObjectImage.ImageLocation = objstate.Image.Replace("IPFS:", @"ipfs/") + @"/artifact"; }
-                                            else { foundObject.ObjectImage.ImageLocation = objstate.Image.Replace("IPFS:", @"ipfs/"); }
-                                        }));
-                                    });
+
+                                        if (objstate.Image.Length == 51)
+                                        { foundObject.ObjectImage.ImageLocation = objstate.Image.Replace("IPFS:", @"ipfs/") + @"/artifact"; }
+                                        else { foundObject.ObjectImage.ImageLocation = objstate.Image.Replace("IPFS:", @"ipfs/"); }
+
                                     }
                                     break;
                                 case "HTTP":
@@ -946,6 +961,21 @@ namespace SUP
                 control.Dispose();
             }
 
+            var SUP = new Options { CreateIfMissing = true };
+            using (var db = new DB(SUP, @"ipfs"))
+            {
+
+                string ipfsdaemon = db.Get("ipfs-daemon");
+
+                if (ipfsdaemon == "true")
+                {
+                    this.Invoke((MethodInvoker)delegate
+                    {
+                        ipfsActive = true;
+                    });
+                }
+            }
+
             flowLayoutPanel1.Controls.Clear();
             int loadQty = (flowLayoutPanel1.Size.Width / 100) * (flowLayoutPanel1.Size.Height / 200) + 3;
 
@@ -986,7 +1016,7 @@ namespace SUP
                 }
 
                 try { transid = objstate.Image.Substring(4, 64).Replace(":", ""); } catch { try { transid = objstate.Image.Substring(5, 46); } catch { } }
-                string imgurl = objstate.Image.Replace("BTC:", "").Replace("MZC:", "").Replace("LTC:", "").Replace("IPFS:", "");
+                string imgurl = objstate.Image.Replace("BTC:", "").Replace("MZC:", "").Replace("LTC:", "").Replace("IPFS:", "").Replace(@"\",@"/");
                 if (objstate.Image.ToUpper().StartsWith("IPFS:")) { imgurl = @"ipfs/" + imgurl; } else { imgurl = @"root/" + imgurl; }
 
                 foundObject.ObjectImage.ImageLocation = imgurl;
@@ -998,8 +1028,7 @@ namespace SUP
                 switch (objstate.Image.ToUpper().Substring(0, 4))
                 {
                     case "BTC:":
-                        if (btcActive)
-                        {
+                       
                             Task.Run(() =>
                         {
                             if (!System.IO.Directory.Exists("root/" + transid))
@@ -1016,11 +1045,10 @@ namespace SUP
                                 }
                             }
                         });
-                        }
+                        
                         break;
                     case "MZC:":
-                        if (mzcActive)
-                        {
+                       
                             Task.Run(() =>
                         {
                             if (!System.IO.Directory.Exists("root/" + transid))
@@ -1037,11 +1065,10 @@ namespace SUP
                                 }
                             }
                         });
-                        }
+                        
                         break;
                     case "LTC:":
-                        if (ltcActive)
-                        {
+                       
                             Task.Run(() =>
                         {
                             if (!System.IO.Directory.Exists("root/" + transid))
@@ -1058,11 +1085,10 @@ namespace SUP
                                 }
                             }
                         });
-                        }
+                        
                         break;
                     case "DOG:":
-                        if (dogActive)
-                        {
+                        
                             Task.Run(() =>
                         {
                             if (!System.IO.Directory.Exists("root/" + transid))
@@ -1079,16 +1105,15 @@ namespace SUP
                                 }
                             }
                         });
-                        }
+                        
                         break;
                     case "IPFS":
                         if (ipfsActive)
                         {
-                            Task.Run(() =>
-                        {
-                            if (!System.IO.Directory.Exists("ipfs/" + transid))
+
+                            if (!System.IO.Directory.Exists("ipfs/" + transid) && !System.IO.Directory.Exists("ipfs/" + transid + "-build"))
                             {
-                                Directory.CreateDirectory("ipfs/" + transid);
+                                Directory.CreateDirectory("ipfs/" + transid + "-build");
                                 Process process2 = new Process();
                                 process2.StartInfo.FileName = @"ipfs\ipfs.exe";
                                 process2.StartInfo.Arguments = "get " + objstate.Image.Substring(5, 46) + @" -o ipfs\" + transid;
@@ -1103,9 +1128,17 @@ namespace SUP
                                     System.IO.Directory.CreateDirectory("ipfs/" + transid);
                                     fileName = objstate.Image.Replace(@"//", "").Replace(@"\\", "").Substring(51);
                                     if (fileName == "") { fileName = "artifact"; } else { fileName = fileName.Replace(@"/", "").Replace(@"\", ""); }
+                                    Directory.CreateDirectory("ipfs/" + transid);
                                     System.IO.File.Move("ipfs/" + transid + "_tmp", @"ipfs/" + transid + @"/" + fileName);
                                 }
 
+                                if (System.IO.File.Exists("ipfs/" + transid + "/" + transid))
+                                {
+                                    fileName = objstate.Image.Replace(@"//", "").Replace(@"\\", "").Substring(51);
+                                    if (fileName == "") { fileName = "artifact"; } else { fileName = fileName.Replace(@"/", "").Replace(@"\", ""); }
+                                   
+                                    System.IO.File.Move("ipfs/" + transid + "/" + transid, @"ipfs/" + transid + @"/" + fileName);
+                                }
 
 
                                 Process process3 = new Process
@@ -1120,16 +1153,15 @@ namespace SUP
                                 };
                                 process3.Start();
 
+                                try { Directory.Delete("ipfs/" + transid + "-build", true); } catch { }
+
+
                             }
-                            this.Invoke((Action)(() =>
-                            {
-                                if (objstate.Image.Length == 51)
-                                { foundObject.ObjectImage.ImageLocation = objstate.Image.Replace("IPFS:", @"ipfs/") + @"/artifact"; }
-                                else { foundObject.ObjectImage.ImageLocation = objstate.Image.Replace("IPFS:", @"ipfs/"); }
 
+                            if (objstate.Image.Length == 51)
+                            { foundObject.ObjectImage.ImageLocation = objstate.Image.Replace("IPFS:", @"ipfs/") + @"/artifact"; }
+                            else { foundObject.ObjectImage.ImageLocation = objstate.Image.Replace("IPFS:", @"ipfs/"); }
 
-                            }));
-                        });
                         }
                         break;
                     case "HTTP":
@@ -1141,8 +1173,7 @@ namespace SUP
 
 
                     default:
-                        if (btctActive)
-                        {
+                      
                             transid = objstate.Image.Substring(0, 64);
 
                             if (!System.IO.Directory.Exists("root/" + transid))
@@ -1155,7 +1186,7 @@ namespace SUP
 
                             }
 
-                        }
+                        
                         break;
                 }
 
@@ -1934,9 +1965,25 @@ namespace SUP
 
         private async void ObjectBrowserLoad(object sender, EventArgs e)
         {
+            if (_isUserControl) { this.Text = String.Empty; this.flowLayoutPanel1.Padding = new Padding(3,80,0,0); this.Size = this.MinimumSize; }
 
             Form parentForm = this.Owner;
             bool isBlue = false;
+
+            var SUP = new Options { CreateIfMissing = true };
+            using (var db = new DB(SUP, @"ipfs"))
+            {
+
+                string ipfsdaemon = db.Get("ipfs-daemon");
+
+                if (ipfsdaemon == "true")
+                {
+                    this.Invoke((MethodInvoker)delegate
+                    {
+                        ipfsActive = true;
+                    });
+                }
+            }
 
             // Check if the parent form has a button named "btnLive" with blue background color
             try
@@ -1994,6 +2041,7 @@ namespace SUP
                     {
                         imgLoading.ImageLocation = @"includes\HugPuddle.jpg";
                     }
+
                     await Task.Run(() => BuildSearchResults());
                     flowLayoutPanel1.Visible = true;
                     pages.Visible = true;
@@ -2100,22 +2148,11 @@ namespace SUP
                         }
                         catch { }
                     });
+                                                          
 
-
-
-
-                    var SUP = new Options { CreateIfMissing = true };
-                    using (var db = new DB(SUP, @"ipfs"))
-                    {
-
-                        string ipfsdaemon = db.Get("ipfs-daemon");
-
-                        if (ipfsdaemon == "true")
+                        if (ipfsActive == true)
                         {
-                            this.Invoke((MethodInvoker)delegate
-                            {
-                                ipfsActive = true;
-                            });
+                            
                             var process = new Process
                             {
                                 StartInfo = new ProcessStartInfo
@@ -2128,8 +2165,7 @@ namespace SUP
                             };
                             process.Start();
                         }
-
-                    }
+                    
 
                 }
 
@@ -2139,15 +2175,7 @@ namespace SUP
             }
         }
 
-        private void ButtonLoadWorkBench(object sender, EventArgs e)
-        {
-            new WorkBench().Show();
-        }
-
-        private void ButtonLoadConnections(object sender, EventArgs e)
-        {
-            new Connections().Show();
-        }
+      
 
         string TruncateAddress(string input)
         {
@@ -2273,14 +2301,9 @@ namespace SUP
         {
             btnOwned.Enabled = false;
             btnCreated.Enabled = false;
-            btnConnections.Enabled = false;
-            btnWorkBench.Enabled = false;
-            btnHistoryBack.Enabled = false;
-            btnHistoryForward.Enabled = false;
-            btnMint.Enabled = false;
+           
             txtSearchAddress.Enabled = false;
             pages.Enabled = false;
-            btnLive.Enabled = false;
             txtLast.Enabled = false;
         }
 
@@ -2288,53 +2311,14 @@ namespace SUP
         {
             btnOwned.Enabled = true;
             btnCreated.Enabled = true;
-            txtSearchAddress.Enabled = true;
-            btnWorkBench.Enabled = true;
-            btnConnections.Enabled = true;
-            btnHistoryBack.Enabled = true;
-            btnHistoryForward.Enabled = true;
-            btnMint.Enabled = true;
+            txtSearchAddress.Enabled = true;          
+
             pages.Enabled = true;
-            btnLive.Enabled = true;
+           
             txtLast.Enabled = true;
         }
 
-        private async void btnLive_Click(object sender, EventArgs e)
-        {
-
-
-            if (btnLive.BackColor == Color.White)
-            {
-                btnLive.BackColor = Color.Blue;
-                btnLive.ForeColor = Color.Yellow;
-                DisableSupInput();
-                tmrSearchMemoryPool.Enabled = true;
-                Random rnd = new Random();
-                string[] gifFiles = Directory.GetFiles("includes", "*.gif");
-                if (gifFiles.Length > 0)
-                {
-                    int randomIndex = rnd.Next(gifFiles.Length);
-                    string randomGifFile = gifFiles[randomIndex];
-                    imgLoading.ImageLocation = randomGifFile;
-                }
-                else
-                {
-                    imgLoading.ImageLocation = @"includes\HugPuddle.jpg";
-                }
-                await Task.Run(() => BuildSearchResults());
-                flowLayoutPanel1.Visible = true;
-                pages.Visible = true;
-                btnLive.Enabled = true;
-            }
-            else
-            {
-                btnLive.BackColor = Color.White;
-                btnLive.ForeColor = Color.Black;
-                tmrSearchMemoryPool.Enabled = false;
-                EnableSupInput();
-
-            }
-        }
+       
 
         private void tmrSearchMemoryPool_Tick(object sender, EventArgs e)
         {
@@ -3084,6 +3068,44 @@ namespace SUP
             if (_mouseLock == false)
             {
 
+                switch (_viewMode)
+                {
+                    case 0:
+                        if (pages.LargeChange != ((flowLayoutPanel1.Width / 200) * (flowLayoutPanel1.Height / 200)) + (flowLayoutPanel1.Width / 200))
+                        {
+                            pages.LargeChange = ((flowLayoutPanel1.Width / 200) * (flowLayoutPanel1.Height / 200)) + (flowLayoutPanel1.Width / 200);
+
+                            txtQty.Text = pages.LargeChange.ToString();
+                                                        
+                        }
+                        break;
+
+                    case 2:
+                        if (pages.LargeChange != ((flowLayoutPanel1.Width / 1059) * (flowLayoutPanel1.Height / 411)) + (flowLayoutPanel1.Width / 1059))
+                        {
+                            pages.LargeChange = ((flowLayoutPanel1.Width / 1059) * (flowLayoutPanel1.Height / 411)) + (flowLayoutPanel1.Width / 1059);
+
+                            txtQty.Text = pages.LargeChange.ToString();
+                           
+                            
+                        }
+                        break;
+                    case 1:
+                        if (pages.LargeChange != ((flowLayoutPanel1.Width / 221) * (flowLayoutPanel1.Height / 336)))
+                        {
+                            pages.LargeChange = ((flowLayoutPanel1.Width / 221) * (flowLayoutPanel1.Height / 336)) + (flowLayoutPanel1.Width / 221);
+
+                            txtQty.Text = pages.LargeChange.ToString();
+
+                         
+                            
+                        }
+                        break;
+                    default:
+                        // Handle any other cases here
+                        break;
+                }
+
                 Random rnd = new Random();
                 string[] gifFiles = Directory.GetFiles("includes", "*.gif");
                 if (gifFiles.Length > 0)
@@ -3096,9 +3118,11 @@ namespace SUP
                 {
                     imgLoading.ImageLocation = @"includes\HugPuddle.jpg";
                 }
+
                 await Task.Run(() => BuildSearchResults());
                 flowLayoutPanel1.Visible = true;
                 pages.Visible = true;
+
             }
         }
 
@@ -3166,6 +3190,16 @@ namespace SUP
         private void txtLast_TextChanged(object sender, EventArgs e)
         {
             if (!int.TryParse(txtLast.Text, out int lastint) || lastint < 0) { txtLast.Text = "0"; }
+        }
+
+        private void flowLayoutPanel1_Paint(object sender, PaintEventArgs e)
+        {
+
+        }
+
+        private void flowLayoutPanel2_SizeChanged(object sender, EventArgs e)
+        {
+            flowLayoutPanel1.Padding = new System.Windows.Forms.Padding(3, flowLayoutPanel2.Height, 0, 0);
         }
     }
 }

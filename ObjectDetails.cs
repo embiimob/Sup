@@ -901,146 +901,148 @@ namespace SUP
                     Match imgurnmatch = regexTransactionId.Match(imgurn);
                     transactionid = imgurnmatch.Value;
                     Root root = new Root();
-
-                    switch (objstate.Image.ToUpper().Substring(0, 4))
+                    if (objstate.Image != null)
                     {
-                        case "MZC:":
-                            root = Root.GetRootByTransactionId(transactionid, "good-user", "better-password", @"http://127.0.0.1:12832", "50");
-                            if (Directory.Exists(@"root\" + transactionid))
-                            {
-                                try
-                                {
-
-                                    lblIMGBlockDate.Text = "mazacoin verified: " + root.BlockDate.ToString("ddd, dd MMM yyyy hh:mm:ss");
-
-                                }
-                                catch { }
-                            }
-
-
-                            break;
-                        case "BTC:":
-
-                            root = Root.GetRootByTransactionId(transactionid, "good-user", "better-password", @"http://127.0.0.1:8332", "0");
-                            if (Directory.Exists(@"root\" + transactionid))
-                            {
-                                try
-                                {
-
-                                    lblIMGBlockDate.Text = "bitcoin verified: " + root.BlockDate.ToString("ddd, dd MMM yyyy hh:mm:ss");
-
-                                }
-                                catch { }
-                            }
-
-
-                            break;
-                        case "LTC:":
-
-                            root = Root.GetRootByTransactionId(transactionid, "good-user", "better-password", @"http://127.0.0.1:9332", "48");
-
-                            if (Directory.Exists(@"root\" + transactionid))
-                            {
-                                try
-                                {
-
-                                    lblIMGBlockDate.Text = "litecoin verified: " + root.BlockDate.ToString("ddd, dd MMM yyyy hh:mm:ss");
-
-                                }
-                                catch { }
-                            }
-
-
-                            break;
-                        case "DOG:":
-                            root = Root.GetRootByTransactionId(transactionid, "good-user", "better-password", @"http://127.0.0.1:22555", "30");
-                            if (Directory.Exists(@"root\" + transactionid))
-                            {
-                                try
-                                {
-
-                                    lblIMGBlockDate.Text = "dogecoin verified: " + root.BlockDate.ToString("ddd, dd MMM yyyy hh:mm:ss");
-
-                                }
-                                catch { }
-                            }
-
-
-                            break;
-                        case "IPFS":
-
-                            transactionid = objstate.Image.Substring(5, 46);
-                            if (objstate.Image.Length == 51) { imgurn += @"\artifact"; }
-
-                            if (!System.IO.Directory.Exists(@"ipfs/" + objstate.Image.Substring(5, 46) + "-build") && !System.IO.Directory.Exists(@"ipfs/" + objstate.Image.Substring(5, 46)))
-                            {
-
-                                Task ipfsTask = Task.Run(() =>
-                                {
-                                    Directory.CreateDirectory(@"ipfs/" + objstate.Image.Substring(5, 46) + "-build");
-                                    Process process2 = new Process();
-                                    process2.StartInfo.FileName = @"ipfs\ipfs.exe";
-                                    process2.StartInfo.Arguments = "get " + objstate.Image.Substring(5, 46) + @" -o ipfs\" + objstate.Image.Substring(5, 46);
-                                    process2.Start();
-                                    process2.WaitForExit();
-
-                                    if (System.IO.File.Exists("ipfs/" + objstate.Image.Substring(5, 46)))
-                                    {
-                                        System.IO.File.Move("ipfs/" + objstate.Image.Substring(5, 46), "ipfs/" + objstate.Image.Substring(5, 46) + "_tmp");
-
-                                        string fileName = objstate.Image.Replace(@"//", "").Replace(@"\\", "").Substring(51);
-                                        if (fileName == "")
-                                        {
-                                            fileName = "artifact";
-
-                                        }
-                                        else { fileName = fileName.Replace(@"/", "").Replace(@"\", ""); }
-                                        Directory.CreateDirectory(@"ipfs/" + objstate.Image.Substring(5, 46));
-                                        try { System.IO.File.Move("ipfs/" + objstate.Image.Substring(5, 46) + "_tmp", imgurn); } catch { }
-                                    }
-                                    Process process3 = new Process
-                                    {
-                                        StartInfo = new ProcessStartInfo
-                                        {
-                                            FileName = @"ipfs\ipfs.exe",
-                                            Arguments = "pin add " + objstate.Image.Substring(5, 46),
-                                            UseShellExecute = false,
-                                            CreateNoWindow = true
-                                        }
-                                    };
-                                    process3.Start();
-                                    Directory.Delete(@"ipfs/" + objstate.Image.Substring(5, 46) + "-build");
-                                    if (File.Exists(imgurn)) { imgPicture.Invoke(new Action(() => imgPicture.ImageLocation = imgurn)); }
-
-                                });
-
-                            }
-                            else
-                            {
-                                lblIMGBlockDate.Text = "ipfs verified: " + DateTime.UtcNow.ToString("ddd, dd MMM yyyy hh:mm:ss");
-
-                            }
-
-                            break;
-                        default:
-                            if (!txtIMG.Text.ToUpper().StartsWith("HTTP") && transactionid != "")
-                            {
-                                root = Root.GetRootByTransactionId(transactionid, "good-user", "better-password", @"http://127.0.0.1:18332");
+                        switch (objstate.Image.ToUpper().Substring(0, 4))
+                        {
+                            case "MZC:":
+                                root = Root.GetRootByTransactionId(transactionid, "good-user", "better-password", @"http://127.0.0.1:12832", "50");
                                 if (Directory.Exists(@"root\" + transactionid))
                                 {
                                     try
                                     {
 
-                                        lblIMGBlockDate.Text = "bitcoin-t verified: " + root.BlockDate.ToString("ddd, dd MMM yyyy hh:mm:ss");
+                                        lblIMGBlockDate.Text = "mazacoin verified: " + root.BlockDate.ToString("ddd, dd MMM yyyy hh:mm:ss");
 
                                     }
                                     catch { }
                                 }
-                            }
 
-                            break;
+
+                                break;
+                            case "BTC:":
+
+                                root = Root.GetRootByTransactionId(transactionid, "good-user", "better-password", @"http://127.0.0.1:8332", "0");
+                                if (Directory.Exists(@"root\" + transactionid))
+                                {
+                                    try
+                                    {
+
+                                        lblIMGBlockDate.Text = "bitcoin verified: " + root.BlockDate.ToString("ddd, dd MMM yyyy hh:mm:ss");
+
+                                    }
+                                    catch { }
+                                }
+
+
+                                break;
+                            case "LTC:":
+
+                                root = Root.GetRootByTransactionId(transactionid, "good-user", "better-password", @"http://127.0.0.1:9332", "48");
+
+                                if (Directory.Exists(@"root\" + transactionid))
+                                {
+                                    try
+                                    {
+
+                                        lblIMGBlockDate.Text = "litecoin verified: " + root.BlockDate.ToString("ddd, dd MMM yyyy hh:mm:ss");
+
+                                    }
+                                    catch { }
+                                }
+
+
+                                break;
+                            case "DOG:":
+                                root = Root.GetRootByTransactionId(transactionid, "good-user", "better-password", @"http://127.0.0.1:22555", "30");
+                                if (Directory.Exists(@"root\" + transactionid))
+                                {
+                                    try
+                                    {
+
+                                        lblIMGBlockDate.Text = "dogecoin verified: " + root.BlockDate.ToString("ddd, dd MMM yyyy hh:mm:ss");
+
+                                    }
+                                    catch { }
+                                }
+
+
+                                break;
+                            case "IPFS":
+                                string transid = "empty";
+                                try { transid = objstate.Image.Substring(5, 46); } catch { }
+
+                                if (!System.IO.Directory.Exists("ipfs/" + transid) && !System.IO.Directory.Exists("ipfs/" + transid + "-build"))
+                                {
+                                    Directory.CreateDirectory("ipfs/" + transid + "-build");
+                                    Process process2 = new Process();
+                                    process2.StartInfo.FileName = @"ipfs\ipfs.exe";
+                                    process2.StartInfo.Arguments = "get " + objstate.Image.Substring(5, 46) + @" -o ipfs\" + transid;
+                                    process2.StartInfo.UseShellExecute = false;
+                                    process2.StartInfo.CreateNoWindow = true;
+                                    process2.Start();
+                                    process2.WaitForExit();
+                                    string fileName;
+                                    if (System.IO.File.Exists("ipfs/" + transid))
+                                    {
+                                        System.IO.File.Move("ipfs/" + transid, "ipfs/" + transid + "_tmp");
+                                        System.IO.Directory.CreateDirectory("ipfs/" + transid);
+                                        fileName = objstate.Image.Replace(@"//", "").Replace(@"\\", "").Substring(51);
+                                        if (fileName == "") { fileName = "artifact"; } else { fileName = fileName.Replace(@"/", "").Replace(@"\", ""); }
+                                        Directory.CreateDirectory("ipfs/" + transid);
+                                        System.IO.File.Move("ipfs/" + transid + "_tmp", @"ipfs/" + transid + @"/" + fileName);
+                                    }
+
+                                    if (System.IO.File.Exists("ipfs/" + transid + "/" + transid))
+                                    {
+                                        fileName = objstate.Image.Replace(@"//", "").Replace(@"\\", "").Substring(51);
+                                        if (fileName == "") { fileName = "artifact"; } else { fileName = fileName.Replace(@"/", "").Replace(@"\", ""); }
+
+                                        System.IO.File.Move("ipfs/" + transid + "/" + transid, @"ipfs/" + transid + @"/" + fileName);
+                                    }
+
+
+                                    Process process3 = new Process
+                                    {
+                                        StartInfo = new ProcessStartInfo
+                                        {
+                                            FileName = @"ipfs\ipfs.exe",
+                                            Arguments = "pin add " + transid,
+                                            UseShellExecute = false,
+                                            CreateNoWindow = true
+                                        }
+                                    };
+                                    process3.Start();
+
+                                    try { Directory.Delete("ipfs/" + transid + "-build", true); } catch { }
+
+
+                                }
+
+                                if (objstate.Image.Length == 51)
+                                { imgurn = imgurn + @"/artifact"; }
+
+
+                                break;
+                            default:
+                                if (!txtIMG.Text.ToUpper().StartsWith("HTTP") && transactionid != "")
+                                {
+                                    root = Root.GetRootByTransactionId(transactionid, "good-user", "better-password", @"http://127.0.0.1:18332");
+                                    if (Directory.Exists(@"root\" + transactionid))
+                                    {
+                                        try
+                                        {
+
+                                            lblIMGBlockDate.Text = "bitcoin-t verified: " + root.BlockDate.ToString("ddd, dd MMM yyyy hh:mm:ss");
+
+                                        }
+                                        catch { }
+                                    }
+                                }
+
+                                break;
+                        }
                     }
-
 
                 }
                 catch { }

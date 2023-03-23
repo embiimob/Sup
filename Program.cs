@@ -210,7 +210,7 @@ namespace SUP
                     Magician.DisappearConsole();
                     Application.EnableVisualStyles();
                     Application.SetCompatibleTextRenderingDefault(false);
-                    Application.Run(new ObjectBrowser(null));
+                    Application.Run(new SupMain());
                 }
             }
             else

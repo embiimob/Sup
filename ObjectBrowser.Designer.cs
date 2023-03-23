@@ -34,23 +34,21 @@ namespace SUP
             this.btnCreated = new System.Windows.Forms.Button();
             this.btnOwned = new System.Windows.Forms.Button();
             this.txtSearchAddress = new System.Windows.Forms.TextBox();
-            this.btnWorkBench = new System.Windows.Forms.Button();
-            this.linkLabel1 = new System.Windows.Forms.LinkLabel();
-            this.btnConnections = new System.Windows.Forms.Button();
-            this.btnHistoryBack = new System.Windows.Forms.Button();
-            this.btnHistoryForward = new System.Windows.Forms.Button();
-            this.btnMint = new System.Windows.Forms.Button();
             this.txtQty = new System.Windows.Forms.TextBox();
             this.txtLast = new System.Windows.Forms.TextBox();
-            this.btnLive = new System.Windows.Forms.Button();
             this.tmrSearchMemoryPool = new System.Windows.Forms.Timer(this.components);
             this.imgLoading = new System.Windows.Forms.PictureBox();
             this.flowLayoutPanel1 = new System.Windows.Forms.FlowLayoutPanel();
             this.pages = new System.Windows.Forms.TrackBar();
             this.txtTotal = new System.Windows.Forms.TextBox();
             this.doubleClickTimer = new System.Windows.Forms.Timer(this.components);
+            this.flowLayoutPanel2 = new System.Windows.Forms.FlowLayoutPanel();
+            this.linkLabel1 = new System.Windows.Forms.LinkLabel();
+            this.panel1 = new System.Windows.Forms.Panel();
             ((System.ComponentModel.ISupportInitialize)(this.imgLoading)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pages)).BeginInit();
+            this.flowLayoutPanel2.SuspendLayout();
+            this.panel1.SuspendLayout();
             this.SuspendLayout();
             // 
             // btnCreated
@@ -58,7 +56,7 @@ namespace SUP
             this.btnCreated.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.btnCreated.BackColor = System.Drawing.Color.White;
             this.btnCreated.ForeColor = System.Drawing.Color.Black;
-            this.btnCreated.Location = new System.Drawing.Point(507, 4);
+            this.btnCreated.Location = new System.Drawing.Point(393, 3);
             this.btnCreated.Name = "btnCreated";
             this.btnCreated.Size = new System.Drawing.Size(55, 20);
             this.btnCreated.TabIndex = 62;
@@ -71,7 +69,8 @@ namespace SUP
             this.btnOwned.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.btnOwned.BackColor = System.Drawing.Color.White;
             this.btnOwned.ForeColor = System.Drawing.Color.Black;
-            this.btnOwned.Location = new System.Drawing.Point(566, 4);
+            this.btnOwned.Location = new System.Drawing.Point(338, 3);
+            this.btnOwned.Margin = new System.Windows.Forms.Padding(10, 3, 3, 3);
             this.btnOwned.Name = "btnOwned";
             this.btnOwned.Size = new System.Drawing.Size(49, 20);
             this.btnOwned.TabIndex = 61;
@@ -84,92 +83,17 @@ namespace SUP
             this.txtSearchAddress.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.txtSearchAddress.CausesValidation = false;
-            this.txtSearchAddress.Location = new System.Drawing.Point(42, 4);
+            this.txtSearchAddress.Location = new System.Drawing.Point(454, 3);
+            this.txtSearchAddress.Margin = new System.Windows.Forms.Padding(3, 3, 0, 3);
             this.txtSearchAddress.Name = "txtSearchAddress";
-            this.txtSearchAddress.Size = new System.Drawing.Size(212, 20);
+            this.txtSearchAddress.Size = new System.Drawing.Size(275, 20);
             this.txtSearchAddress.TabIndex = 58;
             this.txtSearchAddress.KeyDown += new System.Windows.Forms.KeyEventHandler(this.SearchAddressKeyDown);
-            // 
-            // btnWorkBench
-            // 
-            this.btnWorkBench.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnWorkBench.BackColor = System.Drawing.Color.White;
-            this.btnWorkBench.ForeColor = System.Drawing.Color.Black;
-            this.btnWorkBench.Location = new System.Drawing.Point(698, 4);
-            this.btnWorkBench.Name = "btnWorkBench";
-            this.btnWorkBench.Size = new System.Drawing.Size(30, 20);
-            this.btnWorkBench.TabIndex = 68;
-            this.btnWorkBench.Text = "⚙️";
-            this.btnWorkBench.UseVisualStyleBackColor = false;
-            this.btnWorkBench.Click += new System.EventHandler(this.ButtonLoadWorkBench);
-            // 
-            // linkLabel1
-            // 
-            this.linkLabel1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.linkLabel1.LinkColor = System.Drawing.SystemColors.GradientActiveCaption;
-            this.linkLabel1.Location = new System.Drawing.Point(358, 4);
-            this.linkLabel1.Name = "linkLabel1";
-            this.linkLabel1.Size = new System.Drawing.Size(98, 21);
-            this.linkLabel1.TabIndex = 71;
-            this.linkLabel1.TabStop = true;
-            this.linkLabel1.Text = "anon";
-            this.linkLabel1.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.linkLabel1.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.MainUserNameClick);
-            // 
-            // btnConnections
-            // 
-            this.btnConnections.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnConnections.BackColor = System.Drawing.Color.White;
-            this.btnConnections.ForeColor = System.Drawing.Color.Black;
-            this.btnConnections.Location = new System.Drawing.Point(664, 4);
-            this.btnConnections.Name = "btnConnections";
-            this.btnConnections.Size = new System.Drawing.Size(30, 20);
-            this.btnConnections.TabIndex = 72;
-            this.btnConnections.Text = "🔑";
-            this.btnConnections.UseVisualStyleBackColor = false;
-            this.btnConnections.Click += new System.EventHandler(this.ButtonLoadConnections);
-            // 
-            // btnHistoryBack
-            // 
-            this.btnHistoryBack.BackColor = System.Drawing.Color.White;
-            this.btnHistoryBack.ForeColor = System.Drawing.Color.Black;
-            this.btnHistoryBack.Location = new System.Drawing.Point(2, 4);
-            this.btnHistoryBack.Name = "btnHistoryBack";
-            this.btnHistoryBack.Size = new System.Drawing.Size(18, 20);
-            this.btnHistoryBack.TabIndex = 74;
-            this.btnHistoryBack.Text = "<";
-            this.btnHistoryBack.UseVisualStyleBackColor = false;
-            this.btnHistoryBack.Click += new System.EventHandler(this.btnHistoryBack_Click);
-            // 
-            // btnHistoryForward
-            // 
-            this.btnHistoryForward.BackColor = System.Drawing.Color.White;
-            this.btnHistoryForward.ForeColor = System.Drawing.Color.Black;
-            this.btnHistoryForward.Location = new System.Drawing.Point(21, 4);
-            this.btnHistoryForward.Name = "btnHistoryForward";
-            this.btnHistoryForward.Size = new System.Drawing.Size(18, 20);
-            this.btnHistoryForward.TabIndex = 75;
-            this.btnHistoryForward.Text = ">";
-            this.btnHistoryForward.UseVisualStyleBackColor = false;
-            this.btnHistoryForward.Click += new System.EventHandler(this.btnHistoryForward_Click);
-            // 
-            // btnMint
-            // 
-            this.btnMint.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnMint.BackColor = System.Drawing.Color.White;
-            this.btnMint.ForeColor = System.Drawing.Color.Black;
-            this.btnMint.Location = new System.Drawing.Point(619, 4);
-            this.btnMint.Name = "btnMint";
-            this.btnMint.Size = new System.Drawing.Size(39, 20);
-            this.btnMint.TabIndex = 76;
-            this.btnMint.Text = "mint";
-            this.btnMint.UseVisualStyleBackColor = false;
-            this.btnMint.Click += new System.EventHandler(this.btnMint_Click);
             // 
             // txtQty
             // 
             this.txtQty.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.txtQty.Location = new System.Drawing.Point(607, 95);
+            this.txtQty.Location = new System.Drawing.Point(619, 157);
             this.txtQty.Name = "txtQty";
             this.txtQty.Size = new System.Drawing.Size(43, 20);
             this.txtQty.TabIndex = 77;
@@ -179,26 +103,13 @@ namespace SUP
             // txtLast
             // 
             this.txtLast.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.txtLast.Location = new System.Drawing.Point(259, 4);
+            this.txtLast.Location = new System.Drawing.Point(233, 3);
             this.txtLast.Name = "txtLast";
             this.txtLast.Size = new System.Drawing.Size(43, 20);
             this.txtLast.TabIndex = 78;
             this.txtLast.Text = "0";
             this.txtLast.TextChanged += new System.EventHandler(this.txtLast_TextChanged);
             this.txtLast.KeyDown += new System.Windows.Forms.KeyEventHandler(this.txtLast_KeyDown);
-            // 
-            // btnLive
-            // 
-            this.btnLive.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnLive.BackColor = System.Drawing.Color.White;
-            this.btnLive.ForeColor = System.Drawing.Color.Black;
-            this.btnLive.Location = new System.Drawing.Point(462, 4);
-            this.btnLive.Name = "btnLive";
-            this.btnLive.Size = new System.Drawing.Size(39, 20);
-            this.btnLive.TabIndex = 79;
-            this.btnLive.Text = "live";
-            this.btnLive.UseVisualStyleBackColor = false;
-            this.btnLive.Click += new System.EventHandler(this.btnLive_Click);
             // 
             // tmrSearchMemoryPool
             // 
@@ -211,9 +122,9 @@ namespace SUP
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.imgLoading.ImageLocation = "";
-            this.imgLoading.Location = new System.Drawing.Point(0, 28);
+            this.imgLoading.Location = new System.Drawing.Point(3, 3);
             this.imgLoading.Name = "imgLoading";
-            this.imgLoading.Size = new System.Drawing.Size(730, 515);
+            this.imgLoading.Size = new System.Drawing.Size(735, 492);
             this.imgLoading.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
             this.imgLoading.TabIndex = 81;
             this.imgLoading.TabStop = false;
@@ -225,24 +136,25 @@ namespace SUP
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.flowLayoutPanel1.BackColor = System.Drawing.SystemColors.ActiveCaptionText;
-            this.flowLayoutPanel1.Location = new System.Drawing.Point(0, 28);
+            this.flowLayoutPanel1.Location = new System.Drawing.Point(0, 0);
             this.flowLayoutPanel1.Margin = new System.Windows.Forms.Padding(0);
             this.flowLayoutPanel1.Name = "flowLayoutPanel1";
-            this.flowLayoutPanel1.Size = new System.Drawing.Size(730, 470);
+            this.flowLayoutPanel1.Padding = new System.Windows.Forms.Padding(3, 30, 0, 0);
+            this.flowLayoutPanel1.Size = new System.Drawing.Size(738, 498);
             this.flowLayoutPanel1.TabIndex = 82;
             this.flowLayoutPanel1.DragDrop += new System.Windows.Forms.DragEventHandler(this.flowLayoutPanel1_DragDrop);
             this.flowLayoutPanel1.DragEnter += new System.Windows.Forms.DragEventHandler(this.flowLayoutPanel1_DragEnter);
+            this.flowLayoutPanel1.Paint += new System.Windows.Forms.PaintEventHandler(this.flowLayoutPanel1_Paint);
             // 
             // pages
             // 
-            this.pages.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
             this.pages.AutoSize = false;
-            this.pages.BackColor = System.Drawing.SystemColors.Control;
+            this.pages.BackColor = System.Drawing.SystemColors.InactiveCaptionText;
+            this.pages.Dock = System.Windows.Forms.DockStyle.Bottom;
             this.pages.LargeChange = 12;
             this.pages.Location = new System.Drawing.Point(0, 498);
             this.pages.Name = "pages";
-            this.pages.Size = new System.Drawing.Size(729, 45);
+            this.pages.Size = new System.Drawing.Size(738, 39);
             this.pages.TabIndex = 84;
             this.pages.TickStyle = System.Windows.Forms.TickStyle.Both;
             this.pages.Scroll += new System.EventHandler(this.pages_Scroll);
@@ -253,7 +165,7 @@ namespace SUP
             // 
             this.txtTotal.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.txtTotal.Enabled = false;
-            this.txtTotal.Location = new System.Drawing.Point(308, 4);
+            this.txtTotal.Location = new System.Drawing.Point(282, 3);
             this.txtTotal.Name = "txtTotal";
             this.txtTotal.Size = new System.Drawing.Size(43, 20);
             this.txtTotal.TabIndex = 85;
@@ -263,28 +175,58 @@ namespace SUP
             // 
             this.doubleClickTimer.Tick += new System.EventHandler(this.doubleClickTimer_Tick);
             // 
+            // flowLayoutPanel2
+            // 
+            this.flowLayoutPanel2.AutoSize = true;
+            this.flowLayoutPanel2.BackColor = System.Drawing.SystemColors.ActiveCaptionText;
+            this.flowLayoutPanel2.Controls.Add(this.linkLabel1);
+            this.flowLayoutPanel2.Controls.Add(this.txtLast);
+            this.flowLayoutPanel2.Controls.Add(this.txtTotal);
+            this.flowLayoutPanel2.Controls.Add(this.btnOwned);
+            this.flowLayoutPanel2.Controls.Add(this.btnCreated);
+            this.flowLayoutPanel2.Controls.Add(this.txtSearchAddress);
+            this.flowLayoutPanel2.Dock = System.Windows.Forms.DockStyle.Top;
+            this.flowLayoutPanel2.Location = new System.Drawing.Point(0, 0);
+            this.flowLayoutPanel2.Name = "flowLayoutPanel2";
+            this.flowLayoutPanel2.Size = new System.Drawing.Size(738, 30);
+            this.flowLayoutPanel2.TabIndex = 86;
+            this.flowLayoutPanel2.SizeChanged += new System.EventHandler(this.flowLayoutPanel2_SizeChanged);
+            // 
+            // linkLabel1
+            // 
+            this.linkLabel1.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.linkLabel1.LinkColor = System.Drawing.SystemColors.GradientActiveCaption;
+            this.linkLabel1.Location = new System.Drawing.Point(3, 0);
+            this.linkLabel1.Name = "linkLabel1";
+            this.linkLabel1.Padding = new System.Windows.Forms.Padding(10, 0, 0, 0);
+            this.linkLabel1.Size = new System.Drawing.Size(224, 30);
+            this.linkLabel1.TabIndex = 71;
+            this.linkLabel1.TabStop = true;
+            this.linkLabel1.Text = "anon";
+            this.linkLabel1.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.linkLabel1.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.MainUserNameClick);
+            // 
+            // panel1
+            // 
+            this.panel1.Controls.Add(this.flowLayoutPanel1);
+            this.panel1.Controls.Add(this.imgLoading);
+            this.panel1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.panel1.Location = new System.Drawing.Point(0, 0);
+            this.panel1.Name = "panel1";
+            this.panel1.Size = new System.Drawing.Size(738, 498);
+            this.panel1.TabIndex = 88;
+            // 
             // ObjectBrowser
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(730, 541);
+            this.BackColor = System.Drawing.SystemColors.ActiveCaptionText;
+            this.ClientSize = new System.Drawing.Size(738, 537);
+            this.Controls.Add(this.flowLayoutPanel2);
+            this.Controls.Add(this.panel1);
             this.Controls.Add(this.pages);
-            this.Controls.Add(this.txtTotal);
-            this.Controls.Add(this.txtLast);
             this.Controls.Add(this.txtQty);
-            this.Controls.Add(this.btnLive);
-            this.Controls.Add(this.btnMint);
-            this.Controls.Add(this.btnHistoryForward);
-            this.Controls.Add(this.btnHistoryBack);
-            this.Controls.Add(this.btnConnections);
-            this.Controls.Add(this.linkLabel1);
-            this.Controls.Add(this.btnWorkBench);
-            this.Controls.Add(this.btnCreated);
-            this.Controls.Add(this.btnOwned);
-            this.Controls.Add(this.txtSearchAddress);
-            this.Controls.Add(this.flowLayoutPanel1);
-            this.Controls.Add(this.imgLoading);
-            this.MinimumSize = new System.Drawing.Size(709, 558);
+            this.MinimumSize = new System.Drawing.Size(276, 515);
             this.Name = "ObjectBrowser";
             this.RightToLeft = System.Windows.Forms.RightToLeft.No;
             this.Text = "Sup!? Object Browser";
@@ -292,6 +234,9 @@ namespace SUP
             this.Resize += new System.EventHandler(this.ObjectBrowser_Resize);
             ((System.ComponentModel.ISupportInitialize)(this.imgLoading)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pages)).EndInit();
+            this.flowLayoutPanel2.ResumeLayout(false);
+            this.flowLayoutPanel2.PerformLayout();
+            this.panel1.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -301,20 +246,16 @@ namespace SUP
         private System.Windows.Forms.Button btnCreated;
         private System.Windows.Forms.Button btnOwned;
         private System.Windows.Forms.TextBox txtSearchAddress;
-        private System.Windows.Forms.Button btnWorkBench;
-        private System.Windows.Forms.LinkLabel linkLabel1;
-        private System.Windows.Forms.Button btnConnections;
-        private System.Windows.Forms.Button btnHistoryBack;
-        private System.Windows.Forms.Button btnHistoryForward;
-        private System.Windows.Forms.Button btnMint;
         private System.Windows.Forms.TextBox txtQty;
         private System.Windows.Forms.TextBox txtLast;
-        private System.Windows.Forms.Button btnLive;
         private System.Windows.Forms.Timer tmrSearchMemoryPool;
         private System.Windows.Forms.PictureBox imgLoading;
         private System.Windows.Forms.FlowLayoutPanel flowLayoutPanel1;
         private System.Windows.Forms.TrackBar pages;
         private System.Windows.Forms.TextBox txtTotal;
         private System.Windows.Forms.Timer doubleClickTimer;
+        private System.Windows.Forms.FlowLayoutPanel flowLayoutPanel2;
+        private System.Windows.Forms.LinkLabel linkLabel1;
+        private System.Windows.Forms.Panel panel1;
     }
 }

@@ -31,6 +31,7 @@ namespace SUP.P2FK
     public class OBJState
     {
         public int Id { get; set; }
+        public string TransactionId { get; set; }
         public string URN { get; set; }
         public string URI { get; set; }
         public string Image { get; set; }

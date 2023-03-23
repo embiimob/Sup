@@ -122,6 +122,19 @@ namespace SUP
                     }
 
 
+                    if (ObjectImage.ImageLocation != null)
+                    {
+                        try
+                        {
+                            string directoryPath = Path.GetDirectoryName(ObjectImage.ImageLocation.Replace(@"/",@"\"));
+                            Directory.Delete(directoryPath, true);
+                        }
+                        catch
+                        {
+                            // Handle any exceptions thrown during directory deletion
+                        }
+                    }
+
                     Root[] root = Root.GetRootsByAddress(ObjectAddress.Text, "good-user", "better-password", @"http://127.0.0.1:18332");
 
                     foreach (Root rootItem in root)
@@ -172,8 +185,7 @@ namespace SUP
                         catch { }
 
                         Directory.Delete(@"root\" + ObjectAddress.Text, true);
-
-                        
+                        if(ObjectId.Text != null) { try { Directory.Delete(@"root\" + ObjectId.Text, true); } catch { } }                        
 
                     }
                     catch { }
