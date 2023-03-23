@@ -12,18 +12,22 @@ P2FK was directly inspired by the satoshi uploader  see --> https://cirosantilli
 ## **Installation**
 
 1. Download the Sup.v0.1.32-beta.zip file
-2. Create a folder on your **fastest** disk drive with at least **700GB** free (it will be storing the bitcoin prod and testnet blockchains)
+2. Create a folder on your **fastest** disk drive with at least **80GB** free (it will be storing the bitcoin testnet blockchain)
 3. Unzip all contents into the folder
 4. Create a shortcut to SUP.exe and launch
 
-**You will need to sync two blockchains to perform your first Sup!? object search**
+**You will need to sync a blockchain to perform your first Sup!? object search**
 1. Click the key button
-2. Launch a full bitcoin production node AND a full bitcoin testnet node using the buttons provided
-3. Wait until testnet is fully synced and production has synced passed at least 2014. ( this part could take several hours )
+2. Launch a full bitcoin testnet mainchain node using the button provided
+3. Wait until testnet is fully synced. ( this part will take several hours )
 4. Type #flowersofwar in the main search box and hit enter
 <br />
 <br /> 
 
+## **NOTICE**
+Sup!? is an experimental tool made by adults for #adults. Sup!? is not suitable for children. 
+<br />
+<br />
 ## **Search Examples**
 
 ### **muVrFVk3ErfrnmWosLF4WixxRtDKfMx9bs**
@@ -76,9 +80,6 @@ To edit an unlocked object, click on the magnifying glass and enter the object a
 Click the live button and watch in realtime as other Sup!? users mint their objects. All new objects will be added to the top of your browser window pushing the older objects down the screen. A maximized Sup!? monitor that shows a constant stream of new objects makes for a great display. Sup!? montiors the in-memory pool allowing it to display new objects before they are confirmed in the blockchain. Your Sup!? objects will appear in every curently live Sup!? montior around the world in about 10 - 30 seconds after you have etched the object's metadata. All blockhains included with this experiment are monitored for new objects if they are running and fully synced.  
 <br />
 With live monitoring enabled, you never know what might pop into the window. The damage is limited to a thumbnail image and what can fit in a small description text box. Objects that are discovered in live mode are not fully inspected for safety reasons. You can delete one directly from the live preview panel by clicking on the object's small trash icon. This will remove any trace of it from your system. If you are still concerned, clearing all Sup!? caches will without a doubt remove it.
-
-## **NOTICE**
-Sup!? is an experiment in decentralization. It was made for #adults. The Sup!? experiment is not suitable for children. 
 <br />
 <br />
 ## **Official / Unofficial Registration Indicator**
