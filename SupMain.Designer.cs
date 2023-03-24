@@ -80,6 +80,7 @@
             this.splitContainer1.SplitterDistance = 359;
             this.splitContainer1.SplitterWidth = 10;
             this.splitContainer1.TabIndex = 0;
+            this.splitContainer1.DoubleClick += new System.EventHandler(this.splitContainer1_DoubleClick);
             // 
             // splitContainer2
             // 

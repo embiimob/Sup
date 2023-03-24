@@ -173,7 +173,7 @@
             // 
             // btnPurgeFound
             // 
-            this.btnPurgeFound.Location = new System.Drawing.Point(232, 299);
+            this.btnPurgeFound.Location = new System.Drawing.Point(144, 299);
             this.btnPurgeFound.Name = "btnPurgeFound";
             this.btnPurgeFound.Size = new System.Drawing.Size(63, 23);
             this.btnPurgeFound.TabIndex = 159;
@@ -183,7 +183,7 @@
             // 
             // brnPurgeMute
             // 
-            this.brnPurgeMute.Location = new System.Drawing.Point(163, 299);
+            this.brnPurgeMute.Location = new System.Drawing.Point(75, 299);
             this.brnPurgeMute.Name = "brnPurgeMute";
             this.brnPurgeMute.Size = new System.Drawing.Size(63, 23);
             this.brnPurgeMute.TabIndex = 158;
@@ -193,7 +193,7 @@
             // 
             // btnPurgeBlock
             // 
-            this.btnPurgeBlock.Location = new System.Drawing.Point(94, 299);
+            this.btnPurgeBlock.Location = new System.Drawing.Point(6, 299);
             this.btnPurgeBlock.Name = "btnPurgeBlock";
             this.btnPurgeBlock.Size = new System.Drawing.Size(63, 23);
             this.btnPurgeBlock.TabIndex = 157;
@@ -384,11 +384,11 @@
             // 
             // btnPurge
             // 
-            this.btnPurge.Location = new System.Drawing.Point(6, 299);
+            this.btnPurge.Location = new System.Drawing.Point(220, 299);
             this.btnPurge.Name = "btnPurge";
             this.btnPurge.Size = new System.Drawing.Size(82, 23);
             this.btnPurge.TabIndex = 129;
-            this.btnPurge.Text = "purge cache";
+            this.btnPurge.Text = "purge all";
             this.btnPurge.UseVisualStyleBackColor = true;
             this.btnPurge.Click += new System.EventHandler(this.btnPurge_Click);
             // 
@@ -441,7 +441,7 @@
             this.label15.Name = "label15";
             this.label15.Size = new System.Drawing.Size(210, 13);
             this.label15.TabIndex = 124;
-            this.label15.Text = "Sup!? Object Browser  v0.1.32-beta";
+            this.label15.Text = "Sup!? Object Browser  v0.1.33-beta";
             // 
             // label14
             // 

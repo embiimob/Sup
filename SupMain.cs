@@ -1123,5 +1123,18 @@ namespace SUP
         {
 
         }
+
+        private void splitContainer1_DoubleClick(object sender, EventArgs e)
+        {
+            if (splitContainer1.Panel1Collapsed)
+            {
+                splitContainer1.Panel1Collapsed = false;
+            }
+            else
+            {
+
+                splitContainer1.Panel1Collapsed = true;
+            }
+        }
     }
 }
