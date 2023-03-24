@@ -45,6 +45,7 @@ namespace SUP.P2FK
         public string PKY { get; set; }
         public List<string> Creators { get; set; }
         public int ProcessHeight { get; set; }
+        public DateTime CreatedDate { get; set; }
         public DateTime ChangeDate { get; set; }
         //ensures levelDB is thread safely
         private readonly static object SupLocker = new object();
@@ -143,10 +144,10 @@ namespace SUP.P2FK
                                     }
 
                                 }
-
+                              
                             }
                             else { profileState.Creators.Add(profileaddress); }
-
+                            profileState.CreatedDate = transaction.BlockDate;
                             profileState.ChangeDate = transaction.BlockDate;
                             profileinspector.cre = null;
                         }
@@ -182,7 +183,7 @@ namespace SUP.P2FK
 
                                 }
                                 profileState.ChangeDate = transaction.BlockDate;
-
+                                
                             }
 
                             if (profileState.ChangeDate == transaction.BlockDate)

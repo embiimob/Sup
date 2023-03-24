@@ -68,6 +68,7 @@
             // lblIMGBlockDate
             // 
             this.lblIMGBlockDate.AutoSize = true;
+            this.lblIMGBlockDate.ForeColor = System.Drawing.Color.White;
             this.lblIMGBlockDate.Location = new System.Drawing.Point(513, 174);
             this.lblIMGBlockDate.Name = "lblIMGBlockDate";
             this.lblIMGBlockDate.Size = new System.Drawing.Size(0, 13);
@@ -87,6 +88,7 @@
             // 
             this.lblCost.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.lblCost.AutoSize = true;
+            this.lblCost.ForeColor = System.Drawing.Color.White;
             this.lblCost.Location = new System.Drawing.Point(730, 529);
             this.lblCost.Name = "lblCost";
             this.lblCost.Size = new System.Drawing.Size(0, 13);
@@ -132,6 +134,7 @@
             // lblObjectStatus
             // 
             this.lblObjectStatus.AutoSize = true;
+            this.lblObjectStatus.ForeColor = System.Drawing.Color.White;
             this.lblObjectStatus.Location = new System.Drawing.Point(193, 32);
             this.lblObjectStatus.Name = "lblObjectStatus";
             this.lblObjectStatus.Size = new System.Drawing.Size(0, 13);
@@ -200,6 +203,7 @@
             // 
             this.lblRemainingChars.AutoSize = true;
             this.lblRemainingChars.Font = new System.Drawing.Font("Microsoft Sans Serif", 18F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblRemainingChars.ForeColor = System.Drawing.Color.White;
             this.lblRemainingChars.Location = new System.Drawing.Point(184, 139);
             this.lblRemainingChars.Name = "lblRemainingChars";
             this.lblRemainingChars.Size = new System.Drawing.Size(52, 29);
@@ -469,6 +473,7 @@
             // 
             this.txtOBJJSON.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.txtOBJJSON.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.txtOBJJSON.ForeColor = System.Drawing.Color.White;
             this.txtOBJJSON.Location = new System.Drawing.Point(452, 532);
             this.txtOBJJSON.Multiline = true;
             this.txtOBJJSON.Name = "txtOBJJSON";
@@ -480,6 +485,7 @@
             // 
             this.txtOBJP2FK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.txtOBJP2FK.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.txtOBJP2FK.ForeColor = System.Drawing.Color.White;
             this.txtOBJP2FK.Location = new System.Drawing.Point(599, 532);
             this.txtOBJP2FK.Multiline = true;
             this.txtOBJP2FK.Name = "txtOBJP2FK";
@@ -491,6 +497,7 @@
             // 
             this.txtAddressListJSON.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.txtAddressListJSON.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.txtAddressListJSON.ForeColor = System.Drawing.Color.White;
             this.txtAddressListJSON.Location = new System.Drawing.Point(754, 532);
             this.txtAddressListJSON.Multiline = true;
             this.txtAddressListJSON.Name = "txtAddressListJSON";

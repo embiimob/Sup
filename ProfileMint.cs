@@ -23,6 +23,7 @@ using System.Net;
 using System.Security.Cryptography;
 using System.Text;
 using BitcoinNET.RPCClient;
+using System.Windows.Documents;
 
 namespace SUP
 {
@@ -1135,8 +1136,7 @@ namespace SUP
             PROState foundObject = PROState.GetProfileByAddress(address, "good-user", "better-password", "http://127.0.0.1:18332");
             if (foundObject.URN != null)
             {
-                lblObjectStatus.Text = "last seen:[" + foundObject.ChangeDate.ToString("MM/dd/yyyy hh:mm:ss") + "]";
-
+                lblObjectStatus.Text = "created date: [" + foundObject.CreatedDate.ToString("MM / dd / yyyy hh: mm: ss") + "]  last seen:[" + foundObject.ChangeDate.ToString("MM/dd/yyyy hh:mm:ss") + "]";
 
                 if (lblObjectStatus.Text.Contains("Monday, January 1, 0001"))
                 {
@@ -1406,7 +1406,7 @@ namespace SUP
 
             if (PRO.URN != null)
             {
-                lblObjectStatus.Text = "last seen:[" + PRO.ChangeDate.ToString("MM/dd/yyyy hh:mm:ss") + "]";
+                lblObjectStatus.Text = "created date: [" + PRO.CreatedDate.ToString("MM / dd / yyyy hh: mm: ss") + "]  last seen:[" + PRO.ChangeDate.ToString("MM/dd/yyyy hh:mm:ss") + "]";
                 lblObjectStatus.Text = lblObjectStatus.Text.Replace("Monday, January 1, 0001", " unconfirmed ");
 
             }

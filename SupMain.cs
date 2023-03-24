@@ -1118,5 +1118,10 @@ namespace SUP
         {
             profileBIO.Text = richTextBox1.Rtf;
         }
+
+        private void profileCreatedDate_Click(object sender, EventArgs e)
+        {
+
+        }
     }
 }
