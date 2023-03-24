@@ -32,12 +32,14 @@ namespace SUP
         private QrEncoder encoder = new QrEncoder();
         private GraphicsRenderer renderer = new GraphicsRenderer(new FixedModuleSize(2, QuietZoneModules.Two));
         private bool ismint = false;
+        private string searchAddress;
+        Regex regexTransactionId = new Regex(@"\b[0-9a-f]{64}\b");
 
 
-
-        public ProfileMint()
+        public ProfileMint(string address = "")
         {
             InitializeComponent();
+            searchAddress = address;
         }
 
 
@@ -222,7 +224,7 @@ namespace SUP
 
 
 
-        Regex regexTransactionId = new Regex(@"\b[0-9a-f]{64}\b");
+      
 
         private void txtIMG_TextChanged(object sender, EventArgs e)
         {
@@ -335,6 +337,10 @@ namespace SUP
 
         private void ObjectMint_Load(object sender, EventArgs e)
         {
+            if (searchAddress != "")
+            {
+                LoadFormByAddress(searchAddress);                
+            }
         }
 
         private void txtDescription_TextChanged(object sender, EventArgs e)
@@ -1165,25 +1171,28 @@ namespace SUP
 
                 try
                 {
-                    // Iterate through all attributes of foundObject and create a button for each
-                    foreach (var attrib in foundObject.URL)
+                    if (foundObject.URL != null)
                     {
-                        // Create a new button with the attribute key and value separated by ':'
-                        Button attribButton = new Button();
-                        attribButton.ForeColor = Color.White;
-                        attribButton.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
-
-                        attribButton.AutoSize = true;
-                        attribButton.Text = attrib.Key + ":" + attrib.Value;
-
-                        // Add an event handler to the button that removes it from the flowAttribute panel when clicked
-                        attribButton.Click += new EventHandler((sender2, e2) =>
+                        // Iterate through all attributes of foundObject and create a button for each
+                        foreach (var attrib in foundObject.URL)
                         {
-                            flowURL.Controls.Remove(attribButton);
-                        });
+                            // Create a new button with the attribute key and value separated by ':'
+                            Button attribButton = new Button();
+                            attribButton.ForeColor = Color.White;
+                            attribButton.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
 
-                        // Add the button to the flowAttribute panel
-                        flowURL.Controls.Add(attribButton);
+                            attribButton.AutoSize = true;
+                            attribButton.Text = attrib.Key + ":" + attrib.Value;
+
+                            // Add an event handler to the button that removes it from the flowAttribute panel when clicked
+                            attribButton.Click += new EventHandler((sender2, e2) =>
+                            {
+                                flowURL.Controls.Remove(attribButton);
+                            });
+
+                            // Add the button to the flowAttribute panel
+                            flowURL.Controls.Add(attribButton);
+                        }
                     }
 
                 }
@@ -1231,41 +1240,44 @@ namespace SUP
 
                 try
                 {
-                    // Iterate through all attributes of foundObject and create a button for each
-                    foreach (KeyValuePair<string, string> attrib in foundObject.Location)
+                    if (foundObject.Location != null)
                     {
-                        // Split the key and value and create a new button with the attribute key and value separated by ':'
-                        string buttonText = attrib.Key + ":" + attrib.Value.ToString();
-                        Button attribButton = new Button();
-                        attribButton.AutoSize = true;
-                        attribButton.Text = buttonText;
-                        attribButton.ForeColor = Color.White;
-                        attribButton.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
-
-                        // Add an event handler to the button that removes it from the flowAttribute panel when clicked
-                        attribButton.Click += new EventHandler((sender2, e2) =>
+                        // Iterate through all attributes of foundObject and create a button for each
+                        foreach (KeyValuePair<string, string> attrib in foundObject.Location)
                         {
-                            flowLocation.Controls.Remove(attribButton);
-                        });
+                            // Split the key and value and create a new button with the attribute key and value separated by ':'
+                            string buttonText = attrib.Key + ":" + attrib.Value.ToString();
+                            Button attribButton = new Button();
+                            attribButton.AutoSize = true;
+                            attribButton.Text = buttonText;
+                            attribButton.ForeColor = Color.White;
+                            attribButton.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
 
-                        // Add an event handler to the button that opens the ObjectBrowser form on right click using the key value
-                        attribButton.MouseUp += new MouseEventHandler((sender2, e2) =>
-                        {
-                            if (e2.Button == MouseButtons.Right)
-                            {
-                                string[] keyValuePair = attribButton.Text.Split(':');
-                                string key = keyValuePair[0].Trim();
-                                ObjectBrowser form = new ObjectBrowser(key);
-                                form.Show();
-                            }
-                            else if (e2.Button == MouseButtons.Left)
+                            // Add an event handler to the button that removes it from the flowAttribute panel when clicked
+                            attribButton.Click += new EventHandler((sender2, e2) =>
                             {
                                 flowLocation.Controls.Remove(attribButton);
-                            }
-                        });
+                            });
 
-                        // Add the button to the flowOwners panel
-                        flowLocation.Controls.Add(attribButton);
+                            // Add an event handler to the button that opens the ObjectBrowser form on right click using the key value
+                            attribButton.MouseUp += new MouseEventHandler((sender2, e2) =>
+                            {
+                                if (e2.Button == MouseButtons.Right)
+                                {
+                                    string[] keyValuePair = attribButton.Text.Split(':');
+                                    string key = keyValuePair[0].Trim();
+                                    ObjectBrowser form = new ObjectBrowser(key);
+                                    form.Show();
+                                }
+                                else if (e2.Button == MouseButtons.Left)
+                                {
+                                    flowLocation.Controls.Remove(attribButton);
+                                }
+                            });
+
+                            // Add the button to the flowOwners panel
+                            flowLocation.Controls.Add(attribButton);
+                        }
                     }
 
                 }

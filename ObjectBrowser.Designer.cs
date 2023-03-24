@@ -43,7 +43,7 @@ namespace SUP
             this.txtTotal = new System.Windows.Forms.TextBox();
             this.doubleClickTimer = new System.Windows.Forms.Timer(this.components);
             this.flowLayoutPanel2 = new System.Windows.Forms.FlowLayoutPanel();
-            this.linkLabel1 = new System.Windows.Forms.LinkLabel();
+            this.profileURN = new System.Windows.Forms.LinkLabel();
             this.panel1 = new System.Windows.Forms.Panel();
             ((System.ComponentModel.ISupportInitialize)(this.imgLoading)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pages)).BeginInit();
@@ -56,7 +56,7 @@ namespace SUP
             this.btnCreated.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.btnCreated.BackColor = System.Drawing.Color.White;
             this.btnCreated.ForeColor = System.Drawing.Color.Black;
-            this.btnCreated.Location = new System.Drawing.Point(393, 3);
+            this.btnCreated.Location = new System.Drawing.Point(401, 3);
             this.btnCreated.Name = "btnCreated";
             this.btnCreated.Size = new System.Drawing.Size(55, 20);
             this.btnCreated.TabIndex = 62;
@@ -69,7 +69,7 @@ namespace SUP
             this.btnOwned.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.btnOwned.BackColor = System.Drawing.Color.White;
             this.btnOwned.ForeColor = System.Drawing.Color.Black;
-            this.btnOwned.Location = new System.Drawing.Point(338, 3);
+            this.btnOwned.Location = new System.Drawing.Point(346, 3);
             this.btnOwned.Margin = new System.Windows.Forms.Padding(10, 3, 3, 3);
             this.btnOwned.Name = "btnOwned";
             this.btnOwned.Size = new System.Drawing.Size(49, 20);
@@ -83,10 +83,10 @@ namespace SUP
             this.txtSearchAddress.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.txtSearchAddress.CausesValidation = false;
-            this.txtSearchAddress.Location = new System.Drawing.Point(454, 3);
+            this.txtSearchAddress.Location = new System.Drawing.Point(462, 3);
             this.txtSearchAddress.Margin = new System.Windows.Forms.Padding(3, 3, 0, 3);
             this.txtSearchAddress.Name = "txtSearchAddress";
-            this.txtSearchAddress.Size = new System.Drawing.Size(275, 20);
+            this.txtSearchAddress.Size = new System.Drawing.Size(267, 20);
             this.txtSearchAddress.TabIndex = 58;
             this.txtSearchAddress.KeyDown += new System.Windows.Forms.KeyEventHandler(this.SearchAddressKeyDown);
             // 
@@ -103,7 +103,7 @@ namespace SUP
             // txtLast
             // 
             this.txtLast.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.txtLast.Location = new System.Drawing.Point(233, 3);
+            this.txtLast.Location = new System.Drawing.Point(241, 3);
             this.txtLast.Name = "txtLast";
             this.txtLast.Size = new System.Drawing.Size(43, 20);
             this.txtLast.TabIndex = 78;
@@ -144,7 +144,6 @@ namespace SUP
             this.flowLayoutPanel1.TabIndex = 82;
             this.flowLayoutPanel1.DragDrop += new System.Windows.Forms.DragEventHandler(this.flowLayoutPanel1_DragDrop);
             this.flowLayoutPanel1.DragEnter += new System.Windows.Forms.DragEventHandler(this.flowLayoutPanel1_DragEnter);
-            this.flowLayoutPanel1.Paint += new System.Windows.Forms.PaintEventHandler(this.flowLayoutPanel1_Paint);
             // 
             // pages
             // 
@@ -165,7 +164,7 @@ namespace SUP
             // 
             this.txtTotal.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.txtTotal.Enabled = false;
-            this.txtTotal.Location = new System.Drawing.Point(282, 3);
+            this.txtTotal.Location = new System.Drawing.Point(290, 3);
             this.txtTotal.Name = "txtTotal";
             this.txtTotal.Size = new System.Drawing.Size(43, 20);
             this.txtTotal.TabIndex = 85;
@@ -179,7 +178,7 @@ namespace SUP
             // 
             this.flowLayoutPanel2.AutoSize = true;
             this.flowLayoutPanel2.BackColor = System.Drawing.SystemColors.ActiveCaptionText;
-            this.flowLayoutPanel2.Controls.Add(this.linkLabel1);
+            this.flowLayoutPanel2.Controls.Add(this.profileURN);
             this.flowLayoutPanel2.Controls.Add(this.txtLast);
             this.flowLayoutPanel2.Controls.Add(this.txtTotal);
             this.flowLayoutPanel2.Controls.Add(this.btnOwned);
@@ -192,19 +191,19 @@ namespace SUP
             this.flowLayoutPanel2.TabIndex = 86;
             this.flowLayoutPanel2.SizeChanged += new System.EventHandler(this.flowLayoutPanel2_SizeChanged);
             // 
-            // linkLabel1
+            // profileURN
             // 
-            this.linkLabel1.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.linkLabel1.LinkColor = System.Drawing.SystemColors.GradientActiveCaption;
-            this.linkLabel1.Location = new System.Drawing.Point(3, 0);
-            this.linkLabel1.Name = "linkLabel1";
-            this.linkLabel1.Padding = new System.Windows.Forms.Padding(10, 0, 0, 0);
-            this.linkLabel1.Size = new System.Drawing.Size(224, 30);
-            this.linkLabel1.TabIndex = 71;
-            this.linkLabel1.TabStop = true;
-            this.linkLabel1.Text = "anon";
-            this.linkLabel1.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.linkLabel1.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.MainUserNameClick);
+            this.profileURN.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.profileURN.LinkColor = System.Drawing.SystemColors.GradientActiveCaption;
+            this.profileURN.Location = new System.Drawing.Point(3, 0);
+            this.profileURN.Name = "profileURN";
+            this.profileURN.Padding = new System.Windows.Forms.Padding(10, 0, 0, 0);
+            this.profileURN.Size = new System.Drawing.Size(232, 30);
+            this.profileURN.TabIndex = 71;
+            this.profileURN.TabStop = true;
+            this.profileURN.Text = "anon";
+            this.profileURN.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.profileURN.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.MainUserNameClick);
             // 
             // panel1
             // 
@@ -255,7 +254,7 @@ namespace SUP
         private System.Windows.Forms.TextBox txtTotal;
         private System.Windows.Forms.Timer doubleClickTimer;
         private System.Windows.Forms.FlowLayoutPanel flowLayoutPanel2;
-        private System.Windows.Forms.LinkLabel linkLabel1;
         private System.Windows.Forms.Panel panel1;
+        public System.Windows.Forms.LinkLabel profileURN;
     }
 }

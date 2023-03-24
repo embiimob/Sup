@@ -4,16 +4,15 @@ using NBitcoin;
 using SUP.P2FK;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
 using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Net;
-using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Diagnostics;
+using System.Reflection;
+using System.Text.RegularExpressions;
 
 namespace SUP
 {
@@ -32,6 +31,7 @@ namespace SUP
         private bool ltcActive;
         private bool dogActive;
         private RichTextBox richTextBox1;
+        ObjectBrowserControl OBcontrol = new ObjectBrowserControl();
 
         public SupMain()
         {
@@ -40,12 +40,100 @@ namespace SUP
 
         private void SupMaincs_Load(object sender, EventArgs e)
         {
-            ObjectBrowserControl control = new ObjectBrowserControl();
+           
 
-            control.Dock = DockStyle.Fill;
+            OBcontrol.Dock = DockStyle.Fill;
+            OBcontrol.ProfileURNChanged += OBControl_ProfileURNChanged;
 
-           splitContainer1.Panel2.Controls.Add(control);
+            splitContainer1.Panel2.Controls.Add(OBcontrol);
             
+        }
+
+        private void OBControl_ProfileURNChanged(object sender, EventArgs e)
+        {
+            if (sender is ObjectBrowserControl objectBrowserControl)
+            {
+                var objectBrowserForm = objectBrowserControl.Controls[0].Controls[0] as ObjectBrowser;
+                if (objectBrowserForm != null)
+                {
+
+                    profileURN.Links[0].LinkData = objectBrowserForm.profileURN.Links[0].LinkData;
+                    profileURN.Text = objectBrowserForm.profileURN.Text;
+                    profileURN.Enabled = true;
+                    btnBlock.Enabled = true;
+                    btnFollow.Enabled = true;
+                    btnMute.Enabled = true;
+                    btnPrivateMessage.Enabled = true;
+                    btnPublicMessage.Enabled = true;
+                    btnRefresh.Enabled = true;
+                    MakeActiveProfile(objectBrowserForm.profileURN.Links[0].LinkData.ToString());
+
+                }
+            }
+        }
+
+        private void MakeActiveProfile(string address)
+        {
+            Regex regexTransactionId = new Regex(@"\b[0-9a-f]{64}\b");
+            PROState activeProfile = PROState.GetProfileByAddress(address,"good-user","better-password", @"http://127.0.0.1:18332");
+
+            profileBIO.Text = activeProfile.Bio;
+            profileCreatedDate.Text = "since: " + activeProfile.CreatedDate.ToString("MM/dd/yyyy hh:mm:ss tt");
+
+            string imgurn = "";
+
+            if (activeProfile.Image != "")
+            {
+                imgurn = activeProfile.Image;
+
+                if (!activeProfile.Image.ToLower().StartsWith("http"))
+                {
+                    imgurn = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + @"\root\" + activeProfile.Image.Replace("BTC:", "").Replace("MZC:", "").Replace("LTC:", "").Replace("DOG:", "").Replace("IPFS:", "").Replace("btc:", "").Replace("mzc:", "").Replace("ltc:", "").Replace("dog:", "").Replace("ipfs:", "").Replace(@"/", @"\");
+
+                    if (activeProfile.Image.ToLower().StartsWith("ipfs:")) { imgurn = imgurn.Replace(@"\root\", @"\ipfs\"); }
+                }
+            }
+            
+            List<string> allowedExtensions = new List<string> { ".bmp", ".gif", ".ico", ".jpeg", ".jpg", ".png", ".tif", ".tiff", "" };
+            string extension = Path.GetExtension(imgurn).ToLower();
+            if (allowedExtensions.Contains(extension))
+            {
+
+                if (File.Exists(imgurn) || imgurn.ToUpper().StartsWith("HTTP"))
+                {
+
+                    profileIMG.ImageLocation = imgurn;
+                }
+                else
+                {
+                    Random rnd = new Random();
+                    string[] gifFiles = Directory.GetFiles("includes", "*.gif");
+                    if (gifFiles.Length > 0)
+                    {
+                        int randomIndex = rnd.Next(gifFiles.Length);
+                        string randomGifFile = gifFiles[randomIndex];
+
+                        profileIMG.ImageLocation = randomGifFile;
+
+                    }
+                    else
+                    {
+                        try
+                        {
+                            profileIMG.ImageLocation = @"includes\HugPuddle.jpg";
+                        }
+                        catch { }
+                    }
+
+
+                }
+
+
+            }
+           
+            // update buttons to reference current status.
+
+
         }
 
         private void flowLayoutPanel1_SizeChanged(object sender, EventArgs e)
@@ -442,7 +530,15 @@ namespace SUP
 
         private void ButtonLoadConnections(object sender, EventArgs e)
         {
-            new Connections().Show();
+            if (splitContainer1.Panel2Collapsed)
+            {
+                splitContainer1.Panel2Collapsed = false;
+            }
+            else
+            {
+                new Connections().Show();
+            }
+            
         }
 
         private void tmrSearchMemoryPool_Tick(object sender, EventArgs e)
@@ -1126,15 +1222,20 @@ namespace SUP
 
         private void splitContainer1_DoubleClick(object sender, EventArgs e)
         {
-            if (splitContainer1.Panel1Collapsed)
+            if (splitContainer1.Panel2Collapsed)
             {
-                splitContainer1.Panel1Collapsed = false;
+                splitContainer1.Panel2Collapsed = false;
             }
             else
             {
 
-                splitContainer1.Panel1Collapsed = true;
+                splitContainer1.Panel2Collapsed = true;
             }
+        }
+
+        private void profileURN_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        {
+            new ProfileMint(profileURN.Links[0].LinkData.ToString()).Show();
         }
     }
 }

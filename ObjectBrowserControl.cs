@@ -1,18 +1,12 @@
-﻿using SUP.P2FK;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System;
 using System.Windows.Forms;
 
 namespace SUP
 {
     public partial class ObjectBrowserControl : UserControl
     {
+        public event EventHandler ProfileURNChanged;
+
         public ObjectBrowserControl(string searchstring = "", bool iscontrol = true)
         {
             InitializeComponent();
@@ -23,9 +17,14 @@ namespace SUP
             control.ControlBox = false;
             control.Dock = DockStyle.Fill;
             control.FormBorderStyle = FormBorderStyle.None;
+            control.profileURN.TextChanged += ProfileURN_TextChanged;
             panel1.Controls.Add(control);
-      
+            
+        }
 
+        private void ProfileURN_TextChanged(object sender, EventArgs e)
+        {
+            ProfileURNChanged?.Invoke(this, EventArgs.Empty);
         }
     }
 }

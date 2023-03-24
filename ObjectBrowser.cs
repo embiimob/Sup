@@ -60,22 +60,14 @@ namespace SUP
             string profileCheck = address;
             PROState searchprofile = new PROState();
             try { searchprofile = PROState.GetProfileByAddress(address, "good-user", "better-password", @"http://127.0.0.1:18332"); } catch { }
-
-
-            if (searchprofile.URN != null)
-            {
-                this.Invoke((Action)(() =>
-                {
-                    linkLabel1.Text = searchprofile.URN;
-                    linkLabel1.LinkColor = System.Drawing.SystemColors.Highlight;
-                }));
-            }
-            else
-            {
-
+                      
+           
                 try
                 {
+                if (searchprofile.URN == null)
+                {
                     searchprofile = PROState.GetProfileByURN(address, "good-user", "better-password", @"http://127.0.0.1:18332");
+                }
 
                     if (searchprofile.URN != null)
                     {
@@ -83,24 +75,34 @@ namespace SUP
                         this.Invoke((Action)(() =>
                         {
 
-                            linkLabel1.Text = TruncateAddress(searchprofile.Creators.First());
-                            linkLabel1.LinkColor = System.Drawing.SystemColors.Highlight;
+                            profileURN.Links[0].LinkData = searchprofile.Creators.First();
+                            profileURN.LinkColor = System.Drawing.SystemColors.Highlight;
+                            profileURN.Text = TruncateAddress(searchprofile.URN);
                             profileCheck = searchprofile.Creators.First();
                         }));
 
                     }
+                    else
+                {
+                    this.Invoke((Action)(() =>
+                    {
+                        profileURN.Links[0].LinkData = "anon";
+                        profileURN.LinkColor = System.Drawing.SystemColors.GradientActiveCaption;
+                        profileURN.Text = "anon";
+                    }));
+                }
                 }
                 catch
                 {
 
                     this.Invoke((Action)(() =>
                     {
-
-                        linkLabel1.Text = "anon";
-                        linkLabel1.LinkColor = System.Drawing.SystemColors.GradientActiveCaption;
+                        profileURN.Links[0].LinkData = "anon";
+                        profileURN.LinkColor = System.Drawing.SystemColors.GradientActiveCaption;
+                        profileURN.Text = "anon";
                     }));
                 }
-            }
+            
 
             List<OBJState> createdObjects = new List<OBJState>();
 
@@ -1371,39 +1373,8 @@ namespace SUP
         private void MainUserNameClick(object sender, LinkLabelLinkClickedEventArgs e)
         {
 
-            PROState searchprofile = PROState.GetProfileByAddress(txtSearchAddress.Text, "good-user", "better-password", @"http://127.0.0.1:18332");
-
-            if (searchprofile.URN != null)
-            {
-                txtSearchAddress.Text = searchprofile.URN;
-                linkLabel1.Text = TruncateAddress(searchprofile.Creators.First());
-
-                linkLabel1.LinkColor = System.Drawing.SystemColors.Highlight;
-            }
-            else
-            {
-
-
-                searchprofile = PROState.GetProfileByURN(txtSearchAddress.Text, "good-user", "better-password", @"http://127.0.0.1:18332");
-
-                if (searchprofile.URN != null)
-                {
-                    txtSearchAddress.Text = searchprofile.Creators.First();
-                    linkLabel1.Text = searchprofile.URN;
-                    linkLabel1.LinkColor = System.Drawing.SystemColors.Highlight;
-
-                }
-                else
-                {
-                    linkLabel1.Text = "anon";
-                    linkLabel1.LinkColor = System.Drawing.SystemColors.GradientActiveCaption;
-
-                }
-            }
-
-
-
-
+            txtSearchAddress.Text = profileURN.Links[0].LinkData.ToString();
+ 
         }
 
         private async void SearchAddressKeyDown(object sender, System.Windows.Forms.KeyEventArgs e)
@@ -2175,7 +2146,6 @@ namespace SUP
             }
         }
 
-      
 
         string TruncateAddress(string input)
         {
@@ -2189,86 +2159,7 @@ namespace SUP
             }
         }
 
-        private void btnHistoryBack_Click(object sender, EventArgs e)
-        {
-
-            if (SearchHistory.Count - 1 > 0)
-            {
-                SearchId--;
-                if (SearchId < 0) { SearchId = 0; }
-
-                txtSearchAddress.Text = SearchHistory[SearchId].ToString();
-                txtSearchAddress.Focus();
-                SendKeys.SendWait("{Enter}");
-
-            }
-        }
-
-        private void btnHistoryForward_Click(object sender, EventArgs e)
-        {
-            if (SearchHistory.Count - 1 > SearchId)
-            {
-                SearchId++;
-                txtSearchAddress.Text = SearchHistory[SearchId].ToString();
-                txtSearchAddress.Focus();
-                SendKeys.SendWait("{Enter}");
-            }
-        }
-
-        //GPT3
-        private void btnMint_Click(object sender, EventArgs e)
-        {
-            // Create the form that will contain the buttons
-            Form buttonForm = new Form();
-            buttonForm.FormBorderStyle = FormBorderStyle.None;
-            buttonForm.BackColor = Color.White;
-            buttonForm.Size = new Size(300, 150);
-
-            // Create the "Object Mint" button
-            Button objectMintButton = new Button();
-            objectMintButton.Text = @"Object Mint \ Update";
-            objectMintButton.Font = new Font("Arial", 16, FontStyle.Bold);
-            objectMintButton.Size = new Size(250, 50);
-            objectMintButton.Location = new Point(25, 25);
-            objectMintButton.Click += (s, ev) =>
-            {
-                // Close the button form
-                buttonForm.Close();
-
-                // Show the "ObjectMint" form and set focus to it
-                ObjectMint mintform = new ObjectMint();
-                mintform.StartPosition = FormStartPosition.CenterParent;
-                mintform.Show(this);
-                mintform.Focus();
-            };
-            buttonForm.Controls.Add(objectMintButton);
-
-            // Create the "Mint Profile" button
-            Button mintProfileButton = new Button();
-            mintProfileButton.Text = @"Profile Mint \ Update";
-            mintProfileButton.Font = new Font("Arial", 16, FontStyle.Bold);
-            mintProfileButton.Size = new Size(250, 50);
-            mintProfileButton.Location = new Point(25, 85);
-            mintProfileButton.Click += (s, ev) =>
-            {
-                // Close the button form
-                buttonForm.Close();
-
-                // Show the "ProfileMint" form and set focus to it
-                ProfileMint mintprofile = new ProfileMint();
-                mintprofile.StartPosition = FormStartPosition.CenterParent;
-                mintprofile.Show(this);
-                mintprofile.Focus();
-            };
-            buttonForm.Controls.Add(mintProfileButton);
-
-            // Show the button form centered on the launching program and set focus to it
-            buttonForm.StartPosition = FormStartPosition.CenterParent;
-            buttonForm.ShowDialog(this);
-            buttonForm.Focus();
-        }
-
-
+       
         private void flowLayoutPanel1_DragEnter(object sender, System.Windows.Forms.DragEventArgs e)
         {
             // Check if the data being dragged is a file
@@ -2317,8 +2208,7 @@ namespace SUP
            
             txtLast.Enabled = true;
         }
-
-       
+     
 
         private void tmrSearchMemoryPool_Tick(object sender, EventArgs e)
         {
@@ -3050,8 +2940,6 @@ namespace SUP
             }
 
 
-
-
         }
 
         private void pages_Scroll(object sender, EventArgs e)
@@ -3179,7 +3067,6 @@ namespace SUP
             pages.Visible = true;
         }
 
-
         private void doubleClickTimer_Tick(object sender, EventArgs e)
         {
             doubleClickTimer.Stop();
@@ -3192,10 +3079,6 @@ namespace SUP
             if (!int.TryParse(txtLast.Text, out int lastint) || lastint < 0) { txtLast.Text = "0"; }
         }
 
-        private void flowLayoutPanel1_Paint(object sender, PaintEventArgs e)
-        {
-
-        }
 
         private void flowLayoutPanel2_SizeChanged(object sender, EventArgs e)
         {

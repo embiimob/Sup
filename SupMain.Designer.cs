@@ -45,11 +45,11 @@
             this.btnMute = new System.Windows.Forms.Button();
             this.profileCreatedDate = new System.Windows.Forms.Label();
             this.profileBIO = new System.Windows.Forms.Label();
-            this.profileURN = new System.Windows.Forms.Label();
             this.profileIMG = new System.Windows.Forms.PictureBox();
             this.flowLayoutPanel1 = new System.Windows.Forms.FlowLayoutPanel();
             this.activeIMG = new System.Windows.Forms.PictureBox();
             this.flowFollow = new System.Windows.Forms.FlowLayoutPanel();
+            this.profileURN = new System.Windows.Forms.LinkLabel();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.SuspendLayout();
@@ -117,7 +117,7 @@
             // 
             this.btnMint.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.btnMint.Font = new System.Drawing.Font("Microsoft Sans Serif", 21.75F);
-            this.btnMint.Location = new System.Drawing.Point(7, 578);
+            this.btnMint.Location = new System.Drawing.Point(8, 578);
             this.btnMint.Name = "btnMint";
             this.btnMint.Size = new System.Drawing.Size(50, 40);
             this.btnMint.TabIndex = 80;
@@ -141,7 +141,7 @@
             // 
             this.btnConnections.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.btnConnections.Font = new System.Drawing.Font("Microsoft Sans Serif", 21.75F);
-            this.btnConnections.Location = new System.Drawing.Point(9, 580);
+            this.btnConnections.Location = new System.Drawing.Point(9, 578);
             this.btnConnections.Name = "btnConnections";
             this.btnConnections.Size = new System.Drawing.Size(50, 40);
             this.btnConnections.TabIndex = 82;
@@ -152,8 +152,9 @@
             // btnPublicMessage
             // 
             this.btnPublicMessage.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnPublicMessage.Enabled = false;
             this.btnPublicMessage.Font = new System.Drawing.Font("Microsoft Sans Serif", 21.75F);
-            this.btnPublicMessage.Location = new System.Drawing.Point(160, 578);
+            this.btnPublicMessage.Location = new System.Drawing.Point(150, 578);
             this.btnPublicMessage.Name = "btnPublicMessage";
             this.btnPublicMessage.Size = new System.Drawing.Size(50, 40);
             this.btnPublicMessage.TabIndex = 83;
@@ -179,8 +180,9 @@
             // btnPrivateMessage
             // 
             this.btnPrivateMessage.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.btnPrivateMessage.Enabled = false;
             this.btnPrivateMessage.Font = new System.Drawing.Font("Microsoft Sans Serif", 21.75F);
-            this.btnPrivateMessage.Location = new System.Drawing.Point(77, 578);
+            this.btnPrivateMessage.Location = new System.Drawing.Point(79, 578);
             this.btnPrivateMessage.Name = "btnPrivateMessage";
             this.btnPrivateMessage.Size = new System.Drawing.Size(50, 40);
             this.btnPrivateMessage.TabIndex = 84;
@@ -195,8 +197,9 @@
             // btnRefresh
             // 
             this.btnRefresh.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnRefresh.Enabled = false;
             this.btnRefresh.Font = new System.Drawing.Font("Microsoft Sans Serif", 21.75F);
-            this.btnRefresh.Location = new System.Drawing.Point(229, 580);
+            this.btnRefresh.Location = new System.Drawing.Point(220, 578);
             this.btnRefresh.Name = "btnRefresh";
             this.btnRefresh.Size = new System.Drawing.Size(50, 40);
             this.btnRefresh.TabIndex = 85;
@@ -206,12 +209,12 @@
             // 
             // panel1
             // 
+            this.panel1.Controls.Add(this.profileURN);
             this.panel1.Controls.Add(this.btnFollow);
             this.panel1.Controls.Add(this.btnBlock);
             this.panel1.Controls.Add(this.btnMute);
             this.panel1.Controls.Add(this.profileCreatedDate);
             this.panel1.Controls.Add(this.profileBIO);
-            this.panel1.Controls.Add(this.profileURN);
             this.panel1.Controls.Add(this.profileIMG);
             this.panel1.Dock = System.Windows.Forms.DockStyle.Top;
             this.panel1.Location = new System.Drawing.Point(0, 0);
@@ -221,7 +224,8 @@
             // 
             // btnFollow
             // 
-            this.btnFollow.Location = new System.Drawing.Point(10, 148);
+            this.btnFollow.Enabled = false;
+            this.btnFollow.Location = new System.Drawing.Point(7, 149);
             this.btnFollow.Name = "btnFollow";
             this.btnFollow.Size = new System.Drawing.Size(67, 23);
             this.btnFollow.TabIndex = 10;
@@ -231,7 +235,8 @@
             // btnBlock
             // 
             this.btnBlock.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnBlock.Location = new System.Drawing.Point(212, 148);
+            this.btnBlock.Enabled = false;
+            this.btnBlock.Location = new System.Drawing.Point(203, 146);
             this.btnBlock.Name = "btnBlock";
             this.btnBlock.Size = new System.Drawing.Size(67, 23);
             this.btnBlock.TabIndex = 9;
@@ -241,7 +246,8 @@
             // btnMute
             // 
             this.btnMute.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnMute.Location = new System.Drawing.Point(139, 148);
+            this.btnMute.Enabled = false;
+            this.btnMute.Location = new System.Drawing.Point(129, 146);
             this.btnMute.Name = "btnMute";
             this.btnMute.Size = new System.Drawing.Size(67, 23);
             this.btnMute.TabIndex = 8;
@@ -252,7 +258,7 @@
             // 
             this.profileCreatedDate.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.profileCreatedDate.ForeColor = System.Drawing.Color.White;
-            this.profileCreatedDate.Location = new System.Drawing.Point(171, 122);
+            this.profileCreatedDate.Location = new System.Drawing.Point(171, 118);
             this.profileCreatedDate.Name = "profileCreatedDate";
             this.profileCreatedDate.Size = new System.Drawing.Size(112, 16);
             this.profileCreatedDate.TabIndex = 3;
@@ -267,17 +273,6 @@
             this.profileBIO.Name = "profileBIO";
             this.profileBIO.Size = new System.Drawing.Size(176, 100);
             this.profileBIO.TabIndex = 2;
-            // 
-            // profileURN
-            // 
-            this.profileURN.AutoSize = true;
-            this.profileURN.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.profileURN.ForeColor = System.Drawing.Color.White;
-            this.profileURN.Location = new System.Drawing.Point(3, 117);
-            this.profileURN.Name = "profileURN";
-            this.profileURN.Size = new System.Drawing.Size(45, 20);
-            this.profileURN.TabIndex = 1;
-            this.profileURN.Text = "anon";
             // 
             // profileIMG
             // 
@@ -327,6 +322,20 @@
             this.flowFollow.Size = new System.Drawing.Size(59, 410);
             this.flowFollow.TabIndex = 94;
             // 
+            // profileURN
+            // 
+            this.profileURN.AutoSize = true;
+            this.profileURN.Enabled = false;
+            this.profileURN.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.profileURN.LinkColor = System.Drawing.SystemColors.GradientActiveCaption;
+            this.profileURN.Location = new System.Drawing.Point(6, 118);
+            this.profileURN.Name = "profileURN";
+            this.profileURN.Size = new System.Drawing.Size(45, 20);
+            this.profileURN.TabIndex = 11;
+            this.profileURN.TabStop = true;
+            this.profileURN.Text = "anon";
+            this.profileURN.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.profileURN_LinkClicked);
+            // 
             // SupMain
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -371,10 +380,10 @@
         private System.Windows.Forms.Button btnMute;
         private System.Windows.Forms.Label profileCreatedDate;
         private System.Windows.Forms.Label profileBIO;
-        private System.Windows.Forms.Label profileURN;
         private System.Windows.Forms.PictureBox profileIMG;
         private System.Windows.Forms.FlowLayoutPanel flowLayoutPanel1;
         private System.Windows.Forms.PictureBox activeIMG;
         private System.Windows.Forms.FlowLayoutPanel flowFollow;
+        private System.Windows.Forms.LinkLabel profileURN;
     }
 }

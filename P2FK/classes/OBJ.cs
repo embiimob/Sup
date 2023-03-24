@@ -998,7 +998,7 @@ namespace SUP.P2FK
                         {
                             if (isObject.Creators.ElementAt(0).Key == findObject)
                             {
-                                isObject.Id = objectTransactions.Count() - 1;
+                                isObject.Id = objectTransactions.Count();
                                 var profileSerialized = JsonConvert.SerializeObject(isObject);
                                 try
                                 {
@@ -1028,7 +1028,8 @@ namespace SUP.P2FK
 
 
                     }
-                    objectState.Id = objectTransactions.Count() - 1;
+                }
+                    objectState.Id = objectTransactions.Count();
                     var profileSerialized2 = JsonConvert.SerializeObject(objectState);
                     try
                     {
@@ -1048,11 +1049,9 @@ namespace SUP.P2FK
                         }
                         catch { };
                     }
-
-
-
-                }
                 return objectState;
+
+
             }
         }
         public static OBJState GetObjectByFile(string filepath, string username, string password, string url, string versionByte = "111", int skip = 0)
