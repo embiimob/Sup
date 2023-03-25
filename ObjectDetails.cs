@@ -45,13 +45,17 @@ namespace SUP
             Form parentForm = this.Owner;
             bool isBlue = false;
 
-
             // Check if the parent form has a button named "btnLive" with blue background color
             try
             {
-                if (parentForm != null) { isBlue = parentForm.Controls.OfType<System.Windows.Forms.Button>().Any(b => b.Name == "btnLive" && b.BackColor == System.Drawing.Color.Blue); }
+                if (parentForm != null)
+                {
+                    isBlue = parentForm.Controls.OfType<System.Windows.Forms.Button>().Any(b => b.Name == "btnLive" && b.BackColor == System.Drawing.Color.Blue);
+                }
             }
-            catch { }
+            catch
+            {
+            }
 
             if (isBlue)
             {
@@ -65,9 +69,6 @@ namespace SUP
             }
             else
             {
-
-
-
                 this.Text = String.Empty;
 
                 if (!isUserControl)
@@ -77,14 +78,17 @@ namespace SUP
                     this.Width = this.Width + 210;
                     registrationPanel.Visible = true;
                 }
+                else
+                {
+                  //
+                }
+
                 btnReloadObject.PerformClick();
                 lblPleaseStandBy.Visible = false;
-
             }
-
-
-
         }
+
+
         private string TruncateAddress(string input)
         {
             if (input.Length <= 13)

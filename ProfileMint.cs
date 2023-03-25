@@ -1056,8 +1056,6 @@ namespace SUP
         }
 
 
-     
-
 
         //GPT3
         private void flowAttribute_ControlRemoved(object sender, ControlEventArgs e)
@@ -1124,17 +1122,6 @@ namespace SUP
         }
 
 
-
-
-
-
-
-
-
-        private void btnScan_Click(object sender, EventArgs e)
-        {
-
-        }
 
         public void LoadFormByAddress(string address)
         {

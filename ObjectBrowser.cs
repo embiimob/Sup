@@ -86,7 +86,7 @@ namespace SUP
                 {
                     this.Invoke((Action)(() =>
                     {
-                        profileURN.Links[0].LinkData = "anon";
+                        profileURN.Links[0].LinkData = address;
                         profileURN.LinkColor = System.Drawing.SystemColors.GradientActiveCaption;
                         profileURN.Text = "anon";
                     }));
@@ -97,7 +97,7 @@ namespace SUP
 
                     this.Invoke((Action)(() =>
                     {
-                        profileURN.Links[0].LinkData = "anon";
+                        profileURN.Links[0].LinkData = address;
                         profileURN.LinkColor = System.Drawing.SystemColors.GradientActiveCaption;
                         profileURN.Text = "anon";
                     }));

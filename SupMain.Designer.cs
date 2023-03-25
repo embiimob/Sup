@@ -31,25 +31,25 @@
             this.components = new System.ComponentModel.Container();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.splitContainer2 = new System.Windows.Forms.SplitContainer();
-            this.btnMint = new System.Windows.Forms.Button();
-            this.btnWorkBench = new System.Windows.Forms.Button();
-            this.btnConnections = new System.Windows.Forms.Button();
-            this.btnPublicMessage = new System.Windows.Forms.Button();
+            this.flowFollow = new System.Windows.Forms.FlowLayoutPanel();
             this.btnLive = new System.Windows.Forms.Button();
-            this.btnPrivateMessage = new System.Windows.Forms.Button();
-            this.tmrSearchMemoryPool = new System.Windows.Forms.Timer(this.components);
-            this.btnRefresh = new System.Windows.Forms.Button();
+            this.activeIMG = new System.Windows.Forms.PictureBox();
+            this.btnConnections = new System.Windows.Forms.Button();
+            this.btnWorkBench = new System.Windows.Forms.Button();
             this.panel1 = new System.Windows.Forms.Panel();
+            this.profileURN = new System.Windows.Forms.LinkLabel();
             this.btnFollow = new System.Windows.Forms.Button();
             this.btnBlock = new System.Windows.Forms.Button();
             this.btnMute = new System.Windows.Forms.Button();
             this.profileCreatedDate = new System.Windows.Forms.Label();
             this.profileBIO = new System.Windows.Forms.Label();
             this.profileIMG = new System.Windows.Forms.PictureBox();
-            this.flowLayoutPanel1 = new System.Windows.Forms.FlowLayoutPanel();
-            this.activeIMG = new System.Windows.Forms.PictureBox();
-            this.flowFollow = new System.Windows.Forms.FlowLayoutPanel();
-            this.profileURN = new System.Windows.Forms.LinkLabel();
+            this.btnRefresh = new System.Windows.Forms.Button();
+            this.btnPrivateMessage = new System.Windows.Forms.Button();
+            this.btnPublicMessage = new System.Windows.Forms.Button();
+            this.btnMint = new System.Windows.Forms.Button();
+            this.supFlow = new System.Windows.Forms.FlowLayoutPanel();
+            this.tmrSearchMemoryPool = new System.Windows.Forms.Timer(this.components);
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.SuspendLayout();
@@ -57,9 +57,9 @@
             this.splitContainer2.Panel1.SuspendLayout();
             this.splitContainer2.Panel2.SuspendLayout();
             this.splitContainer2.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.activeIMG)).BeginInit();
             this.panel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.profileIMG)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.activeIMG)).BeginInit();
             this.SuspendLayout();
             // 
             // splitContainer1
@@ -106,61 +106,24 @@
             this.splitContainer2.Panel2.Controls.Add(this.btnPrivateMessage);
             this.splitContainer2.Panel2.Controls.Add(this.btnPublicMessage);
             this.splitContainer2.Panel2.Controls.Add(this.btnMint);
-            this.splitContainer2.Panel2.Controls.Add(this.flowLayoutPanel1);
+            this.splitContainer2.Panel2.Controls.Add(this.supFlow);
             this.splitContainer2.Size = new System.Drawing.Size(357, 625);
             this.splitContainer2.SplitterDistance = 70;
             this.splitContainer2.SplitterWidth = 1;
             this.splitContainer2.TabIndex = 0;
             this.splitContainer2.TabStop = false;
             // 
-            // btnMint
+            // flowFollow
             // 
-            this.btnMint.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.btnMint.Font = new System.Drawing.Font("Microsoft Sans Serif", 21.75F);
-            this.btnMint.Location = new System.Drawing.Point(8, 578);
-            this.btnMint.Name = "btnMint";
-            this.btnMint.Size = new System.Drawing.Size(50, 40);
-            this.btnMint.TabIndex = 80;
-            this.btnMint.Text = "💎";
-            this.btnMint.UseVisualStyleBackColor = true;
-            this.btnMint.Click += new System.EventHandler(this.btnMint_Click);
-            // 
-            // btnWorkBench
-            // 
-            this.btnWorkBench.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.btnWorkBench.Font = new System.Drawing.Font("Microsoft Sans Serif", 21.75F);
-            this.btnWorkBench.Location = new System.Drawing.Point(9, 530);
-            this.btnWorkBench.Name = "btnWorkBench";
-            this.btnWorkBench.Size = new System.Drawing.Size(50, 42);
-            this.btnWorkBench.TabIndex = 81;
-            this.btnWorkBench.Text = "⚙️";
-            this.btnWorkBench.UseVisualStyleBackColor = true;
-            this.btnWorkBench.Click += new System.EventHandler(this.ButtonLoadWorkBench);
-            // 
-            // btnConnections
-            // 
-            this.btnConnections.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.btnConnections.Font = new System.Drawing.Font("Microsoft Sans Serif", 21.75F);
-            this.btnConnections.Location = new System.Drawing.Point(9, 578);
-            this.btnConnections.Name = "btnConnections";
-            this.btnConnections.Size = new System.Drawing.Size(50, 40);
-            this.btnConnections.TabIndex = 82;
-            this.btnConnections.Text = "🗝️";
-            this.btnConnections.UseVisualStyleBackColor = true;
-            this.btnConnections.Click += new System.EventHandler(this.ButtonLoadConnections);
-            // 
-            // btnPublicMessage
-            // 
-            this.btnPublicMessage.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnPublicMessage.Enabled = false;
-            this.btnPublicMessage.Font = new System.Drawing.Font("Microsoft Sans Serif", 21.75F);
-            this.btnPublicMessage.Location = new System.Drawing.Point(150, 578);
-            this.btnPublicMessage.Name = "btnPublicMessage";
-            this.btnPublicMessage.Size = new System.Drawing.Size(50, 40);
-            this.btnPublicMessage.TabIndex = 83;
-            this.btnPublicMessage.Text = "📣";
-            this.btnPublicMessage.UseVisualStyleBackColor = true;
-            this.btnPublicMessage.Click += new System.EventHandler(this.btnPublicMessage_Click);
+            this.flowFollow.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.flowFollow.AutoScroll = true;
+            this.flowFollow.FlowDirection = System.Windows.Forms.FlowDirection.TopDown;
+            this.flowFollow.Location = new System.Drawing.Point(5, 65);
+            this.flowFollow.Name = "flowFollow";
+            this.flowFollow.Size = new System.Drawing.Size(59, 410);
+            this.flowFollow.TabIndex = 94;
             // 
             // btnLive
             // 
@@ -177,35 +140,39 @@
             this.btnLive.UseVisualStyleBackColor = false;
             this.btnLive.Click += new System.EventHandler(this.btnLive_Click);
             // 
-            // btnPrivateMessage
+            // activeIMG
             // 
-            this.btnPrivateMessage.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.btnPrivateMessage.Enabled = false;
-            this.btnPrivateMessage.Font = new System.Drawing.Font("Microsoft Sans Serif", 21.75F);
-            this.btnPrivateMessage.Location = new System.Drawing.Point(79, 578);
-            this.btnPrivateMessage.Name = "btnPrivateMessage";
-            this.btnPrivateMessage.Size = new System.Drawing.Size(50, 40);
-            this.btnPrivateMessage.TabIndex = 84;
-            this.btnPrivateMessage.Text = "🤐";
-            this.btnPrivateMessage.UseVisualStyleBackColor = true;
+            this.activeIMG.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
+            this.activeIMG.Location = new System.Drawing.Point(9, 9);
+            this.activeIMG.Name = "activeIMG";
+            this.activeIMG.Size = new System.Drawing.Size(50, 50);
+            this.activeIMG.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
+            this.activeIMG.TabIndex = 94;
+            this.activeIMG.TabStop = false;
             // 
-            // tmrSearchMemoryPool
+            // btnConnections
             // 
-            this.tmrSearchMemoryPool.Interval = 5000;
-            this.tmrSearchMemoryPool.Tick += new System.EventHandler(this.tmrSearchMemoryPool_Tick);
+            this.btnConnections.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.btnConnections.Font = new System.Drawing.Font("Microsoft Sans Serif", 21.75F);
+            this.btnConnections.Location = new System.Drawing.Point(9, 578);
+            this.btnConnections.Name = "btnConnections";
+            this.btnConnections.Size = new System.Drawing.Size(50, 40);
+            this.btnConnections.TabIndex = 82;
+            this.btnConnections.Text = "🗝️";
+            this.btnConnections.UseVisualStyleBackColor = true;
+            this.btnConnections.Click += new System.EventHandler(this.ButtonLoadConnections);
             // 
-            // btnRefresh
+            // btnWorkBench
             // 
-            this.btnRefresh.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnRefresh.Enabled = false;
-            this.btnRefresh.Font = new System.Drawing.Font("Microsoft Sans Serif", 21.75F);
-            this.btnRefresh.Location = new System.Drawing.Point(220, 578);
-            this.btnRefresh.Name = "btnRefresh";
-            this.btnRefresh.Size = new System.Drawing.Size(50, 40);
-            this.btnRefresh.TabIndex = 85;
-            this.btnRefresh.Text = "♻️";
-            this.btnRefresh.UseVisualStyleBackColor = true;
-            this.btnRefresh.Click += new System.EventHandler(this.btnRefresh_Click);
+            this.btnWorkBench.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.btnWorkBench.Font = new System.Drawing.Font("Microsoft Sans Serif", 21.75F);
+            this.btnWorkBench.Location = new System.Drawing.Point(9, 530);
+            this.btnWorkBench.Name = "btnWorkBench";
+            this.btnWorkBench.Size = new System.Drawing.Size(50, 42);
+            this.btnWorkBench.TabIndex = 81;
+            this.btnWorkBench.Text = "⚙️";
+            this.btnWorkBench.UseVisualStyleBackColor = true;
+            this.btnWorkBench.Click += new System.EventHandler(this.ButtonLoadWorkBench);
             // 
             // panel1
             // 
@@ -221,6 +188,20 @@
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(286, 172);
             this.panel1.TabIndex = 0;
+            // 
+            // profileURN
+            // 
+            this.profileURN.AutoSize = true;
+            this.profileURN.Enabled = false;
+            this.profileURN.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.profileURN.LinkColor = System.Drawing.SystemColors.GradientActiveCaption;
+            this.profileURN.Location = new System.Drawing.Point(6, 118);
+            this.profileURN.Name = "profileURN";
+            this.profileURN.Size = new System.Drawing.Size(45, 20);
+            this.profileURN.TabIndex = 11;
+            this.profileURN.TabStop = true;
+            this.profileURN.Text = "anon";
+            this.profileURN.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.profileURN_LinkClicked);
             // 
             // btnFollow
             // 
@@ -262,7 +243,6 @@
             this.profileCreatedDate.Name = "profileCreatedDate";
             this.profileCreatedDate.Size = new System.Drawing.Size(112, 16);
             this.profileCreatedDate.TabIndex = 3;
-            this.profileCreatedDate.Click += new System.EventHandler(this.profileCreatedDate_Click);
             // 
             // profileBIO
             // 
@@ -284,57 +264,75 @@
             this.profileIMG.TabIndex = 0;
             this.profileIMG.TabStop = false;
             // 
-            // flowLayoutPanel1
+            // btnRefresh
             // 
-            this.flowLayoutPanel1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            this.btnRefresh.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnRefresh.Enabled = false;
+            this.btnRefresh.Font = new System.Drawing.Font("Microsoft Sans Serif", 21.75F);
+            this.btnRefresh.Location = new System.Drawing.Point(223, 578);
+            this.btnRefresh.Name = "btnRefresh";
+            this.btnRefresh.Size = new System.Drawing.Size(50, 40);
+            this.btnRefresh.TabIndex = 85;
+            this.btnRefresh.Text = "♻️";
+            this.btnRefresh.UseVisualStyleBackColor = true;
+            this.btnRefresh.Click += new System.EventHandler(this.RefreshSupMessages);
+            // 
+            // btnPrivateMessage
+            // 
+            this.btnPrivateMessage.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.btnPrivateMessage.Enabled = false;
+            this.btnPrivateMessage.Font = new System.Drawing.Font("Microsoft Sans Serif", 21.75F);
+            this.btnPrivateMessage.Location = new System.Drawing.Point(79, 578);
+            this.btnPrivateMessage.Name = "btnPrivateMessage";
+            this.btnPrivateMessage.Size = new System.Drawing.Size(50, 40);
+            this.btnPrivateMessage.TabIndex = 84;
+            this.btnPrivateMessage.Text = "🤐";
+            this.btnPrivateMessage.UseVisualStyleBackColor = true;
+            // 
+            // btnPublicMessage
+            // 
+            this.btnPublicMessage.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnPublicMessage.Enabled = false;
+            this.btnPublicMessage.Font = new System.Drawing.Font("Microsoft Sans Serif", 21.75F);
+            this.btnPublicMessage.Location = new System.Drawing.Point(153, 578);
+            this.btnPublicMessage.Name = "btnPublicMessage";
+            this.btnPublicMessage.Size = new System.Drawing.Size(50, 40);
+            this.btnPublicMessage.TabIndex = 83;
+            this.btnPublicMessage.Text = "📣";
+            this.btnPublicMessage.UseVisualStyleBackColor = true;
+            this.btnPublicMessage.Click += new System.EventHandler(this.btnPublicMessage_Click);
+            // 
+            // btnMint
+            // 
+            this.btnMint.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.btnMint.Font = new System.Drawing.Font("Microsoft Sans Serif", 21.75F);
+            this.btnMint.Location = new System.Drawing.Point(8, 578);
+            this.btnMint.Name = "btnMint";
+            this.btnMint.Size = new System.Drawing.Size(50, 40);
+            this.btnMint.TabIndex = 80;
+            this.btnMint.Text = "💎";
+            this.btnMint.UseVisualStyleBackColor = true;
+            this.btnMint.Click += new System.EventHandler(this.btnMint_Click);
+            // 
+            // supFlow
+            // 
+            this.supFlow.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.flowLayoutPanel1.AutoScroll = true;
-            this.flowLayoutPanel1.BackColor = System.Drawing.Color.Black;
-            this.flowLayoutPanel1.FlowDirection = System.Windows.Forms.FlowDirection.TopDown;
-            this.flowLayoutPanel1.Location = new System.Drawing.Point(3, 178);
-            this.flowLayoutPanel1.Name = "flowLayoutPanel1";
-            this.flowLayoutPanel1.Size = new System.Drawing.Size(283, 394);
-            this.flowLayoutPanel1.TabIndex = 99;
-            this.flowLayoutPanel1.WrapContents = false;
-            this.flowLayoutPanel1.SizeChanged += new System.EventHandler(this.flowLayoutPanel1_SizeChanged);
-            this.flowLayoutPanel1.Paint += new System.Windows.Forms.PaintEventHandler(this.flowLayoutPanel1_Paint);
+            this.supFlow.AutoScroll = true;
+            this.supFlow.BackColor = System.Drawing.Color.Black;
+            this.supFlow.FlowDirection = System.Windows.Forms.FlowDirection.TopDown;
+            this.supFlow.Location = new System.Drawing.Point(3, 178);
+            this.supFlow.Name = "supFlow";
+            this.supFlow.Size = new System.Drawing.Size(286, 394);
+            this.supFlow.TabIndex = 99;
+            this.supFlow.WrapContents = false;
+            this.supFlow.SizeChanged += new System.EventHandler(this.flowLayoutPanel1_SizeChanged);
             // 
-            // activeIMG
+            // tmrSearchMemoryPool
             // 
-            this.activeIMG.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
-            this.activeIMG.Location = new System.Drawing.Point(9, 9);
-            this.activeIMG.Name = "activeIMG";
-            this.activeIMG.Size = new System.Drawing.Size(50, 50);
-            this.activeIMG.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
-            this.activeIMG.TabIndex = 94;
-            this.activeIMG.TabStop = false;
-            // 
-            // flowFollow
-            // 
-            this.flowFollow.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.flowFollow.AutoScroll = true;
-            this.flowFollow.FlowDirection = System.Windows.Forms.FlowDirection.TopDown;
-            this.flowFollow.Location = new System.Drawing.Point(5, 65);
-            this.flowFollow.Name = "flowFollow";
-            this.flowFollow.Size = new System.Drawing.Size(59, 410);
-            this.flowFollow.TabIndex = 94;
-            // 
-            // profileURN
-            // 
-            this.profileURN.AutoSize = true;
-            this.profileURN.Enabled = false;
-            this.profileURN.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.profileURN.LinkColor = System.Drawing.SystemColors.GradientActiveCaption;
-            this.profileURN.Location = new System.Drawing.Point(6, 118);
-            this.profileURN.Name = "profileURN";
-            this.profileURN.Size = new System.Drawing.Size(45, 20);
-            this.profileURN.TabIndex = 11;
-            this.profileURN.TabStop = true;
-            this.profileURN.Text = "anon";
-            this.profileURN.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.profileURN_LinkClicked);
+            this.tmrSearchMemoryPool.Interval = 5000;
+            this.tmrSearchMemoryPool.Tick += new System.EventHandler(this.tmrSearchMemoryPool_Tick);
             // 
             // SupMain
             // 
@@ -354,10 +352,10 @@
             this.splitContainer2.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer2)).EndInit();
             this.splitContainer2.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.activeIMG)).EndInit();
             this.panel1.ResumeLayout(false);
             this.panel1.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.profileIMG)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.activeIMG)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -381,7 +379,7 @@
         private System.Windows.Forms.Label profileCreatedDate;
         private System.Windows.Forms.Label profileBIO;
         private System.Windows.Forms.PictureBox profileIMG;
-        private System.Windows.Forms.FlowLayoutPanel flowLayoutPanel1;
+        private System.Windows.Forms.FlowLayoutPanel supFlow;
         private System.Windows.Forms.PictureBox activeIMG;
         private System.Windows.Forms.FlowLayoutPanel flowFollow;
         private System.Windows.Forms.LinkLabel profileURN;

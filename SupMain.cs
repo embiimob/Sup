@@ -13,6 +13,8 @@ using System.Windows.Forms;
 using System.Diagnostics;
 using System.Reflection;
 using System.Text.RegularExpressions;
+using Newtonsoft.Json;
+using System.Globalization;
 
 namespace SUP
 {
@@ -32,6 +34,7 @@ namespace SUP
         private bool dogActive;
         private RichTextBox richTextBox1;
         ObjectBrowserControl OBcontrol = new ObjectBrowserControl();
+        private int numMessagesDisplayed;
 
         public SupMain()
         {
@@ -67,6 +70,8 @@ namespace SUP
                     btnPublicMessage.Enabled = true;
                     btnRefresh.Enabled = true;
                     MakeActiveProfile(objectBrowserForm.profileURN.Links[0].LinkData.ToString());
+                    numMessagesDisplayed = 0;
+                    btnRefresh.PerformClick();
 
                 }
             }
@@ -76,6 +81,8 @@ namespace SUP
         {
             Regex regexTransactionId = new Regex(@"\b[0-9a-f]{64}\b");
             PROState activeProfile = PROState.GetProfileByAddress(address,"good-user","better-password", @"http://127.0.0.1:18332");
+
+            if (activeProfile.URN == null) { profileURN.Text = "anon"; profileBIO.Text = "";profileCreatedDate.Text = ""; profileIMG.ImageLocation = ""; activeProfile.Image = "";  return; }
 
             profileBIO.Text = activeProfile.Bio;
             profileCreatedDate.Text = "since: " + activeProfile.CreatedDate.ToString("MM/dd/yyyy hh:mm:ss tt");
@@ -138,10 +145,10 @@ namespace SUP
 
         private void flowLayoutPanel1_SizeChanged(object sender, EventArgs e)
         {
-            foreach(Control control in flowLayoutPanel1.Controls)
+            foreach(Control control in supFlow.Controls)
             { 
                
-                control.Width = flowLayoutPanel1.Width - 42;
+                control.Width = supFlow.Width - 42;
               
             }
         }
@@ -354,9 +361,9 @@ namespace SUP
             {
                 try
                 {
-                    flowLayoutPanel1.Invoke((MethodInvoker)delegate
+                    supFlow.Invoke((MethodInvoker)delegate
                     {
-                        flowLayoutPanel1.SuspendLayout();
+                        supFlow.SuspendLayout();
                         if (objstate.Owners != null)
                         {
                             string transid = "";
@@ -511,11 +518,11 @@ namespace SUP
                       
                             foundObject.ResumeLayout();
                                                                                       
-                                flowLayoutPanel1.Controls.Add(foundObject);
-                                flowLayoutPanel1.Controls.SetChildIndex(foundObject, 0);                                                     
+                                supFlow.Controls.Add(foundObject);
+                                supFlow.Controls.SetChildIndex(foundObject, 0);                                                     
 
                         }
-                        flowLayoutPanel1.ResumeLayout();
+                        supFlow.ResumeLayout();
                     });
                 }
                 catch { }
@@ -1174,6 +1181,382 @@ namespace SUP
         }
 
 
+        private void RefreshSupMessages(object sender, EventArgs e)
+        {
+            // Clear controls if no messages have been displayed yet
+            if (numMessagesDisplayed == 0)
+            {
+                supFlow.Controls.Clear();
+            }
+
+            Dictionary<string, string[]> profileAddress = new Dictionary<string, string[]> { };
+            OBJState objstate = OBJState.GetObjectByAddress(profileURN.Links[0].LinkData.ToString(), "good-user", "better-password", "http://127.0.0.1:18332");
+            int rownum = 1;
+
+            var SUP = new Options { CreateIfMissing = true };
+
+            using (var db = new DB(SUP, @"root\sup"))
+            {
+                string lastKey = db.Get("lastkey!" + profileURN.Links[0].LinkData.ToString());
+                if (lastKey == null) { return; }
+                LevelDB.Iterator it = db.CreateIterator();
+                for (
+                   it.Seek(lastKey);
+                   it.IsValid() && it.KeyAsString().StartsWith(profileURN.Links[0].LinkData.ToString()) && rownum <= numMessagesDisplayed + 10; // Only display next 10 messages
+                    it.Prev()
+                 )
+                {
+                    // Display only if rownum > numMessagesDisplayed to skip already displayed messages
+                    if (rownum > numMessagesDisplayed)
+                    {
+                        string process = it.ValueAsString();
+
+                        List<string> supMessagePacket = JsonConvert.DeserializeObject<List<string>>(process);
+
+                        string message = System.IO.File.ReadAllText(@"root/" + supMessagePacket[1] + @"/MSG").Replace("@" + profileURN.Links[0].LinkData.ToString(), "");
+
+                        string fromAddress = supMessagePacket[0];
+                        string imagelocation = "";
+
+
+                        if (!profileAddress.ContainsKey(fromAddress))
+                        {
+
+                            PROState profile = PROState.GetProfileByAddress(fromAddress, "good-user", "better-password", "http://127.0.0.1:18332");
+
+                            if (profile.URN != null)
+                            {
+                                fromAddress = TruncateAddress(profile.URN);
+                                imagelocation = profile.Image;
+
+
+                                if (imagelocation.StartsWith("BTC:") || imagelocation.StartsWith("MZC:"))
+                                {
+                                    if (imagelocation.Length > 64)
+                                    {
+                                        string transid = imagelocation.Substring(4, 64);
+                                        imagelocation = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + @"\root\" + imagelocation.Replace("BTC:", "").Replace("MZC:", "").Replace(@"/", @"\");
+
+
+                                        if (!System.IO.Directory.Exists("root/" + transid))
+                                        {
+                                            if (profile.Image.StartsWith("BTC:"))
+                                            {
+                                                Root.GetRootByTransactionId(transid, "good-user", "better-password", "http://127.0.0.1:8332", "0");
+                                            }
+                                            else
+                                            {
+                                                Root.GetRootByTransactionId(transid, "good-user", "better-password", @"http://127.0.0.1:12832", "50");
+
+                                            }
+                                        }
+                                    }
+
+                                }
+                                else
+                                {
+                                    if (imagelocation.Length > 64)
+                                    {
+                                        string transid = imagelocation.Substring(0, 64);
+                                        imagelocation = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + @"\root\" + imagelocation.Replace(@" / ", @"\");
+                                        if (!System.IO.Directory.Exists("root/" + transid))
+                                        {
+                                            Root.GetRootByTransactionId(transid, "good-user", "better-password", "http://127.0.0.1:18332");
+
+                                        }
+                                    }
+
+
+                                    if (imagelocation.StartsWith("IPFS:"))
+                                    {
+
+                                        string transid = imagelocation.Substring(5, 46);
+                                        if (!System.IO.Directory.Exists("ipfs/" + transid))
+                                        {
+
+                                            string isLoading;
+                                            using (var db2 = new DB(SUP, @"ipfs"))
+                                            {
+                                                isLoading = db2.Get(transid);
+
+                                            }
+
+                                            if (isLoading != "loading")
+                                            {
+                                                using (var db2 = new DB(SUP, @"ipfs"))
+                                                {
+
+                                                    db2.Put(transid, "loading");
+
+                                                }
+
+                                                Task ipfsTask = Task.Run(() =>
+                                                {
+                                                    Process process2 = new Process();
+                                                    process2.StartInfo.FileName = @"ipfs\ipfs.exe";
+                                                    process2.StartInfo.Arguments = "get " + transid + @"-p -o ipfs\" + transid;
+                                                    process2.Start();
+                                                    process2.WaitForExit();
+
+                                                    if (System.IO.File.Exists("ipfs/" + transid))
+                                                    {
+                                                        System.IO.File.Move("ipfs/" + transid, "ipfs/" + transid + "_tmp");
+                                                        System.IO.Directory.CreateDirectory("ipfs/" + transid);
+                                                        string fileName = objstate.Image.Replace(@"//", "").Replace(@"\\", "").Substring(51);
+                                                        if (fileName == "")
+                                                        {
+                                                            fileName = "artifact";
+
+                                                        }
+                                                        else { fileName = fileName.Replace(@"/", "").Replace(@"\", ""); }
+                                                        System.IO.File.Move("ipfs/" + transid + "_tmp", @"ipfs/" + transid + @"/" + fileName);
+                                                    }
+
+
+                                                    //attempt to pin fails silently if daemon is not running
+                                                    Process process3 = new Process
+                                                    {
+                                                        StartInfo = new ProcessStartInfo
+                                                        {
+                                                            FileName = @"ipfs\ipfs.exe",
+                                                            Arguments = "pin add " + transid,
+                                                            UseShellExecute = false,
+                                                            CreateNoWindow = true
+                                                        }
+                                                    };
+                                                    process3.Start();
+
+
+                                                    using (var db2 = new DB(SUP, @"ipfs"))
+                                                    {
+                                                        db2.Delete(transid);
+
+                                                    }
+                                                });
+                                            }
+
+                                        }
+
+                                    }
+
+
+
+
+                                }
+
+
+                            }
+                            else
+                            { fromAddress = TruncateAddress(fromAddress); }
+
+                            string[] profilePacket = new string[2];
+
+                            profilePacket[0] = fromAddress;
+                            profilePacket[1] = imagelocation;
+                            profileAddress.Add(supMessagePacket[0], profilePacket);
+
+                        }
+                        else
+                        {
+                            string[] profilePacket = new string[] { };
+                            profileAddress.TryGetValue(fromAddress, out profilePacket);
+                            fromAddress = profilePacket[0];
+                            imagelocation = profilePacket[1];
+
+                        }
+
+
+                        string tstamp = it.KeyAsString().Split('!')[1];
+                        System.Drawing.Color bgcolor = System.Drawing.Color.White;
+
+                        CreateRow(imagelocation, fromAddress, supMessagePacket[0], DateTime.ParseExact(tstamp, "yyyyMMddHHmmss", CultureInfo.InvariantCulture), message, bgcolor, supFlow);
+
+                    }
+                    rownum++;
+                }
+                it.Dispose();
+            }
+
+            // Update number of messages displayed
+            numMessagesDisplayed += 10;
+
+            supFlow.ResumeLayout();
+
+        }
+
+        void CreateRow(string imageLocation, string ownerName, string ownerId, DateTime timestamp, string messageText, System.Drawing.Color bgcolor, FlowLayoutPanel layoutPanel)
+        {
+
+            // Create a table layout panel for each row
+            TableLayoutPanel row = new TableLayoutPanel
+            {
+                RowCount = 1,
+                ColumnCount = 3,
+                AutoSize = true,
+                BackColor = Color.Black,
+                ForeColor = Color.White,
+                Padding = new Padding(0),
+                Margin = new Padding(0)
+            };
+            // Add the width of the first column to fixed value and second to fill remaining space
+            row.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 50));
+            row.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 90));
+            row.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 110));
+            layoutPanel.Controls.Add(row);
+
+            // Create a PictureBox with the specified image
+
+            if (File.Exists(imageLocation) || imageLocation.ToUpper().StartsWith("HTTP"))
+            {
+                PictureBox picture = new PictureBox
+                {
+                    Size = new System.Drawing.Size(50, 50),
+                    SizeMode = PictureBoxSizeMode.StretchImage,
+                    ImageLocation = imageLocation,
+                    Margin = new System.Windows.Forms.Padding(0),
+
+                };
+                row.Controls.Add(picture, 0, 0);
+            }
+            else
+            {
+                Random rnd = new Random();
+                string randomGifFile;
+                string[] gifFiles = Directory.GetFiles("includes", "*.gif");
+                if (gifFiles.Length > 0)
+                {
+                    int randomIndex = rnd.Next(gifFiles.Length);
+                    randomGifFile = gifFiles[randomIndex];
+                }
+                else
+                {
+                    randomGifFile = @"includes\HugPuddle.jpg";
+                }
+
+
+
+                PictureBox picture = new PictureBox
+                {
+                    Size = new System.Drawing.Size(50, 50),
+                    SizeMode = PictureBoxSizeMode.StretchImage,
+                    ImageLocation = randomGifFile,
+                    Margin = new System.Windows.Forms.Padding(0),
+                };
+                row.Controls.Add(picture, 0, 0);
+            }
+
+
+            // Create a LinkLabel with the owner name
+            LinkLabel owner = new LinkLabel
+            {
+                Text = ownerName,
+                BackColor = Color.Black,
+                ForeColor = Color.White,
+                AutoSize = true
+
+            };
+            owner.LinkClicked += (sender, e) => { Owner_LinkClicked(ownerId); };
+            owner.Font = new System.Drawing.Font("Microsoft Sans Serif", 7.7F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            owner.Margin = new System.Windows.Forms.Padding(3);
+            owner.Dock = DockStyle.Bottom;
+            row.Controls.Add(owner, 1, 0);
+
+
+            // Create a LinkLabel with the owner name
+            Label tstamp = new Label
+            {
+                AutoSize = true,
+                BackColor = Color.Black,
+                ForeColor = Color.White,
+                Font = new System.Drawing.Font("Microsoft Sans Serif", 7.77F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0))),
+                Text = timestamp.ToString("MM/dd/yyyy hh:mm:ss"),
+                Margin = new System.Windows.Forms.Padding(0),
+                Dock = DockStyle.Bottom
+            };
+            row.Controls.Add(tstamp, 2, 0);
+
+
+
+            TableLayoutPanel msg = new TableLayoutPanel
+            {
+                RowCount = 3,
+                ColumnCount = 1,
+                Dock = DockStyle.Top,
+                BackColor = bgcolor,
+                AutoSize = true,
+                Margin = new System.Windows.Forms.Padding(0),
+                Padding = new System.Windows.Forms.Padding(0)
+            };
+
+            msg.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 250));
+            layoutPanel.Controls.Add(msg);
+
+            // Create a Label with the message text
+            Label tpadding = new Label
+            {
+                AutoSize = true,
+                Text = " ",
+                Margin = new System.Windows.Forms.Padding(0)
+            };
+            msg.Controls.Add(tpadding, 0, 0);
+
+            // Create a Label with the message text
+            Label message = new Label
+            {
+                AutoSize = true,
+                Text = messageText,
+                MinimumSize = new Size(100,50) ,
+                Margin = new System.Windows.Forms.Padding(0),
+                TextAlign = System.Drawing.ContentAlignment.TopLeft
+            };
+            msg.Controls.Add(message, 1, 0);
+
+
+            // Create a Label with the message text
+            Label bpadding = new Label
+            {
+                AutoSize = true,
+                Text = " ",
+                Margin = new System.Windows.Forms.Padding(0)
+            };
+            msg.Controls.Add(bpadding, 2, 0);
+
+
+            // Add padding row at the end
+            Label bottomPadding2 = new Label
+            {
+                AutoSize = true,
+                Dock = DockStyle.Top,
+                Text = " ",
+                BackColor = Color.Black,
+                ForeColor = Color.White,
+                Margin = new System.Windows.Forms.Padding(0)
+            };
+            msg.Controls.Add(bottomPadding2, 3, 0);
+
+            // Add padding row at the end
+            Label bottomPadding3 = new Label
+            {
+                AutoSize = true,
+                Dock = DockStyle.Top,
+                Text = " ",
+                BackColor = Color.Black,
+                ForeColor = Color.White,
+                Margin = new System.Windows.Forms.Padding(0)
+            };
+            msg.Controls.Add(bottomPadding3, 4, 0);
+
+
+        }
+
+
+        void Owner_LinkClicked(string ownerId)
+        {
+
+            new ObjectBrowser(ownerId).Show();
+        }
+
+
         string TruncateAddress(string input)
         {
             if (input.Length <= 13)
@@ -1186,10 +1569,6 @@ namespace SUP
             }
         }
 
-        private void flowLayoutPanel1_Paint(object sender, PaintEventArgs e)
-        {
-
-        }
 
         private void btnPublicMessage_Click(object sender, EventArgs e)
         {
@@ -1201,24 +1580,15 @@ namespace SUP
             richTextBox1.ForeColor = Color.White;
            
             // Add the RichTextBox control to the FlowLayoutPanel
-            flowLayoutPanel1.Controls.Add(richTextBox1);
+            supFlow.Controls.Add(richTextBox1);
 
 
             // Set the initial width of the RichTextBox control
-            richTextBox1.Width = flowLayoutPanel1.Width - 42;
+            richTextBox1.Width = supFlow.Width - 42;
             // Register for the FlowLayoutPanel size changed event
-            flowLayoutPanel1.SizeChanged += new EventHandler(flowLayoutPanel1_SizeChanged);
+            supFlow.SizeChanged += new EventHandler(flowLayoutPanel1_SizeChanged);
         }
 
-        private void btnRefresh_Click(object sender, EventArgs e)
-        {
-            profileBIO.Text = richTextBox1.Rtf;
-        }
-
-        private void profileCreatedDate_Click(object sender, EventArgs e)
-        {
-
-        }
 
         private void splitContainer1_DoubleClick(object sender, EventArgs e)
         {
