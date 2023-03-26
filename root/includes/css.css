@@ -1,7 +1,0 @@
-body {font-family: Arial, Helvetica, sans-serif;background:white;}
-a {color: #A0A0A0;}
-img {max-width: 400px;height: auto;}
-.main{max-width: 100%;}
-.main .item {margin: 5px;}
-.main .item .content {word-wrap: break-word;background: #E6E6E6;color: #151515;padding: 10px;text-align: center;-webkit-border-radius:10px;-moz-border-radius:10px;border-radius:10px;}
-.main .item .content table {word-break: break-all;word-wrap: break-word;padding: 10px;}
