@@ -1186,7 +1186,7 @@ namespace SUP
                                             fileName = objstate.Image.Replace(@"//", "").Replace(@"\\", "").Substring(51);
                                             if (fileName == "") { fileName = "artifact"; } else { fileName = fileName.Replace(@"/", "").Replace(@"\", ""); }
 
-                                            System.IO.File.Move("ipfs/" + transid + "/" + transid, @"ipfs/" + transid + @"/" + fileName);
+                                            try { System.IO.File.Move("ipfs/" + transid + "/" + transid, @"ipfs/" + transid + @"/" + fileName); } catch { }
                                         }
 
 

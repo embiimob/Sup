@@ -1264,7 +1264,7 @@ namespace SUP.P2FK
                     }
 
 
-                    if (isObject.URN != null && StructuralComparisons.StructuralEqualityComparer.Equals(hash1, hash2) && isObject.Owners != null && isObject.ChangeDate > DateTime.Now.AddYears(-3))
+                    if (isObject.URN != null && hash1.Length > 0 && StructuralComparisons.StructuralEqualityComparer.Equals(hash1, hash2) && isObject.Owners != null && isObject.ChangeDate > DateTime.Now.AddYears(-3))
                     {
                         if (isObject.Creators.ContainsKey(findObject))
                         {
