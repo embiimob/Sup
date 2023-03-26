@@ -547,7 +547,8 @@
             this.Controls.Add(this.txtAddressListJSON);
             this.MinimumSize = new System.Drawing.Size(983, 653);
             this.Name = "ProfileMint";
-            this.Text = "Sup!? Profile Mint";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
+            this.Text = "Profile Mint";
             this.Load += new System.EventHandler(this.ObjectMint_Load);
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).EndInit();
             this.ResumeLayout(false);

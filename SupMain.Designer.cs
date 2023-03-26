@@ -48,8 +48,9 @@
             this.btnPrivateMessage = new System.Windows.Forms.Button();
             this.btnPublicMessage = new System.Windows.Forms.Button();
             this.btnMint = new System.Windows.Forms.Button();
-            this.supFlow = new System.Windows.Forms.FlowLayoutPanel();
             this.tmrSearchMemoryPool = new System.Windows.Forms.Timer(this.components);
+            this.lblAdultsOnly = new System.Windows.Forms.Label();
+            this.supFlow = new System.Windows.Forms.FlowLayoutPanel();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.SuspendLayout();
@@ -60,6 +61,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.activeIMG)).BeginInit();
             this.panel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.profileIMG)).BeginInit();
+            this.supFlow.SuspendLayout();
             this.SuspendLayout();
             // 
             // splitContainer1
@@ -101,12 +103,12 @@
             // 
             // splitContainer2.Panel2
             // 
+            this.splitContainer2.Panel2.Controls.Add(this.supFlow);
             this.splitContainer2.Panel2.Controls.Add(this.panel1);
             this.splitContainer2.Panel2.Controls.Add(this.btnRefresh);
             this.splitContainer2.Panel2.Controls.Add(this.btnPrivateMessage);
             this.splitContainer2.Panel2.Controls.Add(this.btnPublicMessage);
             this.splitContainer2.Panel2.Controls.Add(this.btnMint);
-            this.splitContainer2.Panel2.Controls.Add(this.supFlow);
             this.splitContainer2.Size = new System.Drawing.Size(357, 625);
             this.splitContainer2.SplitterDistance = 70;
             this.splitContainer2.SplitterWidth = 1;
@@ -217,7 +219,7 @@
             // 
             this.btnBlock.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.btnBlock.Enabled = false;
-            this.btnBlock.Location = new System.Drawing.Point(203, 146);
+            this.btnBlock.Location = new System.Drawing.Point(210, 146);
             this.btnBlock.Name = "btnBlock";
             this.btnBlock.Size = new System.Drawing.Size(67, 23);
             this.btnBlock.TabIndex = 9;
@@ -228,7 +230,7 @@
             // 
             this.btnMute.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.btnMute.Enabled = false;
-            this.btnMute.Location = new System.Drawing.Point(129, 146);
+            this.btnMute.Location = new System.Drawing.Point(137, 146);
             this.btnMute.Name = "btnMute";
             this.btnMute.Size = new System.Drawing.Size(67, 23);
             this.btnMute.TabIndex = 8;
@@ -266,39 +268,40 @@
             // 
             // btnRefresh
             // 
-            this.btnRefresh.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnRefresh.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.btnRefresh.Enabled = false;
             this.btnRefresh.Font = new System.Drawing.Font("Microsoft Sans Serif", 21.75F);
-            this.btnRefresh.Location = new System.Drawing.Point(223, 578);
+            this.btnRefresh.Location = new System.Drawing.Point(81, 578);
             this.btnRefresh.Name = "btnRefresh";
             this.btnRefresh.Size = new System.Drawing.Size(50, 40);
             this.btnRefresh.TabIndex = 85;
-            this.btnRefresh.Text = "♻️";
+            this.btnRefresh.Text = "🪩";
             this.btnRefresh.UseVisualStyleBackColor = true;
-            this.btnRefresh.Click += new System.EventHandler(this.RefreshSupMessages);
+            this.btnRefresh.Click += new System.EventHandler(this.btnRefresh_Click);
             // 
             // btnPrivateMessage
             // 
-            this.btnPrivateMessage.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.btnPrivateMessage.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.btnPrivateMessage.Enabled = false;
             this.btnPrivateMessage.Font = new System.Drawing.Font("Microsoft Sans Serif", 21.75F);
-            this.btnPrivateMessage.Location = new System.Drawing.Point(79, 578);
+            this.btnPrivateMessage.Location = new System.Drawing.Point(227, 578);
             this.btnPrivateMessage.Name = "btnPrivateMessage";
             this.btnPrivateMessage.Size = new System.Drawing.Size(50, 40);
             this.btnPrivateMessage.TabIndex = 84;
             this.btnPrivateMessage.Text = "🤐";
             this.btnPrivateMessage.UseVisualStyleBackColor = true;
+            this.btnPrivateMessage.Click += new System.EventHandler(this.btnPrivateMessage_Click);
             // 
             // btnPublicMessage
             // 
             this.btnPublicMessage.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.btnPublicMessage.Enabled = false;
             this.btnPublicMessage.Font = new System.Drawing.Font("Microsoft Sans Serif", 21.75F);
-            this.btnPublicMessage.Location = new System.Drawing.Point(153, 578);
+            this.btnPublicMessage.Location = new System.Drawing.Point(154, 578);
             this.btnPublicMessage.Name = "btnPublicMessage";
             this.btnPublicMessage.Size = new System.Drawing.Size(50, 40);
             this.btnPublicMessage.TabIndex = 83;
-            this.btnPublicMessage.Text = "📣";
+            this.btnPublicMessage.Text = "😍";
             this.btnPublicMessage.UseVisualStyleBackColor = true;
             this.btnPublicMessage.Click += new System.EventHandler(this.btnPublicMessage_Click);
             // 
@@ -306,7 +309,7 @@
             // 
             this.btnMint.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.btnMint.Font = new System.Drawing.Font("Microsoft Sans Serif", 21.75F);
-            this.btnMint.Location = new System.Drawing.Point(8, 578);
+            this.btnMint.Location = new System.Drawing.Point(9, 578);
             this.btnMint.Name = "btnMint";
             this.btnMint.Size = new System.Drawing.Size(50, 40);
             this.btnMint.TabIndex = 80;
@@ -314,25 +317,35 @@
             this.btnMint.UseVisualStyleBackColor = true;
             this.btnMint.Click += new System.EventHandler(this.btnMint_Click);
             // 
+            // tmrSearchMemoryPool
+            // 
+            this.tmrSearchMemoryPool.Interval = 5000;
+            this.tmrSearchMemoryPool.Tick += new System.EventHandler(this.tmrSearchMemoryPool_Tick);
+            // 
+            // lblAdultsOnly
+            // 
+            this.lblAdultsOnly.Font = new System.Drawing.Font("Dubai", 20.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblAdultsOnly.ForeColor = System.Drawing.Color.White;
+            this.lblAdultsOnly.Location = new System.Drawing.Point(3, 0);
+            this.lblAdultsOnly.Name = "lblAdultsOnly";
+            this.lblAdultsOnly.Size = new System.Drawing.Size(274, 381);
+            this.lblAdultsOnly.TabIndex = 86;
+            this.lblAdultsOnly.Text = "greetings teamworld\r\nclick the 🗝️ to begin\r\n#Experimental Sup!?\r\nmade for adults" +
+    " only";
+            this.lblAdultsOnly.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
             // supFlow
             // 
             this.supFlow.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.supFlow.AutoScroll = true;
-            this.supFlow.BackColor = System.Drawing.Color.Black;
-            this.supFlow.FlowDirection = System.Windows.Forms.FlowDirection.TopDown;
-            this.supFlow.Location = new System.Drawing.Point(3, 178);
+            this.supFlow.Controls.Add(this.lblAdultsOnly);
+            this.supFlow.Location = new System.Drawing.Point(0, 178);
             this.supFlow.Name = "supFlow";
-            this.supFlow.Size = new System.Drawing.Size(286, 394);
-            this.supFlow.TabIndex = 99;
-            this.supFlow.WrapContents = false;
+            this.supFlow.Size = new System.Drawing.Size(283, 394);
+            this.supFlow.TabIndex = 86;
             this.supFlow.SizeChanged += new System.EventHandler(this.flowLayoutPanel1_SizeChanged);
-            // 
-            // tmrSearchMemoryPool
-            // 
-            this.tmrSearchMemoryPool.Interval = 5000;
-            this.tmrSearchMemoryPool.Tick += new System.EventHandler(this.tmrSearchMemoryPool_Tick);
             // 
             // SupMain
             // 
@@ -356,6 +369,7 @@
             this.panel1.ResumeLayout(false);
             this.panel1.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.profileIMG)).EndInit();
+            this.supFlow.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
@@ -379,9 +393,10 @@
         private System.Windows.Forms.Label profileCreatedDate;
         private System.Windows.Forms.Label profileBIO;
         private System.Windows.Forms.PictureBox profileIMG;
-        private System.Windows.Forms.FlowLayoutPanel supFlow;
         private System.Windows.Forms.PictureBox activeIMG;
         private System.Windows.Forms.FlowLayoutPanel flowFollow;
         private System.Windows.Forms.LinkLabel profileURN;
+        private System.Windows.Forms.Label lblAdultsOnly;
+        private System.Windows.Forms.FlowLayoutPanel supFlow;
     }
 }

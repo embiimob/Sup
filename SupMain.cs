@@ -15,6 +15,7 @@ using System.Reflection;
 using System.Text.RegularExpressions;
 using Newtonsoft.Json;
 using System.Globalization;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement.StartPanel;
 
 namespace SUP
 {
@@ -35,6 +36,8 @@ namespace SUP
         private RichTextBox richTextBox1;
         ObjectBrowserControl OBcontrol = new ObjectBrowserControl();
         private int numMessagesDisplayed;
+        private int numPrivateMessagesDisplayed;
+        FlowLayoutPanel supPrivateFlow = new FlowLayoutPanel();
 
         public SupMain()
         {
@@ -43,11 +46,10 @@ namespace SUP
 
         private void SupMaincs_Load(object sender, EventArgs e)
         {
-           
+            if (Directory.Exists("root")) { lblAdultsOnly.Visible = false; }
 
             OBcontrol.Dock = DockStyle.Fill;
             OBcontrol.ProfileURNChanged += OBControl_ProfileURNChanged;
-
             splitContainer1.Panel2.Controls.Add(OBcontrol);
             
         }
@@ -71,7 +73,9 @@ namespace SUP
                     btnRefresh.Enabled = true;
                     MakeActiveProfile(objectBrowserForm.profileURN.Links[0].LinkData.ToString());
                     numMessagesDisplayed = 0;
-                    btnRefresh.PerformClick();
+                    numPrivateMessagesDisplayed = 0;
+                    supFlow.Controls.Clear();
+                    //btnRefresh.PerformClick();
 
                 }
             }
@@ -155,54 +159,65 @@ namespace SUP
 
         private void btnMint_Click(object sender, EventArgs e)
         {
-            // Create the form that will contain the buttons
-            Form buttonForm = new Form();
-            buttonForm.FormBorderStyle = FormBorderStyle.None;
-            buttonForm.BackColor = Color.White;
-            buttonForm.Size = new Size(300, 150);
 
-            // Create the "Object Mint" button
-            Button objectMintButton = new Button();
-            objectMintButton.Text = @"Object Mint \ Update";
-            objectMintButton.Font = new Font("Arial", 16, FontStyle.Bold);
-            objectMintButton.Size = new Size(250, 50);
-            objectMintButton.Location = new Point(25, 25);
-            objectMintButton.Click += (s, ev) =>
+            if (splitContainer1.Panel2.Controls.Contains(supPrivateFlow))
             {
-                // Close the button form
-                buttonForm.Close();
-
-                // Show the "ObjectMint" form and set focus to it
-                ObjectMint mintform = new ObjectMint();
-                mintform.StartPosition = FormStartPosition.CenterScreen;
-                mintform.Show(this);
-                mintform.Focus();
-            };
-            buttonForm.Controls.Add(objectMintButton);
-
-            // Create the "Mint Profile" button
-            Button mintProfileButton = new Button();
-            mintProfileButton.Text = @"Profile Mint \ Update";
-            mintProfileButton.Font = new Font("Arial", 16, FontStyle.Bold);
-            mintProfileButton.Size = new Size(250, 50);
-            mintProfileButton.Location = new Point(25, 85);
-            mintProfileButton.Click += (s, ev) =>
+                splitContainer1.Panel2.Controls.Clear();
+                numPrivateMessagesDisplayed = 0;
+                splitContainer1.Panel2.Controls.Add(OBcontrol);
+                
+            }
+            else
             {
-                // Close the button form
-                buttonForm.Close();
+                // Create the form that will contain the buttons
+                Form buttonForm = new Form();
+                buttonForm.FormBorderStyle = FormBorderStyle.None;
+                buttonForm.BackColor = Color.White;
+                buttonForm.Size = new Size(300, 150);
 
-                // Show the "ProfileMint" form and set focus to it
-                ProfileMint mintprofile = new ProfileMint();
-                mintprofile.StartPosition = FormStartPosition.CenterScreen;
-                mintprofile.Show(this);
-                mintprofile.Focus();
-            };
-            buttonForm.Controls.Add(mintProfileButton);
+                // Create the "Object Mint" button
+                Button objectMintButton = new Button();
+                objectMintButton.Text = @"Object Mint \ Update";
+                objectMintButton.Font = new Font("Arial", 16, FontStyle.Bold);
+                objectMintButton.Size = new Size(250, 50);
+                objectMintButton.Location = new Point(25, 25);
+                objectMintButton.Click += (s, ev) =>
+                {
+                    // Close the button form
+                    buttonForm.Close();
 
-            // Show the button form centered on the launching program and set focus to it
-            buttonForm.StartPosition = FormStartPosition.CenterParent;
-            buttonForm.ShowDialog(this);
-            buttonForm.Focus();
+                    // Show the "ObjectMint" form and set focus to it
+                    ObjectMint mintform = new ObjectMint();
+                    mintform.StartPosition = FormStartPosition.CenterScreen;
+                    mintform.Show(this);
+                    mintform.Focus();
+                };
+                buttonForm.Controls.Add(objectMintButton);
+
+                // Create the "Mint Profile" button
+                Button mintProfileButton = new Button();
+                mintProfileButton.Text = @"Profile Mint \ Update";
+                mintProfileButton.Font = new Font("Arial", 16, FontStyle.Bold);
+                mintProfileButton.Size = new Size(250, 50);
+                mintProfileButton.Location = new Point(25, 85);
+                mintProfileButton.Click += (s, ev) =>
+                {
+                    // Close the button form
+                    buttonForm.Close();
+
+                    // Show the "ProfileMint" form and set focus to it
+                    ProfileMint mintprofile = new ProfileMint();
+                    mintprofile.StartPosition = FormStartPosition.CenterScreen;
+                    mintprofile.Show(this);
+                    mintprofile.Focus();
+                };
+                buttonForm.Controls.Add(mintProfileButton);
+
+                // Show the button form centered on the launching program and set focus to it
+                buttonForm.StartPosition = FormStartPosition.CenterParent;
+                buttonForm.ShowDialog(this);
+                buttonForm.Focus();
+            }
         }
 
 
@@ -545,6 +560,7 @@ namespace SUP
             {
                 new Connections().Show();
             }
+
             
         }
 
@@ -1181,7 +1197,7 @@ namespace SUP
         }
 
 
-        private void RefreshSupMessages(object sender, EventArgs e)
+        private void RefreshSupMessages()
         {
             // Clear controls if no messages have been displayed yet
             if (numMessagesDisplayed == 0)
@@ -1198,7 +1214,7 @@ namespace SUP
             using (var db = new DB(SUP, @"root\sup"))
             {
                 string lastKey = db.Get("lastkey!" + profileURN.Links[0].LinkData.ToString());
-                if (lastKey == null) { return; }
+                if (lastKey == null) { lastKey = profileURN.Links[0].LinkData.ToString(); }
                 LevelDB.Iterator it = db.CreateIterator();
                 for (
                    it.Seek(lastKey);
@@ -1383,6 +1399,219 @@ namespace SUP
             supFlow.ResumeLayout();
 
         }
+
+
+        private void RefreshPrivateSupMessages()
+        {
+           
+            // Clear controls if no messages have been displayed yet
+            if (numPrivateMessagesDisplayed == 0)
+            {
+                splitContainer1.Panel2.Controls.Clear();
+                supPrivateFlow.Controls.Clear();
+                supPrivateFlow.Dock = DockStyle.Fill;
+                splitContainer1.Panel2.Controls.Add(supPrivateFlow);
+            }
+
+            Dictionary<string, string[]> profileAddress = new Dictionary<string, string[]> { };
+            OBJState objstate = OBJState.GetObjectByAddress(profileURN.Links[0].LinkData.ToString(), "good-user", "better-password", "http://127.0.0.1:18332");
+            int rownum = 1;
+
+            var SUP = new Options { CreateIfMissing = true };
+
+            using (var db = new DB(SUP, @"root\sec"))
+            {
+                string lastKey = db.Get("lastkey!" + profileURN.Links[0].LinkData.ToString());
+                if (lastKey == null) { lastKey = profileURN.Links[0].LinkData.ToString(); }
+                LevelDB.Iterator it = db.CreateIterator();
+                for (
+                   it.Seek(lastKey);
+                   it.IsValid() && it.KeyAsString().StartsWith(profileURN.Links[0].LinkData.ToString()) && rownum <= numPrivateMessagesDisplayed + 10; // Only display next 10 messages
+                    it.Prev()
+                 )
+                {
+                    if (rownum > numPrivateMessagesDisplayed)
+                    {
+                        string process = it.ValueAsString();
+
+                        List<string> supMessagePacket = JsonConvert.DeserializeObject<List<string>>(process);
+                        Root root = Root.GetRootByTransactionId(supMessagePacket[1], "good-user", "better-password", "http://127.0.0.1:18332");
+                        byte[] result = Root.GetRootBytesByFile(new string[] { @"root/" + supMessagePacket[1] + @"/SEC" });
+                        result = Root.DecryptRootBytes("good-user", "better-password", "http://127.0.0.1:18332", profileURN.Links[0].LinkData.ToString(), result);
+                        root = Root.GetRootByTransactionId(supMessagePacket[1], null, null, null, "111", result);
+                                         
+
+                        string message = string.Join(" ", root.Message);
+
+                        string fromAddress = supMessagePacket[0];
+                        string imagelocation = "";
+
+
+                        if (!profileAddress.ContainsKey(fromAddress))
+                        {
+
+                            PROState profile = PROState.GetProfileByAddress(fromAddress, "good-user", "better-password", "http://127.0.0.1:18332");
+
+                            if (profile.URN != null)
+                            {
+                                fromAddress = TruncateAddress(profile.URN);
+                                imagelocation = profile.Image;
+
+
+                                if (imagelocation.StartsWith("BTC:") || imagelocation.StartsWith("MZC:"))
+                                {
+                                    if (imagelocation.Length > 64)
+                                    {
+                                        string transid = imagelocation.Substring(4, 64);
+                                        imagelocation = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + @"\root\" + imagelocation.Replace("BTC:", "").Replace("MZC:", "").Replace(@"/", @"\");
+
+
+                                        if (!System.IO.Directory.Exists("root/" + transid))
+                                        {
+                                            if (profile.Image.StartsWith("BTC:"))
+                                            {
+                                                Root.GetRootByTransactionId(transid, "good-user", "better-password", "http://127.0.0.1:8332", "0");
+                                            }
+                                            else
+                                            {
+                                                Root.GetRootByTransactionId(transid, "good-user", "better-password", @"http://127.0.0.1:12832", "50");
+
+                                            }
+                                        }
+                                    }
+
+                                }
+                                else
+                                {
+                                    if (imagelocation.Length > 64)
+                                    {
+                                        string transid = imagelocation.Substring(0, 64);
+                                        imagelocation = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + @"\root\" + imagelocation.Replace(@" / ", @"\");
+                                        if (!System.IO.Directory.Exists("root/" + transid))
+                                        {
+                                            Root.GetRootByTransactionId(transid, "good-user", "better-password", "http://127.0.0.1:18332");
+
+                                        }
+                                    }
+
+
+                                    if (imagelocation.StartsWith("IPFS:"))
+                                    {
+
+                                        string transid = imagelocation.Substring(5, 46);
+                                        if (!System.IO.Directory.Exists("ipfs/" + transid))
+                                        {
+
+                                            string isLoading;
+                                            using (var db2 = new DB(SUP, @"ipfs"))
+                                            {
+                                                isLoading = db2.Get(transid);
+
+                                            }
+
+                                            if (isLoading != "loading")
+                                            {
+                                                using (var db2 = new DB(SUP, @"ipfs"))
+                                                {
+
+                                                    db2.Put(transid, "loading");
+
+                                                }
+
+                                                Task ipfsTask = Task.Run(() =>
+                                                {
+                                                    Process process2 = new Process();
+                                                    process2.StartInfo.FileName = @"ipfs\ipfs.exe";
+                                                    process2.StartInfo.Arguments = "get " + transid + @"-p -o ipfs\" + transid;
+                                                    process2.Start();
+                                                    process2.WaitForExit();
+
+                                                    if (System.IO.File.Exists("ipfs/" + transid))
+                                                    {
+                                                        System.IO.File.Move("ipfs/" + transid, "ipfs/" + transid + "_tmp");
+                                                        System.IO.Directory.CreateDirectory("ipfs/" + transid);
+                                                        string fileName = objstate.Image.Replace(@"//", "").Replace(@"\\", "").Substring(51);
+                                                        if (fileName == "")
+                                                        {
+                                                            fileName = "artifact";
+
+                                                        }
+                                                        else { fileName = fileName.Replace(@"/", "").Replace(@"\", ""); }
+                                                        System.IO.File.Move("ipfs/" + transid + "_tmp", @"ipfs/" + transid + @"/" + fileName);
+                                                    }
+
+
+                                                    //attempt to pin fails silently if daemon is not running
+                                                    Process process3 = new Process
+                                                    {
+                                                        StartInfo = new ProcessStartInfo
+                                                        {
+                                                            FileName = @"ipfs\ipfs.exe",
+                                                            Arguments = "pin add " + transid,
+                                                            UseShellExecute = false,
+                                                            CreateNoWindow = true
+                                                        }
+                                                    };
+                                                    process3.Start();
+
+
+                                                    using (var db2 = new DB(SUP, @"ipfs"))
+                                                    {
+                                                        db2.Delete(transid);
+
+                                                    }
+                                                });
+                                            }
+
+                                        }
+
+                                    }
+
+
+
+
+                                }
+
+
+                            }
+                            else
+                            { fromAddress = TruncateAddress(fromAddress); }
+
+                            string[] profilePacket = new string[2];
+
+                            profilePacket[0] = fromAddress;
+                            profilePacket[1] = imagelocation;
+                            profileAddress.Add(supMessagePacket[0], profilePacket);
+
+                        }
+                        else
+                        {
+                            string[] profilePacket = new string[] { };
+                            profileAddress.TryGetValue(fromAddress, out profilePacket);
+                            fromAddress = profilePacket[0];
+                            imagelocation = profilePacket[1];
+
+                        }
+
+
+                        string tstamp = it.KeyAsString().Split('!')[1];
+                        System.Drawing.Color bgcolor = System.Drawing.Color.White;
+
+                        CreateRow(imagelocation, fromAddress, supMessagePacket[0], DateTime.ParseExact(tstamp, "yyyyMMddHHmmss", CultureInfo.InvariantCulture), message, bgcolor, supPrivateFlow);
+
+                    }
+                    rownum++;
+                }
+                it.Dispose();
+            }
+
+            // Update number of messages displayed
+            numPrivateMessagesDisplayed += 10;
+
+            supPrivateFlow.ResumeLayout();
+
+        }
+
 
         void CreateRow(string imageLocation, string ownerName, string ownerId, DateTime timestamp, string messageText, System.Drawing.Color bgcolor, FlowLayoutPanel layoutPanel)
         {
@@ -1572,21 +1801,7 @@ namespace SUP
 
         private void btnPublicMessage_Click(object sender, EventArgs e)
         {
-            // Create a new RichTextBox control
-            richTextBox1 = new RichTextBox();
-            richTextBox1.Height = 180; // set a fixed height
-            richTextBox1.BackColor = Color.Black;
-            richTextBox1.BorderStyle = BorderStyle.FixedSingle;
-            richTextBox1.ForeColor = Color.White;
-           
-            // Add the RichTextBox control to the FlowLayoutPanel
-            supFlow.Controls.Add(richTextBox1);
-
-
-            // Set the initial width of the RichTextBox control
-            richTextBox1.Width = supFlow.Width - 42;
-            // Register for the FlowLayoutPanel size changed event
-            supFlow.SizeChanged += new EventHandler(flowLayoutPanel1_SizeChanged);
+            RefreshSupMessages();
         }
 
 
@@ -1606,6 +1821,29 @@ namespace SUP
         private void profileURN_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
             new ProfileMint(profileURN.Links[0].LinkData.ToString()).Show();
+        }
+
+        private void btnPrivateMessage_Click(object sender, EventArgs e)
+        {
+         
+
+            RefreshPrivateSupMessages();
+
+            
+        }
+
+        private void btnRefresh_Click(object sender, EventArgs e)
+        {
+
+            //richTextBox1 = new RichTextBox();
+            //richTextBox1.Height = 180; // set a fixed height
+            //richTextBox1.BackColor = Color.Black;
+            //richTextBox1.BorderStyle = BorderStyle.FixedSingle;
+            //richTextBox1.ForeColor = Color.White;
+            //supFlow.Controls.Add(richTextBox1);
+            //richTextBox1.Width = supFlow.Width - 42;
+
+            //supFlow.SizeChanged += new EventHandler(flowLayoutPanel1_SizeChanged);
         }
     }
 }

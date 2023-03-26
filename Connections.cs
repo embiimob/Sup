@@ -180,7 +180,7 @@ namespace SUP
 
         private void button2_Click(object sender, EventArgs e)
         {
-            string[] subfolderNames = Directory.GetDirectories("ipfs");
+           try{ string[] subfolderNames = Directory.GetDirectories("ipfs");
 
             foreach (string subfolder in subfolderNames)
             {
@@ -201,11 +201,13 @@ namespace SUP
                 process2.WaitForExit();
 
             }
+            }
+            catch { Directory.CreateDirectory("ipfs"); }
         }
 
         private void btnUnpinIPFS_Click(object sender, EventArgs e)
         {
-            string[] subfolderNames = Directory.GetDirectories("ipfs");
+            try{string[] subfolderNames = Directory.GetDirectories("ipfs");
 
             foreach (string subfolder in subfolderNames)
             {
@@ -226,11 +228,13 @@ namespace SUP
                 process2.WaitForExit();
 
             }
+            }
+            catch { Directory.CreateDirectory("ipfs"); }
         }
 
         private void btnPurgeIPFS_Click(object sender, EventArgs e)
         {
-            string[] subfolderNames = Directory.GetDirectories("ipfs");
+          try{  string[] subfolderNames = Directory.GetDirectories("ipfs");
 
             foreach (string subfolder in subfolderNames)
             {
@@ -248,17 +252,18 @@ namespace SUP
                     File.Delete(file);
                 }
             }
+            }
+            catch { Directory.CreateDirectory("ipfs"); }
         }
 
         private void btnPurge_Click(object sender, EventArgs e)
         {
 
             string directoryPath = @"root";
-            try
-            {
+            
 
                 // Get a list of all the subdirectories in the directory
-                string[] subdirectories = Directory.GetDirectories(directoryPath);
+             try{   string[] subdirectories = Directory.GetDirectories(directoryPath);
 
                 // Loop through each subdirectory
                 foreach (string subdirectory in subdirectories)
@@ -284,7 +289,9 @@ namespace SUP
                     File.Delete(file);
                 }
             }
-            catch { }
+            catch { Directory.CreateDirectory("root"); }
+
+
         }
 
 
@@ -377,7 +384,7 @@ namespace SUP
             string directoryPath = @"root";
 
             // Get a list of all the subdirectories in the directory
-            string[] subdirectories = Directory.GetDirectories(directoryPath);
+            try { string[] subdirectories = Directory.GetDirectories(directoryPath); 
 
             // Loop through each subdirectory
             foreach (string subdirectory in subdirectories)
@@ -392,8 +399,9 @@ namespace SUP
                     Directory.Delete(subdirectory, true);
                 }
             }
+            }
+            catch { Directory.CreateDirectory("root"); }
 
-            
         }
 
         private void brnPurgeMute_Click(object sender, EventArgs e)

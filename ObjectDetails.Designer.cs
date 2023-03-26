@@ -116,7 +116,7 @@
             // 
             this.btnOfficial.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.btnOfficial.BackColor = System.Drawing.Color.Yellow;
-            this.btnOfficial.Location = new System.Drawing.Point(560, 315);
+            this.btnOfficial.Location = new System.Drawing.Point(741, 496);
             this.btnOfficial.Name = "btnOfficial";
             this.btnOfficial.Size = new System.Drawing.Size(87, 40);
             this.btnOfficial.TabIndex = 105;
@@ -133,7 +133,7 @@
             this.transFlow.Location = new System.Drawing.Point(9, 84);
             this.transFlow.Margin = new System.Windows.Forms.Padding(3, 0, 0, 0);
             this.transFlow.Name = "transFlow";
-            this.transFlow.Size = new System.Drawing.Size(293, 121);
+            this.transFlow.Size = new System.Drawing.Size(293, 302);
             this.transFlow.TabIndex = 102;
             // 
             // btnLaunchURN
@@ -141,7 +141,7 @@
             this.btnLaunchURN.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.btnLaunchURN.BackColor = System.Drawing.SystemColors.ControlDark;
             this.btnLaunchURN.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnLaunchURN.Location = new System.Drawing.Point(612, 322);
+            this.btnLaunchURN.Location = new System.Drawing.Point(793, 503);
             this.btnLaunchURN.Name = "btnLaunchURN";
             this.btnLaunchURN.Size = new System.Drawing.Size(34, 31);
             this.btnLaunchURN.TabIndex = 66;
@@ -158,14 +158,14 @@
             this.flowPanel.Controls.Add(this.pictureBox1);
             this.flowPanel.Location = new System.Drawing.Point(306, 13);
             this.flowPanel.Name = "flowPanel";
-            this.flowPanel.Size = new System.Drawing.Size(350, 350);
+            this.flowPanel.Size = new System.Drawing.Size(531, 531);
             this.flowPanel.TabIndex = 104;
             // 
             // lblWarning
             // 
             this.lblWarning.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.lblWarning.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblWarning.Location = new System.Drawing.Point(11, 301);
+            this.lblWarning.Location = new System.Drawing.Point(11, 482);
             this.lblWarning.Name = "lblWarning";
             this.lblWarning.Size = new System.Drawing.Size(222, 40);
             this.lblWarning.TabIndex = 62;
@@ -179,7 +179,7 @@
             this.pictureBox1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.pictureBox1.Location = new System.Drawing.Point(0, 0);
             this.pictureBox1.Name = "pictureBox1";
-            this.pictureBox1.Size = new System.Drawing.Size(350, 350);
+            this.pictureBox1.Size = new System.Drawing.Size(531, 531);
             this.pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
             this.pictureBox1.TabIndex = 1;
             this.pictureBox1.TabStop = false;
@@ -189,7 +189,7 @@
             // 
             this.KeysFlow.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.KeysFlow.AutoScroll = true;
-            this.KeysFlow.Location = new System.Drawing.Point(9, 208);
+            this.KeysFlow.Location = new System.Drawing.Point(9, 389);
             this.KeysFlow.Name = "KeysFlow";
             this.KeysFlow.Padding = new System.Windows.Forms.Padding(0, 5, 0, 0);
             this.KeysFlow.Size = new System.Drawing.Size(293, 108);
@@ -353,7 +353,7 @@
             // 
             this.btnRefreshOwners.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.btnRefreshOwners.Font = new System.Drawing.Font("Microsoft Sans Serif", 21.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnRefreshOwners.Location = new System.Drawing.Point(833, 322);
+            this.btnRefreshOwners.Location = new System.Drawing.Point(1014, 503);
             this.btnRefreshOwners.Margin = new System.Windows.Forms.Padding(0);
             this.btnRefreshOwners.Name = "btnRefreshOwners";
             this.btnRefreshOwners.Size = new System.Drawing.Size(100, 42);
@@ -367,7 +367,7 @@
             // 
             this.btnRefreshSup.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.btnRefreshSup.Font = new System.Drawing.Font("Microsoft Sans Serif", 21.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnRefreshSup.Location = new System.Drawing.Point(936, 322);
+            this.btnRefreshSup.Location = new System.Drawing.Point(1117, 503);
             this.btnRefreshSup.Name = "btnRefreshSup";
             this.btnRefreshSup.Size = new System.Drawing.Size(100, 42);
             this.btnRefreshSup.TabIndex = 67;
@@ -379,7 +379,7 @@
             // 
             this.btnRefreshTransactions.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.btnRefreshTransactions.Font = new System.Drawing.Font("Microsoft Sans Serif", 21.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnRefreshTransactions.Location = new System.Drawing.Point(13, 323);
+            this.btnRefreshTransactions.Location = new System.Drawing.Point(13, 504);
             this.btnRefreshTransactions.Name = "btnRefreshTransactions";
             this.btnRefreshTransactions.Size = new System.Drawing.Size(100, 42);
             this.btnRefreshTransactions.TabIndex = 85;
@@ -391,7 +391,7 @@
             // 
             this.btnReloadObject.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.btnReloadObject.Font = new System.Drawing.Font("Microsoft Sans Serif", 21.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnReloadObject.Location = new System.Drawing.Point(188, 323);
+            this.btnReloadObject.Location = new System.Drawing.Point(188, 504);
             this.btnReloadObject.Name = "btnReloadObject";
             this.btnReloadObject.Size = new System.Drawing.Size(100, 42);
             this.btnReloadObject.TabIndex = 68;
@@ -427,9 +427,9 @@
             this.supPanel.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.supPanel.Controls.Add(this.supFlow);
-            this.supPanel.Location = new System.Drawing.Point(662, 13);
+            this.supPanel.Location = new System.Drawing.Point(843, 13);
             this.supPanel.Name = "supPanel";
-            this.supPanel.Size = new System.Drawing.Size(374, 279);
+            this.supPanel.Size = new System.Drawing.Size(374, 460);
             this.supPanel.TabIndex = 80;
             this.supPanel.Visible = false;
             // 
@@ -439,7 +439,7 @@
             this.supFlow.Dock = System.Windows.Forms.DockStyle.Fill;
             this.supFlow.Location = new System.Drawing.Point(0, 0);
             this.supFlow.Name = "supFlow";
-            this.supFlow.Size = new System.Drawing.Size(374, 279);
+            this.supFlow.Size = new System.Drawing.Size(374, 460);
             this.supFlow.TabIndex = 3;
             // 
             // button6
@@ -447,7 +447,7 @@
             this.button6.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.button6.Enabled = false;
             this.button6.Font = new System.Drawing.Font("Microsoft Sans Serif", 21.75F);
-            this.button6.Location = new System.Drawing.Point(673, 323);
+            this.button6.Location = new System.Drawing.Point(854, 504);
             this.button6.Name = "button6";
             this.button6.Size = new System.Drawing.Size(100, 42);
             this.button6.TabIndex = 79;
@@ -458,7 +458,7 @@
             // 
             this.button5.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.button5.Enabled = false;
-            this.button5.Location = new System.Drawing.Point(933, 209);
+            this.button5.Location = new System.Drawing.Point(1114, 390);
             this.button5.Name = "button5";
             this.button5.Size = new System.Drawing.Size(103, 33);
             this.button5.TabIndex = 78;
@@ -476,7 +476,7 @@
             this.txtdesc.Multiline = true;
             this.txtdesc.Name = "txtdesc";
             this.txtdesc.ReadOnly = true;
-            this.txtdesc.Size = new System.Drawing.Size(270, 228);
+            this.txtdesc.Size = new System.Drawing.Size(270, 409);
             this.txtdesc.TabIndex = 77;
             this.txtdesc.Text = "description";
             // 
@@ -484,7 +484,7 @@
             // 
             this.button4.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.button4.Enabled = false;
-            this.button4.Location = new System.Drawing.Point(933, 170);
+            this.button4.Location = new System.Drawing.Point(1114, 351);
             this.button4.Name = "button4";
             this.button4.Size = new System.Drawing.Size(103, 33);
             this.button4.TabIndex = 75;
@@ -495,7 +495,7 @@
             // 
             this.button2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.button2.Enabled = false;
-            this.button2.Location = new System.Drawing.Point(933, 248);
+            this.button2.Location = new System.Drawing.Point(1114, 429);
             this.button2.Name = "button2";
             this.button2.Size = new System.Drawing.Size(103, 33);
             this.button2.TabIndex = 74;
@@ -506,7 +506,7 @@
             // 
             this.label2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(676, 156);
+            this.label2.Location = new System.Drawing.Point(857, 337);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(45, 13);
             this.label2.TabIndex = 72;
@@ -517,7 +517,7 @@
             this.CreatorsPanel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.CreatorsPanel.AutoScroll = true;
             this.CreatorsPanel.BackColor = System.Drawing.SystemColors.InactiveCaption;
-            this.CreatorsPanel.Location = new System.Drawing.Point(662, 172);
+            this.CreatorsPanel.Location = new System.Drawing.Point(843, 353);
             this.CreatorsPanel.Name = "CreatorsPanel";
             this.CreatorsPanel.Size = new System.Drawing.Size(260, 110);
             this.CreatorsPanel.TabIndex = 71;
@@ -528,9 +528,9 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.OwnersPanel.AutoScroll = true;
             this.OwnersPanel.BackColor = System.Drawing.SystemColors.InactiveCaption;
-            this.OwnersPanel.Location = new System.Drawing.Point(662, 13);
+            this.OwnersPanel.Location = new System.Drawing.Point(843, 13);
             this.OwnersPanel.Name = "OwnersPanel";
-            this.OwnersPanel.Size = new System.Drawing.Size(374, 133);
+            this.OwnersPanel.Size = new System.Drawing.Size(374, 314);
             this.OwnersPanel.TabIndex = 69;
             // 
             // webviewer
@@ -544,7 +544,7 @@
             this.webviewer.DefaultBackgroundColor = System.Drawing.SystemColors.ControlDark;
             this.webviewer.Location = new System.Drawing.Point(306, 13);
             this.webviewer.Name = "webviewer";
-            this.webviewer.Size = new System.Drawing.Size(350, 350);
+            this.webviewer.Size = new System.Drawing.Size(531, 531);
             this.webviewer.TabIndex = 65;
             this.webviewer.ZoomFactor = 1D;
             // 
@@ -553,7 +553,7 @@
             this.lblTotalOwnedDetail.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.lblTotalOwnedDetail.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lblTotalOwnedDetail.ForeColor = System.Drawing.SystemColors.ControlText;
-            this.lblTotalOwnedDetail.Location = new System.Drawing.Point(673, 295);
+            this.lblTotalOwnedDetail.Location = new System.Drawing.Point(854, 476);
             this.lblTotalOwnedDetail.Name = "lblTotalOwnedDetail";
             this.lblTotalOwnedDetail.Padding = new System.Windows.Forms.Padding(3);
             this.lblTotalOwnedDetail.Size = new System.Drawing.Size(157, 23);
@@ -601,7 +601,7 @@
             this.registrationPanel.Controls.Add(this.lblProcessHeight);
             this.registrationPanel.Controls.Add(this.lblLastChangedDate);
             this.registrationPanel.Controls.Add(this.label4);
-            this.registrationPanel.Location = new System.Drawing.Point(0, 82);
+            this.registrationPanel.Location = new System.Drawing.Point(0, 263);
             this.registrationPanel.Name = "registrationPanel";
             this.registrationPanel.Size = new System.Drawing.Size(294, 237);
             this.registrationPanel.TabIndex = 106;
@@ -645,7 +645,7 @@
             this.lblPleaseStandBy.Location = new System.Drawing.Point(306, 13);
             this.lblPleaseStandBy.Name = "lblPleaseStandBy";
             this.lblPleaseStandBy.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
-            this.lblPleaseStandBy.Size = new System.Drawing.Size(350, 350);
+            this.lblPleaseStandBy.Size = new System.Drawing.Size(531, 531);
             this.lblPleaseStandBy.TabIndex = 108;
             this.lblPleaseStandBy.Text = "please stand by... locked for loading";
             this.lblPleaseStandBy.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -655,7 +655,7 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.SystemColors.InactiveCaption;
-            this.ClientSize = new System.Drawing.Size(1043, 372);
+            this.ClientSize = new System.Drawing.Size(1224, 553);
             this.Controls.Add(this.supPanel);
             this.Controls.Add(this.lblOfficial);
             this.Controls.Add(this.lblPleaseStandBy);
@@ -690,7 +690,8 @@
             this.MinimumSize = new System.Drawing.Size(1059, 411);
             this.Name = "ObjectDetails";
             this.Padding = new System.Windows.Forms.Padding(3);
-            this.Text = "ObjectDetails";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
+            this.Text = "Object Details";
             this.Load += new System.EventHandler(this.ObjectDetails_Load);
             this.flowPanel.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();

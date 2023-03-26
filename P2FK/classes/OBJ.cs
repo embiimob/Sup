@@ -1860,6 +1860,7 @@ namespace SUP.P2FK
                     {
                         LevelDB.Iterator it = db.CreateIterator();
                         string lastKey = db.Get("lastkey!" + objectaddress);
+                       if (lastKey == null) { lastKey = objectaddress; }
                         for (
                            it.Seek(lastKey);
                            it.IsValid() && it.KeyAsString().StartsWith(objectaddress) && rownum <= skip + qty; // Only display next 20 messages
@@ -1909,7 +1910,8 @@ namespace SUP.P2FK
                     using (var db = new DB(SUP, @"root\sec"))
                     {
                         string lastKey = db.Get("lastkey!" + objectaddress);
-                        LevelDB.Iterator it = db.CreateIterator();
+                    if (lastKey == null) { lastKey = objectaddress; }
+                    LevelDB.Iterator it = db.CreateIterator();
                         for (
                            it.Seek(lastKey);
                            it.IsValid() && it.KeyAsString().StartsWith(objectaddress) && rownum <= skip + qty; // Only display next 10 messages

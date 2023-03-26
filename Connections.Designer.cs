@@ -173,7 +173,7 @@
             // 
             // btnPurgeFound
             // 
-            this.btnPurgeFound.Location = new System.Drawing.Point(144, 299);
+            this.btnPurgeFound.Location = new System.Drawing.Point(212, 302);
             this.btnPurgeFound.Name = "btnPurgeFound";
             this.btnPurgeFound.Size = new System.Drawing.Size(63, 23);
             this.btnPurgeFound.TabIndex = 159;
@@ -183,7 +183,7 @@
             // 
             // brnPurgeMute
             // 
-            this.brnPurgeMute.Location = new System.Drawing.Point(75, 299);
+            this.brnPurgeMute.Location = new System.Drawing.Point(143, 302);
             this.brnPurgeMute.Name = "brnPurgeMute";
             this.brnPurgeMute.Size = new System.Drawing.Size(63, 23);
             this.brnPurgeMute.TabIndex = 158;
@@ -193,7 +193,7 @@
             // 
             // btnPurgeBlock
             // 
-            this.btnPurgeBlock.Location = new System.Drawing.Point(6, 299);
+            this.btnPurgeBlock.Location = new System.Drawing.Point(74, 302);
             this.btnPurgeBlock.Name = "btnPurgeBlock";
             this.btnPurgeBlock.Size = new System.Drawing.Size(63, 23);
             this.btnPurgeBlock.TabIndex = 157;
@@ -375,7 +375,7 @@
             // 
             this.pictureBox1.Image = ((System.Drawing.Image)(resources.GetObject("pictureBox1.Image")));
             this.pictureBox1.InitialImage = ((System.Drawing.Image)(resources.GetObject("pictureBox1.InitialImage")));
-            this.pictureBox1.Location = new System.Drawing.Point(356, 308);
+            this.pictureBox1.Location = new System.Drawing.Point(317, 302);
             this.pictureBox1.Name = "pictureBox1";
             this.pictureBox1.Size = new System.Drawing.Size(40, 40);
             this.pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
@@ -384,9 +384,9 @@
             // 
             // btnPurge
             // 
-            this.btnPurge.Location = new System.Drawing.Point(220, 299);
+            this.btnPurge.Location = new System.Drawing.Point(3, 302);
             this.btnPurge.Name = "btnPurge";
-            this.btnPurge.Size = new System.Drawing.Size(82, 23);
+            this.btnPurge.Size = new System.Drawing.Size(65, 23);
             this.btnPurge.TabIndex = 129;
             this.btnPurge.Text = "purge all";
             this.btnPurge.UseVisualStyleBackColor = true;
@@ -437,18 +437,18 @@
             // 
             this.label15.AutoSize = true;
             this.label15.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label15.Location = new System.Drawing.Point(404, 323);
+            this.label15.Location = new System.Drawing.Point(374, 316);
             this.label15.Name = "label15";
-            this.label15.Size = new System.Drawing.Size(210, 13);
+            this.label15.Size = new System.Drawing.Size(116, 13);
             this.label15.TabIndex = 124;
-            this.label15.Text = "Sup!? Object Browser  v0.1.33-beta";
+            this.label15.Text = "Sup!? v0.1.33-beta";
             // 
             // label14
             // 
             this.label14.AutoSize = true;
-            this.label14.Location = new System.Drawing.Point(354, 363);
+            this.label14.Location = new System.Drawing.Point(311, 352);
             this.label14.Name = "label14";
-            this.label14.Size = new System.Drawing.Size(272, 78);
+            this.label14.Size = new System.Drawing.Size(324, 104);
             this.label14.TabIndex = 123;
             this.label14.Text = resources.GetString("label14.Text");
             // 
@@ -565,10 +565,10 @@
             // 
             // label13
             // 
-            this.label13.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label13.Location = new System.Drawing.Point(9, 335);
+            this.label13.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label13.Location = new System.Drawing.Point(6, 337);
             this.label13.Name = "label13";
-            this.label13.Size = new System.Drawing.Size(303, 132);
+            this.label13.Size = new System.Drawing.Size(269, 132);
             this.label13.TabIndex = 109;
             this.label13.Text = resources.GetString("label13.Text");
             // 
@@ -798,7 +798,8 @@
             this.MaximumSize = new System.Drawing.Size(675, 520);
             this.MinimumSize = new System.Drawing.Size(675, 520);
             this.Name = "Connections";
-            this.Text = "Sup!? Connections";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
+            this.Text = "Connections";
             this.Load += new System.EventHandler(this.Connections_Load);
             this.panel1.ResumeLayout(false);
             this.panel1.PerformLayout();

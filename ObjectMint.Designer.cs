@@ -699,7 +699,8 @@
             this.Controls.Add(this.txtAddressListJSON);
             this.MinimumSize = new System.Drawing.Size(1168, 874);
             this.Name = "ObjectMint";
-            this.Text = "Sup!? Object Mint";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
+            this.Text = "Object Mint";
             this.Load += new System.EventHandler(this.ObjectMint_Load);
             ((System.ComponentModel.ISupportInitialize)(this.webviewer)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();

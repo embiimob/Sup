@@ -228,7 +228,8 @@ namespace SUP
             this.MinimumSize = new System.Drawing.Size(276, 515);
             this.Name = "ObjectBrowser";
             this.RightToLeft = System.Windows.Forms.RightToLeft.No;
-            this.Text = "Sup!? Object Browser";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
+            this.Text = "Object Browser";
             this.Load += new System.EventHandler(this.ObjectBrowserLoad);
             this.Resize += new System.EventHandler(this.ObjectBrowser_Resize);
             ((System.ComponentModel.ISupportInitialize)(this.imgLoading)).EndInit();
