@@ -214,6 +214,7 @@
             this.btnFollow.TabIndex = 10;
             this.btnFollow.Text = "follow";
             this.btnFollow.UseVisualStyleBackColor = true;
+            this.btnFollow.Click += new System.EventHandler(this.btnFollow_Click);
             // 
             // btnBlock
             // 
@@ -330,8 +331,7 @@
             this.lblAdultsOnly.Name = "lblAdultsOnly";
             this.lblAdultsOnly.Size = new System.Drawing.Size(274, 381);
             this.lblAdultsOnly.TabIndex = 86;
-            this.lblAdultsOnly.Text = "greetings teamworld\r\nclick the 🗝️ to begin\r\n#Experimental Sup!?\r\nmade for adults" +
-    " only";
+            this.lblAdultsOnly.Text = "greetings teamworld\r\nclick the 🗝️ to begin\r\nmade for adults only";
             this.lblAdultsOnly.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // supFlow

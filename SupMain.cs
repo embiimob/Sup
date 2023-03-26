@@ -16,6 +16,7 @@ using System.Text.RegularExpressions;
 using Newtonsoft.Json;
 using System.Globalization;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement.StartPanel;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace SUP
 {
@@ -51,7 +52,35 @@ namespace SUP
             OBcontrol.Dock = DockStyle.Fill;
             OBcontrol.ProfileURNChanged += OBControl_ProfileURNChanged;
             splitContainer1.Panel2.Controls.Add(OBcontrol);
-            
+
+            // Read the JSON data from the file
+            string filePath = @"root\MyFriendList.Json";
+            string json = File.ReadAllText(filePath);
+
+            // Deserialize the JSON into a Dictionary<string, string> object
+            Dictionary<string, string> friendDict = JsonConvert.DeserializeObject<Dictionary<string, string>>(json);
+
+            // Create PictureBox controls for each friend in the dictionary
+            foreach (var friend in friendDict)
+            {
+                // Create a new PictureBox control
+                PictureBox pictureBox = new PictureBox();
+
+                // Set the PictureBox properties
+                pictureBox.Tag = friend.Key;
+                pictureBox.SizeMode = PictureBoxSizeMode.StretchImage;
+                pictureBox.Width = 50;
+                pictureBox.Height = 50;
+                pictureBox.ImageLocation = friend.Value;
+
+                // Add event handlers to the PictureBox
+                pictureBox.Click += new EventHandler(Friend_Click);
+                pictureBox.MouseUp += new MouseEventHandler(Friend_MouseUp);
+
+                // Add the PictureBox to the FlowLayoutPanel
+                flowFollow.Controls.Add(pictureBox);
+            }
+
         }
 
         private void OBControl_ProfileURNChanged(object sender, EventArgs e)
@@ -71,10 +100,11 @@ namespace SUP
                     btnPrivateMessage.Enabled = true;
                     btnPublicMessage.Enabled = true;
                     btnRefresh.Enabled = true;
-                    MakeActiveProfile(objectBrowserForm.profileURN.Links[0].LinkData.ToString());
+                   
                     numMessagesDisplayed = 0;
                     numPrivateMessagesDisplayed = 0;
                     supFlow.Controls.Clear();
+                    MakeActiveProfile(objectBrowserForm.profileURN.Links[0].LinkData.ToString());
                     //btnRefresh.PerformClick();
 
                 }
@@ -89,6 +119,9 @@ namespace SUP
             if (activeProfile.URN == null) { profileURN.Text = "anon"; profileBIO.Text = "";profileCreatedDate.Text = ""; profileIMG.ImageLocation = ""; activeProfile.Image = "";  return; }
 
             profileBIO.Text = activeProfile.Bio;
+            profileURN.Text = activeProfile.URN;
+            profileURN.Links[0].LinkData = address;
+
             profileCreatedDate.Text = "since: " + activeProfile.CreatedDate.ToString("MM/dd/yyyy hh:mm:ss tt");
 
             string imgurn = "";
@@ -1845,5 +1878,84 @@ namespace SUP
 
             //supFlow.SizeChanged += new EventHandler(flowLayoutPanel1_SizeChanged);
         }
+
+        private void btnFollow_Click(object sender, EventArgs e)
+        {
+
+            // Create a new PictureBox
+            PictureBox pictureBox = new PictureBox();
+
+            // Set the PictureBox properties
+            pictureBox.Tag = profileURN.Links[0].LinkData.ToString();
+            pictureBox.SizeMode = PictureBoxSizeMode.StretchImage;
+            pictureBox.Width = 50;
+            pictureBox.Height = 50;
+            pictureBox.ImageLocation = profileIMG.ImageLocation;
+
+            // Add event handlers to the PictureBox
+            pictureBox.Click += new EventHandler(Friend_Click);
+            pictureBox.MouseUp += new MouseEventHandler(Friend_MouseUp);
+
+            // Add the PictureBox to the FlowLayoutPanel
+            flowFollow.Controls.Add(pictureBox);
+        
+            Dictionary<string, string> friendDict = new Dictionary<string, string>();
+
+
+            foreach (PictureBox pb in flowFollow.Controls)
+            {
+     
+                friendDict.Add(pb.Tag.ToString(), pb.ImageLocation);
+            }
+                  
+            string json = JsonConvert.SerializeObject(friendDict);
+            string filePath = @"root\MyFriendList.Json";
+            File.WriteAllText(filePath, json);
+
+        }
+
+
+
+        private void Friend_Click(object sender, EventArgs e)
+        {
+            // Check if the user left-clicked on the PictureBox
+            if (((MouseEventArgs)e).Button == MouseButtons.Left)
+            {
+                // Get the tag text from the PictureBox
+                string address = ((PictureBox)sender).Tag.ToString();
+                numMessagesDisplayed = 0;
+                numPrivateMessagesDisplayed = 0;
+                supPrivateFlow.Controls.Clear();
+                MakeActiveProfile(address);
+                RefreshSupMessages();
+
+            }
+        }
+
+        private void Friend_MouseUp(object sender, MouseEventArgs e)
+        {
+            // Check if the user right-clicked on the PictureBox
+            if (e.Button == MouseButtons.Right)
+            {
+                // Remove the PictureBox from the FlowLayoutPanel
+                flowFollow.Controls.Remove((PictureBox)sender);
+
+                Dictionary<string, string> friendDict = new Dictionary<string, string>();
+                foreach (PictureBox pb in flowFollow.Controls)
+                {
+
+                    friendDict.Add(pb.Tag.ToString(), pb.ImageLocation);
+                }
+
+                string json = JsonConvert.SerializeObject(friendDict);
+                string filePath = @"root\MyFriendList.Json";
+                File.WriteAllText(filePath, json);
+            }
+        }
+
+
+
+
+
     }
 }
