@@ -181,11 +181,22 @@ namespace SUP
         private void button2_Click(object sender, EventArgs e)
         {
            try{ string[] subfolderNames = Directory.GetDirectories("ipfs");
+                
+                
+                foreach (string subfolder in subfolderNames)
+                {
+                   
+                    try { Directory.Delete(subfolder); } catch { }
+                   
+                }
 
-            foreach (string subfolder in subfolderNames)
+                subfolderNames = Directory.GetDirectories("ipfs");
+
+                foreach (string subfolder in subfolderNames)
             {
                 string hash = Path.GetFileName(subfolder);
 
+                    try { Directory.Delete(subfolder); } catch { }
                 // Call the Kubo local Pin command using the hash
                 Process process2 = new Process
                 {
@@ -193,8 +204,7 @@ namespace SUP
                     {
                         FileName = @"ipfs\ipfs.exe",
                         Arguments = "pin add " + hash,
-                        UseShellExecute = false,
-                        CreateNoWindow = true
+                        UseShellExecute = false
                     }
                 };
                 process2.Start();
