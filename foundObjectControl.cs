@@ -123,7 +123,7 @@ namespace SUP
                     }
 
 
-                    if (ObjectImage.ImageLocation != null)
+                    if (ObjectImage.ImageLocation != null && !ObjectImage.ImageLocation.Contains(@"inlcudes\"))
                     {
                         try
                         {

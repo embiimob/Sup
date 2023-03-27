@@ -59,12 +59,9 @@
             this.chkRunTrustedObject = new System.Windows.Forms.CheckBox();
             this.txtName = new System.Windows.Forms.Label();
             this.supPanel = new System.Windows.Forms.Panel();
-            this.supFlow = new System.Windows.Forms.FlowLayoutPanel();
-            this.button6 = new System.Windows.Forms.Button();
-            this.button5 = new System.Windows.Forms.Button();
             this.txtdesc = new System.Windows.Forms.TextBox();
-            this.button4 = new System.Windows.Forms.Button();
-            this.button2 = new System.Windows.Forms.Button();
+            this.btnBurn = new System.Windows.Forms.Button();
+            this.btnGive = new System.Windows.Forms.Button();
             this.label2 = new System.Windows.Forms.Label();
             this.CreatorsPanel = new System.Windows.Forms.FlowLayoutPanel();
             this.OwnersPanel = new System.Windows.Forms.FlowLayoutPanel();
@@ -76,6 +73,8 @@
             this.lblLaunchURI = new System.Windows.Forms.Label();
             this.lblOfficial = new System.Windows.Forms.Label();
             this.lblPleaseStandBy = new System.Windows.Forms.Label();
+            this.supFlow = new System.Windows.Forms.FlowLayoutPanel();
+            this.btnDisco = new System.Windows.Forms.Button();
             this.flowPanel.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.imgPicture)).BeginInit();
@@ -429,41 +428,9 @@
             this.supPanel.Controls.Add(this.supFlow);
             this.supPanel.Location = new System.Drawing.Point(843, 13);
             this.supPanel.Name = "supPanel";
-            this.supPanel.Size = new System.Drawing.Size(374, 460);
+            this.supPanel.Size = new System.Drawing.Size(374, 454);
             this.supPanel.TabIndex = 80;
             this.supPanel.Visible = false;
-            // 
-            // supFlow
-            // 
-            this.supFlow.AutoScroll = true;
-            this.supFlow.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.supFlow.Location = new System.Drawing.Point(0, 0);
-            this.supFlow.Name = "supFlow";
-            this.supFlow.Size = new System.Drawing.Size(374, 460);
-            this.supFlow.TabIndex = 3;
-            // 
-            // button6
-            // 
-            this.button6.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.button6.Enabled = false;
-            this.button6.Font = new System.Drawing.Font("Microsoft Sans Serif", 21.75F);
-            this.button6.Location = new System.Drawing.Point(854, 504);
-            this.button6.Name = "button6";
-            this.button6.Size = new System.Drawing.Size(100, 42);
-            this.button6.TabIndex = 79;
-            this.button6.Text = "💎";
-            this.button6.UseVisualStyleBackColor = true;
-            // 
-            // button5
-            // 
-            this.button5.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.button5.Enabled = false;
-            this.button5.Location = new System.Drawing.Point(1114, 390);
-            this.button5.Name = "button5";
-            this.button5.Size = new System.Drawing.Size(103, 33);
-            this.button5.TabIndex = 78;
-            this.button5.Text = "list";
-            this.button5.UseVisualStyleBackColor = true;
             // 
             // txtdesc
             // 
@@ -480,27 +447,28 @@
             this.txtdesc.TabIndex = 77;
             this.txtdesc.Text = "description";
             // 
-            // button4
+            // btnBurn
             // 
-            this.button4.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.button4.Enabled = false;
-            this.button4.Location = new System.Drawing.Point(1114, 351);
-            this.button4.Name = "button4";
-            this.button4.Size = new System.Drawing.Size(103, 33);
-            this.button4.TabIndex = 75;
-            this.button4.Text = "burn";
-            this.button4.UseVisualStyleBackColor = true;
+            this.btnBurn.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnBurn.Location = new System.Drawing.Point(1114, 351);
+            this.btnBurn.Name = "btnBurn";
+            this.btnBurn.Size = new System.Drawing.Size(103, 33);
+            this.btnBurn.TabIndex = 75;
+            this.btnBurn.Text = "burn";
+            this.btnBurn.UseVisualStyleBackColor = true;
+            this.btnBurn.Click += new System.EventHandler(this.btnBurn_Click);
             // 
-            // button2
+            // btnGive
             // 
-            this.button2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.button2.Enabled = false;
-            this.button2.Location = new System.Drawing.Point(1114, 429);
-            this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(103, 33);
-            this.button2.TabIndex = 74;
-            this.button2.Text = "give";
-            this.button2.UseVisualStyleBackColor = true;
+            this.btnGive.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnGive.Enabled = false;
+            this.btnGive.Location = new System.Drawing.Point(1114, 429);
+            this.btnGive.Name = "btnGive";
+            this.btnGive.Size = new System.Drawing.Size(103, 33);
+            this.btnGive.TabIndex = 74;
+            this.btnGive.Text = "give";
+            this.btnGive.UseVisualStyleBackColor = true;
+            this.btnGive.Click += new System.EventHandler(this.btnGive_Click);
             // 
             // label2
             // 
@@ -650,6 +618,28 @@
             this.lblPleaseStandBy.Text = "please stand by... locked for loading";
             this.lblPleaseStandBy.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
+            // supFlow
+            // 
+            this.supFlow.AutoScroll = true;
+            this.supFlow.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.supFlow.Location = new System.Drawing.Point(0, 0);
+            this.supFlow.Name = "supFlow";
+            this.supFlow.Size = new System.Drawing.Size(374, 454);
+            this.supFlow.TabIndex = 3;
+            // 
+            // btnDisco
+            // 
+            this.btnDisco.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnDisco.Enabled = false;
+            this.btnDisco.Font = new System.Drawing.Font("Microsoft Sans Serif", 21.75F);
+            this.btnDisco.Location = new System.Drawing.Point(854, 504);
+            this.btnDisco.Name = "btnDisco";
+            this.btnDisco.Size = new System.Drawing.Size(100, 42);
+            this.btnDisco.TabIndex = 79;
+            this.btnDisco.Text = "🪩";
+            this.btnDisco.UseVisualStyleBackColor = true;
+            this.btnDisco.Visible = false;
+            // 
             // ObjectDetails
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -676,10 +666,9 @@
             this.Controls.Add(this.btnRefreshTransactions);
             this.Controls.Add(this.btnReloadObject);
             this.Controls.Add(this.txtName);
-            this.Controls.Add(this.button6);
-            this.Controls.Add(this.button5);
-            this.Controls.Add(this.button4);
-            this.Controls.Add(this.button2);
+            this.Controls.Add(this.btnDisco);
+            this.Controls.Add(this.btnBurn);
+            this.Controls.Add(this.btnGive);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.CreatorsPanel);
             this.Controls.Add(this.webviewer);
@@ -742,12 +731,9 @@
         private System.Windows.Forms.CheckBox chkRunTrustedObject;
         public System.Windows.Forms.Label txtName;
         private System.Windows.Forms.Panel supPanel;
-        private System.Windows.Forms.FlowLayoutPanel supFlow;
-        private System.Windows.Forms.Button button6;
-        private System.Windows.Forms.Button button5;
         private System.Windows.Forms.TextBox txtdesc;
-        private System.Windows.Forms.Button button4;
-        private System.Windows.Forms.Button button2;
+        private System.Windows.Forms.Button btnBurn;
+        private System.Windows.Forms.Button btnGive;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.FlowLayoutPanel CreatorsPanel;
         private System.Windows.Forms.FlowLayoutPanel OwnersPanel;
@@ -759,5 +745,7 @@
         public System.Windows.Forms.Label lblOfficial;
         private System.Windows.Forms.Label lblPleaseStandBy;
         private System.Windows.Forms.Label lblLaunchURI;
+        private System.Windows.Forms.FlowLayoutPanel supFlow;
+        private System.Windows.Forms.Button btnDisco;
     }
 }

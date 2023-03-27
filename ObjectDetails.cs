@@ -129,6 +129,7 @@ namespace SUP
             CreatorsPanel.Controls.Clear();
             OwnersPanel.Controls.Clear();
             supPanel.Visible = false;
+            btnDisco.Visible = false;
 
 
             OBJState objstate = OBJState.GetObjectByAddress(_objectaddress, "good-user", "better-password", "http://127.0.0.1:18332");
@@ -325,6 +326,7 @@ namespace SUP
             }
             supPanel.Visible = true;
             OwnersPanel.Visible = false;
+            btnDisco.Visible = true;
 
             Dictionary<string, string[]> profileAddress = new Dictionary<string, string[]> { };
             OBJState objstate = OBJState.GetObjectByAddress(_objectaddress, "good-user", "better-password", "http://127.0.0.1:18332");
@@ -2145,6 +2147,16 @@ namespace SUP
             try
             { System.Diagnostics.Process.Start(src); }
             catch { System.Media.SystemSounds.Exclamation.Play(); }
+        }
+
+        private void btnBurn_Click(object sender, EventArgs e)
+        {
+            new ObjectBurn(_objectaddress).Show();
+        }
+
+        private void btnGive_Click(object sender, EventArgs e)
+        {
+
         }
     }
 
