@@ -17,6 +17,9 @@ using Newtonsoft.Json;
 using System.Globalization;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement.StartPanel;
 using static System.Net.Mime.MediaTypeNames;
+using Org.BouncyCastle.Utilities.Net;
+using NBitcoin.Protocol;
+using System.Dynamic;
 
 namespace SUP
 {
@@ -38,6 +41,7 @@ namespace SUP
         ObjectBrowserControl OBcontrol = new ObjectBrowserControl();
         private int numMessagesDisplayed;
         private int numPrivateMessagesDisplayed;
+        private int numFriendFeedsDisplayed;
         FlowLayoutPanel supPrivateFlow = new FlowLayoutPanel();
 
         public SupMain()
@@ -55,31 +59,35 @@ namespace SUP
 
             // Read the JSON data from the file
             string filePath = @"root\MyFriendList.Json";
-            string json = File.ReadAllText(filePath);
-
-            // Deserialize the JSON into a Dictionary<string, string> object
-            Dictionary<string, string> friendDict = JsonConvert.DeserializeObject<Dictionary<string, string>>(json);
-
-            // Create PictureBox controls for each friend in the dictionary
-            foreach (var friend in friendDict)
+            try
             {
-                // Create a new PictureBox control
-                PictureBox pictureBox = new PictureBox();
+                string json = File.ReadAllText(filePath);
 
-                // Set the PictureBox properties
-                pictureBox.Tag = friend.Key;
-                pictureBox.SizeMode = PictureBoxSizeMode.StretchImage;
-                pictureBox.Width = 50;
-                pictureBox.Height = 50;
-                pictureBox.ImageLocation = friend.Value;
+                // Deserialize the JSON into a Dictionary<string, string> object
+                Dictionary<string, string> friendDict = JsonConvert.DeserializeObject<Dictionary<string, string>>(json);
 
-                // Add event handlers to the PictureBox
-                pictureBox.Click += new EventHandler(Friend_Click);
-                pictureBox.MouseUp += new MouseEventHandler(Friend_MouseUp);
+                // Create PictureBox controls for each friend in the dictionary
+                foreach (var friend in friendDict)
+                {
+                    // Create a new PictureBox control
+                    PictureBox pictureBox = new PictureBox();
 
-                // Add the PictureBox to the FlowLayoutPanel
-                flowFollow.Controls.Add(pictureBox);
+                    // Set the PictureBox properties
+                    pictureBox.Tag = friend.Key;
+                    pictureBox.SizeMode = PictureBoxSizeMode.StretchImage;
+                    pictureBox.Width = 50;
+                    pictureBox.Height = 50;
+                    pictureBox.ImageLocation = friend.Value;
+
+                    // Add event handlers to the PictureBox
+                    pictureBox.Click += new EventHandler(Friend_Click);
+                    pictureBox.MouseUp += new MouseEventHandler(Friend_MouseUp);
+
+                    // Add the PictureBox to the FlowLayoutPanel
+                    flowFollow.Controls.Add(pictureBox);
+                }
             }
+            catch { }
 
         }
 
@@ -100,12 +108,14 @@ namespace SUP
                     btnPrivateMessage.Enabled = true;
                     btnPublicMessage.Enabled = true;
                     btnRefresh.Enabled = true;
-                   
+
                     numMessagesDisplayed = 0;
                     numPrivateMessagesDisplayed = 0;
+                    numFriendFeedsDisplayed = 0;
                     supFlow.Controls.Clear();
                     MakeActiveProfile(objectBrowserForm.profileURN.Links[0].LinkData.ToString());
-                    //btnRefresh.PerformClick();
+                    profileOwner.ImageLocation = profileIMG.ImageLocation;
+                    profileOwner.Tag = profileIMG.Tag;
 
                 }
             }
@@ -114,9 +124,9 @@ namespace SUP
         private void MakeActiveProfile(string address)
         {
             Regex regexTransactionId = new Regex(@"\b[0-9a-f]{64}\b");
-            PROState activeProfile = PROState.GetProfileByAddress(address,"good-user","better-password", @"http://127.0.0.1:18332");
+            PROState activeProfile = PROState.GetProfileByAddress(address, "good-user", "better-password", @"http://127.0.0.1:18332");
 
-            if (activeProfile.URN == null) { profileURN.Text = "anon"; profileBIO.Text = "";profileCreatedDate.Text = ""; profileIMG.ImageLocation = ""; activeProfile.Image = "";  return; }
+            if (activeProfile.URN == null) { profileURN.Text = "anon"; profileBIO.Text = ""; profileCreatedDate.Text = ""; profileIMG.ImageLocation = ""; activeProfile.Image = ""; return; }
 
             profileBIO.Text = activeProfile.Bio;
             profileURN.Text = activeProfile.URN;
@@ -137,7 +147,7 @@ namespace SUP
                     if (activeProfile.Image.ToLower().StartsWith("ipfs:")) { imgurn = imgurn.Replace(@"\root\", @"\ipfs\"); }
                 }
             }
-            
+
             List<string> allowedExtensions = new List<string> { ".bmp", ".gif", ".ico", ".jpeg", ".jpg", ".png", ".tif", ".tiff", "" };
             string extension = Path.GetExtension(imgurn).ToLower();
             if (allowedExtensions.Contains(extension))
@@ -174,20 +184,14 @@ namespace SUP
 
 
             }
-           
-            // update buttons to reference current status.
+
 
 
         }
 
         private void flowLayoutPanel1_SizeChanged(object sender, EventArgs e)
         {
-            foreach(Control control in supFlow.Controls)
-            { 
-               
-                control.Width = supFlow.Width - 42;
-              
-            }
+
         }
 
         private void btnMint_Click(object sender, EventArgs e)
@@ -198,7 +202,7 @@ namespace SUP
                 splitContainer1.Panel2.Controls.Clear();
                 numPrivateMessagesDisplayed = 0;
                 splitContainer1.Panel2.Controls.Add(OBcontrol);
-                
+
             }
             else
             {
@@ -387,13 +391,13 @@ namespace SUP
 
 
                 tmrSearchMemoryPool.Enabled = true;
-                
+
             }
             else
             {
                 btnLive.BackColor = Color.White;
                 btnLive.ForeColor = Color.Black;
-                tmrSearchMemoryPool.Enabled = false;             
+                tmrSearchMemoryPool.Enabled = false;
 
             }
         }
@@ -422,7 +426,7 @@ namespace SUP
                                 try { transid = objstate.Image.Substring(4, 64).Replace(":", ""); } catch { try { transid = objstate.Image.Substring(5, 46); } catch { } }
                                 try { foundObject.ObjectImage.ImageLocation = @"root/" + objstate.Image.Replace("BTC:", "").Replace("MZC:", "").Replace("LTC:", "").Replace("DOG:", ""); } catch { }
                             }
-                                foundObject.ObjectName.Text = objstate.Name;
+                            foundObject.ObjectName.Text = objstate.Name;
                             foundObject.ObjectDescription.Text = objstate.Description;
                             foundObject.ObjectAddress.Text = objstate.Creators.First().Key;
                             foundObject.ObjectQty.Text = objstate.Owners.Values.Sum().ToString() + "x";
@@ -535,39 +539,39 @@ namespace SUP
 
                             foreach (KeyValuePair<string, DateTime> creator in objstate.Creators.Skip(1))
                             {
-                                                              
 
-                                    if (foundObject.ObjectCreators.Text == "")
+
+                                if (foundObject.ObjectCreators.Text == "")
+                                {
+
+
+                                    foundObject.ObjectCreators.Text = TruncateAddress(creator.Key);
+                                    foundObject.ObjectCreators.Links.Add(0, creator.Key.Length, creator.Key);
+                                    System.Windows.Forms.ToolTip myTooltip = new System.Windows.Forms.ToolTip();
+                                    myTooltip.SetToolTip(foundObject.ObjectCreators, creator.Key);
+                                }
+                                else
+                                {
+
+
+                                    if (foundObject.ObjectCreators2.Text == "")
                                     {
-
-
-                                        foundObject.ObjectCreators.Text = TruncateAddress(creator.Key);
-                                        foundObject.ObjectCreators.Links.Add(0, creator.Key.Length, creator.Key);
+                                        foundObject.ObjectCreators2.Text = TruncateAddress(creator.Key);
+                                        foundObject.ObjectCreators2.Links.Add(0, creator.Key.Length, creator.Key);
                                         System.Windows.Forms.ToolTip myTooltip = new System.Windows.Forms.ToolTip();
-                                        myTooltip.SetToolTip(foundObject.ObjectCreators, creator.Key);
-                                    }
-                                    else
-                                    {
-
-
-                                        if (foundObject.ObjectCreators2.Text == "")
-                                        {
-                                            foundObject.ObjectCreators2.Text = TruncateAddress(creator.Key);
-                                            foundObject.ObjectCreators2.Links.Add(0, creator.Key.Length, creator.Key);
-                                            System.Windows.Forms.ToolTip myTooltip = new System.Windows.Forms.ToolTip();
-                                            myTooltip.SetToolTip(foundObject.ObjectCreators2, creator.Key);
-                                        }
-
+                                        myTooltip.SetToolTip(foundObject.ObjectCreators2, creator.Key);
                                     }
 
-                                
+                                }
+
+
 
                             }
-                      
+
                             foundObject.ResumeLayout();
-                                                                                      
-                                supFlow.Controls.Add(foundObject);
-                                supFlow.Controls.SetChildIndex(foundObject, 0);                                                     
+
+                            supFlow.Controls.Add(foundObject);
+                            supFlow.Controls.SetChildIndex(foundObject, 0);
 
                         }
                         supFlow.ResumeLayout();
@@ -594,7 +598,7 @@ namespace SUP
                 new Connections().Show();
             }
 
-            
+
         }
 
         private void tmrSearchMemoryPool_Tick(object sender, EventArgs e)
@@ -618,7 +622,7 @@ namespace SUP
 
                         string filter = "";
 
-                         if (btctActive)
+                        if (btctActive)
                         {
                             try
                             {
@@ -1436,7 +1440,7 @@ namespace SUP
 
         private void RefreshPrivateSupMessages()
         {
-           
+
             // Clear controls if no messages have been displayed yet
             if (numPrivateMessagesDisplayed == 0)
             {
@@ -1472,7 +1476,7 @@ namespace SUP
                         byte[] result = Root.GetRootBytesByFile(new string[] { @"root/" + supMessagePacket[1] + @"/SEC" });
                         result = Root.DecryptRootBytes("good-user", "better-password", "http://127.0.0.1:18332", profileURN.Links[0].LinkData.ToString(), result);
                         root = Root.GetRootByTransactionId(supMessagePacket[1], null, null, null, "111", result);
-                                         
+
 
                         string message = string.Join(" ", root.Message);
 
@@ -1767,7 +1771,7 @@ namespace SUP
             {
                 AutoSize = true,
                 Text = messageText,
-                MinimumSize = new Size(100,50) ,
+                MinimumSize = new Size(100, 50),
                 Margin = new System.Windows.Forms.Padding(0),
                 TextAlign = System.Drawing.ContentAlignment.TopLeft
             };
@@ -1811,6 +1815,170 @@ namespace SUP
 
         }
 
+        void CreateFeedRow(string imageLocation, string ownerName, string ownerId, DateTime timestamp, string messageText, System.Drawing.Color bgcolor, FlowLayoutPanel layoutPanel)
+        {
+
+            // Create a table layout panel for each row
+            TableLayoutPanel row = new TableLayoutPanel
+            {
+                RowCount = 1,
+                ColumnCount = 3,
+                AutoSize = true,
+                BackColor = Color.Black,
+                ForeColor = Color.White,
+                Padding = new Padding(0),
+                Margin = new Padding(0)
+            };
+            // Add the width of the first column to fixed value and second to fill remaining space
+            row.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 50));
+            row.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 90));
+            row.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 110));
+            layoutPanel.Controls.Add(row);
+
+            // Create a PictureBox with the specified image
+
+            if (File.Exists(imageLocation) || imageLocation.ToUpper().StartsWith("HTTP"))
+            {
+                PictureBox picture = new PictureBox
+                {
+                    Size = new System.Drawing.Size(50, 50),
+                    SizeMode = PictureBoxSizeMode.StretchImage,
+                    ImageLocation = imageLocation,
+                    Margin = new System.Windows.Forms.Padding(0),
+
+                };
+                row.Controls.Add(picture, 0, 0);
+            }
+            else
+            {
+                Random rnd = new Random();
+                string randomGifFile;
+                string[] gifFiles = Directory.GetFiles("includes", "*.gif");
+                if (gifFiles.Length > 0)
+                {
+                    int randomIndex = rnd.Next(gifFiles.Length);
+                    randomGifFile = gifFiles[randomIndex];
+                }
+                else
+                {
+                    randomGifFile = @"includes\HugPuddle.jpg";
+                }
+
+
+
+                PictureBox picture = new PictureBox
+                {
+                    Size = new System.Drawing.Size(50, 50),
+                    SizeMode = PictureBoxSizeMode.StretchImage,
+                    ImageLocation = randomGifFile,
+                    Margin = new System.Windows.Forms.Padding(0),
+                };
+                row.Controls.Add(picture, 0, 0);
+            }
+
+
+            // Create a LinkLabel with the owner name
+            LinkLabel owner = new LinkLabel
+            {
+                Text = ownerName,
+                BackColor = Color.Black,
+                ForeColor = Color.White,
+                AutoSize = true
+
+            };
+            owner.LinkClicked += (sender, e) => { Owner_LinkClicked(ownerId); };
+            owner.Font = new System.Drawing.Font("Microsoft Sans Serif", 7.7F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            owner.Margin = new System.Windows.Forms.Padding(3);
+            owner.Dock = DockStyle.Bottom;
+            row.Controls.Add(owner, 1, 0);
+
+
+            // Create a LinkLabel with the owner name
+            Label tstamp = new Label
+            {
+                AutoSize = true,
+                BackColor = Color.Black,
+                ForeColor = Color.White,
+                Font = new System.Drawing.Font("Microsoft Sans Serif", 7.77F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0))),
+                Text = timestamp.ToString("MM/dd/yyyy hh:mm:ss"),
+                Margin = new System.Windows.Forms.Padding(0),
+                Dock = DockStyle.Bottom
+            };
+            row.Controls.Add(tstamp, 2, 0);
+
+
+
+            TableLayoutPanel msg = new TableLayoutPanel
+            {
+                RowCount = 3,
+                ColumnCount = 1,
+                Dock = DockStyle.Top,
+                BackColor = bgcolor,
+                AutoSize = true,
+                Margin = new System.Windows.Forms.Padding(0),
+                Padding = new System.Windows.Forms.Padding(0)
+            };
+
+            msg.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 250));
+            layoutPanel.Controls.Add(msg);
+
+            // Create a Label with the message text
+            Label tpadding = new Label
+            {
+                AutoSize = true,
+                Text = " ",
+                Margin = new System.Windows.Forms.Padding(0)
+            };
+            msg.Controls.Add(tpadding, 0, 0);
+
+            // Create a Label with the message text
+            Label message = new Label
+            {
+                AutoSize = true,
+                Text = messageText,
+                MinimumSize = new Size(100, 50),
+                Margin = new System.Windows.Forms.Padding(0),
+                TextAlign = System.Drawing.ContentAlignment.TopLeft
+            };
+            msg.Controls.Add(message, 1, 0);
+
+
+            // Create a Label with the message text
+            Label bpadding = new Label
+            {
+                AutoSize = true,
+                Text = " ",
+                Margin = new System.Windows.Forms.Padding(0)
+            };
+            msg.Controls.Add(bpadding, 2, 0);
+
+
+            // Add padding row at the end
+            Label bottomPadding2 = new Label
+            {
+                AutoSize = true,
+                Dock = DockStyle.Top,
+                Text = " ",
+                BackColor = Color.Black,
+                ForeColor = Color.White,
+                Margin = new System.Windows.Forms.Padding(0)
+            };
+            msg.Controls.Add(bottomPadding2, 3, 0);
+
+            // Add padding row at the end
+            Label bottomPadding3 = new Label
+            {
+                AutoSize = true,
+                Dock = DockStyle.Top,
+                Text = " ",
+                BackColor = Color.Black,
+                ForeColor = Color.White,
+                Margin = new System.Windows.Forms.Padding(0)
+            };
+            msg.Controls.Add(bottomPadding3, 4, 0);
+
+
+        }
 
         void Owner_LinkClicked(string ownerId)
         {
@@ -1835,6 +2003,13 @@ namespace SUP
         private void btnPublicMessage_Click(object sender, EventArgs e)
         {
             RefreshSupMessages();
+            if (btnPublicMessage.BackColor == Color.White)
+            {
+                btnPublicMessage.BackColor = Color.Blue; btnPublicMessage.ForeColor = Color.Yellow;
+
+                btnPrivateMessage.BackColor = Color.White;
+                btnPrivateMessage.ForeColor = Color.Black;
+            }
         }
 
 
@@ -1858,25 +2033,25 @@ namespace SUP
 
         private void btnPrivateMessage_Click(object sender, EventArgs e)
         {
-         
+
 
             RefreshPrivateSupMessages();
 
-            
+            if (btnPrivateMessage.BackColor == Color.White)
+            {
+                btnPrivateMessage.BackColor = Color.Blue; btnPrivateMessage.ForeColor = Color.Yellow;
+
+                btnPublicMessage.BackColor = Color.White;
+                btnPublicMessage.ForeColor = Color.Black;
+            }
+
+
         }
 
         private void btnRefresh_Click(object sender, EventArgs e)
         {
 
-            //richTextBox1 = new RichTextBox();
-            //richTextBox1.Height = 180; // set a fixed height
-            //richTextBox1.BackColor = Color.Black;
-            //richTextBox1.BorderStyle = BorderStyle.FixedSingle;
-            //richTextBox1.ForeColor = Color.White;
-            //supFlow.Controls.Add(richTextBox1);
-            //richTextBox1.Width = supFlow.Width - 42;
 
-            //supFlow.SizeChanged += new EventHandler(flowLayoutPanel1_SizeChanged);
         }
 
         private void btnFollow_Click(object sender, EventArgs e)
@@ -1898,16 +2073,16 @@ namespace SUP
 
             // Add the PictureBox to the FlowLayoutPanel
             flowFollow.Controls.Add(pictureBox);
-        
+
             Dictionary<string, string> friendDict = new Dictionary<string, string>();
 
 
             foreach (PictureBox pb in flowFollow.Controls)
             {
-     
-                friendDict.Add(pb.Tag.ToString(), pb.ImageLocation);
+
+                try { friendDict.Add(pb.Tag.ToString(), pb.ImageLocation); } catch { }
             }
-                  
+
             string json = JsonConvert.SerializeObject(friendDict);
             string filePath = @"root\MyFriendList.Json";
             File.WriteAllText(filePath, json);
@@ -1924,6 +2099,7 @@ namespace SUP
                 // Get the tag text from the PictureBox
                 string address = ((PictureBox)sender).Tag.ToString();
                 numMessagesDisplayed = 0;
+                numFriendFeedsDisplayed = 0;
                 numPrivateMessagesDisplayed = 0;
                 supPrivateFlow.Controls.Clear();
                 MakeActiveProfile(address);
@@ -1953,9 +2129,95 @@ namespace SUP
             }
         }
 
+        private void refreshFriendFeed_Click(object sender, EventArgs e)
+        {
+            if (numFriendFeedsDisplayed == 0) { supFlow.Controls.Clear(); }
+
+            var myFriendsJson = File.ReadAllText(@"root\MyFriendList.Json");
+            var myFriends = JsonConvert.DeserializeObject<Dictionary<string, string>>(myFriendsJson);
+
+            // Iterate over each key in the dictionary, get public messages by address, and combine them into a list
+            var allMessages = new List<object>();
+            foreach (var key in myFriends.Keys)
+            {
+                var result = OBJState.GetPublicMessagesByAddress(key, "good-user", "better-password", "http://127.0.0.1:18332");
+                var messages = result.GetType().GetProperty("Messages").GetValue(result) as List<object>;
+
+                // Add the "to" element to each message object
+                foreach (var message in messages)
+                {
+
+                    var fromProp = message.GetType().GetProperty("FromAddress");
+                    var messageProp = message.GetType().GetProperty("Message");
+                    var blockDateProp = message.GetType().GetProperty("BlockDate");
+                    string _from = fromProp?.GetValue(message).ToString();
+                    string _to = key;
+                    string _message = messageProp?.GetValue(message).ToString();
+                    string _blockdate = blockDateProp?.GetValue(message).ToString();
+
+                    allMessages.Add(new
+                    {
+                        Message = _message,
+                        FromAddress = _from,
+                        To = _to,
+                        BlockDate = _blockdate
+                    });
+                }
+            }
+
+            // Sort the combined list by block date
+            allMessages.Sort((m1, m2) =>
+            {
+                var date1Prop = m1?.GetType().GetProperty("BlockDate");
+                var date2Prop = m2?.GetType().GetProperty("BlockDate");
+                if (date1Prop == null && date2Prop == null)
+                {
+                    return 0;
+                }
+                else if (date1Prop == null)
+                {
+                    return -1;
+                }
+                else if (date2Prop == null)
+                {
+                    return 1;
+                }
+                else
+                {
+                    var date1 = DateTime.ParseExact(date1Prop.GetValue(m1).ToString(), "yyyyMMddHHmmss", CultureInfo.InvariantCulture);
+                    var date2 = DateTime.ParseExact(date2Prop.GetValue(m2).ToString(), "yyyyMMddHHmmss", CultureInfo.InvariantCulture);
+                    return date2.CompareTo(date1);
+                }
+            });
+
+            // Serialize the combined list to MyFriendsFeed.Json file
+            var myFriendsFeedJson = JsonConvert.SerializeObject(allMessages);
+            File.WriteAllText(@"root\MyFriendFeed.Json", myFriendsFeedJson);
+
+
+            foreach (var message in allMessages.Skip(numFriendFeedsDisplayed).Take(10))
+            {
+                var fromProp = message.GetType().GetProperty("FromAddress");
+                var toProp = message.GetType().GetProperty("To");
+                var messageProp = message.GetType().GetProperty("Message");
+                var blockDateProp = message.GetType().GetProperty("BlockDate");
+
+                string _from = fromProp?.GetValue(message).ToString();
+                string _to = toProp?.GetValue(message).ToString();
+                string _message = messageProp?.GetValue(message).ToString();
+                string _blockdate = blockDateProp?.GetValue(message).ToString();
+                string imglocation = "";
+
+                try { imglocation = myFriends[_from]; } catch { }
+
+                CreateFeedRow(imglocation, _from, _from, DateTime.ParseExact(_blockdate, "yyyyMMddHHmmss", CultureInfo.InvariantCulture), _message, Color.White, supFlow);
+                numFriendFeedsDisplayed++;
+
+            }
 
 
 
 
+        }
     }
 }
