@@ -400,7 +400,7 @@ namespace SUP.P2FK
                                         {
                                             if (verbose)
                                             {
-                                                logstatus = "[\"" + transaction.SignedBy + "\",\"" + reciever + "\",\"give\",\"" + qtyToGive + "\",\"\",\"failed due to a give qty of < 1\"]";
+                                                logstatus = "[\"" + transaction.SignedBy + "\",\"" + reciever + "\",\"give\",\"" + qtyToGive + "\",\"\",\"salt" + qtyToGive.ToString() + "\"]";
 
 
                                                 var ROOT = new Options { CreateIfMissing = true };
@@ -590,7 +590,7 @@ namespace SUP.P2FK
                                         {
                                             if (verbose)
                                             {
-                                                logstatus = "[\"" + transaction.SignedBy + "\",\"" + objectaddress + "\",\"burn\",\"" + qtyToBurn + "\",\"\",\"failed due to a burn qty of < 1\"]";
+                                                logstatus = "[\"" + transaction.SignedBy + "\",\"" + objectaddress + "\",\"burn\",\"" + qtyToBurn + "\",\"\",\"salt" + qtyToBurn.ToString() + "\"]";
 
                                                 var ROOT = new Options { CreateIfMissing = true };
                                                 var db = new DB(ROOT, @"root\event");
@@ -1029,26 +1029,26 @@ namespace SUP.P2FK
 
                     }
                 }
-                    objectState.Id = objectTransactions.Count();
-                    var profileSerialized2 = JsonConvert.SerializeObject(objectState);
+                objectState.Id = objectTransactions.Count();
+                var profileSerialized2 = JsonConvert.SerializeObject(objectState);
+                try
+                {
+                    System.IO.File.WriteAllText(@"root\" + objectaddress + @"\" + "GetObjectByURN.json", profileSerialized2);
+                }
+                catch
+                {
+
                     try
                     {
+                        if (!Directory.Exists(@"root\" + objectaddress))
+
+                        {
+                            Directory.CreateDirectory(@"root\" + objectaddress);
+                        }
                         System.IO.File.WriteAllText(@"root\" + objectaddress + @"\" + "GetObjectByURN.json", profileSerialized2);
                     }
-                    catch
-                    {
-
-                        try
-                        {
-                            if (!Directory.Exists(@"root\" + objectaddress))
-
-                            {
-                                Directory.CreateDirectory(@"root\" + objectaddress);
-                            }
-                            System.IO.File.WriteAllText(@"root\" + objectaddress + @"\" + "GetObjectByURN.json", profileSerialized2);
-                        }
-                        catch { };
-                    }
+                    catch { };
+                }
                 return objectState;
 
 
@@ -1708,173 +1708,230 @@ namespace SUP.P2FK
                     }
                 }
 
-                    if (qty == -1) { return totalSearch.Skip(skip).ToList(); }
-                    else
-                    {
-                        return totalSearch.Skip(skip).Take(qty).ToList();
-                    }
-                }
-
-            }
-            public static List<OBJState> GetFoundObjects(string username, string password, string url, string versionByte = "111", int skip = 0, int qty = -1)
-            {
-                lock (SupLocker)
+                if (qty == -1) { return totalSearch.Skip(skip).ToList(); }
+                else
                 {
-                    List<OBJState> objectStates = new List<OBJState> { };
-                    var OBJ = new Options { CreateIfMissing = true };
-                    string JSONOBJ;
-                    string diskpath = "root\\found\\";
+                    return totalSearch.Skip(skip).Take(qty).ToList();
+                }
+            }
+
+        }
+        public static List<OBJState> GetFoundObjects(string username, string password, string url, string versionByte = "111", int skip = 0, int qty = -1)
+        {
+            lock (SupLocker)
+            {
+                List<OBJState> objectStates = new List<OBJState> { };
+                var OBJ = new Options { CreateIfMissing = true };
+                string JSONOBJ;
+                string diskpath = "root\\found\\";
 
 
-                    // fetch current JSONOBJ from disk if it exists
-                    try
-                    {
-                        JSONOBJ = System.IO.File.ReadAllText(diskpath + "GetFoundObjects.json");
-                        objectStates = JsonConvert.DeserializeObject<List<OBJState>>(JSONOBJ);
+                // fetch current JSONOBJ from disk if it exists
+                try
+                {
+                    JSONOBJ = System.IO.File.ReadAllText(diskpath + "GetFoundObjects.json");
+                    objectStates = JsonConvert.DeserializeObject<List<OBJState>>(JSONOBJ);
 
-                    }
-                    catch { }
+                }
+                catch { }
 
-                    int foundCount = 0;
-                    var SUP = new Options { CreateIfMissing = true };
+                int foundCount = 0;
+                var SUP = new Options { CreateIfMissing = true };
 
-                    using (var db = new DB(SUP, @"root\found"))
-                    {
-                        LevelDB.Iterator it = db.CreateIterator();
+                using (var db = new DB(SUP, @"root\found"))
+                {
+                    LevelDB.Iterator it = db.CreateIterator();
 
-                        for (
-                               it.SeekToLast();
-                              it.IsValid();
-                                it.Prev()
-                         ) { foundCount++; }
-
-                        it.Dispose();
-                    }
-
-                    if (objectStates.Count() == foundCount) { return objectStates; }
-
-                    objectStates.Clear();
-                    HashSet<string> addedValues = new HashSet<string>();
-                    int rownum = 0;
-                    if (qty == -1) { qty = foundCount; }
-
-
-                    using (var db = new DB(SUP, @"root\found"))
-                    {
-                        LevelDB.Iterator it = db.CreateIterator();
-
-                        for (
+                    for (
                            it.SeekToLast();
-                          it.IsValid() && it.KeyAsString().StartsWith("found!") && rownum < skip + qty;
+                          it.IsValid();
                             it.Prev()
+                     ) { foundCount++; }
+
+                    it.Dispose();
+                }
+
+                if (objectStates.Count() == foundCount) { return objectStates; }
+
+                objectStates.Clear();
+                HashSet<string> addedValues = new HashSet<string>();
+                int rownum = 0;
+                if (qty == -1) { qty = foundCount; }
+
+
+                using (var db = new DB(SUP, @"root\found"))
+                {
+                    LevelDB.Iterator it = db.CreateIterator();
+
+                    for (
+                       it.SeekToLast();
+                      it.IsValid() && it.KeyAsString().StartsWith("found!") && rownum < skip + qty;
+                        it.Prev()
+                 )
+
+                    {
+                        string whatis = it.KeyAsString().Split('!')[2];
+                        // Display only if rownum > numMessagesDisplayed to skip already displayed messages
+                        if (rownum >= skip && !addedValues.Contains(it.KeyAsString().Split('!')[2]))
+                        {
+
+                            addedValues.Add(it.KeyAsString().Split('!')[2]);
+                            OBJState isObject = GetObjectByAddress(it.KeyAsString().Split('!')[2], username, password, url, versionByte);
+                            objectStates.Add(isObject);
+
+
+                        }
+                        rownum++;
+                    }
+                    it.Dispose();
+
+
+                }
+
+
+                var objectSerialized = JsonConvert.SerializeObject(objectStates);
+
+                if (!Directory.Exists(@"root\found"))
+                {
+                    Directory.CreateDirectory(@"root\found");
+                }
+                System.IO.File.WriteAllText(@"root\found\GetFoundObjects.json", objectSerialized);
+
+                return objectStates;
+            }
+        }
+        public static List<string> GetKeywordsByAddress(string objectaddress, string username, string password, string url, string versionByte = "111")
+        {
+
+            GetObjectByAddress(objectaddress, username, password, url, versionByte);
+
+            lock (SupLocker)
+            {
+                List<string> keywords = new List<string>();
+
+                var KEY = new Options { CreateIfMissing = true };
+
+                using (var db = new DB(KEY, @"root\obj"))
+                {
+                    LevelDB.Iterator it = db.CreateIterator();
+                    for (
+                       it.Seek(objectaddress);
+                       it.IsValid() && it.KeyAsString().StartsWith(objectaddress + "!");  // && rownum <= numMessagesDisplayed + 10; // Only display next 10 messages
+                        it.Next()
                      )
-
+                    {
+                        string keyaddress = it.KeyAsString().Substring(it.KeyAsString().IndexOf('!') + 1);
+                        Base58.DecodeWithCheckSum(keyaddress, out byte[] payloadBytes);
+                        // Check each byte to see if it's in the ASCII range
+                        for (int i = 0; i < payloadBytes.Length; i++)
                         {
-                            string whatis = it.KeyAsString().Split('!')[2];
-                            // Display only if rownum > numMessagesDisplayed to skip already displayed messages
-                            if (rownum >= skip && !addedValues.Contains(it.KeyAsString().Split('!')[2]))
+                            if (payloadBytes[i] < 0x20 || payloadBytes[i] > 0x7E)
                             {
-
-                                addedValues.Add(it.KeyAsString().Split('!')[2]);
-                                OBJState isObject = GetObjectByAddress(it.KeyAsString().Split('!')[2], username, password, url, versionByte);
-                                objectStates.Add(isObject);
-
-
+                                keyaddress = null;
                             }
-                            rownum++;
                         }
-                        it.Dispose();
 
-
-                    }
-
-
-                    var objectSerialized = JsonConvert.SerializeObject(objectStates);
-
-                    if (!Directory.Exists(@"root\found"))
-                    {
-                        Directory.CreateDirectory(@"root\found");
-                    }
-                    System.IO.File.WriteAllText(@"root\found\GetFoundObjects.json", objectSerialized);
-
-                    return objectStates;
-                }
-            }
-            public static List<string> GetKeywordsByAddress(string objectaddress, string username, string password, string url, string versionByte = "111")
-            {
-
-                GetObjectByAddress(objectaddress, username, password, url, versionByte);
-
-                lock (SupLocker)
-                {
-                    List<string> keywords = new List<string>();
-
-                    var KEY = new Options { CreateIfMissing = true };
-
-                    using (var db = new DB(KEY, @"root\obj"))
-                    {
-                        LevelDB.Iterator it = db.CreateIterator();
-                        for (
-                           it.Seek(objectaddress);
-                           it.IsValid() && it.KeyAsString().StartsWith(objectaddress + "!");  // && rownum <= numMessagesDisplayed + 10; // Only display next 10 messages
-                            it.Next()
-                         )
+                        if (keyaddress != null)
                         {
-                            string keyaddress = it.KeyAsString().Substring(it.KeyAsString().IndexOf('!') + 1);
-                            Base58.DecodeWithCheckSum(keyaddress, out byte[] payloadBytes);
-                            // Check each byte to see if it's in the ASCII range
-                            for (int i = 0; i < payloadBytes.Length; i++)
-                            {
-                                if (payloadBytes[i] < 0x20 || payloadBytes[i] > 0x7E)
-                                {
-                                    keyaddress = null;
-                                }
-                            }
+                            keyaddress = Encoding.ASCII.GetString(payloadBytes).Replace("#", "").Substring(1);
 
-                            if (keyaddress != null)
-                            {
-                                keyaddress = Encoding.ASCII.GetString(payloadBytes).Replace("#", "").Substring(1);
-
-                                keywords.Add(keyaddress);
-
-                            }
+                            keywords.Add(keyaddress);
 
                         }
-                        it.Dispose();
+
                     }
-
-                    return keywords;
+                    it.Dispose();
                 }
+
+                return keywords;
             }
-            public static object GetPublicMessagesByAddress(string objectaddress, string username, string password, string url, string versionByte = "111", int skip = 0, int qty = 20)
+        }
+        public static object GetPublicMessagesByAddress(string objectaddress, string username, string password, string url, string versionByte = "111", int skip = 0, int qty = 20)
+        {
+            GetObjectByAddress(objectaddress, username, password, url, versionByte);
+            lock (SupLocker)
             {
-                GetObjectByAddress(objectaddress, username, password, url, versionByte);
-                lock (SupLocker)
+                List<object> messages = new List<object>();
+
+                int rownum = 1;
+                var SUP = new Options { CreateIfMissing = true };
+
+                using (var db = new DB(SUP, @"root\sup"))
                 {
-                    List<object> messages = new List<object>();
-
-                    int rownum = 1;
-                    var SUP = new Options { CreateIfMissing = true };
-
-                    using (var db = new DB(SUP, @"root\sup"))
+                    LevelDB.Iterator it = db.CreateIterator();
+                    string lastKey = db.Get("lastkey!" + objectaddress);
+                    if (lastKey == null) { lastKey = objectaddress; }
+                    for (
+                       it.Seek(lastKey);
+                       it.IsValid() && it.KeyAsString().StartsWith(objectaddress) && rownum <= skip + qty; // Only display next 20 messages
+                        it.Prev()
+                     )
                     {
-                        LevelDB.Iterator it = db.CreateIterator();
-                        string lastKey = db.Get("lastkey!" + objectaddress);
-                       if (lastKey == null) { lastKey = objectaddress; }
-                        for (
-                           it.Seek(lastKey);
-                           it.IsValid() && it.KeyAsString().StartsWith(objectaddress) && rownum <= skip + qty; // Only display next 20 messages
-                            it.Prev()
-                         )
+                        // Display only if rownum > numMessagesDisplayed to skip already displayed messages
+                        if (rownum > skip)
                         {
-                            // Display only if rownum > numMessagesDisplayed to skip already displayed messages
-                            if (rownum > skip)
+                            string process = it.ValueAsString();
+
+                            List<string> supMessagePacket = JsonConvert.DeserializeObject<List<string>>(process);
+
+                            string message = System.IO.File.ReadAllText(@"root/" + supMessagePacket[1] + @"/MSG").Replace("@" + objectaddress, "").Replace('“', '"').Replace('”', '"');
+
+                            string fromAddress = supMessagePacket[0];
+
+                            string tstamp = it.KeyAsString().Split('!')[1];
+
+                            // Add the message data to the messages list
+                            messages.Add(new
                             {
-                                string process = it.ValueAsString();
+                                Message = message,
+                                FromAddress = fromAddress,
+                                BlockDate = tstamp
+                            });
+                        }
+                        rownum++;
+                    }
+                    it.Dispose();
+                }
 
-                                List<string> supMessagePacket = JsonConvert.DeserializeObject<List<string>>(process);
 
-                                string message = System.IO.File.ReadAllText(@"root/" + supMessagePacket[1] + @"/MSG").Replace("@" + objectaddress, "").Replace('“', '"').Replace('”', '"');
+                return new { Messages = messages };
+            }
+        }
+        public static object GetPrivateMessagesByAddress(string objectaddress, string username, string password, string url, string versionByte = "111", int skip = 0, int qty = 10)
+        {
+            GetObjectByAddress(objectaddress, username, password, url, versionByte);
+            lock (SupLocker)
+            {
+                List<object> messages = new List<object>();
+
+                int rownum = 1;
+                var SUP = new Options { CreateIfMissing = true };
+
+                using (var db = new DB(SUP, @"root\sec"))
+                {
+                    string lastKey = db.Get("lastkey!" + objectaddress);
+                    if (lastKey == null) { lastKey = objectaddress; }
+                    LevelDB.Iterator it = db.CreateIterator();
+                    for (
+                       it.Seek(lastKey);
+                       it.IsValid() && it.KeyAsString().StartsWith(objectaddress) && rownum <= skip + qty; // Only display next 10 messages
+                        it.Prev()
+                     )
+                    {
+                        // Display only if rownum > numMessagesDisplayed to skip already displayed messages
+                        if (rownum > skip)
+                        {
+                            string process = it.ValueAsString();
+
+                            List<string> supMessagePacket = JsonConvert.DeserializeObject<List<string>>(process);
+                            Root root = Root.GetRootByTransactionId(supMessagePacket[1], username, password, url, versionByte);
+                            byte[] result = Root.GetRootBytesByFile(new string[] { @"root/" + supMessagePacket[1] + @"/SEC" });
+                            result = Root.DecryptRootBytes(username, password, url, objectaddress, result);
+
+                            root = Root.GetRootByTransactionId(supMessagePacket[1], null, null, null, versionByte, result);
+
+                            foreach (string message in root.Message)
+                            {
 
                                 string fromAddress = supMessagePacket[0];
 
@@ -1888,79 +1945,22 @@ namespace SUP.P2FK
                                     BlockDate = tstamp
                                 });
                             }
-                            rownum++;
+
+
+
                         }
-                        it.Dispose();
+                        rownum++;
                     }
-
-
-                    return new { Messages = messages };
+                    it.Dispose();
                 }
+
+                return new { Messages = messages };
             }
-            public static object GetPrivateMessagesByAddress(string objectaddress, string username, string password, string url, string versionByte = "111", int skip = 0, int qty = 10)
-            {
-                GetObjectByAddress(objectaddress, username, password, url, versionByte);
-                lock (SupLocker)
-                {
-                    List<object> messages = new List<object>();
-
-                    int rownum = 1;
-                    var SUP = new Options { CreateIfMissing = true };
-
-                    using (var db = new DB(SUP, @"root\sec"))
-                    {
-                        string lastKey = db.Get("lastkey!" + objectaddress);
-                    if (lastKey == null) { lastKey = objectaddress; }
-                    LevelDB.Iterator it = db.CreateIterator();
-                        for (
-                           it.Seek(lastKey);
-                           it.IsValid() && it.KeyAsString().StartsWith(objectaddress) && rownum <= skip + qty; // Only display next 10 messages
-                            it.Prev()
-                         )
-                        {
-                            // Display only if rownum > numMessagesDisplayed to skip already displayed messages
-                            if (rownum > skip)
-                            {
-                                string process = it.ValueAsString();
-
-                                List<string> supMessagePacket = JsonConvert.DeserializeObject<List<string>>(process);
-                                Root root = Root.GetRootByTransactionId(supMessagePacket[1], username, password, url, versionByte);
-                                byte[] result = Root.GetRootBytesByFile(new string[] { @"root/" + supMessagePacket[1] + @"/SEC" });
-                                result = Root.DecryptRootBytes(username, password, url, objectaddress, result);
-
-                                root = Root.GetRootByTransactionId(supMessagePacket[1], null, null, null, versionByte, result);
-
-                                foreach (string message in root.Message)
-                                {
-
-                                    string fromAddress = supMessagePacket[0];
-
-                                    string tstamp = it.KeyAsString().Split('!')[1];
-
-                                    // Add the message data to the messages list
-                                    messages.Add(new
-                                    {
-                                        Message = message,
-                                        FromAddress = fromAddress,
-                                        BlockDate = tstamp
-                                    });
-                                }
-
-
-
-                            }
-                            rownum++;
-                        }
-                        it.Dispose();
-                    }
-
-                    return new { Messages = messages };
-                }
-            }
-
         }
 
     }
+
+}
 
 
 

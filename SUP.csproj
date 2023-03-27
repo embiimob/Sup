@@ -204,6 +204,12 @@
     <Compile Include="FullScreenView.cs">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Include="ObjectGive.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ObjectGive.Designer.cs">
+      <DependentUpon>ObjectGive.cs</DependentUpon>
+    </Compile>
     <Compile Include="ObjectBurn.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -291,6 +297,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="FullScreenView.resx">
       <DependentUpon>FullScreenView.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ObjectGive.resx">
+      <DependentUpon>ObjectGive.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="ObjectBurn.resx">
       <DependentUpon>ObjectBurn.cs</DependentUpon>

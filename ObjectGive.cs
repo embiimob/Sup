@@ -16,17 +16,17 @@ using AngleSharp.Common;
 
 namespace SUP
 {
-    public partial class ObjectBurn : Form
+    public partial class ObjectGive : Form
     {
         //GPT3 ROCKS
         private const int MaxRows = 2000;
         private readonly List<(string address, int qty)> _addressQtyList = new List<(string address, int qty)>();
         bool mint = false;
-        private readonly string brnaddress = "";
-        public ObjectBurn(string _address="")
+        private readonly string givaddress = "";
+        public ObjectGive(string _address="")
         {
             InitializeComponent();
-            brnaddress = _address;
+            givaddress = _address;
         }
 
         private void addButton_Click(object sender, EventArgs e)
@@ -93,12 +93,12 @@ namespace SUP
 
 
 
-        private void burnButton_Click(object sender, EventArgs e)
+        private void giveButton_Click(object sender, EventArgs e)
         {
             var dictionary = new Dictionary<string, int>();
-            var newdictionary = new List<List<int>>();
+            var newdictionary = new List<List<string>>();
             List<string> encodedList = new List<string>();
-            int brnOrder = 1;
+            int brnOrder = 2;
             foreach (var (address, qty) in _addressQtyList)
             {
                 if (!dictionary.ContainsKey(address))
@@ -107,15 +107,26 @@ namespace SUP
                     if (address == txtSignatureAddress.Text)
                     {
                         newdictionary.Clear();
-                        newdictionary.Add(new List<int> { 0, qty });
+                        newdictionary.Add(new List<string> { "0", qty.ToString() });
                         dictionary.Clear();
                         dictionary.Add(address, qty);
                         break;
                     }
-                    newdictionary.Add(new List<int> { brnOrder, qty });
+                    if (txtObjectAddress.Text == txtSignatureAddress.Text)
+                    {
+                        newdictionary.Clear();
+                        newdictionary.Add(new List<string> { "1", qty.ToString() });
+                        dictionary.Clear();
+                        dictionary.Add(address, qty);
+                        break;
+                    }
+                    newdictionary.Add(new List<string> { brnOrder.ToString(), qty.ToString() });
                     brnOrder++;
                 }
             }
+
+
+            // Generate a random negative integer salt between -99999 and -1
             int salt;
             using (RNGCryptoServiceProvider rng = new RNGCryptoServiceProvider())
             {
@@ -123,16 +134,15 @@ namespace SUP
                 rng.GetBytes(saltBytes);
                 salt = -Math.Abs(BitConverter.ToInt32(saltBytes, 0) % 100000);
             }
-            newdictionary.Add(new List<int> { 0, salt });
 
-
+            newdictionary.Add(new List<string> { "0", salt.ToString("D5") });
 
             var json = JsonConvert.SerializeObject(newdictionary);
             txtOBJJSON.Text = json;
 
-            txtOBJP2FK.Text = "BRN" + "*" + txtOBJJSON.Text.Length + "*" + txtOBJJSON.Text;
+            txtOBJP2FK.Text = "GIV" + ">" + txtOBJJSON.Text.Length + ">" + txtOBJJSON.Text;
 
-            if (btnBurn.Enabled)
+            if (btnGive.Enabled)
             {
                 NetworkCredential credentials = new NetworkCredential("good-user", "better-password");
                 RPCClient rpcClient = new RPCClient(credentials, new Uri(@"http://127.0.0.1:18332"), Network.Main);
@@ -146,8 +156,8 @@ namespace SUP
                 catch (Exception ex)
                 {
                     lblObjectStatus.Text = ex.Message;
-                    btnBurn.BackColor = System.Drawing.Color.White;
-                    btnBurn.ForeColor = System.Drawing.Color.Black;
+                    btnGive.BackColor = System.Drawing.Color.White;
+                    btnGive.ForeColor = System.Drawing.Color.Black;
                     mint = false;
                     return;
                 }
@@ -168,15 +178,15 @@ namespace SUP
                 {
                     encodedList.Add(address);
                 }
-             
-                encodedList.Add(signatureAddress);
+                encodedList.Add(txtObjectAddress.Text);
+                encodedList.Add(signatureAddress); 
                 txtAddressListJSON.Text = JsonConvert.SerializeObject(encodedList.Distinct());
 
                 lblCost.Text = "cost: " + (0.00000546 * encodedList.Count).ToString("0.00000000") + "  + miner fee";
 
                 if (mint)
                 {
-                    DialogResult result = MessageBox.Show("Are you sure you want to burn this?", "Confirmation", MessageBoxButtons.YesNo);
+                    DialogResult result = MessageBox.Show("Are you sure you want to give this?", "Confirmation", MessageBoxButtons.YesNo);
                     if (result == DialogResult.Yes)
                     {
                         // Perform the action
@@ -198,33 +208,21 @@ namespace SUP
                             lblObjectStatus.Text = results;
                         }
                         catch (Exception ex) { lblObjectStatus.Text = ex.Message; }
-                        btnBurn.BackColor = System.Drawing.Color.White;
-                        btnBurn.ForeColor = System.Drawing.Color.Black;
+                        btnGive.BackColor = System.Drawing.Color.White;
+                        btnGive.ForeColor = System.Drawing.Color.Black;
                         mint = false;
 
                     }
-                    btnBurn.BackColor = System.Drawing.Color.White;
-                    btnBurn.ForeColor = System.Drawing.Color.Black;
+                    btnGive.BackColor = System.Drawing.Color.White;
+                    btnGive.ForeColor = System.Drawing.Color.Black;
                     mint = false;
                 }
 
-                btnBurn.BackColor = System.Drawing.Color.Blue;
-                btnBurn.ForeColor = System.Drawing.Color.Yellow;
+                btnGive.BackColor = System.Drawing.Color.Blue;
+                btnGive.ForeColor = System.Drawing.Color.Yellow;
                 mint = true;
 
             }
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -274,9 +272,9 @@ namespace SUP
 
         }
 
-        private void ObjectBurn_Load(object sender, EventArgs e)
+        private void ObjectGive_Load(object sender, EventArgs e)
         {
-            addressTextBox.Text = brnaddress;
+            txtObjectAddress.Text = givaddress;
         }
     }
 }

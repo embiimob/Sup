@@ -1,6 +1,6 @@
 ﻿namespace SUP
 {
-    partial class ObjectBurn
+    partial class ObjectGive
     {
         /// <summary>
         /// Required designer variable.
@@ -28,16 +28,16 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle4 = new System.Windows.Forms.DataGridViewCellStyle();
             this.addressTextBox = new System.Windows.Forms.TextBox();
             this.qtyTextBox = new System.Windows.Forms.TextBox();
             this.addressQtyDataGridView = new System.Windows.Forms.DataGridView();
-            this.btnSave = new System.Windows.Forms.Button();
-            this.btnAdd = new System.Windows.Forms.Button();
-            this.btnBurn = new System.Windows.Forms.Button();
             this.address = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.qty = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.btnSave = new System.Windows.Forms.Button();
+            this.btnAdd = new System.Windows.Forms.Button();
+            this.btnGive = new System.Windows.Forms.Button();
             this.txtOBJJSON = new System.Windows.Forms.TextBox();
             this.txtOBJP2FK = new System.Windows.Forms.TextBox();
             this.txtAddressListJSON = new System.Windows.Forms.TextBox();
@@ -45,6 +45,7 @@
             this.button1 = new System.Windows.Forms.Button();
             this.lblObjectStatus = new System.Windows.Forms.Label();
             this.lblCost = new System.Windows.Forms.Label();
+            this.txtObjectAddress = new System.Windows.Forms.TextBox();
             ((System.ComponentModel.ISupportInitialize)(this.addressQtyDataGridView)).BeginInit();
             this.SuspendLayout();
             // 
@@ -75,14 +76,31 @@
             this.qty});
             this.addressQtyDataGridView.Location = new System.Drawing.Point(12, 67);
             this.addressQtyDataGridView.Name = "addressQtyDataGridView";
-            this.addressQtyDataGridView.Size = new System.Drawing.Size(482, 438);
+            this.addressQtyDataGridView.Size = new System.Drawing.Size(482, 361);
             this.addressQtyDataGridView.TabIndex = 2;
+            // 
+            // address
+            // 
+            dataGridViewCellStyle3.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.address.DefaultCellStyle = dataGridViewCellStyle3;
+            this.address.HeaderText = "recipient addres";
+            this.address.MaxInputLength = 46;
+            this.address.Name = "address";
+            this.address.Width = 325;
+            // 
+            // qty
+            // 
+            dataGridViewCellStyle4.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.qty.DefaultCellStyle = dataGridViewCellStyle4;
+            this.qty.HeaderText = "qty to give";
+            this.qty.Name = "qty";
+            this.qty.Width = 111;
             // 
             // btnSave
             // 
             this.btnSave.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.btnSave.Font = new System.Drawing.Font("Microsoft Sans Serif", 21.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnSave.Location = new System.Drawing.Point(12, 581);
+            this.btnSave.Location = new System.Drawing.Point(12, 583);
             this.btnSave.Name = "btnSave";
             this.btnSave.Size = new System.Drawing.Size(109, 53);
             this.btnSave.TabIndex = 273;
@@ -102,34 +120,17 @@
             this.btnAdd.UseVisualStyleBackColor = true;
             this.btnAdd.Click += new System.EventHandler(this.addButton_Click);
             // 
-            // btnBurn
+            // btnGive
             // 
-            this.btnBurn.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.btnBurn.Font = new System.Drawing.Font("Microsoft Sans Serif", 21.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnBurn.Location = new System.Drawing.Point(385, 581);
-            this.btnBurn.Name = "btnBurn";
-            this.btnBurn.Size = new System.Drawing.Size(109, 53);
-            this.btnBurn.TabIndex = 275;
-            this.btnBurn.Text = "🔥";
-            this.btnBurn.UseVisualStyleBackColor = true;
-            this.btnBurn.Click += new System.EventHandler(this.burnButton_Click);
-            // 
-            // address
-            // 
-            dataGridViewCellStyle1.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.address.DefaultCellStyle = dataGridViewCellStyle1;
-            this.address.HeaderText = "object address to burn";
-            this.address.MaxInputLength = 46;
-            this.address.Name = "address";
-            this.address.Width = 325;
-            // 
-            // qty
-            // 
-            dataGridViewCellStyle2.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.qty.DefaultCellStyle = dataGridViewCellStyle2;
-            this.qty.HeaderText = "qty to burn";
-            this.qty.Name = "qty";
-            this.qty.Width = 111;
+            this.btnGive.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.btnGive.Font = new System.Drawing.Font("Microsoft Sans Serif", 27.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnGive.Location = new System.Drawing.Point(385, 583);
+            this.btnGive.Name = "btnGive";
+            this.btnGive.Size = new System.Drawing.Size(109, 53);
+            this.btnGive.TabIndex = 275;
+            this.btnGive.Text = "💞";
+            this.btnGive.UseVisualStyleBackColor = true;
+            this.btnGive.Click += new System.EventHandler(this.giveButton_Click);
             // 
             // txtOBJJSON
             // 
@@ -139,7 +140,7 @@
             this.txtOBJJSON.Location = new System.Drawing.Point(18, 140);
             this.txtOBJJSON.Multiline = true;
             this.txtOBJJSON.Name = "txtOBJJSON";
-            this.txtOBJJSON.Size = new System.Drawing.Size(141, 349);
+            this.txtOBJJSON.Size = new System.Drawing.Size(141, 226);
             this.txtOBJJSON.TabIndex = 359;
             this.txtOBJJSON.Visible = false;
             // 
@@ -151,7 +152,7 @@
             this.txtOBJP2FK.Location = new System.Drawing.Point(165, 140);
             this.txtOBJP2FK.Multiline = true;
             this.txtOBJP2FK.Name = "txtOBJP2FK";
-            this.txtOBJP2FK.Size = new System.Drawing.Size(156, 349);
+            this.txtOBJP2FK.Size = new System.Drawing.Size(156, 226);
             this.txtOBJP2FK.TabIndex = 360;
             this.txtOBJP2FK.Visible = false;
             // 
@@ -163,7 +164,7 @@
             this.txtAddressListJSON.Location = new System.Drawing.Point(327, 140);
             this.txtAddressListJSON.Multiline = true;
             this.txtAddressListJSON.Name = "txtAddressListJSON";
-            this.txtAddressListJSON.Size = new System.Drawing.Size(160, 349);
+            this.txtAddressListJSON.Size = new System.Drawing.Size(160, 226);
             this.txtAddressListJSON.TabIndex = 358;
             this.txtAddressListJSON.Visible = false;
             // 
@@ -171,7 +172,7 @@
             // 
             this.txtSignatureAddress.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.txtSignatureAddress.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.txtSignatureAddress.Location = new System.Drawing.Point(127, 521);
+            this.txtSignatureAddress.Location = new System.Drawing.Point(127, 524);
             this.txtSignatureAddress.Multiline = true;
             this.txtSignatureAddress.Name = "txtSignatureAddress";
             this.txtSignatureAddress.Size = new System.Drawing.Size(367, 53);
@@ -181,7 +182,7 @@
             // 
             this.button1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.button1.Font = new System.Drawing.Font("Microsoft Sans Serif", 27.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.button1.Location = new System.Drawing.Point(12, 521);
+            this.button1.Location = new System.Drawing.Point(12, 524);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(109, 53);
             this.button1.TabIndex = 362;
@@ -204,12 +205,24 @@
             this.lblCost.Size = new System.Drawing.Size(0, 13);
             this.lblCost.TabIndex = 364;
             // 
-            // ObjectBurn
+            // txtObjectAddress
+            // 
+            this.txtObjectAddress.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.txtObjectAddress.Enabled = false;
+            this.txtObjectAddress.Font = new System.Drawing.Font("Microsoft Sans Serif", 18F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.txtObjectAddress.Location = new System.Drawing.Point(12, 442);
+            this.txtObjectAddress.Multiline = true;
+            this.txtObjectAddress.Name = "txtObjectAddress";
+            this.txtObjectAddress.Size = new System.Drawing.Size(482, 63);
+            this.txtObjectAddress.TabIndex = 365;
+            // 
+            // ObjectGive
             // 
             this.AllowDrop = true;
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(509, 646);
+            this.Controls.Add(this.txtObjectAddress);
             this.Controls.Add(this.lblCost);
             this.Controls.Add(this.lblObjectStatus);
             this.Controls.Add(this.button1);
@@ -217,7 +230,7 @@
             this.Controls.Add(this.txtOBJJSON);
             this.Controls.Add(this.txtOBJP2FK);
             this.Controls.Add(this.txtAddressListJSON);
-            this.Controls.Add(this.btnBurn);
+            this.Controls.Add(this.btnGive);
             this.Controls.Add(this.btnAdd);
             this.Controls.Add(this.btnSave);
             this.Controls.Add(this.addressQtyDataGridView);
@@ -225,9 +238,9 @@
             this.Controls.Add(this.addressTextBox);
             this.MaximumSize = new System.Drawing.Size(525, 685);
             this.MinimumSize = new System.Drawing.Size(525, 685);
-            this.Name = "ObjectBurn";
-            this.Text = "ObjectBurn";
-            this.Load += new System.EventHandler(this.ObjectBurn_Load);
+            this.Name = "ObjectGive";
+            this.Text = "ObjectGive";
+            this.Load += new System.EventHandler(this.ObjectGive_Load);
             this.DragDrop += new System.Windows.Forms.DragEventHandler(this.Form1_DragDrop);
             this.DragEnter += new System.Windows.Forms.DragEventHandler(this.Form1_DragEnter);
             ((System.ComponentModel.ISupportInitialize)(this.addressQtyDataGridView)).EndInit();
@@ -243,9 +256,7 @@
         private System.Windows.Forms.DataGridView addressQtyDataGridView;
         private System.Windows.Forms.Button btnSave;
         private System.Windows.Forms.Button btnAdd;
-        private System.Windows.Forms.DataGridViewTextBoxColumn address;
-        private System.Windows.Forms.DataGridViewTextBoxColumn qty;
-        private System.Windows.Forms.Button btnBurn;
+        private System.Windows.Forms.Button btnGive;
         private System.Windows.Forms.TextBox txtOBJJSON;
         private System.Windows.Forms.TextBox txtOBJP2FK;
         private System.Windows.Forms.TextBox txtAddressListJSON;
@@ -253,5 +264,8 @@
         private System.Windows.Forms.Button button1;
         private System.Windows.Forms.Label lblObjectStatus;
         private System.Windows.Forms.Label lblCost;
+        private System.Windows.Forms.DataGridViewTextBoxColumn address;
+        private System.Windows.Forms.DataGridViewTextBoxColumn qty;
+        private System.Windows.Forms.TextBox txtObjectAddress;
     }
 }

@@ -428,7 +428,7 @@
             this.supPanel.Controls.Add(this.supFlow);
             this.supPanel.Location = new System.Drawing.Point(843, 13);
             this.supPanel.Name = "supPanel";
-            this.supPanel.Size = new System.Drawing.Size(374, 454);
+            this.supPanel.Size = new System.Drawing.Size(374, 484);
             this.supPanel.TabIndex = 80;
             this.supPanel.Visible = false;
             // 
@@ -450,23 +450,24 @@
             // btnBurn
             // 
             this.btnBurn.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnBurn.Location = new System.Drawing.Point(1114, 351);
+            this.btnBurn.Font = new System.Drawing.Font("Microsoft Sans Serif", 21.75F);
+            this.btnBurn.Location = new System.Drawing.Point(1114, 364);
             this.btnBurn.Name = "btnBurn";
-            this.btnBurn.Size = new System.Drawing.Size(103, 33);
+            this.btnBurn.Size = new System.Drawing.Size(100, 42);
             this.btnBurn.TabIndex = 75;
-            this.btnBurn.Text = "burn";
+            this.btnBurn.Text = "🔥";
             this.btnBurn.UseVisualStyleBackColor = true;
             this.btnBurn.Click += new System.EventHandler(this.btnBurn_Click);
             // 
             // btnGive
             // 
             this.btnGive.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnGive.Enabled = false;
-            this.btnGive.Location = new System.Drawing.Point(1114, 429);
+            this.btnGive.Font = new System.Drawing.Font("Microsoft Sans Serif", 21.75F);
+            this.btnGive.Location = new System.Drawing.Point(1114, 421);
             this.btnGive.Name = "btnGive";
-            this.btnGive.Size = new System.Drawing.Size(103, 33);
+            this.btnGive.Size = new System.Drawing.Size(100, 42);
             this.btnGive.TabIndex = 74;
-            this.btnGive.Text = "give";
+            this.btnGive.Text = "💞";
             this.btnGive.UseVisualStyleBackColor = true;
             this.btnGive.Click += new System.EventHandler(this.btnGive_Click);
             // 
@@ -624,7 +625,7 @@
             this.supFlow.Dock = System.Windows.Forms.DockStyle.Fill;
             this.supFlow.Location = new System.Drawing.Point(0, 0);
             this.supFlow.Name = "supFlow";
-            this.supFlow.Size = new System.Drawing.Size(374, 454);
+            this.supFlow.Size = new System.Drawing.Size(374, 484);
             this.supFlow.TabIndex = 3;
             // 
             // btnDisco

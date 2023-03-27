@@ -3,24 +3,19 @@
 [
   [ 8, 1 ],
   [ 9, 2 ],
-  [ 10, 3 ]
+  [ 10, 3 ],
+  [ 0, -123456789 ]
 ]
 
 
 //defined format
-
-[
-  [ "muVrFVk3ErfrnmWosLF4WixxRtDKfMx9bs", "1" ],
-  [ "mxyo2qyUo9h7wzDYbudcyC2VWxaTfTeCZr", "2" ],
-  [ "n1z6HaZbX6iVZ6aLwRhvkiwJ9fhK6CCVeX", "3" ]
-]
-
 
 
 //variable format
 //assume keyword order id 0 is the authorization address
 //assume keyword order id 1-?  list of objects to give ( the max amount of objects to give in batch is #unknown but there is one )
 //[new owner keyword order id, qty to give]
+//[0, numericalSalt]
 
 //remove all unnecessary spaces
 //place JSON in a file named GIV  (no file extension)

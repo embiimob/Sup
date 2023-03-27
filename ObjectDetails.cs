@@ -2156,7 +2156,7 @@ namespace SUP
 
         private void btnGive_Click(object sender, EventArgs e)
         {
-
+            new ObjectGive(_objectaddress).Show();
         }
     }
 
