@@ -23,8 +23,7 @@ namespace SUP
             ObjectDetails childForm = new ObjectDetails(ObjectAddress.Text);
             
             childForm.Owner = parentForm;
-            childForm.WindowState = FormWindowState.Maximized;
-
+          
             childForm.Show();
 
         }
@@ -65,7 +64,6 @@ namespace SUP
             Form parentForm = this.FindForm();
             ObjectDetails childForm = new ObjectDetails(txtOfficialURN.Text);
             childForm.Owner = parentForm;
-            childForm.WindowState = FormWindowState.Maximized;
             childForm.Show();
         }
 

@@ -125,6 +125,17 @@ namespace SUP
         {
             Regex regexTransactionId = new Regex(@"\b[0-9a-f]{64}\b");
             PROState activeProfile = PROState.GetProfileByAddress(address, "good-user", "better-password", @"http://127.0.0.1:18332");
+            string ismuted = "";
+            
+                var WORK = new Options { CreateIfMissing = true };
+                using (var db = new DB(WORK, @"root\mute"))
+                {
+                    ismuted = db.Get(address);
+                }
+            
+            if (ismuted == "true") { btnMute.Text = "unmute"; } else { btnMute.Text = "mute"; }
+          
+
 
             if (activeProfile.URN == null) { profileURN.Text = "anon"; profileBIO.Text = ""; profileCreatedDate.Text = ""; profileIMG.ImageLocation = ""; activeProfile.Image = ""; return; }
 
@@ -401,9 +412,6 @@ namespace SUP
 
             }
         }
-
-
-
 
 
         private void AddToSearchResults(List<OBJState> objects)
@@ -1754,7 +1762,7 @@ namespace SUP
                 Padding = new System.Windows.Forms.Padding(0)
             };
 
-            msg.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 250));
+            msg.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 270));
             layoutPanel.Controls.Add(msg);
 
             // Create a Label with the message text
@@ -2039,6 +2047,11 @@ namespace SUP
 
             if (btnPrivateMessage.BackColor == Color.White)
             {
+                if (splitContainer1.Panel2Collapsed)
+                {
+                    splitContainer1.Panel2Collapsed = false;
+                }
+
                 btnPrivateMessage.BackColor = Color.Blue; btnPrivateMessage.ForeColor = Color.Yellow;
 
                 btnPublicMessage.BackColor = Color.White;
@@ -2218,6 +2231,28 @@ namespace SUP
 
 
 
+        }
+
+        private void btnMute_Click(object sender, EventArgs e)
+        {
+            if (btnMute.Text == "mute")
+            {
+                var WORK = new Options { CreateIfMissing = true };
+                using (var db = new DB(WORK, @"root\mute"))
+                {
+                    db.Put(profileURN.Links[0].LinkData.ToString(), "true");
+                }
+                btnMute.Text = "unmute";
+            }
+            else
+            {
+                var WORK = new Options { CreateIfMissing = true };
+                using (var db = new DB(WORK, @"root\mute"))
+                {
+                    db.Delete(profileURN.Links[0].LinkData.ToString());
+                }
+                btnMute.Text = "mute";
+            }
         }
     }
 }
