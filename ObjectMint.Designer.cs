@@ -348,7 +348,7 @@
             this.btnObjectAddress.Padding = new System.Windows.Forms.Padding(0, 0, 0, 5);
             this.btnObjectAddress.Size = new System.Drawing.Size(109, 50);
             this.btnObjectAddress.TabIndex = 282;
-            this.btnObjectAddress.Text = "💎";
+            this.btnObjectAddress.Text = "👑";
             this.btnObjectAddress.UseVisualStyleBackColor = true;
             this.btnObjectAddress.Click += new System.EventHandler(this.btnObjectAddress_Click);
             // 

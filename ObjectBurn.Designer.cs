@@ -33,11 +33,11 @@
             this.addressTextBox = new System.Windows.Forms.TextBox();
             this.qtyTextBox = new System.Windows.Forms.TextBox();
             this.addressQtyDataGridView = new System.Windows.Forms.DataGridView();
+            this.address = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.qty = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.btnSave = new System.Windows.Forms.Button();
             this.btnAdd = new System.Windows.Forms.Button();
             this.btnBurn = new System.Windows.Forms.Button();
-            this.address = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.qty = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.txtOBJJSON = new System.Windows.Forms.TextBox();
             this.txtOBJP2FK = new System.Windows.Forms.TextBox();
             this.txtAddressListJSON = new System.Windows.Forms.TextBox();
@@ -50,7 +50,9 @@
             // 
             // addressTextBox
             // 
+            this.addressTextBox.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
             this.addressTextBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.addressTextBox.ForeColor = System.Drawing.Color.White;
             this.addressTextBox.Location = new System.Drawing.Point(12, 12);
             this.addressTextBox.Multiline = true;
             this.addressTextBox.Name = "addressTextBox";
@@ -60,7 +62,9 @@
             // 
             // qtyTextBox
             // 
+            this.qtyTextBox.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
             this.qtyTextBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.qtyTextBox.ForeColor = System.Drawing.Color.White;
             this.qtyTextBox.Location = new System.Drawing.Point(355, 12);
             this.qtyTextBox.Multiline = true;
             this.qtyTextBox.Name = "qtyTextBox";
@@ -69,6 +73,7 @@
             // 
             // addressQtyDataGridView
             // 
+            this.addressQtyDataGridView.BackgroundColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
             this.addressQtyDataGridView.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.addressQtyDataGridView.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
             this.address,
@@ -77,6 +82,23 @@
             this.addressQtyDataGridView.Name = "addressQtyDataGridView";
             this.addressQtyDataGridView.Size = new System.Drawing.Size(482, 438);
             this.addressQtyDataGridView.TabIndex = 2;
+            // 
+            // address
+            // 
+            dataGridViewCellStyle1.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.address.DefaultCellStyle = dataGridViewCellStyle1;
+            this.address.HeaderText = "object address to burn";
+            this.address.MaxInputLength = 46;
+            this.address.Name = "address";
+            this.address.Width = 325;
+            // 
+            // qty
+            // 
+            dataGridViewCellStyle2.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.qty.DefaultCellStyle = dataGridViewCellStyle2;
+            this.qty.HeaderText = "qty to burn";
+            this.qty.Name = "qty";
+            this.qty.Width = 111;
             // 
             // btnSave
             // 
@@ -113,23 +135,6 @@
             this.btnBurn.Text = "🔥";
             this.btnBurn.UseVisualStyleBackColor = true;
             this.btnBurn.Click += new System.EventHandler(this.burnButton_Click);
-            // 
-            // address
-            // 
-            dataGridViewCellStyle1.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.address.DefaultCellStyle = dataGridViewCellStyle1;
-            this.address.HeaderText = "object address to burn";
-            this.address.MaxInputLength = 46;
-            this.address.Name = "address";
-            this.address.Width = 325;
-            // 
-            // qty
-            // 
-            dataGridViewCellStyle2.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.qty.DefaultCellStyle = dataGridViewCellStyle2;
-            this.qty.HeaderText = "qty to burn";
-            this.qty.Name = "qty";
-            this.qty.Width = 111;
             // 
             // txtOBJJSON
             // 
@@ -170,7 +175,9 @@
             // txtSignatureAddress
             // 
             this.txtSignatureAddress.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.txtSignatureAddress.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
             this.txtSignatureAddress.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.txtSignatureAddress.ForeColor = System.Drawing.Color.White;
             this.txtSignatureAddress.Location = new System.Drawing.Point(127, 521);
             this.txtSignatureAddress.Multiline = true;
             this.txtSignatureAddress.Name = "txtSignatureAddress";
@@ -209,6 +216,7 @@
             this.AllowDrop = true;
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.BackColor = System.Drawing.Color.Black;
             this.ClientSize = new System.Drawing.Size(509, 646);
             this.Controls.Add(this.lblCost);
             this.Controls.Add(this.lblObjectStatus);

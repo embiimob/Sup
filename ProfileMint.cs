@@ -140,14 +140,14 @@ namespace SUP
             txtOBJJSON.Text = objectSerialized.Replace(",\"url\":{}", "").Replace(",\"loc\":{}", "").Replace(",\"urn\":\"\"", "").Replace(",\"fnm\":\"\"", "").Replace(",\"mnm\":\"\"", "").Replace(",\"lnm\":\"\"", "").Replace(",\"sfx\":\"\"", "").Replace(",\"bio\":\"\"", "").Replace(",\"img\":\"\"", "");
 
 
-            txtOBJP2FK.Text = "PRO" + ":" + txtOBJJSON.Text.Length + ":" + txtOBJJSON.Text;
+            txtOBJP2FK.Text = "PRO" + ">" + txtOBJJSON.Text.Length + ">" + txtOBJJSON.Text;
 
             if (btnMint.Enabled)
             {
                 NetworkCredential credentials = new NetworkCredential("good-user", "better-password");
                 RPCClient rpcClient = new RPCClient(credentials, new Uri(@"http://127.0.0.1:18332"), Network.Main);
                 System.Security.Cryptography.SHA256 mySHA256 = SHA256Managed.Create();
-                byte[] hashValue = mySHA256.ComputeHash(Encoding.UTF8.GetBytes(txtOBJP2FK.Text));
+                byte[] hashValue = mySHA256.ComputeHash(Encoding.ASCII.GetBytes(txtOBJP2FK.Text));
                 string signatureAddress;
 
                 signatureAddress = txtObjectAddress.Text;
@@ -1409,6 +1409,27 @@ namespace SUP
                 lblObjectStatus.Text = lblObjectStatus.Text.Replace("Monday, January 1, 0001", " unconfirmed ");
 
             }
+        }
+
+        private void btnLastName_Click(object sender, EventArgs e)
+        {
+
+            if (btnLastName.BackColor == Color.Blue) { btnLastName.BackColor = Color.White; btnLastName.ForeColor = Color.Black; }
+            else
+            {
+                btnLastName.BackColor = Color.Blue; btnLastName.ForeColor = Color.Yellow;
+            }
+            UpdateRemainingChars();
+        }
+
+        private void btnSuffix_Click(object sender, EventArgs e)
+        {
+            if (btnSuffix.BackColor == Color.Blue) { btnSuffix.BackColor = Color.White; btnSuffix.ForeColor = Color.Black; }
+            else
+            {
+                btnSuffix.BackColor = Color.Blue; btnSuffix.ForeColor = Color.Yellow;
+            }
+            UpdateRemainingChars();
         }
     }
 }

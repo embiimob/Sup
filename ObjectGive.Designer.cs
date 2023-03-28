@@ -28,8 +28,8 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle4 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
             this.addressTextBox = new System.Windows.Forms.TextBox();
             this.qtyTextBox = new System.Windows.Forms.TextBox();
             this.addressQtyDataGridView = new System.Windows.Forms.DataGridView();
@@ -51,7 +51,9 @@
             // 
             // addressTextBox
             // 
+            this.addressTextBox.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
             this.addressTextBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.addressTextBox.ForeColor = System.Drawing.Color.White;
             this.addressTextBox.Location = new System.Drawing.Point(12, 12);
             this.addressTextBox.Multiline = true;
             this.addressTextBox.Name = "addressTextBox";
@@ -61,7 +63,9 @@
             // 
             // qtyTextBox
             // 
+            this.qtyTextBox.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
             this.qtyTextBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.qtyTextBox.ForeColor = System.Drawing.Color.White;
             this.qtyTextBox.Location = new System.Drawing.Point(355, 12);
             this.qtyTextBox.Multiline = true;
             this.qtyTextBox.Name = "qtyTextBox";
@@ -70,6 +74,7 @@
             // 
             // addressQtyDataGridView
             // 
+            this.addressQtyDataGridView.BackgroundColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
             this.addressQtyDataGridView.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.addressQtyDataGridView.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
             this.address,
@@ -81,8 +86,8 @@
             // 
             // address
             // 
-            dataGridViewCellStyle3.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.address.DefaultCellStyle = dataGridViewCellStyle3;
+            dataGridViewCellStyle1.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.address.DefaultCellStyle = dataGridViewCellStyle1;
             this.address.HeaderText = "recipient addres";
             this.address.MaxInputLength = 46;
             this.address.Name = "address";
@@ -90,8 +95,8 @@
             // 
             // qty
             // 
-            dataGridViewCellStyle4.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.qty.DefaultCellStyle = dataGridViewCellStyle4;
+            dataGridViewCellStyle2.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.qty.DefaultCellStyle = dataGridViewCellStyle2;
             this.qty.HeaderText = "qty to give";
             this.qty.Name = "qty";
             this.qty.Width = 111;
@@ -171,7 +176,9 @@
             // txtSignatureAddress
             // 
             this.txtSignatureAddress.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.txtSignatureAddress.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
             this.txtSignatureAddress.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.txtSignatureAddress.ForeColor = System.Drawing.Color.White;
             this.txtSignatureAddress.Location = new System.Drawing.Point(127, 524);
             this.txtSignatureAddress.Multiline = true;
             this.txtSignatureAddress.Name = "txtSignatureAddress";
@@ -208,8 +215,9 @@
             // txtObjectAddress
             // 
             this.txtObjectAddress.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.txtObjectAddress.Enabled = false;
+            this.txtObjectAddress.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
             this.txtObjectAddress.Font = new System.Drawing.Font("Microsoft Sans Serif", 18F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.txtObjectAddress.ForeColor = System.Drawing.Color.White;
             this.txtObjectAddress.Location = new System.Drawing.Point(12, 442);
             this.txtObjectAddress.Multiline = true;
             this.txtObjectAddress.Name = "txtObjectAddress";
@@ -221,6 +229,7 @@
             this.AllowDrop = true;
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.BackColor = System.Drawing.Color.Black;
             this.ClientSize = new System.Drawing.Size(509, 646);
             this.Controls.Add(this.txtObjectAddress);
             this.Controls.Add(this.lblCost);

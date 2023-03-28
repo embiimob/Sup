@@ -138,8 +138,9 @@
             // 
             // ObjectDescription
             // 
-            this.ObjectDescription.BackColor = System.Drawing.SystemColors.ActiveCaption;
+            this.ObjectDescription.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
             this.ObjectDescription.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.ObjectDescription.ForeColor = System.Drawing.Color.White;
             this.ObjectDescription.Location = new System.Drawing.Point(4, 263);
             this.ObjectDescription.Name = "ObjectDescription";
             this.ObjectDescription.Size = new System.Drawing.Size(202, 51);
@@ -151,8 +152,9 @@
             // ObjectQty
             // 
             this.ObjectQty.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.ObjectQty.BackColor = System.Drawing.SystemColors.ActiveCaption;
+            this.ObjectQty.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
             this.ObjectQty.Font = new System.Drawing.Font("Microsoft Sans Serif", 6.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.ObjectQty.ForeColor = System.Drawing.Color.White;
             this.ObjectQty.Location = new System.Drawing.Point(128, 219);
             this.ObjectQty.Name = "ObjectQty";
             this.ObjectQty.Size = new System.Drawing.Size(78, 20);
@@ -163,8 +165,9 @@
             // 
             // ObjectAddress
             // 
-            this.ObjectAddress.BackColor = System.Drawing.SystemColors.ActiveCaption;
+            this.ObjectAddress.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
             this.ObjectAddress.Font = new System.Drawing.Font("Microsoft Sans Serif", 5.75F);
+            this.ObjectAddress.ForeColor = System.Drawing.Color.White;
             this.ObjectAddress.ImageAlign = System.Drawing.ContentAlignment.BottomCenter;
             this.ObjectAddress.Location = new System.Drawing.Point(6, 311);
             this.ObjectAddress.Name = "ObjectAddress";
@@ -176,8 +179,9 @@
             // 
             // ObjectName
             // 
-            this.ObjectName.BackColor = System.Drawing.SystemColors.ActiveCaption;
+            this.ObjectName.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
             this.ObjectName.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.ObjectName.ForeColor = System.Drawing.Color.White;
             this.ObjectName.Location = new System.Drawing.Point(3, 221);
             this.ObjectName.Margin = new System.Windows.Forms.Padding(0);
             this.ObjectName.Name = "ObjectName";
@@ -212,9 +216,10 @@
             // 
             // flowLayoutPanel1
             // 
-            this.flowLayoutPanel1.BackColor = System.Drawing.SystemColors.ActiveCaption;
+            this.flowLayoutPanel1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
             this.flowLayoutPanel1.Controls.Add(this.ObjectCreators);
             this.flowLayoutPanel1.Controls.Add(this.ObjectCreators2);
+            this.flowLayoutPanel1.ForeColor = System.Drawing.Color.White;
             this.flowLayoutPanel1.Location = new System.Drawing.Point(1, 244);
             this.flowLayoutPanel1.Margin = new System.Windows.Forms.Padding(10, 3, 10, 3);
             this.flowLayoutPanel1.Name = "flowLayoutPanel1";
@@ -267,7 +272,8 @@
             // lblTrash
             // 
             this.lblTrash.AutoSize = true;
-            this.lblTrash.BackColor = System.Drawing.SystemColors.ActiveCaption;
+            this.lblTrash.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
+            this.lblTrash.ForeColor = System.Drawing.Color.White;
             this.lblTrash.Location = new System.Drawing.Point(201, 319);
             this.lblTrash.Name = "lblTrash";
             this.lblTrash.Size = new System.Drawing.Size(19, 13);
@@ -280,7 +286,7 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.BackColor = System.Drawing.SystemColors.ActiveCaption;
+            this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
             this.Controls.Add(this.lblTrash);
             this.Controls.Add(this.btnOfficial);
             this.Controls.Add(this.lblOfficial);

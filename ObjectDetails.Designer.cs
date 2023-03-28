@@ -59,6 +59,7 @@
             this.chkRunTrustedObject = new System.Windows.Forms.CheckBox();
             this.txtName = new System.Windows.Forms.Label();
             this.supPanel = new System.Windows.Forms.Panel();
+            this.supFlow = new System.Windows.Forms.FlowLayoutPanel();
             this.txtdesc = new System.Windows.Forms.TextBox();
             this.btnBurn = new System.Windows.Forms.Button();
             this.btnGive = new System.Windows.Forms.Button();
@@ -73,7 +74,6 @@
             this.lblLaunchURI = new System.Windows.Forms.Label();
             this.lblOfficial = new System.Windows.Forms.Label();
             this.lblPleaseStandBy = new System.Windows.Forms.Label();
-            this.supFlow = new System.Windows.Forms.FlowLayoutPanel();
             this.btnDisco = new System.Windows.Forms.Button();
             this.flowPanel.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
@@ -174,7 +174,7 @@
             // 
             // pictureBox1
             // 
-            this.pictureBox1.BackColor = System.Drawing.SystemColors.ControlDark;
+            this.pictureBox1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
             this.pictureBox1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.pictureBox1.Location = new System.Drawing.Point(0, 0);
             this.pictureBox1.Name = "pictureBox1";
@@ -210,6 +210,7 @@
             // 
             this.lblLicense.AutoSize = true;
             this.lblLicense.Font = new System.Drawing.Font("Microsoft Sans Serif", 6.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblLicense.ForeColor = System.Drawing.Color.White;
             this.lblLicense.Location = new System.Drawing.Point(85, 62);
             this.lblLicense.Margin = new System.Windows.Forms.Padding(0, 0, 3, 0);
             this.lblLicense.Name = "lblLicense";
@@ -243,6 +244,7 @@
             this.lbllcdtitle.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.lbllcdtitle.AutoSize = true;
             this.lbllcdtitle.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lbllcdtitle.ForeColor = System.Drawing.Color.White;
             this.lbllcdtitle.Location = new System.Drawing.Point(17, 209);
             this.lbllcdtitle.Name = "lbllcdtitle";
             this.lbllcdtitle.Size = new System.Drawing.Size(94, 15);
@@ -254,6 +256,7 @@
             // 
             this.lblphtitle.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.lblphtitle.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblphtitle.ForeColor = System.Drawing.Color.White;
             this.lblphtitle.Location = new System.Drawing.Point(9, 189);
             this.lblphtitle.Name = "lblphtitle";
             this.lblphtitle.Size = new System.Drawing.Size(102, 15);
@@ -266,6 +269,7 @@
             this.label6.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.label6.AutoSize = true;
             this.label6.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label6.ForeColor = System.Drawing.Color.White;
             this.label6.Location = new System.Drawing.Point(16, 128);
             this.label6.Name = "label6";
             this.label6.Size = new System.Drawing.Size(35, 15);
@@ -276,6 +280,8 @@
             // txtURI
             // 
             this.txtURI.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.txtURI.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
+            this.txtURI.ForeColor = System.Drawing.Color.White;
             this.txtURI.Location = new System.Drawing.Point(13, 146);
             this.txtURI.Multiline = true;
             this.txtURI.Name = "txtURI";
@@ -287,6 +293,7 @@
             // 
             this.lblURIBlockDate.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.lblURIBlockDate.AutoSize = true;
+            this.lblURIBlockDate.ForeColor = System.Drawing.Color.White;
             this.lblURIBlockDate.Location = new System.Drawing.Point(54, 130);
             this.lblURIBlockDate.Name = "lblURIBlockDate";
             this.lblURIBlockDate.Size = new System.Drawing.Size(103, 13);
@@ -299,6 +306,7 @@
             this.label3.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.label3.AutoSize = true;
             this.label3.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label3.ForeColor = System.Drawing.Color.White;
             this.label3.Location = new System.Drawing.Point(15, 72);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(37, 15);
@@ -309,6 +317,8 @@
             // txtIMG
             // 
             this.txtIMG.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.txtIMG.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
+            this.txtIMG.ForeColor = System.Drawing.Color.White;
             this.txtIMG.Location = new System.Drawing.Point(13, 90);
             this.txtIMG.Multiline = true;
             this.txtIMG.Name = "txtIMG";
@@ -320,6 +330,7 @@
             // 
             this.lblIMGBlockDate.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.lblIMGBlockDate.AutoSize = true;
+            this.lblIMGBlockDate.ForeColor = System.Drawing.Color.White;
             this.lblIMGBlockDate.Location = new System.Drawing.Point(54, 74);
             this.lblIMGBlockDate.Name = "lblIMGBlockDate";
             this.lblIMGBlockDate.Size = new System.Drawing.Size(103, 13);
@@ -330,6 +341,8 @@
             // txtURN
             // 
             this.txtURN.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.txtURN.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
+            this.txtURN.ForeColor = System.Drawing.Color.White;
             this.txtURN.Location = new System.Drawing.Point(13, 30);
             this.txtURN.Multiline = true;
             this.txtURN.Name = "txtURN";
@@ -341,6 +354,7 @@
             // 
             this.lblURNBlockDate.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.lblURNBlockDate.AutoSize = true;
+            this.lblURNBlockDate.ForeColor = System.Drawing.Color.White;
             this.lblURNBlockDate.Location = new System.Drawing.Point(54, 14);
             this.lblURNBlockDate.Name = "lblURNBlockDate";
             this.lblURNBlockDate.Size = new System.Drawing.Size(103, 13);
@@ -413,6 +427,7 @@
             // txtName
             // 
             this.txtName.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.txtName.ForeColor = System.Drawing.Color.White;
             this.txtName.Location = new System.Drawing.Point(82, 6);
             this.txtName.Margin = new System.Windows.Forms.Padding(0);
             this.txtName.Name = "txtName";
@@ -432,12 +447,22 @@
             this.supPanel.TabIndex = 80;
             this.supPanel.Visible = false;
             // 
+            // supFlow
+            // 
+            this.supFlow.AutoScroll = true;
+            this.supFlow.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.supFlow.Location = new System.Drawing.Point(0, 0);
+            this.supFlow.Name = "supFlow";
+            this.supFlow.Size = new System.Drawing.Size(374, 484);
+            this.supFlow.TabIndex = 3;
+            // 
             // txtdesc
             // 
             this.txtdesc.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left)));
-            this.txtdesc.BackColor = System.Drawing.SystemColors.InactiveCaption;
+            this.txtdesc.BackColor = System.Drawing.Color.Black;
             this.txtdesc.BorderStyle = System.Windows.Forms.BorderStyle.None;
+            this.txtdesc.ForeColor = System.Drawing.Color.White;
             this.txtdesc.Location = new System.Drawing.Point(18, 92);
             this.txtdesc.Margin = new System.Windows.Forms.Padding(0);
             this.txtdesc.Multiline = true;
@@ -475,6 +500,7 @@
             // 
             this.label2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.label2.AutoSize = true;
+            this.label2.ForeColor = System.Drawing.Color.White;
             this.label2.Location = new System.Drawing.Point(857, 337);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(45, 13);
@@ -485,7 +511,7 @@
             // 
             this.CreatorsPanel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.CreatorsPanel.AutoScroll = true;
-            this.CreatorsPanel.BackColor = System.Drawing.SystemColors.InactiveCaption;
+            this.CreatorsPanel.BackColor = System.Drawing.Color.Black;
             this.CreatorsPanel.Location = new System.Drawing.Point(843, 353);
             this.CreatorsPanel.Name = "CreatorsPanel";
             this.CreatorsPanel.Size = new System.Drawing.Size(260, 110);
@@ -496,7 +522,7 @@
             this.OwnersPanel.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.OwnersPanel.AutoScroll = true;
-            this.OwnersPanel.BackColor = System.Drawing.SystemColors.InactiveCaption;
+            this.OwnersPanel.BackColor = System.Drawing.Color.Black;
             this.OwnersPanel.Location = new System.Drawing.Point(843, 13);
             this.OwnersPanel.Name = "OwnersPanel";
             this.OwnersPanel.Size = new System.Drawing.Size(374, 314);
@@ -508,7 +534,7 @@
             this.webviewer.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.webviewer.BackColor = System.Drawing.SystemColors.ControlDark;
+            this.webviewer.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
             this.webviewer.CreationProperties = null;
             this.webviewer.DefaultBackgroundColor = System.Drawing.SystemColors.ControlDark;
             this.webviewer.Location = new System.Drawing.Point(306, 13);
@@ -521,7 +547,7 @@
             // 
             this.lblTotalOwnedDetail.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.lblTotalOwnedDetail.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblTotalOwnedDetail.ForeColor = System.Drawing.SystemColors.ControlText;
+            this.lblTotalOwnedDetail.ForeColor = System.Drawing.Color.White;
             this.lblTotalOwnedDetail.Location = new System.Drawing.Point(854, 476);
             this.lblTotalOwnedDetail.Name = "lblTotalOwnedDetail";
             this.lblTotalOwnedDetail.Padding = new System.Windows.Forms.Padding(3);
@@ -535,6 +561,7 @@
             this.label4.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.label4.AutoSize = true;
             this.label4.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label4.ForeColor = System.Drawing.Color.White;
             this.label4.Location = new System.Drawing.Point(15, 12);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(41, 15);
@@ -545,6 +572,7 @@
             // lblObjectCreatedDate
             // 
             this.lblObjectCreatedDate.AutoSize = true;
+            this.lblObjectCreatedDate.ForeColor = System.Drawing.Color.White;
             this.lblObjectCreatedDate.Location = new System.Drawing.Point(83, 42);
             this.lblObjectCreatedDate.Margin = new System.Windows.Forms.Padding(0);
             this.lblObjectCreatedDate.Name = "lblObjectCreatedDate";
@@ -611,6 +639,7 @@
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.lblPleaseStandBy.Font = new System.Drawing.Font("Microsoft Sans Serif", 24F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblPleaseStandBy.ForeColor = System.Drawing.Color.White;
             this.lblPleaseStandBy.Location = new System.Drawing.Point(306, 13);
             this.lblPleaseStandBy.Name = "lblPleaseStandBy";
             this.lblPleaseStandBy.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
@@ -618,15 +647,6 @@
             this.lblPleaseStandBy.TabIndex = 108;
             this.lblPleaseStandBy.Text = "please stand by... locked for loading";
             this.lblPleaseStandBy.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            // 
-            // supFlow
-            // 
-            this.supFlow.AutoScroll = true;
-            this.supFlow.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.supFlow.Location = new System.Drawing.Point(0, 0);
-            this.supFlow.Name = "supFlow";
-            this.supFlow.Size = new System.Drawing.Size(374, 484);
-            this.supFlow.TabIndex = 3;
             // 
             // btnDisco
             // 
@@ -645,7 +665,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.BackColor = System.Drawing.SystemColors.InactiveCaption;
+            this.BackColor = System.Drawing.Color.Black;
             this.ClientSize = new System.Drawing.Size(1224, 553);
             this.Controls.Add(this.supPanel);
             this.Controls.Add(this.lblOfficial);

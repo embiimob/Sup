@@ -1337,7 +1337,8 @@ namespace SUP.P2FK
 
                 int intProcessHeight = 0;
 
-                try { intProcessHeight = objectStates.Max(state => state.Id); } catch { }
+                //try { intProcessHeight = objectStates.Max(state => state.Id); } catch { }
+                try { intProcessHeight = objectStates.Max(state => state.ProcessHeight); } catch { }
 
                 Root[] objectTransactions;
 
@@ -1524,7 +1525,8 @@ namespace SUP.P2FK
                 if (fetched && objectStates.Count < 1) { return objectStates; }
 
                 int intProcessHeight = 0;
-                try { intProcessHeight = objectStates.Max(state => state.Id); } catch { }
+                //try { intProcessHeight = objectStates.Max(state => state.Id); } catch { }
+                try { intProcessHeight = objectStates.Max(state => state.ProcessHeight); } catch { }
                 Root[] objectTransactions;
 
                 //return all roots found at address
@@ -1616,7 +1618,8 @@ namespace SUP.P2FK
                 if (fetched && objectStates.Count < 1) { return objectStates; }
 
                 int intProcessHeight = 0;
-                try { intProcessHeight = objectStates.Max(state => state.Id); } catch { }
+                //try { intProcessHeight = objectStates.Max(state => state.Id); } catch { }
+                try { intProcessHeight = objectStates.Max(state => state.ProcessHeight); } catch { }
                 Root[] objectTransactions;
 
                 //return all roots found at address
@@ -1874,7 +1877,9 @@ namespace SUP.P2FK
 
                             List<string> supMessagePacket = JsonConvert.DeserializeObject<List<string>>(process);
 
-                            string message = System.IO.File.ReadAllText(@"root/" + supMessagePacket[1] + @"/MSG").Replace("@" + objectaddress, "").Replace('“', '"').Replace('”', '"');
+                            string message = "";
+
+                            try { message = System.IO.File.ReadAllText(@"root/" + supMessagePacket[1] + @"/MSG").Replace("@" + objectaddress, "").Replace('“', '"').Replace('”', '"'); } catch { }
 
                             string fromAddress = supMessagePacket[0];
 

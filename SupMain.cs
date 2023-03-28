@@ -20,6 +20,7 @@ using static System.Net.Mime.MediaTypeNames;
 using Org.BouncyCastle.Utilities.Net;
 using NBitcoin.Protocol;
 using System.Dynamic;
+using System.Collections;
 
 namespace SUP
 {
@@ -145,6 +146,20 @@ namespace SUP
 
             profileCreatedDate.Text = "since: " + activeProfile.CreatedDate.ToString("MM/dd/yyyy hh:mm:ss tt");
 
+
+            foreach (string key in activeProfile.URL.Keys)
+            {
+                Button button = new Button();
+                button.Text = key;
+                button.Font = new Font("Segoe UI", 12); // Set the button text font size
+                button.ForeColor = Color.White;
+                button.Height = 50;
+                button.Width = supFlow.Width - 20; // Subtract padding of 10 pixels on each side
+                button.Margin = new Padding(10);
+                button.Click += new EventHandler((sender, e) => button_Click(sender, e, activeProfile.URL[key]));
+                supFlow.Controls.Add(button);
+            }
+      
             string imgurn = "";
 
             if (activeProfile.Image != "")
@@ -199,7 +214,12 @@ namespace SUP
 
 
         }
-
+        private void button_Click(object sender, EventArgs e, string value)
+        {
+            // Launch a new form and pass the value as the only parameter to the load function
+            ObjectBrowser browser = new ObjectBrowser(value);
+            browser.Show();
+        }
         private void flowLayoutPanel1_SizeChanged(object sender, EventArgs e)
         {
 
@@ -1274,7 +1294,12 @@ namespace SUP
 
                         List<string> supMessagePacket = JsonConvert.DeserializeObject<List<string>>(process);
 
-                        string message = System.IO.File.ReadAllText(@"root/" + supMessagePacket[1] + @"/MSG").Replace("@" + profileURN.Links[0].LinkData.ToString(), "");
+                        string message = "";
+                        try
+                        {
+                            message = System.IO.File.ReadAllText(@"root/" + supMessagePacket[1] + @"/MSG").Replace("@" + profileURN.Links[0].LinkData.ToString(), "");
+                        }
+                        catch { }
 
                         string fromAddress = supMessagePacket[0];
                         string imagelocation = "";

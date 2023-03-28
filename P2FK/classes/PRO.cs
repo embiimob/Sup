@@ -68,7 +68,7 @@ namespace SUP.P2FK
             }
             catch { }
 
-            var intProcessHeight = profileState.ProcessHeight;
+            var intProcessHeight = profileState.Id;
             Root[] profileTransactions;
             int depth = skip;
             //return all roots found at address
@@ -76,7 +76,7 @@ namespace SUP.P2FK
 
             if (intProcessHeight > 0 && profileTransactions.Count() == 0) { return profileState; }
 
-            profileTransactions = Root.GetRootsByAddress(profileaddress, username, password, url, intProcessHeight, -1, versionByte);
+            profileTransactions = Root.GetRootsByAddress(profileaddress, username, password, url, 0, -1, versionByte);
 
             foreach (Root transaction in profileTransactions)
             {
@@ -222,7 +222,7 @@ namespace SUP.P2FK
             }
 
             //used to determine where to begin profile State processing when retrieved from cache
-            profileState.ProcessHeight = intProcessHeight;
+            profileState.Id = profileTransactions.Count();
             var profileSerialized = JsonConvert.SerializeObject(profileState);
 
             try

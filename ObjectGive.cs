@@ -147,7 +147,7 @@ namespace SUP
                 NetworkCredential credentials = new NetworkCredential("good-user", "better-password");
                 RPCClient rpcClient = new RPCClient(credentials, new Uri(@"http://127.0.0.1:18332"), Network.Main);
                 System.Security.Cryptography.SHA256 mySHA256 = SHA256Managed.Create();
-                byte[] hashValue = mySHA256.ComputeHash(Encoding.UTF8.GetBytes(txtOBJP2FK.Text));
+                byte[] hashValue = mySHA256.ComputeHash(Encoding.ASCII.GetBytes(txtOBJP2FK.Text));
                 string signatureAddress;
 
                 signatureAddress = txtSignatureAddress.Text;
