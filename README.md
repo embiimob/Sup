@@ -87,7 +87,7 @@ When a Sup!? urn is registered, a small symbol appears on the top left corner of
 <br />
 <br />
 ## **File Lookup**
-Drag and drop any file onto the main Sup!? browser screen. Sup!? will search the mainchain for a current file registration with an owner. If found, the registered object will be returned in the main browser window. To obtain a file registration keyword necessary to register a file, drag and drop the file onto the workbench, the reference key will be displayed in the workbench output window. See the example transaction JSON files https://github.com/embiimob/Sup/tree/master/P2FK/samples to begin experimenting with Sup!? file lookups and urn registration.
+Drag and drop any file onto the main Sup!? browser screen. Sup!? will search the mainchain for a current file registration with an owner. If found, the registered object will be returned in the main browser window. All URN's with valid file paths at the time of registration are automatically registered for Sup!? file lookup.
 <br />
 <br />
 ## **Block \ Mute**
