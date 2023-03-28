@@ -154,8 +154,8 @@ namespace SUP
                 button.Font = new Font("Segoe UI", 12); // Set the button text font size
                 button.ForeColor = Color.White;
                 button.Height = 50;
-                button.Width = supFlow.Width - 20; // Subtract padding of 10 pixels on each side
-                button.Margin = new Padding(10);
+                button.Width = supFlow.Width - 40; // Subtract padding of 10 pixels on each side
+                button.Margin = new Padding(10,3,10,3);
                 button.Click += new EventHandler((sender, e) => button_Click(sender, e, activeProfile.URL[key]));
                 supFlow.Controls.Add(button);
             }
@@ -228,63 +228,73 @@ namespace SUP
         private void btnMint_Click(object sender, EventArgs e)
         {
 
-            if (splitContainer1.Panel2.Controls.Contains(supPrivateFlow))
+            if (splitContainer1.Panel2Collapsed)
             {
-                splitContainer1.Panel2.Controls.Clear();
-                numPrivateMessagesDisplayed = 0;
-                splitContainer1.Panel2.Controls.Add(OBcontrol);
-
+                splitContainer1.Panel2Collapsed = false;
             }
             else
             {
-                // Create the form that will contain the buttons
-                Form buttonForm = new Form();
-                buttonForm.FormBorderStyle = FormBorderStyle.None;
-                buttonForm.BackColor = Color.White;
-                buttonForm.Size = new Size(300, 150);
 
-                // Create the "Object Mint" button
-                Button objectMintButton = new Button();
-                objectMintButton.Text = @"Object Mint \ Update";
-                objectMintButton.Font = new Font("Arial", 16, FontStyle.Bold);
-                objectMintButton.Size = new Size(250, 50);
-                objectMintButton.Location = new Point(25, 25);
-                objectMintButton.Click += (s, ev) =>
+
+
+                if (splitContainer1.Panel2.Controls.Contains(supPrivateFlow))
                 {
-                    // Close the button form
-                    buttonForm.Close();
+                    splitContainer1.Panel2.Controls.Clear();
+                    numPrivateMessagesDisplayed = 0;
+                    splitContainer1.Panel2.Controls.Add(OBcontrol);
 
-                    // Show the "ObjectMint" form and set focus to it
-                    ObjectMint mintform = new ObjectMint();
-                    mintform.StartPosition = FormStartPosition.CenterScreen;
-                    mintform.Show(this);
-                    mintform.Focus();
-                };
-                buttonForm.Controls.Add(objectMintButton);
-
-                // Create the "Mint Profile" button
-                Button mintProfileButton = new Button();
-                mintProfileButton.Text = @"Profile Mint \ Update";
-                mintProfileButton.Font = new Font("Arial", 16, FontStyle.Bold);
-                mintProfileButton.Size = new Size(250, 50);
-                mintProfileButton.Location = new Point(25, 85);
-                mintProfileButton.Click += (s, ev) =>
+                }
+                else
                 {
-                    // Close the button form
-                    buttonForm.Close();
+                    // Create the form that will contain the buttons
+                    Form buttonForm = new Form();
+                    buttonForm.FormBorderStyle = FormBorderStyle.None;
+                    buttonForm.BackColor = Color.White;
+                    buttonForm.Size = new Size(300, 150);
 
-                    // Show the "ProfileMint" form and set focus to it
-                    ProfileMint mintprofile = new ProfileMint();
-                    mintprofile.StartPosition = FormStartPosition.CenterScreen;
-                    mintprofile.Show(this);
-                    mintprofile.Focus();
-                };
-                buttonForm.Controls.Add(mintProfileButton);
+                    // Create the "Object Mint" button
+                    Button objectMintButton = new Button();
+                    objectMintButton.Text = @"Object Mint \ Update";
+                    objectMintButton.Font = new Font("Arial", 16, FontStyle.Bold);
+                    objectMintButton.Size = new Size(250, 50);
+                    objectMintButton.Location = new Point(25, 25);
+                    objectMintButton.Click += (s, ev) =>
+                    {
+                        // Close the button form
+                        buttonForm.Close();
 
-                // Show the button form centered on the launching program and set focus to it
-                buttonForm.StartPosition = FormStartPosition.CenterParent;
-                buttonForm.ShowDialog(this);
-                buttonForm.Focus();
+                        // Show the "ObjectMint" form and set focus to it
+                        ObjectMint mintform = new ObjectMint();
+                        mintform.StartPosition = FormStartPosition.CenterScreen;
+                        mintform.Show(this);
+                        mintform.Focus();
+                    };
+                    buttonForm.Controls.Add(objectMintButton);
+
+                    // Create the "Mint Profile" button
+                    Button mintProfileButton = new Button();
+                    mintProfileButton.Text = @"Profile Mint \ Update";
+                    mintProfileButton.Font = new Font("Arial", 16, FontStyle.Bold);
+                    mintProfileButton.Size = new Size(250, 50);
+                    mintProfileButton.Location = new Point(25, 85);
+                    mintProfileButton.Click += (s, ev) =>
+                    {
+                        // Close the button form
+                        buttonForm.Close();
+
+                        // Show the "ProfileMint" form and set focus to it
+                        ProfileMint mintprofile = new ProfileMint();
+                        mintprofile.StartPosition = FormStartPosition.CenterScreen;
+                        mintprofile.Show(this);
+                        mintprofile.Focus();
+                    };
+                    buttonForm.Controls.Add(mintProfileButton);
+
+                    // Show the button form centered on the launching program and set focus to it
+                    buttonForm.StartPosition = FormStartPosition.CenterParent;
+                    buttonForm.ShowDialog(this);
+                    buttonForm.Focus();
+                }
             }
         }
 
@@ -2171,90 +2181,92 @@ namespace SUP
         {
             if (numFriendFeedsDisplayed == 0) { supFlow.Controls.Clear(); }
 
-            var myFriendsJson = File.ReadAllText(@"root\MyFriendList.Json");
-            var myFriends = JsonConvert.DeserializeObject<Dictionary<string, string>>(myFriendsJson);
-
-            // Iterate over each key in the dictionary, get public messages by address, and combine them into a list
-            var allMessages = new List<object>();
-            foreach (var key in myFriends.Keys)
+            if (File.Exists(@"root\MyFriendList.Json"))
             {
-                var result = OBJState.GetPublicMessagesByAddress(key, "good-user", "better-password", "http://127.0.0.1:18332");
-                var messages = result.GetType().GetProperty("Messages").GetValue(result) as List<object>;
+                var myFriendsJson = File.ReadAllText(@"root\MyFriendList.Json");
+                var myFriends = JsonConvert.DeserializeObject<Dictionary<string, string>>(myFriendsJson);
 
-                // Add the "to" element to each message object
-                foreach (var message in messages)
+                // Iterate over each key in the dictionary, get public messages by address, and combine them into a list
+                var allMessages = new List<object>();
+                foreach (var key in myFriends.Keys)
                 {
+                    var result = OBJState.GetPublicMessagesByAddress(key, "good-user", "better-password", "http://127.0.0.1:18332");
+                    var messages = result.GetType().GetProperty("Messages").GetValue(result) as List<object>;
 
+                    // Add the "to" element to each message object
+                    foreach (var message in messages)
+                    {
+
+                        var fromProp = message.GetType().GetProperty("FromAddress");
+                        var messageProp = message.GetType().GetProperty("Message");
+                        var blockDateProp = message.GetType().GetProperty("BlockDate");
+                        string _from = fromProp?.GetValue(message).ToString();
+                        string _to = key;
+                        string _message = messageProp?.GetValue(message).ToString();
+                        string _blockdate = blockDateProp?.GetValue(message).ToString();
+
+                        allMessages.Add(new
+                        {
+                            Message = _message,
+                            FromAddress = _from,
+                            To = _to,
+                            BlockDate = _blockdate
+                        });
+                    }
+                }
+
+                // Sort the combined list by block date
+                allMessages.Sort((m1, m2) =>
+                {
+                    var date1Prop = m1?.GetType().GetProperty("BlockDate");
+                    var date2Prop = m2?.GetType().GetProperty("BlockDate");
+                    if (date1Prop == null && date2Prop == null)
+                    {
+                        return 0;
+                    }
+                    else if (date1Prop == null)
+                    {
+                        return -1;
+                    }
+                    else if (date2Prop == null)
+                    {
+                        return 1;
+                    }
+                    else
+                    {
+                        var date1 = DateTime.ParseExact(date1Prop.GetValue(m1).ToString(), "yyyyMMddHHmmss", CultureInfo.InvariantCulture);
+                        var date2 = DateTime.ParseExact(date2Prop.GetValue(m2).ToString(), "yyyyMMddHHmmss", CultureInfo.InvariantCulture);
+                        return date2.CompareTo(date1);
+                    }
+                });
+
+                // Serialize the combined list to MyFriendsFeed.Json file
+                var myFriendsFeedJson = JsonConvert.SerializeObject(allMessages);
+                File.WriteAllText(@"root\MyFriendFeed.Json", myFriendsFeedJson);
+
+
+                foreach (var message in allMessages.Skip(numFriendFeedsDisplayed).Take(10))
+                {
                     var fromProp = message.GetType().GetProperty("FromAddress");
+                    var toProp = message.GetType().GetProperty("To");
                     var messageProp = message.GetType().GetProperty("Message");
                     var blockDateProp = message.GetType().GetProperty("BlockDate");
+
                     string _from = fromProp?.GetValue(message).ToString();
-                    string _to = key;
+                    string _to = toProp?.GetValue(message).ToString();
                     string _message = messageProp?.GetValue(message).ToString();
                     string _blockdate = blockDateProp?.GetValue(message).ToString();
+                    string imglocation = "";
 
-                    allMessages.Add(new
-                    {
-                        Message = _message,
-                        FromAddress = _from,
-                        To = _to,
-                        BlockDate = _blockdate
-                    });
+                    try { imglocation = myFriends[_from]; } catch { }
+
+                    CreateFeedRow(imglocation, _from, _from, DateTime.ParseExact(_blockdate, "yyyyMMddHHmmss", CultureInfo.InvariantCulture), _message, Color.White, supFlow);
+                    numFriendFeedsDisplayed++;
+
                 }
-            }
 
-            // Sort the combined list by block date
-            allMessages.Sort((m1, m2) =>
-            {
-                var date1Prop = m1?.GetType().GetProperty("BlockDate");
-                var date2Prop = m2?.GetType().GetProperty("BlockDate");
-                if (date1Prop == null && date2Prop == null)
-                {
-                    return 0;
-                }
-                else if (date1Prop == null)
-                {
-                    return -1;
-                }
-                else if (date2Prop == null)
-                {
-                    return 1;
-                }
-                else
-                {
-                    var date1 = DateTime.ParseExact(date1Prop.GetValue(m1).ToString(), "yyyyMMddHHmmss", CultureInfo.InvariantCulture);
-                    var date2 = DateTime.ParseExact(date2Prop.GetValue(m2).ToString(), "yyyyMMddHHmmss", CultureInfo.InvariantCulture);
-                    return date2.CompareTo(date1);
-                }
-            });
-
-            // Serialize the combined list to MyFriendsFeed.Json file
-            var myFriendsFeedJson = JsonConvert.SerializeObject(allMessages);
-            File.WriteAllText(@"root\MyFriendFeed.Json", myFriendsFeedJson);
-
-
-            foreach (var message in allMessages.Skip(numFriendFeedsDisplayed).Take(10))
-            {
-                var fromProp = message.GetType().GetProperty("FromAddress");
-                var toProp = message.GetType().GetProperty("To");
-                var messageProp = message.GetType().GetProperty("Message");
-                var blockDateProp = message.GetType().GetProperty("BlockDate");
-
-                string _from = fromProp?.GetValue(message).ToString();
-                string _to = toProp?.GetValue(message).ToString();
-                string _message = messageProp?.GetValue(message).ToString();
-                string _blockdate = blockDateProp?.GetValue(message).ToString();
-                string imglocation = "";
-
-                try { imglocation = myFriends[_from]; } catch { }
-
-                CreateFeedRow(imglocation, _from, _from, DateTime.ParseExact(_blockdate, "yyyyMMddHHmmss", CultureInfo.InvariantCulture), _message, Color.White, supFlow);
-                numFriendFeedsDisplayed++;
 
             }
-
-
-
 
         }
 

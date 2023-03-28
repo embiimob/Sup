@@ -312,7 +312,8 @@ namespace SUP
 
                                                         this.Invoke((Action)(() =>
                                                         {
-                                                            foundObject.ObjectImage.ImageLocation = imgurn;
+                                                           foundObject.ObjectImage.SizeMode = PictureBoxSizeMode.Zoom;
+                                                           foundObject.ObjectImage.ImageLocation = imgurn;
                                                         }));
                                                     }
                                                 }
@@ -334,6 +335,7 @@ namespace SUP
 
                                                         this.Invoke((Action)(() =>
                                                         {
+                                                            foundObject.ObjectImage.SizeMode = PictureBoxSizeMode.Zoom;
                                                             foundObject.ObjectImage.ImageLocation = imgurn;
                                                         }));
                                                     }
@@ -355,6 +357,7 @@ namespace SUP
 
                                                         this.Invoke((Action)(() =>
                                                         {
+                                                            foundObject.ObjectImage.SizeMode = PictureBoxSizeMode.Zoom;
                                                             foundObject.ObjectImage.ImageLocation = imgurn;
                                                         }));
                                                     }
@@ -376,6 +379,7 @@ namespace SUP
 
                                                         this.Invoke((Action)(() =>
                                                         {
+                                                            foundObject.ObjectImage.SizeMode = PictureBoxSizeMode.Zoom;
                                                             foundObject.ObjectImage.ImageLocation = imgurn;
                                                         }));
                                                     }
@@ -438,6 +442,7 @@ namespace SUP
                                                 try { Directory.Delete("ipfs/" + transid + "-build", true); } catch { }
                                                 this.Invoke((Action)(() =>
                                                 {
+                                                    foundObject.ObjectImage.SizeMode = PictureBoxSizeMode.Zoom;
                                                     foundObject.ObjectImage.ImageLocation = imgurn;
                                                 }));
 
@@ -449,6 +454,7 @@ namespace SUP
                                     case "HTTP":
                                         Task.Run(() =>
                                         {
+                                            foundObject.ObjectImage.SizeMode = PictureBoxSizeMode.Zoom;
                                             foundObject.ObjectImage.ImageLocation = objstate.Image;
                                         });
                                         break;
@@ -469,6 +475,7 @@ namespace SUP
 
                                                     this.Invoke((Action)(() =>
                                                     {
+                                                        foundObject.ObjectImage.SizeMode = PictureBoxSizeMode.Zoom;
                                                         foundObject.ObjectImage.ImageLocation = imgurn;
                                                     }));
                                                 }
