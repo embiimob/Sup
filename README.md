@@ -73,7 +73,7 @@ Click the mint button and select the object mint button. Enter an object name, o
 
 Click print instead of mint and you can use a paper transaction alone to prove ownership. Any person can scan a paper mint & send a small confirmation transaction to the addresses within the QR code printed on the paper to make the paper transaction public. A Sup!? paper transaction can be used in lieu of a public confirmation as it contains all the necessary signature and transaction data necessary to confirm it against a current scan of the object address it is associated with.
 
-To edit an unlocked object, click on the magnifying glass and enter the object address to edit or scan a paper mint. If an address is found and/or the paper transaction is a valid transaction, Sup!? will build and display the object it represents on screen. Modifying any of the fields will cause the corresponding fields' modified indicator to turn blue.. Click mint Or print when you have completed making updates and your changes will take effect following a successfull confirmation of the transaction.
+To edit an unlocked object, click on the magnifying glass and enter the object address to edit. If an object is found, Sup!? will build and display the object it represents on screen. Modifying any of the fields will cause the corresponding fields' modified indicator to turn blue.. Click mint Or print when you have completed making updates and your changes will take effect following a successfull confirmation of the transaction.
 <br />
 <br />
 ## **Live Monitor**
