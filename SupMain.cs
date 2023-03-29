@@ -2365,7 +2365,7 @@ namespace SUP
                 
                 foreach (Control control in flowFollow.Controls)
                 {
-                    if (control is PictureBox pictureBox && pictureBox.Tag == profileURN.Links[0].LinkData)
+                    if (control is PictureBox pictureBox && pictureBox.Tag.ToString() == profileURN.Links[0].LinkData.ToString())
                     {
                         flowFollow.Controls.Remove(pictureBox);
                     }
