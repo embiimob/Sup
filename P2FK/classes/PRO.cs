@@ -55,6 +55,35 @@ namespace SUP.P2FK
 
             PROState profileState = new PROState();
             var OBJ = new Options { CreateIfMissing = true };
+            string isBlocked = "";
+            try
+            {
+                using (var db = new DB(OBJ, @"root\oblock"))
+                {
+                    isBlocked = db.Get(profileaddress);
+                    db.Close();
+                }
+            }
+            catch
+            {
+                try
+                {
+                    using (var db = new DB(OBJ, @"root\oblock2"))
+                    {
+                        isBlocked = db.Get(profileaddress);
+                        db.Close();
+                    }
+                    Directory.Move(@"root\oblock2", @"root\oblock");
+                }
+                catch
+                {
+                    try { Directory.Delete(@"root\oblock", true); }
+                    catch { }
+                }
+
+            }
+            if (isBlocked == "true") { return new PROState { }; }
+               
             string JSONOBJ;
             string logstatus;
             string diskpath = "root\\" + profileaddress + "\\";
@@ -253,8 +282,9 @@ namespace SUP.P2FK
             PROState profileState = new PROState { };
             var OBJ = new Options { CreateIfMissing = true };
             string JSONOBJ;
-
             string profileaddress = Root.GetPublicAddressByKeyword(searchstring, versionByte);
+
+
             string diskpath = "root\\" + profileaddress + "\\";
 
             // fetch current JSONOBJ from disk if it exists
@@ -286,6 +316,36 @@ namespace SUP.P2FK
                 if (transaction.Signed && transaction.File.ContainsKey("PRO"))
                 {
                     string findObject = transaction.Keyword.ElementAt(transaction.Keyword.Count - 1).Key;
+                    string isBlocked = "";
+                    try
+                    {
+                        using (var db = new DB(OBJ, @"root\oblock"))
+                        {
+                            isBlocked = db.Get(findObject);
+                            db.Close();
+                        }
+                    }
+                    catch
+                    {
+                        try
+                        {
+                            using (var db = new DB(OBJ, @"root\oblock2"))
+                            {
+                                isBlocked = db.Get(findObject);
+                                db.Close();
+                            }
+                            Directory.Move(@"root\oblock2", @"root\oblock");
+                        }
+                        catch
+                        {
+                            try { Directory.Delete(@"root\oblock", true); }
+                            catch { }
+                        }
+
+                    }
+                    if (isBlocked == "true") { return new PROState { }; }
+
+
                     PROState isObject = GetProfileByAddress(findObject, username, password, url, versionByte);
 
                     if (isObject.URN != null && isObject.URN == searchstring && isObject.ChangeDate > DateTime.Now.AddYears(-3))

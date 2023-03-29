@@ -31,11 +31,11 @@
             this.components = new System.ComponentModel.Container();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.splitContainer2 = new System.Windows.Forms.SplitContainer();
+            this.btnConnections = new System.Windows.Forms.Button();
             this.btnLive = new System.Windows.Forms.Button();
             this.btnWorkBench = new System.Windows.Forms.Button();
             this.refreshFriendFeed = new System.Windows.Forms.Button();
             this.flowFollow = new System.Windows.Forms.FlowLayoutPanel();
-            this.btnConnections = new System.Windows.Forms.Button();
             this.profileOwner = new System.Windows.Forms.PictureBox();
             this.supFlow = new System.Windows.Forms.FlowLayoutPanel();
             this.lblAdultsOnly = new System.Windows.Forms.Label();
@@ -117,6 +117,18 @@
             this.splitContainer2.TabIndex = 0;
             this.splitContainer2.TabStop = false;
             // 
+            // btnConnections
+            // 
+            this.btnConnections.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.btnConnections.Font = new System.Drawing.Font("Microsoft Sans Serif", 21.75F);
+            this.btnConnections.Location = new System.Drawing.Point(11, 484);
+            this.btnConnections.Name = "btnConnections";
+            this.btnConnections.Size = new System.Drawing.Size(50, 40);
+            this.btnConnections.TabIndex = 82;
+            this.btnConnections.Text = "🗝️";
+            this.btnConnections.UseVisualStyleBackColor = true;
+            this.btnConnections.Click += new System.EventHandler(this.ButtonLoadConnections);
+            // 
             // btnLive
             // 
             this.btnLive.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
@@ -168,18 +180,6 @@
             this.flowFollow.Size = new System.Drawing.Size(56, 415);
             this.flowFollow.TabIndex = 94;
             // 
-            // btnConnections
-            // 
-            this.btnConnections.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.btnConnections.Font = new System.Drawing.Font("Microsoft Sans Serif", 21.75F);
-            this.btnConnections.Location = new System.Drawing.Point(11, 484);
-            this.btnConnections.Name = "btnConnections";
-            this.btnConnections.Size = new System.Drawing.Size(50, 40);
-            this.btnConnections.TabIndex = 82;
-            this.btnConnections.Text = "🗝️";
-            this.btnConnections.UseVisualStyleBackColor = true;
-            this.btnConnections.Click += new System.EventHandler(this.ButtonLoadConnections);
-            // 
             // profileOwner
             // 
             this.profileOwner.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
@@ -200,7 +200,7 @@
             this.supFlow.Controls.Add(this.lblAdultsOnly);
             this.supFlow.Location = new System.Drawing.Point(0, 178);
             this.supFlow.Name = "supFlow";
-            this.supFlow.Size = new System.Drawing.Size(290, 394);
+            this.supFlow.Size = new System.Drawing.Size(293, 394);
             this.supFlow.TabIndex = 86;
             this.supFlow.SizeChanged += new System.EventHandler(this.flowLayoutPanel1_SizeChanged);
             // 
@@ -265,6 +265,7 @@
             this.btnBlock.TabIndex = 9;
             this.btnBlock.Text = "block";
             this.btnBlock.UseVisualStyleBackColor = true;
+            this.btnBlock.Click += new System.EventHandler(this.btnBlock_Click);
             // 
             // btnMute
             // 
@@ -327,7 +328,7 @@
             this.btnPrivateMessage.Enabled = false;
             this.btnPrivateMessage.Font = new System.Drawing.Font("Microsoft Sans Serif", 21.75F);
             this.btnPrivateMessage.ForeColor = System.Drawing.Color.Black;
-            this.btnPrivateMessage.Location = new System.Drawing.Point(229, 578);
+            this.btnPrivateMessage.Location = new System.Drawing.Point(232, 578);
             this.btnPrivateMessage.Name = "btnPrivateMessage";
             this.btnPrivateMessage.Size = new System.Drawing.Size(50, 40);
             this.btnPrivateMessage.TabIndex = 84;
@@ -342,7 +343,7 @@
             this.btnPublicMessage.Enabled = false;
             this.btnPublicMessage.Font = new System.Drawing.Font("Microsoft Sans Serif", 21.75F);
             this.btnPublicMessage.ForeColor = System.Drawing.Color.Black;
-            this.btnPublicMessage.Location = new System.Drawing.Point(170, 578);
+            this.btnPublicMessage.Location = new System.Drawing.Point(173, 578);
             this.btnPublicMessage.Name = "btnPublicMessage";
             this.btnPublicMessage.Size = new System.Drawing.Size(50, 40);
             this.btnPublicMessage.TabIndex = 83;

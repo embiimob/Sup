@@ -127,15 +127,15 @@ namespace SUP
             Regex regexTransactionId = new Regex(@"\b[0-9a-f]{64}\b");
             PROState activeProfile = PROState.GetProfileByAddress(address, "good-user", "better-password", @"http://127.0.0.1:18332");
             string ismuted = "";
-            
-                var WORK = new Options { CreateIfMissing = true };
-                using (var db = new DB(WORK, @"root\mute"))
-                {
-                    ismuted = db.Get(address);
-                }
-            
+
+            var WORK = new Options { CreateIfMissing = true };
+            using (var db = new DB(WORK, @"root\mute"))
+            {
+                ismuted = db.Get(address);
+            }
+
             if (ismuted == "true") { btnMute.Text = "unmute"; } else { btnMute.Text = "mute"; }
-          
+
 
 
             if (activeProfile.URN == null) { profileURN.Text = "anon"; profileBIO.Text = ""; profileCreatedDate.Text = ""; profileIMG.ImageLocation = ""; activeProfile.Image = ""; return; }
@@ -155,11 +155,11 @@ namespace SUP
                 button.ForeColor = Color.White;
                 button.Height = 50;
                 button.Width = supFlow.Width - 40; // Subtract padding of 10 pixels on each side
-                button.Margin = new Padding(10,3,10,3);
+                button.Margin = new Padding(10, 3, 10, 3);
                 button.Click += new EventHandler((sender, e) => button_Click(sender, e, activeProfile.URL[key]));
                 supFlow.Controls.Add(button);
             }
-      
+
             string imgurn = "";
 
             if (activeProfile.Image != "")
@@ -2290,6 +2290,94 @@ namespace SUP
                 }
                 btnMute.Text = "mute";
             }
+        }
+
+        private void btnBlock_Click(object sender, EventArgs e)
+        {
+
+
+            try
+            {
+                var WORK = new Options { CreateIfMissing = true };
+                using (var db = new DB(WORK, @"root\oblock"))
+                {
+                    db.Put(profileURN.Links[0].LinkData.ToString(), "true");
+
+                }
+                var WORK2 = new Options { CreateIfMissing = true };
+                using (var db = new DB(WORK2, @"root\oblock2"))
+                {
+                    db.Put(profileURN.Links[0].LinkData.ToString(), "true");
+
+                }
+
+                var SUP = new Options { CreateIfMissing = true };
+                var keysToDelete = new HashSet<string>(); // Create a new HashSet to store the keys to delete
+
+                using (var db = new DB(SUP, @"root\found"))
+                {
+                    LevelDB.Iterator it = db.CreateIterator();
+
+                    for (
+                        it.SeekToLast();
+                        it.IsValid();
+                        it.Prev()
+                    )
+                    {
+                        string key = it.KeyAsString();
+                        if (key.Contains(profileURN.Links[0].LinkData.ToString()))
+                        {
+                            keysToDelete.Add(key); // Add the key to the HashSet
+                        }
+                    }
+
+                    it.Dispose();
+
+                    var batch = new WriteBatch(); // Create a new WriteBatch to delete the keys
+                    foreach (var key in keysToDelete)
+                    {
+                        batch.Delete(key); // Add a delete operation for each key in the HashSet
+                    }
+                    db.Write(batch); // Execute the batch to delete the keys from the database
+                }
+
+
+                Root[] root = Root.GetRootsByAddress(profileURN.Links[0].LinkData.ToString(), "good-user", "better-password", @"http://127.0.0.1:18332");
+
+                foreach (Root rootItem in root)
+                {
+
+                    using (var db = new DB(WORK, @"root\tblock"))
+                    {
+                        db.Put(rootItem.TransactionId, "true");
+
+                    }
+                    try
+                    {
+                        Directory.Delete(@"root\" + rootItem.TransactionId, true);
+                    }
+                    catch { }
+                }
+
+
+                try { Directory.Delete(@"root\" + profileURN.Links[0].LinkData.ToString(), true); } catch { }
+                try { Directory.Delete(@"root\" + Root.GetPublicAddressByKeyword(profileURN.Text), true); } catch { }
+                
+                foreach (Control control in flowFollow.Controls)
+                {
+                    if (control is PictureBox pictureBox && pictureBox.Tag == profileURN.Links[0].LinkData)
+                    {
+                        flowFollow.Controls.Remove(pictureBox);
+                    }
+                }
+
+
+
+
+            }
+            catch { }
+
+
         }
     }
 }
