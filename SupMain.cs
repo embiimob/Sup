@@ -118,9 +118,14 @@ namespace SUP
                     numFriendFeedsDisplayed = 0;
                     supFlow.Controls.Clear();
                     MakeActiveProfile(objectBrowserForm.profileURN.Links[0].LinkData.ToString());
-                    profileOwner.ImageLocation = profileIMG.ImageLocation;
-                    profileOwner.Tag = objectBrowserForm.profileURN.Links[0].LinkData.ToString();
 
+                    List<string> islocal = Root.GetPublicKeysByAddress(objectBrowserForm.profileURN.Links[0].LinkData.ToString(), "good-user", "better-password", @"http://127.0.0.1:18332");
+                    if
+                         (islocal.Count == 2)
+                    {
+                        profileOwner.ImageLocation = profileIMG.ImageLocation;
+                        profileOwner.Tag = objectBrowserForm.profileURN.Links[0].LinkData.ToString();
+                    }
                 }
             }
         }
