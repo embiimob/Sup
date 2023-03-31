@@ -814,7 +814,7 @@ namespace SUP
 
 
                                                     }
-
+                                                    try { System.IO.Directory.Delete(@"root\" + s, true); } catch { }
 
                                                 }
                                                 else { try { System.IO.Directory.Delete(@"root\" + s, true); } catch { } }
@@ -994,7 +994,7 @@ namespace SUP
 
 
                                                     }
-
+                                                    try { System.IO.Directory.Delete(@"root\" + s, true); } catch { }
 
                                                 }
                                                 else { try { System.IO.Directory.Delete(@"root\" + s, true); } catch { } }
@@ -1163,7 +1163,7 @@ namespace SUP
 
 
                                                     }
-
+                                                    try { System.IO.Directory.Delete(@"root\" + s, true); } catch { }
 
                                                 }
                                                 else { try { System.IO.Directory.Delete(@"root\" + s, true); } catch { } }
@@ -1330,7 +1330,7 @@ namespace SUP
 
 
                                                     }
-
+                                                    try { System.IO.Directory.Delete(@"root\" + s, true); } catch { }
 
                                                 }
                                                 else { try { System.IO.Directory.Delete(@"root\" + s, true); } catch { } }
@@ -1499,7 +1499,7 @@ namespace SUP
 
 
                                                     }
-
+                                                    try { System.IO.Directory.Delete(@"root\" + s, true); } catch { }
 
                                                 }
                                                 else { try { System.IO.Directory.Delete(@"root\" + s, true); } catch { } }

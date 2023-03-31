@@ -434,50 +434,26 @@ namespace SUP.P2FK
 
             string isMuted;
 
-
-            var MUTE = new Options { CreateIfMissing = true };
-            using (var db = new DB(MUTE, @"root\mute"))
+            if (P2FKRoot.BlockDate.Year > 1975)
             {
-                isMuted = db.Get(P2FKRoot.SignedBy);
-            }
+                var MUTE = new Options { CreateIfMissing = true };
+                using (var db = new DB(MUTE, @"root\mute"))
+                {
+                    isMuted = db.Get(P2FKRoot.SignedBy);
+                }
 
 
 
-            if (P2FKRoot.Message.Count() > 0 && isMuted != "true")
-            {
-
-                foreach (KeyValuePair<string, string> keyword in P2FKRoot.Keyword)
+                if (P2FKRoot.Message.Count() > 0 && isMuted != "true")
                 {
 
-
-                    string msg = "[\"" + P2FKRoot.SignedBy + "\",\"" + P2FKRoot.TransactionId + "\"]";
-                    var ROOT = new Options { CreateIfMissing = true };
-
-                    try
+                    foreach (KeyValuePair<string, string> keyword in P2FKRoot.Keyword)
                     {
-                        lock (SupLocker)
-                        {
-                            var db = new DB(ROOT, @"root\sup");
-                            var db2 = new DB(ROOT, @"root\sup2");
-                            db.Put(keyword.Key + "!" + P2FKRoot.BlockDate.ToString("yyyyMMddHHmmss"), msg);
-                            db.Put("lastkey!" + keyword.Key, keyword.Key + "!" + P2FKRoot.BlockDate.ToString("yyyyMMddHHmmss"));
-                            db.Close();
-                            db.Dispose();
 
-                            db2.Put(keyword.Key + "!" + P2FKRoot.BlockDate.ToString("yyyyMMddHHmmss"), msg);
-                            db2.Put("lastkey!" + keyword.Key, keyword.Key + "!" + P2FKRoot.BlockDate.ToString("yyyyMMddHHmmss"));
-                            db2.Close();
-                            db2.Dispose();
-                        }
-                    }
-                    catch
-                    {
-                        lock (SupLocker)
-                        {
-                            try { Directory.Delete(@"root\sup", true); } catch { System.Threading.Thread.Sleep(500); try { Directory.Delete(@"root\sup", true); } catch { } }
 
-                            try { Directory.Move(@"root\sup2", @"root\sup"); } catch { }
-                        }
+                        string msg = "[\"" + P2FKRoot.SignedBy + "\",\"" + P2FKRoot.TransactionId + "\"]";
+                        var ROOT = new Options { CreateIfMissing = true };
+
                         try
                         {
                             lock (SupLocker)
@@ -489,63 +465,64 @@ namespace SUP.P2FK
                                 db.Close();
                                 db.Dispose();
 
-
                                 db2.Put(keyword.Key + "!" + P2FKRoot.BlockDate.ToString("yyyyMMddHHmmss"), msg);
                                 db2.Put("lastkey!" + keyword.Key, keyword.Key + "!" + P2FKRoot.BlockDate.ToString("yyyyMMddHHmmss"));
                                 db2.Close();
                                 db2.Dispose();
                             }
-
                         }
                         catch
                         {
+                            lock (SupLocker)
+                            {
+                                try { Directory.Delete(@"root\sup", true); } catch { System.Threading.Thread.Sleep(500); try { Directory.Delete(@"root\sup", true); } catch { } }
 
-                            Directory.Delete(@"root\sup", true); Directory.Delete(@"root\sup2", true);
+                                try { Directory.Move(@"root\sup2", @"root\sup"); } catch { }
+                            }
+                            try
+                            {
+                                lock (SupLocker)
+                                {
+                                    var db = new DB(ROOT, @"root\sup");
+                                    var db2 = new DB(ROOT, @"root\sup2");
+                                    db.Put(keyword.Key + "!" + P2FKRoot.BlockDate.ToString("yyyyMMddHHmmss"), msg);
+                                    db.Put("lastkey!" + keyword.Key, keyword.Key + "!" + P2FKRoot.BlockDate.ToString("yyyyMMddHHmmss"));
+                                    db.Close();
+                                    db.Dispose();
+
+
+                                    db2.Put(keyword.Key + "!" + P2FKRoot.BlockDate.ToString("yyyyMMddHHmmss"), msg);
+                                    db2.Put("lastkey!" + keyword.Key, keyword.Key + "!" + P2FKRoot.BlockDate.ToString("yyyyMMddHHmmss"));
+                                    db2.Close();
+                                    db2.Dispose();
+                                }
+
+                            }
+                            catch
+                            {
+
+                                Directory.Delete(@"root\sup", true); Directory.Delete(@"root\sup2", true);
+                            }
                         }
-                    }
 
+
+                    }
 
                 }
 
-            }
-
-            if (P2FKRoot.File.ContainsKey("SEC") && isMuted != "true")
-            {
-
-                foreach (KeyValuePair<string, string> keyword in P2FKRoot.Keyword)
+                if (P2FKRoot.File.ContainsKey("SEC") && isMuted != "true")
                 {
-                    string msg;
-                    if (!P2FKRoot.Signed) {
-                        msg = "[\"" + P2FKRoot.Keyword.Keys.Last() + "\",\"" + P2FKRoot.TransactionId + "\"]";
-                    }
-                    else { msg = "[\"" + P2FKRoot.SignedBy + "\",\"" + P2FKRoot.TransactionId + "\"]"; }
-                    var ROOT = new Options { CreateIfMissing = true };
 
-                    try
+                    foreach (KeyValuePair<string, string> keyword in P2FKRoot.Keyword)
                     {
-                        lock (SupLocker)
+                        string msg;
+                        if (!P2FKRoot.Signed)
                         {
-                            var db = new DB(ROOT, @"root\sec");
-                            var db2 = new DB(ROOT, @"root\sec2");
-                            db.Put(keyword.Key + "!" + P2FKRoot.BlockDate.ToString("yyyyMMddHHmmss"), msg);
-                            db.Put("lastkey!" + keyword.Key, keyword.Key + "!" + P2FKRoot.BlockDate.ToString("yyyyMMddHHmmss"));
-                            db.Close();
-                            db.Dispose();
-
-                            db2.Put(keyword.Key + "!" + P2FKRoot.BlockDate.ToString("yyyyMMddHHmmss"), msg);
-                            db2.Put("lastkey!" + keyword.Key, keyword.Key + "!" + P2FKRoot.BlockDate.ToString("yyyyMMddHHmmss"));
-                            db2.Close();
-                            db2.Dispose();
+                            msg = "[\"" + P2FKRoot.Keyword.Keys.Last() + "\",\"" + P2FKRoot.TransactionId + "\"]";
                         }
-                    }
-                    catch
-                    {
-                        lock (SupLocker)
-                        {
-                            try { Directory.Delete(@"root\sec", true); } catch { System.Threading.Thread.Sleep(500); try { Directory.Delete(@"root\sec", true); } catch { } }
+                        else { msg = "[\"" + P2FKRoot.SignedBy + "\",\"" + P2FKRoot.TransactionId + "\"]"; }
+                        var ROOT = new Options { CreateIfMissing = true };
 
-                            Directory.Move(@"root\sec2", @"root\sec");
-                        }
                         try
                         {
                             lock (SupLocker)
@@ -557,26 +534,51 @@ namespace SUP.P2FK
                                 db.Close();
                                 db.Dispose();
 
-
                                 db2.Put(keyword.Key + "!" + P2FKRoot.BlockDate.ToString("yyyyMMddHHmmss"), msg);
                                 db2.Put("lastkey!" + keyword.Key, keyword.Key + "!" + P2FKRoot.BlockDate.ToString("yyyyMMddHHmmss"));
                                 db2.Close();
                                 db2.Dispose();
                             }
-
                         }
                         catch
                         {
+                            lock (SupLocker)
+                            {
+                                try { Directory.Delete(@"root\sec", true); } catch { System.Threading.Thread.Sleep(500); try { Directory.Delete(@"root\sec", true); } catch { } }
 
-                            Directory.Delete(@"root\sec", true); Directory.Delete(@"root\sec2", true);
+                                Directory.Move(@"root\sec2", @"root\sec");
+                            }
+                            try
+                            {
+                                lock (SupLocker)
+                                {
+                                    var db = new DB(ROOT, @"root\sec");
+                                    var db2 = new DB(ROOT, @"root\sec2");
+                                    db.Put(keyword.Key + "!" + P2FKRoot.BlockDate.ToString("yyyyMMddHHmmss"), msg);
+                                    db.Put("lastkey!" + keyword.Key, keyword.Key + "!" + P2FKRoot.BlockDate.ToString("yyyyMMddHHmmss"));
+                                    db.Close();
+                                    db.Dispose();
+
+
+                                    db2.Put(keyword.Key + "!" + P2FKRoot.BlockDate.ToString("yyyyMMddHHmmss"), msg);
+                                    db2.Put("lastkey!" + keyword.Key, keyword.Key + "!" + P2FKRoot.BlockDate.ToString("yyyyMMddHHmmss"));
+                                    db2.Close();
+                                    db2.Dispose();
+                                }
+
+                            }
+                            catch
+                            {
+
+                                Directory.Delete(@"root\sec", true); Directory.Delete(@"root\sec2", true);
+                            }
                         }
+
+
                     }
 
-
                 }
-
             }
-
 
             return P2FKRoot;
         }
