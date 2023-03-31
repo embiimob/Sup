@@ -1852,6 +1852,8 @@ namespace SUP.P2FK
         public static object GetPublicMessagesByAddress(string objectaddress, string username, string password, string url, string versionByte = "111", int skip = 0, int qty = 20)
         {
             GetObjectByAddress(objectaddress, username, password, url, versionByte);
+                                  
+            
             lock (SupLocker)
             {
                 List<object> messages = new List<object>();
@@ -1859,14 +1861,12 @@ namespace SUP.P2FK
                 int rownum = 1;
                 var SUP = new Options { CreateIfMissing = true };
 
-                using (var db = new DB(SUP, @"root\sup"))
+                using (var db = new DB(SUP, @"root\"+ objectaddress + @"\sup"))
                 {
                     LevelDB.Iterator it = db.CreateIterator();
-                    string lastKey = db.Get("lastkey!" + objectaddress);
-                    if (lastKey == null) { lastKey = objectaddress; }
                     for (
-                       it.Seek(lastKey);
-                       it.IsValid() && it.KeyAsString().StartsWith(objectaddress) && rownum <= skip + qty; // Only display next 20 messages
+                       it.SeekToLast();
+                       it.IsValid() && rownum <= skip + qty; // Only display next 20 messages
                         it.Prev()
                      )
                     {
@@ -1912,13 +1912,12 @@ namespace SUP.P2FK
                 int rownum = 1;
                 var SUP = new Options { CreateIfMissing = true };
 
-                using (var db = new DB(SUP, @"root\sec"))
+                using (var db = new DB(SUP, @"root\"+ objectaddress +@"\sec"))
                 {
-                    string lastKey = db.Get("lastkey!" + objectaddress);
-                    if (lastKey == null) { lastKey = objectaddress; }
+                   
                     LevelDB.Iterator it = db.CreateIterator();
                     for (
-                       it.Seek(lastKey);
+                       it.SeekToLast();
                        it.IsValid() && it.KeyAsString().StartsWith(objectaddress) && rownum <= skip + qty; // Only display next 10 messages
                         it.Prev()
                      )

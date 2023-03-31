@@ -23,6 +23,7 @@ using System.Dynamic;
 using System.Collections;
 using System.Security.Policy;
 using AngleSharp.Common;
+using System.Windows.Input;
 
 namespace SUP
 {
@@ -84,7 +85,7 @@ namespace SUP
 
                     // Add event handlers to the PictureBox
                     pictureBox.Click += new EventHandler(Friend_Click);
-                    pictureBox.MouseUp += new MouseEventHandler(Friend_MouseUp);
+                    pictureBox.MouseUp += new System.Windows.Forms.MouseEventHandler(Friend_MouseUp);
 
                     // Add the PictureBox to the FlowLayoutPanel
                     flowFollow.Controls.Add(pictureBox);
@@ -647,6 +648,7 @@ namespace SUP
             {
                 tmrSearchMemoryPool.Stop();
 
+
                 try
                 {
                     Task SearchMemoryTask = Task.Run(() =>
@@ -659,7 +661,14 @@ namespace SUP
                         List<OBJState> foundobjects = new List<OBJState>();
                         NetworkCredential credentials = new NetworkCredential("good-user", "better-password");
                         RPCClient rpcClient;
+                        string myFriendsJson = "";
+                        Dictionary<string, string> myFriends = new Dictionary<string, string>();
 
+                        if (File.Exists(@"root\MyFriendList.Json"))
+                        {
+                            myFriendsJson = File.ReadAllText(@"root\MyFriendList.Json");
+                            myFriends = JsonConvert.DeserializeObject<Dictionary<string, string>>(myFriendsJson);
+                        }
                         string filter = "";
 
                         if (btctActive)
@@ -755,7 +764,13 @@ namespace SUP
 
                                                         this.Invoke((MethodInvoker)delegate
                                                         {
-                                                            CreateFeedRow(imglocation, _from, _from, DateTime.ParseExact(_blockdate, "yyyyMMddHHmmss", CultureInfo.InvariantCulture), _message, Color.White, supFlow, true);
+                                                            try { imglocation = myFriends[_from]; } catch { }
+                                                            CreateFeedRow(imglocation, _from, _from, DateTime.ParseExact("19700101010101", "yyyyMMddHHmmss", CultureInfo.InvariantCulture), _message, Color.White, supFlow);
+
+                                                            try { imglocation = myFriends[_to]; } catch { }
+                                                            CreateFeedRow(imglocation, _to, _to, DateTime.ParseExact(_blockdate, "yyyyMMddHHmmss", CultureInfo.InvariantCulture), "", Color.White, supFlow);
+
+
                                                         });
 
                                                         string pattern = "<<.*?>>";
@@ -936,7 +951,11 @@ namespace SUP
 
                                                         this.Invoke((MethodInvoker)delegate
                                                         {
-                                                            CreateFeedRow(imglocation, _from, _from, DateTime.ParseExact(_blockdate, "yyyyMMddHHmmss", CultureInfo.InvariantCulture), _message, Color.White, supFlow, true);
+                                                            try { imglocation = myFriends[_from]; } catch { }
+                                                            CreateFeedRow(imglocation, _from, _from, DateTime.ParseExact("19700101010101", "yyyyMMddHHmmss", CultureInfo.InvariantCulture), _message, Color.White, supFlow);
+
+                                                            try { imglocation = myFriends[_to]; } catch { }
+                                                            CreateFeedRow(imglocation, _to, _to, DateTime.ParseExact(_blockdate, "yyyyMMddHHmmss", CultureInfo.InvariantCulture), "", Color.White, supFlow);
                                                         });
 
                                                         string pattern = "<<.*?>>";
@@ -1106,7 +1125,11 @@ namespace SUP
 
                                                         this.Invoke((MethodInvoker)delegate
                                                         {
-                                                            CreateFeedRow(imglocation, _from, _from, DateTime.ParseExact(_blockdate, "yyyyMMddHHmmss", CultureInfo.InvariantCulture), _message, Color.White, supFlow, true);
+                                                            try { imglocation = myFriends[_from]; } catch { }
+                                                            CreateFeedRow(imglocation, _from, _from, DateTime.ParseExact("19700101010101", "yyyyMMddHHmmss", CultureInfo.InvariantCulture), _message, Color.White, supFlow);
+
+                                                            try { imglocation = myFriends[_to]; } catch { }
+                                                            CreateFeedRow(imglocation, _to, _to, DateTime.ParseExact(_blockdate, "yyyyMMddHHmmss", CultureInfo.InvariantCulture), "", Color.White, supFlow);
                                                         });
 
                                                         string pattern = "<<.*?>>";
@@ -1274,7 +1297,11 @@ namespace SUP
 
                                                         this.Invoke((MethodInvoker)delegate
                                                         {
-                                                            CreateFeedRow(imglocation, _from, _from, DateTime.ParseExact(_blockdate, "yyyyMMddHHmmss", CultureInfo.InvariantCulture), _message, Color.White, supFlow, true);
+                                                            try { imglocation = myFriends[_from]; } catch { }
+                                                            CreateFeedRow(imglocation, _from, _from, DateTime.ParseExact("19700101010101", "yyyyMMddHHmmss", CultureInfo.InvariantCulture), _message, Color.White, supFlow);
+
+                                                            try { imglocation = myFriends[_to]; } catch { }
+                                                            CreateFeedRow(imglocation, _to, _to, DateTime.ParseExact(_blockdate, "yyyyMMddHHmmss", CultureInfo.InvariantCulture), "", Color.White, supFlow);
                                                         });
 
                                                         string pattern = "<<.*?>>";
@@ -1442,7 +1469,11 @@ namespace SUP
 
                                                         this.Invoke((MethodInvoker)delegate
                                                         {
-                                                            CreateFeedRow(imglocation, _from, _from, DateTime.ParseExact(_blockdate, "yyyyMMddHHmmss", CultureInfo.InvariantCulture), _message, Color.White, supFlow, true);
+                                                            try { imglocation = myFriends[_from]; } catch { }
+                                                            CreateFeedRow(imglocation, _from, _from, DateTime.ParseExact("19700101010101", "yyyyMMddHHmmss", CultureInfo.InvariantCulture), _message, Color.White, supFlow);
+
+                                                            try { imglocation = myFriends[_to]; } catch { }
+                                                            CreateFeedRow(imglocation, _to, _to, DateTime.ParseExact(_blockdate, "yyyyMMddHHmmss", CultureInfo.InvariantCulture), "", Color.White, supFlow);
                                                         });
 
                                                         string pattern = "<<.*?>>";
@@ -1571,14 +1602,13 @@ namespace SUP
 
                 var SUP = new Options { CreateIfMissing = true };
 
-                using (var db = new DB(SUP, @"root\sup"))
+                using (var db = new DB(SUP, @"root\" + profileURN.Links[0].LinkData.ToString() + @"\sup"))
                 {
-                    string lastKey = db.Get("lastkey!" + profileURN.Links[0].LinkData.ToString());
-                    if (lastKey == null) { lastKey = profileURN.Links[0].LinkData.ToString(); }
+                   
                     LevelDB.Iterator it = db.CreateIterator();
                     for (
-                       it.Seek(lastKey);
-                       it.IsValid() && it.KeyAsString().StartsWith(profileURN.Links[0].LinkData.ToString()) && rownum <= numMessagesDisplayed + 10; // Only display next 10 messages
+                       it.SeekToLast();
+                       it.IsValid() && rownum <= numMessagesDisplayed + 10; // Only display next 10 messages
                         it.Prev()
                      )
                     {
@@ -1808,14 +1838,13 @@ namespace SUP
 
             var SUP = new Options { CreateIfMissing = true };
 
-            using (var db = new DB(SUP, @"root\sec"))
+            using (var db = new DB(SUP, @"root\" + profileURN.Links[0].LinkData.ToString() + @"\sec"))
             {
-                string lastKey = db.Get("lastkey!" + profileURN.Links[0].LinkData.ToString());
-                if (lastKey == null) { lastKey = profileURN.Links[0].LinkData.ToString(); }
+              
                 LevelDB.Iterator it = db.CreateIterator();
                 for (
-                   it.Seek(lastKey);
-                   it.IsValid() && it.KeyAsString().StartsWith(profileURN.Links[0].LinkData.ToString()) && rownum <= numPrivateMessagesDisplayed + 10; // Only display next 10 messages
+                   it.SeekToLast();
+                   it.IsValid() && rownum <= numPrivateMessagesDisplayed + 10; // Only display next 10 messages
                     it.Prev()
                  )
                 {
@@ -2492,19 +2521,20 @@ namespace SUP
             row.Controls.Add(owner, 1, 0);
 
 
-            // Create a LinkLabel with the owner name
-            Label tstamp = new Label
-            {
-                AutoSize = true,
-                BackColor = Color.Black,
-                ForeColor = Color.White,
-                Font = new System.Drawing.Font("Microsoft Sans Serif", 7.77F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0))),
-                Text = timestamp.ToString("MM/dd/yyyy hh:mm:ss"),
-                Margin = new System.Windows.Forms.Padding(0),
-                Dock = DockStyle.Bottom
-            };
-            row.Controls.Add(tstamp, 2, 0);
-
+            if (timestamp.Year > 1975)
+            {  // Create a LinkLabel with the owner name
+                Label tstamp = new Label
+                {
+                    AutoSize = true,
+                    BackColor = Color.Black,
+                    ForeColor = Color.White,
+                    Font = new System.Drawing.Font("Microsoft Sans Serif", 7.77F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0))),
+                    Text = timestamp.ToString("MM/dd/yyyy hh:mm:ss"),
+                    Margin = new System.Windows.Forms.Padding(0),
+                    Dock = DockStyle.Bottom
+                };
+                row.Controls.Add(tstamp, 2, 0);
+            }
 
             if (messageText != "")
             {
@@ -2656,7 +2686,7 @@ namespace SUP
 
             // Add event handlers to the PictureBox
             pictureBox.Click += new EventHandler(Friend_Click);
-            pictureBox.MouseUp += new MouseEventHandler(Friend_MouseUp);
+            pictureBox.MouseUp += new System.Windows.Forms.MouseEventHandler(Friend_MouseUp);
 
             // Add the PictureBox to the FlowLayoutPanel
             flowFollow.Controls.Add(pictureBox);
@@ -2681,7 +2711,7 @@ namespace SUP
         private void Friend_Click(object sender, EventArgs e)
         {
             // Check if the user left-clicked on the PictureBox
-            if (((MouseEventArgs)e).Button == MouseButtons.Left)
+            if (((System.Windows.Forms.MouseEventArgs)e).Button == MouseButtons.Left)
             {
                 // Get the tag text from the PictureBox
                 string address = ((PictureBox)sender).Tag.ToString();
@@ -2695,7 +2725,7 @@ namespace SUP
             }
         }
 
-        private void Friend_MouseUp(object sender, MouseEventArgs e)
+        private void Friend_MouseUp(object sender, System.Windows.Forms.MouseEventArgs e)
         {
             // Check if the user right-clicked on the PictureBox
             if (e.Button == MouseButtons.Right)
@@ -2747,9 +2777,9 @@ namespace SUP
                         string _message = messageProp?.GetValue(message).ToString();
                         string _blockdate = blockDateProp?.GetValue(message).ToString();
 
-                        if (!friendFeed.Contains(_from + _to + _message + _blockdate))
+                        if (!friendFeed.Contains(_from + _message + _blockdate))
                         {
-                            friendFeed.Add(_from + _to + _message + _blockdate);
+                            friendFeed.Add(_from + _message + _blockdate);
 
                             allMessages.Add(new
                             {
@@ -2805,11 +2835,14 @@ namespace SUP
                     string _blockdate = blockDateProp?.GetValue(message).ToString();
                     string imglocation = "";
 
-                    try { imglocation = myFriends[_from]; } catch { }
-
                     string unfilteredmessage = _message;
                     _message = Regex.Replace(_message, "<<.*?>>", "");
-                    CreateFeedRow(imglocation, _from, _from, DateTime.ParseExact(_blockdate, "yyyyMMddHHmmss", CultureInfo.InvariantCulture), _message, Color.White, supFlow);
+
+                    try { imglocation = myFriends[_from]; } catch { }
+                    CreateFeedRow(imglocation, _from, _from, DateTime.ParseExact("19700101010101", "yyyyMMddHHmmss", CultureInfo.InvariantCulture), _message, Color.White, supFlow);
+                   
+                    try { imglocation = myFriends[_to]; } catch { }
+                    CreateFeedRow(imglocation, _to, _to, DateTime.ParseExact(_blockdate, "yyyyMMddHHmmss", CultureInfo.InvariantCulture), "", Color.White, supFlow);
 
                     string pattern = "<<.*?>>";
                     MatchCollection matches = Regex.Matches(unfilteredmessage, pattern);
