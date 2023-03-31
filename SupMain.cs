@@ -22,6 +22,7 @@ using NBitcoin.Protocol;
 using System.Dynamic;
 using System.Collections;
 using System.Security.Policy;
+using AngleSharp.Common;
 
 namespace SUP
 {
@@ -740,6 +741,63 @@ namespace SUP
                                                     }
                                                     else { find = true; }
 
+                                                    if (find && root.Message.Count() > 0) {
+
+                                                        string _from = root.SignedBy;
+                                                        string _to = "";
+                                                        if (root.Keyword.Count() > 1) { _to = root.Keyword.Keys.GetItemByIndex(root.Keyword.Count() - 2); } else { _to = root.Keyword.Keys.Last(); }
+                                                        string _message = string.Join(" ", root.Message);
+                                                        string _blockdate = root.BlockDate.ToString("yyyyMMddHHmmss");
+                                                        string imglocation = "";
+                                                        string unfilteredmessage = _message;
+                                                        _message = Regex.Replace(_message, "<<.*?>>", "");
+
+
+                                                        this.Invoke((MethodInvoker)delegate
+                                                        {
+                                                            CreateFeedRow(imglocation, _from, _from, DateTime.ParseExact(_blockdate, "yyyyMMddHHmmss", CultureInfo.InvariantCulture), _message, Color.White, supFlow, true);
+                                                        });
+
+                                                        string pattern = "<<.*?>>";
+                                                        MatchCollection matches = Regex.Matches(unfilteredmessage, pattern);
+                                                        foreach (Match match in matches)
+                                                        {
+                                                            string content = match.Value.Substring(2, match.Value.Length - 4);
+                                                            if (!int.TryParse(content, out int id))
+                                                            {
+                                                                this.Invoke((MethodInvoker)delegate
+                                                                {
+                                                                    AddImage(content, false, true);
+                                                                });
+                                                            }
+
+                                                        }
+
+                                                        TableLayoutPanel padding = new TableLayoutPanel
+                                                        {
+                                                            RowCount = 1,
+                                                            ColumnCount = 1,
+                                                            Dock = DockStyle.Top,
+                                                            BackColor = Color.Black,
+                                                            ForeColor = Color.White,
+                                                            AutoSize = true,
+                                                            CellBorderStyle = TableLayoutPanelCellBorderStyle.Single,
+                                                            Margin = new System.Windows.Forms.Padding(0, 0, 0, 40),
+                                                            Padding = new System.Windows.Forms.Padding(0)
+
+                                                        };
+
+                                                        padding.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, supFlow.Width - 20));
+
+                                                        this.Invoke((MethodInvoker)delegate
+                                                        {
+                                                            supFlow.Controls.Add(padding);
+                                                        });
+                                                            
+
+                                                        }
+
+
                                                     isobject = OBJState.GetObjectByTransactionId(s, "good-user", "better-password", @"http://127.0.0.1:18332");
                                                     if (isobject.URN != null && find == true)
                                                     {
@@ -863,6 +921,64 @@ namespace SUP
                                                     }
                                                     else { find = true; }
 
+                                                    if (find && root.Message.Count() > 0)
+                                                    {
+
+                                                        string _from = root.SignedBy;
+                                                        string _to = "";
+                                                        if (root.Keyword.Count() > 1) { _to = root.Keyword.Keys.GetItemByIndex(root.Keyword.Count() - 2); } else { _to = root.Keyword.Keys.Last(); }
+                                                        string _message = string.Join(" ", root.Message);
+                                                        string _blockdate = root.BlockDate.ToString("yyyyMMddHHmmss");
+                                                        string imglocation = "";
+                                                        string unfilteredmessage = _message;
+                                                        _message = Regex.Replace(_message, "<<.*?>>", "");
+
+
+                                                        this.Invoke((MethodInvoker)delegate
+                                                        {
+                                                            CreateFeedRow(imglocation, _from, _from, DateTime.ParseExact(_blockdate, "yyyyMMddHHmmss", CultureInfo.InvariantCulture), _message, Color.White, supFlow, true);
+                                                        });
+
+                                                        string pattern = "<<.*?>>";
+                                                        MatchCollection matches = Regex.Matches(unfilteredmessage, pattern);
+                                                        foreach (Match match in matches)
+                                                        {
+                                                            string content = match.Value.Substring(2, match.Value.Length - 4);
+                                                            if (!int.TryParse(content, out int id))
+                                                            {
+                                                                this.Invoke((MethodInvoker)delegate
+                                                                {
+                                                                    AddImage(content, false, true);
+                                                                });
+                                                            }
+
+                                                        }
+
+                                                        TableLayoutPanel padding = new TableLayoutPanel
+                                                        {
+                                                            RowCount = 1,
+                                                            ColumnCount = 1,
+                                                            Dock = DockStyle.Top,
+                                                            BackColor = Color.Black,
+                                                            ForeColor = Color.White,
+                                                            AutoSize = true,
+                                                            CellBorderStyle = TableLayoutPanelCellBorderStyle.Single,
+                                                            Margin = new System.Windows.Forms.Padding(0, 0, 0, 40),
+                                                            Padding = new System.Windows.Forms.Padding(0)
+
+                                                        };
+
+                                                        padding.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, supFlow.Width - 20));
+
+                                                        this.Invoke((MethodInvoker)delegate
+                                                        {
+                                                            supFlow.Controls.Add(padding);
+                                                        });
+
+
+                                                    }
+
+
                                                     isobject = OBJState.GetObjectByTransactionId(s, "good-user", "better-password", @"http://127.0.0.1:8332", "0");
                                                     if (isobject.URN != null && find == true)
                                                     {
@@ -975,6 +1091,62 @@ namespace SUP
                                                         }
                                                     }
                                                     else { find = true; }
+                                                    if (find && root.Message.Count() > 0)
+                                                    {
+
+                                                        string _from = root.SignedBy;
+                                                        string _to = "";
+                                                        if (root.Keyword.Count() > 1) { _to = root.Keyword.Keys.GetItemByIndex(root.Keyword.Count() - 2); } else { _to = root.Keyword.Keys.Last(); }
+                                                        string _message = string.Join(" ", root.Message);
+                                                        string _blockdate = root.BlockDate.ToString("yyyyMMddHHmmss");
+                                                        string imglocation = "";
+                                                        string unfilteredmessage = _message;
+                                                        _message = Regex.Replace(_message, "<<.*?>>", "");
+
+
+                                                        this.Invoke((MethodInvoker)delegate
+                                                        {
+                                                            CreateFeedRow(imglocation, _from, _from, DateTime.ParseExact(_blockdate, "yyyyMMddHHmmss", CultureInfo.InvariantCulture), _message, Color.White, supFlow, true);
+                                                        });
+
+                                                        string pattern = "<<.*?>>";
+                                                        MatchCollection matches = Regex.Matches(unfilteredmessage, pattern);
+                                                        foreach (Match match in matches)
+                                                        {
+                                                            string content = match.Value.Substring(2, match.Value.Length - 4);
+                                                            if (!int.TryParse(content, out int id))
+                                                            {
+                                                                this.Invoke((MethodInvoker)delegate
+                                                                {
+                                                                    AddImage(content, false, true);
+                                                                });
+                                                            }
+
+                                                        }
+
+                                                        TableLayoutPanel padding = new TableLayoutPanel
+                                                        {
+                                                            RowCount = 1,
+                                                            ColumnCount = 1,
+                                                            Dock = DockStyle.Top,
+                                                            BackColor = Color.Black,
+                                                            ForeColor = Color.White,
+                                                            AutoSize = true,
+                                                            CellBorderStyle = TableLayoutPanelCellBorderStyle.Single,
+                                                            Margin = new System.Windows.Forms.Padding(0, 0, 0, 40),
+                                                            Padding = new System.Windows.Forms.Padding(0)
+
+                                                        };
+
+                                                        padding.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, supFlow.Width - 20));
+
+                                                        this.Invoke((MethodInvoker)delegate
+                                                        {
+                                                            supFlow.Controls.Add(padding);
+                                                        });
+
+
+                                                    }
 
                                                     isobject = OBJState.GetObjectByTransactionId(s, "good-user", "better-password", @"http://127.0.0.1:12832", "50");
                                                     if (isobject.URN != null && find == true)
@@ -1087,6 +1259,62 @@ namespace SUP
                                                         }
                                                     }
                                                     else { find = true; }
+                                                    if (find && root.Message.Count() > 0)
+                                                    {
+
+                                                        string _from = root.SignedBy;
+                                                        string _to = "";
+                                                        if (root.Keyword.Count() > 1) { _to = root.Keyword.Keys.GetItemByIndex(root.Keyword.Count() - 2); } else { _to = root.Keyword.Keys.Last(); }
+                                                        string _message = string.Join(" ", root.Message);
+                                                        string _blockdate = root.BlockDate.ToString("yyyyMMddHHmmss");
+                                                        string imglocation = "";
+                                                        string unfilteredmessage = _message;
+                                                        _message = Regex.Replace(_message, "<<.*?>>", "");
+
+
+                                                        this.Invoke((MethodInvoker)delegate
+                                                        {
+                                                            CreateFeedRow(imglocation, _from, _from, DateTime.ParseExact(_blockdate, "yyyyMMddHHmmss", CultureInfo.InvariantCulture), _message, Color.White, supFlow, true);
+                                                        });
+
+                                                        string pattern = "<<.*?>>";
+                                                        MatchCollection matches = Regex.Matches(unfilteredmessage, pattern);
+                                                        foreach (Match match in matches)
+                                                        {
+                                                            string content = match.Value.Substring(2, match.Value.Length - 4);
+                                                            if (!int.TryParse(content, out int id))
+                                                            {
+                                                                this.Invoke((MethodInvoker)delegate
+                                                                {
+                                                                    AddImage(content, false, true);
+                                                                });
+                                                            }
+
+                                                        }
+
+                                                        TableLayoutPanel padding = new TableLayoutPanel
+                                                        {
+                                                            RowCount = 1,
+                                                            ColumnCount = 1,
+                                                            Dock = DockStyle.Top,
+                                                            BackColor = Color.Black,
+                                                            ForeColor = Color.White,
+                                                            AutoSize = true,
+                                                            CellBorderStyle = TableLayoutPanelCellBorderStyle.Single,
+                                                            Margin = new System.Windows.Forms.Padding(0, 0, 0, 40),
+                                                            Padding = new System.Windows.Forms.Padding(0)
+
+                                                        };
+
+                                                        padding.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, supFlow.Width - 20));
+
+                                                        this.Invoke((MethodInvoker)delegate
+                                                        {
+                                                            supFlow.Controls.Add(padding);
+                                                        });
+
+
+                                                    }
 
                                                     isobject = OBJState.GetObjectByTransactionId(s, "good-user", "better-password", @"http://127.0.0.1:9332", "48");
                                                     if (isobject.URN != null && find == true)
@@ -1199,6 +1427,62 @@ namespace SUP
                                                         }
                                                     }
                                                     else { find = true; }
+                                                    if (find && root.Message.Count() > 0)
+                                                    {
+
+                                                        string _from = root.SignedBy;
+                                                        string _to = "";
+                                                        if (root.Keyword.Count() > 1) { _to = root.Keyword.Keys.GetItemByIndex(root.Keyword.Count() - 2); } else { _to = root.Keyword.Keys.Last(); }
+                                                        string _message = string.Join(" ", root.Message);
+                                                        string _blockdate = root.BlockDate.ToString("yyyyMMddHHmmss");
+                                                        string imglocation = "";
+                                                        string unfilteredmessage = _message;
+                                                        _message = Regex.Replace(_message, "<<.*?>>", "");
+
+
+                                                        this.Invoke((MethodInvoker)delegate
+                                                        {
+                                                            CreateFeedRow(imglocation, _from, _from, DateTime.ParseExact(_blockdate, "yyyyMMddHHmmss", CultureInfo.InvariantCulture), _message, Color.White, supFlow, true);
+                                                        });
+
+                                                        string pattern = "<<.*?>>";
+                                                        MatchCollection matches = Regex.Matches(unfilteredmessage, pattern);
+                                                        foreach (Match match in matches)
+                                                        {
+                                                            string content = match.Value.Substring(2, match.Value.Length - 4);
+                                                            if (!int.TryParse(content, out int id))
+                                                            {
+                                                                this.Invoke((MethodInvoker)delegate
+                                                                {
+                                                                    AddImage(content, false, true);
+                                                                });
+                                                            }
+
+                                                        }
+
+                                                        TableLayoutPanel padding = new TableLayoutPanel
+                                                        {
+                                                            RowCount = 1,
+                                                            ColumnCount = 1,
+                                                            Dock = DockStyle.Top,
+                                                            BackColor = Color.Black,
+                                                            ForeColor = Color.White,
+                                                            AutoSize = true,
+                                                            CellBorderStyle = TableLayoutPanelCellBorderStyle.Single,
+                                                            Margin = new System.Windows.Forms.Padding(0, 0, 0, 40),
+                                                            Padding = new System.Windows.Forms.Padding(0)
+
+                                                        };
+
+                                                        padding.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, supFlow.Width - 20));
+
+                                                        this.Invoke((MethodInvoker)delegate
+                                                        {
+                                                            supFlow.Controls.Add(padding);
+                                                        });
+
+
+                                                    }
 
                                                     isobject = OBJState.GetObjectByTransactionId(s, "good-user", "better-password", @"http://127.0.0.1:22555", "30");
                                                     if (isobject.URN != null && find == true)
@@ -1825,7 +2109,7 @@ namespace SUP
 
         }
 
-        void AddImage(string imagepath, bool isprivate = false)
+        void AddImage(string imagepath, bool isprivate = false, bool addtoTop = false)
         {
             string imagelocation = "";
             if (imagepath != null)
@@ -1955,7 +2239,22 @@ namespace SUP
             }
             else
             {
-                supFlow.Controls.Add(msg);
+
+
+
+              
+
+                if (addtoTop)
+                {
+                    supFlow.Controls.Add(msg);
+                    supFlow.Controls.SetChildIndex(msg, 2);
+                }
+                else
+                {
+                    supFlow.Controls.Add(msg);
+                }
+
+
             }
             PictureBox pictureBox = new PictureBox();
 
@@ -2104,7 +2403,7 @@ namespace SUP
 
         }
 
-        void CreateFeedRow(string imageLocation, string ownerName, string ownerId, DateTime timestamp, string messageText, System.Drawing.Color bgcolor, FlowLayoutPanel layoutPanel)
+        void CreateFeedRow(string imageLocation, string ownerName, string ownerId, DateTime timestamp, string messageText, System.Drawing.Color bgcolor, FlowLayoutPanel layoutPanel, bool addtoTop = false)
         {
 
             // Create a table layout panel for each row
@@ -2122,8 +2421,19 @@ namespace SUP
             row.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 50));
             row.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 90));
             row.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 110));
-            layoutPanel.Controls.Add(row);
 
+            if (addtoTop)
+            {
+                layoutPanel.Controls.Add(row);
+                layoutPanel.Controls.SetChildIndex(row, 0);
+            }
+            else
+            {
+                layoutPanel.Controls.Add(row);
+            }
+
+
+         
             // Create a PictureBox with the specified image
 
             if (File.Exists(imageLocation) || imageLocation.ToUpper().StartsWith("HTTP"))
@@ -2213,7 +2523,16 @@ namespace SUP
                 };
 
                 msg.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, supFlow.Width - 20));
-                layoutPanel.Controls.Add(msg);
+                
+                if (addtoTop)
+                {
+                    layoutPanel.Controls.Add(msg);
+                    layoutPanel.Controls.SetChildIndex(msg, 1);
+                }
+                else
+                {
+                    layoutPanel.Controls.Add(msg);
+                }
 
 
                 Label message = new Label
@@ -2400,6 +2719,7 @@ namespace SUP
         private void refreshFriendFeed_Click(object sender, EventArgs e)
         {
             numMessagesDisplayed = 0;
+            List<string> friendFeed = new List<string>();
             
             if (numFriendFeedsDisplayed == 0) { supFlow.Controls.Clear(); }
 
@@ -2427,13 +2747,18 @@ namespace SUP
                         string _message = messageProp?.GetValue(message).ToString();
                         string _blockdate = blockDateProp?.GetValue(message).ToString();
 
-                        allMessages.Add(new
+                        if (!friendFeed.Contains(_from + _to + _message + _blockdate))
                         {
-                            Message = _message,
-                            FromAddress = _from,
-                            To = _to,
-                            BlockDate = _blockdate
-                        });
+                            friendFeed.Add(_from + _to + _message + _blockdate);
+
+                            allMessages.Add(new
+                            {
+                                Message = _message,
+                                FromAddress = _from,
+                                To = _to,
+                                BlockDate = _blockdate
+                            });
+                        }
                     }
                 }
 
