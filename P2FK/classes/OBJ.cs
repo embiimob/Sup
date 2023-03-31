@@ -1931,26 +1931,29 @@ namespace SUP.P2FK
                             List<string> supMessagePacket = JsonConvert.DeserializeObject<List<string>>(process);
                             Root root = Root.GetRootByTransactionId(supMessagePacket[1], username, password, url, versionByte);
                             byte[] result = Root.GetRootBytesByFile(new string[] { @"root/" + supMessagePacket[1] + @"/SEC" });
-                            result = Root.DecryptRootBytes(username, password, url, objectaddress, result);
+                            result = Root.DecryptRootBytes(username, password, url, objectaddress, result); 
 
-                            root = Root.GetRootByTransactionId(supMessagePacket[1], null, null, null, versionByte, result);
+                            root = Root.GetRootByTransactionId(supMessagePacket[1], "good-user", "better-password", "http://127.0.0.1:18332", versionByte, result, objectaddress);
 
-                            foreach (string message in root.Message)
+                            try
                             {
-
-                                string fromAddress = supMessagePacket[0];
-
-                                string tstamp = it.KeyAsString().Split('!')[1];
-
-                                // Add the message data to the messages list
-                                messages.Add(new
+                                foreach (string message in root.Message)
                                 {
-                                    Message = message,
-                                    FromAddress = fromAddress,
-                                    BlockDate = tstamp
-                                });
-                            }
 
+                                    string fromAddress = supMessagePacket[0];
+
+                                    string tstamp = it.KeyAsString().Split('!')[1];
+
+                                    // Add the message data to the messages list
+                                    messages.Add(new
+                                    {
+                                        Message = message,
+                                        FromAddress = fromAddress,
+                                        BlockDate = tstamp
+                                    });
+                                }
+                            }
+                            catch { }
 
 
                         }

@@ -88,7 +88,7 @@
             this.lblImageFullPath.AutoSize = true;
             this.lblImageFullPath.Location = new System.Drawing.Point(292, 810);
             this.lblImageFullPath.Name = "lblImageFullPath";
-            this.lblImageFullPath.Size = new System.Drawing.Size(71, 13);
+            this.lblImageFullPath.Size = new System.Drawing.Size(81, 15);
             this.lblImageFullPath.TabIndex = 50;
             this.lblImageFullPath.Text = "IMG Full Path";
             this.lblImageFullPath.Visible = false;
@@ -98,7 +98,7 @@
             this.lblURNFullPath.AutoSize = true;
             this.lblURNFullPath.Location = new System.Drawing.Point(590, 810);
             this.lblURNFullPath.Name = "lblURNFullPath";
-            this.lblURNFullPath.Size = new System.Drawing.Size(75, 13);
+            this.lblURNFullPath.Size = new System.Drawing.Size(85, 15);
             this.lblURNFullPath.TabIndex = 48;
             this.lblURNFullPath.Text = "URN Full Path";
             this.lblURNFullPath.Visible = false;
@@ -115,7 +115,7 @@
             // 
             this.btnOfficial.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.btnOfficial.BackColor = System.Drawing.Color.Yellow;
-            this.btnOfficial.Location = new System.Drawing.Point(741, 496);
+            this.btnOfficial.Location = new System.Drawing.Point(611, 367);
             this.btnOfficial.Name = "btnOfficial";
             this.btnOfficial.Size = new System.Drawing.Size(87, 40);
             this.btnOfficial.TabIndex = 105;
@@ -132,7 +132,7 @@
             this.transFlow.Location = new System.Drawing.Point(9, 84);
             this.transFlow.Margin = new System.Windows.Forms.Padding(3, 0, 0, 0);
             this.transFlow.Name = "transFlow";
-            this.transFlow.Size = new System.Drawing.Size(293, 302);
+            this.transFlow.Size = new System.Drawing.Size(293, 173);
             this.transFlow.TabIndex = 102;
             // 
             // btnLaunchURN
@@ -140,7 +140,7 @@
             this.btnLaunchURN.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.btnLaunchURN.BackColor = System.Drawing.SystemColors.ControlDark;
             this.btnLaunchURN.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnLaunchURN.Location = new System.Drawing.Point(793, 503);
+            this.btnLaunchURN.Location = new System.Drawing.Point(663, 374);
             this.btnLaunchURN.Name = "btnLaunchURN";
             this.btnLaunchURN.Size = new System.Drawing.Size(34, 31);
             this.btnLaunchURN.TabIndex = 66;
@@ -157,14 +157,14 @@
             this.flowPanel.Controls.Add(this.pictureBox1);
             this.flowPanel.Location = new System.Drawing.Point(306, 13);
             this.flowPanel.Name = "flowPanel";
-            this.flowPanel.Size = new System.Drawing.Size(531, 531);
+            this.flowPanel.Size = new System.Drawing.Size(401, 402);
             this.flowPanel.TabIndex = 104;
             // 
             // lblWarning
             // 
             this.lblWarning.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.lblWarning.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblWarning.Location = new System.Drawing.Point(11, 482);
+            this.lblWarning.Location = new System.Drawing.Point(11, 420);
             this.lblWarning.Name = "lblWarning";
             this.lblWarning.Size = new System.Drawing.Size(222, 40);
             this.lblWarning.TabIndex = 62;
@@ -178,7 +178,7 @@
             this.pictureBox1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.pictureBox1.Location = new System.Drawing.Point(0, 0);
             this.pictureBox1.Name = "pictureBox1";
-            this.pictureBox1.Size = new System.Drawing.Size(531, 531);
+            this.pictureBox1.Size = new System.Drawing.Size(401, 402);
             this.pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
             this.pictureBox1.TabIndex = 1;
             this.pictureBox1.TabStop = false;
@@ -188,7 +188,7 @@
             // 
             this.KeysFlow.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.KeysFlow.AutoScroll = true;
-            this.KeysFlow.Location = new System.Drawing.Point(9, 389);
+            this.KeysFlow.Location = new System.Drawing.Point(9, 260);
             this.KeysFlow.Name = "KeysFlow";
             this.KeysFlow.Padding = new System.Windows.Forms.Padding(0, 5, 0, 0);
             this.KeysFlow.Size = new System.Drawing.Size(293, 108);
@@ -214,7 +214,7 @@
             this.lblLicense.Location = new System.Drawing.Point(85, 62);
             this.lblLicense.Margin = new System.Windows.Forms.Padding(0, 0, 3, 0);
             this.lblLicense.Name = "lblLicense";
-            this.lblLicense.Size = new System.Drawing.Size(88, 12);
+            this.lblLicense.Size = new System.Drawing.Size(113, 15);
             this.lblLicense.TabIndex = 101;
             this.lblLicense.Text = "All Rights Reserved";
             this.lblLicense.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
@@ -247,7 +247,7 @@
             this.lbllcdtitle.ForeColor = System.Drawing.Color.White;
             this.lbllcdtitle.Location = new System.Drawing.Point(17, 209);
             this.lbllcdtitle.Name = "lbllcdtitle";
-            this.lbllcdtitle.Size = new System.Drawing.Size(94, 15);
+            this.lbllcdtitle.Size = new System.Drawing.Size(108, 18);
             this.lbllcdtitle.TabIndex = 97;
             this.lbllcdtitle.Text = "changed date";
             this.lbllcdtitle.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
@@ -272,7 +272,7 @@
             this.label6.ForeColor = System.Drawing.Color.White;
             this.label6.Location = new System.Drawing.Point(16, 128);
             this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(35, 15);
+            this.label6.Size = new System.Drawing.Size(41, 18);
             this.label6.TabIndex = 94;
             this.label6.Text = "URI:";
             this.label6.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
@@ -296,7 +296,7 @@
             this.lblURIBlockDate.ForeColor = System.Drawing.Color.White;
             this.lblURIBlockDate.Location = new System.Drawing.Point(54, 130);
             this.lblURIBlockDate.Name = "lblURIBlockDate";
-            this.lblURIBlockDate.Size = new System.Drawing.Size(103, 13);
+            this.lblURIBlockDate.Size = new System.Drawing.Size(119, 15);
             this.lblURIBlockDate.TabIndex = 92;
             this.lblURIBlockDate.Text = "   [ is not immutable ]";
             this.lblURIBlockDate.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
@@ -309,7 +309,7 @@
             this.label3.ForeColor = System.Drawing.Color.White;
             this.label3.Location = new System.Drawing.Point(15, 72);
             this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(37, 15);
+            this.label3.Size = new System.Drawing.Size(44, 18);
             this.label3.TabIndex = 91;
             this.label3.Text = "IMG:";
             this.label3.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
@@ -333,7 +333,7 @@
             this.lblIMGBlockDate.ForeColor = System.Drawing.Color.White;
             this.lblIMGBlockDate.Location = new System.Drawing.Point(54, 74);
             this.lblIMGBlockDate.Name = "lblIMGBlockDate";
-            this.lblIMGBlockDate.Size = new System.Drawing.Size(103, 13);
+            this.lblIMGBlockDate.Size = new System.Drawing.Size(119, 15);
             this.lblIMGBlockDate.TabIndex = 89;
             this.lblIMGBlockDate.Text = "   [ is not immutable ]";
             this.lblIMGBlockDate.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
@@ -357,7 +357,7 @@
             this.lblURNBlockDate.ForeColor = System.Drawing.Color.White;
             this.lblURNBlockDate.Location = new System.Drawing.Point(54, 14);
             this.lblURNBlockDate.Name = "lblURNBlockDate";
-            this.lblURNBlockDate.Size = new System.Drawing.Size(103, 13);
+            this.lblURNBlockDate.Size = new System.Drawing.Size(119, 15);
             this.lblURNBlockDate.TabIndex = 86;
             this.lblURNBlockDate.Text = "   [ is not immutable ]";
             this.lblURNBlockDate.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
@@ -365,8 +365,8 @@
             // btnRefreshOwners
             // 
             this.btnRefreshOwners.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnRefreshOwners.Font = new System.Drawing.Font("Microsoft Sans Serif", 21.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnRefreshOwners.Location = new System.Drawing.Point(1014, 503);
+            this.btnRefreshOwners.Font = new System.Drawing.Font("Microsoft Sans Serif", 16.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnRefreshOwners.Location = new System.Drawing.Point(884, 374);
             this.btnRefreshOwners.Margin = new System.Windows.Forms.Padding(0);
             this.btnRefreshOwners.Name = "btnRefreshOwners";
             this.btnRefreshOwners.Size = new System.Drawing.Size(100, 42);
@@ -379,8 +379,8 @@
             // btnRefreshSup
             // 
             this.btnRefreshSup.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnRefreshSup.Font = new System.Drawing.Font("Microsoft Sans Serif", 21.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnRefreshSup.Location = new System.Drawing.Point(1117, 503);
+            this.btnRefreshSup.Font = new System.Drawing.Font("Microsoft Sans Serif", 16.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnRefreshSup.Location = new System.Drawing.Point(987, 374);
             this.btnRefreshSup.Name = "btnRefreshSup";
             this.btnRefreshSup.Size = new System.Drawing.Size(100, 42);
             this.btnRefreshSup.TabIndex = 67;
@@ -391,8 +391,8 @@
             // btnRefreshTransactions
             // 
             this.btnRefreshTransactions.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.btnRefreshTransactions.Font = new System.Drawing.Font("Microsoft Sans Serif", 21.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnRefreshTransactions.Location = new System.Drawing.Point(13, 504);
+            this.btnRefreshTransactions.Font = new System.Drawing.Font("Microsoft Sans Serif", 16.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnRefreshTransactions.Location = new System.Drawing.Point(13, 375);
             this.btnRefreshTransactions.Name = "btnRefreshTransactions";
             this.btnRefreshTransactions.Size = new System.Drawing.Size(100, 42);
             this.btnRefreshTransactions.TabIndex = 85;
@@ -403,8 +403,8 @@
             // btnReloadObject
             // 
             this.btnReloadObject.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.btnReloadObject.Font = new System.Drawing.Font("Microsoft Sans Serif", 21.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnReloadObject.Location = new System.Drawing.Point(188, 504);
+            this.btnReloadObject.Font = new System.Drawing.Font("Microsoft Sans Serif", 16.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnReloadObject.Location = new System.Drawing.Point(188, 375);
             this.btnReloadObject.Name = "btnReloadObject";
             this.btnReloadObject.Size = new System.Drawing.Size(100, 42);
             this.btnReloadObject.TabIndex = 68;
@@ -418,7 +418,7 @@
             this.chkRunTrustedObject.Location = new System.Drawing.Point(252, 62);
             this.chkRunTrustedObject.Name = "chkRunTrustedObject";
             this.chkRunTrustedObject.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
-            this.chkRunTrustedObject.Size = new System.Drawing.Size(46, 17);
+            this.chkRunTrustedObject.Size = new System.Drawing.Size(52, 19);
             this.chkRunTrustedObject.TabIndex = 83;
             this.chkRunTrustedObject.Text = "trust";
             this.chkRunTrustedObject.UseVisualStyleBackColor = true;
@@ -441,9 +441,9 @@
             this.supPanel.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.supPanel.Controls.Add(this.supFlow);
-            this.supPanel.Location = new System.Drawing.Point(843, 13);
+            this.supPanel.Location = new System.Drawing.Point(713, 13);
             this.supPanel.Name = "supPanel";
-            this.supPanel.Size = new System.Drawing.Size(374, 484);
+            this.supPanel.Size = new System.Drawing.Size(374, 358);
             this.supPanel.TabIndex = 80;
             this.supPanel.Visible = false;
             // 
@@ -453,7 +453,7 @@
             this.supFlow.Dock = System.Windows.Forms.DockStyle.Fill;
             this.supFlow.Location = new System.Drawing.Point(0, 0);
             this.supFlow.Name = "supFlow";
-            this.supFlow.Size = new System.Drawing.Size(374, 484);
+            this.supFlow.Size = new System.Drawing.Size(374, 358);
             this.supFlow.TabIndex = 3;
             // 
             // txtdesc
@@ -468,15 +468,15 @@
             this.txtdesc.Multiline = true;
             this.txtdesc.Name = "txtdesc";
             this.txtdesc.ReadOnly = true;
-            this.txtdesc.Size = new System.Drawing.Size(270, 409);
+            this.txtdesc.Size = new System.Drawing.Size(270, 280);
             this.txtdesc.TabIndex = 77;
             this.txtdesc.Text = "description";
             // 
             // btnBurn
             // 
             this.btnBurn.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnBurn.Font = new System.Drawing.Font("Microsoft Sans Serif", 21.75F);
-            this.btnBurn.Location = new System.Drawing.Point(1114, 364);
+            this.btnBurn.Font = new System.Drawing.Font("Microsoft Sans Serif", 16.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnBurn.Location = new System.Drawing.Point(984, 235);
             this.btnBurn.Name = "btnBurn";
             this.btnBurn.Size = new System.Drawing.Size(100, 42);
             this.btnBurn.TabIndex = 75;
@@ -487,8 +487,8 @@
             // btnGive
             // 
             this.btnGive.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnGive.Font = new System.Drawing.Font("Microsoft Sans Serif", 21.75F);
-            this.btnGive.Location = new System.Drawing.Point(1114, 421);
+            this.btnGive.Font = new System.Drawing.Font("Microsoft Sans Serif", 16.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnGive.Location = new System.Drawing.Point(984, 292);
             this.btnGive.Name = "btnGive";
             this.btnGive.Size = new System.Drawing.Size(100, 42);
             this.btnGive.TabIndex = 74;
@@ -501,9 +501,9 @@
             this.label2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.label2.AutoSize = true;
             this.label2.ForeColor = System.Drawing.Color.White;
-            this.label2.Location = new System.Drawing.Point(857, 337);
+            this.label2.Location = new System.Drawing.Point(727, 208);
             this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(45, 13);
+            this.label2.Size = new System.Drawing.Size(51, 15);
             this.label2.TabIndex = 72;
             this.label2.Text = "creators";
             // 
@@ -512,7 +512,7 @@
             this.CreatorsPanel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.CreatorsPanel.AutoScroll = true;
             this.CreatorsPanel.BackColor = System.Drawing.Color.Black;
-            this.CreatorsPanel.Location = new System.Drawing.Point(843, 353);
+            this.CreatorsPanel.Location = new System.Drawing.Point(713, 224);
             this.CreatorsPanel.Name = "CreatorsPanel";
             this.CreatorsPanel.Size = new System.Drawing.Size(260, 110);
             this.CreatorsPanel.TabIndex = 71;
@@ -523,9 +523,9 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.OwnersPanel.AutoScroll = true;
             this.OwnersPanel.BackColor = System.Drawing.Color.Black;
-            this.OwnersPanel.Location = new System.Drawing.Point(843, 13);
+            this.OwnersPanel.Location = new System.Drawing.Point(713, 13);
             this.OwnersPanel.Name = "OwnersPanel";
-            this.OwnersPanel.Size = new System.Drawing.Size(374, 314);
+            this.OwnersPanel.Size = new System.Drawing.Size(374, 185);
             this.OwnersPanel.TabIndex = 69;
             // 
             // webviewer
@@ -539,7 +539,7 @@
             this.webviewer.DefaultBackgroundColor = System.Drawing.SystemColors.ControlDark;
             this.webviewer.Location = new System.Drawing.Point(306, 13);
             this.webviewer.Name = "webviewer";
-            this.webviewer.Size = new System.Drawing.Size(531, 531);
+            this.webviewer.Size = new System.Drawing.Size(401, 402);
             this.webviewer.TabIndex = 65;
             this.webviewer.ZoomFactor = 1D;
             // 
@@ -548,7 +548,7 @@
             this.lblTotalOwnedDetail.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.lblTotalOwnedDetail.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lblTotalOwnedDetail.ForeColor = System.Drawing.Color.White;
-            this.lblTotalOwnedDetail.Location = new System.Drawing.Point(854, 476);
+            this.lblTotalOwnedDetail.Location = new System.Drawing.Point(724, 347);
             this.lblTotalOwnedDetail.Name = "lblTotalOwnedDetail";
             this.lblTotalOwnedDetail.Padding = new System.Windows.Forms.Padding(3);
             this.lblTotalOwnedDetail.Size = new System.Drawing.Size(157, 23);
@@ -564,7 +564,7 @@
             this.label4.ForeColor = System.Drawing.Color.White;
             this.label4.Location = new System.Drawing.Point(15, 12);
             this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(41, 15);
+            this.label4.Size = new System.Drawing.Size(49, 18);
             this.label4.TabIndex = 88;
             this.label4.Text = "URN:";
             this.label4.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
@@ -576,7 +576,7 @@
             this.lblObjectCreatedDate.Location = new System.Drawing.Point(83, 42);
             this.lblObjectCreatedDate.Margin = new System.Windows.Forms.Padding(0);
             this.lblObjectCreatedDate.Name = "lblObjectCreatedDate";
-            this.lblObjectCreatedDate.Size = new System.Drawing.Size(94, 13);
+            this.lblObjectCreatedDate.Size = new System.Drawing.Size(110, 15);
             this.lblObjectCreatedDate.TabIndex = 95;
             this.lblObjectCreatedDate.Text = "[ is not immutable ]";
             this.lblObjectCreatedDate.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
@@ -598,7 +598,7 @@
             this.registrationPanel.Controls.Add(this.lblProcessHeight);
             this.registrationPanel.Controls.Add(this.lblLastChangedDate);
             this.registrationPanel.Controls.Add(this.label4);
-            this.registrationPanel.Location = new System.Drawing.Point(0, 263);
+            this.registrationPanel.Location = new System.Drawing.Point(0, 134);
             this.registrationPanel.Name = "registrationPanel";
             this.registrationPanel.Size = new System.Drawing.Size(294, 237);
             this.registrationPanel.TabIndex = 106;
@@ -608,7 +608,7 @@
             // 
             this.lblLaunchURI.Anchor = System.Windows.Forms.AnchorStyles.Right;
             this.lblLaunchURI.BackColor = System.Drawing.SystemColors.ScrollBar;
-            this.lblLaunchURI.Font = new System.Drawing.Font("Microsoft Sans Serif", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblLaunchURI.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lblLaunchURI.Location = new System.Drawing.Point(251, 146);
             this.lblLaunchURI.Name = "lblLaunchURI";
             this.lblLaunchURI.Padding = new System.Windows.Forms.Padding(2, 0, 0, 4);
@@ -628,7 +628,7 @@
             this.lblOfficial.Margin = new System.Windows.Forms.Padding(0);
             this.lblOfficial.Name = "lblOfficial";
             this.lblOfficial.Padding = new System.Windows.Forms.Padding(4, 1, 1, 3);
-            this.lblOfficial.Size = new System.Drawing.Size(32, 22);
+            this.lblOfficial.Size = new System.Drawing.Size(37, 28);
             this.lblOfficial.TabIndex = 107;
             this.lblOfficial.Text = "👑";
             this.lblOfficial.Visible = false;
@@ -643,7 +643,7 @@
             this.lblPleaseStandBy.Location = new System.Drawing.Point(306, 13);
             this.lblPleaseStandBy.Name = "lblPleaseStandBy";
             this.lblPleaseStandBy.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
-            this.lblPleaseStandBy.Size = new System.Drawing.Size(531, 531);
+            this.lblPleaseStandBy.Size = new System.Drawing.Size(401, 402);
             this.lblPleaseStandBy.TabIndex = 108;
             this.lblPleaseStandBy.Text = "please stand by... locked for loading";
             this.lblPleaseStandBy.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -651,22 +651,22 @@
             // btnDisco
             // 
             this.btnDisco.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnDisco.Enabled = false;
-            this.btnDisco.Font = new System.Drawing.Font("Microsoft Sans Serif", 21.75F);
-            this.btnDisco.Location = new System.Drawing.Point(854, 504);
+            this.btnDisco.Font = new System.Drawing.Font("Microsoft Sans Serif", 16.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnDisco.Location = new System.Drawing.Point(724, 375);
             this.btnDisco.Name = "btnDisco";
             this.btnDisco.Size = new System.Drawing.Size(100, 42);
             this.btnDisco.TabIndex = 79;
             this.btnDisco.Text = "🪩";
             this.btnDisco.UseVisualStyleBackColor = true;
             this.btnDisco.Visible = false;
+            this.btnDisco.Click += new System.EventHandler(this.btnDisco_Click);
             // 
             // ObjectDetails
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.Black;
-            this.ClientSize = new System.Drawing.Size(1224, 553);
+            this.ClientSize = new System.Drawing.Size(1094, 424);
             this.Controls.Add(this.supPanel);
             this.Controls.Add(this.lblOfficial);
             this.Controls.Add(this.lblPleaseStandBy);

@@ -285,7 +285,7 @@ namespace SUP
                     if (subdirectoryName != "mute" && subdirectoryName != "block")
                     {
                         // Delete the subdirectory and all its contents
-                        Directory.Delete(subdirectory, true);
+                        try { Directory.Delete(subdirectory, true); } catch { }
                     }
                 }
 
@@ -296,10 +296,15 @@ namespace SUP
                 foreach (string file in files)
                 {
                     // Delete the file
-                    File.Delete(file);
+                    try
+                    {
+                        File.Delete(file);
+                    }
+                    catch { }
                 }
             }
-            catch { Directory.CreateDirectory("root"); }
+            catch(Exception ex){ 
+                Directory.CreateDirectory("root"); }
 
 
         }

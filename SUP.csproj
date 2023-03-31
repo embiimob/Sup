@@ -201,6 +201,12 @@
     <Compile Include="Connections.Designer.cs">
       <DependentUpon>Connections.cs</DependentUpon>
     </Compile>
+    <Compile Include="DiscoBall.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="DiscoBall.Designer.cs">
+      <DependentUpon>DiscoBall.cs</DependentUpon>
+    </Compile>
     <Compile Include="FullScreenView.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -294,6 +300,9 @@
     <EmbeddedResource Include="Connections.resx">
       <DependentUpon>Connections.cs</DependentUpon>
       <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="DiscoBall.resx">
+      <DependentUpon>DiscoBall.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="FullScreenView.resx">
       <DependentUpon>FullScreenView.cs</DependentUpon>

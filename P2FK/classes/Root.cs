@@ -3,6 +3,7 @@ using LevelDB;
 using NBitcoin;
 using NBitcoin.RPC;
 using Newtonsoft.Json;
+using Org.BouncyCastle.Utilities.Encoders;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -498,7 +499,7 @@ namespace SUP.P2FK
                         }
                         catch
                         {
-                            
+
                             Directory.Delete(@"root\sup", true); Directory.Delete(@"root\sup2", true);
                         }
                     }
@@ -513,9 +514,11 @@ namespace SUP.P2FK
 
                 foreach (KeyValuePair<string, string> keyword in P2FKRoot.Keyword)
                 {
-
-
-                    string msg = "[\"" + P2FKRoot.SignedBy + "\",\"" + P2FKRoot.TransactionId + "\"]";
+                    string msg;
+                    if (!P2FKRoot.Signed) {
+                        msg = "[\"" + P2FKRoot.Keyword.Keys.Last() + "\",\"" + P2FKRoot.TransactionId + "\"]";
+                    }
+                    else { msg = "[\"" + P2FKRoot.SignedBy + "\",\"" + P2FKRoot.TransactionId + "\"]"; }
                     var ROOT = new Options { CreateIfMissing = true };
 
                     try
@@ -791,8 +794,7 @@ namespace SUP.P2FK
             return Base58.EncodeWithCheckSum(
                 new byte[] { byte.Parse(versionbyte) }
                     .Concat(System.Text.Encoding.ASCII.GetBytes(keyword))
-                    .ToArray()
-            );
+                    .ToArray());
         }
         public static string GetKeywordByPublicAddress(string public_address)
         {
@@ -849,25 +851,39 @@ namespace SUP.P2FK
             privKeyHex = privKeyHex.Substring(2, 64);
             BigInteger privateKey = Hex.HexToBigInteger(privKeyHex);
             ECEncryption encryption = new ECEncryption();
-            byte[] decrypted = encryption.Decrypt(privateKey, output);
+            byte[] decrypted = new byte[0];
+            try { decrypted = encryption.Decrypt(privateKey, output); } catch { }
             return decrypted;
         }
-        public static byte[] EncryptRootBytes(string username, string password, string url, string address, byte[] rootbytes)
+        public static byte[] EncryptRootBytes(string username, string password, string url, string address, byte[] rootbytes, string pkx = "", string pky = "", bool returnfile = false)
         {
-            NetworkCredential credentials = new NetworkCredential(username, password);
-            RPCClient rpcClient = new RPCClient(credentials, new Uri(url));
-            string privKeyHex;
-            try
+            ECPoint publicKey;
+            if (pkx == "")
             {
-                privKeyHex = BitConverter.ToString(Base58.Decode(rpcClient.SendCommand("dumpprivkey", parameters: address).ResultString)).Replace("-", "");
+                // generate public key from private key
+                NetworkCredential credentials = new NetworkCredential(username, password);
+                RPCClient rpcClient = new RPCClient(credentials, new Uri(url));
+                string privKeyHex;
+                try
+                {
+                    privKeyHex = BitConverter.ToString(Base58.Decode(rpcClient.SendCommand("dumpprivkey", parameters: address).ResultString)).Replace("-", "");
+                }
+                catch (Exception ex)
+                {
+                    return Encoding.ASCII.GetBytes("?" + ex.Message.Length + "?" + ex.Message.ToString());
+                }
+                privKeyHex = privKeyHex.Substring(2, 64);
+                BigInteger privateKey = Hex.HexToBigInteger(privKeyHex);
+                publicKey = Secp256k1.G.Multiply(privateKey);
             }
-            catch (Exception ex)
+            else
             {
-                return Encoding.ASCII.GetBytes("?" + ex.Message.Length + "?" + ex.Message.ToString());
+                // create ECPoint directly from pkx and pky values
+                BigInteger x = Hex.HexToBigInteger(pkx);
+                BigInteger y = Hex.HexToBigInteger(pky);
+                publicKey = new ECPoint(x, y);
             }
-            privKeyHex = privKeyHex.Substring(2, 64);
-            BigInteger privateKey = Hex.HexToBigInteger(privKeyHex);
-            ECPoint publicKey = Secp256k1.G.Multiply(privateKey);
+
             ECEncryption encryption = new ECEncryption();
             byte[] encrypted = encryption.Encrypt(publicKey, rootbytes);
             byte[] separators = new byte[] { 92, 47, 58, 42, 63, 34, 60, 62, 124 };
@@ -876,7 +892,8 @@ namespace SUP.P2FK
             byte[] separator2 = new byte[] { separators[new Random().Next(0, separators.Length)] };
             byte[] fileSizeBytes = Encoding.ASCII.GetBytes(encrypted.Length.ToString());
             byte[] joinedBytes = fileNameBytes.Concat(separator1).Concat(fileSizeBytes).Concat(separator2).Concat(encrypted).ToArray();
-            return joinedBytes;
+            if (!returnfile) { return joinedBytes; } else { return encrypted;}
+            
         }
         static byte[] HexStringToByteArray(string hex)
         {

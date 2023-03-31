@@ -86,7 +86,7 @@ namespace SUP
             this.txtSearchAddress.Location = new System.Drawing.Point(462, 3);
             this.txtSearchAddress.Margin = new System.Windows.Forms.Padding(3, 3, 0, 3);
             this.txtSearchAddress.Name = "txtSearchAddress";
-            this.txtSearchAddress.Size = new System.Drawing.Size(267, 20);
+            this.txtSearchAddress.Size = new System.Drawing.Size(237, 20);
             this.txtSearchAddress.TabIndex = 58;
             this.txtSearchAddress.KeyDown += new System.Windows.Forms.KeyEventHandler(this.SearchAddressKeyDown);
             // 
@@ -124,7 +124,7 @@ namespace SUP
             this.imgLoading.ImageLocation = "";
             this.imgLoading.Location = new System.Drawing.Point(3, 3);
             this.imgLoading.Name = "imgLoading";
-            this.imgLoading.Size = new System.Drawing.Size(735, 492);
+            this.imgLoading.Size = new System.Drawing.Size(735, 489);
             this.imgLoading.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
             this.imgLoading.TabIndex = 81;
             this.imgLoading.TabStop = false;
@@ -140,7 +140,7 @@ namespace SUP
             this.flowLayoutPanel1.Margin = new System.Windows.Forms.Padding(0);
             this.flowLayoutPanel1.Name = "flowLayoutPanel1";
             this.flowLayoutPanel1.Padding = new System.Windows.Forms.Padding(3, 30, 0, 0);
-            this.flowLayoutPanel1.Size = new System.Drawing.Size(738, 498);
+            this.flowLayoutPanel1.Size = new System.Drawing.Size(738, 495);
             this.flowLayoutPanel1.TabIndex = 82;
             this.flowLayoutPanel1.DragDrop += new System.Windows.Forms.DragEventHandler(this.flowLayoutPanel1_DragDrop);
             this.flowLayoutPanel1.DragEnter += new System.Windows.Forms.DragEventHandler(this.flowLayoutPanel1_DragEnter);
@@ -151,9 +151,9 @@ namespace SUP
             this.pages.BackColor = System.Drawing.SystemColors.InactiveCaptionText;
             this.pages.Dock = System.Windows.Forms.DockStyle.Bottom;
             this.pages.LargeChange = 12;
-            this.pages.Location = new System.Drawing.Point(0, 498);
+            this.pages.Location = new System.Drawing.Point(0, 495);
             this.pages.Name = "pages";
-            this.pages.Size = new System.Drawing.Size(738, 39);
+            this.pages.Size = new System.Drawing.Size(738, 42);
             this.pages.TabIndex = 84;
             this.pages.TickStyle = System.Windows.Forms.TickStyle.Both;
             this.pages.Scroll += new System.EventHandler(this.pages_Scroll);
@@ -212,7 +212,7 @@ namespace SUP
             this.panel1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panel1.Location = new System.Drawing.Point(0, 0);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(738, 498);
+            this.panel1.Size = new System.Drawing.Size(738, 495);
             this.panel1.TabIndex = 88;
             // 
             // ObjectBrowser
@@ -225,7 +225,7 @@ namespace SUP
             this.Controls.Add(this.panel1);
             this.Controls.Add(this.pages);
             this.Controls.Add(this.txtQty);
-            this.MinimumSize = new System.Drawing.Size(276, 515);
+            this.MinimumSize = new System.Drawing.Size(262, 515);
             this.Name = "ObjectBrowser";
             this.RightToLeft = System.Windows.Forms.RightToLeft.No;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;

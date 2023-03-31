@@ -2,6 +2,7 @@
 using LevelDB;
 using NBitcoin;
 using Newtonsoft.Json;
+using Org.BouncyCastle.Utilities.Net;
 using SUP.P2FK;
 using System;
 using System.Collections.Generic;
@@ -506,9 +507,36 @@ namespace SUP
 
 
                         string tstamp = it.KeyAsString().Split('!')[1];
-                        System.Drawing.Color bgcolor = System.Drawing.Color.White;
-
+                        System.Drawing.Color bgcolor = System.Drawing.Color.Black;
+                        string unfilteredmessage = message;
+                        message = Regex.Replace(message, "<<.*?>>", "");
                         CreateRow(imagelocation, fromAddress, supMessagePacket[0], DateTime.ParseExact(tstamp, "yyyyMMddHHmmss", CultureInfo.InvariantCulture), message, bgcolor, supFlow);
+
+                        string pattern = "<<.*?>>";
+                        MatchCollection matches = Regex.Matches(unfilteredmessage, pattern);
+                        foreach (Match match in matches)
+                        {
+                            string content = match.Value.Substring(2, match.Value.Length - 4);
+                            if (!int.TryParse(content, out int id))
+                            {
+                                AddImage(content);
+                            }
+
+                        }
+
+                        TableLayoutPanel msg = new TableLayoutPanel
+                        {
+                            RowCount = 1,
+                            ColumnCount = 1,
+                            Dock = DockStyle.Top,
+                            BackColor = bgcolor,
+                            AutoSize = true,
+                            Margin = new System.Windows.Forms.Padding(0, 0, 0, 40),
+                            Padding = new System.Windows.Forms.Padding(0)
+                        };
+
+                        msg.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, supPanel.Width - 40));
+                        supFlow.Controls.Add(msg);
 
                     }
                     rownum++;
@@ -523,6 +551,146 @@ namespace SUP
 
         }
 
+        void AddImage(string imagepath)
+        {
+            string imagelocation = "";
+            if (imagepath != null)
+            {
+                imagelocation = imagepath;
+
+
+                if (!imagepath.ToLower().StartsWith("http"))
+                {
+                    imagelocation = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + @"\root\" + imagepath.Replace("BTC:", "").Replace("MZC:", "").Replace("LTC:", "").Replace("DOG:", "").Replace("IPFS:", "").Replace(@"/", @"\");
+                    if (imagepath.ToLower().StartsWith("ipfs:")) { imagelocation = imagelocation.Replace(@"\root\", @"\ipfs\"); if (imagepath.Length == 51) { imagelocation += @"\artifact"; } }
+                }
+                Regex regexTransactionId = new Regex(@"\b[0-9a-f]{64}\b");
+                Match imgurnmatch = regexTransactionId.Match(imagelocation);
+                string transactionid = imgurnmatch.Value;
+                Root root = new Root();
+                if (!File.Exists(imagelocation))
+                {
+                    switch (imagepath.ToUpper().Substring(0, 4))
+                    {
+                        case "MZC:":
+                            Root.GetRootByTransactionId(transactionid, "good-user", "better-password", @"http://127.0.0.1:12832", "50");
+
+                            break;
+                        case "BTC:":
+
+                            Root.GetRootByTransactionId(transactionid, "good-user", "better-password", @"http://127.0.0.1:8332", "0");
+
+                            break;
+                        case "LTC:":
+
+                            Root.GetRootByTransactionId(transactionid, "good-user", "better-password", @"http://127.0.0.1:9332", "48");
+
+
+                            break;
+                        case "DOG:":
+                            Root.GetRootByTransactionId(transactionid, "good-user", "better-password", @"http://127.0.0.1:22555", "30");
+
+                            break;
+                        case "IPFS":
+                            string transid = "empty";
+                            try { transid = imagepath.Substring(5, 46); } catch { }
+
+                            if (!System.IO.Directory.Exists("ipfs/" + transid + "-build"))
+                            {
+                                try { Directory.CreateDirectory("ipfs/" + transid); } catch { };
+                                Directory.CreateDirectory("ipfs/" + transid + "-build");
+                                Process process2 = new Process();
+                                process2.StartInfo.FileName = @"ipfs\ipfs.exe";
+                                process2.StartInfo.Arguments = "get " + imagepath.Substring(5, 46) + @" -o ipfs\" + transid;
+                                process2.StartInfo.UseShellExecute = false;
+                                process2.StartInfo.CreateNoWindow = true;
+                                process2.Start();
+                                process2.WaitForExit();
+                                string fileName;
+                                if (System.IO.File.Exists("ipfs/" + transid))
+                                {
+                                    System.IO.File.Move("ipfs/" + transid, "ipfs/" + transid + "_tmp");
+                                    System.IO.Directory.CreateDirectory("ipfs/" + transid);
+                                    fileName = imagepath.Replace(@"//", "").Replace(@"\\", "").Substring(51);
+                                    if (fileName == "") { fileName = "artifact"; } else { fileName = fileName.Replace(@"/", "").Replace(@"\", ""); }
+                                    Directory.CreateDirectory("ipfs/" + transid);
+                                    System.IO.File.Move("ipfs/" + transid + "_tmp", imagelocation);
+                                }
+
+                                if (System.IO.File.Exists("ipfs/" + transid + "/" + transid))
+                                {
+                                    fileName = imagepath.Replace(@"//", "").Replace(@"\\", "").Substring(51);
+                                    if (fileName == "") { fileName = "artifact"; } else { fileName = fileName.Replace(@"/", "").Replace(@"\", ""); }
+
+                                    System.IO.File.Move("ipfs/" + transid + "/" + transid, imagelocation);
+                                }
+
+
+                                Process process3 = new Process
+                                {
+                                    StartInfo = new ProcessStartInfo
+                                    {
+                                        FileName = @"ipfs\ipfs.exe",
+                                        Arguments = "pin add " + transid,
+                                        UseShellExecute = false,
+                                        CreateNoWindow = true
+                                    }
+                                };
+                                process3.Start();
+
+                                try { Directory.Delete("ipfs/" + transid + "-build", true); } catch { }
+
+
+                            }
+
+                            break;
+                        default:
+                            if (!imagepath.ToUpper().StartsWith("HTTP") && transactionid != "")
+                            {
+                                Root.GetRootByTransactionId(transactionid, "good-user", "better-password", @"http://127.0.0.1:18332");
+
+                            }
+                            break;
+                    }
+                }
+
+
+
+            }
+
+
+            TableLayoutPanel msg = new TableLayoutPanel
+            {
+                RowCount = 1,
+                ColumnCount = 1,
+                Dock = DockStyle.Top,
+                BackColor = System.Drawing.Color.Black,
+                ForeColor = System.Drawing.Color.White,
+                AutoSize = true,
+                CellBorderStyle = TableLayoutPanelCellBorderStyle.Single,
+                Margin = new System.Windows.Forms.Padding(0, 0, 0, 0),
+                Padding = new System.Windows.Forms.Padding(0)
+
+            };
+
+            msg.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, supPanel.Width - 40));
+
+                supFlow.Controls.Add(msg);
+            
+            PictureBox pictureBox = new PictureBox();
+
+            // Set the PictureBox properties
+
+            pictureBox.SizeMode = PictureBoxSizeMode.Zoom;
+            pictureBox.Width = supPanel.Width - 40;
+            pictureBox.Height = supPanel.Width - 40;
+            pictureBox.BackColor = System.Drawing.Color.Black;
+            pictureBox.ImageLocation = imagelocation;
+            msg.Controls.Add(pictureBox);
+
+        }
+
+
         void CreateRow(string imageLocation, string ownerName, string ownerId, DateTime timestamp, string messageText, System.Drawing.Color bgcolor, FlowLayoutPanel layoutPanel)
         {
 
@@ -532,7 +700,7 @@ namespace SUP
                 RowCount = 1,
                 ColumnCount = 3,
                 AutoSize = true,
-                BackColor = System.Drawing.SystemColors.InactiveCaption,
+                BackColor = System.Drawing.Color.Black,
                 Padding = new System.Windows.Forms.Padding(0),
                 Margin = new System.Windows.Forms.Padding(0)
             };
@@ -612,69 +780,28 @@ namespace SUP
 
             TableLayoutPanel msg = new TableLayoutPanel
             {
-                RowCount = 3,
+                RowCount = 1,
                 ColumnCount = 1,
                 Dock = DockStyle.Top,
                 BackColor = bgcolor,
                 AutoSize = true,
                 Margin = new System.Windows.Forms.Padding(0),
-                Padding = new System.Windows.Forms.Padding(0)
+                Padding = new System.Windows.Forms.Padding(10, 20, 10, 20)
             };
 
-            msg.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 342));
+            msg.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, supPanel.Width - 40));
             layoutPanel.Controls.Add(msg);
-
-            // Create a Label with the message text
-            Label tpadding = new Label
-            {
-                AutoSize = true,
-                Text = " ",
-                Margin = new System.Windows.Forms.Padding(0)
-            };
-            msg.Controls.Add(tpadding, 0, 0);
 
             // Create a Label with the message text
             Label message = new Label
             {
                 AutoSize = true,
                 Text = messageText,
+                ForeColor = System.Drawing.Color.White,
                 Margin = new System.Windows.Forms.Padding(0),
                 TextAlign = System.Drawing.ContentAlignment.TopLeft
             };
-            msg.Controls.Add(message, 1, 0);
-
-
-            // Create a Label with the message text
-            Label bpadding = new Label
-            {
-                AutoSize = true,
-                Text = " ",
-                Margin = new System.Windows.Forms.Padding(0)
-            };
-            msg.Controls.Add(bpadding, 2, 0);
-
-
-            // Add padding row at the end
-            Label bottomPadding2 = new Label
-            {
-                AutoSize = true,
-                Dock = DockStyle.Top,
-                Text = " ",
-                BackColor = System.Drawing.SystemColors.InactiveCaption,
-                Margin = new System.Windows.Forms.Padding(0)
-            };
-            msg.Controls.Add(bottomPadding2, 3, 0);
-
-            // Add padding row at the end
-            Label bottomPadding3 = new Label
-            {
-                AutoSize = true,
-                Dock = DockStyle.Top,
-                Text = " ",
-                BackColor = System.Drawing.SystemColors.InactiveCaption,
-                Margin = new System.Windows.Forms.Padding(0)
-            };
-            msg.Controls.Add(bottomPadding3, 4, 0);
+            msg.Controls.Add(message);
 
 
         }
@@ -2157,6 +2284,14 @@ namespace SUP
         private void btnGive_Click(object sender, EventArgs e)
         {
             new ObjectGive(_objectaddress).Show();
+        }
+
+        private void btnDisco_Click(object sender, EventArgs e)
+        {
+            DiscoBall disco = new DiscoBall("", "", _objectaddress, imgPicture.ImageLocation, false);
+            disco.StartPosition = FormStartPosition.CenterScreen;
+            disco.Show(this);
+            disco.Focus();
         }
     }
 

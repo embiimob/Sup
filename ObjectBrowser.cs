@@ -561,6 +561,7 @@ namespace SUP
                             if (_viewMode == 0)
                             {
                                 foundObject.Height = 221;
+                                if (_isUserControl) { foundObject.Margin = new System.Windows.Forms.Padding(0); }
                                 flowLayoutPanel1.Controls.Add(foundObject);
                                 //this.MinimumSize = new System.Drawing.Size(709, 558);
 
@@ -1541,6 +1542,7 @@ namespace SUP
                     {
                         flowLayoutPanel1.Controls.Clear();
                         flowLayoutPanel1.AutoScroll = false;
+                       
                         var webBrowser1 = new Microsoft.Web.WebView2.WinForms.WebView2();
                         webBrowser1.Size = flowLayoutPanel1.Size;
 
@@ -1553,6 +1555,7 @@ namespace SUP
                         {
                             await webBrowser1.EnsureCoreWebView2Async();
                             webBrowser1.CoreWebView2.Navigate(txtSearchAddress.Text);
+                            pages.Visible = false;
                             flowLayoutPanel1.Controls.Add(webBrowser1);
 
                         }));
@@ -1975,6 +1978,7 @@ namespace SUP
                             }
                             if (_viewMode == 1)
                             {
+                         
                                 flowLayoutPanel1.Controls.Add(foundObject);
                                 this.MinimumSize = new System.Drawing.Size(709, 558);
                                 flowLayoutPanel1.Controls.SetChildIndex(foundObject, 0);
@@ -1984,6 +1988,7 @@ namespace SUP
                             {
 
                                 ObjectDetailsControl control = new ObjectDetailsControl(foundObject.ObjectAddress.Text);
+            
                                 flowLayoutPanel1.Controls.Add(control);
                                 this.MinimumSize = new System.Drawing.Size(1101, 521);
                                 this.Size = new System.Drawing.Size(1101, 521);
