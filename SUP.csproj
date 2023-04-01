@@ -402,7 +402,9 @@
     <Content Include="includes\AngleSharp.xml" />
     <Content Include="includes\BouncyCastle.Crypto.dll" />
     <Content Include="includes\BouncyCastle.Crypto.xml" />
-    <None Include="includes\disco.png" />
+    <None Include="includes\disco.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <Content Include="includes\Gma.QrCodeNet.Encoding.dll" />
     <Content Include="includes\HtmlSanitizer.dll" />
     <Content Include="includes\HtmlSanitizer.xml" />

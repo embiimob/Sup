@@ -62,9 +62,9 @@
             this.btnRefresh.Font = new System.Drawing.Font("Segoe UI Emoji", 13.8F);
             this.btnRefresh.ForeColor = System.Drawing.Color.Black;
             this.btnRefresh.Image = global::SUP.Properties.Resources.disco;
-            this.btnRefresh.Location = new System.Drawing.Point(242, 527);
+            this.btnRefresh.Location = new System.Drawing.Point(242, 521);
             this.btnRefresh.Name = "btnRefresh";
-            this.btnRefresh.Size = new System.Drawing.Size(50, 40);
+            this.btnRefresh.Size = new System.Drawing.Size(50, 46);
             this.btnRefresh.TabIndex = 86;
             this.btnRefresh.UseVisualStyleBackColor = true;
             this.btnRefresh.Click += new System.EventHandler(this.discoButton_Click);
@@ -73,7 +73,7 @@
             // 
             this.btnAttach.Font = new System.Drawing.Font("Segoe UI Emoji", 13.8F);
             this.btnAttach.ForeColor = System.Drawing.Color.Black;
-            this.btnAttach.Location = new System.Drawing.Point(264, 463);
+            this.btnAttach.Location = new System.Drawing.Point(264, 458);
             this.btnAttach.Name = "btnAttach";
             this.btnAttach.Size = new System.Drawing.Size(28, 40);
             this.btnAttach.TabIndex = 87;
@@ -83,7 +83,7 @@
             // 
             // txtFromAddress
             // 
-            this.txtFromAddress.Location = new System.Drawing.Point(65, 299);
+            this.txtFromAddress.Location = new System.Drawing.Point(65, 294);
             this.txtFromAddress.Multiline = true;
             this.txtFromAddress.Name = "txtFromAddress";
             this.txtFromAddress.Size = new System.Drawing.Size(227, 40);
@@ -91,7 +91,7 @@
             // 
             // flowAttachments
             // 
-            this.flowAttachments.Location = new System.Drawing.Point(18, 407);
+            this.flowAttachments.Location = new System.Drawing.Point(18, 402);
             this.flowAttachments.Name = "flowAttachments";
             this.flowAttachments.Size = new System.Drawing.Size(291, 50);
             this.flowAttachments.TabIndex = 89;
@@ -99,11 +99,11 @@
             // btnEncryptionStatus
             // 
             this.btnEncryptionStatus.BackColor = System.Drawing.Color.Blue;
-            this.btnEncryptionStatus.Font = new System.Drawing.Font("Segoe UI Emoji", 16.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnEncryptionStatus.Font = new System.Drawing.Font("Segoe UI Emoji", 13.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btnEncryptionStatus.ForeColor = System.Drawing.Color.Yellow;
-            this.btnEncryptionStatus.Location = new System.Drawing.Point(3, 518);
+            this.btnEncryptionStatus.Location = new System.Drawing.Point(18, 521);
             this.btnEncryptionStatus.Name = "btnEncryptionStatus";
-            this.btnEncryptionStatus.Size = new System.Drawing.Size(57, 58);
+            this.btnEncryptionStatus.Size = new System.Drawing.Size(208, 46);
             this.btnEncryptionStatus.TabIndex = 356;
             this.btnEncryptionStatus.Text = "😍";
             this.btnEncryptionStatus.UseVisualStyleBackColor = false;
@@ -111,7 +111,7 @@
             // 
             // txtToAddress
             // 
-            this.txtToAddress.Location = new System.Drawing.Point(65, 361);
+            this.txtToAddress.Location = new System.Drawing.Point(65, 356);
             this.txtToAddress.Multiline = true;
             this.txtToAddress.Name = "txtToAddress";
             this.txtToAddress.Size = new System.Drawing.Size(227, 40);
@@ -120,7 +120,7 @@
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(65, 281);
+            this.label1.Location = new System.Drawing.Point(65, 276);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(35, 15);
             this.label1.TabIndex = 358;
@@ -129,7 +129,7 @@
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(65, 345);
+            this.label2.Location = new System.Drawing.Point(65, 340);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(20, 15);
             this.label2.TabIndex = 359;
@@ -137,7 +137,7 @@
             // 
             // txtAttach
             // 
-            this.txtAttach.Location = new System.Drawing.Point(19, 463);
+            this.txtAttach.Location = new System.Drawing.Point(19, 458);
             this.txtAttach.Multiline = true;
             this.txtAttach.Name = "txtAttach";
             this.txtAttach.Size = new System.Drawing.Size(236, 40);
@@ -146,7 +146,7 @@
             // lblObjectStatus
             // 
             this.lblObjectStatus.AutoSize = true;
-            this.lblObjectStatus.Location = new System.Drawing.Point(17, 506);
+            this.lblObjectStatus.Location = new System.Drawing.Point(17, 503);
             this.lblObjectStatus.Name = "lblObjectStatus";
             this.lblObjectStatus.Size = new System.Drawing.Size(0, 15);
             this.lblObjectStatus.TabIndex = 361;
@@ -154,7 +154,7 @@
             // fromImage
             // 
             this.fromImage.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
-            this.fromImage.Location = new System.Drawing.Point(18, 299);
+            this.fromImage.Location = new System.Drawing.Point(18, 294);
             this.fromImage.Name = "fromImage";
             this.fromImage.Size = new System.Drawing.Size(40, 40);
             this.fromImage.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
@@ -164,7 +164,7 @@
             // toImage
             // 
             this.toImage.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
-            this.toImage.Location = new System.Drawing.Point(18, 361);
+            this.toImage.Location = new System.Drawing.Point(18, 356);
             this.toImage.Name = "toImage";
             this.toImage.Size = new System.Drawing.Size(40, 40);
             this.toImage.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
@@ -192,6 +192,7 @@
             this.Controls.Add(this.supMessage);
             this.ForeColor = System.Drawing.Color.White;
             this.Name = "DiscoBall";
+            this.Text = "Disco";
             this.Load += new System.EventHandler(this.DiscoBall_Load);
             ((System.ComponentModel.ISupportInitialize)(this.fromImage)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.toImage)).EndInit();
