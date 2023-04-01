@@ -9,10 +9,9 @@ using System.Windows.Forms;
 using BitcoinNET.RPCClient;
 using NBitcoin.RPC;
 using NBitcoin;
-using System.Windows.Media.TextFormatting;
 using Newtonsoft.Json;
 using SUP.P2FK;
-using AngleSharp.Common;
+
 
 namespace SUP
 {
@@ -179,7 +178,7 @@ namespace SUP
                     DialogResult result = MessageBox.Show("Are you sure you want to burn this?", "Confirmation", MessageBoxButtons.YesNo);
                     if (result == DialogResult.Yes)
                     {
-                        // Perform the action
+                        
                         var recipients = new Dictionary<string, decimal>();
                         foreach (var encodedAddress in encodedList)
                         {
@@ -213,18 +212,6 @@ namespace SUP
                 mint = true;
 
             }
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 

@@ -563,13 +563,13 @@ namespace SUP
                                 foundObject.Height = 221;
                                 if (_isUserControl) { foundObject.Margin = new System.Windows.Forms.Padding(3,3,2,3); }
                                 flowLayoutPanel1.Controls.Add(foundObject);
-                                //this.MinimumSize = new System.Drawing.Size(709, 558);
+                               
 
                             }
                             if (_viewMode == 1)
                             {
                                 flowLayoutPanel1.Controls.Add(foundObject);
-                                // this.MinimumSize = new System.Drawing.Size(709, 558);
+                               
                             }
 
                             if (_viewMode == 2)
@@ -577,8 +577,7 @@ namespace SUP
 
                                 ObjectDetailsControl control = new ObjectDetailsControl(foundObject.ObjectAddress.Text);
                                 flowLayoutPanel1.Controls.Add(control);
-                                //this.MinimumSize = new System.Drawing.Size(1101, 521);
-                                //this.Size = new System.Drawing.Size(1101, 521);
+                               
                             }
 
 
@@ -1517,8 +1516,7 @@ namespace SUP
 
                     }));
 
-                    // loadedObjects.Clear();
-
+                    
 
                     int loadQty = (flowLayoutPanel1.Size.Width / 213) * (flowLayoutPanel1.Size.Height / 336);
                     loadQty -= flowLayoutPanel1.Controls.Count;
@@ -1997,11 +1995,6 @@ namespace SUP
 
 
 
-
-
-
-
-
                         }
                         flowLayoutPanel1.ResumeLayout();
                     });
@@ -2073,7 +2066,6 @@ namespace SUP
                             txtQty.Text = "3";
                             break;
                         default:
-                            // Handle any other cases here
                             break;
                     }
 
@@ -2238,15 +2230,15 @@ namespace SUP
 
         private void flowLayoutPanel1_DragEnter(object sender, System.Windows.Forms.DragEventArgs e)
         {
-            // Check if the data being dragged is a file
+          
             if (e.Data.GetDataPresent(System.Windows.Forms.DataFormats.FileDrop))
             {
-                // Allow the drop operation
+                
                 e.Effect = System.Windows.Forms.DragDropEffects.Copy;
             }
             else
             {
-                // Prevent the drop operation
+                
                 e.Effect = System.Windows.Forms.DragDropEffects.None;
             }
         }
@@ -3010,7 +3002,6 @@ namespace SUP
                     }
                     break;
                 default:
-                    // Handle any other cases here
                     break;
             }
 
@@ -3065,7 +3056,6 @@ namespace SUP
                         }
                         break;
                     default:
-                        // Handle any other cases here
                         break;
                 }
 

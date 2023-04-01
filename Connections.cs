@@ -303,7 +303,7 @@ namespace SUP
                     catch { }
                 }
             }
-            catch(Exception ex){ 
+            catch{ 
                 Directory.CreateDirectory("root"); }
 
 

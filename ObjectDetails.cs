@@ -2,7 +2,6 @@
 using LevelDB;
 using NBitcoin;
 using Newtonsoft.Json;
-using Org.BouncyCastle.Utilities.Net;
 using SUP.P2FK;
 using System;
 using System.Collections.Generic;
@@ -148,7 +147,7 @@ namespace SUP
                 foreach (KeyValuePair<string, long> item in objstate.Owners)
                 {
 
-                    // Create a table layout panel for each row
+                  
                     TableLayoutPanel rowPanel = new TableLayoutPanel
                     {
                         RowCount = 1,
@@ -157,14 +156,12 @@ namespace SUP
                         AutoSize = true,
                         Padding = new System.Windows.Forms.Padding(3)
                     };
-                    // Add the width of the first column to fixed value and second to fill remaining space
+                 
                     rowPanel.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 230));
                     rowPanel.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 110));
 
-                    // Create a link label for the key column
+                  
                     LinkLabel keyLabel = new LinkLabel();
-
-
 
 
                     string searchkey = item.Key;
@@ -192,8 +189,6 @@ namespace SUP
                         keyLabel.Text = ShortName;
                     }
 
-
-
                     keyLabel.Links[0].LinkData = item.Key;
                     keyLabel.AutoSize = true;
                     keyLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
@@ -202,21 +197,21 @@ namespace SUP
                     keyLabel.ActiveLinkColor = System.Drawing.Color.Black;
                     keyLabel.VisitedLinkColor = System.Drawing.Color.Black;
                     keyLabel.LinkClicked += new LinkLabelLinkClickedEventHandler(LinkClicked);
-                    keyLabel.Dock = DockStyle.Left; // set dock property for key label 
+                    keyLabel.Dock = DockStyle.Left;
 
-                    // Create a label for the value column
+                   
                     Label valueLabel = new Label
                     {
                         Text = item.Value.ToString(),
                         AutoSize = true,
-                        Dock = DockStyle.Right // set dock property for value label 
+                        Dock = DockStyle.Right 
                     };
 
-                    // Add the link label and value label to the row panel
+                 
                     rowPanel.Controls.Add(keyLabel, 0, 0);
                     rowPanel.Controls.Add(valueLabel, 1, 0);
 
-                    // Alternate the background color of the row panel
+                
                     if (row % 2 == 0)
                     {
                         rowPanel.BackColor = System.Drawing.Color.White;
@@ -226,7 +221,7 @@ namespace SUP
                         rowPanel.BackColor = System.Drawing.Color.LightGray;
                     }
 
-                    // Add the row panel to the main panel
+                
                     OwnersPanel.Controls.Add(rowPanel);
                     row++;
 
@@ -246,7 +241,7 @@ namespace SUP
 
                     {
 
-                        // Create a table layout panel for each row
+                       
                         TableLayoutPanel rowPanel = new TableLayoutPanel
                         {
                             RowCount = 1,
@@ -289,7 +284,7 @@ namespace SUP
                         rowPanel.Controls.Add(keyLabel, 0, 0);
 
 
-                        // Alternate the background color of the row panel
+                   
                         if (row % 2 == 0)
                         {
                             rowPanel.BackColor = System.Drawing.Color.White;
@@ -299,7 +294,7 @@ namespace SUP
                             rowPanel.BackColor = System.Drawing.Color.LightGray;
                         }
 
-                        // Add the row panel to the main panel
+                    
                         CreatorsPanel.Controls.Add(rowPanel);
                         row++;
                     }
@@ -320,7 +315,7 @@ namespace SUP
 
         private void RefreshSupMessages(object sender, EventArgs e)
         {
-            // Clear controls if no messages have been displayed yet
+           
             if (numMessagesDisplayed == 0)
             {
                 supFlow.Controls.Clear();
@@ -453,7 +448,7 @@ namespace SUP
                                                     }
 
 
-                                                    //attempt to pin fails silently if daemon is not running
+                                                
                                                     Process process3 = new Process
                                                     {
                                                         StartInfo = new ProcessStartInfo
@@ -544,7 +539,7 @@ namespace SUP
                 it.Dispose();
             }
 
-            // Update number of messages displayed
+         
             numMessagesDisplayed += 20;
 
             supFlow.ResumeLayout();
@@ -679,7 +674,7 @@ namespace SUP
             
             PictureBox pictureBox = new PictureBox();
 
-            // Set the PictureBox properties
+          
 
             pictureBox.SizeMode = PictureBoxSizeMode.Zoom;
             pictureBox.Width = supPanel.Width - 40;
@@ -694,7 +689,7 @@ namespace SUP
         void CreateRow(string imageLocation, string ownerName, string ownerId, DateTime timestamp, string messageText, System.Drawing.Color bgcolor, FlowLayoutPanel layoutPanel)
         {
 
-            // Create a table layout panel for each row
+        
             TableLayoutPanel row = new TableLayoutPanel
             {
                 RowCount = 1,
@@ -704,13 +699,13 @@ namespace SUP
                 Padding = new System.Windows.Forms.Padding(0),
                 Margin = new System.Windows.Forms.Padding(0)
             };
-            // Add the width of the first column to fixed value and second to fill remaining space
+          
             row.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 80));
             row.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 120));
             row.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 142));
             layoutPanel.Controls.Add(row);
 
-            // Create a PictureBox with the specified image
+           
 
             if (File.Exists(imageLocation) || imageLocation.ToUpper().StartsWith("HTTP"))
             {
@@ -942,21 +937,7 @@ namespace SUP
             new ObjectBrowser(ownerId).Show();
         }
 
-        private void CopyAddressByNameClick(object sender, EventArgs e)
-        {
-            System.Windows.Clipboard.SetText(_objectaddress);
-        }
-
-        private void CopyAddressByTotalOwnedClick(object sender, EventArgs e)
-        {
-            System.Windows.Clipboard.SetText(_objectaddress);
-        }
-
-        private void CopyAddressByImageClick(object sender, EventArgs e)
-        {
-            System.Windows.Clipboard.SetText(_objectaddress);
-        }
-
+     
         private async void MainRefreshClick(object sender, EventArgs e)
         {
             transFlow.Visible = false;

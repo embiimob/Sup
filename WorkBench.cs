@@ -36,7 +36,7 @@ namespace SUP
                    
                     txtGetValue.Text = "";
                     
-                        using (var db = new DB(SUP, @"root\sup"))
+                        using (var db = new DB(SUP, @"root\"+txtSearchAddress+@"\sup"))
                         {
                             LevelDB.Iterator it = db.CreateIterator();
                             for (
@@ -78,7 +78,7 @@ namespace SUP
 
                     txtGetValue.Text = "";
 
-                    using (var db = new DB(SUP, @"root\sec"))
+                    using (var db = new DB(SUP, @"root\" + txtSearchAddress + @"\sec"))
                     {
                         LevelDB.Iterator it = db.CreateIterator();
                         for (
@@ -234,7 +234,7 @@ namespace SUP
             {
                 case "sup":
                     
-                    using (var db = new DB(SUP, @"root\sup"))
+                    using (var db = new DB(SUP, @"root\" + txtSearchAddress + @"\sup"))
                     {
                         db.Delete(txtlevelDBKey.Text);
                     }
@@ -249,7 +249,7 @@ namespace SUP
 
                 case "sec":
 
-                    using (var db = new DB(SUP, @"root\sec"))
+                    using (var db = new DB(SUP, @"root\" + txtSearchAddress + @"\sec"))
                     {
                         db.Delete(txtlevelDBKey.Text);
                     }
@@ -265,7 +265,7 @@ namespace SUP
 
                 case "oblock":
 
-                    using (var db = new DB(SUP, @"root\sup"))
+                    using (var db = new DB(SUP, @"root\oblock"))
                     {
                         db.Delete(txtlevelDBKey.Text);
                     }

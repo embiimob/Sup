@@ -28,8 +28,8 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle5 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle6 = new System.Windows.Forms.DataGridViewCellStyle();
             this.addressTextBox = new System.Windows.Forms.TextBox();
             this.qtyTextBox = new System.Windows.Forms.TextBox();
             this.addressQtyDataGridView = new System.Windows.Forms.DataGridView();
@@ -65,7 +65,7 @@
             this.qtyTextBox.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
             this.qtyTextBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.qtyTextBox.ForeColor = System.Drawing.Color.White;
-            this.qtyTextBox.Location = new System.Drawing.Point(355, 12);
+            this.qtyTextBox.Location = new System.Drawing.Point(362, 12);
             this.qtyTextBox.Multiline = true;
             this.qtyTextBox.Name = "qtyTextBox";
             this.qtyTextBox.Size = new System.Drawing.Size(84, 33);
@@ -81,13 +81,13 @@
             this.addressQtyDataGridView.Location = new System.Drawing.Point(12, 67);
             this.addressQtyDataGridView.Name = "addressQtyDataGridView";
             this.addressQtyDataGridView.RowHeadersWidth = 51;
-            this.addressQtyDataGridView.Size = new System.Drawing.Size(482, 438);
+            this.addressQtyDataGridView.Size = new System.Drawing.Size(489, 438);
             this.addressQtyDataGridView.TabIndex = 2;
             // 
             // address
             // 
-            dataGridViewCellStyle1.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.address.DefaultCellStyle = dataGridViewCellStyle1;
+            dataGridViewCellStyle5.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.address.DefaultCellStyle = dataGridViewCellStyle5;
             this.address.HeaderText = "object address to burn";
             this.address.MaxInputLength = 46;
             this.address.MinimumWidth = 6;
@@ -96,8 +96,8 @@
             // 
             // qty
             // 
-            dataGridViewCellStyle2.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.qty.DefaultCellStyle = dataGridViewCellStyle2;
+            dataGridViewCellStyle6.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.qty.DefaultCellStyle = dataGridViewCellStyle6;
             this.qty.HeaderText = "qty to burn";
             this.qty.MinimumWidth = 6;
             this.qty.Name = "qty";
@@ -119,7 +119,7 @@
             // 
             this.btnAdd.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.btnAdd.Font = new System.Drawing.Font("Microsoft Sans Serif", 15.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnAdd.Location = new System.Drawing.Point(445, 12);
+            this.btnAdd.Location = new System.Drawing.Point(452, 12);
             this.btnAdd.Name = "btnAdd";
             this.btnAdd.Size = new System.Drawing.Size(49, 33);
             this.btnAdd.TabIndex = 274;
@@ -131,7 +131,7 @@
             // 
             this.btnBurn.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.btnBurn.Font = new System.Drawing.Font("Segoe UI Emoji", 13.8F);
-            this.btnBurn.Location = new System.Drawing.Point(385, 581);
+            this.btnBurn.Location = new System.Drawing.Point(392, 580);
             this.btnBurn.Name = "btnBurn";
             this.btnBurn.Size = new System.Drawing.Size(109, 53);
             this.btnBurn.TabIndex = 275;
@@ -184,7 +184,7 @@
             this.txtSignatureAddress.Location = new System.Drawing.Point(127, 521);
             this.txtSignatureAddress.Multiline = true;
             this.txtSignatureAddress.Name = "txtSignatureAddress";
-            this.txtSignatureAddress.Size = new System.Drawing.Size(367, 53);
+            this.txtSignatureAddress.Size = new System.Drawing.Size(374, 53);
             this.txtSignatureAddress.TabIndex = 361;
             // 
             // button1
@@ -220,7 +220,7 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.Black;
-            this.ClientSize = new System.Drawing.Size(507, 638);
+            this.ClientSize = new System.Drawing.Size(514, 638);
             this.Controls.Add(this.lblCost);
             this.Controls.Add(this.lblObjectStatus);
             this.Controls.Add(this.button1);
@@ -234,8 +234,8 @@
             this.Controls.Add(this.addressQtyDataGridView);
             this.Controls.Add(this.qtyTextBox);
             this.Controls.Add(this.addressTextBox);
-            this.MaximumSize = new System.Drawing.Size(525, 685);
-            this.MinimumSize = new System.Drawing.Size(525, 685);
+            this.MaximumSize = new System.Drawing.Size(532, 685);
+            this.MinimumSize = new System.Drawing.Size(532, 685);
             this.Name = "ObjectBurn";
             this.Text = "ObjectBurn";
             this.Load += new System.EventHandler(this.ObjectBurn_Load);

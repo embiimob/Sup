@@ -66,7 +66,7 @@
             this.qtyTextBox.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
             this.qtyTextBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.qtyTextBox.ForeColor = System.Drawing.Color.White;
-            this.qtyTextBox.Location = new System.Drawing.Point(355, 12);
+            this.qtyTextBox.Location = new System.Drawing.Point(364, 12);
             this.qtyTextBox.Multiline = true;
             this.qtyTextBox.Name = "qtyTextBox";
             this.qtyTextBox.Size = new System.Drawing.Size(84, 33);
@@ -79,10 +79,10 @@
             this.addressQtyDataGridView.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
             this.address,
             this.qty});
-            this.addressQtyDataGridView.Location = new System.Drawing.Point(12, 67);
+            this.addressQtyDataGridView.Location = new System.Drawing.Point(12, 51);
             this.addressQtyDataGridView.Name = "addressQtyDataGridView";
             this.addressQtyDataGridView.RowHeadersWidth = 51;
-            this.addressQtyDataGridView.Size = new System.Drawing.Size(482, 361);
+            this.addressQtyDataGridView.Size = new System.Drawing.Size(491, 377);
             this.addressQtyDataGridView.TabIndex = 2;
             // 
             // address
@@ -106,7 +106,6 @@
             // 
             // btnSave
             // 
-            this.btnSave.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.btnSave.Font = new System.Drawing.Font("Segoe UI Emoji", 13.8F);
             this.btnSave.Location = new System.Drawing.Point(12, 583);
             this.btnSave.Name = "btnSave";
@@ -120,7 +119,7 @@
             // 
             this.btnAdd.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.btnAdd.Font = new System.Drawing.Font("Microsoft Sans Serif", 15.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnAdd.Location = new System.Drawing.Point(445, 12);
+            this.btnAdd.Location = new System.Drawing.Point(454, 12);
             this.btnAdd.Name = "btnAdd";
             this.btnAdd.Size = new System.Drawing.Size(49, 33);
             this.btnAdd.TabIndex = 274;
@@ -130,9 +129,8 @@
             // 
             // btnGive
             // 
-            this.btnGive.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.btnGive.Font = new System.Drawing.Font("Segoe UI Emoji", 13.8F);
-            this.btnGive.Location = new System.Drawing.Point(385, 583);
+            this.btnGive.Location = new System.Drawing.Point(394, 583);
             this.btnGive.Name = "btnGive";
             this.btnGive.Size = new System.Drawing.Size(109, 53);
             this.btnGive.TabIndex = 275;
@@ -145,7 +143,7 @@
             this.txtOBJJSON.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.txtOBJJSON.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.txtOBJJSON.ForeColor = System.Drawing.Color.Black;
-            this.txtOBJJSON.Location = new System.Drawing.Point(18, 140);
+            this.txtOBJJSON.Location = new System.Drawing.Point(18, 154);
             this.txtOBJJSON.Multiline = true;
             this.txtOBJJSON.Name = "txtOBJJSON";
             this.txtOBJJSON.Size = new System.Drawing.Size(141, 226);
@@ -157,7 +155,7 @@
             this.txtOBJP2FK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.txtOBJP2FK.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.txtOBJP2FK.ForeColor = System.Drawing.Color.Black;
-            this.txtOBJP2FK.Location = new System.Drawing.Point(165, 140);
+            this.txtOBJP2FK.Location = new System.Drawing.Point(165, 154);
             this.txtOBJP2FK.Multiline = true;
             this.txtOBJP2FK.Name = "txtOBJP2FK";
             this.txtOBJP2FK.Size = new System.Drawing.Size(156, 226);
@@ -169,7 +167,7 @@
             this.txtAddressListJSON.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.txtAddressListJSON.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.txtAddressListJSON.ForeColor = System.Drawing.Color.Black;
-            this.txtAddressListJSON.Location = new System.Drawing.Point(327, 140);
+            this.txtAddressListJSON.Location = new System.Drawing.Point(327, 154);
             this.txtAddressListJSON.Multiline = true;
             this.txtAddressListJSON.Name = "txtAddressListJSON";
             this.txtAddressListJSON.Size = new System.Drawing.Size(160, 226);
@@ -178,19 +176,17 @@
             // 
             // txtSignatureAddress
             // 
-            this.txtSignatureAddress.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.txtSignatureAddress.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
             this.txtSignatureAddress.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.txtSignatureAddress.ForeColor = System.Drawing.Color.White;
             this.txtSignatureAddress.Location = new System.Drawing.Point(127, 524);
             this.txtSignatureAddress.Multiline = true;
             this.txtSignatureAddress.Name = "txtSignatureAddress";
-            this.txtSignatureAddress.Size = new System.Drawing.Size(367, 53);
+            this.txtSignatureAddress.Size = new System.Drawing.Size(376, 53);
             this.txtSignatureAddress.TabIndex = 361;
             // 
             // button1
             // 
-            this.button1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.button1.Font = new System.Drawing.Font("Segoe UI Emoji", 13.8F);
             this.button1.Location = new System.Drawing.Point(12, 524);
             this.button1.Name = "button1";
@@ -217,14 +213,13 @@
             // 
             // txtObjectAddress
             // 
-            this.txtObjectAddress.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.txtObjectAddress.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
             this.txtObjectAddress.Font = new System.Drawing.Font("Microsoft Sans Serif", 18F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.txtObjectAddress.ForeColor = System.Drawing.Color.White;
             this.txtObjectAddress.Location = new System.Drawing.Point(12, 442);
             this.txtObjectAddress.Multiline = true;
             this.txtObjectAddress.Name = "txtObjectAddress";
-            this.txtObjectAddress.Size = new System.Drawing.Size(482, 63);
+            this.txtObjectAddress.Size = new System.Drawing.Size(491, 63);
             this.txtObjectAddress.TabIndex = 365;
             // 
             // ObjectGive
@@ -233,7 +228,7 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.Black;
-            this.ClientSize = new System.Drawing.Size(507, 638);
+            this.ClientSize = new System.Drawing.Size(515, 652);
             this.Controls.Add(this.txtObjectAddress);
             this.Controls.Add(this.lblCost);
             this.Controls.Add(this.lblObjectStatus);
@@ -248,8 +243,8 @@
             this.Controls.Add(this.addressQtyDataGridView);
             this.Controls.Add(this.qtyTextBox);
             this.Controls.Add(this.addressTextBox);
-            this.MaximumSize = new System.Drawing.Size(525, 685);
-            this.MinimumSize = new System.Drawing.Size(525, 685);
+            this.MaximumSize = new System.Drawing.Size(533, 699);
+            this.MinimumSize = new System.Drawing.Size(533, 699);
             this.Name = "ObjectGive";
             this.Text = "ObjectGive";
             this.Load += new System.EventHandler(this.ObjectGive_Load);
