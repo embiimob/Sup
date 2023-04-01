@@ -330,14 +330,13 @@ namespace SUP
 
             var SUP = new Options { CreateIfMissing = true };
 
-            using (var db = new DB(SUP, @"root\sup"))
+            using (var db = new DB(SUP, @"root\"+ _objectaddress + @"\sup"))
             {
-                string lastKey = db.Get("lastkey!" + _objectaddress);
-                if (lastKey == null) { return; }
+               
                 LevelDB.Iterator it = db.CreateIterator();
                 for (
-                   it.Seek(lastKey);
-                   it.IsValid() && it.KeyAsString().StartsWith(_objectaddress) && rownum <= numMessagesDisplayed + 10; // Only display next 10 messages
+                   it.SeekToLast();
+                   it.IsValid()  && rownum <= numMessagesDisplayed + 10; // Only display next 10 messages
                     it.Prev()
                  )
                 {
