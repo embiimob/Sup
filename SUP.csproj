@@ -349,6 +349,7 @@
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
+      <DesignTime>True</DesignTime>
     </Compile>
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
@@ -401,6 +402,7 @@
     <Content Include="includes\AngleSharp.xml" />
     <Content Include="includes\BouncyCastle.Crypto.dll" />
     <Content Include="includes\BouncyCastle.Crypto.xml" />
+    <None Include="includes\disco.png" />
     <Content Include="includes\Gma.QrCodeNet.Encoding.dll" />
     <Content Include="includes\HtmlSanitizer.dll" />
     <Content Include="includes\HtmlSanitizer.xml" />

@@ -71,7 +71,7 @@
             this.lblIMGBlockDate.ForeColor = System.Drawing.Color.White;
             this.lblIMGBlockDate.Location = new System.Drawing.Point(513, 174);
             this.lblIMGBlockDate.Name = "lblIMGBlockDate";
-            this.lblIMGBlockDate.Size = new System.Drawing.Size(0, 13);
+            this.lblIMGBlockDate.Size = new System.Drawing.Size(0, 15);
             this.lblIMGBlockDate.TabIndex = 184;
             this.lblIMGBlockDate.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
@@ -80,7 +80,7 @@
             this.lblURNBlockDate.AutoSize = true;
             this.lblURNBlockDate.Location = new System.Drawing.Point(19, 257);
             this.lblURNBlockDate.Name = "lblURNBlockDate";
-            this.lblURNBlockDate.Size = new System.Drawing.Size(0, 13);
+            this.lblURNBlockDate.Size = new System.Drawing.Size(0, 15);
             this.lblURNBlockDate.TabIndex = 185;
             this.lblURNBlockDate.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
@@ -91,7 +91,7 @@
             this.lblCost.ForeColor = System.Drawing.Color.White;
             this.lblCost.Location = new System.Drawing.Point(730, 529);
             this.lblCost.Name = "lblCost";
-            this.lblCost.Size = new System.Drawing.Size(0, 13);
+            this.lblCost.Size = new System.Drawing.Size(0, 15);
             this.lblCost.TabIndex = 296;
             this.lblCost.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
@@ -101,7 +101,7 @@
             this.lblTransactionID.AutoSize = true;
             this.lblTransactionID.Location = new System.Drawing.Point(400, 29);
             this.lblTransactionID.Name = "lblTransactionID";
-            this.lblTransactionID.Size = new System.Drawing.Size(0, 13);
+            this.lblTransactionID.Size = new System.Drawing.Size(0, 15);
             this.lblTransactionID.TabIndex = 297;
             // 
             // btnSuffix
@@ -138,7 +138,7 @@
             this.lblObjectStatus.ForeColor = System.Drawing.Color.White;
             this.lblObjectStatus.Location = new System.Drawing.Point(193, 32);
             this.lblObjectStatus.Name = "lblObjectStatus";
-            this.lblObjectStatus.Size = new System.Drawing.Size(0, 13);
+            this.lblObjectStatus.Size = new System.Drawing.Size(0, 15);
             this.lblObjectStatus.TabIndex = 356;
             // 
             // btnObjectKeywords
@@ -208,7 +208,7 @@
             this.lblRemainingChars.ForeColor = System.Drawing.Color.White;
             this.lblRemainingChars.Location = new System.Drawing.Point(184, 139);
             this.lblRemainingChars.Name = "lblRemainingChars";
-            this.lblRemainingChars.Size = new System.Drawing.Size(52, 29);
+            this.lblRemainingChars.Size = new System.Drawing.Size(66, 36);
             this.lblRemainingChars.TabIndex = 352;
             this.lblRemainingChars.Text = "888";
             // 
@@ -256,7 +256,7 @@
             // btnScan
             // 
             this.btnScan.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnScan.Font = new System.Drawing.Font("Microsoft Sans Serif", 24F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnScan.Font = new System.Drawing.Font("Segoe UI Emoji", 13.8F);
             this.btnScan.Location = new System.Drawing.Point(725, 543);
             this.btnScan.Name = "btnScan";
             this.btnScan.Size = new System.Drawing.Size(109, 50);
@@ -268,7 +268,7 @@
             // btnObjectAddress
             // 
             this.btnObjectAddress.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnObjectAddress.Font = new System.Drawing.Font("Microsoft Sans Serif", 20.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnObjectAddress.Font = new System.Drawing.Font("Segoe UI Emoji", 13.8F);
             this.btnObjectAddress.Location = new System.Drawing.Point(846, 118);
             this.btnObjectAddress.Name = "btnObjectAddress";
             this.btnObjectAddress.Padding = new System.Windows.Forms.Padding(0, 0, 0, 5);

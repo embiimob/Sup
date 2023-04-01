@@ -561,7 +561,7 @@ namespace SUP
                             if (_viewMode == 0)
                             {
                                 foundObject.Height = 221;
-                                if (_isUserControl) { foundObject.Margin = new System.Windows.Forms.Padding(0); }
+                                if (_isUserControl) { foundObject.Margin = new System.Windows.Forms.Padding(3,3,2,3); }
                                 flowLayoutPanel1.Controls.Add(foundObject);
                                 //this.MinimumSize = new System.Drawing.Size(709, 558);
 

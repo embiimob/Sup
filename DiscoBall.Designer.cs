@@ -33,16 +33,16 @@
             this.btnAttach = new System.Windows.Forms.Button();
             this.txtFromAddress = new System.Windows.Forms.TextBox();
             this.flowAttachments = new System.Windows.Forms.FlowLayoutPanel();
-            this.toImage = new System.Windows.Forms.PictureBox();
-            this.fromImage = new System.Windows.Forms.PictureBox();
             this.btnEncryptionStatus = new System.Windows.Forms.Button();
             this.txtToAddress = new System.Windows.Forms.TextBox();
             this.label1 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
             this.txtAttach = new System.Windows.Forms.TextBox();
             this.lblObjectStatus = new System.Windows.Forms.Label();
-            ((System.ComponentModel.ISupportInitialize)(this.toImage)).BeginInit();
+            this.fromImage = new System.Windows.Forms.PictureBox();
+            this.toImage = new System.Windows.Forms.PictureBox();
             ((System.ComponentModel.ISupportInitialize)(this.fromImage)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.toImage)).BeginInit();
             this.SuspendLayout();
             // 
             // supMessage
@@ -59,19 +59,19 @@
             // 
             // btnRefresh
             // 
-            this.btnRefresh.Font = new System.Drawing.Font("Microsoft Sans Serif", 16.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnRefresh.Font = new System.Drawing.Font("Segoe UI Emoji", 13.8F);
             this.btnRefresh.ForeColor = System.Drawing.Color.Black;
+            this.btnRefresh.Image = global::SUP.Properties.Resources.disco;
             this.btnRefresh.Location = new System.Drawing.Point(242, 527);
             this.btnRefresh.Name = "btnRefresh";
             this.btnRefresh.Size = new System.Drawing.Size(50, 40);
             this.btnRefresh.TabIndex = 86;
-            this.btnRefresh.Text = "🪩";
             this.btnRefresh.UseVisualStyleBackColor = true;
             this.btnRefresh.Click += new System.EventHandler(this.discoButton_Click);
             // 
             // btnAttach
             // 
-            this.btnAttach.Font = new System.Drawing.Font("Microsoft Sans Serif", 16.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnAttach.Font = new System.Drawing.Font("Segoe UI Emoji", 13.8F);
             this.btnAttach.ForeColor = System.Drawing.Color.Black;
             this.btnAttach.Location = new System.Drawing.Point(264, 463);
             this.btnAttach.Name = "btnAttach";
@@ -96,34 +96,14 @@
             this.flowAttachments.Size = new System.Drawing.Size(291, 50);
             this.flowAttachments.TabIndex = 89;
             // 
-            // toImage
-            // 
-            this.toImage.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
-            this.toImage.Location = new System.Drawing.Point(18, 361);
-            this.toImage.Name = "toImage";
-            this.toImage.Size = new System.Drawing.Size(40, 40);
-            this.toImage.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
-            this.toImage.TabIndex = 354;
-            this.toImage.TabStop = false;
-            // 
-            // fromImage
-            // 
-            this.fromImage.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
-            this.fromImage.Location = new System.Drawing.Point(18, 299);
-            this.fromImage.Name = "fromImage";
-            this.fromImage.Size = new System.Drawing.Size(40, 40);
-            this.fromImage.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
-            this.fromImage.TabIndex = 355;
-            this.fromImage.TabStop = false;
-            // 
             // btnEncryptionStatus
             // 
             this.btnEncryptionStatus.BackColor = System.Drawing.Color.Blue;
-            this.btnEncryptionStatus.Font = new System.Drawing.Font("Microsoft Sans Serif", 13.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnEncryptionStatus.Font = new System.Drawing.Font("Segoe UI Emoji", 16.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btnEncryptionStatus.ForeColor = System.Drawing.Color.Yellow;
-            this.btnEncryptionStatus.Location = new System.Drawing.Point(18, 527);
+            this.btnEncryptionStatus.Location = new System.Drawing.Point(3, 518);
             this.btnEncryptionStatus.Name = "btnEncryptionStatus";
-            this.btnEncryptionStatus.Size = new System.Drawing.Size(50, 40);
+            this.btnEncryptionStatus.Size = new System.Drawing.Size(57, 58);
             this.btnEncryptionStatus.TabIndex = 356;
             this.btnEncryptionStatus.Text = "😍";
             this.btnEncryptionStatus.UseVisualStyleBackColor = false;
@@ -171,6 +151,26 @@
             this.lblObjectStatus.Size = new System.Drawing.Size(0, 15);
             this.lblObjectStatus.TabIndex = 361;
             // 
+            // fromImage
+            // 
+            this.fromImage.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
+            this.fromImage.Location = new System.Drawing.Point(18, 299);
+            this.fromImage.Name = "fromImage";
+            this.fromImage.Size = new System.Drawing.Size(40, 40);
+            this.fromImage.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
+            this.fromImage.TabIndex = 355;
+            this.fromImage.TabStop = false;
+            // 
+            // toImage
+            // 
+            this.toImage.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
+            this.toImage.Location = new System.Drawing.Point(18, 361);
+            this.toImage.Name = "toImage";
+            this.toImage.Size = new System.Drawing.Size(40, 40);
+            this.toImage.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
+            this.toImage.TabIndex = 354;
+            this.toImage.TabStop = false;
+            // 
             // DiscoBall
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -193,8 +193,8 @@
             this.ForeColor = System.Drawing.Color.White;
             this.Name = "DiscoBall";
             this.Load += new System.EventHandler(this.DiscoBall_Load);
-            ((System.ComponentModel.ISupportInitialize)(this.toImage)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.fromImage)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.toImage)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 

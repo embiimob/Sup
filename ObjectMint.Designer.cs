@@ -85,7 +85,7 @@
             this.lblIMGBlockDate.ForeColor = System.Drawing.Color.White;
             this.lblIMGBlockDate.Location = new System.Drawing.Point(21, 177);
             this.lblIMGBlockDate.Name = "lblIMGBlockDate";
-            this.lblIMGBlockDate.Size = new System.Drawing.Size(0, 13);
+            this.lblIMGBlockDate.Size = new System.Drawing.Size(0, 15);
             this.lblIMGBlockDate.TabIndex = 184;
             this.lblIMGBlockDate.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
@@ -95,7 +95,7 @@
             this.lblURNBlockDate.ForeColor = System.Drawing.Color.White;
             this.lblURNBlockDate.Location = new System.Drawing.Point(21, 254);
             this.lblURNBlockDate.Name = "lblURNBlockDate";
-            this.lblURNBlockDate.Size = new System.Drawing.Size(0, 13);
+            this.lblURNBlockDate.Size = new System.Drawing.Size(0, 15);
             this.lblURNBlockDate.TabIndex = 185;
             this.lblURNBlockDate.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
@@ -106,7 +106,7 @@
             this.lblObjectStatus.ForeColor = System.Drawing.Color.White;
             this.lblObjectStatus.Location = new System.Drawing.Point(580, 578);
             this.lblObjectStatus.Name = "lblObjectStatus";
-            this.lblObjectStatus.Size = new System.Drawing.Size(0, 13);
+            this.lblObjectStatus.Size = new System.Drawing.Size(0, 15);
             this.lblObjectStatus.TabIndex = 293;
             // 
             // txtOBJJSON
@@ -233,7 +233,7 @@
             this.lblRemainingChars.ForeColor = System.Drawing.Color.White;
             this.lblRemainingChars.Location = new System.Drawing.Point(438, 496);
             this.lblRemainingChars.Name = "lblRemainingChars";
-            this.lblRemainingChars.Size = new System.Drawing.Size(52, 29);
+            this.lblRemainingChars.Size = new System.Drawing.Size(66, 36);
             this.lblRemainingChars.TabIndex = 288;
             this.lblRemainingChars.Text = "888";
             // 
@@ -321,7 +321,7 @@
             // btnScan
             // 
             this.btnScan.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnScan.Font = new System.Drawing.Font("Microsoft Sans Serif", 24F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnScan.Font = new System.Drawing.Font("Segoe UI Emoji", 13.8F);
             this.btnScan.Location = new System.Drawing.Point(576, 762);
             this.btnScan.Name = "btnScan";
             this.btnScan.Size = new System.Drawing.Size(109, 53);
@@ -342,7 +342,7 @@
             // 
             this.btnObjectAddress.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.btnObjectAddress.Enabled = false;
-            this.btnObjectAddress.Font = new System.Drawing.Font("Microsoft Sans Serif", 20.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnObjectAddress.Font = new System.Drawing.Font("Segoe UI Emoji", 13.8F);
             this.btnObjectAddress.Location = new System.Drawing.Point(441, 120);
             this.btnObjectAddress.Name = "btnObjectAddress";
             this.btnObjectAddress.Padding = new System.Windows.Forms.Padding(0, 0, 0, 5);
@@ -577,7 +577,7 @@
             this.radioButton4.AutoSize = true;
             this.radioButton4.Location = new System.Drawing.Point(12, 10);
             this.radioButton4.Name = "radioButton4";
-            this.radioButton4.Size = new System.Drawing.Size(45, 17);
+            this.radioButton4.Size = new System.Drawing.Size(51, 19);
             this.radioButton4.TabIndex = 3;
             this.radioButton4.Text = "CC0";
             this.radioButton4.UseVisualStyleBackColor = true;
@@ -588,7 +588,7 @@
             this.radioButton3.AutoSize = true;
             this.radioButton3.Location = new System.Drawing.Point(87, 10);
             this.radioButton3.Name = "radioButton3";
-            this.radioButton3.Size = new System.Drawing.Size(73, 17);
+            this.radioButton3.Size = new System.Drawing.Size(81, 19);
             this.radioButton3.TabIndex = 2;
             this.radioButton3.Text = "CC BY-SA";
             this.radioButton3.UseVisualStyleBackColor = true;
@@ -599,7 +599,7 @@
             this.radioButton2.AutoSize = true;
             this.radioButton2.Location = new System.Drawing.Point(198, 10);
             this.radioButton2.Name = "radioButton2";
-            this.radioButton2.Size = new System.Drawing.Size(56, 17);
+            this.radioButton2.Size = new System.Drawing.Size(63, 19);
             this.radioButton2.TabIndex = 1;
             this.radioButton2.Text = "CC-BY";
             this.radioButton2.UseVisualStyleBackColor = true;
@@ -611,7 +611,7 @@
             this.radioButton1.Checked = true;
             this.radioButton1.Location = new System.Drawing.Point(334, 10);
             this.radioButton1.Name = "radioButton1";
-            this.radioButton1.Size = new System.Drawing.Size(183, 17);
+            this.radioButton1.Size = new System.Drawing.Size(205, 19);
             this.radioButton1.TabIndex = 0;
             this.radioButton1.TabStop = true;
             this.radioButton1.Text = "No License / All Rights Reserved";
@@ -636,7 +636,7 @@
             this.lblCost.ForeColor = System.Drawing.Color.White;
             this.lblCost.Location = new System.Drawing.Point(875, 817);
             this.lblCost.Name = "lblCost";
-            this.lblCost.Size = new System.Drawing.Size(0, 13);
+            this.lblCost.Size = new System.Drawing.Size(0, 15);
             this.lblCost.TabIndex = 296;
             this.lblCost.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
@@ -647,7 +647,7 @@
             this.lblTransactionID.ForeColor = System.Drawing.Color.White;
             this.lblTransactionID.Location = new System.Drawing.Point(578, 747);
             this.lblTransactionID.Name = "lblTransactionID";
-            this.lblTransactionID.Size = new System.Drawing.Size(0, 13);
+            this.lblTransactionID.Size = new System.Drawing.Size(0, 15);
             this.lblTransactionID.TabIndex = 297;
             // 
             // ObjectMint

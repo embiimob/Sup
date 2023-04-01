@@ -392,7 +392,7 @@ namespace SUP
                     var accounts = JsonConvert.DeserializeObject<Dictionary<string, decimal>>(accountsString);
                     var keyWithLargestValue = accounts.Aggregate((x, y) => x.Value > y.Value ? x : y).Key;
                     var results = a.SendMany(keyWithLargestValue, recipients);
-                    lblObjectStatus.Text = results;
+                    supMessage.Text = supMessage.Text + "\r\n" + results;
                 }
                 catch (Exception ex) { lblObjectStatus.Text = ex.Message; }
 

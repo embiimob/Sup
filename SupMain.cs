@@ -769,11 +769,10 @@ namespace SUP
 
                                                         this.Invoke((MethodInvoker)delegate
                                                         {
-                                                            try { imglocation = myFriends[_from]; } catch { }
-                                                            CreateFeedRow(imglocation, _from, _from, DateTime.ParseExact("19700101010101", "yyyyMMddHHmmss", CultureInfo.InvariantCulture), _message, Color.White, supFlow);
-
                                                             try { imglocation = myFriends[_to]; } catch { }
-                                                            CreateFeedRow(imglocation, _to, _to, DateTime.ParseExact(_blockdate, "yyyyMMddHHmmss", CultureInfo.InvariantCulture), "", Color.White, supFlow);
+                                                            CreateFeedRow(imglocation, _to, _to, DateTime.ParseExact(_blockdate, "yyyyMMddHHmmss", CultureInfo.InvariantCulture), "", Color.White, supFlow, true);
+                                                            try { imglocation = myFriends[_from]; } catch { }
+                                                            CreateFeedRow(imglocation, _from, _from, DateTime.ParseExact("19700101010101", "yyyyMMddHHmmss", CultureInfo.InvariantCulture), _message, Color.White, supFlow, true);
 
 
                                                         });
@@ -956,11 +955,10 @@ namespace SUP
 
                                                         this.Invoke((MethodInvoker)delegate
                                                         {
-                                                            try { imglocation = myFriends[_from]; } catch { }
-                                                            CreateFeedRow(imglocation, _from, _from, DateTime.ParseExact("19700101010101", "yyyyMMddHHmmss", CultureInfo.InvariantCulture), _message, Color.White, supFlow);
-
                                                             try { imglocation = myFriends[_to]; } catch { }
-                                                            CreateFeedRow(imglocation, _to, _to, DateTime.ParseExact(_blockdate, "yyyyMMddHHmmss", CultureInfo.InvariantCulture), "", Color.White, supFlow);
+                                                            CreateFeedRow(imglocation, _to, _to, DateTime.ParseExact(_blockdate, "yyyyMMddHHmmss", CultureInfo.InvariantCulture), "", Color.White, supFlow, true);
+                                                            try { imglocation = myFriends[_from]; } catch { }
+                                                            CreateFeedRow(imglocation, _from, _from, DateTime.ParseExact("19700101010101", "yyyyMMddHHmmss", CultureInfo.InvariantCulture), _message, Color.White, supFlow, true);
                                                         });
 
                                                         string pattern = "<<.*?>>";
@@ -1130,11 +1128,10 @@ namespace SUP
 
                                                         this.Invoke((MethodInvoker)delegate
                                                         {
-                                                            try { imglocation = myFriends[_from]; } catch { }
-                                                            CreateFeedRow(imglocation, _from, _from, DateTime.ParseExact("19700101010101", "yyyyMMddHHmmss", CultureInfo.InvariantCulture), _message, Color.White, supFlow);
-
                                                             try { imglocation = myFriends[_to]; } catch { }
-                                                            CreateFeedRow(imglocation, _to, _to, DateTime.ParseExact(_blockdate, "yyyyMMddHHmmss", CultureInfo.InvariantCulture), "", Color.White, supFlow);
+                                                            CreateFeedRow(imglocation, _to, _to, DateTime.ParseExact(_blockdate, "yyyyMMddHHmmss", CultureInfo.InvariantCulture), "", Color.White, supFlow, true);
+                                                            try { imglocation = myFriends[_from]; } catch { }
+                                                            CreateFeedRow(imglocation, _from, _from, DateTime.ParseExact("19700101010101", "yyyyMMddHHmmss", CultureInfo.InvariantCulture), _message, Color.White, supFlow, true);
                                                         });
 
                                                         string pattern = "<<.*?>>";
@@ -1302,11 +1299,10 @@ namespace SUP
 
                                                         this.Invoke((MethodInvoker)delegate
                                                         {
-                                                            try { imglocation = myFriends[_from]; } catch { }
-                                                            CreateFeedRow(imglocation, _from, _from, DateTime.ParseExact("19700101010101", "yyyyMMddHHmmss", CultureInfo.InvariantCulture), _message, Color.White, supFlow);
-
                                                             try { imglocation = myFriends[_to]; } catch { }
-                                                            CreateFeedRow(imglocation, _to, _to, DateTime.ParseExact(_blockdate, "yyyyMMddHHmmss", CultureInfo.InvariantCulture), "", Color.White, supFlow);
+                                                            CreateFeedRow(imglocation, _to, _to, DateTime.ParseExact(_blockdate, "yyyyMMddHHmmss", CultureInfo.InvariantCulture), "", Color.White, supFlow, true);
+                                                            try { imglocation = myFriends[_from]; } catch { }
+                                                            CreateFeedRow(imglocation, _from, _from, DateTime.ParseExact("19700101010101", "yyyyMMddHHmmss", CultureInfo.InvariantCulture), _message, Color.White, supFlow, true);
                                                         });
 
                                                         string pattern = "<<.*?>>";
@@ -1474,11 +1470,11 @@ namespace SUP
 
                                                         this.Invoke((MethodInvoker)delegate
                                                         {
-                                                            try { imglocation = myFriends[_from]; } catch { }
-                                                            CreateFeedRow(imglocation, _from, _from, DateTime.ParseExact("19700101010101", "yyyyMMddHHmmss", CultureInfo.InvariantCulture), _message, Color.White, supFlow);
-
                                                             try { imglocation = myFriends[_to]; } catch { }
-                                                            CreateFeedRow(imglocation, _to, _to, DateTime.ParseExact(_blockdate, "yyyyMMddHHmmss", CultureInfo.InvariantCulture), "", Color.White, supFlow);
+                                                            CreateFeedRow(imglocation, _to, _to, DateTime.ParseExact(_blockdate, "yyyyMMddHHmmss", CultureInfo.InvariantCulture), "", Color.White, supFlow, true);
+                                                            try { imglocation = myFriends[_from]; } catch { }
+                                                            CreateFeedRow(imglocation, _from, _from, DateTime.ParseExact("19700101010101", "yyyyMMddHHmmss", CultureInfo.InvariantCulture), _message, Color.White, supFlow, true);
+
                                                         });
 
                                                         string pattern = "<<.*?>>";

@@ -36,9 +36,7 @@
             this.btnLaunchURN = new System.Windows.Forms.Button();
             this.flowPanel = new System.Windows.Forms.Panel();
             this.lblWarning = new System.Windows.Forms.Label();
-            this.pictureBox1 = new System.Windows.Forms.PictureBox();
             this.KeysFlow = new System.Windows.Forms.FlowLayoutPanel();
-            this.imgPicture = new System.Windows.Forms.PictureBox();
             this.lblLicense = new System.Windows.Forms.Label();
             this.lblLastChangedDate = new System.Windows.Forms.Label();
             this.lblProcessHeight = new System.Windows.Forms.Label();
@@ -75,12 +73,14 @@
             this.lblOfficial = new System.Windows.Forms.Label();
             this.lblPleaseStandBy = new System.Windows.Forms.Label();
             this.btnDisco = new System.Windows.Forms.Button();
+            this.pictureBox1 = new System.Windows.Forms.PictureBox();
+            this.imgPicture = new System.Windows.Forms.PictureBox();
             this.flowPanel.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.imgPicture)).BeginInit();
             this.supPanel.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.webviewer)).BeginInit();
             this.registrationPanel.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.imgPicture)).BeginInit();
             this.SuspendLayout();
             // 
             // lblImageFullPath
@@ -172,18 +172,6 @@
             this.lblWarning.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             this.lblWarning.Visible = false;
             // 
-            // pictureBox1
-            // 
-            this.pictureBox1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
-            this.pictureBox1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.pictureBox1.Location = new System.Drawing.Point(0, 0);
-            this.pictureBox1.Name = "pictureBox1";
-            this.pictureBox1.Size = new System.Drawing.Size(401, 402);
-            this.pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
-            this.pictureBox1.TabIndex = 1;
-            this.pictureBox1.TabStop = false;
-            this.pictureBox1.DoubleClick += new System.EventHandler(this.ShowFullScreenModeClick);
-            // 
             // KeysFlow
             // 
             this.KeysFlow.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
@@ -194,17 +182,6 @@
             this.KeysFlow.Size = new System.Drawing.Size(293, 108);
             this.KeysFlow.TabIndex = 64;
             this.KeysFlow.Visible = false;
-            // 
-            // imgPicture
-            // 
-            this.imgPicture.Location = new System.Drawing.Point(9, 7);
-            this.imgPicture.Name = "imgPicture";
-            this.imgPicture.Size = new System.Drawing.Size(70, 70);
-            this.imgPicture.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
-            this.imgPicture.TabIndex = 76;
-            this.imgPicture.TabStop = false;
-            this.imgPicture.Click += new System.EventHandler(this.imgPicture_Click);
-            this.imgPicture.Validated += new System.EventHandler(this.imgPicture_Validated);
             // 
             // lblLicense
             // 
@@ -365,7 +342,7 @@
             // btnRefreshOwners
             // 
             this.btnRefreshOwners.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnRefreshOwners.Font = new System.Drawing.Font("Microsoft Sans Serif", 16.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnRefreshOwners.Font = new System.Drawing.Font("Segoe UI Emoji", 13.8F);
             this.btnRefreshOwners.Location = new System.Drawing.Point(884, 374);
             this.btnRefreshOwners.Margin = new System.Windows.Forms.Padding(0);
             this.btnRefreshOwners.Name = "btnRefreshOwners";
@@ -379,7 +356,7 @@
             // btnRefreshSup
             // 
             this.btnRefreshSup.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnRefreshSup.Font = new System.Drawing.Font("Microsoft Sans Serif", 16.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnRefreshSup.Font = new System.Drawing.Font("Segoe UI Emoji", 13.8F);
             this.btnRefreshSup.Location = new System.Drawing.Point(987, 374);
             this.btnRefreshSup.Name = "btnRefreshSup";
             this.btnRefreshSup.Size = new System.Drawing.Size(100, 42);
@@ -391,7 +368,7 @@
             // btnRefreshTransactions
             // 
             this.btnRefreshTransactions.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.btnRefreshTransactions.Font = new System.Drawing.Font("Microsoft Sans Serif", 16.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnRefreshTransactions.Font = new System.Drawing.Font("Segoe UI Emoji", 13.8F);
             this.btnRefreshTransactions.Location = new System.Drawing.Point(13, 375);
             this.btnRefreshTransactions.Name = "btnRefreshTransactions";
             this.btnRefreshTransactions.Size = new System.Drawing.Size(100, 42);
@@ -403,7 +380,7 @@
             // btnReloadObject
             // 
             this.btnReloadObject.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.btnReloadObject.Font = new System.Drawing.Font("Microsoft Sans Serif", 16.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnReloadObject.Font = new System.Drawing.Font("Segoe UI Emoji", 13.8F);
             this.btnReloadObject.Location = new System.Drawing.Point(188, 375);
             this.btnReloadObject.Name = "btnReloadObject";
             this.btnReloadObject.Size = new System.Drawing.Size(100, 42);
@@ -443,7 +420,7 @@
             this.supPanel.Controls.Add(this.supFlow);
             this.supPanel.Location = new System.Drawing.Point(713, 13);
             this.supPanel.Name = "supPanel";
-            this.supPanel.Size = new System.Drawing.Size(374, 358);
+            this.supPanel.Size = new System.Drawing.Size(374, 355);
             this.supPanel.TabIndex = 80;
             this.supPanel.Visible = false;
             // 
@@ -453,7 +430,7 @@
             this.supFlow.Dock = System.Windows.Forms.DockStyle.Fill;
             this.supFlow.Location = new System.Drawing.Point(0, 0);
             this.supFlow.Name = "supFlow";
-            this.supFlow.Size = new System.Drawing.Size(374, 358);
+            this.supFlow.Size = new System.Drawing.Size(374, 355);
             this.supFlow.TabIndex = 3;
             // 
             // txtdesc
@@ -651,15 +628,38 @@
             // btnDisco
             // 
             this.btnDisco.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnDisco.Font = new System.Drawing.Font("Microsoft Sans Serif", 16.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnDisco.Font = new System.Drawing.Font("Segoe UI Emoji", 13.8F);
+            this.btnDisco.Image = global::SUP.Properties.Resources.disco;
             this.btnDisco.Location = new System.Drawing.Point(724, 375);
             this.btnDisco.Name = "btnDisco";
             this.btnDisco.Size = new System.Drawing.Size(100, 42);
             this.btnDisco.TabIndex = 79;
-            this.btnDisco.Text = "🪩";
             this.btnDisco.UseVisualStyleBackColor = true;
             this.btnDisco.Visible = false;
             this.btnDisco.Click += new System.EventHandler(this.btnDisco_Click);
+            // 
+            // pictureBox1
+            // 
+            this.pictureBox1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
+            this.pictureBox1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.pictureBox1.Location = new System.Drawing.Point(0, 0);
+            this.pictureBox1.Name = "pictureBox1";
+            this.pictureBox1.Size = new System.Drawing.Size(401, 402);
+            this.pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
+            this.pictureBox1.TabIndex = 1;
+            this.pictureBox1.TabStop = false;
+            this.pictureBox1.DoubleClick += new System.EventHandler(this.ShowFullScreenModeClick);
+            // 
+            // imgPicture
+            // 
+            this.imgPicture.Location = new System.Drawing.Point(9, 7);
+            this.imgPicture.Name = "imgPicture";
+            this.imgPicture.Size = new System.Drawing.Size(70, 70);
+            this.imgPicture.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
+            this.imgPicture.TabIndex = 76;
+            this.imgPicture.TabStop = false;
+            this.imgPicture.Click += new System.EventHandler(this.imgPicture_Click);
+            this.imgPicture.Validated += new System.EventHandler(this.imgPicture_Validated);
             // 
             // ObjectDetails
             // 
@@ -704,12 +704,12 @@
             this.Text = "Object Details";
             this.Load += new System.EventHandler(this.ObjectDetails_Load);
             this.flowPanel.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.imgPicture)).EndInit();
             this.supPanel.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.webviewer)).EndInit();
             this.registrationPanel.ResumeLayout(false);
             this.registrationPanel.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.imgPicture)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 

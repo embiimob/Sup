@@ -55,10 +55,11 @@ namespace SUP
             // 
             this.btnCreated.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.btnCreated.BackColor = System.Drawing.Color.White;
+            this.btnCreated.Font = new System.Drawing.Font("Microsoft Sans Serif", 7.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btnCreated.ForeColor = System.Drawing.Color.Black;
-            this.btnCreated.Location = new System.Drawing.Point(401, 3);
+            this.btnCreated.Location = new System.Drawing.Point(468, 3);
             this.btnCreated.Name = "btnCreated";
-            this.btnCreated.Size = new System.Drawing.Size(55, 20);
+            this.btnCreated.Size = new System.Drawing.Size(59, 27);
             this.btnCreated.TabIndex = 62;
             this.btnCreated.Text = "created";
             this.btnCreated.UseVisualStyleBackColor = false;
@@ -68,11 +69,12 @@ namespace SUP
             // 
             this.btnOwned.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.btnOwned.BackColor = System.Drawing.Color.White;
+            this.btnOwned.Font = new System.Drawing.Font("Microsoft Sans Serif", 7.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btnOwned.ForeColor = System.Drawing.Color.Black;
-            this.btnOwned.Location = new System.Drawing.Point(346, 3);
+            this.btnOwned.Location = new System.Drawing.Point(406, 3);
             this.btnOwned.Margin = new System.Windows.Forms.Padding(10, 3, 3, 3);
             this.btnOwned.Name = "btnOwned";
-            this.btnOwned.Size = new System.Drawing.Size(49, 20);
+            this.btnOwned.Size = new System.Drawing.Size(56, 27);
             this.btnOwned.TabIndex = 61;
             this.btnOwned.Text = "owned";
             this.btnOwned.UseVisualStyleBackColor = false;
@@ -83,17 +85,18 @@ namespace SUP
             this.txtSearchAddress.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.txtSearchAddress.CausesValidation = false;
-            this.txtSearchAddress.Location = new System.Drawing.Point(462, 3);
-            this.txtSearchAddress.Margin = new System.Windows.Forms.Padding(3, 3, 0, 3);
+            this.txtSearchAddress.Location = new System.Drawing.Point(536, 3);
+            this.txtSearchAddress.Margin = new System.Windows.Forms.Padding(6, 3, 0, 3);
+            this.txtSearchAddress.Multiline = true;
             this.txtSearchAddress.Name = "txtSearchAddress";
-            this.txtSearchAddress.Size = new System.Drawing.Size(237, 20);
+            this.txtSearchAddress.Size = new System.Drawing.Size(236, 27);
             this.txtSearchAddress.TabIndex = 58;
             this.txtSearchAddress.KeyDown += new System.Windows.Forms.KeyEventHandler(this.SearchAddressKeyDown);
             // 
             // txtQty
             // 
             this.txtQty.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.txtQty.Location = new System.Drawing.Point(619, 157);
+            this.txtQty.Location = new System.Drawing.Point(659, 157);
             this.txtQty.Name = "txtQty";
             this.txtQty.Size = new System.Drawing.Size(43, 20);
             this.txtQty.TabIndex = 77;
@@ -103,9 +106,11 @@ namespace SUP
             // txtLast
             // 
             this.txtLast.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.txtLast.Location = new System.Drawing.Point(241, 3);
+            this.txtLast.Location = new System.Drawing.Point(291, 3);
+            this.txtLast.Margin = new System.Windows.Forms.Padding(6, 3, 3, 3);
+            this.txtLast.Multiline = true;
             this.txtLast.Name = "txtLast";
-            this.txtLast.Size = new System.Drawing.Size(43, 20);
+            this.txtLast.Size = new System.Drawing.Size(48, 27);
             this.txtLast.TabIndex = 78;
             this.txtLast.Text = "0";
             this.txtLast.TextChanged += new System.EventHandler(this.txtLast_TextChanged);
@@ -124,7 +129,7 @@ namespace SUP
             this.imgLoading.ImageLocation = "";
             this.imgLoading.Location = new System.Drawing.Point(3, 3);
             this.imgLoading.Name = "imgLoading";
-            this.imgLoading.Size = new System.Drawing.Size(735, 489);
+            this.imgLoading.Size = new System.Drawing.Size(775, 483);
             this.imgLoading.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
             this.imgLoading.TabIndex = 81;
             this.imgLoading.TabStop = false;
@@ -140,7 +145,7 @@ namespace SUP
             this.flowLayoutPanel1.Margin = new System.Windows.Forms.Padding(0);
             this.flowLayoutPanel1.Name = "flowLayoutPanel1";
             this.flowLayoutPanel1.Padding = new System.Windows.Forms.Padding(3, 30, 0, 0);
-            this.flowLayoutPanel1.Size = new System.Drawing.Size(738, 495);
+            this.flowLayoutPanel1.Size = new System.Drawing.Size(778, 489);
             this.flowLayoutPanel1.TabIndex = 82;
             this.flowLayoutPanel1.DragDrop += new System.Windows.Forms.DragEventHandler(this.flowLayoutPanel1_DragDrop);
             this.flowLayoutPanel1.DragEnter += new System.Windows.Forms.DragEventHandler(this.flowLayoutPanel1_DragEnter);
@@ -151,9 +156,9 @@ namespace SUP
             this.pages.BackColor = System.Drawing.SystemColors.InactiveCaptionText;
             this.pages.Dock = System.Windows.Forms.DockStyle.Bottom;
             this.pages.LargeChange = 12;
-            this.pages.Location = new System.Drawing.Point(0, 495);
+            this.pages.Location = new System.Drawing.Point(0, 489);
             this.pages.Name = "pages";
-            this.pages.Size = new System.Drawing.Size(738, 42);
+            this.pages.Size = new System.Drawing.Size(778, 48);
             this.pages.TabIndex = 84;
             this.pages.TickStyle = System.Windows.Forms.TickStyle.Both;
             this.pages.Scroll += new System.EventHandler(this.pages_Scroll);
@@ -164,9 +169,10 @@ namespace SUP
             // 
             this.txtTotal.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.txtTotal.Enabled = false;
-            this.txtTotal.Location = new System.Drawing.Point(290, 3);
+            this.txtTotal.Location = new System.Drawing.Point(345, 3);
+            this.txtTotal.Multiline = true;
             this.txtTotal.Name = "txtTotal";
-            this.txtTotal.Size = new System.Drawing.Size(43, 20);
+            this.txtTotal.Size = new System.Drawing.Size(48, 27);
             this.txtTotal.TabIndex = 85;
             this.txtTotal.Text = "0";
             // 
@@ -187,7 +193,7 @@ namespace SUP
             this.flowLayoutPanel2.Dock = System.Windows.Forms.DockStyle.Top;
             this.flowLayoutPanel2.Location = new System.Drawing.Point(0, 0);
             this.flowLayoutPanel2.Name = "flowLayoutPanel2";
-            this.flowLayoutPanel2.Size = new System.Drawing.Size(738, 30);
+            this.flowLayoutPanel2.Size = new System.Drawing.Size(778, 33);
             this.flowLayoutPanel2.TabIndex = 86;
             this.flowLayoutPanel2.SizeChanged += new System.EventHandler(this.flowLayoutPanel2_SizeChanged);
             // 
@@ -198,7 +204,7 @@ namespace SUP
             this.profileURN.Location = new System.Drawing.Point(3, 0);
             this.profileURN.Name = "profileURN";
             this.profileURN.Padding = new System.Windows.Forms.Padding(10, 0, 0, 0);
-            this.profileURN.Size = new System.Drawing.Size(232, 30);
+            this.profileURN.Size = new System.Drawing.Size(279, 30);
             this.profileURN.TabIndex = 71;
             this.profileURN.TabStop = true;
             this.profileURN.Text = "anon";
@@ -212,7 +218,7 @@ namespace SUP
             this.panel1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panel1.Location = new System.Drawing.Point(0, 0);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(738, 495);
+            this.panel1.Size = new System.Drawing.Size(778, 489);
             this.panel1.TabIndex = 88;
             // 
             // ObjectBrowser
@@ -220,12 +226,12 @@ namespace SUP
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.SystemColors.ActiveCaptionText;
-            this.ClientSize = new System.Drawing.Size(738, 537);
+            this.ClientSize = new System.Drawing.Size(778, 537);
             this.Controls.Add(this.flowLayoutPanel2);
             this.Controls.Add(this.panel1);
             this.Controls.Add(this.pages);
             this.Controls.Add(this.txtQty);
-            this.MinimumSize = new System.Drawing.Size(262, 515);
+            this.MinimumSize = new System.Drawing.Size(298, 584);
             this.Name = "ObjectBrowser";
             this.RightToLeft = System.Windows.Forms.RightToLeft.No;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;

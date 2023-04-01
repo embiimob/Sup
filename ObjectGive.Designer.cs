@@ -81,6 +81,7 @@
             this.qty});
             this.addressQtyDataGridView.Location = new System.Drawing.Point(12, 67);
             this.addressQtyDataGridView.Name = "addressQtyDataGridView";
+            this.addressQtyDataGridView.RowHeadersWidth = 51;
             this.addressQtyDataGridView.Size = new System.Drawing.Size(482, 361);
             this.addressQtyDataGridView.TabIndex = 2;
             // 
@@ -90,6 +91,7 @@
             this.address.DefaultCellStyle = dataGridViewCellStyle1;
             this.address.HeaderText = "recipient addres";
             this.address.MaxInputLength = 46;
+            this.address.MinimumWidth = 6;
             this.address.Name = "address";
             this.address.Width = 325;
             // 
@@ -98,13 +100,14 @@
             dataGridViewCellStyle2.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.qty.DefaultCellStyle = dataGridViewCellStyle2;
             this.qty.HeaderText = "qty to give";
+            this.qty.MinimumWidth = 6;
             this.qty.Name = "qty";
             this.qty.Width = 111;
             // 
             // btnSave
             // 
             this.btnSave.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.btnSave.Font = new System.Drawing.Font("Microsoft Sans Serif", 21.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnSave.Font = new System.Drawing.Font("Segoe UI Emoji", 13.8F);
             this.btnSave.Location = new System.Drawing.Point(12, 583);
             this.btnSave.Name = "btnSave";
             this.btnSave.Size = new System.Drawing.Size(109, 53);
@@ -128,7 +131,7 @@
             // btnGive
             // 
             this.btnGive.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.btnGive.Font = new System.Drawing.Font("Microsoft Sans Serif", 27.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnGive.Font = new System.Drawing.Font("Segoe UI Emoji", 13.8F);
             this.btnGive.Location = new System.Drawing.Point(385, 583);
             this.btnGive.Name = "btnGive";
             this.btnGive.Size = new System.Drawing.Size(109, 53);
@@ -188,7 +191,7 @@
             // button1
             // 
             this.button1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.button1.Font = new System.Drawing.Font("Microsoft Sans Serif", 27.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.button1.Font = new System.Drawing.Font("Segoe UI Emoji", 13.8F);
             this.button1.Location = new System.Drawing.Point(12, 524);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(109, 53);
@@ -201,7 +204,7 @@
             this.lblObjectStatus.AutoSize = true;
             this.lblObjectStatus.Location = new System.Drawing.Point(14, 50);
             this.lblObjectStatus.Name = "lblObjectStatus";
-            this.lblObjectStatus.Size = new System.Drawing.Size(0, 13);
+            this.lblObjectStatus.Size = new System.Drawing.Size(0, 15);
             this.lblObjectStatus.TabIndex = 363;
             // 
             // lblCost
@@ -209,7 +212,7 @@
             this.lblCost.AutoSize = true;
             this.lblCost.Location = new System.Drawing.Point(14, 508);
             this.lblCost.Name = "lblCost";
-            this.lblCost.Size = new System.Drawing.Size(0, 13);
+            this.lblCost.Size = new System.Drawing.Size(0, 15);
             this.lblCost.TabIndex = 364;
             // 
             // txtObjectAddress
@@ -230,7 +233,7 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.Black;
-            this.ClientSize = new System.Drawing.Size(509, 646);
+            this.ClientSize = new System.Drawing.Size(507, 638);
             this.Controls.Add(this.txtObjectAddress);
             this.Controls.Add(this.lblCost);
             this.Controls.Add(this.lblObjectStatus);
