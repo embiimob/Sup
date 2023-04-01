@@ -154,23 +154,24 @@ namespace SUP
 
             profileCreatedDate.Text = "since: " + activeProfile.CreatedDate.ToString("MM/dd/yyyy hh:mm:ss tt");
 
-
-            foreach (string key in activeProfile.URL.Keys)
+            if (activeProfile.URL != null)
             {
-                Button button = new Button();
-                button.Text = key;
-                button.Font = new Font("Segoe UI", 12); // Set the button text font size
-                button.ForeColor = Color.White;
-                button.Height = 50;
-                button.Width = supFlow.Width - 40; // Subtract padding of 10 pixels on each side
-                button.Margin = new Padding(10, 3, 10, 4);
-                button.Click += new EventHandler((sender, e) => button_Click(sender, e, activeProfile.URL[key]));
-                supFlow.Controls.Add(button);
+                foreach (string key in activeProfile.URL.Keys)
+                {
+                    Button button = new Button();
+                    button.Text = key;
+                    button.Font = new Font("Segoe UI", 12); // Set the button text font size
+                    button.ForeColor = Color.White;
+                    button.Height = 50;
+                    button.Width = supFlow.Width - 40; // Subtract padding of 10 pixels on each side
+                    button.Margin = new Padding(10, 3, 10, 4);
+                    button.Click += new EventHandler((sender, e) => button_Click(sender, e, activeProfile.URL[key]));
+                    supFlow.Controls.Add(button);
+                }
             }
-
             string imgurn = "";
 
-            if (activeProfile.Image != "")
+            if (activeProfile.Image != null && activeProfile.Image != "")
             {
                 imgurn = activeProfile.Image;
 

@@ -368,7 +368,16 @@ namespace SUP
                     }
                 }
             }
+            string pattern = @"#\w{1,20}";
 
+            Regex regex = new Regex(pattern);
+
+            foreach (Match match in regex.Matches(supMessage.Text))
+            {
+                string keyword = match.Value.Substring(1);
+
+                encodedList.Add(Root.GetPublicAddressByKeyword(keyword));
+            }
 
             encodedList.Add(txtToAddress.Text);
             encodedList.Add(signatureAddress);
