@@ -11,7 +11,7 @@ P2FK was directly inspired by the satoshi uploader  see --> https://cirosantilli
 
 ## **Installation**
 
-1. Download the Sup.v0.1.32-beta.zip file
+1. Download the Sup.v0.1.33-beta.zip file
 2. Create a folder on your **fastest** disk drive with at least **50GB** free (it will be storing the bitcoin testnet blockchain)
 3. Unzip all contents into the folder
 4. Create a shortcut to SUP.exe and launch
@@ -58,28 +58,37 @@ searches mainchain by urn - shows currently registered object with uri redirecti
 navigates to requested url in browser.
 <br />
 <br />
+## **Public / Private Messaging / Social**
+The disco ball has dropped you can now send direct public and private messages using Sup!?, the bitcoin testnet and #IPFS.   Search for a profile and add friends by clicking the follow button.  Click on a friend's icon to show their latest public messages. Click on the community icon to see a combination of all your friends posts in a single feed in the order that they were confirmed on the blockchain.   Search for your own profile in the object browser to login with your local account.  Click on the disco ball to send the profile you are currently browsing a public message.  Click on the 🤐 before clicking on the discon ball to send the profile you are currently browsing a private message.   Search for your own profile and click on the 🤐 icon to see any private messages sent to it.
+<br />
+<br />
+NOTE: all attachments in your private message are encrypted via Sup!? using the recipients public keys before they are uploaded to IPFS for delivery.
+<br />
+<br />
 ## **Profile Minting / Editing**
 Click the mint button and select the profile mint button. Enter a urn and a profile address or click the diamond button to generate a new profile address. These two fields are all that are required to register a profile urn. You may optionally enter a PFP image url, your full name and suffix, web links, contact information and keywords. NOTE: Every profile becomes an entry point for which private messages may be delivered as every profile displays public keys to be used for Secp256k1 encrypted messaging.   
-
+<br />
 Once you are satisfied with your profile information. click mint. Your profile will take effect following a successfull confirmation of the transaction.
-
+<br />
 To edit a profile, click on the magnifying glass and enter the profile address to edit. If a profile is found at the address, Sup!? will build and display it on the screen. Modifying any of the fields will cause the corresponding fields' modified indicator to turn blue. Remove any data that is not being updated from the transaction by clicking its corresponding button until it is not blue. Click mint when you have completed making updates. Your changes will take effect following a successful confirmation of the transaction.
-
+<br />
 Your profile urn registration is valid for 3 years past the last change in its process height. This means that in order for your profile to expire, there must not be a single mention or transaction placed to its holding address for a period of 3 years. Should this occur, the urn registration will be claimed by the next available registration that falls under the same time restriction. If no claims exist, the profile will no longer be discoverable and can be claimed by anyone. An inactive profile can be reactivated by anyone by sending any type of transaction to its previous holding address.
 <br />
 <br />
-## **Object Minting / Printing / Editing**
+## **Object Minting / Printing / Editing / Batch Burning / Batch Giving**
 Click the mint button and select the object mint button. Enter an object name, object address and urn. These fields are required. Click mint. If no creator address is entered, the object will be self-signed using a new address generated at your minting station wallet. To further enhance your collector's experience, a profile can be setup on a collection address and the collection addresss can be added as a creator. Now, both the collection shortname name and the creator short name will be discoverable in the browser. Searching for the creator shortname returns all objects.  Searching for the collection shortname returns just the collection.
-
+<br />
 Click print instead of mint and you can use a paper transaction alone to prove ownership. Any person can scan a paper mint & send a small confirmation transaction to the addresses within the QR code printed on the paper to make the paper transaction public. A Sup!? paper transaction can be used in lieu of a public confirmation as it contains all the necessary signature and transaction data necessary to confirm it against a current scan of the object address it is associated with.
-
+<br />
 To edit an unlocked object, click on the magnifying glass and enter the object address to edit. If an object is found, Sup!? will build and display the object it represents on screen. Modifying any of the fields will cause the corresponding fields' modified indicator to turn blue.. Click mint Or print when you have completed making updates and your changes will take effect following a successfull confirmation of the transaction.
 <br />
 <br />
 ## **Live Monitor**
-Click the live button and watch in realtime as other Sup!? users mint their objects. All new objects will be added to the top of your browser window pushing the older objects down the screen. A maximized Sup!? monitor that shows a constant stream of new objects makes for a great display. Sup!? montiors the in-memory pool allowing it to display new objects before they are confirmed in the blockchain. Your Sup!? objects will appear in every curently live Sup!? montior around the world in about 10 - 30 seconds after you have etched the object's metadata. All blockhains included with this experiment are monitored for new objects if they are running and fully synced.  
+Click the live button and watch in realtime as other Sup!? users mint their objects and compose public messages. All new objects and messages will be added to the top of your browser window pushing the older objects and messages down the screen. A maximized Sup!? monitor that shows a constant stream of new objects and messages makes for a great display. Sup!? montiors the in-memory pool allowing it to display new objects before they are confirmed in the blockchain. Your Sup!? objects and messages will appear in every curently live Sup!? montior around the world in about 10 - 30 seconds after you have etched the metadata. All blockhains included with this experiment are monitored for new objects and messages if they are running and fully synced.  
 <br />
-With live monitoring enabled, you never know what might pop into the window. The damage is limited to a thumbnail image and what can fit in a small description text box. Objects that are discovered in live mode are not fully inspected for safety reasons. You can delete one directly from the live preview panel by clicking on the object's small trash icon. This will remove any trace of it from your system. If you are still concerned, clearing all Sup!? caches will without a doubt remove it.
+With live monitoring enabled, you never know what might pop into the window. The damage is limited to a thumbnail image and what can fit in a small description text box. Objects that are discovered in live mode are not fully inspected for safety reasons. You can delete one directly from the live preview panel by clicking on the object's small trash icon. This will remove any trace of it from your system. If you are still concerned, clearing all Sup!? caches will without a doubt remove it.  
+<br />
+Consider running a seperate instance of Sup!? in it's own folder for live monitoring.  You can then easily clear the cache in the live monitoring folder without effecting your overal Sup!? browsing cache.  Launch the blockchain from your normal folder and just run Sup!? live from your second folder..  both instances of Sup!? will communicate to your launched blockchain without any problems.
 <br />
 <br />
 ## **Official / Unofficial Registration Indicator**
@@ -92,7 +101,7 @@ Drag and drop any file onto the main Sup!? browser screen. Sup!? will search the
 <br />
 ## **Block \ Mute**
 Blocking addresses ignores any associations to them going forward, preventing a transaction or any transactions signed by the blocked address from outputting to disk. A purge and reinspection is required to completely eliminate all data. If a group of collectors decides to block an address, they can technically ignore them out of existence.
-
+<br />
 Muting an address prevents any further transaction comments signed by the address from outputting onto a disk. A purge and reinspection is required to completely elimninate all transaction comments.
 <br />
 <br />
