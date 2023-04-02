@@ -1015,7 +1015,7 @@ namespace SUP
                     Match imgurnmatch = regexTransactionId.Match(imgurn);
                     transactionid = imgurnmatch.Value;
                     Root root = new Root();
-                    if (!File.Exists(imgurn) && imgurn != "")
+                    if (imgurn != "")
                     {
                         switch (objstate.Image.ToUpper().Substring(0, 4))
                         {
@@ -1168,8 +1168,7 @@ namespace SUP
                     transactionid = urnmatch.Value;
                     Root root = new Root();
 
-                    if (!File.Exists(urn))
-                    {
+                 
                         switch (objstate.URN.Substring(0, 4))
                         {
                             case "MZC:":
@@ -1330,7 +1329,7 @@ namespace SUP
 
                                 break;
                         }
-                    }
+                    
 
 
                 }
@@ -1344,7 +1343,7 @@ namespace SUP
                     Match urimatch = regexTransactionId.Match(uriurn);
                     transactionid = urimatch.Value;
 
-                    if (!File.Exists(uriurn) && uriurn != "")
+                    if (uriurn != "")
                     {
                         switch (objstate.URI.Substring(0, 4))
                         {

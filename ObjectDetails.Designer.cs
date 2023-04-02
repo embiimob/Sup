@@ -200,6 +200,7 @@
             // 
             this.lblLastChangedDate.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.lblLastChangedDate.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblLastChangedDate.ForeColor = System.Drawing.Color.White;
             this.lblLastChangedDate.Location = new System.Drawing.Point(114, 209);
             this.lblLastChangedDate.Name = "lblLastChangedDate";
             this.lblLastChangedDate.Size = new System.Drawing.Size(168, 15);
@@ -210,6 +211,7 @@
             // 
             this.lblProcessHeight.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.lblProcessHeight.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblProcessHeight.ForeColor = System.Drawing.Color.White;
             this.lblProcessHeight.Location = new System.Drawing.Point(114, 189);
             this.lblProcessHeight.Name = "lblProcessHeight";
             this.lblProcessHeight.Size = new System.Drawing.Size(168, 15);
