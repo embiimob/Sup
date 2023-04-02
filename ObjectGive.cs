@@ -13,6 +13,7 @@ using System.Windows.Media.TextFormatting;
 using Newtonsoft.Json;
 using SUP.P2FK;
 using AngleSharp.Common;
+using Org.BouncyCastle.Utilities.Net;
 
 namespace SUP
 {
@@ -178,6 +179,7 @@ namespace SUP
                 {
                     encodedList.Add(address);
                 }
+       
                 encodedList.Add(txtObjectAddress.Text);
                 encodedList.Add(signatureAddress); 
                 txtAddressListJSON.Text = JsonConvert.SerializeObject(encodedList.Distinct());
@@ -267,5 +269,9 @@ namespace SUP
             }
         }
 
+        private void ObjectGive_Load(object sender, EventArgs e)
+        {
+            txtObjectAddress.Text = givaddress;
+        }
     }
 }

@@ -28,8 +28,8 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle5 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle6 = new System.Windows.Forms.DataGridViewCellStyle();
             this.addressTextBox = new System.Windows.Forms.TextBox();
             this.qtyTextBox = new System.Windows.Forms.TextBox();
             this.addressQtyDataGridView = new System.Windows.Forms.DataGridView();
@@ -80,27 +80,30 @@
             this.qty});
             this.addressQtyDataGridView.Location = new System.Drawing.Point(12, 68);
             this.addressQtyDataGridView.Name = "addressQtyDataGridView";
+            this.addressQtyDataGridView.ReadOnly = true;
             this.addressQtyDataGridView.RowHeadersWidth = 51;
             this.addressQtyDataGridView.Size = new System.Drawing.Size(491, 360);
             this.addressQtyDataGridView.TabIndex = 2;
             // 
             // address
             // 
-            dataGridViewCellStyle1.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.address.DefaultCellStyle = dataGridViewCellStyle1;
+            dataGridViewCellStyle5.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.address.DefaultCellStyle = dataGridViewCellStyle5;
             this.address.HeaderText = "recipient addres";
             this.address.MaxInputLength = 46;
             this.address.MinimumWidth = 6;
             this.address.Name = "address";
+            this.address.ReadOnly = true;
             this.address.Width = 325;
             // 
             // qty
             // 
-            dataGridViewCellStyle2.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.qty.DefaultCellStyle = dataGridViewCellStyle2;
+            dataGridViewCellStyle6.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.qty.DefaultCellStyle = dataGridViewCellStyle6;
             this.qty.HeaderText = "qty to give";
             this.qty.MinimumWidth = 6;
             this.qty.Name = "qty";
+            this.qty.ReadOnly = true;
             this.qty.Width = 111;
             // 
             // btnSave
@@ -248,6 +251,7 @@
             this.MinimumSize = new System.Drawing.Size(533, 699);
             this.Name = "ObjectGive";
             this.Text = "ObjectGive";
+            this.Load += new System.EventHandler(this.ObjectGive_Load);
             this.DragDrop += new System.Windows.Forms.DragEventHandler(this.Form1_DragDrop);
             this.DragEnter += new System.Windows.Forms.DragEventHandler(this.Form1_DragEnter);
             ((System.ComponentModel.ISupportInitialize)(this.addressQtyDataGridView)).EndInit();

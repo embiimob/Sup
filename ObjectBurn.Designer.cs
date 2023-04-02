@@ -28,8 +28,8 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle7 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle8 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle9 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle10 = new System.Windows.Forms.DataGridViewCellStyle();
             this.addressTextBox = new System.Windows.Forms.TextBox();
             this.qtyTextBox = new System.Windows.Forms.TextBox();
             this.addressQtyDataGridView = new System.Windows.Forms.DataGridView();
@@ -80,27 +80,30 @@
             this.qty});
             this.addressQtyDataGridView.Location = new System.Drawing.Point(12, 67);
             this.addressQtyDataGridView.Name = "addressQtyDataGridView";
+            this.addressQtyDataGridView.ReadOnly = true;
             this.addressQtyDataGridView.RowHeadersWidth = 51;
             this.addressQtyDataGridView.Size = new System.Drawing.Size(489, 422);
             this.addressQtyDataGridView.TabIndex = 2;
             // 
             // address
             // 
-            dataGridViewCellStyle7.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.address.DefaultCellStyle = dataGridViewCellStyle7;
+            dataGridViewCellStyle9.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.address.DefaultCellStyle = dataGridViewCellStyle9;
             this.address.HeaderText = "object address to burn";
             this.address.MaxInputLength = 46;
             this.address.MinimumWidth = 6;
             this.address.Name = "address";
+            this.address.ReadOnly = true;
             this.address.Width = 325;
             // 
             // qty
             // 
-            dataGridViewCellStyle8.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.qty.DefaultCellStyle = dataGridViewCellStyle8;
+            dataGridViewCellStyle10.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.qty.DefaultCellStyle = dataGridViewCellStyle10;
             this.qty.HeaderText = "qty to burn";
             this.qty.MinimumWidth = 6;
             this.qty.Name = "qty";
+            this.qty.ReadOnly = true;
             this.qty.Width = 111;
             // 
             // btnSave
