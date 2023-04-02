@@ -267,14 +267,5 @@ namespace SUP
             }
         }
 
-        private void addressTextBox_TextChanged(object sender, EventArgs e)
-        {
-
-        }
-
-        private void ObjectGive_Load(object sender, EventArgs e)
-        {
-            txtObjectAddress.Text = givaddress;
-        }
     }
 }

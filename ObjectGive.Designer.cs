@@ -59,7 +59,6 @@
             this.addressTextBox.Name = "addressTextBox";
             this.addressTextBox.Size = new System.Drawing.Size(337, 33);
             this.addressTextBox.TabIndex = 0;
-            this.addressTextBox.TextChanged += new System.EventHandler(this.addressTextBox_TextChanged);
             // 
             // qtyTextBox
             // 
@@ -79,10 +78,10 @@
             this.addressQtyDataGridView.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
             this.address,
             this.qty});
-            this.addressQtyDataGridView.Location = new System.Drawing.Point(12, 51);
+            this.addressQtyDataGridView.Location = new System.Drawing.Point(12, 68);
             this.addressQtyDataGridView.Name = "addressQtyDataGridView";
             this.addressQtyDataGridView.RowHeadersWidth = 51;
-            this.addressQtyDataGridView.Size = new System.Drawing.Size(491, 377);
+            this.addressQtyDataGridView.Size = new System.Drawing.Size(491, 360);
             this.addressQtyDataGridView.TabIndex = 2;
             // 
             // address
@@ -198,6 +197,7 @@
             // lblObjectStatus
             // 
             this.lblObjectStatus.AutoSize = true;
+            this.lblObjectStatus.ForeColor = System.Drawing.Color.White;
             this.lblObjectStatus.Location = new System.Drawing.Point(14, 50);
             this.lblObjectStatus.Name = "lblObjectStatus";
             this.lblObjectStatus.Size = new System.Drawing.Size(0, 15);
@@ -206,6 +206,7 @@
             // lblCost
             // 
             this.lblCost.AutoSize = true;
+            this.lblCost.ForeColor = System.Drawing.Color.White;
             this.lblCost.Location = new System.Drawing.Point(14, 508);
             this.lblCost.Name = "lblCost";
             this.lblCost.Size = new System.Drawing.Size(0, 15);
@@ -247,7 +248,6 @@
             this.MinimumSize = new System.Drawing.Size(533, 699);
             this.Name = "ObjectGive";
             this.Text = "ObjectGive";
-            this.Load += new System.EventHandler(this.ObjectGive_Load);
             this.DragDrop += new System.Windows.Forms.DragEventHandler(this.Form1_DragDrop);
             this.DragEnter += new System.Windows.Forms.DragEventHandler(this.Form1_DragEnter);
             ((System.ComponentModel.ISupportInitialize)(this.addressQtyDataGridView)).EndInit();
