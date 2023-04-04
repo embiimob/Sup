@@ -1,7 +1,7 @@
 # Sup!? 
 experimental decentralized state engine browser
 
-Sup!? is a demonstration of establishing a decentralized identity and tracking state changes with comments on immutable blockchain objects in a format familiar to NFT enthusiasts. The experimental Sup!? object browser is currently hardcoded to reference the bitcoin testnet mainchain. A production deployment will be released December 2023. Our goal is to give #teamworld ample time for testing and integrations.
+Sup!? is a demonstration of establishing a decentralized identity and tracking state changes with public and private comments on immutable blockchain objects in a format familiar to NFT enthusiasts. The experimental Sup!? object browser is currently hardcoded to reference the bitcoin testnet mainchain. A production deployment will be released December 2023. Our goal is to give #teamworld ample time for testing and integrations.
 
 This experiment is using an ancient blockchain protocol called P2FK (Pay to Future Key) invented by http://HugPuddle.org in 2013.
 
@@ -11,7 +11,7 @@ P2FK was directly inspired by the satoshi uploader  see --> https://cirosantilli
 
 ## **Installation**
 
-1. Download the Sup.v0.1.33-beta.zip file
+1. Download the Sup.v0.1.34-beta.zip file (at very bottom of the release page)
 2. Create a folder on your **fastest** disk drive with at least **50GB** free (it will be storing the bitcoin testnet blockchain)
 3. Unzip all contents into the folder
 4. Create a shortcut to SUP.exe and launch
@@ -19,8 +19,9 @@ P2FK was directly inspired by the satoshi uploader  see --> https://cirosantilli
 **You will need to sync a blockchain to perform your first Sup!? object search**
 1. Click the key button
 2. Launch a full bitcoin testnet mainchain node using the button provided
-3. Wait until testnet is fully synced. ( this part will take several hours )
-4. Type #flowersofwar in the main search box and hit enter
+3. Launch IPFS using the button provided "enable IPFS pinning"
+4. Wait until testnet is fully synced. ( this part will take several hours )
+5. Type #flowersofwar in the main search box and hit enter
 <br />
 <br /> 
 
