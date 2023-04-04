@@ -128,6 +128,14 @@ namespace SUP.P2FK
                 if (intProcessHeight != 0 && objectTransactions.Count() == 0) { return objectState; }
 
                 objectTransactions = Root.GetRootsByAddress(objectaddress, username, password, url, intProcessHeight, -1, versionByte);
+                
+                foreach (Root transaction in objectTransactions)
+                {
+                    using (var db = new DB(OBJ, @"root\sig"))
+                    {
+                        db.Delete(transaction.Signature);
+                    }
+                }
 
                 foreach (Root transaction in objectTransactions)
                 {
@@ -148,7 +156,7 @@ namespace SUP.P2FK
                         }
 
 
-                        if (sigSeen == null || sigSeen == transaction.TransactionId)
+                        if (sigSeen == null)
                         {
 
 
