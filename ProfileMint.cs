@@ -64,7 +64,6 @@ namespace SUP
 
                 maxsize = maxsize - (control.Text.Length + 5);
 
-
             }
 
 
@@ -151,7 +150,7 @@ namespace SUP
                 try { signature = rpcClient.SendCommand("signmessage", signatureAddress, BitConverter.ToString(hashValue).Replace("-", String.Empty)).ResultString; }
                 catch (Exception ex)
                 {
-                    lblObjectStatus.Text = ex.Message;
+                    lblCost.Text = ex.Message;
                     return;
                 }
 
@@ -201,7 +200,7 @@ namespace SUP
                         var results = a.SendMany(keyWithLargestValue, recipients);
                         lblTransactionID.Text = results;
                     }
-                    catch (Exception ex) { lblObjectStatus.Text = ex.Message; }
+                    catch (Exception ex) { lblCost.Text = ex.Message; }
 
 
                     ismint = false;
@@ -214,13 +213,7 @@ namespace SUP
 
         }
 
-
-
-
-
-
-
-      
+             
 
         private void txtIMG_TextChanged(object sender, EventArgs e)
         {
@@ -1101,31 +1094,14 @@ namespace SUP
         }
 
 
-        private void btnMint_Click(object sender, EventArgs e)
-        {
-
-            ismint = true;
-            UpdateRemainingChars();
-
-            OBJState OBJ = OBJState.GetObjectByAddress(txtObjectAddress.Text, "good-user", "better-password", @"http://127.0.0.1:18332");
-
-            if (OBJ.URN != null)
-            {
-                lblObjectStatus.Text = "created:[" + OBJ.CreatedDate.ToString("MM/dd/yyyy hh:mm:ss") + "]  locked:[" + OBJ.LockedDate.ToString("MM/dd/yyyy hh:mm:ss") + "]  last seen:[" + OBJ.ChangeDate.ToString("MM/dd/yyyy hh:mm:ss") + "]";
-                lblObjectStatus.Text = lblObjectStatus.Text.Replace("Monday, January 1, 0001", " unconfirmed ");
-
-            }
-        }
-
-
-
         public void LoadFormByAddress(string address)
         {
 
             PROState foundObject = PROState.GetProfileByAddress(address, "good-user", "better-password", "http://127.0.0.1:18332");
             if (foundObject.URN != null)
             {
-                lblObjectStatus.Text = "created date: [" + foundObject.CreatedDate.ToString("MM / dd / yyyy hh: mm: ss") + "]  last seen:[" + foundObject.ChangeDate.ToString("MM/dd/yyyy hh:mm:ss") + "]";
+                DateTime expirationDate = foundObject.ChangeDate.AddYears(3);
+                lblObjectStatus.Text = "created date: [" + foundObject.CreatedDate.ToString("MM/dd/yyyy hh:mm:ss") + "]  last change: [" + foundObject.ChangeDate.ToString("MM/dd/yyyy hh:mm:ss") + "]  expires: [" + expirationDate.ToString("MM/dd/yyyy hh:mm:ss") + "]";
 
                 if (lblObjectStatus.Text.Contains("Monday, January 1, 0001"))
                 {

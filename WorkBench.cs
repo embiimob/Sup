@@ -36,7 +36,7 @@ namespace SUP
                    
                     txtGetValue.Text = "";
                     
-                        using (var db = new DB(SUP, @"root\"+txtSearchAddress+@"\sup"))
+                        using (var db = new DB(SUP, @"root\"+txtSearchAddress.Text+@"\sup"))
                         {
                             LevelDB.Iterator it = db.CreateIterator();
                             for (
@@ -926,6 +926,13 @@ namespace SUP
             if (txtTransactionId.Text.Length > 42)
             {
                 try { System.IO.Directory.Delete(@"root\" + txtTransactionId.Text, true); } catch { }
+            }
+
+            var WORK = new Options { CreateIfMissing = true };
+            using (var db = new DB(WORK, @"root\tblock"))
+            {
+                db.Put(txtTransactionId.Text, "true");
+
             }
         }
 
