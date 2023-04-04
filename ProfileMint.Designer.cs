@@ -57,11 +57,11 @@
             this.txtURN = new System.Windows.Forms.TextBox();
             this.txtFirstName = new System.Windows.Forms.TextBox();
             this.txtIMG = new System.Windows.Forms.TextBox();
-            this.pictureBox2 = new System.Windows.Forms.PictureBox();
             this.txtBio = new System.Windows.Forms.TextBox();
             this.txtOBJJSON = new System.Windows.Forms.TextBox();
             this.txtOBJP2FK = new System.Windows.Forms.TextBox();
             this.txtAddressListJSON = new System.Windows.Forms.TextBox();
+            this.pictureBox2 = new System.Windows.Forms.PictureBox();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).BeginInit();
             this.SuspendLayout();
             // 
@@ -89,7 +89,7 @@
             this.lblCost.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.lblCost.AutoSize = true;
             this.lblCost.ForeColor = System.Drawing.Color.White;
-            this.lblCost.Location = new System.Drawing.Point(730, 529);
+            this.lblCost.Location = new System.Drawing.Point(730, 532);
             this.lblCost.Name = "lblCost";
             this.lblCost.Size = new System.Drawing.Size(0, 15);
             this.lblCost.TabIndex = 296;
@@ -99,7 +99,8 @@
             // 
             this.lblTransactionID.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.lblTransactionID.AutoSize = true;
-            this.lblTransactionID.Location = new System.Drawing.Point(400, 29);
+            this.lblTransactionID.ForeColor = System.Drawing.Color.White;
+            this.lblTransactionID.Location = new System.Drawing.Point(193, 4);
             this.lblTransactionID.Name = "lblTransactionID";
             this.lblTransactionID.Size = new System.Drawing.Size(0, 15);
             this.lblTransactionID.TabIndex = 297;
@@ -136,7 +137,7 @@
             // 
             this.lblObjectStatus.AutoSize = true;
             this.lblObjectStatus.ForeColor = System.Drawing.Color.White;
-            this.lblObjectStatus.Location = new System.Drawing.Point(193, 32);
+            this.lblObjectStatus.Location = new System.Drawing.Point(191, 28);
             this.lblObjectStatus.Name = "lblObjectStatus";
             this.lblObjectStatus.Size = new System.Drawing.Size(0, 15);
             this.lblObjectStatus.TabIndex = 356;
@@ -146,7 +147,7 @@
             this.btnObjectKeywords.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.btnObjectKeywords.Enabled = false;
             this.btnObjectKeywords.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold);
-            this.btnObjectKeywords.Location = new System.Drawing.Point(599, 543);
+            this.btnObjectKeywords.Location = new System.Drawing.Point(599, 548);
             this.btnObjectKeywords.Name = "btnObjectKeywords";
             this.btnObjectKeywords.Size = new System.Drawing.Size(109, 50);
             this.btnObjectKeywords.TabIndex = 11;
@@ -163,7 +164,7 @@
             this.flowKeywords.Cursor = System.Windows.Forms.Cursors.Default;
             this.flowKeywords.FlowDirection = System.Windows.Forms.FlowDirection.RightToLeft;
             this.flowKeywords.ForeColor = System.Drawing.Color.White;
-            this.flowKeywords.Location = new System.Drawing.Point(14, 543);
+            this.flowKeywords.Location = new System.Drawing.Point(14, 548);
             this.flowKeywords.Name = "flowKeywords";
             this.flowKeywords.Size = new System.Drawing.Size(573, 50);
             this.flowKeywords.TabIndex = 348;
@@ -257,7 +258,7 @@
             // 
             this.btnScan.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.btnScan.Font = new System.Drawing.Font("Segoe UI Emoji", 13.8F);
-            this.btnScan.Location = new System.Drawing.Point(725, 543);
+            this.btnScan.Location = new System.Drawing.Point(725, 548);
             this.btnScan.Name = "btnScan";
             this.btnScan.Size = new System.Drawing.Size(109, 50);
             this.btnScan.TabIndex = 13;
@@ -298,7 +299,7 @@
             this.btnMint.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.btnMint.Enabled = false;
             this.btnMint.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold);
-            this.btnMint.Location = new System.Drawing.Point(846, 543);
+            this.btnMint.Location = new System.Drawing.Point(846, 548);
             this.btnMint.Name = "btnMint";
             this.btnMint.Size = new System.Drawing.Size(109, 50);
             this.btnMint.TabIndex = 12;
@@ -445,16 +446,6 @@
             this.txtIMG.TabStop = false;
             this.txtIMG.TextChanged += new System.EventHandler(this.txtIMG_TextChanged);
             // 
-            // pictureBox2
-            // 
-            this.pictureBox2.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
-            this.pictureBox2.Location = new System.Drawing.Point(17, 18);
-            this.pictureBox2.Name = "pictureBox2";
-            this.pictureBox2.Size = new System.Drawing.Size(150, 150);
-            this.pictureBox2.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
-            this.pictureBox2.TabIndex = 342;
-            this.pictureBox2.TabStop = false;
-            // 
             // txtBio
             // 
             this.txtBio.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
@@ -506,6 +497,16 @@
             this.txtAddressListJSON.Size = new System.Drawing.Size(160, 193);
             this.txtAddressListJSON.TabIndex = 353;
             this.txtAddressListJSON.Visible = false;
+            // 
+            // pictureBox2
+            // 
+            this.pictureBox2.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
+            this.pictureBox2.Location = new System.Drawing.Point(17, 18);
+            this.pictureBox2.Name = "pictureBox2";
+            this.pictureBox2.Size = new System.Drawing.Size(150, 150);
+            this.pictureBox2.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
+            this.pictureBox2.TabIndex = 342;
+            this.pictureBox2.TabStop = false;
             // 
             // ProfileMint
             // 

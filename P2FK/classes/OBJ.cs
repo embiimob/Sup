@@ -1851,7 +1851,7 @@ namespace SUP.P2FK
         }
         public static object GetPublicMessagesByAddress(string objectaddress, string username, string password, string url, string versionByte = "111", int skip = 0, int qty = 20)
         {
-            GetObjectByAddress(objectaddress, username, password, url, versionByte);
+            Root.GetRootsByAddress(objectaddress, username, password, url,0,-1, versionByte);
                                   
             
             lock (SupLocker)
@@ -1904,7 +1904,7 @@ namespace SUP.P2FK
         }
         public static object GetPrivateMessagesByAddress(string objectaddress, string username, string password, string url, string versionByte = "111", int skip = 0, int qty = 10)
         {
-            GetObjectByAddress(objectaddress, username, password, url, versionByte);
+            Root.GetRootsByAddress(objectaddress, username, password, url, 0, -1, versionByte);
             lock (SupLocker)
             {
                 List<object> messages = new List<object>();

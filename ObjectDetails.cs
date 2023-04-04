@@ -1020,9 +1020,7 @@ namespace SUP
                         switch (objstate.Image.ToUpper().Substring(0, 4))
                         {
                             case "MZC:":
-                                root = Root.GetRootByTransactionId(transactionid, "good-user", "better-password", @"http://127.0.0.1:12832", "50");
-                                if (Directory.Exists(@"root\" + transactionid))
-                                {
+                                 root = Root.GetRootByTransactionId(transactionid, "good-user", "better-password", @"http://127.0.0.1:12832", "50");
                                     try
                                     {
 
@@ -1030,15 +1028,13 @@ namespace SUP
 
                                     }
                                     catch { }
-                                }
+                               
 
 
                                 break;
                             case "BTC:":
 
-                                root = Root.GetRootByTransactionId(transactionid, "good-user", "better-password", @"http://127.0.0.1:8332", "0");
-                                if (Directory.Exists(@"root\" + transactionid))
-                                {
+                                 root = Root.GetRootByTransactionId(transactionid, "good-user", "better-password", @"http://127.0.0.1:8332", "0");
                                     try
                                     {
 
@@ -1046,16 +1042,15 @@ namespace SUP
 
                                     }
                                     catch { }
-                                }
+                                
 
 
                                 break;
                             case "LTC:":
 
-                                root = Root.GetRootByTransactionId(transactionid, "good-user", "better-password", @"http://127.0.0.1:9332", "48");
 
-                                if (Directory.Exists(@"root\" + transactionid))
-                                {
+                                    root = Root.GetRootByTransactionId(transactionid, "good-user", "better-password", @"http://127.0.0.1:9332", "48");
+
                                     try
                                     {
 
@@ -1063,14 +1058,14 @@ namespace SUP
 
                                     }
                                     catch { }
-                                }
+                               
 
 
                                 break;
                             case "DOG:":
-                                root = Root.GetRootByTransactionId(transactionid, "good-user", "better-password", @"http://127.0.0.1:22555", "30");
-                                if (Directory.Exists(@"root\" + transactionid))
-                                {
+                               
+                                    root = Root.GetRootByTransactionId(transactionid, "good-user", "better-password", @"http://127.0.0.1:22555", "30");
+
                                     try
                                     {
 
@@ -1078,7 +1073,7 @@ namespace SUP
 
                                     }
                                     catch { }
-                                }
+                               
 
 
                                 break;
@@ -1086,62 +1081,96 @@ namespace SUP
                                 string transid = "empty";
                                 try { transid = objstate.Image.Substring(5, 46); } catch { }
 
-                                if (!System.IO.Directory.Exists("ipfs/" + transid + "-build"))
+                                if (!File.Exists(imgurn) && !File.Exists("ipfs/" + transid + "/artifact") && !File.Exists("ipfs/" + transid + "/artifact" + objstate.Image.Substring(objstate.Image.LastIndexOf('.'))))
                                 {
-                                    try { Directory.Delete("ipfs/" + transid, true); } catch { }
-                                    try { Directory.CreateDirectory("ipfs/" + transid); } catch { };
-                                    Directory.CreateDirectory("ipfs/" + transid + "-build");
-                                    Process process2 = new Process();
-                                    process2.StartInfo.FileName = @"ipfs\ipfs.exe";
-                                    process2.StartInfo.Arguments = "get " + objstate.Image.Substring(5, 46) + @" -o ipfs\" + transid;
-                                    process2.StartInfo.UseShellExecute = false;
-                                    process2.StartInfo.CreateNoWindow = true;
-                                    process2.Start();
-                                    process2.WaitForExit();
-                                    string fileName;
-                                    if (System.IO.File.Exists("ipfs/" + transid))
+                                    
+                                    if (!System.IO.Directory.Exists("ipfs/" + transid + "-build"))
                                     {
-                                        System.IO.File.Move("ipfs/" + transid, "ipfs/" + transid + "_tmp");
-                                        System.IO.Directory.CreateDirectory("ipfs/" + transid);
-                                        fileName = objstate.Image.Replace(@"//", "").Replace(@"\\", "").Substring(51);
-                                        if (fileName == "") { fileName = "artifact"; } else { fileName = fileName.Replace(@"/", "").Replace(@"\", ""); }
-                                        Directory.CreateDirectory("ipfs/" + transid);
-                                        System.IO.File.Move("ipfs/" + transid + "_tmp", imgurn);
-                                    }
-
-                                    if (System.IO.File.Exists("ipfs/" + transid + "/" + transid))
-                                    {
-                                        fileName = objstate.Image.Replace(@"//", "").Replace(@"\\", "").Substring(51);
-                                        if (fileName == "") { fileName = "artifact"; } else { fileName = fileName.Replace(@"/", "").Replace(@"\", ""); }
-
-                                        System.IO.File.Move("ipfs/" + transid + "/" + transid, imgurn);
-                                    }
-
-
-                                    Process process3 = new Process
-                                    {
-                                        StartInfo = new ProcessStartInfo
+                                        try { Directory.Delete("ipfs/" + transid, true); } catch { }
+                                        try { Directory.CreateDirectory("ipfs/" + transid); } catch { };
+                                        Directory.CreateDirectory("ipfs/" + transid + "-build");
+                                        Process process2 = new Process();
+                                        process2.StartInfo.FileName = @"ipfs\ipfs.exe";
+                                        process2.StartInfo.Arguments = "get " + objstate.Image.Substring(5, 46) + @" -o ipfs\" + transid;
+                                        process2.StartInfo.UseShellExecute = false;
+                                        process2.StartInfo.CreateNoWindow = true;
+                                        process2.Start();
+                                        process2.WaitForExit();
+                                        string fileName;
+                                        if (System.IO.File.Exists("ipfs/" + transid))
                                         {
-                                            FileName = @"ipfs\ipfs.exe",
-                                            Arguments = "pin add " + transid,
-                                            UseShellExecute = false,
-                                            CreateNoWindow = true
+                                            System.IO.File.Move("ipfs/" + transid, "ipfs/" + transid + "_tmp");
+                                            System.IO.Directory.CreateDirectory("ipfs/" + transid);
+                                            fileName = objstate.Image.Replace(@"//", "").Replace(@"\\", "").Substring(51);
+                                            if (fileName == "") { fileName = "artifact"; } else { fileName = fileName.Replace(@"/", "").Replace(@"\", ""); }
+                                            Directory.CreateDirectory("ipfs/" + transid);
+                                           
+                                            try { System.IO.File.Move("ipfs/" + transid + "_tmp", imgurn); }
+                                            catch (System.ArgumentException ex)
+                                            {
+                                                
+                                                    System.IO.File.Move("ipfs/" + transid + "_tmp", "ipfs/" + transid + "/artifact" + objstate.Image.Substring(objstate.Image.LastIndexOf('.')));
+                                                    imgurn = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + @"\ipfs\" + transid + @"\artifact" + objstate.Image.Substring(objstate.Image.LastIndexOf('.'));
+                                                
+                                            }
+
+
                                         }
-                                    };
-                                    process3.Start();
 
-                                    try { Directory.Delete("ipfs/" + transid + "-build", true); } catch { }
+                                        if (System.IO.File.Exists("ipfs/" + transid + "/" + transid))
+                                        {
+                                            fileName = objstate.Image.Replace(@"//", "").Replace(@"\\", "").Substring(51);
+                                            if (fileName == "") { fileName = "artifact"; } else { fileName = fileName.Replace(@"/", "").Replace(@"\", ""); }
 
 
-                                }                               
+                                            try { System.IO.File.Move("ipfs/" + transid + "/" + transid, imgurn); }
+                                            catch (System.ArgumentException ex)
+                                            {
+                                                
+                                                    System.IO.File.Move("ipfs/" + transid + "/" + transid, "ipfs/" + transid + "/artifact" + objstate.Image.Substring(objstate.Image.LastIndexOf('.')));
+                                                    imgurn = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + @"\ipfs\" + transid + @"\artifact" + objstate.Image.Substring(objstate.Image.LastIndexOf('.'));
+                                               
+                                            }
 
+
+
+                                        }
+
+
+                                        Process process3 = new Process
+                                        {
+                                            StartInfo = new ProcessStartInfo
+                                            {
+                                                FileName = @"ipfs\ipfs.exe",
+                                                Arguments = "pin add " + transid,
+                                                UseShellExecute = false,
+                                                CreateNoWindow = true
+                                            }
+                                        };
+                                        process3.Start();
+
+                                        try { Directory.Delete("ipfs/" + transid + "-build", true); } catch { }
+
+
+                                    }
+                                }
+                                else
+                                {
+                                    if (File.Exists("ipfs/" + transid + "/artifact")) { imgurn = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + @"\ipfs\" + transid + @"\artifact"; }
+                                    else
+                                    {
+                                        if (File.Exists("ipfs/" + objstate.Image.Substring(5, 46) + "/artifact" + objstate.Image.Substring(objstate.Image.LastIndexOf('.')))) { imgurn = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + @"\ipfs\" + objstate.Image.Substring(5, 46) + @"\artifact" + objstate.Image.Substring(objstate.Image.LastIndexOf('.')); }
+
+                                    }
+
+                                }
                                 break;
                             default:
                                 if (!txtIMG.Text.ToUpper().StartsWith("HTTP") && transactionid != "")
                                 {
-                                    root = Root.GetRootByTransactionId(transactionid, "good-user", "better-password", @"http://127.0.0.1:18332");
-                                    if (Directory.Exists(@"root\" + transactionid))
-                                    {
+                                   
+                                        root = Root.GetRootByTransactionId(transactionid, "good-user", "better-password", @"http://127.0.0.1:18332");
+
                                         try
                                         {
 
@@ -1149,7 +1178,7 @@ namespace SUP
 
                                         }
                                         catch { }
-                                    }
+                                   
                                 }
 
                                 break;
@@ -1173,70 +1202,71 @@ namespace SUP
                         {
                             case "MZC:":
 
+                               
                                 root = Root.GetRootByTransactionId(transactionid, "good-user", "better-password", @"http://127.0.0.1:12832", "50");
-                                if (Directory.Exists(@"root\" + transactionid))
+
+                                try
                                 {
-                                    try
-                                    {
 
                                         lblURNBlockDate.Text = "mazacoin verified: " + root.BlockDate.ToString("ddd, dd MMM yyyy hh:mm:ss");
 
                                     }
                                     catch { }
-                                }
+                               
 
                                 break;
                             case "BTC:":
 
+                              
                                 root = Root.GetRootByTransactionId(transactionid, "good-user", "better-password", @"http://127.0.0.1:8332", "0");
-                                if (Directory.Exists(@"root\" + transactionid))
+
+                                try
                                 {
-                                    try
-                                    {
 
                                         lblURNBlockDate.Text = "bitcoin verified: " + root.BlockDate.ToString("ddd, dd MMM yyyy hh:mm:ss");
 
                                     }
                                     catch { }
-                                }
+                              
 
 
                                 break;
                             case "LTC:":
 
+
                                 root = Root.GetRootByTransactionId(transactionid, "good-user", "better-password", @"http://127.0.0.1:9332", "48");
 
-                                if (Directory.Exists(@"root\" + transactionid))
+                                try
                                 {
-                                    try
-                                    {
 
                                         lblURNBlockDate.Text = "litecoin verified: " + root.BlockDate.ToString("ddd, dd MMM yyyy hh:mm:ss");
 
                                     }
                                     catch { }
-                                }
+                              
 
                                 break;
                             case "DOG:":
 
+                               
                                 root = Root.GetRootByTransactionId(transactionid, "good-user", "better-password", @"http://127.0.0.1:22555", "30");
-                                if (Directory.Exists(@"root\" + transactionid))
+
+                                try
                                 {
-                                    try
-                                    {
 
                                         lblURNBlockDate.Text = "dogecoin verified: " + root.BlockDate.ToString("ddd, dd MMM yyyy hh:mm:ss");
 
                                     }
                                     catch { }
-                                }
+                               
 
 
                                 break;
                             case "IPFS":
-                            
-                                if (!System.IO.Directory.Exists(@"ipfs/" + objstate.URN.Substring(5, 46) + "-build") )
+                            if (!File.Exists(urn) && !File.Exists("ipfs/" + objstate.URN.Substring(5, 46) + "/artifact") && !File.Exists("ipfs/" + objstate.URN.Substring(5, 46) + "/artifact" + objstate.URN.Substring(objstate.URN.LastIndexOf('.'))))
+                            {
+
+                                if (!System.IO.Directory.Exists(@"ipfs/" + objstate.URN.Substring(5, 46) + "-build"))
                                 {
 
                                     Task ipfsTask = Task.Run(() =>
@@ -1258,7 +1288,18 @@ namespace SUP
                                             fileName = objstate.URN.Replace(@"//", "").Replace(@"\\", "").Substring(51);
                                             if (fileName == "") { fileName = "artifact"; } else { fileName = fileName.Replace(@"/", "").Replace(@"\", ""); }
                                             Directory.CreateDirectory("ipfs/" + objstate.URN.Substring(5, 46));
-                                            System.IO.File.Move("ipfs/" + objstate.URN.Substring(5, 46) + "_tmp", urn);
+         
+                                            try { System.IO.File.Move("ipfs/" + objstate.URN.Substring(5, 46) + "_tmp", urn); }
+                                            catch (System.ArgumentException ex)
+                                            {
+                                                
+                                                    System.IO.File.Move("ipfs/" + objstate.URN.Substring(5, 46) + "_tmp", "ipfs/" + objstate.URN.Substring(5, 46) + "/artifact" + objstate.URN.Substring(objstate.URN.LastIndexOf('.')));
+                                                    urn = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + @"\ipfs\" + objstate.URN.Substring(5, 46) + @"\artifact" + objstate.URN.Substring(objstate.URN.LastIndexOf('.'));
+                                               
+                                            }
+
+
+
                                         }
 
                                         if (System.IO.File.Exists("ipfs/" + objstate.URN.Substring(5, 46) + "/" + objstate.URN.Substring(5, 46)))
@@ -1266,7 +1307,14 @@ namespace SUP
                                             fileName = objstate.URN.Replace(@"//", "").Replace(@"\\", "").Substring(51);
                                             if (fileName == "") { fileName = "artifact"; } else { fileName = fileName.Replace(@"/", "").Replace(@"\", ""); }
 
-                                            System.IO.File.Move("ipfs/" + objstate.URN.Substring(5, 46) + "/" + objstate.URN.Substring(5, 46), urn);
+                                            try { System.IO.File.Move("ipfs/" + objstate.URN.Substring(5, 46) + "/" + objstate.URN.Substring(5, 46), urn); }
+                                            catch (System.ArgumentException ex)
+                                            {
+                                                
+                                                    System.IO.File.Move("ipfs/" + objstate.URN.Substring(5, 46) + "/" + objstate.URN.Substring(5, 46), "ipfs/" + objstate.URN.Substring(5, 46) + "/artifact" + objstate.URN.Substring(objstate.URN.LastIndexOf('.')));
+                                                    urn = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + @"\ipfs\" + objstate.URN.Substring(5, 46) + @"\artifact" + objstate.URN.Substring(objstate.URN.LastIndexOf('.'));
+                                                
+                                            }
                                         }
 
                                         var SUP = new Options { CreateIfMissing = true };
@@ -1303,24 +1351,33 @@ namespace SUP
                                 {
                                     lblURNBlockDate.Text = "ipfs verified: " + System.DateTime.UtcNow.ToString("ddd, dd MMM yyyy hh:mm:ss");
                                 }
+                            }
+                            else
+                            {
+                                if (File.Exists("ipfs/" + objstate.URN.Substring(5, 46) + "/artifact")) { urn = "ipfs/" + objstate.URN.Substring(5, 46) + "/artifact"; }
+                                else
+                                {
+                                    if (File.Exists("ipfs/" + objstate.URN.Substring(5, 46) + "/artifact" + objstate.URN.Substring(objstate.URN.LastIndexOf('.')))) { urn = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + @"\ipfs\" + objstate.URN.Substring(5, 46) + @"\artifact" + objstate.URN.Substring(objstate.URN.LastIndexOf('.')); }
 
-                                break;
+                                }
+                            }
+                            break;
                             default:
                                 if (!txtURN.Text.ToUpper().StartsWith("HTTP"))
                                 {
-                                    root = Root.GetRootByTransactionId(transactionid, "good-user", "better-password", @"http://127.0.0.1:18332");
                                     if (transactionid != "")
                                     {
-                                        if (Directory.Exists(@"root\" + transactionid))
+                                       
+                                        root = Root.GetRootByTransactionId(transactionid, "good-user", "better-password", @"http://127.0.0.1:18332");
+
+                                        try
                                         {
-                                            try
-                                            {
 
                                                 lblURNBlockDate.Text = "bitcoin-t verified: " + root.BlockDate.ToString("ddd, dd MMM yyyy hh:mm:ss");
 
                                             }
                                             catch { }
-                                        }
+                                       
                                     }
 
 
@@ -1349,9 +1406,9 @@ namespace SUP
                         {
                             case "MZC:":
 
-                                root = Root.GetRootByTransactionId(transactionid, "good-user", "better-password", @"http://127.0.0.1:12832", "50");
-                                if (Directory.Exists(@"root\" + transactionid))
-                                {
+                               
+                                    root = Root.GetRootByTransactionId(transactionid, "good-user", "better-password", @"http://127.0.0.1:12832", "50");
+
                                     try
                                     {
 
@@ -1359,14 +1416,14 @@ namespace SUP
 
                                     }
                                     catch { }
-                                }
+                                
 
                                 break;
                             case "BTC:":
 
-                                root = Root.GetRootByTransactionId(transactionid, "good-user", "better-password", @"http://127.0.0.1:8332", "0");
-                                if (Directory.Exists(@"root\" + transactionid))
-                                {
+                               
+                                    root = Root.GetRootByTransactionId(transactionid, "good-user", "better-password", @"http://127.0.0.1:8332", "0");
+
                                     try
                                     {
 
@@ -1374,14 +1431,14 @@ namespace SUP
 
                                     }
                                     catch { }
-                                }
+                               
 
                                 break;
                             case "LTC:":
 
-                                root = Root.GetRootByTransactionId(transactionid, "good-user", "better-password", @"http://127.0.0.1:9332", "48");
-                                if (Directory.Exists(@"root\" + transactionid))
-                                {
+                               
+                                    root = Root.GetRootByTransactionId(transactionid, "good-user", "better-password", @"http://127.0.0.1:9332", "48");
+
                                     try
                                     {
 
@@ -1389,16 +1446,16 @@ namespace SUP
 
                                     }
                                     catch { }
-                                }
+                                
 
 
                                 break;
                             case "DOG:":
 
-                                root = Root.GetRootByTransactionId(transactionid, "good-user", "better-password", @"http://127.0.0.1:22555", "30");
 
-                                if (Directory.Exists(@"root\" + transactionid))
-                                {
+                               
+                                    root = Root.GetRootByTransactionId(transactionid, "good-user", "better-password", @"http://127.0.0.1:22555", "30");
+
                                     try
                                     {
 
@@ -1406,7 +1463,7 @@ namespace SUP
 
                                     }
                                     catch { }
-                                }
+                               
 
                                 break;
                             case "IPFS":
@@ -1437,6 +1494,17 @@ namespace SUP
                                             if (fileName == "") { fileName = "artifact"; } else { fileName = fileName.Replace(@"/", "").Replace(@"\", ""); }
                                             Directory.CreateDirectory("ipfs/" + objstate.URI.Substring(5, 46));
                                             System.IO.File.Move("ipfs/" + objstate.URI.Substring(5, 46) + "_tmp", uriurn);
+
+                                            try { System.IO.File.Move("ipfs/" + objstate.URI.Substring(5, 46) + "_tmp", uriurn); }
+                                            catch (System.ArgumentException ex)
+                                            {
+                                                
+                                                    System.IO.File.Move("ipfs/" + objstate.URI.Substring(5, 46) + "_tmp", "ipfs/" + objstate.URI.Substring(5, 46) + "/artifact" + objstate.URI.Substring(objstate.URI.LastIndexOf('.')));
+                                                    uriurn = "ipfs/" + objstate.URI.Substring(5, 46) + "/artifact" + objstate.URI.Substring(objstate.URI.LastIndexOf('.'));
+                                                
+                                            }
+
+
                                         }
 
                                         if (System.IO.File.Exists("ipfs/" + objstate.URI.Substring(5, 46) + "/" + objstate.URI.Substring(5, 46)))
@@ -1444,7 +1512,14 @@ namespace SUP
                                             fileName = objstate.URI.Replace(@"//", "").Replace(@"\\", "").Substring(51);
                                             if (fileName == "") { fileName = "artifact"; } else { fileName = fileName.Replace(@"/", "").Replace(@"\", ""); }
 
-                                            System.IO.File.Move("ipfs/" + objstate.URI.Substring(5, 46) + "/" + objstate.URI.Substring(5, 46), uriurn);
+                                            try { System.IO.File.Move("ipfs/" + objstate.URI.Substring(5, 46) + "/" + objstate.URI.Substring(5, 46), uriurn); }
+                                            catch (System.ArgumentException ex)
+                                            {
+                                                
+                                                    System.IO.File.Move("ipfs/" + objstate.URI.Substring(5, 46) + "/" + objstate.URI.Substring(5, 46), "ipfs/" + objstate.URI.Substring(5, 46) + "/artifact" + objstate.URI.Substring(objstate.URI.LastIndexOf('.')));
+                                                    uriurn = "ipfs/" + objstate.URI.Substring(5, 46) + "/artifact" + objstate.URI.Substring(objstate.URI.LastIndexOf('.'));
+                                               
+                                            }
                                         }
                                         var SUP = new Options { CreateIfMissing = true };
 
@@ -1487,8 +1562,7 @@ namespace SUP
                                 if (!txtURI.Text.ToUpper().StartsWith("HTTP") && transactionid != "")
                                 {
                                     root = Root.GetRootByTransactionId(transactionid, "good-user", "better-password", @"http://127.0.0.1:18332");
-                                    if (Directory.Exists(@"root\" + transactionid))
-                                    {
+                                   
                                         try
                                         {
 
@@ -1496,7 +1570,7 @@ namespace SUP
 
                                         }
                                         catch { }
-                                    }
+                                    
                                 }
                                 break;
                         }
@@ -1618,8 +1692,16 @@ namespace SUP
                 switch (extension.ToLower())
                 {
                     case "":
-                        lblPleaseStandBy.Text = txtURN.Text;
-                        lblPleaseStandBy.Visible = true;
+
+                        if (File.Exists(urn))
+                        {
+                            pictureBox1.ImageLocation = urn;
+                        }
+                        else
+                        {
+                            lblPleaseStandBy.Text = txtURN.Text;
+                            lblPleaseStandBy.Visible = true;
+                        }
                         break;
                     case ".exe":
                     case ".dll":

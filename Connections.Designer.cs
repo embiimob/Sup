@@ -168,46 +168,46 @@
             this.panel1.Controls.Add(this.label1);
             this.panel1.Location = new System.Drawing.Point(9, 3);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(644, 480);
+            this.panel1.Size = new System.Drawing.Size(706, 517);
             this.panel1.TabIndex = 1;
             // 
             // btnPurgeFound
             // 
-            this.btnPurgeFound.Location = new System.Drawing.Point(212, 302);
+            this.btnPurgeFound.Location = new System.Drawing.Point(200, 302);
             this.btnPurgeFound.Name = "btnPurgeFound";
-            this.btnPurgeFound.Size = new System.Drawing.Size(63, 23);
+            this.btnPurgeFound.Size = new System.Drawing.Size(93, 23);
             this.btnPurgeFound.TabIndex = 159;
-            this.btnPurgeFound.Text = "found";
+            this.btnPurgeFound.Text = "purge found";
             this.btnPurgeFound.UseVisualStyleBackColor = true;
             this.btnPurgeFound.Click += new System.EventHandler(this.btnPurgeFound_Click);
             // 
             // brnPurgeMute
             // 
-            this.brnPurgeMute.Location = new System.Drawing.Point(143, 302);
+            this.brnPurgeMute.Location = new System.Drawing.Point(101, 302);
             this.brnPurgeMute.Name = "brnPurgeMute";
-            this.brnPurgeMute.Size = new System.Drawing.Size(63, 23);
+            this.brnPurgeMute.Size = new System.Drawing.Size(93, 23);
             this.brnPurgeMute.TabIndex = 158;
-            this.brnPurgeMute.Text = "mute";
+            this.brnPurgeMute.Text = "purge mute";
             this.brnPurgeMute.UseVisualStyleBackColor = true;
             this.brnPurgeMute.Click += new System.EventHandler(this.brnPurgeMute_Click);
             // 
             // btnPurgeBlock
             // 
-            this.btnPurgeBlock.Location = new System.Drawing.Point(74, 302);
+            this.btnPurgeBlock.Location = new System.Drawing.Point(6, 302);
             this.btnPurgeBlock.Name = "btnPurgeBlock";
-            this.btnPurgeBlock.Size = new System.Drawing.Size(63, 23);
+            this.btnPurgeBlock.Size = new System.Drawing.Size(89, 23);
             this.btnPurgeBlock.TabIndex = 157;
-            this.btnPurgeBlock.Text = "block";
+            this.btnPurgeBlock.Text = "purge block";
             this.btnPurgeBlock.UseVisualStyleBackColor = true;
             this.btnPurgeBlock.Click += new System.EventHandler(this.btnPurgeBlock_Click);
             // 
             // btnClearIPFSisLoadingCache
             // 
-            this.btnClearIPFSisLoadingCache.Location = new System.Drawing.Point(486, 255);
+            this.btnClearIPFSisLoadingCache.Location = new System.Drawing.Point(527, 255);
             this.btnClearIPFSisLoadingCache.Name = "btnClearIPFSisLoadingCache";
             this.btnClearIPFSisLoadingCache.Size = new System.Drawing.Size(146, 23);
             this.btnClearIPFSisLoadingCache.TabIndex = 156;
-            this.btnClearIPFSisLoadingCache.Text = "clear isloading cache";
+            this.btnClearIPFSisLoadingCache.Text = "purge isloading cache";
             this.btnClearIPFSisLoadingCache.UseVisualStyleBackColor = true;
             this.btnClearIPFSisLoadingCache.Click += new System.EventHandler(this.button2_Click_1);
             // 
@@ -217,7 +217,7 @@
             this.label16.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label16.Location = new System.Drawing.Point(3, 83);
             this.label16.Name = "label16";
-            this.label16.Size = new System.Drawing.Size(65, 13);
+            this.label16.Size = new System.Drawing.Size(82, 17);
             this.label16.TabIndex = 155;
             this.label16.Text = "side chain";
             // 
@@ -225,9 +225,9 @@
             // 
             this.checkBox4.AutoSize = true;
             this.checkBox4.Enabled = false;
-            this.checkBox4.Location = new System.Drawing.Point(505, 218);
+            this.checkBox4.Location = new System.Drawing.Point(546, 218);
             this.checkBox4.Name = "checkBox4";
-            this.checkBox4.Size = new System.Drawing.Size(58, 17);
+            this.checkBox4.Size = new System.Drawing.Size(65, 19);
             this.checkBox4.TabIndex = 146;
             this.checkBox4.Text = "testnet";
             this.checkBox4.UseVisualStyleBackColor = true;
@@ -235,7 +235,7 @@
             // textBox16
             // 
             this.textBox16.Enabled = false;
-            this.textBox16.Location = new System.Drawing.Point(371, 214);
+            this.textBox16.Location = new System.Drawing.Point(412, 214);
             this.textBox16.Name = "textBox16";
             this.textBox16.Size = new System.Drawing.Size(55, 20);
             this.textBox16.TabIndex = 145;
@@ -243,7 +243,7 @@
             // 
             // btnDOGE
             // 
-            this.btnDOGE.Location = new System.Drawing.Point(578, 212);
+            this.btnDOGE.Location = new System.Drawing.Point(619, 212);
             this.btnDOGE.Name = "btnDOGE";
             this.btnDOGE.Size = new System.Drawing.Size(54, 23);
             this.btnDOGE.TabIndex = 144;
@@ -254,16 +254,16 @@
             // textBox17
             // 
             this.textBox17.Enabled = false;
-            this.textBox17.Location = new System.Drawing.Point(80, 214);
+            this.textBox17.Location = new System.Drawing.Point(98, 214);
             this.textBox17.Name = "textBox17";
-            this.textBox17.Size = new System.Drawing.Size(65, 20);
+            this.textBox17.Size = new System.Drawing.Size(75, 20);
             this.textBox17.TabIndex = 140;
             this.textBox17.Text = "good-user";
             // 
             // textBox18
             // 
             this.textBox18.Enabled = false;
-            this.textBox18.Location = new System.Drawing.Point(151, 214);
+            this.textBox18.Location = new System.Drawing.Point(192, 214);
             this.textBox18.Name = "textBox18";
             this.textBox18.Size = new System.Drawing.Size(89, 20);
             this.textBox18.TabIndex = 141;
@@ -272,7 +272,7 @@
             // textBox19
             // 
             this.textBox19.Enabled = false;
-            this.textBox19.Location = new System.Drawing.Point(246, 214);
+            this.textBox19.Location = new System.Drawing.Point(287, 214);
             this.textBox19.Name = "textBox19";
             this.textBox19.Size = new System.Drawing.Size(100, 20);
             this.textBox19.TabIndex = 142;
@@ -281,7 +281,7 @@
             // textBox20
             // 
             this.textBox20.Enabled = false;
-            this.textBox20.Location = new System.Drawing.Point(437, 214);
+            this.textBox20.Location = new System.Drawing.Point(478, 214);
             this.textBox20.Name = "textBox20";
             this.textBox20.Size = new System.Drawing.Size(43, 20);
             this.textBox20.TabIndex = 143;
@@ -290,7 +290,7 @@
             // textBox21
             // 
             this.textBox21.Enabled = false;
-            this.textBox21.Location = new System.Drawing.Point(6, 216);
+            this.textBox21.Location = new System.Drawing.Point(17, 216);
             this.textBox21.Name = "textBox21";
             this.textBox21.Size = new System.Drawing.Size(45, 20);
             this.textBox21.TabIndex = 139;
@@ -300,9 +300,9 @@
             // 
             this.checkBox5.AutoSize = true;
             this.checkBox5.Enabled = false;
-            this.checkBox5.Location = new System.Drawing.Point(505, 189);
+            this.checkBox5.Location = new System.Drawing.Point(546, 189);
             this.checkBox5.Name = "checkBox5";
-            this.checkBox5.Size = new System.Drawing.Size(58, 17);
+            this.checkBox5.Size = new System.Drawing.Size(65, 19);
             this.checkBox5.TabIndex = 138;
             this.checkBox5.Text = "testnet";
             this.checkBox5.UseVisualStyleBackColor = true;
@@ -310,7 +310,7 @@
             // textBox22
             // 
             this.textBox22.Enabled = false;
-            this.textBox22.Location = new System.Drawing.Point(371, 185);
+            this.textBox22.Location = new System.Drawing.Point(412, 185);
             this.textBox22.Name = "textBox22";
             this.textBox22.Size = new System.Drawing.Size(55, 20);
             this.textBox22.TabIndex = 137;
@@ -318,7 +318,7 @@
             // 
             // btnLTC
             // 
-            this.btnLTC.Location = new System.Drawing.Point(578, 183);
+            this.btnLTC.Location = new System.Drawing.Point(619, 183);
             this.btnLTC.Name = "btnLTC";
             this.btnLTC.Size = new System.Drawing.Size(54, 23);
             this.btnLTC.TabIndex = 136;
@@ -329,16 +329,16 @@
             // textBox23
             // 
             this.textBox23.Enabled = false;
-            this.textBox23.Location = new System.Drawing.Point(80, 185);
+            this.textBox23.Location = new System.Drawing.Point(98, 185);
             this.textBox23.Name = "textBox23";
-            this.textBox23.Size = new System.Drawing.Size(65, 20);
+            this.textBox23.Size = new System.Drawing.Size(75, 20);
             this.textBox23.TabIndex = 132;
             this.textBox23.Text = "good-user";
             // 
             // textBox24
             // 
             this.textBox24.Enabled = false;
-            this.textBox24.Location = new System.Drawing.Point(151, 185);
+            this.textBox24.Location = new System.Drawing.Point(192, 185);
             this.textBox24.Name = "textBox24";
             this.textBox24.Size = new System.Drawing.Size(89, 20);
             this.textBox24.TabIndex = 133;
@@ -347,7 +347,7 @@
             // textBox25
             // 
             this.textBox25.Enabled = false;
-            this.textBox25.Location = new System.Drawing.Point(246, 185);
+            this.textBox25.Location = new System.Drawing.Point(287, 185);
             this.textBox25.Name = "textBox25";
             this.textBox25.Size = new System.Drawing.Size(100, 20);
             this.textBox25.TabIndex = 134;
@@ -356,7 +356,7 @@
             // textBox27
             // 
             this.textBox27.Enabled = false;
-            this.textBox27.Location = new System.Drawing.Point(437, 185);
+            this.textBox27.Location = new System.Drawing.Point(478, 185);
             this.textBox27.Name = "textBox27";
             this.textBox27.Size = new System.Drawing.Size(43, 20);
             this.textBox27.TabIndex = 135;
@@ -365,7 +365,7 @@
             // textBox28
             // 
             this.textBox28.Enabled = false;
-            this.textBox28.Location = new System.Drawing.Point(6, 187);
+            this.textBox28.Location = new System.Drawing.Point(17, 187);
             this.textBox28.Name = "textBox28";
             this.textBox28.Size = new System.Drawing.Size(45, 20);
             this.textBox28.TabIndex = 131;
@@ -375,7 +375,7 @@
             // 
             this.pictureBox1.Image = ((System.Drawing.Image)(resources.GetObject("pictureBox1.Image")));
             this.pictureBox1.InitialImage = ((System.Drawing.Image)(resources.GetObject("pictureBox1.InitialImage")));
-            this.pictureBox1.Location = new System.Drawing.Point(317, 302);
+            this.pictureBox1.Location = new System.Drawing.Point(330, 294);
             this.pictureBox1.Name = "pictureBox1";
             this.pictureBox1.Size = new System.Drawing.Size(40, 40);
             this.pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
@@ -384,17 +384,17 @@
             // 
             // btnPurge
             // 
-            this.btnPurge.Location = new System.Drawing.Point(3, 302);
+            this.btnPurge.Location = new System.Drawing.Point(580, 302);
             this.btnPurge.Name = "btnPurge";
-            this.btnPurge.Size = new System.Drawing.Size(65, 23);
+            this.btnPurge.Size = new System.Drawing.Size(93, 23);
             this.btnPurge.TabIndex = 129;
-            this.btnPurge.Text = "purge all";
+            this.btnPurge.Text = "purge root";
             this.btnPurge.UseVisualStyleBackColor = true;
             this.btnPurge.Click += new System.EventHandler(this.btnPurge_Click);
             // 
             // btnPurgeIPFS
             // 
-            this.btnPurgeIPFS.Location = new System.Drawing.Point(376, 255);
+            this.btnPurgeIPFS.Location = new System.Drawing.Point(412, 255);
             this.btnPurgeIPFS.Name = "btnPurgeIPFS";
             this.btnPurgeIPFS.Size = new System.Drawing.Size(104, 23);
             this.btnPurgeIPFS.TabIndex = 128;
@@ -437,18 +437,18 @@
             // 
             this.label15.AutoSize = true;
             this.label15.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label15.Location = new System.Drawing.Point(374, 316);
+            this.label15.Location = new System.Drawing.Point(382, 308);
             this.label15.Name = "label15";
-            this.label15.Size = new System.Drawing.Size(116, 13);
+            this.label15.Size = new System.Drawing.Size(146, 17);
             this.label15.TabIndex = 124;
-            this.label15.Text = "Sup!? v0.1.33-beta";
+            this.label15.Text = "Sup!? v0.1.34-beta";
             // 
             // label14
             // 
             this.label14.AutoSize = true;
-            this.label14.Location = new System.Drawing.Point(311, 352);
+            this.label14.Location = new System.Drawing.Point(310, 349);
             this.label14.Name = "label14";
-            this.label14.Size = new System.Drawing.Size(324, 104);
+            this.label14.Size = new System.Drawing.Size(369, 120);
             this.label14.TabIndex = 123;
             this.label14.Text = resources.GetString("label14.Text");
             // 
@@ -456,9 +456,9 @@
             // 
             this.checkBox2.AutoSize = true;
             this.checkBox2.Enabled = false;
-            this.checkBox2.Location = new System.Drawing.Point(505, 158);
+            this.checkBox2.Location = new System.Drawing.Point(546, 158);
             this.checkBox2.Name = "checkBox2";
-            this.checkBox2.Size = new System.Drawing.Size(58, 17);
+            this.checkBox2.Size = new System.Drawing.Size(65, 19);
             this.checkBox2.TabIndex = 122;
             this.checkBox2.Text = "testnet";
             this.checkBox2.UseVisualStyleBackColor = true;
@@ -466,7 +466,7 @@
             // textBox5
             // 
             this.textBox5.Enabled = false;
-            this.textBox5.Location = new System.Drawing.Point(371, 154);
+            this.textBox5.Location = new System.Drawing.Point(412, 154);
             this.textBox5.Name = "textBox5";
             this.textBox5.Size = new System.Drawing.Size(55, 20);
             this.textBox5.TabIndex = 121;
@@ -474,7 +474,7 @@
             // 
             // btnMZC
             // 
-            this.btnMZC.Location = new System.Drawing.Point(578, 152);
+            this.btnMZC.Location = new System.Drawing.Point(619, 152);
             this.btnMZC.Name = "btnMZC";
             this.btnMZC.Size = new System.Drawing.Size(54, 23);
             this.btnMZC.TabIndex = 120;
@@ -485,16 +485,16 @@
             // textBox11
             // 
             this.textBox11.Enabled = false;
-            this.textBox11.Location = new System.Drawing.Point(80, 154);
+            this.textBox11.Location = new System.Drawing.Point(98, 154);
             this.textBox11.Name = "textBox11";
-            this.textBox11.Size = new System.Drawing.Size(65, 20);
+            this.textBox11.Size = new System.Drawing.Size(75, 20);
             this.textBox11.TabIndex = 116;
             this.textBox11.Text = "good-user";
             // 
             // textBox12
             // 
             this.textBox12.Enabled = false;
-            this.textBox12.Location = new System.Drawing.Point(151, 154);
+            this.textBox12.Location = new System.Drawing.Point(192, 154);
             this.textBox12.Name = "textBox12";
             this.textBox12.Size = new System.Drawing.Size(89, 20);
             this.textBox12.TabIndex = 117;
@@ -503,7 +503,7 @@
             // textBox13
             // 
             this.textBox13.Enabled = false;
-            this.textBox13.Location = new System.Drawing.Point(246, 154);
+            this.textBox13.Location = new System.Drawing.Point(287, 154);
             this.textBox13.Name = "textBox13";
             this.textBox13.Size = new System.Drawing.Size(100, 20);
             this.textBox13.TabIndex = 118;
@@ -512,7 +512,7 @@
             // textBox14
             // 
             this.textBox14.Enabled = false;
-            this.textBox14.Location = new System.Drawing.Point(437, 154);
+            this.textBox14.Location = new System.Drawing.Point(478, 154);
             this.textBox14.Name = "textBox14";
             this.textBox14.Size = new System.Drawing.Size(43, 20);
             this.textBox14.TabIndex = 119;
@@ -521,7 +521,7 @@
             // textBox15
             // 
             this.textBox15.Enabled = false;
-            this.textBox15.Location = new System.Drawing.Point(6, 156);
+            this.textBox15.Location = new System.Drawing.Point(17, 156);
             this.textBox15.Name = "textBox15";
             this.textBox15.Size = new System.Drawing.Size(45, 20);
             this.textBox15.TabIndex = 114;
@@ -530,7 +530,7 @@
             // textBox4
             // 
             this.textBox4.Enabled = false;
-            this.textBox4.Location = new System.Drawing.Point(437, 41);
+            this.textBox4.Location = new System.Drawing.Point(478, 41);
             this.textBox4.Name = "textBox4";
             this.textBox4.Size = new System.Drawing.Size(43, 20);
             this.textBox4.TabIndex = 113;
@@ -539,16 +539,16 @@
             // textBox1
             // 
             this.textBox1.Enabled = false;
-            this.textBox1.Location = new System.Drawing.Point(80, 37);
+            this.textBox1.Location = new System.Drawing.Point(98, 37);
             this.textBox1.Name = "textBox1";
-            this.textBox1.Size = new System.Drawing.Size(65, 20);
+            this.textBox1.Size = new System.Drawing.Size(75, 20);
             this.textBox1.TabIndex = 110;
             this.textBox1.Text = "good-user";
             // 
             // textBox2
             // 
             this.textBox2.Enabled = false;
-            this.textBox2.Location = new System.Drawing.Point(151, 37);
+            this.textBox2.Location = new System.Drawing.Point(192, 37);
             this.textBox2.Name = "textBox2";
             this.textBox2.Size = new System.Drawing.Size(89, 20);
             this.textBox2.TabIndex = 111;
@@ -557,7 +557,7 @@
             // textBox3
             // 
             this.textBox3.Enabled = false;
-            this.textBox3.Location = new System.Drawing.Point(246, 37);
+            this.textBox3.Location = new System.Drawing.Point(287, 37);
             this.textBox3.Name = "textBox3";
             this.textBox3.Size = new System.Drawing.Size(100, 20);
             this.textBox3.TabIndex = 112;
@@ -566,54 +566,54 @@
             // label13
             // 
             this.label13.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label13.Location = new System.Drawing.Point(6, 337);
+            this.label13.Location = new System.Drawing.Point(15, 349);
             this.label13.Name = "label13";
-            this.label13.Size = new System.Drawing.Size(269, 132);
+            this.label13.Size = new System.Drawing.Size(278, 127);
             this.label13.TabIndex = 109;
             this.label13.Text = resources.GetString("label13.Text");
             // 
             // label8
             // 
             this.label8.AutoSize = true;
-            this.label8.Location = new System.Drawing.Point(368, 106);
+            this.label8.Location = new System.Drawing.Point(409, 106);
             this.label8.Name = "label8";
-            this.label8.Size = new System.Drawing.Size(25, 13);
+            this.label8.Size = new System.Drawing.Size(28, 15);
             this.label8.TabIndex = 108;
             this.label8.Text = "port";
             // 
             // label9
             // 
             this.label9.AutoSize = true;
-            this.label9.Location = new System.Drawing.Point(434, 106);
+            this.label9.Location = new System.Drawing.Point(475, 106);
             this.label9.Name = "label9";
-            this.label9.Size = new System.Drawing.Size(64, 13);
+            this.label9.Size = new System.Drawing.Size(71, 15);
             this.label9.TabIndex = 107;
             this.label9.Text = "version byte";
             // 
             // label10
             // 
             this.label10.AutoSize = true;
-            this.label10.Location = new System.Drawing.Point(243, 106);
+            this.label10.Location = new System.Drawing.Point(284, 106);
             this.label10.Name = "label10";
-            this.label10.Size = new System.Drawing.Size(28, 13);
+            this.label10.Size = new System.Drawing.Size(31, 15);
             this.label10.TabIndex = 106;
             this.label10.Text = "path";
             // 
             // label11
             // 
             this.label11.AutoSize = true;
-            this.label11.Location = new System.Drawing.Point(148, 106);
+            this.label11.Location = new System.Drawing.Point(189, 106);
             this.label11.Name = "label11";
-            this.label11.Size = new System.Drawing.Size(52, 13);
+            this.label11.Size = new System.Drawing.Size(60, 15);
             this.label11.TabIndex = 105;
             this.label11.Text = "password";
             // 
             // label12
             // 
             this.label12.AutoSize = true;
-            this.label12.Location = new System.Drawing.Point(80, 106);
+            this.label12.Location = new System.Drawing.Point(98, 106);
             this.label12.Name = "label12";
-            this.label12.Size = new System.Drawing.Size(29, 13);
+            this.label12.Size = new System.Drawing.Size(34, 15);
             this.label12.TabIndex = 104;
             this.label12.Text = "login";
             // 
@@ -621,9 +621,9 @@
             // 
             this.checkBox3.AutoSize = true;
             this.checkBox3.Enabled = false;
-            this.checkBox3.Location = new System.Drawing.Point(505, 129);
+            this.checkBox3.Location = new System.Drawing.Point(546, 129);
             this.checkBox3.Name = "checkBox3";
-            this.checkBox3.Size = new System.Drawing.Size(58, 17);
+            this.checkBox3.Size = new System.Drawing.Size(65, 19);
             this.checkBox3.TabIndex = 103;
             this.checkBox3.Text = "testnet";
             this.checkBox3.UseVisualStyleBackColor = true;
@@ -631,7 +631,7 @@
             // textBox6
             // 
             this.textBox6.Enabled = false;
-            this.textBox6.Location = new System.Drawing.Point(371, 125);
+            this.textBox6.Location = new System.Drawing.Point(412, 125);
             this.textBox6.Name = "textBox6";
             this.textBox6.Size = new System.Drawing.Size(55, 20);
             this.textBox6.TabIndex = 102;
@@ -639,7 +639,7 @@
             // 
             // btnBTC
             // 
-            this.btnBTC.Location = new System.Drawing.Point(578, 123);
+            this.btnBTC.Location = new System.Drawing.Point(619, 123);
             this.btnBTC.Name = "btnBTC";
             this.btnBTC.Size = new System.Drawing.Size(54, 23);
             this.btnBTC.TabIndex = 101;
@@ -650,16 +650,16 @@
             // textBox7
             // 
             this.textBox7.Enabled = false;
-            this.textBox7.Location = new System.Drawing.Point(80, 125);
+            this.textBox7.Location = new System.Drawing.Point(98, 125);
             this.textBox7.Name = "textBox7";
-            this.textBox7.Size = new System.Drawing.Size(65, 20);
+            this.textBox7.Size = new System.Drawing.Size(75, 20);
             this.textBox7.TabIndex = 97;
             this.textBox7.Text = "good-user";
             // 
             // textBox8
             // 
             this.textBox8.Enabled = false;
-            this.textBox8.Location = new System.Drawing.Point(151, 125);
+            this.textBox8.Location = new System.Drawing.Point(192, 125);
             this.textBox8.Name = "textBox8";
             this.textBox8.Size = new System.Drawing.Size(89, 20);
             this.textBox8.TabIndex = 98;
@@ -668,7 +668,7 @@
             // textBox9
             // 
             this.textBox9.Enabled = false;
-            this.textBox9.Location = new System.Drawing.Point(246, 125);
+            this.textBox9.Location = new System.Drawing.Point(287, 125);
             this.textBox9.Name = "textBox9";
             this.textBox9.Size = new System.Drawing.Size(100, 20);
             this.textBox9.TabIndex = 99;
@@ -677,7 +677,7 @@
             // textBox10
             // 
             this.textBox10.Enabled = false;
-            this.textBox10.Location = new System.Drawing.Point(437, 125);
+            this.textBox10.Location = new System.Drawing.Point(478, 125);
             this.textBox10.Name = "textBox10";
             this.textBox10.Size = new System.Drawing.Size(43, 20);
             this.textBox10.TabIndex = 100;
@@ -686,45 +686,45 @@
             // label7
             // 
             this.label7.AutoSize = true;
-            this.label7.Location = new System.Drawing.Point(368, 18);
+            this.label7.Location = new System.Drawing.Point(409, 18);
             this.label7.Name = "label7";
-            this.label7.Size = new System.Drawing.Size(25, 13);
+            this.label7.Size = new System.Drawing.Size(28, 15);
             this.label7.TabIndex = 96;
             this.label7.Text = "port";
             // 
             // label6
             // 
             this.label6.AutoSize = true;
-            this.label6.Location = new System.Drawing.Point(434, 18);
+            this.label6.Location = new System.Drawing.Point(475, 18);
             this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(64, 13);
+            this.label6.Size = new System.Drawing.Size(71, 15);
             this.label6.TabIndex = 95;
             this.label6.Text = "version byte";
             // 
             // label5
             // 
             this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(243, 18);
+            this.label5.Location = new System.Drawing.Point(284, 18);
             this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(28, 13);
+            this.label5.Size = new System.Drawing.Size(31, 15);
             this.label5.TabIndex = 94;
             this.label5.Text = "path";
             // 
             // label4
             // 
             this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(148, 18);
+            this.label4.Location = new System.Drawing.Point(189, 18);
             this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(52, 13);
+            this.label4.Size = new System.Drawing.Size(60, 15);
             this.label4.TabIndex = 93;
             this.label4.Text = "password";
             // 
             // label3
             // 
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(80, 18);
+            this.label3.Location = new System.Drawing.Point(98, 18);
             this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(29, 13);
+            this.label3.Size = new System.Drawing.Size(34, 15);
             this.label3.TabIndex = 92;
             this.label3.Text = "login";
             // 
@@ -732,9 +732,9 @@
             // 
             this.label2.AutoSize = true;
             this.label2.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label2.Location = new System.Drawing.Point(3, 106);
+            this.label2.Location = new System.Drawing.Point(14, 106);
             this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(44, 13);
+            this.label2.Size = new System.Drawing.Size(57, 17);
             this.label2.TabIndex = 91;
             this.label2.Text = "chain id";
             // 
@@ -744,9 +744,9 @@
             this.checkBox1.Checked = true;
             this.checkBox1.CheckState = System.Windows.Forms.CheckState.Checked;
             this.checkBox1.Enabled = false;
-            this.checkBox1.Location = new System.Drawing.Point(505, 41);
+            this.checkBox1.Location = new System.Drawing.Point(546, 41);
             this.checkBox1.Name = "checkBox1";
-            this.checkBox1.Size = new System.Drawing.Size(58, 17);
+            this.checkBox1.Size = new System.Drawing.Size(65, 19);
             this.checkBox1.TabIndex = 88;
             this.checkBox1.Text = "testnet";
             this.checkBox1.UseVisualStyleBackColor = true;
@@ -754,7 +754,7 @@
             // textBox26
             // 
             this.textBox26.Enabled = false;
-            this.textBox26.Location = new System.Drawing.Point(6, 127);
+            this.textBox26.Location = new System.Drawing.Point(17, 127);
             this.textBox26.Name = "textBox26";
             this.textBox26.Size = new System.Drawing.Size(45, 20);
             this.textBox26.TabIndex = 83;
@@ -763,7 +763,7 @@
             // txtPort
             // 
             this.txtPort.Enabled = false;
-            this.txtPort.Location = new System.Drawing.Point(371, 37);
+            this.txtPort.Location = new System.Drawing.Point(412, 37);
             this.txtPort.Name = "txtPort";
             this.txtPort.Size = new System.Drawing.Size(55, 20);
             this.txtPort.TabIndex = 52;
@@ -771,7 +771,7 @@
             // 
             // btnMainConnection
             // 
-            this.btnMainConnection.Location = new System.Drawing.Point(578, 35);
+            this.btnMainConnection.Location = new System.Drawing.Point(619, 35);
             this.btnMainConnection.Name = "btnMainConnection";
             this.btnMainConnection.Size = new System.Drawing.Size(54, 23);
             this.btnMainConnection.TabIndex = 51;
@@ -783,9 +783,9 @@
             // 
             this.label1.AutoSize = true;
             this.label1.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label1.Location = new System.Drawing.Point(3, 40);
+            this.label1.Location = new System.Drawing.Point(3, 37);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(68, 13);
+            this.label1.Size = new System.Drawing.Size(86, 17);
             this.label1.TabIndex = 50;
             this.label1.Text = "main chain";
             // 
@@ -793,9 +793,8 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(659, 481);
+            this.ClientSize = new System.Drawing.Size(707, 492);
             this.Controls.Add(this.panel1);
-            this.MaximumSize = new System.Drawing.Size(675, 520);
             this.MinimumSize = new System.Drawing.Size(675, 520);
             this.Name = "Connections";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;

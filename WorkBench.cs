@@ -78,7 +78,7 @@ namespace SUP
 
                     txtGetValue.Text = "";
 
-                    using (var db = new DB(SUP, @"root\" + txtSearchAddress + @"\sec"))
+                    using (var db = new DB(SUP, @"root\" + txtSearchAddress.Text + @"\sec"))
                     {
                         LevelDB.Iterator it = db.CreateIterator();
                         for (

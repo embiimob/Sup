@@ -161,31 +161,26 @@ namespace SUP
                     supFlow.Controls.Add(button);
                 }
             }
+
+
+
             string imgurn = "";
 
-            if (activeProfile.Image != null && activeProfile.Image != "")
+
+            if (activeProfile.Image != null)
             {
                 imgurn = activeProfile.Image;
+
 
                 if (!activeProfile.Image.ToLower().StartsWith("http"))
                 {
                     imgurn = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + @"\root\" + activeProfile.Image.Replace("BTC:", "").Replace("MZC:", "").Replace("LTC:", "").Replace("DOG:", "").Replace("IPFS:", "").Replace("btc:", "").Replace("mzc:", "").Replace("ltc:", "").Replace("dog:", "").Replace("ipfs:", "").Replace(@"/", @"\");
-
-                    if (activeProfile.Image.ToLower().StartsWith("ipfs:")) { imgurn = imgurn.Replace(@"\root\", @"\ipfs\"); }
+                    if (activeProfile.Image.ToLower().StartsWith("ipfs:")) { imgurn = imgurn.Replace(@"\root\", @"\ipfs\"); if (activeProfile.Image.Length == 51) { imgurn += @"\artifact"; } }
                 }
-            }
 
-            List<string> allowedExtensions = new List<string> { ".bmp", ".gif", ".ico", ".jpeg", ".jpg", ".png", ".tif", ".tiff", "" };
-            string extension = Path.GetExtension(imgurn).ToLower();
-            if (allowedExtensions.Contains(extension))
-            {
 
-                if (File.Exists(imgurn) || imgurn.ToUpper().StartsWith("HTTP"))
-                {
-
-                    profileIMG.ImageLocation = imgurn;
-                }
-                else
+            }else {
+                this.Invoke((Action)(() =>
                 {
                     Random rnd = new Random();
                     string[] gifFiles = Directory.GetFiles("includes", "*.gif");
@@ -193,7 +188,7 @@ namespace SUP
                     {
                         int randomIndex = rnd.Next(gifFiles.Length);
                         string randomGifFile = gifFiles[randomIndex];
-
+                        profileIMG.SizeMode = PictureBoxSizeMode.StretchImage;
                         profileIMG.ImageLocation = randomGifFile;
 
                     }
@@ -201,13 +196,263 @@ namespace SUP
                     {
                         try
                         {
+
+                            profileIMG.SizeMode = PictureBoxSizeMode.StretchImage;
                             profileIMG.ImageLocation = @"includes\HugPuddle.jpg";
                         }
                         catch { }
                     }
+                }));
 
+                return; }
+            
 
+                if (File.Exists(imgurn))
+                {
+
+                    this.Invoke((Action)(() =>
+                    {
+                        profileIMG.ImageLocation = imgurn;
+                    }));
                 }
+                else
+                {
+                    Match imgurnmatch = regexTransactionId.Match(imgurn);
+                    string transid = imgurnmatch.Value;
+
+                    if (activeProfile.Image.LastIndexOf('.') > 0 && File.Exists("ipfs/" + transid + "/artifact" + activeProfile.Image.Substring(activeProfile.Image.LastIndexOf('.'))))
+                    {
+                        this.Invoke((Action)(() =>
+                        {
+                            profileIMG.ImageLocation = "ipfs/" + transid + "/artifact" + activeProfile.Image.Substring(activeProfile.Image.LastIndexOf('.'));
+                        }));
+                    }
+                    else
+                    {
+
+                    this.Invoke((Action)(() =>
+                    {
+                        Random rnd = new Random();
+                        string[] gifFiles = Directory.GetFiles("includes", "*.gif");
+                        if (gifFiles.Length > 0)
+                        {
+                            int randomIndex = rnd.Next(gifFiles.Length);
+                            string randomGifFile = gifFiles[randomIndex];
+                            profileIMG.SizeMode = PictureBoxSizeMode.StretchImage;
+                            profileIMG.ImageLocation = randomGifFile;
+
+                        }
+                        else
+                        {
+                            try
+                            {
+
+                                profileIMG.SizeMode = PictureBoxSizeMode.StretchImage;
+                                profileIMG.ImageLocation = @"includes\HugPuddle.jpg";
+                            }
+                            catch { }
+                        }
+                    }));
+
+
+                    switch (activeProfile.Image.ToUpper().Substring(0, 4))
+                        {
+                            case "BTC:":
+
+                                Task.Run(() =>
+                                {
+
+                                    Root.GetRootByTransactionId(transid, "good-user", "better-password", @"http://127.0.0.1:8332", "0");
+
+                                    if (File.Exists(imgurn))
+                                    {
+
+                                        this.Invoke((Action)(() =>
+                                            {
+                                                profileIMG.SizeMode = PictureBoxSizeMode.Zoom;
+                                                profileIMG.ImageLocation = imgurn;
+                                            }));
+                                    }
+
+                                });
+
+
+                                break;
+                            case "MZC:":
+
+                                Task.Run(() =>
+                                {
+                                    Root.GetRootByTransactionId(transid, "good-user", "better-password", @"http://127.0.0.1:12832", "50");
+
+                                    if (File.Exists(imgurn))
+                                    {
+
+                                        this.Invoke((Action)(() =>
+                                            {
+                                                profileIMG.SizeMode = PictureBoxSizeMode.Zoom;
+                                                profileIMG.ImageLocation = imgurn;
+                                            }));
+                                    }
+
+                                });
+
+                                break;
+                            case "LTC:":
+
+                                Task.Run(() =>
+                                {
+
+                                    Root.GetRootByTransactionId(transid, "good-user", "better-password", @"http://127.0.0.1:9332", "48");
+
+                                    if (File.Exists(imgurn))
+                                    {
+
+                                        this.Invoke((Action)(() =>
+                                            {
+                                                profileIMG.SizeMode = PictureBoxSizeMode.Zoom;
+                                                profileIMG.ImageLocation = imgurn;
+                                            }));
+                                    }
+
+                                });
+
+                                break;
+                            case "DOG:":
+
+                                Task.Run(() =>
+                                {
+
+                                    Root.GetRootByTransactionId(transid, "good-user", "better-password", @"http://127.0.0.1:22555", "30");
+
+                                    if (File.Exists(imgurn))
+                                    {
+
+                                        this.Invoke((Action)(() =>
+                                            {
+                                                profileIMG.SizeMode = PictureBoxSizeMode.Zoom;
+                                                profileIMG.ImageLocation = imgurn;
+                                            }));
+                                    }
+
+                                });
+
+                                break;
+                            case "IPFS":
+                                transid = "empty";
+                                try { transid = activeProfile.Image.Substring(5, 46); } catch { }
+
+                                if (!System.IO.Directory.Exists("ipfs/" + transid + "-build"))
+                                {
+
+
+                                    Task.Run(() =>
+                                    {
+                                        try { Directory.Delete("ipfs/" + transid, true); } catch { }
+                                        try { Directory.CreateDirectory("ipfs/" + transid); } catch { };
+                                        Directory.CreateDirectory("ipfs/" + transid + "-build");
+                                        Process process2 = new Process();
+                                        process2.StartInfo.FileName = @"ipfs\ipfs.exe";
+                                        process2.StartInfo.Arguments = "get " + activeProfile.Image.Substring(5, 46) + @" -o ipfs\" + transid;
+                                        process2.StartInfo.UseShellExecute = false;
+                                        process2.StartInfo.CreateNoWindow = true;
+                                        process2.Start();
+                                        process2.WaitForExit();
+                                        string fileName;
+                                        if (System.IO.File.Exists("ipfs/" + transid))
+                                        {
+                                            System.IO.File.Move("ipfs/" + transid, "ipfs/" + transid + "_tmp");
+                                            System.IO.Directory.CreateDirectory("ipfs/" + transid);
+                                            fileName = activeProfile.Image.Replace(@"//", "").Replace(@"\\", "").Substring(51);
+                                            if (fileName == "") { fileName = "artifact"; } else { fileName = fileName.Replace(@"/", "").Replace(@"\", ""); }
+                                            Directory.CreateDirectory("ipfs/" + transid);
+
+                                            try { System.IO.File.Move("ipfs/" + transid + "_tmp", @"ipfs/" + transid + @"/" + fileName); }
+                                            catch (System.ArgumentException ex)
+                                            {
+
+                                                System.IO.File.Move("ipfs/" + transid + "_tmp", "ipfs/" + transid + "/artifact" + activeProfile.Image.Substring(activeProfile.Image.LastIndexOf('.')));
+                                                imgurn = "ipfs/" + transid + "/artifact" + activeProfile.Image.Substring(activeProfile.Image.LastIndexOf('.'));
+
+                                            }
+
+
+                                        }
+
+                                        if (System.IO.File.Exists("ipfs/" + transid + "/" + transid))
+                                        {
+                                            fileName = activeProfile.Image.Replace(@"//", "").Replace(@"\\", "").Substring(51);
+                                            if (fileName == "") { fileName = "artifact"; } else { fileName = fileName.Replace(@"/", "").Replace(@"\", ""); }
+
+                                            try { System.IO.File.Move("ipfs/" + transid + "/" + transid, @"ipfs/" + transid + @"/" + fileName); }
+                                            catch (System.ArgumentException ex)
+                                            {
+
+                                                System.IO.File.Move("ipfs/" + transid + "/" + transid, "ipfs/" + transid + "/artifact" + activeProfile.Image.Substring(activeProfile.Image.LastIndexOf('.')));
+                                                imgurn = "ipfs/" + transid + "/artifact" + activeProfile.Image.Substring(activeProfile.Image.LastIndexOf('.'));
+
+                                            }
+                                        }
+
+
+
+                                        Process process3 = new Process
+                                        {
+                                            StartInfo = new ProcessStartInfo
+                                            {
+                                                FileName = @"ipfs\ipfs.exe",
+                                                Arguments = "pin add " + transid,
+                                                UseShellExecute = false,
+                                                CreateNoWindow = true
+                                            }
+                                        };
+                                        process3.Start();
+
+                                        try { Directory.Delete("ipfs/" + transid + "-build", true); } catch { }
+                                        this.Invoke((Action)(() =>
+                                        {
+                                            profileIMG.SizeMode = PictureBoxSizeMode.Zoom;
+                                            profileIMG.ImageLocation = imgurn;
+                                        }));
+
+                                    });
+
+                                }
+
+                                break;
+                            case "HTTP":
+                                Task.Run(() =>
+                                {
+                                    profileIMG.SizeMode = PictureBoxSizeMode.Zoom;
+                                    profileIMG.ImageLocation = activeProfile.Image;
+                                });
+                                break;
+
+
+                            default:
+
+                                Task.Run(() =>
+                                {
+
+                                    Root.GetRootByTransactionId(transid, "good-user", "better-password", @"http://127.0.0.1:18332");
+
+                                    if (File.Exists(imgurn))
+                                    {
+
+                                        this.Invoke((Action)(() =>
+                                            {
+                                                profileIMG.SizeMode = PictureBoxSizeMode.Zoom;
+                                                profileIMG.ImageLocation = imgurn;
+                                            }));
+                                    }
+
+                                });
+
+
+                                break;
+                        }
+                    }
+
+                
 
 
             }
@@ -748,7 +993,8 @@ namespace SUP
                                                     }
                                                     else { find = true; }
 
-                                                    if (find && root.Message.Count() > 0) {
+                                                    if (find && root.Message.Count() > 0)
+                                                    {
 
                                                         string _from = root.SignedBy;
                                                         string _to = "";
@@ -805,9 +1051,9 @@ namespace SUP
                                                         {
                                                             supFlow.Controls.Add(padding);
                                                         });
-                                                            
 
-                                                        }
+
+                                                    }
 
 
                                                     isobject = OBJState.GetObjectByTransactionId(s, "good-user", "better-password", @"http://127.0.0.1:18332");
@@ -1598,7 +1844,7 @@ namespace SUP
 
                 using (var db = new DB(SUP, @"root\" + profileURN.Links[0].LinkData.ToString() + @"\sup"))
                 {
-                   
+
                     LevelDB.Iterator it = db.CreateIterator();
                     for (
                        it.SeekToLast();
@@ -1632,7 +1878,7 @@ namespace SUP
                                 if (profile.URN != null)
                                 {
                                     fromAddress = TruncateAddress(profile.URN);
-                                    
+
                                     if (profile.Image != null)
                                     {
                                         imagelocation = profile.Image;
@@ -1668,7 +1914,7 @@ namespace SUP
                                                     break;
                                                 case "DOG:":
                                                     root = Root.GetRootByTransactionId(transactionid, "good-user", "better-password", @"http://127.0.0.1:22555", "30");
-                                                    
+
                                                     break;
                                                 case "IPFS":
                                                     string transid = "empty";
@@ -1728,7 +1974,7 @@ namespace SUP
                                                     if (!profile.Image.ToUpper().StartsWith("HTTP") && transactionid != "")
                                                     {
                                                         root = Root.GetRootByTransactionId(transactionid, "good-user", "better-password", @"http://127.0.0.1:18332");
-                                                        
+
                                                     }
                                                     break;
                                             }
@@ -1779,7 +2025,7 @@ namespace SUP
                                 {
                                     AddImage(content);
                                 }
-                                
+
                             }
 
                             TableLayoutPanel padding = new TableLayoutPanel
@@ -1795,10 +2041,10 @@ namespace SUP
                                 Padding = new System.Windows.Forms.Padding(0)
 
                             };
-                            
-                                padding.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, supFlow.Width - 20));
-                            
-                                supFlow.Controls.Add(padding);
+
+                            padding.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, supFlow.Width - 20));
+
+                            supFlow.Controls.Add(padding);
 
                         }
                         rownum++;
@@ -1822,7 +2068,7 @@ namespace SUP
                 splitContainer1.Panel2.Controls.Clear();
                 supPrivateFlow.Controls.Clear();
                 supPrivateFlow.Dock = DockStyle.Fill;
-                supPrivateFlow.AutoScroll= true;
+                supPrivateFlow.AutoScroll = true;
                 splitContainer1.Panel2.Controls.Add(supPrivateFlow);
             }
 
@@ -1834,7 +2080,7 @@ namespace SUP
 
             using (var db = new DB(SUP, @"root\" + profileURN.Links[0].LinkData.ToString() + @"\sec"))
             {
-              
+
                 LevelDB.Iterator it = db.CreateIterator();
                 for (
                    it.SeekToLast();
@@ -2085,7 +2331,7 @@ namespace SUP
 
                                         foreach (string file in decryptedroot.File.Keys)
                                         {
-                                            AddImage(transid + @"\"+ file, true);
+                                            AddImage(transid + @"\" + file, true);
                                         }
 
 
@@ -2164,18 +2410,18 @@ namespace SUP
                             break;
                         case "LTC:":
 
-                           Root.GetRootByTransactionId(transactionid, "good-user", "better-password", @"http://127.0.0.1:9332", "48");
+                            Root.GetRootByTransactionId(transactionid, "good-user", "better-password", @"http://127.0.0.1:9332", "48");
 
 
                             break;
                         case "DOG:":
-                           Root.GetRootByTransactionId(transactionid, "good-user", "better-password", @"http://127.0.0.1:22555", "30");
+                            Root.GetRootByTransactionId(transactionid, "good-user", "better-password", @"http://127.0.0.1:22555", "30");
 
                             break;
                         case "IPFS":
                             string transid = "empty";
                             try { transid = imagepath.Substring(5, 46); } catch { }
-                        
+
                             if (!System.IO.Directory.Exists("ipfs/" + transid + "-build"))
                             {
                                 try { Directory.CreateDirectory("ipfs/" + transid); } catch { };
@@ -2228,7 +2474,7 @@ namespace SUP
                         default:
                             if (!imagepath.ToUpper().StartsWith("HTTP") && transactionid != "")
                             {
-                               Root.GetRootByTransactionId(transactionid, "good-user", "better-password", @"http://127.0.0.1:18332");
+                                Root.GetRootByTransactionId(transactionid, "good-user", "better-password", @"http://127.0.0.1:18332");
 
                             }
                             break;
@@ -2253,8 +2499,8 @@ namespace SUP
                 Padding = new System.Windows.Forms.Padding(0)
 
             };
-           
-                msg.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 290));
+
+            msg.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 290));
 
             if (isprivate)
             {
@@ -2265,7 +2511,7 @@ namespace SUP
 
 
 
-              
+
 
                 if (addtoTop)
                 {
@@ -2282,7 +2528,7 @@ namespace SUP
             PictureBox pictureBox = new PictureBox();
 
             // Set the PictureBox properties
-          
+
             pictureBox.SizeMode = PictureBoxSizeMode.Zoom;
             pictureBox.Width = 290;
             pictureBox.Height = 290;
@@ -2311,7 +2557,7 @@ namespace SUP
             row.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 50));
             row.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 90));
             row.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 110));
-           
+
             layoutPanel.Controls.Add(row);
 
             // Create a PictureBox with the specified image
@@ -2456,7 +2702,7 @@ namespace SUP
             }
 
 
-         
+
             // Create a PictureBox with the specified image
 
             if (File.Exists(imageLocation) || imageLocation.ToUpper().StartsWith("HTTP"))
@@ -2547,7 +2793,7 @@ namespace SUP
                 };
 
                 msg.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, supFlow.Width - 20));
-                
+
                 if (addtoTop)
                 {
                     layoutPanel.Controls.Add(msg);
@@ -2651,8 +2897,8 @@ namespace SUP
         {
             string profileowner = "";
             string toaddress = "";
-            if(profileOwner.Tag != null) { profileowner = profileOwner.Tag.ToString(); }
-            if(profileURN.Links[0].LinkData != null){toaddress = profileURN.Links[0].LinkData.ToString(); }
+            if (profileOwner.Tag != null) { profileowner = profileOwner.Tag.ToString(); }
+            if (profileURN.Links[0].LinkData != null) { toaddress = profileURN.Links[0].LinkData.ToString(); }
             bool isprivate = false;
 
             if (btnPrivateMessage.BackColor == Color.Blue) { isprivate = true; }
@@ -2744,7 +2990,7 @@ namespace SUP
         {
             numMessagesDisplayed = 0;
             List<string> friendFeed = new List<string>();
-            
+
             if (numFriendFeedsDisplayed == 0) { supFlow.Controls.Clear(); }
 
             if (File.Exists(@"root\MyFriendList.Json"))
@@ -2834,7 +3080,7 @@ namespace SUP
 
                     try { imglocation = myFriends[_from]; } catch { }
                     CreateFeedRow(imglocation, _from, _from, DateTime.ParseExact("19700101010101", "yyyyMMddHHmmss", CultureInfo.InvariantCulture), _message, Color.White, supFlow);
-                   
+
                     try { imglocation = myFriends[_to]; } catch { }
                     CreateFeedRow(imglocation, _to, _to, DateTime.ParseExact(_blockdate, "yyyyMMddHHmmss", CultureInfo.InvariantCulture), "", Color.White, supFlow);
 
@@ -2969,7 +3215,7 @@ namespace SUP
 
                 try { Directory.Delete(@"root\" + profileURN.Links[0].LinkData.ToString(), true); } catch { }
                 try { Directory.Delete(@"root\" + Root.GetPublicAddressByKeyword(profileURN.Text), true); } catch { }
-                
+
                 foreach (Control control in flowFollow.Controls)
                 {
                     if (control is PictureBox pictureBox && pictureBox.Tag.ToString() == profileURN.Links[0].LinkData.ToString())

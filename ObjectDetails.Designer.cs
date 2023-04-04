@@ -394,6 +394,7 @@
             // chkRunTrustedObject
             // 
             this.chkRunTrustedObject.AutoSize = true;
+            this.chkRunTrustedObject.ForeColor = System.Drawing.Color.White;
             this.chkRunTrustedObject.Location = new System.Drawing.Point(252, 62);
             this.chkRunTrustedObject.Name = "chkRunTrustedObject";
             this.chkRunTrustedObject.RightToLeft = System.Windows.Forms.RightToLeft.Yes;

@@ -1266,7 +1266,10 @@ namespace SUP
                 }
                 catch { }
 
-
+                if (txtIMG.Text != "")
+                {
+                    btnObjectImage.PerformClick();
+                }
             }
 
         }
@@ -1394,8 +1397,6 @@ namespace SUP
         private void btnMint_Click_1(object sender, EventArgs e)
         {
 
-            ismint = true;
-            UpdateRemainingChars();
             try { File.Delete(@"root\GetLocalProfiles.json"); } catch { }
             PROState PRO = PROState.GetProfileByAddress(txtObjectAddress.Text, "good-user", "better-password", @"http://127.0.0.1:18332");
 
@@ -1405,6 +1406,9 @@ namespace SUP
                 lblObjectStatus.Text = lblObjectStatus.Text.Replace("Monday, January 1, 0001", " unconfirmed ");
 
             }
+
+            ismint = true;
+            UpdateRemainingChars();
         }
 
         private void btnLastName_Click(object sender, EventArgs e)

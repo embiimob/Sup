@@ -123,6 +123,7 @@ namespace SUP
                                 pictureBox.Width = 50;
                                 pictureBox.Height = 50;
                                 pictureBox.ImageLocation = filePath;
+                                pictureBox.MouseClick += PictureBox_MouseClick;
                                 this.Invoke((MethodInvoker)delegate
                                 {
                                     flowAttachments.Controls.Add(pictureBox);
@@ -277,6 +278,7 @@ namespace SUP
                         pictureBox.Width = 50;
                         pictureBox.Height = 50;
                         pictureBox.ImageLocation = imgurn;
+                        pictureBox.MouseClick += PictureBox_MouseClick;
                         // Add the PictureBox to the FlowLayoutPanel
                         flowAttachments.Controls.Add(pictureBox);
 
@@ -291,6 +293,16 @@ namespace SUP
 
         }
 
+
+        private void PictureBox_MouseClick(object sender, MouseEventArgs e)
+        {
+            if (e.Button == MouseButtons.Right)
+            {
+                PictureBox pictureBox = (PictureBox)sender;
+                flowAttachments.Controls.Remove(pictureBox);
+              
+            }
+        }
 
         private void discoButton_Click(object sender, EventArgs e)
         {
