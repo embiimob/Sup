@@ -1890,7 +1890,7 @@ namespace SUP.P2FK
                             try { message = System.IO.File.ReadAllText(@"root/" + supMessagePacket[1] + @"/MSG").Replace("@" + objectaddress, "").Replace('“', '"').Replace('”', '"'); } catch { }
 
                             string fromAddress = supMessagePacket[0];
-
+                            string toAddress = supMessagePacket[2];
                             string tstamp = it.KeyAsString().Split('!')[1];
 
                             // Add the message data to the messages list
@@ -1898,6 +1898,7 @@ namespace SUP.P2FK
                             {
                                 Message = message,
                                 FromAddress = fromAddress,
+                                ToAddress = toAddress,
                                 BlockDate = tstamp
                             });
                         }

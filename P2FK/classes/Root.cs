@@ -449,9 +449,9 @@ namespace SUP.P2FK
 
                     foreach (KeyValuePair<string, string> keyword in P2FKRoot.Keyword)
                     {
-
-
-                        string msg = "[\"" + P2FKRoot.SignedBy + "\",\"" + P2FKRoot.TransactionId + "\"]";
+                        string toAddress = "";
+                        if (P2FKRoot.Keyword.Count() > 1) { toAddress = P2FKRoot.Keyword.Keys.GetItemByIndex(P2FKRoot.Keyword.Count() - 2); } else { toAddress = P2FKRoot.Keyword.Keys.Last(); }
+                        string msg = "[\"" + P2FKRoot.SignedBy + "\",\"" + P2FKRoot.TransactionId + "\",\"" + toAddress + "\"]";
                         var ROOT = new Options { CreateIfMissing = true };
                         byte[] hashBytes = SHA256.Hash(Encoding.UTF8.GetBytes(msg));
                         string hashString = BitConverter.ToString(hashBytes).Replace("-", "");
@@ -737,12 +737,14 @@ namespace SUP.P2FK
         {
             byte[] separators = new byte[] { 92, 47, 58, 42, 63, 34, 60, 62, 124 };
             byte[] joinedFileBytes = new byte[] { };
+            byte[] fileBytes = new byte[] { };
             foreach (string fileName in fileNames)
             {
                 byte[] fileNameBytes = Encoding.ASCII.GetBytes(Path.GetFileName(fileName));
                 byte[] separator1 = new byte[] { separators[new Random().Next(0, separators.Length)] };
                 byte[] separator2 = new byte[] { separators[new Random().Next(0, separators.Length)] };
-                byte[] fileBytes = System.IO.File.ReadAllBytes(fileName);
+                try {fileBytes = System.IO.File.ReadAllBytes(fileName); }
+                catch { return joinedFileBytes; }
                 byte[] fileSizeBytes = Encoding.ASCII.GetBytes(fileBytes.Length.ToString());
                 byte[] joinedBytes = joinedFileBytes.Concat(fileNameBytes).Concat(separator1).Concat(fileSizeBytes).Concat(separator2).Concat(fileBytes).ToArray();
                 joinedFileBytes = joinedBytes;
