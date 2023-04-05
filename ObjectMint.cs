@@ -245,29 +245,35 @@ namespace SUP
 
                 if (ismint)
                 {
-                    var recipients = new Dictionary<string, decimal>();
-                    foreach (var encodedAddress in encodedList)
+                    DialogResult result = MessageBox.Show("Are you sure you want to mint this object?", "Confirmation", MessageBoxButtons.YesNo);
+                    if (result == DialogResult.Yes)
                     {
 
-                        try { recipients.Add(encodedAddress, 0.00000546m); } catch {}
 
+                        var recipients = new Dictionary<string, decimal>();
+                        foreach (var encodedAddress in encodedList)
+                        {
+
+                            try { recipients.Add(encodedAddress, 0.00000546m); } catch { }
+
+                        }
+
+                        CoinRPC a = new CoinRPC(new Uri("http://127.0.0.1:18332"), new NetworkCredential("good-user", "better-password"));
+
+                        try
+                        {
+                            string accountsString = "";
+                            try { accountsString = rpcClient.SendCommand("listaccounts").ResultString; } catch { }
+                            var accounts = JsonConvert.DeserializeObject<Dictionary<string, decimal>>(accountsString);
+                            var keyWithLargestValue = accounts.Aggregate((x, y) => x.Value > y.Value ? x : y).Key;
+                            var results = a.SendMany(keyWithLargestValue, recipients);
+                            lblTransactionID.Text = results;
+                        }
+                        catch (Exception ex) { lblObjectStatus.Text = ex.Message; }
+
+
+                        ismint = false;
                     }
-
-                    CoinRPC a = new CoinRPC(new Uri("http://127.0.0.1:18332"), new NetworkCredential("good-user", "better-password"));
-
-                    try
-                    {
-                        string accountsString = "";
-                        try { accountsString = rpcClient.SendCommand("listaccounts").ResultString; } catch { }
-                        var accounts = JsonConvert.DeserializeObject<Dictionary<string, decimal>>(accountsString);
-                        var keyWithLargestValue = accounts.Aggregate((x, y) => x.Value > y.Value ? x : y).Key;
-                        var results = a.SendMany(keyWithLargestValue, recipients);
-                        lblTransactionID.Text = results;
-                    }
-                    catch (Exception ex) { lblObjectStatus.Text = ex.Message; }
-
-
-                    ismint = false;
                 }
 
 

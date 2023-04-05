@@ -2925,6 +2925,19 @@ namespace SUP
                             {
                                 Directory.Delete(parentDir, true);
                             }
+
+                            parentDir = parentDir.Replace( @"\ipfs\", @"\root\");
+
+                            if (Directory.Exists(parentDir))
+                            {
+                                Directory.Delete(parentDir, true);
+                            }
+
+                            if (Directory.Exists(parentDir + "-build"))
+                            {
+                                Directory.Delete(parentDir + "-build", true);
+                            }
+
                         }
                     }
 

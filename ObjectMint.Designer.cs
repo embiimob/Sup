@@ -628,10 +628,9 @@
             // 
             // lblTransactionID
             // 
-            this.lblTransactionID.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.lblTransactionID.AutoSize = true;
             this.lblTransactionID.ForeColor = System.Drawing.Color.White;
-            this.lblTransactionID.Location = new System.Drawing.Point(24, 165);
+            this.lblTransactionID.Location = new System.Drawing.Point(179, 21);
             this.lblTransactionID.Name = "lblTransactionID";
             this.lblTransactionID.Size = new System.Drawing.Size(0, 13);
             this.lblTransactionID.TabIndex = 297;
