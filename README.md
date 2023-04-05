@@ -11,7 +11,7 @@ P2FK was directly inspired by the satoshi uploader  see --> https://cirosantilli
 
 ## **Installation**
 
-1. Download the Sup.v0.1.34-beta.zip file (at very bottom of the release page)
+1. Download the Sup.v0.1.35-beta.zip file (at very bottom of the release page)
 2. Create a folder on your **fastest** disk drive with at least **50GB** free (it will be storing the bitcoin testnet blockchain)
 3. Unzip all contents into the folder
 4. Create a shortcut to SUP.exe and launch
@@ -62,9 +62,7 @@ navigates to requested url in browser.
 ## **Public / Private Messaging / Social**
 The disco ball has dropped you can now send direct public and private messages using Sup!?, the bitcoin testnet and #IPFS.   Search for a profile and add friends by clicking the follow button.  Click on a friend's icon to show their latest public messages. Click on the community icon to see a combination of all your friends posts in a single feed in the order that they were confirmed on the blockchain.   Search for your own profile in the object browser to login with your local account.  Click on the disco ball to send the profile you are currently browsing a public message.  Click on the 🤐 before clicking on the discon ball to send the profile you are currently browsing a private message.   Search for your own profile and click on the 🤐 icon to see any private messages sent to it.
 <br />
-<br />
 NOTE: all attachments in your private message are encrypted via Sup!? using the recipients public keys before they are uploaded to IPFS for delivery.
-<br />
 <br />
 ## **Profile Minting / Editing**
 Click the mint button and select the profile mint button. Enter a urn and a profile address or click the diamond button to generate a new profile address. These two fields are all that are required to register a profile urn. You may optionally enter a PFP image url, your full name and suffix, web links, contact information and keywords. NOTE: Every profile becomes an entry point for which private messages may be delivered as every profile displays public keys to be used for Secp256k1 encrypted messaging.   
@@ -100,10 +98,12 @@ When a Sup!? urn is registered, a small symbol appears on the top left corner of
 Drag and drop any file onto the main Sup!? browser screen. Sup!? will search the mainchain for a current file registration with an owner. If found, the registered object will be returned in the main browser window. All URN's with valid file paths at the time of registration are automatically registered for Sup!? file lookup.
 <br />
 <br />
-## **Block \ Mute**
+## **Block \ Mute \ 🗑️**
 Blocking addresses ignores any associations to them going forward, preventing a transaction or any transactions signed by the blocked address from outputting to disk. A purge and reinspection is required to completely eliminate all data. If a group of collectors decides to block an address, they can technically ignore them out of existence.
 <br />
-Muting an address prevents any further transaction comments signed by the address from outputting onto a disk. A purge and reinspection is required to completely elimninate all transaction comments.
+Muting an address prevents any further transaction comments signed by the address from outputting onto a disk. A purge and reinspection is required to completely eliminate all transaction comments.
+<br />
+clicking the 🗑️ icon found in message and object search results deletes them from disk including any thumbnails or attachments they may have been displaying at the time.  it also places a null transaction record into the cache to prevent the object or message from outputting onto a disk in the future. 
 <br />
 <br />
 ## **Web Applet Querystring Data**
