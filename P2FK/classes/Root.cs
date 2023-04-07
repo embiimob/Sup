@@ -592,7 +592,7 @@ namespace SUP.P2FK
             var credentials = new NetworkCredential(username, password);
             var rpcClient = new RPCClient(credentials, new Uri(url));
             bool fetched = false;
-
+            address = address.Replace("<", "").Replace(">", "");
             try
             {
                 string diskpath = "root\\" + address + "\\";

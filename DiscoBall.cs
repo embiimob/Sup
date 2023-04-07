@@ -51,7 +51,7 @@ namespace SUP
             if (flowAttachments.Controls.Count < 6)
             {
                 string imgurn = "";
-                List<string> allowedExtensions = new List<string> { ".bmp", ".gif", ".ico", ".jpeg", ".jpg", ".png", ".tif", ".tiff", "" };
+                List<string> imageExtensions = new List<string> { ".bmp", ".gif", ".ico", ".jpeg", ".jpg", ".png", ".tif", ".tiff", "" };
 
 
                 if (txtAttach.Text != "")
@@ -76,10 +76,8 @@ namespace SUP
                         string fileName = openFileDialog1.SafeFileName;
 
 
-                        string extensions = Path.GetExtension(filePath).ToLower();
-                        if (allowedExtensions.Contains(extensions))
-                        {
-                            string proccessingFile = filePath;
+                  
+                          string proccessingFile = filePath;
                             string processingid = Guid.NewGuid().ToString();
 
                             if (btnEncryptionStatus.Text == "🤐")
@@ -122,7 +120,12 @@ namespace SUP
                                 pictureBox.SizeMode = PictureBoxSizeMode.StretchImage;
                                 pictureBox.Width = 50;
                                 pictureBox.Height = 50;
-                                pictureBox.ImageLocation = filePath;
+
+
+                                string extension = Path.GetExtension(filePath).ToLower();
+                                if (imageExtensions.Contains(extension))
+                                { pictureBox.ImageLocation = filePath; }
+                                else { pictureBox.ImageLocation = @"includes\HugPuddle.jpg"; }
                                 pictureBox.MouseClick += PictureBox_MouseClick;
                                 this.Invoke((MethodInvoker)delegate
                                 {
@@ -134,17 +137,16 @@ namespace SUP
                             ipfsHash = await addTask;
                             try { Directory.Delete(@"root\" + processingid, true); } catch { }
                         }
-
-                    }
+                                       
 
 
                 }
 
 
-                string extension = Path.GetExtension(imgurn).ToLower();
-                if (allowedExtensions.Contains(extension))
-                {
+                string extension2 = Path.GetExtension(imgurn).ToLower();
 
+                if (imageExtensions.Contains(extension2))
+                {
 
 
                     try
@@ -254,12 +256,7 @@ namespace SUP
                             default:
 
                                 root = Root.GetRootByTransactionId(transactionid, "good-user", "better-password", @"http://127.0.0.1:18332");
-                                try
-                                {
-
-                                }
-                                catch { }
-
+                              
 
                                 break;
                         }
@@ -286,6 +283,22 @@ namespace SUP
 
 
                 }
+                else
+                {
+                    PictureBox pictureBox = new PictureBox();
+
+                    // Set the PictureBox properties
+                    pictureBox.Tag = txtAttach.Text;
+                    pictureBox.SizeMode = PictureBoxSizeMode.StretchImage;
+                    pictureBox.Width = 50;
+                    pictureBox.Height = 50;
+                    pictureBox.ImageLocation = @"includes\HugPuddle.jpg";
+                    pictureBox.MouseClick += PictureBox_MouseClick;
+                    // Add the PictureBox to the FlowLayoutPanel
+                    flowAttachments.Controls.Add(pictureBox);
+
+                }
+
 
 
 
@@ -309,9 +322,9 @@ namespace SUP
 
             string transMessage = supMessage.Text;
             List<string> encodedList = new List<string>();
-            foreach (PictureBox pb in flowAttachments.Controls)
+            foreach (Control attach in flowAttachments.Controls)
             {
-                transMessage = transMessage + "<<" + pb.Tag.ToString() + ">>";
+                transMessage = transMessage + "<<" + attach.Tag.ToString() + ">>";
             }
             int salt;
             using (RNGCryptoServiceProvider rng = new RNGCryptoServiceProvider())

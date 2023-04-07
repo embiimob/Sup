@@ -436,14 +436,14 @@ namespace SUP
                                                         fileName = objstate.Image.Replace(@"//", "").Replace(@"\\", "").Substring(51);
                                                         if (fileName == "") { fileName = "artifact"; } else { fileName = fileName.Replace(@"/", "").Replace(@"\", ""); }
                                                         Directory.CreateDirectory("ipfs/" + transid);
-                                                        
+
                                                         try { System.IO.File.Move("ipfs/" + transid + "_tmp", @"ipfs/" + transid + @"/" + fileName); }
                                                         catch (System.ArgumentException ex)
                                                         {
-                                                                                                                      
+
                                                             System.IO.File.Move("ipfs/" + transid + "_tmp", "ipfs/" + transid + "/artifact" + objstate.Image.Substring(objstate.Image.LastIndexOf('.')));
                                                             imgurn = "ipfs/" + transid + "/artifact" + objstate.Image.Substring(objstate.Image.LastIndexOf('.'));
-                                                            
+
                                                         }
 
 
@@ -1355,31 +1355,55 @@ namespace SUP
 
                                         }
 
-                                        Task ipfsTask = Task.Run(() =>
+                                        string imgurl = "";
+                                        if (!System.IO.Directory.Exists("ipfs/" + ipfsHash + "-build"))
                                         {
+                                            try { Directory.Delete("ipfs/" + ipfsHash, true); } catch { }
+                                            try { Directory.CreateDirectory("ipfs/" + ipfsHash); } catch { };
+                                            Directory.CreateDirectory("ipfs/" + ipfsHash + "-build");
                                             Process process2 = new Process();
                                             process2.StartInfo.FileName = @"ipfs\ipfs.exe";
                                             process2.StartInfo.Arguments = "get " + ipfsHash + @" -o ipfs\" + ipfsHash;
+                                            process2.StartInfo.UseShellExecute = false;
+                                            process2.StartInfo.CreateNoWindow = true;
                                             process2.Start();
                                             process2.WaitForExit();
-
+                                            string fileName;
                                             if (System.IO.File.Exists("ipfs/" + ipfsHash))
                                             {
                                                 System.IO.File.Move("ipfs/" + ipfsHash, "ipfs/" + ipfsHash + "_tmp");
                                                 System.IO.Directory.CreateDirectory("ipfs/" + ipfsHash);
-                                                string fileName = txtSearchAddress.Text.Replace(@"//", "").Replace(@"\\", "").Substring(51);
+                                                fileName = txtSearchAddress.Text.Replace(@"//", "").Replace(@"\\", "").Substring(51);
                                                 if (fileName == "") { fileName = "artifact"; } else { fileName = fileName.Replace(@"/", "").Replace(@"\", ""); }
+                                                Directory.CreateDirectory("ipfs/" + ipfsHash);
+                                                System.IO.File.Move("ipfs/" + ipfsHash + "_tmp", @"ipfs/" + ipfsHash + @"/" + fileName);
+
+                                                try { System.IO.File.Move("ipfs/" + ipfsHash + "_tmp", @"ipfs/" + ipfsHash + @"/" + fileName); }
+                                                catch (System.ArgumentException ex)
+                                                {
+
+                                                    System.IO.File.Move("ipfs/" + ipfsHash + "_tmp", "ipfs/" + ipfsHash + "/artifact" + txtSearchAddress.Text.Substring(txtSearchAddress.Text.LastIndexOf('.')));
+                                                    imgurl = "ipfs/" + ipfsHash + "/artifact" + txtSearchAddress.Text.Substring(txtSearchAddress.Text.LastIndexOf('.'));
+
+                                                }
+
+
+                                            }
+
+                                            if (System.IO.File.Exists("ipfs/" + ipfsHash + "/" + ipfsHash))
+                                            {
+                                                fileName = txtSearchAddress.Text.Replace(@"//", "").Replace(@"\\", "").Substring(51);
+                                                if (fileName == "") { fileName = "artifact"; } else { fileName = fileName.Replace(@"/", "").Replace(@"\", ""); }
+
                                                 try { System.IO.File.Move("ipfs/" + ipfsHash + "/" + ipfsHash, @"ipfs/" + ipfsHash + @"/" + fileName); }
                                                 catch (System.ArgumentException ex)
                                                 {
 
-                                                    System.IO.File.Move("ipfs/" + ipfsHash + "/" + ipfsHash, "ipfs/" + ipfsHash + "/artifact");
-
+                                                    System.IO.File.Move("ipfs/" + ipfsHash + "/" + ipfsHash, "ipfs/" + ipfsHash + "/artifact" + txtSearchAddress.Text.Substring(txtSearchAddress.Text.LastIndexOf('.')));
+                                                    imgurl = "ipfs/" + ipfsHash + "/artifact" + txtSearchAddress.Text.Substring(txtSearchAddress.Text.LastIndexOf('.'));
 
                                                 }
-
                                             }
-
 
 
                                             Process process3 = new Process
@@ -1394,22 +1418,22 @@ namespace SUP
                                             };
                                             process3.Start();
 
+                                            try { Directory.Delete("ipfs/" + ipfsHash + "-build", true); } catch { }
+                                        }
+
+                                        if (System.IO.Directory.Exists(System.IO.Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + @"\ipfs\" + ipfsHash))
+                                        {
+                                            Process.Start("explorer.exe", System.IO.Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + @"\ipfs\" + ipfsHash);
+                                        }
+                                        else { System.Windows.Forms.Label filenotFound = new System.Windows.Forms.Label(); filenotFound.AutoSize = true; filenotFound.Text = "IPFS: Search failed! Verify IPFS pinning is enbaled"; flowLayoutPanel1.Controls.Clear(); flowLayoutPanel1.Controls.Add(filenotFound); }
+
+                                        using (var db = new DB(SUP, @"ipfs"))
+                                        {
+                                            db.Delete(ipfsHash);
+
+                                        }
 
 
-
-                                            if (System.IO.Directory.Exists(System.IO.Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + @"\ipfs\" + ipfsHash))
-                                            {
-                                                Process.Start("explorer.exe", System.IO.Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + @"\ipfs\" + ipfsHash);
-                                            }
-                                            else { System.Windows.Forms.Label filenotFound = new System.Windows.Forms.Label(); filenotFound.AutoSize = true; filenotFound.Text = "IPFS: Search failed! Verify IPFS pinning is enbaled"; flowLayoutPanel1.Controls.Clear(); flowLayoutPanel1.Controls.Add(filenotFound); }
-
-                                            using (var db = new DB(SUP, @"ipfs"))
-                                            {
-                                                db.Delete(ipfsHash);
-
-                                            }
-
-                                        });
                                     }
                                 }
                                 else
@@ -1484,6 +1508,7 @@ namespace SUP
                     {
                         db.Delete("isBuilding");
                     }
+
 
                 }
                 catch { }
