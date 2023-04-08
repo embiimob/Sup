@@ -589,6 +589,9 @@ namespace SUP.P2FK
         public static Root[] GetRootsByAddress(string address, string username, string password, string url, int skip = 0, int qty = -1, string versionByte = "111")
         {
             var rootList = new List<Root>();
+
+            if (address.Length < 34) { return rootList.ToArray(); }
+
             var credentials = new NetworkCredential(username, password);
             var rpcClient = new RPCClient(credentials, new Uri(url));
             bool fetched = false;

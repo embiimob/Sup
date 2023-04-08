@@ -63,10 +63,10 @@ namespace SUP
             int skip = int.Parse(txtLast.Text);
             int qty = int.Parse(txtQty.Text);
 
-            if (address.ToUpper().StartsWith(@"SUP:\\"))
+            if (address.ToUpper().StartsWith(@"SUP:"))
             {
-
-                createdObjects = new List<OBJState> { OBJState.GetObjectByURN(address.Substring(5), "good-user", "better-password", @"http://127.0.0.1:18332", "111") };
+                string urnsearch = address.Substring(6);
+                createdObjects = new List<OBJState> { OBJState.GetObjectByURN(urnsearch, "good-user", "better-password", @"http://127.0.0.1:18332") };
 
             }
             else
@@ -1483,12 +1483,19 @@ namespace SUP
                                         flowLayoutPanel1.AutoScroll = false;
                                         var webBrowser1 = new Microsoft.Web.WebView2.WinForms.WebView2();
                                         webBrowser1.Size = flowLayoutPanel1.Size;
+                                       
+                                        flowLayoutPanel1.SizeChanged += (sender, e) =>
+                                        {
+                                            webBrowser1.Size = flowLayoutPanel1.Size;
+                                        };
+
                                         this.Invoke((Action)(async () =>
                                         {
+                                            
                                             flowLayoutPanel1.Controls.Add(webBrowser1);
-
                                             await webBrowser1.EnsureCoreWebView2Async();
                                             webBrowser1.CoreWebView2.Navigate(browserPath.Replace(@"/", @"\"));
+                                            pages.Visible = false;
                                         }));
 
                                     }

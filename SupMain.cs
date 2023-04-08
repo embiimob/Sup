@@ -3927,7 +3927,7 @@ namespace SUP
 
         void Attachment_Clicked(string path)
         {
-            if (path.StartsWith("IPFS:"))
+            if (path.ToUpper().StartsWith("IPFS:") || path.ToUpper().StartsWith("BTC:") || path.ToUpper().StartsWith("MZC:") || path.ToUpper().StartsWith("LTC:") || path.ToUpper().StartsWith("DOG:"))
             {
                 new ObjectBrowser(path).Show();
             }

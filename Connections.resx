@@ -303,8 +303,8 @@
 </value>
   </data>
   <data name="label14.Text" xml:space="preserve">
-    <value>Copyright (C) 1975-∞ Vint Cerf,  Bob Kahn, Ray Tomlinson ( TCPIP )
-Copyright (C) 1993-∞  Tim Berners-Lee ( HTTP )
+    <value>Copyright (C) 1975  Vint Cerf,  Bob Kahn, Ray Tomlinson ( TCPIP )
+Copyright (C) 1993  Tim Berners-Lee ( HTTP )
 Copyright (C) 2009-2016 The Bitcoin Core developers
 Copyright (C) 2011-2018 The Litecoin Core developers
 Copyright (C) 2013-2022 The Dogecoin Core developers
@@ -314,10 +314,10 @@ Copyright (C) 2018-2021 The Maza Core developers
 </value>
   </data>
   <data name="label13.Text" xml:space="preserve">
-    <value>Sup!? requires a local 127.0.0.1 connection to the bitcoin testnet network.
+    <value>Sup!? requires a local 127.0.0.1 connection to the bitcoin testnet network. click launch on the top button to begin.
 
 Launch full bitcoin production, mazacoin prodction, litecoin production and dogecoin production nodes by clicking their launch buttons 
 
-Launched blockchain data will be stored in easily replicated sub folders</value>
+All launched blockchain data will be stored in easily replicated sub folders</value>
   </data>
 </root>

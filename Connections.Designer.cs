@@ -203,9 +203,9 @@
             // 
             // btnClearIPFSisLoadingCache
             // 
-            this.btnClearIPFSisLoadingCache.Location = new System.Drawing.Point(527, 255);
+            this.btnClearIPFSisLoadingCache.Location = new System.Drawing.Point(376, 255);
             this.btnClearIPFSisLoadingCache.Name = "btnClearIPFSisLoadingCache";
-            this.btnClearIPFSisLoadingCache.Size = new System.Drawing.Size(146, 23);
+            this.btnClearIPFSisLoadingCache.Size = new System.Drawing.Size(122, 23);
             this.btnClearIPFSisLoadingCache.TabIndex = 156;
             this.btnClearIPFSisLoadingCache.Text = "purge isloading cache";
             this.btnClearIPFSisLoadingCache.UseVisualStyleBackColor = true;
@@ -394,7 +394,7 @@
             // 
             // btnPurgeIPFS
             // 
-            this.btnPurgeIPFS.Location = new System.Drawing.Point(412, 255);
+            this.btnPurgeIPFS.Location = new System.Drawing.Point(569, 255);
             this.btnPurgeIPFS.Name = "btnPurgeIPFS";
             this.btnPurgeIPFS.Size = new System.Drawing.Size(104, 23);
             this.btnPurgeIPFS.TabIndex = 128;
@@ -441,14 +441,14 @@
             this.label15.Name = "label15";
             this.label15.Size = new System.Drawing.Size(116, 13);
             this.label15.TabIndex = 124;
-            this.label15.Text = "Sup!? v0.1.36-beta";
+            this.label15.Text = "Sup!? v0.1.37-beta";
             // 
             // label14
             // 
             this.label14.AutoSize = true;
-            this.label14.Location = new System.Drawing.Point(310, 349);
+            this.label14.Location = new System.Drawing.Point(329, 352);
             this.label14.Name = "label14";
-            this.label14.Size = new System.Drawing.Size(324, 104);
+            this.label14.Size = new System.Drawing.Size(318, 104);
             this.label14.TabIndex = 123;
             this.label14.Text = resources.GetString("label14.Text");
             // 
@@ -530,7 +530,7 @@
             // textBox4
             // 
             this.textBox4.Enabled = false;
-            this.textBox4.Location = new System.Drawing.Point(478, 41);
+            this.textBox4.Location = new System.Drawing.Point(478, 37);
             this.textBox4.Name = "textBox4";
             this.textBox4.Size = new System.Drawing.Size(43, 20);
             this.textBox4.TabIndex = 113;
