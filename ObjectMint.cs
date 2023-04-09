@@ -625,17 +625,48 @@ namespace SUP
             if (txtObjectAddress.Text != "")
             {
                 lblObjectStatus.Text = "";
+
+                string P2FKASCII = Root.GetKeywordByPublicAddress(txtObjectAddress.Text);
+                char[] specialChars = new char[] { '\\', '/', ':', '*', '?', '"', '<', '>', '|' };
+                // Check for presence of special character followed by a number using regular expression
+                string pattern = "[" + Regex.Escape(new string(specialChars)) + "][0-9]";
+                if (Regex.IsMatch(P2FKASCII, pattern))
+                {
+                    MessageBox.Show("Sup!? Found special characters within this address that could corrupt P2FK transactions.", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                }
+
                 LoadFormByAddress(txtObjectAddress.Text);
-
-
 
             }
             else
             {
+
                 NetworkCredential credentials = new NetworkCredential("good-user", "better-password");
                 RPCClient rpcClient = new RPCClient(credentials, new Uri("http://127.0.0.1:18332"), Network.Main);
                 string newAddress = "";
-                try { newAddress = rpcClient.SendCommand("getnewaddress", txtTitle.Text + "!" + DateTime.UtcNow.ToString("yyyyMMddHHmmss")).ResultString; } catch { }
+                string P2FKASCII = "";
+                char[] specialChars = new char[] { '\\', '/', ':', '*', '?', '"', '<', '>', '|' };
+                int attempt = 0;
+                while (true)
+                {
+                    try
+                    {
+                        newAddress = rpcClient.SendCommand("getnewaddress", txtTitle.Text + "!" + DateTime.UtcNow.ToString("yyyyMMddHHmmss") +"!"+ attempt.ToString()).ResultString;
+                        P2FKASCII = Root.GetKeywordByPublicAddress(newAddress);
+                        string pattern = "[" + Regex.Escape(new string(specialChars)) + "][0-9]";
+                        if (!Regex.IsMatch(P2FKASCII, pattern))
+                        {
+                           
+                            break;
+                        }
+                        attempt++;
+                    }
+                    catch
+                    {
+
+                    }
+                }
+
                 txtObjectAddress.Text = newAddress;
                 txtTitle.Enabled = false;
                 btnObjectName.Enabled = false;

@@ -174,12 +174,15 @@ namespace SUP.P2FK
 
             int transactionBytesSize = transactionBytes.Count();
             transactionASCII = Encoding.ASCII.GetString(transactionBytes);
+           
 
             if (rootbytes == null && P2FKSignatureAddress == null) { return P2FKRoot; }
-
+            bool sigtrim = false;
             // Perform the loop until no additional numbers are found and the regular expression fails to match
             while (regexSpecialChars.IsMatch(transactionASCII))
             {
+
+
                 Match match = regexSpecialChars.Match(transactionASCII);
                 int packetSize;
                 int headerSize;
@@ -379,7 +382,7 @@ namespace SUP.P2FK
 
             if (sigStartByte > 0)
             {
-                //used in signature verification
+
                 System.Security.Cryptography.SHA256 mySHA256 = SHA256Managed.Create();
                 P2FKRoot.Hash = BitConverter
                     .ToString(

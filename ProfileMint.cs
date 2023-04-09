@@ -416,25 +416,53 @@ namespace SUP
 
         private void btnObjectAddress_Click(object sender, EventArgs e)
         {
-
-            if (txtObjectAddress.Text != "")
+            if (!string.IsNullOrEmpty(txtObjectAddress.Text))
             {
+                string P2FKASCII = Root.GetKeywordByPublicAddress(txtObjectAddress.Text);
+                char[] specialChars = new char[] { '\\', '/', ':', '*', '?', '"', '<', '>', '|' };
+                // Check for presence of special character followed by a number using regular expression
+                string pattern = "[" + Regex.Escape(new string(specialChars)) + "][0-9]";
+                if (Regex.IsMatch(P2FKASCII, pattern))
+                {
+                    MessageBox.Show("Sup!? Found special characters within this address that could corrupt P2FK transactions.", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                }
                 lblObjectStatus.Text = "";
                 LoadFormByAddress(txtObjectAddress.Text);
-
             }
             else
             {
                 NetworkCredential credentials = new NetworkCredential("good-user", "better-password");
                 RPCClient rpcClient = new RPCClient(credentials, new Uri("http://127.0.0.1:18332"), Network.Main);
                 string newAddress = "";
-                try { newAddress = rpcClient.SendCommand("getnewaddress",txtURN.Text).ResultString; } catch { }
+                string P2FKASCII = "";
+                int attempt = 0;
+                char[] specialChars = new char[] { '\\', '/', ':', '*', '?', '"', '<', '>', '|' };
+
+                while (true)
+                {
+                    try
+                    {
+                        newAddress = rpcClient.SendCommand("getnewaddress", txtURN.Text + "!" + DateTime.UtcNow.ToString("yyyyMMddHHmmss")+"!"+attempt.ToString()).ResultString;
+                        P2FKASCII = Root.GetKeywordByPublicAddress(newAddress);
+                        string pattern = "[" + Regex.Escape(new string(specialChars)) + "][0-9]";
+                        if (!Regex.IsMatch(P2FKASCII, pattern))
+                        {
+                         
+                            break;
+                        }
+                        attempt++;
+                    }
+                    catch
+                    {
+
+                    }
+                }
+
                 txtObjectAddress.Text = newAddress;
                 lblObjectStatus.Text = "";
                 lblCost.Text = "";
                 UpdateRemainingChars();
             }
-
         }
 
 
