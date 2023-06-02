@@ -11,6 +11,7 @@
   "lic": "CC0",
   "cre": [ 0 ],
   "own": { "0": 1 },
+  "roy": { "0": 3.14 },
   "max": 1
 }
 
@@ -19,7 +20,7 @@
 //assume keyword order id 0 is the authorization address
 //"cre": [ 0, 1 ] assume keyword order id 0 is the object address, keyword order id 1 is a creator address
 //"own": { 0: 10000} assume keyword order id 0 owns a qty of 10000
-
+//"roy": { 0: 3.14} assume keyword order id 0 must recieve royalties of 3.14% on any future BUY transactions for them to be considered valid transactions.
 //defined format
 {
   "cre": [ "mpwoff3ut1DJzomKaH69PWdfheXqKpYTcz", "mxyo2qyUo9h7wzDYbudcyC2VWxaTfTeCZr" ],
@@ -38,20 +39,20 @@
 
 //remove all unnecessary spaces
 //place JSON in a file named OBJ (no file extension)
-//enter #[first 20 charachters of urn] to create a URN registration in this example #IPFS:Qmex6VRDqwVCMPr in the apertus.io message box
-//enter @[file public key] to create a file registration in this example @mpwoff3ut1DJzomKaH69PWdfheXqKpYTcz in the apertus.io message box
+//enter #[first 20 charachters of urn] to create a URN registration in this example #IPFS:QmYyfdKm8S6DjWu in the apertus.io message box
+//enter @[file public key] to create a file registration in this example @mn1t3rubqbomENzASQgvn6hDWJFn3CydRS in the apertus.io message box
 //to find the public key associated with a file drag and drop the file somewhere onto the workbench screen and it will be displayed
 //enter each additional @creatoraddress and or @owneraddress in the apertus.io message box in matching orders
-//in this example keyword order id 1 would be the second from the bottom if the #IPFS:Qmex6VRDqwVCMPr URN was also being registered
+//in this example keyword order id 1 would be the second from the bottom if the #IPFS:QmYyfdKm8S6DjWu URN was also being registered
 //attach file OBJ using the apertus.io attach button
 //create a new signature address in the signature list in apertus.io. select it.  this will be the object address
 //verify that the no message box is checked.
 //click the apertus.io etch button
 
 
-// acknowledge creator deligation example with alphanumeric salt
+// acknowledge creator deligation example with  salt
 
-{ "cre": [ "a1" ] }
+{ "cre": [ -124365 ] }
 
 
 // object element update transaction examples

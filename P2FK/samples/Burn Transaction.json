@@ -1,13 +1,15 @@
 [
   [ 1, 1 ],
   [ 2, 10 ],
-  [ 3, 2 ]
+  [ 3, 2 ],
+  [ 0, -3452 ]
 ]
 
 //assume keyword order id 0 is the authorization address
 //assume keyword order id 1-?  list of objects to burn ( the max amount of objects to burn in batch is #unknown but there is one )
 //[object to burn keyword order id, qty to burn]
-
+//[ 0, -numericalSalt]
+ 
 //remove all unnecessary spaces
 //place JSON in a file named BRN (no file extension)
 //enter @objectaddress to burn in the apertus.io message box

@@ -441,7 +441,7 @@
             this.label15.Name = "label15";
             this.label15.Size = new System.Drawing.Size(116, 13);
             this.label15.TabIndex = 124;
-            this.label15.Text = "Sup!? v0.1.37-beta";
+            this.label15.Text = "Sup!? v0.1.38-beta";
             // 
             // label14
             // 
