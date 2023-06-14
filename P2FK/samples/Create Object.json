@@ -3,7 +3,7 @@
   "img": "0ae9dbbb628bfdee9bdb85e3acec7ada318d49ad3f3d4f2a4e5c8dc0ffab0baf/cloudcity4u.gif",
   "uri": "https://realms.gg/p73fB2YgSQA",
   "nme": "CLOUDCITY4U",
-  "dsc": "Cloud City begins where minecraft ended a long long time ago in the future\n\nHave you beaten Minecraft and are looking for something new to do with your favorite avatars? Check out #CloudCity4U a brand new questing game built inside the #Minecraft World.\n\nYou will begin your quest in the humble town of barnsville. search carefully for things you will need on your journey.\n\nMission 1 - Find the home of embii (#strange wizard of the realms)\nMission 2 - Find Cloud City\nMission 3 - activate the portals Complete these missions and the real fun begins.\n\nCloud City 4U contains many advanced multiplayer games and private apartments that you must find to own and or participate.\n\nNOTE: You must leave the city limits for Survival mode play. Structures built in survival mode will persist until at least 2025\n\nAre you up to the challenge!? https://realms.gg/p73fB2YgSQA\n\n*to claim a private apartment you must post the building number and a picture of the unclaimed apartment number along with your gamerID in our discord server. an operator will program the keys for you to enter it at their earliest convivence. \n\nhttps://discord.gg/pwpfWRRNh2\n\n#CloudCity4U is an Open Source Realm.\nDownload, share and play",
+  "dsc": "Cloud City begins where minecraft ended a long long time ago in the future\n\nHave you beaten Minecraftand are looking for something new to do with your favorite avatars? Check out #CloudCity4U a brand new questing game built inside the #Minecraft World.\n\nYou will begin your quest in the humble town of barnsville. search carefully for things you will need on your journey.\n\nMission 1 - Find the home of embii (#strange wizard of the realms)\nMission 2 - Find Cloud City\nMission 3 - activate the portals Complete these missions and the real fun begins.\n\nCloud City 4U contains many advanced multiplayer games and private apartments that you must find to own and or participate.\n\nNOTE: You must leave the city limits for Survival mode play. Structures built in survival mode will persist until at least 2025\n\nAre you up to the challenge!? https://realms.gg/p73fB2YgSQA\n\n*to claim a private apartment you must post the building number and a picture of the unclaimed apartment number along with your gamerID in our discord server. an operator will program the keys for you to enter it at their earliest convivence. \n\nhttps://discord.gg/pwpfWRRNh2\n\n#CloudCity4U is an Open Source Realm.\nDownload, share and play",
   "atr": {
     "rad": "yes",
     "hard": "yes"
@@ -24,7 +24,8 @@
 //defined format
 {
   "cre": [ "mpwoff3ut1DJzomKaH69PWdfheXqKpYTcz", "mxyo2qyUo9h7wzDYbudcyC2VWxaTfTeCZr" ],
-  "own": { "mpwoff3ut1DJzomKaH69PWdfheXqKpYTcz": 1 }
+  "own": { "mpwoff3ut1DJzomKaH69PWdfheXqKpYTcz": 1 },
+  "roy": { "mpwoff3ut1DJzomKaH69PWdfheXqKpYTcz": 3.14 }
 }
 
 

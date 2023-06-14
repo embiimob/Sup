@@ -181,6 +181,7 @@ namespace SUP
             OwnersPanel.SuspendLayout();
             CreatorsPanel.Controls.Clear();
             OwnersPanel.Controls.Clear();
+            RoyaltiesPanel.Controls.Clear();
             supPanel.Visible = false;
             btnDisco.Visible = false;
 
@@ -285,6 +286,109 @@ namespace SUP
                 long totalQty = objstate.Owners.Values.Sum();
 
                 lblTotalOwnedDetail.Text = "total: " + totalQty.ToString("N0");
+
+
+                ///royalties 
+
+                if (objstate.Royalties != null)
+                {
+
+
+                    RoyaltiesPanel.FlowDirection = System.Windows.Forms.FlowDirection.LeftToRight;
+                    RoyaltiesPanel.AutoScroll = true;
+
+                    row = 0;
+                    foreach (KeyValuePair<string, decimal> item in objstate.Royalties)
+                    {
+
+
+                        TableLayoutPanel rowPanel = new TableLayoutPanel
+                        {
+                            RowCount = 1,
+                            ColumnCount = 2,
+                            Dock = DockStyle.Top,
+                            AutoSize = true,
+                            Padding = new System.Windows.Forms.Padding(3)
+                        };
+
+                        rowPanel.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 230));
+                        rowPanel.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 110));
+
+
+                        LinkLabel keyLabel = new LinkLabel();
+
+
+                        string searchkey = item.Key;
+
+
+                        if (!profileAddress.ContainsKey(searchkey))
+                        {
+
+                            PROState profile = PROState.GetProfileByAddress(searchkey, "good-user", "better-password", "http://127.0.0.1:18332");
+
+                            if (profile.URN != null)
+                            {
+                                keyLabel.Text = profile.URN;
+
+                            }
+                            else
+                            {
+                                keyLabel.Text = item.Key;
+                            }
+                            profileAddress.Add(searchkey, keyLabel.Text);
+                        }
+                        else
+                        {
+                            profileAddress.TryGetValue(searchkey, out string ShortName);
+                            keyLabel.Text = ShortName;
+                        }
+
+                        keyLabel.Links[0].LinkData = item.Key;
+                        keyLabel.AutoSize = true;
+                        keyLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+                        keyLabel.LinkBehavior = LinkBehavior.NeverUnderline;
+                        keyLabel.LinkColor = System.Drawing.Color.Black;
+                        keyLabel.ActiveLinkColor = System.Drawing.Color.Black;
+                        keyLabel.VisitedLinkColor = System.Drawing.Color.Black;
+                        keyLabel.LinkClicked += new LinkLabelLinkClickedEventHandler(LinkClicked);
+                        keyLabel.Dock = DockStyle.Left;
+
+
+                        Label valueLabel = new Label
+                        {
+                            Text = item.Value.ToString(),
+                            AutoSize = true,
+                            Dock = DockStyle.Right
+                        };
+
+
+                        rowPanel.Controls.Add(keyLabel, 0, 0);
+                        rowPanel.Controls.Add(valueLabel, 1, 0);
+
+
+                        if (row % 2 == 0)
+                        {
+                            rowPanel.BackColor = System.Drawing.Color.White;
+                        }
+                        else
+                        {
+                            rowPanel.BackColor = System.Drawing.Color.LightGray;
+                        }
+
+
+                        RoyaltiesPanel.Controls.Add(rowPanel);
+                        row++;
+
+
+
+                    }
+
+                    decimal totalRoytalties = objstate.Royalties.Values.Sum();
+
+                    lblTotalRoyaltiesDetail.Text = "royalties: " + totalRoytalties.ToString();
+                }
+
+                ///
 
 
                 foreach (KeyValuePair<string, DateTime> item in objstate.Creators)

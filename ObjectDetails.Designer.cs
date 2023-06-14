@@ -36,6 +36,7 @@
             this.btnLaunchURN = new System.Windows.Forms.Button();
             this.flowPanel = new System.Windows.Forms.Panel();
             this.lblWarning = new System.Windows.Forms.Label();
+            this.pictureBox1 = new System.Windows.Forms.PictureBox();
             this.KeysFlow = new System.Windows.Forms.FlowLayoutPanel();
             this.lblLicense = new System.Windows.Forms.Label();
             this.lblLastChangedDate = new System.Windows.Forms.Label();
@@ -73,13 +74,16 @@
             this.lblOfficial = new System.Windows.Forms.Label();
             this.lblPleaseStandBy = new System.Windows.Forms.Label();
             this.btnDisco = new System.Windows.Forms.Button();
-            this.pictureBox1 = new System.Windows.Forms.PictureBox();
             this.imgPicture = new System.Windows.Forms.PictureBox();
+            this.RoyaltiesPanel = new System.Windows.Forms.FlowLayoutPanel();
+            this.label1 = new System.Windows.Forms.Label();
+            this.label5 = new System.Windows.Forms.Label();
+            this.lblTotalRoyaltiesDetail = new System.Windows.Forms.Label();
             this.flowPanel.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.supPanel.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.webviewer)).BeginInit();
             this.registrationPanel.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.imgPicture)).BeginInit();
             this.SuspendLayout();
             // 
@@ -88,7 +92,7 @@
             this.lblImageFullPath.AutoSize = true;
             this.lblImageFullPath.Location = new System.Drawing.Point(292, 810);
             this.lblImageFullPath.Name = "lblImageFullPath";
-            this.lblImageFullPath.Size = new System.Drawing.Size(81, 15);
+            this.lblImageFullPath.Size = new System.Drawing.Size(71, 13);
             this.lblImageFullPath.TabIndex = 50;
             this.lblImageFullPath.Text = "IMG Full Path";
             this.lblImageFullPath.Visible = false;
@@ -98,7 +102,7 @@
             this.lblURNFullPath.AutoSize = true;
             this.lblURNFullPath.Location = new System.Drawing.Point(590, 810);
             this.lblURNFullPath.Name = "lblURNFullPath";
-            this.lblURNFullPath.Size = new System.Drawing.Size(85, 15);
+            this.lblURNFullPath.Size = new System.Drawing.Size(75, 13);
             this.lblURNFullPath.TabIndex = 48;
             this.lblURNFullPath.Text = "URN Full Path";
             this.lblURNFullPath.Visible = false;
@@ -172,6 +176,18 @@
             this.lblWarning.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             this.lblWarning.Visible = false;
             // 
+            // pictureBox1
+            // 
+            this.pictureBox1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
+            this.pictureBox1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.pictureBox1.Location = new System.Drawing.Point(0, 0);
+            this.pictureBox1.Name = "pictureBox1";
+            this.pictureBox1.Size = new System.Drawing.Size(401, 402);
+            this.pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
+            this.pictureBox1.TabIndex = 1;
+            this.pictureBox1.TabStop = false;
+            this.pictureBox1.DoubleClick += new System.EventHandler(this.ShowFullScreenModeClick);
+            // 
             // KeysFlow
             // 
             this.KeysFlow.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
@@ -191,7 +207,7 @@
             this.lblLicense.Location = new System.Drawing.Point(85, 62);
             this.lblLicense.Margin = new System.Windows.Forms.Padding(0, 0, 3, 0);
             this.lblLicense.Name = "lblLicense";
-            this.lblLicense.Size = new System.Drawing.Size(113, 15);
+            this.lblLicense.Size = new System.Drawing.Size(88, 12);
             this.lblLicense.TabIndex = 101;
             this.lblLicense.Text = "All Rights Reserved";
             this.lblLicense.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
@@ -226,7 +242,7 @@
             this.lbllcdtitle.ForeColor = System.Drawing.Color.White;
             this.lbllcdtitle.Location = new System.Drawing.Point(17, 209);
             this.lbllcdtitle.Name = "lbllcdtitle";
-            this.lbllcdtitle.Size = new System.Drawing.Size(108, 18);
+            this.lbllcdtitle.Size = new System.Drawing.Size(94, 15);
             this.lbllcdtitle.TabIndex = 97;
             this.lbllcdtitle.Text = "changed date";
             this.lbllcdtitle.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
@@ -251,7 +267,7 @@
             this.label6.ForeColor = System.Drawing.Color.White;
             this.label6.Location = new System.Drawing.Point(16, 128);
             this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(41, 18);
+            this.label6.Size = new System.Drawing.Size(35, 15);
             this.label6.TabIndex = 94;
             this.label6.Text = "URI:";
             this.label6.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
@@ -275,7 +291,7 @@
             this.lblURIBlockDate.ForeColor = System.Drawing.Color.White;
             this.lblURIBlockDate.Location = new System.Drawing.Point(54, 130);
             this.lblURIBlockDate.Name = "lblURIBlockDate";
-            this.lblURIBlockDate.Size = new System.Drawing.Size(119, 15);
+            this.lblURIBlockDate.Size = new System.Drawing.Size(103, 13);
             this.lblURIBlockDate.TabIndex = 92;
             this.lblURIBlockDate.Text = "   [ is not immutable ]";
             this.lblURIBlockDate.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
@@ -288,7 +304,7 @@
             this.label3.ForeColor = System.Drawing.Color.White;
             this.label3.Location = new System.Drawing.Point(15, 72);
             this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(44, 18);
+            this.label3.Size = new System.Drawing.Size(37, 15);
             this.label3.TabIndex = 91;
             this.label3.Text = "IMG:";
             this.label3.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
@@ -312,7 +328,7 @@
             this.lblIMGBlockDate.ForeColor = System.Drawing.Color.White;
             this.lblIMGBlockDate.Location = new System.Drawing.Point(54, 74);
             this.lblIMGBlockDate.Name = "lblIMGBlockDate";
-            this.lblIMGBlockDate.Size = new System.Drawing.Size(119, 15);
+            this.lblIMGBlockDate.Size = new System.Drawing.Size(103, 13);
             this.lblIMGBlockDate.TabIndex = 89;
             this.lblIMGBlockDate.Text = "   [ is not immutable ]";
             this.lblIMGBlockDate.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
@@ -336,7 +352,7 @@
             this.lblURNBlockDate.ForeColor = System.Drawing.Color.White;
             this.lblURNBlockDate.Location = new System.Drawing.Point(54, 14);
             this.lblURNBlockDate.Name = "lblURNBlockDate";
-            this.lblURNBlockDate.Size = new System.Drawing.Size(119, 15);
+            this.lblURNBlockDate.Size = new System.Drawing.Size(103, 13);
             this.lblURNBlockDate.TabIndex = 86;
             this.lblURNBlockDate.Text = "   [ is not immutable ]";
             this.lblURNBlockDate.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
@@ -398,7 +414,7 @@
             this.chkRunTrustedObject.Location = new System.Drawing.Point(252, 62);
             this.chkRunTrustedObject.Name = "chkRunTrustedObject";
             this.chkRunTrustedObject.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
-            this.chkRunTrustedObject.Size = new System.Drawing.Size(52, 19);
+            this.chkRunTrustedObject.Size = new System.Drawing.Size(46, 17);
             this.chkRunTrustedObject.TabIndex = 83;
             this.chkRunTrustedObject.Text = "trust";
             this.chkRunTrustedObject.UseVisualStyleBackColor = true;
@@ -483,7 +499,7 @@
             this.label2.ForeColor = System.Drawing.Color.White;
             this.label2.Location = new System.Drawing.Point(727, 208);
             this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(51, 15);
+            this.label2.Size = new System.Drawing.Size(45, 13);
             this.label2.TabIndex = 72;
             this.label2.Text = "creators";
             // 
@@ -503,9 +519,9 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.OwnersPanel.AutoScroll = true;
             this.OwnersPanel.BackColor = System.Drawing.Color.Black;
-            this.OwnersPanel.Location = new System.Drawing.Point(713, 13);
+            this.OwnersPanel.Location = new System.Drawing.Point(713, 26);
             this.OwnersPanel.Name = "OwnersPanel";
-            this.OwnersPanel.Size = new System.Drawing.Size(374, 185);
+            this.OwnersPanel.Size = new System.Drawing.Size(374, 58);
             this.OwnersPanel.TabIndex = 69;
             // 
             // webviewer
@@ -544,7 +560,7 @@
             this.label4.ForeColor = System.Drawing.Color.White;
             this.label4.Location = new System.Drawing.Point(15, 12);
             this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(49, 18);
+            this.label4.Size = new System.Drawing.Size(41, 15);
             this.label4.TabIndex = 88;
             this.label4.Text = "URN:";
             this.label4.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
@@ -556,7 +572,7 @@
             this.lblObjectCreatedDate.Location = new System.Drawing.Point(83, 42);
             this.lblObjectCreatedDate.Margin = new System.Windows.Forms.Padding(0);
             this.lblObjectCreatedDate.Name = "lblObjectCreatedDate";
-            this.lblObjectCreatedDate.Size = new System.Drawing.Size(110, 15);
+            this.lblObjectCreatedDate.Size = new System.Drawing.Size(94, 13);
             this.lblObjectCreatedDate.TabIndex = 95;
             this.lblObjectCreatedDate.Text = "[ is not immutable ]";
             this.lblObjectCreatedDate.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
@@ -608,7 +624,7 @@
             this.lblOfficial.Margin = new System.Windows.Forms.Padding(0);
             this.lblOfficial.Name = "lblOfficial";
             this.lblOfficial.Padding = new System.Windows.Forms.Padding(4, 1, 1, 3);
-            this.lblOfficial.Size = new System.Drawing.Size(37, 28);
+            this.lblOfficial.Size = new System.Drawing.Size(32, 22);
             this.lblOfficial.TabIndex = 107;
             this.lblOfficial.Text = "👑";
             this.lblOfficial.Visible = false;
@@ -641,18 +657,6 @@
             this.btnDisco.Visible = false;
             this.btnDisco.Click += new System.EventHandler(this.btnDisco_Click);
             // 
-            // pictureBox1
-            // 
-            this.pictureBox1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
-            this.pictureBox1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.pictureBox1.Location = new System.Drawing.Point(0, 0);
-            this.pictureBox1.Name = "pictureBox1";
-            this.pictureBox1.Size = new System.Drawing.Size(401, 402);
-            this.pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
-            this.pictureBox1.TabIndex = 1;
-            this.pictureBox1.TabStop = false;
-            this.pictureBox1.DoubleClick += new System.EventHandler(this.ShowFullScreenModeClick);
-            // 
             // imgPicture
             // 
             this.imgPicture.Location = new System.Drawing.Point(9, 7);
@@ -664,6 +668,51 @@
             this.imgPicture.Click += new System.EventHandler(this.imgPicture_Click);
             this.imgPicture.Validated += new System.EventHandler(this.imgPicture_Validated);
             // 
+            // RoyaltiesPanel
+            // 
+            this.RoyaltiesPanel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.RoyaltiesPanel.AutoScroll = true;
+            this.RoyaltiesPanel.BackColor = System.Drawing.Color.Black;
+            this.RoyaltiesPanel.Location = new System.Drawing.Point(713, 108);
+            this.RoyaltiesPanel.Name = "RoyaltiesPanel";
+            this.RoyaltiesPanel.Size = new System.Drawing.Size(374, 90);
+            this.RoyaltiesPanel.TabIndex = 70;
+            // 
+            // label1
+            // 
+            this.label1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.label1.AutoSize = true;
+            this.label1.ForeColor = System.Drawing.Color.White;
+            this.label1.Location = new System.Drawing.Point(721, 92);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(45, 13);
+            this.label1.TabIndex = 109;
+            this.label1.Text = "royalties";
+            // 
+            // label5
+            // 
+            this.label5.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.label5.AutoSize = true;
+            this.label5.ForeColor = System.Drawing.Color.White;
+            this.label5.Location = new System.Drawing.Point(721, 10);
+            this.label5.Name = "label5";
+            this.label5.Size = new System.Drawing.Size(41, 13);
+            this.label5.TabIndex = 110;
+            this.label5.Text = "owners";
+            // 
+            // lblTotalRoyaltiesDetail
+            // 
+            this.lblTotalRoyaltiesDetail.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.lblTotalRoyaltiesDetail.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblTotalRoyaltiesDetail.ForeColor = System.Drawing.Color.White;
+            this.lblTotalRoyaltiesDetail.Location = new System.Drawing.Point(931, 345);
+            this.lblTotalRoyaltiesDetail.Name = "lblTotalRoyaltiesDetail";
+            this.lblTotalRoyaltiesDetail.Padding = new System.Windows.Forms.Padding(3);
+            this.lblTotalRoyaltiesDetail.Size = new System.Drawing.Size(157, 23);
+            this.lblTotalRoyaltiesDetail.TabIndex = 111;
+            this.lblTotalRoyaltiesDetail.Text = "royalties";
+            this.lblTotalRoyaltiesDetail.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            // 
             // ObjectDetails
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -671,6 +720,8 @@
             this.BackColor = System.Drawing.Color.Black;
             this.ClientSize = new System.Drawing.Size(1094, 424);
             this.Controls.Add(this.supPanel);
+            this.Controls.Add(this.label1);
+            this.Controls.Add(this.RoyaltiesPanel);
             this.Controls.Add(this.lblOfficial);
             this.Controls.Add(this.lblPleaseStandBy);
             this.Controls.Add(this.registrationPanel);
@@ -700,6 +751,8 @@
             this.Controls.Add(this.txtOfficialURN);
             this.Controls.Add(this.lblImageFullPath);
             this.Controls.Add(this.lblURNFullPath);
+            this.Controls.Add(this.label5);
+            this.Controls.Add(this.lblTotalRoyaltiesDetail);
             this.MinimumSize = new System.Drawing.Size(1059, 411);
             this.Name = "ObjectDetails";
             this.Padding = new System.Windows.Forms.Padding(3);
@@ -707,11 +760,11 @@
             this.Text = "Object Details";
             this.Load += new System.EventHandler(this.ObjectDetails_Load);
             this.flowPanel.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
             this.supPanel.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.webviewer)).EndInit();
             this.registrationPanel.ResumeLayout(false);
             this.registrationPanel.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.imgPicture)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
@@ -771,5 +824,9 @@
         private System.Windows.Forms.Label lblLaunchURI;
         private System.Windows.Forms.FlowLayoutPanel supFlow;
         private System.Windows.Forms.Button btnDisco;
+        private System.Windows.Forms.FlowLayoutPanel RoyaltiesPanel;
+        private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.Label label5;
+        private System.Windows.Forms.Label lblTotalRoyaltiesDetail;
     }
 }

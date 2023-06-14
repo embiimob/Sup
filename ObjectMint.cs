@@ -42,11 +42,11 @@ namespace SUP
         {
             if (txtURN.Text != "" && txtTitle.Text != "" && txtObjectAddress.Text != "" && flowOwners.Controls.Count > 0)
             {
-                if (!btnEdit.Enabled && (btnObjectName.BackColor == Color.Blue || btnObjectURN.BackColor == Color.Blue || btnObjectURI.BackColor == Color.Blue || btnObjectOwners.BackColor == Color.Blue || btnObjectCreators.BackColor == Color.Blue || btnObjectAttributes.BackColor == Color.Blue || btnObjectImage.BackColor == Color.Blue || btnObjectMaximum.BackColor == Color.Blue || btnObjectDescription.BackColor == Color.Blue || btnObjectKeywords.BackColor == Color.Blue)) { btnMint.Enabled = true; btnPrint.Enabled = true; }
+                if (!btnEdit.Enabled && (btnObjectName.BackColor == Color.Blue || btnObjectURN.BackColor == Color.Blue || btnObjectURI.BackColor == Color.Blue || btnObjectOwners.BackColor == Color.Blue || btnObjectCreators.BackColor == Color.Blue || btnObjectAttributes.BackColor == Color.Blue || btnObjectImage.BackColor == Color.Blue || btnObjectMaximum.BackColor == Color.Blue || btnObjectDescription.BackColor == Color.Blue || btnObjectKeywords.BackColor == Color.Blue || btnObjectRoyalties.BackColor == Color.Blue)) { btnMint.Enabled = true; btnPrint.Enabled = true; }
             }
 
 
-            int maxsize = 888;
+            int maxsize = 8400;
 
             maxsize = maxsize - txtDescription.Text.Length - txtIMG.Text.Length - txtTitle.Text.Length - txtURI.Text.Length - txtURN.Text.Length - txtMaximum.Text.Length;
             maxsize = maxsize - 40; ///estimated json chars required.
@@ -57,6 +57,7 @@ namespace SUP
             }
 
             maxsize = maxsize - (flowKeywords.Controls.Count * 20) + 5;
+            maxsize = maxsize - (flowRoyalties.Controls.Count * 20) + 5;
 
             foreach (System.Windows.Forms.Control control in flowOwners.Controls)
             {
@@ -123,6 +124,17 @@ namespace SUP
                 OBJJson.own = mintOwners;
             }
 
+            if (btnObjectRoyalties.BackColor == Color.Blue)
+            {
+                Dictionary<string, decimal> mintRoyalties = new Dictionary<string, decimal>();
+                foreach (Button royaltyControl in flowRoyalties.Controls)
+                {
+                    string[] parts = royaltyControl.Text.Split(':');
+                    try { mintRoyalties.Add(parts[0], decimal.Parse(parts[1])); } catch { }
+                }
+                OBJJson.roy = mintRoyalties;
+            }
+
             var settings = new JsonSerializerSettings
             {
                 NullValueHandling = NullValueHandling.Ignore
@@ -133,7 +145,7 @@ namespace SUP
             if (btnEdit.Enabled) { txtOBJJSON.Text = objectSerialized; }
             else
             {
-                txtOBJJSON.Text = objectSerialized.Replace(",\"max\":0", "").Replace(",\"atr\":{}", "").Replace(",\"own\":{}", "").Replace(",\"uri\":\"\"", "").Replace(",\"dsc\":\"\"", "").Replace(",\"img\":\"\"", "").Replace(",\"lic\":\"\"", "");
+                txtOBJJSON.Text = objectSerialized.Replace(",\"max\":0", "").Replace(",\"atr\":{}", "").Replace(",\"own\":{}", "").Replace(",\"roy\":{}", "").Replace(",\"uri\":\"\"", "").Replace(",\"dsc\":\"\"", "").Replace(",\"img\":\"\"", "").Replace(",\"lic\":\"\"", "");
             }
 
             txtOBJP2FK.Text = "OBJ" + ":" + txtOBJJSON.Text.Length + ":" + txtOBJJSON.Text;
@@ -218,6 +230,14 @@ namespace SUP
                 foreach (Button keywordbtn in flowKeywords.Controls)
                 {
                     encodedList.Add(Root.GetPublicAddressByKeyword(keywordbtn.Text));
+                }
+
+                foreach (Button royaltybtn in flowRoyalties.Controls)
+                {
+                    if (royaltybtn.Text.Split(':')[0] != signatureAddress)
+                    {
+                        encodedList.Add(royaltybtn.Text.Split(':')[0]);
+                    }
                 }
 
                 foreach (Button ownerbtn in flowOwners.Controls)
@@ -442,6 +462,7 @@ namespace SUP
                 btnObjectMaximum.Enabled = false;
                 btnObjectCreators.Enabled = false;
                 btnObjectOwners.Enabled = false;
+                btnObjectRoyalties.Enabled = false;
                 btnObjectAddress.Enabled = false;
                 txtDescription.Enabled = false;
                 PanelLicense.Enabled = false;
@@ -480,6 +501,7 @@ namespace SUP
                     PanelLicense.Enabled = true;
                     btnObjectCreators.Enabled = true;
                     btnObjectOwners.Enabled = true;
+                    btnObjectRoyalties.Enabled = true;
                     btnObjectAddress.Enabled = true;
                     btnObjectMaximum.Enabled = true;
                     txtDescription.Enabled = true;
@@ -495,10 +517,7 @@ namespace SUP
             }
         }
 
-        private void ObjectMint_Load(object sender, EventArgs e)
-        {
-        }
-
+   
         private void txtDescription_TextChanged(object sender, EventArgs e)
         {
             UpdateRemainingChars();
@@ -569,9 +588,9 @@ namespace SUP
                 btnObjectName.Enabled = true;
                 btnObjectURI.Enabled = true;
                 btnObjectURN.Enabled = true;
-
                 btnObjectCreators.Enabled = true;
                 btnObjectOwners.Enabled = true;
+                btnObjectRoyalties.Enabled = true;
                 btnObjectAddress.Enabled = true;
                 btnObjectMaximum.Enabled = true;
                 txtDescription.Enabled = true;
@@ -606,6 +625,7 @@ namespace SUP
                 btnObjectURN.Enabled = false;
                 btnObjectCreators.Enabled = false;
                 btnObjectOwners.Enabled = false;
+                btnObjectRoyalties.Enabled = false;
                 btnObjectMaximum.Enabled = false;
                 txtDescription.Enabled = false;
                 PanelLicense.Enabled = false;
@@ -1952,6 +1972,14 @@ namespace SUP
             }
         }
 
+        private void PercentTextBox_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            if (!char.IsControl(e.KeyChar) && !char.IsDigit(e.KeyChar) && !char.Equals(e.KeyChar, '.'))
+            {
+                e.Handled = true;
+            }
+        }
+
 
         //GPT3
         private void flowAttribute_ControlRemoved(object sender, ControlEventArgs e)
@@ -1963,6 +1991,16 @@ namespace SUP
             }
             UpdateRemainingChars();
         }
+        private void flowRoyalties_ControlRemoved(object sender, ControlEventArgs e)
+        {
+            if (flowRoyalties.Controls.Count < 1)
+            {
+                btnObjectRoyalties.BackColor = Color.White;
+                btnObjectRoyalties.ForeColor = Color.Black;
+            }
+            UpdateRemainingChars();
+        }
+
         //GPT3
         private void flowKeyword_ControlRemoved(object sender, ControlEventArgs e)
         {
@@ -2387,6 +2425,50 @@ namespace SUP
                 }
                 catch { }
 
+                flowRoyalties.Controls.Clear();
+
+                try
+                {
+                    // Iterate through all attributes of foundObject and create a button for each
+                    foreach (KeyValuePair<string, decimal> royalty in foundObject.Royalties)
+                    {
+                        // Split the key and value and create a new button with the attribute key and value separated by ':'
+                        string buttonText = royalty.Key + ":" + royalty.Value.ToString();
+                        Button royalButton = new Button();
+                        royalButton.AutoSize = true;
+                        royalButton.Text = buttonText;
+                        royalButton.ForeColor = Color.White;
+                        royalButton.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
+
+                        // Add an event handler to the button that removes it from the flowAttribute panel when clicked
+                        royalButton.Click += new EventHandler((sender2, e2) =>
+                        {
+                            flowRoyalties.Controls.Remove(royalButton);
+                        });
+
+                        // Add an event handler to the button that opens the ObjectBrowser form on right click using the key value
+                        royalButton.MouseUp += new MouseEventHandler((sender2, e2) =>
+                        {
+                            if (e2.Button == MouseButtons.Right)
+                            {
+                                string[] keyValuePair = royalButton.Text.Split(':');
+                                string key = keyValuePair[0].Trim();
+                                ObjectBrowser form = new ObjectBrowser(key);
+                                form.Show();
+                            }
+                            else if (e2.Button == MouseButtons.Left)
+                            {
+                                flowRoyalties.Controls.Remove(royalButton);
+                            }
+                        });
+
+                        // Add the button to the flowOwners panel
+                        flowRoyalties.Controls.Add(royalButton);
+                    }
+
+                }
+                catch { }
+
                 if (foundObject.License != null)
                 {
                     // If the license field is not null, check the radio button in the panel based on the text passed
@@ -2425,6 +2507,130 @@ namespace SUP
         private void btnEdit_Click(object sender, EventArgs e)
         {
 
+        }
+
+        private void btnObjectRoyalties_Click(object sender, EventArgs e)
+        {
+
+            using (var dialog = new Form())
+            {
+                dialog.Text = String.Empty;
+                dialog.AutoSize = true;
+                dialog.StartPosition = FormStartPosition.CenterParent;
+                dialog.ControlBox = false;
+                dialog.FormBorderStyle = FormBorderStyle.FixedDialog;
+                dialog.ClientSize = new Size(400, 80);
+
+                var tableLayout = new TableLayoutPanel();
+                tableLayout.ColumnCount = 2;
+                tableLayout.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50F));
+                tableLayout.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50F));
+
+                var royaltyLabel = new Label();
+                royaltyLabel.Text = "Recipient";
+                royaltyLabel.TextAlign = ContentAlignment.MiddleCenter;
+
+                var decLabel = new Label();
+                decLabel.Text = "Percent";
+               decLabel.TextAlign = ContentAlignment.MiddleCenter;
+
+                var ownerTextBox = new TextBox();
+                ownerTextBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+                ownerTextBox.Multiline = true;
+                ownerTextBox.Size = new Size(170, 70);
+
+                var decTextBox = new TextBox();
+                decTextBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+                decTextBox.Size = new Size(170, 70);
+                decTextBox.Multiline = true;
+                decTextBox.KeyPress += new KeyPressEventHandler(PercentTextBox_KeyPress);
+
+                tableLayout.Controls.Add(royaltyLabel, 0, 0);
+                tableLayout.Controls.Add(decLabel, 1, 0);
+                tableLayout.Controls.Add(ownerTextBox, 0, 1);
+                tableLayout.Controls.Add(decTextBox, 1, 1);
+
+                var addButton = new Button();
+                addButton.Text = "Add";
+                addButton.DialogResult = DialogResult.OK;
+                addButton.Anchor = AnchorStyles.Right;
+
+                var cancelButton = new Button();
+                cancelButton.Text = "Cancel";
+                cancelButton.DialogResult = DialogResult.Cancel;
+                cancelButton.Anchor = AnchorStyles.Right;
+
+                dialog.Controls.Add(tableLayout);
+                dialog.Controls.Add(addButton);
+                dialog.Controls.Add(cancelButton);
+
+                tableLayout.Dock = DockStyle.Top;
+                addButton.Dock = DockStyle.Right;
+                cancelButton.Dock = DockStyle.Right;
+
+                dialog.AcceptButton = addButton;
+                dialog.CancelButton = cancelButton;
+
+                if (dialog.ShowDialog() == DialogResult.OK)
+                {
+                    var royalty = ownerTextBox.Text;
+                    var dec = decTextBox.Text;
+
+                    var isNumeric = decimal.TryParse(dec, out _);
+
+                    if (isNumeric)
+                    {
+                        var button = new Button();
+                        button.ForeColor = Color.White;
+                        button.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
+                        button.Text = $"{royalty}: {dec}";
+                        button.AutoSize = true;
+                        button.MouseClick += (s, ev) =>
+                        {
+                            // only proceed if left mouse button is clicked
+                            if (ev.Button == MouseButtons.Left)
+                            {
+                                // disable the button to prevent double-clicks
+                                button.Enabled = false;
+
+                                // remove the button from the flow layout panel and dispose of it
+                                flowRoyalties.Controls.Remove(button);
+                                button.Dispose();
+                            }
+                        };
+
+                        // add event handler for right click
+                        button.MouseDown += (s, ev) =>
+                        {
+                            // only proceed if right mouse button is clicked
+                            if (ev.Button == MouseButtons.Right)
+                            {
+                                // create the object browser form and show it
+                                string labelText = button.Text;
+                                ObjectBrowser form = new ObjectBrowser(labelText.Split(':')[0]);
+                                form.Show();
+                            }
+                        };
+
+
+
+                        flowRoyalties.Controls.Add(button);
+                    }
+                    else
+                    {
+                        MessageBox.Show("Qty field only accepts numeric input.");
+                    }
+                }
+            }
+            UpdateRemainingChars();
+        }
+
+        private void flowRoyalties_ControlAdded(object sender, ControlEventArgs e)
+        {
+            UpdateRemainingChars();
+          
+            btnObjectRoyalties.BackColor = Color.Blue;
+            btnObjectRoyalties.ForeColor = Color.Yellow;
         }
     }
 

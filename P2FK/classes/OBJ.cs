@@ -26,6 +26,7 @@ namespace SUP.P2FK
         public int max { get; set; }
         public string[] cre { get; set; }
         public Dictionary<string, long> own { get; set; }
+        public Dictionary<string, decimal> roy { get; set; }
 
     }
     public class OBJState
@@ -42,6 +43,7 @@ namespace SUP.P2FK
         public int Maximum { get; set; }
         public Dictionary<string, DateTime> Creators { get; set; }
         public Dictionary<string, long> Owners { get; set; }
+        public Dictionary<string, decimal> Royalties { get; set; } 
         public DateTime LockedDate { get; set; }
         public int ProcessHeight { get; set; }
         public DateTime CreatedDate { get; set; }
@@ -321,6 +323,34 @@ namespace SUP.P2FK
                                                             objectState.Owners[owner] = ownerId.Value;
 
                                                             logstatus = "[\"" + transaction.SignedBy + "\",\"" + objectaddress + "\",\"update\",\"" + ownerId.Value + "\",\"\",\"success\"]";
+                                                        }
+
+                                                    }
+                                                }
+
+
+                                                if (objectinspector.roy != null)
+                                                {
+                                                    objectState.Royalties = new Dictionary<string, decimal>();
+
+                                                    foreach (var royaltyId in objectinspector.roy)
+                                                    {
+                                                        string royalty = "";
+                                                        if (int.TryParse(royaltyId.Key, out int intId))
+                                                        {
+                                                            royalty = transaction.Keyword.Reverse().ElementAt(intId).Key;
+                                                        }
+                                                        else { royalty = royaltyId.Key; }
+
+                                                        if (!objectState.Royalties.ContainsKey(royalty))
+                                                        {
+                                                            objectState.Royalties.Add(royalty, royaltyId.Value);
+                                                        }
+                                                        else
+                                                        {
+                                                            objectState.Royalties[royalty] = royaltyId.Value;
+
+                                                            logstatus = "[\"" + transaction.SignedBy + "\",\"" + objectaddress + "\",\"update\",\"" + royaltyId.Value + "\",\"\",\"success\"]";
                                                         }
 
                                                     }

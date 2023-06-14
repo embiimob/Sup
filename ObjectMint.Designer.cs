@@ -73,6 +73,8 @@
             this.lblTransactionID = new System.Windows.Forms.Label();
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
             this.pictureBox2 = new System.Windows.Forms.PictureBox();
+            this.flowRoyalties = new System.Windows.Forms.FlowLayoutPanel();
+            this.btnObjectRoyalties = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.webviewer)).BeginInit();
             this.PanelLicense.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
@@ -136,7 +138,7 @@
             this.btnObjectKeywords.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.btnObjectKeywords.Enabled = false;
             this.btnObjectKeywords.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold);
-            this.btnObjectKeywords.Location = new System.Drawing.Point(382, 694);
+            this.btnObjectKeywords.Location = new System.Drawing.Point(727, 616);
             this.btnObjectKeywords.Name = "btnObjectKeywords";
             this.btnObjectKeywords.Size = new System.Drawing.Size(109, 42);
             this.btnObjectKeywords.TabIndex = 11;
@@ -146,15 +148,14 @@
             // 
             // flowKeywords
             // 
-            this.flowKeywords.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
+            this.flowKeywords.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.flowKeywords.AutoScroll = true;
             this.flowKeywords.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
             this.flowKeywords.Cursor = System.Windows.Forms.Cursors.Default;
             this.flowKeywords.FlowDirection = System.Windows.Forms.FlowDirection.RightToLeft;
-            this.flowKeywords.Location = new System.Drawing.Point(22, 697);
+            this.flowKeywords.Location = new System.Drawing.Point(511, 616);
             this.flowKeywords.Name = "flowKeywords";
-            this.flowKeywords.Size = new System.Drawing.Size(354, 59);
+            this.flowKeywords.Size = new System.Drawing.Size(210, 59);
             this.flowKeywords.TabIndex = 280;
             this.flowKeywords.ControlAdded += new System.Windows.Forms.ControlEventHandler(this.flowKeyword_ControlAdded);
             this.flowKeywords.ControlRemoved += new System.Windows.Forms.ControlEventHandler(this.flowKeyword_ControlRemoved);
@@ -190,7 +191,7 @@
             this.btnObjectMaximum.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.btnObjectMaximum.Enabled = false;
             this.btnObjectMaximum.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold);
-            this.btnObjectMaximum.Location = new System.Drawing.Point(958, 538);
+            this.btnObjectMaximum.Location = new System.Drawing.Point(958, 616);
             this.btnObjectMaximum.Name = "btnObjectMaximum";
             this.btnObjectMaximum.Size = new System.Drawing.Size(109, 42);
             this.btnObjectMaximum.TabIndex = 290;
@@ -205,10 +206,10 @@
             this.txtMaximum.Enabled = false;
             this.txtMaximum.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
             this.txtMaximum.ForeColor = System.Drawing.Color.White;
-            this.txtMaximum.Location = new System.Drawing.Point(802, 538);
+            this.txtMaximum.Location = new System.Drawing.Point(880, 614);
             this.txtMaximum.Multiline = true;
             this.txtMaximum.Name = "txtMaximum";
-            this.txtMaximum.Size = new System.Drawing.Size(150, 42);
+            this.txtMaximum.Size = new System.Drawing.Size(72, 42);
             this.txtMaximum.TabIndex = 8;
             this.txtMaximum.Tag = "";
             this.txtMaximum.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
@@ -223,20 +224,21 @@
             this.lblRemainingChars.ForeColor = System.Drawing.Color.White;
             this.lblRemainingChars.Location = new System.Drawing.Point(463, 421);
             this.lblRemainingChars.Name = "lblRemainingChars";
-            this.lblRemainingChars.Size = new System.Drawing.Size(52, 29);
+            this.lblRemainingChars.Size = new System.Drawing.Size(65, 29);
             this.lblRemainingChars.TabIndex = 288;
-            this.lblRemainingChars.Text = "888";
+            this.lblRemainingChars.Text = "8400";
             // 
             // flowOwners
             // 
-            this.flowOwners.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.flowOwners.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.flowOwners.AutoScroll = true;
             this.flowOwners.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
             this.flowOwners.FlowDirection = System.Windows.Forms.FlowDirection.RightToLeft;
-            this.flowOwners.Location = new System.Drawing.Point(515, 617);
+            this.flowOwners.Location = new System.Drawing.Point(22, 697);
             this.flowOwners.Name = "flowOwners";
             this.flowOwners.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
-            this.flowOwners.Size = new System.Drawing.Size(437, 59);
+            this.flowOwners.Size = new System.Drawing.Size(354, 59);
             this.flowOwners.TabIndex = 287;
             this.flowOwners.ControlAdded += new System.Windows.Forms.ControlEventHandler(this.flowOwners_ControlAdded);
             this.flowOwners.ControlRemoved += new System.Windows.Forms.ControlEventHandler(this.flowOwners_ControlRemoved);
@@ -287,7 +289,7 @@
             this.btnObjectOwners.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.btnObjectOwners.Enabled = false;
             this.btnObjectOwners.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold);
-            this.btnObjectOwners.Location = new System.Drawing.Point(958, 614);
+            this.btnObjectOwners.Location = new System.Drawing.Point(382, 697);
             this.btnObjectOwners.Name = "btnObjectOwners";
             this.btnObjectOwners.Size = new System.Drawing.Size(109, 42);
             this.btnObjectOwners.TabIndex = 9;
@@ -300,7 +302,7 @@
             this.btnObjectAttributes.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.btnObjectAttributes.Enabled = false;
             this.btnObjectAttributes.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold);
-            this.btnObjectAttributes.Location = new System.Drawing.Point(667, 538);
+            this.btnObjectAttributes.Location = new System.Drawing.Point(452, 538);
             this.btnObjectAttributes.Name = "btnObjectAttributes";
             this.btnObjectAttributes.Size = new System.Drawing.Size(109, 42);
             this.btnObjectAttributes.TabIndex = 7;
@@ -419,7 +421,7 @@
             this.flowAttribute.Location = new System.Drawing.Point(22, 536);
             this.flowAttribute.Name = "flowAttribute";
             this.flowAttribute.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
-            this.flowAttribute.Size = new System.Drawing.Size(639, 59);
+            this.flowAttribute.Size = new System.Drawing.Size(417, 59);
             this.flowAttribute.TabIndex = 278;
             this.flowAttribute.ControlAdded += new System.Windows.Forms.ControlEventHandler(this.flowAttribute_ControlAdded);
             this.flowAttribute.ControlRemoved += new System.Windows.Forms.ControlEventHandler(this.flowAttribute_ControlRemoved);
@@ -655,12 +657,41 @@
             this.pictureBox2.TabIndex = 274;
             this.pictureBox2.TabStop = false;
             // 
+            // flowRoyalties
+            // 
+            this.flowRoyalties.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.flowRoyalties.AutoScroll = true;
+            this.flowRoyalties.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
+            this.flowRoyalties.FlowDirection = System.Windows.Forms.FlowDirection.RightToLeft;
+            this.flowRoyalties.Location = new System.Drawing.Point(576, 536);
+            this.flowRoyalties.Name = "flowRoyalties";
+            this.flowRoyalties.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
+            this.flowRoyalties.Size = new System.Drawing.Size(376, 59);
+            this.flowRoyalties.TabIndex = 299;
+            this.flowRoyalties.ControlAdded += new System.Windows.Forms.ControlEventHandler(this.flowRoyalties_ControlAdded);
+            this.flowRoyalties.ControlRemoved += new System.Windows.Forms.ControlEventHandler(this.flowRoyalties_ControlRemoved);
+            // 
+            // btnObjectRoyalties
+            // 
+            this.btnObjectRoyalties.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnObjectRoyalties.Enabled = false;
+            this.btnObjectRoyalties.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold);
+            this.btnObjectRoyalties.Location = new System.Drawing.Point(958, 538);
+            this.btnObjectRoyalties.Name = "btnObjectRoyalties";
+            this.btnObjectRoyalties.Size = new System.Drawing.Size(109, 42);
+            this.btnObjectRoyalties.TabIndex = 298;
+            this.btnObjectRoyalties.Text = "✅ ROY";
+            this.btnObjectRoyalties.UseVisualStyleBackColor = true;
+            this.btnObjectRoyalties.Click += new System.EventHandler(this.btnObjectRoyalties_Click);
+            // 
             // ObjectMint
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.Black;
             this.ClientSize = new System.Drawing.Size(1091, 768);
+            this.Controls.Add(this.flowRoyalties);
+            this.Controls.Add(this.btnObjectRoyalties);
             this.Controls.Add(this.lblTransactionID);
             this.Controls.Add(this.lblCost);
             this.Controls.Add(this.PanelLicense);
@@ -706,7 +737,6 @@
             this.Name = "ObjectMint";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Object Mint";
-            this.Load += new System.EventHandler(this.ObjectMint_Load);
             ((System.ComponentModel.ISupportInitialize)(this.webviewer)).EndInit();
             this.PanelLicense.ResumeLayout(false);
             this.PanelLicense.PerformLayout();
@@ -763,5 +793,7 @@
         private System.Windows.Forms.TextBox txtOBJP2FK;
         private System.Windows.Forms.Label lblCost;
         private System.Windows.Forms.Label lblTransactionID;
+        private System.Windows.Forms.FlowLayoutPanel flowRoyalties;
+        private System.Windows.Forms.Button btnObjectRoyalties;
     }
 }
