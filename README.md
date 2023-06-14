@@ -11,7 +11,7 @@ P2FK was directly inspired by the satoshi uploader  see --> https://cirosantilli
 
 ## **Installation**
 
-1. Download the Sup.v0.1.37-beta.zip file (https://github.com/embiimob/Sup/releases/download/Supv0.1.37-beta/Sup.v0.1.37-beta.zip)
+1. Download the Sup.v0.1.37-beta.zip file (https://github.com/embiimob/Sup/releases/download/Supv0.1.38-beta/Sup.v0.1.38-beta.zip)
 2. Create a folder on your **fastest** disk drive with at least **50GB** free (it will be storing the bitcoin testnet blockchain)
 3. Unzip all contents into the folder
 4. Create a shortcut to SUP.exe and launch
@@ -75,7 +75,7 @@ Your profile urn registration is valid for 3 years past the last change in its p
 <br />
 <br />
 ## **Object Minting / Printing / Editing / Batch Burning / Batch Giving**
-Click the mint button and select the object mint button. Enter an object name, object address and urn. These fields are required. Click mint. If no creator address is entered, the object will be self-signed using a new address generated at your minting station wallet. To further enhance your collector's experience, a profile can be setup on a collection address and the collection addresss can be added as a creator. Now, both the collection shortname name and the creator short name will be discoverable in the browser. Searching for the creator shortname returns all objects.  Searching for the collection shortname returns just the collection.
+Click the mint button and select the object mint button. Enter an object name, object address, owner address(s) with qty and a urn. These fields are required. Click mint. If no creator address is entered, the object will be self-signed using a new address generated at your minting station wallet. To further enhance your collector's experience, a profile can be setup on a collection address and the collection addresss can be added as a creator. Now, both the collection shortname name and the creator short name will be discoverable in the browser. Searching for the creator shortname returns all objects.  Searching for the collection shortname returns just the collection. in preparation for the future BUY and LST transaction types, royalties can now be defined in the object mint screen. up to 100% of all future sales royalties can be claimed on the roy tab and theoretically divided in to 1000s of recipient addresses in a single p2fk transaction.
 <br />
 Click print instead of mint and you can use a paper transaction alone to prove ownership. Any person can scan a paper mint & send a small confirmation transaction to the addresses within the QR code printed on the paper to make the paper transaction public. A Sup!? paper transaction can be used in lieu of a public confirmation as it contains all the necessary signature and transaction data necessary to confirm it against a current scan of the object address it is associated with.
 <br />
