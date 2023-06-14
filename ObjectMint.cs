@@ -42,7 +42,7 @@ namespace SUP
         {
             if (txtURN.Text != "" && txtTitle.Text != "" && txtObjectAddress.Text != "" && flowOwners.Controls.Count > 0)
             {
-                if (!btnEdit.Enabled && (btnObjectName.BackColor == Color.Blue || btnObjectURN.BackColor == Color.Blue || btnObjectURI.BackColor == Color.Blue || btnObjectOwners.BackColor == Color.Blue || btnObjectCreators.BackColor == Color.Blue || btnObjectAttributes.BackColor == Color.Blue || btnObjectImage.BackColor == Color.Blue || btnObjectMaximum.BackColor == Color.Blue || btnObjectDescription.BackColor == Color.Blue || btnObjectKeywords.BackColor == Color.Blue || btnObjectRoyalties.BackColor == Color.Blue)) { btnMint.Enabled = true; btnPrint.Enabled = true; }
+                if (btnObjectName.BackColor == Color.Blue || btnObjectURN.BackColor == Color.Blue || btnObjectURI.BackColor == Color.Blue || btnObjectOwners.BackColor == Color.Blue || btnObjectCreators.BackColor == Color.Blue || btnObjectAttributes.BackColor == Color.Blue || btnObjectImage.BackColor == Color.Blue || btnObjectMaximum.BackColor == Color.Blue || btnObjectDescription.BackColor == Color.Blue || btnObjectKeywords.BackColor == Color.Blue || btnObjectRoyalties.BackColor == Color.Blue) { btnMint.Enabled = true; btnPrint.Enabled = true; }
             }
 
 
@@ -56,8 +56,16 @@ namespace SUP
                 maxsize = maxsize - (control.Text.Length + 5);
             }
 
-            maxsize = maxsize - (flowKeywords.Controls.Count * 20) + 5;
-            maxsize = maxsize - (flowRoyalties.Controls.Count * 20) + 5;
+            maxsize = maxsize - (flowKeywords.Controls.Count * 25);
+
+
+            foreach (System.Windows.Forms.Control control in flowRoyalties.Controls)
+            {
+
+                maxsize = maxsize - (control.Text.Length + 5);
+
+
+            }
 
             foreach (System.Windows.Forms.Control control in flowOwners.Controls)
             {
@@ -76,7 +84,7 @@ namespace SUP
                 }
             }
 
-            maxsize = maxsize - (flowCreators.Controls.Count * 5) + 5;
+            maxsize = maxsize - (flowCreators.Controls.Count * 40) + 5;
 
             lblRemainingChars.Text = maxsize.ToString();
 
@@ -142,16 +150,13 @@ namespace SUP
 
             // Serialize the modified JObject back into a JSON string
             var objectSerialized = JsonConvert.SerializeObject(OBJJson, Formatting.None, settings);
-            if (btnEdit.Enabled) { txtOBJJSON.Text = objectSerialized; }
-            else
-            {
+            
                 txtOBJJSON.Text = objectSerialized.Replace(",\"max\":0", "").Replace(",\"atr\":{}", "").Replace(",\"own\":{}", "").Replace(",\"roy\":{}", "").Replace(",\"uri\":\"\"", "").Replace(",\"dsc\":\"\"", "").Replace(",\"img\":\"\"", "").Replace(",\"lic\":\"\"", "");
-            }
+           
 
-            txtOBJP2FK.Text = "OBJ" + ":" + txtOBJJSON.Text.Length + ":" + txtOBJJSON.Text;
+                txtOBJP2FK.Text = "OBJ" + ":" + txtOBJJSON.Text.Length + ":" + txtOBJJSON.Text;
 
-            if (btnMint.Enabled)
-            {
+           
                 NetworkCredential credentials = new NetworkCredential("good-user", "better-password");
                 RPCClient rpcClient = new RPCClient(credentials, new Uri("http://127.0.0.1:18332"), Network.Main);
                 System.Security.Cryptography.SHA256 mySHA256 = SHA256Managed.Create();
@@ -292,12 +297,13 @@ namespace SUP
                         catch (Exception ex) { lblObjectStatus.Text = ex.Message; }
 
 
-                        ismint = false;
+                       
                     }
-                }
-
-
+                ismint = false;
             }
+
+
+            
 
 
 
@@ -692,7 +698,7 @@ namespace SUP
                 btnObjectName.Enabled = false;
                 lblObjectStatus.Text = "";
                 lblCost.Text = "";
-                btnEdit.Enabled = false;
+              
                 UpdateRemainingChars();
             }
 
@@ -2065,6 +2071,7 @@ namespace SUP
 
                     }
                 }
+
             }
             catch { }
 
@@ -2257,17 +2264,18 @@ namespace SUP
             {
                 lblObjectStatus.Text = "created:[" + foundObject.CreatedDate.ToString("MM/dd/yyyy hh:mm:ss") + "]  locked:[" + foundObject.LockedDate.ToString("MM/dd/yyyy hh:mm:ss") + "]  last seen:[" + foundObject.ChangeDate.ToString("MM/dd/yyyy hh:mm:ss") + "]";
 
+                NetworkCredential credentials = new NetworkCredential("good-user", "better-password");
+                RPCClient rpcClient = new RPCClient(credentials, new Uri("http://127.0.0.1:18332"), Network.Main);
+                string accountName = "";
+                try { accountName = rpcClient.SendCommand("getaccount", address).ResultString; } catch { }
+                if (accountName != "") { btnMint.Enabled = true; }
+
 
                 if (lblObjectStatus.Text.Contains("Monday, January 1, 0001"))
                 {
                     lblObjectStatus.Text = lblObjectStatus.Text.Replace("Monday, January 1, 0001", " unconfirmed ");
-                    NetworkCredential credentials = new NetworkCredential("good-user", "better-password");
-                    RPCClient rpcClient = new RPCClient(credentials, new Uri("http://127.0.0.1:18332"), Network.Main);
-                    string accountName = "";
-                    try { accountName = rpcClient.SendCommand("getaccount", address).ResultString; } catch { }
-                    if (accountName != "") { btnEdit.Enabled = true; btnMint.Enabled = false; }
+                    btnMint.Enabled = false;
                 }
-                else { btnEdit.Enabled = false; }
 
 
                 txtTitle.Text = foundObject.Name;
@@ -2504,10 +2512,7 @@ namespace SUP
 
         }
 
-        private void btnEdit_Click(object sender, EventArgs e)
-        {
-
-        }
+    
 
         private void btnObjectRoyalties_Click(object sender, EventArgs e)
         {

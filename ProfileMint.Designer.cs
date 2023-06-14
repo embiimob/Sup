@@ -79,7 +79,7 @@
             this.lblCost.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.lblCost.AutoSize = true;
             this.lblCost.ForeColor = System.Drawing.Color.White;
-            this.lblCost.Location = new System.Drawing.Point(484, 545);
+            this.lblCost.Location = new System.Drawing.Point(479, 546);
             this.lblCost.Name = "lblCost";
             this.lblCost.Size = new System.Drawing.Size(0, 13);
             this.lblCost.TabIndex = 296;
@@ -90,7 +90,7 @@
             this.lblTransactionID.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.lblTransactionID.AutoSize = true;
             this.lblTransactionID.ForeColor = System.Drawing.Color.White;
-            this.lblTransactionID.Location = new System.Drawing.Point(72, 545);
+            this.lblTransactionID.Location = new System.Drawing.Point(17, 545);
             this.lblTransactionID.Name = "lblTransactionID";
             this.lblTransactionID.Size = new System.Drawing.Size(0, 13);
             this.lblTransactionID.TabIndex = 297;
@@ -114,10 +114,10 @@
             this.txtSuffix.Enabled = false;
             this.txtSuffix.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
             this.txtSuffix.ForeColor = System.Drawing.Color.White;
-            this.txtSuffix.Location = new System.Drawing.Point(14, 174);
+            this.txtSuffix.Location = new System.Drawing.Point(189, 174);
             this.txtSuffix.Multiline = true;
             this.txtSuffix.Name = "txtSuffix";
-            this.txtSuffix.Size = new System.Drawing.Size(352, 38);
+            this.txtSuffix.Size = new System.Drawing.Size(177, 38);
             this.txtSuffix.TabIndex = 10;
             this.txtSuffix.Tag = "";
             this.txtSuffix.WordWrap = false;
@@ -198,11 +198,11 @@
             this.lblRemainingChars.AutoSize = true;
             this.lblRemainingChars.Font = new System.Drawing.Font("Microsoft Sans Serif", 18F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lblRemainingChars.ForeColor = System.Drawing.Color.White;
-            this.lblRemainingChars.Location = new System.Drawing.Point(191, 138);
+            this.lblRemainingChars.Location = new System.Drawing.Point(57, 178);
             this.lblRemainingChars.Name = "lblRemainingChars";
-            this.lblRemainingChars.Size = new System.Drawing.Size(52, 29);
+            this.lblRemainingChars.Size = new System.Drawing.Size(65, 29);
             this.lblRemainingChars.TabIndex = 352;
-            this.lblRemainingChars.Text = "888";
+            this.lblRemainingChars.Text = "4765";
             // 
             // flowLocation
             // 
@@ -249,7 +249,7 @@
             // 
             this.btnScan.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.btnScan.Font = new System.Drawing.Font("Segoe UI Emoji", 13.8F);
-            this.btnScan.Location = new System.Drawing.Point(633, 518);
+            this.btnScan.Location = new System.Drawing.Point(633, 521);
             this.btnScan.Name = "btnScan";
             this.btnScan.Size = new System.Drawing.Size(109, 42);
             this.btnScan.TabIndex = 12;
@@ -261,7 +261,7 @@
             // 
             this.btnObjectAddress.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.btnObjectAddress.Font = new System.Drawing.Font("Segoe UI Emoji", 13.8F);
-            this.btnObjectAddress.Location = new System.Drawing.Point(754, 122);
+            this.btnObjectAddress.Location = new System.Drawing.Point(754, 70);
             this.btnObjectAddress.Name = "btnObjectAddress";
             this.btnObjectAddress.Padding = new System.Windows.Forms.Padding(0, 0, 0, 5);
             this.btnObjectAddress.Size = new System.Drawing.Size(109, 42);
@@ -277,10 +277,10 @@
             this.txtObjectAddress.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
             this.txtObjectAddress.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.txtObjectAddress.ForeColor = System.Drawing.Color.White;
-            this.txtObjectAddress.Location = new System.Drawing.Point(385, 122);
+            this.txtObjectAddress.Location = new System.Drawing.Point(189, 70);
             this.txtObjectAddress.Multiline = true;
             this.txtObjectAddress.Name = "txtObjectAddress";
-            this.txtObjectAddress.Size = new System.Drawing.Size(357, 39);
+            this.txtObjectAddress.Size = new System.Drawing.Size(553, 39);
             this.txtObjectAddress.TabIndex = 99;
             this.txtObjectAddress.TabStop = false;
             this.txtObjectAddress.TextChanged += new System.EventHandler(this.txtObjectAddress_TextChanged);
@@ -290,7 +290,7 @@
             this.btnMint.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.btnMint.Enabled = false;
             this.btnMint.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold);
-            this.btnMint.Location = new System.Drawing.Point(754, 518);
+            this.btnMint.Location = new System.Drawing.Point(754, 522);
             this.btnMint.Name = "btnMint";
             this.btnMint.Size = new System.Drawing.Size(109, 42);
             this.btnMint.TabIndex = 9;
@@ -374,7 +374,7 @@
             this.btnObjectImage.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.btnObjectImage.Enabled = false;
             this.btnObjectImage.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold);
-            this.btnObjectImage.Location = new System.Drawing.Point(754, 70);
+            this.btnObjectImage.Location = new System.Drawing.Point(754, 121);
             this.btnObjectImage.Name = "btnObjectImage";
             this.btnObjectImage.Size = new System.Drawing.Size(109, 42);
             this.btnObjectImage.TabIndex = 2;
@@ -432,7 +432,7 @@
             this.txtIMG.Enabled = false;
             this.txtIMG.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.txtIMG.ForeColor = System.Drawing.Color.White;
-            this.txtIMG.Location = new System.Drawing.Point(189, 70);
+            this.txtIMG.Location = new System.Drawing.Point(189, 121);
             this.txtIMG.Multiline = true;
             this.txtIMG.Name = "txtIMG";
             this.txtIMG.Size = new System.Drawing.Size(553, 38);

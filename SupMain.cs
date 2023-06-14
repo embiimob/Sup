@@ -3321,7 +3321,9 @@ namespace SUP
                                         if (!imgExtensions.Contains(extension))
                                         {
                                             WebClient client = new WebClient();
-                                            string html = client.DownloadString(content.StripLeadingTrailingSpaces());
+                                            string html = "";
+                                            try { html = client.DownloadString(content.StripLeadingTrailingSpaces()); } catch { }
+
 
                                             // Use regular expressions to extract the metadata from the HTML
                                             string title = Regex.Match(html, @"<title>\s*(.+?)\s*</title>").Groups[1].Value;
