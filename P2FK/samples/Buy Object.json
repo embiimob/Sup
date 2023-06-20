@@ -1,0 +1,33 @@
+
+
+//defined format
+//assume keyword order id 0 is the authorization address
+//assume keyword order id 1 is the object to buy
+//[owner address, qty to buy]
+//[0, -numericalSalt]
+
+[
+  [ "mxyo2qyUo9h7wzDYbudcyC2VWxaTfTeCZr", 1 ],
+  [ "mpwoff3ut1DJzomKaH69PWdfheXqKpYTcz", 2 ],
+  [ "muVrFVk3ErfrnmWosLF4WixxRtDKfMx9bs", 1 ],
+  [ 0, -123456789 ]
+]
+
+//variable format
+//unable to control order of outputs with values greater then min thresholds
+//variable format is not recommended for BUY transactions and will not be supported at this time.
+
+
+//manual entry instructions via apertus.io
+//remove all unnecessary spaces
+//place JSON in a file named BUY  (no file extension)
+//enter @objectaddress to buy in the apertus.io message box
+//calculate any royalties associated with the object and enter each @ownerAddress>cost - royalties above the @objectaddress in the apertus.io message box 
+//in this example @muVrFVk3ErfrnmWosLF4WixxRtDKfMx9bs>0.0314 would be on the top row of the apertus.io message box
+//calculate any royalties associated with the object and continue entering them in a similar manner @royaltyaddress>cost
+
+//attach file BUY using the apertus.io attach button
+//select a owners signature address from the signature list in apertus.io
+//verify that the no message box is checked.
+//click the apertus.io etch button
+

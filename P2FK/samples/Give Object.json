@@ -17,6 +17,7 @@
 //[new owner keyword order id, qty to give]
 //[0, -numericalSalt]
 
+//manual entry instructions via apertus.io
 //remove all unnecessary spaces
 //place JSON in a file named GIV  (no file extension)
 //enter @objectaddress(s) to give in the apertus.io message box

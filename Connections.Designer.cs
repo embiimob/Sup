@@ -37,7 +37,7 @@
             this.label16 = new System.Windows.Forms.Label();
             this.checkBox4 = new System.Windows.Forms.CheckBox();
             this.textBox16 = new System.Windows.Forms.TextBox();
-            this.btnDOGE = new System.Windows.Forms.Button();
+            this.btnDOG = new System.Windows.Forms.Button();
             this.textBox17 = new System.Windows.Forms.TextBox();
             this.textBox18 = new System.Windows.Forms.TextBox();
             this.textBox19 = new System.Windows.Forms.TextBox();
@@ -108,7 +108,7 @@
             this.panel1.Controls.Add(this.label16);
             this.panel1.Controls.Add(this.checkBox4);
             this.panel1.Controls.Add(this.textBox16);
-            this.panel1.Controls.Add(this.btnDOGE);
+            this.panel1.Controls.Add(this.btnDOG);
             this.panel1.Controls.Add(this.textBox17);
             this.panel1.Controls.Add(this.textBox18);
             this.panel1.Controls.Add(this.textBox19);
@@ -241,15 +241,15 @@
             this.textBox16.TabIndex = 145;
             this.textBox16.Text = "22555";
             // 
-            // btnDOGE
+            // btnDOG
             // 
-            this.btnDOGE.Location = new System.Drawing.Point(619, 212);
-            this.btnDOGE.Name = "btnDOGE";
-            this.btnDOGE.Size = new System.Drawing.Size(54, 23);
-            this.btnDOGE.TabIndex = 144;
-            this.btnDOGE.Text = "launch";
-            this.btnDOGE.UseVisualStyleBackColor = true;
-            this.btnDOGE.Click += new System.EventHandler(this.btnDOGE_Click);
+            this.btnDOG.Location = new System.Drawing.Point(619, 212);
+            this.btnDOG.Name = "btnDOG";
+            this.btnDOG.Size = new System.Drawing.Size(54, 23);
+            this.btnDOG.TabIndex = 144;
+            this.btnDOG.Text = "launch";
+            this.btnDOG.UseVisualStyleBackColor = true;
+            this.btnDOG.Click += new System.EventHandler(this.btnDOGE_Click);
             // 
             // textBox17
             // 
@@ -441,7 +441,7 @@
             this.label15.Name = "label15";
             this.label15.Size = new System.Drawing.Size(116, 13);
             this.label15.TabIndex = 124;
-            this.label15.Text = "Sup!? v0.1.38-beta";
+            this.label15.Text = "Sup!? v0.1.39-beta";
             // 
             // label14
             // 
@@ -856,7 +856,7 @@
         private System.Windows.Forms.PictureBox pictureBox1;
         private System.Windows.Forms.CheckBox checkBox4;
         private System.Windows.Forms.TextBox textBox16;
-        private System.Windows.Forms.Button btnDOGE;
+        private System.Windows.Forms.Button btnDOG;
         private System.Windows.Forms.TextBox textBox17;
         private System.Windows.Forms.TextBox textBox18;
         private System.Windows.Forms.TextBox textBox19;

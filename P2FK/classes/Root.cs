@@ -23,6 +23,8 @@ namespace SUP.P2FK
         public string[] Message { get; set; }
         public Dictionary<string, BigInteger> File { get; set; }
         public Dictionary<string, string> Keyword { get; set; }
+        public Dictionary<string, string> Output { get; set; }
+
         public string Hash { get; set; }
         public string SignedBy { get; set; }
         public string Signature { get; set; }
@@ -118,30 +120,34 @@ namespace SUP.P2FK
                  ).DateTime;
 
 
-
+                P2FKRoot.Output = new Dictionary<string, string>();
                 // we are spinning through all the out addresses within each bitcoin transaction
                 // we are base58 decdoing each address to obtain a 20 byte payload that is appended to a byte[]
                 foreach (dynamic v_out in deserializedObject.vout)
                 {
 
+                    string address = v_out.scriptPubKey.addresses[0].ToString();
+                    string value = v_out.value.ToString();
+                    P2FKRoot.Output.Add(address, value);
+
                     // checking for all known P2FK bitcoin testnet microtransaction values
                     if (
-                        v_out.value == "5.46E-06"
-                        || v_out.value == "5.48E-06"
-                        || v_out.value == "5.48E-05"
-                        || v_out.value == "5.5E-05"
-                        || v_out.value == "5.5E-06"
-                        || v_out.value == "1E-05"
-                        || v_out.value == "1E-08"
-                        || v_out.value == "1.3016426"
-                        || v_out.value == "0.01"
-                        || v_out.value == "1"
+                       value == "5.46E-06"
+                       || value == "5.48E-06"
+                       || value == "5.48E-05"
+                       || value == "5.5E-05"
+                       || value == "5.5E-06"
+                       || value == "1E-05"
+                       || value == "1E-08"
+                       || value == "1.3016426"
+                       || value == "0.01"
+                       || value == "1"
                     )
                     {
                         byte[] results = Array.Empty<byte>();
                         try
                         {
-                            P2FKSignatureAddress = v_out.scriptPubKey.addresses[0];
+                            P2FKSignatureAddress = address;
                         }
                         catch { return P2FKRoot; }
 

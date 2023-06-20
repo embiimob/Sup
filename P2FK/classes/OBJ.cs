@@ -29,6 +29,12 @@ namespace SUP.P2FK
         public Dictionary<string, decimal> roy { get; set; }
 
     }
+
+    public class BID
+    {
+        public long Qty { get; set; }
+        public string Value { get; set; }
+    }
     public class OBJState
     {
         public int Id { get; set; }
@@ -44,6 +50,8 @@ namespace SUP.P2FK
         public Dictionary<string, DateTime> Creators { get; set; }
         public Dictionary<string, long> Owners { get; set; }
         public Dictionary<string, decimal> Royalties { get; set; } 
+        public Dictionary<string, BID> Buys { get; set; }
+        public Dictionary<string, BID> Listings { get; set; }
         public DateTime LockedDate { get; set; }
         public int ProcessHeight { get; set; }
         public DateTime CreatedDate { get; set; }
@@ -147,7 +155,7 @@ namespace SUP.P2FK
                     logstatus = "";
 
 
-                    if (transaction.Signed && (transaction.File.ContainsKey("OBJ") || transaction.File.ContainsKey("GIV") || transaction.File.ContainsKey("BRN")))
+                    if (transaction.Signed && (transaction.File.ContainsKey("OBJ") || transaction.File.ContainsKey("GIV") || transaction.File.ContainsKey("BRN") || transaction.File.ContainsKey("BUY") || transaction.File.ContainsKey("LST")))
                     {
 
                         string sigSeen;
@@ -753,6 +761,15 @@ namespace SUP.P2FK
 
 
                                     }
+                                    break;
+                                case "BUY":
+
+
+                                    break;
+
+                                case "LST":
+
+
                                     break;
 
                                 default:

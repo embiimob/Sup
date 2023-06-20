@@ -487,7 +487,7 @@ namespace SUP
 
                 if (txtObjectAddress.Text == "")
                 {
-                    lblASCIIURN.Text = "push 💎 to obtain a new object address";
+                    lblASCIIURN.Text = "push 👑 to obtain a new object address";
                     lblASCIIURN.Visible = true;
                     txtObjectAddress.Enabled = true;
                     btnObjectAddress.Enabled = true;

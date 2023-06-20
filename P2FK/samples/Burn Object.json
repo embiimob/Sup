@@ -9,7 +9,9 @@
 //assume keyword order id 1-?  list of objects to burn ( the max amount of objects to burn in batch is #unknown but there is one )
 //[object to burn keyword order id, qty to burn]
 //[ 0, -numericalSalt]
- 
+
+
+//manual entry instructions via apertus.io 
 //remove all unnecessary spaces
 //place JSON in a file named BRN (no file extension)
 //enter @objectaddress to burn in the apertus.io message box

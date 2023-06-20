@@ -1,7 +1,11 @@
 ﻿using LevelDB;
+using NBitcoin.RPC;
 using System;
 using System.Diagnostics;
+using System.Drawing;
 using System.IO;
+using System.Net;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace SUP
@@ -76,6 +80,118 @@ namespace SUP
         private void Connections_Load(object sender, EventArgs e)
         {
 
+
+            string walletUsername = "good-user";
+            string walletPassword = "better-password";
+            string walletUrl = @"http://127.0.0.1:18332";
+            NetworkCredential credentials = new NetworkCredential(walletUsername, walletPassword);
+            RPCClient rpcClient = new RPCClient(credentials, new Uri(walletUrl), NBitcoin.Network.Main);
+            Task.Run(() =>
+            {
+                try
+                {
+                    string isActive = rpcClient.GetBalance().ToString();
+                    if (decimal.TryParse(isActive, out decimal _))
+                    {
+                        this.Invoke((MethodInvoker)delegate
+                    {
+                        btnMainConnection.BackColor = Color.Blue;
+                        btnMainConnection.ForeColor = Color.Yellow;
+                        btnMainConnection.Text = "active";
+                    });
+                    }
+                }
+                catch { }
+            });
+
+
+            Task.Run(() =>
+            {
+                try
+                {
+                    walletUrl = @"http://127.0.0.1:8332";
+                    rpcClient = new RPCClient(credentials, new Uri(walletUrl), NBitcoin.Network.Main);
+                    string isActive = rpcClient.GetBalance().ToString();
+                    if (decimal.TryParse(isActive, out decimal _))
+                    {
+                        this.Invoke((MethodInvoker)delegate
+                    {
+                        btnBTC.BackColor = Color.Blue;
+                        btnBTC.ForeColor = Color.Yellow;
+                        btnBTC.Text = "active";
+                    });
+                    }
+                }
+                catch { }
+            });
+
+
+
+            Task.Run(() =>
+            {
+                try
+                {
+                    walletUrl = @"http://127.0.0.1:9332";
+                    rpcClient = new RPCClient(credentials, new Uri(walletUrl), NBitcoin.Network.Main);
+                    string isActive = rpcClient.GetBalance().ToString();
+                    if (decimal.TryParse(isActive, out decimal _))
+                    {
+                        this.Invoke((MethodInvoker)delegate
+                        {
+                            btnLTC.BackColor = Color.Blue;
+                            btnLTC.ForeColor = Color.Yellow;
+                            btnLTC.Text = "active";
+                        });
+
+                    }
+                }
+                catch { }
+            });
+
+
+            Task.Run(() =>
+            {
+                try
+                {
+                    walletUrl = @"http://127.0.0.1:12832";
+                    rpcClient = new RPCClient(credentials, new Uri(walletUrl), NBitcoin.Network.Main);
+                    string isActive = rpcClient.GetBalance().ToString();
+                    if (decimal.TryParse(isActive, out decimal _))
+                    {
+                        this.Invoke((MethodInvoker)delegate
+                        {
+                            btnMZC.BackColor = Color.Blue;
+                            btnMZC.ForeColor = Color.Yellow;
+                            btnMZC.Text = "active";
+                        });
+
+                    }
+                }
+                catch { }
+            });
+
+            Task.Run(() =>
+            {
+                try
+                {
+                    walletUrl = @"http://127.0.0.1:22555";
+                    rpcClient = new RPCClient(credentials, new Uri(walletUrl), NBitcoin.Network.Main);
+                    string isActive = rpcClient.GetBalance().ToString();
+                    if (decimal.TryParse(isActive, out decimal _))
+                    {
+                        this.Invoke((MethodInvoker)delegate
+                        {
+                            btnDOG.BackColor = Color.Blue;
+                            btnDOG.ForeColor = Color.Yellow;
+                            btnDOG.Text = "active";
+                        });
+
+                    }
+                }
+                catch { }
+            });
+
+
             var process = new Process
             {
                 StartInfo = new ProcessStartInfo
@@ -92,23 +208,29 @@ namespace SUP
             string output = process.StandardOutput.ReadToEnd();
             if (output.Length > 0)
             {
-                button1.Text = "disable IPFS pinning";
+                button1.Text = "IPFS pinning active";
                 btnPinIPFS.Enabled = true;
                 btnUnpinIPFS.Enabled = true;
+                button1.ForeColor = Color.Yellow;
+                button1.BackColor = Color.Blue;
 
             }
             else
             {
                 button1.Text = "enable IPFS pinning";
+                button1.ForeColor = Color.Black;
+                button1.BackColor = Color.White;
             }
 
         }
 
         private void button1_Click(object sender, EventArgs e)
         {
-            if (button1.Text == "disable IPFS pinning")
+            if (button1.Text == "IPFS pinning active")
             {
                 button1.Text = "enable IPFS pinning";
+                button1.BackColor= Color.White;
+                button1.ForeColor = Color.Black;
 
                 var process = new Process
                 {
@@ -137,7 +259,9 @@ namespace SUP
             }
             else
             {
-                button1.Text = "disable IPFS pinning";
+                button1.Text = "IPFS pinning active";
+                button1.ForeColor = Color.Yellow;
+                button1.BackColor = Color.Blue;
 
                 var init = new Process
                 {
