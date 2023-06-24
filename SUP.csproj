@@ -364,7 +364,7 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
-    <None Include="p2fk\samples\Burn Transaction.json">
+    <None Include="p2fk\samples\Burn Object.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Include="p2fk\samples\Create Object.json">

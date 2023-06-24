@@ -1,4 +1,5 @@
 ﻿using AngleSharp.Common;
+using Ganss.Xss;
 using LevelDB;
 using NBitcoin;
 using Newtonsoft.Json;
@@ -6,8 +7,10 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Diagnostics.Eventing.Reader;
 using System.IO;
 using System.Linq;
+using System.Management.Instrumentation;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
@@ -30,10 +33,27 @@ namespace SUP.P2FK
 
     }
 
+    public class Offer
+    {
+        public string Requestor { get; set; }
+        public string Owner { get; set; }
+        public long Qty { get; set; }
+        public decimal Value { get; set; }
+        public DateTime OfferDate { get; set; }
+    }
+
     public class BID
     {
+        public string Requestor { get; set; }
         public long Qty { get; set; }
-        public string Value { get; set; }
+        public decimal Value { get; set; }
+    }
+
+
+    public class BUY
+    {
+        public string Holder { get; set; }
+        public int Qty { get; set; }
     }
     public class OBJState
     {
@@ -49,8 +69,8 @@ namespace SUP.P2FK
         public int Maximum { get; set; }
         public Dictionary<string, DateTime> Creators { get; set; }
         public Dictionary<string, long> Owners { get; set; }
-        public Dictionary<string, decimal> Royalties { get; set; } 
-        public Dictionary<string, BID> Buys { get; set; }
+        public Dictionary<string, decimal> Royalties { get; set; }
+        public List<Offer> Offers { get; set; }
         public Dictionary<string, BID> Listings { get; set; }
         public DateTime LockedDate { get; set; }
         public int ProcessHeight { get; set; }
@@ -138,7 +158,7 @@ namespace SUP.P2FK
                 if (intProcessHeight != 0 && objectTransactions.Count() == 0) { return objectState; }
 
                 objectTransactions = Root.GetRootsByAddress(objectaddress, username, password, url, intProcessHeight, -1, versionByte);
-                
+
                 foreach (Root transaction in objectTransactions)
                 {
                     using (var db = new DB(OBJ, @"root\sig"))
@@ -391,7 +411,8 @@ namespace SUP.P2FK
 
 
                                 case "GIV":
-
+                                    // no sense checking any further
+                                    if (objectState.Owners == null) { break; }
                                     List<List<int>> givinspector = new List<List<int>> { };
                                     try
                                     {
@@ -461,8 +482,7 @@ namespace SUP.P2FK
                                             break;
                                         }
 
-                                        // no sense checking any further
-                                        if (objectState.Owners == null) { break; }
+
                                         if (objectState.Maximum > 0)
                                         {
                                             if (qtyToGive > objectState.Maximum)
@@ -764,6 +784,255 @@ namespace SUP.P2FK
                                     break;
                                 case "BUY":
 
+                                    if (objectState.Owners == null)
+                                    {
+                                        logstatus = "[\"" + transaction.SignedBy + "\",\"" + objectaddress + "\",\"buy\",\"\",\"\",\"failed due to no owners\"]";
+                                        break;
+                                    }
+
+                                    List<List<string>> buyinspector = new List<List<string>> { };
+
+                                    try
+                                    {
+                                        buyinspector = JsonConvert.DeserializeObject<List<List<string>>>(File.ReadAllText(@"root\" + transaction.TransactionId + @"\BUY"));
+                                    }
+                                    catch
+                                    {
+                                        logstatus = "[\"" + transaction.SignedBy + "\",\"" + objectaddress + "\",\"inspect\",\"\",\"\",\"failed due to invalid transaction format\"]";
+
+                                        break;
+                                    }
+                                    if (buyinspector == null)
+                                    {
+                                        logstatus = "[\"" + transaction.SignedBy + "\",\"" + objectaddress + "\",\"buy\",\"\",\"\",\"failed due to no data\"]";
+                                        break;
+                                    }
+                                    int buyCount = 0;
+                                    decimal royaltiesPaid = 0;
+
+                                    foreach (var buy in buyinspector)
+                                    {
+
+                                        buyCount++;
+                                        string sortableBuyCount = buyCount.ToString("X").PadLeft(4, '0');
+
+                                        if (long.Parse(buy[1]) < 1)
+                                        {
+                                            if (verbose)
+                                            {
+                                                logstatus = "[\"" + transaction.SignedBy + "\",\"" + objectaddress + "\",\"buy\",\"" + buy[1] + "\",\"\",\"salt" + buy[1] + "\"]";
+
+                                                var ROOT = new Options { CreateIfMissing = true };
+                                                var db = new DB(ROOT, @"root\event");
+                                                db.Put(objectaddress + "!" + transaction.BlockDate.ToString("yyyyMMddHHmmss") + "!" + sortableProcessHeight + "!" + sortableBuyCount, logstatus);
+                                                db.Put("lastkey!" + objectaddress, objectaddress + "!" + transaction.BlockDate.ToString("yyyyMMddHHmmss") + "!" + sortableProcessHeight + "!" + sortableBuyCount);
+                                                db.Close();
+
+                                                logstatus = "";
+                                            }
+                                            break;
+                                        }
+
+
+                                        // listed
+
+                                        // Are their enough listed to buy?
+                                        if (objectState.Listings != null && objectState.Listings.TryGetValue(buy[0], out BID qtyListed) && qtyListed.Qty >= long.Parse(buy[1]))
+                                        {
+
+                                            //have all required royalties been paid or greator?
+                                            foreach (KeyValuePair<string, decimal> pair in objectState.Royalties)
+                                            {
+                                                if (transaction.Output.TryGetValue(pair.Key, out string output) && decimal.TryParse(output, out decimal sentValue) && sentValue >= ((qtyListed.Value * long.Parse(buy[1])) * (pair.Value / 100))) { royaltiesPaid = royaltiesPaid + ((qtyListed.Value * long.Parse(buy[1])) * (pair.Value / 100)); }
+
+                                                //conditons were not met log failed event.
+                                                else
+                                                {
+
+
+                                                    break;
+                                                }
+                                            }
+                                            if (verbose)
+                                            {
+                                                logstatus = "[\"" + transaction.SignedBy + "\",\"" + objectaddress + "\",\"buy\",\"" + buy[1] + "\",\"\",\"failed due to insuficent royalties paid\"]";
+
+                                                var ROOT = new Options { CreateIfMissing = true };
+                                                var db = new DB(ROOT, @"root\event");
+                                                db.Put(objectaddress + "!" + transaction.BlockDate.ToString("yyyyMMddHHmmss") + "!" + sortableProcessHeight + "!" + sortableBuyCount, logstatus);
+                                                db.Put("lastkey!" + objectaddress, objectaddress + "!" + transaction.BlockDate.ToString("yyyyMMddHHmmss") + "!" + sortableProcessHeight + "!" + sortableBuyCount);
+                                                db.Close();
+
+                                                logstatus = "";
+                                            }
+
+
+                                            //was the current owner paid what was listed with required royalties removed or greator?
+                                            decimal ownerPaid = 0;
+                                            if (transaction.Output.TryGetValue(buy[0], out string ownerValue) && decimal.TryParse(ownerValue, out ownerPaid) && ownerPaid >= (qtyListed.Value * long.Parse(buy[1])) - royaltiesPaid)
+                                            {
+
+                                                //seems like conditions are met
+
+
+
+                                                //remove listing
+                                                //update ownership table
+                                                //event buy success
+
+
+
+                                                //conditons were not met log failed event.
+                                            }
+                                            else
+                                            {
+
+                                                if (verbose)
+                                                {
+                                                    logstatus = "[\"" + transaction.SignedBy + "\",\"" + objectaddress + "\",\"buy\",\"" + ownerPaid.ToString() + "\",\"\",\"failed due to insuficent owner paid\"]";
+
+                                                    var ROOT = new Options { CreateIfMissing = true };
+                                                    var db = new DB(ROOT, @"root\event");
+                                                    db.Put(objectaddress + "!" + transaction.BlockDate.ToString("yyyyMMddHHmmss") + "!" + sortableProcessHeight + "!" + sortableBuyCount, logstatus);
+                                                    db.Put("lastkey!" + objectaddress, objectaddress + "!" + transaction.BlockDate.ToString("yyyyMMddHHmmss") + "!" + sortableProcessHeight + "!" + sortableBuyCount);
+                                                    db.Close();
+
+                                                    logstatus = "";
+                                                }
+
+                                                break;
+                                            }
+
+
+
+
+                                        }
+                                        //not listed check is valid offer?
+                                        else
+                                        {
+
+                                            // is qty requested > qty owned - reject
+
+
+                                            decimal totalPaid;
+                                            decimal totalRoyaltiesPercent = 0;
+
+                                            //have all required royalties been paid or greator?
+                                            foreach (KeyValuePair<string, decimal> pair in objectState.Royalties)
+                                            {
+                                                if (transaction.Output.TryGetValue(pair.Key, out string output) && decimal.TryParse(output, out decimal sentValue))
+                                                {
+                                                    if (!objectState.Royalties.Keys.Contains(pair.Key))
+                                                    {
+                                                        royaltiesPaid = royaltiesPaid + sentValue;
+                                                        totalRoyaltiesPercent = totalRoyaltiesPercent + pair.Value;
+                                                    }
+                                                }
+                                                //transaction failed due to insufficent royalties
+                                                else
+                                                {
+                                                    if (verbose)
+                                                    {
+                                                        logstatus = "[\"" + transaction.SignedBy + "\",\"" + objectaddress + "\",\"buy\",\"" + buy[1] + "\",\"\",\"failed due to insuficent royalties paid\"]";
+
+                                                        var ROOT = new Options { CreateIfMissing = true };
+                                                        var db = new DB(ROOT, @"root\event");
+                                                        db.Put(objectaddress + "!" + transaction.BlockDate.ToString("yyyyMMddHHmmss") + "!" + sortableProcessHeight + "!" + sortableBuyCount, logstatus);
+                                                        db.Put("lastkey!" + objectaddress, objectaddress + "!" + transaction.BlockDate.ToString("yyyyMMddHHmmss") + "!" + sortableProcessHeight + "!" + sortableBuyCount);
+                                                        db.Close();
+
+                                                        logstatus = "";
+                                                    }
+                                                    break;
+                                                }
+                                            }
+
+
+
+                                            //has owner been paid some amount?
+                                            if (transaction.Output.TryGetValue(buy[0], out string ownerValue) && decimal.TryParse(ownerValue, out decimal ownerPaid))
+                                            {
+                                                totalPaid = ownerPaid + royaltiesPaid;
+
+                                                if (totalPaid * (totalRoyaltiesPercent / 100) == royaltiesPaid)
+                                                {
+                                                    Offer offer = new Offer();
+                                                    offer.Requestor = transaction.SignedBy;
+                                                    offer.Owner = buy[0];
+                                                    offer.Value = totalPaid / long.Parse(buy[1]);
+                                                    offer.Qty = long.Parse(buy[1]);
+                                                    offer.OfferDate = transaction.BlockDate;
+
+                                                    if (objectState.Offers == null)
+                                                    {
+                                                        objectState.Offers = new List<Offer>();
+                                                    }
+
+                                                    objectState.Offers.Add(offer);
+
+                                                    if (verbose)
+                                                    {
+                                                        logstatus = "[\"" + transaction.SignedBy + "\",\"" + buy[0] + "\",\"offer\",\"" + buy[1] + "\",\"\",\"success - "+ totalPaid / long.Parse(buy[1]) + "\"]";
+
+                                                        var ROOT = new Options { CreateIfMissing = true };
+                                                        var db = new DB(ROOT, @"root\event");
+                                                        db.Put(objectaddress + "!" + transaction.BlockDate.ToString("yyyyMMddHHmmss") + "!" + sortableProcessHeight + "!" + sortableBuyCount, logstatus);
+                                                        db.Put("lastkey!" + objectaddress, objectaddress + "!" + transaction.BlockDate.ToString("yyyyMMddHHmmss") + "!" + sortableProcessHeight + "!" + sortableBuyCount);
+                                                        db.Close();
+
+                                                        logstatus = "";
+                                                    }
+                                                    break;
+
+                                                }
+                                                //transaction failed insufficent royalties paid - reject
+                                                else
+                                                {
+
+                                                    if (verbose)
+                                                    {
+                                                        logstatus = "[\"" + transaction.SignedBy + "\",\"" + objectaddress + "\",\"buy\",\"" + buy[1] + "\",\"\",\"failed due to insuficent royalties paid\"]";
+
+                                                        var ROOT = new Options { CreateIfMissing = true };
+                                                        var db = new DB(ROOT, @"root\event");
+                                                        db.Put(objectaddress + "!" + transaction.BlockDate.ToString("yyyyMMddHHmmss") + "!" + sortableProcessHeight + "!" + sortableBuyCount, logstatus);
+                                                        db.Put("lastkey!" + objectaddress, objectaddress + "!" + transaction.BlockDate.ToString("yyyyMMddHHmmss") + "!" + sortableProcessHeight + "!" + sortableBuyCount);
+                                                        db.Close();
+
+                                                        logstatus = "";
+                                                    }
+                                                    break;
+
+                                                }
+                                            }
+                                            //transaction failed insuficent owner payment - reject
+                                            else
+                                            {
+                                                if (verbose)
+                                                {
+                                                    logstatus = "[\"" + transaction.SignedBy + "\",\"" + objectaddress + "\",\"buy\",\"" + buy[1] + "\",\"\",\"failed due to insuficent owner payment\"]";
+
+                                                    var ROOT = new Options { CreateIfMissing = true };
+                                                    var db = new DB(ROOT, @"root\event");
+                                                    db.Put(objectaddress + "!" + transaction.BlockDate.ToString("yyyyMMddHHmmss") + "!" + sortableProcessHeight + "!" + sortableBuyCount, logstatus);
+                                                    db.Put("lastkey!" + objectaddress, objectaddress + "!" + transaction.BlockDate.ToString("yyyyMMddHHmmss") + "!" + sortableProcessHeight + "!" + sortableBuyCount);
+                                                    db.Close();
+
+                                                    logstatus = "";
+                                                }
+                                                break;
+
+
+
+                                            }
+
+
+
+                                        }
+
+
+
+                                    }
 
                                     break;
 
@@ -1906,9 +2175,9 @@ namespace SUP.P2FK
         }
         public static object GetPublicMessagesByAddress(string objectaddress, string username, string password, string url, string versionByte = "111", int skip = 0, int qty = 20)
         {
-            Root.GetRootsByAddress(objectaddress, username, password, url,0,-1, versionByte);
-                                  
-            
+            Root.GetRootsByAddress(objectaddress, username, password, url, 0, -1, versionByte);
+
+
             lock (SupLocker)
             {
                 List<object> messages = new List<object>();
@@ -1916,7 +2185,7 @@ namespace SUP.P2FK
                 int rownum = 1;
                 var SUP = new Options { CreateIfMissing = true };
 
-                using (var db = new DB(SUP, @"root\"+ objectaddress + @"\sup"))
+                using (var db = new DB(SUP, @"root\" + objectaddress + @"\sup"))
                 {
                     LevelDB.Iterator it = db.CreateIterator();
                     for (
@@ -1968,9 +2237,9 @@ namespace SUP.P2FK
                 int rownum = 1;
                 var SUP = new Options { CreateIfMissing = true };
 
-                using (var db = new DB(SUP, @"root\"+ objectaddress +@"\sec"))
+                using (var db = new DB(SUP, @"root\" + objectaddress + @"\sec"))
                 {
-                   
+
                     LevelDB.Iterator it = db.CreateIterator();
                     for (
                        it.SeekToLast();
@@ -1986,7 +2255,7 @@ namespace SUP.P2FK
                             List<string> supMessagePacket = JsonConvert.DeserializeObject<List<string>>(process);
                             Root root = Root.GetRootByTransactionId(supMessagePacket[1], username, password, url, versionByte);
                             byte[] result = Root.GetRootBytesByFile(new string[] { @"root/" + supMessagePacket[1] + @"/SEC" });
-                            result = Root.DecryptRootBytes(username, password, url, objectaddress, result); 
+                            result = Root.DecryptRootBytes(username, password, url, objectaddress, result);
 
                             root = Root.GetRootByTransactionId(supMessagePacket[1], "good-user", "better-password", "http://127.0.0.1:18332", versionByte, result, objectaddress);
 

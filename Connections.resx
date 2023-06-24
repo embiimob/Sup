@@ -314,10 +314,10 @@ Copyright (C) 2018-2021 The Maza Core developers
 </value>
   </data>
   <data name="label13.Text" xml:space="preserve">
-    <value>Sup!? requires a local 127.0.0.1 connection to the bitcoin testnet network. click launch on the top button to begin.
+    <value>Sup!? requires a local 127.0.0.1 connection to bitcoin testnet. click top launch button and click enable IPFS pinning to begin.
 
-Launch full bitcoin production, mazacoin prodction, litecoin production and dogecoin production nodes by clicking their launch buttons 
+Launch optional production bitcoin, mazacoin, litecoin and dogecoin nodes by clicking their launch buttons 
 
-All launched blockchain data will be stored in easily replicated sub folders</value>
+All launched blockchains and IPFS data will be stored in easily replicated sub folders</value>
   </data>
 </root>

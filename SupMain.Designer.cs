@@ -99,8 +99,8 @@
             this.splitContainer2.Panel1.Controls.Add(this.btnConnections);
             this.splitContainer2.Panel1.Controls.Add(this.btnLive);
             this.splitContainer2.Panel1.Controls.Add(this.btnWorkBench);
-            this.splitContainer2.Panel1.Controls.Add(this.refreshFriendFeed);
             this.splitContainer2.Panel1.Controls.Add(this.flowFollow);
+            this.splitContainer2.Panel1.Controls.Add(this.btnMint);
             this.splitContainer2.Panel1MinSize = 67;
             // 
             // splitContainer2.Panel2
@@ -108,6 +108,7 @@
             this.splitContainer2.Panel2.Controls.Add(this.profileURN);
             this.splitContainer2.Panel2.Controls.Add(this.lblProcessHeight);
             this.splitContainer2.Panel2.Controls.Add(this.btnMute);
+            this.splitContainer2.Panel2.Controls.Add(this.refreshFriendFeed);
             this.splitContainer2.Panel2.Controls.Add(this.btnFollow);
             this.splitContainer2.Panel2.Controls.Add(this.profileOwner);
             this.splitContainer2.Panel2.Controls.Add(this.btnBlock);
@@ -116,7 +117,6 @@
             this.splitContainer2.Panel2.Controls.Add(this.btnDisco);
             this.splitContainer2.Panel2.Controls.Add(this.btnPrivateMessage);
             this.splitContainer2.Panel2.Controls.Add(this.btnPublicMessage);
-            this.splitContainer2.Panel2.Controls.Add(this.btnMint);
             this.splitContainer2.Size = new System.Drawing.Size(411, 655);
             this.splitContainer2.SplitterDistance = 67;
             this.splitContainer2.SplitterWidth = 1;
@@ -127,7 +127,7 @@
             // 
             this.btnConnections.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.btnConnections.Font = new System.Drawing.Font("Segoe UI Emoji", 13.8F);
-            this.btnConnections.Location = new System.Drawing.Point(8, 513);
+            this.btnConnections.Location = new System.Drawing.Point(8, 510);
             this.btnConnections.Name = "btnConnections";
             this.btnConnections.Size = new System.Drawing.Size(56, 40);
             this.btnConnections.TabIndex = 82;
@@ -142,7 +142,7 @@
             this.btnLive.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
             this.btnLive.Font = new System.Drawing.Font("Segoe UI Emoji", 13.8F);
             this.btnLive.ForeColor = System.Drawing.Color.Black;
-            this.btnLive.Location = new System.Drawing.Point(8, 459);
+            this.btnLive.Location = new System.Drawing.Point(8, 462);
             this.btnLive.Name = "btnLive";
             this.btnLive.Size = new System.Drawing.Size(56, 42);
             this.btnLive.TabIndex = 83;
@@ -154,7 +154,7 @@
             // 
             this.btnWorkBench.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.btnWorkBench.Font = new System.Drawing.Font("Segoe UI Emoji", 13.8F);
-            this.btnWorkBench.Location = new System.Drawing.Point(8, 559);
+            this.btnWorkBench.Location = new System.Drawing.Point(8, 556);
             this.btnWorkBench.Name = "btnWorkBench";
             this.btnWorkBench.Size = new System.Drawing.Size(56, 42);
             this.btnWorkBench.TabIndex = 81;
@@ -166,7 +166,7 @@
             // 
             this.refreshFriendFeed.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.refreshFriendFeed.Font = new System.Drawing.Font("Segoe UI Emoji", 13.8F);
-            this.refreshFriendFeed.Location = new System.Drawing.Point(9, 608);
+            this.refreshFriendFeed.Location = new System.Drawing.Point(61, 608);
             this.refreshFriendFeed.Name = "refreshFriendFeed";
             this.refreshFriendFeed.Size = new System.Drawing.Size(55, 40);
             this.refreshFriendFeed.TabIndex = 96;
@@ -205,7 +205,7 @@
             this.lblProcessHeight.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.lblProcessHeight.AutoSize = true;
             this.lblProcessHeight.ForeColor = System.Drawing.Color.White;
-            this.lblProcessHeight.Location = new System.Drawing.Point(276, 121);
+            this.lblProcessHeight.Location = new System.Drawing.Point(279, 121);
             this.lblProcessHeight.Name = "lblProcessHeight";
             this.lblProcessHeight.Size = new System.Drawing.Size(25, 13);
             this.lblProcessHeight.TabIndex = 96;
@@ -217,7 +217,7 @@
             this.btnMute.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.btnMute.BackColor = System.Drawing.Color.White;
             this.btnMute.Enabled = false;
-            this.btnMute.Location = new System.Drawing.Point(195, 141);
+            this.btnMute.Location = new System.Drawing.Point(198, 141);
             this.btnMute.Name = "btnMute";
             this.btnMute.Size = new System.Drawing.Size(67, 23);
             this.btnMute.TabIndex = 8;
@@ -251,7 +251,7 @@
             // 
             this.btnBlock.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.btnBlock.Enabled = false;
-            this.btnBlock.Location = new System.Drawing.Point(268, 141);
+            this.btnBlock.Location = new System.Drawing.Point(271, 141);
             this.btnBlock.Name = "btnBlock";
             this.btnBlock.Size = new System.Drawing.Size(67, 23);
             this.btnBlock.TabIndex = 9;
@@ -269,7 +269,7 @@
             this.supFlow.Location = new System.Drawing.Point(7, 170);
             this.supFlow.Name = "supFlow";
             this.supFlow.Padding = new System.Windows.Forms.Padding(0, 3, 0, 0);
-            this.supFlow.Size = new System.Drawing.Size(335, 432);
+            this.supFlow.Size = new System.Drawing.Size(338, 432);
             this.supFlow.TabIndex = 86;
             // 
             // lblAdultsOnly
@@ -342,7 +342,7 @@
             this.btnPrivateMessage.Enabled = false;
             this.btnPrivateMessage.Font = new System.Drawing.Font("Segoe UI Emoji", 13.8F);
             this.btnPrivateMessage.ForeColor = System.Drawing.Color.Black;
-            this.btnPrivateMessage.Location = new System.Drawing.Point(279, 608);
+            this.btnPrivateMessage.Location = new System.Drawing.Point(282, 608);
             this.btnPrivateMessage.Name = "btnPrivateMessage";
             this.btnPrivateMessage.Size = new System.Drawing.Size(56, 40);
             this.btnPrivateMessage.TabIndex = 84;
@@ -357,7 +357,7 @@
             this.btnPublicMessage.Enabled = false;
             this.btnPublicMessage.Font = new System.Drawing.Font("Segoe UI Emoji", 13.8F);
             this.btnPublicMessage.ForeColor = System.Drawing.Color.Black;
-            this.btnPublicMessage.Location = new System.Drawing.Point(217, 608);
+            this.btnPublicMessage.Location = new System.Drawing.Point(220, 608);
             this.btnPublicMessage.Name = "btnPublicMessage";
             this.btnPublicMessage.Size = new System.Drawing.Size(56, 40);
             this.btnPublicMessage.TabIndex = 83;
@@ -369,7 +369,7 @@
             // 
             this.btnMint.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.btnMint.Font = new System.Drawing.Font("Segoe UI Emoji", 13.8F);
-            this.btnMint.Location = new System.Drawing.Point(60, 608);
+            this.btnMint.Location = new System.Drawing.Point(8, 608);
             this.btnMint.Name = "btnMint";
             this.btnMint.Size = new System.Drawing.Size(56, 40);
             this.btnMint.TabIndex = 80;

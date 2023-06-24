@@ -446,7 +446,7 @@
             // label14
             // 
             this.label14.AutoSize = true;
-            this.label14.Location = new System.Drawing.Point(329, 352);
+            this.label14.Location = new System.Drawing.Point(343, 360);
             this.label14.Name = "label14";
             this.label14.Size = new System.Drawing.Size(318, 104);
             this.label14.TabIndex = 123;
@@ -566,9 +566,9 @@
             // label13
             // 
             this.label13.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label13.Location = new System.Drawing.Point(15, 349);
+            this.label13.Location = new System.Drawing.Point(17, 349);
             this.label13.Name = "label13";
-            this.label13.Size = new System.Drawing.Size(278, 127);
+            this.label13.Size = new System.Drawing.Size(264, 127);
             this.label13.TabIndex = 109;
             this.label13.Text = resources.GetString("label13.Text");
             // 
