@@ -44,15 +44,7 @@ namespace SUP
             childForm.Show();
         }
 
-        private void ObjectPrice_TextChanged(object sender, EventArgs e)
-        {
-            this.Size = new System.Drawing.Size(208, 367);
-        }
-
-        private void ObjectOffer_TextChanged(object sender, EventArgs e)
-        {
-            this.Size = new System.Drawing.Size(208, 367);
-        }
+     
 
         private void ObjectAddress_Click(object sender, EventArgs e)
         {

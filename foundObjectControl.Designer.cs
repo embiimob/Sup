@@ -68,20 +68,23 @@
             // 
             // panel1
             // 
+            this.panel1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.panel1.BackColor = System.Drawing.SystemColors.GradientInactiveCaption;
             this.panel1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.panel1.Controls.Add(this.ObjectPrice);
             this.panel1.Controls.Add(this.label4);
             this.panel1.Controls.Add(this.ObjectOffer);
             this.panel1.Controls.Add(this.label3);
-            this.panel1.Location = new System.Drawing.Point(3, 336);
+            this.panel1.Location = new System.Drawing.Point(6, 291);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(210, 40);
+            this.panel1.Size = new System.Drawing.Size(209, 40);
             this.panel1.TabIndex = 5;
             this.panel1.Click += new System.EventHandler(this.foundObjectControl_Click);
             // 
             // ObjectPrice
             // 
+            this.ObjectPrice.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.ObjectPrice.BackColor = System.Drawing.SystemColors.GradientInactiveCaption;
             this.ObjectPrice.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.ObjectPrice.Location = new System.Drawing.Point(2, 19);
@@ -89,14 +92,14 @@
             this.ObjectPrice.Size = new System.Drawing.Size(92, 20);
             this.ObjectPrice.TabIndex = 9;
             this.ObjectPrice.Text = "-";
-            this.ObjectPrice.TextChanged += new System.EventHandler(this.ObjectPrice_TextChanged);
             this.ObjectPrice.Click += new System.EventHandler(this.foundObjectControl_Click);
             // 
             // label4
             // 
+            this.label4.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.label4.AutoSize = true;
             this.label4.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label4.Location = new System.Drawing.Point(175, 6);
+            this.label4.Location = new System.Drawing.Point(172, -1);
             this.label4.MaximumSize = new System.Drawing.Size(170, 0);
             this.label4.Name = "label4";
             this.label4.Padding = new System.Windows.Forms.Padding(0, 3, 0, 0);
@@ -110,21 +113,22 @@
             // 
             // ObjectOffer
             // 
+            this.ObjectOffer.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.ObjectOffer.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.ObjectOffer.Location = new System.Drawing.Point(109, 19);
             this.ObjectOffer.Name = "ObjectOffer";
             this.ObjectOffer.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
             this.ObjectOffer.Size = new System.Drawing.Size(95, 20);
             this.ObjectOffer.TabIndex = 8;
-            this.ObjectOffer.Text = "-";
-            this.ObjectOffer.TextChanged += new System.EventHandler(this.ObjectOffer_TextChanged);
+            this.ObjectOffer.Text = ".00001";
             this.ObjectOffer.Click += new System.EventHandler(this.foundObjectControl_Click);
             // 
             // label3
             // 
+            this.label3.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.label3.AutoSize = true;
             this.label3.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label3.Location = new System.Drawing.Point(3, 5);
+            this.label3.Location = new System.Drawing.Point(3, -2);
             this.label3.MaximumSize = new System.Drawing.Size(170, 0);
             this.label3.Name = "label3";
             this.label3.Padding = new System.Windows.Forms.Padding(0, 3, 0, 0);
@@ -143,7 +147,7 @@
             this.ObjectDescription.ForeColor = System.Drawing.Color.White;
             this.ObjectDescription.Location = new System.Drawing.Point(4, 263);
             this.ObjectDescription.Name = "ObjectDescription";
-            this.ObjectDescription.Size = new System.Drawing.Size(202, 51);
+            this.ObjectDescription.Size = new System.Drawing.Size(211, 51);
             this.ObjectDescription.TabIndex = 6;
             this.ObjectDescription.Text = "a collection of items found on a spaceship";
             this.ObjectDescription.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
@@ -171,7 +175,7 @@
             this.ObjectAddress.ImageAlign = System.Drawing.ContentAlignment.BottomCenter;
             this.ObjectAddress.Location = new System.Drawing.Point(6, 311);
             this.ObjectAddress.Name = "ObjectAddress";
-            this.ObjectAddress.Size = new System.Drawing.Size(176, 21);
+            this.ObjectAddress.Size = new System.Drawing.Size(209, 21);
             this.ObjectAddress.TabIndex = 8;
             this.ObjectAddress.Text = "@";
             this.ObjectAddress.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
@@ -287,25 +291,24 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
-            this.Controls.Add(this.lblTrash);
+            this.Controls.Add(this.flowLayoutPanel1);
             this.Controls.Add(this.btnOfficial);
             this.Controls.Add(this.lblOfficial);
+            this.Controls.Add(this.ObjectImage);
+            this.Controls.Add(this.lblTrash);
+            this.Controls.Add(this.ObjectAddress);
+            this.Controls.Add(this.ObjectDescription);
             this.Controls.Add(this.txtOfficialURN);
             this.Controls.Add(this.ObjectName);
             this.Controls.Add(this.ObjectQty);
-            this.Controls.Add(this.flowLayoutPanel1);
             this.Controls.Add(this.panel1);
-            this.Controls.Add(this.ObjectImage);
-            this.Controls.Add(this.ObjectAddress);
-            this.Controls.Add(this.ObjectDescription);
             this.Controls.Add(this.ObjectId);
             this.DoubleBuffered = true;
             this.Margin = new System.Windows.Forms.Padding(8, 7, 8, 7);
-            this.MaximumSize = new System.Drawing.Size(221, 400);
             this.MinimumSize = new System.Drawing.Size(221, 221);
             this.Name = "FoundObjectControl";
             this.Padding = new System.Windows.Forms.Padding(10);
-            this.Size = new System.Drawing.Size(221, 336);
+            this.Size = new System.Drawing.Size(221, 340);
             this.Click += new System.EventHandler(this.foundObjectControl_Click);
             ((System.ComponentModel.ISupportInitialize)(this.ObjectImage)).EndInit();
             this.panel1.ResumeLayout(false);

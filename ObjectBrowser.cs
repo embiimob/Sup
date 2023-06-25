@@ -205,6 +205,8 @@ namespace SUP
                             foundObject.ObjectAddress.Text = objstate.Creators.First().Key;
                             foundObject.ObjectQty.Text = objstate.Owners.Values.Sum().ToString() + "x";
                             foundObject.ObjectId.Text = objstate.Id.ToString();
+                            if (objstate.Offers != null) { foundObject.Height = 389; BID lowestOffer = objstate.Offers.OrderBy(offer => offer.Value).FirstOrDefault(); foundObject.ObjectOffer.Text = lowestOffer.Value.ToString(); }
+                            if (objstate.Listings != null ) { foundObject.Height = 389; BID lowestListing = objstate.Listings.Values.OrderBy(listing => listing.Value).FirstOrDefault(); foundObject.ObjectPrice.Text = lowestListing.Value.ToString(); }
 
 
                             OBJState isOfficial = OBJState.GetObjectByURN(objstate.URN, "good-user", "better-password", @"http://127.0.0.1:18332");
@@ -609,6 +611,7 @@ namespace SUP
                             }
                             if (_viewMode == 1)
                             {
+
                                 flowLayoutPanel1.Controls.Add(foundObject);
 
                             }
@@ -681,6 +684,8 @@ namespace SUP
                         foundObject.ObjectAddress.Text = objstate.Creators.First().Key;
                         foundObject.ObjectQty.Text = objstate.Owners.Values.Sum().ToString() + "x";
                         foundObject.ObjectId.Text = objstate.Id.ToString();
+                        if (objstate.Offers != null & objstate.Offers.Count > 0) { foundObject.Height = 383; BID lowestOffer = objstate.Offers.OrderBy(offer => offer.Value).FirstOrDefault(); foundObject.ObjectOffer.Text = lowestOffer.Value.ToString(); }
+                        if (objstate.Listings != null & objstate.Listings.Count > 0) { foundObject.Height = 383; BID lowestListing = objstate.Listings.Values.OrderBy(listing => listing.Value).FirstOrDefault();foundObject.ObjectPrice.Text = lowestListing.Value.ToString(); }
 
 
                         OBJState isOfficial = OBJState.GetObjectByURN(objstate.URN, "good-user", "better-password", @"http://127.0.0.1:18332");
@@ -1087,6 +1092,7 @@ namespace SUP
                         }
                         if (_viewMode == 1)
                         {
+                            
                             flowLayoutPanel1.Controls.Add(foundObject);
 
                         }
@@ -1558,6 +1564,9 @@ namespace SUP
                             foundObject.ObjectDescription.Text = objstate.Description;
                             foundObject.ObjectAddress.Text = objstate.Creators.First().Key;
                             foundObject.ObjectQty.Text = objstate.Owners.Values.Sum().ToString() + "x";
+                            if (objstate.Offers != null & objstate.Offers.Count > 0) { foundObject.Height = 383; BID lowestOffer = objstate.Offers.OrderBy(offer => offer.Value).FirstOrDefault(); foundObject.ObjectOffer.Text = lowestOffer.Value.ToString(); }
+                            if (objstate.Listings != null & objstate.Listings.Count > 0) { foundObject.Height = 383; BID lowestListing = objstate.Listings.Values.OrderBy(listing => listing.Value).FirstOrDefault(); foundObject.ObjectPrice.Text = lowestListing.Value.ToString(); }
+
                             try
                             {
                                 switch (objstate.Image.ToUpper().Substring(0, 4))
