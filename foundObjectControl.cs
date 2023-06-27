@@ -115,7 +115,7 @@ namespace SUP
                     }
 
 
-                    if (ObjectImage.ImageLocation != null && !ObjectImage.ImageLocation.Contains(@"inlcudes\"))
+                    if (ObjectImage.ImageLocation != null && !ObjectImage.ImageLocation.StartsWith("includes"))
                     {
                         try
                         {

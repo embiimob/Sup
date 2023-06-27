@@ -455,20 +455,20 @@ namespace SUP.P2FK
                                         // cannot give less then 1
                                         if (qtyToGive < 0)
                                         {
-                                            if (verbose)
-                                            {
-                                                logstatus = "[\"" + transaction.SignedBy + "\",\"" + reciever + "\",\"salt\",\"" + qtyToGive + "\",\"\",\"\"]";
+                                            //if (verbose)
+                                            //{
+                                            //    logstatus = "[\"" + transaction.SignedBy + "\",\"" + reciever + "\",\"salt\",\"" + qtyToGive + "\",\"\",\"\"]";
 
 
-                                                var ROOT = new Options { CreateIfMissing = true };
-                                                var db = new DB(ROOT, @"root\event");
-                                                db.Put(objectaddress + "!" + transaction.BlockDate.ToString("yyyyMMddHHmmss") + "!" + sortableProcessHeight + "!" + sortableGiveCount, logstatus);
-                                                db.Put("lastkey!" + objectaddress, objectaddress + "!" + transaction.BlockDate.ToString("yyyyMMddHHmmss") + "!" + sortableProcessHeight + "!" + sortableGiveCount);
+                                            //    var ROOT = new Options { CreateIfMissing = true };
+                                            //    var db = new DB(ROOT, @"root\event");
+                                            //    db.Put(objectaddress + "!" + transaction.BlockDate.ToString("yyyyMMddHHmmss") + "!" + sortableProcessHeight + "!" + sortableGiveCount, logstatus);
+                                            //    db.Put("lastkey!" + objectaddress, objectaddress + "!" + transaction.BlockDate.ToString("yyyyMMddHHmmss") + "!" + sortableProcessHeight + "!" + sortableGiveCount);
 
-                                                db.Close();
+                                            //    db.Close();
 
-                                                logstatus = "";
-                                            }
+                                            //    logstatus = "";
+                                            //}
                                             break;
                                         }
 
@@ -556,7 +556,7 @@ namespace SUP.P2FK
                                             long newValue = qtyOwnedG - qtyToGive;
 
 
-                                            // Check if the new value is an integer
+                                            // Check if the new value is greater then 0
                                             if (newValue > 0)
                                             {
                                                 // Update the value
@@ -671,18 +671,18 @@ namespace SUP.P2FK
 
                                         if (qtyToBurn < 1)
                                         {
-                                            if (verbose)
-                                            {
-                                                logstatus = "[\"" + transaction.SignedBy + "\",\"" + objectaddress + "\",\"salt\",\"" + qtyToBurn + "\",\"\",\"\"]";
+                                            //if (verbose)
+                                            //{
+                                            //    logstatus = "[\"" + transaction.SignedBy + "\",\"" + objectaddress + "\",\"salt\",\"" + qtyToBurn + "\",\"\",\"\"]";
 
-                                                var ROOT = new Options { CreateIfMissing = true };
-                                                var db = new DB(ROOT, @"root\event");
-                                                db.Put(objectaddress + "!" + transaction.BlockDate.ToString("yyyyMMddHHmmss") + "!" + sortableProcessHeight + "!" + sortableBurnCount, logstatus);
-                                                db.Put("lastkey!" + objectaddress, objectaddress + "!" + transaction.BlockDate.ToString("yyyyMMddHHmmss") + "!" + sortableProcessHeight + "!" + sortableBurnCount);
-                                                db.Close();
+                                            //    var ROOT = new Options { CreateIfMissing = true };
+                                            //    var db = new DB(ROOT, @"root\event");
+                                            //    db.Put(objectaddress + "!" + transaction.BlockDate.ToString("yyyyMMddHHmmss") + "!" + sortableProcessHeight + "!" + sortableBurnCount, logstatus);
+                                            //    db.Put("lastkey!" + objectaddress, objectaddress + "!" + transaction.BlockDate.ToString("yyyyMMddHHmmss") + "!" + sortableProcessHeight + "!" + sortableBurnCount);
+                                            //    db.Close();
 
-                                                logstatus = "";
-                                            }
+                                            //    logstatus = "";
+                                            //}
                                             break;
                                         }
 
@@ -800,6 +800,12 @@ namespace SUP.P2FK
                                     }
                                     break;
                                 case "BUY":
+                                    //BUY command can only be directed at one object at a time for now.
+                                    if (objectaddress != transaction.Output.ElementAt(transaction.Output.Count - 2).Key)
+                                    {
+                                        logstatus = "";
+                                        break;
+                                    }
 
                                     if (objectState.Owners == null)
                                     {
@@ -841,18 +847,18 @@ namespace SUP.P2FK
 
                                         if (long.Parse(buy[1]) < 1)
                                         {
-                                            if (verbose)
-                                            {
-                                                logstatus = "[\"" + transaction.SignedBy + "\",\"" + objectaddress + "\",\"salt\",\"" + buy[1] + "\",\"\",\"\"]";
+                                            //if (verbose)
+                                            //{
+                                            //    logstatus = "[\"" + transaction.SignedBy + "\",\"" + objectaddress + "\",\"salt\",\"" + buy[1] + "\",\"\",\"\"]";
 
-                                                var ROOT = new Options { CreateIfMissing = true };
-                                                var db = new DB(ROOT, @"root\event");
-                                                db.Put(objectaddress + "!" + transaction.BlockDate.ToString("yyyyMMddHHmmss") + "!" + sortableProcessHeight + "!" + sortableBuyCount, logstatus);
-                                                db.Put("lastkey!" + objectaddress, objectaddress + "!" + transaction.BlockDate.ToString("yyyyMMddHHmmss") + "!" + sortableProcessHeight + "!" + sortableBuyCount);
-                                                db.Close();
+                                            //    var ROOT = new Options { CreateIfMissing = true };
+                                            //    var db = new DB(ROOT, @"root\event");
+                                            //    db.Put(objectaddress + "!" + transaction.BlockDate.ToString("yyyyMMddHHmmss") + "!" + sortableProcessHeight + "!" + sortableBuyCount, logstatus);
+                                            //    db.Put("lastkey!" + objectaddress, objectaddress + "!" + transaction.BlockDate.ToString("yyyyMMddHHmmss") + "!" + sortableProcessHeight + "!" + sortableBuyCount);
+                                            //    db.Close();
 
-                                                logstatus = "";
-                                            }
+                                            //    logstatus = "";
+                                            //}
                                             break;
                                         }
 

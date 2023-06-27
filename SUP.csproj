@@ -234,12 +234,6 @@
     <Compile Include="ObjectBrowserControl.Designer.cs">
       <DependentUpon>ObjectBrowserControl.cs</DependentUpon>
     </Compile>
-    <Compile Include="ObjectDetailsControl.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="ObjectDetailsControl.Designer.cs">
-      <DependentUpon>ObjectDetailsControl.cs</DependentUpon>
-    </Compile>
     <Compile Include="ObjectMint.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -318,9 +312,6 @@
     </EmbeddedResource>
     <EmbeddedResource Include="ObjectBrowserControl.resx">
       <DependentUpon>ObjectBrowserControl.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="ObjectDetailsControl.resx">
-      <DependentUpon>ObjectDetailsControl.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="ObjectMint.resx">
       <DependentUpon>ObjectMint.cs</DependentUpon>

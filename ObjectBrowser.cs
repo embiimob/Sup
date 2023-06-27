@@ -205,8 +205,22 @@ namespace SUP
                             foundObject.ObjectAddress.Text = objstate.Creators.First().Key;
                             foundObject.ObjectQty.Text = objstate.Owners.Values.Sum().ToString() + "x";
                             foundObject.ObjectId.Text = objstate.Id.ToString();
-                            if (objstate.Offers != null) { foundObject.Height = 389; BID lowestOffer = objstate.Offers.OrderBy(offer => offer.Value).FirstOrDefault(); foundObject.ObjectOffer.Text = lowestOffer.Value.ToString(); }
-                            if (objstate.Listings != null ) { foundObject.Height = 389; BID lowestListing = objstate.Listings.Values.OrderBy(listing => listing.Value).FirstOrDefault(); foundObject.ObjectPrice.Text = lowestListing.Value.ToString(); }
+ 
+                            //GPT3 reformed
+                            if (objstate.Offers != null && objstate.Offers.Count > 0)
+                            {
+                                foundObject.Height = 389;
+                                decimal highestValue = objstate.Offers.Max(offer => offer.Value);
+                                foundObject.ObjectOffer.Text = highestValue.ToString();
+                            }
+                            //GPT3 reformed
+                            if (objstate.Listings != null && objstate.Listings.Count > 0)
+                            {
+                                foundObject.Height = 389;
+                                decimal lowestValue = objstate.Listings.Values.Min(listing => listing.Value);
+                                foundObject.ObjectPrice.Text = lowestValue.ToString();
+                            }
+
 
 
                             OBJState isOfficial = OBJState.GetObjectByURN(objstate.URN, "good-user", "better-password", @"http://127.0.0.1:18332");
@@ -529,7 +543,7 @@ namespace SUP
 
                             }
 
-                            if (_viewMode > 0)
+                            if (_viewMode == 0)
                             {
                                 foreach (KeyValuePair<string, DateTime> creator in objstate.Creators.Skip(1))
                                 {
@@ -601,7 +615,7 @@ namespace SUP
 
 
 
-                            if (_viewMode == 0)
+                            if (_viewMode == 1)
                             {
                                 foundObject.Height = 221;
                                 if (_isUserControl) { foundObject.Margin = new System.Windows.Forms.Padding(3, 3, 2, 3); }
@@ -609,20 +623,12 @@ namespace SUP
 
 
                             }
-                            if (_viewMode == 1)
+                            if (_viewMode == 0)
                             {
 
                                 flowLayoutPanel1.Controls.Add(foundObject);
 
-                            }
-
-                            if (_viewMode == 2)
-                            {
-
-                                ObjectDetailsControl control = new ObjectDetailsControl(foundObject.ObjectAddress.Text);
-                                flowLayoutPanel1.Controls.Add(control);
-
-                            }
+                            }                          
 
 
                         }
@@ -1010,7 +1016,7 @@ namespace SUP
 
                         }
 
-                        if (_viewMode > 0)
+                        if (_viewMode == 0)
                         {
                             foreach (KeyValuePair<string, DateTime> creator in objstate.Creators.Skip(1))
                             {
@@ -1082,7 +1088,7 @@ namespace SUP
 
 
 
-                        if (_viewMode == 0)
+                        if (_viewMode == 1)
                         {
                             foundObject.Height = 221;
                             if (_isUserControl) { foundObject.Margin = new System.Windows.Forms.Padding(3, 3, 2, 3); }
@@ -1090,20 +1096,14 @@ namespace SUP
 
 
                         }
-                        if (_viewMode == 1)
+                        if (_viewMode == 0)
                         {
                             
                             flowLayoutPanel1.Controls.Add(foundObject);
 
                         }
 
-                        if (_viewMode == 2)
-                        {
-
-                            ObjectDetailsControl control = new ObjectDetailsControl(foundObject.ObjectAddress.Text);
-                            flowLayoutPanel1.Controls.Add(control);
-
-                        }
+                       
 
 
                     }
@@ -1786,34 +1786,15 @@ namespace SUP
                             foundObject.ResumeLayout();
 
 
-                            if (_viewMode == 0)
-                            {
-                                foundObject.Height = 221;
-                                flowLayoutPanel1.Controls.Add(foundObject);
-                                this.MinimumSize = new System.Drawing.Size(709, 558);
-                                flowLayoutPanel1.Controls.SetChildIndex(foundObject, 0);
-
-                            }
                             if (_viewMode == 1)
                             {
-
-                                flowLayoutPanel1.Controls.Add(foundObject);
-                                this.MinimumSize = new System.Drawing.Size(709, 558);
-                                flowLayoutPanel1.Controls.SetChildIndex(foundObject, 0);
+                                foundObject.Height = 221;
+                               
                             }
 
-                            if (_viewMode == 2)
-                            {
-
-                                ObjectDetailsControl control = new ObjectDetailsControl(foundObject.ObjectAddress.Text);
-
-                                flowLayoutPanel1.Controls.Add(control);
-                                this.MinimumSize = new System.Drawing.Size(1101, 521);
-                                this.Size = new System.Drawing.Size(1101, 521);
-                                flowLayoutPanel1.Controls.SetChildIndex(control, 0);
-                            }
-
-
+                            flowLayoutPanel1.Controls.Add(foundObject);
+                            this.MinimumSize = new System.Drawing.Size(709, 558);
+                            flowLayoutPanel1.Controls.SetChildIndex(foundObject, 0);
 
                         }
                         flowLayoutPanel1.ResumeLayout();
@@ -1876,15 +1857,12 @@ namespace SUP
 
                     switch (_viewMode)
                     {
-                        case 0:
+                        case 1:
                             txtQty.Text = "9";
                             break;
-                        case 1:
+                        case 0:
                             txtQty.Text = "6";
-                            break;
-                        case 2:
-                            txtQty.Text = "3";
-                            break;
+                            break;                      
                         default:
                             break;
                     }
@@ -2732,7 +2710,7 @@ namespace SUP
 
             switch (_viewMode)
             {
-                case 0:
+                case 1:
                     if (pages.LargeChange != ((flowLayoutPanel1.Width / 200) * (flowLayoutPanel1.Height / 200)) + (flowLayoutPanel1.Width / 200))
                     {
                         pages.LargeChange = ((flowLayoutPanel1.Width / 200) * (flowLayoutPanel1.Height / 200)) + (flowLayoutPanel1.Width / 200);
@@ -2764,38 +2742,12 @@ namespace SUP
                     }
                     break;
 
-                case 2:
-                    if (pages.LargeChange != ((flowLayoutPanel1.Width / 1059) * (flowLayoutPanel1.Height / 411)) + (flowLayoutPanel1.Width / 1059))
+               
+                case 0:
+                    if (pages.LargeChange != ((flowLayoutPanel1.Width / 200) * (flowLayoutPanel1.Height / 360)) + (flowLayoutPanel1.Width / 200));
                     {
-                        pages.LargeChange = ((flowLayoutPanel1.Width / 1059) * (flowLayoutPanel1.Height / 411)) + (flowLayoutPanel1.Width / 1059);
+                        pages.LargeChange = ((flowLayoutPanel1.Width / 200) * (flowLayoutPanel1.Height / 360)) + (flowLayoutPanel1.Width / 200);
 
-                        txtQty.Text = pages.LargeChange.ToString();
-                        if (this.WindowState == FormWindowState.Maximized)
-                        {
-
-                            Random rnd = new Random();
-                            string[] gifFiles = Directory.GetFiles("includes", "*.gif");
-                            if (gifFiles.Length > 0)
-                            {
-                                int randomIndex = rnd.Next(gifFiles.Length);
-                                string randomGifFile = gifFiles[randomIndex];
-                                imgLoading.ImageLocation = randomGifFile;
-                            }
-                            else
-                            {
-                                imgLoading.ImageLocation = @"includes\HugPuddle.jpg";
-                            }
-
-                            await Task.Run(() => BuildSearchResults());
-                            flowLayoutPanel1.Visible = true;
-                            pages.Visible = true;
-                        }
-                    }
-                    break;
-                case 1:
-                    if (pages.LargeChange != ((flowLayoutPanel1.Width / 221) * (flowLayoutPanel1.Height / 336)))
-                    {
-                        pages.LargeChange = ((flowLayoutPanel1.Width / 221) * (flowLayoutPanel1.Height / 336)) + (flowLayoutPanel1.Width / 221);
 
                         txtQty.Text = pages.LargeChange.ToString();
 
@@ -2821,6 +2773,7 @@ namespace SUP
                         }
                     }
                     break;
+
                 default:
                     break;
             }
@@ -2844,7 +2797,7 @@ namespace SUP
 
                 switch (_viewMode)
                 {
-                    case 0:
+                    case 1:
                         if (pages.LargeChange != ((flowLayoutPanel1.Width / 200) * (flowLayoutPanel1.Height / 200)) + (flowLayoutPanel1.Width / 200))
                         {
                             pages.LargeChange = ((flowLayoutPanel1.Width / 200) * (flowLayoutPanel1.Height / 200)) + (flowLayoutPanel1.Width / 200);
@@ -2853,21 +2806,12 @@ namespace SUP
 
                         }
                         break;
-
-                    case 2:
-                        if (pages.LargeChange != ((flowLayoutPanel1.Width / 1059) * (flowLayoutPanel1.Height / 411)) + (flowLayoutPanel1.Width / 1059))
+                  
+                     
+                    case 0:
+                        if (pages.LargeChange != ((flowLayoutPanel1.Width / 200) * (flowLayoutPanel1.Height / 360)) + (flowLayoutPanel1.Width / 200));
                         {
-                            pages.LargeChange = ((flowLayoutPanel1.Width / 1059) * (flowLayoutPanel1.Height / 411)) + (flowLayoutPanel1.Width / 1059);
-
-                            txtQty.Text = pages.LargeChange.ToString();
-
-
-                        }
-                        break;
-                    case 1:
-                        if (pages.LargeChange != ((flowLayoutPanel1.Width / 221) * (flowLayoutPanel1.Height / 336)))
-                        {
-                            pages.LargeChange = ((flowLayoutPanel1.Width / 221) * (flowLayoutPanel1.Height / 336)) + (flowLayoutPanel1.Width / 221);
+                            pages.LargeChange = ((flowLayoutPanel1.Width / 200) * (flowLayoutPanel1.Height / 360)) + (flowLayoutPanel1.Width / 200);
 
                             txtQty.Text = pages.LargeChange.ToString();
 
@@ -2876,6 +2820,7 @@ namespace SUP
                         }
                         break;
                     default:
+
                         break;
                 }
 
@@ -2932,7 +2877,7 @@ namespace SUP
         private async void DoubleClickEventHandler()
         {
             ++_viewMode;
-            if (_viewMode == 3) { _viewMode = 0; }
+            if (_viewMode == 2) { _viewMode = 0; }
 
             Random rnd = new Random();
             string[] gifFiles = Directory.GetFiles("includes", "*.gif");

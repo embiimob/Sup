@@ -71,17 +71,12 @@ namespace SUP
             {
                 this.Text = String.Empty;
 
-                if (!isUserControl)
+              if (!isUserControl)
                 {
                     this.Text = "[ " + _objectaddress + " ]";
-                    this.Height = this.Height + 210;
-                    this.Width = this.Width + 210;
                     registrationPanel.Visible = true;
                 }
-                else
-                {
-                  //
-                }
+               
 
                 btnReloadObject.PerformClick();
                 lblPleaseStandBy.Visible = false;
@@ -756,7 +751,7 @@ namespace SUP
                                 Padding = new System.Windows.Forms.Padding(0)
                             };
 
-                            msg.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, supPanel.Width - 40));
+                            msg.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, supPanel.Width - 50));
                             supFlow.Controls.Add(msg);
                         }
                         catch { }//deleted message
@@ -767,7 +762,7 @@ namespace SUP
             }
 
          
-            numMessagesDisplayed += 20;
+            numMessagesDisplayed += 10;
 
             supFlow.ResumeLayout();
 
@@ -895,7 +890,7 @@ namespace SUP
 
             };
 
-            msg.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, supPanel.Width - 40));
+            msg.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, supPanel.Width - 25));
 
                 supFlow.Controls.Add(msg);
             
@@ -904,8 +899,8 @@ namespace SUP
           
 
             pictureBox.SizeMode = PictureBoxSizeMode.Zoom;
-            pictureBox.Width = supPanel.Width - 40;
-            pictureBox.Height = supPanel.Width - 40;
+            pictureBox.Width = supPanel.Width;
+            pictureBox.Height = supPanel.Width;
             pictureBox.BackColor = System.Drawing.Color.Black;
             pictureBox.ImageLocation = imagelocation;
             msg.Controls.Add(pictureBox);
@@ -930,7 +925,7 @@ namespace SUP
             row.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 80));
             row.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 120));
             row.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 142));
-            row.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 20));
+            row.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 15));
             layoutPanel.Controls.Add(row);
 
            
@@ -1025,7 +1020,7 @@ namespace SUP
                 Padding = new System.Windows.Forms.Padding(10, 20, 10, 20)
             };
 
-            msg.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, supPanel.Width - 40));
+            msg.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, supPanel.Width - 50));
             layoutPanel.Controls.Add(msg);
 
             // Create a Label with the message text
