@@ -342,6 +342,9 @@
       <DependentUpon>Resources.resx</DependentUpon>
       <DesignTime>True</DesignTime>
     </Compile>
+    <None Include="p2fk\samples\List Object.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Include="p2fk\samples\Give Object.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

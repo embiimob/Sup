@@ -1,0 +1,37 @@
+
+
+//defined format
+
+[
+  [ "mvVa2Ug1V3U8kZhELeUhE7kjpsPMpBKjht", 1, 0.01 ],
+  [ "muLpqaBeCXLK872PuRsfSmcJJT112aCqGL", 2, 0.001 ],
+  [ "mijUz6dC71dETg1SzR7FfEfYKNc5CrfY4A", 1, 0.1 ],
+  [ 0, -123456789 ]
+]
+
+//variable format
+[
+  [ 3, 1, 0.01 ],
+  [ 2, 2, 0.001 ],
+  [ 1, 1, 0.1 ],
+  [ 0, -123456789 ]
+]
+
+//assume keyword order id 0 is the authorization address
+//[object address, qty to list, each cost]
+//[0, -numericalSalt]
+
+//manual entry instructions via apertus.io
+//remove all unnecessary spaces
+//place JSON in a file named LST  (no file extension)
+
+//enter each @objectaddress to list in the apertus.io message box 
+//in this example keyword order id 3 @mvVa2Ug1V3U8kZhELeUhE7kjpsPMpBKjht would be on the top row of the apertus.io message box
+//in this example keywords 1 - 3 represent a list of objects
+
+
+//attach file LST using the apertus.io attach button
+//select a owners signature address from the signature list in apertus.io
+//verify that the no message box is checked.
+//click the apertus.io etch button
+
