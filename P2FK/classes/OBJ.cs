@@ -801,7 +801,7 @@ namespace SUP.P2FK
                                     break;
                                 case "BUY":
                                     //BUY command can only be directed at one object at a time for now.
-                                    if (objectaddress != transaction.Output.ElementAt(transaction.Output.Count - 2).Key)
+                                    if (objectaddress != transaction.Output.ElementAt(transaction.Output.Count - 2).Key && objectaddress != transaction.Output.ElementAt(transaction.Output.Count - 3).Key)
                                     {
                                         logstatus = "";
                                         break;
@@ -2004,7 +2004,7 @@ namespace SUP.P2FK
 
                         if (transaction.File.ContainsKey("OBJ") || transaction.File.ContainsKey("GIV") || transaction.File.ContainsKey("BUY"))
                         {
-                            if (transaction.File.ContainsKey("GIV") || transaction.File.ContainsKey("BUY"))
+                            if (transaction.File.ContainsKey("GIV"))
                             {
                                 foreach (string key in transaction.Keyword.Keys)
                                 {
@@ -2046,7 +2046,7 @@ namespace SUP.P2FK
                             }
                             else
                             {
-                                foreach (string key in transaction.Keyword.Keys.Reverse().Take(2))
+                                foreach (string key in transaction.Output.Keys.Reverse().Take(3))
                                 {
 
                                     if (!addedValues.Contains(key))
