@@ -906,10 +906,11 @@ namespace SUP.P2FK
                                             if (transaction.Output.TryGetValue(buy[0], out string ownerValue) && decimal.TryParse(ownerValue, out ownerPaid) && ownerPaid >= (qtyListed.Value * long.Parse(buy[1])) - royaltiesPaid)
                                             {
 
+                                                //remove from listing
+                                                objectState.Listings[buy[0]].Qty = objectState.Listings[buy[0]].Qty - long.Parse(buy[1]);
 
-                                                //remove listing
-                                                objectState.Listings.Remove(buy[0]);
-
+                                                //remove previous owner from list if 0
+                                                if (objectState.Listings[buy[0]].Qty < 1) { objectState.Listings.Remove(buy[0]); }
 
                                                 //remove from previous owner
                                                 objectState.Owners[buy[0]] = objectState.Owners[buy[0]] - long.Parse(buy[1]);
@@ -1160,9 +1161,194 @@ namespace SUP.P2FK
                                     break;
 
                                 case "LST":
+                                    // no sense checking any further
+                                    if (objectState.Owners == null) { break; }
+                                    List<List<string>> lstinspector = new List<List<string>> { };
+                                    try
+                                    {
+                                        lstinspector = JsonConvert.DeserializeObject<List<List<string>>>(File.ReadAllText(@"root\" + transaction.TransactionId + @"\LST"));
+                                    }
+                                    catch
+                                    {
+                                        logstatus = "[\"" + transaction.SignedBy + "\",\"" + objectaddress + "\",\"inspect\",\"\",\"\",\"failed due to invalid transaction format\"]";
+
+                                        break;
+                                    }
+
+                                    if (lstinspector == null)
+                                    {
+                                        logstatus = "[\"" + transaction.SignedBy + "\",\"" + objectaddress + "\",\"list\",\"\",\"\",\"failed due to no data\"]";
+                                        break;
+                                    }
+                                    int ListCount = 0;
+                                    foreach (var List in lstinspector)
+                                    {
+                                        int qtyToList = 0;
+                                        string Listr = transaction.SignedBy;
+                                        string objectToList;
+                                        decimal eachCost = 0;
+
+                                        try
+                                        {
+                                            objectToList = List[0];
+
+                                        }
+                                        catch
+                                        {
+                                            logstatus = "[\"" + transaction.SignedBy + "\",\"" + objectaddress + "\",\"List\",\"\",\"\",\"failed due to invalid data\"]";
+                                            break;
+                                        }
+
+                                        if (objectToList == objectaddress)
+                                        {
+
+                                            try
+                                            {
+                                                qtyToList = int.Parse(List[1]);
+                                            }
+                                            catch
+                                            {
+                                                logstatus = "[\"" + transaction.SignedBy + "\",\"" + objectaddress + "\",\"List\",\"\",\"\",\"failed due to invalid data\"]";
+                                                break;
+                                            }
+
+                                            try
+                                            {
+                                                eachCost = decimal.Parse(List[2]);
+                                            }
+                                            catch
+                                            {
+                                                logstatus = "[\"" + transaction.SignedBy + "\",\"" + objectaddress + "\",\"List\",\"\",\"\",\"failed due to invalid data\"]";
+                                                break;
+                                            }
 
 
+
+                                            ListCount++;
+                                            string sortableListCount = ListCount.ToString("X").PadLeft(4, '0');
+
+
+
+                                            // salt
+                                            if (qtyToList < 0)
+                                            {
+
+                                                break;
+                                            }
+
+                                            // LST Transaction with 0 qty closes all listings
+                                            if (qtyToList == 0)
+                                            {
+                                                objectState.Listings.Remove(Listr);
+
+                                                if (verbose)
+                                                {
+                                                    logstatus = "[\"" + transaction.SignedBy + "\",\"" + objectToList + "\",\"List\",\"" + qtyToList.ToString() + "\",\"\",\"close all listings\"]";
+
+
+                                                    var ROOT = new Options { CreateIfMissing = true };
+                                                    var db = new DB(ROOT, @"root\event");
+                                                    db.Put(objectaddress + "!" + transaction.BlockDate.ToString("yyyyMMddHHmmss") + "!" + sortableProcessHeight + "!" + sortableListCount, logstatus);
+                                                    db.Put("lastkey!" + objectaddress, objectaddress + "!" + transaction.BlockDate.ToString("yyyyMMddHHmmss") + "!" + sortableProcessHeight + "!" + sortableListCount);
+
+                                                    db.Close();
+
+                                                    logstatus = "";
+                                                }
+                                                break;
+                                            }
+
+
+
+                                            //is transaction signer not on the Owners list
+                                            if (!objectState.Owners.TryGetValue(transaction.SignedBy, out long qtyOwnedG))
+                                            {
+                                                //is the object container empty
+                                                if (!objectState.Owners.TryGetValue(objectaddress, out long selfOwned))
+                                                {
+                                                    if (verbose)
+                                                    {
+                                                        logstatus = "[\"" + transaction.SignedBy + "\",\"" + objectToList + "\",\"List\",\"" + qtyToList + "\",\"\",\"failed due to insufficent qty owned\"]";
+
+
+                                                        var ROOT = new Options { CreateIfMissing = true };
+                                                        var db = new DB(ROOT, @"root\event");
+                                                        db.Put(objectaddress + "!" + transaction.BlockDate.ToString("yyyyMMddHHmmss") + "!" + sortableProcessHeight + "!" + sortableListCount, logstatus);
+                                                        db.Put("lastkey!" + objectaddress, objectaddress + "!" + transaction.BlockDate.ToString("yyyyMMddHHmmss") + "!" + sortableProcessHeight + "!" + sortableListCount);
+
+                                                        db.Close();
+
+                                                        logstatus = "";
+                                                    }
+                                                    break;
+                                                }
+                                                else
+                                                {    //if the transaction is signed by a creator who doesn't own any objects emulate container
+                                                    if (objectState.Creators.ContainsKey(transaction.SignedBy) || transaction.SignedBy == objectaddress)
+                                                    {
+                                                        Listr = objectaddress;
+                                                        qtyOwnedG = selfOwned;
+                                                    }
+                                                }
+                                            }
+
+
+
+                                            if (qtyOwnedG >= qtyToList)
+                                            {
+                                                if (objectState.Listings == null) { objectState.Listings = new Dictionary<string, BID>(); }
+
+                                                try { objectState.Listings.Remove(Listr); } catch { }
+
+                                                BID listing = new BID();
+
+                                                listing.Owner = Listr;
+                                                listing.Requestor = transaction.SignedBy;
+                                                listing.Qty = qtyToList;
+                                                listing.Value = eachCost;
+                                                listing.BlockDate = transaction.BlockDate;
+                                                objectState.Listings.Add(Listr, listing);
+
+                                                if (verbose)
+                                                { //Invalid list attempt
+                                                    logstatus = "[\"" + transaction.SignedBy + "\",\"" + objectToList + "\",\"List\",\"" + qtyToList + "\",\"" + eachCost + "\",\"Success\"]";
+
+                                                    lock (SupLocker)
+                                                    {
+                                                        var ROOT = new Options { CreateIfMissing = true };
+                                                        var db = new DB(ROOT, @"root\event");
+                                                        db.Put(objectaddress + "!" + transaction.BlockDate.ToString("yyyyMMddHHmmss") + "!" + sortableProcessHeight + "!" + sortableListCount, logstatus);
+                                                        db.Put("lastkey!" + objectaddress, objectaddress + "!" + transaction.BlockDate.ToString("yyyyMMddHHmmss") + "!" + sortableProcessHeight + "!" + sortableListCount);
+                                                        db.Close();
+                                                    }
+                                                    logstatus = "";
+                                                }
+
+                                            }
+                                            else
+                                            {
+                                                if (verbose)
+                                                { //Invalid list attempt
+                                                    logstatus = "[\"" + transaction.SignedBy + "\",\"" + objectToList + "\",\"List\",\"" + qtyToList + "\",\"\",\"failed due to insufficent available qty owned\"]";
+
+                                                    lock (SupLocker)
+                                                    {
+                                                        var ROOT = new Options { CreateIfMissing = true };
+                                                        var db = new DB(ROOT, @"root\event");
+                                                        db.Put(objectaddress + "!" + transaction.BlockDate.ToString("yyyyMMddHHmmss") + "!" + sortableProcessHeight + "!" + sortableListCount, logstatus);
+                                                        db.Put("lastkey!" + objectaddress, objectaddress + "!" + transaction.BlockDate.ToString("yyyyMMddHHmmss") + "!" + sortableProcessHeight + "!" + sortableListCount);
+                                                        db.Close();
+                                                    }
+                                                    logstatus = "";
+                                                }
+                                                break;
+                                            }
+                                        }
+
+
+                                    }
                                     break;
+
 
                                 default:
                                     // ignore
@@ -1172,7 +1358,7 @@ namespace SUP.P2FK
                         }
                         else
                         {
-                            logstatus = "[\"" + transaction.SignedBy + "\",\"" + objectaddress + "\",\"burn\",\"\",\"\",\"failed due to duplicate signature\"]";
+                            logstatus = "[\"" + transaction.SignedBy + "\",\"" + objectaddress + "\",\"inspect\",\"\",\"\",\"failed due to duplicate signature\"]";
                         }
 
 

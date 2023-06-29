@@ -76,7 +76,7 @@
             this.panel1.Controls.Add(this.label4);
             this.panel1.Controls.Add(this.ObjectOffer);
             this.panel1.Controls.Add(this.label3);
-            this.panel1.Location = new System.Drawing.Point(6, 291);
+            this.panel1.Location = new System.Drawing.Point(6, 292);
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(209, 40);
             this.panel1.TabIndex = 5;
@@ -120,7 +120,7 @@
             this.ObjectOffer.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
             this.ObjectOffer.Size = new System.Drawing.Size(95, 20);
             this.ObjectOffer.TabIndex = 8;
-            this.ObjectOffer.Text = ".00001";
+            this.ObjectOffer.Text = "-";
             this.ObjectOffer.Click += new System.EventHandler(this.foundObjectControl_Click);
             // 
             // label3
@@ -308,7 +308,7 @@
             this.MinimumSize = new System.Drawing.Size(221, 221);
             this.Name = "FoundObjectControl";
             this.Padding = new System.Windows.Forms.Padding(10);
-            this.Size = new System.Drawing.Size(221, 340);
+            this.Size = new System.Drawing.Size(221, 341);
             this.Click += new System.EventHandler(this.foundObjectControl_Click);
             ((System.ComponentModel.ISupportInitialize)(this.ObjectImage)).EndInit();
             this.panel1.ResumeLayout(false);
