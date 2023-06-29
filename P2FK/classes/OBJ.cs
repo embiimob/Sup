@@ -2002,9 +2002,9 @@ namespace SUP.P2FK
 
                         string findId;
 
-                        if (transaction.File.ContainsKey("OBJ") || transaction.File.ContainsKey("GIV"))
+                        if (transaction.File.ContainsKey("OBJ") || transaction.File.ContainsKey("GIV") || transaction.File.ContainsKey("BUY"))
                         {
-                            if (transaction.File.ContainsKey("GIV"))
+                            if (transaction.File.ContainsKey("GIV") || transaction.File.ContainsKey("BUY"))
                             {
                                 foreach (string key in transaction.Keyword.Keys)
                                 {
