@@ -79,6 +79,7 @@
             this.label1 = new System.Windows.Forms.Label();
             this.label5 = new System.Windows.Forms.Label();
             this.lblTotalRoyaltiesDetail = new System.Windows.Forms.Label();
+            this.btnBuy = new System.Windows.Forms.Button();
             this.flowPanel.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.supPanel.SuspendLayout();
@@ -713,12 +714,25 @@
             this.lblTotalRoyaltiesDetail.Text = "royalties";
             this.lblTotalRoyaltiesDetail.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
+            // btnBuy
+            // 
+            this.btnBuy.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.btnBuy.Font = new System.Drawing.Font("Segoe UI Emoji", 13.8F);
+            this.btnBuy.Location = new System.Drawing.Point(113, 456);
+            this.btnBuy.Name = "btnBuy";
+            this.btnBuy.Size = new System.Drawing.Size(60, 42);
+            this.btnBuy.TabIndex = 112;
+            this.btnBuy.Text = "⚡️";
+            this.btnBuy.UseVisualStyleBackColor = true;
+            this.btnBuy.Click += new System.EventHandler(this.btnBuy_Click);
+            // 
             // ObjectDetails
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.Black;
             this.ClientSize = new System.Drawing.Size(1053, 506);
+            this.Controls.Add(this.btnBuy);
             this.Controls.Add(this.registrationPanel);
             this.Controls.Add(this.lblOfficial);
             this.Controls.Add(this.txtdesc);
@@ -828,5 +842,6 @@
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Label label5;
         private System.Windows.Forms.Label lblTotalRoyaltiesDetail;
+        private System.Windows.Forms.Button btnBuy;
     }
 }

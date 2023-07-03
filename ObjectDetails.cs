@@ -2591,6 +2591,11 @@ namespace SUP
             disco.Show(this);
             disco.Focus();
         }
+
+        private void btnBuy_Click(object sender, EventArgs e)
+        {
+            new ObjectBuy(_objectaddress).Show();
+        }
     }
 
 }

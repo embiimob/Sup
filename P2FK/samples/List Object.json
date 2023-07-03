@@ -9,13 +9,13 @@
   [ 0, -123456789 ]
 ]
 
-//variable format
-[
-  [ 3, 1, 0.01 ],
-  [ 2, 2, 0.001 ],
-  [ 1, 1, 0.1 ],
-  [ 0, -123456789 ]
-]
+//variable format not supported at this time
+//[
+//  [ 3, 1, 0.01 ],
+//  [ 2, 2, 0.001 ],
+//  [ 1, 1, 0.1 ],
+//  [ 0, -123456789 ]
+//]
 
 //assume keyword order id 0 is the authorization address
 //[object address, qty to list, each cost]

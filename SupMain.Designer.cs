@@ -205,7 +205,7 @@
             this.lblProcessHeight.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.lblProcessHeight.AutoSize = true;
             this.lblProcessHeight.ForeColor = System.Drawing.Color.White;
-            this.lblProcessHeight.Location = new System.Drawing.Point(274, 121);
+            this.lblProcessHeight.Location = new System.Drawing.Point(277, 121);
             this.lblProcessHeight.Name = "lblProcessHeight";
             this.lblProcessHeight.Size = new System.Drawing.Size(25, 13);
             this.lblProcessHeight.TabIndex = 96;
@@ -217,7 +217,7 @@
             this.btnMute.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.btnMute.BackColor = System.Drawing.Color.White;
             this.btnMute.Enabled = false;
-            this.btnMute.Location = new System.Drawing.Point(193, 141);
+            this.btnMute.Location = new System.Drawing.Point(196, 141);
             this.btnMute.Name = "btnMute";
             this.btnMute.Size = new System.Drawing.Size(67, 23);
             this.btnMute.TabIndex = 8;
@@ -263,7 +263,7 @@
             // 
             this.btnBlock.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.btnBlock.Enabled = false;
-            this.btnBlock.Location = new System.Drawing.Point(266, 141);
+            this.btnBlock.Location = new System.Drawing.Point(269, 141);
             this.btnBlock.Name = "btnBlock";
             this.btnBlock.Size = new System.Drawing.Size(67, 23);
             this.btnBlock.TabIndex = 9;
@@ -281,7 +281,7 @@
             this.supFlow.Location = new System.Drawing.Point(7, 170);
             this.supFlow.Name = "supFlow";
             this.supFlow.Padding = new System.Windows.Forms.Padding(0, 3, 0, 0);
-            this.supFlow.Size = new System.Drawing.Size(333, 432);
+            this.supFlow.Size = new System.Drawing.Size(336, 432);
             this.supFlow.TabIndex = 86;
             // 
             // lblAdultsOnly
@@ -354,7 +354,7 @@
             this.btnPrivateMessage.Enabled = false;
             this.btnPrivateMessage.Font = new System.Drawing.Font("Segoe UI Emoji", 13.8F);
             this.btnPrivateMessage.ForeColor = System.Drawing.Color.Black;
-            this.btnPrivateMessage.Location = new System.Drawing.Point(277, 608);
+            this.btnPrivateMessage.Location = new System.Drawing.Point(280, 608);
             this.btnPrivateMessage.Name = "btnPrivateMessage";
             this.btnPrivateMessage.Size = new System.Drawing.Size(56, 40);
             this.btnPrivateMessage.TabIndex = 84;
@@ -369,7 +369,7 @@
             this.btnPublicMessage.Enabled = false;
             this.btnPublicMessage.Font = new System.Drawing.Font("Segoe UI Emoji", 13.8F);
             this.btnPublicMessage.ForeColor = System.Drawing.Color.Black;
-            this.btnPublicMessage.Location = new System.Drawing.Point(215, 608);
+            this.btnPublicMessage.Location = new System.Drawing.Point(218, 608);
             this.btnPublicMessage.Name = "btnPublicMessage";
             this.btnPublicMessage.Size = new System.Drawing.Size(56, 40);
             this.btnPublicMessage.TabIndex = 83;

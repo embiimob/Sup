@@ -1,17 +1,13 @@
 ﻿using AngleSharp.Common;
-using Ganss.Xss;
 using LevelDB;
 using NBitcoin;
 using Newtonsoft.Json;
 using System;
-using System.CodeDom;
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Diagnostics.Eventing.Reader;
 using System.IO;
 using System.Linq;
-using System.Management.Instrumentation;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
@@ -801,6 +797,7 @@ namespace SUP.P2FK
                                     break;
                                 case "BUY":
                                     //BUY command can only be directed at one object at a time for now.
+                                    //cannot garuntee the placement of outputs. can occur in possibly two locations.
                                     if (objectaddress != transaction.Output.ElementAt(transaction.Output.Count - 2).Key && objectaddress != transaction.Output.ElementAt(transaction.Output.Count - 3).Key)
                                     {
                                         logstatus = "";
@@ -847,18 +844,8 @@ namespace SUP.P2FK
 
                                         if (long.Parse(buy[1]) < 1)
                                         {
-                                            //if (verbose)
-                                            //{
-                                            //    logstatus = "[\"" + transaction.SignedBy + "\",\"" + objectaddress + "\",\"salt\",\"" + buy[1] + "\",\"\",\"\"]";
-
-                                            //    var ROOT = new Options { CreateIfMissing = true };
-                                            //    var db = new DB(ROOT, @"root\event");
-                                            //    db.Put(objectaddress + "!" + transaction.BlockDate.ToString("yyyyMMddHHmmss") + "!" + sortableProcessHeight + "!" + sortableBuyCount, logstatus);
-                                            //    db.Put("lastkey!" + objectaddress, objectaddress + "!" + transaction.BlockDate.ToString("yyyyMMddHHmmss") + "!" + sortableProcessHeight + "!" + sortableBuyCount);
-                                            //    db.Close();
-
-                                            //    logstatus = "";
-                                            //}
+                                            //salt
+                              
                                             break;
                                         }
 
@@ -1163,6 +1150,7 @@ namespace SUP.P2FK
                                 case "LST":
                                     // no sense checking any further
                                     if (objectState.Owners == null) { break; }
+
                                     List<List<string>> lstinspector = new List<List<string>> { };
                                     try
                                     {
