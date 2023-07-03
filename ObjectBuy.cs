@@ -21,6 +21,7 @@ using System.Text.RegularExpressions;
 using System.Reflection;
 using System.Diagnostics;
 using System.Media;
+using AngleSharp.Dom;
 
 namespace SUP
 {
@@ -469,7 +470,7 @@ namespace SUP
                         dictionary.Add(address, qty);
                         break;
                     }
-                    if (txtObjectAddress.Text == txtSignatureAddress.Text)
+                    if (txtAddressSearch.Text == txtSignatureAddress.Text)
                     {
                         newdictionary.Clear();
                         newdictionary.Add(new List<string> { "1", qty.ToString() });
@@ -536,7 +537,7 @@ namespace SUP
                     encodedList.Add(address);
                 }
        
-                encodedList.Add(txtObjectAddress.Text);
+                encodedList.Add(txtAddressSearch.Text);
                 encodedList.Add(signatureAddress); 
                 txtAddressListJSON.Text = JsonConvert.SerializeObject(encodedList.Distinct());
 
@@ -590,7 +591,7 @@ namespace SUP
 
         private void ObjectGive_Load(object sender, EventArgs e)
         {
-            txtObjectAddress.Text = givaddress;
+            txtAddressSearch.Text = givaddress;
             RefreshPage();
 
         }
@@ -598,18 +599,60 @@ namespace SUP
         private void RefreshPage()
         {
            
-            flowOffers.Controls.Clear();
-            flowListings.Controls.Clear();
+           
 
-
-
-            OBJState objstate = OBJState.GetObjectByAddress(txtObjectAddress.Text, "good-user", "better-password", "http://127.0.0.1:18332");
+            OBJState objstate = OBJState.GetObjectByAddress(txtAddressSearch.Text, "good-user", "better-password", "http://127.0.0.1:18332");
             Dictionary<string, string> profileAddress = new Dictionary<string, string> { };
+            profileAddress.Add(txtAddressSearch.Text, "primary");
+
+            txtName.Text  = objstate.Name;
+            lblLicense.Text = objstate.License;
+            lblObjectCreatedDate.Text = objstate.CreatedDate.ToString("ddd, dd MMM yyyy hh:mm:ss");
+            lblTotalOwnedDetail.Text = "total: " + objstate.Owners.Values.Sum().ToString();
+            lblTotalRoyaltiesDetail.Text = "royalties: " + objstate.Royalties.Values.Sum().ToString();
+            
+            string imagelocation = "";
+            
+            if (!objstate.Image.ToLower().StartsWith("http"))
+            {
+                imagelocation = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + @"\root\" + objstate.Image.Replace("BTC:", "").Replace("MZC:", "").Replace("LTC:", "").Replace("DOG:", "").Replace("IPFS:", "").Replace("btc:", "").Replace("mzc:", "").Replace("ltc:", "").Replace("dog:", "").Replace("ipfs:", "").Replace(@"/", @"\");
+                if (objstate.Image.ToLower().StartsWith("ipfs:")) { imagelocation = imagelocation.Replace(@"\root\", @"\ipfs\"); if (objstate.Image.Length == 51) { imagelocation += @"\artifact"; } }
+            }
+            
+            if (imagelocation != "")
+            {
+                ObjectImage.ImageLocation = imagelocation;
+            }
+            else
+            {
+
+                Random rnd = new Random();
+                string[] gifFiles = Directory.GetFiles("includes", "*.gif");
+                if (gifFiles.Length > 0)
+                {
+                    int randomIndex = rnd.Next(gifFiles.Length);
+                    string randomGifFile = gifFiles[randomIndex];
+
+                    ObjectImage.ImageLocation = randomGifFile;
+
+                }
+                else
+                {
+                    try
+                    {
+                        ObjectImage.ImageLocation = @"includes\HugPuddle.jpg";
+                    }
+                    catch { }
+                }
+            }
+           
+
+
 
 
             if (objstate.Listings != null)
             {
-
+                flowListings.Controls.Clear();
 
                 flowListings.FlowDirection = System.Windows.Forms.FlowDirection.LeftToRight;
                 flowListings.AutoScroll = true;
@@ -629,8 +672,8 @@ namespace SUP
                     };
 
                     rowPanel.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 130));
-                    rowPanel.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 110));
-                    rowPanel.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 110));
+                    rowPanel.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 80));
+                    rowPanel.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 80));
 
 
                     LinkLabel keyLabel = new LinkLabel();
@@ -716,7 +759,7 @@ namespace SUP
             if (objstate.Offers != null)
             {
 
-
+                flowOffers.Controls.Clear();
                 flowOffers.FlowDirection = System.Windows.Forms.FlowDirection.LeftToRight;
                 flowOffers.AutoScroll = true;
 
@@ -736,8 +779,8 @@ namespace SUP
 
                     rowPanel.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 130));
                     rowPanel.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 130));
-                    rowPanel.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 110));
-                    rowPanel.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 110));
+                    rowPanel.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 90));
+                    rowPanel.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 90));
 
 
                     LinkLabel keyLabel = new LinkLabel();
@@ -868,27 +911,7 @@ namespace SUP
             new ObjectBrowser((string)linkData).Show();
 
         }
-        private void btnSearchMemory_Click(object sender, EventArgs e)
-        {
-
-
-            if (btnSearchMemory.BackColor == Color.White)
-            {
-                btnSearchMemory.BackColor = Color.Blue;
-                btnSearchMemory.ForeColor = Color.Yellow;
-                tmrSearchMemoryPool.Enabled = true;
-
-            }
-            else
-            {
-                btnSearchMemory.BackColor = Color.White;
-                btnSearchMemory.ForeColor = Color.Black;
-                tmrSearchMemoryPool.Enabled = false;
-
-            }
-
-        }
-
+       
 
         private void tmrSearchMemoryPool_Tick(object sender, EventArgs e)
         {
@@ -932,7 +955,13 @@ namespace SUP
 
                                     BTCTMemPool = newtransactions;
 
-                                    foreach (var s in differenceQuery)
+                            this.Invoke((MethodInvoker)delegate
+                            {
+                                progressBar1.Maximum = differenceQuery.Count;
+                                progressBar1.Value = 0;
+                            });
+
+                            foreach (var s in differenceQuery)
                                     {
                                         try
                                         {
@@ -1306,7 +1335,13 @@ namespace SUP
                                         {
                                             string error = ex.Message;
                                         }
-                                    }
+
+
+                                this.Invoke((MethodInvoker)delegate
+                                {
+                                    progressBar1.Value = progressBar1.Value + 1;
+                                });
+                            }
 
                                 
                             }
@@ -1331,7 +1366,7 @@ namespace SUP
 
                         this.Invoke((MethodInvoker)delegate
                         {
-                            SystemSounds.Beep.Play();
+                           
                             tmrSearchMemoryPool.Start();
                         });
 
@@ -1355,14 +1390,14 @@ namespace SUP
             }
         }
 
-        private void txtObjectAddress_TextChanged(object sender, EventArgs e)
+        private void label2_DoubleClick(object sender, EventArgs e)
         {
-
+            RefreshPage();
         }
 
-        private void label5_Click(object sender, EventArgs e)
+        private void label5_DoubleClick(object sender, EventArgs e)
         {
-
+            RefreshPage();
         }
     }
 }

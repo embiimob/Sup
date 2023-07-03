@@ -440,7 +440,7 @@
             this.supPanel.Controls.Add(this.supFlow);
             this.supPanel.Location = new System.Drawing.Point(672, 13);
             this.supPanel.Name = "supPanel";
-            this.supPanel.Size = new System.Drawing.Size(375, 427);
+            this.supPanel.Size = new System.Drawing.Size(374, 427);
             this.supPanel.TabIndex = 80;
             this.supPanel.Visible = false;
             // 
@@ -450,7 +450,7 @@
             this.supFlow.Dock = System.Windows.Forms.DockStyle.Fill;
             this.supFlow.Location = new System.Drawing.Point(0, 0);
             this.supFlow.Name = "supFlow";
-            this.supFlow.Size = new System.Drawing.Size(375, 427);
+            this.supFlow.Size = new System.Drawing.Size(374, 427);
             this.supFlow.TabIndex = 3;
             // 
             // txtdesc
@@ -473,9 +473,9 @@
             // 
             this.btnBurn.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.btnBurn.Font = new System.Drawing.Font("Microsoft Sans Serif", 16.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnBurn.Location = new System.Drawing.Point(981, 350);
+            this.btnBurn.Location = new System.Drawing.Point(945, 350);
             this.btnBurn.Name = "btnBurn";
-            this.btnBurn.Size = new System.Drawing.Size(60, 42);
+            this.btnBurn.Size = new System.Drawing.Size(96, 42);
             this.btnBurn.TabIndex = 75;
             this.btnBurn.Text = "🔥";
             this.btnBurn.UseVisualStyleBackColor = true;
@@ -485,9 +485,9 @@
             // 
             this.btnGive.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.btnGive.Font = new System.Drawing.Font("Microsoft Sans Serif", 16.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnGive.Location = new System.Drawing.Point(981, 398);
+            this.btnGive.Location = new System.Drawing.Point(945, 398);
             this.btnGive.Name = "btnGive";
-            this.btnGive.Size = new System.Drawing.Size(60, 42);
+            this.btnGive.Size = new System.Drawing.Size(96, 42);
             this.btnGive.TabIndex = 74;
             this.btnGive.Text = "💞";
             this.btnGive.UseVisualStyleBackColor = true;
@@ -509,9 +509,10 @@
             this.CreatorsPanel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.CreatorsPanel.AutoScroll = true;
             this.CreatorsPanel.BackColor = System.Drawing.Color.Black;
+            this.CreatorsPanel.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.CreatorsPanel.Location = new System.Drawing.Point(672, 350);
             this.CreatorsPanel.Name = "CreatorsPanel";
-            this.CreatorsPanel.Size = new System.Drawing.Size(278, 90);
+            this.CreatorsPanel.Size = new System.Drawing.Size(267, 90);
             this.CreatorsPanel.TabIndex = 71;
             // 
             // OwnersPanel
@@ -520,6 +521,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.OwnersPanel.AutoScroll = true;
             this.OwnersPanel.BackColor = System.Drawing.Color.Black;
+            this.OwnersPanel.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.OwnersPanel.Location = new System.Drawing.Point(672, 26);
             this.OwnersPanel.Name = "OwnersPanel";
             this.OwnersPanel.Size = new System.Drawing.Size(374, 176);
@@ -674,6 +676,7 @@
             this.RoyaltiesPanel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.RoyaltiesPanel.AutoScroll = true;
             this.RoyaltiesPanel.BackColor = System.Drawing.Color.Black;
+            this.RoyaltiesPanel.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.RoyaltiesPanel.Location = new System.Drawing.Point(672, 231);
             this.RoyaltiesPanel.Name = "RoyaltiesPanel";
             this.RoyaltiesPanel.Size = new System.Drawing.Size(374, 90);
