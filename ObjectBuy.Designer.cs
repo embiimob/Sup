@@ -35,7 +35,7 @@
             this.txtAddressListJSON = new System.Windows.Forms.TextBox();
             this.txtSignatureAddress = new System.Windows.Forms.TextBox();
             this.lblCost = new System.Windows.Forms.Label();
-            this.txtObjectAddress = new System.Windows.Forms.TextBox();
+            this.txtCurrentOwnerAddress = new System.Windows.Forms.TextBox();
             this.label3 = new System.Windows.Forms.Label();
             this.label4 = new System.Windows.Forms.Label();
             this.lblObjectStatus = new System.Windows.Forms.Label();
@@ -47,8 +47,8 @@
             this.flowListings = new System.Windows.Forms.FlowLayoutPanel();
             this.flowInMemoryResults = new System.Windows.Forms.FlowLayoutPanel();
             this.label5 = new System.Windows.Forms.Label();
-            this.textBox1 = new System.Windows.Forms.TextBox();
-            this.textBox2 = new System.Windows.Forms.TextBox();
+            this.txtListQty = new System.Windows.Forms.TextBox();
+            this.txtEachValue = new System.Windows.Forms.TextBox();
             this.label6 = new System.Windows.Forms.Label();
             this.label7 = new System.Windows.Forms.Label();
             this.ObjectImage = new System.Windows.Forms.PictureBox();
@@ -59,20 +59,21 @@
             this.lblTotalRoyaltiesDetail = new System.Windows.Forms.Label();
             this.label8 = new System.Windows.Forms.Label();
             this.label9 = new System.Windows.Forms.Label();
-            this.textBox3 = new System.Windows.Forms.TextBox();
-            this.textBox4 = new System.Windows.Forms.TextBox();
-            this.button1 = new System.Windows.Forms.Button();
+            this.txtBuyEachCost = new System.Windows.Forms.TextBox();
+            this.txtBuyQty = new System.Windows.Forms.TextBox();
+            this.btnBuy = new System.Windows.Forms.Button();
             this.progressBar1 = new System.Windows.Forms.ProgressBar();
+            this.lblBuyCost = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.ObjectImage)).BeginInit();
             this.SuspendLayout();
             // 
             // btnGive
             // 
             this.btnGive.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.btnGive.Font = new System.Drawing.Font("Segoe UI Emoji", 13.8F);
-            this.btnGive.Location = new System.Drawing.Point(671, 470);
+            this.btnGive.Font = new System.Drawing.Font("Segoe UI Emoji", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnGive.Location = new System.Drawing.Point(671, 491);
             this.btnGive.Name = "btnGive";
-            this.btnGive.Size = new System.Drawing.Size(112, 53);
+            this.btnGive.Size = new System.Drawing.Size(112, 32);
             this.btnGive.TabIndex = 275;
             this.btnGive.Text = "LIST";
             this.btnGive.UseVisualStyleBackColor = true;
@@ -131,24 +132,24 @@
             this.lblCost.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.lblCost.AutoSize = true;
             this.lblCost.ForeColor = System.Drawing.Color.White;
-            this.lblCost.Location = new System.Drawing.Point(515, 492);
+            this.lblCost.Location = new System.Drawing.Point(628, 465);
             this.lblCost.Name = "lblCost";
             this.lblCost.Size = new System.Drawing.Size(0, 13);
             this.lblCost.TabIndex = 364;
             // 
-            // txtObjectAddress
+            // txtCurrentOwnerAddress
             // 
-            this.txtObjectAddress.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.txtObjectAddress.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
-            this.txtObjectAddress.Font = new System.Drawing.Font("Microsoft Sans Serif", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.txtObjectAddress.ForeColor = System.Drawing.Color.White;
-            this.txtObjectAddress.Location = new System.Drawing.Point(806, 489);
-            this.txtObjectAddress.Multiline = true;
-            this.txtObjectAddress.Name = "txtObjectAddress";
-            this.txtObjectAddress.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
-            this.txtObjectAddress.Size = new System.Drawing.Size(385, 32);
-            this.txtObjectAddress.TabIndex = 365;
-            this.txtObjectAddress.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+            this.txtCurrentOwnerAddress.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.txtCurrentOwnerAddress.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
+            this.txtCurrentOwnerAddress.Font = new System.Drawing.Font("Microsoft Sans Serif", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.txtCurrentOwnerAddress.ForeColor = System.Drawing.Color.White;
+            this.txtCurrentOwnerAddress.Location = new System.Drawing.Point(806, 489);
+            this.txtCurrentOwnerAddress.Multiline = true;
+            this.txtCurrentOwnerAddress.Name = "txtCurrentOwnerAddress";
+            this.txtCurrentOwnerAddress.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
+            this.txtCurrentOwnerAddress.Size = new System.Drawing.Size(385, 32);
+            this.txtCurrentOwnerAddress.TabIndex = 365;
+            this.txtCurrentOwnerAddress.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
             // 
             // label3
             // 
@@ -177,8 +178,9 @@
             // lblObjectStatus
             // 
             this.lblObjectStatus.AutoSize = true;
+            this.lblObjectStatus.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lblObjectStatus.ForeColor = System.Drawing.Color.White;
-            this.lblObjectStatus.Location = new System.Drawing.Point(14, 66);
+            this.lblObjectStatus.Location = new System.Drawing.Point(524, 542);
             this.lblObjectStatus.Name = "lblObjectStatus";
             this.lblObjectStatus.Size = new System.Drawing.Size(0, 13);
             this.lblObjectStatus.TabIndex = 363;
@@ -271,31 +273,31 @@
             this.label5.Text = "current listings";
             this.label5.DoubleClick += new System.EventHandler(this.label5_DoubleClick);
             // 
-            // textBox1
+            // txtListQty
             // 
-            this.textBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.textBox1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
-            this.textBox1.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.textBox1.ForeColor = System.Drawing.Color.White;
-            this.textBox1.Location = new System.Drawing.Point(403, 491);
-            this.textBox1.Multiline = true;
-            this.textBox1.Name = "textBox1";
-            this.textBox1.Size = new System.Drawing.Size(106, 32);
-            this.textBox1.TabIndex = 379;
-            this.textBox1.Text = "0";
+            this.txtListQty.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.txtListQty.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
+            this.txtListQty.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.txtListQty.ForeColor = System.Drawing.Color.White;
+            this.txtListQty.Location = new System.Drawing.Point(403, 491);
+            this.txtListQty.Multiline = true;
+            this.txtListQty.Name = "txtListQty";
+            this.txtListQty.Size = new System.Drawing.Size(106, 32);
+            this.txtListQty.TabIndex = 379;
+            this.txtListQty.Text = "0";
             // 
-            // textBox2
+            // txtEachValue
             // 
-            this.textBox2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.textBox2.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
-            this.textBox2.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.textBox2.ForeColor = System.Drawing.Color.White;
-            this.textBox2.Location = new System.Drawing.Point(521, 492);
-            this.textBox2.Multiline = true;
-            this.textBox2.Name = "textBox2";
-            this.textBox2.Size = new System.Drawing.Size(133, 31);
-            this.textBox2.TabIndex = 380;
-            this.textBox2.Text = "0";
+            this.txtEachValue.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.txtEachValue.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
+            this.txtEachValue.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.txtEachValue.ForeColor = System.Drawing.Color.White;
+            this.txtEachValue.Location = new System.Drawing.Point(521, 492);
+            this.txtEachValue.Multiline = true;
+            this.txtEachValue.Name = "txtEachValue";
+            this.txtEachValue.Size = new System.Drawing.Size(133, 31);
+            this.txtEachValue.TabIndex = 380;
+            this.txtEachValue.Text = "0";
             // 
             // label6
             // 
@@ -425,42 +427,43 @@
             this.label9.TabIndex = 395;
             this.label9.Text = "qty";
             // 
-            // textBox3
+            // txtBuyEachCost
             // 
-            this.textBox3.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.textBox3.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
-            this.textBox3.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.textBox3.ForeColor = System.Drawing.Color.White;
-            this.textBox3.Location = new System.Drawing.Point(932, 567);
-            this.textBox3.Multiline = true;
-            this.textBox3.Name = "textBox3";
-            this.textBox3.Size = new System.Drawing.Size(133, 36);
-            this.textBox3.TabIndex = 394;
-            this.textBox3.Text = "0";
+            this.txtBuyEachCost.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.txtBuyEachCost.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
+            this.txtBuyEachCost.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.txtBuyEachCost.ForeColor = System.Drawing.Color.White;
+            this.txtBuyEachCost.Location = new System.Drawing.Point(932, 567);
+            this.txtBuyEachCost.Multiline = true;
+            this.txtBuyEachCost.Name = "txtBuyEachCost";
+            this.txtBuyEachCost.Size = new System.Drawing.Size(133, 36);
+            this.txtBuyEachCost.TabIndex = 394;
+            this.txtBuyEachCost.Text = "0";
             // 
-            // textBox4
+            // txtBuyQty
             // 
-            this.textBox4.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.textBox4.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
-            this.textBox4.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.textBox4.ForeColor = System.Drawing.Color.White;
-            this.textBox4.Location = new System.Drawing.Point(806, 567);
-            this.textBox4.Multiline = true;
-            this.textBox4.Name = "textBox4";
-            this.textBox4.Size = new System.Drawing.Size(106, 36);
-            this.textBox4.TabIndex = 393;
-            this.textBox4.Text = "0";
+            this.txtBuyQty.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.txtBuyQty.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
+            this.txtBuyQty.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.txtBuyQty.ForeColor = System.Drawing.Color.White;
+            this.txtBuyQty.Location = new System.Drawing.Point(806, 567);
+            this.txtBuyQty.Multiline = true;
+            this.txtBuyQty.Name = "txtBuyQty";
+            this.txtBuyQty.Size = new System.Drawing.Size(106, 36);
+            this.txtBuyQty.TabIndex = 393;
+            this.txtBuyQty.Text = "0";
             // 
-            // button1
+            // btnBuy
             // 
-            this.button1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.button1.Font = new System.Drawing.Font("Segoe UI Emoji", 13.8F);
-            this.button1.Location = new System.Drawing.Point(1079, 552);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(112, 53);
-            this.button1.TabIndex = 390;
-            this.button1.Text = "BUY";
-            this.button1.UseVisualStyleBackColor = true;
+            this.btnBuy.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.btnBuy.Font = new System.Drawing.Font("Segoe UI Emoji", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnBuy.Location = new System.Drawing.Point(1079, 568);
+            this.btnBuy.Name = "btnBuy";
+            this.btnBuy.Size = new System.Drawing.Size(112, 34);
+            this.btnBuy.TabIndex = 390;
+            this.btnBuy.Text = "BUY";
+            this.btnBuy.UseVisualStyleBackColor = true;
+            this.btnBuy.Click += new System.EventHandler(this.btnBuy_Click);
             // 
             // progressBar1
             // 
@@ -471,6 +474,16 @@
             this.progressBar1.Step = 1;
             this.progressBar1.TabIndex = 397;
             // 
+            // lblBuyCost
+            // 
+            this.lblBuyCost.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.lblBuyCost.AutoSize = true;
+            this.lblBuyCost.ForeColor = System.Drawing.Color.White;
+            this.lblBuyCost.Location = new System.Drawing.Point(1027, 542);
+            this.lblBuyCost.Name = "lblBuyCost";
+            this.lblBuyCost.Size = new System.Drawing.Size(0, 13);
+            this.lblBuyCost.TabIndex = 398;
+            // 
             // ObjectBuy
             // 
             this.AllowDrop = true;
@@ -478,12 +491,14 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.Black;
             this.ClientSize = new System.Drawing.Size(1203, 660);
+            this.Controls.Add(this.lblBuyCost);
+            this.Controls.Add(this.lblObjectStatus);
             this.Controls.Add(this.label8);
             this.Controls.Add(this.progressBar1);
             this.Controls.Add(this.label9);
-            this.Controls.Add(this.textBox3);
-            this.Controls.Add(this.textBox4);
-            this.Controls.Add(this.button1);
+            this.Controls.Add(this.txtBuyEachCost);
+            this.Controls.Add(this.txtBuyQty);
+            this.Controls.Add(this.btnBuy);
             this.Controls.Add(this.lblTotalOwnedDetail);
             this.Controls.Add(this.lblTotalRoyaltiesDetail);
             this.Controls.Add(this.txtAddressListJSON);
@@ -495,8 +510,8 @@
             this.Controls.Add(this.ObjectImage);
             this.Controls.Add(this.label7);
             this.Controls.Add(this.label6);
-            this.Controls.Add(this.textBox2);
-            this.Controls.Add(this.textBox1);
+            this.Controls.Add(this.txtEachValue);
+            this.Controls.Add(this.txtListQty);
             this.Controls.Add(this.label5);
             this.Controls.Add(this.flowListings);
             this.Controls.Add(this.label2);
@@ -505,9 +520,8 @@
             this.Controls.Add(this.flowInMemoryResults);
             this.Controls.Add(this.label4);
             this.Controls.Add(this.label3);
-            this.Controls.Add(this.txtObjectAddress);
+            this.Controls.Add(this.txtCurrentOwnerAddress);
             this.Controls.Add(this.lblCost);
-            this.Controls.Add(this.lblObjectStatus);
             this.Controls.Add(this.txtSignatureAddress);
             this.Controls.Add(this.btnGive);
             this.Controls.Add(this.txtAddressSearch);
@@ -529,7 +543,7 @@
         private System.Windows.Forms.TextBox txtAddressListJSON;
         private System.Windows.Forms.TextBox txtSignatureAddress;
         private System.Windows.Forms.Label lblCost;
-        private System.Windows.Forms.TextBox txtObjectAddress;
+        private System.Windows.Forms.TextBox txtCurrentOwnerAddress;
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.Label label4;
         private System.Windows.Forms.Label lblObjectStatus;
@@ -541,8 +555,8 @@
         private System.Windows.Forms.FlowLayoutPanel flowListings;
         private System.Windows.Forms.FlowLayoutPanel flowInMemoryResults;
         private System.Windows.Forms.Label label5;
-        private System.Windows.Forms.TextBox textBox1;
-        private System.Windows.Forms.TextBox textBox2;
+        private System.Windows.Forms.TextBox txtListQty;
+        private System.Windows.Forms.TextBox txtEachValue;
         private System.Windows.Forms.Label label6;
         private System.Windows.Forms.Label label7;
         public System.Windows.Forms.PictureBox ObjectImage;
@@ -553,9 +567,10 @@
         private System.Windows.Forms.Label lblTotalRoyaltiesDetail;
         private System.Windows.Forms.Label label8;
         private System.Windows.Forms.Label label9;
-        private System.Windows.Forms.TextBox textBox3;
-        private System.Windows.Forms.TextBox textBox4;
-        private System.Windows.Forms.Button button1;
+        private System.Windows.Forms.TextBox txtBuyEachCost;
+        private System.Windows.Forms.TextBox txtBuyQty;
+        private System.Windows.Forms.Button btnBuy;
         private System.Windows.Forms.ProgressBar progressBar1;
+        private System.Windows.Forms.Label lblBuyCost;
     }
 }

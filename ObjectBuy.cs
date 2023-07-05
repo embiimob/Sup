@@ -22,6 +22,7 @@ using System.Reflection;
 using System.Diagnostics;
 using System.Media;
 using AngleSharp.Dom;
+using System.Windows.Interop;
 
 namespace SUP
 {
@@ -30,6 +31,7 @@ namespace SUP
         //GPT3 ROCKS
         private readonly static object SupLocker = new object();
         private List<string> BTCTMemPool = new List<string>();
+
 
         private const int MaxRows = 2000;
         private readonly List<(string address, int qty)> _addressQtyList = new List<(string address, int qty)>();
@@ -287,25 +289,43 @@ namespace SUP
             }
         }
 
+        //GPT3 THANKS!
+        private void RemoveRowByTransactionId(FlowLayoutPanel flowLayoutPanel, string transactionId)
+        {
+            // Get all TableLayoutPanel controls with the specified transaction ID tag
+            var tableLayoutPanels = flowLayoutPanel.Controls.OfType<TableLayoutPanel>()
+                .Where(panel => panel.Tag != null && panel.Tag.ToString() == transactionId)
+                .ToList();
 
-        void CreateFeedRow(string imageLocation, string ownerName, string ownerId, DateTime timestamp, string messageText, string transactionid, System.Drawing.Color bgcolor, FlowLayoutPanel layoutPanel, bool addtoTop = false)
+            // Remove the TableLayoutPanel controls from the FlowLayoutPanel
+            foreach (var panel in tableLayoutPanels)
+            {
+                flowLayoutPanel.Controls.Remove(panel);
+                panel.Dispose(); // Optional: Dispose of the removed control to free up resources
+            }
+        }
+
+        void CreateFeedRow(string imageLocation, string SentTo, string SentFrom, DateTime timestamp, string messageText, string transactionid, System.Drawing.Color bgcolor, FlowLayoutPanel layoutPanel, bool addtoTop = false)
         {
 
             // Create a table layout panel for each row
             TableLayoutPanel row = new TableLayoutPanel
             {
                 RowCount = 1,
-                ColumnCount = 4,
+                ColumnCount = 5,
                 AutoSize = true,
                 BackColor = Color.Black,
                 ForeColor = Color.White,
                 Padding = new Padding(0),
-                Margin = new Padding(0)
+                Margin = new Padding(0),
+                Tag = transactionid
+               
             };
             // Add the width of the first column to fixed value and second to fill remaining space
             row.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 50));
             row.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 90));
-            row.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 110));
+            row.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 90));
+            row.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 130));
             row.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 20));
 
             if (addtoTop)
@@ -362,36 +382,82 @@ namespace SUP
             }
 
 
-            // Create a LinkLabel with the owner name
-            LinkLabel owner = new LinkLabel
+
+
+
+
+            
+
+                PROState profile = PROState.GetProfileByAddress(SentFrom, "good-user", "better-password", "http://127.0.0.1:18332");
+
+                if (profile.URN != null)
+                {
+                SentFrom = profile.URN;
+                }
+
+            profile = PROState.GetProfileByAddress(SentTo, "good-user", "better-password", "http://127.0.0.1:18332");
+
+            if (profile.URN != null)
             {
-                Text = ownerName,
+                SentTo = profile.URN;
+            }
+
+            if (SentFrom == txtCurrentOwnerAddress.Text) { SentFrom = "primary"; }
+            if (SentTo == txtCurrentOwnerAddress.Text) { SentTo = "primary"; }
+
+
+
+            // Create a LinkLabel with the owner name
+            LinkLabel sentfrom = new LinkLabel
+            {
+                Text = SentFrom,
                 BackColor = Color.Black,
                 ForeColor = Color.White,
-                AutoSize = true
+                AutoSize = true,
+                Dock = DockStyle.Bottom
 
             };
-            owner.LinkClicked += (sender, e) => { Owner_LinkClicked(ownerId); };
-            owner.Font = new System.Drawing.Font("Microsoft Sans Serif", 7.7F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            owner.Margin = new System.Windows.Forms.Padding(3);
-            owner.Dock = DockStyle.Bottom;
-            row.Controls.Add(owner, 1, 0);
+            if (SentFrom != "primary") { sentfrom.LinkClicked += (sender, e) => { Owner_LinkClicked(SentFrom); }; }
+            sentfrom.Font = new System.Drawing.Font("Microsoft Sans Serif", 7.7F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            sentfrom.Margin = new System.Windows.Forms.Padding(3);
+            row.Controls.Add(sentfrom, 1, 0);
 
+            // Create a LinkLabel with the owner name
+            LinkLabel sentto = new LinkLabel
+            {
+                Text = SentTo,
+                BackColor = Color.Black,
+                ForeColor = Color.White,
+                AutoSize = true,
+                Dock = DockStyle.Bottom
 
-            if (timestamp.Year > 1975)
-            {  // Create a LinkLabel with the owner name
-                Label tstamp = new Label
-                {
-                    AutoSize = true,
-                    BackColor = Color.Black,
-                    ForeColor = Color.White,
-                    Font = new System.Drawing.Font("Microsoft Sans Serif", 7.77F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0))),
-                    Text = timestamp.ToString("MM/dd/yyyy hh:mm:ss"),
-                    Margin = new System.Windows.Forms.Padding(0),
-                    Dock = DockStyle.Bottom
-                };
-                row.Controls.Add(tstamp, 2, 0);
+            };
+            if (SentTo != "primary")
+            {
+                sentto.LinkClicked += (sender, e) => { Owner_LinkClicked(SentTo); };
             }
+            sentto.Font = new System.Drawing.Font("Microsoft Sans Serif", 7.7F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            sentto.Margin = new System.Windows.Forms.Padding(3);
+            row.Controls.Add(sentto, 2, 0);
+
+            Label message = new Label
+            {
+                AutoSize = true,
+                Text = messageText,
+                MinimumSize = new Size(130, 46),
+                Font = new System.Drawing.Font("Segoe UI", 7.77F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0))),
+                Margin = new System.Windows.Forms.Padding(0),
+                Padding = new System.Windows.Forms.Padding(0),
+                Dock = DockStyle.Bottom,
+                TextAlign = ContentAlignment.BottomLeft
+              
+            };
+            row.Controls.Add(message,3,0);
+
+
+
+
+
 
             Label deleteme = new Label
             {
@@ -403,87 +469,19 @@ namespace SUP
                 Margin = new System.Windows.Forms.Padding(0),
                 Dock = DockStyle.Bottom
             };
-            deleteme.Click += (sender, e) => { deleteme_LinkClicked(transactionid); };
-            row.Controls.Add(deleteme, 3, 0);
-
-            if (messageText != "")
-            {
-                TableLayoutPanel msg = new TableLayoutPanel
-                {
-                    RowCount = 1,
-                    ColumnCount = 1,
-                    Dock = DockStyle.Top,
-                    BackColor = Color.Black,
-                    ForeColor = Color.White,
-                    AutoSize = true,
-                    CellBorderStyle = TableLayoutPanelCellBorderStyle.None,
-                    Margin = new System.Windows.Forms.Padding(0, 0, 0, 0),
-                    Padding = new System.Windows.Forms.Padding(0)
-
-                };
-
-                msg.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, flowInMemoryResults.Width - 20));
-
-                if (addtoTop)
-                {
-                    layoutPanel.Controls.Add(msg);
-                    layoutPanel.Controls.SetChildIndex(msg, 1);
-                }
-                else
-                {
-                    layoutPanel.Controls.Add(msg);
-                }
-
-
-                Label message = new Label
-                {
-                    AutoSize = true,
-                    Text = messageText,
-                    MinimumSize = new Size(280, 46),
-                    Font = new System.Drawing.Font("Segoe UI", 7.77F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0))),
-                    Margin = new System.Windows.Forms.Padding(0),
-                    Padding = new System.Windows.Forms.Padding(10, 20, 10, 20),
-                    TextAlign = System.Drawing.ContentAlignment.TopLeft
-                };
-                msg.Controls.Add(message);
-            }
+            deleteme.Click += (sender, e) => { RemoveRowByTransactionId(flowInMemoryResults, transactionid); };
+            row.Controls.Add(deleteme, 4, 0);
+          
 
         }
 
 
         private void giveButton_Click(object sender, EventArgs e)
         {
-            var dictionary = new Dictionary<string, int>();
             var newdictionary = new List<List<string>>();
             List<string> encodedList = new List<string>();
-            int brnOrder = 2;
-            foreach (var (address, qty) in _addressQtyList)
-            {
-                if (!dictionary.ContainsKey(address))
-                {
-                    dictionary[address] = qty;
-                    if (address == txtSignatureAddress.Text)
-                    {
-                        newdictionary.Clear();
-                        newdictionary.Add(new List<string> { "0", qty.ToString() });
-                        dictionary.Clear();
-                        dictionary.Add(address, qty);
-                        break;
-                    }
-                    if (txtAddressSearch.Text == txtSignatureAddress.Text)
-                    {
-                        newdictionary.Clear();
-                        newdictionary.Add(new List<string> { "1", qty.ToString() });
-                        dictionary.Clear();
-                        dictionary.Add(address, qty);
-                        break;
-                    }
-                    newdictionary.Add(new List<string> { brnOrder.ToString(), qty.ToString() });
-                    brnOrder++;
-                }
-            }
-
-
+            newdictionary.Add(new List<string> { txtAddressSearch.Text, txtListQty.Text, txtEachValue.Text });
+            
             // Generate a random negative integer salt between -99999 and -1
             int salt;
             using (RNGCryptoServiceProvider rng = new RNGCryptoServiceProvider())
@@ -498,11 +496,9 @@ namespace SUP
             var json = JsonConvert.SerializeObject(newdictionary);
             txtOBJJSON.Text = json;
 
-            txtOBJP2FK.Text = "GIV" + ">" + txtOBJJSON.Text.Length + ">" + txtOBJJSON.Text;
+            txtOBJP2FK.Text = "LST" + ">" + txtOBJJSON.Text.Length + ">" + txtOBJJSON.Text;
 
-            if (btnGive.Enabled)
-            {
-                NetworkCredential credentials = new NetworkCredential("good-user", "better-password");
+            NetworkCredential credentials = new NetworkCredential("good-user", "better-password");
                 RPCClient rpcClient = new RPCClient(credentials, new Uri(@"http://127.0.0.1:18332"), Network.Main);
                 System.Security.Cryptography.SHA256 mySHA256 = SHA256Managed.Create();
                 byte[] hashValue = mySHA256.ComputeHash(Encoding.ASCII.GetBytes(txtOBJP2FK.Text));
@@ -532,10 +528,7 @@ namespace SUP
                     }
                 }
 
-                foreach (string address in dictionary.Keys)
-                {
-                    encodedList.Add(address);
-                }
+
        
                 encodedList.Add(txtAddressSearch.Text);
                 encodedList.Add(signatureAddress); 
@@ -545,7 +538,7 @@ namespace SUP
 
                 if (mint)
                 {
-                    DialogResult result = MessageBox.Show("Are you sure you want to give this?", "Confirmation", MessageBoxButtons.YesNo);
+                    DialogResult result = MessageBox.Show("Are you sure you want to list this?", "Confirmation", MessageBoxButtons.YesNo);
                     if (result == DialogResult.Yes)
                     {
                         // Perform the action
@@ -579,11 +572,7 @@ namespace SUP
 
                 btnGive.BackColor = System.Drawing.Color.Blue;
                 btnGive.ForeColor = System.Drawing.Color.Yellow;
-                mint = true;
-
-            }
-
-
+                mint = true;       
 
 
         }
@@ -1019,221 +1008,6 @@ namespace SUP
                                                     }
                                                     else { find = true; }
 
-                                                    if (find && root.Message.Count() > 0)
-                                                    {
-
-                                                        string _from = root.SignedBy;
-                                                        string _to = "";
-                                                        if (root.Keyword.Count() > 1) { _to = root.Keyword.Keys.First(); } else { _to = root.Keyword.Keys.Last(); }
-                                                        string _message = string.Join(" ", root.Message);
-                                                        string _blockdate = root.BlockDate.ToString("yyyyMMddHHmmss");
-                                                        string imglocation = "";
-                                                        string unfilteredmessage = _message;
-                                                        _message = Regex.Replace(_message, "<<.*?>>", "");
-
-
-                                                        this.Invoke((MethodInvoker)delegate
-                                                        {
-                                                            try { imglocation = myFriends[_to]; } catch { }
-                                                            CreateFeedRow(imglocation, _to, _to, DateTime.ParseExact(_blockdate, "yyyyMMddHHmmss", CultureInfo.InvariantCulture), " ", "", Color.White, flowInMemoryResults, true);
-                                                            try { imglocation = myFriends[_from]; } catch { }
-                                                            CreateFeedRow(imglocation, _from, _from, DateTime.ParseExact("19700101010101", "yyyyMMddHHmmss", CultureInfo.InvariantCulture), _message, root.TransactionId, Color.White, flowInMemoryResults, true);
-
-
-                                                        });
-
-                                                        string pattern = "<<.*?>>";
-                                                        MatchCollection matches = Regex.Matches(unfilteredmessage, pattern);
-                                                        foreach (Match match in matches)
-                                                        {
-
-
-                                                            string content = match.Value.Substring(2, match.Value.Length - 4);
-                                                            if (!int.TryParse(content, out int r))
-                                                            {
-
-                                                                string imgurn = content;
-
-                                                                if (!content.ToLower().StartsWith("http"))
-                                                                {
-                                                                    imgurn = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + @"\root\" + content.Replace("BTC:", "").Replace("MZC:", "").Replace("LTC:", "").Replace("DOG:", "").Replace("IPFS:", "").Replace("btc:", "").Replace("mzc:", "").Replace("ltc:", "").Replace("dog:", "").Replace("ipfs:", "").Replace(@"/", @"\");
-
-                                                                    if (content.ToLower().StartsWith("ipfs:")) { imgurn = imgurn.Replace(@"\root\", @"\ipfs\"); }
-                                                                }
-
-                                                                string extension = Path.GetExtension(imgurn).ToLower();
-                                                                List<string> imgExtensions = new List<string> { ".bmp", ".gif", ".ico", ".jpeg", ".jpg", ".png", ".tif", ".tiff" };
-
-                                                                if (!imgExtensions.Contains(extension))
-                                                                {
-
-
-                                                                    try
-                                                                    {
-                                                                        // Create a WebClient object to fetch the webpage
-                                                                        WebClient client = new WebClient();
-                                                                        string html = client.DownloadString(content.StripLeadingTrailingSpaces());
-
-                                                                        // Use regular expressions to extract the metadata from the HTML
-                                                                        string title = Regex.Match(html, @"<title>\s*(.+?)\s*</title>").Groups[1].Value;
-                                                                        string description = Regex.Match(html, @"<meta\s+name\s*=\s*""description""\s+content\s*=\s*""(.+?)""\s*/?>").Groups[1].Value;
-                                                                        string imageUrl = Regex.Match(html, @"<meta\s+property\s*=\s*""og:image""\s+content\s*=\s*""(.+?)""\s*/?>").Groups[1].Value;
-
-                                                                        if (description != "")
-                                                                        {
-                                                                            this.Invoke((MethodInvoker)delegate
-                                                                            {
-                                                                                // Create a new panel to display the metadata
-                                                                                Panel panel = new Panel();
-                                                                                panel.BorderStyle = BorderStyle.FixedSingle;
-                                                                                panel.Size = new Size(flowInMemoryResults.Width - 30, 100);
-
-                                                                                // Create a label for the title
-                                                                                Label titleLabel = new Label();
-                                                                                titleLabel.Text = title;
-                                                                                titleLabel.Dock = DockStyle.Top;
-                                                                                titleLabel.Font = new Font("Segoe UI", 12, FontStyle.Bold);
-                                                                                titleLabel.ForeColor = Color.White;
-                                                                                titleLabel.MinimumSize = new Size(flowInMemoryResults.Width - 120, 30);
-                                                                                titleLabel.Padding = new Padding(5);
-                                                                                titleLabel.MouseClick += (sender2, e2) => { Attachment_Clicked(content); };
-                                                                                panel.Controls.Add(titleLabel);
-
-                                                                                // Create a label for the description
-                                                                                Label descriptionLabel = new Label();
-                                                                                descriptionLabel.Text = description;
-                                                                                descriptionLabel.ForeColor = Color.White;
-                                                                                descriptionLabel.Dock = DockStyle.Fill;
-                                                                                descriptionLabel.Padding = new Padding(5, 40, 5, 5);
-                                                                                descriptionLabel.MouseClick += (sender2, e2) => { Attachment_Clicked(content); };
-                                                                                panel.Controls.Add(descriptionLabel);
-
-                                                                                // Add an image to the panel if one is defined
-                                                                                if (!String.IsNullOrEmpty(imageUrl))
-                                                                                {
-                                                                                    try
-                                                                                    {
-                                                                                        // Create a MemoryStream object from the image data
-                                                                                        byte[] imageData = client.DownloadData(imageUrl);
-                                                                                        MemoryStream memoryStream = new MemoryStream(imageData);
-
-                                                                                        // Create a new PictureBox control and add it to the panel
-                                                                                        PictureBox pictureBox = new PictureBox();
-                                                                                        pictureBox.Dock = DockStyle.Left;
-                                                                                        pictureBox.Size = new Size(100, 100);
-                                                                                        pictureBox.SizeMode = PictureBoxSizeMode.StretchImage;
-                                                                                        pictureBox.Image = Image.FromStream(memoryStream);
-                                                                                        pictureBox.MouseClick += (sender2, e2) => { Attachment_Clicked(content); };
-                                                                                        panel.Controls.Add(pictureBox);
-                                                                                    }
-                                                                                    catch
-                                                                                    {
-                                                                                    }
-                                                                                }
-
-
-                                                                                this.flowInMemoryResults.Controls.Add(panel);
-                                                                                flowInMemoryResults.Controls.SetChildIndex(panel, 0);
-                                                                            });
-
-                                                                        }
-                                                                        else
-                                                                        {
-                                                                            this.Invoke((MethodInvoker)delegate
-                                                                            {  // Create a new panel to display the metadata
-                                                                                Panel panel = new Panel();
-                                                                                panel.BorderStyle = BorderStyle.FixedSingle;
-                                                                                panel.Size = new Size(flowInMemoryResults.Width - 20, 30);
-
-                                                                                // Create a label for the title
-                                                                                LinkLabel titleLabel = new LinkLabel();
-                                                                                titleLabel.Text = content;
-                                                                                titleLabel.Links[0].LinkData = imgurn;
-                                                                                titleLabel.Dock = DockStyle.Top;
-                                                                                titleLabel.Font = new Font("Segoe UI", 8, FontStyle.Bold);
-                                                                                titleLabel.LinkColor = System.Drawing.SystemColors.GradientActiveCaption;
-                                                                                titleLabel.MinimumSize = new Size(flowInMemoryResults.Width - 120, 30);
-                                                                                titleLabel.Padding = new Padding(5);
-                                                                                titleLabel.MouseClick += (sender2, e2) => { Attachment_Clicked(imgurn); };
-                                                                                panel.Controls.Add(titleLabel);
-
-
-                                                                                this.flowInMemoryResults.Controls.Add(panel);
-                                                                                flowInMemoryResults.Controls.SetChildIndex(panel, 0);
-                                                                            });
-
-                                                                        }
-                                                                    }
-                                                                    catch
-                                                                    {
-
-                                                                        this.Invoke((MethodInvoker)delegate
-                                                                        {  // Create a new panel to display the metadata
-                                                                            Panel panel = new Panel();
-                                                                            panel.BorderStyle = BorderStyle.FixedSingle;
-                                                                            panel.Size = new Size(flowInMemoryResults.Width - 20, 30);
-
-                                                                            // Create a label for the title
-                                                                            LinkLabel titleLabel = new LinkLabel();
-                                                                            titleLabel.Text = content;
-                                                                            titleLabel.Links[0].LinkData = imgurn;
-                                                                            titleLabel.Dock = DockStyle.Top;
-                                                                            titleLabel.Font = new Font("Segoe UI", 8, FontStyle.Bold);
-                                                                            titleLabel.LinkColor = System.Drawing.SystemColors.GradientActiveCaption;
-                                                                            titleLabel.MinimumSize = new Size(flowInMemoryResults.Width - 120, 30);
-                                                                            titleLabel.Padding = new Padding(5);
-                                                                            titleLabel.MouseClick += (sender2, e2) => { Attachment_Clicked(imgurn); };
-                                                                            panel.Controls.Add(titleLabel);
-
-
-                                                                            this.flowInMemoryResults.Controls.Add(panel);
-                                                                            flowInMemoryResults.Controls.SetChildIndex(panel, 0);
-                                                                        });
-
-
-
-                                                                    }
-                                                                }
-                                                                else
-                                                                {
-
-
-                                                                    if (!int.TryParse(content, out int id))
-                                                                    {
-                                                                        this.Invoke((MethodInvoker)delegate
-                                                                        {
-                                                                            AddImage(content, false, true);
-                                                                        });
-                                                                    }
-
-                                                                }
-                                                            }
-                                                        }
-
-                                                        TableLayoutPanel padding = new TableLayoutPanel
-                                                        {
-                                                            RowCount = 1,
-                                                            ColumnCount = 1,
-                                                            Dock = DockStyle.Top,
-                                                            BackColor = Color.Black,
-                                                            ForeColor = Color.White,
-                                                            AutoSize = true,
-                                                            CellBorderStyle = TableLayoutPanelCellBorderStyle.Single,
-                                                            Margin = new System.Windows.Forms.Padding(0, 0, 0, 40),
-                                                            Padding = new System.Windows.Forms.Padding(0)
-
-                                                        };
-
-                                                        padding.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, flowInMemoryResults.Width - 20));
-
-                                                        this.Invoke((MethodInvoker)delegate
-                                                        {
-                                                            flowInMemoryResults.Controls.Add(padding);
-                                                        });
-
-
-                                            }
-
 
                                             switch (root.File.Last().Key.ToString().Substring(root.File.Last().Key.ToString().Length - 3))
                                             {
@@ -1260,11 +1034,10 @@ namespace SUP
                                                     {
                                                         string _from = root.SignedBy;
                                                         string _to = "";
-                                                        if (root.Keyword.Count() > 1) { _to = root.Keyword.Keys.First(); } else { _to = root.Keyword.Keys.Last(); }
+                                                        _to = root.Keyword.Reverse().GetItemByIndex(give[0]).Key;
                                                         string _message = "GIV " + give[1];
                                                         string _blockdate = root.BlockDate.ToString("yyyyMMddHHmmss");
                                                         string imglocation = "";
-                                                        string unfilteredmessage = _message;
                                                         
                                                         if (give[1] < 0)
                                                         {
@@ -1274,11 +1047,9 @@ namespace SUP
 
                                                         this.Invoke((MethodInvoker)delegate
                                                         {
-                                                            try { imglocation = myFriends[_to]; } catch { }
-                                                            CreateFeedRow(imglocation, _to, _to, DateTime.ParseExact(_blockdate, "yyyyMMddHHmmss", CultureInfo.InvariantCulture), " ", "", Color.White, flowInMemoryResults, true);
                                                             try { imglocation = myFriends[_from]; } catch { }
-                                                            CreateFeedRow(imglocation, _from, _from, DateTime.ParseExact("19700101010101", "yyyyMMddHHmmss", CultureInfo.InvariantCulture), _message, root.TransactionId, Color.White, flowInMemoryResults, true);
 
+                                                            CreateFeedRow(imglocation, _to, _from, DateTime.ParseExact(_blockdate, "yyyyMMddHHmmss", CultureInfo.InvariantCulture), _message, root.TransactionId, Color.White, flowInMemoryResults, true);
 
                                                         });
 
@@ -1292,11 +1063,98 @@ namespace SUP
 
 
 
+                                                    List<List<string>> buyinspector = new List<List<string>> { };
+                                                    try
+                                                    {
+                                                        buyinspector = JsonConvert.DeserializeObject<List<List<string>>>(File.ReadAllText(@"root\" + root.TransactionId + @"\BUY"));
+                                                    }
+                                                    catch
+                                                    {
+
+                                                        break;
+                                                    }
+
+                                                    if (buyinspector == null)
+                                                    {
+                                                        break;
+                                                    }
+
+                                                    foreach (var buy in buyinspector)
+                                                    {
+                                                        string _from = root.SignedBy;
+                                                        string _to = buy[0];                                                      
+                                                        string _message = "BUY " + buy[1];
+                                                        string _blockdate = root.BlockDate.ToString("yyyyMMddHHmmss");
+                                                        string imglocation = "";
+
+                                                        if (int.Parse(buy[1]) < 0)
+                                                        {
+                                                            break;
+                                                        }
+
+
+                                                        this.Invoke((MethodInvoker)delegate
+                                                        {
+                                                            try { imglocation = myFriends[_from]; } catch { }
+
+                                                            CreateFeedRow(imglocation, _to, _from, DateTime.ParseExact(_blockdate, "yyyyMMddHHmmss", CultureInfo.InvariantCulture), _message, root.TransactionId, Color.White, flowInMemoryResults, true);
+
+                                                        });
+
+
+
+
+                                                    }
                                                     break;
 
                                                 case "LST":
 
 
+                                                    List<List<string>> lstinspector = new List<List<string>> { };
+                                                    try
+                                                    {
+                                                        lstinspector = JsonConvert.DeserializeObject<List<List<string>>>(File.ReadAllText(@"root\" + root.TransactionId + @"\LST"));
+                                                    }
+                                                    catch
+                                                    {
+
+                                                        break;
+                                                    }
+
+                                                    if (lstinspector == null)
+                                                    {
+                                                        break;
+                                                    }
+
+                                                    foreach (var lst in lstinspector)
+                                                    {
+                                                        string _from = root.SignedBy;
+                                                        string _to = "";
+
+                                                        if (root.SignedBy == txtCurrentOwnerAddress.Text) { _to = "primary"; } else { _to = "secondary"; }
+                                                       
+
+
+                                                        string _message = "LST " + lst[1] + " at " + lst[2] + " each";
+                                                        string _blockdate = root.BlockDate.ToString("yyyyMMddHHmmss");
+                                                        string imglocation = "";
+
+                                                        if (int.Parse(lst[1]) < 0)
+                                                        {
+                                                            break;
+                                                        }
+
+
+                                                        this.Invoke((MethodInvoker)delegate
+                                                        {
+                                                            try { imglocation = myFriends[_from]; } catch { }
+
+                                                            CreateFeedRow(imglocation, _to, _from, DateTime.ParseExact(_blockdate, "yyyyMMddHHmmss", CultureInfo.InvariantCulture), _message, root.TransactionId, Color.White, flowInMemoryResults, true);
+
+                                                        });
+
+
+                                                    }
                                                     break;
 
                                                 default:
@@ -1305,21 +1163,6 @@ namespace SUP
 
                                             }
 
-                                                    //isobject = objstate.getobjectbytransactionid(s, "good-user", "better-password", @"http://127.0.0.1:18332");
-                                                    //if (isobject.urn != null && find == true)
-                                                    //{
-                                                    //    isobject.transactionid = s;
-                                                    //    foundobjects.add(isobject);
-                                                    //    try { directory.delete(@"root\" + s, true); } catch { }
-
-                                                    //    using (var db = new db(sup, @"root\found"))
-                                                    //    {
-                                                    //        db.put("found!" + root.blockdate.tostring("yyyymmddhhmmss") + "!" + root.signedby, "1");
-                                                    //    }
-
-
-                                                    //}
-                                                    // try { System.IO.Directory.Delete(@"root\" + s, true); } catch { }
 
                                             }
                                                 else { try { System.IO.Directory.Delete(@"root\" + s, true); } catch { } }
@@ -1349,20 +1192,23 @@ namespace SUP
                             {
 
                             }
-                        
+                                               
 
 
-
-                        if (foundobjects.Count > 0)
+                        this.Invoke((MethodInvoker)delegate
                         {
+                            var tableLayoutPanels = flowInMemoryResults.Controls.OfType<TableLayoutPanel>().ToList();
 
-                            this.Invoke((MethodInvoker)delegate
+                            foreach (var panel in tableLayoutPanels)
                             {
-                               // AddToSearchResults(foundobjects);
-                            });
+                                string diskpath = "root\\" + panel.Tag.ToString() + "\\";
+                                try { System.IO.File.Delete(diskpath + "ROOT.json"); } catch { }
+                    
+                                Root root = Root.GetRootByTransactionId(panel.Tag.ToString(), "good-user", "better-password", @"http://127.0.0.1:18332");
 
-                        }
-
+                                if (root != null && root.BlockDate.Year > 1975) { RemoveRowByTransactionId(flowInMemoryResults, panel.Tag.ToString()); }
+                            }
+                        });
 
                         this.Invoke((MethodInvoker)delegate
                         {
@@ -1398,6 +1244,120 @@ namespace SUP
         private void label5_DoubleClick(object sender, EventArgs e)
         {
             RefreshPage();
+        }
+
+        private void btnBuy_Click(object sender, EventArgs e)
+        {
+            var newdictionary = new List<List<string>>();
+            List<string> encodedList = new List<string>();
+            newdictionary.Add(new List<string> {txtCurrentOwnerAddress.Text, txtBuyQty.Text});
+
+            // Generate a random negative integer salt between -99999 and -1
+            int salt;
+            using (RNGCryptoServiceProvider rng = new RNGCryptoServiceProvider())
+            {
+                byte[] saltBytes = new byte[4];
+                rng.GetBytes(saltBytes);
+                salt = -Math.Abs(BitConverter.ToInt32(saltBytes, 0) % 100000);
+            }
+
+            newdictionary.Add(new List<string> { "0", salt.ToString("D5") });
+
+            var json = JsonConvert.SerializeObject(newdictionary);
+            txtOBJJSON.Text = json;
+
+            txtOBJP2FK.Text = "BUY" + ">" + txtOBJJSON.Text.Length + ">" + txtOBJJSON.Text;
+
+            NetworkCredential credentials = new NetworkCredential("good-user", "better-password");
+            RPCClient rpcClient = new RPCClient(credentials, new Uri(@"http://127.0.0.1:18332"), Network.Main);
+            System.Security.Cryptography.SHA256 mySHA256 = SHA256Managed.Create();
+            byte[] hashValue = mySHA256.ComputeHash(Encoding.ASCII.GetBytes(txtOBJP2FK.Text));
+            string signatureAddress;
+
+            signatureAddress = txtSignatureAddress.Text;
+            string signature = "";
+            try { signature = rpcClient.SendCommand("signmessage", signatureAddress, BitConverter.ToString(hashValue).Replace("-", String.Empty)).ResultString; }
+            catch (Exception ex)
+            {
+                lblObjectStatus.Text = ex.Message;
+                btnBuy.BackColor = System.Drawing.Color.White;
+                btnBuy.ForeColor = System.Drawing.Color.Black;
+                mint = false;
+                return;
+            }
+
+            txtOBJP2FK.Text = "SIG" + ":" + "88" + ">" + signature + txtOBJP2FK.Text;
+
+
+            for (int i = 0; i < txtOBJP2FK.Text.Length; i += 20)
+            {
+                string chunk = txtOBJP2FK.Text.Substring(i, Math.Min(20, txtOBJP2FK.Text.Length - i));
+                if (chunk.Any())
+                {
+                    encodedList.Add(Root.GetPublicAddressByKeyword(chunk));
+                }
+            }
+
+
+
+           
+            txtAddressListJSON.Text = JsonConvert.SerializeObject(encodedList.Distinct());
+
+            lblCost.Text = "cost: " + (0.00000546 * encodedList.Count + (int.Parse(txtBuyQty.Text) * double.Parse(txtBuyEachCost.Text))).ToString("0.00000000") + "  + miner fee";
+
+            if (mint)
+            {
+                DialogResult result = MessageBox.Show("Are you sure you want to buy this?", "Confirmation", MessageBoxButtons.YesNo);
+                if (result == DialogResult.Yes)
+                {
+                    // Perform the action
+                    var recipients = new Dictionary<string, decimal>();
+                    foreach (var encodedAddress in encodedList)
+                    {
+                        try { recipients.Add(encodedAddress, 0.00000546m); } catch { }
+                    }
+
+                    decimal totalCost = int.Parse(txtBuyQty.Text) * decimal.Parse(txtBuyEachCost.Text);
+                    decimal remainingCost = totalCost;
+                    OBJState objstate = OBJState.GetObjectByAddress(txtAddressSearch.Text, "good-user", "better-password", "http://127.0.0.1:18332");
+
+                    foreach ( var keyvalue in objstate.Royalties)
+                    {
+                        if (keyvalue.Key != txtCurrentOwnerAddress.Text && keyvalue.Key != txtSignatureAddress.Text) {
+                            try { recipients.Add(keyvalue.Key, totalCost * (keyvalue.Value / 100)); remainingCost = remainingCost - (totalCost * (keyvalue.Value / 100)); } catch { }
+
+                        } }
+
+                    recipients.Add(txtCurrentOwnerAddress.Text, remainingCost);
+                    try { recipients.Add(txtAddressSearch.Text, 0.00000546m); } catch { }
+                    recipients.Add(txtSignatureAddress.Text, 0.00000546m);            
+
+
+                    CoinRPC a = new CoinRPC(new Uri("http://127.0.0.1:18332"), new NetworkCredential("good-user", "better-password"));
+
+                    try
+                    {
+                        string accountsString = "";
+                        try { accountsString = rpcClient.SendCommand("listaccounts").ResultString; } catch { }
+                        var accounts = JsonConvert.DeserializeObject<Dictionary<string, decimal>>(accountsString);
+                        var keyWithLargestValue = accounts.Aggregate((x, y) => x.Value > y.Value ? x : y).Key;
+                        var results = a.SendMany(keyWithLargestValue, recipients);
+                        lblObjectStatus.Text = results;
+                    }
+                    catch (Exception ex) { lblObjectStatus.Text = ex.Message; }
+                    btnBuy.BackColor = System.Drawing.Color.White;
+                    btnBuy.ForeColor = System.Drawing.Color.Black;
+                    mint = false;
+
+                }
+                btnBuy.BackColor = System.Drawing.Color.White;
+                btnBuy.ForeColor = System.Drawing.Color.Black;
+                mint = false;
+            }
+
+            btnBuy.BackColor = System.Drawing.Color.Blue;
+            btnBuy.ForeColor = System.Drawing.Color.Yellow;
+            mint = true;
         }
     }
 }

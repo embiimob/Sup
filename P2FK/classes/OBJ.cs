@@ -859,17 +859,21 @@ namespace SUP.P2FK
                                             foreach (KeyValuePair<string, decimal> pair in objectState.Royalties)
                                             {
 
-                                                if (pair.Key != buy[0])
+                                                if (pair.Key != transaction.SignedBy)
                                                 {
+                                                    string outputSent;
+                                                    transaction.Output.TryGetValue(pair.Key, out outputSent);
+                                                    decimal logSent = decimal.Parse(outputSent, System.Globalization.NumberStyles.Float);
+
                                                     //have required royalties been paid or greator?
-                                                    if (transaction.Output.TryGetValue(pair.Key, out string output) && decimal.TryParse(output, out decimal sentValue) && sentValue >= ((qtyListed.Value * long.Parse(buy[1])) * (pair.Value / 100))) { royaltiesPaid = royaltiesPaid + ((qtyListed.Value * long.Parse(buy[1])) * (pair.Value / 100)); }
+                                                    if (logSent >= ((qtyListed.Value * long.Parse(buy[1])) * (pair.Value / 100))) { royaltiesPaid = royaltiesPaid + ((qtyListed.Value * long.Parse(buy[1])) * (pair.Value / 100)); }
 
                                                     //conditons were not met log failed event.
                                                     else
                                                     {
                                                         if (verbose)
                                                         {
-                                                            logstatus = "[\"" + transaction.SignedBy + "\",\"" + buy[0] + "\",\"buy\",\"" + buy[1] + "\",\"\",\"failed "+ pair.Key + " insuficent royalties paid\"]";
+                                                            logstatus = "[\"" + transaction.SignedBy + "\",\"" + buy[0] + "\",\"buy\",\"" + buy[1] + "\",\"\",\"failed "+ pair.Key +" " + logSent + " insuficent royalties paid\"]";
 
                                                             var ROOT = new Options { CreateIfMissing = true };
                                                             var db = new DB(ROOT, @"root\event");
@@ -1202,7 +1206,7 @@ namespace SUP.P2FK
 
                                             try
                                             {
-                                                eachCost = decimal.Parse(List[2]);
+                                                eachCost = decimal.Parse(List[2], System.Globalization.NumberStyles.Float);
                                             }
                                             catch
                                             {
@@ -1227,7 +1231,7 @@ namespace SUP.P2FK
                                             // LST Transaction with 0 qty closes all listings
                                             if (qtyToList == 0)
                                             {
-                                                objectState.Listings.Remove(Listr);
+                                                try { objectState.Listings.Remove(Listr); } catch { }
 
                                                 if (verbose)
                                                 {
