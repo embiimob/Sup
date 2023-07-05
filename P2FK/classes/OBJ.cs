@@ -894,7 +894,11 @@ namespace SUP.P2FK
 
                                             //was the current owner paid what was listed with required royalties removed or greator?
                                             decimal ownerPaid = 0;
-                                            if (transaction.Output.TryGetValue(buy[0], out string ownerValue) && decimal.TryParse(ownerValue, out ownerPaid) && ownerPaid >= (qtyListed.Value * long.Parse(buy[1])) - royaltiesPaid)
+                                            string ownerValue;
+                                            transaction.Output.TryGetValue(buy[0], out ownerValue);
+                                            ownerPaid = decimal.Parse(ownerValue, System.Globalization.NumberStyles.Float);
+
+                                            if (ownerPaid >= (qtyListed.Value * long.Parse(buy[1])) - royaltiesPaid)
                                             {
 
                                                 //remove from listing

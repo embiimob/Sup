@@ -28,6 +28,18 @@ namespace SUP
 
         }
 
+        private void foundListings_Click(object sender, EventArgs e)
+        {
+
+           Form parentForm = this.FindForm();
+           ObjectBuy childForm = new ObjectBuy(ObjectAddress.Text);
+
+            childForm.Owner = parentForm;
+
+            childForm.Show();
+
+        }
+
         private void ObjectCreators_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
             Form parentForm = this.FindForm();

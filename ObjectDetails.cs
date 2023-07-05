@@ -178,7 +178,7 @@ namespace SUP
             OwnersPanel.Controls.Clear();
             RoyaltiesPanel.Controls.Clear();
             supPanel.Visible = false;
-            btnDisco.Visible = false;
+       
 
 
             OBJState objstate = OBJState.GetObjectByAddress(_objectaddress, "good-user", "better-password", "http://127.0.0.1:18332");
@@ -474,7 +474,7 @@ namespace SUP
             }
             supPanel.Visible = true;
             OwnersPanel.Visible = false;
-            btnDisco.Visible = true;
+       
 
             Dictionary<string, string[]> profileAddress = new Dictionary<string, string[]> { };
             OBJState objstate = OBJState.GetObjectByAddress(_objectaddress, "good-user", "better-password", "http://127.0.0.1:18332");

@@ -80,7 +80,7 @@
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(209, 40);
             this.panel1.TabIndex = 5;
-            this.panel1.Click += new System.EventHandler(this.foundObjectControl_Click);
+            this.panel1.Click += new System.EventHandler(this.foundListings_Click);
             // 
             // ObjectPrice
             // 
@@ -92,7 +92,7 @@
             this.ObjectPrice.Size = new System.Drawing.Size(92, 20);
             this.ObjectPrice.TabIndex = 9;
             this.ObjectPrice.Text = "-";
-            this.ObjectPrice.Click += new System.EventHandler(this.foundObjectControl_Click);
+            this.ObjectPrice.Click += new System.EventHandler(this.foundListings_Click);
             // 
             // label4
             // 
@@ -109,7 +109,7 @@
             this.label4.Text = "offer";
             this.label4.TextAlign = System.Drawing.ContentAlignment.TopRight;
             this.label4.UseMnemonic = false;
-            this.label4.Click += new System.EventHandler(this.foundObjectControl_Click);
+            this.label4.Click += new System.EventHandler(this.foundListings_Click);
             // 
             // ObjectOffer
             // 
@@ -121,7 +121,7 @@
             this.ObjectOffer.Size = new System.Drawing.Size(95, 20);
             this.ObjectOffer.TabIndex = 8;
             this.ObjectOffer.Text = "-";
-            this.ObjectOffer.Click += new System.EventHandler(this.foundObjectControl_Click);
+            this.ObjectOffer.Click += new System.EventHandler(this.foundListings_Click);
             // 
             // label3
             // 
@@ -138,7 +138,7 @@
             this.label3.Text = "price";
             this.label3.TextAlign = System.Drawing.ContentAlignment.TopRight;
             this.label3.UseMnemonic = false;
-            this.label3.Click += new System.EventHandler(this.foundObjectControl_Click);
+            this.label3.Click += new System.EventHandler(this.foundListings_Click);
             // 
             // ObjectDescription
             // 

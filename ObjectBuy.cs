@@ -581,7 +581,9 @@ namespace SUP
         private void ObjectGive_Load(object sender, EventArgs e)
         {
             txtAddressSearch.Text = givaddress;
+            this.Text = "[ " + txtAddressSearch.Text + " ]";
             RefreshPage();
+            tmrSearchMemoryPool.Enabled = true;
 
         }
 
@@ -1008,161 +1010,164 @@ namespace SUP
                                                     }
                                                     else { find = true; }
 
-
-                                            switch (root.File.Last().Key.ToString().Substring(root.File.Last().Key.ToString().Length - 3))
+                                            if (find)
                                             {
-                                                case "GIV":
 
 
-                                                    List<List<int>> givinspector = new List<List<int>> { };
-                                                    try
-                                                    {
-                                                        givinspector = JsonConvert.DeserializeObject<List<List<int>>>(File.ReadAllText(@"root\" + root.TransactionId + @"\GIV"));
-                                                    }
-                                                    catch
-                                                    {
+                                                switch (root.File.Last().Key.ToString().Substring(root.File.Last().Key.ToString().Length - 3))
+                                                {
+                                                    case "GIV":
 
-                                                        break;
-                                                    }
 
-                                                    if (givinspector == null)
-                                                    {
-                                                        break;
-                                                    }
+                                                        List<List<int>> givinspector = new List<List<int>> { };
+                                                        try
+                                                        {
+                                                            givinspector = JsonConvert.DeserializeObject<List<List<int>>>(File.ReadAllText(@"root\" + root.TransactionId + @"\GIV"));
+                                                        }
+                                                        catch
+                                                        {
 
-                                                    foreach (var give in givinspector)
-                                                    {
-                                                        string _from = root.SignedBy;
-                                                        string _to = "";
-                                                        _to = root.Keyword.Reverse().GetItemByIndex(give[0]).Key;
-                                                        string _message = "GIV " + give[1];
-                                                        string _blockdate = root.BlockDate.ToString("yyyyMMddHHmmss");
-                                                        string imglocation = "";
-                                                        
-                                                        if (give[1] < 0)
+                                                            break;
+                                                        }
+
+                                                        if (givinspector == null)
                                                         {
                                                             break;
                                                         }
 
-
-                                                        this.Invoke((MethodInvoker)delegate
+                                                        foreach (var give in givinspector)
                                                         {
-                                                            try { imglocation = myFriends[_from]; } catch { }
+                                                            string _from = root.SignedBy;
+                                                            string _to = "";
+                                                            _to = root.Keyword.Reverse().GetItemByIndex(give[0]).Key;
+                                                            string _message = "GIV " + give[1];
+                                                            string _blockdate = root.BlockDate.ToString("yyyyMMddHHmmss");
+                                                            string imglocation = "";
 
-                                                            CreateFeedRow(imglocation, _to, _from, DateTime.ParseExact(_blockdate, "yyyyMMddHHmmss", CultureInfo.InvariantCulture), _message, root.TransactionId, Color.White, flowInMemoryResults, true);
-
-                                                        });
-
-
-
-
-                                                    }
-                                                    break;
-
-                                                case "BUY":
+                                                            if (give[1] < 0)
+                                                            {
+                                                                break;
+                                                            }
 
 
+                                                            this.Invoke((MethodInvoker)delegate
+                                                            {
+                                                                try { imglocation = myFriends[_from]; } catch { }
 
-                                                    List<List<string>> buyinspector = new List<List<string>> { };
-                                                    try
-                                                    {
-                                                        buyinspector = JsonConvert.DeserializeObject<List<List<string>>>(File.ReadAllText(@"root\" + root.TransactionId + @"\BUY"));
-                                                    }
-                                                    catch
-                                                    {
+                                                                CreateFeedRow(imglocation, _to, _from, DateTime.ParseExact(_blockdate, "yyyyMMddHHmmss", CultureInfo.InvariantCulture), _message, root.TransactionId, Color.White, flowInMemoryResults, true);
 
+                                                            });
+
+
+
+
+                                                        }
                                                         break;
-                                                    }
 
-                                                    if (buyinspector == null)
-                                                    {
-                                                        break;
-                                                    }
+                                                    case "BUY":
 
-                                                    foreach (var buy in buyinspector)
-                                                    {
-                                                        string _from = root.SignedBy;
-                                                        string _to = buy[0];                                                      
-                                                        string _message = "BUY " + buy[1];
-                                                        string _blockdate = root.BlockDate.ToString("yyyyMMddHHmmss");
-                                                        string imglocation = "";
 
-                                                        if (int.Parse(buy[1]) < 0)
+
+                                                        List<List<string>> buyinspector = new List<List<string>> { };
+                                                        try
+                                                        {
+                                                            buyinspector = JsonConvert.DeserializeObject<List<List<string>>>(File.ReadAllText(@"root\" + root.TransactionId + @"\BUY"));
+                                                        }
+                                                        catch
+                                                        {
+
+                                                            break;
+                                                        }
+
+                                                        if (buyinspector == null)
                                                         {
                                                             break;
                                                         }
 
-
-                                                        this.Invoke((MethodInvoker)delegate
+                                                        foreach (var buy in buyinspector)
                                                         {
-                                                            try { imglocation = myFriends[_from]; } catch { }
+                                                            string _from = root.SignedBy;
+                                                            string _to = buy[0];
+                                                            string _message = "BUY " + buy[1];
+                                                            string _blockdate = root.BlockDate.ToString("yyyyMMddHHmmss");
+                                                            string imglocation = "";
 
-                                                            CreateFeedRow(imglocation, _to, _from, DateTime.ParseExact(_blockdate, "yyyyMMddHHmmss", CultureInfo.InvariantCulture), _message, root.TransactionId, Color.White, flowInMemoryResults, true);
-
-                                                        });
-
-
-
-
-                                                    }
-                                                    break;
-
-                                                case "LST":
+                                                            if (int.Parse(buy[1]) < 0)
+                                                            {
+                                                                break;
+                                                            }
 
 
-                                                    List<List<string>> lstinspector = new List<List<string>> { };
-                                                    try
-                                                    {
-                                                        lstinspector = JsonConvert.DeserializeObject<List<List<string>>>(File.ReadAllText(@"root\" + root.TransactionId + @"\LST"));
-                                                    }
-                                                    catch
-                                                    {
+                                                            this.Invoke((MethodInvoker)delegate
+                                                            {
+                                                                try { imglocation = myFriends[_from]; } catch { }
 
+                                                                CreateFeedRow(imglocation, _to, _from, DateTime.ParseExact(_blockdate, "yyyyMMddHHmmss", CultureInfo.InvariantCulture), _message, root.TransactionId, Color.White, flowInMemoryResults, true);
+
+                                                            });
+
+
+
+
+                                                        }
                                                         break;
-                                                    }
 
-                                                    if (lstinspector == null)
-                                                    {
-                                                        break;
-                                                    }
-
-                                                    foreach (var lst in lstinspector)
-                                                    {
-                                                        string _from = root.SignedBy;
-                                                        string _to = "";
-
-                                                        if (root.SignedBy == txtCurrentOwnerAddress.Text) { _to = "primary"; } else { _to = "secondary"; }
-                                                       
+                                                    case "LST":
 
 
-                                                        string _message = "LST " + lst[1] + " at " + lst[2] + " each";
-                                                        string _blockdate = root.BlockDate.ToString("yyyyMMddHHmmss");
-                                                        string imglocation = "";
+                                                        List<List<string>> lstinspector = new List<List<string>> { };
+                                                        try
+                                                        {
+                                                            lstinspector = JsonConvert.DeserializeObject<List<List<string>>>(File.ReadAllText(@"root\" + root.TransactionId + @"\LST"));
+                                                        }
+                                                        catch
+                                                        {
 
-                                                        if (int.Parse(lst[1]) < 0)
+                                                            break;
+                                                        }
+
+                                                        if (lstinspector == null)
                                                         {
                                                             break;
                                                         }
 
-
-                                                        this.Invoke((MethodInvoker)delegate
+                                                        foreach (var lst in lstinspector)
                                                         {
-                                                            try { imglocation = myFriends[_from]; } catch { }
+                                                            string _from = root.SignedBy;
+                                                            string _to = "";
 
-                                                            CreateFeedRow(imglocation, _to, _from, DateTime.ParseExact(_blockdate, "yyyyMMddHHmmss", CultureInfo.InvariantCulture), _message, root.TransactionId, Color.White, flowInMemoryResults, true);
-
-                                                        });
+                                                            if (root.SignedBy == txtCurrentOwnerAddress.Text) { _to = "primary"; } else { _to = "secondary"; }
 
 
-                                                    }
-                                                    break;
 
-                                                default:
-                                                    
-                                                   break;
+                                                            string _message = "LST " + lst[1] + " at " + lst[2] + " each";
+                                                            string _blockdate = root.BlockDate.ToString("yyyyMMddHHmmss");
+                                                            string imglocation = "";
 
+                                                            if (int.Parse(lst[1]) < 0)
+                                                            {
+                                                                break;
+                                                            }
+
+
+                                                            this.Invoke((MethodInvoker)delegate
+                                                            {
+                                                                try { imglocation = myFriends[_from]; } catch { }
+
+                                                                CreateFeedRow(imglocation, _to, _from, DateTime.ParseExact(_blockdate, "yyyyMMddHHmmss", CultureInfo.InvariantCulture), _message, root.TransactionId, Color.White, flowInMemoryResults, true);
+
+                                                            });
+
+
+                                                        }
+                                                        break;
+
+                                                    default:
+
+                                                        break;
+
+                                                }
                                             }
-
 
                                             }
                                                 else { try { System.IO.Directory.Delete(@"root\" + s, true); } catch { } }
@@ -1303,7 +1308,7 @@ namespace SUP
            
             txtAddressListJSON.Text = JsonConvert.SerializeObject(encodedList.Distinct());
 
-            lblCost.Text = "cost: " + (0.00000546 * encodedList.Count + (int.Parse(txtBuyQty.Text) * double.Parse(txtBuyEachCost.Text))).ToString("0.00000000") + "  + miner fee";
+            lblBuyCost.Text = "cost: " + (0.00000546 * encodedList.Count + (int.Parse(txtBuyQty.Text) * double.Parse(txtBuyEachCost.Text))).ToString("0.00000000") + "  + miner fee";
 
             if (mint)
             {
@@ -1328,6 +1333,7 @@ namespace SUP
 
                         } }
 
+                    if (remainingCost <= 0 ) { remainingCost = 0.00000546m; }
                     recipients.Add(txtCurrentOwnerAddress.Text, remainingCost);
                     try { recipients.Add(txtAddressSearch.Text, 0.00000546m); } catch { }
                     recipients.Add(txtSignatureAddress.Text, 0.00000546m);            

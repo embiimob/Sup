@@ -657,7 +657,6 @@
             this.btnDisco.Size = new System.Drawing.Size(60, 42);
             this.btnDisco.TabIndex = 79;
             this.btnDisco.UseVisualStyleBackColor = true;
-            this.btnDisco.Visible = false;
             this.btnDisco.Click += new System.EventHandler(this.btnDisco_Click);
             // 
             // imgPicture
