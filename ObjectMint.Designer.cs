@@ -84,7 +84,7 @@
             // 
             this.lblIMGBlockDate.AutoSize = true;
             this.lblIMGBlockDate.ForeColor = System.Drawing.Color.White;
-            this.lblIMGBlockDate.Location = new System.Drawing.Point(21, 171);
+            this.lblIMGBlockDate.Location = new System.Drawing.Point(24, 231);
             this.lblIMGBlockDate.Name = "lblIMGBlockDate";
             this.lblIMGBlockDate.Size = new System.Drawing.Size(0, 13);
             this.lblIMGBlockDate.TabIndex = 184;
@@ -94,7 +94,7 @@
             // 
             this.lblURNBlockDate.AutoSize = true;
             this.lblURNBlockDate.ForeColor = System.Drawing.Color.White;
-            this.lblURNBlockDate.Location = new System.Drawing.Point(25, 235);
+            this.lblURNBlockDate.Location = new System.Drawing.Point(25, 167);
             this.lblURNBlockDate.Name = "lblURNBlockDate";
             this.lblURNBlockDate.Size = new System.Drawing.Size(0, 13);
             this.lblURNBlockDate.TabIndex = 185;

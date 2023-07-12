@@ -112,7 +112,7 @@ namespace SUP.P2FK
                 {
                     JSONOBJ = System.IO.File.ReadAllText(diskpath + "OBJ.json");
                     objectState = JsonConvert.DeserializeObject<OBJState>(JSONOBJ);
-                    verbose = objectState.Verbose;
+                    //verbose = objectState.Verbose;
                     fetched = true;
 
                 }
@@ -142,17 +142,22 @@ namespace SUP.P2FK
 
                 if (intProcessHeight != 0 && objectTransactions.Count() == 0) { return objectState; }
 
+                if (verbose == true) { intProcessHeight = 0; objectState = new OBJState(); }
+
                 objectTransactions = Root.GetRootsByAddress(objectaddress, username, password, url, intProcessHeight, -1, versionByte);
 
-                foreach (Root transaction in objectTransactions)
-                {
-                    using (var db = new DB(OBJ, @"root\sig"))
-                    {
-                        db.Delete(transaction.Signature);
-                    }
-                }
+                //if (verbose == true)
+                //{
+                //    foreach (Root transaction in objectTransactions)
+                //    {
+                //        using (var db = new DB(OBJ, @"root\sig"))
+                //        {
+                //            db.Delete(transaction.Signature);
+                //        }
+                //    }
+                //}
 
-                foreach (Root transaction in objectTransactions)
+                    foreach (Root transaction in objectTransactions)
                 {
 
                     intProcessHeight = transaction.Id;
@@ -171,7 +176,7 @@ namespace SUP.P2FK
                         }
 
 
-                        if (sigSeen == null)
+                        if (sigSeen == null || sigSeen == transaction.TransactionId)
                         {
 
 
@@ -1688,18 +1693,19 @@ namespace SUP.P2FK
             OBJState objectState = new OBJState { };
             Root[] objectTransactions;
 
+            // Create payload byte array
             byte[] payload = new byte[21];
 
-            try
+            using (FileStream fileStream = new FileStream(filepath, FileMode.Open))
             {
-                using (FileStream fileStream = new FileStream(filepath, FileMode.Open))
+                using (System.Security.Cryptography.SHA256 sha256 = System.Security.Cryptography.SHA256.Create())
                 {
-                    fileStream.Read(payload, 1, 20);
+                    byte[] hash = sha256.ComputeHash(fileStream);
+                    Array.Copy(hash, payload, 20);
                 }
             }
-            catch { }
 
-            payload[0] = Byte.Parse(versionByte);
+            payload[0] = 0x6F; // 0x6F is the hexadecimal representation of 111
             string objectaddress = Base58.EncodeWithCheckSum(payload);
 
             var OBJ = new Options { CreateIfMissing = true };
@@ -1747,6 +1753,9 @@ namespace SUP.P2FK
                     byte[] hash2 = new byte[0];
                     string file1 = filepath;
                     string file2 = null;
+
+                    
+                    //self signed search first.
                     string findObject = transaction.Keyword.ElementAt(transaction.Keyword.Count - 1).Key;
                     OBJState isObject = GetObjectByAddress(findObject, username, password, url, versionByte);
                     if (isObject.URN != null && !isObject.URN.ToUpper().StartsWith("HTTP"))
@@ -1835,7 +1844,7 @@ namespace SUP.P2FK
                         else
                         {
 
-                            string transid = isObject.URN.Replace("MZC:", "").Replace("BTC:", "").Replace("LTC:", "").Replace("DOG:", "").Substring(0, 64);
+                            string transid = isObject.URN.Replace("MZC:", "").Replace("BTC:", "").Replace("LTC:", "").Replace("DOG:", "").Replace("mzc:", "").Replace("btc:", "").Replace("ltc:", "").Replace("dog:", "").Substring(0, 64);
                             switch (isObject.URN.ToUpper().Substring(0, 4))
                             {
                                 case "BTC:":
@@ -1870,7 +1879,7 @@ namespace SUP.P2FK
                                     break;
                             }
 
-                            file2 = @"root\" + isObject.URN.Replace("MZC:", "").Replace("BTC:", "").Replace("LTC:", "").Replace("DOG:", "").Replace(@"/", @"\");
+                            file2 = @"root\" + isObject.URN.Replace("MZC:", "").Replace("BTC:", "").Replace("LTC:", "").Replace("DOG:", "").Replace("mzc:", "").Replace("btc:", "").Replace("ltc:", "").Replace("dog:", "").Replace(@"/", @"\");
                         }
 
 
@@ -1899,7 +1908,165 @@ namespace SUP.P2FK
                         {
                             isObject.Id = depth;
                             return isObject;
+                        }
 
+                    }
+
+
+
+                    //creator signed search second.
+                    findObject = transaction.Keyword.ElementAt(transaction.Keyword.Count - 2).Key;
+                    isObject = GetObjectByAddress(findObject, username, password, url, versionByte);
+                    if (isObject.URN != null && !isObject.URN.ToUpper().StartsWith("HTTP"))
+                    {
+                        if (isObject.URN.ToUpper().Contains("IPFS:"))
+                        {
+                            file2 = @"ipfs\" + isObject.URN.Replace("IPFS:", "").Replace("ipfs:", "").Replace(@"/", @"\");
+
+                            string transid = isObject.URN.Substring(5, 46);
+                            if (!System.IO.Directory.Exists("ipfs/" + transid))
+                            {
+
+                                var SUP = new Options { CreateIfMissing = true };
+                                string isLoading;
+                                lock (SupLocker)
+                                {
+                                    using (var db = new DB(SUP, @"ipfs"))
+                                    {
+                                        isLoading = db.Get(transid);
+
+                                    }
+                                }
+
+                                if (isLoading != "loading")
+                                {
+                                    lock (SupLocker)
+                                    {
+                                        using (var db = new DB(SUP, @"ipfs"))
+                                        {
+
+                                            db.Put(transid, "loading");
+
+                                        }
+                                    }
+                                    Task ipfsTask = Task.Run(() =>
+                                    {
+                                        Process process2 = new Process();
+                                        process2.StartInfo.FileName = @"ipfs\ipfs.exe";
+                                        process2.StartInfo.Arguments = "get " + transid + @" -o ipfs\" + transid;
+                                        process2.StartInfo.UseShellExecute = false;
+                                        process2.Start();
+                                        process2.WaitForExit();
+
+                                        if (System.IO.File.Exists("ipfs/" + transid))
+                                        {
+                                            System.IO.File.Move("ipfs/" + transid, "ipfs/" + transid + "_tmp");
+                                            System.IO.Directory.CreateDirectory("ipfs/" + transid);
+                                            string fileName = isObject.URN.Replace(@"//", "").Replace(@"\\", "").Substring(51);
+                                            if (fileName == "")
+                                            {
+                                                fileName = "artifact";
+                                                file2 += @"\artifact";
+                                            }
+                                            else { fileName = fileName.Replace(@"/", "").Replace(@"\", ""); }
+                                            System.IO.File.Move("ipfs/" + transid + "_tmp", @"ipfs/" + transid + @"/" + fileName);
+                                        }
+
+
+                                        //attempt to pin fails silently if daemon is not running
+                                        Process process3 = new Process
+                                        {
+                                            StartInfo = new ProcessStartInfo
+                                            {
+                                                FileName = @"ipfs\ipfs.exe",
+                                                Arguments = "pin add " + transid,
+                                                UseShellExecute = false,
+                                                CreateNoWindow = true
+                                            }
+                                        };
+                                        process3.Start();
+                                        lock (SupLocker)
+                                        {
+                                            using (var db = new DB(SUP, @"ipfs"))
+                                            {
+                                                db.Delete(transid);
+
+                                            }
+                                        }
+                                    });
+                                }
+
+
+                            }
+
+                        }
+                        else
+                        {
+
+                            string transid = isObject.URN.Replace("MZC:", "").Replace("BTC:", "").Replace("LTC:", "").Replace("DOG:", "").Replace("mzc:", "").Replace("btc:", "").Replace("ltc:", "").Replace("dog:", "").Substring(0, 64);
+                            switch (isObject.URN.ToUpper().Substring(0, 4))
+                            {
+                                case "BTC:":
+                                    if (!System.IO.Directory.Exists("root/" + transid))
+                                    {
+                                        Root.GetRootByTransactionId(transid, username, password, @"http://127.0.0.1:8332", "0");
+                                    }
+                                    break;
+                                case "MZC:":
+                                    if (!System.IO.Directory.Exists("root/" + transid))
+                                    {
+                                        Root.GetRootByTransactionId(transid, username, password, @"http://127.0.0.1:12832", "50");
+                                    }
+                                    break;
+                                case "LTC:":
+                                    if (!System.IO.Directory.Exists("root/" + transid))
+                                    {
+                                        Root.GetRootByTransactionId(transid, username, password, @"http://127.0.0.1:9332", "48");
+                                    }
+                                    break;
+                                case "DOG:":
+                                    if (!System.IO.Directory.Exists("root/" + transid))
+                                    {
+                                        Root.GetRootByTransactionId(transid, username, password, @"http://127.0.0.1:22555", "30");
+                                    }
+                                    break;
+                                default:
+                                    if (!System.IO.Directory.Exists("root/" + transid))
+                                    {
+                                        Root root = Root.GetRootByTransactionId(transid, username, password, @"http://127.0.0.1:18332");
+                                    }
+                                    break;
+                            }
+
+                            file2 = @"root\" + isObject.URN.Replace("MZC:", "").Replace("BTC:", "").Replace("LTC:", "").Replace("DOG:", "").Replace("mzc:", "").Replace("btc:", "").Replace("ltc:", "").Replace("dog:", "").Replace(@"/", @"\");
+                        }
+
+
+
+
+                        try
+                        {
+                            using (MD5 md5 = MD5.Create())
+                            {
+                                using (var stream1 = File.OpenRead(file1))
+                                using (var stream2 = File.OpenRead(file2))
+                                {
+                                    hash1 = md5.ComputeHash(stream1);
+                                    hash2 = md5.ComputeHash(stream2);
+                                }
+                            }
+                        }
+                        catch { }
+
+                    }
+
+
+                    if (isObject.URN != null && hash1.Length > 0 && StructuralComparisons.StructuralEqualityComparer.Equals(hash1, hash2) && isObject.Owners != null && isObject.ChangeDate > DateTime.Now.AddYears(-3))
+                    {
+                        if (isObject.Creators.ContainsKey(findObject))
+                        {
+                            isObject.Id = depth;
+                            return isObject;
                         }
 
                     }

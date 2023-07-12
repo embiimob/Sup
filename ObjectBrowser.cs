@@ -63,14 +63,19 @@ namespace SUP
             int skip = int.Parse(txtLast.Text);
             int qty = int.Parse(txtQty.Text);
 
-            if (address.ToUpper().StartsWith(@"SUP:"))
+            if (address.ToUpper().StartsWith(@"SUP:") || address.ToUpper().StartsWith(@"MZC:") || address.ToUpper().StartsWith(@"BTC:") || address.ToUpper().StartsWith(@"LTC:") || address.ToUpper().StartsWith(@"DOG:"))
             {
-                string urnsearch = address.Substring(6);
+                string urnsearch = address;
+                if (address.ToUpper().StartsWith(@"SUP:")) { urnsearch = address.Substring(6); } else { urnsearch = address.Substring(0, 20); }
+
                 createdObjects = new List<OBJState> { OBJState.GetObjectByURN(urnsearch, "good-user", "better-password", @"http://127.0.0.1:18332") };
 
             }
             else
             {
+
+
+
                 try { searchprofile = PROState.GetProfileByAddress(address, "good-user", "better-password", @"http://127.0.0.1:18332"); } catch { }
 
 
@@ -690,9 +695,21 @@ namespace SUP
                         foundObject.ObjectAddress.Text = objstate.Creators.First().Key;
                         foundObject.ObjectQty.Text = objstate.Owners.Values.Sum().ToString() + "x";
                         foundObject.ObjectId.Text = objstate.Id.ToString();
-                        if (objstate.Offers != null & objstate.Offers.Count > 0) { foundObject.Height = 383; BID lowestOffer = objstate.Offers.OrderBy(offer => offer.Value).FirstOrDefault(); foundObject.ObjectOffer.Text = lowestOffer.Value.ToString(); }
-                        if (objstate.Listings != null & objstate.Listings.Count > 0) { foundObject.Height = 383; BID lowestListing = objstate.Listings.Values.OrderBy(listing => listing.Value).FirstOrDefault();foundObject.ObjectPrice.Text = lowestListing.Value.ToString(); }
 
+                        //GPT3 reformed
+                        if (objstate.Offers != null && objstate.Offers.Count > 0)
+                        {
+                            foundObject.Height = 389;
+                            decimal highestValue = objstate.Offers.Max(offer => offer.Value);
+                            foundObject.ObjectOffer.Text = highestValue.ToString();
+                        }
+                        //GPT3 reformed
+                        if (objstate.Listings != null && objstate.Listings.Count > 0)
+                        {
+                            foundObject.Height = 389;
+                            decimal lowestValue = objstate.Listings.Values.Min(listing => listing.Value);
+                            foundObject.ObjectPrice.Text = lowestValue.ToString();
+                        }
 
                         OBJState isOfficial = OBJState.GetObjectByURN(objstate.URN, "good-user", "better-password", @"http://127.0.0.1:18332");
                         if (isOfficial.URN != null)
@@ -1300,7 +1317,7 @@ namespace SUP
                     {
                         flowLayoutPanel1.Controls.Clear();
                         flowLayoutPanel1.AutoScroll = false;
-
+                      
                         var webBrowser1 = new Microsoft.Web.WebView2.WinForms.WebView2();
                         webBrowser1.Size = flowLayoutPanel1.Size;
 
@@ -1312,10 +1329,9 @@ namespace SUP
                         this.Invoke((Action)(async () =>
                         {
                             await webBrowser1.EnsureCoreWebView2Async();
-                            webBrowser1.CoreWebView2.Navigate(txtSearchAddress.Text);
-                            pages.Visible = false;
+                            webBrowser1.CoreWebView2.Navigate(txtSearchAddress.Text);                            
                             flowLayoutPanel1.Controls.Add(webBrowser1);
-
+                            pages.Visible = true;
                         }));
 
                     }
@@ -1501,7 +1517,7 @@ namespace SUP
                                             flowLayoutPanel1.Controls.Add(webBrowser1);
                                             await webBrowser1.EnsureCoreWebView2Async();
                                             webBrowser1.CoreWebView2.Navigate(browserPath.Replace(@"/", @"\"));
-                                            pages.Visible = false;
+                                            pages.Visible = true;
                                         }));
 
                                     }

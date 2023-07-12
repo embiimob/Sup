@@ -2480,7 +2480,7 @@ namespace SUP
                 LevelDB.Iterator it = db.CreateIterator();
                 for (
                    it.Seek(lastKey);
-                  it.IsValid() && it.KeyAsString().StartsWith(_objectaddress) && rownum <= numChangesDisplayed + 20;
+                  it.IsValid() && it.KeyAsString().StartsWith(_objectaddress) && rownum <= numChangesDisplayed + 10;
                     it.Prev()
                  )
 

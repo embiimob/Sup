@@ -215,19 +215,23 @@ namespace SUP
                 try
                 {
 
-                    byte[] payload = new byte[21];
+                byte[] payload = new byte[21];
 
-                    using (FileStream fileStream = new FileStream(fileSource, FileMode.Open))
+                using (FileStream fileStream = new FileStream(fileSource, FileMode.Open))
+                {
+                    using (System.Security.Cryptography.SHA256 sha256 = System.Security.Cryptography.SHA256.Create())
                     {
-                        fileStream.Read(payload, 1, 20);
+                        byte[] hash = sha256.ComputeHash(fileStream);
+                        Array.Copy(hash, payload, 20);
                     }
-
-                    payload[0] = Byte.Parse("111");
-                    string objectaddress = Base58.EncodeWithCheckSum(payload);
-
-                    encodedList.Add(objectaddress);
-
                 }
+
+                payload[0] = 0x6F; // 0x6F is the hexadecimal representation of 111
+                string objectaddress = Base58.EncodeWithCheckSum(payload);
+
+                encodedList.Add(objectaddress);
+
+            }
                 catch { }
 
 
