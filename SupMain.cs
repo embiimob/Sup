@@ -115,15 +115,24 @@ namespace SUP
                     numPrivateMessagesDisplayed = 0;
                     numFriendFeedsDisplayed = 0;
                     supFlow.Controls.Clear();
-                    MakeActiveProfile(objectBrowserForm.profileURN.Links[0].LinkData.ToString());
 
-                    List<string> islocal = Root.GetPublicKeysByAddress(objectBrowserForm.profileURN.Links[0].LinkData.ToString(), "good-user", "better-password", @"http://127.0.0.1:18332");
-                    if
-                         (islocal.Count == 2)
-                    {
-                        profileOwner.ImageLocation = profileIMG.ImageLocation;
-                        profileOwner.Tag = objectBrowserForm.profileURN.Links[0].LinkData.ToString();
+                    if (profileURN.Text.StartsWith("#")) {
+                        profileBIO.Text = ""; profileCreatedDate.Text = ""; profileIMG.ImageLocation = ""; lblProcessHeight.Text = "";
+                        RefreshSupMessages();
                     }
+                    else
+                    {
+                        MakeActiveProfile(objectBrowserForm.profileURN.Links[0].LinkData.ToString());
+
+                        List<string> islocal = Root.GetPublicKeysByAddress(objectBrowserForm.profileURN.Links[0].LinkData.ToString(), "good-user", "better-password", @"http://127.0.0.1:18332");
+                        if
+                             (islocal.Count == 2)
+                        {
+                            profileOwner.ImageLocation = profileIMG.ImageLocation;
+                            profileOwner.Tag = objectBrowserForm.profileURN.Links[0].LinkData.ToString();
+                        }
+                    }
+
                 }
             }
         }
@@ -144,7 +153,7 @@ namespace SUP
 
 
 
-            if (activeProfile.URN == null) { profileURN.Text = "anon"; profileBIO.Text = ""; profileCreatedDate.Text = ""; profileIMG.ImageLocation = ""; activeProfile.Image = ""; return; }
+            if (activeProfile.URN == null) { profileURN.Text = "anon"; profileBIO.Text = ""; profileCreatedDate.Text = ""; profileIMG.ImageLocation = ""; activeProfile.Image = ""; lblProcessHeight.Text = ""; return; }
 
             profileBIO.Text = activeProfile.Bio;
             profileURN.Text = activeProfile.URN;

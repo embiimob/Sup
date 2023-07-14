@@ -33,7 +33,7 @@ namespace SUP
             _fromimageurl = fromimageurl;
             _toimageurl = toimageurl;
 
-            if (isprivate ) { btnEncryptionStatus.Text = "🤐"; }
+            if (isprivate ) { btnEncryptionStatus.Text = "PRIVATE 🤐"; }
 
         }
 
@@ -80,7 +80,7 @@ namespace SUP
                           string proccessingFile = filePath;
                             string processingid = Guid.NewGuid().ToString();
 
-                            if (btnEncryptionStatus.Text == "🤐")
+                            if (btnEncryptionStatus.Text == "PRIVATE 🤐")
                             {
                                 
                                 byte[] rootbytes = Root.GetRootBytesByFile(new string[] { filePath });
@@ -110,7 +110,7 @@ namespace SUP
                                 string hash = output.Split(' ')[1];
 
                                 PictureBox pictureBox = new PictureBox();
-                                if (btnEncryptionStatus.Text == "🤐")
+                                if (btnEncryptionStatus.Text == "PRIVATE 🤐")
                                 { pictureBox.Tag = "IPFS:" + hash + @"\SEC"; }
                                 else
                                 {
@@ -359,7 +359,7 @@ namespace SUP
             }
   
 
-            if (btnEncryptionStatus.Text == "🤐")
+            if (btnEncryptionStatus.Text == "PRIVATE 🤐")
             {
                 OBJP2FK = "SIG" + ":" + "88" + ">" + signature + OBJP2FK;
                 byte[] combinedBytes = Root.EncryptRootBytes("good-user", "better-password", "http://127.0.0.1:18332", signatureAddress, Encoding.UTF8.GetBytes(OBJP2FK), toProfile.PKX, toProfile.PKY);

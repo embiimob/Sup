@@ -76,31 +76,62 @@ namespace SUP
 
 
 
-                try { searchprofile = PROState.GetProfileByAddress(address, "good-user", "better-password", @"http://127.0.0.1:18332"); } catch { }
-
-
-                try
+                if (txtSearchAddress.Text.StartsWith("#"))
                 {
-                    if (searchprofile.URN == null)
-                    {
-                        searchprofile = PROState.GetProfileByURN(address, "good-user", "better-password", @"http://127.0.0.1:18332");
-                    }
 
-                    if (searchprofile.URN != null)
+                    this.Invoke((Action)(() =>
                     {
 
-                        this.Invoke((Action)(() =>
+                        profileURN.Links[0].LinkData = Root.GetPublicAddressByKeyword(txtSearchAddress.Text.Substring(1), "111");
+                        profileURN.LinkColor = System.Drawing.SystemColors.Highlight;
+                        profileURN.Text = txtSearchAddress.Text;
+                        
+                    }));
+
+                }
+                else
+                {
+
+
+
+
+
+                    try { searchprofile = PROState.GetProfileByAddress(address, "good-user", "better-password", @"http://127.0.0.1:18332"); } catch { }
+
+
+                    try
+                    {
+                        if (searchprofile.URN == null)
+                        {
+                            searchprofile = PROState.GetProfileByURN(address, "good-user", "better-password", @"http://127.0.0.1:18332");
+                        }
+
+                        if (searchprofile.URN != null)
                         {
 
-                            profileURN.Links[0].LinkData = searchprofile.Creators.First();
-                            profileURN.LinkColor = System.Drawing.SystemColors.Highlight;
-                            profileURN.Text = TruncateAddress(searchprofile.URN);
-                            profileCheck = searchprofile.Creators.First();
-                        }));
+                            this.Invoke((Action)(() =>
+                            {
 
+                                profileURN.Links[0].LinkData = searchprofile.Creators.First();
+                                profileURN.LinkColor = System.Drawing.SystemColors.Highlight;
+                                profileURN.Text = TruncateAddress(searchprofile.URN);
+                                profileCheck = searchprofile.Creators.First();
+                            }));
+
+                        }
+                        else
+                        {
+                            this.Invoke((Action)(() =>
+                            {
+                                profileURN.Links[0].LinkData = address;
+                                profileURN.LinkColor = System.Drawing.SystemColors.GradientActiveCaption;
+                                profileURN.Text = "anon";
+                            }));
+                        }
                     }
-                    else
+                    catch
                     {
+
                         this.Invoke((Action)(() =>
                         {
                             profileURN.Links[0].LinkData = address;
@@ -109,17 +140,6 @@ namespace SUP
                         }));
                     }
                 }
-                catch
-                {
-
-                    this.Invoke((Action)(() =>
-                    {
-                        profileURN.Links[0].LinkData = address;
-                        profileURN.LinkColor = System.Drawing.SystemColors.GradientActiveCaption;
-                        profileURN.Text = "anon";
-                    }));
-                }
-
 
                 if (btnCreated.BackColor == Color.Yellow && txtSearchAddress.Text != "")
                 {
