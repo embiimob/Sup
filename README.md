@@ -11,7 +11,7 @@ P2FK was directly inspired by the satoshi uploader  see --> https://cirosantilli
 
 ## **Installation**
 
-1. Download the Sup.v0.1.40-beta.zip file (https://github.com/embiimob/Sup/releases/download/Supv0.1.40-beta/Sup.v0.1.40-beta.zip)
+1. Download the Sup.v0.1.41-beta.zip file (https://github.com/embiimob/Sup/releases/download/Supv0.1.41-beta/Sup.v0.1.41-beta.zip)
 2. Create a folder on your **fastest** disk drive with at least **50GB** free (it will be storing the bitcoin testnet blockchain)
 3. Unzip all contents into the folder
 4. Create a shortcut to SUP.exe and launch
@@ -44,10 +44,10 @@ searches sidechain - bitcoin production by transaction id returns referenced ind
 searches sidechain - mazacoin production by transaction id returns referenced index.htm(l) in browser
 
 ### **#CaseSensitiveKeyword**
-searches mainchain for up to a 20 character case sensitive keyword and shows all object associations
+searches mainchain for up to a 20 character case sensitive keyword and shows all public message and object associations
 
 ### **@UserName**
-searches mainchain by urn - shows currently registered profile object associated with @username and shows all object associations. profile registrations are transferable and expire after 3 years of no activity allowing them to be claimed by other registrants in the future.
+searches mainchain by urn - shows currently registered profile object links associated with @username and shows all object associations. profile registrations are transferable and expire after 3 years of no activity allowing them to be claimed by other registrants in the future.
 
 ### **ipfs://QmU42aLJToYmshwJu26iprH9RsX6SfJDw3FTf6senJEdF1**
 performs a ipfs get, archives ipfs file(s) locally, pins file(s) if pinning is enabled, and opens a system folder dioluge allowing you to explore any files found
@@ -59,8 +59,8 @@ searches mainchain by urn - shows currently registered object with uri redirecti
 navigates to requested url in browser.
 <br />
 <br />
-## **Public / Private Messaging / Social**
-The disco ball has dropped you can now send direct public and private messages using Sup!?, the bitcoin testnet and #IPFS.   Search for a profile and add friends by clicking the follow button.  Click on a friend's icon to show their latest public messages. Click on the community icon to see a combination of all your friends posts in a single feed in the order that they were confirmed on the blockchain.   Search for your own profile in the object browser to login with your local account.  Click on the disco ball to send the profile you are currently browsing a public message.  Click on the 🤐 before clicking on the discon ball to send the profile you are currently browsing a private message.   Search for your own profile and click on the 🤐 icon to see any private messages sent to it.
+## **Public / Private Messaging / Social / #Keyword Search**
+The disco ball has dropped you can now send direct public and private messages using Sup!?, the bitcoin testnet and #IPFS.   Search for a profile and add friends by clicking the follow button.  Click on a friend's icon to show their latest public messages. Click on the community icon to see a combination of all your friends posts in a single feed in the order that they were confirmed on the blockchain.   Search for your own profile in the object browser to login with your local account. Sup!? search now finds and displays all public messages by #keyword.  Click on the disco ball to send the profile you are currently browsing a public message.  Click on the 🤐 before clicking on the discon ball to send the profile you are currently browsing a private message.   Search for your own profile and click on the 🤐 icon to see any private messages sent to it.
 <br />
 NOTE: all attachments in your private message are encrypted via Sup!? using the recipients public keys before they are uploaded to IPFS for delivery.
 <br />
