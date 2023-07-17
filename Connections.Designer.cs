@@ -384,7 +384,7 @@
             // 
             // btnPurge
             // 
-            this.btnPurge.Location = new System.Drawing.Point(580, 302);
+            this.btnPurge.Location = new System.Drawing.Point(569, 302);
             this.btnPurge.Name = "btnPurge";
             this.btnPurge.Size = new System.Drawing.Size(93, 23);
             this.btnPurge.TabIndex = 129;
@@ -441,7 +441,7 @@
             this.label15.Name = "label15";
             this.label15.Size = new System.Drawing.Size(116, 13);
             this.label15.TabIndex = 124;
-            this.label15.Text = "Sup!? v0.1.41-beta";
+            this.label15.Text = "Sup!? v0.1.42-beta";
             // 
             // label14
             // 

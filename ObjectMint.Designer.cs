@@ -169,7 +169,7 @@
             this.lblASCIIURN.Name = "lblASCIIURN";
             this.lblASCIIURN.Size = new System.Drawing.Size(500, 500);
             this.lblASCIIURN.TabIndex = 291;
-            this.lblASCIIURN.Text = "NME, 👑, URN and OWN fields are required to mint\r\n\r\nenter the name of an object  " +
+            this.lblASCIIURN.Text = "NME, 💎, URN and OWN fields are required to mint\r\n\r\nenter the name of an object  " +
     "in the NME field to begin\r\n\r\nor click 🔍 and enter an object address to update";
             this.lblASCIIURN.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
@@ -326,7 +326,7 @@
             this.btnObjectAddress.Padding = new System.Windows.Forms.Padding(0, 0, 0, 5);
             this.btnObjectAddress.Size = new System.Drawing.Size(109, 42);
             this.btnObjectAddress.TabIndex = 1;
-            this.btnObjectAddress.Text = "👑";
+            this.btnObjectAddress.Text = "💎";
             this.btnObjectAddress.UseVisualStyleBackColor = true;
             this.btnObjectAddress.Click += new System.EventHandler(this.btnObjectAddress_Click);
             // 

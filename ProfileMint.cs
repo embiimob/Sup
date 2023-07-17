@@ -1283,6 +1283,10 @@ namespace SUP
                     btnObjectImage.PerformClick();
                 }
             }
+            else
+            {
+                Directory.Delete(@"root\" + txtObjectAddress.Text, true);
+            }
 
         }
 
@@ -1417,6 +1421,10 @@ namespace SUP
                 lblObjectStatus.Text = "created date: [" + PRO.CreatedDate.ToString("MM / dd / yyyy hh: mm: ss") + "]  last seen:[" + PRO.ChangeDate.ToString("MM/dd/yyyy hh:mm:ss") + "]";
                 lblObjectStatus.Text = lblObjectStatus.Text.Replace("Monday, January 1, 0001", " unconfirmed ");
 
+            }        
+            else
+            {
+                Directory.Delete(@"root\" + txtObjectAddress.Text, true);
             }
 
             ismint = true;

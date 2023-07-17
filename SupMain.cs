@@ -2672,6 +2672,21 @@ namespace SUP
                             try
                             {
                                 message = System.IO.File.ReadAllText(@"root/" + supMessagePacket[1] + @"/MSG").Replace("@" + profileURN.Links[0].LinkData.ToString(), "");
+                                
+                                string relativeFolderPath = @"root\" + supMessagePacket[1];
+                                string folderPath = Path.Combine(Environment.CurrentDirectory, relativeFolderPath);
+
+                                string[] files = Directory.GetFiles(folderPath);
+                           
+                                foreach (string file in files)
+                                {
+                                    string extension = Path.GetExtension(file);
+
+                                    if (!string.IsNullOrEmpty(extension) && !file.Contains("ROOT.json"))
+                                    {
+                                        message = message + @"<<" + supMessagePacket[1] + @"/"+ Path.GetFileName(file) + ">>";                               
+                                    }
+                                }
 
                                 string fromAddress = supMessagePacket[0];
                                 string imagelocation = "";
@@ -2821,6 +2836,7 @@ namespace SUP
                                 System.Drawing.Color bgcolor = System.Drawing.Color.White;
                                 string unfilteredmessage = message;
                                 message = Regex.Replace(message, "<<.*?>>", "");
+
 
                                 CreateRow(imagelocation, fromAddress, supMessagePacket[0], DateTime.ParseExact(tstamp, "yyyyMMddHHmmss", CultureInfo.InvariantCulture), message, supMessagePacket[1], false, supFlow);
 

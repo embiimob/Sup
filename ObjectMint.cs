@@ -491,7 +491,7 @@ namespace SUP
 
                 if (txtObjectAddress.Text == "")
                 {
-                    lblASCIIURN.Text = "push 👑 to obtain a new object address";
+                    lblASCIIURN.Text = "push 💎 to obtain a new object address";
                     lblASCIIURN.Visible = true;
                     txtObjectAddress.Enabled = true;
                     btnObjectAddress.Enabled = true;
@@ -618,7 +618,7 @@ namespace SUP
             }
             else
             {
-                lblASCIIURN.Text = "push 👑 to obtain a new object address";
+                lblASCIIURN.Text = "push 💎 to obtain a new object address";
                 lblASCIIURN.Visible = true;
                 txtTitle.Enabled = true;
                 txtObjectAddress.Enabled = true;
@@ -2090,6 +2090,9 @@ namespace SUP
                 lblObjectStatus.Text = "created:[" + OBJ.CreatedDate.ToString("MM/dd/yyyy hh:mm:ss") + "]  locked:[" + OBJ.LockedDate.ToString("MM/dd/yyyy hh:mm:ss") + "]  last seen:[" + OBJ.ChangeDate.ToString("MM/dd/yyyy hh:mm:ss") + "]";
                 lblObjectStatus.Text = lblObjectStatus.Text.Replace("Monday, January 1, 0001", " unconfirmed ");
                
+            }else
+            {
+                Directory.Delete(@"root\" + txtObjectAddress.Text, true);
             }
         }
 
@@ -2512,6 +2515,10 @@ namespace SUP
                         // If there is no radio button with the text "All Rights Reserved", do nothing
                     }
                 }
+            }
+            else
+            {
+                Directory.Delete(@"root\" + txtObjectAddress.Text, true);
             }
 
         }

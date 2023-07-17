@@ -307,9 +307,9 @@
             this.label6.ForeColor = System.Drawing.Color.White;
             this.label6.Location = new System.Drawing.Point(400, 412);
             this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(21, 13);
+            this.label6.Size = new System.Drawing.Size(36, 13);
             this.label6.TabIndex = 381;
-            this.label6.Text = "qty";
+            this.label6.Text = "list qty";
             // 
             // label7
             // 
@@ -319,9 +319,9 @@
             this.label7.ForeColor = System.Drawing.Color.White;
             this.label7.Location = new System.Drawing.Point(518, 412);
             this.label7.Name = "label7";
-            this.label7.Size = new System.Drawing.Size(54, 13);
+            this.label7.Size = new System.Drawing.Size(69, 13);
             this.label7.TabIndex = 382;
-            this.label7.Text = "each cost";
+            this.label7.Text = "list each cost";
             // 
             // ObjectImage
             // 
@@ -346,9 +346,8 @@
             this.lblObjectCreatedDate.Location = new System.Drawing.Point(151, 463);
             this.lblObjectCreatedDate.Margin = new System.Windows.Forms.Padding(0);
             this.lblObjectCreatedDate.Name = "lblObjectCreatedDate";
-            this.lblObjectCreatedDate.Size = new System.Drawing.Size(136, 13);
+            this.lblObjectCreatedDate.Size = new System.Drawing.Size(0, 13);
             this.lblObjectCreatedDate.TabIndex = 386;
-            this.lblObjectCreatedDate.Text = "Tue, 27 Jun 2023 03:15:30";
             this.lblObjectCreatedDate.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
             // lblLicense
@@ -360,9 +359,8 @@
             this.lblLicense.Location = new System.Drawing.Point(154, 483);
             this.lblLicense.Margin = new System.Windows.Forms.Padding(0, 0, 3, 0);
             this.lblLicense.Name = "lblLicense";
-            this.lblLicense.Size = new System.Drawing.Size(24, 12);
+            this.lblLicense.Size = new System.Drawing.Size(0, 12);
             this.lblLicense.TabIndex = 387;
-            this.lblLicense.Text = "CC0";
             this.lblLicense.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
             // txtName
@@ -375,7 +373,6 @@
             this.txtName.Name = "txtName";
             this.txtName.Size = new System.Drawing.Size(236, 38);
             this.txtName.TabIndex = 385;
-            this.txtName.Text = "Royalty Check";
             // 
             // lblTotalOwnedDetail
             // 
@@ -387,7 +384,6 @@
             this.lblTotalOwnedDetail.Padding = new System.Windows.Forms.Padding(3);
             this.lblTotalOwnedDetail.Size = new System.Drawing.Size(161, 23);
             this.lblTotalOwnedDetail.TabIndex = 388;
-            this.lblTotalOwnedDetail.Text = "total: 100";
             this.lblTotalOwnedDetail.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
             // lblTotalRoyaltiesDetail
@@ -400,7 +396,6 @@
             this.lblTotalRoyaltiesDetail.Padding = new System.Windows.Forms.Padding(3);
             this.lblTotalRoyaltiesDetail.Size = new System.Drawing.Size(161, 23);
             this.lblTotalRoyaltiesDetail.TabIndex = 389;
-            this.lblTotalRoyaltiesDetail.Text = "royalties: 9.0 %";
             this.lblTotalRoyaltiesDetail.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
             // label8
@@ -411,9 +406,9 @@
             this.label8.ForeColor = System.Drawing.Color.White;
             this.label8.Location = new System.Drawing.Point(931, 487);
             this.label8.Name = "label8";
-            this.label8.Size = new System.Drawing.Size(54, 13);
+            this.label8.Size = new System.Drawing.Size(74, 13);
             this.label8.TabIndex = 396;
-            this.label8.Text = "each cost";
+            this.label8.Text = "buy each cost";
             // 
             // label9
             // 
@@ -423,9 +418,9 @@
             this.label9.ForeColor = System.Drawing.Color.White;
             this.label9.Location = new System.Drawing.Point(803, 487);
             this.label9.Name = "label9";
-            this.label9.Size = new System.Drawing.Size(21, 13);
+            this.label9.Size = new System.Drawing.Size(41, 13);
             this.label9.TabIndex = 395;
-            this.label9.Text = "qty";
+            this.label9.Text = "buy qty";
             // 
             // txtBuyEachCost
             // 

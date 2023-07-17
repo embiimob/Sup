@@ -28,8 +28,8 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle4 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
             this.addressTextBox = new System.Windows.Forms.TextBox();
             this.qtyTextBox = new System.Windows.Forms.TextBox();
             this.addressQtyDataGridView = new System.Windows.Forms.DataGridView();
@@ -42,7 +42,6 @@
             this.txtOBJP2FK = new System.Windows.Forms.TextBox();
             this.txtAddressListJSON = new System.Windows.Forms.TextBox();
             this.txtSignatureAddress = new System.Windows.Forms.TextBox();
-            this.button1 = new System.Windows.Forms.Button();
             this.lblObjectStatus = new System.Windows.Forms.Label();
             this.lblCost = new System.Windows.Forms.Label();
             this.txtObjectAddress = new System.Windows.Forms.TextBox();
@@ -91,8 +90,8 @@
             // 
             // address
             // 
-            dataGridViewCellStyle3.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.address.DefaultCellStyle = dataGridViewCellStyle3;
+            dataGridViewCellStyle1.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.address.DefaultCellStyle = dataGridViewCellStyle1;
             this.address.HeaderText = "recipient addres";
             this.address.MaxInputLength = 46;
             this.address.MinimumWidth = 6;
@@ -102,8 +101,8 @@
             // 
             // qty
             // 
-            dataGridViewCellStyle4.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.qty.DefaultCellStyle = dataGridViewCellStyle4;
+            dataGridViewCellStyle2.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.qty.DefaultCellStyle = dataGridViewCellStyle2;
             this.qty.HeaderText = "qty to give";
             this.qty.MinimumWidth = 6;
             this.qty.Name = "qty";
@@ -185,23 +184,11 @@
             this.txtSignatureAddress.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
             this.txtSignatureAddress.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.txtSignatureAddress.ForeColor = System.Drawing.Color.White;
-            this.txtSignatureAddress.Location = new System.Drawing.Point(76, 525);
+            this.txtSignatureAddress.Location = new System.Drawing.Point(12, 525);
             this.txtSignatureAddress.Multiline = true;
             this.txtSignatureAddress.Name = "txtSignatureAddress";
-            this.txtSignatureAddress.Size = new System.Drawing.Size(427, 53);
+            this.txtSignatureAddress.Size = new System.Drawing.Size(491, 53);
             this.txtSignatureAddress.TabIndex = 361;
-            // 
-            // button1
-            // 
-            this.button1.BackColor = System.Drawing.Color.Blue;
-            this.button1.Font = new System.Drawing.Font("Segoe UI Emoji", 13.8F);
-            this.button1.ForeColor = System.Drawing.Color.Yellow;
-            this.button1.Location = new System.Drawing.Point(12, 525);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(58, 53);
-            this.button1.TabIndex = 362;
-            this.button1.Text = "👑";
-            this.button1.UseVisualStyleBackColor = false;
             // 
             // lblObjectStatus
             // 
@@ -239,9 +226,9 @@
             this.label1.ForeColor = System.Drawing.Color.White;
             this.label1.Location = new System.Drawing.Point(12, 6);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(138, 13);
+            this.label1.Size = new System.Drawing.Size(114, 13);
             this.label1.TabIndex = 366;
-            this.label1.Text = "enter recipient address here";
+            this.label1.Text = "enter recipient address";
             // 
             // label2
             // 
@@ -261,9 +248,9 @@
             this.label3.ForeColor = System.Drawing.Color.White;
             this.label3.Location = new System.Drawing.Point(15, 427);
             this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(162, 13);
+            this.label3.Size = new System.Drawing.Size(138, 13);
             this.label3.TabIndex = 368;
-            this.label3.Text = "enter object address to give here";
+            this.label3.Text = "enter object address to give";
             // 
             // label4
             // 
@@ -290,7 +277,6 @@
             this.Controls.Add(this.txtObjectAddress);
             this.Controls.Add(this.lblCost);
             this.Controls.Add(this.lblObjectStatus);
-            this.Controls.Add(this.button1);
             this.Controls.Add(this.txtSignatureAddress);
             this.Controls.Add(this.txtOBJJSON);
             this.Controls.Add(this.txtOBJP2FK);
@@ -326,7 +312,6 @@
         private System.Windows.Forms.TextBox txtOBJP2FK;
         private System.Windows.Forms.TextBox txtAddressListJSON;
         private System.Windows.Forms.TextBox txtSignatureAddress;
-        private System.Windows.Forms.Button button1;
         private System.Windows.Forms.Label lblObjectStatus;
         private System.Windows.Forms.Label lblCost;
         private System.Windows.Forms.DataGridViewTextBoxColumn address;
