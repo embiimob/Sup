@@ -22,6 +22,7 @@ using System.Data.SqlTypes;
 using AngleSharp.Text;
 using AngleSharp.Html.Dom;
 using System.Windows.Interop;
+using Org.BouncyCastle.Utilities.Net;
 
 namespace SUP
 {
@@ -106,6 +107,7 @@ namespace SUP
                     profileURN.Enabled = true;
                     btnBlock.Enabled = true;
                     btnFollow.Enabled = true;
+                    btnHome.Enabled = true;
                     btnMute.Enabled = true;
                     btnPrivateMessage.Enabled = true;
                     btnPublicMessage.Enabled = true;
@@ -163,6 +165,7 @@ namespace SUP
 
             if (activeProfile.URL != null)
             {
+                supFlow.Controls.Clear();
                 foreach (string key in activeProfile.URL.Keys)
                 {
                     Button button = new Button();
@@ -3667,7 +3670,7 @@ namespace SUP
 
             };
 
-            msg.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 290));
+            msg.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 420));
 
             if (isprivate)
             {
@@ -3697,8 +3700,8 @@ namespace SUP
             // Set the PictureBox properties
 
             pictureBox.SizeMode = PictureBoxSizeMode.Zoom;
-            pictureBox.Width = 290;
-            pictureBox.Height = 290;
+            pictureBox.Width = 400;
+            pictureBox.Height = 400;
             pictureBox.BackColor = Color.Black;
             pictureBox.ImageLocation = imagelocation;
             pictureBox.MouseClick += (sender, e) => { Attachment_Clicked(imagelocation); };
@@ -4633,6 +4636,21 @@ namespace SUP
             }
             catch { }
 
+
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            MakeActiveProfile(profileURN.Links[0].LinkData.ToString());
+        }
+
+        private void profileBIO_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void splitContainer1_SplitterMoved(object sender, SplitterEventArgs e)
+        {
 
         }
     }
