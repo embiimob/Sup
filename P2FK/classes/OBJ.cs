@@ -2613,7 +2613,7 @@ namespace SUP.P2FK
                 return keywords;
             }
         }
-        public static object GetPublicMessagesByAddress(string objectaddress, string username, string password, string url, string versionByte = "111", int skip = 0, int qty = 20)
+        public static object GetPublicMessagesByAddress(string objectaddress, string username, string password, string url, string versionByte = "111", int skip = 0, int qty = 50)
         {
             Root.GetRootsByAddress(objectaddress, username, password, url, 0, -1, versionByte);
 
