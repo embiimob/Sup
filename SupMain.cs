@@ -23,6 +23,7 @@ using AngleSharp.Text;
 using AngleSharp.Html.Dom;
 using System.Windows.Interop;
 using Org.BouncyCastle.Utilities.Net;
+using System.Threading;
 
 namespace SUP
 {
@@ -2855,7 +2856,7 @@ namespace SUP
                                         });
 
                                         string pattern = "<<.*?>>";
-                                        List<string> imgExtensions = new List<string> { ".bmp", ".gif", ".ico", ".jpeg", ".jpg", ".png", ".tif", ".tiff" };
+                                        List<string> imgExtensions = new List<string> { ".bmp", ".gif", ".ico", ".jpeg", ".jpg", ".png", ".tif", ".tiff", ".mp4",".avi" };
 
                                         MatchCollection matches = Regex.Matches(unfilteredmessage, pattern);
                                         foreach (Match match in matches)
@@ -2879,7 +2880,7 @@ namespace SUP
                                                 }
 
                                                 string extension = Path.GetExtension(imgurn).ToLower();
-                                                if (!imgExtensions.Contains(extension))
+                                                if (!imgExtensions.Contains(extension) && !imgurn.Contains("youtube.com") && !imgurn.Contains("youtu.be"))
                                                 {
 
 
@@ -3009,10 +3010,24 @@ namespace SUP
 
                                                     if (!int.TryParse(content, out int id))
                                                     {
-                                                        this.Invoke((MethodInvoker)delegate
+
+                                                        if (extension == ".mp4" || extension == ".avi" || content.Contains("youtube.com") || content.Contains("youtu.be"))
                                                         {
-                                                            AddImage(content);
-                                                        });
+
+                                                            this.Invoke((MethodInvoker)delegate
+                                                            {
+                                                                AddVideo(content);
+                                                            });
+
+                                                        }
+                                                        else
+                                                        {
+
+                                                            this.Invoke((MethodInvoker)delegate
+                                                            {
+                                                                AddImage(content);
+                                                            });
+                                                        }
                                                     }
 
                                                 }
@@ -3346,7 +3361,7 @@ namespace SUP
                                                 result = Root.DecryptRootBytes("good-user", "better-password", @"http://127.0.0.1:18332", profileURN.Links[0].LinkData.ToString(), result2);
 
                                                 Root decryptedroot = Root.GetRootByTransactionId(transid, "good-user", "better-password", @"http://127.0.0.1:18332", "111", result, profileURN.Links[0].LinkData.ToString());
-                                                List<string> imgExtensions = new List<string> { ".bmp", ".gif", ".ico", ".jpeg", ".jpg", ".png", ".tif", ".tiff" };
+                                                List<string> imgExtensions = new List<string> { ".bmp", ".gif", ".ico", ".jpeg", ".jpg", ".png", ".tif", ".tiff",".mp4",".avi" };
 
                                                 foreach (string file in decryptedroot.File.Keys)
                                                 {
@@ -3379,10 +3394,23 @@ namespace SUP
                                                     }
                                                     else
                                                     {
-                                                        this.Invoke((MethodInvoker)delegate
+                                                        if (extension == ".mp4" || extension == ".avi")
                                                         {
-                                                            AddImage(transid + @"\" + file, true);
-                                                        });
+
+                                                            this.Invoke((MethodInvoker)delegate
+                                                            {
+                                                                AddVideo(transid + @"\" + file, true);
+                                                            });
+
+                                                        }
+                                                        else
+                                                        {
+
+                                                            this.Invoke((MethodInvoker)delegate
+                                                            {
+                                                                AddImage(transid + @"\" + file, true);
+                                                            });
+                                                        }
 
                                                     }
 
@@ -3395,10 +3423,10 @@ namespace SUP
                                             {
 
 
-                                                List<string> imgExtensions = new List<string> { ".bmp", ".gif", ".ico", ".jpeg", ".jpg", ".png", ".tif", ".tiff" };
+                                                List<string> imgExtensions = new List<string> { ".bmp", ".gif", ".ico", ".jpeg", ".jpg", ".png", ".tif", ".tiff",".mp4",".avi" };
 
                                                 string extension = Path.GetExtension(content).ToLower();
-                                                if (!imgExtensions.Contains(extension))
+                                                if (!imgExtensions.Contains(extension) && !content.Contains("youtube.com") && !content.Contains("youtu.be"))
                                                 {
                                                     WebClient client = new WebClient();
                                                     string html = "";
@@ -3493,10 +3521,23 @@ namespace SUP
                                                 }
                                                 else
                                                 {
-                                                    this.Invoke((MethodInvoker)delegate
+                                                    if (extension == ".mp4" || extension == ".avi" || content.Contains("youtube.com") || content.Contains("youtu.be"))
                                                     {
-                                                        AddImage(content, true);
-                                                    });
+
+                                                        this.Invoke((MethodInvoker)delegate
+                                                        {
+                                                            AddVideo(content,true);
+                                                        });
+
+                                                    }
+                                                    else
+                                                    {
+
+                                                        this.Invoke((MethodInvoker)delegate
+                                                        {
+                                                            AddImage(content,true);
+                                                        });
+                                                    }
 
                                                 }
 
@@ -3709,6 +3750,207 @@ namespace SUP
 
 
         }
+
+        async void AddVideo(string videopath, bool isprivate = false, bool addtoTop = false)
+        {
+            string videolocation = "";
+            if (videopath != null)
+            {
+                videolocation = videopath;
+
+
+                if (!videopath.ToLower().StartsWith("http"))
+                {
+                    videolocation = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + @"\root\" + videopath.Replace("BTC:", "").Replace("MZC:", "").Replace("LTC:", "").Replace("DOG:", "").Replace("IPFS:", "").Replace(@"/", @"\");
+                    if (videopath.ToLower().StartsWith("ipfs:")) { videolocation = videolocation.Replace(@"\root\", @"\ipfs\"); if (videopath.Length == 51) { videolocation += @"\artifact"; } }
+                }
+                else
+                {
+                    string pattern = @"(?:youtu\.be/|youtube(?:-nocookie)?\.com/(?:[^/\n\s]*[/\n\s]*(?:v/|e(?:mbed)?/|.*[?&]v=))?)?([a-zA-Z0-9_-]{11})";
+
+                    Match match = Regex.Match(videopath, pattern);
+                    if (match.Success)
+                    {
+                        videolocation = @"https://www.youtube.com/embed/" + match.Groups[1].Value;
+                    }
+
+                }
+
+                Regex regexTransactionId = new Regex(@"\b[0-9a-f]{64}\b");
+                Match imgurnmatch = regexTransactionId.Match(videolocation);
+                string transactionid = imgurnmatch.Value;
+                Root root = new Root();
+                if (!videolocation.Contains("www.youtube.com") && !File.Exists(videolocation))
+                {
+                    switch (videopath.ToUpper().Substring(0, 4))
+                    {
+                        case "MZC:":
+                            Root.GetRootByTransactionId(transactionid, "good-user", "better-password", @"http://127.0.0.1:12832", "50");
+
+                            break;
+                        case "BTC:":
+
+                            Root.GetRootByTransactionId(transactionid, "good-user", "better-password", @"http://127.0.0.1:8332", "0");
+
+                            break;
+                        case "LTC:":
+
+                            Root.GetRootByTransactionId(transactionid, "good-user", "better-password", @"http://127.0.0.1:9332", "48");
+
+
+                            break;
+                        case "DOG:":
+                            Root.GetRootByTransactionId(transactionid, "good-user", "better-password", @"http://127.0.0.1:22555", "30");
+
+                            break;
+                        case "IPFS":
+                            string transid = "empty";
+                            try { transid = videopath.Substring(5, 46); } catch { }
+
+                            if (!System.IO.Directory.Exists("ipfs/" + transid + "-build"))
+                            {
+                                try { Directory.CreateDirectory("ipfs/" + transid); } catch { };
+                                Directory.CreateDirectory("ipfs/" + transid + "-build");
+                                Process process2 = new Process();
+                                process2.StartInfo.FileName = @"ipfs\ipfs.exe";
+                                process2.StartInfo.Arguments = "get " + videopath.Substring(5, 46) + @" -o ipfs\" + transid;
+                                process2.StartInfo.UseShellExecute = false;
+                                process2.StartInfo.CreateNoWindow = true;
+                                process2.Start();
+                                process2.WaitForExit();
+                                string fileName;
+                                if (System.IO.File.Exists("ipfs/" + transid))
+                                {
+                                    System.IO.File.Move("ipfs/" + transid, "ipfs/" + transid + "_tmp");
+                                    System.IO.Directory.CreateDirectory("ipfs/" + transid);
+                                    fileName = videopath.Replace(@"//", "").Replace(@"\\", "").Substring(51);
+                                    if (fileName == "") { fileName = "artifact"; } else { fileName = fileName.Replace(@"/", "").Replace(@"\", ""); }
+                                    Directory.CreateDirectory("ipfs/" + transid);
+                                    System.IO.File.Move("ipfs/" + transid + "_tmp", videolocation);
+                                }
+
+                                if (System.IO.File.Exists("ipfs/" + transid + "/" + transid))
+                                {
+                                    fileName = videopath.Replace(@"//", "").Replace(@"\\", "").Substring(51);
+                                    if (fileName == "") { fileName = "artifact"; } else { fileName = fileName.Replace(@"/", "").Replace(@"\", ""); }
+
+                                    System.IO.File.Move("ipfs/" + transid + "/" + transid, videolocation);
+                                }
+
+
+                                Process process3 = new Process
+                                {
+                                    StartInfo = new ProcessStartInfo
+                                    {
+                                        FileName = @"ipfs\ipfs.exe",
+                                        Arguments = "pin add " + transid,
+                                        UseShellExecute = false,
+                                        CreateNoWindow = true
+                                    }
+                                };
+                                process3.Start();
+
+                                try { Directory.Delete("ipfs/" + transid + "-build", true); } catch { }
+
+
+                            }
+
+                            break;
+                        default:
+                            if (!videopath.ToUpper().StartsWith("HTTP") && transactionid != "")
+                            {
+                                Root.GetRootByTransactionId(transactionid, "good-user", "better-password", @"http://127.0.0.1:18332");
+
+                            }
+                            break;
+                    }
+                }
+
+
+
+            }
+
+
+            TableLayoutPanel msg = new TableLayoutPanel
+            {
+                RowCount = 1,
+                ColumnCount = 1,
+                Dock = DockStyle.Top,
+                BackColor = Color.Black,
+                ForeColor = Color.White,
+                AutoSize = true,
+                CellBorderStyle = TableLayoutPanelCellBorderStyle.None,
+                Margin = new System.Windows.Forms.Padding(0, 0, 0, 0),
+                Padding = new System.Windows.Forms.Padding(0)
+
+            };
+
+            msg.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 420));
+
+            if (isprivate)
+            {
+                supPrivateFlow.Controls.Add(msg);
+            }
+            else
+            {
+
+
+
+
+
+                if (addtoTop)
+                {
+                    supFlow.Controls.Add(msg);
+                    supFlow.Controls.SetChildIndex(msg, 2);
+                }
+                else
+                {
+                    supFlow.Controls.Add(msg);
+                }
+
+
+            }
+            Microsoft.Web.WebView2.WinForms.WebView2 webviewer = new Microsoft.Web.WebView2.WinForms.WebView2();
+            webviewer.AllowExternalDrop = true;
+            webviewer.BackColor = System.Drawing.Color.Black;
+            webviewer.CreationProperties = null;
+            webviewer.DefaultBackgroundColor = System.Drawing.Color.Black;
+           
+            webviewer.Name = "webviewer";
+            webviewer.Size = new System.Drawing.Size(400, 300);
+            webviewer.ZoomFactor = 1D;
+
+            string viewerPath = Path.GetDirectoryName(videolocation) + @"\urnviewer.html";
+
+            if (videolocation.Contains("www.youtube.com")){
+                try { Directory.CreateDirectory(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + @"\root\" + videolocation.Substring(29)); } catch { }
+                viewerPath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + @"\root\"+ videolocation.Substring(29) + @"\urnviewer.html"; }
+
+            string htmlstring = "<html><body><embed src=\"" + videolocation + "\" width=100% height=100% ></body></html>";
+            msg.Controls.Add(webviewer);
+
+            try
+            {
+                System.IO.File.WriteAllText(viewerPath, htmlstring);
+                await webviewer.EnsureCoreWebView2Async();
+                webviewer.CoreWebView2.Navigate(viewerPath);
+            }
+            catch
+            {
+                Thread.Sleep(1000);
+                try
+                {
+                    await webviewer.EnsureCoreWebView2Async();
+                    webviewer.CoreWebView2.Navigate(viewerPath);
+                }
+                catch { }
+            }
+
+          
+
+
+        }
+
 
         void CreateRow(string imageLocation, string ownerName, string ownerId, DateTime timestamp, string messageText, string transactionid, bool isprivate, FlowLayoutPanel layoutPanel)
         {
@@ -4225,7 +4467,6 @@ namespace SUP
         }
 
 
-
         private void Friend_Click(object sender, EventArgs e)
         {
             // Check if the user left-clicked on the PictureBox
@@ -4378,12 +4619,10 @@ namespace SUP
                             if (!int.TryParse(content, out int id) && !content.Trim().StartsWith("#"))
                             {
 
-
-
-                                List<string> imgExtensions = new List<string> { ".bmp", ".gif", ".ico", ".jpeg", ".jpg", ".png", ".tif", ".tiff" };
+                                List<string> imgExtensions = new List<string> { ".bmp", ".gif", ".ico", ".jpeg", ".jpg", ".png", ".tif", ".tiff" ,".mp4",".avi"};
 
                                 string extension = Path.GetExtension(content).ToLower();
-                                if (!imgExtensions.Contains(extension))
+                                if (!imgExtensions.Contains(extension) && !content.Contains("youtube.com") && !content.Contains("youtu.be"))
                                 {
                                     WebClient client = new WebClient();
                                     string html = "";
@@ -4478,10 +4717,25 @@ namespace SUP
                                 }
                                 else
                                 {
-                                    this.Invoke((MethodInvoker)delegate
-                                    {
-                                        AddImage(content);
-                                    });
+
+                                        if (extension == ".mp4" || extension == ".avi" || content.Contains("youtube.com") || content.Contains("youtu.be"))
+                                        {
+
+                                            this.Invoke((MethodInvoker)delegate
+                                            {
+                                                AddVideo(content);
+                                            });
+
+                                        }
+                                        else
+                                        {
+
+                                            this.Invoke((MethodInvoker)delegate
+                                            {
+                                                AddImage(content);
+                                            });
+                                        }
+                                    
 
                                 }
 
@@ -4644,14 +4898,6 @@ namespace SUP
             MakeActiveProfile(profileURN.Links[0].LinkData.ToString());
         }
 
-        private void profileBIO_Click(object sender, EventArgs e)
-        {
 
-        }
-
-        private void splitContainer1_SplitterMoved(object sender, SplitterEventArgs e)
-        {
-
-        }
     }
 }

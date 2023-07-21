@@ -85,7 +85,6 @@
             this.splitContainer1.SplitterDistance = 497;
             this.splitContainer1.SplitterWidth = 10;
             this.splitContainer1.TabIndex = 0;
-            this.splitContainer1.SplitterMoved += new System.Windows.Forms.SplitterEventHandler(this.splitContainer1_SplitterMoved);
             this.splitContainer1.DoubleClick += new System.EventHandler(this.splitContainer1_DoubleClick);
             // 
             // splitContainer2
@@ -337,7 +336,6 @@
             this.profileBIO.Name = "profileBIO";
             this.profileBIO.Size = new System.Drawing.Size(309, 85);
             this.profileBIO.TabIndex = 2;
-            this.profileBIO.Click += new System.EventHandler(this.profileBIO_Click);
             // 
             // profileIMG
             // 
