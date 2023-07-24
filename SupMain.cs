@@ -24,6 +24,8 @@ using AngleSharp.Html.Dom;
 using System.Windows.Interop;
 using Org.BouncyCastle.Utilities.Net;
 using System.Threading;
+using System.Drawing.Imaging;
+using System.Windows.Media.TextFormatting;
 
 namespace SUP
 {
@@ -56,6 +58,25 @@ namespace SUP
         private void SupMaincs_Load(object sender, EventArgs e)
         {
             if (Directory.Exists("root")) { lblAdultsOnly.Visible = false; }
+
+
+            //remove any partialy built IPFS files
+            try
+            {
+                string[] subfolderNames = Directory.GetDirectories("ipfs");
+
+                foreach (string subfolder in subfolderNames)
+                {
+                    if (subfolder.EndsWith("-build"))
+                    {
+                        Directory.Delete(subfolder, true);
+                    }
+
+                }
+
+            }
+            catch { }
+
 
             OBcontrol.Dock = DockStyle.Fill;
             OBcontrol.ProfileURNChanged += OBControl_ProfileURNChanged;
@@ -120,7 +141,12 @@ namespace SUP
                     supFlow.Controls.Clear();
 
                     if (profileURN.Text.StartsWith("#")) {
-                        profileBIO.Text = ""; profileCreatedDate.Text = ""; profileIMG.ImageLocation = ""; lblProcessHeight.Text = "";
+                        profileBIO.Text = "Click the follow button to add this search to your community feed."; profileCreatedDate.Text = ""; profileIMG.ImageLocation = ""; lblProcessHeight.Text = "";
+
+                        GenerateImage(profileURN.Text);
+
+                        profileIMG.ImageLocation = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + @"\root\keywords\" + profileURN.Text + ".png";
+
                         RefreshSupMessages();
                     }
                     else
@@ -4360,7 +4386,8 @@ namespace SUP
 
         private void btnPublicMessage_Click(object sender, EventArgs e)
         {
-         
+            refreshFriendFeed.BackColor = System.Drawing.Color.White;
+            refreshFriendFeed.ForeColor = System.Drawing.Color.Black;
             RefreshSupMessages();
             if (btnPublicMessage.BackColor == Color.White)
             {
@@ -4393,7 +4420,8 @@ namespace SUP
 
         private void btnPrivateMessage_Click(object sender, EventArgs e)
         {
-           
+            refreshFriendFeed.BackColor = System.Drawing.Color.White;
+            refreshFriendFeed.ForeColor = System.Drawing.Color.Black;
 
             RefreshPrivateSupMessages();
 
@@ -4434,6 +4462,15 @@ namespace SUP
         private void btnFollow_Click(object sender, EventArgs e)
         {
 
+            Dictionary<string, string> friendDict = new Dictionary<string, string>();
+
+
+            foreach (PictureBox pb in flowFollow.Controls)
+            {
+
+                try { friendDict.Add(pb.Tag.ToString(), pb.ImageLocation); } catch { }
+            }
+
             // Create a new PictureBox
             PictureBox pictureBox = new PictureBox();
 
@@ -4448,17 +4485,12 @@ namespace SUP
             pictureBox.Click += new EventHandler(Friend_Click);
             pictureBox.MouseUp += new System.Windows.Forms.MouseEventHandler(Friend_MouseUp);
 
+            try {
+                friendDict.Add(profileURN.Links[0].LinkData.ToString(), profileIMG.ImageLocation);
+                flowFollow.Controls.Add(pictureBox);
+            } catch { }
             // Add the PictureBox to the FlowLayoutPanel
-            flowFollow.Controls.Add(pictureBox);
-
-            Dictionary<string, string> friendDict = new Dictionary<string, string>();
-
-
-            foreach (PictureBox pb in flowFollow.Controls)
-            {
-
-                try { friendDict.Add(pb.Tag.ToString(), pb.ImageLocation); } catch { }
-            }
+                     
 
             string json = JsonConvert.SerializeObject(friendDict);
             string filePath = @"root\MyFriendList.Json";
@@ -4472,13 +4504,34 @@ namespace SUP
             // Check if the user left-clicked on the PictureBox
             if (((System.Windows.Forms.MouseEventArgs)e).Button == MouseButtons.Left)
             {
-                // Get the tag text from the PictureBox
-                string address = ((PictureBox)sender).Tag.ToString();
                 numMessagesDisplayed = 0;
                 numFriendFeedsDisplayed = 0;
                 numPrivateMessagesDisplayed = 0;
+                refreshFriendFeed.BackColor = System.Drawing.Color.White;
+                refreshFriendFeed.ForeColor = System.Drawing.Color.Black;
+                btnPrivateMessage.BackColor = System.Drawing.Color.White;
+                btnPrivateMessage.ForeColor = System.Drawing.Color.Black;
+                btnPublicMessage.BackColor = Color.Blue;
+                btnPublicMessage.ForeColor = Color.Yellow;
                 supPrivateFlow.Controls.Clear();
-                MakeActiveProfile(address);
+
+                if (!((PictureBox)sender).ImageLocation.ToString().Contains(@"root\keywords") ){
+                    // Get the tag text from the PictureBox
+                    string address = ((PictureBox)sender).Tag.ToString();
+                    MakeActiveProfile(address);
+                        }
+                else
+                {
+
+                    profileBIO.Text = ""; profileCreatedDate.Text = ""; profileIMG.ImageLocation = ""; lblProcessHeight.Text = "";
+                    profileURN.Links[0].LinkData = ((PictureBox)sender).Tag.ToString();
+                    profileURN.Text = Path.GetFileNameWithoutExtension(((PictureBox)sender).ImageLocation.ToString());
+                    profileIMG.ImageLocation = ((PictureBox)sender).ImageLocation.ToString();
+                    //string address = ((PictureBox)sender).Tag.ToString();
+                   // MakeActiveProfile(address);
+
+                }
+
                 RefreshSupMessages();
 
             }
@@ -4502,11 +4555,20 @@ namespace SUP
                 string json = JsonConvert.SerializeObject(friendDict);
                 string filePath = @"root\MyFriendList.Json";
                 File.WriteAllText(filePath, json);
+                try { File.Delete(@"root\MyFriendFeed.Json"); } catch { }
+                numFriendFeedsDisplayed = 0;
             }
         }
 
         private void refreshFriendFeed_Click(object sender, EventArgs e)
         {
+            refreshFriendFeed.BackColor = System.Drawing.Color.Blue;
+            refreshFriendFeed.ForeColor = System.Drawing.Color.Yellow;
+            btnPublicMessage.BackColor = System.Drawing.Color.White;
+            btnPrivateMessage.BackColor = System.Drawing.Color.White;
+            btnPublicMessage.ForeColor = System.Drawing.Color.Black;
+            btnPrivateMessage.ForeColor = System.Drawing.Color.Black;
+
             refreshFriendFeed.Enabled = false;
             numMessagesDisplayed = 0;
             List<string> friendFeed = new List<string>();
@@ -4896,7 +4958,76 @@ namespace SUP
         private void button1_Click(object sender, EventArgs e)
         {
             MakeActiveProfile(profileURN.Links[0].LinkData.ToString());
+            numMessagesDisplayed = 0;
+            refreshFriendFeed.BackColor = System.Drawing.Color.White;
+            refreshFriendFeed.ForeColor = System.Drawing.Color.Black;
         }
+
+        //GPT3
+        static void GenerateImage(string text)
+        {
+            // Set the image size
+            int width = 1000;
+            int height = 1000;
+
+            if (!Directory.Exists(@"root\keywords")) { Directory.CreateDirectory(@"root\keywords"); }
+
+            // Create a new bitmap image with the specified size
+            using (Bitmap bmp = new Bitmap(width, height))
+            {
+                // Create a graphics object to draw on the image
+                using (Graphics graphics = Graphics.FromImage(bmp))
+                {
+                    // Clear the image with a random background color
+                    Random random = new Random();
+                    int red = random.Next(128, 256); // From 128 to 255 (avoiding very dark colors)
+                    int green = random.Next(128, 256);
+                    int blue = random.Next(128, 256);
+                    
+                    graphics.Clear(Color.FromArgb(red, green, blue));
+
+                    // Set up the font and text formatting
+                    float fontSize = 150;
+                    FontFamily fontFamily = FontFamily.GenericSansSerif;
+                    Font font = null;
+
+                    // Declare textSize outside the loop
+                    SizeF textSize;
+
+                    // Calculate the font size dynamically based on the image size and text length
+                    while (true)
+                    {
+                        font?.Dispose();
+                        font = new Font(fontFamily, fontSize);
+                        textSize = graphics.MeasureString(text, font);
+                        if (textSize.Width < width && textSize.Height < height)
+                            break;
+
+                        fontSize -= 1;
+                    }
+
+                    StringFormat stringFormat = new StringFormat
+                    {
+                        Alignment = StringAlignment.Center,
+                        LineAlignment = StringAlignment.Center
+                    };
+
+                    // Calculate the center positions for the text
+                    float x = 0;//(width - textSize.Width) / 2;
+                    float y = 0; //(height - textSize.Height) / 2;
+
+                    graphics.DrawString(text, font, Brushes.Black, new RectangleF(x, y, width, height), stringFormat);
+
+                    // Save the image to the specified folder
+                    string filePath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + @"\root\keywords\" + text + ".png";
+                    bmp.Save(filePath, ImageFormat.Png);
+                }
+            }
+        }
+
+
+
+
 
 
     }

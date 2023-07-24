@@ -47,6 +47,7 @@ namespace SUP.P2FK
             bool fetched = false;
             string diskpath = "root\\" + transactionid + "\\";
             string P2FKJSONString = null;
+            string isMuted;
             if (rootbytes == null)
             {
                 try
@@ -54,6 +55,12 @@ namespace SUP.P2FK
 
                     P2FKJSONString = System.IO.File.ReadAllText(diskpath + "ROOT.json");
                     P2FKRoot = JsonConvert.DeserializeObject<Root>(P2FKJSONString);
+                    var MUTE = new Options { CreateIfMissing = true };
+                    using (var db = new DB(MUTE, @"root\mute"))
+                    {
+                        isMuted = db.Get(P2FKRoot.SignedBy);
+                    }
+
                     return P2FKRoot;
 
                 }
@@ -441,7 +448,7 @@ namespace SUP.P2FK
             System.IO.File.WriteAllText(@"root\" + P2FKRoot.TransactionId + @"\" + "ROOT.json", rootSerialized);
 
 
-            string isMuted;
+
 
             if (P2FKRoot.BlockDate.Year > 1975)
             {

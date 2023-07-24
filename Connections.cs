@@ -497,22 +497,21 @@ namespace SUP
 
         private void button2_Click_1(object sender, EventArgs e)
         {
-            string[] files = Directory.GetFiles("ipfs");
-
-            foreach (string file in files)
+            try
             {
-                // Delete the file
-                if (!file.Contains("ipfs.exe"))
+                string[] subfolderNames = Directory.GetDirectories("ipfs");
+
+                foreach (string subfolder in subfolderNames)
                 {
-                    File.Delete(file);
+                    if (subfolder.EndsWith("-build"))
+                    {
+                        Directory.Delete(subfolder, true);
+                    }
+                    
                 }
-            }
-
-            foreach (string directory in Directory.GetDirectories("ipfs"))
-            {
-                try { Directory.Delete(directory, false); } catch { }
                
             }
+            catch { }
 
 
 
