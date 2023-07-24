@@ -37,6 +37,8 @@ namespace SUP
         private List<string> MZCMemPool = new List<string>();
         private List<string> LTCMemPool = new List<string>();
         private List<string> DOGMemPool = new List<string>();
+        List<Microsoft.Web.WebView2.WinForms.WebView2> webviewers = new List<Microsoft.Web.WebView2.WinForms.WebView2>();
+
         private bool ipfsActive;
         private bool btctActive;
         private bool btcActive;
@@ -2671,6 +2673,11 @@ namespace SUP
             // Clear controls if no messages have been displayed yet
             if (numMessagesDisplayed == 0)
             {
+
+                foreach (var viewer in webviewers)
+                {
+                    viewer.Dispose();
+                }
                 supFlow.Controls.Clear();
             }
             if (profileURN.Links[0].LinkData != null)
@@ -3113,6 +3120,12 @@ namespace SUP
             if (numPrivateMessagesDisplayed == 0)
             {
                 splitContainer1.Panel2.Controls.Clear();
+
+
+                foreach (var viewer in webviewers)
+                {
+                    viewer.Dispose();
+                }
                 supPrivateFlow.Controls.Clear();
                 supPrivateFlow.Dock = DockStyle.Fill;
                 supPrivateFlow.AutoScroll = true;
@@ -3953,7 +3966,9 @@ namespace SUP
                 viewerPath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + @"\root\"+ videolocation.Substring(29) + @"\urnviewer.html"; }
 
             string htmlstring = "<html><body><embed src=\"" + videolocation + "\" width=100% height=100% ></body></html>";
+            webviewers.Add(webviewer);
             msg.Controls.Add(webviewer);
+           
 
             try
             {
@@ -3971,12 +3986,9 @@ namespace SUP
                 }
                 catch { }
             }
-
-          
-
+                      
 
         }
-
 
         void CreateRow(string imageLocation, string ownerName, string ownerId, DateTime timestamp, string messageText, string transactionid, bool isprivate, FlowLayoutPanel layoutPanel)
         {
@@ -4573,7 +4585,15 @@ namespace SUP
             numMessagesDisplayed = 0;
             List<string> friendFeed = new List<string>();
 
-            if (numFriendFeedsDisplayed == 0) { supFlow.Controls.Clear(); }
+            if (numFriendFeedsDisplayed == 0) {
+
+                foreach (var viewer in webviewers)
+                {
+                    viewer.Dispose();
+                }
+
+                supFlow.Controls.Clear();
+                 }
 
             if (File.Exists(@"root\MyFriendList.Json"))
             {
