@@ -1,5 +1,6 @@
 ﻿using LevelDB;
 using NBitcoin.RPC;
+using SUP.P2FK;
 using System;
 using System.Diagnostics;
 using System.Drawing;
@@ -7,6 +8,7 @@ using System.IO;
 using System.Net;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.Windows.Shapes;
 
 namespace SUP
 {
@@ -318,7 +320,7 @@ namespace SUP
 
                 foreach (string subfolder in subfolderNames)
             {
-                string hash = Path.GetFileName(subfolder);
+                string hash = System.IO.Path.GetFileName(subfolder);
 
                     try { Directory.Delete(subfolder); } catch { }
                 // Call the Kubo local Pin command using the hash
@@ -345,7 +347,7 @@ namespace SUP
 
             foreach (string subfolder in subfolderNames)
             {
-                string hash = Path.GetFileName(subfolder);
+                string hash = System.IO.Path.GetFileName(subfolder);
 
                 // Call the Kubo local Pin command using the hash
                 Process process2 = new Process
@@ -392,44 +394,8 @@ namespace SUP
 
         private void btnPurge_Click(object sender, EventArgs e)
         {
-
-            string directoryPath = @"root";
-            
-
-                // Get a list of all the subdirectories in the directory
-             try{   string[] subdirectories = Directory.GetDirectories(directoryPath);
-
-                // Loop through each subdirectory
-                foreach (string subdirectory in subdirectories)
-                {
-                    // Get the name of the subdirectory
-                    string subdirectoryName = Path.GetFileName(subdirectory);
-
-                    // Check if the subdirectory name is "mute" or "block"
-                    if (subdirectoryName != "mute" && subdirectoryName != "block")
-                    {
-                        // Delete the subdirectory and all its contents
-                        try { Directory.Delete(subdirectory, true); } catch { }
-                    }
-                }
-
-                // Get a list of all the files in the directory
-                string[] files = Directory.GetFiles(directoryPath);
-
-                // Loop through each file
-                foreach (string file in files)
-                {
-                    // Delete the file
-                    try
-                    {
-                        File.Delete(file);
-                    }
-                    catch { }
-                }
-            }
-            catch{ 
-                Directory.CreateDirectory("root"); }
-
+        
+             try{ Directory.Delete("root", true);} catch{ }
 
         }
 
@@ -519,26 +485,64 @@ namespace SUP
 
         private void btnPurgeBlock_Click(object sender, EventArgs e)
         {
-            string directoryPath = @"root";
-
-            // Get a list of all the subdirectories in the directory
-            try { string[] subdirectories = Directory.GetDirectories(directoryPath); 
-
-            // Loop through each subdirectory
-            foreach (string subdirectory in subdirectories)
+            try
             {
-                // Get the name of the subdirectory
-                string subdirectoryName = Path.GetFileName(subdirectory);
+                string directoryPath = @"root";
 
-                // Check if the subdirectory name is "mute" or "block"
-                if (subdirectoryName == "oblock" || subdirectoryName == "tblock")
+
+
+                // Get a list of all the subdirectories in the directory
+                string[] subdirectories = Directory.GetDirectories(directoryPath);
+
+                // Loop through each subdirectory
+                foreach (string subdirectory in subdirectories)
                 {
-                    // Delete the subdirectory and all its contents
-                    Directory.Delete(subdirectory, true);
+                    try
+                    {
+                        // Get the files in the subdirectory
+                        string[] files = Directory.GetFiles(subdirectory);
+
+                        // Loop through each file in the subdirectory
+                        foreach (string file in files)
+                        {
+                            // Get the name of the file
+                            string fileName = System.IO.Path.GetFileName(file);
+
+                            // Check if the file name is "BLOCK" (case-insensitive check)
+                            if (fileName.Equals("BLOCK", StringComparison.OrdinalIgnoreCase))
+                            {
+                                string[] pathParts = file.Split('\\');
+
+
+
+                                Root[] root = Root.GetRootsByAddress(pathParts[pathParts.Length - 2], "good-user", "better-password", @"http://127.0.0.1:18332");
+
+                                foreach (Root rootItem in root)
+                                {
+
+                                    try
+                                    {
+                                        Directory.Delete(@"root\" + rootItem.TransactionId, true);
+                                    }
+                                    catch { }
+
+                                    foreach (string key in rootItem.Keyword.Keys)
+                                    {
+                                        try { Directory.Delete(@"root\" + key, true); } catch { }
+                                    }
+
+                                }
+
+
+                                // Delete the Directory
+                                try { Directory.Delete(subdirectory, true); } catch { }
+                            }
+                        }
+                    }
+                    catch { }
                 }
             }
-            }
-            catch { Directory.CreateDirectory("root"); }
+            catch { }
 
         }
 
@@ -546,44 +550,59 @@ namespace SUP
         {
             string directoryPath = @"root";
 
-            // Get a list of all the subdirectories in the directory
-            string[] subdirectories = Directory.GetDirectories(directoryPath);
-
-            // Loop through each subdirectory
-            foreach (string subdirectory in subdirectories)
+            try
             {
-                // Get the name of the subdirectory
-                string subdirectoryName = Path.GetFileName(subdirectory);
+                // Get a list of all the subdirectories in the directory
+                string[] subdirectories = Directory.GetDirectories(directoryPath);
 
-                // Check if the subdirectory name is "mute" or "block"
-                if (subdirectoryName == "mute")
+                // Loop through each subdirectory
+                foreach (string subdirectory in subdirectories)
                 {
-                    // Delete the subdirectory and all its contents
-                    Directory.Delete(subdirectory, true);
+                    // Get the files in the subdirectory
+                    string[] files = Directory.GetFiles(subdirectory);
+
+                    // Loop through each file in the subdirectory
+                    foreach (string file in files)
+                    {
+                        // Get the name of the file
+                        string fileName = System.IO.Path.GetFileName(file);
+
+                        // Check if the file name is "BLOCK" (case-insensitive check)
+                        if (fileName.Equals("MUTE", StringComparison.OrdinalIgnoreCase))
+                        {
+                            // Delete the file
+                            File.Delete(file);
+                        }
+                    }
                 }
             }
+            catch { }
         }
 
         private void btnPurgeFound_Click(object sender, EventArgs e)
         {
-            string directoryPath = @"root";
-
-            // Get a list of all the subdirectories in the directory
-            string[] subdirectories = Directory.GetDirectories(directoryPath);
-
-            // Loop through each subdirectory
-            foreach (string subdirectory in subdirectories)
+            try
             {
-                // Get the name of the subdirectory
-                string subdirectoryName = Path.GetFileName(subdirectory);
+                string directoryPath = @"root";
 
-                // Check if the subdirectory name is "mute" or "block"
-                if (subdirectoryName == "found")
+                // Get a list of all the subdirectories in the directory
+                string[] subdirectories = Directory.GetDirectories(directoryPath);
+
+                // Loop through each subdirectory
+                foreach (string subdirectory in subdirectories)
                 {
-                    // Delete the subdirectory and all its contents
-                    Directory.Delete(subdirectory, true);
+                    // Get the name of the subdirectory
+                    string subdirectoryName = System.IO.Path.GetFileName(subdirectory);
+
+                    // Check if the subdirectory name is "mute" or "block"
+                    if (subdirectoryName == "found")
+                    {
+                        // Delete the subdirectory and all its contents
+                        Directory.Delete(subdirectory, true);
+                    }
                 }
             }
+            catch { }
         }
     }
 }

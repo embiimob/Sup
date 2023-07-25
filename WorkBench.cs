@@ -941,19 +941,7 @@ namespace SUP
 
             try
             {
-                var WORK = new Options { CreateIfMissing = true };
-                using (var db = new DB(WORK, @"root\oblock"))
-                {
-                    db.Put(txtSearchAddress.Text, "true");
-
-                }
-                var WORK2 = new Options { CreateIfMissing = true };
-                using (var db = new DB(WORK2, @"root\oblock2"))
-                {
-                    db.Put(txtSearchAddress.Text, "true");
-
-                }
-
+                
                 var SUP = new Options { CreateIfMissing = true };
                 var keysToDelete = new HashSet<string>(); // Create a new HashSet to store the keys to delete
 
@@ -990,11 +978,6 @@ namespace SUP
                 foreach (Root rootItem in root)
                 {
 
-                    using (var db = new DB(WORK, @"root\tblock"))
-                    {
-                        db.Put(rootItem.TransactionId, "true");
-
-                    }
                     try
                     {
                         Directory.Delete(@"root\" + rootItem.TransactionId, true);
@@ -1028,10 +1011,16 @@ namespace SUP
                     }
                     catch { }
 
-                    Directory.Delete(@"root\" + txtSearchAddress.Text, true);
+
 
                 }
                 catch { }
+
+                try { Directory.Delete(@"root\" + txtSearchAddress.Text, true); Directory.CreateDirectory(@"root\" + txtSearchAddress.Text); } catch { }
+                using (FileStream fs = File.Create(@"root\" + txtSearchAddress.Text + @"\BLOCK"))
+                {
+                  
+                }
             }
             catch { }
 
@@ -1040,29 +1029,43 @@ namespace SUP
 
         private void ButtonUnBlockAddressClick(object sender, EventArgs e)
         {
-            var WORK = new Options { CreateIfMissing = true };
-            using (var db = new DB(WORK, @"root\oblock"))
+            try { Directory.Delete(@"root\" + txtSearchAddress.Text); } catch { }
+
+
+            Root[] root = Root.GetRootsByAddress(txtSearchAddress.Text, "good-user", "better-password", @"http://127.0.0.1:18332");
+
+            foreach (Root rootItem in root)
             {
-                db.Delete(txtSearchAddress.Text);
+
+                try
+                {
+                    Directory.Delete(@"root\" + rootItem.TransactionId, true);
+                }
+                catch { }
+
+                foreach (string key in rootItem.Keyword.Keys)
+                {
+                    try { Directory.Delete(@"root\" + key, true); } catch { }
+                }
+
             }
+
+            try { Directory.Delete(@"root\" + txtSearchAddress.Text); } catch { }
+
         }
 
         private void ButtonMuteAddressClick(object sender, EventArgs e)
         {
-            var WORK = new Options { CreateIfMissing = true };
-            using (var db = new DB(WORK, @"root\mute"))
+            using (FileStream fs = File.Create(@"root\" + txtSearchAddress.Text + @"\MUTE"))
             {
-                db.Put(txtSearchAddress.Text, "true");
+
             }
         }
 
         private void ButtonUnMuteAddressClick(object sender, EventArgs e)
         {
-            var WORK = new Options { CreateIfMissing = true };
-            using (var db = new DB(WORK, @"root\mute"))
-            {
-                db.Delete(txtSearchAddress.Text);
-            }
+            try { File.Delete(@"root\" + txtSearchAddress.Text + @"\MUTE"); } catch { }
+
         }
 
         private void DisplayRootJSON(JObject[] jsonObject)

@@ -128,15 +128,6 @@ namespace SUP
 
                     profileURN.Links[0].LinkData = objectBrowserForm.profileURN.Links[0].LinkData;
                     profileURN.Text = objectBrowserForm.profileURN.Text;
-                    profileURN.Enabled = true;
-                    btnBlock.Enabled = true;
-                    btnFollow.Enabled = true;
-                    btnHome.Enabled = true;
-                    btnMute.Enabled = true;
-                    btnPrivateMessage.Enabled = true;
-                    btnPublicMessage.Enabled = true;
-                    btnDisco.Enabled = true;
-
                     numMessagesDisplayed = 0;
                     numPrivateMessagesDisplayed = 0;
                     numFriendFeedsDisplayed = 0;
@@ -148,13 +139,16 @@ namespace SUP
                         GenerateImage(profileURN.Text);
 
                         profileIMG.ImageLocation = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + @"\root\keywords\" + profileURN.Text + ".png";
+                        btnPublicMessage.BackColor = Color.Blue;
+                        btnPublicMessage.ForeColor = Color.Yellow;
 
                         RefreshSupMessages();
                     }
                     else
                     {
                         MakeActiveProfile(objectBrowserForm.profileURN.Links[0].LinkData.ToString());
-
+                        btnPublicMessage.BackColor = Color.White;
+                        btnPublicMessage.ForeColor = Color.Black;
                         List<string> islocal = Root.GetPublicKeysByAddress(objectBrowserForm.profileURN.Links[0].LinkData.ToString(), "good-user", "better-password", @"http://127.0.0.1:18332");
                         if
                              (islocal.Count == 2)
@@ -526,24 +520,23 @@ namespace SUP
             }
         }
 
-
         //GPT3
         private void btnMint_Click(object sender, EventArgs e)
         {
+            btnMint.Text = "💎";
+            numPrivateMessagesDisplayed = 0;
+            splitContainer1.Panel2.Controls.Clear();
+            splitContainer1.Panel2.Controls.Add(OBcontrol);
+
+
             if (splitContainer1.Panel2Collapsed)
             {
-                splitContainer1.Panel2Collapsed = false;
+                splitContainer1.Panel2Collapsed = false;               
+
             }
             else
             {
-                if (splitContainer1.Panel2.Controls.Contains(supPrivateFlow))
-                {
-                    splitContainer1.Panel2.Controls.Clear();
-                    numPrivateMessagesDisplayed = 0;
-                    splitContainer1.Panel2.Controls.Add(OBcontrol);
-                }
-                else
-                {
+ 
                     // Create the form that will contain the buttons
                     CustomForm buttonForm = new CustomForm();
                     buttonForm.BackColor = Color.White;
@@ -592,7 +585,7 @@ namespace SUP
                     buttonForm.StartPosition = FormStartPosition.CenterParent;
                     buttonForm.ShowDialog(this);
                     buttonForm.Focus();
-                }
+                
             }
         }
 
@@ -619,7 +612,6 @@ namespace SUP
                 base.WndProc(ref m);
             }
         }
-
 
         private async void btnLive_Click(object sender, EventArgs e)
         {
@@ -764,7 +756,6 @@ namespace SUP
 
             }
         }
-
 
         private void AddToSearchResults(List<OBJState> objects)
         {
@@ -3131,6 +3122,8 @@ namespace SUP
                 supPrivateFlow.AutoScroll = true;
                 splitContainer1.Panel2.Controls.Add(supPrivateFlow);
             }
+            if (profileURN.Links[0].LinkData == null) { btnPrivateMessage.Enabled = true; return; }
+
             Task BuildMessage = Task.Run(() =>
             {
 
@@ -3618,7 +3611,12 @@ namespace SUP
                     numPrivateMessagesDisplayed += 10;
                     supPrivateFlow.ResumeLayout();
                 }
-                catch { }
+                catch {
+                    this.Invoke((MethodInvoker)delegate
+                    {
+                        btnPrivateMessage.Enabled = true;
+                    });
+                }
 
                 this.Invoke((MethodInvoker)delegate
                 {
@@ -4432,26 +4430,26 @@ namespace SUP
 
         private void btnPrivateMessage_Click(object sender, EventArgs e)
         {
-            refreshFriendFeed.BackColor = System.Drawing.Color.White;
-            refreshFriendFeed.ForeColor = System.Drawing.Color.Black;
+
+
+            btnPrivateMessage.BackColor = Color.Blue;
+            btnPrivateMessage.ForeColor = Color.Yellow;
+            btnMint.Text = "🔍";
 
             RefreshPrivateSupMessages();
 
-            if (btnPrivateMessage.BackColor == Color.White)
+
+            if (splitContainer1.Panel2Collapsed)
             {
-                if (splitContainer1.Panel2Collapsed)
-                {
-                    splitContainer1.Panel2Collapsed = false;
-                }
-
-                btnPrivateMessage.BackColor = Color.Blue; btnPrivateMessage.ForeColor = Color.Yellow;
-
-                btnPublicMessage.BackColor = Color.White;
-                btnPublicMessage.ForeColor = Color.Black;
+                splitContainer1.Panel2Collapsed = false;
             }
-          
 
+            btnPublicMessage.BackColor = Color.White;
+            btnPublicMessage.ForeColor = Color.Black;
+            refreshFriendFeed.BackColor = Color.White;
+            refreshFriendFeed.ForeColor = Color.Black;
         }
+           
 
         private void btnRefresh_Click(object sender, EventArgs e)
         {
@@ -4539,8 +4537,6 @@ namespace SUP
                     profileURN.Links[0].LinkData = ((PictureBox)sender).Tag.ToString();
                     profileURN.Text = Path.GetFileNameWithoutExtension(((PictureBox)sender).ImageLocation.ToString());
                     profileIMG.ImageLocation = ((PictureBox)sender).ImageLocation.ToString();
-                    //string address = ((PictureBox)sender).Tag.ToString();
-                   // MakeActiveProfile(address);
 
                 }
 
@@ -4869,20 +4865,21 @@ namespace SUP
         {
             if (btnMute.Text == "mute")
             {
-                var WORK = new Options { CreateIfMissing = true };
-                using (var db = new DB(WORK, @"root\mute"))
+
+                try
                 {
-                    db.Put(profileURN.Links[0].LinkData.ToString(), "true");
+                    using (FileStream fs = File.Create(@"root\" + profileURN.Links[0].LinkData.ToString() + @"\MUTE"))
+                    {
+
+                    }
                 }
+                catch { }
+
                 btnMute.Text = "unmute";
             }
             else
             {
-                var WORK = new Options { CreateIfMissing = true };
-                using (var db = new DB(WORK, @"root\mute"))
-                {
-                    db.Delete(profileURN.Links[0].LinkData.ToString());
-                }
+                try { File.Delete(@"root\" + profileURN.Links[0].LinkData.ToString() + @"\MUTE"); } catch { }
                 btnMute.Text = "mute";
             }
         }
@@ -4893,18 +4890,7 @@ namespace SUP
 
             try
             {
-                var WORK = new Options { CreateIfMissing = true };
-                using (var db = new DB(WORK, @"root\oblock"))
-                {
-                    db.Put(profileURN.Links[0].LinkData.ToString(), "true");
-
-                }
-                var WORK2 = new Options { CreateIfMissing = true };
-                using (var db = new DB(WORK2, @"root\oblock2"))
-                {
-                    db.Put(profileURN.Links[0].LinkData.ToString(), "true");
-
-                }
+              
 
                 var SUP = new Options { CreateIfMissing = true };
                 var keysToDelete = new HashSet<string>(); // Create a new HashSet to store the keys to delete
@@ -4942,21 +4928,32 @@ namespace SUP
                 foreach (Root rootItem in root)
                 {
 
-                    using (var db = new DB(WORK, @"root\tblock"))
-                    {
-                        db.Put(rootItem.TransactionId, "true");
-
-                    }
                     try
                     {
                         Directory.Delete(@"root\" + rootItem.TransactionId, true);
                     }
                     catch { }
+
+                    foreach (string key in rootItem.Keyword.Keys)
+                    {
+                        try { Directory.Delete(@"root\" + key, true); } catch { }
+                    }
+
                 }
 
 
+                try { Directory.Delete(@"root\" + profileURN.Text.Replace("#",""), true); } catch { }
+                
                 try { Directory.Delete(@"root\" + profileURN.Links[0].LinkData.ToString(), true); } catch { }
-                try { Directory.Delete(@"root\" + Root.GetPublicAddressByKeyword(profileURN.Text), true); } catch { }
+                try { Directory.CreateDirectory(@"root\" + profileURN.Links[0].LinkData.ToString()); } catch { }
+                try
+                {
+                    using (FileStream fs = File.Create(@"root\" + profileURN.Links[0].LinkData.ToString() + @"\BLOCK"))
+                    {
+
+                    }
+                }
+                catch { }
 
                 foreach (Control control in flowFollow.Controls)
                 {
@@ -4966,8 +4963,16 @@ namespace SUP
                     }
                 }
 
+                //remove from follow list
+                Dictionary<string, string> friendDict = new Dictionary<string, string>();
+                foreach (PictureBox pb in flowFollow.Controls)
+                {
 
-
+                    try { friendDict.Add(pb.Tag.ToString(), pb.ImageLocation); } catch { }
+                }
+                string json = JsonConvert.SerializeObject(friendDict);
+                string filePath = @"root\MyFriendList.Json";
+                File.WriteAllText(filePath, json);
 
             }
             catch { }
@@ -4977,10 +4982,14 @@ namespace SUP
 
         private void button1_Click(object sender, EventArgs e)
         {
-            MakeActiveProfile(profileURN.Links[0].LinkData.ToString());
-            numMessagesDisplayed = 0;
-            refreshFriendFeed.BackColor = System.Drawing.Color.White;
-            refreshFriendFeed.ForeColor = System.Drawing.Color.Black;
+            try
+            {
+                MakeActiveProfile(profileURN.Links[0].LinkData.ToString());
+                numMessagesDisplayed = 0;
+                refreshFriendFeed.BackColor = System.Drawing.Color.White;
+                refreshFriendFeed.ForeColor = System.Drawing.Color.Black;
+            }
+            catch { }
         }
 
         //GPT3

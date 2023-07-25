@@ -78,10 +78,12 @@ namespace SUP
 
                 if (txtSearchAddress.Text.StartsWith("#"))
                 {
+                    try { File.Delete(@"root/" + address + @"/GetObjectsByAddress.json"); } catch { }
+
 
                     this.Invoke((Action)(() =>
                     {
-
+  
                         profileURN.Links[0].LinkData = Root.GetPublicAddressByKeyword(txtSearchAddress.Text.Substring(1), "111");
                         profileURN.LinkColor = System.Drawing.SystemColors.Highlight;
                         profileURN.Text = txtSearchAddress.Text;
@@ -576,7 +578,10 @@ namespace SUP
                                     if (creator.Value.Year > 1)
                                     {
                                         PROState profile = PROState.GetProfileByAddress(creator.Key, "good-user", "better-password", @"http://127.0.0.1:18332");
-                                        PROState IsRegistered = PROState.GetProfileByURN(profile.URN, "good-user", "better-password", @"http://127.0.0.1:18332");
+                                        PROState IsRegistered = new PROState();
+
+                                        try { IsRegistered = PROState.GetProfileByURN(profile.URN, "good-user", "better-password", @"http://127.0.0.1:18332"); } catch { }
+
 
 
                                         try

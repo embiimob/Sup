@@ -173,7 +173,7 @@
             this.flowFollow.FlowDirection = System.Windows.Forms.FlowDirection.TopDown;
             this.flowFollow.Location = new System.Drawing.Point(8, 7);
             this.flowFollow.Name = "flowFollow";
-            this.flowFollow.Size = new System.Drawing.Size(57, 562);
+            this.flowFollow.Size = new System.Drawing.Size(64, 562);
             this.flowFollow.TabIndex = 94;
             // 
             // btnMint
@@ -190,10 +190,9 @@
             // 
             // btnHome
             // 
-            this.btnHome.Enabled = false;
             this.btnHome.Location = new System.Drawing.Point(8, 141);
             this.btnHome.Name = "btnHome";
-            this.btnHome.Size = new System.Drawing.Size(67, 23);
+            this.btnHome.Size = new System.Drawing.Size(56, 23);
             this.btnHome.TabIndex = 97;
             this.btnHome.Text = "home";
             this.btnHome.UseVisualStyleBackColor = true;
@@ -202,7 +201,6 @@
             // profileURN
             // 
             this.profileURN.AutoSize = true;
-            this.profileURN.Enabled = false;
             this.profileURN.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.profileURN.LinkColor = System.Drawing.SystemColors.GradientActiveCaption;
             this.profileURN.Location = new System.Drawing.Point(3, 114);
@@ -218,7 +216,7 @@
             this.lblProcessHeight.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.lblProcessHeight.AutoSize = true;
             this.lblProcessHeight.ForeColor = System.Drawing.Color.White;
-            this.lblProcessHeight.Location = new System.Drawing.Point(370, 119);
+            this.lblProcessHeight.Location = new System.Drawing.Point(373, 119);
             this.lblProcessHeight.Name = "lblProcessHeight";
             this.lblProcessHeight.Size = new System.Drawing.Size(25, 13);
             this.lblProcessHeight.TabIndex = 96;
@@ -229,10 +227,9 @@
             // 
             this.btnMute.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.btnMute.BackColor = System.Drawing.Color.White;
-            this.btnMute.Enabled = false;
-            this.btnMute.Location = new System.Drawing.Point(279, 141);
+            this.btnMute.Location = new System.Drawing.Point(304, 141);
             this.btnMute.Name = "btnMute";
-            this.btnMute.Size = new System.Drawing.Size(67, 23);
+            this.btnMute.Size = new System.Drawing.Size(56, 23);
             this.btnMute.TabIndex = 8;
             this.btnMute.Text = "mute";
             this.btnMute.UseVisualStyleBackColor = false;
@@ -252,10 +249,10 @@
             // 
             // btnFollow
             // 
-            this.btnFollow.Enabled = false;
-            this.btnFollow.Location = new System.Drawing.Point(81, 141);
+            this.btnFollow.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnFollow.Location = new System.Drawing.Point(242, 141);
             this.btnFollow.Name = "btnFollow";
-            this.btnFollow.Size = new System.Drawing.Size(67, 23);
+            this.btnFollow.Size = new System.Drawing.Size(56, 23);
             this.btnFollow.TabIndex = 10;
             this.btnFollow.Text = "follow";
             this.btnFollow.UseVisualStyleBackColor = true;
@@ -275,10 +272,9 @@
             // btnBlock
             // 
             this.btnBlock.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnBlock.Enabled = false;
-            this.btnBlock.Location = new System.Drawing.Point(352, 141);
+            this.btnBlock.Location = new System.Drawing.Point(366, 141);
             this.btnBlock.Name = "btnBlock";
-            this.btnBlock.Size = new System.Drawing.Size(67, 23);
+            this.btnBlock.Size = new System.Drawing.Size(56, 23);
             this.btnBlock.TabIndex = 9;
             this.btnBlock.Text = "block";
             this.btnBlock.UseVisualStyleBackColor = true;
@@ -294,7 +290,7 @@
             this.supFlow.Location = new System.Drawing.Point(7, 170);
             this.supFlow.Name = "supFlow";
             this.supFlow.Padding = new System.Windows.Forms.Padding(0, 3, 0, 0);
-            this.supFlow.Size = new System.Drawing.Size(437, 549);
+            this.supFlow.Size = new System.Drawing.Size(440, 549);
             this.supFlow.TabIndex = 86;
             // 
             // lblAdultsOnly
@@ -350,10 +346,9 @@
             // btnDisco
             // 
             this.btnDisco.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnDisco.Enabled = false;
             this.btnDisco.Font = new System.Drawing.Font("Segoe UI Emoji", 13.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btnDisco.Image = global::SUP.Properties.Resources.disco;
-            this.btnDisco.Location = new System.Drawing.Point(239, 725);
+            this.btnDisco.Location = new System.Drawing.Point(242, 725);
             this.btnDisco.Name = "btnDisco";
             this.btnDisco.Size = new System.Drawing.Size(56, 40);
             this.btnDisco.TabIndex = 85;
@@ -364,10 +359,9 @@
             // 
             this.btnPrivateMessage.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.btnPrivateMessage.BackColor = System.Drawing.Color.White;
-            this.btnPrivateMessage.Enabled = false;
             this.btnPrivateMessage.Font = new System.Drawing.Font("Segoe UI Emoji", 13.8F);
             this.btnPrivateMessage.ForeColor = System.Drawing.Color.Black;
-            this.btnPrivateMessage.Location = new System.Drawing.Point(363, 725);
+            this.btnPrivateMessage.Location = new System.Drawing.Point(366, 725);
             this.btnPrivateMessage.Name = "btnPrivateMessage";
             this.btnPrivateMessage.Size = new System.Drawing.Size(56, 40);
             this.btnPrivateMessage.TabIndex = 84;
@@ -379,10 +373,9 @@
             // 
             this.btnPublicMessage.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.btnPublicMessage.BackColor = System.Drawing.Color.White;
-            this.btnPublicMessage.Enabled = false;
             this.btnPublicMessage.Font = new System.Drawing.Font("Segoe UI Emoji", 13.8F);
             this.btnPublicMessage.ForeColor = System.Drawing.Color.Black;
-            this.btnPublicMessage.Location = new System.Drawing.Point(301, 725);
+            this.btnPublicMessage.Location = new System.Drawing.Point(304, 725);
             this.btnPublicMessage.Name = "btnPublicMessage";
             this.btnPublicMessage.Size = new System.Drawing.Size(56, 40);
             this.btnPublicMessage.TabIndex = 83;

@@ -55,34 +55,8 @@ namespace SUP.P2FK
 
             PROState profileState = new PROState();
             var OBJ = new Options { CreateIfMissing = true };
-            string isBlocked = "";
-            try
-            {
-                using (var db = new DB(OBJ, @"root\oblock"))
-                {
-                    isBlocked = db.Get(profileaddress);
-                    db.Close();
-                }
-            }
-            catch
-            {
-                try
-                {
-                    using (var db = new DB(OBJ, @"root\oblock2"))
-                    {
-                        isBlocked = db.Get(profileaddress);
-                        db.Close();
-                    }
-                    Directory.Move(@"root\oblock2", @"root\oblock");
-                }
-                catch
-                {
-                    try { Directory.Delete(@"root\oblock", true); }
-                    catch { }
-                }
-
-            }
-            if (isBlocked == "true") { return new PROState { }; }
+           
+            if (System.IO.File.Exists(@"root\" + profileaddress + @"\BLOCK")) { return new PROState { }; }
                
             string JSONOBJ;
             string logstatus;
@@ -278,6 +252,7 @@ namespace SUP.P2FK
             return profileState;
 
         }
+        
         public static PROState GetProfileByURN(string searchstring, string username, string password, string url, string versionByte = "111", bool verbose = false, int skip = 0)
         {
             PROState profileState = new PROState { };
@@ -317,72 +292,48 @@ namespace SUP.P2FK
                 if (transaction.Signed && transaction.File.ContainsKey("PRO"))
                 {
                     string findObject = transaction.Keyword.ElementAt(transaction.Keyword.Count - 1).Key;
-                    string isBlocked = "";
-                    try
+
+                    if (!System.IO.File.Exists(@"root\" + findObject + @"\BLOCK"))
                     {
-                        using (var db = new DB(OBJ, @"root\oblock"))
+
+
+                        PROState isObject = GetProfileByAddress(findObject, username, password, url, versionByte);
+
+                        if (isObject.URN != null && isObject.URN == searchstring && isObject.ChangeDate > DateTime.Now.AddYears(-3))
                         {
-                            isBlocked = db.Get(findObject);
-                            db.Close();
-                        }
-                    }
-                    catch
-                    {
-                        try
-                        {
-                            using (var db = new DB(OBJ, @"root\oblock2"))
-                            {
-                                isBlocked = db.Get(findObject);
-                                db.Close();
-                            }
-                            Directory.Move(@"root\oblock2", @"root\oblock");
-                        }
-                        catch
-                        {
-                            try { Directory.Delete(@"root\oblock", true); }
-                            catch { }
-                        }
-
-                    }
-                    if (isBlocked == "true") { return new PROState { }; }
-
-
-                    PROState isObject = GetProfileByAddress(findObject, username, password, url, versionByte);
-
-                    if (isObject.URN != null && isObject.URN == searchstring && isObject.ChangeDate > DateTime.Now.AddYears(-3))
-                    {
-                        if (isObject.Creators.ElementAt(0) == findObject)
-                        {
-
-                            isObject.Id = profileTransactions.Count();
-                            var profileSerialized = JsonConvert.SerializeObject(isObject);
-                            try
-                            {
-                                System.IO.File.WriteAllText(@"root\" + profileaddress + @"\" + "GetProfileByURN.json", profileSerialized);
-                            }
-                            catch
+                            if (isObject.Creators.ElementAt(0) == findObject)
                             {
 
+                                isObject.Id = profileTransactions.Count();
+                                var profileSerialized = JsonConvert.SerializeObject(isObject);
                                 try
                                 {
-                                    if (!Directory.Exists(@"root\" + profileaddress))
-
-                                    {
-                                        Directory.CreateDirectory(@"root\" + profileaddress);
-                                    }
                                     System.IO.File.WriteAllText(@"root\" + profileaddress + @"\" + "GetProfileByURN.json", profileSerialized);
                                 }
-                                catch { };
+                                catch
+                                {
+
+                                    try
+                                    {
+                                        if (!Directory.Exists(@"root\" + profileaddress))
+
+                                        {
+                                            Directory.CreateDirectory(@"root\" + profileaddress);
+                                        }
+                                        System.IO.File.WriteAllText(@"root\" + profileaddress + @"\" + "GetProfileByURN.json", profileSerialized);
+                                    }
+                                    catch { };
+                                }
+
+
+                                return isObject;
+
                             }
 
-                        
-                            return isObject;
 
                         }
 
                     }
-
-
                 }
 
 

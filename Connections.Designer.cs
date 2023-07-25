@@ -795,7 +795,8 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(707, 492);
             this.Controls.Add(this.panel1);
-            this.MinimumSize = new System.Drawing.Size(674, 518);
+            this.MaximumSize = new System.Drawing.Size(723, 531);
+            this.MinimumSize = new System.Drawing.Size(723, 531);
             this.Name = "Connections";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "Connections";

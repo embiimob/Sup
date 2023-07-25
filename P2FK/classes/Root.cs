@@ -44,10 +44,10 @@ namespace SUP.P2FK
         public static Root GetRootByTransactionId(string transactionid, string username, string password, string url, string versionbyte = "111", byte[] rootbytes = null, string signatureaddress = null)
         {
             Root P2FKRoot = new Root();
-            bool fetched = false;
             string diskpath = "root\\" + transactionid + "\\";
             string P2FKJSONString = null;
-            string isMuted;
+            bool isMuted = false;
+
             if (rootbytes == null)
             {
                 try
@@ -55,18 +55,12 @@ namespace SUP.P2FK
 
                     P2FKJSONString = System.IO.File.ReadAllText(diskpath + "ROOT.json");
                     P2FKRoot = JsonConvert.DeserializeObject<Root>(P2FKJSONString);
-                    var MUTE = new Options { CreateIfMissing = true };
-                    using (var db = new DB(MUTE, @"root\mute"))
-                    {
-                        isMuted = db.Get(P2FKRoot.SignedBy);
-                    }
 
+                    //refresh LevelDB Sup Messaging.
                     return P2FKRoot;
 
                 }
                 catch { }
-
-
 
             }
 
@@ -190,7 +184,7 @@ namespace SUP.P2FK
            
 
             if (rootbytes == null && P2FKSignatureAddress == null) { return P2FKRoot; }
-            bool sigtrim = false;
+
             // Perform the loop until no additional numbers are found and the regular expression fails to match
             while (regexSpecialChars.IsMatch(transactionASCII))
             {
@@ -448,19 +442,12 @@ namespace SUP.P2FK
             System.IO.File.WriteAllText(@"root\" + P2FKRoot.TransactionId + @"\" + "ROOT.json", rootSerialized);
 
 
-
-
             if (P2FKRoot.BlockDate.Year > 1975)
             {
-                var MUTE = new Options { CreateIfMissing = true };
-                using (var db = new DB(MUTE, @"root\mute"))
-                {
-                    isMuted = db.Get(P2FKRoot.SignedBy);
-                }
+                isMuted = System.IO.File.Exists(@"root\" + P2FKRoot.SignedBy + @"\MUTE");
 
 
-
-                if (P2FKRoot.Message.Count() > 0 && isMuted != "true")
+                if (P2FKRoot.Message.Count() > 0 && !isMuted)
                 {
 
                     foreach (KeyValuePair<string, string> keyword in P2FKRoot.Keyword)
@@ -527,7 +514,7 @@ namespace SUP.P2FK
 
                 }
 
-                if (P2FKRoot.File.ContainsKey("SEC") && isMuted != "true")
+                if (P2FKRoot.File.ContainsKey("SEC") && !isMuted)
                 {
 
                     foreach (KeyValuePair<string, string> keyword in P2FKRoot.Keyword)

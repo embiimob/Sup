@@ -85,16 +85,7 @@ namespace SUP
                 // Delete the file
                 try
                 {
-                    var WORK = new Options { CreateIfMissing = true };
-                    using (var db = new DB(WORK, @"root\oblock"))
-                    {
-                        db.Put(ObjectAddress.Text, "true");
-                    }
 
-                    using (var db = new DB(WORK, @"root\oblock2"))
-                    {
-                        db.Put(ObjectAddress.Text, "true");
-                    }
 
                     var SUP = new Options { CreateIfMissing = true };
                     var keysToDelete = new HashSet<string>(); // Create a new HashSet to store the keys to delete
@@ -145,11 +136,7 @@ namespace SUP
                     foreach (Root rootItem in root)
                     {
 
-                        using (var db = new DB(WORK, @"root\tblock"))
-                        {
-                            db.Put(rootItem.TransactionId, "true");
-
-                        }
+     
                         try
                         {
                             Directory.Delete(@"root\" + rootItem.TransactionId, true);
@@ -162,6 +149,7 @@ namespace SUP
                         }
 
                     }
+
                     try
                     {
 
@@ -172,8 +160,7 @@ namespace SUP
                         {
                             string JSONOBJ = System.IO.File.ReadAllText(diskpath + "OBJ.json");
                             OBJState objectState = JsonConvert.DeserializeObject<OBJState>(JSONOBJ);
-                            try
-                            {
+
                                 if (objectState.URN != null)
                                 {
                                     try { Directory.Delete(@"root\" + GetTransactionId(objectState.URN), true); } catch { }
@@ -184,13 +171,20 @@ namespace SUP
                                     try { Directory.Delete(@"root\" + GetTransactionId(objectState.Image), true); } catch { }
                                     try { Directory.Delete(@"ipfs\" + GetTransactionId(objectState.Image), true); } catch { }
                                 }
-                            }
-                            catch { }
+                            
                         }
                         catch { }
 
-                        Directory.Delete(@"root\" + ObjectAddress.Text, true);
-                        if(ObjectId.Text != null) { try { Directory.Delete(@"root\" + ObjectId.Text, true); } catch { } }                        
+                        try { Directory.Delete(@"root\" + ObjectAddress.Text, true); } catch { }
+                        try { Directory.CreateDirectory(@"root\" + ObjectAddress.Text); } catch { }
+
+                        using (FileStream fs = File.Create(@"root\" + ObjectAddress.Text + @"\BLOCK"))
+                        {
+
+                        }
+
+                        //this may no longer be necessary...
+                        //if (ObjectId.Text != null) { try { Directory.Delete(@"root\" + ObjectId.Text, true); } catch { } }                        
 
                     }
                     catch { }

@@ -71,36 +71,10 @@ namespace SUP.P2FK
 
                 OBJState objectState = new OBJState();
                 var OBJ = new Options { CreateIfMissing = true };
-                string isBlocked = "";
+
                 bool fetched = false;
-
-                try
-                {
-                    using (var db = new DB(OBJ, @"root\oblock"))
-                    {
-                        isBlocked = db.Get(objectaddress);
-                        db.Close();
-                    }
-                }
-                catch
-                {
-                    try
-                    {
-                        using (var db = new DB(OBJ, @"root\oblock2"))
-                        {
-                            isBlocked = db.Get(objectaddress);
-                            db.Close();
-                        }
-                        Directory.Move(@"root\oblock2", @"root\oblock");
-                    }
-                    catch
-                    {
-                        try { Directory.Delete(@"root\oblock", true); }
-                        catch { }
-                    }
-
-                }
-                if (isBlocked == "true") { return objectState; }
+                
+                if (System.IO.File.Exists(@"root\" + objectaddress + @"\BLOCK")) { return objectState; }
 
                 string JSONOBJ;
                 string logstatus;
@@ -1520,39 +1494,11 @@ namespace SUP.P2FK
                 OBJState objectState = new OBJState();
                 string objectaddress = Root.GetPublicAddressByKeyword(searchstring, versionByte);
                 var OBJ = new Options { CreateIfMissing = true };
-                string isBlocked = "";
                 bool fetched = false;
-                try
-                {
-                    using (var db = new DB(OBJ, @"root\oblock"))
-                    {
-                        isBlocked = db.Get(objectaddress);
-                        db.Close();
-                    }
-                }
-                catch
-                {
-                    try
-                    {
-                        using (var db = new DB(OBJ, @"root\oblock2"))
-                        {
-                            isBlocked = db.Get(objectaddress);
-                            db.Close();
-                        }
-                        Directory.Move(@"root\oblock2", @"root\oblock");
-                    }
-                    catch
-                    {
-                        try { Directory.Delete(@"root\oblock", true); }
-                        catch { }
-                    }
-
-                }
-                if (isBlocked == "true") { return objectState; }
+                if (System.IO.File.Exists(@"root\" + objectaddress + @"\BLOCK")) { return objectState; }
 
                 string JSONOBJ;
                 string diskpath = "root\\" + objectaddress + "\\";
-
 
                 // fetch current JSONOBJ from disk if it exists
                 try
@@ -1675,35 +1621,9 @@ namespace SUP.P2FK
             string objectaddress = Base58.EncodeWithCheckSum(payload);
 
             var OBJ = new Options { CreateIfMissing = true };
-            string isBlocked = "";
 
-            try
-            {
-                using (var db = new DB(OBJ, @"root\oblock"))
-                {
-                    isBlocked = db.Get(objectaddress);
-                    db.Close();
-                }
-            }
-            catch
-            {
-                try
-                {
-                    using (var db = new DB(OBJ, @"root\oblock2"))
-                    {
-                        isBlocked = db.Get(objectaddress);
-                        db.Close();
-                    }
-                    Directory.Move(@"root\oblock2", @"root\oblock");
-                }
-                catch
-                {
-                    try { Directory.Delete(@"root\oblock", true); }
-                    catch { }
-                }
+            if (System.IO.File.Exists(@"root\" + objectaddress + @"\BLOCK")) { return objectState; }
 
-            }
-            if (isBlocked == "true") { return objectState; }
 
 
             int depth = skip;
@@ -2051,36 +1971,10 @@ namespace SUP.P2FK
             {
                 List<OBJState> objectStates = new List<OBJState> { };
                 var OBJ = new Options { CreateIfMissing = true };
-                string isBlocked = "";
                 bool fetched = false;
 
-                try
-                {
-                    using (var db = new DB(OBJ, @"root\oblock"))
-                    {
-                        isBlocked = db.Get(objectaddress);
-                        db.Close();
-                    }
-                }
-                catch
-                {
-                    try
-                    {
-                        using (var db = new DB(OBJ, @"root\oblock2"))
-                        {
-                            isBlocked = db.Get(objectaddress);
-                            db.Close();
-                        }
-                        Directory.Move(@"root\oblock2", @"root\oblock");
-                    }
-                    catch
-                    {
-                        try { Directory.Delete(@"root\oblock", true); }
-                        catch { }
-                    }
+                if (System.IO.File.Exists(@"root\" + objectaddress + @"\BLOCK")) { return objectStates; }
 
-                }
-                if (isBlocked == "true") { return objectStates; }
 
                 string JSONOBJ;
                 string diskpath = "root\\" + objectaddress + "\\";
@@ -2149,25 +2043,6 @@ namespace SUP.P2FK
                                         if (isObject.URN != null)
                                         {
 
-                                            //using (var db = new DB(OBJ, @"root\obj"))
-                                            //{
-                                            //    findId = db.Get(objectaddress + "!" + key);
-                                            //}
-
-
-                                            //if (findId == transaction.Id.ToString() || findId == null)
-                                            //{
-                                            //    if (findId == null)
-                                            //    {
-
-                                            //        using (var db = new DB(OBJ, @"root\obj"))
-                                            //        {
-                                            //            db.Put(objectaddress + "!" + key, transaction.Id.ToString());
-                                            //        }
-
-                                            //    }
-                                            //}
-
                                             isObject.Id = transaction.Id;
                                             objectStates.Add(isObject);
 
@@ -2188,25 +2063,6 @@ namespace SUP.P2FK
 
                                         if (isObject.URN != null)
                                         {
-
-                                            //using (var db = new DB(OBJ, @"root\obj"))
-                                            //{
-                                            //    findId = db.Get(objectaddress + "!" + key);
-                                            //}
-
-
-                                            //if (findId == transaction.Id.ToString() || findId == null)
-                                            //{
-                                            //    if (findId == null)
-                                            //    {
-
-                                            //        using (var db = new DB(OBJ, @"root\obj"))
-                                            //        {
-                                            //            db.Put(objectaddress + "!" + key, transaction.Id.ToString());
-                                            //        }
-
-                                            //    }
-                                            //}
 
                                             isObject.Id = transaction.Id;
                                             objectStates.Add(isObject);
@@ -2244,35 +2100,9 @@ namespace SUP.P2FK
             {
                 List<OBJState> objectStates = new List<OBJState> { };
                 var OBJ = new Options { CreateIfMissing = true };
-                string isBlocked = "";
                 bool fetched = false;
-                try
-                {
-                    using (var db = new DB(OBJ, @"root\oblock"))
-                    {
-                        isBlocked = db.Get(objectaddress);
-                        db.Close();
-                    }
-                }
-                catch
-                {
-                    try
-                    {
-                        using (var db = new DB(OBJ, @"root\oblock2"))
-                        {
-                            isBlocked = db.Get(objectaddress);
-                            db.Close();
-                        }
-                        Directory.Move(@"root\oblock2", @"root\oblock");
-                    }
-                    catch
-                    {
-                        try { Directory.Delete(@"root\oblock", true); }
-                        catch { }
-                    }
 
-                }
-                if (isBlocked == "true") { return objectStates; }
+                if (System.IO.File.Exists(@"root\" + objectaddress + @"\BLOCK")) { return objectStates; }
 
                 string JSONOBJ;
                 string diskpath = "root\\" + objectaddress + "\\";
@@ -2335,36 +2165,9 @@ namespace SUP.P2FK
             {
                 List<OBJState> objectStates = new List<OBJState> { };
                 var OBJ = new Options { CreateIfMissing = true };
-                string isBlocked = "";
                 bool fetched = false;
 
-                try
-                {
-                    using (var db = new DB(OBJ, @"root\oblock"))
-                    {
-                        isBlocked = db.Get(objectaddress);
-                        db.Close();
-                    }
-                }
-                catch
-                {
-                    try
-                    {
-                        using (var db = new DB(OBJ, @"root\oblock2"))
-                        {
-                            isBlocked = db.Get(objectaddress);
-                            db.Close();
-                        }
-                        Directory.Move(@"root\oblock2", @"root\oblock");
-                    }
-                    catch
-                    {
-                        try { Directory.Delete(@"root\oblock", true); }
-                        catch { }
-                    }
-
-                }
-                if (isBlocked == "true") { return objectStates; }
+                if (System.IO.File.Exists(@"root\" + objectaddress + @"\BLOCK")) { return objectStates; }
 
                 string JSONOBJ;
                 string diskpath = "root\\" + objectaddress + "\\";
@@ -2436,36 +2239,9 @@ namespace SUP.P2FK
                 {
 
                     string objectaddress = Root.GetPublicAddressByKeyword(search, versionByte);
-                    string isBlocked = "";
-                    var OBJ = new Options { CreateIfMissing = true };
-                    try
-                    {
-                        using (var db = new DB(OBJ, @"root\oblock"))
-                        {
-                            isBlocked = db.Get(search);
-                            db.Close();
-                        }
-                    }
-                    catch
-                    {
-                        try
-                        {
-                            using (var db = new DB(OBJ, @"root\oblock2"))
-                            {
-                                isBlocked = db.Get(search);
-                                db.Close();
-                            }
-                            Directory.Move(@"root\oblock2", @"root\oblock");
-                        }
-                        catch
-                        {
-                            try { Directory.Delete(@"root\oblock", true); }
-                            catch { }
-                        }
 
-                    }
 
-                    if (isBlocked != "true")
+                    if (!System.IO.File.Exists(@"root\" + objectaddress + @"\BLOCK"))
                     {
 
                         List<OBJState> keySearch = GetObjectsByAddress(objectaddress, username, password, url, versionByte, 0, -1);
