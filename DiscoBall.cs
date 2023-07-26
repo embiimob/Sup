@@ -46,7 +46,7 @@ namespace SUP
             txtToAddress.Text = _toaddress;            
         }
 
-        private async void btnAttach_Click(object sender, EventArgs e)
+        public async void btnAttach_Click(object sender, EventArgs e)
         {
             if (flowAttachments.Controls.Count < 6)
             {
@@ -277,7 +277,10 @@ namespace SUP
                         pictureBox.ImageLocation = imgurn;
                         pictureBox.MouseClick += PictureBox_MouseClick;
                         // Add the PictureBox to the FlowLayoutPanel
-                        flowAttachments.Controls.Add(pictureBox);
+                        this.Invoke((MethodInvoker)delegate
+                        {
+                            flowAttachments.Controls.Add(pictureBox);
+                        });
 
                     }
 
@@ -295,7 +298,10 @@ namespace SUP
                     pictureBox.ImageLocation = @"includes\HugPuddle.jpg";
                     pictureBox.MouseClick += PictureBox_MouseClick;
                     // Add the PictureBox to the FlowLayoutPanel
-                    flowAttachments.Controls.Add(pictureBox);
+                    this.Invoke((MethodInvoker)delegate
+                    {
+                        flowAttachments.Controls.Add(pictureBox);
+                    });
 
                 }
 
@@ -303,8 +309,12 @@ namespace SUP
 
 
             }
+            this.Invoke((MethodInvoker)delegate
+            {
 
-        }
+                txtAttach.Text = "";
+            });
+            }
 
 
         private void PictureBox_MouseClick(object sender, MouseEventArgs e)
@@ -436,6 +446,32 @@ namespace SUP
         }
 
         private void button2_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void txtAttach_TextChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void lblTransactionId_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            GifTool gifToolForm = new GifTool(this); // Pass the reference to the current form as the parent form
+            gifToolForm.ShowDialog();
+        }
+
+        private void label1_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void supMessage_TextChanged(object sender, EventArgs e)
         {
 
         }

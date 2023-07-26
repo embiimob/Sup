@@ -210,6 +210,12 @@
     <Compile Include="FullScreenView.cs">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Include="GifTool.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="GifTool.Designer.cs">
+      <DependentUpon>GifTool.cs</DependentUpon>
+    </Compile>
     <Compile Include="ObjectBuy.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -306,6 +312,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="FullScreenView.resx">
       <DependentUpon>FullScreenView.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="GifTool.resx">
+      <DependentUpon>GifTool.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="ObjectBuy.resx">
       <DependentUpon>ObjectBuy.cs</DependentUpon>

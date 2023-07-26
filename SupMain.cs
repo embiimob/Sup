@@ -523,8 +523,10 @@ namespace SUP
         //GPT3
         private void btnMint_Click(object sender, EventArgs e)
         {
-            btnMint.Text = "💎";
+            
             numPrivateMessagesDisplayed = 0;
+            btnPrivateMessage.BackColor = System.Drawing.Color.White;
+            btnPrivateMessage.ForeColor = System.Drawing.Color.Black;
             splitContainer1.Panel2.Controls.Clear();
             splitContainer1.Panel2.Controls.Add(OBcontrol);
 
@@ -536,7 +538,8 @@ namespace SUP
             }
             else
             {
- 
+                if (btnMint.Text == "💎")
+                {
                     // Create the form that will contain the buttons
                     CustomForm buttonForm = new CustomForm();
                     buttonForm.BackColor = Color.White;
@@ -585,7 +588,9 @@ namespace SUP
                     buttonForm.StartPosition = FormStartPosition.CenterParent;
                     buttonForm.ShowDialog(this);
                     buttonForm.Focus();
-                
+                }
+                else { btnMint.Text = "💎"; }
+           
             }
         }
 
@@ -615,6 +620,7 @@ namespace SUP
 
         private async void btnLive_Click(object sender, EventArgs e)
         {
+            if (System.IO.File.Exists(@"GET_OBJECT_BY_ADDRESS") || System.IO.File.Exists(@"GET_OBJECTS_BY_ADDRESS")) { MessageBox.Show("Please wait for the search to complete.", "Notification"); return; }
 
             if (btnLive.BackColor == Color.White)
             {
@@ -4393,9 +4399,10 @@ namespace SUP
             }
         }
 
-
         private void btnPublicMessage_Click(object sender, EventArgs e)
         {
+            if (System.IO.File.Exists(@"GET_OBJECT_BY_ADDRESS") || System.IO.File.Exists(@"GET_OBJECTS_BY_ADDRESS")) { MessageBox.Show("Please wait for the search to complete.", "Notification"); return; }
+
             refreshFriendFeed.BackColor = System.Drawing.Color.White;
             refreshFriendFeed.ForeColor = System.Drawing.Color.Black;
             RefreshSupMessages();
@@ -4409,17 +4416,19 @@ namespace SUP
             
         }
 
-
         private void splitContainer1_DoubleClick(object sender, EventArgs e)
         {
             if (splitContainer1.Panel2Collapsed)
             {
                 splitContainer1.Panel2Collapsed = false;
+                btnMint.Text = "💎";
+
             }
             else
             {
 
                 splitContainer1.Panel2Collapsed = true;
+                btnMint.Text = "🔍";
             }
         }
 
@@ -4430,6 +4439,7 @@ namespace SUP
 
         private void btnPrivateMessage_Click(object sender, EventArgs e)
         {
+            if (System.IO.File.Exists(@"GET_OBJECT_BY_ADDRESS") || System.IO.File.Exists(@"GET_OBJECTS_BY_ADDRESS")) { MessageBox.Show("Please wait for the search to complete.", "Notification"); return; }
 
 
             btnPrivateMessage.BackColor = Color.Blue;
@@ -4449,7 +4459,6 @@ namespace SUP
             refreshFriendFeed.BackColor = Color.White;
             refreshFriendFeed.ForeColor = Color.Black;
         }
-           
 
         private void btnRefresh_Click(object sender, EventArgs e)
         {
@@ -4508,9 +4517,10 @@ namespace SUP
 
         }
 
-
         private void Friend_Click(object sender, EventArgs e)
         {
+            if (System.IO.File.Exists(@"GET_OBJECT_BY_ADDRESS") || System.IO.File.Exists(@"GET_OBJECTS_BY_ADDRESS")) { MessageBox.Show("Please wait for the search to complete.", "Notification"); return; }
+
             // Check if the user left-clicked on the PictureBox
             if (((System.Windows.Forms.MouseEventArgs)e).Button == MouseButtons.Left)
             {
@@ -4570,6 +4580,8 @@ namespace SUP
 
         private void refreshFriendFeed_Click(object sender, EventArgs e)
         {
+            if (System.IO.File.Exists(@"GET_OBJECT_BY_ADDRESS") || System.IO.File.Exists(@"GET_OBJECTS_BY_ADDRESS")) { MessageBox.Show("Please wait for the search to complete.", "Notification"); return; }
+
             refreshFriendFeed.BackColor = System.Drawing.Color.Blue;
             refreshFriendFeed.ForeColor = System.Drawing.Color.Yellow;
             btnPublicMessage.BackColor = System.Drawing.Color.White;
@@ -4857,12 +4869,15 @@ namespace SUP
                 });
 
             }
+            else { refreshFriendFeed.Enabled = true; }
             
 
         }
 
         private void btnMute_Click(object sender, EventArgs e)
         {
+            if (System.IO.File.Exists(@"GET_OBJECT_BY_ADDRESS") || System.IO.File.Exists(@"GET_OBJECTS_BY_ADDRESS")) { MessageBox.Show("Please wait for the search to complete.", "Notification"); return; }
+
             if (btnMute.Text == "mute")
             {
 
@@ -4886,6 +4901,7 @@ namespace SUP
 
         private void btnBlock_Click(object sender, EventArgs e)
         {
+            if (System.IO.File.Exists(@"GET_OBJECT_BY_ADDRESS") || System.IO.File.Exists(@"GET_OBJECTS_BY_ADDRESS")) { MessageBox.Show("Please wait for the search to complete.", "Notification"); return; }
 
 
             try
@@ -5054,10 +5070,9 @@ namespace SUP
             }
         }
 
+        private void splitContainer1_Panel2_Paint(object sender, PaintEventArgs e)
+        {
 
-
-
-
-
+        }
     }
 }
