@@ -16,6 +16,11 @@ using System.Linq;
 using System.Net;
 using System.Security.Cryptography;
 using System.Text;
+using System.Timers;
+
+using NAudio.Wave;
+using AngleSharp.Html.Dom;
+using Microsoft.Win32;
 
 namespace SUP
 {
@@ -25,6 +30,18 @@ namespace SUP
         private string _toaddress;
         private string _fromimageurl;
         private string _toimageurl;
+
+        // GPT3 AUDIO RECORDING MAGIC
+        private WaveInEvent waveIn;
+        private BufferedWaveProvider bufferedWaveProvider;
+        private WaveFileWriter writer;
+        private WaveOut waveOut;
+        private WaveFileReader reader;
+
+        private string wavFileName = @"sup.wav";
+        private bool isRecording = false;
+        private System.Timers.Timer recordTimer;
+
         public DiscoBall(string fromaddress = "", string fromimageurl = "", string toaddress = "", string toimageurl = "", bool isprivate = false)
         {
             InitializeComponent();
@@ -33,7 +50,7 @@ namespace SUP
             _fromimageurl = fromimageurl;
             _toimageurl = toimageurl;
 
-            if (isprivate ) { btnEncryptionStatus.Text = "PRIVATE 🤐"; }
+            if (isprivate) { btnEncryptionStatus.Text = "PRIVATE 🤐"; }
 
         }
 
@@ -43,7 +60,21 @@ namespace SUP
             fromImage.ImageLocation = _fromimageurl;
             toImage.ImageLocation = _toimageurl;
             txtFromAddress.Text = _fromaddress;
-            txtToAddress.Text = _toaddress;            
+            txtToAddress.Text = _toaddress;
+          
+            // GPT3 Initialize NAudio objects for recording and playback
+            waveIn = new WaveInEvent();
+            waveIn.BufferMilliseconds = 100; // Increase the buffer size (adjust as needed)
+            waveIn.DataAvailable += WaveIn_DataAvailable;
+            waveIn.RecordingStopped += WaveIn_RecordingStopped;
+            bufferedWaveProvider = new BufferedWaveProvider(waveIn.WaveFormat);
+            bufferedWaveProvider.BufferLength = waveIn.BufferMilliseconds * 2 * waveIn.WaveFormat.AverageBytesPerSecond;
+            // Initialize the timer to prevent loss of last few seconds of recordings
+            recordTimer = new System.Timers.Timer();
+            recordTimer.Interval = 1000; // 2 seconds
+            recordTimer.Elapsed += RecordTimer_Elapsed;
+            recordTimer.AutoReset = false; // Only trigger once
+
         }
 
         public async void btnAttach_Click(object sender, EventArgs e)
@@ -69,75 +100,91 @@ namespace SUP
                 {
                     string ipfsHash = "";
                     // Open file dialog and get file path and name
-                    OpenFileDialog openFileDialog1 = new OpenFileDialog();
+                    System.Windows.Forms.OpenFileDialog openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
                     if (openFileDialog1.ShowDialog() == DialogResult.OK)
                     {
                         string filePath = openFileDialog1.FileName;
                         string fileName = openFileDialog1.SafeFileName;
 
 
-                  
-                          string proccessingFile = filePath;
-                            string processingid = Guid.NewGuid().ToString();
 
-                            if (btnEncryptionStatus.Text == "PRIVATE 🤐")
-                            {
-                                
-                                byte[] rootbytes = Root.GetRootBytesByFile(new string[] { filePath });
-                                PROState toProfile = PROState.GetProfileByAddress(txtToAddress.Text, "good-user", "better-password", @"http://127.0.0.1:18332");
-                                rootbytes = Root.EncryptRootBytes("good-user", "better-password", @"http://127.0.0.1:18332", txtToAddress.Text, rootbytes, toProfile.PKX, toProfile.PKY, true);
-                                string proccessingDirectory = @"root\" + processingid;
-                                Directory.CreateDirectory(proccessingDirectory);
-                                proccessingFile = proccessingDirectory + @"\SEC";
-                                File.WriteAllBytes(proccessingFile, rootbytes);
-                                
-                           }
+                        string proccessingFile = filePath;
+                        string processingid = Guid.NewGuid().ToString();
 
+                        if (btnEncryptionStatus.Text == "PRIVATE 🤐")
+                        {
 
+                            byte[] rootbytes = Root.GetRootBytesByFile(new string[] { filePath });
+                            PROState toProfile = PROState.GetProfileByAddress(txtToAddress.Text, "good-user", "better-password", @"http://127.0.0.1:18332");
+                            rootbytes = Root.EncryptRootBytes("good-user", "better-password", @"http://127.0.0.1:18332", txtToAddress.Text, rootbytes, toProfile.PKX, toProfile.PKY, true);
+                            string proccessingDirectory = @"root\" + processingid;
+                            Directory.CreateDirectory(proccessingDirectory);
+                            proccessingFile = proccessingDirectory + @"\SEC";
+                            File.WriteAllBytes(proccessingFile, rootbytes);
 
-                            // Add file to IPFS
-                            Task<string> addTask = Task.Run(() =>
-                            {
-                                Process process = new Process();
-                                process.StartInfo.FileName = @"ipfs\ipfs.exe";
-                                process.StartInfo.Arguments = "add \"" + proccessingFile + "\"";
-                                process.StartInfo.UseShellExecute = false;
-                                process.StartInfo.CreateNoWindow = false;
-                                process.StartInfo.RedirectStandardOutput = true;
-                                process.Start();
-                                string output = process.StandardOutput.ReadToEnd();
-                                process.WaitForExit();
-                                string hash = output.Split(' ')[1];
-
-                                PictureBox pictureBox = new PictureBox();
-                                if (btnEncryptionStatus.Text == "PRIVATE 🤐")
-                                { pictureBox.Tag = "IPFS:" + hash + @"\SEC"; }
-                                else
-                                {
-                                    // Set the PictureBox properties
-                                    pictureBox.Tag = "IPFS:" + hash + @"\" + fileName;
-                                }
-                                pictureBox.SizeMode = PictureBoxSizeMode.StretchImage;
-                                pictureBox.Width = 50;
-                                pictureBox.Height = 50;
-
-
-                                string extension = Path.GetExtension(filePath).ToLower();
-                                if (imageExtensions.Contains(extension))
-                                { pictureBox.ImageLocation = filePath; }
-                                else { pictureBox.ImageLocation = @"includes\HugPuddle.jpg"; }
-                                pictureBox.MouseClick += PictureBox_MouseClick;
-                                this.Invoke((MethodInvoker)delegate
-                                {
-                                    flowAttachments.Controls.Add(pictureBox);
-                                });
-
-                                return "IPFS:" + hash;
-                            });
-                            ipfsHash = await addTask;
-                            try { Directory.Delete(@"root\" + processingid, true); } catch { }
                         }
-                                       
+
+
+
+                        // Add file to IPFS
+                        Task<string> addTask = Task.Run(() =>
+                        {
+                            Process process = new Process();
+                            process.StartInfo.FileName = @"ipfs\ipfs.exe";
+                            process.StartInfo.Arguments = "add \"" + proccessingFile + "\"";
+                            process.StartInfo.UseShellExecute = false;
+                            process.StartInfo.CreateNoWindow = false;
+                            process.StartInfo.RedirectStandardOutput = true;
+                            process.Start();
+                            string output = process.StandardOutput.ReadToEnd();
+                            process.WaitForExit();
+                            string hash = output.Split(' ')[1];
+
+                            PictureBox pictureBox = new PictureBox();
+                            if (btnEncryptionStatus.Text == "PRIVATE 🤐")
+                            { pictureBox.Tag = "IPFS:" + hash + @"\SEC"; }
+                            else
+                            {
+                                // Set the PictureBox properties
+                                pictureBox.Tag = "IPFS:" + hash + @"\" + fileName;
+                            }
+                            pictureBox.SizeMode = PictureBoxSizeMode.StretchImage;
+                            pictureBox.Width = 50;
+                            pictureBox.Height = 50;
+
+
+                            string extension = Path.GetExtension(filePath).ToLower();
+                            if (imageExtensions.Contains(extension))
+                            {
+
+                                pictureBox.ImageLocation = filePath;
+                                pictureBox.MouseClick += PictureBox_MouseClick;
+
+                            }
+                            else {
+
+                                if (extension == ".wav")
+                                { 
+                                
+                                
+                                }
+                                else {
+                                    pictureBox.ImageLocation = @"includes\HugPuddle.jpg";
+                                    pictureBox.MouseClick += PictureBox_MouseClick;
+                                    }
+                            }
+                            
+                            this.Invoke((MethodInvoker)delegate
+                            {
+                                flowAttachments.Controls.Add(pictureBox);
+                            });
+
+                            return "IPFS:" + hash;
+                        });
+                        ipfsHash = await addTask;
+                        try { Directory.Delete(@"root\" + processingid, true); } catch { }
+                    }
+
 
 
                 }
@@ -256,7 +303,7 @@ namespace SUP
                             default:
 
                                 root = Root.GetRootByTransactionId(transactionid, "good-user", "better-password", @"http://127.0.0.1:18332");
-                              
+
 
                                 break;
                         }
@@ -314,7 +361,7 @@ namespace SUP
 
                 txtAttach.Text = "";
             });
-            }
+        }
 
 
         private void PictureBox_MouseClick(object sender, MouseEventArgs e)
@@ -323,7 +370,7 @@ namespace SUP
             {
                 PictureBox pictureBox = (PictureBox)sender;
                 flowAttachments.Controls.Remove(pictureBox);
-              
+
             }
         }
 
@@ -349,13 +396,13 @@ namespace SUP
             byte[] OBJP2FKBytes = new byte[] { };
             PROState toProfile = PROState.GetProfileByAddress(_toaddress, "good-user", "better-password", @"http://127.0.0.1:18332");
 
-  
+
             NetworkCredential credentials = new NetworkCredential("good-user", "better-password");
             RPCClient rpcClient = new RPCClient(credentials, new Uri(@"http://127.0.0.1:18332"), Network.Main);
             System.Security.Cryptography.SHA256 mySHA256 = SHA256Managed.Create();
             byte[] hashValue = new byte[] { };
             hashValue = mySHA256.ComputeHash(Encoding.ASCII.GetBytes(OBJP2FK));
-            
+
             string signatureAddress;
 
             signatureAddress = txtFromAddress.Text;
@@ -367,7 +414,7 @@ namespace SUP
 
                 return;
             }
-  
+
 
             if (btnEncryptionStatus.Text == "PRIVATE 🤐")
             {
@@ -466,12 +513,201 @@ namespace SUP
             gifToolForm.ShowDialog();
         }
 
-        private void label1_Click(object sender, EventArgs e)
+
+        private void MainForm_FormClosing(object sender, FormClosingEventArgs e)
         {
+            // Clean up NAudio resources
+            waveIn?.Dispose();
+            writer?.Dispose();
+            waveOut?.Dispose();
+        }
+
+        private void BtnRecord_MouseDown(object sender, MouseEventArgs e)
+        {
+            // Start recording audio if not already recording
+            if (!isRecording)
+            {
+                waveIn.StartRecording();
+                isRecording = true;
+            }
+        }
+
+        private void BtnRecord_MouseUp(object sender, MouseEventArgs e)
+        {
+            recordTimer.Start(); // Start the delay timer when the button is released
 
         }
 
-        private void supMessage_TextChanged(object sender, EventArgs e)
+        private void BtnPlay_Click(object sender, MouseEventArgs e)
+        {
+
+            if (waveOut != null)
+            {
+                waveOut.Stop();
+                waveOut.Dispose();
+                waveOut = null;
+            }
+
+           
+                waveOut = new WaveOut();
+                waveOut.PlaybackStopped += waveOut_PlaybackStopped;
+                reader = new WaveFileReader(wavFileName);
+                waveOut.Init(reader);
+                waveOut.Play();
+            
+        }
+        private void BtnPlay_MouseUp(object sender, MouseEventArgs e)
+        {
+            if (e.Button == MouseButtons.Right)
+            {
+                flowAttachments.Controls.Remove(this.btnPlay);
+            }
+        }
+        private void WaveIn_DataAvailable(object sender, WaveInEventArgs e)
+        {
+            // Add recorded data to the bufferedWaveProvider
+            bufferedWaveProvider.AddSamples(e.Buffer, 0, e.BytesRecorded);
+
+            // If writer is not initialized and recording has started, create the WaveFileWriter
+            if (writer == null && isRecording)
+            {
+                writer = new WaveFileWriter(wavFileName, waveIn.WaveFormat);
+            }
+
+            // If writer is initialized, write the recorded data to the file
+            if (writer != null)
+            {
+                writer.Write(e.Buffer, 0, e.BytesRecorded);
+
+                // Flush the writer to ensure data is written immediately (optional, but recommended)
+                writer.Flush();
+            }
+        }
+
+        private async void WaveIn_RecordingStopped(object sender, StoppedEventArgs e)
+        {
+            // Clean up after recording is stopped
+            if (writer != null) {
+                isRecording = false;
+                writer?.Dispose();
+                writer = null;
+            }
+          
+            string proccessingFile = wavFileName;
+            string processingid = Guid.NewGuid().ToString();
+            string ipfsHash = "";
+
+            flowAttachments.Controls.Clear();
+            this.btnPlay = new System.Windows.Forms.Button();
+            this.btnPlay.Font = new System.Drawing.Font("Segoe UI Emoji", 20.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnPlay.ForeColor = System.Drawing.Color.Black;
+            this.btnPlay.Name = "btnPlay";
+            this.btnPlay.Padding = new System.Windows.Forms.Padding(3, 0, 0, 0);
+            this.btnPlay.RightToLeft = System.Windows.Forms.RightToLeft.No;
+            this.btnPlay.Size = new System.Drawing.Size(50, 46);
+            this.btnPlay.Text = "▶️";
+            this.btnPlay.UseVisualStyleBackColor = true;
+            this.btnPlay.MouseClick += new MouseEventHandler(BtnPlay_Click);
+            this.btnPlay.MouseUp += new MouseEventHandler(BtnPlay_MouseUp);
+
+            if (btnEncryptionStatus.Text == "PRIVATE 🤐")
+            {
+                if (waveOut != null)
+                {
+                    waveOut.Stop();
+                    waveOut.Dispose();
+                    waveOut = null;
+                }
+
+                if (reader != null)
+                {
+                    reader.Dispose();
+                    reader = null;
+                }
+
+                byte[] rootbytes = Root.GetRootBytesByFile(new string[] { wavFileName });
+                PROState toProfile = PROState.GetProfileByAddress(txtToAddress.Text, "good-user", "better-password", @"http://127.0.0.1:18332");
+                rootbytes = Root.EncryptRootBytes("good-user", "better-password", @"http://127.0.0.1:18332", txtToAddress.Text, rootbytes, toProfile.PKX, toProfile.PKY, true);
+                string proccessingDirectory = @"root\" + processingid;
+                Directory.CreateDirectory(proccessingDirectory);
+                proccessingFile = proccessingDirectory + @"\SEC";
+                File.WriteAllBytes(proccessingFile, rootbytes);
+
+            }
+
+            // Add file to IPFS
+            Task<string> addTask = Task.Run(() =>
+            {
+                Process process = new Process();
+                process.StartInfo.FileName = @"ipfs\ipfs.exe";
+                process.StartInfo.Arguments = "add \"" + proccessingFile + "\"";
+                process.StartInfo.UseShellExecute = false;
+                process.StartInfo.CreateNoWindow = false;
+                process.StartInfo.RedirectStandardOutput = true;
+                process.Start();
+                string output = process.StandardOutput.ReadToEnd();
+                process.WaitForExit();
+                string hash = output.Split(' ')[1];
+
+                this.Invoke((MethodInvoker)delegate
+                {
+                    if (btnEncryptionStatus.Text == "PRIVATE 🤐")
+                { 
+                    this.btnPlay.Tag = "IPFS:" + hash + @"\SEC"; }
+                else
+                {
+                    // Set the PictureBox properties
+                    this.btnPlay.Tag = "IPFS:" + hash + @"\" + wavFileName;
+                }
+            
+                flowAttachments.Controls.Add(this.btnPlay);
+                });
+
+                return "IPFS:" + hash;
+            });
+            ipfsHash = await addTask; 
+
+         try { Directory.Delete(@"root\" + processingid, true); } catch { }
+                  
+
+            
+        }
+        private void waveOut_PlaybackStopped(object sender, StoppedEventArgs e)
+        {
+            if (waveOut != null)
+            {
+                waveOut.Stop();
+                waveOut.Dispose();
+                waveOut = null;
+            }
+
+            if (reader != null)
+            {
+                reader.Dispose();
+                reader = null;
+            }
+        }
+
+        private void RecordTimer_Elapsed(object sender, ElapsedEventArgs e)
+                    {
+            if (isRecording)
+            {
+                waveIn.StopRecording();
+                isRecording = false;
+
+                // Dispose the MemoryStream to release resources
+                waveIn?.Dispose();
+
+                // Save the recorded data to a WAV file
+                if (writer != null)
+                {
+                    writer.Dispose();
+                    writer = null;
+                }
+            }
+        }
+
+        private void flowAttachments_Paint(object sender, PaintEventArgs e)
         {
 
         }

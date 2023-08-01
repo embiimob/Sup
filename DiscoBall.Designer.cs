@@ -44,6 +44,7 @@
             this.toImage = new System.Windows.Forms.PictureBox();
             this.btnRefresh = new System.Windows.Forms.Button();
             this.label3 = new System.Windows.Forms.Label();
+            this.btnRecord = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.fromImage)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.toImage)).BeginInit();
             this.SuspendLayout();
@@ -59,7 +60,6 @@
             this.supMessage.Name = "supMessage";
             this.supMessage.Size = new System.Drawing.Size(317, 202);
             this.supMessage.TabIndex = 0;
-            this.supMessage.TextChanged += new System.EventHandler(this.supMessage_TextChanged);
             // 
             // btnAttach
             // 
@@ -88,6 +88,7 @@
             this.flowAttachments.Name = "flowAttachments";
             this.flowAttachments.Size = new System.Drawing.Size(282, 50);
             this.flowAttachments.TabIndex = 89;
+            this.flowAttachments.Paint += new System.Windows.Forms.PaintEventHandler(this.flowAttachments_Paint);
             // 
             // btnEncryptionStatus
             // 
@@ -96,7 +97,7 @@
             this.btnEncryptionStatus.ForeColor = System.Drawing.Color.Black;
             this.btnEncryptionStatus.Location = new System.Drawing.Point(19, 521);
             this.btnEncryptionStatus.Name = "btnEncryptionStatus";
-            this.btnEncryptionStatus.Size = new System.Drawing.Size(232, 46);
+            this.btnEncryptionStatus.Size = new System.Drawing.Size(140, 46);
             this.btnEncryptionStatus.TabIndex = 356;
             this.btnEncryptionStatus.Text = "PUBLIC 😍";
             this.btnEncryptionStatus.UseVisualStyleBackColor = false;
@@ -118,7 +119,6 @@
             this.label1.Size = new System.Drawing.Size(30, 13);
             this.label1.TabIndex = 358;
             this.label1.Text = "from:";
-            this.label1.Click += new System.EventHandler(this.label1_Click);
             // 
             // label2
             // 
@@ -210,12 +210,27 @@
             this.label3.TabIndex = 364;
             this.label3.Text = "url:  ( http:// , IPFS:  , BTC: )";
             // 
+            // btnRecord
+            // 
+            this.btnRecord.Font = new System.Drawing.Font("Segoe UI Emoji", 20.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnRecord.ForeColor = System.Drawing.Color.Black;
+            this.btnRecord.Location = new System.Drawing.Point(165, 521);
+            this.btnRecord.Name = "btnRecord";
+            this.btnRecord.Padding = new System.Windows.Forms.Padding(3, 0, 0, 0);
+            this.btnRecord.Size = new System.Drawing.Size(50, 46);
+            this.btnRecord.TabIndex = 365;
+            this.btnRecord.Text = "⏺️";
+            this.btnRecord.UseVisualStyleBackColor = true;
+            this.btnRecord.MouseDown += new System.Windows.Forms.MouseEventHandler(this.BtnRecord_MouseDown);
+            this.btnRecord.MouseUp += new System.Windows.Forms.MouseEventHandler(this.BtnRecord_MouseUp);
+            // 
             // DiscoBall
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.Black;
             this.ClientSize = new System.Drawing.Size(358, 579);
+            this.Controls.Add(this.btnRecord);
             this.Controls.Add(this.label3);
             this.Controls.Add(this.button1);
             this.Controls.Add(this.lblTransactionId);
@@ -235,6 +250,7 @@
             this.ForeColor = System.Drawing.Color.White;
             this.Name = "DiscoBall";
             this.Text = "Disco";
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.MainForm_FormClosing);
             this.Load += new System.EventHandler(this.DiscoBall_Load);
             ((System.ComponentModel.ISupportInitialize)(this.fromImage)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.toImage)).EndInit();
@@ -261,5 +277,7 @@
         private System.Windows.Forms.Button button1;
         public System.Windows.Forms.TextBox txtAttach;
         private System.Windows.Forms.Label label3;
+        private System.Windows.Forms.Button btnRecord;
+        private System.Windows.Forms.Button btnPlay;
     }
 }
