@@ -65,7 +65,7 @@
             // 
             this.btnAttach.Font = new System.Drawing.Font("Segoe UI Emoji", 13.8F);
             this.btnAttach.ForeColor = System.Drawing.Color.Black;
-            this.btnAttach.Location = new System.Drawing.Point(257, 458);
+            this.btnAttach.Location = new System.Drawing.Point(261, 458);
             this.btnAttach.Name = "btnAttach";
             this.btnAttach.Size = new System.Drawing.Size(28, 40);
             this.btnAttach.TabIndex = 87;
@@ -88,7 +88,6 @@
             this.flowAttachments.Name = "flowAttachments";
             this.flowAttachments.Size = new System.Drawing.Size(282, 50);
             this.flowAttachments.TabIndex = 89;
-            this.flowAttachments.Paint += new System.Windows.Forms.PaintEventHandler(this.flowAttachments_Paint);
             // 
             // btnEncryptionStatus
             // 
@@ -101,7 +100,6 @@
             this.btnEncryptionStatus.TabIndex = 356;
             this.btnEncryptionStatus.Text = "PUBLIC 😍";
             this.btnEncryptionStatus.UseVisualStyleBackColor = false;
-            this.btnEncryptionStatus.Click += new System.EventHandler(this.button2_Click);
             // 
             // txtToAddress
             // 
@@ -134,9 +132,8 @@
             this.txtAttach.Location = new System.Drawing.Point(20, 458);
             this.txtAttach.Multiline = true;
             this.txtAttach.Name = "txtAttach";
-            this.txtAttach.Size = new System.Drawing.Size(231, 40);
+            this.txtAttach.Size = new System.Drawing.Size(235, 40);
             this.txtAttach.TabIndex = 360;
-            this.txtAttach.TextChanged += new System.EventHandler(this.txtAttach_TextChanged);
             // 
             // lblObjectStatus
             // 
@@ -155,7 +152,6 @@
             this.lblTransactionId.Size = new System.Drawing.Size(356, 11);
             this.lblTransactionId.TabIndex = 362;
             this.lblTransactionId.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            this.lblTransactionId.Click += new System.EventHandler(this.lblTransactionId_Click);
             // 
             // button1
             // 
@@ -206,9 +202,9 @@
             this.label3.AutoSize = true;
             this.label3.Location = new System.Drawing.Point(18, 442);
             this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(141, 13);
+            this.label3.Size = new System.Drawing.Size(163, 13);
             this.label3.TabIndex = 364;
-            this.label3.Text = "url:  ( http:// , IPFS:  , BTC: )";
+            this.label3.Text = "URL:  ( HTTP:// , IPFS:  , BTC: )";
             // 
             // btnRecord
             // 
@@ -248,6 +244,8 @@
             this.Controls.Add(this.btnRefresh);
             this.Controls.Add(this.supMessage);
             this.ForeColor = System.Drawing.Color.White;
+            this.MaximumSize = new System.Drawing.Size(374, 618);
+            this.MinimumSize = new System.Drawing.Size(374, 618);
             this.Name = "DiscoBall";
             this.Text = "Disco";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.MainForm_FormClosing);

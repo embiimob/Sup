@@ -2,6 +2,7 @@
 using NBitcoin.RPC;
 using SUP.P2FK;
 using System;
+using System.Data;
 using System.Diagnostics;
 using System.Drawing;
 using System.IO;
@@ -603,6 +604,39 @@ namespace SUP
                 }
             }
             catch { }
+        }
+
+        private void checkBox6_CheckedChanged(object sender, EventArgs e)
+        {
+            if (checkBox6.Checked) {
+
+                using (FileStream fs = File.Create(@"LIVE_FILTER_ENABLED"))
+                {
+
+                }
+
+            } else {
+
+                try { File.Delete(@"LIVE_FILTER_ENABLED"); }catch { }
+            
+            }
+
+        }
+
+        private void checkBox7_CheckedChanged(object sender, EventArgs e)
+        {
+            if (checkBox7.Checked) {
+
+                using (FileStream fs = File.Create(@"WALKIE_TALKIE_ENABLED"))
+                {
+
+                }
+
+            } else {
+                try { File.Delete(@"WALKIE_TALKIE_ENABLED"); } catch { }
+
+
+            }
         }
     }
 }

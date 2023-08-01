@@ -61,7 +61,7 @@ namespace SUP
             toImage.ImageLocation = _toimageurl;
             txtFromAddress.Text = _fromaddress;
             txtToAddress.Text = _toaddress;
-          
+
             // GPT3 Initialize NAudio objects for recording and playback
             waveIn = new WaveInEvent();
             waveIn.BufferMilliseconds = 100; // Increase the buffer size (adjust as needed)
@@ -492,21 +492,6 @@ namespace SUP
 
         }
 
-        private void button2_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void txtAttach_TextChanged(object sender, EventArgs e)
-        {
-
-        }
-
-        private void lblTransactionId_Click(object sender, EventArgs e)
-        {
-
-        }
-
         private void button1_Click(object sender, EventArgs e)
         {
             GifTool gifToolForm = new GifTool(this); // Pass the reference to the current form as the parent form
@@ -519,11 +504,26 @@ namespace SUP
             // Clean up NAudio resources
             waveIn?.Dispose();
             writer?.Dispose();
-            waveOut?.Dispose();
+
+            if (waveOut != null)
+            {
+                waveOut.Stop();
+                waveOut.Dispose();
+                waveOut = null;
+            }
+
+            if (reader != null)
+            {
+                reader.Dispose();
+                reader = null;
+            }
+            try { File.Delete(wavFileName); } catch { } 
         }
 
         private void BtnRecord_MouseDown(object sender, MouseEventArgs e)
         {
+            btnRecord.BackColor = System.Drawing.Color.Blue;
+            btnRecord.ForeColor = System.Drawing.Color.Yellow;
             // Start recording audio if not already recording
             if (!isRecording)
             {
@@ -561,6 +561,7 @@ namespace SUP
             if (e.Button == MouseButtons.Right)
             {
                 flowAttachments.Controls.Remove(this.btnPlay);
+                try { File.Delete(wavFileName); } catch { }
             }
         }
         private void WaveIn_DataAvailable(object sender, WaveInEventArgs e)
@@ -690,6 +691,8 @@ namespace SUP
 
         private void RecordTimer_Elapsed(object sender, ElapsedEventArgs e)
                     {
+            btnRecord.BackColor = System.Drawing.Color.White;
+            btnRecord.ForeColor = System.Drawing.Color.Black;
             if (isRecording)
             {
                 waveIn.StopRecording();
@@ -707,9 +710,6 @@ namespace SUP
             }
         }
 
-        private void flowAttachments_Paint(object sender, PaintEventArgs e)
-        {
-
-        }
+ 
     }
 }

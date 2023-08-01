@@ -1015,37 +1015,8 @@ namespace SUP
                                             Root root = Root.GetRootByTransactionId(s, "good-user", "better-password", @"http://127.0.0.1:18332");
                                             if (root.Signed == true)
                                             {
-                                                string isBlocked = "";
-                                                var OBJ = new Options { CreateIfMissing = true };
-                                                try
-                                                {
-                                                    using (var db = new DB(OBJ, @"root\oblock"))
-                                                    {
-                                                        isBlocked = db.Get(root.Signature);
-                                                        db.Close();
-                                                    }
-                                                }
-                                                catch
-                                                {
-                                                    try
-                                                    {
-                                                        using (var db = new DB(OBJ, @"root\oblock2"))
-                                                        {
-                                                            isBlocked = db.Get(root.Signature);
-                                                            db.Close();
-                                                        }
-                                                        Directory.Move(@"root\oblock2", @"root\oblock");
-                                                    }
-                                                    catch
-                                                    {
-                                                        try { Directory.Delete(@"root\oblock", true); }
-                                                        catch { }
-                                                    }
-
-                                                }
-
-
-                                                if (isBlocked != "true")
+                                               
+                                                    if (!System.IO.File.Exists(@"root\" + root.SignedBy + @"\BLOCK"))
                                                 {
                                                     bool find = false;
 
@@ -1059,13 +1030,14 @@ namespace SUP
                                                         else
                                                         {
 
-                                                            find = root.Keyword.ContainsKey(filter);
-
+                                                            find = root.Keyword.ContainsKey(filter);                                                       
 
                                                         }
                                                     }
                                                     else { find = true; }
 
+                                                    if (File.Exists(@"LIVE_FILTER_ENABLED")){ find = myFriends.ContainsKey(root.Signature); }
+                                                    
                                                     if (find && root.Message.Count() > 0)
                                                     {
 
@@ -1109,9 +1081,10 @@ namespace SUP
                                                                 }
 
                                                                 string extension = Path.GetExtension(imgurn).ToLower();
-                                                                List<string> imgExtensions = new List<string> { ".bmp", ".gif", ".ico", ".jpeg", ".jpg", ".png", ".tif", ".tiff" };
-
-                                                                if (!imgExtensions.Contains(extension))
+                                                                List<string> imgExtensions = new List<string> { ".bmp", ".gif", ".ico", ".jpeg", ".jpg", ".png", ".tif", ".tiff", ".mp4",".avi" };
+                                                                string vpattern = @"(?:youtu\.be/|youtube(?:-nocookie)?\.com/(?:[^/\n\s]*[/\n\s]*(?:v/|e(?:mbed)?/|.*[?&]v=))?)?([a-zA-Z0-9_-]{11})";
+                                                                Match vmatch = Regex.Match(content, vpattern);
+                                                                if (!imgExtensions.Contains(extension) && !vmatch.Success)
                                                                 {
 
 
@@ -1247,10 +1220,24 @@ namespace SUP
 
                                                                     if (!int.TryParse(content, out int id))
                                                                     {
-                                                                        this.Invoke((MethodInvoker)delegate
+
+
+                                                                        if (vmatch.Success || extension == ".mp4" || extension == ".avi")
                                                                         {
-                                                                            AddImage(content, false, true);
-                                                                        });
+                                                                            this.Invoke((MethodInvoker)delegate
+                                                                            {
+                                                                                AddVideo(content, false, true);
+                                                                            });
+                                                                        }
+                                                                        else
+                                                                        {
+
+
+                                                                            this.Invoke((MethodInvoker)delegate
+                                                                            {
+                                                                                AddImage(content, false, true);
+                                                                            });
+                                                                        }
                                                                     }
 
                                                                 }
@@ -1354,37 +1341,7 @@ namespace SUP
                                             Root root = Root.GetRootByTransactionId(s, "good-user", "better-password", @"http://127.0.0.1:8332", "0");
                                             if (root.Signed == true)
                                             {
-                                                string isBlocked = "";
-                                                var OBJ = new Options { CreateIfMissing = true };
-                                                try
-                                                {
-                                                    using (var db = new DB(OBJ, @"root\oblock"))
-                                                    {
-                                                        isBlocked = db.Get(root.Signature);
-                                                        db.Close();
-                                                    }
-                                                }
-                                                catch
-                                                {
-                                                    try
-                                                    {
-                                                        using (var db = new DB(OBJ, @"root\oblock2"))
-                                                        {
-                                                            isBlocked = db.Get(root.Signature);
-                                                            db.Close();
-                                                        }
-                                                        Directory.Move(@"root\oblock2", @"root\oblock");
-                                                    }
-                                                    catch
-                                                    {
-                                                        try { Directory.Delete(@"root\oblock", true); }
-                                                        catch { }
-                                                    }
-
-                                                }
-
-
-                                                if (isBlocked != "true")
+                                                if (!System.IO.File.Exists(@"root\" + root.SignedBy + @"\BLOCK"))
                                                 {
                                                     bool find = false;
 
@@ -1404,7 +1361,7 @@ namespace SUP
                                                         }
                                                     }
                                                     else { find = true; }
-
+                                                    if (File.Exists(@"LIVE_FILTER_ENABLED")) { find = myFriends.ContainsKey(root.Signature); }
                                                     if (find && root.Message.Count() > 0)
                                                     {
 
@@ -1446,9 +1403,10 @@ namespace SUP
                                                                 }
 
                                                                 string extension = Path.GetExtension(imgurn).ToLower();
-                                                                List<string> imgExtensions = new List<string> { ".bmp", ".gif", ".ico", ".jpeg", ".jpg", ".png", ".tif", ".tiff" };
-
-                                                                if (!imgExtensions.Contains(extension))
+                                                                List<string> imgExtensions = new List<string> { ".bmp", ".gif", ".ico", ".jpeg", ".jpg", ".png", ".tif", ".tiff", ".mp4", ".avi" };
+                                                                string vpattern = @"(?:youtu\.be/|youtube(?:-nocookie)?\.com/(?:[^/\n\s]*[/\n\s]*(?:v/|e(?:mbed)?/|.*[?&]v=))?)?([a-zA-Z0-9_-]{11})";
+                                                                Match vmatch = Regex.Match(content, vpattern);
+                                                                if (!imgExtensions.Contains(extension) && !vmatch.Success)
                                                                 {
 
 
@@ -1584,10 +1542,22 @@ namespace SUP
 
                                                                     if (!int.TryParse(content, out int id))
                                                                     {
-                                                                        this.Invoke((MethodInvoker)delegate
+                                                                        if (vmatch.Success || extension == ".mp4" || extension == ".avi")
                                                                         {
-                                                                            AddImage(content, false, true);
-                                                                        });
+                                                                            this.Invoke((MethodInvoker)delegate
+                                                                            {
+                                                                                AddVideo(content, false, true);
+                                                                            });
+                                                                        }
+                                                                        else
+                                                                        {
+
+
+                                                                            this.Invoke((MethodInvoker)delegate
+                                                                            {
+                                                                                AddImage(content, false, true);
+                                                                            });
+                                                                        }
                                                                     }
 
                                                                 }
@@ -1681,37 +1651,7 @@ namespace SUP
                                             Root root = Root.GetRootByTransactionId(s, "good-user", "better-password", @"http://127.0.0.1:12832", "50");
                                             if (root.Signed == true)
                                             {
-                                                string isBlocked = "";
-                                                var OBJ = new Options { CreateIfMissing = true };
-                                                try
-                                                {
-                                                    using (var db = new DB(OBJ, @"root\oblock"))
-                                                    {
-                                                        isBlocked = db.Get(root.Signature);
-                                                        db.Close();
-                                                    }
-                                                }
-                                                catch
-                                                {
-                                                    try
-                                                    {
-                                                        using (var db = new DB(OBJ, @"root\oblock2"))
-                                                        {
-                                                            isBlocked = db.Get(root.Signature);
-                                                            db.Close();
-                                                        }
-                                                        Directory.Move(@"root\oblock2", @"root\oblock");
-                                                    }
-                                                    catch
-                                                    {
-                                                        try { Directory.Delete(@"root\oblock", true); }
-                                                        catch { }
-                                                    }
-
-                                                }
-
-
-                                                if (isBlocked != "true")
+                                                if (!System.IO.File.Exists(@"root\" + root.SignedBy + @"\BLOCK"))
                                                 {
                                                     bool find = false;
 
@@ -1731,6 +1671,7 @@ namespace SUP
                                                         }
                                                     }
                                                     else { find = true; }
+                                                    if (File.Exists(@"LIVE_FILTER_ENABLED")) { find = myFriends.ContainsKey(root.Signature); }
                                                     if (find && root.Message.Count() > 0)
                                                     {
 
@@ -1772,9 +1713,10 @@ namespace SUP
                                                                 }
 
                                                                 string extension = Path.GetExtension(imgurn).ToLower();
-                                                                List<string> imgExtensions = new List<string> { ".bmp", ".gif", ".ico", ".jpeg", ".jpg", ".png", ".tif", ".tiff" };
-
-                                                                if (!imgExtensions.Contains(extension))
+                                                                List<string> imgExtensions = new List<string> { ".bmp", ".gif", ".ico", ".jpeg", ".jpg", ".png", ".tif", ".tiff", ".mp4", ".avi" };
+                                                                string vpattern = @"(?:youtu\.be/|youtube(?:-nocookie)?\.com/(?:[^/\n\s]*[/\n\s]*(?:v/|e(?:mbed)?/|.*[?&]v=))?)?([a-zA-Z0-9_-]{11})";
+                                                                Match vmatch = Regex.Match(content, vpattern);
+                                                                if (!imgExtensions.Contains(extension) && !vmatch.Success)
                                                                 {
 
 
@@ -1910,10 +1852,22 @@ namespace SUP
 
                                                                     if (!int.TryParse(content, out int id))
                                                                     {
-                                                                        this.Invoke((MethodInvoker)delegate
+                                                                         if (vmatch.Success || extension == ".mp4" || extension == ".avi")
                                                                         {
-                                                                            AddImage(content, false, true);
-                                                                        });
+                                                                            this.Invoke((MethodInvoker)delegate
+                                                                            {
+                                                                                AddVideo(content, false, true);
+                                                                            });
+                                                                        }
+                                                                        else
+                                                                        {
+
+
+                                                                            this.Invoke((MethodInvoker)delegate
+                                                                            {
+                                                                                AddImage(content, false, true);
+                                                                            });
+                                                                        }
                                                                     }
 
                                                                 }
@@ -2006,36 +1960,7 @@ namespace SUP
                                             Root root = Root.GetRootByTransactionId(s, "good-user", "better-password", @"http://127.0.0.1:9332", "48");
                                             if (root.Signed == true)
                                             {
-                                                string isBlocked = "";
-                                                var OBJ = new Options { CreateIfMissing = true };
-                                                try
-                                                {
-                                                    using (var db = new DB(OBJ, @"root\oblock"))
-                                                    {
-                                                        isBlocked = db.Get(root.Signature);
-                                                        db.Close();
-                                                    }
-                                                }
-                                                catch
-                                                {
-                                                    try
-                                                    {
-                                                        using (var db = new DB(OBJ, @"root\oblock2"))
-                                                        {
-                                                            isBlocked = db.Get(root.Signature);
-                                                            db.Close();
-                                                        }
-                                                        Directory.Move(@"root\oblock2", @"root\oblock");
-                                                    }
-                                                    catch
-                                                    {
-                                                        try { Directory.Delete(@"root\oblock", true); }
-                                                        catch { }
-                                                    }
-
-                                                }
-
-                                                if (isBlocked != "true")
+                                                if (!System.IO.File.Exists(@"root\" + root.SignedBy + @"\BLOCK"))
                                                 {
                                                     bool find = false;
 
@@ -2055,6 +1980,7 @@ namespace SUP
                                                         }
                                                     }
                                                     else { find = true; }
+                                                    if (File.Exists(@"LIVE_FILTER_ENABLED")) { find = myFriends.ContainsKey(root.Signature); }
                                                     if (find && root.Message.Count() > 0)
                                                     {
 
@@ -2096,9 +2022,10 @@ namespace SUP
                                                                 }
 
                                                                 string extension = Path.GetExtension(imgurn).ToLower();
-                                                                List<string> imgExtensions = new List<string> { ".bmp", ".gif", ".ico", ".jpeg", ".jpg", ".png", ".tif", ".tiff" };
-
-                                                                if (!imgExtensions.Contains(extension))
+                                                                List<string> imgExtensions = new List<string> { ".bmp", ".gif", ".ico", ".jpeg", ".jpg", ".png", ".tif", ".tiff", ".mp4", ".avi" };
+                                                                string vpattern = @"(?:youtu\.be/|youtube(?:-nocookie)?\.com/(?:[^/\n\s]*[/\n\s]*(?:v/|e(?:mbed)?/|.*[?&]v=))?)?([a-zA-Z0-9_-]{11})";
+                                                                Match vmatch = Regex.Match(content, vpattern);
+                                                                if (!imgExtensions.Contains(extension) && !vmatch.Success)
                                                                 {
 
 
@@ -2234,10 +2161,22 @@ namespace SUP
 
                                                                     if (!int.TryParse(content, out int id))
                                                                     {
-                                                                        this.Invoke((MethodInvoker)delegate
+                                                                        if (vmatch.Success || extension == ".mp4" || extension == ".avi")
                                                                         {
-                                                                            AddImage(content, false, true);
-                                                                        });
+                                                                            this.Invoke((MethodInvoker)delegate
+                                                                            {
+                                                                                AddVideo(content, false, true);
+                                                                            });
+                                                                        }
+                                                                        else
+                                                                        {
+
+
+                                                                            this.Invoke((MethodInvoker)delegate
+                                                                            {
+                                                                                AddImage(content, false, true);
+                                                                            });
+                                                                        }
                                                                     }
 
                                                                 }
@@ -2331,35 +2270,7 @@ namespace SUP
                                             if (root.Signed == true)
                                             {
 
-                                                string isBlocked = "";
-                                                var OBJ = new Options { CreateIfMissing = true };
-                                                try
-                                                {
-                                                    using (var db = new DB(OBJ, @"root\oblock"))
-                                                    {
-                                                        isBlocked = db.Get(root.Signature);
-                                                        db.Close();
-                                                    }
-                                                }
-                                                catch
-                                                {
-                                                    try
-                                                    {
-                                                        using (var db = new DB(OBJ, @"root\oblock2"))
-                                                        {
-                                                            isBlocked = db.Get(root.Signature);
-                                                        }
-                                                        Directory.Move(@"root\oblock2", @"root\oblock");
-                                                    }
-                                                    catch
-                                                    {
-                                                        try { Directory.Delete(@"root\oblock", true); }
-                                                        catch { }
-                                                    }
-
-                                                }
-
-                                                if (isBlocked != "true")
+                                                if (!System.IO.File.Exists(@"root\" + root.SignedBy + @"\BLOCK"))
                                                 {
                                                     bool find = false;
 
@@ -2379,6 +2290,7 @@ namespace SUP
                                                         }
                                                     }
                                                     else { find = true; }
+                                                    if (File.Exists(@"LIVE_FILTER_ENABLED")) { find = myFriends.ContainsKey(root.Signature); }
                                                     if (find && root.Message.Count() > 0)
                                                     {
 
@@ -2421,9 +2333,10 @@ namespace SUP
                                                                 }
 
                                                                 string extension = Path.GetExtension(imgurn).ToLower();
-                                                                List<string> imgExtensions = new List<string> { ".bmp", ".gif", ".ico", ".jpeg", ".jpg", ".png", ".tif", ".tiff" };
-
-                                                                if (!imgExtensions.Contains(extension))
+                                                                List<string> imgExtensions = new List<string> { ".bmp", ".gif", ".ico", ".jpeg", ".jpg", ".png", ".tif", ".tiff", ".mp4", ".avi" };
+                                                                string vpattern = @"(?:youtu\.be/|youtube(?:-nocookie)?\.com/(?:[^/\n\s]*[/\n\s]*(?:v/|e(?:mbed)?/|.*[?&]v=))?)?([a-zA-Z0-9_-]{11})";
+                                                                Match vmatch = Regex.Match(content, vpattern);
+                                                                if (!imgExtensions.Contains(extension) && !vmatch.Success)
                                                                 {
 
 
@@ -2559,10 +2472,22 @@ namespace SUP
 
                                                                     if (!int.TryParse(content, out int id))
                                                                     {
-                                                                        this.Invoke((MethodInvoker)delegate
+                                                                        if (vmatch.Success || extension == ".mp4" || extension == ".avi")
                                                                         {
-                                                                            AddImage(content, false, true);
-                                                                        });
+                                                                            this.Invoke((MethodInvoker)delegate
+                                                                            {
+                                                                                AddVideo(content, false, true);
+                                                                            });
+                                                                        }
+                                                                        else
+                                                                        {
+
+
+                                                                            this.Invoke((MethodInvoker)delegate
+                                                                            {
+                                                                                AddImage(content, false, true);
+                                                                            });
+                                                                        }
                                                                     }
 
                                                                 }
