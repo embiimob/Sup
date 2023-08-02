@@ -84,6 +84,22 @@ namespace SUP
         {
 
 
+
+
+            if (File.Exists(@"WALKIE_TALKIE_ENABLED"))
+            {
+                checkBox7.Checked = true;
+            }
+
+            if (File.Exists(@"LIVE_FILTER_ENABLED"))
+            {
+                checkBox6.Checked = true;
+
+            }
+
+
+
+
             string walletUsername = "good-user";
             string walletPassword = "better-password";
             string walletUrl = @"http://127.0.0.1:18332";

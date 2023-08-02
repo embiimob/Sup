@@ -26,6 +26,7 @@ using Org.BouncyCastle.Utilities.Net;
 using System.Threading;
 using System.Drawing.Imaging;
 using System.Windows.Media.TextFormatting;
+using NAudio.Wave;
 
 namespace SUP
 {
@@ -1036,7 +1037,7 @@ namespace SUP
                                                     }
                                                     else { find = true; }
 
-                                                    if (File.Exists(@"LIVE_FILTER_ENABLED")){ find = myFriends.ContainsKey(root.Signature); }
+                                                    if (File.Exists(@"LIVE_FILTER_ENABLED")){ find = myFriends.ContainsKey(root.SignedBy); }
                                                     
                                                     if (find && root.Message.Count() > 0)
                                                     {
@@ -1081,10 +1082,10 @@ namespace SUP
                                                                 }
 
                                                                 string extension = Path.GetExtension(imgurn).ToLower();
-                                                                List<string> imgExtensions = new List<string> { ".bmp", ".gif", ".ico", ".jpeg", ".jpg", ".png", ".tif", ".tiff", ".mp4",".avi" };
+                                                                List<string> imgExtensions = new List<string> { ".bmp", ".gif", ".ico", ".jpeg", ".jpg", ".png", ".tif", ".tiff", ".mp4",".avi",".wav" };
                                                                 string vpattern = @"(?:youtu\.be/|youtube(?:-nocookie)?\.com/(?:[^/\n\s]*[/\n\s]*(?:v/|e(?:mbed)?/|.*[?&]v=))?)?([a-zA-Z0-9_-]{11})";
                                                                 Match vmatch = Regex.Match(content, vpattern);
-                                                                if (!imgExtensions.Contains(extension) && !vmatch.Success)
+                                                                if (!imgExtensions.Contains(extension) && vmatch.Value.Length < 12)
                                                                 {
 
 
@@ -1222,11 +1223,11 @@ namespace SUP
                                                                     {
 
 
-                                                                        if (vmatch.Success || extension == ".mp4" || extension == ".avi")
+                                                                        if (vmatch.Success || extension == ".mp4" || extension == ".avi" || extension == ".wav")
                                                                         {
                                                                             this.Invoke((MethodInvoker)delegate
                                                                             {
-                                                                                AddVideo(content, false, true);
+                                                                                AddVideo(content, false, true, true);
                                                                             });
                                                                         }
                                                                         else
@@ -1361,7 +1362,7 @@ namespace SUP
                                                         }
                                                     }
                                                     else { find = true; }
-                                                    if (File.Exists(@"LIVE_FILTER_ENABLED")) { find = myFriends.ContainsKey(root.Signature); }
+                                                    if (File.Exists(@"LIVE_FILTER_ENABLED")) { find = myFriends.ContainsKey(root.SignedBy); }
                                                     if (find && root.Message.Count() > 0)
                                                     {
 
@@ -1403,10 +1404,10 @@ namespace SUP
                                                                 }
 
                                                                 string extension = Path.GetExtension(imgurn).ToLower();
-                                                                List<string> imgExtensions = new List<string> { ".bmp", ".gif", ".ico", ".jpeg", ".jpg", ".png", ".tif", ".tiff", ".mp4", ".avi" };
+                                                                List<string> imgExtensions = new List<string> { ".bmp", ".gif", ".ico", ".jpeg", ".jpg", ".png", ".tif", ".tiff", ".mp4", ".avi",".wav" };
                                                                 string vpattern = @"(?:youtu\.be/|youtube(?:-nocookie)?\.com/(?:[^/\n\s]*[/\n\s]*(?:v/|e(?:mbed)?/|.*[?&]v=))?)?([a-zA-Z0-9_-]{11})";
                                                                 Match vmatch = Regex.Match(content, vpattern);
-                                                                if (!imgExtensions.Contains(extension) && !vmatch.Success)
+                                                                if (!imgExtensions.Contains(extension) && vmatch.Value.Length < 12)
                                                                 {
 
 
@@ -1542,11 +1543,11 @@ namespace SUP
 
                                                                     if (!int.TryParse(content, out int id))
                                                                     {
-                                                                        if (vmatch.Success || extension == ".mp4" || extension == ".avi")
+                                                                        if (vmatch.Success || extension == ".mp4" || extension == ".avi" || extension == ".wav")
                                                                         {
                                                                             this.Invoke((MethodInvoker)delegate
                                                                             {
-                                                                                AddVideo(content, false, true);
+                                                                                AddVideo(content, false, true, true);
                                                                             });
                                                                         }
                                                                         else
@@ -1671,7 +1672,7 @@ namespace SUP
                                                         }
                                                     }
                                                     else { find = true; }
-                                                    if (File.Exists(@"LIVE_FILTER_ENABLED")) { find = myFriends.ContainsKey(root.Signature); }
+                                                    if (File.Exists(@"LIVE_FILTER_ENABLED")) { find = myFriends.ContainsKey(root.SignedBy); }
                                                     if (find && root.Message.Count() > 0)
                                                     {
 
@@ -1713,10 +1714,10 @@ namespace SUP
                                                                 }
 
                                                                 string extension = Path.GetExtension(imgurn).ToLower();
-                                                                List<string> imgExtensions = new List<string> { ".bmp", ".gif", ".ico", ".jpeg", ".jpg", ".png", ".tif", ".tiff", ".mp4", ".avi" };
+                                                                List<string> imgExtensions = new List<string> { ".bmp", ".gif", ".ico", ".jpeg", ".jpg", ".png", ".tif", ".tiff", ".mp4", ".avi",".wav" };
                                                                 string vpattern = @"(?:youtu\.be/|youtube(?:-nocookie)?\.com/(?:[^/\n\s]*[/\n\s]*(?:v/|e(?:mbed)?/|.*[?&]v=))?)?([a-zA-Z0-9_-]{11})";
                                                                 Match vmatch = Regex.Match(content, vpattern);
-                                                                if (!imgExtensions.Contains(extension) && !vmatch.Success)
+                                                                if (!imgExtensions.Contains(extension) && vmatch.Value.Length < 12)
                                                                 {
 
 
@@ -1852,11 +1853,11 @@ namespace SUP
 
                                                                     if (!int.TryParse(content, out int id))
                                                                     {
-                                                                         if (vmatch.Success || extension == ".mp4" || extension == ".avi")
+                                                                         if (vmatch.Success || extension == ".mp4" || extension == ".avi" || extension == ".wav")
                                                                         {
                                                                             this.Invoke((MethodInvoker)delegate
                                                                             {
-                                                                                AddVideo(content, false, true);
+                                                                                AddVideo(content, false, true, true);
                                                                             });
                                                                         }
                                                                         else
@@ -1980,7 +1981,7 @@ namespace SUP
                                                         }
                                                     }
                                                     else { find = true; }
-                                                    if (File.Exists(@"LIVE_FILTER_ENABLED")) { find = myFriends.ContainsKey(root.Signature); }
+                                                    if (File.Exists(@"LIVE_FILTER_ENABLED")) { find = myFriends.ContainsKey(root.SignedBy); }
                                                     if (find && root.Message.Count() > 0)
                                                     {
 
@@ -2022,10 +2023,10 @@ namespace SUP
                                                                 }
 
                                                                 string extension = Path.GetExtension(imgurn).ToLower();
-                                                                List<string> imgExtensions = new List<string> { ".bmp", ".gif", ".ico", ".jpeg", ".jpg", ".png", ".tif", ".tiff", ".mp4", ".avi" };
+                                                                List<string> imgExtensions = new List<string> { ".bmp", ".gif", ".ico", ".jpeg", ".jpg", ".png", ".tif", ".tiff", ".mp4", ".avi",".wav" };
                                                                 string vpattern = @"(?:youtu\.be/|youtube(?:-nocookie)?\.com/(?:[^/\n\s]*[/\n\s]*(?:v/|e(?:mbed)?/|.*[?&]v=))?)?([a-zA-Z0-9_-]{11})";
                                                                 Match vmatch = Regex.Match(content, vpattern);
-                                                                if (!imgExtensions.Contains(extension) && !vmatch.Success)
+                                                                if (!imgExtensions.Contains(extension) && vmatch.Value.Length < 12)
                                                                 {
 
 
@@ -2161,11 +2162,11 @@ namespace SUP
 
                                                                     if (!int.TryParse(content, out int id))
                                                                     {
-                                                                        if (vmatch.Success || extension == ".mp4" || extension == ".avi")
+                                                                        if (vmatch.Success || extension == ".mp4" || extension == ".avi" || extension == ".wav")
                                                                         {
                                                                             this.Invoke((MethodInvoker)delegate
                                                                             {
-                                                                                AddVideo(content, false, true);
+                                                                                AddVideo(content, false, true, true);
                                                                             });
                                                                         }
                                                                         else
@@ -2290,7 +2291,7 @@ namespace SUP
                                                         }
                                                     }
                                                     else { find = true; }
-                                                    if (File.Exists(@"LIVE_FILTER_ENABLED")) { find = myFriends.ContainsKey(root.Signature); }
+                                                    if (File.Exists(@"LIVE_FILTER_ENABLED")) { find = myFriends.ContainsKey(root.SignedBy); }
                                                     if (find && root.Message.Count() > 0)
                                                     {
 
@@ -2333,10 +2334,10 @@ namespace SUP
                                                                 }
 
                                                                 string extension = Path.GetExtension(imgurn).ToLower();
-                                                                List<string> imgExtensions = new List<string> { ".bmp", ".gif", ".ico", ".jpeg", ".jpg", ".png", ".tif", ".tiff", ".mp4", ".avi" };
+                                                                List<string> imgExtensions = new List<string> { ".bmp", ".gif", ".ico", ".jpeg", ".jpg", ".png", ".tif", ".tiff", ".mp4", ".avi",".wav" };
                                                                 string vpattern = @"(?:youtu\.be/|youtube(?:-nocookie)?\.com/(?:[^/\n\s]*[/\n\s]*(?:v/|e(?:mbed)?/|.*[?&]v=))?)?([a-zA-Z0-9_-]{11})";
                                                                 Match vmatch = Regex.Match(content, vpattern);
-                                                                if (!imgExtensions.Contains(extension) && !vmatch.Success)
+                                                                if (!imgExtensions.Contains(extension) && vmatch.Value.Length < 12)
                                                                 {
 
 
@@ -2472,11 +2473,11 @@ namespace SUP
 
                                                                     if (!int.TryParse(content, out int id))
                                                                     {
-                                                                        if (vmatch.Success || extension == ".mp4" || extension == ".avi")
+                                                                        if (vmatch.Success || extension == ".mp4" || extension == ".avi" || extension == ".wav")
                                                                         {
                                                                             this.Invoke((MethodInvoker)delegate
                                                                             {
-                                                                                AddVideo(content, false, true);
+                                                                                AddVideo(content, false, true, true);
                                                                             });
                                                                         }
                                                                         else
@@ -2811,7 +2812,7 @@ namespace SUP
                                         });
 
                                         string pattern = "<<.*?>>";
-                                        List<string> imgExtensions = new List<string> { ".bmp", ".gif", ".ico", ".jpeg", ".jpg", ".png", ".tif", ".tiff", ".mp4",".avi" };
+                                        List<string> imgExtensions = new List<string> { ".bmp", ".gif", ".ico", ".jpeg", ".jpg", ".png", ".tif", ".tiff", ".mp4",".avi",".wav" };
 
                                         MatchCollection matches = Regex.Matches(unfilteredmessage, pattern);
                                         foreach (Match match in matches)
@@ -2966,7 +2967,7 @@ namespace SUP
                                                     if (!int.TryParse(content, out int id))
                                                     {
 
-                                                        if (extension == ".mp4" || extension == ".avi" || content.Contains("youtube.com") || content.Contains("youtu.be"))
+                                                        if (extension == ".mp4" || extension == ".avi" || content.Contains("youtube.com") || content.Contains("youtu.be") || extension == ".wav")
                                                         {
 
                                                             this.Invoke((MethodInvoker)delegate
@@ -3324,7 +3325,7 @@ namespace SUP
                                                 result = Root.DecryptRootBytes("good-user", "better-password", @"http://127.0.0.1:18332", profileURN.Links[0].LinkData.ToString(), result2);
 
                                                 Root decryptedroot = Root.GetRootByTransactionId(transid, "good-user", "better-password", @"http://127.0.0.1:18332", "111", result, profileURN.Links[0].LinkData.ToString());
-                                                List<string> imgExtensions = new List<string> { ".bmp", ".gif", ".ico", ".jpeg", ".jpg", ".png", ".tif", ".tiff",".mp4",".avi" };
+                                                List<string> imgExtensions = new List<string> { ".bmp", ".gif", ".ico", ".jpeg", ".jpg", ".png", ".tif", ".tiff",".mp4",".avi",".wav" };
 
                                                 foreach (string file in decryptedroot.File.Keys)
                                                 {
@@ -3357,7 +3358,7 @@ namespace SUP
                                                     }
                                                     else
                                                     {
-                                                        if (extension == ".mp4" || extension == ".avi")
+                                                        if (extension == ".mp4" || extension == ".avi" || extension == ".wav")
                                                         {
 
                                                             this.Invoke((MethodInvoker)delegate
@@ -3386,7 +3387,7 @@ namespace SUP
                                             {
 
 
-                                                List<string> imgExtensions = new List<string> { ".bmp", ".gif", ".ico", ".jpeg", ".jpg", ".png", ".tif", ".tiff",".mp4",".avi" };
+                                                List<string> imgExtensions = new List<string> { ".bmp", ".gif", ".ico", ".jpeg", ".jpg", ".png", ".tif", ".tiff", ".mp4", ".avi", ".wav" };
 
                                                 string extension = Path.GetExtension(content).ToLower();
                                                 if (!imgExtensions.Contains(extension) && !content.Contains("youtube.com") && !content.Contains("youtu.be"))
@@ -3484,7 +3485,7 @@ namespace SUP
                                                 }
                                                 else
                                                 {
-                                                    if (extension == ".mp4" || extension == ".avi" || content.Contains("youtube.com") || content.Contains("youtu.be"))
+                                                    if (extension == ".mp4" || extension == ".avi" || content.Contains("youtube.com") || content.Contains("youtu.be") || extension == ".wav")
                                                     {
 
                                                         this.Invoke((MethodInvoker)delegate
@@ -3719,7 +3720,7 @@ namespace SUP
 
         }
 
-        async void AddVideo(string videopath, bool isprivate = false, bool addtoTop = false)
+        async void AddVideo(string videopath, bool isprivate = false, bool addtoTop = false, bool autoPlay = false)
         {
             string videolocation = "";
             if (videopath != null)
@@ -3878,44 +3879,57 @@ namespace SUP
 
 
             }
+
             Microsoft.Web.WebView2.WinForms.WebView2 webviewer = new Microsoft.Web.WebView2.WinForms.WebView2();
             webviewer.AllowExternalDrop = true;
             webviewer.BackColor = System.Drawing.Color.Black;
             webviewer.CreationProperties = null;
             webviewer.DefaultBackgroundColor = System.Drawing.Color.Black;
-           
+
             webviewer.Name = "webviewer";
             webviewer.Size = new System.Drawing.Size(400, 300);
             webviewer.ZoomFactor = 1D;
 
+            // Assuming "videolocation" is defined elsewhere in your code.
             string viewerPath = Path.GetDirectoryName(videolocation) + @"\urnviewer.html";
 
-            if (videolocation.Contains("www.youtube.com")){
-                try { Directory.CreateDirectory(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + @"\root\" + videolocation.Substring(29)); } catch { }
-                viewerPath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + @"\root\"+ videolocation.Substring(29) + @"\urnviewer.html"; }
+            if (videolocation.Contains("www.youtube.com"))
+            {
+                try { Directory.CreateDirectory(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + @"\root\" + videolocation.Substring(29)); }
+                catch { }
+                viewerPath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + @"\root\" + videolocation.Substring(29) + @"\urnviewer.html";
+            }
 
             string htmlstring = "<html><body><embed src=\"" + videolocation + "\" width=100% height=100% ></body></html>";
+
             webviewers.Add(webviewer);
             msg.Controls.Add(webviewer);
-           
 
             try
             {
-                System.IO.File.WriteAllText(viewerPath, htmlstring);
                 await webviewer.EnsureCoreWebView2Async();
+
+                // Load the HTML content into the WebView2 control
+                System.IO.File.WriteAllText(viewerPath, htmlstring);
                 webviewer.CoreWebView2.Navigate(viewerPath);
-            }
-            catch
-            {
-                Thread.Sleep(1000);
-                try
+
+                // If it's a .wav file and autoplay is enabled, trigger the audio playback
+                if (videolocation.ToLower().EndsWith(".wav") && autoPlay)
+
                 {
-                    await webviewer.EnsureCoreWebView2Async();
-                    webviewer.CoreWebView2.Navigate(viewerPath);
+                    WaveOut waveOut = new WaveOut();
+                    //.PlaybackStopped += waveOut_PlaybackStopped;
+                    WaveFileReader reader = new WaveFileReader(videolocation);
+                    waveOut.Init(reader);
+                    waveOut.Play();
                 }
-                catch { }
             }
-                      
+            catch (Exception ex)
+            {
+                string error = ex.Message;// Handle exceptions here
+            }
+            
+
 
         }
 
@@ -4634,7 +4648,7 @@ namespace SUP
                             if (!int.TryParse(content, out int id) && !content.Trim().StartsWith("#"))
                             {
 
-                                List<string> imgExtensions = new List<string> { ".bmp", ".gif", ".ico", ".jpeg", ".jpg", ".png", ".tif", ".tiff" ,".mp4",".avi"};
+                                List<string> imgExtensions = new List<string> { ".bmp", ".gif", ".ico", ".jpeg", ".jpg", ".png", ".tif", ".tiff", ".mp4", ".avi", ".wav" };
 
                                 string extension = Path.GetExtension(content).ToLower();
                                 if (!imgExtensions.Contains(extension) && !content.Contains("youtube.com") && !content.Contains("youtu.be"))
@@ -4733,7 +4747,7 @@ namespace SUP
                                 else
                                 {
 
-                                        if (extension == ".mp4" || extension == ".avi" || content.Contains("youtube.com") || content.Contains("youtu.be"))
+                                        if (extension == ".mp4" || extension == ".avi" || content.Contains("youtube.com") || content.Contains("youtu.be") || extension == ".wav")
                                         {
 
                                             this.Invoke((MethodInvoker)delegate
@@ -4995,9 +5009,6 @@ namespace SUP
             }
         }
 
-        private void splitContainer1_Panel2_Paint(object sender, PaintEventArgs e)
-        {
-
-        }
+ 
     }
 }

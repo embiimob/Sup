@@ -464,9 +464,10 @@ namespace SUP
             encodedList.Add(txtToAddress.Text);
             encodedList.Add(signatureAddress);
             lblObjectStatus.Text = "cost: " + (0.00000546 * encodedList.Count).ToString("0.00000000") + "  + miner fee";
-            DialogResult result = MessageBox.Show("Are you sure you want to send this?", "Confirmation", MessageBoxButtons.YesNo);
-            if (result == DialogResult.Yes)
+
+            if (File.Exists(@"WALKIE_TALKIE_ENABLED") && flowAttachments.Contains(this.btnPlay))
             {
+
                 // Perform the action
                 var recipients = new Dictionary<string, decimal>();
                 foreach (var encodedAddress in encodedList)
@@ -487,10 +488,40 @@ namespace SUP
                 }
                 catch (Exception ex) { lblObjectStatus.Text = ex.Message; }
 
+            }
+            else
+            {
+                DialogResult result = MessageBox.Show("Are you sure you want to send this?", "Confirmation", MessageBoxButtons.YesNo);
+                if (result == DialogResult.Yes)
+                {
+                    // Perform the action
+                    var recipients = new Dictionary<string, decimal>();
+                    foreach (var encodedAddress in encodedList)
+                    {
+                        try { recipients.Add(encodedAddress, 0.00000546m); } catch { }
+                    }
+
+                    CoinRPC a = new CoinRPC(new Uri("http://127.0.0.1:18332"), new NetworkCredential("good-user", "better-password"));
+
+                    try
+                    {
+                        string accountsString = "";
+                        try { accountsString = rpcClient.SendCommand("listaccounts").ResultString; } catch { }
+                        var accounts = JsonConvert.DeserializeObject<Dictionary<string, decimal>>(accountsString);
+                        var keyWithLargestValue = accounts.Aggregate((x, y) => x.Value > y.Value ? x : y).Key;
+                        var results = a.SendMany(keyWithLargestValue, recipients);
+                        lblTransactionId.Text = results;
+                    }
+                    catch (Exception ex) { lblObjectStatus.Text = ex.Message; }
+
+
+                }
+
 
             }
-
         }
+           
+
 
         private void button1_Click(object sender, EventArgs e)
         {
@@ -669,9 +700,14 @@ namespace SUP
             ipfsHash = await addTask; 
 
          try { Directory.Delete(@"root\" + processingid, true); } catch { }
-                  
 
-            
+            if (File.Exists(@"WALKIE_TALKIE_ENABLED"))
+            {
+                btnRefresh.PerformClick();
+            }
+
+
+
         }
         private void waveOut_PlaybackStopped(object sender, StoppedEventArgs e)
         {
@@ -710,6 +746,6 @@ namespace SUP
             }
         }
 
- 
+
     }
 }
