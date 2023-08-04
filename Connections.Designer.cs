@@ -479,7 +479,7 @@
             this.label15.Name = "label15";
             this.label15.Size = new System.Drawing.Size(116, 13);
             this.label15.TabIndex = 124;
-            this.label15.Text = "Sup!? v0.1.44-beta";
+            this.label15.Text = "Sup!? v0.1.45-beta";
             // 
             // label14
             // 
@@ -833,6 +833,8 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(707, 568);
             this.Controls.Add(this.panel1);
+            this.MaximumSize = new System.Drawing.Size(723, 607);
+            this.MinimumSize = new System.Drawing.Size(723, 607);
             this.Name = "Connections";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "Connections";

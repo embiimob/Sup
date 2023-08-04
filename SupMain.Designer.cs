@@ -80,9 +80,6 @@
             // 
             this.splitContainer1.Panel1.Controls.Add(this.splitContainer2);
             this.splitContainer1.Panel1MinSize = 525;
-            // 
-            // splitContainer1.Panel2
-            // 
             this.splitContainer1.Panel2MinSize = 280;
             this.splitContainer1.Size = new System.Drawing.Size(1034, 735);
             this.splitContainer1.SplitterDistance = 525;
@@ -219,7 +216,7 @@
             this.lblProcessHeight.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.lblProcessHeight.AutoSize = true;
             this.lblProcessHeight.ForeColor = System.Drawing.Color.White;
-            this.lblProcessHeight.Location = new System.Drawing.Point(413, 119);
+            this.lblProcessHeight.Location = new System.Drawing.Point(398, 119);
             this.lblProcessHeight.Name = "lblProcessHeight";
             this.lblProcessHeight.Size = new System.Drawing.Size(25, 13);
             this.lblProcessHeight.TabIndex = 96;
@@ -293,7 +290,7 @@
             this.supFlow.Location = new System.Drawing.Point(9, 170);
             this.supFlow.Name = "supFlow";
             this.supFlow.Padding = new System.Windows.Forms.Padding(0, 3, 0, 0);
-            this.supFlow.Size = new System.Drawing.Size(449, 510);
+            this.supFlow.Size = new System.Drawing.Size(455, 510);
             this.supFlow.TabIndex = 86;
             // 
             // lblAdultsOnly
