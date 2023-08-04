@@ -11,7 +11,7 @@ P2FK was directly inspired by the satoshi uploader  see --> https://cirosantilli
 
 ## **Installation**
 
-1. Download the Sup.v0.1.43-beta.zip file (https://github.com/embiimob/Sup/releases/download/Supv0.1.43-beta/Sup.v0.1.43-beta.zip)
+1. Download the Sup.v0.1.44-beta.zip file (https://github.com/embiimob/Sup/releases/download/Supv0.1.44-beta/Sup.v0.1.44-beta.zip)
 2. Create a folder on your **fastest** disk drive with at least **50GB** free (it will be storing the bitcoin testnet blockchain)
 3. Unzip all contents into the folder
 4. Create a shortcut to SUP.exe and launch
@@ -59,7 +59,7 @@ searches mainchain by urn - shows currently registered object with uri redirecti
 navigates to requested url in browser.
 <br />
 <br />
-## **Public / Private Messaging / Social / #Keyword Search / GIF Selector**
+## **Public / Private Messaging / Social / #Keyword Search / GIF Selector / Walkie Talkie**
 The disco ball has dropped you can now send direct public and private messages using Sup!?, the bitcoin testnet and #IPFS.   Search for a profile and add friends by clicking the follow button.  Click on a friend's icon to show their latest public messages. Click on the community icon to see a combination of all your friends posts in a single feed in the order that they were confirmed on the blockchain.   Search for your own profile in the object browser to login with your local account. Sup!? search now finds and displays all public messages by #keyword.  Click on the disco ball to send the profile you are currently browsing a public message.  Click on the 🤐 before clicking on the discon ball to send the profile you are currently browsing a private message. Click the GIF button to search through a growing collection of Gifs etched into the blockchain by other Sup!? users.  Search for your own profile and click on the 🤐 icon to see any private messages sent to it.
 <br />
 NOTE: all attachments in your private message are encrypted via Sup!? using the recipients public keys before they are uploaded to IPFS for delivery.
