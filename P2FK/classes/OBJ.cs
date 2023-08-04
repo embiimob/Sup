@@ -2524,7 +2524,8 @@ namespace SUP.P2FK
                         if (rownum > skip)
                         {
                             string process = it.ValueAsString();
-
+                            try
+                            {
                             List<string> supMessagePacket = JsonConvert.DeserializeObject<List<string>>(process);
                             Root root = Root.GetRootByTransactionId(supMessagePacket[1], username, password, url, versionByte);
                             byte[] result = Root.GetRootBytesByFile(new string[] { @"root/" + supMessagePacket[1] + @"/SEC" });
@@ -2532,8 +2533,7 @@ namespace SUP.P2FK
 
                             root = Root.GetRootByTransactionId(supMessagePacket[1], "good-user", "better-password", "http://127.0.0.1:18332", versionByte, result, objectaddress);
 
-                            try
-                            {
+                         
                                 foreach (string message in root.Message)
                                 {
 

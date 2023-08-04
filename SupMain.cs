@@ -3254,7 +3254,7 @@ namespace SUP
                                                                     process2.StartInfo.UseShellExecute = false;
                                                                     process2.StartInfo.CreateNoWindow = true;
                                                                     process2.Start();
-                                                                    if (process2.WaitForExit(5000))
+                                                                    if (process2.WaitForExit(55000))
                                                                     {
                                                                         string fileName;
                                                                         if (System.IO.File.Exists("ipfs/" + transid))
@@ -3430,7 +3430,7 @@ namespace SUP
                                                         process2.StartInfo.UseShellExecute = false;
                                                         process2.StartInfo.CreateNoWindow = true;
                                                         process2.Start();
-                                                        if (process2.WaitForExit(5000))
+                                                        if (process2.WaitForExit(55000))
                                                         {
                                                             string fileName;
                                                             if (System.IO.File.Exists("root/" + transid))
@@ -3836,7 +3836,7 @@ namespace SUP
                                 process2.StartInfo.UseShellExecute = false;
                                 process2.StartInfo.CreateNoWindow = true;
                                 process2.Start();
-                                if (process2.WaitForExit(5000))
+                                if (process2.WaitForExit(55000))
                                 {
                                     string fileName;
                                     if (System.IO.File.Exists("ipfs/" + transid))
@@ -4990,6 +4990,25 @@ namespace SUP
 
                         string _from = fromProp?.GetValue(message).ToString();
                         string _to = toProp?.GetValue(message).ToString();
+
+                        string fromURN = fromProp?.GetValue(message).ToString();
+                        PROState fromProfile = PROState.GetProfileByAddress(fromURN, "good-user", "better-password", "http://127.0.0.1:18332");
+                        if (fromProfile.URN != null)
+                        {
+                            fromURN = fromProfile.URN;
+
+                        }
+                       
+
+                        string toURN = toProp?.GetValue(message).ToString();
+                        PROState toProfile = PROState.GetProfileByAddress(toURN, "good-user", "better-password", "http://127.0.0.1:18332");
+
+                        if (toProfile.URN != null)
+                        {
+                            toURN = toProfile.URN;
+
+                        }
+
                         string _message = messageProp?.GetValue(message).ToString();
                         string _blockdate = blockDateProp?.GetValue(message).ToString();
                         string imglocation = "";
@@ -4999,10 +5018,10 @@ namespace SUP
                         this.Invoke((MethodInvoker)delegate
                         {
                             try { imglocation = myFriends[_from]; } catch { }
-                            CreateFeedRow(imglocation, _from, _from, DateTime.ParseExact("19700101010101", "yyyyMMddHHmmss", CultureInfo.InvariantCulture), _message, "", Color.White, supFlow);
+                            CreateFeedRow(imglocation, fromURN, _from, DateTime.ParseExact("19700101010101", "yyyyMMddHHmmss", CultureInfo.InvariantCulture), _message, "", Color.White, supFlow);
 
                             try { imglocation = myFriends[_to]; } catch { }
-                            CreateFeedRow(imglocation, _to, _to, DateTime.ParseExact(_blockdate, "yyyyMMddHHmmss", CultureInfo.InvariantCulture), " ", "", Color.White, supFlow);
+                            CreateFeedRow(imglocation, toURN, _to, DateTime.ParseExact(_blockdate, "yyyyMMddHHmmss", CultureInfo.InvariantCulture), " ", "", Color.White, supFlow);
                         });
                         string pattern = "<<.*?>>";
                         MatchCollection matches = Regex.Matches(unfilteredmessage, pattern);

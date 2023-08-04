@@ -161,18 +161,10 @@ namespace SUP
                                 pictureBox.MouseClick += PictureBox_MouseClick;
 
                             }
-                            else {
-
-                                if (extension == ".wav")
-                                { 
-                                
-                                
-                                }
-                                else {
+                            else {               
                                     pictureBox.ImageLocation = @"includes\HugPuddle.jpg";
                                     pictureBox.MouseClick += PictureBox_MouseClick;
-                                    }
-                            }
+                                  }
                             
                             this.Invoke((MethodInvoker)delegate
                             {
@@ -362,8 +354,6 @@ namespace SUP
                 txtAttach.Text = "";
             });
         }
-
-
         private void PictureBox_MouseClick(object sender, MouseEventArgs e)
         {
             if (e.Button == MouseButtons.Right)
@@ -373,7 +363,6 @@ namespace SUP
 
             }
         }
-
         private void discoButton_Click(object sender, EventArgs e)
         {
 
@@ -520,16 +509,11 @@ namespace SUP
 
             }
         }
-           
-
-
         private void button1_Click(object sender, EventArgs e)
         {
             GifTool gifToolForm = new GifTool(this); // Pass the reference to the current form as the parent form
             gifToolForm.ShowDialog();
         }
-
-
         private void MainForm_FormClosing(object sender, FormClosingEventArgs e)
         {
             // Clean up NAudio resources
@@ -550,7 +534,6 @@ namespace SUP
             }
             try { File.Delete(wavFileName); } catch { } 
         }
-
         private void BtnRecord_MouseDown(object sender, MouseEventArgs e)
         {
             btnRecord.BackColor = System.Drawing.Color.Blue;
@@ -562,13 +545,11 @@ namespace SUP
                 isRecording = true;
             }
         }
-
         private void BtnRecord_MouseUp(object sender, MouseEventArgs e)
         {
             recordTimer.Start(); // Start the delay timer when the button is released
 
         }
-
         private void BtnPlay_Click(object sender, MouseEventArgs e)
         {
 
@@ -615,7 +596,6 @@ namespace SUP
                 writer.Flush();
             }
         }
-
         private async void WaveIn_RecordingStopped(object sender, StoppedEventArgs e)
         {
             // Clean up after recording is stopped
@@ -724,7 +704,6 @@ namespace SUP
                 reader = null;
             }
         }
-
         private void RecordTimer_Elapsed(object sender, ElapsedEventArgs e)
                     {
             btnRecord.BackColor = System.Drawing.Color.White;
