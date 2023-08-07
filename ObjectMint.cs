@@ -23,6 +23,7 @@ using System.Net;
 using System.Security.Cryptography;
 using System.Text;
 using BitcoinNET.RPCClient;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement.ProgressBar;
 
 namespace SUP
 {
@@ -40,6 +41,8 @@ namespace SUP
     
         private void UpdateRemainingChars()
         {
+            lblObjectStatus.Text = "";
+
             if (txtURN.Text != "" && txtTitle.Text != "" && txtObjectAddress.Text != "" && flowOwners.Controls.Count > 0)
             {
                 if (btnObjectName.BackColor == Color.Blue || btnObjectURN.BackColor == Color.Blue || btnObjectURI.BackColor == Color.Blue || btnObjectOwners.BackColor == Color.Blue || btnObjectCreators.BackColor == Color.Blue || btnObjectAttributes.BackColor == Color.Blue || btnObjectImage.BackColor == Color.Blue || btnObjectMaximum.BackColor == Color.Blue || btnObjectDescription.BackColor == Color.Blue || btnObjectKeywords.BackColor == Color.Blue || btnObjectRoyalties.BackColor == Color.Blue) { btnMint.Enabled = true; btnPrint.Enabled = true; }
@@ -180,14 +183,26 @@ namespace SUP
                     string chunk = txtOBJP2FK.Text.Substring(i, Math.Min(20, txtOBJP2FK.Text.Length - i));
                     if (chunk.Any())
                     {
+                    if (!encodedList.Contains(Root.GetPublicAddressByKeyword(chunk))) 
+                    
+                    {
                         encodedList.Add(Root.GetPublicAddressByKeyword(chunk));
                     }
+                    else
+                    {
+                        DialogResult result = MessageBox.Show("the following duplicate information was detected. [  "+ chunk +"  ]. sorry you must still use Apertus.io for etchings that require repetitive data", "Confirmation", MessageBoxButtons.OK);
+                    }
+
+
+                }
                 }
 
                 //add URN registration
                 encodedList.Add(Root.GetPublicAddressByKeyword(txtURN.Text));
 
 
+            if (txtURN.Text != "")
+            {
                 //attempt file registration
                 string fileSource = txtURN.Text.Trim();
                 byte[] fileBytes;
@@ -215,26 +230,26 @@ namespace SUP
                 try
                 {
 
-                byte[] payload = new byte[21];
+                    byte[] payload = new byte[21];
 
-                using (FileStream fileStream = new FileStream(fileSource, FileMode.Open))
-                {
-                    using (System.Security.Cryptography.SHA256 sha256 = System.Security.Cryptography.SHA256.Create())
+                    using (FileStream fileStream = new FileStream(fileSource, FileMode.Open))
                     {
-                        byte[] hash = sha256.ComputeHash(fileStream);
-                        Array.Copy(hash, payload, 20);
+                        using (System.Security.Cryptography.SHA256 sha256 = System.Security.Cryptography.SHA256.Create())
+                        {
+                            byte[] hash = sha256.ComputeHash(fileStream);
+                            Array.Copy(hash, payload, 20);
+                        }
                     }
+
+                    payload[0] = 0x6F; // 0x6F is the hexadecimal representation of 111
+                    string objectaddress = Base58.EncodeWithCheckSum(payload);
+
+                    encodedList.Add(objectaddress);
+
                 }
-
-                payload[0] = 0x6F; // 0x6F is the hexadecimal representation of 111
-                string objectaddress = Base58.EncodeWithCheckSum(payload);
-
-                encodedList.Add(objectaddress);
+                catch (Exception ex) { lblObjectStatus.Text = ex.Message; }
 
             }
-                catch { }
-
-
 
                 foreach (Button keywordbtn in flowKeywords.Controls)
                 {
@@ -266,9 +281,22 @@ namespace SUP
                     }
                 }
 
-                if (!encodedList.Contains(txtObjectAddress.Text)) { encodedList.Add(txtObjectAddress.Text); }
-                encodedList.Add(signatureAddress);
-                txtAddressListJSON.Text = JsonConvert.SerializeObject(encodedList.Distinct());
+            while (encodedList.Contains(txtObjectAddress.Text))
+            {
+                encodedList.Remove(txtObjectAddress.Text);
+            }
+
+            // Assuming signatureAddress is a string
+            while (encodedList.Contains(signatureAddress))
+            {
+                encodedList.Remove(signatureAddress);
+            }
+
+            encodedList.Add(txtObjectAddress.Text);
+            encodedList.Add(signatureAddress);
+
+ 
+            txtAddressListJSON.Text = JsonConvert.SerializeObject(encodedList.Distinct());
 
                 lblCost.Text = "cost: " + (0.00000546 * encodedList.Count).ToString("0.00000000") + "  + miner fee";
 
@@ -2647,6 +2675,21 @@ namespace SUP
           
             btnObjectRoyalties.BackColor = Color.Blue;
             btnObjectRoyalties.ForeColor = Color.Yellow;
+        }
+
+        private void txtOBJP2FK_TextChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void txtAddressListJSON_TextChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void txtOBJJSON_TextChanged(object sender, EventArgs e)
+        {
+
         }
     }
 

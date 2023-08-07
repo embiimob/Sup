@@ -181,6 +181,13 @@ namespace SUP.P2FK
                                 {
                                     case "OBJ":
                                         OBJ objectinspector = null;
+
+                                        //is this even the right object!?  no!?  goodbye!
+                                        if (!transaction.Keyword.ContainsKey(objectaddress))
+                                        {
+                                            break;
+                                        }
+
                                         try
                                         {
                                             objectinspector = JsonConvert.DeserializeObject<OBJ>(File.ReadAllText(@"root\" + transaction.TransactionId + @"\OBJ"));
@@ -1602,6 +1609,45 @@ namespace SUP.P2FK
 
                             }
 
+                        }
+                        else { 
+                            try
+                            {
+                                findObject = transaction.Keyword.ElementAt(transaction.Keyword.Count - 2).Key;
+                                isObject = GetObjectByAddress(findObject, username, password, url, versionByte);
+
+                                if (isObject.URN != null && isObject.URN == searchstring && isObject.Owners != null && isObject.ChangeDate > DateTime.Now.AddYears(-3) && isObject.Creators.ElementAt(0).Key == findObject)
+                                {
+                                    isObject.Id = objectTransactions.Count();
+                                    var profileSerialized = JsonConvert.SerializeObject(isObject);
+                                    try
+                                    {
+                                        System.IO.File.WriteAllText(@"root\" + objectaddress + @"\" + "GetObjectByURN.json", profileSerialized);
+                                    }
+                                    catch
+                                    {
+
+                                        try
+                                        {
+                                            if (!Directory.Exists(@"root\" + objectaddress))
+
+                                            {
+                                                Directory.CreateDirectory(@"root\" + objectaddress);
+                                            }
+                                            System.IO.File.WriteAllText(@"root\" + objectaddress + @"\" + "GetObjectByURN.json", profileSerialized);
+                                        }
+                                        catch { };
+                                    }
+
+
+                                    return isObject;
+
+                                }
+
+
+
+                            }
+                            catch { }
                         }
 
 
