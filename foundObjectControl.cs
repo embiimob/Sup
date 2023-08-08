@@ -223,5 +223,7 @@ namespace SUP
             // Return the substring between the colon and the slash
             return input.Substring(startIndex, endIndex - startIndex);
         }
+
+
     }
 }

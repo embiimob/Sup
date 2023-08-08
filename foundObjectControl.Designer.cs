@@ -213,7 +213,8 @@
             this.ObjectCreators2.LinkColor = System.Drawing.SystemColors.Highlight;
             this.ObjectCreators2.Location = new System.Drawing.Point(9, 0);
             this.ObjectCreators2.Name = "ObjectCreators2";
-            this.ObjectCreators2.Size = new System.Drawing.Size(0, 13);
+            this.ObjectCreators2.Padding = new System.Windows.Forms.Padding(30, 0, 0, 0);
+            this.ObjectCreators2.Size = new System.Drawing.Size(30, 13);
             this.ObjectCreators2.TabIndex = 11;
             this.ObjectCreators2.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             this.ObjectCreators2.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.ObjectCreators2_LinkClicked);
@@ -225,9 +226,9 @@
             this.flowLayoutPanel1.Controls.Add(this.ObjectCreators2);
             this.flowLayoutPanel1.ForeColor = System.Drawing.Color.White;
             this.flowLayoutPanel1.Location = new System.Drawing.Point(1, 244);
-            this.flowLayoutPanel1.Margin = new System.Windows.Forms.Padding(10, 3, 10, 3);
+            this.flowLayoutPanel1.Margin = new System.Windows.Forms.Padding(10, 3, 20, 3);
             this.flowLayoutPanel1.Name = "flowLayoutPanel1";
-            this.flowLayoutPanel1.Size = new System.Drawing.Size(207, 20);
+            this.flowLayoutPanel1.Size = new System.Drawing.Size(219, 20);
             this.flowLayoutPanel1.TabIndex = 12;
             this.flowLayoutPanel1.Click += new System.EventHandler(this.foundObjectControl_Click);
             // 

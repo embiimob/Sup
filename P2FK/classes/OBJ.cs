@@ -205,16 +205,6 @@ namespace SUP.P2FK
                                         }
 
 
-                                        //foreach (string key in transaction.Keyword.Keys)
-                                        //{
-
-                                        //    using (var db = new DB(OBJ, @"root\obj"))
-                                        //    {
-                                        //        db.Put(objectaddress + "!" + key, transaction.TransactionId);
-                                        //    }
-
-
-                                        //}
 
                                         try
                                         {
@@ -584,6 +574,29 @@ namespace SUP.P2FK
                                                     db.Close();
 
                                                     logstatus = "";
+                                                }
+
+                                                if (objectState.Creators.TryGet(transaction.SignedBy).Year == 1)
+                                                {
+                                                    objectState.Creators[transaction.SignedBy] = transaction.BlockDate;
+                                                    objectState.ChangeDate = transaction.BlockDate;
+                                                    if (verbose)
+                                                    {
+
+                                                        logstatus = "[\"" + transaction.SignedBy + "\",\"" + objectaddress + "\",\"grant\",\"\",\"\",\"success\"]";
+
+                                                        lock (SupLocker)
+                                                        {
+                                                            var ROOT = new Options { CreateIfMissing = true };
+                                                            var db = new DB(ROOT, @"root\event");
+                                                            db.Put(objectaddress + "!" + transaction.BlockDate.ToString("yyyyMMddHHmmss") + "!" + sortableProcessHeight + "!", logstatus);
+                                                            db.Put("lastkey!" + objectaddress, objectaddress + "!" + transaction.BlockDate.ToString("yyyyMMddHHmmss") + "!" + sortableProcessHeight + "!");
+                                                            db.Close();
+                                                        }
+
+
+                                                    }
+
                                                 }
 
                                                 if (objectState.LockedDate.Year == 1)
@@ -1289,8 +1302,55 @@ namespace SUP.P2FK
                                                     listing.BlockDate = transaction.BlockDate;
                                                     objectState.Listings.Add(Listr, listing);
 
+                                                    //Lock Object upon successfull Listing
+                                                    if (objectState.LockedDate.Year == 1)
+                                                    {
+
+                                                        if (verbose)
+                                                        {
+                                                            ListCount++;
+                                                            sortableListCount = ListCount.ToString("X").PadLeft(4, '0');
+                                                            logstatus = "[\"" + transaction.SignedBy + "\",\"" + objectaddress + "\",\"lock\",\"\",\"\",\"success\"]";
+
+                                                            var ROOT = new Options { CreateIfMissing = true };
+                                                            var db = new DB(ROOT, @"root\event");
+                                                            db.Put(objectaddress + "!" + transaction.BlockDate.ToString("yyyyMMddHHmmss") + "!" + sortableProcessHeight + "!" + sortableListCount, logstatus);
+                                                            db.Put("lastkey!" + objectaddress, objectaddress + "!" + transaction.BlockDate.ToString("yyyyMMddHHmmss") + "!" + sortableProcessHeight + "!" + sortableListCount);
+                                                            db.Close();
+
+                                                            logstatus = "";
+                                                        }
+                                                        objectState.LockedDate = transaction.BlockDate;
+                                                    }
+
+                                                    // update grant date if null and signed by a creator
+                                                    if (objectState.Creators.TryGet(transaction.SignedBy).Year == 1)
+                                                    {
+                                                        objectState.Creators[transaction.SignedBy] = transaction.BlockDate;
+                                                        objectState.ChangeDate = transaction.BlockDate;
+                                                        if (verbose)
+                                                        {
+
+                                                            logstatus = "[\"" + transaction.SignedBy + "\",\"" + objectaddress + "\",\"grant\",\"\",\"\",\"success\"]";
+
+                                                            lock (SupLocker)
+                                                            {
+                                                                var ROOT = new Options { CreateIfMissing = true };
+                                                                var db = new DB(ROOT, @"root\event");
+                                                                db.Put(objectaddress + "!" + transaction.BlockDate.ToString("yyyyMMddHHmmss") + "!" + sortableProcessHeight + "!", logstatus);
+                                                                db.Put("lastkey!" + objectaddress, objectaddress + "!" + transaction.BlockDate.ToString("yyyyMMddHHmmss") + "!" + sortableProcessHeight + "!");
+                                                                db.Close();
+                                                            }
+
+
+                                                        }
+
+                                                    }
+
+
+
                                                     if (verbose)
-                                                    { //Invalid list attempt
+                                                    {
                                                         logstatus = "[\"" + transaction.SignedBy + "\",\"" + objectToList + "\",\"List\",\"" + qtyToList + "\",\"" + eachCost + "\",\"Success\"]";
 
                                                         lock (SupLocker)
@@ -1365,7 +1425,8 @@ namespace SUP.P2FK
                     }
 
                     //used to determine where to begin object State processing when retrieved from cache
-                    objectState.ProcessHeight = objectTransactions.Count();
+
+                    objectState.ProcessHeight = objectTransactions.Max(state => state.Id);
                     objectState.Verbose = verbose;
                     var objectSerialized = JsonConvert.SerializeObject(objectState);
 
@@ -1614,7 +1675,8 @@ namespace SUP.P2FK
                             }
 
                         }
-                        else { 
+                        else
+                        {
                             try
                             {
                                 findObject = transaction.Keyword.ElementAt(transaction.Keyword.Count - 2).Key;
@@ -2106,7 +2168,7 @@ namespace SUP.P2FK
                         string error = x.Message;
                     }
 
-                    if (intProcessHeight != 0 && intProcessHeight == maxID )
+                    if (intProcessHeight != 0 && intProcessHeight == maxID)
                     {
                         try { File.Delete(@"GET_OBJECTS_BY_ADDRESS"); } catch { }
 
@@ -2126,20 +2188,20 @@ namespace SUP.P2FK
 
 
                         //ignore any transaction that is not signed
-                        if (transaction.Signed && transaction.Id > intProcessHeight )
+                        if (transaction.Signed && transaction.Id > intProcessHeight)
                         {
 
                             // string findId;
 
                             if (transaction.File.ContainsKey("OBJ") || transaction.File.ContainsKey("GIV") || transaction.File.ContainsKey("BUY") || transaction.File.ContainsKey("BRN") || transaction.File.ContainsKey("LST"))
                             {
-                                if (transaction.File.ContainsKey("GIV") || transaction.File.ContainsKey("BRN"))
+                                if (!transaction.File.ContainsKey("OBJ"))
                                 {
                                     foreach (string key in transaction.Keyword.Keys)
                                     {
                                         if (!addedValues.Contains(key))
                                         {
-                                            addedValues.Add(key);   
+                                            addedValues.Add(key);
 
                                             OBJState existingObjectState = objectStates.FirstOrDefault(os => os.Creators.First().Key == key);
                                             if (existingObjectState != null)
@@ -2476,13 +2538,14 @@ namespace SUP.P2FK
         public static List<string> GetKeywordsByAddress(string objectaddress, string username, string password, string url, string versionByte = "111")
         {
 
-            Root [] roots = Root.GetRootsByAddress(objectaddress, username, password, url,0,-1, versionByte);
+            Root[] roots = Root.GetRootsByAddress(objectaddress, username, password, url, 0, -1, versionByte);
 
             lock (SupLocker)
             {
                 List<string> keywords = new List<string>();
-                    
-                    foreach (Root root in roots){
+
+                foreach (Root root in roots)
+                {
 
                     foreach (string keyword in root.Keyword.Values)
                     {
@@ -2491,13 +2554,13 @@ namespace SUP.P2FK
 
                         if (!keywords.Contains(formattedKeyword))
                         {
-                         
+
                             keywords.Add(formattedKeyword);
 
                         }
                     }
 
-                    }
+                }
 
                 return keywords;
             }
@@ -2582,14 +2645,14 @@ namespace SUP.P2FK
                             string process = it.ValueAsString();
                             try
                             {
-                            List<string> supMessagePacket = JsonConvert.DeserializeObject<List<string>>(process);
-                            Root root = Root.GetRootByTransactionId(supMessagePacket[1], username, password, url, versionByte);
-                            byte[] result = Root.GetRootBytesByFile(new string[] { @"root/" + supMessagePacket[1] + @"/SEC" });
-                            result = Root.DecryptRootBytes(username, password, url, objectaddress, result);
+                                List<string> supMessagePacket = JsonConvert.DeserializeObject<List<string>>(process);
+                                Root root = Root.GetRootByTransactionId(supMessagePacket[1], username, password, url, versionByte);
+                                byte[] result = Root.GetRootBytesByFile(new string[] { @"root/" + supMessagePacket[1] + @"/SEC" });
+                                result = Root.DecryptRootBytes(username, password, url, objectaddress, result);
 
-                            root = Root.GetRootByTransactionId(supMessagePacket[1], "good-user", "better-password", "http://127.0.0.1:18332", versionByte, result, objectaddress);
+                                root = Root.GetRootByTransactionId(supMessagePacket[1], "good-user", "better-password", "http://127.0.0.1:18332", versionByte, result, objectaddress);
 
-                         
+
                                 foreach (string message in root.Message)
                                 {
 
