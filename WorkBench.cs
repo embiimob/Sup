@@ -357,7 +357,7 @@ namespace SUP
                 txtSearchAddress.Text,
                 txtLogin.Text,
                 txtPassword.Text,
-                txtUrl.Text, 0, 300,
+                txtUrl.Text, 0, -1,
                 txtVersionByte.Text
             );
             DateTime tmendCall = DateTime.UtcNow;
@@ -497,7 +497,7 @@ namespace SUP
                 publicAddress,
                 txtLogin.Text,
                 txtPassword.Text,
-                txtUrl.Text, 0, 300,
+                txtUrl.Text, 0, -1,
                 txtVersionByte.Text
             );
             DateTime tmendCall = DateTime.UtcNow;

@@ -43,7 +43,7 @@ namespace SUP
         {
             if (txtURN.Text != "" && txtObjectAddress.Text != "")
             {
-                if ((btnFirstName.BackColor == Color.Blue || btnObjectURN.BackColor == Color.Blue || btnMiddleName.BackColor == Color.Blue || btnSuffix.BackColor == Color.Blue || btnLocation.BackColor == Color.Blue || btnURL.BackColor == Color.Blue || btnObjectImage.BackColor == Color.Blue || btnLastName.BackColor == Color.Blue || btnBio.BackColor == Color.Blue || btnObjectKeywords.BackColor == Color.Blue)) { btnMint.Enabled = true; }
+                if ((btnFirstName.BackColor == Color.Blue || btnObjectURN.BackColor == Color.Blue || btnMiddleName.BackColor == Color.Blue || btnSuffix.BackColor == Color.Blue || btnLocation.BackColor == Color.Blue || btnURL.BackColor == Color.Blue || btnObjectImage.BackColor == Color.Blue || btnLastName.BackColor == Color.Blue || btnBio.BackColor == Color.Blue )) { btnMint.Enabled = true; }
             }
 
 
@@ -56,8 +56,6 @@ namespace SUP
             {
                 maxsize = maxsize - (control.Text.Length + 5);
             }
-
-            maxsize = maxsize - (flowKeywords.Controls.Count * 20) + 5;
 
             foreach (System.Windows.Forms.Control control in flowLocation.Controls)
             {
@@ -170,11 +168,6 @@ namespace SUP
                 //add URN registration
                 encodedList.Add(Root.GetPublicAddressByKeyword(txtURN.Text));
 
-                foreach (Button keywordbtn in flowKeywords.Controls)
-                {
-                    encodedList.Add(Root.GetPublicAddressByKeyword(keywordbtn.Text));
-                }
-
                 encodedList.Add(signatureAddress);
                 txtAddressListJSON.Text = JsonConvert.SerializeObject(encodedList.Distinct());
 
@@ -241,7 +234,6 @@ namespace SUP
                 btnURL.Enabled = true;
                 btnBio.Enabled = true;
                 btnObjectImage.Enabled = true;
-                btnObjectKeywords.Enabled = true;
                 btnFirstName.Enabled = true;
                 btnMiddleName.Enabled = true;
                 btnLastName.Enabled = true;
@@ -266,7 +258,6 @@ namespace SUP
                 btnURL.Enabled = false;
                 btnBio.Enabled = false;
                 btnObjectImage.Enabled = false;
-                btnObjectKeywords.Enabled = false;
                 btnFirstName.Enabled = false;
                 btnMiddleName.Enabled = false;
                 btnLastName.Enabled = false;
@@ -309,13 +300,6 @@ namespace SUP
             UpdateRemainingChars();
         }
 
-        private void flowKeyword_ControlAdded(object sender, ControlEventArgs e)
-        {
-            
-            btnObjectKeywords.BackColor = Color.Blue;
-            btnObjectKeywords.ForeColor = Color.Yellow;
-            UpdateRemainingChars();
-        }
 
         private void txtTitle_TextChanged(object sender, EventArgs e)
         {
@@ -378,7 +362,6 @@ namespace SUP
                 btnURL.Enabled = true;
                 btnBio.Enabled = true;
                 btnObjectImage.Enabled = true;
-                btnObjectKeywords.Enabled = true;
                 btnFirstName.Enabled = true;
                 btnMiddleName.Enabled = true;
                 btnLastName.Enabled = true;
@@ -403,7 +386,6 @@ namespace SUP
                 btnURL.Enabled = false;
                 btnBio.Enabled = false;
                 btnObjectImage.Enabled = false;
-                btnObjectKeywords.Enabled = false;
                 btnFirstName.Enabled = false;
                 btnMiddleName.Enabled = false;
                 btnLastName.Enabled = false;
@@ -888,101 +870,6 @@ namespace SUP
             UpdateRemainingChars();
         }
 
-        //GPT3
-        private void btnObjectKeywords_Click(object sender, EventArgs e)
-        {
-
-            using (var dialog = new Form())
-            {
-                dialog.Text = String.Empty;
-                dialog.AutoSize = true;
-                dialog.StartPosition = FormStartPosition.CenterParent;
-                dialog.ControlBox = false;
-                dialog.FormBorderStyle = FormBorderStyle.FixedDialog;
-                dialog.ClientSize = new Size(400, 80);
-
-                var tableLayout = new TableLayoutPanel();
-                tableLayout.ColumnCount = 1;
-                tableLayout.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
-
-                var keyLabel = new Label();
-                keyLabel.Text = "Keyword";
-                keyLabel.TextAlign = ContentAlignment.MiddleCenter;
-
-                var keyTextBox = new TextBox();
-                keyTextBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-                keyTextBox.Multiline = true;
-                keyTextBox.Size = new Size(340, 70);
-                tableLayout.Controls.Add(keyLabel, 0, 0);
-                tableLayout.Controls.Add(keyTextBox, 0, 1);
-
-                var addButton = new Button();
-                addButton.Text = "Add";
-                addButton.DialogResult = DialogResult.OK;
-                addButton.Anchor = AnchorStyles.Right;
-
-                var cancelButton = new Button();
-                cancelButton.Text = "Cancel";
-                cancelButton.DialogResult = DialogResult.Cancel;
-                cancelButton.Anchor = AnchorStyles.Right;
-
-                dialog.Controls.Add(tableLayout);
-                dialog.Controls.Add(addButton);
-                dialog.Controls.Add(cancelButton);
-
-                tableLayout.Dock = DockStyle.Top;
-                addButton.Dock = DockStyle.Right;
-                cancelButton.Dock = DockStyle.Right;
-
-                dialog.AcceptButton = addButton;
-                dialog.CancelButton = cancelButton;
-
-                if (dialog.ShowDialog() == DialogResult.OK)
-                {
-                    var key = keyTextBox.Text;
-
-                    var button = new Button();
-                    button.ForeColor = Color.White;
-                    button.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
-
-                    button.Text = $"{key}";
-                    button.AutoSize = true;
-
-                    // add event handler for left click
-                    button.MouseClick += (s, ev) =>
-                    {
-                        // only proceed if left mouse button is clicked
-                        if (ev.Button == MouseButtons.Left)
-                        {
-                            // disable the button to prevent double-clicks
-                            button.Enabled = false;
-
-                            // remove the button from the flow layout panel and dispose of it
-                            flowKeywords.Controls.Remove(button);
-                            button.Dispose();
-                        }
-                    };
-
-                    // add event handler for right click
-                    button.MouseDown += (s, ev) =>
-                    {
-                        // only proceed if right mouse button is clicked
-                        if (ev.Button == MouseButtons.Right)
-                        {
-                            // create the object browser form and show it
-                            string labelText = button.Text;
-                            ObjectBrowser form = new ObjectBrowser("#" + labelText);
-                            form.Show();
-                        }
-                    };
-
-                    flowKeywords.Controls.Add(button);
-                }
-            }
-            UpdateRemainingChars();
-        }
-
-        //GPT3
 
         //GPT3
         private void btnObjectOwners_Click(object sender, EventArgs e)
@@ -1081,7 +968,6 @@ namespace SUP
         }
 
 
-
         //GPT3
         private void flowAttribute_ControlRemoved(object sender, ControlEventArgs e)
         {
@@ -1092,29 +978,7 @@ namespace SUP
             }
             UpdateRemainingChars();
         }
-        //GPT3
-        private void flowKeyword_ControlRemoved(object sender, ControlEventArgs e)
-        {
-
-            if (flowKeywords.Controls.Count < 1)
-            {
-                btnObjectKeywords.BackColor = Color.White;
-                btnObjectKeywords.ForeColor = Color.Black;
-            }
-            UpdateRemainingChars();
-
-        }
-
-        private void txtMaximum_TextChanged(object sender, EventArgs e)
-        {
-            UpdateRemainingChars();
-            if (txtLastName.Text != "")
-            {
-                btnLastName.BackColor = Color.Blue;
-                btnLastName.ForeColor = Color.Yellow;
-                if (!int.TryParse(txtLastName.Text, out int value)) { txtLastName.Text = "0"; }
-            }
-        }
+     
 
         private void flowOwners_ControlRemoved(object sender, ControlEventArgs e)
         {
@@ -1193,44 +1057,7 @@ namespace SUP
                 }
                 catch { }
 
-                // Clear any existing buttons from the flowKeywords panel
-                flowKeywords.Controls.Clear();
-
-                List<string> keywords = new List<string>();
-                keywords = OBJState.GetKeywordsByAddress(address, "good-user", "better-password", "http://127.0.0.1:18332");
-
-                // Iterate through all attributes of foundObject and create a button for each
-                foreach (string attrib in keywords)
-                {
-                    // Create a new button with the attribute key and value separated by ':'
-                    Button attribButton = new Button();
-                    attribButton.AutoSize = true;
-                    attribButton.Text = attrib;
-                    attribButton.ForeColor = Color.White;
-                    attribButton.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
-
-                    // Add an event handler to the button that removes it from the flowKeywords panel when clicked
-                    attribButton.Click += new EventHandler((sender2, e2) =>
-                    {
-                        flowKeywords.Controls.Remove(attribButton);
-                    });
-
-                    // Add an event handler to the button that opens the ObjectBrowser form with the button text
-                    attribButton.MouseDown += new MouseEventHandler((sender2, e2) =>
-                    {
-                        if (e2.Button == MouseButtons.Right)
-                        {
-                            ObjectBrowser objectBrowserForm = new ObjectBrowser("#" + attribButton.Text);
-                            objectBrowserForm.Show();
-                        }
-                    });
-
-                    // Add the button to the flowKeywords panel
-                    flowKeywords.Controls.Add(attribButton);
-                }
-
-
-
+           
                 flowLocation.Controls.Clear();
 
                 try
@@ -1285,7 +1112,7 @@ namespace SUP
             }
             else
             {
-                Directory.Delete(@"root\" + txtObjectAddress.Text, true);
+                try { Directory.Delete(@"root\" + txtObjectAddress.Text, true); } catch { }
             }
 
         }
@@ -1450,6 +1277,16 @@ namespace SUP
                 btnSuffix.BackColor = Color.Blue; btnSuffix.ForeColor = Color.Yellow;
             }
             UpdateRemainingChars();
+        }
+
+        private void flowURL_Paint(object sender, PaintEventArgs e)
+        {
+
+        }
+
+        private void txtOBJP2FK_TextChanged(object sender, EventArgs e)
+        {
+
         }
     }
 }

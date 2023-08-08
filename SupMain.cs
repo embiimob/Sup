@@ -766,7 +766,6 @@ namespace SUP
 
             }
         }
-
         private void AddToSearchResults(List<OBJState> objects)
         {
 
@@ -947,7 +946,6 @@ namespace SUP
         {
             new WorkBench().Show();
         }
-
         private void ButtonLoadConnections(object sender, EventArgs e)
         {
             if (splitContainer1.Panel2Collapsed)
@@ -961,7 +959,6 @@ namespace SUP
 
 
         }
-
         private void tmrSearchMemoryPool_Tick(object sender, EventArgs e)
         {
             lock (SupLocker)
@@ -2612,6 +2609,11 @@ namespace SUP
                 // supFlow.SuspendLayout();
                 supFlow.Controls.Clear();
                 //supFlow.ResumeLayout();
+       
+                btnPublicMessage.Enabled = false;
+                
+                Root[] roots = Root.GetRootsByAddress(profileURN.Links[0].LinkData.ToString(), "good-user", "better-password", "http://127.0.0.1:18332");
+
             }
 
             Task BuildMessage = Task.Run(() =>
@@ -2619,13 +2621,9 @@ namespace SUP
                 if (profileURN.Links[0].LinkData != null)
                 {
 
-                    this.Invoke((MethodInvoker)delegate
-                      {
-                          btnPublicMessage.Enabled = false;
-                      });
+
 
                     Dictionary<string, string[]> profileAddress = new Dictionary<string, string[]> { };
-                    OBJState objstate = OBJState.GetObjectByAddress(profileURN.Links[0].LinkData.ToString(), "good-user", "better-password", "http://127.0.0.1:18332");
                     int rownum = 1;
 
                     var SUP = new Options { CreateIfMissing = true };
@@ -3146,7 +3144,7 @@ namespace SUP
                 });
 
                 Dictionary<string, string[]> profileAddress = new Dictionary<string, string[]> { };
-                OBJState objstate = OBJState.GetObjectByAddress(profileURN.Links[0].LinkData.ToString(), "good-user", "better-password", "http://127.0.0.1:18332");
+                Root[] roots = Root.GetRootsByAddress(profileURN.Links[0].LinkData.ToString(), "good-user", "better-password", "http://127.0.0.1:18332");
                 int rownum = 1;
 
                 var SUP = new Options { CreateIfMissing = true };
@@ -5331,7 +5329,6 @@ namespace SUP
             }
             catch { }
         }
-
         //GPT3
         static void GenerateImage(string text)
         {

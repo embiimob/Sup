@@ -71,12 +71,12 @@ namespace SUP
             {
                 this.Text = String.Empty;
 
-              if (!isUserControl)
+                if (!isUserControl)
                 {
                     this.Text = "[ " + _objectaddress + " ]";
                     registrationPanel.Visible = true;
                 }
-               
+
 
                 btnReloadObject.PerformClick();
                 lblPleaseStandBy.Visible = false;
@@ -178,7 +178,7 @@ namespace SUP
             OwnersPanel.Controls.Clear();
             RoyaltiesPanel.Controls.Clear();
             supPanel.Visible = false;
-       
+
 
 
             OBJState objstate = OBJState.GetObjectByAddress(_objectaddress, "good-user", "better-password", "http://127.0.0.1:18332");
@@ -196,7 +196,7 @@ namespace SUP
                 foreach (KeyValuePair<string, long> item in objstate.Owners)
                 {
 
-                  
+
                     TableLayoutPanel rowPanel = new TableLayoutPanel
                     {
                         RowCount = 1,
@@ -205,11 +205,11 @@ namespace SUP
                         AutoSize = true,
                         Padding = new System.Windows.Forms.Padding(3)
                     };
-                 
+
                     rowPanel.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 230));
                     rowPanel.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 110));
 
-                  
+
                     LinkLabel keyLabel = new LinkLabel();
 
 
@@ -248,19 +248,19 @@ namespace SUP
                     keyLabel.LinkClicked += new LinkLabelLinkClickedEventHandler(LinkClicked);
                     keyLabel.Dock = DockStyle.Left;
 
-                   
+
                     Label valueLabel = new Label
                     {
                         Text = item.Value.ToString(),
                         AutoSize = true,
-                        Dock = DockStyle.Right 
+                        Dock = DockStyle.Right
                     };
 
-                 
+
                     rowPanel.Controls.Add(keyLabel, 0, 0);
                     rowPanel.Controls.Add(valueLabel, 1, 0);
 
-                
+
                     if (row % 2 == 0)
                     {
                         rowPanel.BackColor = System.Drawing.Color.White;
@@ -270,7 +270,7 @@ namespace SUP
                         rowPanel.BackColor = System.Drawing.Color.LightGray;
                     }
 
-                
+
                     OwnersPanel.Controls.Add(rowPanel);
                     row++;
 
@@ -393,7 +393,7 @@ namespace SUP
 
                     {
 
-                       
+
                         TableLayoutPanel rowPanel = new TableLayoutPanel
                         {
                             RowCount = 1,
@@ -436,7 +436,7 @@ namespace SUP
                         rowPanel.Controls.Add(keyLabel, 0, 0);
 
 
-                   
+
                         if (row % 2 == 0)
                         {
                             rowPanel.BackColor = System.Drawing.Color.White;
@@ -446,7 +446,7 @@ namespace SUP
                             rowPanel.BackColor = System.Drawing.Color.LightGray;
                         }
 
-                    
+
                         CreatorsPanel.Controls.Add(rowPanel);
                         row++;
                     }
@@ -467,14 +467,14 @@ namespace SUP
 
         private void RefreshSupMessages(object sender, EventArgs e)
         {
-           
+
             if (numMessagesDisplayed == 0)
             {
                 supFlow.Controls.Clear();
             }
             supPanel.Visible = true;
             OwnersPanel.Visible = false;
-       
+
 
             Dictionary<string, string[]> profileAddress = new Dictionary<string, string[]> { };
             OBJState objstate = OBJState.GetObjectByAddress(_objectaddress, "good-user", "better-password", "http://127.0.0.1:18332");
@@ -482,13 +482,13 @@ namespace SUP
 
             var SUP = new Options { CreateIfMissing = true };
 
-            using (var db = new DB(SUP, @"root\"+ _objectaddress + @"\sup"))
+            using (var db = new DB(SUP, @"root\" + _objectaddress + @"\sup"))
             {
-               
+
                 LevelDB.Iterator it = db.CreateIterator();
                 for (
                    it.SeekToLast();
-                   it.IsValid()  && rownum <= numMessagesDisplayed + 10; // Only display next 10 messages
+                   it.IsValid() && rownum <= numMessagesDisplayed + 10; // Only display next 10 messages
                     it.Prev()
                  )
                 {
@@ -761,7 +761,7 @@ namespace SUP
                 it.Dispose();
             }
 
-         
+
             numMessagesDisplayed += 10;
 
             supFlow.ResumeLayout();
@@ -892,11 +892,11 @@ namespace SUP
 
             msg.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, supPanel.Width - 25));
 
-                supFlow.Controls.Add(msg);
-            
+            supFlow.Controls.Add(msg);
+
             PictureBox pictureBox = new PictureBox();
 
-          
+
 
             pictureBox.SizeMode = PictureBoxSizeMode.Zoom;
             pictureBox.Width = supPanel.Width;
@@ -911,7 +911,7 @@ namespace SUP
         void CreateRow(string imageLocation, string ownerName, string ownerId, DateTime timestamp, string messageText, string transactionid, System.Drawing.Color bgcolor, FlowLayoutPanel layoutPanel)
         {
 
-        
+
             TableLayoutPanel row = new TableLayoutPanel
             {
                 RowCount = 1,
@@ -921,16 +921,16 @@ namespace SUP
                 Padding = new System.Windows.Forms.Padding(0),
                 Margin = new System.Windows.Forms.Padding(0)
             };
-          
+
             row.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 80));
             row.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 120));
             row.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 142));
             row.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 15));
             layoutPanel.Controls.Add(row);
 
-           
 
-            if (imageLocation != null && ( File.Exists(imageLocation) || imageLocation.ToUpper().StartsWith("HTTP")))
+
+            if (imageLocation != null && (File.Exists(imageLocation) || imageLocation.ToUpper().StartsWith("HTTP")))
             {
                 PictureBox picture = new PictureBox
                 {
@@ -1173,7 +1173,7 @@ namespace SUP
             new ObjectBrowser(ownerId).Show();
         }
 
-     
+
         private async void MainRefreshClick(object sender, EventArgs e)
         {
             transFlow.Visible = false;
@@ -1257,60 +1257,60 @@ namespace SUP
                         switch (objstate.Image.ToUpper().Substring(0, 4))
                         {
                             case "MZC:":
-                                 root = Root.GetRootByTransactionId(transactionid, "good-user", "better-password", @"http://127.0.0.1:12832", "50");
-                                    try
-                                    {
+                                root = Root.GetRootByTransactionId(transactionid, "good-user", "better-password", @"http://127.0.0.1:12832", "50");
+                                try
+                                {
 
-                                        lblIMGBlockDate.Text = "mazacoin verified: " + root.BlockDate.ToString("ddd, dd MMM yyyy hh:mm:ss");
+                                    lblIMGBlockDate.Text = "mazacoin verified: " + root.BlockDate.ToString("ddd, dd MMM yyyy hh:mm:ss");
 
-                                    }
-                                    catch { }
-                               
+                                }
+                                catch { }
+
 
 
                                 break;
                             case "BTC:":
 
-                                 root = Root.GetRootByTransactionId(transactionid, "good-user", "better-password", @"http://127.0.0.1:8332", "0");
-                                    try
-                                    {
+                                root = Root.GetRootByTransactionId(transactionid, "good-user", "better-password", @"http://127.0.0.1:8332", "0");
+                                try
+                                {
 
-                                        lblIMGBlockDate.Text = "bitcoin verified: " + root.BlockDate.ToString("ddd, dd MMM yyyy hh:mm:ss");
+                                    lblIMGBlockDate.Text = "bitcoin verified: " + root.BlockDate.ToString("ddd, dd MMM yyyy hh:mm:ss");
 
-                                    }
-                                    catch { }
-                                
+                                }
+                                catch { }
+
 
 
                                 break;
                             case "LTC:":
 
 
-                                    root = Root.GetRootByTransactionId(transactionid, "good-user", "better-password", @"http://127.0.0.1:9332", "48");
+                                root = Root.GetRootByTransactionId(transactionid, "good-user", "better-password", @"http://127.0.0.1:9332", "48");
 
-                                    try
-                                    {
+                                try
+                                {
 
-                                        lblIMGBlockDate.Text = "litecoin verified: " + root.BlockDate.ToString("ddd, dd MMM yyyy hh:mm:ss");
+                                    lblIMGBlockDate.Text = "litecoin verified: " + root.BlockDate.ToString("ddd, dd MMM yyyy hh:mm:ss");
 
-                                    }
-                                    catch { }
-                               
+                                }
+                                catch { }
+
 
 
                                 break;
                             case "DOG:":
-                               
-                                    root = Root.GetRootByTransactionId(transactionid, "good-user", "better-password", @"http://127.0.0.1:22555", "30");
 
-                                    try
-                                    {
+                                root = Root.GetRootByTransactionId(transactionid, "good-user", "better-password", @"http://127.0.0.1:22555", "30");
 
-                                        lblIMGBlockDate.Text = "dogecoin verified: " + root.BlockDate.ToString("ddd, dd MMM yyyy hh:mm:ss");
+                                try
+                                {
 
-                                    }
-                                    catch { }
-                               
+                                    lblIMGBlockDate.Text = "dogecoin verified: " + root.BlockDate.ToString("ddd, dd MMM yyyy hh:mm:ss");
+
+                                }
+                                catch { }
+
 
 
                                 break;
@@ -1320,7 +1320,7 @@ namespace SUP
 
                                 if (!File.Exists(imgurn) && !File.Exists("ipfs/" + transid + "/artifact") && !File.Exists("ipfs/" + transid + "/artifact" + objstate.Image.Substring(objstate.Image.LastIndexOf('.'))))
                                 {
-                                    
+
                                     if (!System.IO.Directory.Exists("ipfs/" + transid + "-build"))
                                     {
                                         try { Directory.Delete("ipfs/" + transid, true); } catch { }
@@ -1341,14 +1341,14 @@ namespace SUP
                                             fileName = objstate.Image.Replace(@"//", "").Replace(@"\\", "").Substring(51);
                                             if (fileName == "") { fileName = "artifact"; } else { fileName = fileName.Replace(@"/", "").Replace(@"\", ""); }
                                             Directory.CreateDirectory("ipfs/" + transid);
-                                           
+
                                             try { System.IO.File.Move("ipfs/" + transid + "_tmp", imgurn); }
                                             catch (System.ArgumentException ex)
                                             {
-                                                
-                                                    System.IO.File.Move("ipfs/" + transid + "_tmp", "ipfs/" + transid + "/artifact" + objstate.Image.Substring(objstate.Image.LastIndexOf('.')));
-                                                    imgurn = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + @"\ipfs\" + transid + @"\artifact" + objstate.Image.Substring(objstate.Image.LastIndexOf('.'));
-                                                
+
+                                                System.IO.File.Move("ipfs/" + transid + "_tmp", "ipfs/" + transid + "/artifact" + objstate.Image.Substring(objstate.Image.LastIndexOf('.')));
+                                                imgurn = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + @"\ipfs\" + transid + @"\artifact" + objstate.Image.Substring(objstate.Image.LastIndexOf('.'));
+
                                             }
 
 
@@ -1363,10 +1363,10 @@ namespace SUP
                                             try { System.IO.File.Move("ipfs/" + transid + "/" + transid, imgurn); }
                                             catch (System.ArgumentException ex)
                                             {
-                                                
-                                                    System.IO.File.Move("ipfs/" + transid + "/" + transid, "ipfs/" + transid + "/artifact" + objstate.Image.Substring(objstate.Image.LastIndexOf('.')));
-                                                    imgurn = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + @"\ipfs\" + transid + @"\artifact" + objstate.Image.Substring(objstate.Image.LastIndexOf('.'));
-                                               
+
+                                                System.IO.File.Move("ipfs/" + transid + "/" + transid, "ipfs/" + transid + "/artifact" + objstate.Image.Substring(objstate.Image.LastIndexOf('.')));
+                                                imgurn = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + @"\ipfs\" + transid + @"\artifact" + objstate.Image.Substring(objstate.Image.LastIndexOf('.'));
+
                                             }
 
 
@@ -1405,17 +1405,17 @@ namespace SUP
                             default:
                                 if (!txtIMG.Text.ToUpper().StartsWith("HTTP") && transactionid != "")
                                 {
-                                   
-                                        root = Root.GetRootByTransactionId(transactionid, "good-user", "better-password", @"http://127.0.0.1:18332");
 
-                                        try
-                                        {
+                                    root = Root.GetRootByTransactionId(transactionid, "good-user", "better-password", @"http://127.0.0.1:18332");
 
-                                            lblIMGBlockDate.Text = "bitcoin-t verified: " + root.BlockDate.ToString("ddd, dd MMM yyyy hh:mm:ss");
+                                    try
+                                    {
 
-                                        }
-                                        catch { }
-                                   
+                                        lblIMGBlockDate.Text = "bitcoin-t verified: " + root.BlockDate.ToString("ddd, dd MMM yyyy hh:mm:ss");
+
+                                    }
+                                    catch { }
+
                                 }
 
                                 break;
@@ -1434,72 +1434,72 @@ namespace SUP
                     transactionid = urnmatch.Value;
                     Root root = new Root();
 
-                 
-                        switch (objstate.URN.Substring(0, 4))
-                        {
-                            case "MZC:":
 
-                               
-                                root = Root.GetRootByTransactionId(transactionid, "good-user", "better-password", @"http://127.0.0.1:12832", "50");
-
-                                try
-                                {
-
-                                        lblURNBlockDate.Text = "mazacoin verified: " + root.BlockDate.ToString("ddd, dd MMM yyyy hh:mm:ss");
-
-                                    }
-                                    catch { }
-                               
-
-                                break;
-                            case "BTC:":
-
-                              
-                                root = Root.GetRootByTransactionId(transactionid, "good-user", "better-password", @"http://127.0.0.1:8332", "0");
-
-                                try
-                                {
-
-                                        lblURNBlockDate.Text = "bitcoin verified: " + root.BlockDate.ToString("ddd, dd MMM yyyy hh:mm:ss");
-
-                                    }
-                                    catch { }
-                              
+                    switch (objstate.URN.Substring(0, 4))
+                    {
+                        case "MZC:":
 
 
-                                break;
-                            case "LTC:":
+                            root = Root.GetRootByTransactionId(transactionid, "good-user", "better-password", @"http://127.0.0.1:12832", "50");
+
+                            try
+                            {
+
+                                lblURNBlockDate.Text = "mazacoin verified: " + root.BlockDate.ToString("ddd, dd MMM yyyy hh:mm:ss");
+
+                            }
+                            catch { }
 
 
-                                root = Root.GetRootByTransactionId(transactionid, "good-user", "better-password", @"http://127.0.0.1:9332", "48");
-
-                                try
-                                {
-
-                                        lblURNBlockDate.Text = "litecoin verified: " + root.BlockDate.ToString("ddd, dd MMM yyyy hh:mm:ss");
-
-                                    }
-                                    catch { }
-                              
-
-                                break;
-                            case "DOG:":
-
-                               
-                                root = Root.GetRootByTransactionId(transactionid, "good-user", "better-password", @"http://127.0.0.1:22555", "30");
-
-                                try
-                                {
-
-                                        lblURNBlockDate.Text = "dogecoin verified: " + root.BlockDate.ToString("ddd, dd MMM yyyy hh:mm:ss");
-
-                                    }
-                                    catch { }
-                               
+                            break;
+                        case "BTC:":
 
 
-                                break;
-                            case "IPFS":
+                            root = Root.GetRootByTransactionId(transactionid, "good-user", "better-password", @"http://127.0.0.1:8332", "0");
+
+                            try
+                            {
+
+                                lblURNBlockDate.Text = "bitcoin verified: " + root.BlockDate.ToString("ddd, dd MMM yyyy hh:mm:ss");
+
+                            }
+                            catch { }
+
+
+
+                            break;
+                        case "LTC:":
+
+
+                            root = Root.GetRootByTransactionId(transactionid, "good-user", "better-password", @"http://127.0.0.1:9332", "48");
+
+                            try
+                            {
+
+                                lblURNBlockDate.Text = "litecoin verified: " + root.BlockDate.ToString("ddd, dd MMM yyyy hh:mm:ss");
+
+                            }
+                            catch { }
+
+
+                            break;
+                        case "DOG:":
+
+
+                            root = Root.GetRootByTransactionId(transactionid, "good-user", "better-password", @"http://127.0.0.1:22555", "30");
+
+                            try
+                            {
+
+                                lblURNBlockDate.Text = "dogecoin verified: " + root.BlockDate.ToString("ddd, dd MMM yyyy hh:mm:ss");
+
+                            }
+                            catch { }
+
+
+
+                            break;
+                        case "IPFS":
                             if (!File.Exists(urn) && !File.Exists("ipfs/" + objstate.URN.Substring(5, 46) + "/artifact") && !File.Exists("ipfs/" + objstate.URN.Substring(5, 46) + "/artifact" + objstate.URN.Substring(objstate.URN.LastIndexOf('.'))))
                             {
 
@@ -1525,14 +1525,14 @@ namespace SUP
                                             fileName = objstate.URN.Replace(@"//", "").Replace(@"\\", "").Substring(51);
                                             if (fileName == "") { fileName = "artifact"; } else { fileName = fileName.Replace(@"/", "").Replace(@"\", ""); }
                                             Directory.CreateDirectory("ipfs/" + objstate.URN.Substring(5, 46));
-         
+
                                             try { System.IO.File.Move("ipfs/" + objstate.URN.Substring(5, 46) + "_tmp", urn); }
                                             catch (System.ArgumentException ex)
                                             {
-                                                
-                                                    System.IO.File.Move("ipfs/" + objstate.URN.Substring(5, 46) + "_tmp", "ipfs/" + objstate.URN.Substring(5, 46) + "/artifact" + objstate.URN.Substring(objstate.URN.LastIndexOf('.')));
-                                                    urn = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + @"\ipfs\" + objstate.URN.Substring(5, 46) + @"\artifact" + objstate.URN.Substring(objstate.URN.LastIndexOf('.'));
-                                               
+
+                                                System.IO.File.Move("ipfs/" + objstate.URN.Substring(5, 46) + "_tmp", "ipfs/" + objstate.URN.Substring(5, 46) + "/artifact" + objstate.URN.Substring(objstate.URN.LastIndexOf('.')));
+                                                urn = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + @"\ipfs\" + objstate.URN.Substring(5, 46) + @"\artifact" + objstate.URN.Substring(objstate.URN.LastIndexOf('.'));
+
                                             }
 
 
@@ -1547,10 +1547,10 @@ namespace SUP
                                             try { System.IO.File.Move("ipfs/" + objstate.URN.Substring(5, 46) + "/" + objstate.URN.Substring(5, 46), urn); }
                                             catch (System.ArgumentException ex)
                                             {
-                                                
-                                                    System.IO.File.Move("ipfs/" + objstate.URN.Substring(5, 46) + "/" + objstate.URN.Substring(5, 46), "ipfs/" + objstate.URN.Substring(5, 46) + "/artifact" + objstate.URN.Substring(objstate.URN.LastIndexOf('.')));
-                                                    urn = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + @"\ipfs\" + objstate.URN.Substring(5, 46) + @"\artifact" + objstate.URN.Substring(objstate.URN.LastIndexOf('.'));
-                                                
+
+                                                System.IO.File.Move("ipfs/" + objstate.URN.Substring(5, 46) + "/" + objstate.URN.Substring(5, 46), "ipfs/" + objstate.URN.Substring(5, 46) + "/artifact" + objstate.URN.Substring(objstate.URN.LastIndexOf('.')));
+                                                urn = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + @"\ipfs\" + objstate.URN.Substring(5, 46) + @"\artifact" + objstate.URN.Substring(objstate.URN.LastIndexOf('.'));
+
                                             }
                                         }
 
@@ -1599,31 +1599,31 @@ namespace SUP
                                 }
                             }
                             break;
-                            default:
-                                if (!txtURN.Text.ToUpper().StartsWith("HTTP"))
+                        default:
+                            if (!txtURN.Text.ToUpper().StartsWith("HTTP"))
+                            {
+                                if (transactionid != "")
                                 {
-                                    if (transactionid != "")
+
+                                    root = Root.GetRootByTransactionId(transactionid, "good-user", "better-password", @"http://127.0.0.1:18332");
+
+                                    try
                                     {
-                                       
-                                        root = Root.GetRootByTransactionId(transactionid, "good-user", "better-password", @"http://127.0.0.1:18332");
 
-                                        try
-                                        {
+                                        lblURNBlockDate.Text = "bitcoin-t verified: " + root.BlockDate.ToString("ddd, dd MMM yyyy hh:mm:ss");
 
-                                                lblURNBlockDate.Text = "bitcoin-t verified: " + root.BlockDate.ToString("ddd, dd MMM yyyy hh:mm:ss");
-
-                                            }
-                                            catch { }
-                                       
                                     }
-
+                                    catch { }
 
                                 }
 
 
-                                break;
-                        }
-                    
+                            }
+
+
+                            break;
+                    }
+
 
 
                 }
@@ -1643,64 +1643,64 @@ namespace SUP
                         {
                             case "MZC:":
 
-                               
-                                    root = Root.GetRootByTransactionId(transactionid, "good-user", "better-password", @"http://127.0.0.1:12832", "50");
 
-                                    try
-                                    {
+                                root = Root.GetRootByTransactionId(transactionid, "good-user", "better-password", @"http://127.0.0.1:12832", "50");
 
-                                        lblURIBlockDate.Text = "mazacoin verified: " + root.BlockDate.ToString("ddd, dd MMM yyyy hh:mm:ss");
+                                try
+                                {
 
-                                    }
-                                    catch { }
-                                
+                                    lblURIBlockDate.Text = "mazacoin verified: " + root.BlockDate.ToString("ddd, dd MMM yyyy hh:mm:ss");
+
+                                }
+                                catch { }
+
 
                                 break;
                             case "BTC:":
 
-                               
-                                    root = Root.GetRootByTransactionId(transactionid, "good-user", "better-password", @"http://127.0.0.1:8332", "0");
 
-                                    try
-                                    {
+                                root = Root.GetRootByTransactionId(transactionid, "good-user", "better-password", @"http://127.0.0.1:8332", "0");
 
-                                        lblURIBlockDate.Text = "bitcoin verified: " + root.BlockDate.ToString("ddd, dd MMM yyyy hh:mm:ss");
+                                try
+                                {
 
-                                    }
-                                    catch { }
-                               
+                                    lblURIBlockDate.Text = "bitcoin verified: " + root.BlockDate.ToString("ddd, dd MMM yyyy hh:mm:ss");
+
+                                }
+                                catch { }
+
 
                                 break;
                             case "LTC:":
 
-                               
-                                    root = Root.GetRootByTransactionId(transactionid, "good-user", "better-password", @"http://127.0.0.1:9332", "48");
 
-                                    try
-                                    {
+                                root = Root.GetRootByTransactionId(transactionid, "good-user", "better-password", @"http://127.0.0.1:9332", "48");
 
-                                        lblURIBlockDate.Text = "litecoin verified: " + root.BlockDate.ToString("ddd, dd MMM yyyy hh:mm:ss");
+                                try
+                                {
 
-                                    }
-                                    catch { }
-                                
+                                    lblURIBlockDate.Text = "litecoin verified: " + root.BlockDate.ToString("ddd, dd MMM yyyy hh:mm:ss");
+
+                                }
+                                catch { }
+
 
 
                                 break;
                             case "DOG:":
 
 
-                               
-                                    root = Root.GetRootByTransactionId(transactionid, "good-user", "better-password", @"http://127.0.0.1:22555", "30");
 
-                                    try
-                                    {
+                                root = Root.GetRootByTransactionId(transactionid, "good-user", "better-password", @"http://127.0.0.1:22555", "30");
 
-                                        lblURIBlockDate.Text = "dogecoin verified: " + root.BlockDate.ToString("ddd, dd MMM yyyy hh:mm:ss");
+                                try
+                                {
 
-                                    }
-                                    catch { }
-                               
+                                    lblURIBlockDate.Text = "dogecoin verified: " + root.BlockDate.ToString("ddd, dd MMM yyyy hh:mm:ss");
+
+                                }
+                                catch { }
+
 
                                 break;
                             case "IPFS":
@@ -1735,10 +1735,10 @@ namespace SUP
                                             try { System.IO.File.Move("ipfs/" + objstate.URI.Substring(5, 46) + "_tmp", uriurn); }
                                             catch (System.ArgumentException ex)
                                             {
-                                                
-                                                    System.IO.File.Move("ipfs/" + objstate.URI.Substring(5, 46) + "_tmp", "ipfs/" + objstate.URI.Substring(5, 46) + "/artifact" + objstate.URI.Substring(objstate.URI.LastIndexOf('.')));
-                                                    uriurn = "ipfs/" + objstate.URI.Substring(5, 46) + "/artifact" + objstate.URI.Substring(objstate.URI.LastIndexOf('.'));
-                                                
+
+                                                System.IO.File.Move("ipfs/" + objstate.URI.Substring(5, 46) + "_tmp", "ipfs/" + objstate.URI.Substring(5, 46) + "/artifact" + objstate.URI.Substring(objstate.URI.LastIndexOf('.')));
+                                                uriurn = "ipfs/" + objstate.URI.Substring(5, 46) + "/artifact" + objstate.URI.Substring(objstate.URI.LastIndexOf('.'));
+
                                             }
 
 
@@ -1752,10 +1752,10 @@ namespace SUP
                                             try { System.IO.File.Move("ipfs/" + objstate.URI.Substring(5, 46) + "/" + objstate.URI.Substring(5, 46), uriurn); }
                                             catch (System.ArgumentException ex)
                                             {
-                                                
-                                                    System.IO.File.Move("ipfs/" + objstate.URI.Substring(5, 46) + "/" + objstate.URI.Substring(5, 46), "ipfs/" + objstate.URI.Substring(5, 46) + "/artifact" + objstate.URI.Substring(objstate.URI.LastIndexOf('.')));
-                                                    uriurn = "ipfs/" + objstate.URI.Substring(5, 46) + "/artifact" + objstate.URI.Substring(objstate.URI.LastIndexOf('.'));
-                                               
+
+                                                System.IO.File.Move("ipfs/" + objstate.URI.Substring(5, 46) + "/" + objstate.URI.Substring(5, 46), "ipfs/" + objstate.URI.Substring(5, 46) + "/artifact" + objstate.URI.Substring(objstate.URI.LastIndexOf('.')));
+                                                uriurn = "ipfs/" + objstate.URI.Substring(5, 46) + "/artifact" + objstate.URI.Substring(objstate.URI.LastIndexOf('.'));
+
                                             }
                                         }
                                         var SUP = new Options { CreateIfMissing = true };
@@ -1799,15 +1799,15 @@ namespace SUP
                                 if (!txtURI.Text.ToUpper().StartsWith("HTTP") && transactionid != "")
                                 {
                                     root = Root.GetRootByTransactionId(transactionid, "good-user", "better-password", @"http://127.0.0.1:18332");
-                                   
-                                        try
-                                        {
 
-                                            lblURIBlockDate.Text = "bitcoin-t verified: " + root.BlockDate.ToString("ddd, dd MMM yyyy hh:mm:ss");
+                                    try
+                                    {
 
-                                        }
-                                        catch { }
-                                    
+                                        lblURIBlockDate.Text = "bitcoin-t verified: " + root.BlockDate.ToString("ddd, dd MMM yyyy hh:mm:ss");
+
+                                    }
+                                    catch { }
+
                                 }
                                 break;
                         }
@@ -1830,46 +1830,28 @@ namespace SUP
                 txtURI.Text = objstate.URI;
                 lblLicense.Text = objstate.License;
 
+                List<string> keywords = new List<string>();
 
-
-                var KEY = new Options { CreateIfMissing = true };
-
-                using (var db = new DB(KEY, @"root\obj"))
+                keywords = OBJState.GetKeywordsByAddress(_objectaddress, "good-user", "better-password", @"http://127.0.0.1:18332");
+                foreach (string keyword in keywords)
                 {
-                    LevelDB.Iterator it = db.CreateIterator();
-                    for (
-                       it.Seek(this._objectaddress);
-                       it.IsValid() && it.KeyAsString().StartsWith(_objectaddress + "!");  // && rownum <= numMessagesDisplayed + 10; // Only display next 10 messages
-                        it.Next()
-                     )
+
+                    if (IsStandardASCII(keyword))
                     {
-                        string keyaddress = it.KeyAsString().Substring(it.KeyAsString().IndexOf('!') + 1);
-                        Base58.DecodeWithCheckSum(keyaddress, out byte[] payloadBytes);
-                        keyaddress = IsAsciiText(payloadBytes);
-
-                        if (keyaddress != null)
+                        LinkLabel keywordLabel = new LinkLabel
                         {
+                            Text = keyword,
+                            AutoSize = true
+                        };
 
-                            LinkLabel keyword = new LinkLabel
-                            {
-                                Text = keyaddress,
-                                AutoSize = true
-                            };
-
-
-                            keyword.LinkClicked += (Ksender, b) => { Owner_LinkClicked("#" + keyaddress); };
-                            keyword.Font = new System.Drawing.Font("Microsoft Sans Serif", 7.7F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-                            keyword.Margin = new System.Windows.Forms.Padding(0);
-                            keyword.Dock = DockStyle.Bottom;
-                            KeysFlow.Controls.Add(keyword);
-
-                        }
-
-
+                        keywordLabel.LinkClicked += (Ksender, b) => { Owner_LinkClicked("#" + keyword); };
+                        keywordLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 7.7F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+                        keywordLabel.Margin = new System.Windows.Forms.Padding(0);
+                        keywordLabel.Dock = DockStyle.Bottom;
+                        KeysFlow.Controls.Add(keywordLabel);
                     }
-                    it.Dispose();
-                }
 
+                }
 
                 lblProcessHeight.Text = objstate.ProcessHeight.ToString();
                 lblLastChangedDate.Text = objstate.ChangeDate.ToString("ddd, dd MMM yyyy hh:mm:ss");
@@ -2532,18 +2514,16 @@ namespace SUP
         }
 
 
-        public static string IsAsciiText(byte[] data)
+        private bool IsStandardASCII(string input)
         {
-            // Check each byte to see if it's in the ASCII range
-            for (int i = 0; i < 20; i++)
+            foreach (char c in input)
             {
-                if (data[i] < 0x20 || data[i] > 0x7E)
+                if (c < 32 || c > 127)
                 {
-                    return null;
+                    return false;
                 }
             }
-
-            return Encoding.ASCII.GetString(data).Replace("#", "").Substring(1);
+            return true;
         }
 
         private void btnOfficial_Click(object sender, EventArgs e)

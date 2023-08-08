@@ -1,6 +1,8 @@
 ﻿using AngleSharp.Common;
 using LevelDB;
+using NAudio.Gui;
 using NBitcoin;
+using NBitcoin.Logging;
 using Newtonsoft.Json;
 using System;
 using System.Collections;
@@ -11,6 +13,8 @@ using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
+using static NBitcoin.Scripting.OutputDescriptor;
+using System.Windows.Forms;
 
 namespace SUP.P2FK
 {
@@ -201,16 +205,16 @@ namespace SUP.P2FK
                                         }
 
 
-                                        foreach (string key in transaction.Keyword.Keys)
-                                        {
+                                        //foreach (string key in transaction.Keyword.Keys)
+                                        //{
 
-                                            using (var db = new DB(OBJ, @"root\obj"))
-                                            {
-                                                db.Put(objectaddress + "!" + key, transaction.TransactionId);
-                                            }
+                                        //    using (var db = new DB(OBJ, @"root\obj"))
+                                        //    {
+                                        //        db.Put(objectaddress + "!" + key, transaction.TransactionId);
+                                        //    }
 
 
-                                        }
+                                        //}
 
                                         try
                                         {
@@ -2102,7 +2106,7 @@ namespace SUP.P2FK
                         string error = x.Message;
                     }
 
-                    if (intProcessHeight != 0 && intProcessHeight == maxID)
+                    if (intProcessHeight != 0 && intProcessHeight == maxID )
                     {
                         try { File.Delete(@"GET_OBJECTS_BY_ADDRESS"); } catch { }
 
@@ -2111,43 +2115,55 @@ namespace SUP.P2FK
 
                     }
 
-                    objectStates = new List<OBJState> { };
 
-                    //return all roots found at address
+                    List<string> addedValues = new List<string>();
 
-                    HashSet<string> addedValues = new HashSet<string>();
+                    //Do not process container address as object.
+                    addedValues.Add(objectaddress);
+
                     foreach (Root transaction in objectTransactions)
                     {
 
 
                         //ignore any transaction that is not signed
-                        if (transaction.Signed)
+                        if (transaction.Signed && transaction.Id > intProcessHeight )
                         {
 
                             // string findId;
 
-                            if (transaction.File.ContainsKey("OBJ") || transaction.File.ContainsKey("GIV") || transaction.File.ContainsKey("BUY"))
+                            if (transaction.File.ContainsKey("OBJ") || transaction.File.ContainsKey("GIV") || transaction.File.ContainsKey("BUY") || transaction.File.ContainsKey("BRN") || transaction.File.ContainsKey("LST"))
                             {
-                                if (transaction.File.ContainsKey("GIV"))
+                                if (transaction.File.ContainsKey("GIV") || transaction.File.ContainsKey("BRN"))
                                 {
                                     foreach (string key in transaction.Keyword.Keys)
                                     {
-
                                         if (!addedValues.Contains(key))
                                         {
-                                            addedValues.Add(key);
+                                            addedValues.Add(key);   
 
-                                            OBJState isObject = GetObjectByAddress(key, username, password, url, versionByte);
-
-                                            if (isObject.URN != null)
+                                            OBJState existingObjectState = objectStates.FirstOrDefault(os => os.Creators.First().Key == key);
+                                            if (existingObjectState != null)
                                             {
-
-                                                isObject.Id = transaction.Id;
-                                                objectStates.Add(isObject);
-
+                                                OBJState isObject = GetObjectByAddress(key, username, password, url, versionByte);
+                                                if (isObject.URN != null)
+                                                {
+                                                    isObject.Id = transaction.Id;
+                                                    objectStates[objectStates.IndexOf(existingObjectState)] = isObject;
+                                                }
+                                            }
+                                            else
+                                            {
+                                                OBJState newObject = GetObjectByAddress(key, username, password, url, versionByte);
+                                                if (newObject.URN != null)
+                                                {
+                                                    newObject.Id = transaction.Id;
+                                                    objectStates.Add(newObject);
+                                                }
                                             }
                                         }
                                     }
+
+
                                 }
                                 else
                                 {
@@ -2158,18 +2174,29 @@ namespace SUP.P2FK
                                         {
                                             addedValues.Add(key);
 
-                                            OBJState isObject = GetObjectByAddress(key, username, password, url, versionByte);
 
-                                            if (isObject.URN != null)
+                                            OBJState existingObjectState = objectStates.FirstOrDefault(os => os.Creators.First().Key == key);
+                                            if (existingObjectState != null)
                                             {
-
-                                                isObject.Id = transaction.Id;
-                                                objectStates.Add(isObject);
-                                                break;
-
+                                                OBJState isObject = GetObjectByAddress(key, username, password, url, versionByte);
+                                                if (isObject.URN != null)
+                                                {
+                                                    isObject.Id = transaction.Id;
+                                                    objectStates[objectStates.IndexOf(existingObjectState)] = isObject;
+                                                }
+                                            }
+                                            else
+                                            {
+                                                OBJState newObject = GetObjectByAddress(key, username, password, url, versionByte);
+                                                if (newObject.URN != null)
+                                                {
+                                                    newObject.Id = transaction.Id;
+                                                    objectStates.Add(newObject);
+                                                }
                                             }
                                         }
                                     }
+
                                 }
 
                             }
@@ -2449,45 +2476,28 @@ namespace SUP.P2FK
         public static List<string> GetKeywordsByAddress(string objectaddress, string username, string password, string url, string versionByte = "111")
         {
 
-            GetObjectByAddress(objectaddress, username, password, url, versionByte);
+            Root [] roots = Root.GetRootsByAddress(objectaddress, username, password, url,0,-1, versionByte);
 
             lock (SupLocker)
             {
                 List<string> keywords = new List<string>();
+                    
+                    foreach (Root root in roots){
 
-                var KEY = new Options { CreateIfMissing = true };
-
-                using (var db = new DB(KEY, @"root\obj"))
-                {
-                    LevelDB.Iterator it = db.CreateIterator();
-                    for (
-                       it.Seek(objectaddress);
-                       it.IsValid() && it.KeyAsString().StartsWith(objectaddress + "!");  // && rownum <= numMessagesDisplayed + 10; // Only display next 10 messages
-                        it.Next()
-                     )
+                    foreach (string keyword in root.Keyword.Values)
                     {
-                        string keyaddress = it.KeyAsString().Substring(it.KeyAsString().IndexOf('!') + 1);
-                        Base58.DecodeWithCheckSum(keyaddress, out byte[] payloadBytes);
-                        // Check each byte to see if it's in the ASCII range
-                        for (int i = 0; i < payloadBytes.Length; i++)
-                        {
-                            if (payloadBytes[i] < 0x20 || payloadBytes[i] > 0x7E)
-                            {
-                                keyaddress = null;
-                            }
-                        }
 
-                        if (keyaddress != null)
-                        {
-                            keyaddress = Encoding.ASCII.GetString(payloadBytes).Replace("#", "").Substring(1);
+                        string formattedKeyword = keyword.Replace("#", "").Substring(1);
 
-                            keywords.Add(keyaddress);
+                        if (!keywords.Contains(formattedKeyword))
+                        {
+                         
+                            keywords.Add(formattedKeyword);
 
                         }
+                    }
 
                     }
-                    it.Dispose();
-                }
 
                 return keywords;
             }

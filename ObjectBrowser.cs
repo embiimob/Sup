@@ -78,7 +78,7 @@ namespace SUP
 
                 if (txtSearchAddress.Text.StartsWith("#"))
                 {
-                    try { File.Delete(@"root/" + address + @"/GetObjectsByAddress.json"); } catch { }
+                    //try { File.Delete(@"root/" + address + @"/GetObjectsByAddress.json"); } catch { }
 
 
                     this.Invoke((Action)(() =>

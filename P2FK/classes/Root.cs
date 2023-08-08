@@ -629,14 +629,14 @@ namespace SUP.P2FK
 
                 if (deserializedObject.Count == 0)
                 {
-                    if (qty == -1) { return rootList.ToArray(); }
+                    if (qty == -1) { return rootList.Skip(skip).ToArray(); }
                     else { return rootList.Skip(skip).Take(qty).ToArray(); }
                 }
 
             }
-            rootList = new List<Root>();
-            int innerskip = 0;
-            intProcessHeight = 0;
+            //rootList = new List<Root>();
+            int innerskip = intProcessHeight;
+            //intProcessHeight = 0;
             while (true)
             {
                 try
@@ -672,7 +672,7 @@ namespace SUP.P2FK
             var rootSerialized = JsonConvert.SerializeObject(rootList);
             System.IO.File.WriteAllText(@"root\" + address + @"\" + "ROOTS.json", rootSerialized);
 
-            if (qty == -1) { return rootList.ToArray(); } else { return rootList.Skip(skip).Take(qty).ToArray(); }
+            if (qty == -1) { return rootList.Skip(skip).ToArray(); } else { return rootList.Skip(skip).Take(qty).ToArray(); }
 
         }
         public static byte[] GetRootBytesByLedger(string ledger, string username, string password, string url)
