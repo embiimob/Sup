@@ -657,9 +657,10 @@ namespace SUP.P2FK
 
                     var root = Root.GetRootByTransactionId(hexId, username, password, url, versionByte);
 
-                    if (root != null && root.TotalByteSize > 0)
+                    if (root != null && root.TotalByteSize > 0 && root.Output != null && root.Output.ContainsKey(address))
                     {
                         root.Id = intProcessHeight;
+                        
                         rootList.Add(root);
                     }
 

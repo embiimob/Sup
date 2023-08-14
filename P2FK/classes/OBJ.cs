@@ -576,27 +576,30 @@ namespace SUP.P2FK
                                                     logstatus = "";
                                                 }
 
-                                                if (objectState.Creators.TryGet(transaction.SignedBy).Year == 1)
+                                                if (objectState.Creators != null && objectState.Creators.ContainsKey(transaction.SignedBy))
                                                 {
-                                                    objectState.Creators[transaction.SignedBy] = transaction.BlockDate;
-                                                    objectState.ChangeDate = transaction.BlockDate;
-                                                    if (verbose)
+                                                    if (objectState.Creators.TryGet(transaction.SignedBy).Year == 1)
                                                     {
-
-                                                        logstatus = "[\"" + transaction.SignedBy + "\",\"" + objectaddress + "\",\"grant\",\"\",\"\",\"success\"]";
-
-                                                        lock (SupLocker)
+                                                        objectState.Creators[transaction.SignedBy] = transaction.BlockDate;
+                                                        objectState.ChangeDate = transaction.BlockDate;
+                                                        if (verbose)
                                                         {
-                                                            var ROOT = new Options { CreateIfMissing = true };
-                                                            var db = new DB(ROOT, @"root\event");
-                                                            db.Put(objectaddress + "!" + transaction.BlockDate.ToString("yyyyMMddHHmmss") + "!" + sortableProcessHeight + "!", logstatus);
-                                                            db.Put("lastkey!" + objectaddress, objectaddress + "!" + transaction.BlockDate.ToString("yyyyMMddHHmmss") + "!" + sortableProcessHeight + "!");
-                                                            db.Close();
+
+                                                            logstatus = "[\"" + transaction.SignedBy + "\",\"" + objectaddress + "\",\"grant\",\"\",\"\",\"success\"]";
+
+                                                            lock (SupLocker)
+                                                            {
+                                                                var ROOT = new Options { CreateIfMissing = true };
+                                                                var db = new DB(ROOT, @"root\event");
+                                                                db.Put(objectaddress + "!" + transaction.BlockDate.ToString("yyyyMMddHHmmss") + "!" + sortableProcessHeight + "!", logstatus);
+                                                                db.Put("lastkey!" + objectaddress, objectaddress + "!" + transaction.BlockDate.ToString("yyyyMMddHHmmss") + "!" + sortableProcessHeight + "!");
+                                                                db.Close();
+                                                            }
+
+
                                                         }
 
-
                                                     }
-
                                                 }
 
                                                 if (objectState.LockedDate.Year == 1)
@@ -1323,28 +1326,31 @@ namespace SUP.P2FK
                                                         objectState.LockedDate = transaction.BlockDate;
                                                     }
 
-                                                    // update grant date if null and signed by a creator
-                                                    if (objectState.Creators.TryGet(transaction.SignedBy).Year == 1)
+                                                    if (objectState.Creators != null && objectState.Creators.ContainsKey(transaction.SignedBy))
                                                     {
-                                                        objectState.Creators[transaction.SignedBy] = transaction.BlockDate;
-                                                        objectState.ChangeDate = transaction.BlockDate;
-                                                        if (verbose)
+                                                        // update grant date if null and signed by a creator
+                                                        if (objectState.Creators.TryGet(transaction.SignedBy).Year == 1)
                                                         {
-
-                                                            logstatus = "[\"" + transaction.SignedBy + "\",\"" + objectaddress + "\",\"grant\",\"\",\"\",\"success\"]";
-
-                                                            lock (SupLocker)
+                                                            objectState.Creators[transaction.SignedBy] = transaction.BlockDate;
+                                                            objectState.ChangeDate = transaction.BlockDate;
+                                                            if (verbose)
                                                             {
-                                                                var ROOT = new Options { CreateIfMissing = true };
-                                                                var db = new DB(ROOT, @"root\event");
-                                                                db.Put(objectaddress + "!" + transaction.BlockDate.ToString("yyyyMMddHHmmss") + "!" + sortableProcessHeight + "!", logstatus);
-                                                                db.Put("lastkey!" + objectaddress, objectaddress + "!" + transaction.BlockDate.ToString("yyyyMMddHHmmss") + "!" + sortableProcessHeight + "!");
-                                                                db.Close();
+
+                                                                logstatus = "[\"" + transaction.SignedBy + "\",\"" + objectaddress + "\",\"grant\",\"\",\"\",\"success\"]";
+
+                                                                lock (SupLocker)
+                                                                {
+                                                                    var ROOT = new Options { CreateIfMissing = true };
+                                                                    var db = new DB(ROOT, @"root\event");
+                                                                    db.Put(objectaddress + "!" + transaction.BlockDate.ToString("yyyyMMddHHmmss") + "!" + sortableProcessHeight + "!", logstatus);
+                                                                    db.Put("lastkey!" + objectaddress, objectaddress + "!" + transaction.BlockDate.ToString("yyyyMMddHHmmss") + "!" + sortableProcessHeight + "!");
+                                                                    db.Close();
+                                                                }
+
+
                                                             }
 
-
                                                         }
-
                                                     }
 
 
@@ -2311,7 +2317,7 @@ namespace SUP.P2FK
                 if (fetched && objectStates.Count < 1) { return objectStates; }
 
                 int intProcessHeight = 0;
-                //try { intProcessHeight = objectStates.Max(state => state.Id); } catch { }
+
                 try { intProcessHeight = objectStates.Max(state => state.ProcessHeight); } catch { }
                 Root[] objectTransactions;
 
@@ -2377,7 +2383,6 @@ namespace SUP.P2FK
                 if (fetched && objectStates.Count < 1) { return objectStates; }
 
                 int intProcessHeight = 0;
-                //try { intProcessHeight = objectStates.Max(state => state.Id); } catch { }
                 try { intProcessHeight = objectStates.Max(state => state.ProcessHeight); } catch { }
                 Root[] objectTransactions;
 
