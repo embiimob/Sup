@@ -1,0 +1,508 @@
+﻿using NAudio.Wave;
+using SUP.P2FK;
+using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Diagnostics;
+using System.Diagnostics.Eventing.Reader;
+using System.Drawing;
+using System.IO;
+using System.Linq;
+using System.Reflection;
+using System.Text;
+using System.Text.RegularExpressions;
+using System.Threading.Tasks;
+using System.Windows.Forms;
+
+namespace SUP
+{
+    public partial class JukeBox : Form
+    {
+        private Timer delayTimer;
+        private SupMain parentForm; // Reference to the parent form that opened this form
+        private List<string> soundFiles;
+        private int numPictureBoxesToAdd = 30;
+        private int currentPictureBoxIndex = 0;
+        private IWavePlayer waveOutDevice;
+        private AudioFileReader audioFileReader;
+        private int currentSoundIndex = -1; // Initialize with -1 to indicate no current playing sound
+        private bool playNext = true;
+
+
+        public JukeBox(SupMain parentForm)
+        {
+            InitializeComponent();
+            InitializeDelayTimer();
+            this.parentForm = parentForm;
+            soundFiles = new List<string>();
+
+        }
+
+        private void GifTool_Load(object sender, EventArgs e)
+        {
+            //
+            //FindGifs(txtSearch.Text);
+            //AddTracksToFlowLayout();
+            flowLayoutPanel1.MouseWheel += new MouseEventHandler(flowLayoutPanel1_Scroll);
+        }
+
+        private void InitializeDelayTimer()
+        {
+            delayTimer = new Timer();
+            delayTimer.Interval = 2000; // 2 seconds delay
+            delayTimer.Tick += DelayTimer_Tick;
+            delayTimer.Stop();
+        }
+
+        private void TextBox_TextChanged(object sender, EventArgs e)
+        {
+            // Stop the existing timer if running
+            delayTimer.Stop();
+
+            // Restart the timer
+            delayTimer.Start();
+        }
+
+        private void DelayTimer_Tick(object sender, EventArgs e)
+        {
+            delayTimer.Stop();
+            string typedText = txtSearch.Text;
+            FindGifs(txtSearch.Text);
+
+            // Reset the currentPictureBoxIndex and add the first batch of PictureBoxes
+            currentPictureBoxIndex = 0;
+
+        }
+
+        private void FindGifs(string searchstring)
+        {
+            playNext = false;
+            StopPlayback();
+            currentSoundIndex = -1;
+
+            Task BuildMessage = Task.Run(() =>
+            {
+
+                Random rnd = new Random();
+                string randomGifFile;
+                string[] gifFiles = Directory.GetFiles("includes", "*.gif");
+                if (gifFiles.Length > 0)
+                {
+                    int randomIndex = rnd.Next(gifFiles.Length);
+                    randomGifFile = gifFiles[randomIndex];
+                }
+                else
+                {
+                    randomGifFile = @"includes\HugPuddle.jpg";
+                }
+
+                this.Invoke((MethodInvoker)delegate
+                {
+                    pictureBox1.ImageLocation = randomGifFile;
+                    pictureBox1.Visible = true;
+                    flowLayoutPanel1.Controls.Clear();
+                });
+
+                soundFiles = new List<string>();
+                string searchAddress = Root.GetPublicAddressByKeyword(searchstring);
+
+                if (searchstring.Length > 20) { searchAddress = searchstring; }
+                else
+                {
+                    PROState searchprofile = PROState.GetProfileByURN(searchstring, "good-user", "better-password", @"http://127.0.0.1:18332");
+                    if (searchprofile.Creators != null)
+                    {
+                        searchAddress = searchprofile.Creators[0];
+                    }
+                }
+
+               List<OBJState> objects = new List<OBJState>();
+
+                objects = OBJState.GetObjectsCreatedByAddress(searchAddress, "good-user", "better-password", @"http://127.0.0.1:18332");
+
+                foreach (OBJState obj in objects)
+                {
+
+                    if (obj.URN.ToLower().EndsWith(".mp3") || obj.URN.ToLower().EndsWith(".wav"))
+                    {
+                        soundFiles.Add(getLocalPath(obj.URN) + "," + obj.CreatedDate + "," + obj.Creators.Keys.First());
+
+                    }
+                }
+                
+                
+                Root[] TRACKS = Root.GetRootsByAddress(searchAddress, "good-user", "better-password", @"http://127.0.0.1:18332");
+
+
+                foreach (Root TRACK in TRACKS)
+                {
+                    foreach (string message in TRACK.Message)
+                    {
+                        // Find all occurrences of strings surrounded by << >> that end in .mp3 or .wav
+                        foreach (Match match in Regex.Matches(message, @"<<([^>]*?(\s*\.mp3\s*(?=>>|$)|\.mp3\s*>>|\s*\.wav\s*(?=>>|$)|\.wav\s*>>))"))
+                        {
+                            string audioFrom = TRACK.SignedBy;
+                            
+                            soundFiles.Add(getLocalPath(match.Groups[1].Value)+ "," + TRACK.BlockDate + "," + audioFrom);
+
+                        }
+                    }
+
+                    foreach (string attachment in TRACK.File.Keys)
+                    {
+                        // Check if the attachment ends in .GIF (case-insensitive)
+                        if (attachment.EndsWith(".MP3", StringComparison.OrdinalIgnoreCase) || attachment.EndsWith(".WAV", StringComparison.OrdinalIgnoreCase))
+                        {
+                            string audioFrom = TRACK.SignedBy;
+                            soundFiles.Add(getLocalPath(attachment)+ "," + TRACK.BlockDate + "," + audioFrom);
+
+                        }
+                    }
+                }
+
+                this.Invoke((MethodInvoker)delegate
+                {
+                    pictureBox1.Visible = false;
+                    soundFiles.Reverse();
+                    AddTracksToFlowLayout();
+                    playNext = true;
+                    InitializeAudioPlayer();
+
+                });
+            });
+        }
+
+        private string getLocalPath(string filepath)
+        {
+            string filelocation = "";
+
+            filelocation = filepath;
+
+
+            if (!filepath.ToLower().StartsWith("http"))
+            {
+                filelocation = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + @"\root\" + filepath.Replace("BTC:", "").Replace("MZC:", "").Replace("LTC:", "").Replace("DOG:", "").Replace("IPFS:", "").Replace(@"/", @"\");
+                if (filepath.ToLower().StartsWith("ipfs:")) { filelocation = filelocation.Replace(@"\root\", @"\ipfs\"); if (filepath.Length == 51) { filelocation += @"\artifact"; } }
+            }
+            Regex regexTransactionId = new Regex(@"\b[0-9a-f]{64}\b");
+            Match imgurnmatch = regexTransactionId.Match(filelocation);
+            string transactionid = imgurnmatch.Value;
+            Root root = new Root();
+            if (!File.Exists(filelocation))
+            {
+                Task BuildMessage = Task.Run(() =>
+                {
+
+
+                    switch (filepath.ToUpper().Substring(0, 4))
+                    {
+                        case "MZC:":
+                            Root.GetRootByTransactionId(transactionid, "good-user", "better-password", @"http://127.0.0.1:12832", "50");
+
+                            break;
+                        case "BTC:":
+
+                            Root.GetRootByTransactionId(transactionid, "good-user", "better-password", @"http://127.0.0.1:8332", "0");
+
+                            break;
+                        case "LTC:":
+
+                            Root.GetRootByTransactionId(transactionid, "good-user", "better-password", @"http://127.0.0.1:9332", "48");
+
+
+                            break;
+                        case "DOG:":
+                            Root.GetRootByTransactionId(transactionid, "good-user", "better-password", @"http://127.0.0.1:22555", "30");
+
+                            break;
+                        case "IPFS":
+                            string transid = "empty";
+                            try { transid = filepath.Substring(5, 46); } catch { }
+
+                            if (!System.IO.Directory.Exists("ipfs/" + transid + "-build"))
+                            {
+                                try { Directory.CreateDirectory("ipfs/" + transid); } catch { };
+                                Directory.CreateDirectory("ipfs/" + transid + "-build");
+                                Process process2 = new Process();
+                                process2.StartInfo.FileName = @"ipfs\ipfs.exe";
+                                process2.StartInfo.Arguments = "get " + filepath.Substring(5, 46) + @" -o ipfs\" + transid;
+                                process2.StartInfo.UseShellExecute = false;
+                                process2.StartInfo.CreateNoWindow = true;
+                                process2.Start();
+                                if (process2.WaitForExit(550000))
+                                {
+                                    string fileName;
+                                    if (System.IO.File.Exists("ipfs/" + transid))
+                                    {
+                                        System.IO.File.Move("ipfs/" + transid, "ipfs/" + transid + "_tmp");
+                                        System.IO.Directory.CreateDirectory("ipfs/" + transid);
+                                        fileName = filepath.Replace(@"//", "").Replace(@"\\", "").Substring(51);
+                                        if (fileName == "") { fileName = "artifact"; } else { fileName = fileName.Replace(@"/", "").Replace(@"\", ""); }
+                                        Directory.CreateDirectory("ipfs/" + transid);
+                                        System.IO.File.Move("ipfs/" + transid + "_tmp", filelocation);
+                                    }
+
+                                    if (System.IO.File.Exists("ipfs/" + transid + "/" + transid))
+                                    {
+                                        fileName = filepath.Replace(@"//", "").Replace(@"\\", "").Substring(51);
+                                        if (fileName == "") { fileName = "artifact"; } else { fileName = fileName.Replace(@"/", "").Replace(@"\", ""); }
+
+                                        System.IO.File.Move("ipfs/" + transid + "/" + transid, filelocation);
+                                    }
+
+
+                                    Process process3 = new Process
+                                    {
+                                        StartInfo = new ProcessStartInfo
+                                        {
+                                            FileName = @"ipfs\ipfs.exe",
+                                            Arguments = "pin add " + transid,
+                                            UseShellExecute = false,
+                                            CreateNoWindow = true
+                                        }
+                                    };
+                                    process3.Start();
+
+                                    try { Directory.Delete("ipfs/" + transid + "-build", true); } catch { }
+                                }
+                                else { process2.Kill(); }
+
+                            }
+
+                            break;
+                        default:
+                            if (!filepath.ToUpper().StartsWith("HTTP") && transactionid != "")
+                            {
+                                Root.GetRootByTransactionId(transactionid, "good-user", "better-password", @"http://127.0.0.1:18332");
+
+                            }
+                            break;
+
+                    }
+                });
+
+            }
+            return filelocation;
+        }
+
+        private void flowLayoutPanel1_Scroll(object sender, MouseEventArgs e)
+        {
+            // Check if the user has scrolled to the bottom
+            if (flowLayoutPanel1.VerticalScroll.Value + flowLayoutPanel1.ClientSize.Height >= flowLayoutPanel1.VerticalScroll.Maximum)
+            {
+                // Add more PictureBoxes if available
+                AddTracksToFlowLayout();
+            }
+        }
+
+        private void AddTracksToFlowLayout()
+        {
+            // Determine the number of PictureBoxes to add in this batch
+            int countToAdd = Math.Min(numPictureBoxesToAdd, soundFiles.Count - currentPictureBoxIndex);
+
+            // Add PictureBoxes to the FlowLayoutPanel
+            for (int i = 0; i < countToAdd; i++)
+            {
+                string[] soundInfo = soundFiles[currentPictureBoxIndex].Split(',');
+                string soundFrom = soundInfo[2];
+                PROState searchprofile = PROState.GetProfileByAddress(soundFrom, "good-user", "better-password", @"http://127.0.0.1:18332");
+                if (searchprofile.URN != null)
+                {
+                    soundFrom = searchprofile.URN;
+                }
+
+                string soundFile = Path.GetFileName(soundInfo[0]);
+                string soundDate = soundInfo[1];
+
+                LinkLabel linkLabel = new LinkLabel
+                {
+                   
+                    Text = currentPictureBoxIndex + ": "+ soundDate + " from: "+ soundFrom + " - "+soundFile,
+                    Tag = currentPictureBoxIndex, // Store the index in the Tag property for reference
+                    AutoSize = true,
+                    Font = new Font("Arial", 12, FontStyle.Regular)
+                };
+                linkLabel.Click += LinkLabel_Click;
+                flowLayoutPanel1.Controls.Add(linkLabel);
+                currentPictureBoxIndex++;
+            }
+
+
+        }
+
+        private async Task ExecuteBtnAttachClickAsync()
+        {
+            // Call the btnAttach_Click function on the parent form asynchronously
+            //await Task.Run(() => parentForm.btnAttach_Click(this, EventArgs.Empty));
+        }
+
+        private void flowLayoutPanel1_Scroll(object sender, ScrollEventArgs e)
+        {
+            // Check if the user has scrolled to the bottom
+            if (flowLayoutPanel1.VerticalScroll.Value + flowLayoutPanel1.ClientSize.Height >= flowLayoutPanel1.VerticalScroll.Maximum)
+            {
+                // Add more PictureBoxes if available
+                AddTracksToFlowLayout();
+            }
+        }
+
+        private void pictureBox1_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void flowLayoutPanel1_Paint(object sender, PaintEventArgs e)
+        {
+
+        }
+
+        private void InitializeAudioPlayer()
+        {
+            waveOutDevice = new WaveOutEvent();
+            waveOutDevice.PlaybackStopped += WaveOutDevice_PlaybackStopped;
+
+            PlayNextSound();
+        }
+
+        private async void PlayNextSound()
+        {
+            if (currentSoundIndex >= 0)
+            {
+                if (waveOutDevice != null)
+                {
+                    waveOutDevice.Stop();
+                }
+
+                if (audioFileReader != null)
+                {
+                    audioFileReader.Dispose();
+                }
+            }
+
+      
+            int nextIndex = currentSoundIndex + 1;
+            if (nextIndex < soundFiles.Count)
+            {
+                currentSoundIndex = nextIndex;
+
+                this.Invoke((MethodInvoker)delegate
+                {
+                    HighlightLinkLabel(currentSoundIndex);
+                });
+
+                try
+                {
+                    audioFileReader = new AudioFileReader(soundFiles[nextIndex].Split(',')[0]);
+                    waveOutDevice.Init(audioFileReader);
+                    waveOutDevice.Play();
+
+                }
+                catch
+                {
+                    await Task.Delay(1000); // Pause for 1 second (adjust as needed)
+
+                    object sender = new object(); // You can replace this with the actual sender object
+                    StoppedEventArgs e = new StoppedEventArgs(); // Create a new StoppedEventArgs instance without an exception
+
+                    // Simulate raising the event
+                    WaveOutDevice_PlaybackStopped(sender, e);
+
+
+                }
+                            
+;
+
+            }
+            else
+            {
+                currentSoundIndex = -1;
+                HighlightLinkLabel(currentSoundIndex);
+            }
+        }
+
+        private void WaveOutDevice_PlaybackStopped(object sender, StoppedEventArgs e)
+        {
+
+            if (playNext)
+            {
+                PlayNextSound();
+            }
+        }
+
+        private void HighlightLinkLabel(int index)
+        {
+            // Reset highlighting for all LinkLabels
+            foreach (LinkLabel label in flowLayoutPanel1.Controls)
+            {
+                label.Font = new Font(label.Font, FontStyle.Regular);
+            }
+
+            // Highlight the LinkLabel at the given index
+            if (index >= 0 && index < flowLayoutPanel1.Controls.Count)
+            {
+                LinkLabel highlightedLabel = (LinkLabel)flowLayoutPanel1.Controls[index];
+                highlightedLabel.Font = new Font(highlightedLabel.Font, FontStyle.Bold);
+            }
+        }
+
+
+
+        private void LinkLabel_Click(object sender, EventArgs e)
+        {
+           // playNext = false;
+
+            LinkLabel clickedLabel = (LinkLabel)sender;
+            int clickedIndex = (int)clickedLabel.Tag;
+            currentSoundIndex = clickedIndex - 1; // Adjust index to play from the clicked position
+            StopPlayback();
+
+
+        }
+
+        private void StopButton_Click(object sender, EventArgs e)
+        {
+            playNext = false;
+
+            StopPlayback();  
+
+        }
+
+        private void StopPlayback()
+        {
+            if (waveOutDevice != null)
+            {
+                waveOutDevice.Stop();
+            
+            }
+
+            if (audioFileReader != null)
+            {
+                audioFileReader.Dispose();
+                audioFileReader = null;
+            }
+        }
+
+        private void btnPlay_Click(object sender, EventArgs e)
+        {
+            StopPlayback();
+
+            playNext = true;
+            currentSoundIndex = currentSoundIndex - 1;
+
+            object sender2 = new object(); // You can replace this with the actual sender object
+            StoppedEventArgs e2 = new StoppedEventArgs(); // Create a new StoppedEventArgs instance without an exception
+
+            // Simulate raising the event
+            WaveOutDevice_PlaybackStopped(sender2, e2);
+
+        }
+
+        private void JukeBox_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            playNext = false;
+
+            StopPlayback();
+        }
+    }
+}

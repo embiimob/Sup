@@ -5391,6 +5391,10 @@ namespace SUP
             }
         }
 
-
+        private void button1_Click_1(object sender, EventArgs e)
+        {
+            JukeBox jukeBoxForm = new JukeBox(this); // Pass the reference to the current form as the parent form
+            jukeBoxForm.Show();
+        }
     }
 }

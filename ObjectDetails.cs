@@ -211,7 +211,7 @@ namespace SUP
                         Padding = new System.Windows.Forms.Padding(3)
                     };
 
-                    rowPanel.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 230));
+                    rowPanel.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 300));
                     rowPanel.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 110));
 
 
@@ -311,7 +311,7 @@ namespace SUP
                             Padding = new System.Windows.Forms.Padding(3)
                         };
 
-                        rowPanel.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 230));
+                        rowPanel.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 300));
                         rowPanel.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 110));
 
 
@@ -409,7 +409,7 @@ namespace SUP
                         };
 
 
-                        rowPanel.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 230));
+                        rowPanel.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 300));
                         rowPanel.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 0));
 
 
@@ -3220,6 +3220,11 @@ namespace SUP
         }
 
         private void pictureBox1_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void button1_Click(object sender, EventArgs e)
         {
 
         }

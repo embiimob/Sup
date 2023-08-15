@@ -189,11 +189,11 @@
             // 
             this.btnRefresh.Font = new System.Drawing.Font("Segoe UI Emoji", 13.8F);
             this.btnRefresh.ForeColor = System.Drawing.Color.Black;
-            this.btnRefresh.Image = global::SUP.Properties.Resources.disco;
             this.btnRefresh.Location = new System.Drawing.Point(287, 521);
             this.btnRefresh.Name = "btnRefresh";
             this.btnRefresh.Size = new System.Drawing.Size(50, 46);
             this.btnRefresh.TabIndex = 86;
+            this.btnRefresh.Text = "📣";
             this.btnRefresh.UseVisualStyleBackColor = true;
             this.btnRefresh.Click += new System.EventHandler(this.discoButton_Click);
             // 

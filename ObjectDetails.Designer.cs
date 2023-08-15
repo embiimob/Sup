@@ -36,7 +36,6 @@
             this.btnLaunchURN = new System.Windows.Forms.Button();
             this.flowPanel = new System.Windows.Forms.Panel();
             this.lblWarning = new System.Windows.Forms.Label();
-            this.pictureBox1 = new System.Windows.Forms.PictureBox();
             this.KeysFlow = new System.Windows.Forms.FlowLayoutPanel();
             this.lblLicense = new System.Windows.Forms.Label();
             this.lblLastChangedDate = new System.Windows.Forms.Label();
@@ -74,17 +73,19 @@
             this.lblOfficial = new System.Windows.Forms.Label();
             this.lblPleaseStandBy = new System.Windows.Forms.Label();
             this.btnDisco = new System.Windows.Forms.Button();
-            this.imgPicture = new System.Windows.Forms.PictureBox();
             this.RoyaltiesPanel = new System.Windows.Forms.FlowLayoutPanel();
             this.label1 = new System.Windows.Forms.Label();
             this.label5 = new System.Windows.Forms.Label();
             this.lblTotalRoyaltiesDetail = new System.Windows.Forms.Label();
             this.btnBuy = new System.Windows.Forms.Button();
+            this.pictureBox1 = new System.Windows.Forms.PictureBox();
+            this.imgPicture = new System.Windows.Forms.PictureBox();
+            this.button1 = new System.Windows.Forms.Button();
             this.flowPanel.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.supPanel.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.webviewer)).BeginInit();
             this.registrationPanel.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.imgPicture)).BeginInit();
             this.SuspendLayout();
             // 
@@ -120,7 +121,7 @@
             // 
             this.btnOfficial.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.btnOfficial.BackColor = System.Drawing.Color.Yellow;
-            this.btnOfficial.Location = new System.Drawing.Point(733, 492);
+            this.btnOfficial.Location = new System.Drawing.Point(738, 487);
             this.btnOfficial.Name = "btnOfficial";
             this.btnOfficial.Size = new System.Drawing.Size(87, 40);
             this.btnOfficial.TabIndex = 105;
@@ -145,7 +146,7 @@
             this.btnLaunchURN.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.btnLaunchURN.BackColor = System.Drawing.SystemColors.ControlDark;
             this.btnLaunchURN.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnLaunchURN.Location = new System.Drawing.Point(785, 499);
+            this.btnLaunchURN.Location = new System.Drawing.Point(791, 493);
             this.btnLaunchURN.Name = "btnLaunchURN";
             this.btnLaunchURN.Size = new System.Drawing.Size(34, 31);
             this.btnLaunchURN.TabIndex = 66;
@@ -160,7 +161,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.flowPanel.Controls.Add(this.lblWarning);
             this.flowPanel.Controls.Add(this.pictureBox1);
-            this.flowPanel.Location = new System.Drawing.Point(306, 13);
+            this.flowPanel.Location = new System.Drawing.Point(312, 12);
             this.flowPanel.Name = "flowPanel";
             this.flowPanel.Size = new System.Drawing.Size(531, 527);
             this.flowPanel.TabIndex = 104;
@@ -176,19 +177,6 @@
             this.lblWarning.Text = "WARNING FILES EXECUTE LOCALY";
             this.lblWarning.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             this.lblWarning.Visible = false;
-            // 
-            // pictureBox1
-            // 
-            this.pictureBox1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
-            this.pictureBox1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.pictureBox1.Location = new System.Drawing.Point(0, 0);
-            this.pictureBox1.Name = "pictureBox1";
-            this.pictureBox1.Size = new System.Drawing.Size(531, 527);
-            this.pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
-            this.pictureBox1.TabIndex = 1;
-            this.pictureBox1.TabStop = false;
-            this.pictureBox1.Click += new System.EventHandler(this.pictureBox1_Click);
-            this.pictureBox1.DoubleClick += new System.EventHandler(this.ShowFullScreenModeClick);
             // 
             // KeysFlow
             // 
@@ -381,7 +369,7 @@
             this.btnRefreshSup.Name = "btnRefreshSup";
             this.btnRefreshSup.Size = new System.Drawing.Size(60, 42);
             this.btnRefreshSup.TabIndex = 67;
-            this.btnRefreshSup.Text = "📣";
+            this.btnRefreshSup.Text = "😍";
             this.btnRefreshSup.UseVisualStyleBackColor = true;
             this.btnRefreshSup.Click += new System.EventHandler(this.ShowSupPanel);
             // 
@@ -540,9 +528,9 @@
             this.webviewer.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
             this.webviewer.CreationProperties = null;
             this.webviewer.DefaultBackgroundColor = System.Drawing.SystemColors.ControlDark;
-            this.webviewer.Location = new System.Drawing.Point(306, 13);
+            this.webviewer.Location = new System.Drawing.Point(312, 12);
             this.webviewer.Name = "webviewer";
-            this.webviewer.Size = new System.Drawing.Size(512, 527);
+            this.webviewer.Size = new System.Drawing.Size(531, 527);
             this.webviewer.TabIndex = 65;
             this.webviewer.ZoomFactor = 1D;
             // 
@@ -641,9 +629,9 @@
             this.lblPleaseStandBy.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.lblPleaseStandBy.Font = new System.Drawing.Font("Microsoft Sans Serif", 24F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblPleaseStandBy.Font = new System.Drawing.Font("Microsoft Sans Serif", 27.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lblPleaseStandBy.ForeColor = System.Drawing.Color.White;
-            this.lblPleaseStandBy.Location = new System.Drawing.Point(306, 13);
+            this.lblPleaseStandBy.Location = new System.Drawing.Point(312, 12);
             this.lblPleaseStandBy.Name = "lblPleaseStandBy";
             this.lblPleaseStandBy.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
             this.lblPleaseStandBy.Size = new System.Drawing.Size(528, 527);
@@ -655,25 +643,14 @@
             // btnDisco
             // 
             this.btnDisco.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnDisco.Font = new System.Drawing.Font("Segoe UI Emoji", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnDisco.Image = global::SUP.Properties.Resources.disco;
+            this.btnDisco.Font = new System.Drawing.Font("Segoe UI Emoji", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btnDisco.Location = new System.Drawing.Point(1191, 499);
             this.btnDisco.Name = "btnDisco";
             this.btnDisco.Size = new System.Drawing.Size(60, 42);
             this.btnDisco.TabIndex = 79;
+            this.btnDisco.Text = "📣";
             this.btnDisco.UseVisualStyleBackColor = true;
             this.btnDisco.Click += new System.EventHandler(this.btnDisco_Click);
-            // 
-            // imgPicture
-            // 
-            this.imgPicture.Location = new System.Drawing.Point(9, 7);
-            this.imgPicture.Name = "imgPicture";
-            this.imgPicture.Size = new System.Drawing.Size(70, 70);
-            this.imgPicture.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
-            this.imgPicture.TabIndex = 76;
-            this.imgPicture.TabStop = false;
-            this.imgPicture.Click += new System.EventHandler(this.imgPicture_Click);
-            this.imgPicture.Validated += new System.EventHandler(this.imgPicture_Validated);
             // 
             // RoyaltiesPanel
             // 
@@ -736,12 +713,50 @@
             this.btnBuy.UseVisualStyleBackColor = true;
             this.btnBuy.Click += new System.EventHandler(this.btnBuy_Click);
             // 
+            // pictureBox1
+            // 
+            this.pictureBox1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
+            this.pictureBox1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.pictureBox1.Location = new System.Drawing.Point(0, 0);
+            this.pictureBox1.Name = "pictureBox1";
+            this.pictureBox1.Size = new System.Drawing.Size(531, 527);
+            this.pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
+            this.pictureBox1.TabIndex = 1;
+            this.pictureBox1.TabStop = false;
+            this.pictureBox1.Click += new System.EventHandler(this.pictureBox1_Click);
+            this.pictureBox1.DoubleClick += new System.EventHandler(this.ShowFullScreenModeClick);
+            // 
+            // imgPicture
+            // 
+            this.imgPicture.Location = new System.Drawing.Point(9, 7);
+            this.imgPicture.Name = "imgPicture";
+            this.imgPicture.Size = new System.Drawing.Size(70, 70);
+            this.imgPicture.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
+            this.imgPicture.TabIndex = 76;
+            this.imgPicture.TabStop = false;
+            this.imgPicture.Click += new System.EventHandler(this.imgPicture_Click);
+            this.imgPicture.Validated += new System.EventHandler(this.imgPicture_Validated);
+            // 
+            // button1
+            // 
+            this.button1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.button1.Font = new System.Drawing.Font("Segoe UI Emoji", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.button1.Location = new System.Drawing.Point(1125, 500);
+            this.button1.Name = "button1";
+            this.button1.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
+            this.button1.Size = new System.Drawing.Size(60, 42);
+            this.button1.TabIndex = 113;
+            this.button1.Text = "🎵";
+            this.button1.UseVisualStyleBackColor = true;
+            this.button1.Click += new System.EventHandler(this.button1_Click);
+            // 
             // ObjectDetails
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.Black;
             this.ClientSize = new System.Drawing.Size(1329, 549);
+            this.Controls.Add(this.button1);
             this.Controls.Add(this.btnOfficial);
             this.Controls.Add(this.btnLaunchURN);
             this.Controls.Add(this.btnBuy);
@@ -784,11 +799,11 @@
             this.Text = "Object Details";
             this.Load += new System.EventHandler(this.ObjectDetails_Load);
             this.flowPanel.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
             this.supPanel.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.webviewer)).EndInit();
             this.registrationPanel.ResumeLayout(false);
             this.registrationPanel.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.imgPicture)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
@@ -853,5 +868,6 @@
         private System.Windows.Forms.Label label5;
         private System.Windows.Forms.Label lblTotalRoyaltiesDetail;
         private System.Windows.Forms.Button btnBuy;
+        private System.Windows.Forms.Button button1;
     }
 }
