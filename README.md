@@ -11,7 +11,7 @@ P2FK was directly inspired by the satoshi uploader  see --> https://cirosantilli
 
 ## **Installation**
 
-1. Download the Sup.v0.1.47-beta.zip file (https://github.com/embiimob/Sup/releases/download/Supv0.1.47-beta/Sup.v0.1.47-beta.zip)
+1. Download the Sup.v0.1.49-beta.zip file (https://github.com/embiimob/Sup/releases/download/Supv0.1.49-beta/Sup.v0.1.49-beta.zip)
 2. Create a folder on your **fastest** disk drive with at least **50GB** free (it will be storing the bitcoin testnet blockchain)
 3. Unzip all contents into the folder
 4. Create a shortcut to SUP.exe and launch
@@ -59,10 +59,15 @@ searches mainchain by urn - shows currently registered object with uri redirecti
 navigates to requested url in browser.
 <br />
 <br />
-## **Public / Private Messaging / Social / #Keyword Search / GIF Selector / Walkie Talkie**
-The disco ball has dropped you can now send direct public and private messages using Sup!?, the bitcoin testnet and #IPFS.   Search for your own profile in the object browser to login with your local account.  Search for aditional profiles and add them as friends by clicking the follow button.  Click on a friend's icon to show their latest public messages. Click on the community icon to see a combination of all your friends posts in a single feed in the order that they were confirmed on the blockchain. Sup!? search also now finds and displays all public messages by #keyword.  Click on the disco ball to send the profile you are currently browsing a public message.  Click on the 🤐 before clicking on the discon ball to send the profile you are currently browsing a private message. Click the GIF button to search through a growing collection of Gifs etched into the blockchain by other Sup!? users. Click and hold the new audio record button and your audio message will be delivered imediately after letting go of the record button ( if walkie talkie mode is enabled in the connection screen ).  Search for your own profile and click on the 🤐 icon to see any private messages sent to it.
+## **Public / Private Messaging / Social / #Keyword Search / GIF Selector / Walkie Talkie **
+The disco ball has dropped you can now send direct public and private messages using Sup!?, the bitcoin testnet and #IPFS.   Search for your own profile in the object browser to login with your local account.  Search for aditional profiles and add them as friends by clicking the follow button.  Click on a friend's icon to show their latest public messages. Click on the community icon to see a combination of all your friends posts in a single feed in the order that they were confirmed on the blockchain. Sup!? search also now finds and displays all public messages by #keyword.  Click on the 📢 to send the profile you are currently browsing a public message.  Click on the 🤐 before clicking on the 📢 to send the profile you are currently browsing a private message. Click the GIF button to search through a growing collection of Gifs etched into the blockchain by other Sup!? users. Click and hold the new audio record button and your audio message will be delivered imediately after letting go of the record button ( if walkie talkie mode is enabled in the connection screen ).  Search for your own profile and click on the 🤐 icon to see any private messages sent to it.
 <br />
 NOTE: all attachments in your private message are encrypted via Sup!? using the recipients public keys before they are uploaded to IPFS for delivery.
+<br />
+## **JukeBox 🎵**
+Click the new 🎵 and the currently active profile will be searched for mp3 and wav files, if found they will be displayed in an ordered list and played one after the other. You can also perform #Keyword searches and all audio files found at that #keyword will be displayed and played. it is also possible to search by profile urn or address.  click on any link to skip to it. scroll to load additional audio cliips.
+<br />
+search for experimental to hear a collection of 2007 - 2009 embii audio experiments.
 <br />
 ## **Profile Minting / Editing**
 Click the mint button and select the profile mint button. Enter a urn and a profile address or click the diamond button to generate a new profile address. These two fields are all that are required to register a profile urn. You may optionally enter a PFP image url, your full name and suffix, web links, contact information and keywords. NOTE: Every profile becomes an entry point for which private messages may be delivered as every profile displays public keys to be used for Secp256k1 encrypted messaging.   
