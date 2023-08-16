@@ -1311,10 +1311,7 @@ namespace SUP
             return input.Substring(startIndex, endIndex - startIndex);
         }
 
-        private void btnEditProfile_Click(object sender, EventArgs e)
-        {
-          
-        }
+   
 
         private void button3_Click(object sender, EventArgs e)
         {

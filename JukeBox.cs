@@ -20,30 +20,29 @@ namespace SUP
     public partial class JukeBox : Form
     {
         private Timer delayTimer;
-        private SupMain parentForm; // Reference to the parent form that opened this form
         private List<string> soundFiles;
         private int numPictureBoxesToAdd = 30;
-        private int currentPictureBoxIndex = 0;
+        private int currentTrackIndex = 0;
         private IWavePlayer waveOutDevice;
         private AudioFileReader audioFileReader;
         private int currentSoundIndex = -1; // Initialize with -1 to indicate no current playing sound
         private bool playNext = true;
 
 
-        public JukeBox(SupMain parentForm)
+        public JukeBox(string searchaddress = "mp3")
         {
             InitializeComponent();
             InitializeDelayTimer();
-            this.parentForm = parentForm;
             soundFiles = new List<string>();
+            txtSearch.Text = searchaddress;
+            FindSounds(txtSearch.Text);
+
 
         }
 
-        private void GifTool_Load(object sender, EventArgs e)
+        private void JukeBox_Load(object sender, EventArgs e)
         {
-            //
-            //FindGifs(txtSearch.Text);
-            //AddTracksToFlowLayout();
+
             flowLayoutPanel1.MouseWheel += new MouseEventHandler(flowLayoutPanel1_Scroll);
         }
 
@@ -68,14 +67,14 @@ namespace SUP
         {
             delayTimer.Stop();
             string typedText = txtSearch.Text;
-            FindGifs(txtSearch.Text);
+            FindSounds(txtSearch.Text);
 
             // Reset the currentPictureBoxIndex and add the first batch of PictureBoxes
-            currentPictureBoxIndex = 0;
+            currentTrackIndex = 0;
 
         }
 
-        private void FindGifs(string searchstring)
+        private void FindSounds(string searchstring)
         {
             playNext = false;
             StopPlayback();
@@ -105,32 +104,22 @@ namespace SUP
                 });
 
                 soundFiles = new List<string>();
-                string searchAddress = Root.GetPublicAddressByKeyword(searchstring);
+                string searchAddress = Root.GetPublicAddressByKeyword(searchstring.Replace("#",""));
 
                 if (searchstring.Length > 20) { searchAddress = searchstring; }
                 else
                 {
-                    PROState searchprofile = PROState.GetProfileByURN(searchstring, "good-user", "better-password", @"http://127.0.0.1:18332");
-                    if (searchprofile.Creators != null)
+                    if (!searchstring.StartsWith("#"))
                     {
-                        searchAddress = searchprofile.Creators[0];
+                        PROState searchprofile = PROState.GetProfileByURN(searchstring, "good-user", "better-password", @"http://127.0.0.1:18332");
+                        if (searchprofile.Creators != null)
+                        {
+                            searchAddress = searchprofile.Creators[0];
+                        }
                     }
                 }
 
-               List<OBJState> objects = new List<OBJState>();
-
-                objects = OBJState.GetObjectsCreatedByAddress(searchAddress, "good-user", "better-password", @"http://127.0.0.1:18332");
-
-                foreach (OBJState obj in objects)
-                {
-
-                    if (obj.URN.ToLower().EndsWith(".mp3") || obj.URN.ToLower().EndsWith(".wav"))
-                    {
-                        soundFiles.Add(getLocalPath(obj.URN) + "," + obj.CreatedDate + "," + obj.Creators.Keys.First());
-
-                    }
-                }
-                
+                               
                 
                 Root[] TRACKS = Root.GetRootsByAddress(searchAddress, "good-user", "better-password", @"http://127.0.0.1:18332");
 
@@ -143,8 +132,11 @@ namespace SUP
                         foreach (Match match in Regex.Matches(message, @"<<([^>]*?(\s*\.mp3\s*(?=>>|$)|\.mp3\s*>>|\s*\.wav\s*(?=>>|$)|\.wav\s*>>))"))
                         {
                             string audioFrom = TRACK.SignedBy;
+                            string audioPacket = getLocalPath(match.Groups[1].Value) + "," + TRACK.BlockDate + "," + audioFrom + "," + match.Groups[1].Value;
                             
-                            soundFiles.Add(getLocalPath(match.Groups[1].Value)+ "," + TRACK.BlockDate + "," + audioFrom);
+                            if (!soundFiles.Contains(audioPacket)) {
+                                soundFiles.Add(audioPacket);
+                            }
 
                         }
                     }
@@ -155,7 +147,69 @@ namespace SUP
                         if (attachment.EndsWith(".MP3", StringComparison.OrdinalIgnoreCase) || attachment.EndsWith(".WAV", StringComparison.OrdinalIgnoreCase))
                         {
                             string audioFrom = TRACK.SignedBy;
-                            soundFiles.Add(getLocalPath(attachment)+ "," + TRACK.BlockDate + "," + audioFrom);
+                            string audioPacket = getLocalPath(TRACK.TransactionId + @"\" + attachment) + "," + TRACK.BlockDate + "," + audioFrom + "," + TRACK.TransactionId + @"\" + attachment;
+                            
+                            if (!soundFiles.Contains(audioPacket))
+                            {
+                                soundFiles.Add(audioPacket);
+                            }
+                        }
+                    }
+                }
+
+                List<OBJState> objects = new List<OBJState>();
+
+
+                objects = OBJState.GetObjectsByKeyword(new List<string> { searchstring.Replace("#", "") }, "good-user", "better-password", @"http://127.0.0.1:18332");
+
+                foreach (OBJState obj in objects)
+                {
+
+                    if (obj.URN.ToLower().EndsWith(".mp3") || obj.URN.ToLower().EndsWith(".wav"))
+                    {
+
+                        string creatorKey = null;
+
+                        if (obj.Creators.Keys.Count > 1)
+                        {
+                            creatorKey = obj.Creators.Keys.ElementAt(1);
+                        }
+                        else if (obj.Creators.Keys.Count == 1)
+                        {
+                            creatorKey = obj.Creators.Keys.First();
+                        }
+                        string audioPacket = getLocalPath(obj.URN) + "," + obj.CreatedDate + "," + creatorKey + "," + obj.URN;
+                        if (!soundFiles.Contains(audioPacket))
+                        {
+                            soundFiles.Add(audioPacket);
+                        }
+                    }
+                }
+
+
+                objects = OBJState.GetObjectsCreatedByAddress(searchAddress, "good-user", "better-password", @"http://127.0.0.1:18332");
+
+                foreach (OBJState obj in objects)
+                {
+
+                    if (obj.URN.ToLower().EndsWith(".mp3") || obj.URN.ToLower().EndsWith(".wav"))
+                    {
+
+                        string creatorKey = null;
+
+                        if (obj.Creators.Keys.Count > 1)
+                        {
+                            creatorKey = obj.Creators.Keys.ElementAt(1);
+                        }
+                        else if (obj.Creators.Keys.Count == 1)
+                        {
+                            creatorKey = obj.Creators.Keys.First();
+                        }
+
+                        string audioPacket = getLocalPath(obj.URN) + "," + obj.CreatedDate + "," + creatorKey + "," + obj.URN;
+                        if (!soundFiles.Contains(audioPacket))
+                        {
+                            soundFiles.Add(audioPacket);
 
                         }
                     }
@@ -185,6 +239,63 @@ namespace SUP
                 filelocation = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + @"\root\" + filepath.Replace("BTC:", "").Replace("MZC:", "").Replace("LTC:", "").Replace("DOG:", "").Replace("IPFS:", "").Replace(@"/", @"\");
                 if (filepath.ToLower().StartsWith("ipfs:")) { filelocation = filelocation.Replace(@"\root\", @"\ipfs\"); if (filepath.Length == 51) { filelocation += @"\artifact"; } }
             }
+           
+            return filelocation;
+        }
+
+        private void flowLayoutPanel1_Scroll(object sender, MouseEventArgs e)
+        {
+            // Check if the user has scrolled to the bottom
+            if (flowLayoutPanel1.VerticalScroll.Value + flowLayoutPanel1.ClientSize.Height >= flowLayoutPanel1.VerticalScroll.Maximum)
+            {
+                // Add more PictureBoxes if available
+                AddTracksToFlowLayout();
+            }
+        }
+
+        private void AddTracksToFlowLayout()
+        {
+            // Determine the number of PictureBoxes to add in this batch
+            int countToAdd = Math.Min(numPictureBoxesToAdd, soundFiles.Count - currentTrackIndex);
+
+            // Add PictureBoxes to the FlowLayoutPanel
+            for (int i = 0; i < countToAdd; i++)
+            {
+                string[] soundInfo = soundFiles[currentTrackIndex].Split(',');
+                string soundFrom = soundInfo[2];
+                PROState searchprofile = PROState.GetProfileByAddress(soundFrom, "good-user", "better-password", @"http://127.0.0.1:18332");
+                if (searchprofile.URN != null)
+                {
+                    soundFrom = searchprofile.URN;
+                }
+
+                string soundFile = Path.GetFileName(soundInfo[0]);
+                string soundDate = soundInfo[1];
+                string soundURN = soundInfo[3];
+
+                // should prevent all files from trying to build at once will be limited to 30 at a time.
+                buildSoundFiles(soundInfo[0], soundURN);
+
+                LinkLabel linkLabel = new LinkLabel
+                {
+                   
+                    Text = currentTrackIndex + ": "+ soundDate + " from: "+ soundFrom + " - "+soundFile,
+                    Tag = currentTrackIndex, // Store the index in the Tag property for reference
+                    AutoSize = true,
+                    Font = new Font("Arial", 12, FontStyle.Regular)
+                };
+                linkLabel.Click += LinkLabel_Click;
+                toolTip1.SetToolTip(linkLabel, soundURN);
+                flowLayoutPanel1.Controls.Add(linkLabel);
+                currentTrackIndex++;
+            }
+
+
+        }
+
+        private void buildSoundFiles(string filelocation, string filepath)
+        {
+
             Regex regexTransactionId = new Regex(@"\b[0-9a-f]{64}\b");
             Match imgurnmatch = regexTransactionId.Match(filelocation);
             string transactionid = imgurnmatch.Value;
@@ -283,58 +394,8 @@ namespace SUP
                 });
 
             }
-            return filelocation;
-        }
-
-        private void flowLayoutPanel1_Scroll(object sender, MouseEventArgs e)
-        {
-            // Check if the user has scrolled to the bottom
-            if (flowLayoutPanel1.VerticalScroll.Value + flowLayoutPanel1.ClientSize.Height >= flowLayoutPanel1.VerticalScroll.Maximum)
-            {
-                // Add more PictureBoxes if available
-                AddTracksToFlowLayout();
-            }
-        }
-
-        private void AddTracksToFlowLayout()
-        {
-            // Determine the number of PictureBoxes to add in this batch
-            int countToAdd = Math.Min(numPictureBoxesToAdd, soundFiles.Count - currentPictureBoxIndex);
-
-            // Add PictureBoxes to the FlowLayoutPanel
-            for (int i = 0; i < countToAdd; i++)
-            {
-                string[] soundInfo = soundFiles[currentPictureBoxIndex].Split(',');
-                string soundFrom = soundInfo[2];
-                PROState searchprofile = PROState.GetProfileByAddress(soundFrom, "good-user", "better-password", @"http://127.0.0.1:18332");
-                if (searchprofile.URN != null)
-                {
-                    soundFrom = searchprofile.URN;
-                }
-
-                string soundFile = Path.GetFileName(soundInfo[0]);
-                string soundDate = soundInfo[1];
-
-                LinkLabel linkLabel = new LinkLabel
-                {
-                   
-                    Text = currentPictureBoxIndex + ": "+ soundDate + " from: "+ soundFrom + " - "+soundFile,
-                    Tag = currentPictureBoxIndex, // Store the index in the Tag property for reference
-                    AutoSize = true,
-                    Font = new Font("Arial", 12, FontStyle.Regular)
-                };
-                linkLabel.Click += LinkLabel_Click;
-                flowLayoutPanel1.Controls.Add(linkLabel);
-                currentPictureBoxIndex++;
-            }
 
 
-        }
-
-        private async Task ExecuteBtnAttachClickAsync()
-        {
-            // Call the btnAttach_Click function on the parent form asynchronously
-            //await Task.Run(() => parentForm.btnAttach_Click(this, EventArgs.Empty));
         }
 
         private void flowLayoutPanel1_Scroll(object sender, ScrollEventArgs e)
@@ -345,16 +406,6 @@ namespace SUP
                 // Add more PictureBoxes if available
                 AddTracksToFlowLayout();
             }
-        }
-
-        private void pictureBox1_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void flowLayoutPanel1_Paint(object sender, PaintEventArgs e)
-        {
-
         }
 
         private void InitializeAudioPlayer()
@@ -445,8 +496,6 @@ namespace SUP
                 highlightedLabel.Font = new Font(highlightedLabel.Font, FontStyle.Bold);
             }
         }
-
-
 
         private void LinkLabel_Click(object sender, EventArgs e)
         {

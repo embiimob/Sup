@@ -5393,8 +5393,18 @@ namespace SUP
 
         private void button1_Click_1(object sender, EventArgs e)
         {
-            JukeBox jukeBoxForm = new JukeBox(this); // Pass the reference to the current form as the parent form
-            jukeBoxForm.Show();
+
+            if (profileURN.Links[0].LinkData != null)
+            {
+                JukeBox jukeBoxForm = new JukeBox(profileURN.Text);
+                jukeBoxForm.Show();// Pass the reference to the current form as the parent form
+            } 
+            else
+            {
+                JukeBox jukeBoxForm = new JukeBox();
+                jukeBoxForm.Show();// Pass the reference to the current form as the parent form
+            }
+            
         }
     }
 }

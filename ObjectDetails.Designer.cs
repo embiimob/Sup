@@ -80,7 +80,7 @@
             this.btnBuy = new System.Windows.Forms.Button();
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
             this.imgPicture = new System.Windows.Forms.PictureBox();
-            this.button1 = new System.Windows.Forms.Button();
+            this.btnJukeBox = new System.Windows.Forms.Button();
             this.flowPanel.SuspendLayout();
             this.supPanel.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.webviewer)).BeginInit();
@@ -441,7 +441,6 @@
             this.supFlow.Name = "supFlow";
             this.supFlow.Size = new System.Drawing.Size(467, 476);
             this.supFlow.TabIndex = 3;
-            this.supFlow.Paint += new System.Windows.Forms.PaintEventHandler(this.supFlow_Paint);
             // 
             // txtdesc
             // 
@@ -504,7 +503,6 @@
             this.CreatorsPanel.Name = "CreatorsPanel";
             this.CreatorsPanel.Size = new System.Drawing.Size(395, 90);
             this.CreatorsPanel.TabIndex = 71;
-            this.CreatorsPanel.Paint += new System.Windows.Forms.PaintEventHandler(this.CreatorsPanel_Paint);
             // 
             // OwnersPanel
             // 
@@ -517,7 +515,6 @@
             this.OwnersPanel.Name = "OwnersPanel";
             this.OwnersPanel.Size = new System.Drawing.Size(453, 219);
             this.OwnersPanel.TabIndex = 69;
-            this.OwnersPanel.Paint += new System.Windows.Forms.PaintEventHandler(this.OwnersPanel_Paint);
             // 
             // webviewer
             // 
@@ -638,7 +635,6 @@
             this.lblPleaseStandBy.TabIndex = 108;
             this.lblPleaseStandBy.Text = "please stand by... locked for loading";
             this.lblPleaseStandBy.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            this.lblPleaseStandBy.Click += new System.EventHandler(this.lblPleaseStandBy_Click);
             // 
             // btnDisco
             // 
@@ -662,7 +658,6 @@
             this.RoyaltiesPanel.Name = "RoyaltiesPanel";
             this.RoyaltiesPanel.Size = new System.Drawing.Size(453, 90);
             this.RoyaltiesPanel.TabIndex = 70;
-            this.RoyaltiesPanel.Paint += new System.Windows.Forms.PaintEventHandler(this.RoyaltiesPanel_Paint);
             // 
             // label1
             // 
@@ -674,7 +669,6 @@
             this.label1.Size = new System.Drawing.Size(45, 13);
             this.label1.TabIndex = 109;
             this.label1.Text = "royalties";
-            this.label1.Click += new System.EventHandler(this.label1_Click);
             // 
             // label5
             // 
@@ -686,7 +680,6 @@
             this.label5.Size = new System.Drawing.Size(41, 13);
             this.label5.TabIndex = 110;
             this.label5.Text = "owners";
-            this.label5.Click += new System.EventHandler(this.label5_Click);
             // 
             // lblTotalRoyaltiesDetail
             // 
@@ -723,7 +716,6 @@
             this.pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
             this.pictureBox1.TabIndex = 1;
             this.pictureBox1.TabStop = false;
-            this.pictureBox1.Click += new System.EventHandler(this.pictureBox1_Click);
             this.pictureBox1.DoubleClick += new System.EventHandler(this.ShowFullScreenModeClick);
             // 
             // imgPicture
@@ -737,18 +729,18 @@
             this.imgPicture.Click += new System.EventHandler(this.imgPicture_Click);
             this.imgPicture.Validated += new System.EventHandler(this.imgPicture_Validated);
             // 
-            // button1
+            // btnJukeBox
             // 
-            this.button1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.button1.Font = new System.Drawing.Font("Segoe UI Emoji", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.button1.Location = new System.Drawing.Point(1125, 500);
-            this.button1.Name = "button1";
-            this.button1.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
-            this.button1.Size = new System.Drawing.Size(60, 42);
-            this.button1.TabIndex = 113;
-            this.button1.Text = "🎵";
-            this.button1.UseVisualStyleBackColor = true;
-            this.button1.Click += new System.EventHandler(this.button1_Click);
+            this.btnJukeBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnJukeBox.Font = new System.Drawing.Font("Segoe UI Emoji", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnJukeBox.Location = new System.Drawing.Point(1125, 500);
+            this.btnJukeBox.Name = "btnJukeBox";
+            this.btnJukeBox.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
+            this.btnJukeBox.Size = new System.Drawing.Size(60, 42);
+            this.btnJukeBox.TabIndex = 113;
+            this.btnJukeBox.Text = "🎵";
+            this.btnJukeBox.UseVisualStyleBackColor = true;
+            this.btnJukeBox.Click += new System.EventHandler(this.button1_Click);
             // 
             // ObjectDetails
             // 
@@ -756,7 +748,7 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.Black;
             this.ClientSize = new System.Drawing.Size(1329, 549);
-            this.Controls.Add(this.button1);
+            this.Controls.Add(this.btnJukeBox);
             this.Controls.Add(this.btnOfficial);
             this.Controls.Add(this.btnLaunchURN);
             this.Controls.Add(this.btnBuy);
@@ -868,6 +860,6 @@
         private System.Windows.Forms.Label label5;
         private System.Windows.Forms.Label lblTotalRoyaltiesDetail;
         private System.Windows.Forms.Button btnBuy;
-        private System.Windows.Forms.Button button1;
+        private System.Windows.Forms.Button btnJukeBox;
     }
 }

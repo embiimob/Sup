@@ -2677,20 +2677,7 @@ namespace SUP
             btnObjectRoyalties.ForeColor = Color.Yellow;
         }
 
-        private void txtOBJP2FK_TextChanged(object sender, EventArgs e)
-        {
-
-        }
-
-        private void txtAddressListJSON_TextChanged(object sender, EventArgs e)
-        {
-
-        }
-
-        private void txtOBJJSON_TextChanged(object sender, EventArgs e)
-        {
-
-        }
+     
     }
 
 }

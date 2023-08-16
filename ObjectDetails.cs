@@ -3184,49 +3184,13 @@ namespace SUP
             new ObjectBuy(_objectaddress).Show();
         }
 
-        private void supFlow_Paint(object sender, PaintEventArgs e)
-        {
-
-        }
-
-        private void lblPleaseStandBy_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void OwnersPanel_Paint(object sender, PaintEventArgs e)
-        {
-
-        }
-
-        private void CreatorsPanel_Paint(object sender, PaintEventArgs e)
-        {
-
-        }
-
-        private void label5_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void RoyaltiesPanel_Paint(object sender, PaintEventArgs e)
-        {
-
-        }
-
-        private void label1_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void pictureBox1_Click(object sender, EventArgs e)
-        {
-
-        }
-
+       
         private void button1_Click(object sender, EventArgs e)
         {
 
+            JukeBox jukeBoxForm = new JukeBox(_objectaddress);
+            jukeBoxForm.Show();// Pass the reference to the current form as the parent form
+            
         }
     }
 

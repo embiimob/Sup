@@ -256,11 +256,6 @@ namespace SUP
             }
         }
 
-        private void addressTextBox_TextChanged(object sender, EventArgs e)
-        {
-
-        }
-
         private void ObjectBurn_Load(object sender, EventArgs e)
         {
             addressTextBox.Text = brnaddress;

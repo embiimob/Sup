@@ -60,7 +60,6 @@
             this.addressTextBox.Name = "addressTextBox";
             this.addressTextBox.Size = new System.Drawing.Size(337, 33);
             this.addressTextBox.TabIndex = 0;
-            this.addressTextBox.TextChanged += new System.EventHandler(this.addressTextBox_TextChanged);
             // 
             // qtyTextBox
             // 

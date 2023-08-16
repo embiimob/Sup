@@ -311,7 +311,6 @@
             this.flowURL.TabIndex = 346;
             this.flowURL.ControlAdded += new System.Windows.Forms.ControlEventHandler(this.flowAttribute_ControlAdded);
             this.flowURL.ControlRemoved += new System.Windows.Forms.ControlEventHandler(this.flowAttribute_ControlRemoved);
-            this.flowURL.Paint += new System.Windows.Forms.PaintEventHandler(this.flowURL_Paint);
             // 
             // btnMiddleName
             // 
@@ -448,7 +447,6 @@
             this.txtOBJP2FK.Size = new System.Drawing.Size(156, 190);
             this.txtOBJP2FK.TabIndex = 357;
             this.txtOBJP2FK.Visible = false;
-            this.txtOBJP2FK.TextChanged += new System.EventHandler(this.txtOBJP2FK_TextChanged);
             // 
             // txtAddressListJSON
             // 

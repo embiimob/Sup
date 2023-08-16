@@ -1279,14 +1279,6 @@ namespace SUP
             UpdateRemainingChars();
         }
 
-        private void flowURL_Paint(object sender, PaintEventArgs e)
-        {
-
-        }
-
-        private void txtOBJP2FK_TextChanged(object sender, EventArgs e)
-        {
-
-        }
+  
     }
 }
