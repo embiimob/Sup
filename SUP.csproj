@@ -473,6 +473,9 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="includes\LevelDB.NET.dll" />
+    <Content Include="includes\loading.html">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="includes\Microsoft.Bcl.AsyncInterfaces.dll" />
     <Content Include="includes\Microsoft.Bcl.AsyncInterfaces.xml" />
     <Content Include="includes\Microsoft.Extensions.Configuration.Abstractions.dll" />
@@ -509,6 +512,12 @@
     <Content Include="includes\NBitcoin.xml" />
     <Content Include="includes\Newtonsoft.Json.dll" />
     <Content Include="includes\Newtonsoft.Json.xml" />
+    <Content Include="includes\notfound.html">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="includes\progress.gif">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="includes\Sup1.gif">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
