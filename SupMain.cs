@@ -27,6 +27,7 @@ using System.Threading;
 using System.Drawing.Imaging;
 using System.Windows.Media.TextFormatting;
 using NAudio.Wave;
+using System.Text;
 
 namespace SUP
 {
@@ -168,6 +169,8 @@ namespace SUP
 
         private void MakeActiveProfile(string address)
         {
+           
+
             Regex regexTransactionId = new Regex(@"\b[0-9a-f]{64}\b");
             PROState activeProfile = PROState.GetProfileByAddress(address, "good-user", "better-password", @"http://127.0.0.1:18332");
             string ismuted = "";
@@ -193,14 +196,7 @@ namespace SUP
             if (activeProfile.URL != null)
             {
 
-                Task.Run(() =>
-                {
-                    foreach (var viewer in webviewers)
-                    {
-                        viewer.Dispose();
-                    }
 
-                });
 
                 supFlow.Controls.Clear();
                 foreach (string key in activeProfile.URL.Keys)
@@ -1024,10 +1020,10 @@ namespace SUP
                                         {
 
                                             Root root = Root.GetRootByTransactionId(s, "good-user", "better-password", @"http://127.0.0.1:18332");
-                                            if (root.Signed == true)
+                                            if (root.Signed == true || root.File.ContainsKey("SEC"))
                                             {
 
-                                                if (!System.IO.File.Exists(@"root\" + root.SignedBy + @"\BLOCK"))
+                                                if (!System.IO.File.Exists(@"root\" + root.Keyword.Keys.Last() + @"\BLOCK"))
                                                 {
                                                     bool find = false;
 
@@ -1047,7 +1043,91 @@ namespace SUP
                                                     }
                                                     else { find = true; }
 
-                                                    if (File.Exists(@"LIVE_FILTER_ENABLED")) { find = myFriends.ContainsKey(root.SignedBy); }
+                                                    if (File.Exists(@"LIVE_FILTER_ENABLED")) { find = myFriends.ContainsKey(root.Keyword.Keys.Last()); }
+                                                    if (find && root.File.ContainsKey("SEC") && root.Keyword.ContainsKey(profileURN.Links[0].LinkData.ToString()))
+                                                    {
+                                                        //ADD SEC message to leveld DB with system date stamp and refresh supPrivate Screen if active provile.
+
+                                                        foreach (KeyValuePair<string, string> keyword in root.Keyword)
+                                                        {
+                                                            string msg;
+                                                            if (!root.Signed)
+                                                            {
+                                                                msg = "[\"" + root.Keyword.Keys.Last() + "\",\"" + root.TransactionId + "\"]";
+                                                            }
+                                                            else { msg = "[\"" + root.SignedBy + "\",\"" + root.TransactionId + "\"]"; }
+                                                            var ROOT = new Options { CreateIfMissing = true };
+                                                            byte[] hashBytes = SHA256.Hash(Encoding.UTF8.GetBytes(msg));
+                                                            string hashString = BitConverter.ToString(hashBytes).Replace("-", "");
+
+
+
+
+                                                            try
+                                                            {
+                                                                lock (SupLocker)
+                                                                {
+                                                                    var db = new DB(ROOT, @"root\" + keyword.Key + @"\sec");
+                                                                    var db2 = new DB(ROOT, @"root\" + keyword.Key + @"\sec2");
+                                                                    db.Put(keyword.Key + "!" + DateTime.UtcNow.ToString("yyyyMMddHHmmss") + "!" + hashString, msg);
+                                                                    db.Close();
+                                                                    db.Dispose();
+
+                                                                    db2.Put(keyword.Key + "!" + DateTime.UtcNow.ToString("yyyyMMddHHmmss") + "!" + hashString, msg);
+                                                                    db2.Close();
+                                                                    db2.Dispose();
+                                                                }
+                                                            }
+                                                            catch
+                                                            {
+                                                                lock (SupLocker)
+                                                                {
+                                                                    try { Directory.Delete(@"root\" + keyword.Key + @"\sec", true); } catch { System.Threading.Thread.Sleep(500); try { Directory.Delete(@"root\" + keyword.Key + @"\sec", true); } catch { } }
+
+                                                                    Directory.Move(@"root\" + keyword.Key + @"\sec2", @"root\" + keyword.Key + @"\sec");
+                                                                }
+                                                                try
+                                                                {
+                                                                    lock (SupLocker)
+                                                                    {
+                                                                        var db = new DB(ROOT, @"root\" + keyword.Key + @"\sec");
+                                                                        var db2 = new DB(ROOT, @"root\" + keyword.Key + @"\sec2");
+                                                                        db.Put(keyword.Key + "!" + DateTime.UtcNow.ToString("yyyyMMddHHmmss"), msg);
+                                                                        db.Put("lastkey!" + keyword.Key, keyword.Key + "!" + root.BlockDate.ToString("yyyyMMddHHmmss"));
+                                                                        db.Close();
+                                                                        db.Dispose();
+
+
+                                                                        db2.Put(keyword.Key + "!" + DateTime.UtcNow.ToString("yyyyMMddHHmmss"), msg);
+                                                                        db2.Put("lastkey!" + keyword.Key, keyword.Key + "!" + root.BlockDate.ToString("yyyyMMddHHmmss"));
+                                                                        db2.Close();
+                                                                        db2.Dispose();
+                                                                    }
+
+                                                                }
+                                                                catch
+                                                                {
+
+                                                                    Directory.Delete(@"root\" + keyword.Key + @"\sec", true); Directory.Delete(@"root\" + keyword.Key + @"\sec2", true);
+                                                                }
+                                                            }
+
+
+                                                        }
+                                                        this.Invoke((MethodInvoker)delegate
+                                                        {
+                                                            numPrivateMessagesDisplayed = 0;
+
+                                                            RefreshPrivateSupMessages();
+
+
+                                                            if (splitContainer1.Panel2Collapsed)
+                                                            {
+                                                                splitContainer1.Panel2Collapsed = false;
+                                                            }
+                                                        });
+
+                                                    }
 
                                                     if (find && root.Message.Count() > 0)
                                                     {
@@ -1055,6 +1135,21 @@ namespace SUP
                                                         string _from = root.SignedBy;
                                                         string _to = "";
                                                         if (root.Keyword.Count() > 1) { _to = root.Keyword.Keys.First(); } else { _to = root.Keyword.Keys.Last(); }
+
+                                                        string _fromId = _from;
+
+                                                        PROState Fromprofile = PROState.GetProfileByAddress(_fromId, "good-user", "better-password", "http://127.0.0.1:18332");
+
+                                                        if (Fromprofile.URN != null)
+                                                        { _fromId = Fromprofile.URN; }
+
+                                                        string _toId = _to;
+
+                                                        PROState Toprofile = PROState.GetProfileByAddress(_toId, "good-user", "better-password", "http://127.0.0.1:18332");
+
+                                                        if (Toprofile.URN != null)
+                                                        { _toId = Toprofile.URN; }
+
                                                         string _message = string.Join(" ", root.Message);
                                                         string _blockdate = root.BlockDate.ToString("yyyyMMddHHmmss");
                                                         string imglocation = "";
@@ -1065,10 +1160,9 @@ namespace SUP
                                                         this.Invoke((MethodInvoker)delegate
                                                         {
                                                             try { imglocation = myFriends[_to]; } catch { }
-                                                            CreateFeedRow(imglocation, _to, _to, DateTime.ParseExact(_blockdate, "yyyyMMddHHmmss", CultureInfo.InvariantCulture), " ", "", Color.White, supFlow, true);
+                                                            CreateFeedRow(imglocation, _toId, _to, DateTime.ParseExact(_blockdate, "yyyyMMddHHmmss", CultureInfo.InvariantCulture), " ", "", Color.White, supFlow, true);
                                                             try { imglocation = myFriends[_from]; } catch { }
-                                                            CreateFeedRow(imglocation, _from, _from, DateTime.ParseExact("19700101010101", "yyyyMMddHHmmss", CultureInfo.InvariantCulture), _message, root.TransactionId, Color.White, supFlow, true);
-
+                                                            CreateFeedRow(imglocation, _fromId, _from, DateTime.ParseExact("19700101010101", "yyyyMMddHHmmss", CultureInfo.InvariantCulture), _message, root.TransactionId, Color.White, supFlow, true);
 
                                                         });
 
@@ -2608,10 +2702,15 @@ namespace SUP
             {
                 Task.Run(() =>
                 {
-                    foreach (var viewer in webviewers)
+                    this.Invoke((MethodInvoker)delegate
                     {
-                        viewer.Dispose();
-                    }
+                        foreach (var viewer in webviewers)
+                        {
+
+                            try { viewer.Dispose(); } catch { }
+
+                        }
+                    });
 
                 });
 
@@ -2620,9 +2719,10 @@ namespace SUP
                 supFlow.Controls.Clear();
                 //supFlow.ResumeLayout();
 
-                btnPublicMessage.Enabled = false;
 
-                Root[] roots = Root.GetRootsByAddress(profileURN.Links[0].LinkData.ToString(), "good-user", "better-password", "http://127.0.0.1:18332");
+                try { Root[] roots = Root.GetRootsByAddress(profileURN.Links[0].LinkData.ToString(), "good-user", "better-password", "http://127.0.0.1:18332"); } catch { return; }
+               
+                btnPublicMessage.Enabled = false;
 
             }
 
@@ -3049,7 +3149,7 @@ namespace SUP
                                                             {
                                                                 this.Invoke((MethodInvoker)delegate
                                                                 {
-                                                                    AddVideo(content);
+                                                                    try { AddVideo(content); } catch { }
                                                                 });
 
                                                             }
@@ -3128,10 +3228,15 @@ namespace SUP
 
                 Task.Run(() =>
                 {
-                    foreach (var viewer in webviewers)
+                    this.Invoke((MethodInvoker)delegate
                     {
-                        viewer.Dispose();
-                    }
+                        foreach (var viewer in webviewers)
+                        {
+
+                            try { viewer.Dispose(); } catch { }
+
+                        }
+                    });
 
                 });
 
@@ -3578,7 +3683,7 @@ namespace SUP
 
                                                                 this.Invoke((MethodInvoker)delegate
                                                                 {
-                                                                    AddVideo(transid + @"\" + file, true);
+                                                                    try { AddVideo(transid + @"\" + file, true); } catch { }
                                                                 });
 
                                                             }
@@ -3705,7 +3810,7 @@ namespace SUP
 
                                                             this.Invoke((MethodInvoker)delegate
                                                             {
-                                                                AddVideo(content, true);
+                                                                try { AddVideo(content, true); } catch { }
                                                             });
 
                                                         }
@@ -4029,12 +4134,12 @@ namespace SUP
                             pictureBox.MouseClick += (sender, e) => { Attachment_Clicked(imagelocation); };
                         }));
 
-                        });
+                    });
 
-                    }
+                }
 
 
-            }         
+            }
 
 
         }
@@ -4102,9 +4207,9 @@ namespace SUP
 
                 }
                 msg.Controls.Add(webviewer);
-                await webviewer.EnsureCoreWebView2Async();
+                try { await webviewer.EnsureCoreWebView2Async(); } catch { }
                 // immediately load Progress content into the WebView2 control
-                webviewer.CoreWebView2.Navigate(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + @"\includes\loading.html");
+                try { webviewer.CoreWebView2.Navigate(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + @"\includes\loading.html"); } catch { }
 
 
                 if (!videopath.ToLower().StartsWith("http"))
@@ -4112,7 +4217,7 @@ namespace SUP
                     videolocation = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + @"\root\" + videopath.Replace("BTC:", "").Replace("MZC:", "").Replace("LTC:", "").Replace("DOG:", "").Replace("IPFS:", "").Replace(@"/", @"\");
                     if (videopath.ToLower().StartsWith("ipfs:")) { videolocation = videolocation.Replace(@"\root\", @"\ipfs\"); if (videopath.Length == 51) { videolocation += @"\artifact"; } }
 
-   
+
                     if (!File.Exists(videolocation))
                     {
 
@@ -4226,57 +4331,57 @@ namespace SUP
 
                                 this.Invoke((Action)(() =>
                                 {
-                                    webviewer.CoreWebView2.Navigate(viewerPath);
-                               
-
-                                try
-                                {
+                                    try { webviewer.CoreWebView2.Navigate(viewerPath); } catch { }
 
 
-                                    // If it's a .wav file and autoplay is enabled, trigger the audio playback
-                                    if (videolocation.ToLower().EndsWith(".wav") && autoPlay)
-
+                                    try
                                     {
-                                        WaveOut waveOut = new WaveOut();
-                                        WaveFileReader reader = new WaveFileReader(videolocation);
-                                        waveOut.Init(reader);
-                                        waveOut.Play();
 
+
+                                        // If it's a .wav file and autoplay is enabled, trigger the audio playback
+                                        if (videolocation.ToLower().EndsWith(".wav") && autoPlay)
+
+                                        {
+                                            WaveOut waveOut = new WaveOut();
+                                            WaveFileReader reader = new WaveFileReader(videolocation);
+                                            waveOut.Init(reader);
+                                            waveOut.Play();
+
+
+                                        }
+
+                                        // If it's a .mp3 file and autoplay is enabled, trigger the audio playback
+                                        if (videolocation.ToLower().EndsWith(".mp3") && autoPlay)
+
+                                        {
+                                            WaveOut waveOut = new WaveOut();
+                                            Mp3FileReader reader = new Mp3FileReader(videolocation);
+                                            waveOut.Init(reader);
+                                            waveOut.Play();
+
+                                        }
 
                                     }
-
-                                    // If it's a .mp3 file and autoplay is enabled, trigger the audio playback
-                                    if (videolocation.ToLower().EndsWith(".mp3") && autoPlay)
-
+                                    catch (Exception ex)
                                     {
-                                        WaveOut waveOut = new WaveOut();
-                                        Mp3FileReader reader = new Mp3FileReader(videolocation);
-                                        waveOut.Init(reader);
-                                        waveOut.Play();
-
+                                        string error = ex.Message;// Handle exceptions here
                                     }
-
-                                }
-                                catch (Exception ex)
-                                {
-                                    string error = ex.Message;// Handle exceptions here
-                                }
                                 }));
 
 
                             }
                             else
                             {
-                                webviewer.CoreWebView2.Navigate(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + @"\includes\notfound.html");
+                                try { webviewer.CoreWebView2.Navigate(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + @"\includes\notfound.html"); } catch { }
 
                             }
 
-                           
+
 
                         });
 
 
-                       
+
 
                     }
                     else
@@ -4284,7 +4389,7 @@ namespace SUP
                         string viewerPath = Path.GetDirectoryName(videolocation) + @"\urnviewer.html";
                         string htmlstring = "<html><body><embed src=\"" + videolocation + "\" width=100% height=100% ></body></html>";
                         System.IO.File.WriteAllText(viewerPath, htmlstring);
-                        webviewer.CoreWebView2.Navigate(viewerPath);
+                        try { webviewer.CoreWebView2.Navigate(viewerPath); } catch { }
                     }
 
 
@@ -4299,11 +4404,11 @@ namespace SUP
                         videolocation = @"https://www.youtube.com/embed/" + match.Groups[1].Value;
                     }
 
-                    webviewer.CoreWebView2.Navigate(videolocation);
+                    try { webviewer.CoreWebView2.Navigate(videolocation); } catch { }
                 }
 
 
-               
+
             }
 
 
@@ -4618,8 +4723,12 @@ namespace SUP
 
         void Owner_LinkClicked(string ownerId)
         {
+            numMessagesDisplayed = 0;
+            numPrivateMessagesDisplayed = 0;
+            numFriendFeedsDisplayed = 0; 
 
-            new ObjectBrowser(ownerId).Show();
+            MakeActiveProfile(ownerId);
+            RefreshSupMessages();
         }
 
         void Attachment_Clicked(string path)
@@ -4749,7 +4858,7 @@ namespace SUP
 
         private void profileURN_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
-            new ProfileMint(profileURN.Links[0].LinkData.ToString()).Show();
+            try { new ProfileMint(profileURN.Links[0].LinkData.ToString()).Show(); } catch { }
         }
 
         private void btnPrivateMessage_Click(object sender, EventArgs e)
@@ -4809,7 +4918,7 @@ namespace SUP
             PictureBox pictureBox = new PictureBox();
 
             // Set the PictureBox properties
-            pictureBox.Tag = profileURN.Links[0].LinkData.ToString();
+            try { pictureBox.Tag = profileURN.Links[0].LinkData.ToString(); } catch { return; }
             pictureBox.SizeMode = PictureBoxSizeMode.StretchImage;
             pictureBox.Width = 50;
             pictureBox.Height = 50;
@@ -4914,10 +5023,19 @@ namespace SUP
             if (numFriendFeedsDisplayed == 0)
             {
 
-                foreach (var viewer in webviewers)
+                Task.Run(() =>
                 {
-                    viewer.Dispose();
-                }
+                    this.Invoke((MethodInvoker)delegate
+                    {
+                        foreach (var viewer in webviewers)
+                        {
+
+                            try { viewer.Dispose(); } catch { }
+
+                        }
+                    });
+
+                });
 
                 supFlow.Controls.Clear();
             }
@@ -5151,7 +5269,7 @@ namespace SUP
 
                                         this.Invoke((MethodInvoker)delegate
                                                 {
-                                                    AddVideo(content);
+                                                    try { AddVideo(content); } catch { }
                                                 });
 
                                     }
@@ -5426,5 +5544,7 @@ namespace SUP
             btnJukeBox.Enabled = true;
 
         }
+
+   
     }
 }
