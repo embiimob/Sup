@@ -41,6 +41,7 @@ namespace SUP
         private string wavFileName = @"sup.wav";
         private bool isRecording = false;
         private System.Timers.Timer recordTimer;
+        private DateTime startTime;
 
         public DiscoBall(string fromaddress = "", string fromimageurl = "", string toaddress = "", string toimageurl = "", bool isprivate = false)
         {
@@ -541,8 +542,10 @@ namespace SUP
             // Start recording audio if not already recording
             if (!isRecording)
             {
+                startTime = DateTime.Now;
                 waveIn.StartRecording();
                 isRecording = true;
+                
             }
         }
         private void BtnRecord_MouseUp(object sender, MouseEventArgs e)
@@ -604,7 +607,17 @@ namespace SUP
                 writer?.Dispose();
                 writer = null;
             }
-          
+
+            TimeSpan duration = DateTime.Now - startTime;
+
+            if (duration.TotalSeconds < 2.2)
+            {
+                // Do nothing, as the time difference is less than 2.2 second
+                return;
+            }
+
+
+
             string proccessingFile = wavFileName;
             string processingid = Guid.NewGuid().ToString();
             string ipfsHash = "";
