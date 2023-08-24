@@ -53,6 +53,7 @@ namespace SUP
         private int numPrivateMessagesDisplayed;
         private int numFriendFeedsDisplayed;
         FlowLayoutPanel supPrivateFlow = new FlowLayoutPanel();
+        AudioPlayer audioPlayer = new AudioPlayer();
 
         public SupMain()
         {
@@ -169,7 +170,7 @@ namespace SUP
 
         private void MakeActiveProfile(string address)
         {
-           
+
 
             Regex regexTransactionId = new Regex(@"\b[0-9a-f]{64}\b");
             PROState activeProfile = PROState.GetProfileByAddress(address, "good-user", "better-password", @"http://127.0.0.1:18332");
@@ -196,7 +197,19 @@ namespace SUP
             if (activeProfile.URL != null)
             {
 
+                Task.Run(() =>
+                {
+                    this.Invoke((MethodInvoker)delegate
+                    {
+                        foreach (var viewer in webviewers)
+                        {
 
+                            try { viewer.Dispose(); } catch { }
+
+                        }
+                    });
+
+                });
 
                 supFlow.Controls.Clear();
                 foreach (string key in activeProfile.URL.Keys)
@@ -2721,7 +2734,7 @@ namespace SUP
 
 
                 try { Root[] roots = Root.GetRootsByAddress(profileURN.Links[0].LinkData.ToString(), "good-user", "better-password", "http://127.0.0.1:18332"); } catch { return; }
-               
+
                 btnPublicMessage.Enabled = false;
 
             }
@@ -3226,19 +3239,7 @@ namespace SUP
             {
                 splitContainer1.Panel2.Controls.Clear();
 
-                Task.Run(() =>
-                {
-                    this.Invoke((MethodInvoker)delegate
-                    {
-                        foreach (var viewer in webviewers)
-                        {
-
-                            try { viewer.Dispose(); } catch { }
-
-                        }
-                    });
-
-                });
+                
 
                 //supPrivateFlow.SuspendLayout();
                 supPrivateFlow.Controls.Clear();
@@ -4325,47 +4326,57 @@ namespace SUP
 
                             if (File.Exists(videolocation))
                             {
-                                string viewerPath = Path.GetDirectoryName(videolocation) + @"\urnviewer.html";
-                                string htmlstring = "<html><body><embed src=\"" + videolocation + "\" width=100% height=100% ></body></html>";
-                                System.IO.File.WriteAllText(viewerPath, htmlstring);
+                                        
+
+
+
 
                                 this.Invoke((Action)(() =>
                                 {
+                                    if ((videolocation.ToLower().EndsWith(".wav") || videolocation.ToLower().EndsWith(".mp3")) && autoPlay)
+                                    {
+                                        audioPlayer.AddToPlaylist(videolocation);
+                                    }
+
+                                    string viewerPath = Path.GetDirectoryName(videolocation) + @"\urnviewer.html";
+                                    string htmlstring = "<html><body><embed src=\"" + videolocation + "\" width=100% height=100% ></body></html>";
+                                    System.IO.File.WriteAllText(viewerPath, htmlstring);
+
                                     try { webviewer.CoreWebView2.Navigate(viewerPath); } catch { }
 
 
-                                    try
-                                    {
+                                    //try
+                                    //{
 
 
-                                        // If it's a .wav file and autoplay is enabled, trigger the audio playback
-                                        if (videolocation.ToLower().EndsWith(".wav") && autoPlay)
+                                    //    // If it's a .wav file and autoplay is enabled, trigger the audio playback
+                                    //    if (videolocation.ToLower().EndsWith(".wav") && autoPlay)
 
-                                        {
-                                            WaveOut waveOut = new WaveOut();
-                                            WaveFileReader reader = new WaveFileReader(videolocation);
-                                            waveOut.Init(reader);
-                                            waveOut.Play();
+                                    //    {
+                                    //        WaveOut waveOut = new WaveOut();
+                                    //        WaveFileReader reader = new WaveFileReader(videolocation);
+                                    //        waveOut.Init(reader);
+                                    //        waveOut.Play();
 
 
-                                        }
+                                    //    }
 
-                                        // If it's a .mp3 file and autoplay is enabled, trigger the audio playback
-                                        if (videolocation.ToLower().EndsWith(".mp3") && autoPlay)
+                                    //    // If it's a .mp3 file and autoplay is enabled, trigger the audio playback
+                                    //    if (videolocation.ToLower().EndsWith(".mp3") && autoPlay)
 
-                                        {
-                                            WaveOut waveOut = new WaveOut();
-                                            Mp3FileReader reader = new Mp3FileReader(videolocation);
-                                            waveOut.Init(reader);
-                                            waveOut.Play();
+                                    //    {
+                                    //        WaveOut waveOut = new WaveOut();
+                                    //        Mp3FileReader reader = new Mp3FileReader(videolocation);
+                                    //        waveOut.Init(reader);
+                                    //        waveOut.Play();
 
-                                        }
+                                    //    }
 
-                                    }
-                                    catch (Exception ex)
-                                    {
-                                        string error = ex.Message;// Handle exceptions here
-                                    }
+                                    //}
+                                    //catch (Exception ex)
+                                    //{
+                                    //    string error = ex.Message;// Handle exceptions here
+                                    //}
                                 }));
 
 
@@ -4386,6 +4397,12 @@ namespace SUP
                     }
                     else
                     {
+
+                        if ((videolocation.ToLower().EndsWith(".wav") || videolocation.ToLower().EndsWith(".mp3")) && autoPlay)
+                        {
+                            audioPlayer.AddToPlaylist(videolocation);
+                        }
+
                         string viewerPath = Path.GetDirectoryName(videolocation) + @"\urnviewer.html";
                         string htmlstring = "<html><body><embed src=\"" + videolocation + "\" width=100% height=100% ></body></html>";
                         System.IO.File.WriteAllText(viewerPath, htmlstring);
@@ -4725,7 +4742,7 @@ namespace SUP
         {
             numMessagesDisplayed = 0;
             numPrivateMessagesDisplayed = 0;
-            numFriendFeedsDisplayed = 0; 
+            numFriendFeedsDisplayed = 0;
 
             MakeActiveProfile(ownerId);
             RefreshSupMessages();
@@ -5545,6 +5562,9 @@ namespace SUP
 
         }
 
-   
+        private void btnSkipAudio_Click(object sender, EventArgs e)
+        {
+            audioPlayer.SkipCurrent();
+        }
     }
 }

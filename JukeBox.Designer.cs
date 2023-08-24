@@ -35,6 +35,7 @@
             this.btnStop = new System.Windows.Forms.Button();
             this.btnPlay = new System.Windows.Forms.Button();
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
+            this.btnOrder = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.SuspendLayout();
             // 
@@ -95,12 +96,23 @@
             this.btnPlay.UseVisualStyleBackColor = true;
             this.btnPlay.Click += new System.EventHandler(this.btnPlay_Click);
             // 
+            // btnOrder
+            // 
+            this.btnOrder.Location = new System.Drawing.Point(333, 9);
+            this.btnOrder.Name = "btnOrder";
+            this.btnOrder.Size = new System.Drawing.Size(49, 23);
+            this.btnOrder.TabIndex = 6;
+            this.btnOrder.Text = "order";
+            this.btnOrder.UseVisualStyleBackColor = true;
+            this.btnOrder.Click += new System.EventHandler(this.btnOrder_Click);
+            // 
             // JukeBox
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.Black;
             this.ClientSize = new System.Drawing.Size(933, 457);
+            this.Controls.Add(this.btnOrder);
             this.Controls.Add(this.btnPlay);
             this.Controls.Add(this.btnStop);
             this.Controls.Add(this.pictureBox1);
@@ -124,5 +136,6 @@
         private System.Windows.Forms.Button btnStop;
         private System.Windows.Forms.Button btnPlay;
         private System.Windows.Forms.ToolTip toolTip1;
+        private System.Windows.Forms.Button btnOrder;
     }
 }

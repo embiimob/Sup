@@ -55,6 +55,7 @@
             this.btnPrivateMessage = new System.Windows.Forms.Button();
             this.btnPublicMessage = new System.Windows.Forms.Button();
             this.tmrSearchMemoryPool = new System.Windows.Forms.Timer(this.components);
+            this.btnSkipAudio = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.SuspendLayout();
@@ -107,6 +108,7 @@
             // 
             // splitContainer2.Panel2
             // 
+            this.splitContainer2.Panel2.Controls.Add(this.btnSkipAudio);
             this.splitContainer2.Panel2.Controls.Add(this.btnJukeBox);
             this.splitContainer2.Panel2.Controls.Add(this.btnHome);
             this.splitContainer2.Panel2.Controls.Add(this.profileURN);
@@ -230,7 +232,7 @@
             this.lblProcessHeight.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.lblProcessHeight.AutoSize = true;
             this.lblProcessHeight.ForeColor = System.Drawing.Color.White;
-            this.lblProcessHeight.Location = new System.Drawing.Point(410, 119);
+            this.lblProcessHeight.Location = new System.Drawing.Point(393, 119);
             this.lblProcessHeight.Name = "lblProcessHeight";
             this.lblProcessHeight.Size = new System.Drawing.Size(25, 13);
             this.lblProcessHeight.TabIndex = 96;
@@ -304,7 +306,7 @@
             this.supFlow.Location = new System.Drawing.Point(9, 170);
             this.supFlow.Name = "supFlow";
             this.supFlow.Padding = new System.Windows.Forms.Padding(0, 3, 0, 0);
-            this.supFlow.Size = new System.Drawing.Size(467, 510);
+            this.supFlow.Size = new System.Drawing.Size(470, 510);
             this.supFlow.TabIndex = 86;
             // 
             // lblAdultsOnly
@@ -402,6 +404,19 @@
             this.tmrSearchMemoryPool.Interval = 5000;
             this.tmrSearchMemoryPool.Tick += new System.EventHandler(this.tmrSearchMemoryPool_Tick);
             // 
+            // btnSkipAudio
+            // 
+            this.btnSkipAudio.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnSkipAudio.Font = new System.Drawing.Font("Segoe UI Emoji", 13.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnSkipAudio.Location = new System.Drawing.Point(142, 686);
+            this.btnSkipAudio.Name = "btnSkipAudio";
+            this.btnSkipAudio.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
+            this.btnSkipAudio.Size = new System.Drawing.Size(56, 40);
+            this.btnSkipAudio.TabIndex = 99;
+            this.btnSkipAudio.Text = "⏩";
+            this.btnSkipAudio.UseVisualStyleBackColor = true;
+            this.btnSkipAudio.Click += new System.EventHandler(this.btnSkipAudio_Click);
+            // 
             // SupMain
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -457,5 +472,6 @@
         private System.Windows.Forms.Label lblProcessHeight;
         private System.Windows.Forms.Button btnHome;
         private System.Windows.Forms.Button btnJukeBox;
+        private System.Windows.Forms.Button btnSkipAudio;
     }
 }

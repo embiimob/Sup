@@ -27,6 +27,7 @@ namespace SUP
         private AudioFileReader audioFileReader;
         private int currentSoundIndex = -1; // Initialize with -1 to indicate no current playing sound
         private bool playNext = true;
+        private bool playOldestFirst = false;
 
 
         public JukeBox(string searchaddress = "mp3")
@@ -67,10 +68,11 @@ namespace SUP
         {
             delayTimer.Stop();
             string typedText = txtSearch.Text;
-            FindSounds(txtSearch.Text);
-
             // Reset the currentPictureBoxIndex and add the first batch of PictureBoxes
             currentTrackIndex = 0;
+            FindSounds(txtSearch.Text);
+
+
 
         }
 
@@ -218,7 +220,7 @@ namespace SUP
                 this.Invoke((MethodInvoker)delegate
                 {
                     pictureBox1.Visible = false;
-                    soundFiles.Reverse();
+                    if (!playOldestFirst) { soundFiles.Reverse(); }
                     AddTracksToFlowLayout();
                     playNext = true;
                     InitializeAudioPlayer();
@@ -552,6 +554,11 @@ namespace SUP
             playNext = false;
 
             StopPlayback();
+        }
+
+        private void btnOrder_Click(object sender, EventArgs e)
+        {
+            if (playOldestFirst) { currentTrackIndex = 0; playOldestFirst = false; FindSounds(txtSearch.Text); } else { currentTrackIndex = 0; playOldestFirst = true; FindSounds(txtSearch.Text); }
         }
     }
 }

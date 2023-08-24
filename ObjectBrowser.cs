@@ -116,7 +116,9 @@ namespace SUP
 
                                 profileURN.Links[0].LinkData = searchprofile.Creators.First();
                                 profileURN.LinkColor = System.Drawing.SystemColors.Highlight;
-                                profileURN.Text = TruncateAddress(searchprofile.URN);
+                                profileURN.Text = "";
+                                profileURN.Text = TruncateAddress(searchprofile.URN); 
+                                
                                 profileCheck = searchprofile.Creators.First();
                             }));
 
@@ -2956,4 +2958,7 @@ namespace SUP
             flowLayoutPanel1.Padding = new System.Windows.Forms.Padding(3, flowLayoutPanel2.Height, 0, 0);
         }
     }
+
+
+
 }
