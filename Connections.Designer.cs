@@ -98,12 +98,14 @@
             this.txtPort = new System.Windows.Forms.TextBox();
             this.btnMainConnection = new System.Windows.Forms.Button();
             this.label1 = new System.Windows.Forms.Label();
+            this.btnUpgradeIPFS = new System.Windows.Forms.Button();
             this.panel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.SuspendLayout();
             // 
             // panel1
             // 
+            this.panel1.Controls.Add(this.btnUpgradeIPFS);
             this.panel1.Controls.Add(this.label17);
             this.panel1.Controls.Add(this.checkBox7);
             this.panel1.Controls.Add(this.checkBox6);
@@ -241,7 +243,7 @@
             // 
             // btnClearIPFSisLoadingCache
             // 
-            this.btnClearIPFSisLoadingCache.Location = new System.Drawing.Point(376, 330);
+            this.btnClearIPFSisLoadingCache.Location = new System.Drawing.Point(441, 330);
             this.btnClearIPFSisLoadingCache.Name = "btnClearIPFSisLoadingCache";
             this.btnClearIPFSisLoadingCache.Size = new System.Drawing.Size(122, 23);
             this.btnClearIPFSisLoadingCache.TabIndex = 156;
@@ -443,11 +445,11 @@
             // btnUnpinIPFS
             // 
             this.btnUnpinIPFS.Enabled = false;
-            this.btnUnpinIPFS.Location = new System.Drawing.Point(277, 330);
+            this.btnUnpinIPFS.Location = new System.Drawing.Point(254, 330);
             this.btnUnpinIPFS.Name = "btnUnpinIPFS";
-            this.btnUnpinIPFS.Size = new System.Drawing.Size(93, 23);
+            this.btnUnpinIPFS.Size = new System.Drawing.Size(75, 23);
             this.btnUnpinIPFS.TabIndex = 127;
-            this.btnUnpinIPFS.Text = "unpin ipfs cache";
+            this.btnUnpinIPFS.Text = "unpin cache";
             this.btnUnpinIPFS.UseVisualStyleBackColor = true;
             this.btnUnpinIPFS.Click += new System.EventHandler(this.btnUnpinIPFS_Click);
             // 
@@ -456,9 +458,9 @@
             this.btnPinIPFS.Enabled = false;
             this.btnPinIPFS.Location = new System.Drawing.Point(178, 330);
             this.btnPinIPFS.Name = "btnPinIPFS";
-            this.btnPinIPFS.Size = new System.Drawing.Size(93, 23);
+            this.btnPinIPFS.Size = new System.Drawing.Size(70, 23);
             this.btnPinIPFS.TabIndex = 126;
-            this.btnPinIPFS.Text = "pin ipfs cache";
+            this.btnPinIPFS.Text = "pin cache";
             this.btnPinIPFS.UseVisualStyleBackColor = true;
             this.btnPinIPFS.Click += new System.EventHandler(this.button2_Click);
             // 
@@ -479,7 +481,7 @@
             this.label15.Name = "label15";
             this.label15.Size = new System.Drawing.Size(116, 13);
             this.label15.TabIndex = 124;
-            this.label15.Text = "Sup!? v0.1.52-beta";
+            this.label15.Text = "Sup!? v0.1.53-beta";
             this.label15.TextAlign = System.Drawing.ContentAlignment.TopCenter;
             // 
             // label14
@@ -828,6 +830,16 @@
             this.label1.TabIndex = 50;
             this.label1.Text = "main chain";
             // 
+            // btnUpgradeIPFS
+            // 
+            this.btnUpgradeIPFS.Location = new System.Drawing.Point(335, 330);
+            this.btnUpgradeIPFS.Name = "btnUpgradeIPFS";
+            this.btnUpgradeIPFS.Size = new System.Drawing.Size(75, 23);
+            this.btnUpgradeIPFS.TabIndex = 163;
+            this.btnUpgradeIPFS.Text = "upgrade ipfs";
+            this.btnUpgradeIPFS.UseVisualStyleBackColor = true;
+            this.btnUpgradeIPFS.Click += new System.EventHandler(this.btnUpgradeIPFS_Click);
+            // 
             // Connections
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -918,5 +930,6 @@
         private System.Windows.Forms.CheckBox checkBox6;
         private System.Windows.Forms.CheckBox checkBox7;
         private System.Windows.Forms.Label label17;
+        private System.Windows.Forms.Button btnUpgradeIPFS;
     }
 }

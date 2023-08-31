@@ -1249,6 +1249,7 @@ namespace SUP
                 DisableSupInput();
                 pages.Maximum = 0; pages.Value = 0;
                 txtTotal.Text = "0";
+                txtLast.Text = "0";
                 Random rnd = new Random();
                 string[] gifFiles = Directory.GetFiles("includes", "*.gif");
                 if (gifFiles.Length > 0)

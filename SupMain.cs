@@ -1208,9 +1208,13 @@ namespace SUP
 
                                                                     try
                                                                     {
-                                                                        // Create a WebClient object to fetch the webpage
+                                                                        string html = "";
                                                                         WebClient client = new WebClient();
-                                                                        string html = client.DownloadString(content.StripLeadingTrailingSpaces());
+                                                                        // Create a WebClient object to fetch the webpage
+                                                                        if (!content.ToLower().EndsWith(".zip"))
+                                                                        {
+                                                                          html = client.DownloadString(content.StripLeadingTrailingSpaces());
+                                                                        }
 
                                                                         // Use regular expressions to extract the metadata from the HTML
                                                                         string title = Regex.Match(html, @"<title>\s*(.+?)\s*</title>").Groups[1].Value;
@@ -3033,10 +3037,13 @@ namespace SUP
 
                                                         try
                                                         {
-                                                            // Create a WebClient object to fetch the webpage
+                                                            string html = "";
                                                             WebClient client = new WebClient();
-                                                            string html = client.DownloadString(content.StripLeadingTrailingSpaces());
-
+                                                            // Create a WebClient object to fetch the webpage
+                                                            if (!content.ToLower().EndsWith(".zip"))
+                                                            {
+                                                                html = client.DownloadString(content.StripLeadingTrailingSpaces());
+                                                            }
                                                             // Use regular expressions to extract the metadata from the HTML
                                                             string title = Regex.Match(html, @"<title>\s*(.+?)\s*</title>").Groups[1].Value;
                                                             string description = Regex.Match(html, @"<meta\s+name\s*=\s*""description""\s+content\s*=\s*""(.+?)""\s*/?>").Groups[1].Value;
@@ -3713,10 +3720,13 @@ namespace SUP
                                                     string extension = Path.GetExtension(content).ToLower();
                                                     if (!imgExtensions.Contains(extension) && !content.Contains("youtube.com") && !content.Contains("youtu.be"))
                                                     {
-                                                        WebClient client = new WebClient();
                                                         string html = "";
-                                                        try { html = client.DownloadString(content.StripLeadingTrailingSpaces()); } catch { }
-
+                                                        WebClient client = new WebClient();
+                                                        // Create a WebClient object to fetch the webpage
+                                                        if (!content.ToLower().EndsWith(".zip"))
+                                                        {
+                                                            html = client.DownloadString(content.StripLeadingTrailingSpaces());
+                                                        }
 
                                                         // Use regular expressions to extract the metadata from the HTML
                                                         string title = Regex.Match(html, @"<title>\s*(.+?)\s*</title>").Groups[1].Value;

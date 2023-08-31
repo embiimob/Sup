@@ -608,7 +608,6 @@ namespace SUP
                         // Get the name of the file
                         string fileName = System.IO.Path.GetFileName(file);
 
-                        // Check if the file name is "BLOCK" (case-insensitive check)
                         if (fileName.Equals("MUTE", StringComparison.OrdinalIgnoreCase))
                         {
                             // Delete the file
@@ -635,7 +634,7 @@ namespace SUP
                     // Get the name of the subdirectory
                     string subdirectoryName = System.IO.Path.GetFileName(subdirectory);
 
-                    // Check if the subdirectory name is "mute" or "block"
+
                     if (subdirectoryName == "found")
                     {
                         // Delete the subdirectory and all its contents
@@ -679,6 +678,11 @@ namespace SUP
             }
         }
 
-      
+        private void btnUpgradeIPFS_Click(object sender, EventArgs e)
+        {
+            Process process2 = new Process();
+            process2.StartInfo.FileName = @"ipfs\fs-repo-migrations.exe";
+            process2.Start();
+        }
     }
 }

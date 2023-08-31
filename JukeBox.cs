@@ -36,8 +36,7 @@ namespace SUP
             InitializeDelayTimer();
             soundFiles = new List<string>();
             txtSearch.Text = searchaddress;
-            FindSounds(txtSearch.Text);
-
+   
 
         }
 
