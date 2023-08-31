@@ -1,7 +1,7 @@
 # Sup!? 
 experimental decentralized state engine browser
 
-Sup!? is a demonstration of establishing a decentralized identity and tracking state changes with public and private comments on immutable blockchain objects in a format familiar to NFT enthusiasts. The experimental Sup!? object browser is currently hardcoded to reference the bitcoin testnet mainchain. A production deployment will be released December 2023. Our goal is to give #teamworld ample time for testing and integrations.
+Sup!? is a demonstration of establishing a decentralized social identity and tracking state changes with public and private comments on immutable blockchain objects in a format familiar to NFT enthusiasts. The experimental Sup!? object browser is currently hardcoded to reference the bitcoin testnet mainchain. A production deployment will be released December 2023. Our goal is to give #teamworld ample time for testing and integrations.
 
 This experiment is using an ancient blockchain protocol called P2FK (Pay to Future Key) invented by http://HugPuddle.org in 2013.
 
@@ -11,7 +11,7 @@ P2FK was directly inspired by the satoshi uploader  see --> https://cirosantilli
 
 ## **Installation**
 
-1. Download the Sup.v0.1.51-beta.zip file (https://github.com/embiimob/Sup/releases/download/Supv0.1.51-beta/Sup.v0.1.51-beta.zip)
+1. Download the Sup!? v0.1.53-beta.zip file (https://github.com/embiimob/Sup/releases/download/Supv0.1.53-beta/Sup.v0.1.53-beta.zip)
 2. Create a folder on your **fastest** disk drive with at least **50GB** free (it will be storing the bitcoin testnet blockchain)
 3. Unzip all contents into the folder
 4. Create a shortcut to SUP.exe and launch
@@ -306,7 +306,7 @@ http://bitfossil.org/7033eb8138de0d3f4be111a57dfb8319b400d3b6a6f5b387a22b334ebb9
 
 - this experiment uses oodrive's levelDB; a stable release has been included in the deployment https://github.com/oodrive/leveldb.net
 
-- this experiment uses the most recent ipfs kubo command line tool found here https://dist.ipfs.tech/kubo/v0.18.1/kubo_v0.18.1_windows-amd64.zip
+- this experiment uses the most recent ipfs kubo command line tool found here https://github.com/ipfs/kubo/releases/download/v0.22.0/kubo_v0.22.0_windows-amd64.zip
 
 - see the example transaction JSON files https://github.com/embiimob/Sup/tree/master/P2FK/samples to begin experimenting with the entry and trading of your own Sup!? objects
 
