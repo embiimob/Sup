@@ -708,35 +708,6 @@ namespace SUP
             DisplayRootJSON(new JObject[] { JObject.FromObject(Tester) });
         }
 
-        private void ButtonPurgeClick(object sender, EventArgs e)
-        {
-            string directoryPath = @"root";
-
-            // Get a list of all the subdirectories in the directory
-            string[] subdirectories = Directory.GetDirectories(directoryPath);
-
-            // Loop through each subdirectory
-            foreach (string subdirectory in subdirectories)
-            {
-
-                // Delete the subdirectory and all its contents
-                Directory.Delete(subdirectory, true);
-
-            }
-
-            // Get a list of all the files in the directory
-            string[] files = Directory.GetFiles(directoryPath);
-
-            // Loop through each file
-            foreach (string file in files)
-            {
-                // Delete the file
-                File.Delete(file);
-            }
-
-
-        }
-
         private void ButtonGetOwnedClick(object sender, EventArgs e)
         {
             DateTime tmbeginCall = DateTime.UtcNow;
@@ -1310,8 +1281,6 @@ namespace SUP
             // Return the substring between the colon and the slash
             return input.Substring(startIndex, endIndex - startIndex);
         }
-
-   
 
         private void button3_Click(object sender, EventArgs e)
         {

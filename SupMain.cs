@@ -16,20 +16,11 @@ using System.Text.RegularExpressions;
 using Newtonsoft.Json;
 using System.Globalization;
 using AngleSharp.Common;
-using NBitcoin.Protocol;
 using Message = System.Windows.Forms.Message;
-using System.Data.SqlTypes;
 using AngleSharp.Text;
-using AngleSharp.Html.Dom;
-using System.Windows.Interop;
-using Org.BouncyCastle.Utilities.Net;
-using System.Threading;
 using System.Drawing.Imaging;
-using System.Windows.Media.TextFormatting;
 using NAudio.Wave;
 using System.Text;
-using AngleSharp.Dom;
-using System.Windows.Input;
 
 namespace SUP
 {

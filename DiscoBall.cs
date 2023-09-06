@@ -17,10 +17,7 @@ using System.Net;
 using System.Security.Cryptography;
 using System.Text;
 using System.Timers;
-
 using NAudio.Wave;
-using AngleSharp.Html.Dom;
-using Microsoft.Win32;
 
 namespace SUP
 {

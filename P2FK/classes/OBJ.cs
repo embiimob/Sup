@@ -1,8 +1,6 @@
 ﻿using AngleSharp.Common;
 using LevelDB;
-using NAudio.Gui;
 using NBitcoin;
-using NBitcoin.Logging;
 using Newtonsoft.Json;
 using System;
 using System.Collections;
@@ -11,11 +9,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Security.Cryptography;
-using System.Text;
 using System.Threading.Tasks;
-using static NBitcoin.Scripting.OutputDescriptor;
-using System.Windows.Forms;
-using NAudio.Dmo;
 
 namespace SUP.P2FK
 {
@@ -2341,7 +2335,10 @@ namespace SUP.P2FK
 
                 }
 
-                objectStates.Last().Id = cachedObjectStates.Last().Id;
+                if (cachedObjectStates.Count() > 0)
+                {
+                    objectStates.Last().Id = cachedObjectStates.Last().Id;
+                }
 
                 var objectSerialized = JsonConvert.SerializeObject(objectStates);
 
@@ -2401,7 +2398,10 @@ namespace SUP.P2FK
                     }
 
                 }
-                objectStates.Last().Id = cachedObjectStates.Last().Id;
+                if (cachedObjectStates.Count() > 0)
+                {
+                    objectStates.Last().Id = cachedObjectStates.Last().Id;
+                }
 
                 var objectSerialized = JsonConvert.SerializeObject(objectStates);
 

@@ -9,11 +9,8 @@ using System.Windows.Forms;
 using BitcoinNET.RPCClient;
 using NBitcoin.RPC;
 using NBitcoin;
-using System.Windows.Media.TextFormatting;
 using Newtonsoft.Json;
 using SUP.P2FK;
-using AngleSharp.Common;
-using Org.BouncyCastle.Utilities.Net;
 
 namespace SUP
 {

@@ -23,7 +23,6 @@ using System.Net;
 using System.Security.Cryptography;
 using System.Text;
 using BitcoinNET.RPCClient;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement.ProgressBar;
 
 namespace SUP
 {

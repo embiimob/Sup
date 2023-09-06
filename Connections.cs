@@ -2,14 +2,12 @@
 using NBitcoin.RPC;
 using SUP.P2FK;
 using System;
-using System.Data;
 using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Net;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using System.Windows.Shapes;
 
 namespace SUP
 {

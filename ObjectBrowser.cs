@@ -10,8 +10,6 @@ using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using NBitcoin;
 using System.Threading.Tasks;
-using System.Net;
-using NBitcoin.RPC;
 using System.IO;
 
 namespace SUP
