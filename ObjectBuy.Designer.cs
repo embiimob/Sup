@@ -141,7 +141,7 @@
             // 
             this.txtCurrentOwnerAddress.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.txtCurrentOwnerAddress.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
-            this.txtCurrentOwnerAddress.Font = new System.Drawing.Font("Microsoft Sans Serif", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.txtCurrentOwnerAddress.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F);
             this.txtCurrentOwnerAddress.ForeColor = System.Drawing.Color.White;
             this.txtCurrentOwnerAddress.Location = new System.Drawing.Point(806, 436);
             this.txtCurrentOwnerAddress.Multiline = true;

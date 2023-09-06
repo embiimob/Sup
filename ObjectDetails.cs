@@ -1868,8 +1868,15 @@ namespace SUP
                                 try
                                 {
 
-                                    lblIMGBlockDate.Text = "mazacoin verified: " + root.BlockDate.ToString("ddd, dd MMM yyyy hh:mm:ss");
+                                    if (root.BlockDate.Year > 1975)
+                                    {
+                                        lblIMGBlockDate.Text = "mazacoin verified: " + root.BlockDate.ToString("ddd, dd MMM yyyy hh:mm:ss");
+                                    }
+                                    else
+                                    {
+                                        lblIMGBlockDate.Text = "mazacoin could not be verified: ";
 
+                                    }
                                 }
                                 catch { }
 
@@ -1881,8 +1888,14 @@ namespace SUP
                                 root = Root.GetRootByTransactionId(transactionid, "good-user", "better-password", @"http://127.0.0.1:8332", "0");
                                 try
                                 {
+                                    if (root.BlockDate.Year > 1975)
+                                    {
+                                        lblIMGBlockDate.Text = "bitcoin verified: " + root.BlockDate.ToString("ddd, dd MMM yyyy hh:mm:ss");
+                                    }else
+                                    {
+                                        lblIMGBlockDate.Text = "bitcoin could not be verified: ";
 
-                                    lblIMGBlockDate.Text = "bitcoin verified: " + root.BlockDate.ToString("ddd, dd MMM yyyy hh:mm:ss");
+                                    }
 
                                 }
                                 catch { }
@@ -1898,8 +1911,15 @@ namespace SUP
                                 try
                                 {
 
-                                    lblIMGBlockDate.Text = "litecoin verified: " + root.BlockDate.ToString("ddd, dd MMM yyyy hh:mm:ss");
+                                    if (root.BlockDate.Year > 1975)
+                                    {
+                                        lblIMGBlockDate.Text = "litecoin verified: " + root.BlockDate.ToString("ddd, dd MMM yyyy hh:mm:ss");
+                                    }
+                                    else
+                                    {
+                                        lblIMGBlockDate.Text = "litecoin could not be verified: ";
 
+                                    }
                                 }
                                 catch { }
 
@@ -1913,8 +1933,15 @@ namespace SUP
                                 try
                                 {
 
-                                    lblIMGBlockDate.Text = "dogecoin verified: " + root.BlockDate.ToString("ddd, dd MMM yyyy hh:mm:ss");
+                                    if (root.BlockDate.Year > 1975)
+                                    {
+                                        lblIMGBlockDate.Text = "dogecoin verified: " + root.BlockDate.ToString("ddd, dd MMM yyyy hh:mm:ss");
+                                    }
+                                    else
+                                    {
+                                        lblIMGBlockDate.Text = "dogecoin could not be verified: ";
 
+                                    }
                                 }
                                 catch { }
 
@@ -2018,8 +2045,15 @@ namespace SUP
                                     try
                                     {
 
-                                        lblIMGBlockDate.Text = "bitcoin-t verified: " + root.BlockDate.ToString("ddd, dd MMM yyyy hh:mm:ss");
+                                        if (root.BlockDate.Year > 1975)
+                                        {
+                                            lblIMGBlockDate.Text = "bitcoin-t verified: " + root.BlockDate.ToString("ddd, dd MMM yyyy hh:mm:ss");
+                                        }
+                                        else
+                                        {
+                                            lblIMGBlockDate.Text = "bitcoin-t could not be verified: ";
 
+                                        }
                                     }
                                     catch { }
 
@@ -2052,8 +2086,15 @@ namespace SUP
                             try
                             {
 
-                                lblURNBlockDate.Text = "mazacoin verified: " + root.BlockDate.ToString("ddd, dd MMM yyyy hh:mm:ss");
+                                if (root.BlockDate.Year > 1975)
+                                {
+                                    lblURNBlockDate.Text = "mazacoin verified: " + root.BlockDate.ToString("ddd, dd MMM yyyy hh:mm:ss");
+                                }
+                                else
+                                {
+                                    lblURNBlockDate.Text = "mazacoin could not be verified: ";
 
+                                }
                             }
                             catch { }
 
@@ -2067,8 +2108,15 @@ namespace SUP
                             try
                             {
 
-                                lblURNBlockDate.Text = "bitcoin verified: " + root.BlockDate.ToString("ddd, dd MMM yyyy hh:mm:ss");
+                                if (root.BlockDate.Year > 1975)
+                                {
+                                    lblURNBlockDate.Text = "bitcoin verified: " + root.BlockDate.ToString("ddd, dd MMM yyyy hh:mm:ss");
+                                }
+                                else
+                                {
+                                    lblURNBlockDate.Text = "bitcoin could not be verified: ";
 
+                                }
                             }
                             catch { }
 
@@ -2083,8 +2131,15 @@ namespace SUP
                             try
                             {
 
-                                lblURNBlockDate.Text = "litecoin verified: " + root.BlockDate.ToString("ddd, dd MMM yyyy hh:mm:ss");
+                                if (root.BlockDate.Year > 1975)
+                                {
+                                    lblURNBlockDate.Text = "litecoin verified: " + root.BlockDate.ToString("ddd, dd MMM yyyy hh:mm:ss");
+                                }
+                                else
+                                {
+                                    lblURNBlockDate.Text = "litecoin could not be verified: ";
 
+                                }
                             }
                             catch { }
 
@@ -2098,8 +2153,15 @@ namespace SUP
                             try
                             {
 
-                                lblURNBlockDate.Text = "dogecoin verified: " + root.BlockDate.ToString("ddd, dd MMM yyyy hh:mm:ss");
+                                if (root.BlockDate.Year > 1975)
+                                {
+                                    lblURNBlockDate.Text = "dogecoin verified: " + root.BlockDate.ToString("ddd, dd MMM yyyy hh:mm:ss");
+                                }
+                                else
+                                {
+                                    lblURNBlockDate.Text = "dogecoin could not be verified: ";
 
+                                }
                             }
                             catch { }
 
@@ -2217,8 +2279,15 @@ namespace SUP
                                     try
                                     {
 
-                                        lblURNBlockDate.Text = "bitcoin-t verified: " + root.BlockDate.ToString("ddd, dd MMM yyyy hh:mm:ss");
+                                        if (root.BlockDate.Year > 1975)
+                                        {
+                                            lblURNBlockDate.Text = "bitcoin-t verified: " + root.BlockDate.ToString("ddd, dd MMM yyyy hh:mm:ss");
+                                        }
+                                        else
+                                        {
+                                            lblURNBlockDate.Text = "bitcoin-t could not be verified: ";
 
+                                        }
                                     }
                                     catch { }
 
@@ -2256,8 +2325,15 @@ namespace SUP
                                 try
                                 {
 
-                                    lblURIBlockDate.Text = "mazacoin verified: " + root.BlockDate.ToString("ddd, dd MMM yyyy hh:mm:ss");
+                                    if (root.BlockDate.Year > 1975)
+                                    {
+                                        lblURIBlockDate.Text = "mazacoin verified: " + root.BlockDate.ToString("ddd, dd MMM yyyy hh:mm:ss");
+                                    }
+                                    else
+                                    {
+                                        lblURIBlockDate.Text = "mazacoin could not be verified: ";
 
+                                    }
                                 }
                                 catch { }
 
@@ -2271,8 +2347,15 @@ namespace SUP
                                 try
                                 {
 
-                                    lblURIBlockDate.Text = "bitcoin verified: " + root.BlockDate.ToString("ddd, dd MMM yyyy hh:mm:ss");
+                                    if (root.BlockDate.Year > 1975)
+                                    {
+                                        lblURIBlockDate.Text = "bitcoin verified: " + root.BlockDate.ToString("ddd, dd MMM yyyy hh:mm:ss");
+                                    }
+                                    else
+                                    {
+                                        lblURIBlockDate.Text = "bitcoin could not be verified: ";
 
+                                    }
                                 }
                                 catch { }
 
@@ -2286,8 +2369,15 @@ namespace SUP
                                 try
                                 {
 
-                                    lblURIBlockDate.Text = "litecoin verified: " + root.BlockDate.ToString("ddd, dd MMM yyyy hh:mm:ss");
+                                    if (root.BlockDate.Year > 1975)
+                                    {
+                                        lblURIBlockDate.Text = "litecoin verified: " + root.BlockDate.ToString("ddd, dd MMM yyyy hh:mm:ss");
+                                    }
+                                    else
+                                    {
+                                        lblURIBlockDate.Text = "litecoin could not be verified: ";
 
+                                    }
                                 }
                                 catch { }
 
@@ -2303,8 +2393,15 @@ namespace SUP
                                 try
                                 {
 
-                                    lblURIBlockDate.Text = "dogecoin verified: " + root.BlockDate.ToString("ddd, dd MMM yyyy hh:mm:ss");
+                                    if (root.BlockDate.Year > 1975)
+                                    {
+                                        lblURIBlockDate.Text = "dogecoin verified: " + root.BlockDate.ToString("ddd, dd MMM yyyy hh:mm:ss");
+                                    }
+                                    else
+                                    {
+                                        lblURIBlockDate.Text = "dogecoin could not be verified: ";
 
+                                    }
                                 }
                                 catch { }
 
@@ -2410,8 +2507,15 @@ namespace SUP
                                     try
                                     {
 
-                                        lblURIBlockDate.Text = "bitcoin-t verified: " + root.BlockDate.ToString("ddd, dd MMM yyyy hh:mm:ss");
+                                        if (root.BlockDate.Year > 1975)
+                                        {
+                                            lblURIBlockDate.Text = "bitcoin-t verified: " + root.BlockDate.ToString("ddd, dd MMM yyyy hh:mm:ss");
+                                        }
+                                        else
+                                        {
+                                            lblURIBlockDate.Text = "bitcoin-t could not be verified: ";
 
+                                        }
                                     }
                                     catch { }
 

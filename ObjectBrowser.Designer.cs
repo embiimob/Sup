@@ -36,7 +36,6 @@ namespace SUP
             this.txtSearchAddress = new System.Windows.Forms.TextBox();
             this.txtQty = new System.Windows.Forms.TextBox();
             this.txtLast = new System.Windows.Forms.TextBox();
-            this.tmrSearchMemoryPool = new System.Windows.Forms.Timer(this.components);
             this.imgLoading = new System.Windows.Forms.PictureBox();
             this.flowLayoutPanel1 = new System.Windows.Forms.FlowLayoutPanel();
             this.pages = new System.Windows.Forms.TrackBar();
@@ -116,11 +115,6 @@ namespace SUP
             this.txtLast.TextChanged += new System.EventHandler(this.txtLast_TextChanged);
             this.txtLast.KeyDown += new System.Windows.Forms.KeyEventHandler(this.txtLast_KeyDown);
             // 
-            // tmrSearchMemoryPool
-            // 
-            this.tmrSearchMemoryPool.Interval = 5000;
-            this.tmrSearchMemoryPool.Tick += new System.EventHandler(this.tmrSearchMemoryPool_Tick);
-            // 
             // imgLoading
             // 
             this.imgLoading.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
@@ -145,7 +139,7 @@ namespace SUP
             this.flowLayoutPanel1.Margin = new System.Windows.Forms.Padding(0);
             this.flowLayoutPanel1.Name = "flowLayoutPanel1";
             this.flowLayoutPanel1.Padding = new System.Windows.Forms.Padding(3, 30, 0, 0);
-            this.flowLayoutPanel1.Size = new System.Drawing.Size(778, 506);
+            this.flowLayoutPanel1.Size = new System.Drawing.Size(778, 545);
             this.flowLayoutPanel1.TabIndex = 82;
             this.flowLayoutPanel1.DragDrop += new System.Windows.Forms.DragEventHandler(this.flowLayoutPanel1_DragDrop);
             this.flowLayoutPanel1.DragEnter += new System.Windows.Forms.DragEventHandler(this.flowLayoutPanel1_DragEnter);
@@ -255,7 +249,6 @@ namespace SUP
         private System.Windows.Forms.TextBox txtSearchAddress;
         private System.Windows.Forms.TextBox txtQty;
         private System.Windows.Forms.TextBox txtLast;
-        private System.Windows.Forms.Timer tmrSearchMemoryPool;
         private System.Windows.Forms.PictureBox imgLoading;
         private System.Windows.Forms.FlowLayoutPanel flowLayoutPanel1;
         private System.Windows.Forms.TrackBar pages;

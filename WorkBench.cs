@@ -883,7 +883,7 @@ namespace SUP
         private void ButtonGetProfileByAddressClick(object sender, EventArgs e)
         {
             DateTime tmbeginCall = DateTime.UtcNow;
-            PROState Tester = PROState.GetProfileByAddress(txtSearchAddress.Text, txtLogin.Text, txtPassword.Text, txtUrl.Text, txtVersionByte.Text, chkVerbose.Checked, int.Parse(txtSkip.Text));
+            PROState Tester = PROState.GetProfileByAddress(txtSearchAddress.Text, txtLogin.Text, txtPassword.Text, txtUrl.Text, txtVersionByte.Text, chkVerbose.Checked);
             DateTime tmendCall = DateTime.UtcNow;
             lblTotalBytes.Text = "bytes: ";
             lblTotalTime.Text = "time: ";

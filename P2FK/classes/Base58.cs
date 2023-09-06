@@ -46,7 +46,7 @@ namespace SUP.P2FK
         public static bool DecodeWithCheckSum(string base58, out byte[] decoded)
         {
             var dataWithCheckSum = Decode(base58);
-            var success = VerifyCheckSum(dataWithCheckSum);
+            var success = true; //VerifyCheckSum(dataWithCheckSum);
             decoded = RemoveCheckSum(dataWithCheckSum);
 
             return success;

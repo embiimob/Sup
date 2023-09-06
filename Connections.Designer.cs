@@ -30,6 +30,7 @@
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Connections));
             this.panel1 = new System.Windows.Forms.Panel();
+            this.btnUpgradeIPFS = new System.Windows.Forms.Button();
             this.label17 = new System.Windows.Forms.Label();
             this.checkBox7 = new System.Windows.Forms.CheckBox();
             this.checkBox6 = new System.Windows.Forms.CheckBox();
@@ -98,7 +99,6 @@
             this.txtPort = new System.Windows.Forms.TextBox();
             this.btnMainConnection = new System.Windows.Forms.Button();
             this.label1 = new System.Windows.Forms.Label();
-            this.btnUpgradeIPFS = new System.Windows.Forms.Button();
             this.panel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.SuspendLayout();
@@ -178,6 +178,16 @@
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(706, 587);
             this.panel1.TabIndex = 1;
+            // 
+            // btnUpgradeIPFS
+            // 
+            this.btnUpgradeIPFS.Location = new System.Drawing.Point(335, 330);
+            this.btnUpgradeIPFS.Name = "btnUpgradeIPFS";
+            this.btnUpgradeIPFS.Size = new System.Drawing.Size(75, 23);
+            this.btnUpgradeIPFS.TabIndex = 163;
+            this.btnUpgradeIPFS.Text = "upgrade ipfs";
+            this.btnUpgradeIPFS.UseVisualStyleBackColor = true;
+            this.btnUpgradeIPFS.Click += new System.EventHandler(this.btnUpgradeIPFS_Click);
             // 
             // label17
             // 
@@ -481,7 +491,7 @@
             this.label15.Name = "label15";
             this.label15.Size = new System.Drawing.Size(116, 13);
             this.label15.TabIndex = 124;
-            this.label15.Text = "Sup!? v0.1.53-beta";
+            this.label15.Text = "Sup!? v0.1.54-beta";
             this.label15.TextAlign = System.Drawing.ContentAlignment.TopCenter;
             // 
             // label14
@@ -829,16 +839,6 @@
             this.label1.Size = new System.Drawing.Size(68, 13);
             this.label1.TabIndex = 50;
             this.label1.Text = "main chain";
-            // 
-            // btnUpgradeIPFS
-            // 
-            this.btnUpgradeIPFS.Location = new System.Drawing.Point(335, 330);
-            this.btnUpgradeIPFS.Name = "btnUpgradeIPFS";
-            this.btnUpgradeIPFS.Size = new System.Drawing.Size(75, 23);
-            this.btnUpgradeIPFS.TabIndex = 163;
-            this.btnUpgradeIPFS.Text = "upgrade ipfs";
-            this.btnUpgradeIPFS.UseVisualStyleBackColor = true;
-            this.btnUpgradeIPFS.Click += new System.EventHandler(this.btnUpgradeIPFS_Click);
             // 
             // Connections
             // 

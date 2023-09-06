@@ -3,7 +3,6 @@ using LevelDB;
 using NBitcoin;
 using NBitcoin.RPC;
 using Newtonsoft.Json;
-using Org.BouncyCastle.Utilities.Encoders;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -56,7 +55,6 @@ namespace SUP.P2FK
                     P2FKJSONString = System.IO.File.ReadAllText(diskpath + "ROOT.json");
                     P2FKRoot = JsonConvert.DeserializeObject<Root>(P2FKJSONString);
 
-                    //refresh LevelDB Sup Messaging.
                     return P2FKRoot;
 
                 }
@@ -94,6 +92,19 @@ namespace SUP.P2FK
 
             if (rootbytes == null)
             {
+                var allowedValues = new HashSet<string>
+{
+    "5.46E-06",
+    "5.48E-06",
+    "5.48E-05",
+    "5.5E-05",
+    "5.5E-06",
+    "1E-05",
+    "1E-08",
+    "1.3016426",
+    "0.01",
+    "1"
+};
                 NetworkCredential credentials = new NetworkCredential(username, password);
                 RPCClient rpcClient = new RPCClient(credentials, new Uri(url), Network.Main);
 
@@ -114,7 +125,7 @@ namespace SUP.P2FK
                 }
 
                 totalByteSize = deserializedObject.size;
-                try { confirmations = deserializedObject.confirmations; } catch { confirmations = 0; }
+                confirmations = deserializedObject.confirmations ?? 0;
                 blockdate =
                  DateTimeOffset.FromUnixTimeSeconds(
                      Convert.ToInt32(deserializedObject.blocktime)
@@ -132,18 +143,7 @@ namespace SUP.P2FK
                     P2FKRoot.Output.Add(address, value);
 
                     // checking for all known P2FK bitcoin testnet microtransaction values
-                    if (
-                       value == "5.46E-06"
-                       || value == "5.48E-06"
-                       || value == "5.48E-05"
-                       || value == "5.5E-05"
-                       || value == "5.5E-06"
-                       || value == "1E-05"
-                       || value == "1E-08"
-                       || value == "1.3016426"
-                       || value == "0.01"
-                       || value == "1"
-                    )
+                    if (allowedValues.Contains(value))
                     {
                         byte[] results = Array.Empty<byte>();
                         try
@@ -181,7 +181,7 @@ namespace SUP.P2FK
 
             int transactionBytesSize = transactionBytes.Count();
             transactionASCII = Encoding.ASCII.GetString(transactionBytes);
-           
+
 
             if (rootbytes == null && P2FKSignatureAddress == null) { return P2FKRoot; }
 
@@ -220,7 +220,7 @@ namespace SUP.P2FK
                 {
                     Directory.CreateDirectory(diskpath);
                 }
-                if (fileName.Length > 1 & fileName.Replace("#","") != "BTC" & fileName.Replace("#", "") != "MZC" & fileName.Replace("#", "") != "LTC" & fileName.Replace("#", "") != "DOG" & fileName.Replace("#", "") != "IPFS")
+                if (fileName.Length > 1 & fileName.Replace("#", "") != "BTC" & fileName.Replace("#", "") != "MZC" & fileName.Replace("#", "") != "LTC" & fileName.Replace("#", "") != "DOG" & fileName.Replace("#", "") != "IPFS")
                 {
                     try
                     {
@@ -244,8 +244,7 @@ namespace SUP.P2FK
                 if (isValid)
                 {
 
-                    lock (SupLocker)
-                    {
+                   
                         //Process Ledger files until reaching Root
                         while (regexTransactionId.IsMatch(fileName))
                         {
@@ -289,7 +288,7 @@ namespace SUP.P2FK
 
                         }
 
-                    }
+                    
 
                     if (isledger)
                     {
@@ -438,12 +437,15 @@ namespace SUP.P2FK
 
             //Cache Root to disk to speed up future crawls
 
-            var rootSerialized = JsonConvert.SerializeObject(P2FKRoot);
-            System.IO.File.WriteAllText(@"root\" + P2FKRoot.TransactionId + @"\" + "ROOT.json", rootSerialized);
 
 
-            if (P2FKRoot.BlockDate.Year > 1975)
+
+           
+                if (P2FKRoot.BlockDate.Year > 1975)
             {
+                var rootSerialized = JsonConvert.SerializeObject(P2FKRoot);
+                System.IO.File.WriteAllText(@"root\" + P2FKRoot.TransactionId + @"\" + "ROOT.json", rootSerialized);
+
                 isMuted = System.IO.File.Exists(@"root\" + P2FKRoot.SignedBy + @"\MUTE");
 
 
@@ -463,10 +465,10 @@ namespace SUP.P2FK
                         {
                             lock (SupLocker)
                             {
-                                var db = new DB(ROOT, @"root\"+ keyword.Key + @"\sup");
+                                var db = new DB(ROOT, @"root\" + keyword.Key + @"\sup");
                                 var db2 = new DB(ROOT, @"root\" + keyword.Key + @"\sup2");
 
-                               
+
 
                                 db.Put(keyword.Key + "!" + P2FKRoot.BlockDate.ToString("yyyyMMddHHmmss") + "!" + hashString, msg);
                                 db.Close();
@@ -536,7 +538,7 @@ namespace SUP.P2FK
                         {
                             lock (SupLocker)
                             {
-                                var db = new DB(ROOT, @"root\"+ keyword.Key + @"\sec");
+                                var db = new DB(ROOT, @"root\" + keyword.Key + @"\sec");
                                 var db2 = new DB(ROOT, @"root\" + keyword.Key + @"\sec2");
                                 db.Put(keyword.Key + "!" + P2FKRoot.BlockDate.ToString("yyyyMMddHHmmss") + "!" + hashString, msg);
                                 db.Close();
@@ -587,6 +589,9 @@ namespace SUP.P2FK
                 }
             }
 
+         
+
+
             return P2FKRoot;
         }
         public static Root[] GetRootsByAddress(string address, string username, string password, string url, int skip = 0, int qty = -1, string versionByte = "111")
@@ -615,8 +620,10 @@ namespace SUP.P2FK
 
             dynamic deserializedObject = null;
 
+      
             try { intProcessHeight = rootList.Max(state => state.Id); } catch { }
-   ;
+   
+            
 
 
             if (intProcessHeight != 0)
@@ -629,8 +636,21 @@ namespace SUP.P2FK
 
                 if (deserializedObject.Count == 0)
                 {
-                    if (qty == -1) { return rootList.Skip(skip).ToArray(); }
-                    else { return rootList.Skip(skip).Take(qty).ToArray(); }
+                    if (skip != 0)
+                    {
+                        //GPT3 SUGGESTED
+                        var skippedList = rootList.SkipWhile(state => state.Id != skip);
+
+
+                        if (qty == -1) { return skippedList.ToArray(); }
+                        else { return skippedList.Take(qty).ToArray(); }
+                    }
+                    else
+                    {
+                        if (qty == -1) { return rootList.ToArray(); }
+                        else { return rootList.Take(qty).ToArray(); }
+
+                    }
                 }
 
             }
@@ -657,11 +677,16 @@ namespace SUP.P2FK
 
                     var root = Root.GetRootByTransactionId(hexId, username, password, url, versionByte);
 
-                    if (root != null && root.TotalByteSize > 0 && root.Output != null && root.Output.ContainsKey(address))
+                    if (root != null && root.TotalByteSize > 0 && root.Output != null && !rootList.Any(ROOT => ROOT.TransactionId == root.TransactionId) && root.Output.ContainsKey(address) && root.BlockDate.Year > 1975)
                     {
                         root.Id = intProcessHeight;
-                        
+
                         rootList.Add(root);
+                    }
+                    else
+                    {
+                        if (root.BlockDate.Year < 1975) { intProcessHeight--; }
+
                     }
 
                 }
@@ -673,8 +698,21 @@ namespace SUP.P2FK
             var rootSerialized = JsonConvert.SerializeObject(rootList);
             System.IO.File.WriteAllText(@"root\" + address + @"\" + "ROOTS.json", rootSerialized);
 
-            if (qty == -1) { return rootList.Skip(skip).ToArray(); } else { return rootList.Skip(skip).Take(qty).ToArray(); }
+            if (skip != 0)
+            {
+                //GPT3 SUGGESTED
+                var skippedList = rootList.SkipWhile(state => state.Id != skip);
 
+
+                if (qty == -1) { return skippedList.ToArray(); }
+                else { return skippedList.Take(qty).ToArray(); }
+            }
+            else
+            {
+                if (qty == -1) { return rootList.ToArray(); }
+                else { return rootList.Take(qty).ToArray(); }
+
+            }
         }
         public static byte[] GetRootBytesByLedger(string ledger, string username, string password, string url)
         {
@@ -686,6 +724,19 @@ namespace SUP.P2FK
             int length2;
             byte[] result;
             var matches = regexTransactionId.Matches(ledger);
+            var allowedValues = new HashSet<string>
+{
+    "5.46E-06",
+    "5.48E-06",
+    "5.48E-05",
+    "5.5E-05",
+    "5.5E-06",
+    "1E-05",
+    "1E-08",
+    "1.3016426",
+    "0.01",
+    "1"
+};
             foreach (Match match in matches)
             {
                 byte[] transactionBytesBatch = new byte[0];
@@ -696,18 +747,8 @@ namespace SUP.P2FK
                 foreach (dynamic v_out in deserializedObject.vout)
                 {
                     // checking for all known P2FK bitcoin testnet microtransaction values
-                    if (
-                        v_out.value == "5.46E-06"
-                        || v_out.value == "5.48E-06"
-                        || v_out.value == "5.48E-05"
-                        || v_out.value == "5.5E-05"
-                        || v_out.value == "5.5E-06"
-                        || v_out.value == "1E-05"
-                        || v_out.value == "1E-08"
-                        || v_out.value == "1.3016426"
-                        || v_out.value == "0.01"
-                        || v_out.value == "1"
-                    )
+                    string value = v_out.value;
+                    if (allowedValues.Contains(value))
                     {
                         string P2FKSignatureAddress = v_out.scriptPubKey.addresses[0];
 
@@ -750,7 +791,7 @@ namespace SUP.P2FK
                 byte[] fileNameBytes = Encoding.ASCII.GetBytes(Path.GetFileName(fileName));
                 byte[] separator1 = new byte[] { separators[new Random().Next(0, separators.Length)] };
                 byte[] separator2 = new byte[] { separators[new Random().Next(0, separators.Length)] };
-                try {fileBytes = System.IO.File.ReadAllBytes(fileName); }
+                try { fileBytes = System.IO.File.ReadAllBytes(fileName); }
                 catch { return joinedFileBytes; }
                 byte[] fileSizeBytes = Encoding.ASCII.GetBytes(fileBytes.Length.ToString());
                 byte[] joinedBytes = joinedFileBytes.Concat(fileNameBytes).Concat(separator1).Concat(fileSizeBytes).Concat(separator2).Concat(fileBytes).ToArray();
@@ -907,8 +948,8 @@ namespace SUP.P2FK
             byte[] separator2 = new byte[] { separators[new Random().Next(0, separators.Length)] };
             byte[] fileSizeBytes = Encoding.ASCII.GetBytes(encrypted.Length.ToString());
             byte[] joinedBytes = fileNameBytes.Concat(separator1).Concat(fileSizeBytes).Concat(separator2).Concat(encrypted).ToArray();
-            if (!returnfile) { return joinedBytes; } else { return encrypted;}
-            
+            if (!returnfile) { return joinedBytes; } else { return encrypted; }
+
         }
         static byte[] HexStringToByteArray(string hex)
         {

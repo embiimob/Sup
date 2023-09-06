@@ -50,7 +50,7 @@ namespace SUP.P2FK
         //ensures levelDB is thread safely
         private readonly static object SupLocker = new object();
 
-        public static PROState GetProfileByAddress(string profileaddress, string username, string password, string url, string versionByte = "111", bool verbose = false, int skip = 0)
+        public static PROState GetProfileByAddress(string profileaddress, string username, string password, string url, string versionByte = "111", bool verbose = false)
         {
 
             PROState profileState = new PROState();
@@ -73,160 +73,158 @@ namespace SUP.P2FK
 
             var intProcessHeight = profileState.ProcessHeight;
             Root[] profileTransactions;
-            int depth = skip;
+        
             //return all roots found at address
-            profileTransactions = Root.GetRootsByAddress(profileaddress, username, password, url, intProcessHeight, 1, versionByte);
+            profileTransactions = Root.GetRootsByAddress(profileaddress, username, password, url, intProcessHeight, -1, versionByte);
 
             if (intProcessHeight > 0 && profileTransactions.Count() == 0) { return profileState; }
 
-            profileTransactions = Root.GetRootsByAddress(profileaddress, username, password, url, 0, -1, versionByte);
 
             foreach (Root transaction in profileTransactions)
             {
-
-                intProcessHeight = transaction.Id;
-                string sortableProcessHeight = intProcessHeight.ToString("X").PadLeft(9, '0');
-                logstatus = null;
-
-
-                //ignore any transaction that is not signed
-                if (transaction.Signed && (transaction.File.ContainsKey("PRO")))
+                if (transaction.Id > intProcessHeight)
                 {
+                    intProcessHeight = transaction.Id;
+                    string sortableProcessHeight = intProcessHeight.ToString("X").PadLeft(9, '0');
+                    logstatus = null;
 
-                    string sigSeen;
-                    lock (SupLocker)
-                    {
-                        using (var db = new DB(OBJ, @"root\pro"))
-                        {
-                            sigSeen = db.Get(transaction.Signature);
-                        }
-                    }
 
-                    if (sigSeen == null || sigSeen == transaction.TransactionId)
+                    //ignore any transaction that is not signed
+                    if (transaction.Signed && (transaction.File.ContainsKey("PRO")))
                     {
 
+                        string sigSeen;
                         lock (SupLocker)
                         {
                             using (var db = new DB(OBJ, @"root\pro"))
                             {
-                                db.Put(transaction.Signature, transaction.TransactionId);
+                                sigSeen = db.Get(transaction.Signature);
                             }
                         }
 
-
-                        PRO profileinspector = null;
-                        try
-                        {
-                            profileinspector = JsonConvert.DeserializeObject<PRO>(File.ReadAllText(@"root\" + transaction.TransactionId + @"\PRO"));
-                        }
-                        catch
-                        {
-
-                            logstatus = "txid:" + transaction.TransactionId + ",profile,inspect,\"failed due to invalid transaction format\"";
-
-                        }
-
-
-
-
-                        if (logstatus == null && profileState.Creators == null && transaction.SignedBy == profileaddress)
-                        {
-                            profileState.Id = depth;
-                            profileState.Creators = new List<string> { };
-
-                            if (profileinspector.cre != null)
-                            {
-                                foreach (int keywordId in profileinspector.cre)
-                                {
-
-                                    string creator = transaction.Keyword.Reverse().ElementAt(keywordId).Key;
-
-                                    if (!profileState.Creators.Contains(creator))
-                                    {
-                                        profileState.Creators.Add(creator);
-                                    }
-
-                                }
-                              
-                            }
-                            else { profileState.Creators.Add(profileaddress); }
-                            profileState.CreatedDate = transaction.BlockDate;
-                            profileState.ChangeDate = transaction.BlockDate;
-                            profileinspector.cre = null;
-                        }
-
-
-                        //has proper authority to make OBJ changes
-                        if (logstatus == null && profileState.Creators != null && profileState.Creators.Contains(transaction.SignedBy))
-                        {
-
-                            if (profileinspector.urn != null) { profileState.ChangeDate = transaction.BlockDate; profileState.URN = profileinspector.urn; }
-                            if (profileinspector.snm != null) { profileState.ChangeDate = transaction.BlockDate; profileState.ShortName = profileinspector.snm; }
-                            if (profileinspector.fnm != null) { profileState.ChangeDate = transaction.BlockDate; profileState.FirstName = profileinspector.fnm; }
-                            if (profileinspector.mnm != null) { profileState.ChangeDate = transaction.BlockDate; profileState.MiddleName = profileinspector.mnm; }
-                            if (profileinspector.lnm != null) { profileState.ChangeDate = transaction.BlockDate; profileState.LastName = profileinspector.lnm; }
-                            if (profileinspector.sfx != null) { profileState.ChangeDate = transaction.BlockDate; profileState.Suffix = profileinspector.sfx; }
-                            if (profileinspector.bio != null) { profileState.ChangeDate = transaction.BlockDate; profileState.Bio = profileinspector.bio; }
-                            if (profileinspector.img != null) { profileState.ChangeDate = transaction.BlockDate; profileState.Image = profileinspector.img; }
-                            if (profileinspector.url != null) { profileState.ChangeDate = transaction.BlockDate; profileState.URL = profileinspector.url; }
-                            if (profileinspector.loc != null) { profileState.ChangeDate = transaction.BlockDate; profileState.Location = profileinspector.loc; }
-                            if (profileinspector.pkx != null) { profileState.ChangeDate = transaction.BlockDate; profileState.PKX = profileinspector.pkx; }
-                            if (profileinspector.pky != null) { profileState.ChangeDate = transaction.BlockDate; profileState.PKY = profileinspector.pky; }
-                            if (profileinspector.cre != null)
-                            {
-                                profileState.Creators.Clear();
-                                foreach (int keywordId in profileinspector.cre)
-                                {
-                                    string creator = transaction.Keyword.Reverse().ElementAt(keywordId).Key;
-
-                                    if (!profileState.Creators.Contains(creator))
-                                    {
-                                        profileState.Creators.Add(creator);
-                                    }
-
-                                }
-                                profileState.ChangeDate = transaction.BlockDate;
-                                
-                            }
-
-                            if (profileState.ChangeDate == transaction.BlockDate)
-                            {
-                                logstatus = "txid:" + transaction.TransactionId + ",profile,update,\"success\"";
-                            }
-                            else
-                            {
-                                logstatus = "txid:" + transaction.TransactionId + ",profile,update,\"failed due to nothing to update\"";
-                            }
-
-                        }
-                        else { logstatus = "txid:" + transaction.TransactionId + " failed due to insufficent privlidges"; }
-
-                    }
-                    else { logstatus = "txid:" + transaction.TransactionId + " transaction failed due to duplicate signature"; }
-
-                    if (verbose)
-                    {
-                        if (logstatus != "")
+                        if (sigSeen == null || sigSeen == transaction.TransactionId)
                         {
 
                             lock (SupLocker)
                             {
-                                using (var db = new DB(OBJ, @"root\event"))
+                                using (var db = new DB(OBJ, @"root\pro"))
                                 {
-                                    db.Put(profileaddress + "!" + sortableProcessHeight + "!" + "0", logstatus);
+                                    db.Put(transaction.Signature, transaction.TransactionId);
                                 }
                             }
 
+
+                            PRO profileinspector = null;
+                            try
+                            {
+                                profileinspector = JsonConvert.DeserializeObject<PRO>(File.ReadAllText(@"root\" + transaction.TransactionId + @"\PRO"));
+                            }
+                            catch
+                            {
+
+                                logstatus = "txid:" + transaction.TransactionId + ",profile,inspect,\"failed due to invalid transaction format\"";
+
+                            }
+
+
+
+
+                            if (logstatus == null && profileState.Creators == null && transaction.SignedBy == profileaddress)
+                            {
+
+                                profileState.Creators = new List<string> { };
+
+                                if (profileinspector.cre != null)
+                                {
+                                    foreach (int keywordId in profileinspector.cre)
+                                    {
+
+                                        string creator = transaction.Keyword.Reverse().ElementAt(keywordId).Key;
+
+                                        if (!profileState.Creators.Contains(creator))
+                                        {
+                                            profileState.Creators.Add(creator);
+                                        }
+
+                                    }
+
+                                }
+                                else { profileState.Creators.Add(profileaddress); }
+                                profileState.CreatedDate = transaction.BlockDate;
+                                profileState.ChangeDate = transaction.BlockDate;
+                                profileinspector.cre = null;
+                            }
+
+
+                            //has proper authority to make OBJ changes
+                            if (logstatus == null && profileState.Creators != null && profileState.Creators.Contains(transaction.SignedBy))
+                            {
+
+                                if (profileinspector.urn != null) { profileState.ChangeDate = transaction.BlockDate; profileState.URN = profileinspector.urn; }
+                                if (profileinspector.snm != null) { profileState.ChangeDate = transaction.BlockDate; profileState.ShortName = profileinspector.snm; }
+                                if (profileinspector.fnm != null) { profileState.ChangeDate = transaction.BlockDate; profileState.FirstName = profileinspector.fnm; }
+                                if (profileinspector.mnm != null) { profileState.ChangeDate = transaction.BlockDate; profileState.MiddleName = profileinspector.mnm; }
+                                if (profileinspector.lnm != null) { profileState.ChangeDate = transaction.BlockDate; profileState.LastName = profileinspector.lnm; }
+                                if (profileinspector.sfx != null) { profileState.ChangeDate = transaction.BlockDate; profileState.Suffix = profileinspector.sfx; }
+                                if (profileinspector.bio != null) { profileState.ChangeDate = transaction.BlockDate; profileState.Bio = profileinspector.bio; }
+                                if (profileinspector.img != null) { profileState.ChangeDate = transaction.BlockDate; profileState.Image = profileinspector.img; }
+                                if (profileinspector.url != null) { profileState.ChangeDate = transaction.BlockDate; profileState.URL = profileinspector.url; }
+                                if (profileinspector.loc != null) { profileState.ChangeDate = transaction.BlockDate; profileState.Location = profileinspector.loc; }
+                                if (profileinspector.pkx != null) { profileState.ChangeDate = transaction.BlockDate; profileState.PKX = profileinspector.pkx; }
+                                if (profileinspector.pky != null) { profileState.ChangeDate = transaction.BlockDate; profileState.PKY = profileinspector.pky; }
+                                if (profileinspector.cre != null)
+                                {
+                                    profileState.Creators.Clear();
+                                    foreach (int keywordId in profileinspector.cre)
+                                    {
+                                        string creator = transaction.Keyword.Reverse().ElementAt(keywordId).Key;
+
+                                        if (!profileState.Creators.Contains(creator))
+                                        {
+                                            profileState.Creators.Add(creator);
+                                        }
+
+                                    }
+                                    profileState.ChangeDate = transaction.BlockDate;
+
+                                }
+
+                                if (profileState.ChangeDate == transaction.BlockDate)
+                                {
+                                    logstatus = "txid:" + transaction.TransactionId + ",profile,update,\"success\"";
+                                }
+                                else
+                                {
+                                    logstatus = "txid:" + transaction.TransactionId + ",profile,update,\"failed due to nothing to update\"";
+                                }
+
+                            }
+                            else { logstatus = "txid:" + transaction.TransactionId + " failed due to insufficent privlidges"; }
+
+                        }
+                        else { logstatus = "txid:" + transaction.TransactionId + " transaction failed due to duplicate signature"; }
+
+                        if (verbose)
+                        {
+                            if (logstatus != "")
+                            {
+
+                                lock (SupLocker)
+                                {
+                                    using (var db = new DB(OBJ, @"root\event"))
+                                    {
+                                        db.Put(profileaddress + "!" + sortableProcessHeight + "!" + "0", logstatus);
+                                    }
+                                }
+
+                            }
                         }
                     }
+
                 }
-                else { }///not sure why their is an else may not be necessary..
-                depth++;
             }
 
-            //used to determine where to begin profile State processing when retrieved from cache
-            profileState.Id = depth;
-            profileState.ProcessHeight = profileTransactions.Count();
+            profileState.ProcessHeight = intProcessHeight;
             var profileSerialized = JsonConvert.SerializeObject(profileState);
 
             try
@@ -272,7 +270,7 @@ namespace SUP.P2FK
             catch { }
 
             //if (profileState.URN == null && diskpath.Length > 5) { try { Directory.Delete(diskpath); } catch { } }
-            var intProcessHeight = profileState.Id;
+            var intProcessHeight = profileState.ProcessHeight;
             Root[] profileTransactions;
 
             //return all roots found at address
@@ -287,7 +285,7 @@ namespace SUP.P2FK
             foreach (Root transaction in profileTransactions)
             {
 
-
+                intProcessHeight = transaction.Id;
                 //ignore any transaction that is not signed
                 if (transaction.Signed && transaction.File.ContainsKey("PRO"))
                 {
@@ -305,6 +303,8 @@ namespace SUP.P2FK
                             {
 
                                 isObject.Id = profileTransactions.Count();
+                                isObject.ProcessHeight = intProcessHeight;
+
                                 var profileSerialized = JsonConvert.SerializeObject(isObject);
                                 try
                                 {
