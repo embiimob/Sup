@@ -676,11 +676,9 @@ namespace SUP
             }
         }
 
-        private void btnUpgradeIPFS_Click(object sender, EventArgs e)
+        private void panel1_Paint(object sender, PaintEventArgs e)
         {
-            Process process2 = new Process();
-            process2.StartInfo.FileName = @"ipfs\fs-repo-migrations.exe";
-            process2.Start();
+
         }
     }
 }

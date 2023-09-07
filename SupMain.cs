@@ -21,6 +21,7 @@ using AngleSharp.Text;
 using System.Drawing.Imaging;
 using NAudio.Wave;
 using System.Text;
+using System.Windows.Interop;
 
 namespace SUP
 {
@@ -1279,7 +1280,7 @@ namespace SUP
                                                                             {  // Create a new panel to display the metadata
                                                                                 Panel panel = new Panel();
                                                                                 panel.BorderStyle = BorderStyle.FixedSingle;
-                                                                                panel.Size = new Size(supFlow.Width - 20, 30);
+                                                                                panel.Size = new Size(500, 30);
 
                                                                                 // Create a label for the title
                                                                                 LinkLabel titleLabel = new LinkLabel();
@@ -1307,7 +1308,7 @@ namespace SUP
                                                                         {  // Create a new panel to display the metadata
                                                                             Panel panel = new Panel();
                                                                             panel.BorderStyle = BorderStyle.FixedSingle;
-                                                                            panel.Size = new Size(supFlow.Width - 20, 30);
+                                                                            panel.Size = new Size(500, 30);
 
                                                                             // Create a label for the title
                                                                             LinkLabel titleLabel = new LinkLabel();
@@ -2754,13 +2755,6 @@ namespace SUP
                     {
 
 
-
-
-
-
-
-
-
                         using (var db = new DB(SUP, @"root\" + profileURN.Links[0].LinkData.ToString() + @"\sup"))
                         {
 
@@ -2783,14 +2777,7 @@ namespace SUP
                                         string message = "";
                                         try
                                         {
-                                            
-                                            
-                                            
-                                            
-                                            
-                                            
-                                            
-                                            
+                                        
                                             
                                             message = System.IO.File.ReadAllText(@"root/" + supMessagePacket[1] + @"/MSG").Replace("@" + profileURN.Links[0].LinkData.ToString(), "");
 
@@ -3209,12 +3196,6 @@ namespace SUP
                                             }
 
 
-
-
-
-
-
-
                                             string tstamp = it.KeyAsString().Split('!')[1];
                                             System.Drawing.Color bgcolor = System.Drawing.Color.White;
                                             string unfilteredmessage = message;
@@ -3222,8 +3203,8 @@ namespace SUP
 
                                             this.Invoke((MethodInvoker)delegate
                                             {
-                                                CreateRow(fromImage, fromAddress, supMessagePacket[0], DateTime.ParseExact("19700101010101", "yyyyMMddHHmmss", CultureInfo.InvariantCulture), message, supMessagePacket[1], false, supFlow);
-                                                CreateRow(toImage, toAddress, supMessagePacket[2], DateTime.ParseExact(tstamp, "yyyyMMddHHmmss", CultureInfo.InvariantCulture), " ", "", false, supFlow);
+                                                CreateRow(fromImage, fromAddress, supMessagePacket[0], DateTime.ParseExact("19700101010101", "yyyyMMddHHmmss", CultureInfo.InvariantCulture),"", supMessagePacket[1], false, supFlow);
+                                                CreateRow(toImage, toAddress, supMessagePacket[2], DateTime.ParseExact(tstamp, "yyyyMMddHHmmss", CultureInfo.InvariantCulture),message,"", false, supFlow);
                                             });
 
 
@@ -3331,7 +3312,7 @@ namespace SUP
                                                                 // Create a new panel to display the metadata
                                                                 Panel panel = new Panel();
                                                                 panel.BorderStyle = BorderStyle.FixedSingle;
-                                                                panel.Size = new Size(supFlow.Width - 20, 30);
+                                                                panel.Size = new Size(500, 30);
 
                                                                 // Create a label for the title
                                                                 LinkLabel titleLabel = new LinkLabel();
@@ -3358,7 +3339,7 @@ namespace SUP
                                                             // Create a new panel to display the metadata
                                                             Panel panel = new Panel();
                                                             panel.BorderStyle = BorderStyle.FixedSingle;
-                                                            panel.Size = new Size(supFlow.Width - 30, 30);
+                                                            panel.Size = new Size(500, 30);
 
                                                             // Create a label for the title
                                                             LinkLabel titleLabel = new LinkLabel();
@@ -3416,7 +3397,7 @@ namespace SUP
                                                 ForeColor = Color.White,
                                                 AutoSize = true,
                                                 CellBorderStyle = TableLayoutPanelCellBorderStyle.Single,
-                                                Margin = new System.Windows.Forms.Padding(0, 0, 0, 40),
+                                                Margin = new System.Windows.Forms.Padding(0, 10, 0, 10),
                                                 Padding = new System.Windows.Forms.Padding(0)
 
                                             };
@@ -3511,11 +3492,7 @@ namespace SUP
                         {
                             try
                             {
-                                //this.Invoke((MethodInvoker)delegate
-                                //{
-                                //    supFlow.SuspendLayout();
-
-                                //});
+               
 
                                 if (rownum > numPrivateMessagesDisplayed)
                                 {
@@ -4020,7 +3997,7 @@ namespace SUP
                                                             // Create a new panel to display the metadata
                                                             Panel panel = new Panel();
                                                             panel.BorderStyle = BorderStyle.FixedSingle;
-                                                            panel.MinimumSize = new Size(supPrivateFlow.Width - 30, 30);
+                                                            panel.MinimumSize = new Size(500, 30);
                                                             panel.AutoSize = true;
                                                             // Create a label for the title
                                                             LinkLabel titleLabel = new LinkLabel();
@@ -4077,7 +4054,7 @@ namespace SUP
                                             ForeColor = Color.White,
                                             AutoSize = true,
                                             CellBorderStyle = TableLayoutPanelCellBorderStyle.Single,
-                                            Margin = new System.Windows.Forms.Padding(0, 0, 0, 40),
+                                            Margin = new System.Windows.Forms.Padding(0, 10, 0, 10),
                                             Padding = new System.Windows.Forms.Padding(0)
 
                                         };
@@ -4146,7 +4123,7 @@ namespace SUP
 
                 };
 
-                msg.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 420));
+                msg.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 520));
 
                 if (isprivate)
                 {
@@ -4176,8 +4153,8 @@ namespace SUP
                 // Set the PictureBox properties
 
                 pictureBox.SizeMode = PictureBoxSizeMode.Zoom;
-                pictureBox.Width = 400;
-                pictureBox.Height = 400;
+                pictureBox.Width = 500;
+                pictureBox.Height = 500;
                 pictureBox.BackColor = Color.Black;
                 pictureBox.ImageLocation = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + @"\includes\progress.gif";
                 msg.Controls.Add(pictureBox);
@@ -4395,7 +4372,17 @@ namespace SUP
                 webviewer.CreationProperties = null;
                 webviewer.DefaultBackgroundColor = System.Drawing.Color.Black;
                 webviewer.Name = "webviewer";
-                webviewer.Size = new System.Drawing.Size(400, 300);
+
+                if (videolocation.ToLower().EndsWith(".wav") || videolocation.ToLower().EndsWith(".mp3"))
+                {
+                    webviewer.Size = new System.Drawing.Size(500, 200);
+
+                }
+                else
+                {
+                    webviewer.Size = new System.Drawing.Size(500, 400);
+
+                }
                 webviewer.ZoomFactor = 1D;
                 webviewers.Add(webviewer);
 
@@ -4413,7 +4400,7 @@ namespace SUP
 
                 };
 
-                msg.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 420));
+                msg.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 520));
 
                 if (isprivate)
                 {
@@ -4569,9 +4556,11 @@ namespace SUP
 
                                 this.Invoke((Action)(() =>
                                 {
+
                                     if ((videolocation.ToLower().EndsWith(".wav") || videolocation.ToLower().EndsWith(".mp3")) && autoPlay)
                                     {
                                         audioPlayer.AddToPlaylist(videolocation);
+                                       
                                     }
 
                                     string viewerPath = Path.GetDirectoryName(videolocation) + @"\urnviewer.html";
@@ -4581,38 +4570,6 @@ namespace SUP
                                     try { webviewer.CoreWebView2.Navigate(viewerPath); } catch { }
 
 
-                                    //try
-                                    //{
-
-
-                                    //    // If it's a .wav file and autoplay is enabled, trigger the audio playback
-                                    //    if (videolocation.ToLower().EndsWith(".wav") && autoPlay)
-
-                                    //    {
-                                    //        WaveOut waveOut = new WaveOut();
-                                    //        WaveFileReader reader = new WaveFileReader(videolocation);
-                                    //        waveOut.Init(reader);
-                                    //        waveOut.Play();
-
-
-                                    //    }
-
-                                    //    // If it's a .mp3 file and autoplay is enabled, trigger the audio playback
-                                    //    if (videolocation.ToLower().EndsWith(".mp3") && autoPlay)
-
-                                    //    {
-                                    //        WaveOut waveOut = new WaveOut();
-                                    //        Mp3FileReader reader = new Mp3FileReader(videolocation);
-                                    //        waveOut.Init(reader);
-                                    //        waveOut.Play();
-
-                                    //    }
-
-                                    //}
-                                    //catch (Exception ex)
-                                    //{
-                                    //    string error = ex.Message;// Handle exceptions here
-                                    //}
                                 }));
 
 
@@ -4776,8 +4733,7 @@ namespace SUP
                 row.Controls.Add(deleteme, 3, 0);
             }
 
-            if (messageText != "")
-            {
+    
                 TableLayoutPanel msg = new TableLayoutPanel
                 {
                     RowCount = 1,
@@ -4786,9 +4742,9 @@ namespace SUP
                     BackColor = Color.Black,
                     ForeColor = Color.White,
                     AutoSize = true,
-                    CellBorderStyle = TableLayoutPanelCellBorderStyle.None,
-                    Margin = new System.Windows.Forms.Padding(0, 0, 0, 0),
-                    Padding = new System.Windows.Forms.Padding(0)
+                    Margin = new System.Windows.Forms.Padding(0),
+                    Padding = new System.Windows.Forms.Padding(0, 0, 0, 0),
+                    CellBorderStyle = TableLayoutPanelCellBorderStyle.None
 
                 };
                 msg.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, layoutPanel.Width - 20));
@@ -4796,7 +4752,8 @@ namespace SUP
 
                 layoutPanel.Controls.Add(msg);
 
-
+            if (messageText != "")
+            {
                 Label message = new Label
                 {
                     AutoSize = true,
@@ -4807,7 +4764,23 @@ namespace SUP
                     Padding = new System.Windows.Forms.Padding(10, 20, 10, 20),
                     TextAlign = System.Drawing.ContentAlignment.TopLeft
                 };
+
                 msg.Controls.Add(message, 1, 0);
+            }else
+            {
+
+                Label message = new Label
+                {
+                    AutoSize = true,
+                    Text = messageText,
+                    Font = new System.Drawing.Font("Segoe UI", 7.77F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0))),
+                    Margin = new System.Windows.Forms.Padding(0),
+                    Padding = new System.Windows.Forms.Padding(0, 0, 0, 0),
+                    TextAlign = System.Drawing.ContentAlignment.TopLeft
+                };
+
+                msg.Controls.Add(message, 1, 0);
+
             }
 
 
@@ -4931,8 +4904,10 @@ namespace SUP
                 deleteme.Click += (sender, e) => { deleteme_LinkClicked(transactionid); };
                 row.Controls.Add(deleteme, 3, 0);
             }
-            if (messageText != "")
-            {
+
+           
+
+           
                 TableLayoutPanel msg = new TableLayoutPanel
                 {
                     RowCount = 1,
@@ -4942,7 +4917,7 @@ namespace SUP
                     ForeColor = Color.White,
                     AutoSize = true,
                     CellBorderStyle = TableLayoutPanelCellBorderStyle.None,
-                    Margin = new System.Windows.Forms.Padding(0, 0, 0, 0),
+                    Margin = new System.Windows.Forms.Padding(10, 10, 10, 0),
                     Padding = new System.Windows.Forms.Padding(0)
 
                 };
@@ -4960,18 +4935,38 @@ namespace SUP
                 }
 
 
+            if (messageText != "")
+            {
                 Label message = new Label
                 {
                     AutoSize = true,
                     Text = messageText,
-                    MinimumSize = new Size(280, 46),
+                    MinimumSize = new Size(200, 46),
                     Font = new System.Drawing.Font("Segoe UI", 7.77F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0))),
                     Margin = new System.Windows.Forms.Padding(0),
                     Padding = new System.Windows.Forms.Padding(10, 20, 10, 20),
                     TextAlign = System.Drawing.ContentAlignment.TopLeft
                 };
-                msg.Controls.Add(message);
+
+                msg.Controls.Add(message, 1, 0);
             }
+            else
+            {
+
+                Label message = new Label
+                {
+                    AutoSize = true,
+                    Text = messageText,
+                    Font = new System.Drawing.Font("Segoe UI", 7.77F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0))),
+                    Margin = new System.Windows.Forms.Padding(0),
+                    Padding = new System.Windows.Forms.Padding(0, 0, 0, 0),
+                    TextAlign = System.Drawing.ContentAlignment.TopLeft
+                };
+
+                msg.Controls.Add(message, 1, 0);
+
+            }
+
 
         }
 
@@ -5405,10 +5400,10 @@ namespace SUP
                         this.Invoke((MethodInvoker)delegate
                         {
                             try { imglocation = myFriends[_from]; } catch { }
-                            CreateFeedRow(imglocation, fromURN, _from, DateTime.ParseExact("19700101010101", "yyyyMMddHHmmss", CultureInfo.InvariantCulture), _message, "", Color.White, supFlow);
+                            CreateFeedRow(imglocation, fromURN, _from, DateTime.ParseExact("19700101010101", "yyyyMMddHHmmss", CultureInfo.InvariantCulture), "", "", Color.White, supFlow);
 
                             try { imglocation = myFriends[_to]; } catch { }
-                            CreateFeedRow(imglocation, toURN, _to, DateTime.ParseExact(_blockdate, "yyyyMMddHHmmss", CultureInfo.InvariantCulture), " ", "", Color.White, supFlow);
+                            CreateFeedRow(imglocation, toURN, _to, DateTime.ParseExact(_blockdate, "yyyyMMddHHmmss", CultureInfo.InvariantCulture), _message, "", Color.White, supFlow);
                         });
                         string pattern = "<<.*?>>";
                         MatchCollection matches = Regex.Matches(unfilteredmessage, pattern);
@@ -5556,7 +5551,7 @@ namespace SUP
                             ForeColor = Color.White,
                             AutoSize = true,
                             CellBorderStyle = TableLayoutPanelCellBorderStyle.Single,
-                            Margin = new System.Windows.Forms.Padding(0, 0, 0, 40),
+                            Margin = new System.Windows.Forms.Padding(0, 10, 0, 10),
                             Padding = new System.Windows.Forms.Padding(0)
 
                         };
@@ -5804,5 +5799,7 @@ namespace SUP
         {
             audioPlayer.SkipCurrent();
         }
+
+ 
     }
 }
