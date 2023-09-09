@@ -11,7 +11,7 @@ P2FK was directly inspired by the satoshi uploader  see --> https://cirosantilli
 
 ## **Installation**
 
-1. Download the Sup!? v0.1.56-beta.zip file (https://github.com/embiimob/Sup/releases/download/Supv0.1.56-beta/Sup.v0.1.56-beta.zip)
+1. Download the Sup!? v0.1.57-beta.zip file (https://github.com/embiimob/Sup/releases/download/Supv0.1.57-beta/Sup.v0.1.57-beta.zip)
 2. Create a folder on your **fastest** disk drive with at least **50GB** free (it will be storing the bitcoin testnet blockchain)
 3. Unzip all contents into the folder
 4. Create a shortcut to SUP.exe and launch
@@ -66,6 +66,11 @@ NOTE: all attachments in your private message are encrypted via Sup!? using the 
 <br />
 ## **JukeBox 🎵**
 Click the new 🎵 and the currently active profile will be searched for mp3 and wav files, if found they will be displayed in an ordered list and played one after the other. You can also perform #Keyword searches and all audio files found at that #keyword will be displayed and played. it is also possible to search by profile urn or address.  click on any link to skip to it. scroll to load additional audio cliips.
+<br />
+search for experimental to hear a collection of 2007 - 2009 embii audio experiments.
+<br />
+## **SupFlix 🎬**
+Click the new 🎬 and the currently active profile will be searched for mp4 and avi files, if found they will be displayed in an ordered list.  Click on the link below each video preview window to watch it in full screen mode. You can also perform #Keyword searches and all video files found at that #keyword will be displayed and played. it is also possible to search by profile urn or address.  scroll to load additional video cliips.
 <br />
 search for experimental to hear a collection of 2007 - 2009 embii audio experiments.
 <br />
