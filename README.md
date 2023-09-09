@@ -30,17 +30,17 @@ Sup!? is an experimental tool made by adults for #adults. Sup!? is not suitable 
 ## **Public / Private Messaging / Social / #Keyword Search / GIF Selector / Walkie Talkie **
 The disco ball has dropped you can now send direct public and private messages using Sup!?, the bitcoin testnet and #IPFS.   Search for your own profile in the object browser to login with your local account.  Search for aditional profiles and add them as friends by clicking the follow button.  Click on a friend's icon to show their latest public messages. Click on the community icon to see a combination of all your friends posts in a single feed in the order that they were confirmed on the blockchain. Sup!? search also now finds and displays all public messages by #keyword.  Click on the 📢 to send the profile you are currently browsing a public message.  Click on the 🤐 before clicking on the 📢 to send the profile you are currently browsing a private message. Click the GIF button to search through a growing collection of Gifs etched into the blockchain by other Sup!? users. Click and hold the new audio record button and your audio message will be delivered imediately after letting go of the record button ( if walkie talkie mode is enabled in the connection screen ).  Search for your own profile and click on the 🤐 icon to see any private messages sent to it.
 <br />
-NOTE: all attachments in your private message are encrypted using the recipients public keys before they are uploaded to IPFS for delivery.
+NOTE: all attachments in your private messages are encrypted using the recipients public keys before they are uploaded to IPFS for delivery.
 <br />
 ## **JukeBox 🎵**
 Click the new 🎵 and the currently active profile will be searched for mp3 and wav files, if found they will be displayed in an ordered list and played one after the other. You can also perform #Keyword searches and all audio files found at that #keyword will be displayed. it is also possible to search by profile urn or address.  click on any link to skip to it. scroll to load additional audio cliips.
 <br />
-search for experimental to hear a collection of 2007 - 2009 embii audio experiments.
+search for experimental to hear a registered collection of 2007 - 2009 embii audio experiments.
 <br />
 ## **SupFlix 🎬**
 Click the new 🎬 and the currently active profile will be searched for mp4 and avi files, if found they will be displayed in an ordered list.  Click on the link below each video preview window to watch it in full screen mode. You can also perform #Keyword searches and all video files found at that #keyword will be displayed and played. it is also possible to search by profile urn or address.  scroll to load additional video cliips.
 <br />
-search for experimental to hear a collection of 2007 - 2009 embii audio experiments.
+search for boxpoem to see a registered collection of 2021 embii video box poems recently delisted by OpenSea
 <br />
 ## **Profile Minting / Editing**
 Click the mint button and select the profile mint button. Enter a urn and a profile address or click the diamond button to generate a new profile address. These two fields are all that are required to register a profile urn. You may optionally enter a PFP image url, your full name and suffix, web links, contact information and keywords. NOTE: Every profile becomes an entry point for which private messages may be delivered as every profile displays public keys to be used for Secp256k1 encrypted messaging.   
@@ -67,9 +67,13 @@ BUY transactions that do not correspond to any current listing will instead crea
 <br />
 <br />
 ## **Live Monitor**
-Click the live button and watch in realtime as other Sup!? users mint their objects and compose public messages. All new objects and messages will be added to the top of your browser window pushing the older objects and messages down the screen. A maximized Sup!? monitor that shows a constant stream of new objects and messages makes for a great display. Sup!? montiors the in-memory pool allowing it to display new objects before they are confirmed in the blockchain. Your Sup!? objects and messages will appear in every curently live Sup!? montior around the world in about 10 - 30 seconds after you have etched the metadata. All blockhains included with this experiment are monitored for new objects and messages if they are running and fully synced.  private messages are delivered to the active profile if the private panel is active. private message audio is not auto played during live monitoring sessions.  
+Click the live button and watch in realtime as other Sup!? users mint their objects and compose public messages. All new objects and messages will be added to the top of your browser window pushing the older objects and messages down the screen. A maximized Sup!? monitor that shows a constant stream of new objects and messages makes for a great display. Sup!? montiors the in-memory pool allowing it to display new objects before they are confirmed in the blockchain. Your Sup!? objects and messages will appear in every curently live Sup!? montior around the world in about 10 - 30 seconds after you have etched the metadata. All blockhains included with this experiment are monitored for new objects and messages if they are running and fully synced.
+<br />
+<br />
+private messages are delivered to the active profile if the private panel is active. private message audio is not auto played during live monitoring sessions.  
 <br />
 With live monitoring enabled, you never know what might pop into the window! You can delete one directly from the live preview panel by clicking on the object's small trash icon. This will #attempt to remove all traces of it from your system. you can block and mute accounts by address. consider checking the filter live postings check box.  this will filter live messages allowing only transactions signed by people on your friends list from being displayed on the live feed.  If you are concerned about files remaining on your PC Click the purge Root button and click the purge ipfs button.
+<br />
 <br />
 Consider running a seperate instance of Sup!? in it's own folder for live monitoring.  You can then easily clear the caches in the live monitoring folder without effecting your overal Sup!? browsing cache.  Launch the blockchain from your normal folder and just run Sup!? live from your second folder..  both instances of Sup!? will communicate to any Sup!? launched local blockchain without any problems.
 <br />
