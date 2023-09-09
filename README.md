@@ -1,13 +1,11 @@
 # Sup!? 
-experimental decentralized state engine browser
+experimental decentralized state engine
 
-Sup!? is a demonstration of establishing a decentralized social identity and tracking state changes with public and private comments on immutable blockchain objects in a format familiar to NFT enthusiasts. The experimental Sup!? object browser is currently hardcoded to reference the bitcoin testnet mainchain. A production deployment will be released December 2023. Our goal is to give #teamworld ample time for testing and integrations.
+Sup!? is a demonstration of establishing a decentralized social identity and tracking state changes with public and private comments on immutable blockchain objects in a format familiar to NFT enthusiasts. Experimental Sup!? is currently hardcoded to reference the bitcoin testnet mainchain. A production deployment will be released December 2023. Our goal is to give #teamworld ample time for testing and integrations.
 
 This experiment is using an ancient blockchain protocol called P2FK (Pay to Future Key) invented by http://HugPuddle.org in 2013.
 
 P2FK was directly inspired by the satoshi uploader  see --> https://cirosantilli.com/satoshi-uploader
-
- As of Sup?'s first release date, all transactions and objects discoverable in the experiment were created by embii using http://apertus.io
 
 ## **Installation**
 
@@ -29,40 +27,10 @@ P2FK was directly inspired by the satoshi uploader  see --> https://cirosantilli
 Sup!? is an experimental tool made by adults for #adults. Sup!? is not suitable for children. 
 <br />
 <br />
-## **Search Examples**
-
-### **muVrFVk3ErfrnmWosLF4WixxRtDKfMx9bs**
-searches mainchain - bitcoin testnet by address returns all object associations and the associated profile
-
-### **6d14b0dc526a431f611f16f29d684f73e6b01f0a59a0b7b3d9b8d951091c2422/index.html**
-searches mainchain - bitcoin testnet by transaction id returns referenced index.htm(l) in browser
-
-### **BTC:0618f12af65a4e82f8e7b41f8578721dfeb109e9a73ff71aebdbc982696e3720/index.html**
-searches sidechain - bitcoin production by transaction id returns referenced index.htm(l) in browser
-
-### **MZC:4dbb0e984586d1994f461c419c460edf7ecf15488a8b11282f19cec9aa7ec285/index.html?viewer=embii4u**
-searches sidechain - mazacoin production by transaction id returns referenced index.htm(l) in browser
-
-### **#CaseSensitiveKeyword**
-searches mainchain for up to a 20 character case sensitive keyword and shows all public message and object associations
-
-### **@UserName**
-searches mainchain by urn - shows currently registered profile object links associated with @username and shows all object associations. profile registrations are transferable and expire after 3 years of no activity allowing them to be claimed by other registrants in the future.
-
-### **ipfs://QmU42aLJToYmshwJu26iprH9RsX6SfJDw3FTf6senJEdF1**
-performs a ipfs get, archives ipfs file(s) locally, pins file(s) if pinning is enabled, and opens a system folder dioluge allowing you to explore any files found
-
-### **sup://twitter.com**
-searches mainchain by urn - shows currently registered object with uri redirection.  urn registrations are transferable and expire after 3 years of inactivity allowing them to be claimed by other registrants in the future.  ( there are no urn character limits, uri redirects are NOT enabled )
-
-### **http(s)://embii.org**
-navigates to requested url in browser.
-<br />
-<br />
 ## **Public / Private Messaging / Social / #Keyword Search / GIF Selector / Walkie Talkie **
 The disco ball has dropped you can now send direct public and private messages using Sup!?, the bitcoin testnet and #IPFS.   Search for your own profile in the object browser to login with your local account.  Search for aditional profiles and add them as friends by clicking the follow button.  Click on a friend's icon to show their latest public messages. Click on the community icon to see a combination of all your friends posts in a single feed in the order that they were confirmed on the blockchain. Sup!? search also now finds and displays all public messages by #keyword.  Click on the 📢 to send the profile you are currently browsing a public message.  Click on the 🤐 before clicking on the 📢 to send the profile you are currently browsing a private message. Click the GIF button to search through a growing collection of Gifs etched into the blockchain by other Sup!? users. Click and hold the new audio record button and your audio message will be delivered imediately after letting go of the record button ( if walkie talkie mode is enabled in the connection screen ).  Search for your own profile and click on the 🤐 icon to see any private messages sent to it.
 <br />
-NOTE: all attachments in your private message are encrypted via Sup!? using the recipients public keys before they are uploaded to IPFS for delivery.
+NOTE: all attachments in your private message are encrypted using the recipients public keys before they are uploaded to IPFS for delivery.
 <br />
 ## **JukeBox 🎵**
 Click the new 🎵 and the currently active profile will be searched for mp3 and wav files, if found they will be displayed in an ordered list and played one after the other. You can also perform #Keyword searches and all audio files found at that #keyword will be displayed. it is also possible to search by profile urn or address.  click on any link to skip to it. scroll to load additional audio cliips.
@@ -99,11 +67,11 @@ BUY transactions that do not correspond to any current listing will instead crea
 <br />
 <br />
 ## **Live Monitor**
-Click the live button and watch in realtime as other Sup!? users mint their objects and compose public messages. All new objects and messages will be added to the top of your browser window pushing the older objects and messages down the screen. A maximized Sup!? monitor that shows a constant stream of new objects and messages makes for a great display. Sup!? montiors the in-memory pool allowing it to display new objects before they are confirmed in the blockchain. Your Sup!? objects and messages will appear in every curently live Sup!? montior around the world in about 10 - 30 seconds after you have etched the metadata. All blockhains included with this experiment are monitored for new objects and messages if they are running and fully synced.  
+Click the live button and watch in realtime as other Sup!? users mint their objects and compose public messages. All new objects and messages will be added to the top of your browser window pushing the older objects and messages down the screen. A maximized Sup!? monitor that shows a constant stream of new objects and messages makes for a great display. Sup!? montiors the in-memory pool allowing it to display new objects before they are confirmed in the blockchain. Your Sup!? objects and messages will appear in every curently live Sup!? montior around the world in about 10 - 30 seconds after you have etched the metadata. All blockhains included with this experiment are monitored for new objects and messages if they are running and fully synced.  private messages are delivered to the active profile if the private panel is active. private message audio is not auto played during live monitoring sessions.  
 <br />
-With live monitoring enabled, you never know what might pop into the window. The damage is limited to a thumbnail image and what can fit in a small description text box. Objects that are discovered in live mode are not fully inspected for safety reasons. You can delete one directly from the live preview panel by clicking on the object's small trash icon. This will remove any trace of it from your system. If you are still concerned, clearing all Sup!? caches will without a doubt remove it.  
+With live monitoring enabled, you never know what might pop into the window! You can delete one directly from the live preview panel by clicking on the object's small trash icon. This will #attempt to remove all traces of it from your system. you can block and mute accounts by address. consider checking the filter live postings check box.  this will filter live messages allowing only transactions signed by people on your friends list from being displayed on the live feed.  If you are concerned about files remaining on your PC Click the purge Root button and click the purge ipfs button.
 <br />
-Consider running a seperate instance of Sup!? in it's own folder for live monitoring.  You can then easily clear the cache in the live monitoring folder without effecting your overal Sup!? browsing cache.  Launch the blockchain from your normal folder and just run Sup!? live from your second folder..  both instances of Sup!? will communicate to your launched blockchain without any problems.
+Consider running a seperate instance of Sup!? in it's own folder for live monitoring.  You can then easily clear the caches in the live monitoring folder without effecting your overal Sup!? browsing cache.  Launch the blockchain from your normal folder and just run Sup!? live from your second folder..  both instances of Sup!? will communicate to any Sup!? launched local blockchain without any problems.
 <br />
 <br />
 ## **Official / Unofficial Registration Indicator**
@@ -125,6 +93,36 @@ clicking the 🗑️ icon found in message and object search results deletes the
 ## **Web Applet Querystring Data**
 Trusted index.html and index.htm files are sent the following Sup!? object information via querystring on load:
 "address=", "creator=", "viewer=", "viewer-name=", "owner=", "owner-name=", "urn=", "uri=", "url=", "height="
+<br />
+<br />
+## **Search Examples**
+
+### **muVrFVk3ErfrnmWosLF4WixxRtDKfMx9bs**
+searches mainchain - bitcoin testnet by address returns all object associations and the associated profile
+
+### **6d14b0dc526a431f611f16f29d684f73e6b01f0a59a0b7b3d9b8d951091c2422/index.html**
+searches mainchain - bitcoin testnet by transaction id returns referenced index.htm(l) in browser
+
+### **BTC:0618f12af65a4e82f8e7b41f8578721dfeb109e9a73ff71aebdbc982696e3720/index.html**
+searches sidechain - bitcoin production by transaction id returns referenced index.htm(l) in browser
+
+### **MZC:4dbb0e984586d1994f461c419c460edf7ecf15488a8b11282f19cec9aa7ec285/index.html?viewer=embii4u**
+searches sidechain - mazacoin production by transaction id returns referenced index.htm(l) in browser
+
+### **#CaseSensitiveKeyword**
+searches mainchain for up to a 20 character case sensitive keyword and shows all public message and object associations
+
+### **@UserName**
+searches mainchain by urn - shows currently registered profile object links associated with @username and shows all object associations. profile registrations are transferable and expire after 3 years of no activity allowing them to be claimed by other registrants in the future.
+
+### **ipfs://QmU42aLJToYmshwJu26iprH9RsX6SfJDw3FTf6senJEdF1**
+performs a ipfs get, archives ipfs file(s) locally, pins file(s) if pinning is enabled, and opens a system folder dioluge allowing you to explore any files found
+
+### **sup://twitter.com**
+searches mainchain by urn - shows currently registered object with uri redirection.  urn registrations are transferable and expire after 3 years of inactivity allowing them to be claimed by other registrants in the future.  ( there are no urn character limits, uri redirects are NOT enabled )
+
+### **http(s)://embii.org**
+navigates to requested url in browser.
 <br />
 <br />
 ## **Command Line Interface**
@@ -152,7 +150,6 @@ Trusted index.html and index.htm files are sent the following Sup!? object infor
 **get object by transaction id:**<br />
 SUP.EXE --tid 69ae3a76a9de22ffad7bfb9249824512fc38e01d82e2010877ead179b50f0f77 --versionbyte 111 --getobjectbytransactionid --password better-password --url http://127.0.0.1:18332 --username good-user<br />
 <br />
-
 
 **get object owner by urn registration:**<br />
   SUP.EXE --versionbyte 111 --getobjectbyurn --password better-password --url https://127.0.0.1:18332 --username  good-user --urn twitter.com<br />
