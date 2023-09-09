@@ -65,7 +65,7 @@ The disco ball has dropped you can now send direct public and private messages u
 NOTE: all attachments in your private message are encrypted via Sup!? using the recipients public keys before they are uploaded to IPFS for delivery.
 <br />
 ## **JukeBox 🎵**
-Click the new 🎵 and the currently active profile will be searched for mp3 and wav files, if found they will be displayed in an ordered list and played one after the other. You can also perform #Keyword searches and all audio files found at that #keyword will be displayed and played. it is also possible to search by profile urn or address.  click on any link to skip to it. scroll to load additional audio cliips.
+Click the new 🎵 and the currently active profile will be searched for mp3 and wav files, if found they will be displayed in an ordered list and played one after the other. You can also perform #Keyword searches and all audio files found at that #keyword will be displayed. it is also possible to search by profile urn or address.  click on any link to skip to it. scroll to load additional audio cliips.
 <br />
 search for experimental to hear a collection of 2007 - 2009 embii audio experiments.
 <br />
