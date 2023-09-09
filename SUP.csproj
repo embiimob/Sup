@@ -248,6 +248,12 @@
     <Compile Include="FullScreenView.cs">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Include="SupFlix.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="SupFlix.Designer.cs">
+      <DependentUpon>SupFlix.cs</DependentUpon>
+    </Compile>
     <Compile Include="JukeBox.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -356,6 +362,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="FullScreenView.resx">
       <DependentUpon>FullScreenView.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="SupFlix.resx">
+      <DependentUpon>SupFlix.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="JukeBox.resx">
       <DependentUpon>JukeBox.cs</DependentUpon>

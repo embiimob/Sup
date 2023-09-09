@@ -1,6 +1,6 @@
 ﻿namespace SUP
 {
-    partial class JukeBox
+    partial class SupFlix
     {
         /// <summary>
         /// Required designer variable.
@@ -32,8 +32,6 @@
             this.txtSearch = new System.Windows.Forms.TextBox();
             this.flowLayoutPanel1 = new System.Windows.Forms.FlowLayoutPanel();
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
-            this.btnStop = new System.Windows.Forms.Button();
-            this.btnPlay = new System.Windows.Forms.Button();
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
             this.btnOrder = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
@@ -48,7 +46,7 @@
             this.txtSearch.ScrollBars = System.Windows.Forms.ScrollBars.Horizontal;
             this.txtSearch.Size = new System.Drawing.Size(204, 20);
             this.txtSearch.TabIndex = 0;
-            this.txtSearch.Text = "mp3";
+            this.txtSearch.Text = "mp4";
             this.txtSearch.TextChanged += new System.EventHandler(this.TextBox_TextChanged);
             // 
             // flowLayoutPanel1
@@ -60,7 +58,7 @@
             this.flowLayoutPanel1.FlowDirection = System.Windows.Forms.FlowDirection.TopDown;
             this.flowLayoutPanel1.Location = new System.Drawing.Point(12, 39);
             this.flowLayoutPanel1.Name = "flowLayoutPanel1";
-            this.flowLayoutPanel1.Size = new System.Drawing.Size(909, 406);
+            this.flowLayoutPanel1.Size = new System.Drawing.Size(909, 626);
             this.flowLayoutPanel1.TabIndex = 1;
             this.flowLayoutPanel1.WrapContents = false;
             this.flowLayoutPanel1.Scroll += new System.Windows.Forms.ScrollEventHandler(this.flowLayoutPanel1_Scroll);
@@ -72,36 +70,15 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.pictureBox1.Location = new System.Drawing.Point(-1, 39);
             this.pictureBox1.Name = "pictureBox1";
-            this.pictureBox1.Size = new System.Drawing.Size(937, 419);
+            this.pictureBox1.Size = new System.Drawing.Size(937, 639);
             this.pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
             this.pictureBox1.TabIndex = 0;
             this.pictureBox1.TabStop = false;
             this.pictureBox1.Visible = false;
             // 
-            // btnStop
-            // 
-            this.btnStop.Location = new System.Drawing.Point(222, 10);
-            this.btnStop.Name = "btnStop";
-            this.btnStop.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
-            this.btnStop.Size = new System.Drawing.Size(50, 23);
-            this.btnStop.TabIndex = 4;
-            this.btnStop.Text = "stop";
-            this.btnStop.UseVisualStyleBackColor = true;
-            this.btnStop.Click += new System.EventHandler(this.StopButton_Click);
-            // 
-            // btnPlay
-            // 
-            this.btnPlay.Location = new System.Drawing.Point(278, 10);
-            this.btnPlay.Name = "btnPlay";
-            this.btnPlay.Size = new System.Drawing.Size(49, 23);
-            this.btnPlay.TabIndex = 5;
-            this.btnPlay.Text = "play";
-            this.btnPlay.UseVisualStyleBackColor = true;
-            this.btnPlay.Click += new System.EventHandler(this.btnPlay_Click);
-            // 
             // btnOrder
             // 
-            this.btnOrder.Location = new System.Drawing.Point(333, 9);
+            this.btnOrder.Location = new System.Drawing.Point(222, 10);
             this.btnOrder.Name = "btnOrder";
             this.btnOrder.Size = new System.Drawing.Size(49, 23);
             this.btnOrder.TabIndex = 6;
@@ -109,22 +86,20 @@
             this.btnOrder.UseVisualStyleBackColor = true;
             this.btnOrder.Click += new System.EventHandler(this.btnOrder_Click);
             // 
-            // JukeBox
+            // SupFlix
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.Black;
-            this.ClientSize = new System.Drawing.Size(933, 457);
+            this.ClientSize = new System.Drawing.Size(933, 677);
             this.Controls.Add(this.btnOrder);
-            this.Controls.Add(this.btnPlay);
-            this.Controls.Add(this.btnStop);
             this.Controls.Add(this.pictureBox1);
             this.Controls.Add(this.flowLayoutPanel1);
             this.Controls.Add(this.txtSearch);
-            this.Name = "JukeBox";
-            this.Text = "JukeBox";
-            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.JukeBox_FormClosing);
-            this.Load += new System.EventHandler(this.JukeBox_Load);
+            this.Name = "SupFlix";
+            this.Text = "SupFlix";
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.SupFlix_Closing);
+            this.Load += new System.EventHandler(this.SupFlix_Load);
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
@@ -136,8 +111,6 @@
         private System.Windows.Forms.TextBox txtSearch;
         private System.Windows.Forms.FlowLayoutPanel flowLayoutPanel1;
         private System.Windows.Forms.PictureBox pictureBox1;
-        private System.Windows.Forms.Button btnStop;
-        private System.Windows.Forms.Button btnPlay;
         private System.Windows.Forms.ToolTip toolTip1;
         private System.Windows.Forms.Button btnOrder;
     }

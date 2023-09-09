@@ -57,6 +57,9 @@ namespace SUP
         private void SupMaincs_Load(object sender, EventArgs e)
         {
             if (Directory.Exists("root")) { lblAdultsOnly.Visible = false; }
+            
+            if (File.Exists("LIVE_MONITOR_ENABLED")) { btnLive.PerformClick(); }
+
 
 
             //remove any partialy built IPFS files
@@ -645,6 +648,15 @@ namespace SUP
                 btnLive.BackColor = Color.Blue;
                 btnLive.ForeColor = Color.Yellow;
 
+                try
+                {
+                    using (FileStream fs = File.Create(@"LIVE_MONITOR_ENABLED"))
+                    {
+
+                    }
+                }
+                catch { }
+
                 string walletUsername = "good-user";
                 string walletPassword = "better-password";
                 string walletUrl = @"http://127.0.0.1:18332";
@@ -777,7 +789,11 @@ namespace SUP
                 btnLive.BackColor = Color.White;
                 btnLive.ForeColor = Color.Black;
                 tmrSearchMemoryPool.Enabled = false;
+         
 
+                    try { File.Delete(@"LIVE_MONITOR_ENABLED"); } catch { }
+
+                
             }
         }
         private void AddToSearchResults(List<OBJState> objects)
@@ -2736,12 +2752,17 @@ namespace SUP
 
                 try { Root[] roots = Root.GetRootsByAddress(profileURN.Links[0].LinkData.ToString(), "good-user", "better-password", "http://127.0.0.1:18332"); } catch { return; }
 
-                btnPublicMessage.Enabled = false;
 
             }
 
             Task BuildMessage = Task.Run(() =>
             {
+
+                this.Invoke((MethodInvoker)delegate
+                {
+                    btnPublicMessage.Enabled = false;
+                });
+
                 if (profileURN.Links[0].LinkData != null)
                 {
 
@@ -4655,7 +4676,7 @@ namespace SUP
                     Size = new System.Drawing.Size(50, 50),
                     SizeMode = PictureBoxSizeMode.StretchImage,
                     ImageLocation = imageLocation,
-                    Margin = new System.Windows.Forms.Padding(0),
+                    Margin = new System.Windows.Forms.Padding(0)
 
                 };
                 row.Controls.Add(picture, 0, 0);
@@ -4905,26 +4926,25 @@ namespace SUP
                 row.Controls.Add(deleteme, 3, 0);
             }
 
-           
 
-           
-                TableLayoutPanel msg = new TableLayoutPanel
-                {
-                    RowCount = 1,
-                    ColumnCount = 1,
-                    Dock = DockStyle.Top,
-                    BackColor = Color.Black,
-                    ForeColor = Color.White,
-                    AutoSize = true,
-                    CellBorderStyle = TableLayoutPanelCellBorderStyle.None,
-                    Margin = new System.Windows.Forms.Padding(10, 10, 10, 0),
-                    Padding = new System.Windows.Forms.Padding(0)
 
-                };
 
-                msg.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, supFlow.Width - 20));
+            TableLayoutPanel msg = new TableLayoutPanel
+            {
+                RowCount = 1,
+                ColumnCount = 1,
+                Dock = DockStyle.Top,
+                BackColor = Color.Black,
+                ForeColor = Color.White,
+                AutoSize = true,
+                Margin = new System.Windows.Forms.Padding(0),
+                Padding = new System.Windows.Forms.Padding(0, 0, 0, 0),
+                CellBorderStyle = TableLayoutPanelCellBorderStyle.None
 
-                if (addtoTop)
+            };
+            msg.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, layoutPanel.Width - 20));
+
+            if (addtoTop)
                 {
                     layoutPanel.Controls.Add(msg);
                     layoutPanel.Controls.SetChildIndex(msg, 1);
@@ -5492,7 +5512,7 @@ namespace SUP
                                         // Create a new panel to display the metadata
                                         Panel panel = new Panel();
                                         panel.BorderStyle = BorderStyle.FixedSingle;
-                                        panel.MinimumSize = new Size(supFlow.Width - 30, 30);
+                                        panel.MinimumSize = new Size(500, 30);
                                         panel.AutoSize = true;
                                         // Create a label for the title
                                         LinkLabel titleLabel = new LinkLabel();
@@ -5784,12 +5804,12 @@ namespace SUP
             if (profileURN.Links[0].LinkData != null)
             {
                 JukeBox jukeBoxForm = new JukeBox(profileURN.Text);
-                jukeBoxForm.Show();// Pass the reference to the current form as the parent form
+                jukeBoxForm.Show();
             }
             else
             {
                 JukeBox jukeBoxForm = new JukeBox();
-                jukeBoxForm.Show();// Pass the reference to the current form as the parent form
+                jukeBoxForm.Show();
             }
             btnJukeBox.Enabled = true;
 
@@ -5800,6 +5820,22 @@ namespace SUP
             audioPlayer.SkipCurrent();
         }
 
- 
+        private void btnVideoSearch_Click(object sender, EventArgs e)
+        {
+            btnVideoSearch.Enabled = false;
+
+            if (profileURN.Links[0].LinkData != null)
+            {
+                SupFlix supFlixForm = new SupFlix(profileURN.Text);
+                supFlixForm.Show();
+            }
+            else
+            {
+                SupFlix supFlixForm = new SupFlix();
+                supFlixForm.Show();
+            }
+
+            btnVideoSearch.Enabled = true;
+        }
     }
 }

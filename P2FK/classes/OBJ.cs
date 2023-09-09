@@ -116,7 +116,7 @@ namespace SUP.P2FK
                             unconfimredobj = JsonConvert.DeserializeObject<Root>(JSONOBJ);
                             try { File.Delete(@"GET_OBJECT_BY_ADDRESS"); } catch { }
                             return OBJState.GetObjectByTransactionId(unconfimredobj.TransactionId, username, password, url, versionByte);
-                            
+
 
                         }
                         catch
@@ -129,9 +129,9 @@ namespace SUP.P2FK
                     int intProcessHeight = 0;
 
                     try { intProcessHeight = objectState.ProcessHeight; } catch { }
-                   
+
                     Root[] objectTransactions;
-                    objectTransactions = Root.GetRootsByAddress(objectaddress, username, password, url, intProcessHeight , 1, versionByte);
+                    objectTransactions = Root.GetRootsByAddress(objectaddress, username, password, url, intProcessHeight, 1, versionByte);
 
                     if (intProcessHeight != 0 && objectTransactions.Count() == 0)
                     {
@@ -1348,7 +1348,8 @@ namespace SUP.P2FK
                                                         }
 
                                                         //force all assoicated collections to update by purging the cache file when listed on secondary
-                                                        foreach (string creatorAddress in objectState.Creators.Keys) {
+                                                        foreach (string creatorAddress in objectState.Creators.Keys)
+                                                        {
                                                             try { System.IO.File.Delete(@"root\" + creatorAddress + @"\" + "GetObjectsByAddress.json"); } catch { }
                                                             try { System.IO.File.Delete(@"root\" + creatorAddress + @"\" + "GetObjectsCreatedByAddress.json"); } catch { }
 
@@ -2379,7 +2380,8 @@ namespace SUP.P2FK
                 if (fetched && objectStates.Count < 1) { return objectStates; }
 
                 List<OBJState> cachedObjectStates = OBJState.GetObjectsByAddress(objectaddress, username, password, url, versionByte, 0, -1);
-                if (fetched && objectStates.Last().Id == cachedObjectStates.Last().Id) {
+                if (fetched && objectStates.Last().Id == cachedObjectStates.Last().Id)
+                {
 
                     if (qty == -1) { return objectStates.Skip(skip).ToList(); }
                     else { return objectStates.Skip(skip).Take(qty).ToList(); }
@@ -2387,20 +2389,25 @@ namespace SUP.P2FK
                 }
 
                 objectStates = new List<OBJState>();
-                //return all roots found at address
-                foreach (OBJState objectstate in cachedObjectStates)
-                {
-                    if (objectstate.URN != null && objectstate.Creators.ContainsKey(objectaddress) && objectstate.Creators[objectaddress] != null && objectstate.Creators[objectaddress].Year > 1975)
-                    {
 
-                        objectStates.Add(objectstate);
+                if (cachedObjectStates.Count() > 0)
+                {
+                    foreach (OBJState objectstate in cachedObjectStates)
+                    {
+                        if (objectstate.URN != null && objectstate.Creators.ContainsKey(objectaddress) && objectstate.Creators[objectaddress] != null && objectstate.Creators[objectaddress].Year > 1975)
+                        {
+
+                            objectStates.Add(objectstate);
+
+                        }
 
                     }
 
-                }
-                if (cachedObjectStates.Count() > 0)
-                {
-                    objectStates.Last().Id = cachedObjectStates.Last().Id;
+
+                    if (objectStates.Count() > 0)
+                    {
+                        objectStates.Last().Id = cachedObjectStates.Last().Id;
+                    }
                 }
 
                 var objectSerialized = JsonConvert.SerializeObject(objectStates);
