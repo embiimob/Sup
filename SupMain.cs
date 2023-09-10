@@ -460,17 +460,24 @@ namespace SUP
 
 
 
-                                    Process process3 = new Process
+                                    try
                                     {
-                                        StartInfo = new ProcessStartInfo
+                                        if (File.Exists("IPFS_PINNING_ENABLED"))
                                         {
-                                            FileName = @"ipfs\ipfs.exe",
-                                            Arguments = "pin add " + transid,
-                                            UseShellExecute = false,
-                                            CreateNoWindow = true
+                                            Process process3 = new Process
+                                            {
+                                                StartInfo = new ProcessStartInfo
+                                                {
+                                                    FileName = @"ipfs\ipfs.exe",
+                                                    Arguments = "pin add " + transid,
+                                                    UseShellExecute = false,
+                                                    CreateNoWindow = true
+                                                }
+                                            };
+                                            process3.Start();
                                         }
-                                    };
-                                    process3.Start();
+                                    }
+                                    catch { }
 
                                     try { Directory.Delete("ipfs/" + transid + "-build", true); } catch { }
                                     this.Invoke((Action)(() =>
@@ -886,17 +893,24 @@ namespace SUP
                                                     }
 
 
-                                                    Process process3 = new Process
+                                                    try
                                                     {
-                                                        StartInfo = new ProcessStartInfo
+                                                        if (File.Exists("IPFS_PINNING_ENABLED"))
                                                         {
-                                                            FileName = @"ipfs\ipfs.exe",
-                                                            Arguments = "pin add " + transid,
-                                                            UseShellExecute = false,
-                                                            CreateNoWindow = true
+                                                            Process process3 = new Process
+                                                            {
+                                                                StartInfo = new ProcessStartInfo
+                                                                {
+                                                                    FileName = @"ipfs\ipfs.exe",
+                                                                    Arguments = "pin add " + transid,
+                                                                    UseShellExecute = false,
+                                                                    CreateNoWindow = true
+                                                                }
+                                                            };
+                                                            process3.Start();
                                                         }
-                                                    };
-                                                    process3.Start();
+                                                    }
+                                                    catch { }
 
 
                                                 }
@@ -1239,7 +1253,7 @@ namespace SUP
                                                                                 // Create a new panel to display the metadata
                                                                                 Panel panel = new Panel();
                                                                                 panel.BorderStyle = BorderStyle.FixedSingle;
-                                                                                panel.Size = new Size(supFlow.Width - 30, 100);
+                                                                                panel.Size = new Size(supFlow.Width - 50, 100);
 
                                                                                 // Create a label for the title
                                                                                 Label titleLabel = new Label();
@@ -1247,7 +1261,7 @@ namespace SUP
                                                                                 titleLabel.Dock = DockStyle.Top;
                                                                                 titleLabel.Font = new Font("Segoe UI", 12, FontStyle.Bold);
                                                                                 titleLabel.ForeColor = Color.White;
-                                                                                titleLabel.MinimumSize = new Size(supFlow.Width - 120, 30);
+                                                                                titleLabel.MinimumSize = new Size(supFlow.Width - 150, 30);
                                                                                 titleLabel.Padding = new Padding(5);
                                                                                 titleLabel.MouseClick += (sender2, e2) => { Attachment_Clicked(content); };
                                                                                 panel.Controls.Add(titleLabel);
@@ -1296,7 +1310,7 @@ namespace SUP
                                                                             {  // Create a new panel to display the metadata
                                                                                 Panel panel = new Panel();
                                                                                 panel.BorderStyle = BorderStyle.FixedSingle;
-                                                                                panel.Size = new Size(500, 30);
+                                                                                panel.Size = new Size(supFlow.Width - 50, 30);
 
                                                                                 // Create a label for the title
                                                                                 LinkLabel titleLabel = new LinkLabel();
@@ -1305,7 +1319,7 @@ namespace SUP
                                                                                 titleLabel.Dock = DockStyle.Top;
                                                                                 titleLabel.Font = new Font("Segoe UI", 8, FontStyle.Bold);
                                                                                 titleLabel.LinkColor = System.Drawing.SystemColors.GradientActiveCaption;
-                                                                                titleLabel.MinimumSize = new Size(supFlow.Width - 120, 30);
+                                                                                titleLabel.MinimumSize = new Size(supFlow.Width - 150, 30);
                                                                                 titleLabel.Padding = new Padding(5);
                                                                                 titleLabel.MouseClick += (sender2, e2) => { Attachment_Clicked(imgurn); };
                                                                                 panel.Controls.Add(titleLabel);
@@ -1324,7 +1338,7 @@ namespace SUP
                                                                         {  // Create a new panel to display the metadata
                                                                             Panel panel = new Panel();
                                                                             panel.BorderStyle = BorderStyle.FixedSingle;
-                                                                            panel.Size = new Size(500, 30);
+                                                                            panel.Size = new Size(supFlow.Width - 50, 30);
 
                                                                             // Create a label for the title
                                                                             LinkLabel titleLabel = new LinkLabel();
@@ -1333,7 +1347,7 @@ namespace SUP
                                                                             titleLabel.Dock = DockStyle.Top;
                                                                             titleLabel.Font = new Font("Segoe UI", 8, FontStyle.Bold);
                                                                             titleLabel.LinkColor = System.Drawing.SystemColors.GradientActiveCaption;
-                                                                            titleLabel.MinimumSize = new Size(supFlow.Width - 120, 30);
+                                                                            titleLabel.MinimumSize = new Size(supFlow.Width - 150, 30);
                                                                             titleLabel.Padding = new Padding(5);
                                                                             titleLabel.MouseClick += (sender2, e2) => { Attachment_Clicked(imgurn); };
                                                                             panel.Controls.Add(titleLabel);
@@ -1391,7 +1405,7 @@ namespace SUP
 
                                                         };
 
-                                                        padding.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, supFlow.Width - 20));
+                                                        padding.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, supFlow.Width - 50));
 
                                                         this.Invoke((MethodInvoker)delegate
                                                         {
@@ -1561,7 +1575,7 @@ namespace SUP
                                                                                 // Create a new panel to display the metadata
                                                                                 Panel panel = new Panel();
                                                                                 panel.BorderStyle = BorderStyle.FixedSingle;
-                                                                                panel.Size = new Size(supFlow.Width - 30, 100);
+                                                                                panel.Size = new Size(supFlow.Width - 50, 100);
 
                                                                                 // Create a label for the title
                                                                                 Label titleLabel = new Label();
@@ -1569,7 +1583,7 @@ namespace SUP
                                                                                 titleLabel.Dock = DockStyle.Top;
                                                                                 titleLabel.Font = new Font("Segoe UI", 12, FontStyle.Bold);
                                                                                 titleLabel.ForeColor = Color.White;
-                                                                                titleLabel.MinimumSize = new Size(supFlow.Width - 120, 30);
+                                                                                titleLabel.MinimumSize = new Size(supFlow.Width - 150, 30);
                                                                                 titleLabel.Padding = new Padding(5);
                                                                                 titleLabel.MouseClick += (sender2, e2) => { Attachment_Clicked(content); };
                                                                                 panel.Controls.Add(titleLabel);
@@ -1618,7 +1632,7 @@ namespace SUP
                                                                             {  // Create a new panel to display the metadata
                                                                                 Panel panel = new Panel();
                                                                                 panel.BorderStyle = BorderStyle.FixedSingle;
-                                                                                panel.Size = new Size(supFlow.Width - 20, 30);
+                                                                                panel.Size = new Size(supFlow.Width - 50, 30);
 
                                                                                 // Create a label for the title
                                                                                 LinkLabel titleLabel = new LinkLabel();
@@ -1627,7 +1641,7 @@ namespace SUP
                                                                                 titleLabel.Dock = DockStyle.Top;
                                                                                 titleLabel.Font = new Font("Segoe UI", 8, FontStyle.Bold);
                                                                                 titleLabel.LinkColor = System.Drawing.SystemColors.GradientActiveCaption;
-                                                                                titleLabel.MinimumSize = new Size(supFlow.Width - 120, 30);
+                                                                                titleLabel.MinimumSize = new Size(supFlow.Width - 150, 30);
                                                                                 titleLabel.Padding = new Padding(5);
                                                                                 titleLabel.MouseClick += (sender2, e2) => { Attachment_Clicked(imgurn); };
                                                                                 panel.Controls.Add(titleLabel);
@@ -1646,7 +1660,7 @@ namespace SUP
                                                                         {  // Create a new panel to display the metadata
                                                                             Panel panel = new Panel();
                                                                             panel.BorderStyle = BorderStyle.FixedSingle;
-                                                                            panel.Size = new Size(supFlow.Width - 20, 30);
+                                                                            panel.Size = new Size(supFlow.Width - 50, 30);
 
                                                                             // Create a label for the title
                                                                             LinkLabel titleLabel = new LinkLabel();
@@ -1655,7 +1669,7 @@ namespace SUP
                                                                             titleLabel.Dock = DockStyle.Top;
                                                                             titleLabel.Font = new Font("Segoe UI", 8, FontStyle.Bold);
                                                                             titleLabel.LinkColor = System.Drawing.SystemColors.GradientActiveCaption;
-                                                                            titleLabel.MinimumSize = new Size(supFlow.Width - 120, 30);
+                                                                            titleLabel.MinimumSize = new Size(supFlow.Width - 150, 30);
                                                                             titleLabel.Padding = new Padding(5);
                                                                             titleLabel.MouseClick += (sender2, e2) => { Attachment_Clicked(imgurn); };
                                                                             panel.Controls.Add(titleLabel);
@@ -1711,7 +1725,7 @@ namespace SUP
 
                                                         };
 
-                                                        padding.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, supFlow.Width - 20));
+                                                        padding.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, supFlow.Width - 50));
 
                                                         this.Invoke((MethodInvoker)delegate
                                                         {
@@ -1879,7 +1893,7 @@ namespace SUP
                                                                                 titleLabel.Dock = DockStyle.Top;
                                                                                 titleLabel.Font = new Font("Segoe UI", 12, FontStyle.Bold);
                                                                                 titleLabel.ForeColor = Color.White;
-                                                                                titleLabel.MinimumSize = new Size(supFlow.Width - 120, 30);
+                                                                                titleLabel.MinimumSize = new Size(supFlow.Width - 150, 30);
                                                                                 titleLabel.Padding = new Padding(5);
                                                                                 titleLabel.MouseClick += (sender2, e2) => { Attachment_Clicked(content); };
                                                                                 panel.Controls.Add(titleLabel);
@@ -1928,7 +1942,7 @@ namespace SUP
                                                                             {  // Create a new panel to display the metadata
                                                                                 Panel panel = new Panel();
                                                                                 panel.BorderStyle = BorderStyle.FixedSingle;
-                                                                                panel.Size = new Size(supFlow.Width - 20, 30);
+                                                                                panel.Size = new Size(supFlow.Width - 50, 30);
 
                                                                                 // Create a label for the title
                                                                                 LinkLabel titleLabel = new LinkLabel();
@@ -1937,7 +1951,7 @@ namespace SUP
                                                                                 titleLabel.Dock = DockStyle.Top;
                                                                                 titleLabel.Font = new Font("Segoe UI", 8, FontStyle.Bold);
                                                                                 titleLabel.LinkColor = System.Drawing.SystemColors.GradientActiveCaption;
-                                                                                titleLabel.MinimumSize = new Size(supFlow.Width - 120, 30);
+                                                                                titleLabel.MinimumSize = new Size(supFlow.Width - 150, 30);
                                                                                 titleLabel.Padding = new Padding(5);
                                                                                 titleLabel.MouseClick += (sender2, e2) => { Attachment_Clicked(imgurn); };
                                                                                 panel.Controls.Add(titleLabel);
@@ -1956,7 +1970,7 @@ namespace SUP
                                                                         {  // Create a new panel to display the metadata
                                                                             Panel panel = new Panel();
                                                                             panel.BorderStyle = BorderStyle.FixedSingle;
-                                                                            panel.Size = new Size(supFlow.Width - 20, 30);
+                                                                            panel.Size = new Size(supFlow.Width - 50, 30);
 
                                                                             // Create a label for the title
                                                                             LinkLabel titleLabel = new LinkLabel();
@@ -1965,7 +1979,7 @@ namespace SUP
                                                                             titleLabel.Dock = DockStyle.Top;
                                                                             titleLabel.Font = new Font("Segoe UI", 8, FontStyle.Bold);
                                                                             titleLabel.LinkColor = System.Drawing.SystemColors.GradientActiveCaption;
-                                                                            titleLabel.MinimumSize = new Size(supFlow.Width - 120, 30);
+                                                                            titleLabel.MinimumSize = new Size(supFlow.Width - 150, 30);
                                                                             titleLabel.Padding = new Padding(5);
                                                                             titleLabel.MouseClick += (sender2, e2) => { Attachment_Clicked(imgurn); };
                                                                             panel.Controls.Add(titleLabel);
@@ -2021,7 +2035,7 @@ namespace SUP
 
                                                         };
 
-                                                        padding.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, supFlow.Width - 20));
+                                                        padding.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, supFlow.Width - 50));
 
                                                         this.Invoke((MethodInvoker)delegate
                                                         {
@@ -2180,7 +2194,7 @@ namespace SUP
                                                                                 // Create a new panel to display the metadata
                                                                                 Panel panel = new Panel();
                                                                                 panel.BorderStyle = BorderStyle.FixedSingle;
-                                                                                panel.Size = new Size(supFlow.Width - 30, 100);
+                                                                                panel.Size = new Size(supFlow.Width - 50, 100);
 
                                                                                 // Create a label for the title
                                                                                 Label titleLabel = new Label();
@@ -2188,7 +2202,7 @@ namespace SUP
                                                                                 titleLabel.Dock = DockStyle.Top;
                                                                                 titleLabel.Font = new Font("Segoe UI", 12, FontStyle.Bold);
                                                                                 titleLabel.ForeColor = Color.White;
-                                                                                titleLabel.MinimumSize = new Size(supFlow.Width - 120, 30);
+                                                                                titleLabel.MinimumSize = new Size(supFlow.Width - 150, 30);
                                                                                 titleLabel.Padding = new Padding(5);
                                                                                 titleLabel.MouseClick += (sender2, e2) => { Attachment_Clicked(content); };
                                                                                 panel.Controls.Add(titleLabel);
@@ -2237,7 +2251,7 @@ namespace SUP
                                                                             {  // Create a new panel to display the metadata
                                                                                 Panel panel = new Panel();
                                                                                 panel.BorderStyle = BorderStyle.FixedSingle;
-                                                                                panel.Size = new Size(supFlow.Width - 20, 30);
+                                                                                panel.Size = new Size(supFlow.Width - 50, 30);
 
                                                                                 // Create a label for the title
                                                                                 LinkLabel titleLabel = new LinkLabel();
@@ -2246,7 +2260,7 @@ namespace SUP
                                                                                 titleLabel.Dock = DockStyle.Top;
                                                                                 titleLabel.Font = new Font("Segoe UI", 8, FontStyle.Bold);
                                                                                 titleLabel.LinkColor = System.Drawing.SystemColors.GradientActiveCaption;
-                                                                                titleLabel.MinimumSize = new Size(supFlow.Width - 120, 30);
+                                                                                titleLabel.MinimumSize = new Size(supFlow.Width - 150, 30);
                                                                                 titleLabel.Padding = new Padding(5);
                                                                                 titleLabel.MouseClick += (sender2, e2) => { Attachment_Clicked(imgurn); };
                                                                                 panel.Controls.Add(titleLabel);
@@ -2265,7 +2279,7 @@ namespace SUP
                                                                         {  // Create a new panel to display the metadata
                                                                             Panel panel = new Panel();
                                                                             panel.BorderStyle = BorderStyle.FixedSingle;
-                                                                            panel.Size = new Size(supFlow.Width - 20, 30);
+                                                                            panel.Size = new Size(supFlow.Width - 50, 30);
 
                                                                             // Create a label for the title
                                                                             LinkLabel titleLabel = new LinkLabel();
@@ -2274,7 +2288,7 @@ namespace SUP
                                                                             titleLabel.Dock = DockStyle.Top;
                                                                             titleLabel.Font = new Font("Segoe UI", 8, FontStyle.Bold);
                                                                             titleLabel.LinkColor = System.Drawing.SystemColors.GradientActiveCaption;
-                                                                            titleLabel.MinimumSize = new Size(supFlow.Width - 120, 30);
+                                                                            titleLabel.MinimumSize = new Size(supFlow.Width - 150, 30);
                                                                             titleLabel.Padding = new Padding(5);
                                                                             titleLabel.MouseClick += (sender2, e2) => { Attachment_Clicked(imgurn); };
                                                                             panel.Controls.Add(titleLabel);
@@ -2330,7 +2344,7 @@ namespace SUP
 
                                                         };
 
-                                                        padding.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, supFlow.Width - 20));
+                                                        padding.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, supFlow.Width - 50));
 
                                                         this.Invoke((MethodInvoker)delegate
                                                         {
@@ -2491,7 +2505,7 @@ namespace SUP
                                                                                 // Create a new panel to display the metadata
                                                                                 Panel panel = new Panel();
                                                                                 panel.BorderStyle = BorderStyle.FixedSingle;
-                                                                                panel.Size = new Size(supFlow.Width - 30, 100);
+                                                                                panel.Size = new Size(supFlow.Width - 50, 100);
 
                                                                                 // Create a label for the title
                                                                                 Label titleLabel = new Label();
@@ -2499,7 +2513,7 @@ namespace SUP
                                                                                 titleLabel.Dock = DockStyle.Top;
                                                                                 titleLabel.Font = new Font("Segoe UI", 12, FontStyle.Bold);
                                                                                 titleLabel.ForeColor = Color.White;
-                                                                                titleLabel.MinimumSize = new Size(supFlow.Width - 120, 30);
+                                                                                titleLabel.MinimumSize = new Size(supFlow.Width - 150, 30);
                                                                                 titleLabel.Padding = new Padding(5);
                                                                                 titleLabel.MouseClick += (sender2, e2) => { Attachment_Clicked(content); };
                                                                                 panel.Controls.Add(titleLabel);
@@ -2548,7 +2562,7 @@ namespace SUP
                                                                             {  // Create a new panel to display the metadata
                                                                                 Panel panel = new Panel();
                                                                                 panel.BorderStyle = BorderStyle.FixedSingle;
-                                                                                panel.Size = new Size(supFlow.Width - 20, 30);
+                                                                                panel.Size = new Size(supFlow.Width - 50, 30);
 
                                                                                 // Create a label for the title
                                                                                 LinkLabel titleLabel = new LinkLabel();
@@ -2557,7 +2571,7 @@ namespace SUP
                                                                                 titleLabel.Dock = DockStyle.Top;
                                                                                 titleLabel.Font = new Font("Segoe UI", 8, FontStyle.Bold);
                                                                                 titleLabel.LinkColor = System.Drawing.SystemColors.GradientActiveCaption;
-                                                                                titleLabel.MinimumSize = new Size(supFlow.Width - 120, 30);
+                                                                                titleLabel.MinimumSize = new Size(supFlow.Width - 150, 30);
                                                                                 titleLabel.Padding = new Padding(5);
                                                                                 titleLabel.MouseClick += (sender2, e2) => { Attachment_Clicked(imgurn); };
                                                                                 panel.Controls.Add(titleLabel);
@@ -2576,7 +2590,7 @@ namespace SUP
                                                                         {  // Create a new panel to display the metadata
                                                                             Panel panel = new Panel();
                                                                             panel.BorderStyle = BorderStyle.FixedSingle;
-                                                                            panel.Size = new Size(supFlow.Width - 20, 30);
+                                                                            panel.Size = new Size(supFlow.Width - 50, 30);
 
                                                                             // Create a label for the title
                                                                             LinkLabel titleLabel = new LinkLabel();
@@ -2585,7 +2599,7 @@ namespace SUP
                                                                             titleLabel.Dock = DockStyle.Top;
                                                                             titleLabel.Font = new Font("Segoe UI", 8, FontStyle.Bold);
                                                                             titleLabel.LinkColor = System.Drawing.SystemColors.GradientActiveCaption;
-                                                                            titleLabel.MinimumSize = new Size(supFlow.Width - 120, 30);
+                                                                            titleLabel.MinimumSize = new Size(supFlow.Width - 150, 30);
                                                                             titleLabel.Padding = new Padding(5);
                                                                             titleLabel.MouseClick += (sender2, e2) => { Attachment_Clicked(imgurn); };
                                                                             panel.Controls.Add(titleLabel);
@@ -2641,7 +2655,7 @@ namespace SUP
 
                                                         };
 
-                                                        padding.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, supFlow.Width - 20));
+                                                        padding.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, supFlow.Width - 50));
 
                                                         this.Invoke((MethodInvoker)delegate
                                                         {
@@ -2909,17 +2923,24 @@ namespace SUP
                                                                                 System.IO.File.Move("ipfs/" + transid + "/" + transid, fromImage);
                                                                             }
 
-                                                                            Process process3 = new Process
+                                                                            try
                                                                             {
-                                                                                StartInfo = new ProcessStartInfo
+                                                                                if (File.Exists("IPFS_PINNING_ENABLED"))
                                                                                 {
-                                                                                    FileName = @"ipfs\ipfs.exe",
-                                                                                    Arguments = "pin add " + transid,
-                                                                                    UseShellExecute = false,
-                                                                                    CreateNoWindow = true
+                                                                                    Process process3 = new Process
+                                                                                    {
+                                                                                        StartInfo = new ProcessStartInfo
+                                                                                        {
+                                                                                            FileName = @"ipfs\ipfs.exe",
+                                                                                            Arguments = "pin add " + transid,
+                                                                                            UseShellExecute = false,
+                                                                                            CreateNoWindow = true
+                                                                                        }
+                                                                                    };
+                                                                                    process3.Start();
                                                                                 }
-                                                                            };
-                                                                            process3.Start();
+                                                                            }
+                                                                            catch { }
 
                                                                             try { Directory.Delete("ipfs/" + transid + "-build", true); } catch { }
                                                                         }
@@ -2956,17 +2977,24 @@ namespace SUP
                                                                                         System.IO.File.Move("ipfs/" + transid + "/" + transid, fromImage);
                                                                                     }
 
-                                                                                    Process process3 = new Process
+                                                                                    try
                                                                                     {
-                                                                                        StartInfo = new ProcessStartInfo
+                                                                                        if (File.Exists("IPFS_PINNING_ENABLED"))
                                                                                         {
-                                                                                            FileName = @"ipfs\ipfs.exe",
-                                                                                            Arguments = "pin add " + transid,
-                                                                                            UseShellExecute = false,
-                                                                                            CreateNoWindow = true
+                                                                                            Process process3 = new Process
+                                                                                            {
+                                                                                                StartInfo = new ProcessStartInfo
+                                                                                                {
+                                                                                                    FileName = @"ipfs\ipfs.exe",
+                                                                                                    Arguments = "pin add " + transid,
+                                                                                                    UseShellExecute = false,
+                                                                                                    CreateNoWindow = true
+                                                                                                }
+                                                                                            };
+                                                                                            process3.Start();
                                                                                         }
-                                                                                    };
-                                                                                    process3.Start();
+                                                                                    }
+                                                                                    catch { }
 
                                                                                     try { Directory.Delete("ipfs/" + transid + "-build", true); } catch { }
 
@@ -3106,17 +3134,24 @@ namespace SUP
                                                                                 System.IO.File.Move("ipfs/" + transid + "/" + transid, toImage);
                                                                             }
 
-                                                                            Process process3 = new Process
+                                                                            try
                                                                             {
-                                                                                StartInfo = new ProcessStartInfo
+                                                                                if (File.Exists("IPFS_PINNING_ENABLED"))
                                                                                 {
-                                                                                    FileName = @"ipfs\ipfs.exe",
-                                                                                    Arguments = "pin add " + transid,
-                                                                                    UseShellExecute = false,
-                                                                                    CreateNoWindow = true
+                                                                                    Process process3 = new Process
+                                                                                    {
+                                                                                        StartInfo = new ProcessStartInfo
+                                                                                        {
+                                                                                            FileName = @"ipfs\ipfs.exe",
+                                                                                            Arguments = "pin add " + transid,
+                                                                                            UseShellExecute = false,
+                                                                                            CreateNoWindow = true
+                                                                                        }
+                                                                                    };
+                                                                                    process3.Start();
                                                                                 }
-                                                                            };
-                                                                            process3.Start();
+                                                                            }
+                                                                            catch { }
 
                                                                             try { Directory.Delete("ipfs/" + transid + "-build", true); } catch { }
                                                                         }
@@ -3153,17 +3188,24 @@ namespace SUP
                                                                                         System.IO.File.Move("ipfs/" + transid + "/" + transid, toImage);
                                                                                     }
 
-                                                                                    Process process3 = new Process
+                                                                                    try
                                                                                     {
-                                                                                        StartInfo = new ProcessStartInfo
+                                                                                        if (File.Exists("IPFS_PINNING_ENABLED"))
                                                                                         {
-                                                                                            FileName = @"ipfs\ipfs.exe",
-                                                                                            Arguments = "pin add " + transid,
-                                                                                            UseShellExecute = false,
-                                                                                            CreateNoWindow = true
+                                                                                            Process process3 = new Process
+                                                                                            {
+                                                                                                StartInfo = new ProcessStartInfo
+                                                                                                {
+                                                                                                    FileName = @"ipfs\ipfs.exe",
+                                                                                                    Arguments = "pin add " + transid,
+                                                                                                    UseShellExecute = false,
+                                                                                                    CreateNoWindow = true
+                                                                                                }
+                                                                                            };
+                                                                                            process3.Start();
                                                                                         }
-                                                                                    };
-                                                                                    process3.Start();
+                                                                                    }
+                                                                                    catch { }
 
                                                                                     try { Directory.Delete("ipfs/" + transid + "-build", true); } catch { }
 
@@ -3277,7 +3319,7 @@ namespace SUP
                                                                 // Create a new panel to display the metadata
                                                                 Panel panel = new Panel();
                                                                 panel.BorderStyle = BorderStyle.FixedSingle;
-                                                                panel.Size = new Size(supFlow.Width - 30, 100);
+                                                                panel.Size = new Size(supFlow.Width - 50, 100);
 
                                                                 // Create a label for the title
                                                                 Label titleLabel = new Label();
@@ -3285,7 +3327,7 @@ namespace SUP
                                                                 titleLabel.Dock = DockStyle.Top;
                                                                 titleLabel.Font = new Font("Segoe UI", 12, FontStyle.Bold);
                                                                 titleLabel.ForeColor = Color.White;
-                                                                titleLabel.MinimumSize = new Size(supFlow.Width - 130, 30);
+                                                                titleLabel.MinimumSize = new Size(supFlow.Width - 150, 30);
                                                                 titleLabel.Padding = new Padding(5);
                                                                 titleLabel.MouseClick += (sender, e) => { Attachment_Clicked(content); };
                                                                 panel.Controls.Add(titleLabel);
@@ -3333,7 +3375,7 @@ namespace SUP
                                                                 // Create a new panel to display the metadata
                                                                 Panel panel = new Panel();
                                                                 panel.BorderStyle = BorderStyle.FixedSingle;
-                                                                panel.Size = new Size(500, 30);
+                                                                panel.Size = new Size(supFlow.Width - 50, 30);
 
                                                                 // Create a label for the title
                                                                 LinkLabel titleLabel = new LinkLabel();
@@ -3342,7 +3384,7 @@ namespace SUP
                                                                 titleLabel.Dock = DockStyle.Top;
                                                                 titleLabel.Font = new Font("Segoe UI", 8, FontStyle.Bold);
                                                                 titleLabel.LinkColor = System.Drawing.SystemColors.GradientActiveCaption;
-                                                                titleLabel.MinimumSize = new Size(supFlow.Width - 130, 30);
+                                                                titleLabel.MinimumSize = new Size(supFlow.Width - 150, 30);
                                                                 titleLabel.Padding = new Padding(5);
                                                                 titleLabel.MouseClick += (sender, e) => { Attachment_Clicked(content); };
                                                                 panel.Controls.Add(titleLabel);
@@ -3360,7 +3402,7 @@ namespace SUP
                                                             // Create a new panel to display the metadata
                                                             Panel panel = new Panel();
                                                             panel.BorderStyle = BorderStyle.FixedSingle;
-                                                            panel.Size = new Size(500, 30);
+                                                            panel.Size = new Size(supFlow.Width - 50, 30);
 
                                                             // Create a label for the title
                                                             LinkLabel titleLabel = new LinkLabel();
@@ -3369,7 +3411,7 @@ namespace SUP
                                                             titleLabel.Dock = DockStyle.Top;
                                                             titleLabel.Font = new Font("Segoe UI", 8, FontStyle.Bold);
                                                             titleLabel.LinkColor = System.Drawing.SystemColors.GradientActiveCaption;
-                                                            titleLabel.MinimumSize = new Size(supFlow.Width - 130, 30);
+                                                            titleLabel.MinimumSize = new Size(supFlow.Width - 150, 30);
                                                             titleLabel.Padding = new Padding(5);
                                                             titleLabel.MouseClick += (sender, e) => { Attachment_Clicked(content); };
                                                             panel.Controls.Add(titleLabel);
@@ -3423,7 +3465,7 @@ namespace SUP
 
                                             };
 
-                                            padding.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, supFlow.Width - 20));
+                                            padding.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, supFlow.Width - 50));
                                             this.Invoke((MethodInvoker)delegate
                                             {
                                                 supFlow.Controls.Add(padding);
@@ -3599,7 +3641,7 @@ namespace SUP
                                                                     process2.StartInfo.UseShellExecute = false;
                                                                     process2.StartInfo.CreateNoWindow = true;
                                                                     process2.Start();
-                                                                    if (process2.WaitForExit(55000))
+                                                                    if (process2.WaitForExit(5000))
                                                                     {
                                                                         string fileName;
                                                                         if (System.IO.File.Exists("ipfs/" + transid))
@@ -3620,17 +3662,24 @@ namespace SUP
                                                                             System.IO.File.Move("ipfs/" + transid + "/" + transid, imagelocation);
                                                                         }
 
-                                                                        Process process3 = new Process
+                                                                        try
                                                                         {
-                                                                            StartInfo = new ProcessStartInfo
+                                                                            if (File.Exists("IPFS_PINNING_ENABLED"))
                                                                             {
-                                                                                FileName = @"ipfs\ipfs.exe",
-                                                                                Arguments = "pin add " + transid,
-                                                                                UseShellExecute = false,
-                                                                                CreateNoWindow = true
+                                                                                Process process3 = new Process
+                                                                                {
+                                                                                    StartInfo = new ProcessStartInfo
+                                                                                    {
+                                                                                        FileName = @"ipfs\ipfs.exe",
+                                                                                        Arguments = "pin add " + transid,
+                                                                                        UseShellExecute = false,
+                                                                                        CreateNoWindow = true
+                                                                                    }
+                                                                                };
+                                                                                process3.Start();
                                                                             }
-                                                                        };
-                                                                        process3.Start();
+                                                                        }
+                                                                        catch { }
 
                                                                         try { Directory.Delete("ipfs/" + transid + "-build", true); } catch { }
                                                                     }
@@ -3667,17 +3716,24 @@ namespace SUP
                                                                                     System.IO.File.Move("ipfs/" + transid + "/" + transid, imagelocation);
                                                                                 }
 
-                                                                                Process process3 = new Process
+                                                                                try
                                                                                 {
-                                                                                    StartInfo = new ProcessStartInfo
+                                                                                    if (File.Exists("IPFS_PINNING_ENABLED"))
                                                                                     {
-                                                                                        FileName = @"ipfs\ipfs.exe",
-                                                                                        Arguments = "pin add " + transid,
-                                                                                        UseShellExecute = false,
-                                                                                        CreateNoWindow = true
+                                                                                        Process process3 = new Process
+                                                                                        {
+                                                                                            StartInfo = new ProcessStartInfo
+                                                                                            {
+                                                                                                FileName = @"ipfs\ipfs.exe",
+                                                                                                Arguments = "pin add " + transid,
+                                                                                                UseShellExecute = false,
+                                                                                                CreateNoWindow = true
+                                                                                            }
+                                                                                        };
+                                                                                        process3.Start();
                                                                                     }
-                                                                                };
-                                                                                process3.Start();
+                                                                                }
+                                                                                catch { }
 
                                                                                 try { Directory.Delete("ipfs/" + transid + "-build", true); } catch { }
 
@@ -3775,7 +3831,7 @@ namespace SUP
                                                         process2.StartInfo.UseShellExecute = false;
                                                         process2.StartInfo.CreateNoWindow = true;
                                                         process2.Start();
-                                                        if (process2.WaitForExit(55000))
+                                                        if (process2.WaitForExit(5000))
                                                         {
                                                             string fileName;
                                                             if (System.IO.File.Exists("root/" + transid))
@@ -3797,17 +3853,24 @@ namespace SUP
                                                                 catch { }
                                                             }
 
-                                                            Process process3 = new Process
+                                                            try
                                                             {
-                                                                StartInfo = new ProcessStartInfo
+                                                                if (File.Exists("IPFS_PINNING_ENABLED"))
                                                                 {
-                                                                    FileName = @"ipfs\ipfs.exe",
-                                                                    Arguments = "pin add " + transid,
-                                                                    UseShellExecute = false,
-                                                                    CreateNoWindow = true
+                                                                    Process process3 = new Process
+                                                                    {
+                                                                        StartInfo = new ProcessStartInfo
+                                                                        {
+                                                                            FileName = @"ipfs\ipfs.exe",
+                                                                            Arguments = "pin add " + transid,
+                                                                            UseShellExecute = false,
+                                                                            CreateNoWindow = true
+                                                                        }
+                                                                    };
+                                                                    process3.Start();
                                                                 }
-                                                            };
-                                                            process3.Start();
+                                                            }
+                                                            catch { }
 
                                                             try { Directory.Delete("root/" + transid + "-build", true); } catch { }
                                                         }
@@ -3845,17 +3908,24 @@ namespace SUP
                                                                         catch { }
                                                                     }
 
-                                                                    Process process3 = new Process
+                                                                    try
                                                                     {
-                                                                        StartInfo = new ProcessStartInfo
+                                                                        if (File.Exists("IPFS_PINNING_ENABLED"))
                                                                         {
-                                                                            FileName = @"ipfs\ipfs.exe",
-                                                                            Arguments = "pin add " + transid,
-                                                                            UseShellExecute = false,
-                                                                            CreateNoWindow = true
+                                                                            Process process3 = new Process
+                                                                            {
+                                                                                StartInfo = new ProcessStartInfo
+                                                                                {
+                                                                                    FileName = @"ipfs\ipfs.exe",
+                                                                                    Arguments = "pin add " + transid,
+                                                                                    UseShellExecute = false,
+                                                                                    CreateNoWindow = true
+                                                                                }
+                                                                            };
+                                                                            process3.Start();
                                                                         }
-                                                                    };
-                                                                    process3.Start();
+                                                                    }
+                                                                    catch { }
 
                                                                     try { Directory.Delete("root/" + transid + "-build", true); } catch { }
 
@@ -3889,7 +3959,7 @@ namespace SUP
                                                             // Create a new panel to display the metadata
                                                             Panel panel = new Panel();
                                                             panel.BorderStyle = BorderStyle.FixedSingle;
-                                                            panel.MinimumSize = new Size(supPrivateFlow.Width - 30, 30);
+                                                            panel.MinimumSize = new Size(supPrivateFlow.Width - 50, 30);
                                                             panel.AutoSize = true;
                                                             // Create a label for the title
                                                             LinkLabel titleLabel = new LinkLabel();
@@ -3962,7 +4032,7 @@ namespace SUP
                                                             // Create a new panel to display the metadata
                                                             Panel panel = new Panel();
                                                             panel.BorderStyle = BorderStyle.FixedSingle;
-                                                            panel.Size = new Size(supPrivateFlow.Width - 30, 100);
+                                                            panel.Size = new Size(supPrivateFlow.Width - 50, 100);
 
 
                                                             // Create a label for the title
@@ -3971,7 +4041,7 @@ namespace SUP
                                                             titleLabel.Dock = DockStyle.Top;
                                                             titleLabel.Font = new Font("Segoe UI", 12, FontStyle.Bold);
                                                             titleLabel.ForeColor = Color.White;
-                                                            titleLabel.MinimumSize = new Size(supPrivateFlow.Width - 130, 30);
+                                                            titleLabel.MinimumSize = new Size(supPrivateFlow.Width - 150, 30);
                                                             titleLabel.Padding = new Padding(5);
                                                             titleLabel.MouseClick += (sender, e) => { Attachment_Clicked(content); };
                                                             panel.Controls.Add(titleLabel);
@@ -4018,7 +4088,7 @@ namespace SUP
                                                             // Create a new panel to display the metadata
                                                             Panel panel = new Panel();
                                                             panel.BorderStyle = BorderStyle.FixedSingle;
-                                                            panel.MinimumSize = new Size(500, 30);
+                                                            panel.MinimumSize = new Size(supPrivateFlow.Width - 50, 30);
                                                             panel.AutoSize = true;
                                                             // Create a label for the title
                                                             LinkLabel titleLabel = new LinkLabel();
@@ -4093,11 +4163,6 @@ namespace SUP
                             catch { }
                             rownum++;
 
-                            //this.Invoke((MethodInvoker)delegate
-                            //{
-                            //    supPrivateFlow.ResumeLayout();
-                            //});
-
 
                         }
 
@@ -4144,14 +4209,16 @@ namespace SUP
 
                 };
 
-                msg.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 520));
 
                 if (isprivate)
                 {
+                    msg.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, supPrivateFlow.Width - 50));
+
                     supPrivateFlow.Controls.Add(msg);
                 }
                 else
                 {
+                    msg.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, supFlow.Width - 50));
 
 
 
@@ -4174,8 +4241,19 @@ namespace SUP
                 // Set the PictureBox properties
 
                 pictureBox.SizeMode = PictureBoxSizeMode.Zoom;
-                pictureBox.Width = 500;
-                pictureBox.Height = 500;
+
+                if (isprivate)
+                {
+                    pictureBox.Width = supPrivateFlow.Width - 50;
+                    pictureBox.Height = supPrivateFlow.Width - 50;
+                }
+                else
+                {
+
+                    pictureBox.Width = supFlow.Width - 50;
+                    pictureBox.Height = supFlow.Width - 50;
+                }
+
                 pictureBox.BackColor = Color.Black;
                 pictureBox.ImageLocation = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + @"\includes\progress.gif";
                 msg.Controls.Add(pictureBox);
@@ -4258,17 +4336,24 @@ namespace SUP
                                                 System.IO.File.Move("ipfs/" + transid + "/" + transid, imagelocation);
                                             }
 
-                                            Process process3 = new Process
+                                            try
                                             {
-                                                StartInfo = new ProcessStartInfo
+                                                if (File.Exists("IPFS_PINNING_ENABLED"))
                                                 {
-                                                    FileName = @"ipfs\ipfs.exe",
-                                                    Arguments = "pin add " + transid,
-                                                    UseShellExecute = false,
-                                                    CreateNoWindow = true
+                                                    Process process3 = new Process
+                                                    {
+                                                        StartInfo = new ProcessStartInfo
+                                                        {
+                                                            FileName = @"ipfs\ipfs.exe",
+                                                            Arguments = "pin add " + transid,
+                                                            UseShellExecute = false,
+                                                            CreateNoWindow = true
+                                                        }
+                                                    };
+                                                    process3.Start();
                                                 }
-                                            };
-                                            process3.Start();
+                                            }
+                                            catch { }
 
                                             try { Directory.Delete("ipfs/" + transid + "-build", true); } catch { }
                                         }
@@ -4396,13 +4481,25 @@ namespace SUP
 
                 if (videolocation.ToLower().EndsWith(".wav") || videolocation.ToLower().EndsWith(".mp3"))
                 {
-                    webviewer.Size = new System.Drawing.Size(500, 200);
-
+                    if (isprivate)
+                    {
+                        webviewer.Size = new System.Drawing.Size(supPrivateFlow.Width - 50, supPrivateFlow.Width - 250);
+                    }
+                    else
+                    {
+                        webviewer.Size = new System.Drawing.Size(supFlow.Width - 50, supFlow.Width - 250);
+                    }
                 }
                 else
                 {
-                    webviewer.Size = new System.Drawing.Size(500, 400);
-
+                    if (isprivate)
+                    {
+                        webviewer.Size = new System.Drawing.Size(supPrivateFlow.Width - 50, supPrivateFlow.Width - 150);
+                    }
+                    else
+                    {
+                        webviewer.Size = new System.Drawing.Size(supFlow.Width - 50, supFlow.Width - 150);
+                    }
                 }
                 webviewer.ZoomFactor = 1D;
                 webviewers.Add(webviewer);
@@ -4421,17 +4518,21 @@ namespace SUP
 
                 };
 
-                msg.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 520));
+
+
+
+
 
                 if (isprivate)
                 {
-
+                    msg.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, supPrivateFlow.Width - 50));
                     supPrivateFlow.Controls.Add(msg);
 
 
                 }
                 else
                 {
+                    msg.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, supFlow.Width - 50));
 
                     if (addtoTop)
                     {
@@ -4537,18 +4638,24 @@ namespace SUP
                                                 System.IO.File.Move("ipfs/" + transid + "/" + transid, videolocation);
                                             }
 
-                                            Process process3 = new Process
+                                            try
                                             {
-                                                StartInfo = new ProcessStartInfo
+                                                if (File.Exists("IPFS_PINNING_ENABLED"))
                                                 {
-                                                    FileName = @"ipfs\ipfs.exe",
-                                                    Arguments = "pin add " + transid,
-                                                    UseShellExecute = false,
-                                                    CreateNoWindow = true
+                                                    Process process3 = new Process
+                                                    {
+                                                        StartInfo = new ProcessStartInfo
+                                                        {
+                                                            FileName = @"ipfs\ipfs.exe",
+                                                            Arguments = "pin add " + transid,
+                                                            UseShellExecute = false,
+                                                            CreateNoWindow = true
+                                                        }
+                                                    };
+                                                    process3.Start();
                                                 }
-                                            };
-                                            process3.Start();
-
+                                            }
+                                            catch { }
                                             try { Directory.Delete("ipfs/" + transid + "-build", true); } catch { }
                                         }
                                         else { process2.Kill(); }
@@ -4571,9 +4678,6 @@ namespace SUP
                             if (File.Exists(videolocation))
                             {
                                         
-
-
-
 
                                 this.Invoke((Action)(() =>
                                 {
@@ -4768,7 +4872,7 @@ namespace SUP
                     CellBorderStyle = TableLayoutPanelCellBorderStyle.None
 
                 };
-                msg.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, layoutPanel.Width - 20));
+                msg.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, layoutPanel.Width - 50));
 
 
                 layoutPanel.Controls.Add(msg);
@@ -4942,7 +5046,7 @@ namespace SUP
                 CellBorderStyle = TableLayoutPanelCellBorderStyle.None
 
             };
-            msg.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, layoutPanel.Width - 20));
+            msg.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, layoutPanel.Width - 50));
 
             if (addtoTop)
                 {

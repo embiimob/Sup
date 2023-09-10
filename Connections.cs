@@ -83,6 +83,11 @@ namespace SUP
 
 
 
+            if (File.Exists(@"IPFS_PINNING_ENABLED"))
+            {
+                checkBox8.Checked = true;
+
+            }
 
             if (File.Exists(@"WALKIE_TALKIE_ENABLED"))
             {
@@ -679,6 +684,25 @@ namespace SUP
         private void panel1_Paint(object sender, PaintEventArgs e)
         {
 
+        }
+
+        private void checkBox8_CheckedChanged(object sender, EventArgs e)
+        {
+            if (checkBox8.Checked)
+            {
+
+                using (FileStream fs = File.Create(@"IPFS_PINNING_ENABLED"))
+                {
+
+                }
+
+            }
+            else
+            {
+                try { File.Delete(@"IPFS_PINNING_ENABLED"); } catch { }
+
+
+            }
         }
     }
 }
