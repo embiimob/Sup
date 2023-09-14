@@ -20,7 +20,7 @@ namespace SUP
         {
 
             Form parentForm = this.FindForm();
-            ObjectDetails childForm = new ObjectDetails(ObjectAddress.Text);
+            ObjectBrowser childForm = new ObjectBrowser(ObjectAddress.Text);
             
             childForm.Owner = parentForm;
           
@@ -35,13 +35,6 @@ namespace SUP
             Clipboard.SetText(ObjectAddress.Text);
         }
 
-        private void btnOfficial_Click(object sender, EventArgs e)
-        {
-            Form parentForm = this.FindForm();
-            ObjectDetails childForm = new ObjectDetails(txtOfficialURN.Text);
-            childForm.Owner = parentForm;
-            childForm.Show();
-        }
 
         private void lblTrash_Click(object sender, EventArgs e)
         {
@@ -117,7 +110,7 @@ namespace SUP
 
                         foreach (string key in rootItem.Keyword.Keys)
                         {
-                            try { File.Delete(@"root\" + key + @"\GetObjectsByAddress.json"); }catch { }
+                            try { File.Delete(@"root\" + key + @"\GetObjectsCollectionsByAddress.json"); }catch { }
                         }
 
                     }
@@ -125,28 +118,7 @@ namespace SUP
                     try
                     {
 
-                        string diskpath = "root\\" + ObjectAddress.Text + "\\";
-
-                        // fetch current JSONOBJ from disk if it exists
-                        try
-                        {
-                            string JSONOBJ = System.IO.File.ReadAllText(diskpath + "OBJ.json");
-                            OBJState objectState = JsonConvert.DeserializeObject<OBJState>(JSONOBJ);
-
-                                if (objectState.URN != null)
-                                {
-                                    try { Directory.Delete(@"root\" + GetTransactionId(objectState.URN), true); } catch { }
-                                    try { Directory.Delete(@"ipfs\" + GetTransactionId(objectState.URN), true); } catch { }
-                                }
-                                if (objectState.Image != null)
-                                {
-                                    try { Directory.Delete(@"root\" + GetTransactionId(objectState.Image), true); } catch { }
-                                    try { Directory.Delete(@"ipfs\" + GetTransactionId(objectState.Image), true); } catch { }
-                                }
-                            
-                        }
-                        catch { }
-
+                       
                         try { Directory.Delete(@"root\" + ObjectAddress.Text, true); } catch { }
                         try { Directory.CreateDirectory(@"root\" + ObjectAddress.Text); } catch { }
 
@@ -155,8 +127,7 @@ namespace SUP
 
                         }
 
-                        //this may no longer be necessary...
-                        //if (ObjectId.Text != null) { try { Directory.Delete(@"root\" + ObjectId.Text, true); } catch { } }                        
+                                        
 
                     }
                     catch { }
@@ -176,34 +147,6 @@ namespace SUP
 
         }
 
-        public string GetTransactionId(string input)
-        {
-            int startIndex = input.IndexOf(":") + 1;
-            if (startIndex == 0)
-            {
-                // No colon found, return the original string
-                startIndex = 0;
-            }
 
-            int endIndex = input.IndexOf("/");
-            if (endIndex == -1)
-            {
-                // No slash found, return the substring starting from the start index
-                return input.Substring(startIndex);
-            }
-
-            // Return the substring between the colon and the slash
-            return input.Substring(startIndex, endIndex - startIndex);
-        }
-
-        private void lblOfficial_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void label1_Click(object sender, EventArgs e)
-        {
-
-        }
     }
 }

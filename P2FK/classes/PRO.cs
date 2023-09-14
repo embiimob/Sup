@@ -233,8 +233,10 @@ namespace SUP.P2FK
 
                 }
             }
-
-            profileState.ProcessHeight = objectTransactions.Max(state => state.Id);
+            if (objectTransactions.Count() > 0)
+            {
+                profileState.ProcessHeight = objectTransactions.Max(state => state.Id);
+            }
 
             var profileSerialized = JsonConvert.SerializeObject(profileState);
 

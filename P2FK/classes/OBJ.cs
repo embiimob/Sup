@@ -2488,7 +2488,7 @@ namespace SUP.P2FK
                             if (objectstate.URN != null && objectstate.Creators.Count() > 1 && objectstate.Creators.ElementAt(1).Value.Year > 1975)
                             {
 
-                                if (!addedValues.Contains(objectstate.Creators.ElementAt(1).Key))
+                                if (!addedValues.Contains(objectstate.Creators.ElementAt(1).Key) && !System.IO.File.Exists(@"root\" + objectstate.Creators.ElementAt(1).Key + @"\BLOCK") && !System.IO.File.Exists(@"root\" + objectstate.Creators.ElementAt(0).Key + @"\BLOCK"))
                                 {
                                     addedValues.Add(objectstate.Creators.ElementAt(1).Key);
                                     COLState colstate = new COLState();
@@ -2545,7 +2545,7 @@ namespace SUP.P2FK
                             if (objectstate.URN != null && objectstate.Creators!= null && objectstate.Creators.ContainsKey(objectaddress) && objectstate.Creators[objectaddress].Year > 1975)
                             {
 
-                                if (!addedValues.Contains(objectstate.Creators.ElementAt(1).Key))
+                                if (!addedValues.Contains(objectstate.Creators.ElementAt(1).Key) && !System.IO.File.Exists(@"root\" + objectstate.Creators.ElementAt(1).Key + @"\BLOCK"))
                                 {
                                     addedValues.Add(objectstate.Creators.ElementAt(1).Key);
                                     COLState colstate = new COLState();

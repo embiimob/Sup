@@ -429,22 +429,23 @@
             this.txtOBJJSON.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.txtOBJJSON.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.txtOBJJSON.ForeColor = System.Drawing.Color.Black;
-            this.txtOBJJSON.Location = new System.Drawing.Point(326, 302);
+            this.txtOBJJSON.Location = new System.Drawing.Point(232, 302);
             this.txtOBJJSON.Multiline = true;
             this.txtOBJJSON.Name = "txtOBJJSON";
-            this.txtOBJJSON.Size = new System.Drawing.Size(141, 190);
+            this.txtOBJJSON.Size = new System.Drawing.Size(202, 313);
             this.txtOBJJSON.TabIndex = 355;
             this.txtOBJJSON.Visible = false;
+            this.txtOBJJSON.TextChanged += new System.EventHandler(this.txtOBJJSON_TextChanged);
             // 
             // txtOBJP2FK
             // 
             this.txtOBJP2FK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.txtOBJP2FK.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.txtOBJP2FK.ForeColor = System.Drawing.Color.Black;
-            this.txtOBJP2FK.Location = new System.Drawing.Point(492, 302);
+            this.txtOBJP2FK.Location = new System.Drawing.Point(445, 302);
             this.txtOBJP2FK.Multiline = true;
             this.txtOBJP2FK.Name = "txtOBJP2FK";
-            this.txtOBJP2FK.Size = new System.Drawing.Size(156, 190);
+            this.txtOBJP2FK.Size = new System.Drawing.Size(203, 313);
             this.txtOBJP2FK.TabIndex = 357;
             this.txtOBJP2FK.Visible = false;
             // 
@@ -456,7 +457,7 @@
             this.txtAddressListJSON.Location = new System.Drawing.Point(654, 300);
             this.txtAddressListJSON.Multiline = true;
             this.txtAddressListJSON.Name = "txtAddressListJSON";
-            this.txtAddressListJSON.Size = new System.Drawing.Size(160, 193);
+            this.txtAddressListJSON.Size = new System.Drawing.Size(223, 316);
             this.txtAddressListJSON.TabIndex = 353;
             this.txtAddressListJSON.Visible = false;
             // 
@@ -476,9 +477,6 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.Black;
             this.ClientSize = new System.Drawing.Size(1139, 645);
-            this.Controls.Add(this.txtOBJJSON);
-            this.Controls.Add(this.txtOBJP2FK);
-            this.Controls.Add(this.txtAddressListJSON);
             this.Controls.Add(this.btnSuffix);
             this.Controls.Add(this.txtSuffix);
             this.Controls.Add(this.lblObjectStatus);
@@ -507,6 +505,9 @@
             this.Controls.Add(this.lblTransactionID);
             this.Controls.Add(this.lblCost);
             this.Controls.Add(this.lblIMGBlockDate);
+            this.Controls.Add(this.txtOBJJSON);
+            this.Controls.Add(this.txtOBJP2FK);
+            this.Controls.Add(this.txtAddressListJSON);
             this.MinimumSize = new System.Drawing.Size(891, 614);
             this.Name = "ProfileMint";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;

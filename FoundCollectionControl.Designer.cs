@@ -30,10 +30,9 @@
         {
             this.ObjectImage = new System.Windows.Forms.PictureBox();
             this.ObjectDescription = new System.Windows.Forms.Label();
-            this.ObjectQty = new System.Windows.Forms.Label();
             this.ObjectAddress = new System.Windows.Forms.Label();
             this.ObjectName = new System.Windows.Forms.Label();
-            this.txtOfficialURN = new System.Windows.Forms.TextBox();
+            this.txtFoundAddress = new System.Windows.Forms.TextBox();
             this.lblTrash = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.ObjectImage)).BeginInit();
             this.SuspendLayout();
@@ -47,7 +46,7 @@
             this.ObjectImage.Location = new System.Drawing.Point(4, 5);
             this.ObjectImage.Margin = new System.Windows.Forms.Padding(0);
             this.ObjectImage.Name = "ObjectImage";
-            this.ObjectImage.Size = new System.Drawing.Size(260, 260);
+            this.ObjectImage.Size = new System.Drawing.Size(280, 280);
             this.ObjectImage.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
             this.ObjectImage.TabIndex = 0;
             this.ObjectImage.TabStop = false;
@@ -58,27 +57,11 @@
             this.ObjectDescription.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
             this.ObjectDescription.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.ObjectDescription.ForeColor = System.Drawing.Color.White;
-            this.ObjectDescription.Location = new System.Drawing.Point(8, 305);
+            this.ObjectDescription.Location = new System.Drawing.Point(8, 314);
             this.ObjectDescription.Name = "ObjectDescription";
-            this.ObjectDescription.Size = new System.Drawing.Size(256, 95);
+            this.ObjectDescription.Size = new System.Drawing.Size(274, 154);
             this.ObjectDescription.TabIndex = 6;
-            this.ObjectDescription.Text = "🦁🐺💃🐭🧚🦬🦉🐍🧞‍♀️☄️🐝🕷🐟🐋🐴🦤\r\n🐒🧚‍♀️🧞🦹‍♂️🦈🦃🐿🐲🐅🐠🍄🐚🧚‍♂️🌵🐊🌱\r\n😈" +
-    "🍀🌎🧞🐢🪐🦦✨☀️🕳️🌊❄️ 🔥🤖👽🦐\r\n🐙 🧚🧞‍♂️🐜 🦝👼💃👻🔴💙💃🌚👶🕺🏽🌸⚡";
             this.ObjectDescription.Click += new System.EventHandler(this.foundObjectControl_Click);
-            // 
-            // ObjectQty
-            // 
-            this.ObjectQty.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.ObjectQty.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
-            this.ObjectQty.Font = new System.Drawing.Font("Microsoft Sans Serif", 6.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.ObjectQty.ForeColor = System.Drawing.Color.White;
-            this.ObjectQty.Location = new System.Drawing.Point(179, 272);
-            this.ObjectQty.Name = "ObjectQty";
-            this.ObjectQty.Size = new System.Drawing.Size(78, 20);
-            this.ObjectQty.TabIndex = 7;
-            this.ObjectQty.Text = "10000x";
-            this.ObjectQty.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
-            this.ObjectQty.Click += new System.EventHandler(this.foundObjectControl_Click);
             // 
             // ObjectAddress
             // 
@@ -88,9 +71,9 @@
             this.ObjectAddress.Font = new System.Drawing.Font("Microsoft Sans Serif", 5.75F);
             this.ObjectAddress.ForeColor = System.Drawing.Color.White;
             this.ObjectAddress.ImageAlign = System.Drawing.ContentAlignment.BottomCenter;
-            this.ObjectAddress.Location = new System.Drawing.Point(5, 415);
+            this.ObjectAddress.Location = new System.Drawing.Point(5, 471);
             this.ObjectAddress.Name = "ObjectAddress";
-            this.ObjectAddress.Size = new System.Drawing.Size(258, 21);
+            this.ObjectAddress.Size = new System.Drawing.Size(277, 21);
             this.ObjectAddress.TabIndex = 8;
             this.ObjectAddress.Text = "@";
             this.ObjectAddress.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
@@ -99,23 +82,23 @@
             // ObjectName
             // 
             this.ObjectName.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
-            this.ObjectName.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.ObjectName.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.ObjectName.ForeColor = System.Drawing.Color.White;
-            this.ObjectName.Location = new System.Drawing.Point(8, 275);
+            this.ObjectName.Location = new System.Drawing.Point(8, 290);
             this.ObjectName.Margin = new System.Windows.Forms.Padding(0);
             this.ObjectName.Name = "ObjectName";
-            this.ObjectName.Size = new System.Drawing.Size(122, 18);
+            this.ObjectName.Size = new System.Drawing.Size(271, 18);
             this.ObjectName.TabIndex = 9;
-            this.ObjectName.Text = "FakeUFO Keywords this hoy sdgfd";
+            this.ObjectName.Text = "FakeUFO";
             this.ObjectName.Click += new System.EventHandler(this.foundObjectControl_Click);
             // 
-            // txtOfficialURN
+            // txtFoundAddress
             // 
-            this.txtOfficialURN.Location = new System.Drawing.Point(4, 182);
-            this.txtOfficialURN.Name = "txtOfficialURN";
-            this.txtOfficialURN.Size = new System.Drawing.Size(83, 20);
-            this.txtOfficialURN.TabIndex = 15;
-            this.txtOfficialURN.Visible = false;
+            this.txtFoundAddress.Location = new System.Drawing.Point(4, 182);
+            this.txtFoundAddress.Name = "txtFoundAddress";
+            this.txtFoundAddress.Size = new System.Drawing.Size(83, 20);
+            this.txtFoundAddress.TabIndex = 15;
+            this.txtFoundAddress.Visible = false;
             // 
             // lblTrash
             // 
@@ -123,7 +106,7 @@
             this.lblTrash.AutoSize = true;
             this.lblTrash.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
             this.lblTrash.ForeColor = System.Drawing.Color.White;
-            this.lblTrash.Location = new System.Drawing.Point(248, 414);
+            this.lblTrash.Location = new System.Drawing.Point(267, 470);
             this.lblTrash.Name = "lblTrash";
             this.lblTrash.Size = new System.Drawing.Size(19, 13);
             this.lblTrash.TabIndex = 17;
@@ -140,15 +123,14 @@
             this.Controls.Add(this.ObjectImage);
             this.Controls.Add(this.ObjectAddress);
             this.Controls.Add(this.ObjectDescription);
-            this.Controls.Add(this.txtOfficialURN);
+            this.Controls.Add(this.txtFoundAddress);
             this.Controls.Add(this.ObjectName);
-            this.Controls.Add(this.ObjectQty);
             this.DoubleBuffered = true;
             this.Margin = new System.Windows.Forms.Padding(8, 7, 8, 7);
             this.MinimumSize = new System.Drawing.Size(221, 221);
             this.Name = "FoundCollectionControl";
             this.Padding = new System.Windows.Forms.Padding(10);
-            this.Size = new System.Drawing.Size(270, 436);
+            this.Size = new System.Drawing.Size(289, 492);
             this.Click += new System.EventHandler(this.foundObjectControl_Click);
             ((System.ComponentModel.ISupportInitialize)(this.ObjectImage)).EndInit();
             this.ResumeLayout(false);
@@ -158,11 +140,10 @@
 
         #endregion
         public System.Windows.Forms.Label ObjectDescription;
-        public System.Windows.Forms.Label ObjectQty;
         public System.Windows.Forms.PictureBox ObjectImage;
         public System.Windows.Forms.Label ObjectAddress;
         public System.Windows.Forms.Label ObjectName;
-        public System.Windows.Forms.TextBox txtOfficialURN;
+        public System.Windows.Forms.TextBox txtFoundAddress;
         public System.Windows.Forms.Label lblTrash;
     }
 }

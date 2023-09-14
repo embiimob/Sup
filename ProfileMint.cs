@@ -131,7 +131,7 @@ namespace SUP
             // Serialize the modified JObject back into a JSON string
             var objectSerialized = JsonConvert.SerializeObject(PROJson, Formatting.None, settings);
 
-            txtOBJJSON.Text = objectSerialized.Replace(",\"url\":{}", "").Replace(",\"loc\":{}", "").Replace(",\"urn\":\"\"", "").Replace(",\"fnm\":\"\"", "").Replace(",\"mnm\":\"\"", "").Replace(",\"lnm\":\"\"", "").Replace(",\"sfx\":\"\"", "").Replace(",\"bio\":\"\"", "").Replace(",\"img\":\"\"", "");
+            txtOBJJSON.Text = objectSerialized.Replace(",\"url\":{}", "").Replace(",\"loc\":{}", "").Replace(",\"urn\":\"\"", "").Replace(",\"dnm\":\"\"", "").Replace(",\"fnm\":\"\"", "").Replace(",\"mnm\":\"\"", "").Replace(",\"lnm\":\"\"", "").Replace(",\"sfx\":\"\"", "").Replace(",\"bio\":\"\"", "").Replace(",\"img\":\"\"", "");
 
 
             if (btnMint.Enabled)
@@ -465,7 +465,7 @@ namespace SUP
                     try
                     {
                         newAddress = rpcClient.SendCommand("getnewaddress", txtURN.Text + "!" + DateTime.UtcNow.ToString("yyyyMMddHHmmss")+"!"+attempt.ToString()).ResultString;
-                        P2FKASCII = Root.GetKeywordByPublicAddress(newAddress);
+                        P2FKASCII = Root.GetKeywordByPublicAddress(newAddress,"ASCII");
                         string pattern = "[" + Regex.Escape(new string(specialChars)) + "][0-9]";
                         if (!Regex.IsMatch(P2FKASCII, pattern))
                         {
@@ -1311,6 +1311,9 @@ namespace SUP
             UpdateRemainingChars();
         }
 
-  
+        private void txtOBJJSON_TextChanged(object sender, EventArgs e)
+        {
+
+        }
     }
 }
