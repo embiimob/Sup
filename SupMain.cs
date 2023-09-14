@@ -52,6 +52,30 @@ namespace SUP
         public SupMain()
         {
             InitializeComponent();
+            supFlow.MouseWheel += supFlow_MouseWheel;
+            supPrivateFlow.MouseWheel += supPrivateFlow_MouseWheel;
+        }
+
+        private void supFlow_MouseWheel(object sender, MouseEventArgs e)
+        {
+            if (supFlow.VerticalScroll.Value + supFlow.ClientSize.Height >= supFlow.VerticalScroll.Maximum)
+            {
+                // Add more PictureBoxes if available              
+                
+                if (btnPublicMessage.BackColor == System.Drawing.Color.Blue)
+                { RefreshSupMessages(); }
+                else { refreshFriendFeed.PerformClick(); }
+               
+            }
+        }
+
+        private void supPrivateFlow_MouseWheel(object sender, MouseEventArgs e)
+        {
+            if (supPrivateFlow.VerticalScroll.Value + supPrivateFlow.ClientSize.Height >= supPrivateFlow.VerticalScroll.Maximum)
+            {
+                // Add more PictureBoxes if available
+                RefreshPrivateSupMessages();
+            }
         }
 
         private void SupMaincs_Load(object sender, EventArgs e)
@@ -171,6 +195,9 @@ namespace SUP
 
             Regex regexTransactionId = new Regex(@"\b[0-9a-f]{64}\b");
             PROState activeProfile = PROState.GetProfileByAddress(address, "good-user", "better-password", @"http://127.0.0.1:18332");
+           
+            //List<PROState> proStates = PROState.GetProfilesByAddress(address, "good-user", "better-password", @"http://127.0.0.1:18332");
+
             string ismuted = "";
 
             var WORK = new Options { CreateIfMissing = true };
@@ -189,6 +216,7 @@ namespace SUP
             profileURN.Text = activeProfile.URN;
             profileURN.Links[0].LinkData = address;
             lblProcessHeight.Text = "ph: " + activeProfile.ProcessHeight.ToString();
+            //lblUniqueInteractions.Text = "ui: " + proStates.Count().ToString();
             profileCreatedDate.Text = "since: " + activeProfile.CreatedDate.ToString("MM/dd/yyyy hh:mm:ss tt");
 
             if (activeProfile.URL != null)
@@ -543,8 +571,42 @@ namespace SUP
             else
             {
 
-                ObjectBrowser browser = new ObjectBrowser(value);
-                browser.Show();
+                if (value.ToUpper().StartsWith("@"))
+                {
+
+                    PROState profile = PROState.GetProfileByURN(value.Replace("@", ""), "good-user", "better-password", @"http://127.0.0.1:18332");
+
+                    if (profile.Creators != null) { MakeActiveProfile(profile.Creators.First()); }
+
+                }
+                else
+                {
+                    if (value.StartsWith("#"))
+                    {
+
+                        string searchAddress = Root.GetPublicAddressByKeyword(value.Replace("#", ""),"111");
+                        MakeActiveProfile(searchAddress);
+                        profileURN.Text = value;
+                        profileURN.Links[0].LinkData = searchAddress;
+                        profileBIO.Text = "Click the follow button to add this search to your community feed."; profileCreatedDate.Text = ""; profileIMG.ImageLocation = ""; lblProcessHeight.Text = "";
+
+                        GenerateImage(value);
+
+                        profileIMG.ImageLocation = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + @"\root\keywords\" + value + ".png";
+                        btnPublicMessage.BackColor = Color.Blue;
+                        btnPublicMessage.ForeColor = Color.Yellow;
+
+                        RefreshSupMessages();
+
+
+                    }
+                    else
+                    {
+
+                        ObjectBrowser browser = new ObjectBrowser(value);
+                        browser.Show();
+                    }
+                }
             }
         }
 
@@ -1225,8 +1287,16 @@ namespace SUP
 
                                                                 string extension = Path.GetExtension(imgurn).ToLower();
                                                                 List<string> imgExtensions = new List<string> { ".bmp", ".gif", ".ico", ".jpeg", ".jpg", ".png", ".tif", ".tiff", ".mp4", ".avi", ".wav", ".mp3" };
+
+                                                               
                                                                 string vpattern = @"(?:youtu\.be/|youtube(?:-nocookie)?\.com/(?:[^/\n\s]*[/\n\s]*(?:v/|e(?:mbed)?/|.*[?&]v=))?)?([a-zA-Z0-9_-]{11})";
                                                                 Match vmatch = Regex.Match(content, vpattern);
+
+
+
+
+
+
                                                                 if (!imgExtensions.Contains(extension) && vmatch.Value.Length < 12)
                                                                 {
 
@@ -1369,7 +1439,7 @@ namespace SUP
                                                                     {
 
 
-                                                                        if (vmatch.Success || extension == ".mp4" || extension == ".avi" || extension == ".wav" || extension == ".mp3")
+                                                                        if ((vmatch.Success && !imgExtensions.Contains(extension)) || extension == ".mp4" || extension == ".avi" || extension == ".wav" || extension == ".mp3")
                                                                         {
                                                                             this.Invoke((MethodInvoker)delegate
                                                                             {
@@ -2739,6 +2809,10 @@ namespace SUP
 
         private void RefreshSupMessages()
         {
+
+            // sorry cannot run two searches at a time
+            if (refreshFriendFeed.Enabled == false || btnPublicMessage.Enabled == false || btnPrivateMessage.Enabled == false) { return; }
+
             // Clear controls if no messages have been displayed yet
             if (numMessagesDisplayed == 0)
             {
@@ -3510,6 +3584,8 @@ namespace SUP
 
         private void RefreshPrivateSupMessages()
         {
+            // sorry cannot run two searches at a time
+            if (refreshFriendFeed.Enabled == false || btnPublicMessage.Enabled == false || btnPrivateMessage.Enabled == false) { return; }
 
             // Clear controls if no messages have been displayed yet
             if (numPrivateMessagesDisplayed == 0)
@@ -4190,6 +4266,335 @@ namespace SUP
 
         }
 
+        private void RefreshCommunityMessages(object sender, EventArgs e)
+        {
+            // sorry cannot run two searches at a time
+            if (refreshFriendFeed.Enabled == false || btnPublicMessage.Enabled==false || btnPrivateMessage.Enabled==false) { return; }
+
+            if (System.IO.File.Exists(@"GET_OBJECT_BY_ADDRESS") || System.IO.File.Exists(@"GET_OBJECTS_BY_ADDRESS")) { MessageBox.Show("Please wait for the search to complete.", "Notification"); return; }
+
+            refreshFriendFeed.BackColor = System.Drawing.Color.Blue;
+            refreshFriendFeed.ForeColor = System.Drawing.Color.Yellow;
+            btnPublicMessage.BackColor = System.Drawing.Color.White;
+            btnPrivateMessage.BackColor = System.Drawing.Color.White;
+            btnPublicMessage.ForeColor = System.Drawing.Color.Black;
+            btnPrivateMessage.ForeColor = System.Drawing.Color.Black;
+
+            refreshFriendFeed.Enabled = false;
+            numMessagesDisplayed = 0;
+            numPrivateMessagesDisplayed = 0;
+            List<string> friendFeed = new List<string>();
+
+            if (numFriendFeedsDisplayed == 0)
+            {
+
+                Task.Run(() =>
+                {
+                    this.Invoke((MethodInvoker)delegate
+                    {
+                        foreach (var viewer in webviewers)
+                        {
+
+                            try { viewer.Dispose(); } catch { }
+
+                        }
+                    });
+
+                });
+                supPrivateFlow.Controls.Clear();
+                supFlow.Controls.Clear();
+            }
+
+            if (File.Exists(@"root\MyFriendList.Json"))
+            {
+                Task BuildMessage = Task.Run(() =>
+                {
+
+                    var myFriendsJson = File.ReadAllText(@"root\MyFriendList.Json");
+                    var myFriends = JsonConvert.DeserializeObject<Dictionary<string, string>>(myFriendsJson);
+
+                    // Iterate over each key in the dictionary, get public messages by address, and combine them into a list
+                    var allMessages = new List<object>();
+                    foreach (var key in myFriends.Keys)
+                    {
+                        var result = OBJState.GetPublicMessagesByAddress(key, "good-user", "better-password", "http://127.0.0.1:18332");
+                        var messages = result.GetType().GetProperty("Messages").GetValue(result) as List<object>;
+
+                        // Add the "to" element to each message object
+                        foreach (var message in messages)
+                        {
+
+                            var fromProp = message.GetType().GetProperty("FromAddress");
+                            var messageProp = message.GetType().GetProperty("Message");
+                            var blockDateProp = message.GetType().GetProperty("BlockDate");
+                            var toProp = message.GetType().GetProperty("ToAddress");
+                            string _from = fromProp?.GetValue(message).ToString();
+                            string _to = toProp?.GetValue(message).ToString();
+                            string _message = messageProp?.GetValue(message).ToString();
+                            string _blockdate = blockDateProp?.GetValue(message).ToString();
+
+                            if (!friendFeed.Contains(_from + _message + _blockdate))
+                            {
+                                friendFeed.Add(_from + _message + _blockdate);
+
+                                allMessages.Add(new
+                                {
+                                    Message = _message,
+                                    FromAddress = _from,
+                                    ToAddress = _to,
+                                    BlockDate = _blockdate
+                                });
+                            }
+                        }
+                    }
+
+                    // Sort the combined list by block date
+                    allMessages.Sort((m1, m2) =>
+                    {
+                        var date1Prop = m1?.GetType().GetProperty("BlockDate");
+                        var date2Prop = m2?.GetType().GetProperty("BlockDate");
+                        if (date1Prop == null && date2Prop == null)
+                        {
+                            return 0;
+                        }
+                        else if (date1Prop == null)
+                        {
+                            return -1;
+                        }
+                        else if (date2Prop == null)
+                        {
+                            return 1;
+                        }
+                        else
+                        {
+                            var date1 = DateTime.ParseExact(date1Prop.GetValue(m1).ToString(), "yyyyMMddHHmmss", CultureInfo.InvariantCulture);
+                            var date2 = DateTime.ParseExact(date2Prop.GetValue(m2).ToString(), "yyyyMMddHHmmss", CultureInfo.InvariantCulture);
+                            return date2.CompareTo(date1);
+                        }
+                    });
+
+                    // Serialize the combined list to MyFriendsFeed.Json file
+                    var myFriendsFeedJson = JsonConvert.SerializeObject(allMessages);
+                    File.WriteAllText(@"root\MyFriendFeed.Json", myFriendsFeedJson);
+
+
+                    foreach (var message in allMessages.Skip(numFriendFeedsDisplayed).Take(10))
+                    {
+                        var fromProp = message.GetType().GetProperty("FromAddress");
+                        var toProp = message.GetType().GetProperty("ToAddress");
+                        var messageProp = message.GetType().GetProperty("Message");
+                        var blockDateProp = message.GetType().GetProperty("BlockDate");
+
+                        string _from = fromProp?.GetValue(message).ToString();
+                        string _to = toProp?.GetValue(message).ToString();
+
+                        string fromURN = fromProp?.GetValue(message).ToString();
+                        PROState fromProfile = PROState.GetProfileByAddress(fromURN, "good-user", "better-password", "http://127.0.0.1:18332");
+                        if (fromProfile.URN != null)
+                        {
+                            fromURN = fromProfile.URN;
+
+                        }
+
+
+                        string toURN = toProp?.GetValue(message).ToString();
+                        PROState toProfile = PROState.GetProfileByAddress(toURN, "good-user", "better-password", "http://127.0.0.1:18332");
+
+                        if (toProfile.URN != null)
+                        {
+                            toURN = toProfile.URN;
+
+                        }
+
+                        string _message = messageProp?.GetValue(message).ToString();
+                        string _blockdate = blockDateProp?.GetValue(message).ToString();
+                        string imglocation = "";
+
+                        string unfilteredmessage = _message;
+                        _message = Regex.Replace(_message, "<<.*?>>", "");
+                        this.Invoke((MethodInvoker)delegate
+                        {
+                            try { imglocation = myFriends[_from]; } catch { }
+                            CreateFeedRow(imglocation, fromURN, _from, DateTime.ParseExact("19700101010101", "yyyyMMddHHmmss", CultureInfo.InvariantCulture), "", "", Color.White, supFlow);
+
+                            try { imglocation = myFriends[_to]; } catch { }
+                            CreateFeedRow(imglocation, toURN, _to, DateTime.ParseExact(_blockdate, "yyyyMMddHHmmss", CultureInfo.InvariantCulture), _message, "", Color.White, supFlow);
+                        });
+                        string pattern = "<<.*?>>";
+                        MatchCollection matches = Regex.Matches(unfilteredmessage, pattern);
+                        foreach (Match match in matches)
+                        {
+
+
+                            string content = match.Value.Substring(2, match.Value.Length - 4);
+                            if (!int.TryParse(content, out int id) && !content.Trim().StartsWith("#"))
+                            {
+
+                                List<string> imgExtensions = new List<string> { ".bmp", ".gif", ".ico", ".jpeg", ".jpg", ".png", ".tif", ".tiff", ".mp4", ".avi", ".wav", ".mp3" };
+
+                                string extension = Path.GetExtension(content).ToLower();
+                                if (!imgExtensions.Contains(extension) && !content.Contains("youtube.com") && !content.Contains("youtu.be"))
+                                {
+                                    WebClient client = new WebClient();
+                                    string html = "";
+                                    try
+                                    {
+                                        html = client.DownloadString(content.StripLeadingTrailingSpaces());
+
+                                    }
+                                    catch { }
+
+                                    // Use regular expressions to extract the metadata from the HTML
+                                    string title = Regex.Match(html, @"<title>\s*(.+?)\s*</title>").Groups[1].Value;
+                                    string description = Regex.Match(html, @"<meta\s+name\s*=\s*""description""\s+content\s*=\s*""(.+?)""\s*/?>").Groups[1].Value;
+                                    string imageUrl = Regex.Match(html, @"<meta\s+property\s*=\s*""og:image""\s+content\s*=\s*""(.+?)""\s*/?>").Groups[1].Value;
+
+                                    if (description != "")
+                                    {
+                                        // Create a new panel to display the metadata
+                                        Panel panel = new Panel();
+                                        panel.BorderStyle = BorderStyle.FixedSingle;
+                                        panel.Size = new Size(supFlow.Width - 30, 100);
+
+
+                                        // Create a label for the title
+                                        Label titleLabel = new Label();
+                                        titleLabel.Text = title;
+                                        titleLabel.Dock = DockStyle.Top;
+                                        titleLabel.Font = new Font("Segoe UI", 12, FontStyle.Bold);
+                                        titleLabel.ForeColor = Color.White;
+                                        titleLabel.MinimumSize = new Size(supFlow.Width - 130, 30);
+                                        titleLabel.Padding = new Padding(5);
+                                        panel.Controls.Add(titleLabel);
+
+                                        // Create a label for the description
+                                        Label descriptionLabel = new Label();
+                                        descriptionLabel.Text = description;
+                                        descriptionLabel.ForeColor = Color.White;
+                                        descriptionLabel.Dock = DockStyle.Fill;
+                                        descriptionLabel.Padding = new Padding(5, 40, 5, 5);
+                                        panel.Controls.Add(descriptionLabel);
+
+                                        // Add an image to the panel if one is defined
+                                        if (!String.IsNullOrEmpty(imageUrl))
+                                        {
+                                            try
+                                            {
+                                                // Create a MemoryStream object from the image data
+                                                byte[] imageData = client.DownloadData(imageUrl);
+                                                MemoryStream memoryStream = new MemoryStream(imageData);
+
+                                                // Create a new PictureBox control and add it to the panel
+                                                PictureBox pictureBox = new PictureBox();
+                                                pictureBox.Dock = DockStyle.Left;
+                                                pictureBox.Size = new Size(100, 100);
+                                                pictureBox.SizeMode = PictureBoxSizeMode.StretchImage;
+                                                pictureBox.Image = Image.FromStream(memoryStream);
+                                                panel.Controls.Add(pictureBox);
+                                            }
+                                            catch
+                                            {
+                                            }
+                                        }
+                                        this.Invoke((MethodInvoker)delegate
+                                        {
+                                            // Add the panel to the flow layout panel
+                                            this.supFlow.Controls.Add(panel);
+                                        });
+                                    }
+                                    else
+                                    {
+                                        // Create a new panel to display the metadata
+                                        Panel panel = new Panel();
+                                        panel.BorderStyle = BorderStyle.FixedSingle;
+                                        panel.MinimumSize = new Size(500, 30);
+                                        panel.AutoSize = true;
+                                        // Create a label for the title
+                                        LinkLabel titleLabel = new LinkLabel();
+                                        titleLabel.Text = content;
+                                        titleLabel.Links[0].LinkData = content;
+                                        titleLabel.AutoSize = true;
+                                        titleLabel.Font = new Font("Segoe UI", 8, FontStyle.Bold);
+                                        titleLabel.LinkColor = System.Drawing.SystemColors.GradientActiveCaption;
+                                        titleLabel.Padding = new Padding(5);
+                                        panel.Controls.Add(titleLabel);
+                                        this.Invoke((MethodInvoker)delegate
+                                        {
+                                            this.supFlow.Controls.Add(panel);
+                                        });
+
+                                    }
+
+                                }
+                                else
+                                {
+
+                                    if (extension == ".mp4" || extension == ".avi" || content.Contains("youtube.com") || content.Contains("youtu.be") || extension == ".wav" || extension == ".mp3")
+                                    {
+
+                                        this.Invoke((MethodInvoker)delegate
+                                        {
+                                            try { AddVideo(content); } catch { }
+                                        });
+
+                                    }
+                                    else
+                                    {
+
+                                        this.Invoke((MethodInvoker)delegate
+                                        {
+                                            AddImage(content);
+                                        });
+                                    }
+
+
+                                }
+
+
+
+                            }
+
+
+                        }
+
+                        TableLayoutPanel padding = new TableLayoutPanel
+                        {
+                            RowCount = 1,
+                            ColumnCount = 1,
+                            Dock = DockStyle.Top,
+                            BackColor = Color.Black,
+                            ForeColor = Color.White,
+                            AutoSize = true,
+                            CellBorderStyle = TableLayoutPanelCellBorderStyle.Single,
+                            Margin = new System.Windows.Forms.Padding(0, 10, 0, 10),
+                            Padding = new System.Windows.Forms.Padding(0)
+
+                        };
+
+                        padding.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, supFlow.Width - 20));
+
+                        this.Invoke((MethodInvoker)delegate
+                        {
+                            supFlow.Controls.Add(padding);
+                        });
+
+                        numFriendFeedsDisplayed++;
+
+                    }
+
+                    this.Invoke((MethodInvoker)delegate
+                    {
+                        refreshFriendFeed.Enabled = true;
+                    });
+
+                });
+
+            }
+            else { refreshFriendFeed.Enabled = true; }
+
+
+        }
+
         void AddImage(string imagepath, bool isprivate = false, bool addtoTop = false)
         {
             string imagelocation = "";
@@ -4473,21 +4878,23 @@ namespace SUP
 
                 //build web viewer with default loading page
                 Microsoft.Web.WebView2.WinForms.WebView2 webviewer = new Microsoft.Web.WebView2.WinForms.WebView2();
-                webviewer.AllowExternalDrop = true;
+                webviewer.AllowExternalDrop = false;
+                webviewer.TabStop = false;
                 webviewer.BackColor = System.Drawing.Color.Black;
                 webviewer.CreationProperties = null;
                 webviewer.DefaultBackgroundColor = System.Drawing.Color.Black;
                 webviewer.Name = "webviewer";
+               
 
                 if (videolocation.ToLower().EndsWith(".wav") || videolocation.ToLower().EndsWith(".mp3"))
                 {
                     if (isprivate)
                     {
-                        webviewer.Size = new System.Drawing.Size(supPrivateFlow.Width - 50, supPrivateFlow.Width - 250);
+                        webviewer.Size = new System.Drawing.Size(supPrivateFlow.Width - 50, 150);
                     }
                     else
                     {
-                        webviewer.Size = new System.Drawing.Size(supFlow.Width - 50, supFlow.Width - 250);
+                        webviewer.Size = new System.Drawing.Size(supFlow.Width - 50, 150);
                     }
                 }
                 else
@@ -4884,7 +5291,7 @@ namespace SUP
                     AutoSize = true,
                     Text = messageText,
                     MinimumSize = new Size(200, 46),
-                    Font = new System.Drawing.Font("Segoe UI", 7.77F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0))),
+                    Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0))),
                     Margin = new System.Windows.Forms.Padding(0),
                     Padding = new System.Windows.Forms.Padding(10, 20, 10, 20),
                     TextAlign = System.Drawing.ContentAlignment.TopLeft
@@ -4898,7 +5305,7 @@ namespace SUP
                 {
                     AutoSize = true,
                     Text = messageText,
-                    Font = new System.Drawing.Font("Segoe UI", 7.77F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0))),
+                    Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0))),
                     Margin = new System.Windows.Forms.Padding(0),
                     Padding = new System.Windows.Forms.Padding(0, 0, 0, 0),
                     TextAlign = System.Drawing.ContentAlignment.TopLeft
@@ -5066,7 +5473,7 @@ namespace SUP
                     AutoSize = true,
                     Text = messageText,
                     MinimumSize = new Size(200, 46),
-                    Font = new System.Drawing.Font("Segoe UI", 7.77F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0))),
+                    Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0))),
                     Margin = new System.Windows.Forms.Padding(0),
                     Padding = new System.Windows.Forms.Padding(10, 20, 10, 20),
                     TextAlign = System.Drawing.ContentAlignment.TopLeft
@@ -5081,7 +5488,7 @@ namespace SUP
                 {
                     AutoSize = true,
                     Text = messageText,
-                    Font = new System.Drawing.Font("Segoe UI", 7.77F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0))),
+                    Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0))),
                     Margin = new System.Windows.Forms.Padding(0),
                     Padding = new System.Windows.Forms.Padding(0, 0, 0, 0),
                     TextAlign = System.Drawing.ContentAlignment.TopLeft
@@ -5378,332 +5785,6 @@ namespace SUP
             }
         }
 
-        private void refreshFriendFeed_Click(object sender, EventArgs e)
-        {
-            if (System.IO.File.Exists(@"GET_OBJECT_BY_ADDRESS") || System.IO.File.Exists(@"GET_OBJECTS_BY_ADDRESS")) { MessageBox.Show("Please wait for the search to complete.", "Notification"); return; }
-
-            refreshFriendFeed.BackColor = System.Drawing.Color.Blue;
-            refreshFriendFeed.ForeColor = System.Drawing.Color.Yellow;
-            btnPublicMessage.BackColor = System.Drawing.Color.White;
-            btnPrivateMessage.BackColor = System.Drawing.Color.White;
-            btnPublicMessage.ForeColor = System.Drawing.Color.Black;
-            btnPrivateMessage.ForeColor = System.Drawing.Color.Black;
-
-            refreshFriendFeed.Enabled = false;
-            numMessagesDisplayed = 0;
-            numPrivateMessagesDisplayed = 0;
-            List<string> friendFeed = new List<string>();
-
-            if (numFriendFeedsDisplayed == 0)
-            {
-
-                Task.Run(() =>
-                {
-                    this.Invoke((MethodInvoker)delegate
-                    {
-                        foreach (var viewer in webviewers)
-                        {
-
-                            try { viewer.Dispose(); } catch { }
-
-                        }
-                    });
-
-                });
-                supPrivateFlow.Controls.Clear();
-                supFlow.Controls.Clear();
-            }
-
-            if (File.Exists(@"root\MyFriendList.Json"))
-            {
-                Task BuildMessage = Task.Run(() =>
-                {
-
-                    var myFriendsJson = File.ReadAllText(@"root\MyFriendList.Json");
-                    var myFriends = JsonConvert.DeserializeObject<Dictionary<string, string>>(myFriendsJson);
-
-                    // Iterate over each key in the dictionary, get public messages by address, and combine them into a list
-                    var allMessages = new List<object>();
-                    foreach (var key in myFriends.Keys)
-                    {
-                        var result = OBJState.GetPublicMessagesByAddress(key, "good-user", "better-password", "http://127.0.0.1:18332");
-                        var messages = result.GetType().GetProperty("Messages").GetValue(result) as List<object>;
-
-                        // Add the "to" element to each message object
-                        foreach (var message in messages)
-                        {
-
-                            var fromProp = message.GetType().GetProperty("FromAddress");
-                            var messageProp = message.GetType().GetProperty("Message");
-                            var blockDateProp = message.GetType().GetProperty("BlockDate");
-                            var toProp = message.GetType().GetProperty("ToAddress");
-                            string _from = fromProp?.GetValue(message).ToString();
-                            string _to = toProp?.GetValue(message).ToString();
-                            string _message = messageProp?.GetValue(message).ToString();
-                            string _blockdate = blockDateProp?.GetValue(message).ToString();
-
-                            if (!friendFeed.Contains(_from + _message + _blockdate))
-                            {
-                                friendFeed.Add(_from + _message + _blockdate);
-
-                                allMessages.Add(new
-                                {
-                                    Message = _message,
-                                    FromAddress = _from,
-                                    ToAddress = _to,
-                                    BlockDate = _blockdate
-                                });
-                            }
-                        }
-                    }
-
-                    // Sort the combined list by block date
-                    allMessages.Sort((m1, m2) =>
-                    {
-                        var date1Prop = m1?.GetType().GetProperty("BlockDate");
-                        var date2Prop = m2?.GetType().GetProperty("BlockDate");
-                        if (date1Prop == null && date2Prop == null)
-                        {
-                            return 0;
-                        }
-                        else if (date1Prop == null)
-                        {
-                            return -1;
-                        }
-                        else if (date2Prop == null)
-                        {
-                            return 1;
-                        }
-                        else
-                        {
-                            var date1 = DateTime.ParseExact(date1Prop.GetValue(m1).ToString(), "yyyyMMddHHmmss", CultureInfo.InvariantCulture);
-                            var date2 = DateTime.ParseExact(date2Prop.GetValue(m2).ToString(), "yyyyMMddHHmmss", CultureInfo.InvariantCulture);
-                            return date2.CompareTo(date1);
-                        }
-                    });
-
-                    // Serialize the combined list to MyFriendsFeed.Json file
-                    var myFriendsFeedJson = JsonConvert.SerializeObject(allMessages);
-                    File.WriteAllText(@"root\MyFriendFeed.Json", myFriendsFeedJson);
-
-
-                    foreach (var message in allMessages.Skip(numFriendFeedsDisplayed).Take(10))
-                    {
-                        var fromProp = message.GetType().GetProperty("FromAddress");
-                        var toProp = message.GetType().GetProperty("ToAddress");
-                        var messageProp = message.GetType().GetProperty("Message");
-                        var blockDateProp = message.GetType().GetProperty("BlockDate");
-
-                        string _from = fromProp?.GetValue(message).ToString();
-                        string _to = toProp?.GetValue(message).ToString();
-
-                        string fromURN = fromProp?.GetValue(message).ToString();
-                        PROState fromProfile = PROState.GetProfileByAddress(fromURN, "good-user", "better-password", "http://127.0.0.1:18332");
-                        if (fromProfile.URN != null)
-                        {
-                            fromURN = fromProfile.URN;
-
-                        }
-
-
-                        string toURN = toProp?.GetValue(message).ToString();
-                        PROState toProfile = PROState.GetProfileByAddress(toURN, "good-user", "better-password", "http://127.0.0.1:18332");
-
-                        if (toProfile.URN != null)
-                        {
-                            toURN = toProfile.URN;
-
-                        }
-
-                        string _message = messageProp?.GetValue(message).ToString();
-                        string _blockdate = blockDateProp?.GetValue(message).ToString();
-                        string imglocation = "";
-
-                        string unfilteredmessage = _message;
-                        _message = Regex.Replace(_message, "<<.*?>>", "");
-                        this.Invoke((MethodInvoker)delegate
-                        {
-                            try { imglocation = myFriends[_from]; } catch { }
-                            CreateFeedRow(imglocation, fromURN, _from, DateTime.ParseExact("19700101010101", "yyyyMMddHHmmss", CultureInfo.InvariantCulture), "", "", Color.White, supFlow);
-
-                            try { imglocation = myFriends[_to]; } catch { }
-                            CreateFeedRow(imglocation, toURN, _to, DateTime.ParseExact(_blockdate, "yyyyMMddHHmmss", CultureInfo.InvariantCulture), _message, "", Color.White, supFlow);
-                        });
-                        string pattern = "<<.*?>>";
-                        MatchCollection matches = Regex.Matches(unfilteredmessage, pattern);
-                        foreach (Match match in matches)
-                        {
-
-
-                            string content = match.Value.Substring(2, match.Value.Length - 4);
-                            if (!int.TryParse(content, out int id) && !content.Trim().StartsWith("#"))
-                            {
-
-                                List<string> imgExtensions = new List<string> { ".bmp", ".gif", ".ico", ".jpeg", ".jpg", ".png", ".tif", ".tiff", ".mp4", ".avi", ".wav", ".mp3" };
-
-                                string extension = Path.GetExtension(content).ToLower();
-                                if (!imgExtensions.Contains(extension) && !content.Contains("youtube.com") && !content.Contains("youtu.be"))
-                                {
-                                    WebClient client = new WebClient();
-                                    string html = "";
-                                    try
-                                    {
-                                        html = client.DownloadString(content.StripLeadingTrailingSpaces());
-
-                                    }
-                                    catch { }
-
-                                    // Use regular expressions to extract the metadata from the HTML
-                                    string title = Regex.Match(html, @"<title>\s*(.+?)\s*</title>").Groups[1].Value;
-                                    string description = Regex.Match(html, @"<meta\s+name\s*=\s*""description""\s+content\s*=\s*""(.+?)""\s*/?>").Groups[1].Value;
-                                    string imageUrl = Regex.Match(html, @"<meta\s+property\s*=\s*""og:image""\s+content\s*=\s*""(.+?)""\s*/?>").Groups[1].Value;
-
-                                    if (description != "")
-                                    {
-                                        // Create a new panel to display the metadata
-                                        Panel panel = new Panel();
-                                        panel.BorderStyle = BorderStyle.FixedSingle;
-                                        panel.Size = new Size(supFlow.Width - 30, 100);
-
-
-                                        // Create a label for the title
-                                        Label titleLabel = new Label();
-                                        titleLabel.Text = title;
-                                        titleLabel.Dock = DockStyle.Top;
-                                        titleLabel.Font = new Font("Segoe UI", 12, FontStyle.Bold);
-                                        titleLabel.ForeColor = Color.White;
-                                        titleLabel.MinimumSize = new Size(supFlow.Width - 130, 30);
-                                        titleLabel.Padding = new Padding(5);
-                                        panel.Controls.Add(titleLabel);
-
-                                        // Create a label for the description
-                                        Label descriptionLabel = new Label();
-                                        descriptionLabel.Text = description;
-                                        descriptionLabel.ForeColor = Color.White;
-                                        descriptionLabel.Dock = DockStyle.Fill;
-                                        descriptionLabel.Padding = new Padding(5, 40, 5, 5);
-                                        panel.Controls.Add(descriptionLabel);
-
-                                        // Add an image to the panel if one is defined
-                                        if (!String.IsNullOrEmpty(imageUrl))
-                                        {
-                                            try
-                                            {
-                                                // Create a MemoryStream object from the image data
-                                                byte[] imageData = client.DownloadData(imageUrl);
-                                                MemoryStream memoryStream = new MemoryStream(imageData);
-
-                                                // Create a new PictureBox control and add it to the panel
-                                                PictureBox pictureBox = new PictureBox();
-                                                pictureBox.Dock = DockStyle.Left;
-                                                pictureBox.Size = new Size(100, 100);
-                                                pictureBox.SizeMode = PictureBoxSizeMode.StretchImage;
-                                                pictureBox.Image = Image.FromStream(memoryStream);
-                                                panel.Controls.Add(pictureBox);
-                                            }
-                                            catch
-                                            {
-                                            }
-                                        }
-                                        this.Invoke((MethodInvoker)delegate
-                                        {
-                                            // Add the panel to the flow layout panel
-                                            this.supFlow.Controls.Add(panel);
-                                        });
-                                    }
-                                    else
-                                    {
-                                        // Create a new panel to display the metadata
-                                        Panel panel = new Panel();
-                                        panel.BorderStyle = BorderStyle.FixedSingle;
-                                        panel.MinimumSize = new Size(500, 30);
-                                        panel.AutoSize = true;
-                                        // Create a label for the title
-                                        LinkLabel titleLabel = new LinkLabel();
-                                        titleLabel.Text = content;
-                                        titleLabel.Links[0].LinkData = content;
-                                        titleLabel.AutoSize = true;
-                                        titleLabel.Font = new Font("Segoe UI", 8, FontStyle.Bold);
-                                        titleLabel.LinkColor = System.Drawing.SystemColors.GradientActiveCaption;
-                                        titleLabel.Padding = new Padding(5);
-                                        panel.Controls.Add(titleLabel);
-                                        this.Invoke((MethodInvoker)delegate
-                                        {
-                                            this.supFlow.Controls.Add(panel);
-                                        });
-
-                                    }
-
-                                }
-                                else
-                                {
-
-                                    if (extension == ".mp4" || extension == ".avi" || content.Contains("youtube.com") || content.Contains("youtu.be") || extension == ".wav" || extension == ".mp3")
-                                    {
-
-                                        this.Invoke((MethodInvoker)delegate
-                                                {
-                                                    try { AddVideo(content); } catch { }
-                                                });
-
-                                    }
-                                    else
-                                    {
-
-                                        this.Invoke((MethodInvoker)delegate
-                                                {
-                                                    AddImage(content);
-                                                });
-                                    }
-
-
-                                }
-
-
-
-                            }
-
-
-                        }
-
-                        TableLayoutPanel padding = new TableLayoutPanel
-                        {
-                            RowCount = 1,
-                            ColumnCount = 1,
-                            Dock = DockStyle.Top,
-                            BackColor = Color.Black,
-                            ForeColor = Color.White,
-                            AutoSize = true,
-                            CellBorderStyle = TableLayoutPanelCellBorderStyle.Single,
-                            Margin = new System.Windows.Forms.Padding(0, 10, 0, 10),
-                            Padding = new System.Windows.Forms.Padding(0)
-
-                        };
-
-                        padding.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, supFlow.Width - 20));
-
-                        this.Invoke((MethodInvoker)delegate
-                        {
-                            supFlow.Controls.Add(padding);
-                        });
-
-                        numFriendFeedsDisplayed++;
-
-                    }
-
-                    this.Invoke((MethodInvoker)delegate
-                    {
-                        refreshFriendFeed.Enabled = true;
-                    });
-
-                });
-
-            }
-            else { refreshFriendFeed.Enabled = true; }
-
-
-        }
-
         private void btnMute_Click(object sender, EventArgs e)
         {
             if (System.IO.File.Exists(@"GET_OBJECT_BY_ADDRESS") || System.IO.File.Exists(@"GET_OBJECTS_BY_ADDRESS")) { MessageBox.Show("Please wait for the search to complete.", "Notification"); return; }
@@ -5864,7 +5945,6 @@ namespace SUP
 
                     // Set up the font and text formatting
                     float fontSize = 150;
-                    FontFamily fontFamily = FontFamily.GenericSansSerif;
                     Font font = null;
 
                     // Declare textSize outside the loop
@@ -5874,7 +5954,7 @@ namespace SUP
                     while (true)
                     {
                         font?.Dispose();
-                        font = new Font(fontFamily, fontSize);
+                        font = new Font("Segoe UI Emoji", fontSize);
                         textSize = graphics.MeasureString(text, font);
                         if (textSize.Width < width && textSize.Height < height)
                             break;
@@ -5940,6 +6020,16 @@ namespace SUP
             }
 
             btnVideoSearch.Enabled = true;
+        }
+
+        private void lblProcessHeight_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void lblUniqueInteractions_Click(object sender, EventArgs e)
+        {
+
         }
     }
 }

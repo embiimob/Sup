@@ -120,6 +120,7 @@
             this.txtOBJJSON.Size = new System.Drawing.Size(344, 117);
             this.txtOBJJSON.TabIndex = 292;
             this.txtOBJJSON.Visible = false;
+            this.txtOBJJSON.TextChanged += new System.EventHandler(this.txtOBJJSON_TextChanged);
             // 
             // txtAddressListJSON
             // 
@@ -601,6 +602,7 @@
             this.txtOBJP2FK.Size = new System.Drawing.Size(344, 157);
             this.txtOBJP2FK.TabIndex = 295;
             this.txtOBJP2FK.Visible = false;
+            this.txtOBJP2FK.TextChanged += new System.EventHandler(this.txtOBJP2FK_TextChanged);
             // 
             // lblCost
             // 

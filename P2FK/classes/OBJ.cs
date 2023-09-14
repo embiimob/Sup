@@ -10,6 +10,7 @@ using System.IO;
 using System.Linq;
 using System.Security.Cryptography;
 using System.Threading.Tasks;
+using System.Windows.Forms;
 
 namespace SUP.P2FK
 {
@@ -38,8 +39,22 @@ namespace SUP.P2FK
         public DateTime BlockDate { get; set; }
     }
 
+    public class COLState
+    {
+        public int Id { get; set; }
+        public string URN { get; set; }
+        public string Image { get; set; }
+        public string Name { get; set; }
+        public string Description { get; set; }
+        public Dictionary<string, DateTime> Creators { get; set; }
+        public Dictionary<string, string> URL { get; set; }
+        public Dictionary<string, string> Location { get; set; }
+        public DateTime CreatedDate { get; set; }
+      
+    }
 
-    public class OBJState
+
+        public class OBJState
     {
         public int Id { get; set; }
         public string TransactionId { get; set; }
@@ -2423,6 +2438,189 @@ namespace SUP.P2FK
             }
 
         }
+        public static List<COLState> GetObjectCollectionsByAddress(string objectaddress, string username, string password, string url, string versionByte = "111", int skip = 0, int qty = -1)
+        {
+
+            lock (SupLocker)
+            {
+                List<COLState> objectStates = new List<COLState> { };
+                var OBJ = new Options { CreateIfMissing = true };
+                bool fetched = false;
+                bool isKeywordSearch = false;
+
+                if (objectaddress.StartsWith("#")) { objectaddress = Root.GetPublicAddressByKeyword(objectaddress.Substring(1),"111"); isKeywordSearch = true; }
+
+                if (System.IO.File.Exists(@"root\" + objectaddress + @"\BLOCK")) { return objectStates; }
+
+                string JSONOBJ;
+                string diskpath = "root\\" + objectaddress + "\\";
+
+
+                // fetch current JSONOBJ from disk if it exists
+                try
+                {
+                    JSONOBJ = System.IO.File.ReadAllText(diskpath + "GetObjectsCollectionsByAddress.json");
+                    objectStates = JsonConvert.DeserializeObject<List<COLState>>(JSONOBJ);
+                    fetched = true;
+
+                }
+                catch { }
+                if (fetched && objectStates.Count < 1) { return objectStates; }
+
+                List<OBJState> cachedObjectStates = OBJState.GetObjectsByAddress(objectaddress, username, password, url, versionByte, 0, -1);
+                if (fetched && objectStates.Last().Id == cachedObjectStates.Last().Id)
+                {
+
+                    if (qty == -1) { return objectStates.Skip(skip).ToList(); }
+                    else { return objectStates.Skip(skip).Take(qty).ToList(); }
+
+                }
+
+                objectStates = new List<COLState>();
+                List<string> addedValues = new List<string>();
+
+                if (cachedObjectStates.Count() > 0)
+                {
+                    foreach (OBJState objectstate in cachedObjectStates)
+                    {
+                        if (isKeywordSearch)
+                        {
+                            if (objectstate.URN != null && objectstate.Creators.Count() > 1 && objectstate.Creators.ElementAt(1).Value.Year > 1975)
+                            {
+
+                                if (!addedValues.Contains(objectstate.Creators.ElementAt(1).Key))
+                                {
+                                    addedValues.Add(objectstate.Creators.ElementAt(1).Key);
+                                    COLState colstate = new COLState();
+                                    colstate.URN = objectstate.Creators.ElementAt(1).Key;
+
+                                    PROState activeProfile = PROState.GetProfileByAddress(objectstate.Creators.ElementAt(1).Key, username, password, url, versionByte);
+
+                                    if (activeProfile.URN != null)
+                                    {
+
+                                        colstate.Name = activeProfile.URN;
+                                        colstate.Description = activeProfile.Bio;
+                                        colstate.Image = activeProfile.Image;
+                                        colstate.URL = activeProfile.URL;
+                                        colstate.Location = activeProfile.Location;
+                                        colstate.CreatedDate = activeProfile.CreatedDate;
+
+                                        if (activeProfile.DisplayName != null)
+                                        {
+                                            colstate.Name = activeProfile.DisplayName;
+                                        }
+
+                                    }
+                                    else
+                                    {
+                                        colstate.Name = objectstate.Creators.ElementAt(1).Key;
+                                        Random rnd = new Random();
+                                        string[] gifFiles = Directory.GetFiles("includes", "*.gif");
+                                        if (gifFiles.Length > 0)
+                                        {
+                                            int randomIndex = rnd.Next(gifFiles.Length);
+                                            string randomGifFile = gifFiles[randomIndex];
+                                            colstate.Image = randomGifFile;
+
+                                        }
+                                        else
+                                        {
+                                            try
+                                            {
+
+                                                colstate.Image = @"includes\HugPuddle.jpg";
+                                            }
+                                            catch { }
+                                        }
+                                    }
+
+
+                                    objectStates.Add(colstate);
+                                }
+                            }
+                        }
+                        else
+                        {
+                            if (objectstate.URN != null && objectstate.Creators!= null && objectstate.Creators.ContainsKey(objectaddress) && objectstate.Creators[objectaddress].Year > 1975)
+                            {
+
+                                if (!addedValues.Contains(objectstate.Creators.ElementAt(1).Key))
+                                {
+                                    addedValues.Add(objectstate.Creators.ElementAt(1).Key);
+                                    COLState colstate = new COLState();
+                                    colstate.URN = objectstate.Creators.ElementAt(1).Key;
+
+                                    PROState activeProfile = PROState.GetProfileByAddress(objectstate.Creators.ElementAt(1).Key, username, password, url, versionByte);
+
+                                    if (activeProfile.URN != null)
+                                    {
+
+                                        colstate.Name = activeProfile.URN;
+                                        colstate.Description = activeProfile.Bio;
+                                        colstate.Image = activeProfile.Image;
+                                        colstate.URL = activeProfile.URL;
+                                        colstate.Location = activeProfile.Location;
+                                        colstate.CreatedDate = activeProfile.CreatedDate;
+
+                                        if (activeProfile.DisplayName != null)
+                                        {
+                                            colstate.Name = activeProfile.DisplayName;
+                                        }
+
+                                    }
+                                    else
+                                    {
+                                        colstate.Name = objectstate.Creators.ElementAt(1).Key;
+                                        Random rnd = new Random();
+                                        string[] gifFiles = Directory.GetFiles("includes", "*.gif");
+                                        if (gifFiles.Length > 0)
+                                        {
+                                            int randomIndex = rnd.Next(gifFiles.Length);
+                                            string randomGifFile = gifFiles[randomIndex];
+                                            colstate.Image = randomGifFile;
+
+                                        }
+                                        else
+                                        {
+                                            try
+                                            {
+
+                                                colstate.Image = @"includes\HugPuddle.jpg";
+                                            }
+                                            catch { }
+                                        }
+                                    }
+
+
+                                    objectStates.Add(colstate);
+                                }
+                            }
+
+                        }
+                    }
+
+
+                    if (objectStates.Count() > 0)
+                    {
+                        objectStates.Last().Id = cachedObjectStates.Last().Id;
+                    }
+                }
+
+                var objectSerialized = JsonConvert.SerializeObject(objectStates);
+
+                if (!Directory.Exists(@"root\" + objectaddress))
+                {
+                    Directory.CreateDirectory(@"root\" + objectaddress);
+                }
+                System.IO.File.WriteAllText(@"root\" + objectaddress + @"\" + "GetObjectsCollectionsByAddress.json", objectSerialized);
+
+                return objectStates;
+
+            }
+
+        }
+
         public static List<OBJState> GetObjectsByKeyword(List<string> searchstrings, string username, string password, string url, string versionByte = "111", int skip = 0, int qty = -1)
         {
             lock (SupLocker)
@@ -2455,6 +2653,7 @@ namespace SUP.P2FK
             }
 
         }
+
         public static List<OBJState> GetFoundObjects(string username, string password, string url, string versionByte = "111", int skip = 0, int qty = -1)
         {
             lock (SupLocker)

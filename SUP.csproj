@@ -245,6 +245,12 @@
     <Compile Include="DiscoBall.Designer.cs">
       <DependentUpon>DiscoBall.cs</DependentUpon>
     </Compile>
+    <Compile Include="FoundCollectionControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="FoundCollectionControl.Designer.cs">
+      <DependentUpon>FoundCollectionControl.cs</DependentUpon>
+    </Compile>
     <Compile Include="FullScreenView.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -359,6 +365,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="DiscoBall.resx">
       <DependentUpon>DiscoBall.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FoundCollectionControl.resx">
+      <DependentUpon>FoundCollectionControl.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="FullScreenView.resx">
       <DependentUpon>FullScreenView.cs</DependentUpon>

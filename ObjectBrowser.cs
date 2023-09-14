@@ -665,6 +665,623 @@ namespace SUP
         }
 
 
+        private void GetCollectionsByAddress(string address)
+        {
+
+            string profileCheck = address;
+            PROState searchprofile = new PROState();
+            List<OBJState> createdObjects = new List<OBJState>();
+            int skip = int.Parse(txtLast.Text);
+            int qty = int.Parse(txtQty.Text);
+
+            if (address.ToUpper().StartsWith(@"SUP:") || address.ToUpper().StartsWith(@"MZC:") || address.ToUpper().StartsWith(@"BTC:") || address.ToUpper().StartsWith(@"LTC:") || address.ToUpper().StartsWith(@"DOG:"))
+            {
+                string urnsearch = address;
+                if (address.ToUpper().StartsWith(@"SUP:")) { urnsearch = address.Substring(6); } else { urnsearch = address.Substring(0, 20); }
+
+                createdObjects = new List<OBJState> { OBJState.GetObjectByURN(urnsearch, "good-user", "better-password", @"http://127.0.0.1:18332") };
+
+            }
+            else
+            {
+
+
+
+                if (txtSearchAddress.Text.StartsWith("#"))
+                {
+                    //try { File.Delete(@"root/" + address + @"/GetObjectsByAddress.json"); } catch { }
+
+
+                    this.Invoke((Action)(() =>
+                    {
+
+                        profileURN.Links[0].LinkData = Root.GetPublicAddressByKeyword(txtSearchAddress.Text.Substring(1), "111");
+                        profileURN.LinkColor = System.Drawing.SystemColors.Highlight;
+                        profileURN.Text = txtSearchAddress.Text;
+
+                    }));
+
+                }
+                else
+                {
+
+
+
+
+
+                    try { searchprofile = PROState.GetProfileByAddress(address, "good-user", "better-password", @"http://127.0.0.1:18332"); } catch { }
+
+
+                    try
+                    {
+                        if (searchprofile.URN == null)
+                        {
+                            searchprofile = PROState.GetProfileByURN(address, "good-user", "better-password", @"http://127.0.0.1:18332");
+                        }
+
+                        if (searchprofile.URN != null)
+                        {
+
+                            this.Invoke((Action)(() =>
+                            {
+
+                                profileURN.Links[0].LinkData = searchprofile.Creators.First();
+                                profileURN.LinkColor = System.Drawing.SystemColors.Highlight;
+
+                                profileURN.Text = TruncateAddress(searchprofile.URN);
+
+                                profileCheck = searchprofile.Creators.First();
+                            }));
+
+                        }
+                        else
+                        {
+                            this.Invoke((Action)(() =>
+                            {
+                                profileURN.Links[0].LinkData = address;
+                                profileURN.LinkColor = System.Drawing.SystemColors.GradientActiveCaption;
+                                profileURN.Text = "anon";
+                            }));
+                        }
+                    }
+                    catch
+                    {
+
+                        this.Invoke((Action)(() =>
+                        {
+                            profileURN.Links[0].LinkData = address;
+                            profileURN.LinkColor = System.Drawing.SystemColors.GradientActiveCaption;
+                            profileURN.Text = "anon";
+                        }));
+                    }
+                }
+
+                if (btnCreated.BackColor == Color.Yellow && txtSearchAddress.Text != "")
+                {
+                    if (!System.IO.File.Exists("root\\" + profileCheck + "\\GetObjectsCreatedByAddress.json"))
+                    {
+                        this.Invoke((Action)(() =>
+                        {
+                            flowLayoutPanel1.Visible = false;
+                            pages.Visible = false;
+                        }));
+
+                    }
+                    createdObjects = OBJState.GetObjectsCreatedByAddress(profileCheck, "good-user", "better-password", @"http://127.0.0.1:18332", "111", 0, -1);
+
+                }
+                else if (btnOwned.BackColor == Color.Yellow && txtSearchAddress.Text != "")
+                {
+
+                    if (!System.IO.File.Exists("root\\" + profileCheck + "\\GetObjectsOwnedByAddress.json"))
+                    {
+                        this.Invoke((Action)(() =>
+                        {
+                            flowLayoutPanel1.Visible = false;
+                            pages.Visible = false;
+                        }));
+
+                    }
+                    createdObjects = OBJState.GetObjectsOwnedByAddress(profileCheck, "good-user", "better-password", @"http://127.0.0.1:18332", "111", 0, -1);
+
+                }
+                else
+                {
+                    if (txtSearchAddress.Text == "")
+                    {
+                        if (!System.IO.File.Exists("root\\found\\GetFoundObjects.json"))
+                        {
+                            this.Invoke((Action)(() =>
+                            {
+                                flowLayoutPanel1.Visible = false;
+                                pages.Visible = false;
+                            }));
+
+                        }
+                        createdObjects = OBJState.GetFoundObjects("good-user", "better-password", @"http://127.0.0.1:18332", "111", 0, -1);
+
+
+                    }
+                    else
+                    {
+
+
+                        if (!System.IO.File.Exists("root\\" + profileCheck + "\\GetObjectsByAddress.json"))
+                        {
+                            this.Invoke((Action)(() =>
+                            {
+                                flowLayoutPanel1.Visible = false;
+                                pages.Visible = false;
+                            }));
+
+                        }
+                        createdObjects = OBJState.GetObjectsByAddress(profileCheck, "good-user", "better-password", @"http://127.0.0.1:18332", "111", 0, -1);
+                    }
+                }
+
+            }
+
+
+            this.Invoke((Action)(() =>
+            {
+                flowLayoutPanel1.SuspendLayout();
+                pages.Maximum = createdObjects.Count - 1;
+                txtTotal.Text = (createdObjects.Count).ToString();
+                pages.Visible = true;
+
+                createdObjects.Reverse();
+
+                foreach (OBJState objstate in createdObjects.Skip(skip).Take(qty))
+                {
+                    try
+                    {
+
+                        if (objstate.Owners != null)
+                        {
+                            string transid = "";
+                            FoundObjectControl foundObject = new FoundObjectControl();
+                            foundObject.ObjectName.Text = objstate.Name;
+                            foundObject.ObjectDescription.Text = objstate.Description;
+                            foundObject.ObjectAddress.Text = objstate.Creators.First().Key;
+                            foundObject.ObjectQty.Text = objstate.Owners.Values.Sum().ToString() + "x";
+                            foundObject.ObjectId.Text = objstate.Id.ToString();
+
+                            //GPT3 reformed
+                            if (objstate.Offers != null && objstate.Offers.Count > 0)
+                            {
+                                foundObject.Height = 389;
+                                decimal highestValue = objstate.Offers.Max(offer => offer.Value);
+                                foundObject.ObjectOffer.Text = highestValue.ToString();
+                            }
+                            //GPT3 reformed
+                            if (objstate.Listings != null && objstate.Listings.Count > 0)
+                            {
+                                foundObject.Height = 389;
+                                decimal lowestValue = objstate.Listings.Values.Min(listing => listing.Value);
+                                foundObject.ObjectPrice.Text = lowestValue.ToString();
+                            }
+
+
+
+                            OBJState isOfficial = OBJState.GetObjectByURN(objstate.URN, "good-user", "better-password", @"http://127.0.0.1:18332");
+                            if (isOfficial.URN != null)
+                            {
+
+                                if (isOfficial.Creators.First().Key == foundObject.ObjectAddress.Text)
+                                {
+                                    foundObject.lblOfficial.Visible = true;
+                                    foundObject.lblOfficial.Text = TruncateAddress(isOfficial.URN);
+                                    System.Windows.Forms.ToolTip myTooltip = new System.Windows.Forms.ToolTip();
+                                    myTooltip.SetToolTip(foundObject.lblOfficial, isOfficial.URN);
+                                }
+                                else
+                                {
+                                    foundObject.txtOfficialURN.Text = isOfficial.Creators.First().Key;
+                                    foundObject.btnOfficial.Visible = true;
+
+                                }
+
+                            }
+
+
+
+                            if (objstate.Image == null)
+                            {
+
+
+                                Random rnd = new Random();
+                                string[] gifFiles = Directory.GetFiles("includes", "*.gif");
+                                if (gifFiles.Length > 0)
+                                {
+                                    int randomIndex = rnd.Next(gifFiles.Length);
+                                    objstate.Image = gifFiles[randomIndex];
+
+                                }
+                                else
+                                {
+                                    try
+                                    {
+
+                                        objstate.Image = @"includes\HugPuddle.jpg";
+                                    }
+                                    catch { }
+                                }
+
+
+                            }
+
+                            string imgurn = "";
+
+
+                            if (objstate.Image != null)
+                            {
+                                imgurn = objstate.Image;
+
+                                if (!objstate.Image.ToLower().StartsWith("http"))
+                                {
+                                    imgurn = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + @"\root\" + objstate.Image.Replace("BTC:", "").Replace("MZC:", "").Replace("LTC:", "").Replace("DOG:", "").Replace("IPFS:", "").Replace(@"/", @"\");
+                                    if (objstate.Image.ToLower().StartsWith("ipfs:")) { imgurn = imgurn.Replace(@"\root\", @"\ipfs\"); if (objstate.Image.Length == 51) { imgurn += @"\artifact"; } }
+                                }
+
+                                Regex regexTransactionId = new Regex(@"\b[0-9a-f]{64}\b");
+                                Match imgurnmatch = regexTransactionId.Match(imgurn);
+                                transid = imgurnmatch.Value;
+                            }
+                            if (File.Exists(imgurn))
+                            {
+
+                                this.Invoke((Action)(() =>
+                                {
+                                    foundObject.ObjectImage.ImageLocation = imgurn;
+                                }));
+                            }
+                            else
+                            {
+
+                                if (objstate.Image.LastIndexOf('.') > 0 && File.Exists("ipfs/" + transid + "/artifact" + objstate.Image.Substring(objstate.Image.LastIndexOf('.'))))
+                                {
+                                    this.Invoke((Action)(() =>
+                                    {
+                                        foundObject.ObjectImage.ImageLocation = "ipfs/" + transid + "/artifact" + objstate.Image.Substring(objstate.Image.LastIndexOf('.'));
+                                    }));
+                                }
+                                else
+                                {
+
+                                    this.Invoke((Action)(() =>
+                                    {
+                                        Random rnd = new Random();
+                                        string[] gifFiles = Directory.GetFiles("includes", "*.gif");
+                                        if (gifFiles.Length > 0)
+                                        {
+                                            int randomIndex = rnd.Next(gifFiles.Length);
+                                            string randomGifFile = gifFiles[randomIndex];
+                                            foundObject.ObjectImage.SizeMode = PictureBoxSizeMode.StretchImage;
+                                            foundObject.ObjectImage.ImageLocation = randomGifFile;
+
+                                        }
+                                        else
+                                        {
+                                            try
+                                            {
+
+                                                foundObject.ObjectImage.SizeMode = PictureBoxSizeMode.StretchImage;
+                                                foundObject.ObjectImage.ImageLocation = @"includes\HugPuddle.jpg";
+                                            }
+                                            catch { }
+                                        }
+                                    }));
+
+
+                                    switch (objstate.Image.ToUpper().Substring(0, 4))
+                                    {
+                                        case "BTC:":
+
+                                            Task.Run(() =>
+                                            {
+                                                Root.GetRootByTransactionId(transid, "good-user", "better-password", @"http://127.0.0.1:8332", "0");
+
+                                                if (File.Exists(imgurn))
+                                                {
+
+                                                    this.Invoke((Action)(() =>
+                                                    {
+                                                        foundObject.ObjectImage.SizeMode = PictureBoxSizeMode.Zoom;
+                                                        foundObject.ObjectImage.ImageLocation = imgurn;
+                                                    }));
+                                                }
+
+                                            });
+
+
+                                            break;
+                                        case "MZC:":
+
+                                            Task.Run(() =>
+                                            {
+
+                                                Root.GetRootByTransactionId(transid, "good-user", "better-password", @"http://127.0.0.1:12832", "50");
+
+                                                if (File.Exists(imgurn))
+                                                {
+
+                                                    this.Invoke((Action)(() =>
+                                                    {
+                                                        foundObject.ObjectImage.SizeMode = PictureBoxSizeMode.Zoom;
+                                                        foundObject.ObjectImage.ImageLocation = imgurn;
+                                                    }));
+                                                }
+
+                                            });
+
+                                            break;
+                                        case "LTC:":
+
+                                            Task.Run(() =>
+                                            {
+
+                                                Root.GetRootByTransactionId(transid, "good-user", "better-password", @"http://127.0.0.1:9332", "48");
+
+                                                if (File.Exists(imgurn))
+                                                {
+
+                                                    this.Invoke((Action)(() =>
+                                                    {
+                                                        foundObject.ObjectImage.SizeMode = PictureBoxSizeMode.Zoom;
+                                                        foundObject.ObjectImage.ImageLocation = imgurn;
+                                                    }));
+                                                }
+
+                                            });
+
+                                            break;
+                                        case "DOG:":
+
+
+                                            Task.Run(() =>
+                                            {
+
+                                                Root.GetRootByTransactionId(transid, "good-user", "better-password", @"http://127.0.0.1:22555", "30");
+
+                                                if (File.Exists(imgurn))
+                                                {
+
+                                                    this.Invoke((Action)(() =>
+                                                    {
+                                                        foundObject.ObjectImage.SizeMode = PictureBoxSizeMode.Zoom;
+                                                        foundObject.ObjectImage.ImageLocation = imgurn;
+                                                    }));
+                                                }
+
+                                            });
+
+                                            break;
+                                        case "IPFS":
+                                            transid = "empty";
+                                            try { transid = objstate.Image.Substring(5, 46); } catch { }
+
+                                            if (!System.IO.Directory.Exists("ipfs/" + transid + "-build"))
+                                            {
+
+
+                                                Task.Run(() =>
+                                                {
+                                                    try { Directory.Delete("ipfs/" + transid, true); } catch { }
+                                                    try { Directory.CreateDirectory("ipfs/" + transid); } catch { };
+                                                    Directory.CreateDirectory("ipfs/" + transid + "-build");
+                                                    Process process2 = new Process();
+                                                    process2.StartInfo.FileName = @"ipfs\ipfs.exe";
+                                                    process2.StartInfo.Arguments = "get " + objstate.Image.Substring(5, 46) + @" -o ipfs\" + transid;
+                                                    process2.StartInfo.UseShellExecute = false;
+                                                    process2.StartInfo.CreateNoWindow = true;
+                                                    process2.Start();
+
+                                                    if (process2.WaitForExit(30000))
+                                                    {
+                                                        string fileName;
+                                                        if (System.IO.File.Exists("ipfs/" + transid))
+                                                        {
+                                                            System.IO.File.Move("ipfs/" + transid, "ipfs/" + transid + "_tmp");
+                                                            System.IO.Directory.CreateDirectory("ipfs/" + transid);
+                                                            fileName = objstate.Image.Replace(@"//", "").Replace(@"\\", "").Substring(51);
+                                                            if (fileName == "") { fileName = "artifact"; } else { fileName = fileName.Replace(@"/", "").Replace(@"\", ""); }
+                                                            Directory.CreateDirectory("ipfs/" + transid);
+
+                                                            try { System.IO.File.Move("ipfs/" + transid + "_tmp", @"ipfs/" + transid + @"/" + fileName); }
+                                                            catch (System.ArgumentException ex)
+                                                            {
+
+                                                                System.IO.File.Move("ipfs/" + transid + "_tmp", "ipfs/" + transid + "/artifact" + objstate.Image.Substring(objstate.Image.LastIndexOf('.')));
+                                                                imgurn = "ipfs/" + transid + "/artifact" + objstate.Image.Substring(objstate.Image.LastIndexOf('.'));
+
+                                                            }
+
+
+                                                        }
+
+                                                        if (System.IO.File.Exists("ipfs/" + transid + "/" + transid))
+                                                        {
+                                                            fileName = objstate.Image.Replace(@"//", "").Replace(@"\\", "").Substring(51);
+                                                            if (fileName == "") { fileName = "artifact"; } else { fileName = fileName.Replace(@"/", "").Replace(@"\", ""); }
+
+                                                            try { System.IO.File.Move("ipfs/" + transid + "/" + transid, @"ipfs/" + transid + @"/" + fileName); }
+                                                            catch (System.ArgumentException ex)
+                                                            {
+
+                                                                System.IO.File.Move("ipfs/" + transid + "/" + transid, "ipfs/" + transid + "/artifact" + objstate.Image.Substring(objstate.Image.LastIndexOf('.')));
+                                                                imgurn = "ipfs/" + transid + "/artifact" + objstate.Image.Substring(objstate.Image.LastIndexOf('.'));
+
+                                                            }
+                                                        }
+
+
+                                                        Process process3 = new Process
+                                                        {
+                                                            StartInfo = new ProcessStartInfo
+                                                            {
+                                                                FileName = @"ipfs\ipfs.exe",
+                                                                Arguments = "pin add " + transid,
+                                                                UseShellExecute = false,
+                                                                CreateNoWindow = true
+                                                            }
+                                                        };
+                                                        process3.Start();
+
+                                                        try { Directory.Delete("ipfs/" + transid + "-build", true); } catch { }
+                                                        this.Invoke((Action)(() =>
+                                                        {
+                                                            foundObject.ObjectImage.SizeMode = PictureBoxSizeMode.Zoom;
+                                                            foundObject.ObjectImage.ImageLocation = imgurn;
+                                                        }));
+
+
+                                                    }
+                                                    else { process2.Kill(); }
+
+
+
+
+                                                });
+
+                                            }
+
+                                            break;
+                                        case "HTTP":
+                                            Task.Run(() =>
+                                            {
+                                                foundObject.ObjectImage.SizeMode = PictureBoxSizeMode.Zoom;
+                                                foundObject.ObjectImage.ImageLocation = objstate.Image;
+                                            });
+                                            break;
+
+
+                                        default:
+
+                                            Task.Run(() =>
+                                            {
+
+                                                Root.GetRootByTransactionId(transid, "good-user", "better-password", @"http://127.0.0.1:18332");
+
+                                                if (File.Exists(imgurn))
+                                                {
+
+                                                    this.Invoke((Action)(() =>
+                                                    {
+                                                        foundObject.ObjectImage.SizeMode = PictureBoxSizeMode.Zoom;
+                                                        foundObject.ObjectImage.ImageLocation = imgurn;
+                                                    }));
+                                                }
+
+                                            });
+
+
+                                            break;
+                                    }
+                                }
+
+                            }
+
+                            if (_viewMode == 0)
+                            {
+                                foreach (KeyValuePair<string, DateTime> creator in objstate.Creators.Skip(1))
+                                {
+
+                                    if (creator.Value.Year > 1)
+                                    {
+                                        PROState profile = PROState.GetProfileByAddress(creator.Key, "good-user", "better-password", @"http://127.0.0.1:18332");
+
+
+                                        try
+                                        {
+
+
+                                            if (profile.URN != null && foundObject.ObjectCreators.Text == "" && objstate.Creators.TryGetValue(creator.Key, out DateTime dateacknowledged) && dateacknowledged.Year > 1975)
+                                            {
+
+
+                                                foundObject.ObjectCreators.Text = TruncateAddress(profile.URN);
+                                                foundObject.ObjectCreators.Links.Add(0, creator.Key.Length, creator.Key);
+                                                System.Windows.Forms.ToolTip myTooltip = new System.Windows.Forms.ToolTip();
+                                                myTooltip.SetToolTip(foundObject.ObjectCreators, profile.URN);
+                                            }
+                                            else
+                                            {
+
+
+                                                if (profile.URN != null && foundObject.ObjectCreators2.Text == "" && objstate.Creators.TryGetValue(creator.Key, out DateTime dateacknowledged2) && dateacknowledged2.Year > 1975)
+                                                {
+                                                    foundObject.ObjectCreators2.Text = TruncateAddress(profile.URN);
+                                                    foundObject.ObjectCreators2.Links.Add(0, creator.Key.Length, creator.Key);
+                                                    System.Windows.Forms.ToolTip myTooltip = new System.Windows.Forms.ToolTip();
+                                                    myTooltip.SetToolTip(foundObject.ObjectCreators2, profile.URN);
+                                                }
+
+                                                if (foundObject.ObjectCreators.Text == "")
+                                                {
+
+
+                                                    foundObject.ObjectCreators.Text = TruncateAddress(creator.Key);
+                                                    foundObject.ObjectCreators.Links.Add(0, creator.Key.Length, creator.Key);
+                                                    System.Windows.Forms.ToolTip myTooltip = new System.Windows.Forms.ToolTip();
+                                                    myTooltip.SetToolTip(foundObject.ObjectCreators, creator.Key);
+                                                }
+                                                else
+                                                {
+
+
+                                                    if (foundObject.ObjectCreators2.Text == "")
+                                                    {
+                                                        foundObject.ObjectCreators2.Text = TruncateAddress(creator.Key);
+                                                        foundObject.ObjectCreators2.Links.Add(0, creator.Key.Length, creator.Key);
+                                                        System.Windows.Forms.ToolTip myTooltip = new System.Windows.Forms.ToolTip();
+                                                        myTooltip.SetToolTip(foundObject.ObjectCreators2, creator.Key);
+                                                    }
+
+                                                }
+
+                                            }
+                                        }
+                                        catch { }
+
+
+                                    }
+
+
+                                }
+                            }
+
+
+
+                            if (_viewMode == 1)
+                            {
+                                foundObject.Height = 221;
+                                if (_isUserControl) { foundObject.Margin = new System.Windows.Forms.Padding(3, 3, 2, 3); }
+                                flowLayoutPanel1.Controls.Add(foundObject);
+
+
+                            }
+                            if (_viewMode == 0)
+                            {
+
+                                flowLayoutPanel1.Controls.Add(foundObject);
+
+                            }
+
+
+                        }
+
+
+                    }
+                    catch (Exception ex)
+                    {
+                        string error = ex.Message;
+                    }
+                }
+                flowLayoutPanel1.ResumeLayout();
+            }));
+        }
+
+
         private void GetObjectByFile(string filePath)
         {
             foreach (Control control in flowLayoutPanel1.Controls)
@@ -1146,6 +1763,7 @@ namespace SUP
             {
                 btnOwned.BackColor = Color.Yellow;
                 btnCreated.BackColor = Color.White;
+                btnCollections.BackColor = Color.White;
             }
             txtLast.Text = "0";
             if (txtSearchAddress.Text != "" && !txtSearchAddress.Text.StartsWith("#") && !txtSearchAddress.Text.ToUpper().StartsWith("BTC:") && !txtSearchAddress.Text.ToUpper().StartsWith("MZC:") && !txtSearchAddress.Text.ToUpper().StartsWith("LTC:") && !txtSearchAddress.Text.ToUpper().StartsWith("IPFS:") && !txtSearchAddress.Text.ToUpper().StartsWith("HTTP") && !txtSearchAddress.Text.ToUpper().StartsWith("SUP:"))
@@ -1182,6 +1800,7 @@ namespace SUP
             {
                 btnCreated.BackColor = Color.Yellow;
                 btnOwned.BackColor = Color.White;
+                btnCollections.BackColor = Color.White;
             }
             txtLast.Text = "0";
             if (txtSearchAddress.Text != "" && !txtSearchAddress.Text.StartsWith("#") && !txtSearchAddress.Text.ToUpper().StartsWith("BTC:") && !txtSearchAddress.Text.ToUpper().StartsWith("MZC:") && !txtSearchAddress.Text.ToUpper().StartsWith("LTC:") && !txtSearchAddress.Text.ToUpper().StartsWith("IPFS:") && !txtSearchAddress.Text.ToUpper().StartsWith("HTTP") && !txtSearchAddress.Text.ToUpper().StartsWith("SUP:"))
@@ -1208,6 +1827,42 @@ namespace SUP
 
             }
         }
+
+        private async void btnCollections_Click(object sender, EventArgs e)
+        {
+            if (btnCollections.BackColor == Color.Yellow) { btnCollections.BackColor = Color.White; }
+            else
+            {
+                btnCreated.BackColor = Color.White;
+                btnOwned.BackColor = Color.White;
+                btnCollections.BackColor = Color.Yellow;
+            }
+            txtLast.Text = "0";
+            if (txtSearchAddress.Text != "" && !txtSearchAddress.Text.ToUpper().StartsWith("BTC:") && !txtSearchAddress.Text.ToUpper().StartsWith("MZC:") && !txtSearchAddress.Text.ToUpper().StartsWith("LTC:") && !txtSearchAddress.Text.ToUpper().StartsWith("IPFS:") && !txtSearchAddress.Text.ToUpper().StartsWith("HTTP") && !txtSearchAddress.Text.ToUpper().StartsWith("SUP:"))
+            {
+                DisableSupInput();
+                pages.Maximum = 0;
+                pages.Value = 0;
+                Random rnd = new Random();
+                string[] gifFiles = Directory.GetFiles("includes", "*.gif");
+                if (gifFiles.Length > 0)
+                {
+                    int randomIndex = rnd.Next(gifFiles.Length);
+                    string randomGifFile = gifFiles[randomIndex];
+                    imgLoading.ImageLocation = randomGifFile;
+                }
+                else
+                {
+                    imgLoading.ImageLocation = @"includes\HugPuddle.jpg";
+                }
+                await Task.Run(() => BuildSearchResults());
+                flowLayoutPanel1.Visible = true;
+                pages.Visible = true;
+                EnableSupInput();
+
+            }
+        }
+
 
         private void MainUserNameClick(object sender, LinkLabelLinkClickedEventArgs e)
         {
@@ -1352,8 +2007,17 @@ namespace SUP
 
                         if (txtSearchAddress.Text.StartsWith("#"))
                         {
+                            if (btnCollections.BackColor == System.Drawing.Color.Yellow)
+                            {
 
-                            GetObjectsByAddress(Root.GetPublicAddressByKeyword(txtSearchAddress.Text.Substring(1), "111"));
+                                GetCollectionsByAddress(Root.GetPublicAddressByKeyword(txtSearchAddress.Text.Substring(1), "111"));
+
+
+                            }
+                            else
+                            {
+                                GetObjectsByAddress(Root.GetPublicAddressByKeyword(txtSearchAddress.Text.Substring(1), "111"));
+                            }
 
                         }
                         else
@@ -1531,8 +2195,16 @@ namespace SUP
                                     }
                                     else
                                     {
-                                        GetObjectsByAddress(txtSearchAddress.Text.Replace("@", ""));
 
+                                        if (btnCollections.BackColor == System.Drawing.Color.Yellow)
+                                                                                {
+                                            GetCollectionsByAddress(txtSearchAddress.Text.Replace("@", ""));
+
+                                        }
+                                        else
+                                        {
+                                            GetObjectsByAddress(txtSearchAddress.Text.Replace("@", ""));
+                                        }
                                     }
 
                                 }
@@ -1878,12 +2550,57 @@ namespace SUP
             }
         }
 
-        private void txtLast_KeyDown(object sender, KeyEventArgs e)
+        private async void txtLast_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.KeyCode == Keys.Enter)
             {
-                txtSearchAddress.Focus();
-                SendKeys.SendWait("{Enter}");
+                switch (_viewMode)
+                {
+                    case 1:
+                        if (pages.LargeChange != ((flowLayoutPanel1.Width / 200) * (flowLayoutPanel1.Height / 200)) + (flowLayoutPanel1.Width / 200))
+                        {
+                            pages.LargeChange = ((flowLayoutPanel1.Width / 200) * (flowLayoutPanel1.Height / 200)) + (flowLayoutPanel1.Width / 200);
+
+                            txtQty.Text = pages.LargeChange.ToString();
+
+                        }
+                        break;
+
+
+                    case 0:
+                        if (pages.LargeChange != ((flowLayoutPanel1.Width / 200) * (flowLayoutPanel1.Height / 360)) + (flowLayoutPanel1.Width / 200)) ;
+                        {
+                            pages.LargeChange = ((flowLayoutPanel1.Width / 200) * (flowLayoutPanel1.Height / 360)) + (flowLayoutPanel1.Width / 200);
+
+                            txtQty.Text = pages.LargeChange.ToString();
+
+
+
+                        }
+                        break;
+                    default:
+
+                        break;
+                }
+
+                Random rnd = new Random();
+                string[] gifFiles = Directory.GetFiles("includes", "*.gif");
+                if (gifFiles.Length > 0)
+                {
+                    int randomIndex = rnd.Next(gifFiles.Length);
+                    string randomGifFile = gifFiles[randomIndex];
+                    imgLoading.ImageLocation = randomGifFile;
+                }
+                else
+                {
+                    imgLoading.ImageLocation = @"includes\HugPuddle.jpg";
+                }
+                try { pages.Value = int.Parse(txtLast.Text); } catch { }
+
+                await Task.Run(() => BuildSearchResults());
+                flowLayoutPanel1.Visible = true;
+                pages.Visible = true;
+                txtLast.Text = pages.Value.ToString();
             }
         }
 
@@ -1948,6 +2665,7 @@ namespace SUP
         {
             flowLayoutPanel1.Padding = new System.Windows.Forms.Padding(3, flowLayoutPanel2.Height, 0, 0);
         }
+
     }
 
 

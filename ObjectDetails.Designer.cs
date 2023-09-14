@@ -36,6 +36,7 @@
             this.btnLaunchURN = new System.Windows.Forms.Button();
             this.flowPanel = new System.Windows.Forms.Panel();
             this.lblWarning = new System.Windows.Forms.Label();
+            this.pictureBox1 = new System.Windows.Forms.PictureBox();
             this.KeysFlow = new System.Windows.Forms.FlowLayoutPanel();
             this.lblLicense = new System.Windows.Forms.Label();
             this.lblLastChangedDate = new System.Windows.Forms.Label();
@@ -78,14 +79,14 @@
             this.label5 = new System.Windows.Forms.Label();
             this.lblTotalRoyaltiesDetail = new System.Windows.Forms.Label();
             this.btnBuy = new System.Windows.Forms.Button();
-            this.pictureBox1 = new System.Windows.Forms.PictureBox();
             this.imgPicture = new System.Windows.Forms.PictureBox();
             this.btnJukeBox = new System.Windows.Forms.Button();
+            this.btnSupFlix = new System.Windows.Forms.Button();
             this.flowPanel.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.supPanel.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.webviewer)).BeginInit();
             this.registrationPanel.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.imgPicture)).BeginInit();
             this.SuspendLayout();
             // 
@@ -159,7 +160,6 @@
             this.flowPanel.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.flowPanel.Controls.Add(this.lblWarning);
             this.flowPanel.Controls.Add(this.pictureBox1);
             this.flowPanel.Location = new System.Drawing.Point(312, 12);
             this.flowPanel.Name = "flowPanel";
@@ -170,13 +170,25 @@
             // 
             this.lblWarning.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.lblWarning.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblWarning.Location = new System.Drawing.Point(11, 545);
+            this.lblWarning.ForeColor = System.Drawing.SystemColors.Highlight;
+            this.lblWarning.Location = new System.Drawing.Point(332, 482);
             this.lblWarning.Name = "lblWarning";
             this.lblWarning.Size = new System.Drawing.Size(222, 40);
             this.lblWarning.TabIndex = 62;
             this.lblWarning.Text = "WARNING FILES EXECUTE LOCALY";
             this.lblWarning.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            this.lblWarning.Visible = false;
+            // 
+            // pictureBox1
+            // 
+            this.pictureBox1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
+            this.pictureBox1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.pictureBox1.Location = new System.Drawing.Point(0, 0);
+            this.pictureBox1.Name = "pictureBox1";
+            this.pictureBox1.Size = new System.Drawing.Size(531, 527);
+            this.pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
+            this.pictureBox1.TabIndex = 1;
+            this.pictureBox1.TabStop = false;
+            this.pictureBox1.DoubleClick += new System.EventHandler(this.ShowFullScreenModeClick);
             // 
             // KeysFlow
             // 
@@ -706,18 +718,6 @@
             this.btnBuy.UseVisualStyleBackColor = true;
             this.btnBuy.Click += new System.EventHandler(this.btnBuy_Click);
             // 
-            // pictureBox1
-            // 
-            this.pictureBox1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
-            this.pictureBox1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.pictureBox1.Location = new System.Drawing.Point(0, 0);
-            this.pictureBox1.Name = "pictureBox1";
-            this.pictureBox1.Size = new System.Drawing.Size(531, 527);
-            this.pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
-            this.pictureBox1.TabIndex = 1;
-            this.pictureBox1.TabStop = false;
-            this.pictureBox1.DoubleClick += new System.EventHandler(this.ShowFullScreenModeClick);
-            // 
             // imgPicture
             // 
             this.imgPicture.Location = new System.Drawing.Point(9, 7);
@@ -742,12 +742,27 @@
             this.btnJukeBox.UseVisualStyleBackColor = true;
             this.btnJukeBox.Click += new System.EventHandler(this.button1_Click);
             // 
+            // btnSupFlix
+            // 
+            this.btnSupFlix.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnSupFlix.Font = new System.Drawing.Font("Segoe UI Emoji", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnSupFlix.Location = new System.Drawing.Point(1059, 499);
+            this.btnSupFlix.Name = "btnSupFlix";
+            this.btnSupFlix.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
+            this.btnSupFlix.Size = new System.Drawing.Size(60, 42);
+            this.btnSupFlix.TabIndex = 114;
+            this.btnSupFlix.Text = "🎬";
+            this.btnSupFlix.UseVisualStyleBackColor = true;
+            this.btnSupFlix.Click += new System.EventHandler(this.btnSupFlix_Click);
+            // 
             // ObjectDetails
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.Black;
             this.ClientSize = new System.Drawing.Size(1329, 549);
+            this.Controls.Add(this.btnSupFlix);
+            this.Controls.Add(this.lblWarning);
             this.Controls.Add(this.btnJukeBox);
             this.Controls.Add(this.btnOfficial);
             this.Controls.Add(this.btnLaunchURN);
@@ -791,11 +806,11 @@
             this.Text = "Object Details";
             this.Load += new System.EventHandler(this.ObjectDetails_Load);
             this.flowPanel.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
             this.supPanel.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.webviewer)).EndInit();
             this.registrationPanel.ResumeLayout(false);
             this.registrationPanel.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.imgPicture)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
@@ -861,5 +876,6 @@
         private System.Windows.Forms.Label lblTotalRoyaltiesDetail;
         private System.Windows.Forms.Button btnBuy;
         private System.Windows.Forms.Button btnJukeBox;
+        private System.Windows.Forms.Button btnSupFlix;
     }
 }

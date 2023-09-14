@@ -141,7 +141,7 @@ namespace SUP
                             foreach (string message in TRACK.Message)
                             {
                                 // Find all occurrences of strings surrounded by << >> that end in .mp3 or .wav
-                                foreach (Match match in Regex.Matches(message, @"<<([^>]*?(\s*\.mp4\s*(?=>>|$)|\.mp4\s*>>|\s*\.avi\s*(?=>>|$)|\.avi\s*>>))"))
+                                foreach (Match match in Regex.Matches(message, @"<<([^>]*?(?i:\.mp4\s*(?=>>|$)|\.avi\s*(?=>>|$)|youtube\.com[^\s>]*|youtu\.be[^\s>]*))>>"))
                                 {
                                     string audioFrom = TRACK.SignedBy;
                                     string audioPacket = getLocalPath(match.Groups[1].Value) + "," + TRACK.BlockDate + "," + audioFrom + "," + match.Groups[1].Value;

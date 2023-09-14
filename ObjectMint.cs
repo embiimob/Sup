@@ -37,7 +37,7 @@ namespace SUP
             InitializeComponent();
         }
 
-    
+
         private void UpdateRemainingChars()
         {
             lblObjectStatus.Text = "";
@@ -152,52 +152,77 @@ namespace SUP
 
             // Serialize the modified JObject back into a JSON string
             var objectSerialized = JsonConvert.SerializeObject(OBJJson, Formatting.None, settings);
-            
-                txtOBJJSON.Text = objectSerialized.Replace(",\"max\":0", "").Replace(",\"atr\":{}", "").Replace(",\"own\":{}", "").Replace(",\"roy\":{}", "").Replace(",\"uri\":\"\"", "").Replace(",\"dsc\":\"\"", "").Replace(",\"img\":\"\"", "").Replace(",\"lic\":\"\"", "");
-           
 
-                txtOBJP2FK.Text = "OBJ" + ":" + txtOBJJSON.Text.Length + ":" + txtOBJJSON.Text;
+            txtOBJJSON.Text = objectSerialized.Replace(",\"max\":0", "").Replace(",\"atr\":{}", "").Replace(",\"own\":{}", "").Replace(",\"roy\":{}", "").Replace(",\"uri\":\"\"", "").Replace(",\"dsc\":\"\"", "").Replace(",\"img\":\"\"", "").Replace(",\"lic\":\"\"", "");
 
-           
-                NetworkCredential credentials = new NetworkCredential("good-user", "better-password");
-                RPCClient rpcClient = new RPCClient(credentials, new Uri("http://127.0.0.1:18332"), Network.Main);
-                System.Security.Cryptography.SHA256 mySHA256 = SHA256Managed.Create();
-                byte[] hashValue = mySHA256.ComputeHash(Encoding.ASCII.GetBytes(txtOBJP2FK.Text));
-                string signatureAddress;
+            byte[] utf8Bytes = System.Text.Encoding.UTF8.GetBytes(txtOBJJSON.Text);
 
-                if (flowCreators.Controls.Count > 0)
-                { signatureAddress = flowCreators.Controls[0].Text; }
-                else { signatureAddress = txtObjectAddress.Text; }
-                string signature = "";
-                try { signature = rpcClient.SendCommand("signmessage", signatureAddress, BitConverter.ToString(hashValue).Replace("-", String.Empty)).ResultString; }catch(Exception ex) 
-                { lblObjectStatus.Text = ex.Message;
-                    return;
-                }
-                
-                txtOBJP2FK.Text = "SIG" + ":" + "88" + ">" + signature + txtOBJP2FK.Text;
+            int lengthInBytes = utf8Bytes.Length;
 
-                List<string> encodedList = new List<string>();
-                for (int i = 0; i < txtOBJP2FK.Text.Length; i += 20)
+            string objString = "OBJ:" + lengthInBytes + ":" + txtOBJJSON.Text;
+
+            // Assign the result to txtOBJP2FK.Text
+            txtOBJP2FK.Text = objString;
+
+            NetworkCredential credentials = new NetworkCredential("good-user", "better-password");
+            RPCClient rpcClient = new RPCClient(credentials, new Uri("http://127.0.0.1:18332"), Network.Main);
+            System.Security.Cryptography.SHA256 mySHA256 = SHA256Managed.Create();
+            byte[] hashValue = mySHA256.ComputeHash(Encoding.UTF8.GetBytes(txtOBJP2FK.Text));
+
+
+            string signatureAddress;
+
+            if (flowCreators.Controls.Count > 0)
+            { signatureAddress = flowCreators.Controls[0].Text; }
+            else { signatureAddress = txtObjectAddress.Text; }
+            string signature = "";
+            try { signature = rpcClient.SendCommand("signmessage", signatureAddress, BitConverter.ToString(hashValue).Replace("-", String.Empty)).ResultString; }
+            catch (Exception ex)
+            {
+                lblObjectStatus.Text = ex.Message;
+                return;
+            }
+
+            txtOBJP2FK.Text = "SIG" + ":" + "88" + ">" + signature + txtOBJP2FK.Text;
+
+            List<string> encodedList = new List<string>();
+            byte[] inputBytes = Encoding.UTF8.GetBytes(txtOBJP2FK.Text); // Convert the string to bytes
+
+            for (int i = 0; i < inputBytes.Length; i += 20)
+            {
+                byte[] chunkBytes = new byte[Math.Min(20, inputBytes.Length - i)];
+                Array.Copy(inputBytes, i, chunkBytes, 0, chunkBytes.Length);
+
+                // Right-pad the chunkBytes with '#' if it's less than 20 bytes
+                if (chunkBytes.Length < 20)
                 {
-                    string chunk = txtOBJP2FK.Text.Substring(i, Math.Min(20, txtOBJP2FK.Text.Length - i));
-                    if (chunk.Any())
+                    byte[] paddedChunkBytes = new byte[20];
+                    Array.Copy(chunkBytes, paddedChunkBytes, chunkBytes.Length);
+                    for (int j = chunkBytes.Length; j < 20; j++)
                     {
-                    if (!encodedList.Contains(Root.GetPublicAddressByKeyword(chunk))) 
-                    
-                    {
-                        encodedList.Add(Root.GetPublicAddressByKeyword(chunk));
+                        paddedChunkBytes[j] = (byte)'#';
                     }
-                    else
-                    {
-                        DialogResult result = MessageBox.Show("the following duplicate information was detected. [  "+ chunk +"  ]. sorry you must still use Apertus.io for etchings that require repetitive data", "Confirmation", MessageBoxButtons.OK);
-                    }
-
-
-                }
+                    chunkBytes = paddedChunkBytes;
                 }
 
-                //add URN registration
-                encodedList.Add(Root.GetPublicAddressByKeyword(txtURN.Text));
+                string chunkBase58 = Base58.EncodeWithCheckSum(
+                    new byte[] { 111 }.Concat(chunkBytes).ToArray());
+
+                if (!encodedList.Contains(chunkBase58))
+                {
+                    encodedList.Add(chunkBase58);
+                }
+                else
+                {
+                    DialogResult result = MessageBox.Show("The following duplicate information was detected: [  " + chunkBase58 + "  ]. Sorry, you must still use Apertus.io for etchings that require repetitive data", "Confirmation", MessageBoxButtons.OK);
+                }
+            }
+
+        
+
+
+        //add URN registration
+        encodedList.Add(Root.GetPublicAddressByKeyword(txtURN.Text));
 
 
             if (txtURN.Text != "")
@@ -250,35 +275,35 @@ namespace SUP
 
             }
 
-                foreach (Button keywordbtn in flowKeywords.Controls)
-                {
-                    encodedList.Add(Root.GetPublicAddressByKeyword(keywordbtn.Text));
-                }
+            foreach (Button keywordbtn in flowKeywords.Controls)
+            {
+                encodedList.Add(Root.GetPublicAddressByKeyword(keywordbtn.Text));
+            }
 
-                foreach (Button royaltybtn in flowRoyalties.Controls)
+            foreach (Button royaltybtn in flowRoyalties.Controls)
+            {
+                if (royaltybtn.Text.Split(':')[0] != signatureAddress)
                 {
-                    if (royaltybtn.Text.Split(':')[0] != signatureAddress)
-                    {
-                        encodedList.Add(royaltybtn.Text.Split(':')[0]);
-                    }
+                    encodedList.Add(royaltybtn.Text.Split(':')[0]);
                 }
+            }
 
-                foreach (Button ownerbtn in flowOwners.Controls)
+            foreach (Button ownerbtn in flowOwners.Controls)
+            {
+                if (ownerbtn.Text.Split(':')[0] != signatureAddress)
                 {
-                    if (ownerbtn.Text.Split(':')[0] != signatureAddress)
-                    {
-                        encodedList.Add(ownerbtn.Text.Split(':')[0]);
-                    }
+                    encodedList.Add(ownerbtn.Text.Split(':')[0]);
                 }
+            }
 
-                foreach (Button creatorbtn in flowCreators.Controls)
+            foreach (Button creatorbtn in flowCreators.Controls)
+            {
+
+                if (creatorbtn.Text != signatureAddress)
                 {
-
-                    if (creatorbtn.Text != signatureAddress)
-                    {
-                        encodedList.Add(creatorbtn.Text);
-                    }
+                    encodedList.Add(creatorbtn.Text);
                 }
+            }
 
             while (encodedList.Contains(txtObjectAddress.Text))
             {
@@ -294,47 +319,47 @@ namespace SUP
             encodedList.Add(txtObjectAddress.Text);
             encodedList.Add(signatureAddress);
 
- 
+
             txtAddressListJSON.Text = JsonConvert.SerializeObject(encodedList.Distinct());
 
-                lblCost.Text = "cost: " + (0.00000546 * encodedList.Count).ToString("0.00000000") + "  + miner fee";
+            lblCost.Text = "cost: " + (0.00000546 * encodedList.Count).ToString("0.00000000") + "  + miner fee";
 
-                if (ismint)
+            if (ismint)
+            {
+                DialogResult result = MessageBox.Show("Are you sure you want to mint this object?", "Confirmation", MessageBoxButtons.YesNo);
+                if (result == DialogResult.Yes)
                 {
-                    DialogResult result = MessageBox.Show("Are you sure you want to mint this object?", "Confirmation", MessageBoxButtons.YesNo);
-                    if (result == DialogResult.Yes)
+
+
+                    var recipients = new Dictionary<string, decimal>();
+                    foreach (var encodedAddress in encodedList)
                     {
 
+                        try { recipients.Add(encodedAddress, 0.00000546m); } catch { }
 
-                        var recipients = new Dictionary<string, decimal>();
-                        foreach (var encodedAddress in encodedList)
-                        {
-
-                            try { recipients.Add(encodedAddress, 0.00000546m); } catch { }
-
-                        }
-
-                        CoinRPC a = new CoinRPC(new Uri("http://127.0.0.1:18332"), new NetworkCredential("good-user", "better-password"));
-
-                        try
-                        {
-                            string accountsString = "";
-                            try { accountsString = rpcClient.SendCommand("listaccounts").ResultString; } catch { }
-                            var accounts = JsonConvert.DeserializeObject<Dictionary<string, decimal>>(accountsString);
-                            var keyWithLargestValue = accounts.Aggregate((x, y) => x.Value > y.Value ? x : y).Key;
-                            var results = a.SendMany(keyWithLargestValue, recipients);
-                            lblTransactionID.Text = results;
-                        }
-                        catch (Exception ex) { lblObjectStatus.Text = ex.Message; }
-
-
-                       
                     }
+
+                    CoinRPC a = new CoinRPC(new Uri("http://127.0.0.1:18332"), new NetworkCredential("good-user", "better-password"));
+
+                    try
+                    {
+                        string accountsString = "";
+                        try { accountsString = rpcClient.SendCommand("listaccounts").ResultString; } catch { }
+                        var accounts = JsonConvert.DeserializeObject<Dictionary<string, decimal>>(accountsString);
+                        var keyWithLargestValue = accounts.Aggregate((x, y) => x.Value > y.Value ? x : y).Key;
+                        var results = a.SendMany(keyWithLargestValue, recipients);
+                        lblTransactionID.Text = results;
+                    }
+                    catch (Exception ex) { lblObjectStatus.Text = ex.Message; }
+
+
+
+                }
                 ismint = false;
             }
 
 
-            
+
 
 
 
@@ -363,19 +388,6 @@ namespace SUP
         }
 
 
-
-
-
-        private void button12_Click_1(object sender, EventArgs e)
-        {
-
-            System.Drawing.Bitmap bitmap = new Bitmap(this.Width - 22, this.Height - 44);
-            Graphics graphics = Graphics.FromImage(bitmap);
-            graphics.CopyFromScreen(this.PointToScreen(new Point(0, 0)), new Point(0, 0), this.Size);
-            bitmap.RotateFlip(RotateFlipType.Rotate90FlipNone);
-            PrintImage(bitmap);
-
-        }
         Regex regexTransactionId = new Regex(@"\b[0-9a-f]{64}\b");
         System.Drawing.Image bmIm;
 
@@ -554,7 +566,7 @@ namespace SUP
             }
         }
 
-   
+
         private void txtDescription_TextChanged(object sender, EventArgs e)
         {
             UpdateRemainingChars();
@@ -683,7 +695,7 @@ namespace SUP
             {
                 lblObjectStatus.Text = "";
 
-                string P2FKASCII = Root.GetKeywordByPublicAddress(txtObjectAddress.Text);
+                string P2FKASCII = Root.GetKeywordByPublicAddress(txtObjectAddress.Text, "ASCII");
                 char[] specialChars = new char[] { '\\', '/', ':', '*', '?', '"', '<', '>', '|' };
                 // Check for presence of special character followed by a number using regular expression
                 string pattern = "[" + Regex.Escape(new string(specialChars)) + "][0-9]";
@@ -708,12 +720,12 @@ namespace SUP
                 {
                     try
                     {
-                        newAddress = rpcClient.SendCommand("getnewaddress", txtTitle.Text + "!" + DateTime.UtcNow.ToString("yyyyMMddHHmmss") +"!"+ attempt.ToString()).ResultString;
-                        P2FKASCII = Root.GetKeywordByPublicAddress(newAddress);
+                        newAddress = rpcClient.SendCommand("getnewaddress", txtTitle.Text + "!" + DateTime.UtcNow.ToString("yyyyMMddHHmmss") + "!" + attempt.ToString()).ResultString;
+                        P2FKASCII = Root.GetKeywordByPublicAddress(newAddress, "ASCII");
                         string pattern = "[" + Regex.Escape(new string(specialChars)) + "][0-9]";
                         if (!Regex.IsMatch(P2FKASCII, pattern))
                         {
-                           
+
                             break;
                         }
                         attempt++;
@@ -729,7 +741,7 @@ namespace SUP
                 btnObjectName.Enabled = false;
                 lblObjectStatus.Text = "";
                 lblCost.Text = "";
-              
+
                 UpdateRemainingChars();
             }
 
@@ -2116,8 +2128,9 @@ namespace SUP
             {
                 lblObjectStatus.Text = "created:[" + OBJ.CreatedDate.ToString("MM/dd/yyyy hh:mm:ss") + "]  locked:[" + OBJ.LockedDate.ToString("MM/dd/yyyy hh:mm:ss") + "]  last seen:[" + OBJ.ChangeDate.ToString("MM/dd/yyyy hh:mm:ss") + "]";
                 lblObjectStatus.Text = lblObjectStatus.Text.Replace("Monday, January 1, 0001", " unconfirmed ");
-               
-            }else
+
+            }
+            else
             {
                 Directory.Delete(@"root\" + txtObjectAddress.Text, true);
             }
@@ -2323,7 +2336,8 @@ namespace SUP
                 flowAttribute.Controls.Clear();
 
                 try
-                { if (foundObject.Attributes != null)
+                {
+                    if (foundObject.Attributes != null)
                     {
                         // Iterate through all attributes of foundObject and create a button for each
                         foreach (var attrib in foundObject.Attributes)
@@ -2550,7 +2564,7 @@ namespace SUP
 
         }
 
-    
+
 
         private void btnObjectRoyalties_Click(object sender, EventArgs e)
         {
@@ -2575,7 +2589,7 @@ namespace SUP
 
                 var decLabel = new Label();
                 decLabel.Text = "Percent";
-               decLabel.TextAlign = ContentAlignment.MiddleCenter;
+                decLabel.TextAlign = ContentAlignment.MiddleCenter;
 
                 var ownerTextBox = new TextBox();
                 ownerTextBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
@@ -2671,12 +2685,20 @@ namespace SUP
         private void flowRoyalties_ControlAdded(object sender, ControlEventArgs e)
         {
             UpdateRemainingChars();
-          
+
             btnObjectRoyalties.BackColor = Color.Blue;
             btnObjectRoyalties.ForeColor = Color.Yellow;
         }
 
-     
+        private void txtOBJJSON_TextChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void txtOBJP2FK_TextChanged(object sender, EventArgs e)
+        {
+
+        }
     }
 
 }

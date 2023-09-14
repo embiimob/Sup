@@ -1,4 +1,5 @@
 ﻿using AngleSharp.Common;
+using AngleSharp.Css.Dom;
 using LevelDB;
 using NBitcoin;
 using NBitcoin.RPC;
@@ -378,7 +379,7 @@ namespace SUP.P2FK
                     );
                     keywords.Add(
                         Base58.EncodeWithCheckSum(KeywordArray),
-                        Encoding.ASCII.GetString(KeywordArray)
+                        Encoding.UTF8.GetString(KeywordArray)
                     );
                 }
                 catch { }
@@ -388,12 +389,14 @@ namespace SUP.P2FK
 
             if (sigStartByte > 0)
             {
+                // Convert the byte array to an ASCII-encoded string
+//string asciiString = Encoding.ASCII.GetString(transactionBytes);
 
+                // Create SHA-256 hash
                 System.Security.Cryptography.SHA256 mySHA256 = SHA256Managed.Create();
                 P2FKRoot.Hash = BitConverter
                     .ToString(
-                        mySHA256.ComputeHash(
-                            transactionBytes
+                        mySHA256.ComputeHash(transactionBytes
                                 .Skip(sigStartByte)
                                 .Take(sigEndByte - sigStartByte)
                                 .ToArray()
@@ -417,12 +420,13 @@ namespace SUP.P2FK
             }
             else
             {
-                //Object not signed stop tracking Signature address
+                // Object not signed, stop tracking Signature address
                 P2FKSignatureAddress = "";
             }
+        
 
-            //Populate P2FK object with all values
-            P2FKRoot.Id = -1;
+        //Populate P2FK object with all values
+        P2FKRoot.Id = -1;
             P2FKRoot.TransactionId = transactionid;
             P2FKRoot.Signature = signature;
             P2FKRoot.SignedBy = P2FKSignatureAddress;
@@ -839,26 +843,47 @@ namespace SUP.P2FK
         public static string GetPublicAddressByKeyword(string keyword, string versionbyte = "111")
         {
             if (keyword == null) { return null; }
-            // Cut the string at 20 characters
-            if (keyword.Length > 20)
+
+            // Convert the string to UTF-8 bytes
+            byte[] keywordBytes = Encoding.UTF8.GetBytes(keyword);
+
+            // Ensure the keywordBytes is exactly 20 bytes in length by right-padding with '#' characters
+            if (keywordBytes.Length < 20)
             {
-                keyword = keyword.Substring(0, 20);
+                byte[] paddedBytes = new byte[20];
+                Array.Copy(keywordBytes, paddedBytes, keywordBytes.Length);
+                for (int i = keywordBytes.Length; i < 20; i++)
+                {
+                    paddedBytes[i] = (byte)'#';
+                }
+                keywordBytes = paddedBytes;
             }
-            // Right pad the string with '#' characters
-            keyword = keyword.PadRight(20, '#');
+            else if (keywordBytes.Length > 20)
+            {
+                // If it's more than 20 bytes, truncate it to 20 bytes
+                byte[] truncatedBytes = new byte[20];
+                Array.Copy(keywordBytes, truncatedBytes, 20);
+                keywordBytes = truncatedBytes;
+            }
 
             return Base58.EncodeWithCheckSum(
                 new byte[] { byte.Parse(versionbyte) }
-                    .Concat(System.Text.Encoding.ASCII.GetBytes(keyword))
+                    .Concat(keywordBytes)
                     .ToArray());
         }
-        public static string GetKeywordByPublicAddress(string public_address)
+        public static string GetKeywordByPublicAddress(string public_address, string encoding = "UTF8")
         {
 
 
             Base58.DecodeWithCheckSum(public_address, out byte[] payloadBytes);
-
-            return Encoding.ASCII.GetString(payloadBytes).Replace("#", "").Substring(1);
+            if (encoding == "UTF8")
+            {
+                return Encoding.UTF8.GetString(payloadBytes).Replace("#", "").Substring(1);
+            }
+            else
+            {
+                return Encoding.ASCII.GetString(payloadBytes).Replace("#", "").Substring(1);
+            }
         }
         public static string GetTransactionIdByHexString(string transactionHex)
         {

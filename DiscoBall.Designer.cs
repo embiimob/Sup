@@ -39,12 +39,14 @@
             this.txtAttach = new System.Windows.Forms.TextBox();
             this.lblObjectStatus = new System.Windows.Forms.Label();
             this.lblTransactionId = new System.Windows.Forms.Label();
-            this.button1 = new System.Windows.Forms.Button();
+            this.btnEMOJI = new System.Windows.Forms.Button();
             this.fromImage = new System.Windows.Forms.PictureBox();
             this.toImage = new System.Windows.Forms.PictureBox();
             this.btnRefresh = new System.Windows.Forms.Button();
             this.label3 = new System.Windows.Forms.Label();
             this.btnRecord = new System.Windows.Forms.Button();
+            this.button2 = new System.Windows.Forms.Button();
+            this.emojiPanel = new System.Windows.Forms.FlowLayoutPanel();
             ((System.ComponentModel.ISupportInitialize)(this.fromImage)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.toImage)).BeginInit();
             this.SuspendLayout();
@@ -54,20 +56,20 @@
             this.supMessage.BackColor = System.Drawing.Color.Black;
             this.supMessage.Font = new System.Drawing.Font("Segoe UI", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.supMessage.ForeColor = System.Drawing.Color.White;
-            this.supMessage.Location = new System.Drawing.Point(20, 19);
+            this.supMessage.Location = new System.Drawing.Point(19, 19);
             this.supMessage.MaxLength = 420;
             this.supMessage.Multiline = true;
             this.supMessage.Name = "supMessage";
-            this.supMessage.Size = new System.Drawing.Size(317, 202);
+            this.supMessage.Size = new System.Drawing.Size(410, 202);
             this.supMessage.TabIndex = 0;
             // 
             // btnAttach
             // 
-            this.btnAttach.Font = new System.Drawing.Font("Segoe UI Emoji", 13.8F);
+            this.btnAttach.Font = new System.Drawing.Font("Segoe UI Emoji", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btnAttach.ForeColor = System.Drawing.Color.Black;
-            this.btnAttach.Location = new System.Drawing.Point(261, 458);
+            this.btnAttach.Location = new System.Drawing.Point(375, 318);
             this.btnAttach.Name = "btnAttach";
-            this.btnAttach.Size = new System.Drawing.Size(28, 40);
+            this.btnAttach.Size = new System.Drawing.Size(54, 50);
             this.btnAttach.TabIndex = 87;
             this.btnAttach.Text = "📎";
             this.btnAttach.UseVisualStyleBackColor = true;
@@ -75,18 +77,18 @@
             // 
             // txtFromAddress
             // 
-            this.txtFromAddress.Location = new System.Drawing.Point(66, 320);
+            this.txtFromAddress.Location = new System.Drawing.Point(66, 395);
             this.txtFromAddress.Multiline = true;
             this.txtFromAddress.Name = "txtFromAddress";
-            this.txtFromAddress.Size = new System.Drawing.Size(271, 40);
+            this.txtFromAddress.Size = new System.Drawing.Size(363, 40);
             this.txtFromAddress.TabIndex = 88;
             // 
             // flowAttachments
             // 
             this.flowAttachments.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.flowAttachments.Location = new System.Drawing.Point(38, 235);
+            this.flowAttachments.Location = new System.Drawing.Point(19, 244);
             this.flowAttachments.Name = "flowAttachments";
-            this.flowAttachments.Size = new System.Drawing.Size(282, 50);
+            this.flowAttachments.Size = new System.Drawing.Size(287, 50);
             this.flowAttachments.TabIndex = 89;
             // 
             // btnEncryptionStatus
@@ -103,16 +105,16 @@
             // 
             // txtToAddress
             // 
-            this.txtToAddress.Location = new System.Drawing.Point(66, 382);
+            this.txtToAddress.Location = new System.Drawing.Point(66, 457);
             this.txtToAddress.Multiline = true;
             this.txtToAddress.Name = "txtToAddress";
-            this.txtToAddress.Size = new System.Drawing.Size(271, 40);
+            this.txtToAddress.Size = new System.Drawing.Size(363, 40);
             this.txtToAddress.TabIndex = 357;
             // 
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(66, 302);
+            this.label1.Location = new System.Drawing.Point(66, 377);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(30, 13);
             this.label1.TabIndex = 358;
@@ -121,7 +123,7 @@
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(66, 366);
+            this.label2.Location = new System.Drawing.Point(66, 441);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(19, 13);
             this.label2.TabIndex = 359;
@@ -129,10 +131,10 @@
             // 
             // txtAttach
             // 
-            this.txtAttach.Location = new System.Drawing.Point(20, 458);
+            this.txtAttach.Location = new System.Drawing.Point(20, 318);
             this.txtAttach.Multiline = true;
             this.txtAttach.Name = "txtAttach";
-            this.txtAttach.Size = new System.Drawing.Size(235, 40);
+            this.txtAttach.Size = new System.Drawing.Size(346, 50);
             this.txtAttach.TabIndex = 360;
             // 
             // lblObjectStatus
@@ -153,22 +155,22 @@
             this.lblTransactionId.TabIndex = 362;
             this.lblTransactionId.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
-            // button1
+            // btnEMOJI
             // 
-            this.button1.Font = new System.Drawing.Font("Segoe UI Emoji", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.button1.ForeColor = System.Drawing.Color.Black;
-            this.button1.Location = new System.Drawing.Point(295, 458);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(42, 40);
-            this.button1.TabIndex = 363;
-            this.button1.Text = "GIF";
-            this.button1.UseVisualStyleBackColor = true;
-            this.button1.Click += new System.EventHandler(this.button1_Click);
+            this.btnEMOJI.Font = new System.Drawing.Font("Segoe UI Emoji", 14.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnEMOJI.ForeColor = System.Drawing.Color.Black;
+            this.btnEMOJI.Location = new System.Drawing.Point(312, 244);
+            this.btnEMOJI.Name = "btnEMOJI";
+            this.btnEMOJI.Size = new System.Drawing.Size(54, 50);
+            this.btnEMOJI.TabIndex = 363;
+            this.btnEMOJI.Text = "🙂";
+            this.btnEMOJI.UseVisualStyleBackColor = true;
+            this.btnEMOJI.Click += new System.EventHandler(this.btnEMOJI_Click);
             // 
             // fromImage
             // 
-            this.fromImage.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
-            this.fromImage.Location = new System.Drawing.Point(19, 320);
+            this.fromImage.BackColor = System.Drawing.Color.Black;
+            this.fromImage.Location = new System.Drawing.Point(19, 395);
             this.fromImage.Name = "fromImage";
             this.fromImage.Size = new System.Drawing.Size(40, 40);
             this.fromImage.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
@@ -177,8 +179,8 @@
             // 
             // toImage
             // 
-            this.toImage.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
-            this.toImage.Location = new System.Drawing.Point(19, 382);
+            this.toImage.BackColor = System.Drawing.Color.Black;
+            this.toImage.Location = new System.Drawing.Point(19, 457);
             this.toImage.Name = "toImage";
             this.toImage.Size = new System.Drawing.Size(40, 40);
             this.toImage.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
@@ -189,7 +191,7 @@
             // 
             this.btnRefresh.Font = new System.Drawing.Font("Segoe UI Emoji", 13.8F);
             this.btnRefresh.ForeColor = System.Drawing.Color.Black;
-            this.btnRefresh.Location = new System.Drawing.Point(287, 521);
+            this.btnRefresh.Location = new System.Drawing.Point(379, 521);
             this.btnRefresh.Name = "btnRefresh";
             this.btnRefresh.Size = new System.Drawing.Size(50, 46);
             this.btnRefresh.TabIndex = 86;
@@ -200,7 +202,7 @@
             // label3
             // 
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(18, 442);
+            this.label3.Location = new System.Drawing.Point(18, 302);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(163, 13);
             this.label3.TabIndex = 364;
@@ -220,15 +222,41 @@
             this.btnRecord.MouseDown += new System.Windows.Forms.MouseEventHandler(this.BtnRecord_MouseDown);
             this.btnRecord.MouseUp += new System.Windows.Forms.MouseEventHandler(this.BtnRecord_MouseUp);
             // 
+            // button2
+            // 
+            this.button2.Font = new System.Drawing.Font("Segoe UI Emoji", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.button2.ForeColor = System.Drawing.Color.Black;
+            this.button2.Location = new System.Drawing.Point(375, 244);
+            this.button2.Name = "button2";
+            this.button2.Size = new System.Drawing.Size(54, 50);
+            this.button2.TabIndex = 366;
+            this.button2.Text = "GIF";
+            this.button2.UseVisualStyleBackColor = true;
+            this.button2.Click += new System.EventHandler(this.button1_Click);
+            // 
+            // emojiPanel
+            // 
+            this.emojiPanel.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.emojiPanel.AutoScroll = true;
+            this.emojiPanel.Location = new System.Drawing.Point(19, 244);
+            this.emojiPanel.Name = "emojiPanel";
+            this.emojiPanel.Size = new System.Drawing.Size(410, 323);
+            this.emojiPanel.TabIndex = 367;
+            this.emojiPanel.Visible = false;
+            // 
             // DiscoBall
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.Black;
-            this.ClientSize = new System.Drawing.Size(358, 579);
+            this.ClientSize = new System.Drawing.Size(447, 586);
+            this.Controls.Add(this.emojiPanel);
+            this.Controls.Add(this.button2);
             this.Controls.Add(this.btnRecord);
             this.Controls.Add(this.label3);
-            this.Controls.Add(this.button1);
+            this.Controls.Add(this.btnEMOJI);
             this.Controls.Add(this.lblTransactionId);
             this.Controls.Add(this.lblObjectStatus);
             this.Controls.Add(this.txtAttach);
@@ -244,8 +272,8 @@
             this.Controls.Add(this.btnRefresh);
             this.Controls.Add(this.supMessage);
             this.ForeColor = System.Drawing.Color.White;
-            this.MaximumSize = new System.Drawing.Size(374, 618);
-            this.MinimumSize = new System.Drawing.Size(374, 618);
+            this.MaximumSize = new System.Drawing.Size(463, 625);
+            this.MinimumSize = new System.Drawing.Size(463, 625);
             this.Name = "DiscoBall";
             this.Text = "Disco";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.MainForm_FormClosing);
@@ -272,10 +300,12 @@
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.Label lblObjectStatus;
         private System.Windows.Forms.Label lblTransactionId;
-        private System.Windows.Forms.Button button1;
+        private System.Windows.Forms.Button btnEMOJI;
         public System.Windows.Forms.TextBox txtAttach;
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.Button btnRecord;
         private System.Windows.Forms.Button btnPlay;
+        private System.Windows.Forms.Button button2;
+        private System.Windows.Forms.FlowLayoutPanel emojiPanel;
     }
 }

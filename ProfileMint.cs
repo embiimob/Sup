@@ -134,36 +134,68 @@ namespace SUP
             txtOBJJSON.Text = objectSerialized.Replace(",\"url\":{}", "").Replace(",\"loc\":{}", "").Replace(",\"urn\":\"\"", "").Replace(",\"fnm\":\"\"", "").Replace(",\"mnm\":\"\"", "").Replace(",\"lnm\":\"\"", "").Replace(",\"sfx\":\"\"", "").Replace(",\"bio\":\"\"", "").Replace(",\"img\":\"\"", "");
 
 
-            txtOBJP2FK.Text = "PRO" + ">" + txtOBJJSON.Text.Length + ">" + txtOBJJSON.Text;
-
             if (btnMint.Enabled)
             {
-                NetworkCredential credentials = new NetworkCredential("good-user", "better-password");
-                RPCClient rpcClient = new RPCClient(credentials, new Uri(@"http://127.0.0.1:18332"), Network.Main);
-                System.Security.Cryptography.SHA256 mySHA256 = SHA256Managed.Create();
-                byte[] hashValue = mySHA256.ComputeHash(Encoding.ASCII.GetBytes(txtOBJP2FK.Text));
-                string signatureAddress;
+                byte[] utf8Bytes = System.Text.Encoding.UTF8.GetBytes(txtOBJJSON.Text);
 
-                signatureAddress = txtObjectAddress.Text;
+                int lengthInBytes = utf8Bytes.Length;
+
+                string objString = "PRO>" + lengthInBytes + ">" + txtOBJJSON.Text;
+
+                // Assign the result to txtOBJP2FK.Text
+                txtOBJP2FK.Text = objString;
+
+                NetworkCredential credentials = new NetworkCredential("good-user", "better-password");
+                RPCClient rpcClient = new RPCClient(credentials, new Uri("http://127.0.0.1:18332"), Network.Main);
+                System.Security.Cryptography.SHA256 mySHA256 = SHA256Managed.Create();
+                byte[] hashValue = mySHA256.ComputeHash(Encoding.UTF8.GetBytes(txtOBJP2FK.Text));
+
+
+                string signatureAddress = txtObjectAddress.Text;
+
                 string signature = "";
                 try { signature = rpcClient.SendCommand("signmessage", signatureAddress, BitConverter.ToString(hashValue).Replace("-", String.Empty)).ResultString; }
                 catch (Exception ex)
                 {
-                    lblCost.Text = ex.Message;
+                    lblObjectStatus.Text = ex.Message;
                     return;
                 }
 
                 txtOBJP2FK.Text = "SIG" + ":" + "88" + ">" + signature + txtOBJP2FK.Text;
 
                 List<string> encodedList = new List<string>();
-                for (int i = 0; i < txtOBJP2FK.Text.Length; i += 20)
+                byte[] inputBytes = Encoding.UTF8.GetBytes(txtOBJP2FK.Text); // Convert the string to bytes
+
+                for (int i = 0; i < inputBytes.Length; i += 20)
                 {
-                    string chunk = txtOBJP2FK.Text.Substring(i, Math.Min(20, txtOBJP2FK.Text.Length - i));
-                    if (chunk.Any())
+                    byte[] chunkBytes = new byte[Math.Min(20, inputBytes.Length - i)];
+                    Array.Copy(inputBytes, i, chunkBytes, 0, chunkBytes.Length);
+
+                    // Right-pad the chunkBytes with '#' if it's less than 20 bytes
+                    if (chunkBytes.Length < 20)
                     {
-                        encodedList.Add(Root.GetPublicAddressByKeyword(chunk));
+                        byte[] paddedChunkBytes = new byte[20];
+                        Array.Copy(chunkBytes, paddedChunkBytes, chunkBytes.Length);
+                        for (int j = chunkBytes.Length; j < 20; j++)
+                        {
+                            paddedChunkBytes[j] = (byte)'#';
+                        }
+                        chunkBytes = paddedChunkBytes;
+                    }
+
+                    string chunkBase58 = Base58.EncodeWithCheckSum(
+                        new byte[] { 111 }.Concat(chunkBytes).ToArray());
+
+                    if (!encodedList.Contains(chunkBase58))
+                    {
+                        encodedList.Add(chunkBase58);
+                    }
+                    else
+                    {
+                        DialogResult result = MessageBox.Show("The following duplicate information was detected: [  " + chunkBase58 + "  ]. Sorry, you must still use Apertus.io for etchings that require repetitive data", "Confirmation", MessageBoxButtons.OK);
                     }
                 }
+
 
                 //add URN registration
                 encodedList.Add(Root.GetPublicAddressByKeyword(txtURN.Text));
@@ -408,7 +440,7 @@ namespace SUP
         {
             if (!string.IsNullOrEmpty(txtObjectAddress.Text))
             {
-                string P2FKASCII = Root.GetKeywordByPublicAddress(txtObjectAddress.Text);
+                string P2FKASCII = Root.GetKeywordByPublicAddress(txtObjectAddress.Text,"ASCII");
                 char[] specialChars = new char[] { '\\', '/', ':', '*', '?', '"', '<', '>', '|' };
                 // Check for presence of special character followed by a number using regular expression
                 string pattern = "[" + Regex.Escape(new string(specialChars)) + "][0-9]";

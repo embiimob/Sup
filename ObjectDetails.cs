@@ -40,7 +40,7 @@ namespace SUP
             InitializeComponent();
             _objectaddress = objectaddress;
             isUserControl = isusercontrol;
-
+            supFlow.MouseWheel += supFlow_MouseWheel;
         }
 
         private void ObjectDetails_Load(object sender, EventArgs e)
@@ -85,6 +85,18 @@ namespace SUP
 
                 btnReloadObject.PerformClick();
                 lblPleaseStandBy.Visible = false;
+            }
+        }
+        private void supFlow_MouseWheel(object sender, MouseEventArgs e)
+        {
+            if (supFlow.VerticalScroll.Value + supFlow.ClientSize.Height >= supFlow.VerticalScroll.Maximum)
+            {
+                // Add more PictureBoxes if available              
+
+                if (btnRefreshSup.BackColor == System.Drawing.Color.Blue)
+                { RefreshSupMessages(); }
+                else { btnRefreshSup.PerformClick(); }
+
             }
         }
 
@@ -162,9 +174,23 @@ namespace SUP
         private void LaunchURN(object sender, EventArgs e)
         {
             string src = lblURNFullPath.Text;
-            try
-            { System.Diagnostics.Process.Start(src); }
-            catch { System.Media.SystemSounds.Exclamation.Play(); }
+
+             // Show a confirmation dialog
+            DialogResult result = MessageBox.Show("Are you sure!? Launching files executes locally!", "Confirmation", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
+
+            if (result == DialogResult.Yes)
+            {
+                try
+                {
+                    System.Diagnostics.Process.Start(src);
+                }
+                catch
+                {
+                    System.Media.SystemSounds.Exclamation.Play();
+                }
+            }
+
+
         }
 
         private void LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
@@ -2607,6 +2633,9 @@ namespace SUP
                         txtOfficialURN.Text = isOfficial.Creators.First().Key;
                         btnLaunchURN.Visible = false;
                         btnOfficial.Visible = true;
+                        lblLaunchURI.Visible = false;
+                        lblWarning.Visible = false;
+
                     }
                     else
                     {
@@ -3273,10 +3302,23 @@ namespace SUP
         private void lblLaunchURI_Click(object sender, EventArgs e)
         {
             string src = txtURI.Text;
-            try
-            { System.Diagnostics.Process.Start(src); }
-            catch { System.Media.SystemSounds.Exclamation.Play(); }
+
+            // Show a confirmation dialog
+            DialogResult result = MessageBox.Show("Are you sure!? Launching files executes locally!", "Confirmation", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
+
+            if (result == DialogResult.Yes)
+            {
+                try
+                {
+                    System.Diagnostics.Process.Start(src);
+                }
+                catch
+                {
+                    System.Media.SystemSounds.Exclamation.Play();
+                }
+            }
         }
+
 
         private void btnBurn_Click(object sender, EventArgs e)
         {
@@ -3308,6 +3350,12 @@ namespace SUP
             JukeBox jukeBoxForm = new JukeBox(_objectaddress);
             jukeBoxForm.Show();// Pass the reference to the current form as the parent form
             
+        }
+
+        private void btnSupFlix_Click(object sender, EventArgs e)
+        {
+            SupFlix supflixForm = new SupFlix(_objectaddress);
+            supflixForm.Show();
         }
     }
 

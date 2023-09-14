@@ -76,6 +76,8 @@ namespace SUP
             this.lblTotalTime = new System.Windows.Forms.Label();
             this.lblKbs = new System.Windows.Forms.Label();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
+            this.btnUniqueInteractions = new System.Windows.Forms.Button();
+            this.button5 = new System.Windows.Forms.Button();
             this.button3 = new System.Windows.Forms.Button();
             this.ButtonGetPublicKeys = new System.Windows.Forms.Button();
             this.ButtonGetPrivateMessages = new System.Windows.Forms.Button();
@@ -104,6 +106,7 @@ namespace SUP
             this.btnGetObject = new System.Windows.Forms.Button();
             this.btnDecrypt = new System.Windows.Forms.Button();
             this.btnEncrypt = new System.Windows.Forms.Button();
+            this.btnCollections = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.dgTransactions)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
@@ -113,7 +116,7 @@ namespace SUP
             // 
             // btnGet
             // 
-            this.btnGet.Location = new System.Drawing.Point(408, 118);
+            this.btnGet.Location = new System.Drawing.Point(493, 118);
             this.btnGet.Name = "btnGet";
             this.btnGet.Size = new System.Drawing.Size(42, 23);
             this.btnGet.TabIndex = 1;
@@ -123,7 +126,7 @@ namespace SUP
             // 
             // btnDelete
             // 
-            this.btnDelete.Location = new System.Drawing.Point(357, 118);
+            this.btnDelete.Location = new System.Drawing.Point(443, 117);
             this.btnDelete.Name = "btnDelete";
             this.btnDelete.Size = new System.Drawing.Size(44, 23);
             this.btnDelete.TabIndex = 2;
@@ -144,7 +147,7 @@ namespace SUP
             // 
             this.txtlevelDBKey.Location = new System.Drawing.Point(62, 120);
             this.txtlevelDBKey.Name = "txtlevelDBKey";
-            this.txtlevelDBKey.Size = new System.Drawing.Size(281, 20);
+            this.txtlevelDBKey.Size = new System.Drawing.Size(366, 20);
             this.txtlevelDBKey.TabIndex = 7;
             // 
             // lbTableName
@@ -159,16 +162,16 @@ namespace SUP
             "found",
             "obj",
             "event"});
-            this.lbTableName.Location = new System.Drawing.Point(349, 34);
+            this.lbTableName.Location = new System.Drawing.Point(443, 34);
             this.lbTableName.Name = "lbTableName";
             this.lbTableName.ScrollAlwaysVisible = true;
-            this.lbTableName.Size = new System.Drawing.Size(102, 69);
+            this.lbTableName.Size = new System.Drawing.Size(90, 69);
             this.lbTableName.TabIndex = 13;
             // 
             // label6
             // 
             this.label6.AutoSize = true;
-            this.label6.Location = new System.Drawing.Point(346, 18);
+            this.label6.Location = new System.Drawing.Point(440, 12);
             this.label6.Name = "label6";
             this.label6.Size = new System.Drawing.Size(67, 13);
             this.label6.TabIndex = 14;
@@ -227,7 +230,7 @@ namespace SUP
             // 
             // btnTestConnection
             // 
-            this.btnTestConnection.Location = new System.Drawing.Point(257, 34);
+            this.btnTestConnection.Location = new System.Drawing.Point(303, 31);
             this.btnTestConnection.Name = "btnTestConnection";
             this.btnTestConnection.Size = new System.Drawing.Size(86, 23);
             this.btnTestConnection.TabIndex = 21;
@@ -246,7 +249,7 @@ namespace SUP
             // 
             // txtbalance
             // 
-            this.txtbalance.Location = new System.Drawing.Point(257, 83);
+            this.txtbalance.Location = new System.Drawing.Point(303, 83);
             this.txtbalance.Name = "txtbalance";
             this.txtbalance.Size = new System.Drawing.Size(86, 20);
             this.txtbalance.TabIndex = 22;
@@ -255,7 +258,7 @@ namespace SUP
             // 
             this.txtSearchAddress.Location = new System.Drawing.Point(9, 243);
             this.txtSearchAddress.Name = "txtSearchAddress";
-            this.txtSearchAddress.Size = new System.Drawing.Size(281, 20);
+            this.txtSearchAddress.Size = new System.Drawing.Size(339, 20);
             this.txtSearchAddress.TabIndex = 25;
             this.txtSearchAddress.Text = "muVrFVk3ErfrnmWosLF4WixxRtDKfMx9bs";
             // 
@@ -270,7 +273,7 @@ namespace SUP
             // 
             // btnSearch
             // 
-            this.btnSearch.Location = new System.Drawing.Point(296, 242);
+            this.btnSearch.Location = new System.Drawing.Point(352, 243);
             this.btnSearch.Name = "btnSearch";
             this.btnSearch.Size = new System.Drawing.Size(76, 23);
             this.btnSearch.TabIndex = 27;
@@ -323,7 +326,7 @@ namespace SUP
             dataGridViewCellStyle4.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
             dataGridViewCellStyle4.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
             this.dgTransactions.RowHeadersDefaultCellStyle = dataGridViewCellStyle4;
-            this.dgTransactions.Size = new System.Drawing.Size(1056, 267);
+            this.dgTransactions.Size = new System.Drawing.Size(1154, 267);
             this.dgTransactions.TabIndex = 30;
             this.dgTransactions.CellClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.DataGridViewClick);
             // 
@@ -402,7 +405,7 @@ namespace SUP
             // 
             // btnGetTransactionId
             // 
-            this.btnGetTransactionId.Location = new System.Drawing.Point(408, 179);
+            this.btnGetTransactionId.Location = new System.Drawing.Point(493, 179);
             this.btnGetTransactionId.Name = "btnGetTransactionId";
             this.btnGetTransactionId.Size = new System.Drawing.Size(43, 23);
             this.btnGetTransactionId.TabIndex = 33;
@@ -423,13 +426,13 @@ namespace SUP
             // 
             this.txtTransactionId.Location = new System.Drawing.Point(9, 180);
             this.txtTransactionId.Name = "txtTransactionId";
-            this.txtTransactionId.Size = new System.Drawing.Size(393, 20);
+            this.txtTransactionId.Size = new System.Drawing.Size(478, 20);
             this.txtTransactionId.TabIndex = 31;
             this.txtTransactionId.Text = "7223070fbc3706856e90701b62a8bfb3f5a618dc13d64d8f029260cba187ca26";
             // 
             // btnGetKeyword
             // 
-            this.btnGetKeyword.Location = new System.Drawing.Point(377, 243);
+            this.btnGetKeyword.Location = new System.Drawing.Point(462, 243);
             this.btnGetKeyword.Name = "btnGetKeyword";
             this.btnGetKeyword.Size = new System.Drawing.Size(73, 23);
             this.btnGetKeyword.TabIndex = 36;
@@ -457,7 +460,7 @@ namespace SUP
             // label14
             // 
             this.label14.AutoSize = true;
-            this.label14.Location = new System.Drawing.Point(254, 67);
+            this.label14.Location = new System.Drawing.Point(300, 67);
             this.label14.Name = "label14";
             this.label14.Size = new System.Drawing.Size(45, 13);
             this.label14.TabIndex = 39;
@@ -491,6 +494,9 @@ namespace SUP
             // 
             // splitContainer1.Panel1
             // 
+            this.splitContainer1.Panel1.Controls.Add(this.btnCollections);
+            this.splitContainer1.Panel1.Controls.Add(this.btnUniqueInteractions);
+            this.splitContainer1.Panel1.Controls.Add(this.button5);
             this.splitContainer1.Panel1.Controls.Add(this.button3);
             this.splitContainer1.Panel1.Controls.Add(this.ButtonGetPublicKeys);
             this.splitContainer1.Panel1.Controls.Add(this.ButtonGetPrivateMessages);
@@ -551,25 +557,44 @@ namespace SUP
             // splitContainer1.Panel2
             // 
             this.splitContainer1.Panel2.Controls.Add(this.dgTransactions);
-            this.splitContainer1.Size = new System.Drawing.Size(1056, 648);
+            this.splitContainer1.Size = new System.Drawing.Size(1154, 648);
             this.splitContainer1.SplitterDistance = 380;
             this.splitContainer1.SplitterWidth = 1;
             this.splitContainer1.TabIndex = 42;
             this.splitContainer1.Resize += new System.EventHandler(this.OnContainerResize);
             // 
+            // btnUniqueInteractions
+            // 
+            this.btnUniqueInteractions.Location = new System.Drawing.Point(352, 299);
+            this.btnUniqueInteractions.Name = "btnUniqueInteractions";
+            this.btnUniqueInteractions.Size = new System.Drawing.Size(77, 23);
+            this.btnUniqueInteractions.TabIndex = 78;
+            this.btnUniqueInteractions.Text = "get profiles";
+            this.btnUniqueInteractions.UseVisualStyleBackColor = true;
+            this.btnUniqueInteractions.Click += new System.EventHandler(this.btnUniqueInteractions_Click);
+            // 
+            // button5
+            // 
+            this.button5.Location = new System.Drawing.Point(352, 271);
+            this.button5.Name = "button5";
+            this.button5.Size = new System.Drawing.Size(77, 23);
+            this.button5.TabIndex = 77;
+            this.button5.Text = "profile urn";
+            this.button5.UseVisualStyleBackColor = true;
+            // 
             // button3
             // 
-            this.button3.Location = new System.Drawing.Point(377, 213);
+            this.button3.Location = new System.Drawing.Point(395, 151);
             this.button3.Name = "button3";
-            this.button3.Size = new System.Drawing.Size(72, 23);
+            this.button3.Size = new System.Drawing.Size(77, 23);
             this.button3.TabIndex = 76;
-            this.button3.Text = "profiles";
+            this.button3.Text = "local profiles";
             this.button3.UseVisualStyleBackColor = true;
             this.button3.Click += new System.EventHandler(this.button3_Click);
             // 
             // ButtonGetPublicKeys
             // 
-            this.ButtonGetPublicKeys.Location = new System.Drawing.Point(300, 213);
+            this.ButtonGetPublicKeys.Location = new System.Drawing.Point(317, 151);
             this.ButtonGetPublicKeys.Name = "ButtonGetPublicKeys";
             this.ButtonGetPublicKeys.Size = new System.Drawing.Size(72, 23);
             this.ButtonGetPublicKeys.TabIndex = 75;
@@ -620,7 +645,7 @@ namespace SUP
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(357, 334);
+            this.label2.Location = new System.Drawing.Point(442, 334);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(26, 13);
             this.label2.TabIndex = 69;
@@ -629,7 +654,7 @@ namespace SUP
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(357, 305);
+            this.label1.Location = new System.Drawing.Point(442, 305);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(21, 13);
             this.label1.TabIndex = 68;
@@ -637,7 +662,7 @@ namespace SUP
             // 
             // txtSkip
             // 
-            this.txtSkip.Location = new System.Drawing.Point(384, 332);
+            this.txtSkip.Location = new System.Drawing.Point(469, 332);
             this.txtSkip.Name = "txtSkip";
             this.txtSkip.Size = new System.Drawing.Size(66, 20);
             this.txtSkip.TabIndex = 67;
@@ -645,7 +670,7 @@ namespace SUP
             // 
             // txtQty
             // 
-            this.txtQty.Location = new System.Drawing.Point(385, 302);
+            this.txtQty.Location = new System.Drawing.Point(470, 302);
             this.txtQty.Name = "txtQty";
             this.txtQty.Size = new System.Drawing.Size(66, 20);
             this.txtQty.TabIndex = 66;
@@ -736,16 +761,16 @@ namespace SUP
             this.txtGetValue.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.txtGetValue.BackColor = System.Drawing.SystemColors.Control;
-            this.txtGetValue.Location = new System.Drawing.Point(457, 12);
+            this.txtGetValue.Location = new System.Drawing.Point(549, 12);
             this.txtGetValue.Name = "txtGetValue";
-            this.txtGetValue.Size = new System.Drawing.Size(587, 360);
+            this.txtGetValue.Size = new System.Drawing.Size(593, 360);
             this.txtGetValue.TabIndex = 56;
             this.txtGetValue.Text = "";
             // 
             // chkVerbose
             // 
             this.chkVerbose.AutoSize = true;
-            this.chkVerbose.Location = new System.Drawing.Point(384, 275);
+            this.chkVerbose.Location = new System.Drawing.Point(469, 275);
             this.chkVerbose.Name = "chkVerbose";
             this.chkVerbose.Size = new System.Drawing.Size(64, 17);
             this.chkVerbose.TabIndex = 55;
@@ -831,12 +856,22 @@ namespace SUP
             this.btnEncrypt.UseVisualStyleBackColor = true;
             this.btnEncrypt.Click += new System.EventHandler(this.ButtonEncryptTransactionIdClick);
             // 
+            // btnCollections
+            // 
+            this.btnCollections.Location = new System.Drawing.Point(352, 329);
+            this.btnCollections.Name = "btnCollections";
+            this.btnCollections.Size = new System.Drawing.Size(77, 23);
+            this.btnCollections.TabIndex = 79;
+            this.btnCollections.Text = "collections";
+            this.btnCollections.UseVisualStyleBackColor = true;
+            this.btnCollections.Click += new System.EventHandler(this.btnCollections_Click);
+            // 
             // WorkBench
             // 
             this.AllowDrop = true;
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1056, 648);
+            this.ClientSize = new System.Drawing.Size(1154, 648);
             this.Controls.Add(this.splitContainer1);
             this.MinimumSize = new System.Drawing.Size(1072, 687);
             this.Name = "WorkBench";
@@ -925,6 +960,9 @@ namespace SUP
         private Button ButtonGetPublicMessages;
         private Button ButtonGetPublicKeys;
         private Button button3;
+        private Button btnUniqueInteractions;
+        private Button button5;
+        private Button btnCollections;
     }
 }
 
