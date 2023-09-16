@@ -21,7 +21,6 @@ using AngleSharp.Text;
 using System.Drawing.Imaging;
 using NAudio.Wave;
 using System.Text;
-using System.Windows.Interop;
 
 namespace SUP
 {
@@ -583,6 +582,7 @@ namespace SUP
 
 
         }
+
         private void button_Click(object sender, EventArgs e, string value)
         {
             // Launch a new form and pass the value as the only parameter to the load function
@@ -632,7 +632,6 @@ namespace SUP
                 }
             }
         }
-
         //GPT3
         private void btnMint_Click(object sender, EventArgs e)
         {
@@ -706,7 +705,6 @@ namespace SUP
 
             }
         }
-
         //GPT3
         public class CustomForm : Form
         {
@@ -730,7 +728,6 @@ namespace SUP
                 base.WndProc(ref m);
             }
         }
-
         private async void btnLive_Click(object sender, EventArgs e)
         {
             if (System.IO.File.Exists(@"GET_OBJECT_BY_ADDRESS") || System.IO.File.Exists(@"GET_OBJECTS_BY_ADDRESS")) { MessageBox.Show("Please wait for the search to complete.", "Notification"); return; }
@@ -888,6 +885,7 @@ namespace SUP
 
             }
         }
+
         private void AddToSearchResults(List<OBJState> objects)
         {
 
@@ -1071,10 +1069,12 @@ namespace SUP
 
 
         }
+
         private void ButtonLoadWorkBench(object sender, EventArgs e)
         {
             new WorkBench().Show();
         }
+
         private void ButtonLoadConnections(object sender, EventArgs e)
         {
             if (splitContainer1.Panel2Collapsed)
@@ -1088,6 +1088,7 @@ namespace SUP
 
 
         }
+
         private void tmrSearchMemoryPool_Tick(object sender, EventArgs e)
         {
             lock (SupLocker)
