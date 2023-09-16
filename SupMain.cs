@@ -1143,7 +1143,7 @@ namespace SUP
                                     {
 
                                         Root root = Root.GetRootByTransactionId(s, "good-user", "better-password", @"http://127.0.0.1:18332");
-                                        if (root.Signed == true || root.File.ContainsKey("SEC"))
+                                        if (root.Signed == true || (root.File != null && root.File.ContainsKey("SEC")))
                                         {
 
                                             if (!System.IO.File.Exists(@"root\" + root.Keyword.Keys.Last() + @"\BLOCK") && !System.IO.File.Exists(@"root\" + root.Keyword.Keys.Last() + @"\MUTE"))

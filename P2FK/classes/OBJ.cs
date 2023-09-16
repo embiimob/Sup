@@ -535,7 +535,7 @@ namespace SUP.P2FK
                                                 }
 
                                                 long qtyListed = 0;
-                                                try { qtyListed = qtyListed + objectState.Listings[giver].Qty; } catch { }
+                                                try { if (objectState.Listings != null) { qtyListed = qtyListed + objectState.Listings[giver].Qty; } } catch { }
 
                                                 if (qtyOwnedG - qtyListed >= qtyToGive)
                                                 {
@@ -567,7 +567,7 @@ namespace SUP.P2FK
                                                     else { objectState.Owners[reciever] = recieverOwned + qtyToGive; }
 
                                                     //close all currently open offers from reciever
-                                                    try { objectState.Offers.RemoveAll(offer => offer.Requestor == reciever && offer.Owner == giver); } catch { }
+                                                    try { if (objectState.Offers != null) { objectState.Offers.RemoveAll(offer => offer.Requestor == reciever && offer.Owner == giver); } } catch { }
 
                                                     if (verbose)
                                                     {
@@ -1244,7 +1244,7 @@ namespace SUP.P2FK
                                                     // LST Transaction with 0 qty closes all listings
                                                     if (qtyToList == 0)
                                                     {
-                                                        try { objectState.Listings.Remove(Listr); } catch { }
+                                                        try { if (objectState.Listings != null) { objectState.Listings.Remove(Listr); } } catch { }
 
                                                         if (verbose)
                                                         {
