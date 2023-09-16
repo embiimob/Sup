@@ -14,7 +14,6 @@ namespace SUP
         {
             InitializeComponent();
         }
-
      
         private void foundObjectControl_Click(object sender, EventArgs e)
         {
@@ -28,13 +27,10 @@ namespace SUP
 
         }
 
-           
-
         private void ObjectAddress_Click(object sender, EventArgs e)
         {
             Clipboard.SetText(ObjectAddress.Text);
         }
-
 
         private void lblTrash_Click(object sender, EventArgs e)
         {

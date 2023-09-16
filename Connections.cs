@@ -443,8 +443,6 @@ namespace SUP
 
         }
 
-
-
         private void btnLTC_Click(object sender, EventArgs e)
         {
             string bitcoinDirectory = AppDomain.CurrentDomain.BaseDirectory + "\\litecoin";
@@ -480,26 +478,6 @@ namespace SUP
                 RedirectStandardError = true,
                 WindowStyle = ProcessWindowStyle.Hidden,
                 Arguments = $"-txindex=1 -addrindex=1 -datadir={bitcoinDirectory} -server -rpcuser=good-user -rpcpassword=better-password -rpcport=22555"
-            };
-
-            Process.Start(startInfo);
-        }
-
-        private void btnDTC_Click(object sender, EventArgs e)
-        {
-            string bitcoinDirectory = AppDomain.CurrentDomain.BaseDirectory + "\\datacoin";
-            string bitcoindPath = AppDomain.CurrentDomain.BaseDirectory + "\\datacoin-qt.exe";
-            System.IO.Directory.CreateDirectory("datacoin");
-
-            ProcessStartInfo startInfo = new ProcessStartInfo
-            {
-                CreateNoWindow = false,
-                UseShellExecute = false,
-                FileName = bitcoindPath,
-                RedirectStandardOutput = true,
-                RedirectStandardError = true,
-                WindowStyle = ProcessWindowStyle.Hidden,
-                Arguments = $"-txindex=1 -addrindex=1 -datadir={bitcoinDirectory} -server -rpcuser=good-user -rpcpassword=better-password -rpcport=11777"
             };
 
             Process.Start(startInfo);
@@ -679,11 +657,6 @@ namespace SUP
 
 
             }
-        }
-
-        private void panel1_Paint(object sender, PaintEventArgs e)
-        {
-
         }
 
         private void checkBox8_CheckedChanged(object sender, EventArgs e)

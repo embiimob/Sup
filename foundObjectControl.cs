@@ -56,8 +56,6 @@ namespace SUP
             childForm.Show();
         }
 
-     
-
         private void ObjectAddress_Click(object sender, EventArgs e)
         {
             Clipboard.SetText(ObjectAddress.Text);

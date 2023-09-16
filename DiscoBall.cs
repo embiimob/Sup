@@ -56,7 +56,6 @@ namespace SUP
 
         }
 
-
         private void DiscoBall_Load(object sender, EventArgs e)
         {
             fromImage.ImageLocation = _fromimageurl;
@@ -357,6 +356,7 @@ namespace SUP
                 txtAttach.Text = "";
             });
         }
+
         private void PictureBox_MouseClick(object sender, MouseEventArgs e)
         {
             if (e.Button == MouseButtons.Right)
@@ -366,6 +366,7 @@ namespace SUP
 
             }
         }
+
         private void discoButton_Click(object sender, EventArgs e)
         {
 
@@ -554,11 +555,13 @@ namespace SUP
 
             }
         }
+
         private void button1_Click(object sender, EventArgs e)
         {
             GifTool gifToolForm = new GifTool(this); // Pass the reference to the current form as the parent form
             gifToolForm.ShowDialog();
         }
+
         private void MainForm_FormClosing(object sender, FormClosingEventArgs e)
         {
             // Clean up NAudio resources
@@ -579,6 +582,7 @@ namespace SUP
             }
             try { File.Delete(wavFileName); } catch { }
         }
+
         private void BtnRecord_MouseDown(object sender, MouseEventArgs e)
         {
             btnRecord.BackColor = System.Drawing.Color.Blue;
@@ -592,11 +596,13 @@ namespace SUP
 
             }
         }
+
         private void BtnRecord_MouseUp(object sender, MouseEventArgs e)
         {
             recordTimer.Start(); // Start the delay timer when the button is released
 
         }
+
         private void BtnPlay_Click(object sender, MouseEventArgs e)
         {
 
@@ -615,6 +621,7 @@ namespace SUP
             waveOut.Play();
 
         }
+
         private void BtnPlay_MouseUp(object sender, MouseEventArgs e)
         {
             if (e.Button == MouseButtons.Right)
@@ -623,6 +630,7 @@ namespace SUP
                 try { File.Delete(wavFileName); } catch { }
             }
         }
+
         private void WaveIn_DataAvailable(object sender, WaveInEventArgs e)
         {
             // Add recorded data to the bufferedWaveProvider
@@ -643,6 +651,7 @@ namespace SUP
                 writer.Flush();
             }
         }
+
         private async void WaveIn_RecordingStopped(object sender, StoppedEventArgs e)
         {
             // Clean up after recording is stopped
@@ -748,6 +757,7 @@ namespace SUP
 
 
         }
+
         private void waveOut_PlaybackStopped(object sender, StoppedEventArgs e)
         {
             if (waveOut != null)
@@ -763,6 +773,7 @@ namespace SUP
                 reader = null;
             }
         }
+
         private void RecordTimer_Elapsed(object sender, ElapsedEventArgs e)
         {
             btnRecord.BackColor = System.Drawing.Color.White;
@@ -783,7 +794,6 @@ namespace SUP
                 }
             }
         }
-
 
         private void CreateEmojiPanel()
         {
@@ -944,8 +954,7 @@ namespace SUP
             }
 
         }
-
-       
+               
         private void btnEMOJI_Click(object sender, EventArgs e)
         {
             // Show/hide the emoji panel based on its current visibility

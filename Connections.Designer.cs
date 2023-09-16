@@ -178,7 +178,6 @@
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(706, 631);
             this.panel1.TabIndex = 1;
-            this.panel1.Paint += new System.Windows.Forms.PaintEventHandler(this.panel1_Paint);
             // 
             // checkBox8
             // 
@@ -493,7 +492,7 @@
             this.label15.Name = "label15";
             this.label15.Size = new System.Drawing.Size(109, 13);
             this.label15.TabIndex = 124;
-            this.label15.Text = "Sup!? v0.2.1-beta";
+            this.label15.Text = "Sup!? v0.2.2-beta";
             this.label15.TextAlign = System.Drawing.ContentAlignment.TopCenter;
             // 
             // label14

@@ -30,10 +30,10 @@ namespace SUP
         /// </summary>
         private void InitializeComponent()
         {
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle4 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle5 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle7 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle8 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle6 = new System.Windows.Forms.DataGridViewCellStyle();
             this.btnGet = new System.Windows.Forms.Button();
             this.btnDelete = new System.Windows.Forms.Button();
             this.label3 = new System.Windows.Forms.Label();
@@ -76,8 +76,7 @@ namespace SUP
             this.lblTotalTime = new System.Windows.Forms.Label();
             this.lblKbs = new System.Windows.Forms.Label();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
-            this.btnUniqueInteractions = new System.Windows.Forms.Button();
-            this.button5 = new System.Windows.Forms.Button();
+            this.btnCollections = new System.Windows.Forms.Button();
             this.button3 = new System.Windows.Forms.Button();
             this.ButtonGetPublicKeys = new System.Windows.Forms.Button();
             this.ButtonGetPrivateMessages = new System.Windows.Forms.Button();
@@ -106,7 +105,6 @@ namespace SUP
             this.btnGetObject = new System.Windows.Forms.Button();
             this.btnDecrypt = new System.Windows.Forms.Button();
             this.btnEncrypt = new System.Windows.Forms.Button();
-            this.btnCollections = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.dgTransactions)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
@@ -241,7 +239,7 @@ namespace SUP
             // lblTotalBytes
             // 
             this.lblTotalBytes.AutoSize = true;
-            this.lblTotalBytes.Location = new System.Drawing.Point(200, 359);
+            this.lblTotalBytes.Location = new System.Drawing.Point(200, 375);
             this.lblTotalBytes.Name = "lblTotalBytes";
             this.lblTotalBytes.Size = new System.Drawing.Size(35, 13);
             this.lblTotalBytes.TabIndex = 23;
@@ -284,14 +282,14 @@ namespace SUP
             // dgTransactions
             // 
             this.dgTransactions.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.Fill;
-            dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle1.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            dataGridViewCellStyle1.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle1.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.dgTransactions.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle1;
+            dataGridViewCellStyle5.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle5.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle5.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle5.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle5.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle5.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle5.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.dgTransactions.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle5;
             this.dgTransactions.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.dgTransactions.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
             this.rootid,
@@ -307,26 +305,26 @@ namespace SUP
             this.signature,
             this.confirmations,
             this.buildtime});
-            dataGridViewCellStyle3.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle3.BackColor = System.Drawing.SystemColors.Window;
-            dataGridViewCellStyle3.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            dataGridViewCellStyle3.ForeColor = System.Drawing.SystemColors.ControlText;
-            dataGridViewCellStyle3.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle3.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle3.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
-            this.dgTransactions.DefaultCellStyle = dataGridViewCellStyle3;
+            dataGridViewCellStyle7.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle7.BackColor = System.Drawing.SystemColors.Window;
+            dataGridViewCellStyle7.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle7.ForeColor = System.Drawing.SystemColors.ControlText;
+            dataGridViewCellStyle7.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle7.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle7.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
+            this.dgTransactions.DefaultCellStyle = dataGridViewCellStyle7;
             this.dgTransactions.Dock = System.Windows.Forms.DockStyle.Fill;
             this.dgTransactions.Location = new System.Drawing.Point(0, 0);
             this.dgTransactions.Name = "dgTransactions";
-            dataGridViewCellStyle4.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle4.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle4.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            dataGridViewCellStyle4.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle4.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle4.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle4.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.dgTransactions.RowHeadersDefaultCellStyle = dataGridViewCellStyle4;
-            this.dgTransactions.Size = new System.Drawing.Size(1154, 267);
+            dataGridViewCellStyle8.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle8.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle8.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle8.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle8.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle8.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle8.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.dgTransactions.RowHeadersDefaultCellStyle = dataGridViewCellStyle8;
+            this.dgTransactions.Size = new System.Drawing.Size(1154, 331);
             this.dgTransactions.TabIndex = 30;
             this.dgTransactions.CellClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.DataGridViewClick);
             // 
@@ -338,8 +336,8 @@ namespace SUP
             // 
             // messagecount
             // 
-            dataGridViewCellStyle2.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.messagecount.DefaultCellStyle = dataGridViewCellStyle2;
+            dataGridViewCellStyle6.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.messagecount.DefaultCellStyle = dataGridViewCellStyle6;
             this.messagecount.HeaderText = "Messages";
             this.messagecount.MaxInputLength = 100000000;
             this.messagecount.Name = "messagecount";
@@ -469,7 +467,7 @@ namespace SUP
             // lblTotalTime
             // 
             this.lblTotalTime.AutoSize = true;
-            this.lblTotalTime.Location = new System.Drawing.Point(25, 359);
+            this.lblTotalTime.Location = new System.Drawing.Point(25, 375);
             this.lblTotalTime.Name = "lblTotalTime";
             this.lblTotalTime.Size = new System.Drawing.Size(29, 13);
             this.lblTotalTime.TabIndex = 40;
@@ -478,7 +476,7 @@ namespace SUP
             // lblKbs
             // 
             this.lblKbs.AutoSize = true;
-            this.lblKbs.Location = new System.Drawing.Point(314, 359);
+            this.lblKbs.Location = new System.Drawing.Point(314, 375);
             this.lblKbs.Name = "lblKbs";
             this.lblKbs.Size = new System.Drawing.Size(32, 13);
             this.lblKbs.TabIndex = 41;
@@ -495,8 +493,6 @@ namespace SUP
             // splitContainer1.Panel1
             // 
             this.splitContainer1.Panel1.Controls.Add(this.btnCollections);
-            this.splitContainer1.Panel1.Controls.Add(this.btnUniqueInteractions);
-            this.splitContainer1.Panel1.Controls.Add(this.button5);
             this.splitContainer1.Panel1.Controls.Add(this.button3);
             this.splitContainer1.Panel1.Controls.Add(this.ButtonGetPublicKeys);
             this.splitContainer1.Panel1.Controls.Add(this.ButtonGetPrivateMessages);
@@ -552,39 +548,30 @@ namespace SUP
             this.splitContainer1.Panel1.Controls.Add(this.label9);
             this.splitContainer1.Panel1.Controls.Add(this.label8);
             this.splitContainer1.Panel1.Controls.Add(this.txtUrl);
-            this.splitContainer1.Panel1MinSize = 380;
+            this.splitContainer1.Panel1MinSize = 400;
             // 
             // splitContainer1.Panel2
             // 
             this.splitContainer1.Panel2.Controls.Add(this.dgTransactions);
-            this.splitContainer1.Size = new System.Drawing.Size(1154, 648);
-            this.splitContainer1.SplitterDistance = 380;
+            this.splitContainer1.Size = new System.Drawing.Size(1154, 732);
+            this.splitContainer1.SplitterDistance = 400;
             this.splitContainer1.SplitterWidth = 1;
             this.splitContainer1.TabIndex = 42;
             this.splitContainer1.Resize += new System.EventHandler(this.OnContainerResize);
             // 
-            // btnUniqueInteractions
+            // btnCollections
             // 
-            this.btnUniqueInteractions.Location = new System.Drawing.Point(352, 299);
-            this.btnUniqueInteractions.Name = "btnUniqueInteractions";
-            this.btnUniqueInteractions.Size = new System.Drawing.Size(77, 23);
-            this.btnUniqueInteractions.TabIndex = 78;
-            this.btnUniqueInteractions.Text = "get profiles";
-            this.btnUniqueInteractions.UseVisualStyleBackColor = true;
-            this.btnUniqueInteractions.Click += new System.EventHandler(this.btnUniqueInteractions_Click);
-            // 
-            // button5
-            // 
-            this.button5.Location = new System.Drawing.Point(352, 271);
-            this.button5.Name = "button5";
-            this.button5.Size = new System.Drawing.Size(77, 23);
-            this.button5.TabIndex = 77;
-            this.button5.Text = "profile urn";
-            this.button5.UseVisualStyleBackColor = true;
+            this.btnCollections.Location = new System.Drawing.Point(352, 309);
+            this.btnCollections.Name = "btnCollections";
+            this.btnCollections.Size = new System.Drawing.Size(77, 23);
+            this.btnCollections.TabIndex = 79;
+            this.btnCollections.Text = "collections";
+            this.btnCollections.UseVisualStyleBackColor = true;
+            this.btnCollections.Click += new System.EventHandler(this.btnCollections_Click);
             // 
             // button3
             // 
-            this.button3.Location = new System.Drawing.Point(395, 151);
+            this.button3.Location = new System.Drawing.Point(352, 280);
             this.button3.Name = "button3";
             this.button3.Size = new System.Drawing.Size(77, 23);
             this.button3.TabIndex = 76;
@@ -604,7 +591,7 @@ namespace SUP
             // 
             // ButtonGetPrivateMessages
             // 
-            this.ButtonGetPrivateMessages.Location = new System.Drawing.Point(269, 330);
+            this.ButtonGetPrivateMessages.Location = new System.Drawing.Point(269, 339);
             this.ButtonGetPrivateMessages.Name = "ButtonGetPrivateMessages";
             this.ButtonGetPrivateMessages.Size = new System.Drawing.Size(79, 23);
             this.ButtonGetPrivateMessages.TabIndex = 74;
@@ -614,7 +601,7 @@ namespace SUP
             // 
             // ButtonGetPublicMessages
             // 
-            this.ButtonGetPublicMessages.Location = new System.Drawing.Point(182, 330);
+            this.ButtonGetPublicMessages.Location = new System.Drawing.Point(182, 339);
             this.ButtonGetPublicMessages.Name = "ButtonGetPublicMessages";
             this.ButtonGetPublicMessages.Size = new System.Drawing.Size(79, 23);
             this.ButtonGetPublicMessages.TabIndex = 73;
@@ -624,7 +611,7 @@ namespace SUP
             // 
             // ButtonGetObjectByTransactionId
             // 
-            this.ButtonGetObjectByTransactionId.Location = new System.Drawing.Point(12, 329);
+            this.ButtonGetObjectByTransactionId.Location = new System.Drawing.Point(12, 338);
             this.ButtonGetObjectByTransactionId.Name = "ButtonGetObjectByTransactionId";
             this.ButtonGetObjectByTransactionId.Size = new System.Drawing.Size(79, 23);
             this.ButtonGetObjectByTransactionId.TabIndex = 72;
@@ -634,7 +621,7 @@ namespace SUP
             // 
             // btnGetFoundObjects
             // 
-            this.btnGetFoundObjects.Location = new System.Drawing.Point(97, 271);
+            this.btnGetFoundObjects.Location = new System.Drawing.Point(97, 280);
             this.btnGetFoundObjects.Name = "btnGetFoundObjects";
             this.btnGetFoundObjects.Size = new System.Drawing.Size(79, 23);
             this.btnGetFoundObjects.TabIndex = 71;
@@ -645,7 +632,7 @@ namespace SUP
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(442, 334);
+            this.label2.Location = new System.Drawing.Point(442, 343);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(26, 13);
             this.label2.TabIndex = 69;
@@ -654,7 +641,7 @@ namespace SUP
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(442, 305);
+            this.label1.Location = new System.Drawing.Point(442, 314);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(21, 13);
             this.label1.TabIndex = 68;
@@ -662,7 +649,7 @@ namespace SUP
             // 
             // txtSkip
             // 
-            this.txtSkip.Location = new System.Drawing.Point(469, 332);
+            this.txtSkip.Location = new System.Drawing.Point(469, 341);
             this.txtSkip.Name = "txtSkip";
             this.txtSkip.Size = new System.Drawing.Size(66, 20);
             this.txtSkip.TabIndex = 67;
@@ -670,7 +657,7 @@ namespace SUP
             // 
             // txtQty
             // 
-            this.txtQty.Location = new System.Drawing.Point(470, 302);
+            this.txtQty.Location = new System.Drawing.Point(470, 311);
             this.txtQty.Name = "txtQty";
             this.txtQty.Size = new System.Drawing.Size(66, 20);
             this.txtQty.TabIndex = 66;
@@ -728,7 +715,7 @@ namespace SUP
             // 
             // btnProfileURN
             // 
-            this.btnProfileURN.Location = new System.Drawing.Point(269, 271);
+            this.btnProfileURN.Location = new System.Drawing.Point(269, 280);
             this.btnProfileURN.Name = "btnProfileURN";
             this.btnProfileURN.Size = new System.Drawing.Size(77, 23);
             this.btnProfileURN.TabIndex = 59;
@@ -738,7 +725,7 @@ namespace SUP
             // 
             // button4
             // 
-            this.button4.Location = new System.Drawing.Point(13, 271);
+            this.button4.Location = new System.Drawing.Point(13, 280);
             this.button4.Name = "button4";
             this.button4.Size = new System.Drawing.Size(79, 23);
             this.button4.TabIndex = 58;
@@ -748,7 +735,7 @@ namespace SUP
             // 
             // btnObjectURN
             // 
-            this.btnObjectURN.Location = new System.Drawing.Point(182, 271);
+            this.btnObjectURN.Location = new System.Drawing.Point(182, 280);
             this.btnObjectURN.Name = "btnObjectURN";
             this.btnObjectURN.Size = new System.Drawing.Size(77, 23);
             this.btnObjectURN.TabIndex = 57;
@@ -763,14 +750,14 @@ namespace SUP
             this.txtGetValue.BackColor = System.Drawing.SystemColors.Control;
             this.txtGetValue.Location = new System.Drawing.Point(549, 12);
             this.txtGetValue.Name = "txtGetValue";
-            this.txtGetValue.Size = new System.Drawing.Size(593, 360);
+            this.txtGetValue.Size = new System.Drawing.Size(593, 383);
             this.txtGetValue.TabIndex = 56;
             this.txtGetValue.Text = "";
             // 
             // chkVerbose
             // 
             this.chkVerbose.AutoSize = true;
-            this.chkVerbose.Location = new System.Drawing.Point(469, 275);
+            this.chkVerbose.Location = new System.Drawing.Point(469, 284);
             this.chkVerbose.Name = "chkVerbose";
             this.chkVerbose.Size = new System.Drawing.Size(64, 17);
             this.chkVerbose.TabIndex = 55;
@@ -779,7 +766,7 @@ namespace SUP
             // 
             // button2
             // 
-            this.button2.Location = new System.Drawing.Point(97, 329);
+            this.button2.Location = new System.Drawing.Point(97, 338);
             this.button2.Name = "button2";
             this.button2.Size = new System.Drawing.Size(79, 23);
             this.button2.TabIndex = 53;
@@ -789,7 +776,7 @@ namespace SUP
             // 
             // button1
             // 
-            this.button1.Location = new System.Drawing.Point(97, 300);
+            this.button1.Location = new System.Drawing.Point(97, 309);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(79, 23);
             this.button1.TabIndex = 52;
@@ -799,7 +786,7 @@ namespace SUP
             // 
             // btnGetCreated
             // 
-            this.btnGetCreated.Location = new System.Drawing.Point(267, 300);
+            this.btnGetCreated.Location = new System.Drawing.Point(267, 309);
             this.btnGetCreated.Name = "btnGetCreated";
             this.btnGetCreated.Size = new System.Drawing.Size(79, 23);
             this.btnGetCreated.TabIndex = 51;
@@ -809,7 +796,7 @@ namespace SUP
             // 
             // btnGetOwned
             // 
-            this.btnGetOwned.Location = new System.Drawing.Point(182, 300);
+            this.btnGetOwned.Location = new System.Drawing.Point(182, 309);
             this.btnGetOwned.Name = "btnGetOwned";
             this.btnGetOwned.Size = new System.Drawing.Size(79, 23);
             this.btnGetOwned.TabIndex = 50;
@@ -820,7 +807,7 @@ namespace SUP
             // lblTotal
             // 
             this.lblTotal.AutoSize = true;
-            this.lblTotal.Location = new System.Drawing.Point(107, 359);
+            this.lblTotal.Location = new System.Drawing.Point(107, 375);
             this.lblTotal.Name = "lblTotal";
             this.lblTotal.Size = new System.Drawing.Size(30, 13);
             this.lblTotal.TabIndex = 49;
@@ -828,7 +815,7 @@ namespace SUP
             // 
             // btnGetObject
             // 
-            this.btnGetObject.Location = new System.Drawing.Point(12, 300);
+            this.btnGetObject.Location = new System.Drawing.Point(12, 309);
             this.btnGetObject.Name = "btnGetObject";
             this.btnGetObject.Size = new System.Drawing.Size(79, 23);
             this.btnGetObject.TabIndex = 44;
@@ -856,22 +843,12 @@ namespace SUP
             this.btnEncrypt.UseVisualStyleBackColor = true;
             this.btnEncrypt.Click += new System.EventHandler(this.ButtonEncryptTransactionIdClick);
             // 
-            // btnCollections
-            // 
-            this.btnCollections.Location = new System.Drawing.Point(352, 329);
-            this.btnCollections.Name = "btnCollections";
-            this.btnCollections.Size = new System.Drawing.Size(77, 23);
-            this.btnCollections.TabIndex = 79;
-            this.btnCollections.Text = "collections";
-            this.btnCollections.UseVisualStyleBackColor = true;
-            this.btnCollections.Click += new System.EventHandler(this.btnCollections_Click);
-            // 
             // WorkBench
             // 
             this.AllowDrop = true;
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1154, 648);
+            this.ClientSize = new System.Drawing.Size(1154, 732);
             this.Controls.Add(this.splitContainer1);
             this.MinimumSize = new System.Drawing.Size(1072, 687);
             this.Name = "WorkBench";
@@ -960,8 +937,6 @@ namespace SUP
         private Button ButtonGetPublicMessages;
         private Button ButtonGetPublicKeys;
         private Button button3;
-        private Button btnUniqueInteractions;
-        private Button button5;
         private Button btnCollections;
     }
 }

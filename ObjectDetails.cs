@@ -2881,6 +2881,7 @@ namespace SUP
 
                             if (chkRunTrustedObject.Checked)
                             {
+                                lblWarning.Visible = false;
                                 try
                                 {
 
@@ -3075,6 +3076,7 @@ namespace SUP
                             }
                             else
                             {
+                                lblWarning.Visible = true;
                                 var sanitizer = new HtmlSanitizer();
                                 var sanitized = sanitizer.Sanitize(potentialyUnsafeHtml);
                                 try { System.IO.File.WriteAllText(urn, sanitized); } catch { }

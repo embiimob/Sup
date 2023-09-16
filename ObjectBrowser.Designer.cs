@@ -42,10 +42,12 @@ namespace SUP
             this.doubleClickTimer = new System.Windows.Forms.Timer(this.components);
             this.flowLayoutPanel2 = new System.Windows.Forms.FlowLayoutPanel();
             this.profileURN = new System.Windows.Forms.LinkLabel();
-            this.panel1 = new System.Windows.Forms.Panel();
             this.btnCollections = new System.Windows.Forms.Button();
-            this.imgLoading = new System.Windows.Forms.PictureBox();
             this.selectSort = new System.Windows.Forms.ComboBox();
+            this.panel1 = new System.Windows.Forms.Panel();
+            this.imgLoading = new System.Windows.Forms.PictureBox();
+            this.btnVideoSearch = new System.Windows.Forms.Button();
+            this.btnJukeBox = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.pages)).BeginInit();
             this.flowLayoutPanel2.SuspendLayout();
             this.panel1.SuspendLayout();
@@ -56,6 +58,7 @@ namespace SUP
             // 
             this.btnCreated.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.btnCreated.BackColor = System.Drawing.Color.White;
+            this.btnCreated.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnCreated.Font = new System.Drawing.Font("Microsoft Sans Serif", 7.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btnCreated.ForeColor = System.Drawing.Color.Black;
             this.btnCreated.Location = new System.Drawing.Point(466, 3);
@@ -70,6 +73,7 @@ namespace SUP
             // 
             this.btnOwned.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.btnOwned.BackColor = System.Drawing.Color.White;
+            this.btnOwned.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnOwned.Font = new System.Drawing.Font("Microsoft Sans Serif", 7.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btnOwned.ForeColor = System.Drawing.Color.Black;
             this.btnOwned.Location = new System.Drawing.Point(396, 3);
@@ -97,7 +101,7 @@ namespace SUP
             // txtQty
             // 
             this.txtQty.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.txtQty.Location = new System.Drawing.Point(860, 157);
+            this.txtQty.Location = new System.Drawing.Point(868, 157);
             this.txtQty.Name = "txtQty";
             this.txtQty.Size = new System.Drawing.Size(43, 20);
             this.txtQty.TabIndex = 77;
@@ -128,7 +132,7 @@ namespace SUP
             this.flowLayoutPanel1.Margin = new System.Windows.Forms.Padding(0);
             this.flowLayoutPanel1.Name = "flowLayoutPanel1";
             this.flowLayoutPanel1.Padding = new System.Windows.Forms.Padding(3, 30, 0, 0);
-            this.flowLayoutPanel1.Size = new System.Drawing.Size(979, 545);
+            this.flowLayoutPanel1.Size = new System.Drawing.Size(987, 545);
             this.flowLayoutPanel1.TabIndex = 82;
             this.flowLayoutPanel1.DragDrop += new System.Windows.Forms.DragEventHandler(this.flowLayoutPanel1_DragDrop);
             this.flowLayoutPanel1.DragEnter += new System.Windows.Forms.DragEventHandler(this.flowLayoutPanel1_DragEnter);
@@ -142,7 +146,7 @@ namespace SUP
             this.pages.LargeChange = 12;
             this.pages.Location = new System.Drawing.Point(0, 500);
             this.pages.Name = "pages";
-            this.pages.Size = new System.Drawing.Size(979, 45);
+            this.pages.Size = new System.Drawing.Size(987, 45);
             this.pages.TabIndex = 84;
             this.pages.TickStyle = System.Windows.Forms.TickStyle.Both;
             this.pages.Scroll += new System.EventHandler(this.pages_Scroll);
@@ -176,10 +180,12 @@ namespace SUP
             this.flowLayoutPanel2.Controls.Add(this.btnCollections);
             this.flowLayoutPanel2.Controls.Add(this.txtSearchAddress);
             this.flowLayoutPanel2.Controls.Add(this.selectSort);
+            this.flowLayoutPanel2.Controls.Add(this.btnVideoSearch);
+            this.flowLayoutPanel2.Controls.Add(this.btnJukeBox);
             this.flowLayoutPanel2.Dock = System.Windows.Forms.DockStyle.Top;
             this.flowLayoutPanel2.Location = new System.Drawing.Point(0, 0);
             this.flowLayoutPanel2.Name = "flowLayoutPanel2";
-            this.flowLayoutPanel2.Size = new System.Drawing.Size(979, 32);
+            this.flowLayoutPanel2.Size = new System.Drawing.Size(987, 32);
             this.flowLayoutPanel2.TabIndex = 86;
             this.flowLayoutPanel2.SizeChanged += new System.EventHandler(this.flowLayoutPanel2_SizeChanged);
             // 
@@ -197,20 +203,11 @@ namespace SUP
             this.profileURN.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             this.profileURN.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.MainUserNameClick);
             // 
-            // panel1
-            // 
-            this.panel1.Controls.Add(this.flowLayoutPanel1);
-            this.panel1.Controls.Add(this.imgLoading);
-            this.panel1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.panel1.Location = new System.Drawing.Point(0, 0);
-            this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(979, 545);
-            this.panel1.TabIndex = 88;
-            // 
             // btnCollections
             // 
             this.btnCollections.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.btnCollections.BackColor = System.Drawing.Color.White;
+            this.btnCollections.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnCollections.Font = new System.Drawing.Font("Microsoft Sans Serif", 7.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btnCollections.ForeColor = System.Drawing.Color.Black;
             this.btnCollections.Location = new System.Drawing.Point(536, 3);
@@ -221,21 +218,9 @@ namespace SUP
             this.btnCollections.UseVisualStyleBackColor = false;
             this.btnCollections.Click += new System.EventHandler(this.btnCollections_Click);
             // 
-            // imgLoading
-            // 
-            this.imgLoading.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.imgLoading.ImageLocation = "";
-            this.imgLoading.Location = new System.Drawing.Point(3, 3);
-            this.imgLoading.Name = "imgLoading";
-            this.imgLoading.Size = new System.Drawing.Size(976, 539);
-            this.imgLoading.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
-            this.imgLoading.TabIndex = 81;
-            this.imgLoading.TabStop = false;
-            // 
             // selectSort
             // 
+            this.selectSort.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.selectSort.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.selectSort.FormattingEnabled = true;
             this.selectSort.Items.AddRange(new object[] {
@@ -244,6 +229,8 @@ namespace SUP
             "price: lowest",
             "offer: highest",
             "offer: lowest",
+            "activity: high",
+            "activity: low",
             "oldest"});
             this.selectSort.Location = new System.Drawing.Point(800, 3);
             this.selectSort.Name = "selectSort";
@@ -251,12 +238,63 @@ namespace SUP
             this.selectSort.TabIndex = 87;
             this.selectSort.SelectedIndexChanged += new System.EventHandler(this.comboBox1_SelectedIndexChanged);
             // 
+            // panel1
+            // 
+            this.panel1.Controls.Add(this.flowLayoutPanel1);
+            this.panel1.Controls.Add(this.imgLoading);
+            this.panel1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.panel1.Location = new System.Drawing.Point(0, 0);
+            this.panel1.Name = "panel1";
+            this.panel1.Size = new System.Drawing.Size(987, 545);
+            this.panel1.TabIndex = 88;
+            // 
+            // imgLoading
+            // 
+            this.imgLoading.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.imgLoading.ImageLocation = "";
+            this.imgLoading.Location = new System.Drawing.Point(3, 3);
+            this.imgLoading.Name = "imgLoading";
+            this.imgLoading.Size = new System.Drawing.Size(984, 539);
+            this.imgLoading.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
+            this.imgLoading.TabIndex = 81;
+            this.imgLoading.TabStop = false;
+            // 
+            // btnVideoSearch
+            // 
+            this.btnVideoSearch.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.btnVideoSearch.BackColor = System.Drawing.Color.White;
+            this.btnVideoSearch.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnVideoSearch.Font = new System.Drawing.Font("Segoe UI Emoji", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnVideoSearch.Location = new System.Drawing.Point(923, 3);
+            this.btnVideoSearch.Name = "btnVideoSearch";
+            this.btnVideoSearch.Size = new System.Drawing.Size(26, 26);
+            this.btnVideoSearch.TabIndex = 102;
+            this.btnVideoSearch.Text = "🎬";
+            this.btnVideoSearch.UseVisualStyleBackColor = false;
+            this.btnVideoSearch.Click += new System.EventHandler(this.btnVideoSearch_Click);
+            // 
+            // btnJukeBox
+            // 
+            this.btnJukeBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.btnJukeBox.BackColor = System.Drawing.Color.White;
+            this.btnJukeBox.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnJukeBox.Font = new System.Drawing.Font("Segoe UI Emoji", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnJukeBox.Location = new System.Drawing.Point(955, 3);
+            this.btnJukeBox.Name = "btnJukeBox";
+            this.btnJukeBox.Size = new System.Drawing.Size(26, 26);
+            this.btnJukeBox.TabIndex = 101;
+            this.btnJukeBox.Text = "🎵";
+            this.btnJukeBox.UseVisualStyleBackColor = false;
+            this.btnJukeBox.Click += new System.EventHandler(this.btnJukeBox_Click);
+            // 
             // ObjectBrowser
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.SystemColors.ActiveCaptionText;
-            this.ClientSize = new System.Drawing.Size(979, 545);
+            this.ClientSize = new System.Drawing.Size(987, 545);
             this.Controls.Add(this.pages);
             this.Controls.Add(this.flowLayoutPanel2);
             this.Controls.Add(this.panel1);
@@ -294,5 +332,7 @@ namespace SUP
         public System.Windows.Forms.LinkLabel profileURN;
         private System.Windows.Forms.Button btnCollections;
         private System.Windows.Forms.ComboBox selectSort;
+        private System.Windows.Forms.Button btnVideoSearch;
+        private System.Windows.Forms.Button btnJukeBox;
     }
 }

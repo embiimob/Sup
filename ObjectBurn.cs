@@ -55,6 +55,7 @@ namespace SUP
             addressTextBox.Clear();
             qtyTextBox.Clear();
         }
+
         private void saveButton_Click(object sender, EventArgs e)
         {
             if (addressQtyDataGridView.Rows.Count == 0)
@@ -89,8 +90,6 @@ namespace SUP
                 }
             }
         }
-
-
 
         private void burnButton_Click(object sender, EventArgs e)
         {
@@ -217,6 +216,7 @@ namespace SUP
 
 
         }
+
         private void Form1_DragEnter(object sender, DragEventArgs e)
         {
             e.Effect = e.Data.GetDataPresent(DataFormats.FileDrop) ? DragDropEffects.Copy : DragDropEffects.None;

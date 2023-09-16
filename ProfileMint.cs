@@ -246,8 +246,6 @@ namespace SUP
 
         }
 
-             
-
         private void txtIMG_TextChanged(object sender, EventArgs e)
         {
             UpdateRemainingChars();
@@ -307,23 +305,6 @@ namespace SUP
             UpdateRemainingChars();
         }
 
-        private void txtURI_TextChanged(object sender, EventArgs e)
-        {
-           
-
-            if (txtMiddleName.Text != "")
-            {
-                btnMiddleName.BackColor = Color.Blue;
-                btnMiddleName.ForeColor = Color.Yellow;
-            }
-            else
-            {
-                btnMiddleName.BackColor = Color.White;
-                btnMiddleName.ForeColor = Color.Black;
-            }
-            UpdateRemainingChars();
-        }
-
         private void flowAttribute_ControlAdded(object sender, ControlEventArgs e)
         {
            
@@ -331,7 +312,6 @@ namespace SUP
             btnURL.ForeColor = Color.Yellow;
             UpdateRemainingChars();
         }
-
 
         private void txtTitle_TextChanged(object sender, EventArgs e)
         {
@@ -373,7 +353,6 @@ namespace SUP
 
             UpdateRemainingChars();
         }
-
 
         private void flowOwners_ControlAdded(object sender, ControlEventArgs e)
         {
@@ -487,7 +466,6 @@ namespace SUP
             }
         }
 
-
         private void btnObjectName_Click(object sender, EventArgs e)
         {
             if (btnFirstName.BackColor == Color.Blue) { btnFirstName.BackColor = Color.White; btnFirstName.ForeColor = Color.Black; }
@@ -497,7 +475,6 @@ namespace SUP
             }
             UpdateRemainingChars();
         }
-
 
         private void btnObjectDescription_Click(object sender, EventArgs e)
         {
@@ -902,7 +879,6 @@ namespace SUP
             UpdateRemainingChars();
         }
 
-
         //GPT3
         private void btnObjectOwners_Click(object sender, EventArgs e)
         {
@@ -999,7 +975,6 @@ namespace SUP
             UpdateRemainingChars();
         }
 
-
         //GPT3
         private void flowAttribute_ControlRemoved(object sender, ControlEventArgs e)
         {
@@ -1011,7 +986,6 @@ namespace SUP
             UpdateRemainingChars();
         }
      
-
         private void flowOwners_ControlRemoved(object sender, ControlEventArgs e)
         {
 
@@ -1024,7 +998,6 @@ namespace SUP
             }
             UpdateRemainingChars();
         }
-
 
         public void LoadFormByAddress(string address)
         {
@@ -1311,9 +1284,6 @@ namespace SUP
             UpdateRemainingChars();
         }
 
-        private void txtOBJJSON_TextChanged(object sender, EventArgs e)
-        {
-
-        }
+       
     }
 }

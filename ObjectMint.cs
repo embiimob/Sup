@@ -747,7 +747,6 @@ namespace SUP
 
         }
 
-
         private void btnObjectName_Click(object sender, EventArgs e)
         {
             if (btnObjectName.BackColor == Color.Blue) { btnObjectName.BackColor = Color.White; btnObjectName.ForeColor = Color.Black; }
@@ -2029,7 +2028,6 @@ namespace SUP
             }
         }
 
-
         //GPT3
         private void flowAttribute_ControlRemoved(object sender, ControlEventArgs e)
         {
@@ -2564,8 +2562,6 @@ namespace SUP
 
         }
 
-
-
         private void btnObjectRoyalties_Click(object sender, EventArgs e)
         {
 
@@ -2690,15 +2686,7 @@ namespace SUP
             btnObjectRoyalties.ForeColor = Color.Yellow;
         }
 
-        private void txtOBJJSON_TextChanged(object sender, EventArgs e)
-        {
-
-        }
-
-        private void txtOBJP2FK_TextChanged(object sender, EventArgs e)
-        {
-
-        }
+      
     }
 
 }

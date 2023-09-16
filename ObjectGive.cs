@@ -88,9 +88,6 @@ namespace SUP
                 }
             }
         }
-
-
-
         private void giveButton_Click(object sender, EventArgs e)
         {
             var dictionary = new Dictionary<string, int>();
@@ -231,7 +228,6 @@ namespace SUP
         {
             e.Effect = e.Data.GetDataPresent(DataFormats.FileDrop) ? DragDropEffects.Copy : DragDropEffects.None;
         }
-
         private void Form1_DragDrop(object sender, DragEventArgs e)
         {
             var files = (string[])e.Data.GetData(DataFormats.FileDrop);
@@ -265,7 +261,6 @@ namespace SUP
                 addressQtyDataGridView.Rows.Add(address, qty);
             }
         }
-
         private void ObjectGive_Load(object sender, EventArgs e)
         {
             txtObjectAddress.Text = givaddress;

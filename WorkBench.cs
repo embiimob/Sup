@@ -1307,31 +1307,7 @@ namespace SUP
 
             txtGetValue.Text = json;
         }
-
-        private void btnUniqueInteractions_Click(object sender, EventArgs e)
-        {
-            DateTime tmbeginCall = DateTime.UtcNow;
-            List<PROState> createdObjects = PROState.GetProfilesByAddress(txtSearchAddress.Text, txtLogin.Text, txtPassword.Text, txtUrl.Text, txtVersionByte.Text, int.Parse(txtSkip.Text), int.Parse(txtQty.Text));
-            DateTime tmendCall = DateTime.UtcNow;
-            lblTotalBytes.Text = "bytes: ";
-            lblTotalTime.Text = "time: ";
-            lblKbs.Text = "kb/s: ";
-            lblTotal.Text = "total:";
-            TimeSpan elapsedTime = tmendCall - tmbeginCall;
-            double elapsedMilliseconds = elapsedTime.TotalMilliseconds;
-
-            lblTotalTime.Text = "time: " + Math.Truncate(elapsedMilliseconds);
-            lblTotal.Text = "total: " + createdObjects.Count();
-            JObject[] ObjectArray = new JObject[createdObjects.Count];
-            int objectcount = 0;
-            foreach (object obj in createdObjects)
-            {
-
-                ObjectArray[objectcount++] = JObject.FromObject(obj);
-            }
-            DisplayRootJSON(ObjectArray);
-        }
-
+    
         private void btnCollections_Click(object sender, EventArgs e)
         {
             DateTime tmbeginCall = DateTime.UtcNow;
@@ -1356,6 +1332,7 @@ namespace SUP
             DisplayRootJSON(ObjectArray);
 
         }
+
     }
 }
 

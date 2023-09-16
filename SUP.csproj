@@ -702,9 +702,6 @@
     <Content Include="includes\System.Xml.Linq.dll" />
     <Content Include="includes\WindowsBase.dll" />
     <Content Include="includes\WindowsFormsIntegration.dll" />
-    <Content Include="ipfs\fs-repo-migrations.exe">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
     <Content Include="ipfs\ipfs.exe">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>

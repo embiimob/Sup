@@ -35,8 +35,8 @@
             this.transFlow = new System.Windows.Forms.FlowLayoutPanel();
             this.btnLaunchURN = new System.Windows.Forms.Button();
             this.flowPanel = new System.Windows.Forms.Panel();
-            this.lblWarning = new System.Windows.Forms.Label();
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
+            this.lblWarning = new System.Windows.Forms.Label();
             this.KeysFlow = new System.Windows.Forms.FlowLayoutPanel();
             this.lblLicense = new System.Windows.Forms.Label();
             this.lblLastChangedDate = new System.Windows.Forms.Label();
@@ -166,18 +166,6 @@
             this.flowPanel.Size = new System.Drawing.Size(531, 527);
             this.flowPanel.TabIndex = 104;
             // 
-            // lblWarning
-            // 
-            this.lblWarning.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.lblWarning.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblWarning.ForeColor = System.Drawing.SystemColors.Highlight;
-            this.lblWarning.Location = new System.Drawing.Point(332, 482);
-            this.lblWarning.Name = "lblWarning";
-            this.lblWarning.Size = new System.Drawing.Size(222, 40);
-            this.lblWarning.TabIndex = 62;
-            this.lblWarning.Text = "WARNING FILES EXECUTE LOCALY";
-            this.lblWarning.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            // 
             // pictureBox1
             // 
             this.pictureBox1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
@@ -189,6 +177,18 @@
             this.pictureBox1.TabIndex = 1;
             this.pictureBox1.TabStop = false;
             this.pictureBox1.DoubleClick += new System.EventHandler(this.ShowFullScreenModeClick);
+            // 
+            // lblWarning
+            // 
+            this.lblWarning.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.lblWarning.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblWarning.ForeColor = System.Drawing.SystemColors.Highlight;
+            this.lblWarning.Location = new System.Drawing.Point(332, 29);
+            this.lblWarning.Name = "lblWarning";
+            this.lblWarning.Size = new System.Drawing.Size(222, 40);
+            this.lblWarning.TabIndex = 62;
+            this.lblWarning.Text = "WARNING FILES EXECUTE LOCALY";
+            this.lblWarning.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // KeysFlow
             // 

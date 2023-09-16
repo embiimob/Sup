@@ -449,7 +449,6 @@ namespace SUP
             }
         }
 
-
         private void LinkLabel_Click(object sender, EventArgs e)
         {
             // playNext = false;
@@ -462,7 +461,6 @@ namespace SUP
             catch { System.Media.SystemSounds.Exclamation.Play(); }
 
         }
-
 
         private void SupFlix_Closing(object sender, FormClosingEventArgs e)
         {
@@ -717,7 +715,6 @@ namespace SUP
 
 
         }
-
 
         private void btnOrder_Click(object sender, EventArgs e)
         {

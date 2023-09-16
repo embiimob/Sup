@@ -252,6 +252,14 @@ namespace SUP
                                 .ToList();
                             break;
 
+                        case "activity: low":
+                            createdObjects = createdObjects.OrderBy(obj => obj.ProcessHeight).ToList();
+                            break;
+
+                        case "activity: high":
+                            createdObjects = createdObjects.OrderByDescending(obj => obj.ProcessHeight).ToList();
+                            break;
+
                         default:
                             // Handle the case when none of the known values match.
                             break;
@@ -821,26 +829,7 @@ namespace SUP
                             foundObject.ObjectName.Text = objstate.Name;
                             foundObject.ObjectDescription.Text = objstate.Description;
                             foundObject.ObjectAddress.Text = objstate.URN;
-                            //foundObject.ObjectQty.Text = objstate.Owners.Values.Sum().ToString() + "x";
-                            //foundObject.ObjectId.Text = objstate.Id.ToString();
-
-                            ////GPT3 reformed
-                            //if (objstate.Offers != null && objstate.Offers.Count > 0)
-                            //{
-                            //    foundObject.Height = 389;
-                            //    decimal highestValue = objstate.Offers.Max(offer => offer.Value);
-                            //    foundObject.ObjectOffer.Text = highestValue.ToString();
-                            //}
-                            ////GPT3 reformed
-                            //if (objstate.Listings != null && objstate.Listings.Count > 0)
-                            //{
-                            //    foundObject.Height = 389;
-                            //    decimal lowestValue = objstate.Listings.Values.Min(listing => listing.Value);
-                            //    foundObject.ObjectPrice.Text = lowestValue.ToString();
-                            //}
-
-
-
+                            
                             string imgurn = "";
                             imgurn = objstate.Image;
 
@@ -1707,7 +1696,6 @@ namespace SUP
             }
         }
 
-
         private void MainUserNameClick(object sender, LinkLabelLinkClickedEventArgs e)
         {
 
@@ -2095,7 +2083,7 @@ namespace SUP
 
         private async void ObjectBrowserLoad(object sender, EventArgs e)
         {
-            if (_isUserControl) { this.Text = String.Empty; this.flowLayoutPanel1.Padding = new Padding(3, 80, 0, 0); this.Size = this.MinimumSize; }
+            if (_isUserControl) { this.Text = String.Empty; this.flowLayoutPanel1.Padding = new Padding(3, 80, 0, 0); this.Size = this.MinimumSize; btnJukeBox.Visible = false; btnVideoSearch.Visible = false;}
 
             Form parentForm = this.Owner;
             bool isBlue = false;
@@ -2264,7 +2252,6 @@ namespace SUP
 
             txtLast.Enabled = true;
         }
-
 
         private async void ObjectBrowser_Resize(object sender, EventArgs e)
         {
@@ -2515,15 +2502,9 @@ namespace SUP
             if (!int.TryParse(txtLast.Text, out int lastint) || lastint < 0) { txtLast.Text = "0"; }
         }
 
-
         private void flowLayoutPanel2_SizeChanged(object sender, EventArgs e)
         {
             flowLayoutPanel1.Padding = new System.Windows.Forms.Padding(3, flowLayoutPanel2.Height, 0, 0);
-        }
-
-        private void listBox1_SelectedIndexChanged(object sender, EventArgs e)
-        {
-
         }
 
         private async void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
@@ -2552,6 +2533,43 @@ namespace SUP
                 EnableSupInput();
 
             }
+        }
+
+        private void btnVideoSearch_Click(object sender, EventArgs e)
+        {
+            btnVideoSearch.Enabled = false;
+
+            if (txtSearchAddress.Text != null)
+            {
+                SupFlix supFlixForm = new SupFlix(txtSearchAddress.Text);
+                supFlixForm.Show();
+            }
+            else
+            {
+                SupFlix supFlixForm = new SupFlix();
+                supFlixForm.Show();
+            }
+
+            btnVideoSearch.Enabled = true;
+        }
+
+        private void btnJukeBox_Click(object sender, EventArgs e)
+        {
+
+            btnJukeBox.Enabled = false;
+
+            if (txtSearchAddress.Text != null)
+            {
+                JukeBox jukeBoxForm = new JukeBox(txtSearchAddress.Text);
+                jukeBoxForm.Show();
+            }
+            else
+            {
+                JukeBox jukeBoxForm = new JukeBox();
+                jukeBoxForm.Show();
+            }
+            btnJukeBox.Enabled = true;
+
         }
     }
 

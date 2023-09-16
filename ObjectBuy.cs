@@ -25,13 +25,10 @@ namespace SUP
         //GPT3 ROCKS
         private readonly static object SupLocker = new object();
         private List<string> BTCTMemPool = new List<string>();
-
-
         private const int MaxRows = 2000;
         private readonly List<(string address, int qty)> _addressQtyList = new List<(string address, int qty)>();
         bool mint = false;
         private readonly string givaddress = "";
-
 
         public ObjectBuy(string _address = "")
         {
@@ -39,15 +36,11 @@ namespace SUP
             givaddress = _address;
         }
 
-
-
         void Owner_LinkClicked(string ownerId)
         {
 
             new ObjectBrowser(ownerId).Show();
         }
-
-
 
         //GPT3 THANKS!
         private void RemoveRowByTransactionId(FlowLayoutPanel flowLayoutPanel, string transactionId)
@@ -236,109 +229,6 @@ namespace SUP
 
 
         }
-
-
-        private void giveButton_Click(object sender, EventArgs e)
-        {
-            var newdictionary = new List<List<string>>();
-            List<string> encodedList = new List<string>();
-            newdictionary.Add(new List<string> { txtAddressSearch.Text, txtListQty.Text, txtEachValue.Text });
-
-            // Generate a random negative integer salt between -99999 and -1
-            int salt;
-            using (RNGCryptoServiceProvider rng = new RNGCryptoServiceProvider())
-            {
-                byte[] saltBytes = new byte[4];
-                rng.GetBytes(saltBytes);
-                salt = -Math.Abs(BitConverter.ToInt32(saltBytes, 0) % 100000);
-            }
-
-            newdictionary.Add(new List<string> { "0", salt.ToString("D5") });
-
-            var json = JsonConvert.SerializeObject(newdictionary);
-            txtOBJJSON.Text = json;
-
-            txtOBJP2FK.Text = "LST" + ">" + txtOBJJSON.Text.Length + ">" + txtOBJJSON.Text;
-
-            NetworkCredential credentials = new NetworkCredential("good-user", "better-password");
-            RPCClient rpcClient = new RPCClient(credentials, new Uri(@"http://127.0.0.1:18332"), Network.Main);
-            System.Security.Cryptography.SHA256 mySHA256 = SHA256Managed.Create();
-            byte[] hashValue = mySHA256.ComputeHash(Encoding.ASCII.GetBytes(txtOBJP2FK.Text));
-            string signatureAddress;
-
-            signatureAddress = txtSignatureAddress.Text;
-            string signature = "";
-            try { signature = rpcClient.SendCommand("signmessage", signatureAddress, BitConverter.ToString(hashValue).Replace("-", String.Empty)).ResultString; }
-            catch (Exception ex)
-            {
-                lblObjectStatus.Text = ex.Message;
-                btnGive.BackColor = System.Drawing.Color.White;
-                btnGive.ForeColor = System.Drawing.Color.Black;
-                mint = false;
-                return;
-            }
-
-            txtOBJP2FK.Text = "SIG" + ":" + "88" + ">" + signature + txtOBJP2FK.Text;
-
-
-            for (int i = 0; i < txtOBJP2FK.Text.Length; i += 20)
-            {
-                string chunk = txtOBJP2FK.Text.Substring(i, Math.Min(20, txtOBJP2FK.Text.Length - i));
-                if (chunk.Any())
-                {
-                    encodedList.Add(Root.GetPublicAddressByKeyword(chunk));
-                }
-            }
-
-
-
-            encodedList.Add(txtAddressSearch.Text);
-            encodedList.Add(signatureAddress);
-            txtAddressListJSON.Text = JsonConvert.SerializeObject(encodedList.Distinct());
-
-            lblCost.Text = "cost: " + (0.00000546 * encodedList.Count).ToString("0.00000000") + "  + miner fee";
-
-            if (mint)
-            {
-                DialogResult result = MessageBox.Show("Are you sure you want to list this?", "Confirmation", MessageBoxButtons.YesNo);
-                if (result == DialogResult.Yes)
-                {
-                    // Perform the action
-                    var recipients = new Dictionary<string, decimal>();
-                    foreach (var encodedAddress in encodedList)
-                    {
-                        try { recipients.Add(encodedAddress, 0.00000546m); } catch { }
-                    }
-
-                    CoinRPC a = new CoinRPC(new Uri("http://127.0.0.1:18332"), new NetworkCredential("good-user", "better-password"));
-
-                    try
-                    {
-                        string accountsString = "";
-                        try { accountsString = rpcClient.SendCommand("listaccounts").ResultString; } catch { }
-                        var accounts = JsonConvert.DeserializeObject<Dictionary<string, decimal>>(accountsString);
-                        var keyWithLargestValue = accounts.Aggregate((x, y) => x.Value > y.Value ? x : y).Key;
-                        var results = a.SendMany(keyWithLargestValue, recipients);
-                        lblObjectStatus.Text = results;
-                    }
-                    catch (Exception ex) { lblObjectStatus.Text = ex.Message; }
-                    btnGive.BackColor = System.Drawing.Color.White;
-                    btnGive.ForeColor = System.Drawing.Color.Black;
-                    mint = false;
-
-                }
-                btnGive.BackColor = System.Drawing.Color.White;
-                btnGive.ForeColor = System.Drawing.Color.Black;
-                mint = false;
-            }
-
-            btnGive.BackColor = System.Drawing.Color.Blue;
-            btnGive.ForeColor = System.Drawing.Color.Yellow;
-            mint = true;
-
-
-        }
-
 
         private void ObjectGive_Load(object sender, EventArgs e)
         {
@@ -672,7 +562,6 @@ namespace SUP
             catch { }
 
         }
-
 
         private void tmrSearchMemoryPool_Tick(object sender, EventArgs e)
         {
@@ -1162,5 +1051,107 @@ namespace SUP
             btnBuy.ForeColor = System.Drawing.Color.Yellow;
             mint = true;
         }
+
+        private void giveButton_Click(object sender, EventArgs e)
+        {
+            var newdictionary = new List<List<string>>();
+            List<string> encodedList = new List<string>();
+            newdictionary.Add(new List<string> { txtAddressSearch.Text, txtListQty.Text, txtEachValue.Text });
+
+            // Generate a random negative integer salt between -99999 and -1
+            int salt;
+            using (RNGCryptoServiceProvider rng = new RNGCryptoServiceProvider())
+            {
+                byte[] saltBytes = new byte[4];
+                rng.GetBytes(saltBytes);
+                salt = -Math.Abs(BitConverter.ToInt32(saltBytes, 0) % 100000);
+            }
+
+            newdictionary.Add(new List<string> { "0", salt.ToString("D5") });
+
+            var json = JsonConvert.SerializeObject(newdictionary);
+            txtOBJJSON.Text = json;
+
+            txtOBJP2FK.Text = "LST" + ">" + txtOBJJSON.Text.Length + ">" + txtOBJJSON.Text;
+
+            NetworkCredential credentials = new NetworkCredential("good-user", "better-password");
+            RPCClient rpcClient = new RPCClient(credentials, new Uri(@"http://127.0.0.1:18332"), Network.Main);
+            System.Security.Cryptography.SHA256 mySHA256 = SHA256Managed.Create();
+            byte[] hashValue = mySHA256.ComputeHash(Encoding.ASCII.GetBytes(txtOBJP2FK.Text));
+            string signatureAddress;
+
+            signatureAddress = txtSignatureAddress.Text;
+            string signature = "";
+            try { signature = rpcClient.SendCommand("signmessage", signatureAddress, BitConverter.ToString(hashValue).Replace("-", String.Empty)).ResultString; }
+            catch (Exception ex)
+            {
+                lblObjectStatus.Text = ex.Message;
+                btnGive.BackColor = System.Drawing.Color.White;
+                btnGive.ForeColor = System.Drawing.Color.Black;
+                mint = false;
+                return;
+            }
+
+            txtOBJP2FK.Text = "SIG" + ":" + "88" + ">" + signature + txtOBJP2FK.Text;
+
+
+            for (int i = 0; i < txtOBJP2FK.Text.Length; i += 20)
+            {
+                string chunk = txtOBJP2FK.Text.Substring(i, Math.Min(20, txtOBJP2FK.Text.Length - i));
+                if (chunk.Any())
+                {
+                    encodedList.Add(Root.GetPublicAddressByKeyword(chunk));
+                }
+            }
+
+
+
+            encodedList.Add(txtAddressSearch.Text);
+            encodedList.Add(signatureAddress);
+            txtAddressListJSON.Text = JsonConvert.SerializeObject(encodedList.Distinct());
+
+            lblCost.Text = "cost: " + (0.00000546 * encodedList.Count).ToString("0.00000000") + "  + miner fee";
+
+            if (mint)
+            {
+                DialogResult result = MessageBox.Show("Are you sure you want to list this?", "Confirmation", MessageBoxButtons.YesNo);
+                if (result == DialogResult.Yes)
+                {
+                    // Perform the action
+                    var recipients = new Dictionary<string, decimal>();
+                    foreach (var encodedAddress in encodedList)
+                    {
+                        try { recipients.Add(encodedAddress, 0.00000546m); } catch { }
+                    }
+
+                    CoinRPC a = new CoinRPC(new Uri("http://127.0.0.1:18332"), new NetworkCredential("good-user", "better-password"));
+
+                    try
+                    {
+                        string accountsString = "";
+                        try { accountsString = rpcClient.SendCommand("listaccounts").ResultString; } catch { }
+                        var accounts = JsonConvert.DeserializeObject<Dictionary<string, decimal>>(accountsString);
+                        var keyWithLargestValue = accounts.Aggregate((x, y) => x.Value > y.Value ? x : y).Key;
+                        var results = a.SendMany(keyWithLargestValue, recipients);
+                        lblObjectStatus.Text = results;
+                    }
+                    catch (Exception ex) { lblObjectStatus.Text = ex.Message; }
+                    btnGive.BackColor = System.Drawing.Color.White;
+                    btnGive.ForeColor = System.Drawing.Color.Black;
+                    mint = false;
+
+                }
+                btnGive.BackColor = System.Drawing.Color.White;
+                btnGive.ForeColor = System.Drawing.Color.Black;
+                mint = false;
+            }
+
+            btnGive.BackColor = System.Drawing.Color.Blue;
+            btnGive.ForeColor = System.Drawing.Color.Yellow;
+            mint = true;
+
+
+        }
+
     }
 }

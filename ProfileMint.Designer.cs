@@ -435,7 +435,6 @@
             this.txtOBJJSON.Size = new System.Drawing.Size(202, 313);
             this.txtOBJJSON.TabIndex = 355;
             this.txtOBJJSON.Visible = false;
-            this.txtOBJJSON.TextChanged += new System.EventHandler(this.txtOBJJSON_TextChanged);
             // 
             // txtOBJP2FK
             // 
