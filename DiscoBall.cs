@@ -19,7 +19,11 @@ using System.Text;
 using System.Timers;
 using NAudio.Wave;
 using System.Drawing;
-using System.Runtime.Serialization.Formatters;
+using Gma.QrCodeNet.Encoding;
+using Gma.QrCodeNet.Encoding.Windows.Render;
+using System.Drawing.Imaging;
+using System.Drawing.Printing;
+using System.Linq.Expressions;
 
 namespace SUP
 {
@@ -29,6 +33,7 @@ namespace SUP
         private string _toaddress;
         private string _fromimageurl;
         private string _toimageurl;
+        private string messagecache;
 
         // GPT3 AUDIO RECORDING MAGIC
         private WaveInEvent waveIn;
@@ -39,8 +44,12 @@ namespace SUP
 
         private string wavFileName = @"sup.wav";
         private bool isRecording = false;
+        private bool isPrint = false;
         private System.Timers.Timer recordTimer;
         private DateTime startTime;
+        private QrEncoder encoder = new QrEncoder();
+        private GraphicsRenderer renderer = new GraphicsRenderer(new FixedModuleSize(2, QuietZoneModules.Two));
+        System.Drawing.Image bmIm;
 
 
         public DiscoBall(string fromaddress = "", string fromimageurl = "", string toaddress = "", string toimageurl = "", bool isprivate = false)
@@ -53,6 +62,22 @@ namespace SUP
             _toimageurl = toimageurl;
 
             if (isprivate) { btnEncryptionStatus.Text = "PRIVATE 🤐"; }
+
+            ContextMenuStrip contextMenu = new ContextMenuStrip();
+
+            // Add a "Save to Disk" menu item
+            ToolStripMenuItem hideMenuItem = new ToolStripMenuItem("Exit");
+            ToolStripMenuItem saveMenuItem = new ToolStripMenuItem("Save to Disk");
+            ToolStripMenuItem printMenuItem = new ToolStripMenuItem("Print");
+            saveMenuItem.Click += SaveMenuItem_Click;
+            hideMenuItem.Click += HideMenuItem_Click;
+            printMenuItem.Click += PrintMenuItem_Click;
+            contextMenu.Items.Add(hideMenuItem);
+            contextMenu.Items.Add(saveMenuItem);
+            contextMenu.Items.Add(printMenuItem);
+
+            // Assign the context menu to the PictureBox
+            pictureBox1.ContextMenuStrip = contextMenu;
 
         }
 
@@ -76,6 +101,48 @@ namespace SUP
             recordTimer.Elapsed += RecordTimer_Elapsed;
             recordTimer.AutoReset = false; // Only trigger once
 
+        }
+
+
+        private void PrintImage(System.Drawing.Image img)
+        {
+            bmIm = img;
+            PrintDocument pd = new PrintDocument();
+            pd.PrintPage += this.pd_PrintPage;
+            pd.OriginAtMargins = false;
+            pd.DefaultPageSettings.Landscape = false;
+            pd.Print();
+        }
+        void pd_PrintPage(object sender, PrintPageEventArgs e)
+        {
+
+            System.Drawing.Image i = bmIm;
+
+            float newWidth = i.Width * 100 / i.HorizontalResolution;
+            float newHeight = i.Height * 100 / i.VerticalResolution;
+
+            float widthFactor = newWidth / e.PageBounds.Width;
+            float heightFactor = newHeight / e.PageBounds.Height;
+
+            if (widthFactor > 1 || heightFactor > 1)
+            {
+                if (widthFactor > heightFactor)
+                {
+                    newWidth = newWidth / widthFactor;
+                    newHeight = newHeight / widthFactor;
+                }
+                else
+                {
+                    newWidth = newWidth / heightFactor;
+                    newHeight = newHeight / heightFactor;
+                }
+            }
+
+            // Calculate the x and y coordinates of the top-left corner of the image
+            float x = (e.PageBounds.Width - newWidth) / 2;
+            float y = (e.PageBounds.Height - newHeight) / 2;
+
+            e.Graphics.DrawImage(i, x, y, (int)newWidth, (int)newHeight);
         }
 
         public async void btnAttach_Click(object sender, EventArgs e)
@@ -526,30 +593,46 @@ namespace SUP
             }
             else
             {
-                DialogResult result = MessageBox.Show("Are you sure you want to send this?", "Confirmation", MessageBoxButtons.YesNo);
-                if (result == DialogResult.Yes)
+                if (isPrint)
                 {
-                    // Perform the action
                     var recipients = new Dictionary<string, decimal>();
                     foreach (var encodedAddress in encodedList)
                     {
                         try { recipients.Add(encodedAddress, 0.00000546m); } catch { }
                     }
+                    string addressList = JsonConvert.SerializeObject(recipients);
+                    PrintMessage(addressList);
+                    isPrint = false;
+                    //pictureBox1.Visible=false;
 
-                    CoinRPC a = new CoinRPC(new Uri("http://127.0.0.1:18332"), new NetworkCredential("good-user", "better-password"));
-
-                    try
+                }
+                else
+                {
+                    DialogResult result = MessageBox.Show("Are you sure you want to send this?", "Confirmation", MessageBoxButtons.YesNo);
+                    if (result == DialogResult.Yes)
                     {
-                        string accountsString = "";
-                        try { accountsString = rpcClient.SendCommand("listaccounts").ResultString; } catch { }
-                        var accounts = JsonConvert.DeserializeObject<Dictionary<string, decimal>>(accountsString);
-                        var keyWithLargestValue = accounts.Aggregate((x, y) => x.Value > y.Value ? x : y).Key;
-                        var results = a.SendMany(keyWithLargestValue, recipients);
-                        lblTransactionId.Text = results;
+                        // Perform the action
+                        var recipients = new Dictionary<string, decimal>();
+                        foreach (var encodedAddress in encodedList)
+                        {
+                            try { recipients.Add(encodedAddress, 0.00000546m); } catch { }
+                        }
+
+                        CoinRPC a = new CoinRPC(new Uri("http://127.0.0.1:18332"), new NetworkCredential("good-user", "better-password"));
+
+                        try
+                        {
+                            string accountsString = "";
+                            try { accountsString = rpcClient.SendCommand("listaccounts").ResultString; } catch { }
+                            var accounts = JsonConvert.DeserializeObject<Dictionary<string, decimal>>(accountsString);
+                            var keyWithLargestValue = accounts.Aggregate((x, y) => x.Value > y.Value ? x : y).Key;
+                            var results = a.SendMany(keyWithLargestValue, recipients);
+                            lblTransactionId.Text = results;
+                        }
+                        catch (Exception ex) { lblObjectStatus.Text = ex.Message; }
+
+
                     }
-                    catch (Exception ex) { lblObjectStatus.Text = ex.Message; }
-
-
                 }
 
 
@@ -954,12 +1037,165 @@ namespace SUP
             }
 
         }
-               
+
         private void btnEMOJI_Click(object sender, EventArgs e)
         {
             // Show/hide the emoji panel based on its current visibility
             emojiPanel.Visible = !emojiPanel.Visible;
         }
-    
+
+        private Bitmap GenerateQRCode(string qrData)
+        {
+            QrCode qrCode = encoder.Encode(qrData);
+            Graphics g = null;
+            try
+            {
+                int height = qrCode.Matrix.Height;
+                Bitmap qrCodeImage = new Bitmap((height * 2) + 9, (height * 2) + 9);
+                g = Graphics.FromImage(qrCodeImage);
+                renderer.Draw(g, qrCode.Matrix);
+                return qrCodeImage;
+            }
+            finally
+            {
+                if (g != null)
+                {
+                    g.Dispose();
+                }
+            }
+        }
+        private async void PrintMessage(string message)
+        {
+
+
+            try
+            {
+                using (Bitmap qrCode = GenerateQRCode(message))
+                {
+                    if (qrCode != null)
+                    {
+                        Directory.CreateDirectory(@"root\" + txtToAddress.Text);
+                        qrCode.Save(@"root\" + txtToAddress.Text + @"\MSGPrint.png", ImageFormat.Png);
+                        this.Invoke((Action)(() =>
+                        {
+                            pictureBox1.ImageLocation = @"root\" + txtToAddress.Text + @"\MSGPrint.png";
+                        }));
+                    }
+                }
+            }
+            catch { }
+        }
+
+      
+
+        private void btnPrint_Click_1(object sender, EventArgs e)
+        {
+            isPrint = true;
+
+
+            PROState toProfile = PROState.GetProfileByAddress(txtToAddress.Text, "good-user", "better-password", @"http://127.0.0.1:18332");
+
+            var location = toProfile.Location;
+            messagecache = supMessage.Text;
+            // Create a StringBuilder to build the text
+            var stringBuilder = new StringBuilder();
+
+            foreach (var kvp in location)
+            {
+                stringBuilder.AppendLine($"{kvp.Key} : {kvp.Value}");
+            }
+
+            this.Invoke((Action)(() =>
+            {
+                supMessage.ForeColor = Color.Black;
+                supMessage.BackColor = Color.White;
+            }));
+
+            this.Invoke((Action)(() =>
+            {
+                supMessage.Text = stringBuilder.ToString();
+                
+            }));
+
+            Application.DoEvents();
+
+            this.Invoke((Action)(() =>
+            {
+                pictureBox1.Visible = true;
+                btnRefresh.PerformClick();
+            }));
+
+
+            }
+
+        private void PrintMenuItem_Click(object sender, EventArgs e)
+        {
+            pictureBox1.Refresh();
+            System.Drawing.Bitmap bitmap = new Bitmap(this.Width - 22, this.Height - 44);
+            Graphics graphics = Graphics.FromImage(bitmap);
+            graphics.CopyFromScreen(this.PointToScreen(new Point(0, 0)), new Point(0, 0), this.Size);
+            bitmap.RotateFlip(RotateFlipType.Rotate90FlipNone);
+            PrintImage(bitmap);
+        }
+
+        private void HideMenuItem_Click(object sender, EventArgs e)
+        {
+            pictureBox1.Visible = false;
+            pictureBox1.ImageLocation = null;
+            supMessage.ForeColor = Color.White;
+            supMessage.BackColor = Color.Black;
+            supMessage.Text = messagecache;
+        }
+        private void SaveMenuItem_Click(object sender, EventArgs e)
+        {
+            if (!string.IsNullOrEmpty(pictureBox1.ImageLocation))
+            {
+                using (WebClient webClient = new WebClient())
+                {
+                    try
+                    {
+                        // Download the image from the specified URL
+                        byte[] imageBytes = webClient.DownloadData(pictureBox1.ImageLocation);
+
+                        // Create an Image object from the downloaded bytes
+                        using (MemoryStream stream = new MemoryStream(imageBytes))
+                        {
+                            using (Image image = Image.FromStream(stream))
+                            {
+                                using (SaveFileDialog saveFileDialog = new SaveFileDialog())
+                                {
+                                    saveFileDialog.Filter = "PNG Files (*.png)|*.png|All Files (*.*)|*.*";
+                                    saveFileDialog.FilterIndex = 1;
+                                    saveFileDialog.RestoreDirectory = true;
+
+                                    if (saveFileDialog.ShowDialog() == DialogResult.OK)
+                                    {
+                                        // Save the Image to the chosen file path
+                                        image.Save(saveFileDialog.FileName, System.Drawing.Imaging.ImageFormat.Png);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show("Error saving the image: " + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    }
+                }
+            }
+            else
+            {
+                MessageBox.Show("No image location specified.", "Information", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
+        }
+
+        private void pictureBox1_DoubleClick(object sender, EventArgs e)
+        {
+            pictureBox1.Visible = false;
+            pictureBox1.ImageLocation = null;
+            supMessage.ForeColor = Color.White;
+            supMessage.BackColor = Color.Black;
+            supMessage.Text = messagecache;
+        }
     }
 }

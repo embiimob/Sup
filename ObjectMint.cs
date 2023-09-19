@@ -23,6 +23,7 @@ using System.Net;
 using System.Security.Cryptography;
 using System.Text;
 using BitcoinNET.RPCClient;
+using System.Runtime.Serialization.Formatters;
 
 namespace SUP
 {
@@ -31,10 +32,27 @@ namespace SUP
         private QrEncoder encoder = new QrEncoder();
         private GraphicsRenderer renderer = new GraphicsRenderer(new FixedModuleSize(2, QuietZoneModules.Two));
         private bool ismint = false;
+        private string imagecache;
 
         public ObjectMint()
         {
             InitializeComponent();
+
+            ContextMenuStrip contextMenu = new ContextMenuStrip();
+
+            // Add a "Save to Disk" menu item
+            ToolStripMenuItem hideMenuItem = new ToolStripMenuItem("Exit");
+            ToolStripMenuItem saveMenuItem = new ToolStripMenuItem("Save to Disk");
+            ToolStripMenuItem printMenuItem = new ToolStripMenuItem("Print");
+            saveMenuItem.Click += SaveMenuItem_Click;
+            hideMenuItem.Click += HideMenuItem_Click;
+            printMenuItem.Click += PrintMenuItem_Click;
+            contextMenu.Items.Add(hideMenuItem);
+            contextMenu.Items.Add(saveMenuItem);
+            contextMenu.Items.Add(printMenuItem);
+
+            // Assign the context menu to the PictureBox
+            pictureBox1.ContextMenuStrip = contextMenu;
         }
 
 
@@ -365,7 +383,6 @@ namespace SUP
 
         }
 
-
         private Bitmap GenerateQRCode(string qrData)
         {
             QrCode qrCode = encoder.Encode(qrData);
@@ -565,7 +582,6 @@ namespace SUP
 
             }
         }
-
 
         private void txtDescription_TextChanged(object sender, EventArgs e)
         {
@@ -2134,10 +2150,10 @@ namespace SUP
             }
         }
 
-        private async void btnPrint_Click(object sender, EventArgs e)
+        private async void CreateObjectQRCode()
         {
             UpdateRemainingChars();
-
+            imagecache = pictureBox1.ImageLocation;
             try
             {
                 using (Bitmap qrCode = GenerateQRCode(txtAddressListJSON.Text))
@@ -2146,7 +2162,6 @@ namespace SUP
                     {
                         Directory.CreateDirectory(@"root\" + txtObjectAddress.Text);
                         qrCode.Save(@"root\" + txtObjectAddress.Text + @"\OBJPrint.png", ImageFormat.Png);
-                        pictureBox1.LoadCompleted += PictureBox_LoadCompleted;
                         pictureBox1.ImageLocation = @"root\" + txtObjectAddress.Text + @"\OBJPrint.png";
                     }
                 }
@@ -2154,21 +2169,7 @@ namespace SUP
             catch { }
         }
 
-        private void PictureBox_LoadCompleted(object sender, EventArgs e)
-        {
-            lblRemainingChars.Visible = false;
-            pictureBox1.Refresh();
-            System.Drawing.Bitmap bitmap = new Bitmap(this.Width - 22, this.Height - 44);
-            Graphics graphics = Graphics.FromImage(bitmap);
-            graphics.CopyFromScreen(this.PointToScreen(new Point(0, 0)), new Point(0, 0), this.Size);
-            bitmap.RotateFlip(RotateFlipType.Rotate90FlipNone);
-            PrintImage(bitmap);
-            lblRemainingChars.Visible = true;
-
-            // unsubscribe from LoadCompleted event
-            pictureBox1.LoadCompleted -= PictureBox_LoadCompleted;
-        }
-
+     
         private void radioButton4_CheckedChanged(object sender, EventArgs e)
         {
             RadioButton radioButton = sender as RadioButton;
@@ -2686,7 +2687,85 @@ namespace SUP
             btnObjectRoyalties.ForeColor = Color.Yellow;
         }
 
-      
+        private void PrintMenuItem_Click(object sender, EventArgs e)
+        {
+            lblRemainingChars.Visible = false;
+            pictureBox1.Refresh();
+            System.Drawing.Bitmap bitmap = new Bitmap(this.Width, this.Height-44);
+            Graphics graphics = Graphics.FromImage(bitmap);
+            graphics.CopyFromScreen(this.PointToScreen(new Point(0, 0)), new Point(0, 0), this.Size);
+            bitmap.RotateFlip(RotateFlipType.Rotate90FlipNone);
+            PrintImage(bitmap);
+            lblRemainingChars.Visible = true;
+        }
+
+        private void HideMenuItem_Click(object sender, EventArgs e)
+        {
+       
+            pictureBox1.ImageLocation = imagecache;
+           
+        }
+        private void SaveMenuItem_Click(object sender, EventArgs e)
+        {
+            if (!string.IsNullOrEmpty(pictureBox1.ImageLocation))
+            {
+                using (WebClient webClient = new WebClient())
+                {
+                    try
+                    {
+                        // Download the image from the specified URL
+                        byte[] imageBytes = webClient.DownloadData(pictureBox1.ImageLocation);
+
+                        // Create an Image object from the downloaded bytes
+                        using (MemoryStream stream = new MemoryStream(imageBytes))
+                        {
+                            using (Image image = Image.FromStream(stream))
+                            {
+                                using (SaveFileDialog saveFileDialog = new SaveFileDialog())
+                                {
+                                    saveFileDialog.Filter = "PNG Files (*.png)|*.png|All Files (*.*)|*.*";
+                                    saveFileDialog.FilterIndex = 1;
+                                    saveFileDialog.RestoreDirectory = true;
+
+                                    if (saveFileDialog.ShowDialog() == DialogResult.OK)
+                                    {
+                                        // Save the Image to the chosen file path
+                                        image.Save(saveFileDialog.FileName, System.Drawing.Imaging.ImageFormat.Png);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show("Error saving the image: " + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    }
+                }
+            }
+            else
+            {
+                MessageBox.Show("No image location specified.", "Information", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
+        }
+
+        private void btnPrint_Click(object sender, EventArgs e)
+        {
+            CreateObjectQRCode();
+        }
+
+        private void TextBox_LostFocus(object sender, EventArgs e)
+        {
+            // Cast the sender to a TextBox to access the specific textbox
+            if (sender is TextBox textBox)
+            {
+                // Set the SelectionStart to 0
+                textBox.SelectionStart = 0;
+                textBox.SelectionLength = 0;
+
+                // Scroll to the beginning of the text
+                textBox.ScrollToCaret();
+            }
+        }
     }
 
 }

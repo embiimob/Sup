@@ -154,6 +154,7 @@
             this.flowKeywords.FlowDirection = System.Windows.Forms.FlowDirection.RightToLeft;
             this.flowKeywords.Location = new System.Drawing.Point(576, 620);
             this.flowKeywords.Name = "flowKeywords";
+            this.flowKeywords.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
             this.flowKeywords.Size = new System.Drawing.Size(170, 59);
             this.flowKeywords.TabIndex = 280;
             this.flowKeywords.ControlAdded += new System.Windows.Forms.ControlEventHandler(this.flowKeyword_ControlAdded);
@@ -265,6 +266,7 @@
             this.flowCreators.FlowDirection = System.Windows.Forms.FlowDirection.RightToLeft;
             this.flowCreators.Location = new System.Drawing.Point(22, 618);
             this.flowCreators.Name = "flowCreators";
+            this.flowCreators.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
             this.flowCreators.Size = new System.Drawing.Size(424, 59);
             this.flowCreators.TabIndex = 286;
             this.flowCreators.ControlAdded += new System.Windows.Forms.ControlEventHandler(this.flowCreators_ControlAdded);
@@ -285,7 +287,7 @@
             // 
             // btnObjectAttributes
             // 
-            this.btnObjectAttributes.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnObjectAttributes.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.btnObjectAttributes.Enabled = false;
             this.btnObjectAttributes.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold);
             this.btnObjectAttributes.Location = new System.Drawing.Point(958, 540);
@@ -344,6 +346,7 @@
             this.txtObjectAddress.Size = new System.Drawing.Size(245, 42);
             this.txtObjectAddress.TabIndex = 889;
             this.txtObjectAddress.TextChanged += new System.EventHandler(this.txtObjectAddress_TextChanged);
+            this.txtObjectAddress.Leave += new System.EventHandler(this.TextBox_LostFocus);
             // 
             // btnMint
             // 
@@ -367,7 +370,7 @@
             this.btnPrint.Name = "btnPrint";
             this.btnPrint.Size = new System.Drawing.Size(109, 42);
             this.btnPrint.TabIndex = 13;
-            this.btnPrint.Text = "PRINT";
+            this.btnPrint.Text = "MAIL";
             this.btnPrint.UseVisualStyleBackColor = true;
             this.btnPrint.Click += new System.EventHandler(this.btnPrint_Click);
             // 
@@ -398,7 +401,8 @@
             // 
             // flowAttribute
             // 
-            this.flowAttribute.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.flowAttribute.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.flowAttribute.AutoScroll = true;
             this.flowAttribute.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
             this.flowAttribute.Cursor = System.Windows.Forms.Cursors.Default;
@@ -464,6 +468,7 @@
             this.txtURI.Size = new System.Drawing.Size(417, 42);
             this.txtURI.TabIndex = 4;
             this.txtURI.TextChanged += new System.EventHandler(this.txtURI_TextChanged);
+            this.txtURI.Leave += new System.EventHandler(this.TextBox_LostFocus);
             // 
             // txtURN
             // 
@@ -479,6 +484,7 @@
             this.txtURN.Size = new System.Drawing.Size(417, 42);
             this.txtURN.TabIndex = 2;
             this.txtURN.TextChanged += new System.EventHandler(this.txtURN_TextChanged);
+            this.txtURN.Leave += new System.EventHandler(this.TextBox_LostFocus);
             // 
             // txtTitle
             // 
@@ -493,6 +499,7 @@
             this.txtTitle.Size = new System.Drawing.Size(243, 42);
             this.txtTitle.TabIndex = 0;
             this.txtTitle.TextChanged += new System.EventHandler(this.txtTitle_TextChanged);
+            this.txtTitle.Leave += new System.EventHandler(this.TextBox_LostFocus);
             // 
             // txtIMG
             // 
@@ -508,6 +515,7 @@
             this.txtIMG.Size = new System.Drawing.Size(417, 42);
             this.txtIMG.TabIndex = 3;
             this.txtIMG.TextChanged += new System.EventHandler(this.txtIMG_TextChanged);
+            this.txtIMG.Leave += new System.EventHandler(this.TextBox_LostFocus);
             // 
             // txtDescription
             // 
@@ -525,6 +533,7 @@
             this.txtDescription.Size = new System.Drawing.Size(417, 92);
             this.txtDescription.TabIndex = 5;
             this.txtDescription.TextChanged += new System.EventHandler(this.txtDescription_TextChanged);
+            this.txtDescription.Leave += new System.EventHandler(this.TextBox_LostFocus);
             // 
             // PanelLicense
             // 
