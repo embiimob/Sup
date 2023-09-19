@@ -29,7 +29,9 @@ Sup!? is an experimental tool made by adults for #adults. Sup!? is not suitable 
 <br />
 ## **Public / Private Messaging / Social / #Keyword Search / GIF Selector / Walkie Talkie / Paper Messaging **
 The disco ball has dropped you can now send direct public and private messages using Sup!?, the bitcoin testnet and #IPFS.   Search for your own profile in the object browser to login with your local account.  Search for aditional profiles and add them as friends by clicking the follow button.  Click on a friend's icon to show their latest public messages. Click on the community icon to see a combination of all your friends posts in a single feed in the order that they were confirmed on the blockchain. Sup!? search also now finds and displays all public messages by #keyword.  Click on the 📢 to send the profile you are currently browsing a public message.  Click on the 🤐 before clicking on the 📢 to send the profile you are currently browsing a private message. Click the GIF button to search through a growing collection of Gifs etched into the blockchain by other Sup!? users. Click and hold the new audio record button and your audio message will be delivered imediately after letting go of the record button ( if walkie talkie mode is enabled in the connection screen ). Click the 💌 button and a printable QR CODE will be generated containg the public or encrypted message that can be sent to the recpient by standard US MAIL.  (a mobile decoder app is in development)
+<br />
 Search for your own profile and click on the 🤐 icon to see any private messages sent to it.
+<br />
 <br />
 NOTE: all attachments in your private messages are encrypted using the recipients public keys before they are uploaded to IPFS for delivery.
 <br />
