@@ -24,6 +24,7 @@ using System.Security.Cryptography;
 using System.Text;
 using BitcoinNET.RPCClient;
 using System.Runtime.Serialization.Formatters;
+using System.Security.Policy;
 
 namespace SUP
 {
@@ -58,7 +59,7 @@ namespace SUP
 
         private void UpdateRemainingChars()
         {
-            lblObjectStatus.Text = "";
+           // lblObjectStatus.Text = "";
 
             if (txtURN.Text != "" && txtTitle.Text != "" && txtObjectAddress.Text != "" && flowOwners.Controls.Count > 0)
             {
@@ -236,14 +237,14 @@ namespace SUP
                 }
             }
 
-        
 
 
-        //add URN registration
-        encodedList.Add(Root.GetPublicAddressByKeyword(txtURN.Text));
+
+            //add URN registration
+            encodedList.Add(Root.GetPublicAddressByKeyword(txtURN.Text));
 
 
-            if (txtURN.Text != "")
+            if (txtURN.Text != "" && ismint)
             {
                 //attempt file registration
                 string fileSource = txtURN.Text.Trim();
@@ -452,6 +453,18 @@ namespace SUP
         private void txtIMG_TextChanged(object sender, EventArgs e)
         {
             UpdateRemainingChars();
+  
+
+            if (txtIMG.Text != "")
+            {
+                btnObjectImage.BackColor = Color.Blue;
+                btnObjectImage.ForeColor = Color.Yellow;
+            }
+            else
+            {
+                btnObjectImage.BackColor = Color.White;
+                btnObjectImage.ForeColor = Color.Black;
+            }
         }
 
         private void txtURN_TextChanged(object sender, EventArgs e)
@@ -837,37 +850,30 @@ namespace SUP
                         string filePath = openFileDialog1.FileName;
                         string fileName = openFileDialog1.SafeFileName;
 
-                        // Add file to IPFS
-                        Task<string> addTask = Task.Run(() =>
-                            {
-                                Process process = new Process();
-                                process.StartInfo.FileName = @"ipfs\ipfs.exe";
-                                process.StartInfo.Arguments = "add \"" + filePath + "\"";
-                                process.StartInfo.UseShellExecute = false;
-                                process.StartInfo.RedirectStandardOutput = true;
-                                process.Start();
-                                string output = process.StandardOutput.ReadToEnd();
-                                process.WaitForExit();
-                                string hash = output.Split(' ')[1];
-                                return "IPFS:" + hash;
-                            });
-                        string ipfsHash = await addTask;
+                        lblIMGBlockDate.Text = "[ uploading to IPFS please wait...]";
+                        MessageBox.Show("Uploading a file to IPFS could take a long time. to prevent any issues, Sup!? will lock while it's loading.  just wait for it.");
+                        Process process = new Process();
+                        process.StartInfo.FileName = @"ipfs\ipfs.exe";
+                        process.StartInfo.Arguments = "add \"" + filePath + "\"";
+                        process.StartInfo.RedirectStandardOutput = true;
+                        process.StartInfo.UseShellExecute = false;
+                        process.Start();
+                        string output = process.StandardOutput.ReadToEnd();
+                        process.WaitForExit();
+                        string hash = output.Split(' ')[1];
+                        txtIMG.Text = "IPFS:" + hash + @"\" + fileName;
+                        imgurn = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + @"\ipfs\" + hash + @"\" + fileName;
 
-
-                        // Update text box with IPFS hash
-                        txtIMG.Text = ipfsHash + @"\" + fileName;
                     }
 
 
                 }
 
-
+            
                 List<string> allowedExtensions = new List<string> { ".bmp", ".gif", ".ico", ".jpeg", ".jpg", ".png", ".tif", ".tiff", "" };
                 string extension = Path.GetExtension(imgurn).ToLower();
                 if (allowedExtensions.Contains(extension))
                 {
-
-
 
                     try
                     {
@@ -924,12 +930,10 @@ namespace SUP
                                 break;
                             case "IPFS":
                                 if (txtIMG.Text.Length == 51) { imgurn += @"\artifact"; }
-                                if (!System.IO.Directory.Exists(@"ipfs/" + txtIMG.Text.Substring(5, 46) + "-build") && !System.IO.File.Exists(@"ipfs/" + txtIMG.Text.Substring(5, 46)))
+                                if (!System.IO.Directory.Exists(@"ipfs/" + txtIMG.Text.Substring(5, 46) + "-build") && !System.IO.Directory.Exists(@"ipfs/" + txtIMG.Text.Substring(5, 46)))
                                 {
 
-
-                                    Task ipfsTask = Task.Run(() =>
-                                    {
+                                                                        
                                         Directory.CreateDirectory(@"ipfs/" + txtIMG.Text.Substring(5, 46) + "-build");
                                         Process process2 = new Process();
                                         process2.StartInfo.FileName = @"ipfs\ipfs.exe";
@@ -958,7 +962,15 @@ namespace SUP
                                             try { System.IO.File.Move("ipfs/" + txtIMG.Text.Substring(5, 46) + "_tmp", imgurn); } catch { }
                                         }
 
-                                        var SUP = new Options { CreateIfMissing = true };
+                                    if (File.Exists(imgurn))
+                                    {
+                                        lblIMGBlockDate.Text = "ipfs verified: " + System.DateTime.UtcNow.ToString("ddd, dd MMM yyyy hh:mm:ss");
+                                        btnObjectImage.BackColor = Color.Blue;
+                                        btnObjectImage.ForeColor = Color.Yellow;
+                                    }
+
+
+                                    var SUP = new Options { CreateIfMissing = true };
 
                                         using (var db = new DB(SUP, @"ipfs"))
                                         {
@@ -987,13 +999,8 @@ namespace SUP
                                             Directory.Delete(@"ipfs/" + txtIMG.Text.Substring(5, 46) + "-build");
                                         }
                                         catch { }
+                                                                       
 
-
-
-                                    });
-                                    lblIMGBlockDate.Text = "ipfs verified: " + System.DateTime.UtcNow.ToString("ddd, dd MMM yyyy hh:mm:ss");
-                                    btnObjectImage.BackColor = Color.Blue;
-                                    btnObjectImage.ForeColor = Color.Yellow;
 
                                 }
                                 else
@@ -1115,26 +1122,20 @@ namespace SUP
                         string filePath = openFileDialog1.FileName;
                         string fileName = openFileDialog1.SafeFileName;
                         openFileDialog1.Title = "Select File";
+                        lblURNBlockDate.Text = "[ uploading to IPFS please wait...]";
+                        MessageBox.Show("Uploading a file to IPFS could take a long time. to prevent any issues, Sup!? will lock while it's loading.  just wait for it.");
+                        Process process = new Process();
+                        process.StartInfo.FileName = @"ipfs\ipfs.exe";
+                        process.StartInfo.Arguments = "add \"" + filePath + "\"";
+                        process.StartInfo.RedirectStandardOutput = true;
+                        process.StartInfo.UseShellExecute = false;
+                        process.Start();
+                        string output = process.StandardOutput.ReadToEnd();
+                        process.WaitForExit();
+                        string hash = output.Split(' ')[1];
+                        txtURN.Text = "IPFS:" + hash + @"\" + fileName;
+                        urn = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + @"\ipfs\" + hash + @"\" + fileName;
 
-                        // Add file to IPFS
-                        Task<string> addTask = Task.Run(() =>
-                        {
-                            Process process = new Process();
-                            process.StartInfo.FileName = @"ipfs\ipfs.exe";
-                            process.StartInfo.Arguments = "add \"" + filePath + "\"";
-                            process.StartInfo.UseShellExecute = false;
-                            process.StartInfo.RedirectStandardOutput = true;
-                            process.Start();
-                            string output = process.StandardOutput.ReadToEnd();
-                            process.WaitForExit();
-                            string hash = output.Split(' ')[1];
-                            return "IPFS:" + hash;
-                        });
-                        string ipfsHash = await addTask;
-
-
-                        // Update text box with IPFS hash
-                        txtURN.Text = ipfsHash + @"\" + fileName;
                     }
 
 
@@ -1203,8 +1204,6 @@ namespace SUP
                             {
 
 
-                                Task ipfsTask = Task.Run(() =>
-                                {
                                     Directory.CreateDirectory(@"ipfs/" + txtURN.Text.Substring(5, 46) + "-build");
                                     Process process2 = new Process();
                                     process2.StartInfo.FileName = @"ipfs\ipfs.exe";
@@ -1228,11 +1227,17 @@ namespace SUP
                                             fileName = "artifact";
                                         }
                                         else { fileName = fileName.Replace(@"/", "").Replace(@"\", ""); }
-                                        Directory.CreateDirectory(@"ipfs/" + txtURN.Text.Substring(5, 46));
+                                    try { Directory.CreateDirectory(@"ipfs/" + txtURN.Text.Substring(5, 46)); } catch { }
                                         try { System.IO.File.Move("ipfs/" + txtURN.Text.Substring(5, 46) + "_tmp", urn); } catch { }
                                     }
 
-                                    var SUP = new Options { CreateIfMissing = true };
+                                if (File.Exists(urn))
+                                {
+                                    lblURNBlockDate.Text = "ipfs verified: " + System.DateTime.UtcNow.ToString("ddd, dd MMM yyyy hh:mm:ss");
+                                    btnObjectURN.BackColor = Color.Blue;
+                                    btnObjectURN.ForeColor = Color.Yellow;
+                                }
+                                var SUP = new Options { CreateIfMissing = true };
 
                                     using (var db = new DB(SUP, @"ipfs"))
                                     {
@@ -1264,7 +1269,7 @@ namespace SUP
 
 
 
-                                });
+                                
                             }
                             else
                             {
@@ -2169,7 +2174,7 @@ namespace SUP
             catch { }
         }
 
-     
+
         private void radioButton4_CheckedChanged(object sender, EventArgs e)
         {
             RadioButton radioButton = sender as RadioButton;
@@ -2298,8 +2303,7 @@ namespace SUP
             // Show the dialog and set focus to the address text box
             addressForm.ShowDialog();
 
-            btnObjectImage.PerformClick();
-            btnObjectURN.PerformClick();
+      
         }
 
         public void LoadFormByAddress(string address)
@@ -2323,12 +2327,11 @@ namespace SUP
                     btnMint.Enabled = false;
                 }
 
-
+                txtObjectAddress.Text = address;
                 txtTitle.Text = foundObject.Name;
                 txtIMG.Text = foundObject.Image;
                 txtURN.Text = foundObject.URN;
                 txtURI.Text = foundObject.URI;
-                txtObjectAddress.Text = address;
                 txtDescription.Text = foundObject.Description;
                 try { txtMaximum.Text = foundObject.Maximum.ToString(); } catch { txtMaximum.Text = ""; }
 
@@ -2561,6 +2564,13 @@ namespace SUP
                 Directory.Delete(@"root\" + txtObjectAddress.Text, true);
             }
 
+          
+            btnObjectImage.BackColor = Color.White;
+            btnObjectImage.PerformClick();
+            btnObjectURN.BackColor = Color.White;
+            btnObjectURN.PerformClick();
+
+
         }
 
         private void btnObjectRoyalties_Click(object sender, EventArgs e)
@@ -2691,7 +2701,7 @@ namespace SUP
         {
             lblRemainingChars.Visible = false;
             pictureBox1.Refresh();
-            System.Drawing.Bitmap bitmap = new Bitmap(this.Width, this.Height-44);
+            System.Drawing.Bitmap bitmap = new Bitmap(this.Width, this.Height - 44);
             Graphics graphics = Graphics.FromImage(bitmap);
             graphics.CopyFromScreen(this.PointToScreen(new Point(0, 0)), new Point(0, 0), this.Size);
             bitmap.RotateFlip(RotateFlipType.Rotate90FlipNone);
@@ -2701,9 +2711,9 @@ namespace SUP
 
         private void HideMenuItem_Click(object sender, EventArgs e)
         {
-       
+
             pictureBox1.ImageLocation = imagecache;
-           
+
         }
         private void SaveMenuItem_Click(object sender, EventArgs e)
         {

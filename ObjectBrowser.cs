@@ -1891,7 +1891,7 @@ namespace SUP
                                             process2.StartInfo.FileName = @"ipfs\ipfs.exe";
                                             process2.StartInfo.Arguments = "get " + ipfsHash + @" -o ipfs\" + ipfsHash;
                                             process2.StartInfo.UseShellExecute = false;
-                                            process2.StartInfo.CreateNoWindow = true;
+                                            process2.StartInfo.CreateNoWindow = false;
                                             process2.Start();
                                             process2.WaitForExit();
                                             string fileName;
