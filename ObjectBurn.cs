@@ -28,6 +28,14 @@ namespace SUP
             brnaddress = _address;
         }
 
+        static string GetRandomDelimiter()
+        {
+            string[] delimiters = { "\\", "/", ":", "*", "?", "\"", "<", ">", "|" };
+            Random random = new Random();
+            return delimiters[random.Next(delimiters.Length)];
+        }
+
+
         private void addButton_Click(object sender, EventArgs e)
         {
             if (_addressQtyList.Count >= MaxRows)
@@ -128,7 +136,7 @@ namespace SUP
             var json = JsonConvert.SerializeObject(newdictionary);
             txtOBJJSON.Text = json;
 
-            txtOBJP2FK.Text = "BRN" + "*" + txtOBJJSON.Text.Length + "*" + txtOBJJSON.Text;
+            txtOBJP2FK.Text = "BRN" + GetRandomDelimiter() + txtOBJJSON.Text.Length + GetRandomDelimiter() + txtOBJJSON.Text;
 
             if (btnBurn.Enabled)
             {
@@ -150,7 +158,7 @@ namespace SUP
                     return;
                 }
 
-                txtOBJP2FK.Text = "SIG" + ":" + "88" + ">" + signature + txtOBJP2FK.Text;
+                txtOBJP2FK.Text = "SIG" + GetRandomDelimiter() + "88" + GetRandomDelimiter() + signature + txtOBJP2FK.Text;
 
                 
                 for (int i = 0; i < txtOBJP2FK.Text.Length; i += 20)

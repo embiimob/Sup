@@ -36,6 +36,14 @@ namespace SUP
             givaddress = _address;
         }
 
+        static string GetRandomDelimiter()
+        {
+            string[] delimiters = { "\\", "/", ":", "*", "?", "\"", "<", ">", "|" };
+            Random random = new Random();
+            return delimiters[random.Next(delimiters.Length)];
+        }
+
+
         void Owner_LinkClicked(string ownerId)
         {
 
@@ -955,7 +963,7 @@ namespace SUP
             var json = JsonConvert.SerializeObject(newdictionary);
             txtOBJJSON.Text = json;
 
-            txtOBJP2FK.Text = "BUY" + ">" + txtOBJJSON.Text.Length + ">" + txtOBJJSON.Text;
+            txtOBJP2FK.Text = "BUY" + GetRandomDelimiter() + txtOBJJSON.Text.Length + GetRandomDelimiter() + txtOBJJSON.Text;
 
             NetworkCredential credentials = new NetworkCredential("good-user", "better-password");
             RPCClient rpcClient = new RPCClient(credentials, new Uri(@"http://127.0.0.1:18332"), Network.Main);
@@ -975,7 +983,7 @@ namespace SUP
                 return;
             }
 
-            txtOBJP2FK.Text = "SIG" + ":" + "88" + ">" + signature + txtOBJP2FK.Text;
+            txtOBJP2FK.Text = "SIG" + GetRandomDelimiter() + "88" + GetRandomDelimiter() + signature + txtOBJP2FK.Text;
 
 
             for (int i = 0; i < txtOBJP2FK.Text.Length; i += 20)
@@ -1072,7 +1080,7 @@ namespace SUP
             var json = JsonConvert.SerializeObject(newdictionary);
             txtOBJJSON.Text = json;
 
-            txtOBJP2FK.Text = "LST" + ">" + txtOBJJSON.Text.Length + ">" + txtOBJJSON.Text;
+            txtOBJP2FK.Text = "LST" + GetRandomDelimiter() + txtOBJJSON.Text.Length + GetRandomDelimiter() + txtOBJJSON.Text;
 
             NetworkCredential credentials = new NetworkCredential("good-user", "better-password");
             RPCClient rpcClient = new RPCClient(credentials, new Uri(@"http://127.0.0.1:18332"), Network.Main);
@@ -1092,7 +1100,7 @@ namespace SUP
                 return;
             }
 
-            txtOBJP2FK.Text = "SIG" + ":" + "88" + ">" + signature + txtOBJP2FK.Text;
+            txtOBJP2FK.Text = "SIG" + GetRandomDelimiter() + "88" + GetRandomDelimiter() + signature + txtOBJP2FK.Text;
 
 
             for (int i = 0; i < txtOBJP2FK.Text.Length; i += 20)

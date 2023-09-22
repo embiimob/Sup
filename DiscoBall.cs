@@ -102,7 +102,12 @@ namespace SUP
             recordTimer.AutoReset = false; // Only trigger once
 
         }
-
+        static string GetRandomDelimiter()
+        {
+            string[] delimiters = { "\\", "/", ":", "*", "?", "\"", "<", ">", "|" };
+            Random random = new Random();
+            return delimiters[random.Next(delimiters.Length)];
+        }
 
         private void PrintImage(System.Drawing.Image img)
         {
@@ -452,7 +457,7 @@ namespace SUP
             }
             transMessage = transMessage + "<<" + salt.ToString() + ">>";
             byte[] messageBytes = Encoding.UTF8.GetBytes(transMessage);
-            string OBJP2FK = ">" + messageBytes.Length + ">" + transMessage;
+            string OBJP2FK = GetRandomDelimiter() + messageBytes.Length + GetRandomDelimiter() + transMessage;
             byte[] OBJP2FKBytes = new byte[] { };
             PROState toProfile = PROState.GetProfileByAddress(_toaddress, "good-user", "better-password", @"http://127.0.0.1:18332");
 
@@ -478,7 +483,7 @@ namespace SUP
 
             if (btnEncryptionStatus.Text == "PRIVATE 🤐")
             {
-                OBJP2FK = "SIG" + ":" + "88" + ">" + signature + OBJP2FK;
+                OBJP2FK = "SIG" + GetRandomDelimiter() + "88" + GetRandomDelimiter() + signature + OBJP2FK;
                 byte[] combinedBytes = Root.EncryptRootBytes("good-user", "better-password", "http://127.0.0.1:18332", signatureAddress, Encoding.UTF8.GetBytes(OBJP2FK), toProfile.PKX, toProfile.PKY);
                 // Split byte array into chunks of maximum length 20
                 for (int i = 0; i < combinedBytes.Length; i += 20)
@@ -499,7 +504,7 @@ namespace SUP
             }
             else
             {
-                OBJP2FK = "SIG" + ":" + "88" + ">" + signature + OBJP2FK;
+                OBJP2FK = "SIG" + GetRandomDelimiter() + "88" + GetRandomDelimiter() + signature + OBJP2FK;
 
 
                 byte[] inputBytes = Encoding.UTF8.GetBytes(OBJP2FK); // Convert the string to bytes

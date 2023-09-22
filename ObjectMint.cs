@@ -56,6 +56,13 @@ namespace SUP
             pictureBox1.ContextMenuStrip = contextMenu;
         }
 
+        static string GetRandomDelimiter()
+        {
+            string[] delimiters = { "\\", "/", ":", "*", "?", "\"", "<", ">", "|" };
+            Random random = new Random();
+            return delimiters[random.Next(delimiters.Length)];
+        }
+
 
         private void UpdateRemainingChars()
         {
@@ -178,7 +185,7 @@ namespace SUP
 
             int lengthInBytes = utf8Bytes.Length;
 
-            string objString = "OBJ:" + lengthInBytes + ":" + txtOBJJSON.Text;
+            string objString = "OBJ" + GetRandomDelimiter() + lengthInBytes + GetRandomDelimiter() + txtOBJJSON.Text;
 
             // Assign the result to txtOBJP2FK.Text
             txtOBJP2FK.Text = objString;
@@ -202,7 +209,7 @@ namespace SUP
                 return;
             }
 
-            txtOBJP2FK.Text = "SIG" + ":" + "88" + ">" + signature + txtOBJP2FK.Text;
+            txtOBJP2FK.Text = "SIG" + GetRandomDelimiter() + "88" + GetRandomDelimiter() + signature + txtOBJP2FK.Text;
 
             List<string> encodedList = new List<string>();
             byte[] inputBytes = Encoding.UTF8.GetBytes(txtOBJP2FK.Text); // Convert the string to bytes
