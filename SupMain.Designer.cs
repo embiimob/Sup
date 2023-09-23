@@ -59,6 +59,7 @@ namespace SUP
             this.btnPrivateMessage = new System.Windows.Forms.Button();
             this.btnPublicMessage = new System.Windows.Forms.Button();
             this.tmrSearchMemoryPool = new System.Windows.Forms.Timer(this.components);
+            this.btnInquirySearch = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.SuspendLayout();
@@ -115,6 +116,7 @@ namespace SUP
             // 
             // splitContainer2.Panel2
             // 
+            this.splitContainer2.Panel2.Controls.Add(this.btnInquirySearch);
             this.splitContainer2.Panel2.Controls.Add(this.btnVideoSearch);
             this.splitContainer2.Panel2.Controls.Add(this.btnSkipAudio);
             this.splitContainer2.Panel2.Controls.Add(this.btnJukeBox);
@@ -211,7 +213,7 @@ namespace SUP
             // 
             this.btnSkipAudio.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.btnSkipAudio.Font = new System.Drawing.Font("Segoe UI Emoji", 13.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnSkipAudio.Location = new System.Drawing.Point(239, 692);
+            this.btnSkipAudio.Location = new System.Drawing.Point(301, 692);
             this.btnSkipAudio.Name = "btnSkipAudio";
             this.btnSkipAudio.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
             this.btnSkipAudio.Size = new System.Drawing.Size(56, 40);
@@ -267,7 +269,7 @@ namespace SUP
             this.supFlow.Location = new System.Drawing.Point(9, 159);
             this.supFlow.Name = "supFlow";
             this.supFlow.Padding = new System.Windows.Forms.Padding(0, 3, 0, 0);
-            this.supFlow.Size = new System.Drawing.Size(587, 527);
+            this.supFlow.Size = new System.Drawing.Size(590, 527);
             this.supFlow.TabIndex = 86;
             // 
             // lblAdultsOnly
@@ -418,7 +420,7 @@ namespace SUP
             // 
             this.btnDisco.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.btnDisco.Font = new System.Drawing.Font("Segoe UI Emoji", 13.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnDisco.Location = new System.Drawing.Point(411, 692);
+            this.btnDisco.Location = new System.Drawing.Point(408, 692);
             this.btnDisco.Name = "btnDisco";
             this.btnDisco.Size = new System.Drawing.Size(56, 40);
             this.btnDisco.TabIndex = 85;
@@ -432,7 +434,7 @@ namespace SUP
             this.btnPrivateMessage.BackColor = System.Drawing.Color.White;
             this.btnPrivateMessage.Font = new System.Drawing.Font("Segoe UI Emoji", 13.8F);
             this.btnPrivateMessage.ForeColor = System.Drawing.Color.Black;
-            this.btnPrivateMessage.Location = new System.Drawing.Point(535, 692);
+            this.btnPrivateMessage.Location = new System.Drawing.Point(532, 692);
             this.btnPrivateMessage.Name = "btnPrivateMessage";
             this.btnPrivateMessage.Size = new System.Drawing.Size(56, 40);
             this.btnPrivateMessage.TabIndex = 84;
@@ -446,7 +448,7 @@ namespace SUP
             this.btnPublicMessage.BackColor = System.Drawing.Color.White;
             this.btnPublicMessage.Font = new System.Drawing.Font("Segoe UI Emoji", 13.8F);
             this.btnPublicMessage.ForeColor = System.Drawing.Color.Black;
-            this.btnPublicMessage.Location = new System.Drawing.Point(473, 692);
+            this.btnPublicMessage.Location = new System.Drawing.Point(470, 692);
             this.btnPublicMessage.Name = "btnPublicMessage";
             this.btnPublicMessage.Size = new System.Drawing.Size(56, 40);
             this.btnPublicMessage.TabIndex = 83;
@@ -458,6 +460,17 @@ namespace SUP
             // 
             this.tmrSearchMemoryPool.Interval = 5000;
             this.tmrSearchMemoryPool.Tick += new System.EventHandler(this.tmrSearchMemoryPool_Tick);
+            // 
+            // btnInquirySearch
+            // 
+            this.btnInquirySearch.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.btnInquirySearch.Font = new System.Drawing.Font("Segoe UI Emoji", 13.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnInquirySearch.Location = new System.Drawing.Point(239, 692);
+            this.btnInquirySearch.Name = "btnInquirySearch";
+            this.btnInquirySearch.Size = new System.Drawing.Size(56, 40);
+            this.btnInquirySearch.TabIndex = 101;
+            this.btnInquirySearch.Text = "⁉️";
+            this.btnInquirySearch.UseVisualStyleBackColor = true;
             // 
             // SupMain
             // 
@@ -518,5 +531,6 @@ namespace SUP
         private System.Windows.Forms.Button btnJukeBox;
         private System.Windows.Forms.Button btnSkipAudio;
         private System.Windows.Forms.Button btnVideoSearch;
+        private System.Windows.Forms.Button btnInquirySearch;
     }
 }

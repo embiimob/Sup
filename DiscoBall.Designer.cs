@@ -49,6 +49,7 @@
             this.emojiPanel = new System.Windows.Forms.FlowLayoutPanel();
             this.btnPrint = new System.Windows.Forms.Button();
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
+            this.btnInquiry = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.fromImage)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.toImage)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
@@ -254,7 +255,7 @@
             this.btnPrint.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.btnPrint.Font = new System.Drawing.Font("Segoe UI Emoji", 13.8F);
             this.btnPrint.ForeColor = System.Drawing.Color.Black;
-            this.btnPrint.Location = new System.Drawing.Point(312, 604);
+            this.btnPrint.Location = new System.Drawing.Point(252, 603);
             this.btnPrint.Name = "btnPrint";
             this.btnPrint.Size = new System.Drawing.Size(54, 46);
             this.btnPrint.TabIndex = 368;
@@ -272,6 +273,18 @@
             this.pictureBox1.TabStop = false;
             this.pictureBox1.Visible = false;
             this.pictureBox1.DoubleClick += new System.EventHandler(this.pictureBox1_DoubleClick);
+            // 
+            // btnInquiry
+            // 
+            this.btnInquiry.Font = new System.Drawing.Font("Segoe UI Emoji", 20.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnInquiry.ForeColor = System.Drawing.Color.Black;
+            this.btnInquiry.Location = new System.Drawing.Point(316, 603);
+            this.btnInquiry.Name = "btnInquiry";
+            this.btnInquiry.Padding = new System.Windows.Forms.Padding(3, 0, 0, 0);
+            this.btnInquiry.Size = new System.Drawing.Size(50, 46);
+            this.btnInquiry.TabIndex = 369;
+            this.btnInquiry.Text = "⁉️";
+            this.btnInquiry.UseVisualStyleBackColor = true;
             // 
             // DiscoBall
             // 
@@ -300,6 +313,7 @@
             this.Controls.Add(this.btnRefresh);
             this.Controls.Add(this.supMessage);
             this.Controls.Add(this.btnPrint);
+            this.Controls.Add(this.btnInquiry);
             this.ForeColor = System.Drawing.Color.White;
             this.MinimumSize = new System.Drawing.Size(463, 625);
             this.Name = "DiscoBall";
@@ -338,5 +352,6 @@
         private System.Windows.Forms.FlowLayoutPanel emojiPanel;
         private System.Windows.Forms.Button btnPrint;
         private System.Windows.Forms.PictureBox pictureBox1;
+        private System.Windows.Forms.Button btnInquiry;
     }
 }

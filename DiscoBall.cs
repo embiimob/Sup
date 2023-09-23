@@ -568,7 +568,23 @@ namespace SUP
 
             }
 
-            encodedList.Add(txtToAddress.Text);
+            // Remove spaces from txtToAddress.Text
+            string inputText = txtToAddress.Text.Replace(" ", "");
+
+            // Split the input text by comma or semicolon
+            char[] delimiters = { ',', ';' };
+            string[] addresses = inputText.Split(delimiters, StringSplitOptions.RemoveEmptyEntries);
+
+            // Iterate through the addresses in reverse order and add them to the beginning of encodedList if not already present
+            for (int i = addresses.Length - 1; i >= 0; i--)
+            {
+                string address = addresses[i].Trim(); // Trim any leading/trailing spaces
+                if (!encodedList.Contains(address) && address != signatureAddress)
+                {
+                    encodedList.Add(address); // Add to the beginning of the list
+                }
+            }
+
             encodedList.Add(signatureAddress);
             lblObjectStatus.Text = "cost: " + (0.00000546 * encodedList.Count).ToString("0.00000000") + "  + miner fee";
 

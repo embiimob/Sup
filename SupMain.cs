@@ -5809,34 +5809,43 @@ namespace SUP
             // Check if the user left-clicked on the PictureBox
             if (((System.Windows.Forms.MouseEventArgs)e).Button == MouseButtons.Left)
             {
-                numMessagesDisplayed = 0;
-                numFriendFeedsDisplayed = 0;
-                numPrivateMessagesDisplayed = 0;
-                refreshFriendFeed.BackColor = System.Drawing.Color.White;
-                refreshFriendFeed.ForeColor = System.Drawing.Color.Black;
-                btnPrivateMessage.BackColor = System.Drawing.Color.White;
-                btnPrivateMessage.ForeColor = System.Drawing.Color.Black;
-                btnPublicMessage.BackColor = Color.Blue;
-                btnPublicMessage.ForeColor = Color.Yellow;
-                supPrivateFlow.Controls.Clear();
 
-                if (!((PictureBox)sender).ImageLocation.ToString().Contains(@"root\keywords"))
+
+                if (((PictureBox)sender).ImageLocation != null)
                 {
-                    // Get the tag text from the PictureBox
-                    string address = ((PictureBox)sender).Tag.ToString();
-                    MakeActiveProfile(address);
+                    numMessagesDisplayed = 0;
+                    numFriendFeedsDisplayed = 0;
+                    numPrivateMessagesDisplayed = 0;
+                    refreshFriendFeed.BackColor = System.Drawing.Color.White;
+                    refreshFriendFeed.ForeColor = System.Drawing.Color.Black;
+                    btnPrivateMessage.BackColor = System.Drawing.Color.White;
+                    btnPrivateMessage.ForeColor = System.Drawing.Color.Black;
+                    btnPublicMessage.BackColor = Color.Blue;
+                    btnPublicMessage.ForeColor = Color.Yellow;
+                    supPrivateFlow.Controls.Clear();
+
+                    if (!((PictureBox)sender).ImageLocation.ToString().Contains(@"root\keywords"))
+                    {
+                        // Get the tag text from the PictureBox
+                        string address = ((PictureBox)sender).Tag.ToString();
+                        if (address != null)
+                        {
+                            MakeActiveProfile(address);
+                        }
+                    }
+                    else
+                    {
+
+                        profileBIO.Text = ""; profileCreatedDate.Text = ""; profileIMG.ImageLocation = ""; lblProcessHeight.Text = "";
+                        profileURN.Links[0].LinkData = ((PictureBox)sender).Tag.ToString();
+                        profileURN.Text = Path.GetFileNameWithoutExtension(((PictureBox)sender).ImageLocation.ToString());
+                        profileIMG.ImageLocation = ((PictureBox)sender).ImageLocation.ToString();
+
+                    }
+                    RefreshSupMessages();
                 }
-                else
-                {
 
-                    profileBIO.Text = ""; profileCreatedDate.Text = ""; profileIMG.ImageLocation = ""; lblProcessHeight.Text = "";
-                    profileURN.Links[0].LinkData = ((PictureBox)sender).Tag.ToString();
-                    profileURN.Text = Path.GetFileNameWithoutExtension(((PictureBox)sender).ImageLocation.ToString());
-                    profileIMG.ImageLocation = ((PictureBox)sender).ImageLocation.ToString();
-
-                }
-
-                RefreshSupMessages();
+               
 
             }
         }
