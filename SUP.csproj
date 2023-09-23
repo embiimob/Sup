@@ -425,6 +425,9 @@
       <DependentUpon>Resources.resx</DependentUpon>
       <DesignTime>True</DesignTime>
     </Compile>
+    <None Include="p2fk\samples\Create Poll.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Include="p2fk\samples\List Object.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

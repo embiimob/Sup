@@ -81,6 +81,7 @@
             // 
             // txtFromAddress
             // 
+            this.txtFromAddress.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.txtFromAddress.Location = new System.Drawing.Point(66, 434);
             this.txtFromAddress.Multiline = true;
             this.txtFromAddress.Name = "txtFromAddress";
@@ -109,6 +110,7 @@
             // 
             // txtToAddress
             // 
+            this.txtToAddress.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.txtToAddress.Location = new System.Drawing.Point(66, 496);
             this.txtToAddress.Multiline = true;
             this.txtToAddress.Name = "txtToAddress";
@@ -135,6 +137,7 @@
             // 
             // txtAttach
             // 
+            this.txtAttach.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.txtAttach.Location = new System.Drawing.Point(20, 321);
             this.txtAttach.Multiline = true;
             this.txtAttach.Name = "txtAttach";

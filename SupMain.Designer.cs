@@ -269,7 +269,7 @@ namespace SUP
             this.supFlow.Location = new System.Drawing.Point(9, 159);
             this.supFlow.Name = "supFlow";
             this.supFlow.Padding = new System.Windows.Forms.Padding(0, 3, 0, 0);
-            this.supFlow.Size = new System.Drawing.Size(590, 527);
+            this.supFlow.Size = new System.Drawing.Size(584, 527);
             this.supFlow.TabIndex = 86;
             // 
             // lblAdultsOnly

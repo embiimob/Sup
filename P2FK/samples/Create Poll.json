@@ -1,0 +1,50 @@
+
+
+//defined format
+
+{
+  "que": {
+    "mqjT2e9zzYia9ndiwcT3Xwi4FvED4gw3Da": "What is your favorite color?"
+  },
+  "ans": {
+    "mvPKoZxMci9MVfZrt45eMiZ7RwRizdng27": "Blue",
+    "n248JukurzbQMdPPLg7Zwgr32y7bG2ZN1F": "Red",
+    "n3Ge8QJUx6zY6ENp1pFNUibRbPcKXPHGUu": "Green"
+  },
+  "own": [
+    "mvUsp7nsQRrBpF5uJd6TbSQiZiYybf8Pc9",
+    "mvVa2Ug1V3U8kZhELeUhE7kjpsPMpBKjht"
+  ],
+  "cre": [
+    "mxyo2qyUo9h7wzDYbudcyC2VWxaTfTeCZr"
+  ],
+  "end": 144,
+  "any": 1
+}
+
+
+//optional attributes
+//own
+//list of object addresses, any of which must be owned to be valid
+
+//cre
+//list of creator addresses, must own an object created by the address to be valid
+
+//end
+//number of blocks to keep the poll open... on bitcoin a block is generated roughly every 10 minutes.... the example 144 would be 24 hrs.  [ default = forever ]
+
+//any
+//an integer representing a boolean   1 = true 0 = false   allow non signed votes to count  [ default = 0 ]
+
+
+//manual entry instructions via apertus.io
+//remove all unnecessary spaces
+//place JSON in a file named INQ  (no file extension)
+//enter que @objectaddress in the apertus.io message box 
+
+
+//attach file INQ using the apertus.io attach button
+//select a creators signature address from the signature list in apertus.io
+//verify that the no message box is checked.
+//click the apertus.io etch button
+
