@@ -254,6 +254,7 @@
     <Compile Include="FullScreenView.cs">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Include="p2fk\classes\INQ.cs" />
     <Compile Include="SupFlix.cs">
       <SubType>Form</SubType>
     </Compile>

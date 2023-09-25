@@ -1333,6 +1333,23 @@ namespace SUP
 
         }
 
+        private void btnGetInquiry_Click(object sender, EventArgs e)
+        {
+            DateTime tmbeginCall = DateTime.UtcNow;
+            INQState Tester = INQState.GetInquiryByAddress(txtSearchAddress.Text, txtLogin.Text, txtPassword.Text, txtUrl.Text, txtVersionByte.Text, chkVerbose.Checked);
+            DateTime tmendCall = DateTime.UtcNow;
+            lblTotalBytes.Text = "bytes: ";
+            lblTotalTime.Text = "time: ";
+            lblKbs.Text = "kb/s: ";
+            lblTotal.Text = "total:";
+            TimeSpan elapsedTime = tmendCall - tmbeginCall;
+            double elapsedMilliseconds = elapsedTime.TotalMilliseconds;
+
+            lblTotalTime.Text = "time: " + Math.Truncate(elapsedMilliseconds);
+            //lblTotal.Text = "total: " + Tester.ProcessHeight.ToString();
+
+            DisplayRootJSON(new JObject[] { JObject.FromObject(Tester) });
+        }
     }
 }
 

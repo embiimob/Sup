@@ -4,6 +4,7 @@ using LevelDB;
 using NBitcoin;
 using NBitcoin.RPC;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -13,6 +14,7 @@ using System.Numerics;
 using System.Security.Cryptography;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Windows.Documents;
 
 
 namespace SUP.P2FK
@@ -24,13 +26,13 @@ namespace SUP.P2FK
         public Dictionary<string, BigInteger> File { get; set; }
         public Dictionary<string, string> Keyword { get; set; }
         public Dictionary<string, string> Output { get; set; }
-
         public string Hash { get; set; }
         public string SignedBy { get; set; }
         public string Signature { get; set; }
         public bool Signed { get; set; }
         public string TransactionId { get; set; }
         public DateTime BlockDate { get; set; }
+        public int BlockHeight { get; set; }    
         public int TotalByteSize { get; set; }
         public int Confirmations { get; set; }
         public DateTime BuildDate { get; set; }
@@ -41,14 +43,14 @@ namespace SUP.P2FK
         //ensures levelDB is thread safely
         private readonly static object SupLocker = new object();
 
-        public static Root GetRootByTransactionId(string transactionid, string username, string password, string url, string versionbyte = "111", byte[] rootbytes = null, string signatureaddress = null)
+        public static Root GetRootByTransactionId(string transactionid, string username, string password, string url, string versionbyte = "111", byte[] rootbytes = null, string signatureaddress = null, bool blockheight = false)
         {
             Root P2FKRoot = new Root();
             string diskpath = "root\\" + transactionid + "\\";
             string P2FKJSONString = null;
             bool isMuted = false;
 
-            if (rootbytes == null)
+            if (rootbytes == null && blockheight == false)
             {
                 try
                 {
@@ -132,8 +134,16 @@ namespace SUP.P2FK
                      Convert.ToInt32(deserializedObject.blocktime)
                  ).DateTime;
 
+                if (blockheight)
+                {
+                    string hash = deserializedObject.blockhash;
+                    dynamic deserializedObjectDetails = rpcClient.SendCommand("getblock", hash);
+                    var BlockHeightResult = deserializedObjectDetails.Result; // Assuming 'height' is within the 'result' property
+                    var BlockHeight = BlockHeightResult.height;
 
-                P2FKRoot.Output = new Dictionary<string, string>();
+                    P2FKRoot.BlockHeight = BlockHeight;
+                }
+                    P2FKRoot.Output = new Dictionary<string, string>();
                 // we are spinning through all the out addresses within each bitcoin transaction
                 // we are base58 decdoing each address to obtain a 20 byte payload that is appended to a byte[]
                 foreach (dynamic v_out in deserializedObject.vout)
@@ -598,7 +608,7 @@ namespace SUP.P2FK
 
             return P2FKRoot;
         }
-        public static Root[] GetRootsByAddress(string address, string username, string password, string url, int skip = 0, int qty = -1, string versionByte = "111")
+        public static Root[] GetRootsByAddress(string address, string username, string password, string url, int skip = 0, int qty = -1, string versionByte = "111", bool blockheight = false)
         {
             var rootList = new List<Root>();
 
@@ -679,7 +689,7 @@ namespace SUP.P2FK
                     intProcessHeight++;
                     string hexId = GetTransactionIdByHexString(deserializedObject[i].ToString());
 
-                    var root = Root.GetRootByTransactionId(hexId, username, password, url, versionByte);
+                    var root = Root.GetRootByTransactionId(hexId, username, password, url, versionByte,null,null, blockheight);
 
                     if (root != null && root.TotalByteSize > 0 && root.Output != null && !rootList.Any(ROOT => ROOT.TransactionId == root.TransactionId) && root.Output.ContainsKey(address) && root.BlockDate.Year > 1975)
                     {
