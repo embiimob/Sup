@@ -1350,6 +1350,84 @@ namespace SUP
 
             DisplayRootJSON(new JObject[] { JObject.FromObject(Tester) });
         }
+
+        private void button7_Click(object sender, EventArgs e)
+        {
+            DateTime tmbeginCall = DateTime.UtcNow;
+            List<INQState> createdObjects = INQState.GetInquiriesByAddress(txtSearchAddress.Text, txtLogin.Text, txtPassword.Text, txtUrl.Text, txtVersionByte.Text, int.Parse(txtSkip.Text), int.Parse(txtQty.Text), chkVerbose.Checked);
+            DateTime tmendCall = DateTime.UtcNow;
+            lblTotalBytes.Text = "bytes: ";
+            lblTotalTime.Text = "time: ";
+            lblKbs.Text = "kb/s: ";
+            lblTotal.Text = "total:";
+            TimeSpan elapsedTime = tmendCall - tmbeginCall;
+            double elapsedMilliseconds = elapsedTime.TotalMilliseconds;
+
+            lblTotalTime.Text = "time: " + Math.Truncate(elapsedMilliseconds);
+            lblTotal.Text = "total: " + createdObjects.Count();
+            JObject[] ObjectArray = new JObject[createdObjects.Count];
+            int objectcount = 0;
+
+
+            foreach (object obj in createdObjects)
+            {
+
+                ObjectArray[objectcount++] = JObject.FromObject(obj);
+            }
+            DisplayRootJSON(ObjectArray);
+        }
+
+        private void btnGetInquiriesByKeyword_Click(object sender, EventArgs e)
+        {
+            DateTime tmbeginCall = DateTime.UtcNow;
+            List<INQState> createdObjects = INQState.GetInquiriesByKeyword(new List<string> { txtSearchAddress.Text }, txtLogin.Text, txtPassword.Text, txtUrl.Text, txtVersionByte.Text, int.Parse(txtSkip.Text), int.Parse(txtQty.Text), chkVerbose.Checked);
+            DateTime tmendCall = DateTime.UtcNow;
+            lblTotalBytes.Text = "bytes: ";
+            lblTotalTime.Text = "time: ";
+            lblKbs.Text = "kb/s: ";
+            lblTotal.Text = "total:";
+            TimeSpan elapsedTime = tmendCall - tmbeginCall;
+            double elapsedMilliseconds = elapsedTime.TotalMilliseconds;
+
+            lblTotalTime.Text = "time: " + Math.Truncate(elapsedMilliseconds);
+            lblTotal.Text = "total: " + createdObjects.Count();
+            JObject[] ObjectArray = new JObject[createdObjects.Count];
+            int objectcount = 0;
+
+
+            foreach (object obj in createdObjects)
+            {
+
+                ObjectArray[objectcount++] = JObject.FromObject(obj);
+            }
+            DisplayRootJSON(ObjectArray);
+        }
+
+        private void btnInquiriesCreated_Click(object sender, EventArgs e)
+        {
+            DateTime tmbeginCall = DateTime.UtcNow;
+            List<INQState> createdObjects = INQState.GetInquiriesCreatedByAddress(txtSearchAddress.Text , txtLogin.Text, txtPassword.Text, txtUrl.Text, txtVersionByte.Text, int.Parse(txtSkip.Text), int.Parse(txtQty.Text), chkVerbose.Checked);
+            DateTime tmendCall = DateTime.UtcNow;
+            lblTotalBytes.Text = "bytes: ";
+            lblTotalTime.Text = "time: ";
+            lblKbs.Text = "kb/s: ";
+            lblTotal.Text = "total:";
+            TimeSpan elapsedTime = tmendCall - tmbeginCall;
+            double elapsedMilliseconds = elapsedTime.TotalMilliseconds;
+
+            lblTotalTime.Text = "time: " + Math.Truncate(elapsedMilliseconds);
+            lblTotal.Text = "total: " + createdObjects.Count();
+            JObject[] ObjectArray = new JObject[createdObjects.Count];
+            int objectcount = 0;
+
+
+            foreach (object obj in createdObjects)
+            {
+
+                ObjectArray[objectcount++] = JObject.FromObject(obj);
+            }
+            DisplayRootJSON(ObjectArray);
+        }
     }
 }
 

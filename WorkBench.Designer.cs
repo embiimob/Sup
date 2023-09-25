@@ -30,10 +30,10 @@ namespace SUP
         /// </summary>
         private void InitializeComponent()
         {
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle4 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle5 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle7 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle8 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle6 = new System.Windows.Forms.DataGridViewCellStyle();
             this.btnGet = new System.Windows.Forms.Button();
             this.btnDelete = new System.Windows.Forms.Button();
             this.label3 = new System.Windows.Forms.Label();
@@ -97,7 +97,7 @@ namespace SUP
             this.btnObjectURN = new System.Windows.Forms.Button();
             this.txtGetValue = new System.Windows.Forms.RichTextBox();
             this.chkVerbose = new System.Windows.Forms.CheckBox();
-            this.button2 = new System.Windows.Forms.Button();
+            this.btnGetObjectsByKeyword = new System.Windows.Forms.Button();
             this.button1 = new System.Windows.Forms.Button();
             this.btnGetCreated = new System.Windows.Forms.Button();
             this.btnGetOwned = new System.Windows.Forms.Button();
@@ -106,6 +106,9 @@ namespace SUP
             this.btnDecrypt = new System.Windows.Forms.Button();
             this.btnEncrypt = new System.Windows.Forms.Button();
             this.btnGetInquiry = new System.Windows.Forms.Button();
+            this.btnGetInquiriesByKeyword = new System.Windows.Forms.Button();
+            this.btnInquiriesCreated = new System.Windows.Forms.Button();
+            this.btnGetInquiries = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.dgTransactions)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
@@ -283,14 +286,14 @@ namespace SUP
             // dgTransactions
             // 
             this.dgTransactions.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.Fill;
-            dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle1.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            dataGridViewCellStyle1.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle1.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.dgTransactions.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle1;
+            dataGridViewCellStyle5.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle5.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle5.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle5.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle5.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle5.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle5.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.dgTransactions.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle5;
             this.dgTransactions.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.dgTransactions.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
             this.rootid,
@@ -306,25 +309,25 @@ namespace SUP
             this.signature,
             this.confirmations,
             this.buildtime});
-            dataGridViewCellStyle3.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle3.BackColor = System.Drawing.SystemColors.Window;
-            dataGridViewCellStyle3.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            dataGridViewCellStyle3.ForeColor = System.Drawing.SystemColors.ControlText;
-            dataGridViewCellStyle3.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle3.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle3.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
-            this.dgTransactions.DefaultCellStyle = dataGridViewCellStyle3;
+            dataGridViewCellStyle7.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle7.BackColor = System.Drawing.SystemColors.Window;
+            dataGridViewCellStyle7.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle7.ForeColor = System.Drawing.SystemColors.ControlText;
+            dataGridViewCellStyle7.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle7.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle7.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
+            this.dgTransactions.DefaultCellStyle = dataGridViewCellStyle7;
             this.dgTransactions.Dock = System.Windows.Forms.DockStyle.Fill;
             this.dgTransactions.Location = new System.Drawing.Point(0, 0);
             this.dgTransactions.Name = "dgTransactions";
-            dataGridViewCellStyle4.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle4.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle4.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            dataGridViewCellStyle4.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle4.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle4.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle4.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.dgTransactions.RowHeadersDefaultCellStyle = dataGridViewCellStyle4;
+            dataGridViewCellStyle8.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle8.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle8.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle8.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle8.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle8.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle8.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.dgTransactions.RowHeadersDefaultCellStyle = dataGridViewCellStyle8;
             this.dgTransactions.Size = new System.Drawing.Size(1154, 331);
             this.dgTransactions.TabIndex = 30;
             this.dgTransactions.CellClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.DataGridViewClick);
@@ -337,8 +340,8 @@ namespace SUP
             // 
             // messagecount
             // 
-            dataGridViewCellStyle2.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.messagecount.DefaultCellStyle = dataGridViewCellStyle2;
+            dataGridViewCellStyle6.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.messagecount.DefaultCellStyle = dataGridViewCellStyle6;
             this.messagecount.HeaderText = "Messages";
             this.messagecount.MaxInputLength = 100000000;
             this.messagecount.Name = "messagecount";
@@ -431,7 +434,7 @@ namespace SUP
             // 
             // btnGetKeyword
             // 
-            this.btnGetKeyword.Location = new System.Drawing.Point(462, 243);
+            this.btnGetKeyword.Location = new System.Drawing.Point(434, 241);
             this.btnGetKeyword.Name = "btnGetKeyword";
             this.btnGetKeyword.Size = new System.Drawing.Size(73, 23);
             this.btnGetKeyword.TabIndex = 36;
@@ -493,6 +496,9 @@ namespace SUP
             // 
             // splitContainer1.Panel1
             // 
+            this.splitContainer1.Panel1.Controls.Add(this.btnGetInquiries);
+            this.splitContainer1.Panel1.Controls.Add(this.btnInquiriesCreated);
+            this.splitContainer1.Panel1.Controls.Add(this.btnGetInquiriesByKeyword);
             this.splitContainer1.Panel1.Controls.Add(this.btnGetInquiry);
             this.splitContainer1.Panel1.Controls.Add(this.btnCollections);
             this.splitContainer1.Panel1.Controls.Add(this.button3);
@@ -515,7 +521,7 @@ namespace SUP
             this.splitContainer1.Panel1.Controls.Add(this.btnObjectURN);
             this.splitContainer1.Panel1.Controls.Add(this.txtGetValue);
             this.splitContainer1.Panel1.Controls.Add(this.chkVerbose);
-            this.splitContainer1.Panel1.Controls.Add(this.button2);
+            this.splitContainer1.Panel1.Controls.Add(this.btnGetObjectsByKeyword);
             this.splitContainer1.Panel1.Controls.Add(this.button1);
             this.splitContainer1.Panel1.Controls.Add(this.btnGetCreated);
             this.splitContainer1.Panel1.Controls.Add(this.btnGetOwned);
@@ -563,7 +569,7 @@ namespace SUP
             // 
             // btnCollections
             // 
-            this.btnCollections.Location = new System.Drawing.Point(352, 309);
+            this.btnCollections.Location = new System.Drawing.Point(439, 280);
             this.btnCollections.Name = "btnCollections";
             this.btnCollections.Size = new System.Drawing.Size(77, 23);
             this.btnCollections.TabIndex = 79;
@@ -573,9 +579,9 @@ namespace SUP
             // 
             // button3
             // 
-            this.button3.Location = new System.Drawing.Point(352, 280);
+            this.button3.Location = new System.Drawing.Point(182, 280);
             this.button3.Name = "button3";
-            this.button3.Size = new System.Drawing.Size(77, 23);
+            this.button3.Size = new System.Drawing.Size(81, 23);
             this.button3.TabIndex = 76;
             this.button3.Text = "local profiles";
             this.button3.UseVisualStyleBackColor = true;
@@ -583,7 +589,7 @@ namespace SUP
             // 
             // ButtonGetPublicKeys
             // 
-            this.ButtonGetPublicKeys.Location = new System.Drawing.Point(317, 151);
+            this.ButtonGetPublicKeys.Location = new System.Drawing.Point(513, 243);
             this.ButtonGetPublicKeys.Name = "ButtonGetPublicKeys";
             this.ButtonGetPublicKeys.Size = new System.Drawing.Size(72, 23);
             this.ButtonGetPublicKeys.TabIndex = 75;
@@ -593,7 +599,7 @@ namespace SUP
             // 
             // ButtonGetPrivateMessages
             // 
-            this.ButtonGetPrivateMessages.Location = new System.Drawing.Point(349, 338);
+            this.ButtonGetPrivateMessages.Location = new System.Drawing.Point(354, 280);
             this.ButtonGetPrivateMessages.Name = "ButtonGetPrivateMessages";
             this.ButtonGetPrivateMessages.Size = new System.Drawing.Size(79, 23);
             this.ButtonGetPrivateMessages.TabIndex = 74;
@@ -603,7 +609,7 @@ namespace SUP
             // 
             // ButtonGetPublicMessages
             // 
-            this.ButtonGetPublicMessages.Location = new System.Drawing.Point(262, 338);
+            this.ButtonGetPublicMessages.Location = new System.Drawing.Point(269, 278);
             this.ButtonGetPublicMessages.Name = "ButtonGetPublicMessages";
             this.ButtonGetPublicMessages.Size = new System.Drawing.Size(79, 23);
             this.ButtonGetPublicMessages.TabIndex = 73;
@@ -613,7 +619,7 @@ namespace SUP
             // 
             // ButtonGetObjectByTransactionId
             // 
-            this.ButtonGetObjectByTransactionId.Location = new System.Drawing.Point(12, 338);
+            this.ButtonGetObjectByTransactionId.Location = new System.Drawing.Point(97, 309);
             this.ButtonGetObjectByTransactionId.Name = "ButtonGetObjectByTransactionId";
             this.ButtonGetObjectByTransactionId.Size = new System.Drawing.Size(79, 23);
             this.ButtonGetObjectByTransactionId.TabIndex = 72;
@@ -623,18 +629,18 @@ namespace SUP
             // 
             // btnGetFoundObjects
             // 
-            this.btnGetFoundObjects.Location = new System.Drawing.Point(97, 280);
+            this.btnGetFoundObjects.Location = new System.Drawing.Point(354, 338);
             this.btnGetFoundObjects.Name = "btnGetFoundObjects";
             this.btnGetFoundObjects.Size = new System.Drawing.Size(79, 23);
             this.btnGetFoundObjects.TabIndex = 71;
-            this.btnGetFoundObjects.Text = "all found";
+            this.btnGetFoundObjects.Text = "obj found";
             this.btnGetFoundObjects.UseVisualStyleBackColor = true;
             this.btnGetFoundObjects.Click += new System.EventHandler(this.ButtonGetFoundObjectsClick);
             // 
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(442, 343);
+            this.label2.Location = new System.Drawing.Point(578, 343);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(26, 13);
             this.label2.TabIndex = 69;
@@ -643,7 +649,7 @@ namespace SUP
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(442, 314);
+            this.label1.Location = new System.Drawing.Point(578, 314);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(21, 13);
             this.label1.TabIndex = 68;
@@ -651,7 +657,7 @@ namespace SUP
             // 
             // txtSkip
             // 
-            this.txtSkip.Location = new System.Drawing.Point(469, 341);
+            this.txtSkip.Location = new System.Drawing.Point(605, 341);
             this.txtSkip.Name = "txtSkip";
             this.txtSkip.Size = new System.Drawing.Size(66, 20);
             this.txtSkip.TabIndex = 67;
@@ -659,7 +665,7 @@ namespace SUP
             // 
             // txtQty
             // 
-            this.txtQty.Location = new System.Drawing.Point(470, 311);
+            this.txtQty.Location = new System.Drawing.Point(606, 311);
             this.txtQty.Name = "txtQty";
             this.txtQty.Size = new System.Drawing.Size(66, 20);
             this.txtQty.TabIndex = 66;
@@ -717,7 +723,7 @@ namespace SUP
             // 
             // btnProfileURN
             // 
-            this.btnProfileURN.Location = new System.Drawing.Point(269, 280);
+            this.btnProfileURN.Location = new System.Drawing.Point(97, 280);
             this.btnProfileURN.Name = "btnProfileURN";
             this.btnProfileURN.Size = new System.Drawing.Size(77, 23);
             this.btnProfileURN.TabIndex = 59;
@@ -737,9 +743,9 @@ namespace SUP
             // 
             // btnObjectURN
             // 
-            this.btnObjectURN.Location = new System.Drawing.Point(182, 280);
+            this.btnObjectURN.Location = new System.Drawing.Point(182, 311);
             this.btnObjectURN.Name = "btnObjectURN";
-            this.btnObjectURN.Size = new System.Drawing.Size(77, 23);
+            this.btnObjectURN.Size = new System.Drawing.Size(81, 23);
             this.btnObjectURN.TabIndex = 57;
             this.btnObjectURN.Text = "object urn";
             this.btnObjectURN.UseVisualStyleBackColor = true;
@@ -750,35 +756,35 @@ namespace SUP
             this.txtGetValue.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.txtGetValue.BackColor = System.Drawing.SystemColors.Control;
-            this.txtGetValue.Location = new System.Drawing.Point(549, 12);
+            this.txtGetValue.Location = new System.Drawing.Point(677, 12);
             this.txtGetValue.Name = "txtGetValue";
-            this.txtGetValue.Size = new System.Drawing.Size(593, 383);
+            this.txtGetValue.Size = new System.Drawing.Size(465, 383);
             this.txtGetValue.TabIndex = 56;
             this.txtGetValue.Text = "";
             // 
             // chkVerbose
             // 
             this.chkVerbose.AutoSize = true;
-            this.chkVerbose.Location = new System.Drawing.Point(469, 284);
+            this.chkVerbose.Location = new System.Drawing.Point(605, 284);
             this.chkVerbose.Name = "chkVerbose";
             this.chkVerbose.Size = new System.Drawing.Size(64, 17);
             this.chkVerbose.TabIndex = 55;
             this.chkVerbose.Text = "verbose";
             this.chkVerbose.UseVisualStyleBackColor = true;
             // 
-            // button2
+            // btnGetObjectsByKeyword
             // 
-            this.button2.Location = new System.Drawing.Point(97, 338);
-            this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(79, 23);
-            this.button2.TabIndex = 53;
-            this.button2.Text = "by keyword";
-            this.button2.UseVisualStyleBackColor = true;
-            this.button2.Click += new System.EventHandler(this.ButtonGetObjectsByKeywordClick);
+            this.btnGetObjectsByKeyword.Location = new System.Drawing.Point(354, 309);
+            this.btnGetObjectsByKeyword.Name = "btnGetObjectsByKeyword";
+            this.btnGetObjectsByKeyword.Size = new System.Drawing.Size(79, 23);
+            this.btnGetObjectsByKeyword.TabIndex = 53;
+            this.btnGetObjectsByKeyword.Text = "by keyword";
+            this.btnGetObjectsByKeyword.UseVisualStyleBackColor = true;
+            this.btnGetObjectsByKeyword.Click += new System.EventHandler(this.ButtonGetObjectsByKeywordClick);
             // 
             // button1
             // 
-            this.button1.Location = new System.Drawing.Point(97, 309);
+            this.button1.Location = new System.Drawing.Point(269, 309);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(79, 23);
             this.button1.TabIndex = 52;
@@ -788,21 +794,21 @@ namespace SUP
             // 
             // btnGetCreated
             // 
-            this.btnGetCreated.Location = new System.Drawing.Point(267, 309);
+            this.btnGetCreated.Location = new System.Drawing.Point(439, 338);
             this.btnGetCreated.Name = "btnGetCreated";
             this.btnGetCreated.Size = new System.Drawing.Size(79, 23);
             this.btnGetCreated.TabIndex = 51;
-            this.btnGetCreated.Text = "get created";
+            this.btnGetCreated.Text = "obj created";
             this.btnGetCreated.UseVisualStyleBackColor = true;
             this.btnGetCreated.Click += new System.EventHandler(this.ButtonGetCreatedClick);
             // 
             // btnGetOwned
             // 
-            this.btnGetOwned.Location = new System.Drawing.Point(182, 309);
+            this.btnGetOwned.Location = new System.Drawing.Point(439, 309);
             this.btnGetOwned.Name = "btnGetOwned";
             this.btnGetOwned.Size = new System.Drawing.Size(79, 23);
             this.btnGetOwned.TabIndex = 50;
-            this.btnGetOwned.Text = "get owned";
+            this.btnGetOwned.Text = "obj owned";
             this.btnGetOwned.UseVisualStyleBackColor = true;
             this.btnGetOwned.Click += new System.EventHandler(this.ButtonGetOwnedClick);
             // 
@@ -847,13 +853,43 @@ namespace SUP
             // 
             // btnGetInquiry
             // 
-            this.btnGetInquiry.Location = new System.Drawing.Point(182, 338);
+            this.btnGetInquiry.Location = new System.Drawing.Point(13, 339);
             this.btnGetInquiry.Name = "btnGetInquiry";
-            this.btnGetInquiry.Size = new System.Drawing.Size(79, 23);
+            this.btnGetInquiry.Size = new System.Drawing.Size(78, 23);
             this.btnGetInquiry.TabIndex = 80;
             this.btnGetInquiry.Text = "get inquiry";
             this.btnGetInquiry.UseVisualStyleBackColor = true;
             this.btnGetInquiry.Click += new System.EventHandler(this.btnGetInquiry_Click);
+            // 
+            // btnGetInquiriesByKeyword
+            // 
+            this.btnGetInquiriesByKeyword.Location = new System.Drawing.Point(182, 338);
+            this.btnGetInquiriesByKeyword.Name = "btnGetInquiriesByKeyword";
+            this.btnGetInquiriesByKeyword.Size = new System.Drawing.Size(81, 23);
+            this.btnGetInquiriesByKeyword.TabIndex = 81;
+            this.btnGetInquiriesByKeyword.Text = "by keyword";
+            this.btnGetInquiriesByKeyword.UseVisualStyleBackColor = true;
+            this.btnGetInquiriesByKeyword.Click += new System.EventHandler(this.btnGetInquiriesByKeyword_Click);
+            // 
+            // btnInquiriesCreated
+            // 
+            this.btnInquiriesCreated.Location = new System.Drawing.Point(269, 338);
+            this.btnInquiriesCreated.Name = "btnInquiriesCreated";
+            this.btnInquiriesCreated.Size = new System.Drawing.Size(79, 23);
+            this.btnInquiriesCreated.TabIndex = 82;
+            this.btnInquiriesCreated.Text = "inq created";
+            this.btnInquiriesCreated.UseVisualStyleBackColor = true;
+            this.btnInquiriesCreated.Click += new System.EventHandler(this.btnInquiriesCreated_Click);
+            // 
+            // btnGetInquiries
+            // 
+            this.btnGetInquiries.Location = new System.Drawing.Point(99, 338);
+            this.btnGetInquiries.Name = "btnGetInquiries";
+            this.btnGetInquiries.Size = new System.Drawing.Size(75, 23);
+            this.btnGetInquiries.TabIndex = 83;
+            this.btnGetInquiries.Text = "get inquiries";
+            this.btnGetInquiries.UseVisualStyleBackColor = true;
+            this.btnGetInquiries.Click += new System.EventHandler(this.button7_Click);
             // 
             // WorkBench
             // 
@@ -928,7 +964,7 @@ namespace SUP
         private Button btnGetCreated;
         private Button btnGetOwned;
         private Button button1;
-        private Button button2;
+        private Button btnGetObjectsByKeyword;
         private CheckBox chkVerbose;
         private RichTextBox txtGetValue;
         private Button btnObjectURN;
@@ -951,6 +987,9 @@ namespace SUP
         private Button button3;
         private Button btnCollections;
         private Button btnGetInquiry;
+        private Button btnGetInquiries;
+        private Button btnInquiriesCreated;
+        private Button btnGetInquiriesByKeyword;
     }
 }
 

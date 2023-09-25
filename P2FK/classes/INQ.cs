@@ -3,6 +3,7 @@ using LevelDB;
 using NBitcoin;
 using NBitcoin.RPC;
 using Newtonsoft.Json;
+using Org.BouncyCastle.Asn1.Cmp;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -65,7 +66,7 @@ namespace SUP.P2FK
 
 
         private readonly static object SupLocker = new object();
-    public static INQState GetInquiryByAddress(string objectaddress, string username, string password, string url, string versionByte = "111", bool calculate = false)
+        public static INQState GetInquiryByAddress(string objectaddress, string username, string password, string url, string versionByte = "111", bool calculate = false)
         {
             using (FileStream fs = File.Create(@"GET_INQUIRY_BY_ADDRESS"))
             {
@@ -214,7 +215,7 @@ namespace SUP.P2FK
 
                                 if (objectinspector.end != 0)
                                 {
-                                    
+
                                     objectState.ChangedDate = transaction.BlockDate; objectState.MaxBlockHeight = transaction.BlockHeight + objectinspector.end;
 
 
@@ -245,12 +246,12 @@ namespace SUP.P2FK
 
                             foreach (string owner in objecto.Owners.Keys)
                             {
-                               
-                                    if (!objectState.AuthorizedByGate.Contains(owner))
-                                    {
-                                        objectState.AuthorizedByGate.Add(owner);
-                                    }
-                                
+
+                                if (!objectState.AuthorizedByGate.Contains(owner))
+                                {
+                                    objectState.AuthorizedByGate.Add(owner);
+                                }
+
                             }
 
 
@@ -268,11 +269,11 @@ namespace SUP.P2FK
                             {
                                 foreach (string owner in obj.Owners.Keys)
                                 {
-                                        if (!objectState.AuthorizedByGate.Contains(owner))
-                                        {
-                                            objectState.AuthorizedByGate.Add(owner);
-                                        }
-                                    
+                                    if (!objectState.AuthorizedByGate.Contains(owner))
+                                    {
+                                        objectState.AuthorizedByGate.Add(owner);
+                                    }
+
                                 }
 
 
@@ -288,12 +289,12 @@ namespace SUP.P2FK
                         {
                             Root[] roots = new Root[0];
 
-                            roots = Root.GetRootsByAddress(answer.Address, username, password, url,0,-1,"111",true);
+                            roots = Root.GetRootsByAddress(answer.Address, username, password, url, 0, -1, "111", true);
 
                             roots = roots.Where(obj => !hasVoted.Contains(obj.SignedBy)).ToArray();
 
                             foreach (Root root in roots)
-                            { 
+                            {
                                 if (root.SignedBy != "")
                                 {
                                     hasVoted.Add(root.SignedBy);
@@ -374,7 +375,7 @@ namespace SUP.P2FK
                             objectState.TotalGatedValue += answerData.TotalGatedValue;
                         }
 
-              
+
 
                     }
 
@@ -385,9 +386,11 @@ namespace SUP.P2FK
                         dynamic blockCountResult = rpcClient.SendCommand("getblockcount");
                         int currentBlockHeight = int.Parse(blockCountResult.ResultString);
 
-                        if (currentBlockHeight > objectState.MaxBlockHeight) {
+                        if (currentBlockHeight > objectState.MaxBlockHeight)
+                        {
                             objectState.status = "closed";
-                        }else
+                        }
+                        else
                         { objectState.status = (objectState.MaxBlockHeight - currentBlockHeight).ToString(); }
 
                     }
@@ -399,110 +402,115 @@ namespace SUP.P2FK
                     var objectSerialized = JsonConvert.SerializeObject(objectState);
 
 
-                if (!Directory.Exists(@"root\" + objectaddress))
-                {
-                    Directory.CreateDirectory(@"root\" + objectaddress);
-                }
-                System.IO.File.WriteAllText(@"root\" + objectaddress + @"\" + "INQ.json", objectSerialized);
+                    if (!Directory.Exists(@"root\" + objectaddress))
+                    {
+                        Directory.CreateDirectory(@"root\" + objectaddress);
+                    }
+                    System.IO.File.WriteAllText(@"root\" + objectaddress + @"\" + "INQ.json", objectSerialized);
 
-                try { File.Delete(@"GET_INQUIRY_BY_ADDRESS"); } catch { }
-            }
-                catch (Exception ex) {
+                    try { File.Delete(@"GET_INQUIRY_BY_ADDRESS"); } catch { }
+                }
+                catch (Exception ex)
+                {
                     string error = ex.Message;
                 }
                 finally { try { File.Delete(@"GET_INQUIRY_BY_ADDRESS"); } catch { } }
-            return objectState;
+                return objectState;
 
+            }
         }
-    }
-    public static List<INQState> GetInquiriesByAddress(string objectaddress, string username, string password, string url, string versionByte = "111", int skip = 0, int qty = -1, bool calculate = false)
-    {
-        using (FileStream fs = File.Create(@"GET_INQUIRIES_BY_ADDRESS"))
+        public static List<INQState> GetInquiriesByAddress(string objectaddress, string username, string password, string url, string versionByte = "111", int skip = 0, int qty = -1, bool calculate = false)
         {
-
-        }
-
-        lock (SupLocker)
-        {
-            List<INQState> objectStates = new List<INQState> { };
-            try
+            using (FileStream fs = File.Create(@"GET_INQUIRIES_BY_ADDRESS"))
             {
-                var OBJ = new Options { CreateIfMissing = true };
-                bool fetched = false;
 
-                if (System.IO.File.Exists(@"root\" + objectaddress + @"\BLOCK"))
-                {
-                    try { File.Delete(@"GET_INQUIRIES_BY_ADDRESS"); } catch { }
+            }
 
-                    return objectStates;
-                }
-
-
-                string JSONOBJ;
-                string diskpath = "root\\" + objectaddress + "\\";
-
-
-                // fetch current JSONOBJ from disk if it exists
+            lock (SupLocker)
+            {
+                List<INQState> objectStates = new List<INQState> { };
                 try
                 {
-                    JSONOBJ = System.IO.File.ReadAllText(diskpath + "GetInquiriesByAddress.json");
-                    objectStates = JsonConvert.DeserializeObject<List<INQState>>(JSONOBJ);
-                    fetched = true;
+                    var OBJ = new Options { CreateIfMissing = true };
+                    bool fetched = false;
 
-                }
-                catch { }
-                if (fetched && objectStates.Count < 1)
-                {
-                    try { File.Delete(@"GET_INQUIRIES_BY_ADDRESS"); } catch { }
+                    if (System.IO.File.Exists(@"root\" + objectaddress + @"\BLOCK"))
+                    {
+                        try { File.Delete(@"GET_INQUIRIES_BY_ADDRESS"); } catch { }
 
-                    return objectStates;
-                }
-
-                int intProcessHeight = 0;
-
-                try { intProcessHeight = objectStates.Last().Id; } catch { }
+                        return objectStates;
+                    }
 
 
-                Root[] objectTransactions;
-
-                //return all roots found at address
-                objectTransactions = Root.GetRootsByAddress(objectaddress, username, password, url, 0, -1, versionByte);
-                int maxID = 0;
-                try { maxID = objectTransactions.Count(); }
-                catch (Exception x)
-                {
-                    string error = x.Message;
-                }
-
-                if (intProcessHeight != 0 && intProcessHeight == maxID)
-                {
-                    try { File.Delete(@"GET_INQUIRIES_BY_ADDRESS"); } catch { }
-
-                    if (qty == -1) { return objectStates.ToList(); }
-                    else { return objectStates.Skip(skip).Take(qty).ToList(); }
-
-                }
+                    string JSONOBJ;
+                    string diskpath = "root\\" + objectaddress + "\\";
 
 
-                List<string> addedValues = new List<string>();
+                    // fetch current JSONOBJ from disk if it exists
+                    try
+                    {
+                        JSONOBJ = System.IO.File.ReadAllText(diskpath + "GetInquiriesByAddress.json");
+                        objectStates = JsonConvert.DeserializeObject<List<INQState>>(JSONOBJ);
+                        fetched = true;
 
-                //Do not process container address as object.
-                addedValues.Add(objectaddress);
-                int rowcount = 0;
-                foreach (Root transaction in objectTransactions)
-                {
+                    }
+                    catch { }
+                    if (fetched && objectStates.Count < 1)
+                    {
+                        try { File.Delete(@"GET_INQUIRIES_BY_ADDRESS"); } catch { }
 
-                    rowcount++;
-                    //ignore any transaction that is not signed
-                    if (transaction.Signed && rowcount > intProcessHeight)
+                        return objectStates;
+                    }
+
+                    int intProcessHeight = 0;
+
+                    if (calculate) { intProcessHeight = 0; }
+                    else
+                    {
+                        try { intProcessHeight = objectStates.Last().Id; } catch { }
+
+                    }
+
+                    Root[] objectTransactions;
+
+                    //return all roots found at address
+                    objectTransactions = Root.GetRootsByAddress(objectaddress, username, password, url, 0, -1, versionByte);
+                    int maxID = 0;
+                    try { maxID = objectTransactions.Count(); }
+                    catch (Exception x)
+                    {
+                        string error = x.Message;
+                    }
+
+                    if (intProcessHeight != 0 && intProcessHeight == maxID)
+                    {
+                        try { File.Delete(@"GET_INQUIRIES_BY_ADDRESS"); } catch { }
+
+                        if (qty == -1) { return objectStates.ToList(); }
+                        else { return objectStates.Skip(skip).Take(qty).ToList(); }
+
+                    }
+
+
+                    List<string> addedValues = new List<string>();
+
+                    //Do not process container address as object.
+                    addedValues.Add(objectaddress);
+                    int rowcount = 0;
+                    foreach (Root transaction in objectTransactions)
                     {
 
-                        // string findId;
-
-                        if (transaction.File.ContainsKey("INQ"))
+                        rowcount++;
+                        //ignore any transaction that is not signed
+                        if (transaction.Signed && rowcount > intProcessHeight)
                         {
-                            
-                                foreach (string key in transaction.Output.Keys.Reverse().Take(3))
+
+                            // string findId;
+
+                            if (transaction.File.ContainsKey("INQ"))
+                            {
+
+                                foreach (string key in transaction.Keyword.Keys.Reverse().Take(2).Skip(1))
                                 {
 
                                     if (!addedValues.Contains(key))
@@ -532,14 +540,88 @@ namespace SUP.P2FK
                                     }
                                 }
 
-                            
+
+
+                            }
+                        }
+
+
+                    }
+                    objectStates.Last().Id = objectTransactions.Count();
+
+                    var objectSerialized = JsonConvert.SerializeObject(objectStates);
+
+                    if (!Directory.Exists(@"root\" + objectaddress))
+                    {
+                        Directory.CreateDirectory(@"root\" + objectaddress);
+                    }
+                    System.IO.File.WriteAllText(@"root\" + objectaddress + @"\" + "GetInquiriesByAddress.json", objectSerialized);
+
+                    try { File.Delete(@"GET_INQUIRIES_BY_ADDRESS"); } catch { }
+                }
+                catch { }
+                finally { try { File.Delete(@"GET_INQUIRIES_BY_ADDRESS"); } catch { } }
+                if (qty == -1) { return objectStates.ToList(); }
+                else { return objectStates.Skip(skip).Take(qty).ToList(); }
+
+            }
+        }
+        public static List<INQState> GetInquiriesCreatedByAddress(string objectaddress, string username, string password, string url, string versionByte = "111", int skip = 0, int qty = -1, bool calculate = false)
+        {
+
+            lock (SupLocker)
+            {
+                List<INQState> objectStates = new List<INQState> { };
+                var OBJ = new Options { CreateIfMissing = true };
+                bool fetched = false;
+
+                if (System.IO.File.Exists(@"root\" + objectaddress + @"\BLOCK")) { return objectStates; }
+
+                string JSONOBJ;
+                string diskpath = "root\\" + objectaddress + "\\";
+
+
+                // fetch current JSONOBJ from disk if it exists
+                try
+                {
+                    JSONOBJ = System.IO.File.ReadAllText(diskpath + "GetInquiriesCreatedByAddress.json");
+                    objectStates = JsonConvert.DeserializeObject<List<INQState>>(JSONOBJ);
+                    fetched = true;
+
+                }
+                catch { }
+                if (fetched && objectStates.Count < 1) { return objectStates; }
+
+                List<INQState> cachedObjectStates = INQState.GetInquiriesByAddress(objectaddress, username, password, url, versionByte, 0, -1, calculate);
+                if (fetched && objectStates.Last().Id == cachedObjectStates.Last().Id)
+                {
+
+                    if (qty == -1) { return objectStates.Skip(skip).ToList(); }
+                    else { return objectStates.Skip(skip).Take(qty).ToList(); }
+
+                }
+
+                objectStates = new List<INQState>();
+
+                if (cachedObjectStates.Count() > 0)
+                {
+                    foreach (INQState objectstate in cachedObjectStates)
+                    {
+                        if (objectstate.URN != null && objectstate.CreatedBy == objectaddress)
+                        {
+
+                            objectStates.Add(objectstate);
 
                         }
+
                     }
 
 
+                    if (objectStates.Count() > 0)
+                    {
+                        objectStates.Last().Id = cachedObjectStates.Last().Id;
+                    }
                 }
-                objectStates.Last().Id = objectTransactions.Count();
 
                 var objectSerialized = JsonConvert.SerializeObject(objectStates);
 
@@ -547,120 +629,46 @@ namespace SUP.P2FK
                 {
                     Directory.CreateDirectory(@"root\" + objectaddress);
                 }
-                System.IO.File.WriteAllText(@"root\" + objectaddress + @"\" + "GetInquiriesByAddress.json", objectSerialized);
+                System.IO.File.WriteAllText(@"root\" + objectaddress + @"\" + "GetInquiriesCreatedByAddress.json", objectSerialized);
 
-                try { File.Delete(@"GET_INQUIRIES_BY_ADDRESS"); } catch { }
+                return objectStates;
+
             }
-            catch { }
-            finally { try { File.Delete(@"GET_INQUIRIES_BY_ADDRESS"); } catch { } }
-            if (qty == -1) { return objectStates.ToList(); }
-            else { return objectStates.Skip(skip).Take(qty).ToList(); }
 
         }
-    }
-    public static List<INQState> GetInquiriesCreatedByAddress(string objectaddress, string username, string password, string url, string versionByte = "111", int skip = 0, int qty = -1, bool calculate = false)
-    {
-
-        lock (SupLocker)
+        public static List<INQState> GetInquiriesByKeyword(List<string> searchstrings, string username, string password, string url, string versionByte = "111", int skip = 0, int qty = -1, bool calculate = false)
         {
-            List<INQState> objectStates = new List<INQState> { };
-            var OBJ = new Options { CreateIfMissing = true };
-            bool fetched = false;
-
-            if (System.IO.File.Exists(@"root\" + objectaddress + @"\BLOCK")) { return objectStates; }
-
-            string JSONOBJ;
-            string diskpath = "root\\" + objectaddress + "\\";
-
-
-            // fetch current JSONOBJ from disk if it exists
-            try
-            {
-                JSONOBJ = System.IO.File.ReadAllText(diskpath + "GetInquiriesCreatedByAddress.json");
-                objectStates = JsonConvert.DeserializeObject<List<INQState>>(JSONOBJ);
-                fetched = true;
-
-            }
-            catch { }
-            if (fetched && objectStates.Count < 1) { return objectStates; }
-
-            List<INQState> cachedObjectStates = INQState.GetInquiriesByAddress(objectaddress, username, password, url, versionByte, 0, -1, calculate);
-            if (fetched && objectStates.Last().Id == cachedObjectStates.Last().Id)
+            lock (SupLocker)
             {
 
-                if (qty == -1) { return objectStates.Skip(skip).ToList(); }
-                else { return objectStates.Skip(skip).Take(qty).ToList(); }
 
-            }
+                List<INQState> totalSearch = new List<INQState>();
 
-            objectStates = new List<INQState>();
-
-            if (cachedObjectStates.Count() > 0)
-            {
-                foreach (INQState objectstate in cachedObjectStates)
+                foreach (string search in searchstrings)
                 {
-                    if (objectstate.URN != null && objectstate.CreatedBy == objectaddress )
+
+                    string objectaddress = Root.GetPublicAddressByKeyword(search, versionByte);
+
+
+                    if (!System.IO.File.Exists(@"root\" + objectaddress + @"\BLOCK"))
                     {
 
-                        objectStates.Add(objectstate);
+                        List<INQState> keySearch = GetInquiriesByAddress(objectaddress, username, password, url, versionByte, 0, -1, calculate);
+
+                        totalSearch = totalSearch.Concat(keySearch).ToList();
 
                     }
-
                 }
 
-
-                if (objectStates.Count() > 0)
+                if (qty == -1) { return totalSearch.Skip(skip).ToList(); }
+                else
                 {
-                    objectStates.Last().Id = cachedObjectStates.Last().Id;
+                    return totalSearch.Skip(skip).Take(qty).ToList();
                 }
             }
-
-            var objectSerialized = JsonConvert.SerializeObject(objectStates);
-
-            if (!Directory.Exists(@"root\" + objectaddress))
-            {
-                Directory.CreateDirectory(@"root\" + objectaddress);
-            }
-            System.IO.File.WriteAllText(@"root\" + objectaddress + @"\" + "GetInquiriesCreatedByAddress.json", objectSerialized);
-
-            return objectStates;
 
         }
-
     }
-    public static List<INQState> GetInquiriesByKeyword(List<string> searchstrings, string username, string password, string url, string versionByte = "111", int skip = 0, int qty = -1, bool calculate = false)
-    {
-        lock (SupLocker)
-        {
-
-
-            List<INQState> totalSearch = new List<INQState>();
-
-            foreach (string search in searchstrings)
-            {
-
-                string objectaddress = Root.GetPublicAddressByKeyword(search, versionByte);
-
-
-                if (!System.IO.File.Exists(@"root\" + objectaddress + @"\BLOCK"))
-                {
-
-                    List<INQState> keySearch = GetInquiriesByAddress(objectaddress, username, password, url, versionByte, 0, -1, calculate);
-
-                    totalSearch = totalSearch.Concat(keySearch).ToList();
-
-                }
-            }
-
-            if (qty == -1) { return totalSearch.Skip(skip).ToList(); }
-            else
-            {
-                return totalSearch.Skip(skip).Take(qty).ToList();
-            }
-        }
-
-    }
-}
 
 }
 
