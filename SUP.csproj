@@ -245,6 +245,12 @@
     <Compile Include="DiscoBall.Designer.cs">
       <DependentUpon>DiscoBall.cs</DependentUpon>
     </Compile>
+    <Compile Include="FoundINQControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="FoundINQControl.Designer.cs">
+      <DependentUpon>FoundINQControl.cs</DependentUpon>
+    </Compile>
     <Compile Include="FoundCollectionControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -255,6 +261,18 @@
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="p2fk\classes\INQ.cs" />
+    <Compile Include="INQSearch.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="INQSearch.Designer.cs">
+      <DependentUpon>INQSearch.cs</DependentUpon>
+    </Compile>
+    <Compile Include="INQMint.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="INQMint.Designer.cs">
+      <DependentUpon>INQMint.cs</DependentUpon>
+    </Compile>
     <Compile Include="SupFlix.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -367,11 +385,20 @@
     <EmbeddedResource Include="DiscoBall.resx">
       <DependentUpon>DiscoBall.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="FoundINQControl.resx">
+      <DependentUpon>FoundINQControl.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="FoundCollectionControl.resx">
       <DependentUpon>FoundCollectionControl.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="FullScreenView.resx">
       <DependentUpon>FullScreenView.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="INQSearch.resx">
+      <DependentUpon>INQSearch.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="INQMint.resx">
+      <DependentUpon>INQMint.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="SupFlix.resx">
       <DependentUpon>SupFlix.cs</DependentUpon>

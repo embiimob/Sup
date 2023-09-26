@@ -118,7 +118,7 @@ namespace SUP
             // 
             // btnGet
             // 
-            this.btnGet.Location = new System.Drawing.Point(493, 118);
+            this.btnGet.Location = new System.Drawing.Point(586, 118);
             this.btnGet.Name = "btnGet";
             this.btnGet.Size = new System.Drawing.Size(42, 23);
             this.btnGet.TabIndex = 1;
@@ -128,7 +128,7 @@ namespace SUP
             // 
             // btnDelete
             // 
-            this.btnDelete.Location = new System.Drawing.Point(443, 117);
+            this.btnDelete.Location = new System.Drawing.Point(536, 117);
             this.btnDelete.Name = "btnDelete";
             this.btnDelete.Size = new System.Drawing.Size(44, 23);
             this.btnDelete.TabIndex = 2;
@@ -149,7 +149,7 @@ namespace SUP
             // 
             this.txtlevelDBKey.Location = new System.Drawing.Point(62, 120);
             this.txtlevelDBKey.Name = "txtlevelDBKey";
-            this.txtlevelDBKey.Size = new System.Drawing.Size(366, 20);
+            this.txtlevelDBKey.Size = new System.Drawing.Size(454, 20);
             this.txtlevelDBKey.TabIndex = 7;
             // 
             // lbTableName
@@ -164,7 +164,7 @@ namespace SUP
             "found",
             "obj",
             "event"});
-            this.lbTableName.Location = new System.Drawing.Point(443, 34);
+            this.lbTableName.Location = new System.Drawing.Point(536, 34);
             this.lbTableName.Name = "lbTableName";
             this.lbTableName.ScrollAlwaysVisible = true;
             this.lbTableName.Size = new System.Drawing.Size(90, 69);
@@ -173,7 +173,7 @@ namespace SUP
             // label6
             // 
             this.label6.AutoSize = true;
-            this.label6.Location = new System.Drawing.Point(440, 12);
+            this.label6.Location = new System.Drawing.Point(533, 12);
             this.label6.Name = "label6";
             this.label6.Size = new System.Drawing.Size(67, 13);
             this.label6.TabIndex = 14;
@@ -183,7 +183,7 @@ namespace SUP
             // 
             this.txtLogin.Location = new System.Drawing.Point(13, 34);
             this.txtLogin.Name = "txtLogin";
-            this.txtLogin.Size = new System.Drawing.Size(111, 20);
+            this.txtLogin.Size = new System.Drawing.Size(170, 20);
             this.txtLogin.TabIndex = 15;
             this.txtLogin.Text = "good-user";
             // 
@@ -199,7 +199,7 @@ namespace SUP
             // label8
             // 
             this.label8.AutoSize = true;
-            this.label8.Location = new System.Drawing.Point(132, 17);
+            this.label8.Location = new System.Drawing.Point(192, 14);
             this.label8.Name = "label8";
             this.label8.Size = new System.Drawing.Size(52, 13);
             this.label8.TabIndex = 18;
@@ -207,9 +207,9 @@ namespace SUP
             // 
             // txtPassword
             // 
-            this.txtPassword.Location = new System.Drawing.Point(130, 34);
+            this.txtPassword.Location = new System.Drawing.Point(190, 31);
             this.txtPassword.Name = "txtPassword";
-            this.txtPassword.Size = new System.Drawing.Size(121, 20);
+            this.txtPassword.Size = new System.Drawing.Size(159, 20);
             this.txtPassword.TabIndex = 17;
             this.txtPassword.Text = "better-password";
             // 
@@ -232,7 +232,7 @@ namespace SUP
             // 
             // btnTestConnection
             // 
-            this.btnTestConnection.Location = new System.Drawing.Point(303, 31);
+            this.btnTestConnection.Location = new System.Drawing.Point(386, 28);
             this.btnTestConnection.Name = "btnTestConnection";
             this.btnTestConnection.Size = new System.Drawing.Size(86, 23);
             this.btnTestConnection.TabIndex = 21;
@@ -251,7 +251,7 @@ namespace SUP
             // 
             // txtbalance
             // 
-            this.txtbalance.Location = new System.Drawing.Point(303, 83);
+            this.txtbalance.Location = new System.Drawing.Point(386, 83);
             this.txtbalance.Name = "txtbalance";
             this.txtbalance.Size = new System.Drawing.Size(86, 20);
             this.txtbalance.TabIndex = 22;
@@ -328,7 +328,7 @@ namespace SUP
             dataGridViewCellStyle8.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
             dataGridViewCellStyle8.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
             this.dgTransactions.RowHeadersDefaultCellStyle = dataGridViewCellStyle8;
-            this.dgTransactions.Size = new System.Drawing.Size(1154, 331);
+            this.dgTransactions.Size = new System.Drawing.Size(1154, 322);
             this.dgTransactions.TabIndex = 30;
             this.dgTransactions.CellClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.DataGridViewClick);
             // 
@@ -407,7 +407,7 @@ namespace SUP
             // 
             // btnGetTransactionId
             // 
-            this.btnGetTransactionId.Location = new System.Drawing.Point(493, 179);
+            this.btnGetTransactionId.Location = new System.Drawing.Point(538, 177);
             this.btnGetTransactionId.Name = "btnGetTransactionId";
             this.btnGetTransactionId.Size = new System.Drawing.Size(43, 23);
             this.btnGetTransactionId.TabIndex = 33;
@@ -428,13 +428,13 @@ namespace SUP
             // 
             this.txtTransactionId.Location = new System.Drawing.Point(9, 180);
             this.txtTransactionId.Name = "txtTransactionId";
-            this.txtTransactionId.Size = new System.Drawing.Size(478, 20);
+            this.txtTransactionId.Size = new System.Drawing.Size(509, 20);
             this.txtTransactionId.TabIndex = 31;
             this.txtTransactionId.Text = "7223070fbc3706856e90701b62a8bfb3f5a618dc13d64d8f029260cba187ca26";
             // 
             // btnGetKeyword
             // 
-            this.btnGetKeyword.Location = new System.Drawing.Point(434, 241);
+            this.btnGetKeyword.Location = new System.Drawing.Point(445, 240);
             this.btnGetKeyword.Name = "btnGetKeyword";
             this.btnGetKeyword.Size = new System.Drawing.Size(73, 23);
             this.btnGetKeyword.TabIndex = 36;
@@ -462,7 +462,7 @@ namespace SUP
             // label14
             // 
             this.label14.AutoSize = true;
-            this.label14.Location = new System.Drawing.Point(300, 67);
+            this.label14.Location = new System.Drawing.Point(383, 67);
             this.label14.Name = "label14";
             this.label14.Size = new System.Drawing.Size(45, 13);
             this.label14.TabIndex = 39;
@@ -489,7 +489,6 @@ namespace SUP
             // splitContainer1
             // 
             this.splitContainer1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.splitContainer1.IsSplitterFixed = true;
             this.splitContainer1.Location = new System.Drawing.Point(0, 0);
             this.splitContainer1.Name = "splitContainer1";
             this.splitContainer1.Orientation = System.Windows.Forms.Orientation.Horizontal;
@@ -563,7 +562,7 @@ namespace SUP
             this.splitContainer1.Panel2.Controls.Add(this.dgTransactions);
             this.splitContainer1.Size = new System.Drawing.Size(1154, 732);
             this.splitContainer1.SplitterDistance = 400;
-            this.splitContainer1.SplitterWidth = 1;
+            this.splitContainer1.SplitterWidth = 10;
             this.splitContainer1.TabIndex = 42;
             this.splitContainer1.Resize += new System.EventHandler(this.OnContainerResize);
             // 
@@ -589,7 +588,7 @@ namespace SUP
             // 
             // ButtonGetPublicKeys
             // 
-            this.ButtonGetPublicKeys.Location = new System.Drawing.Point(513, 243);
+            this.ButtonGetPublicKeys.Location = new System.Drawing.Point(554, 240);
             this.ButtonGetPublicKeys.Name = "ButtonGetPublicKeys";
             this.ButtonGetPublicKeys.Size = new System.Drawing.Size(72, 23);
             this.ButtonGetPublicKeys.TabIndex = 75;
@@ -640,7 +639,7 @@ namespace SUP
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(578, 343);
+            this.label2.Location = new System.Drawing.Point(535, 342);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(26, 13);
             this.label2.TabIndex = 69;
@@ -649,7 +648,7 @@ namespace SUP
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(578, 314);
+            this.label1.Location = new System.Drawing.Point(535, 313);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(21, 13);
             this.label1.TabIndex = 68;
@@ -657,7 +656,7 @@ namespace SUP
             // 
             // txtSkip
             // 
-            this.txtSkip.Location = new System.Drawing.Point(605, 341);
+            this.txtSkip.Location = new System.Drawing.Point(562, 340);
             this.txtSkip.Name = "txtSkip";
             this.txtSkip.Size = new System.Drawing.Size(66, 20);
             this.txtSkip.TabIndex = 67;
@@ -665,7 +664,7 @@ namespace SUP
             // 
             // txtQty
             // 
-            this.txtQty.Location = new System.Drawing.Point(606, 311);
+            this.txtQty.Location = new System.Drawing.Point(563, 310);
             this.txtQty.Name = "txtQty";
             this.txtQty.Size = new System.Drawing.Size(66, 20);
             this.txtQty.TabIndex = 66;
@@ -753,19 +752,20 @@ namespace SUP
             // 
             // txtGetValue
             // 
-            this.txtGetValue.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            this.txtGetValue.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.txtGetValue.BackColor = System.Drawing.SystemColors.Control;
-            this.txtGetValue.Location = new System.Drawing.Point(677, 12);
+            this.txtGetValue.Location = new System.Drawing.Point(635, 12);
             this.txtGetValue.Name = "txtGetValue";
-            this.txtGetValue.Size = new System.Drawing.Size(465, 383);
+            this.txtGetValue.Size = new System.Drawing.Size(507, 383);
             this.txtGetValue.TabIndex = 56;
             this.txtGetValue.Text = "";
             // 
             // chkVerbose
             // 
             this.chkVerbose.AutoSize = true;
-            this.chkVerbose.Location = new System.Drawing.Point(605, 284);
+            this.chkVerbose.Location = new System.Drawing.Point(562, 283);
             this.chkVerbose.Name = "chkVerbose";
             this.chkVerbose.Size = new System.Drawing.Size(64, 17);
             this.chkVerbose.TabIndex = 55;

@@ -3359,6 +3359,15 @@ namespace SUP
             SupFlix supflixForm = new SupFlix(_objectaddress);
             supflixForm.Show();
         }
+
+        private void btnInquiry_Click(object sender, EventArgs e)
+        {
+            btnInquiry.Enabled = false;
+          
+            INQSearch INQSearchForm = new INQSearch(_objectaddress);
+           
+            btnInquiry.Enabled = true;
+        }
     }
 
 }

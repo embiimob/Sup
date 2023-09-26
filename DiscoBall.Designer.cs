@@ -40,19 +40,19 @@
             this.lblObjectStatus = new System.Windows.Forms.Label();
             this.lblTransactionId = new System.Windows.Forms.Label();
             this.btnEMOJI = new System.Windows.Forms.Button();
-            this.fromImage = new System.Windows.Forms.PictureBox();
-            this.toImage = new System.Windows.Forms.PictureBox();
             this.btnRefresh = new System.Windows.Forms.Button();
             this.label3 = new System.Windows.Forms.Label();
             this.btnRecord = new System.Windows.Forms.Button();
             this.button2 = new System.Windows.Forms.Button();
             this.emojiPanel = new System.Windows.Forms.FlowLayoutPanel();
             this.btnPrint = new System.Windows.Forms.Button();
-            this.pictureBox1 = new System.Windows.Forms.PictureBox();
             this.btnInquiry = new System.Windows.Forms.Button();
+            this.pictureBox1 = new System.Windows.Forms.PictureBox();
+            this.fromImage = new System.Windows.Forms.PictureBox();
+            this.toImage = new System.Windows.Forms.PictureBox();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.fromImage)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.toImage)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.SuspendLayout();
             // 
             // supMessage
@@ -174,26 +174,6 @@
             this.btnEMOJI.UseVisualStyleBackColor = true;
             this.btnEMOJI.Click += new System.EventHandler(this.btnEMOJI_Click);
             // 
-            // fromImage
-            // 
-            this.fromImage.BackColor = System.Drawing.Color.Black;
-            this.fromImage.Location = new System.Drawing.Point(19, 434);
-            this.fromImage.Name = "fromImage";
-            this.fromImage.Size = new System.Drawing.Size(40, 40);
-            this.fromImage.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
-            this.fromImage.TabIndex = 355;
-            this.fromImage.TabStop = false;
-            // 
-            // toImage
-            // 
-            this.toImage.BackColor = System.Drawing.Color.Black;
-            this.toImage.Location = new System.Drawing.Point(19, 496);
-            this.toImage.Name = "toImage";
-            this.toImage.Size = new System.Drawing.Size(40, 40);
-            this.toImage.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
-            this.toImage.TabIndex = 354;
-            this.toImage.TabStop = false;
-            // 
             // btnRefresh
             // 
             this.btnRefresh.Font = new System.Drawing.Font("Segoe UI Emoji", 13.8F);
@@ -266,17 +246,6 @@
             this.btnPrint.UseVisualStyleBackColor = true;
             this.btnPrint.Click += new System.EventHandler(this.btnPrint_Click_1);
             // 
-            // pictureBox1
-            // 
-            this.pictureBox1.Location = new System.Drawing.Point(19, 241);
-            this.pictureBox1.Name = "pictureBox1";
-            this.pictureBox1.Size = new System.Drawing.Size(410, 410);
-            this.pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
-            this.pictureBox1.TabIndex = 0;
-            this.pictureBox1.TabStop = false;
-            this.pictureBox1.Visible = false;
-            this.pictureBox1.DoubleClick += new System.EventHandler(this.pictureBox1_DoubleClick);
-            // 
             // btnInquiry
             // 
             this.btnInquiry.Font = new System.Drawing.Font("Segoe UI Emoji", 20.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
@@ -288,6 +257,38 @@
             this.btnInquiry.TabIndex = 369;
             this.btnInquiry.Text = "⁉️";
             this.btnInquiry.UseVisualStyleBackColor = true;
+            this.btnInquiry.Click += new System.EventHandler(this.btnInquiry_Click);
+            // 
+            // pictureBox1
+            // 
+            this.pictureBox1.Location = new System.Drawing.Point(19, 241);
+            this.pictureBox1.Name = "pictureBox1";
+            this.pictureBox1.Size = new System.Drawing.Size(410, 410);
+            this.pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
+            this.pictureBox1.TabIndex = 0;
+            this.pictureBox1.TabStop = false;
+            this.pictureBox1.Visible = false;
+            this.pictureBox1.DoubleClick += new System.EventHandler(this.pictureBox1_DoubleClick);
+            // 
+            // fromImage
+            // 
+            this.fromImage.BackColor = System.Drawing.Color.Black;
+            this.fromImage.Location = new System.Drawing.Point(19, 434);
+            this.fromImage.Name = "fromImage";
+            this.fromImage.Size = new System.Drawing.Size(40, 40);
+            this.fromImage.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
+            this.fromImage.TabIndex = 355;
+            this.fromImage.TabStop = false;
+            // 
+            // toImage
+            // 
+            this.toImage.BackColor = System.Drawing.Color.Black;
+            this.toImage.Location = new System.Drawing.Point(19, 496);
+            this.toImage.Name = "toImage";
+            this.toImage.Size = new System.Drawing.Size(40, 40);
+            this.toImage.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
+            this.toImage.TabIndex = 354;
+            this.toImage.TabStop = false;
             // 
             // DiscoBall
             // 
@@ -323,9 +324,9 @@
             this.Text = "Disco";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.MainForm_FormClosing);
             this.Load += new System.EventHandler(this.DiscoBall_Load);
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.fromImage)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.toImage)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 

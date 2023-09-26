@@ -82,6 +82,7 @@
             this.imgPicture = new System.Windows.Forms.PictureBox();
             this.btnJukeBox = new System.Windows.Forms.Button();
             this.btnSupFlix = new System.Windows.Forms.Button();
+            this.btnInquiry = new System.Windows.Forms.Button();
             this.flowPanel.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.supPanel.SuspendLayout();
@@ -709,7 +710,7 @@
             // 
             this.btnBuy.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.btnBuy.Font = new System.Drawing.Font("Segoe UI Emoji", 13.8F);
-            this.btnBuy.Location = new System.Drawing.Point(113, 499);
+            this.btnBuy.Location = new System.Drawing.Point(79, 500);
             this.btnBuy.Name = "btnBuy";
             this.btnBuy.Size = new System.Drawing.Size(60, 42);
             this.btnBuy.TabIndex = 112;
@@ -754,12 +755,25 @@
             this.btnSupFlix.UseVisualStyleBackColor = true;
             this.btnSupFlix.Click += new System.EventHandler(this.btnSupFlix_Click);
             // 
+            // btnInquiry
+            // 
+            this.btnInquiry.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnInquiry.Font = new System.Drawing.Font("Segoe UI Emoji", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnInquiry.Location = new System.Drawing.Point(156, 500);
+            this.btnInquiry.Name = "btnInquiry";
+            this.btnInquiry.Size = new System.Drawing.Size(60, 42);
+            this.btnInquiry.TabIndex = 115;
+            this.btnInquiry.Text = "⁉️";
+            this.btnInquiry.UseVisualStyleBackColor = true;
+            this.btnInquiry.Click += new System.EventHandler(this.btnInquiry_Click);
+            // 
             // ObjectDetails
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.Black;
             this.ClientSize = new System.Drawing.Size(1329, 549);
+            this.Controls.Add(this.btnInquiry);
             this.Controls.Add(this.btnSupFlix);
             this.Controls.Add(this.lblWarning);
             this.Controls.Add(this.btnJukeBox);
@@ -876,5 +890,6 @@
         private System.Windows.Forms.Button btnBuy;
         private System.Windows.Forms.Button btnJukeBox;
         private System.Windows.Forms.Button btnSupFlix;
+        private System.Windows.Forms.Button btnInquiry;
     }
 }

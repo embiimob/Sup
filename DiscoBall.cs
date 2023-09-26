@@ -1218,5 +1218,11 @@ namespace SUP
             supMessage.BackColor = Color.Black;
             supMessage.Text = messagecache;
         }
+
+        private void btnInquiry_Click(object sender, EventArgs e)
+        {
+            INQMint mintForm = new INQMint(this); // Pass the reference to the current form as the parent form
+            mintForm.ShowDialog();
+        }
     }
 }

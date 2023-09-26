@@ -2083,7 +2083,7 @@ namespace SUP
 
         private async void ObjectBrowserLoad(object sender, EventArgs e)
         {
-            if (_isUserControl) { this.Text = String.Empty; this.flowLayoutPanel1.Padding = new Padding(3, 80, 0, 0); this.Size = this.MinimumSize; btnJukeBox.Visible = false; btnVideoSearch.Visible = false;}
+            if (_isUserControl) { this.Text = String.Empty; this.flowLayoutPanel1.Padding = new Padding(3, 80, 0, 0); this.Size = this.MinimumSize; btnJukeBox.Visible = false; btnVideoSearch.Visible = false; btnInquiry.Visible = false; }
 
             Form parentForm = this.Owner;
             bool isBlue = false;
@@ -2570,6 +2570,24 @@ namespace SUP
             }
             btnJukeBox.Enabled = true;
 
+        }
+
+        private void btnInquiry_Click(object sender, EventArgs e)
+        {
+
+            btnInquiry.Enabled = false;
+
+            if (txtSearchAddress.Text != null)
+            {
+                INQSearch INQSearchForm = new INQSearch(txtSearchAddress.Text);
+                INQSearchForm.Show();
+            }
+            else
+            {
+                INQSearch INQSearchForm = new INQSearch();
+                INQSearchForm.Show();
+            }
+            btnInquiry.Enabled = true;
         }
     }
 

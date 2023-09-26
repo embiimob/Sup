@@ -6145,5 +6145,23 @@ namespace SUP
         {
 
         }
+
+        private void btnInquirySearch_Click(object sender, EventArgs e)
+        {
+            btnVideoSearch.Enabled = false;
+
+            if (profileURN.Links[0].LinkData != null)
+            {
+                INQSearch INQSearchForm = new INQSearch(profileURN.Text);
+                INQSearchForm.Show();
+            }
+            else
+            {
+                INQSearch INQSearchForm = new INQSearch();
+                INQSearchForm.Show();
+            }
+
+            btnVideoSearch.Enabled = true;
+        }
     }
 }

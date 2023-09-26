@@ -42,7 +42,6 @@ namespace SUP
             this.btnSkipAudio = new System.Windows.Forms.Button();
             this.btnJukeBox = new System.Windows.Forms.Button();
             this.refreshFriendFeed = new System.Windows.Forms.Button();
-            this.profileOwner = new System.Windows.Forms.PictureBox();
             this.supFlow = new System.Windows.Forms.FlowLayoutPanel();
             this.lblAdultsOnly = new System.Windows.Forms.Label();
             this.panel1 = new System.Windows.Forms.Panel();
@@ -50,7 +49,6 @@ namespace SUP
             this.profileURN = new System.Windows.Forms.LinkLabel();
             this.btnHome = new System.Windows.Forms.Button();
             this.lblProcessHeight = new System.Windows.Forms.Label();
-            this.profileIMG = new System.Windows.Forms.PictureBox();
             this.btnMute = new System.Windows.Forms.Button();
             this.btnFollow = new System.Windows.Forms.Button();
             this.btnBlock = new System.Windows.Forms.Button();
@@ -60,6 +58,8 @@ namespace SUP
             this.btnPublicMessage = new System.Windows.Forms.Button();
             this.tmrSearchMemoryPool = new System.Windows.Forms.Timer(this.components);
             this.btnInquirySearch = new System.Windows.Forms.Button();
+            this.profileOwner = new System.Windows.Forms.PictureBox();
+            this.profileIMG = new System.Windows.Forms.PictureBox();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.SuspendLayout();
@@ -67,9 +67,9 @@ namespace SUP
             this.splitContainer2.Panel1.SuspendLayout();
             this.splitContainer2.Panel2.SuspendLayout();
             this.splitContainer2.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.profileOwner)).BeginInit();
             this.supFlow.SuspendLayout();
             this.panel1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.profileOwner)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.profileIMG)).BeginInit();
             this.SuspendLayout();
             // 
@@ -246,19 +246,6 @@ namespace SUP
             this.refreshFriendFeed.UseVisualStyleBackColor = true;
             this.refreshFriendFeed.Click += new System.EventHandler(this.RefreshCommunityMessages_Click);
             // 
-            // profileOwner
-            // 
-            this.profileOwner.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.profileOwner.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(22)))), ((int)(((byte)(22)))), ((int)(((byte)(22)))));
-            this.profileOwner.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.profileOwner.Location = new System.Drawing.Point(8, 692);
-            this.profileOwner.Name = "profileOwner";
-            this.profileOwner.Size = new System.Drawing.Size(40, 40);
-            this.profileOwner.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
-            this.profileOwner.TabIndex = 95;
-            this.profileOwner.TabStop = false;
-            this.profileOwner.Click += new System.EventHandler(this.Friend_Click);
-            // 
             // supFlow
             // 
             this.supFlow.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
@@ -349,17 +336,6 @@ namespace SUP
             this.lblProcessHeight.TabIndex = 96;
             this.lblProcessHeight.Text = "ph: ";
             this.lblProcessHeight.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            // 
-            // profileIMG
-            // 
-            this.profileIMG.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(22)))), ((int)(((byte)(22)))), ((int)(((byte)(22)))));
-            this.profileIMG.Location = new System.Drawing.Point(7, 7);
-            this.profileIMG.Name = "profileIMG";
-            this.profileIMG.Size = new System.Drawing.Size(140, 140);
-            this.profileIMG.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
-            this.profileIMG.TabIndex = 0;
-            this.profileIMG.TabStop = false;
-            this.profileIMG.Click += new System.EventHandler(this.Friend_Click);
             // 
             // btnMute
             // 
@@ -471,6 +447,31 @@ namespace SUP
             this.btnInquirySearch.TabIndex = 101;
             this.btnInquirySearch.Text = "⁉️";
             this.btnInquirySearch.UseVisualStyleBackColor = true;
+            this.btnInquirySearch.Click += new System.EventHandler(this.btnInquirySearch_Click);
+            // 
+            // profileOwner
+            // 
+            this.profileOwner.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.profileOwner.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(22)))), ((int)(((byte)(22)))), ((int)(((byte)(22)))));
+            this.profileOwner.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.profileOwner.Location = new System.Drawing.Point(8, 692);
+            this.profileOwner.Name = "profileOwner";
+            this.profileOwner.Size = new System.Drawing.Size(40, 40);
+            this.profileOwner.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
+            this.profileOwner.TabIndex = 95;
+            this.profileOwner.TabStop = false;
+            this.profileOwner.Click += new System.EventHandler(this.Friend_Click);
+            // 
+            // profileIMG
+            // 
+            this.profileIMG.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(22)))), ((int)(((byte)(22)))), ((int)(((byte)(22)))));
+            this.profileIMG.Location = new System.Drawing.Point(7, 7);
+            this.profileIMG.Name = "profileIMG";
+            this.profileIMG.Size = new System.Drawing.Size(140, 140);
+            this.profileIMG.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
+            this.profileIMG.TabIndex = 0;
+            this.profileIMG.TabStop = false;
+            this.profileIMG.Click += new System.EventHandler(this.Friend_Click);
             // 
             // SupMain
             // 
@@ -490,10 +491,10 @@ namespace SUP
             this.splitContainer2.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer2)).EndInit();
             this.splitContainer2.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.profileOwner)).EndInit();
             this.supFlow.ResumeLayout(false);
             this.panel1.ResumeLayout(false);
             this.panel1.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.profileOwner)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.profileIMG)).EndInit();
             this.ResumeLayout(false);
 
