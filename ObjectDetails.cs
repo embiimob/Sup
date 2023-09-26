@@ -175,7 +175,7 @@ namespace SUP
         {
             string src = lblURNFullPath.Text;
 
-             // Show a confirmation dialog
+            // Show a confirmation dialog
             DialogResult result = MessageBox.Show("Are you sure!? Launching files executes locally!", "Confirmation", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
 
             if (result == DialogResult.Yes)
@@ -499,7 +499,7 @@ namespace SUP
 
         private void RefreshSupMessages()
         {
-           // ShowSupPanel().;
+            // ShowSupPanel().;
             // Clear controls if no messages have been displayed yet
             if (numMessagesDisplayed == 0)
             {
@@ -1036,23 +1036,23 @@ namespace SUP
 
                 msg.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 420));
 
-              
 
 
 
 
-                    if (addtoTop)
-                    {
-                        supFlow.Controls.Add(msg);
-                        supFlow.Controls.SetChildIndex(msg, 2);
-                    }
-                    else
-                    {
-                        supFlow.Controls.Add(msg);
-                    }
+
+                if (addtoTop)
+                {
+                    supFlow.Controls.Add(msg);
+                    supFlow.Controls.SetChildIndex(msg, 2);
+                }
+                else
+                {
+                    supFlow.Controls.Add(msg);
+                }
 
 
-                
+
                 PictureBox pictureBox = new PictureBox();
 
                 // Set the PictureBox properties
@@ -1297,26 +1297,26 @@ namespace SUP
 
                 msg.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 420));
 
-              
-
-                    if (addtoTop)
-                    {
-
-                        supFlow.Controls.Add(msg);
-                        supFlow.Controls.SetChildIndex(msg, 2);
 
 
-                    }
-                    else
-                    {
+                if (addtoTop)
+                {
 
-                        supFlow.Controls.Add(msg);
-
-
-                    }
+                    supFlow.Controls.Add(msg);
+                    supFlow.Controls.SetChildIndex(msg, 2);
 
 
-                
+                }
+                else
+                {
+
+                    supFlow.Controls.Add(msg);
+
+
+                }
+
+
+
                 msg.Controls.Add(webviewer);
                 await webviewer.EnsureCoreWebView2Async();
                 // immediately load Progress content into the WebView2 control
@@ -1917,7 +1917,8 @@ namespace SUP
                                     if (root.BlockDate.Year > 1975)
                                     {
                                         lblIMGBlockDate.Text = "bitcoin verified: " + root.BlockDate.ToString("ddd, dd MMM yyyy hh:mm:ss");
-                                    }else
+                                    }
+                                    else
                                     {
                                         lblIMGBlockDate.Text = "bitcoin could not be verified: ";
 
@@ -3345,13 +3346,13 @@ namespace SUP
             new ObjectBuy(_objectaddress).Show();
         }
 
-       
+
         private void button1_Click(object sender, EventArgs e)
         {
 
             JukeBox jukeBoxForm = new JukeBox(_objectaddress);
             jukeBoxForm.Show();// Pass the reference to the current form as the parent form
-            
+
         }
 
         private void btnSupFlix_Click(object sender, EventArgs e)
@@ -3364,12 +3365,13 @@ namespace SUP
         {
             btnInquiry.Enabled = false;
 
-           
-                INQSearch INQSearchForm = new INQSearch(_objectaddress);
-                INQSearchForm.Show();
-           
+
+            INQSearch INQSearchForm = new INQSearch(_objectaddress);
+            INQSearchForm.Show();
+
             btnInquiry.Enabled = true;
         }
 
+    }
 }
 
