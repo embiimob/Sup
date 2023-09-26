@@ -3363,12 +3363,13 @@ namespace SUP
         private void btnInquiry_Click(object sender, EventArgs e)
         {
             btnInquiry.Enabled = false;
-          
-            INQSearch INQSearchForm = new INQSearch(_objectaddress);
+
+           
+                INQSearch INQSearchForm = new INQSearch(_objectaddress);
+                INQSearchForm.Show();
            
             btnInquiry.Enabled = true;
         }
-    }
 
 }
 
