@@ -216,9 +216,9 @@ namespace SUP
             this.btnSkipAudio.Location = new System.Drawing.Point(301, 692);
             this.btnSkipAudio.Name = "btnSkipAudio";
             this.btnSkipAudio.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
-            this.btnSkipAudio.Size = new System.Drawing.Size(56, 40);
+            this.btnSkipAudio.Size = new System.Drawing.Size(101, 40);
             this.btnSkipAudio.TabIndex = 99;
-            this.btnSkipAudio.Text = "⏩";
+            this.btnSkipAudio.Text = "⏩ skip";
             this.btnSkipAudio.UseVisualStyleBackColor = true;
             this.btnSkipAudio.Click += new System.EventHandler(this.btnSkipAudio_Click);
             // 
@@ -261,7 +261,7 @@ namespace SUP
             // 
             // lblAdultsOnly
             // 
-            this.lblAdultsOnly.Font = new System.Drawing.Font("Dubai", 26.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblAdultsOnly.Font = new System.Drawing.Font("Dubai", 27.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lblAdultsOnly.ForeColor = System.Drawing.Color.White;
             this.lblAdultsOnly.Location = new System.Drawing.Point(3, 3);
             this.lblAdultsOnly.Name = "lblAdultsOnly";
