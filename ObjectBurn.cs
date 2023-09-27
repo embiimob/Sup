@@ -22,16 +22,17 @@ namespace SUP
         private readonly List<(string address, int qty)> _addressQtyList = new List<(string address, int qty)>();
         bool mint = false;
         private readonly string brnaddress = "";
+        private Random random = new Random();
         public ObjectBurn(string _address="")
         {
             InitializeComponent();
             brnaddress = _address;
         }
 
-        static string GetRandomDelimiter()
+        private string GetRandomDelimiter()
         {
             string[] delimiters = { "\\", "/", ":", "*", "?", "\"", "<", ">", "|" };
-            Random random = new Random();
+          
             return delimiters[random.Next(delimiters.Length)];
         }
 

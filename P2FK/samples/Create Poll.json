@@ -23,6 +23,21 @@
 }
 
 
+
+
+{
+  "que": { "mrJDpFhWFG8PgFXvSBaXRAn5Nt8TKi5ioj": "What is your favourite Color?" },
+  "ans": {
+    "ms3ZjL7ECgmXAKpDnxzC8AjeqtsdDPx2ba": "red",
+    "msyCcaDXfxfgxJeYXsp5EnJFWVepoLuKnz": "green",
+    "mt6UNjLpeRtcFpkHLQXCtMrAESdFcAip9Y": "blue"
+  },
+  "own": [ "mvUsp7nsQRrBpF5uJd6TbSQiZiYybf8Pc9", "mvVa2Ug1V3U8kZhELeUhE7kjpsPMpBKjht" ],
+  "cre": [ "mxyo2qyUo9h7wzDYbudcyC2VWxaTfTeCZr" ],
+  "end": 6,
+  "any": 1
+}
+
 //optional attributes
 //own
 //list of object addresses, any of which must be owned to be valid

@@ -10,9 +10,11 @@ namespace SUP
 {
     public partial class FoundINQControl : UserControl
     {
-        public FoundINQControl()
+        private string _address;
+        public FoundINQControl(string address)
         {
             InitializeComponent();
+            _address = address;
         }
      
         private void foundObjectControl_Click(object sender, EventArgs e)

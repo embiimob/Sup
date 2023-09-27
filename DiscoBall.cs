@@ -50,6 +50,7 @@ namespace SUP
         private QrEncoder encoder = new QrEncoder();
         private GraphicsRenderer renderer = new GraphicsRenderer(new FixedModuleSize(2, QuietZoneModules.Two));
         System.Drawing.Image bmIm;
+        private Random random = new Random();
 
 
         public DiscoBall(string fromaddress = "", string fromimageurl = "", string toaddress = "", string toimageurl = "", bool isprivate = false)
@@ -102,10 +103,9 @@ namespace SUP
             recordTimer.AutoReset = false; // Only trigger once
 
         }
-        static string GetRandomDelimiter()
+        private string GetRandomDelimiter()
         {
             string[] delimiters = { "\\", "/", ":", "*", "?", "\"", "<", ">", "|" };
-            Random random = new Random();
             return delimiters[random.Next(delimiters.Length)];
         }
 
@@ -446,7 +446,11 @@ namespace SUP
             List<string> encodedList = new List<string>();
             foreach (Control attach in flowAttachments.Controls)
             {
-                transMessage = transMessage + "<<" + attach.Tag.ToString() + ">>";
+                if (attach.Tag != null)
+                {
+                    transMessage = transMessage + "<<" + attach.Tag.ToString() + ">>";
+                }
+
             }
             int salt;
             using (RNGCryptoServiceProvider rng = new RNGCryptoServiceProvider())
@@ -457,7 +461,7 @@ namespace SUP
             }
             transMessage = transMessage + "<<" + salt.ToString() + ">>";
             byte[] messageBytes = Encoding.UTF8.GetBytes(transMessage);
-            string OBJP2FK = GetRandomDelimiter() + messageBytes.Length + GetRandomDelimiter() + transMessage;
+            string OBJP2FK = GetRandomDelimiter() + messageBytes.Length + GetRandomDelimiter() + transMessage + txtINQJson.Text;
             byte[] OBJP2FKBytes = new byte[] { };
             PROState toProfile = PROState.GetProfileByAddress(_toaddress, "good-user", "better-password", @"http://127.0.0.1:18332");
 
@@ -584,6 +588,9 @@ namespace SUP
                     encodedList.Add(address); // Add to the beginning of the list
                 }
             }
+
+            //this will add the order specific inq address if one exists.
+            if (txtINQAddress.Text != "") { encodedList.Add(txtINQAddress.Text); }
 
             encodedList.Add(signatureAddress);
             lblObjectStatus.Text = "cost: " + (0.00000546 * encodedList.Count).ToString("0.00000000") + "  + miner fee";
@@ -780,7 +787,17 @@ namespace SUP
             string processingid = Guid.NewGuid().ToString();
             string ipfsHash = "";
 
-            flowAttachments.Controls.Clear();
+
+            try
+            {
+                // Attempt to remove the existing btnINQ control
+                flowAttachments.Controls.RemoveByKey("btnPlay");
+            }
+            catch (ArgumentException)
+            {
+                // Control with the specified name doesn't exist, so no need to handle the exception
+            }
+
             this.btnPlay = new System.Windows.Forms.Button();
             this.btnPlay.Font = new System.Drawing.Font("Segoe UI Emoji", 20.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btnPlay.ForeColor = System.Drawing.Color.Black;
@@ -1107,8 +1124,6 @@ namespace SUP
             catch { }
         }
 
-      
-
         private void btnPrint_Click_1(object sender, EventArgs e)
         {
             isPrint = true;
@@ -1223,6 +1238,46 @@ namespace SUP
         {
             INQMint mintForm = new INQMint(this); // Pass the reference to the current form as the parent form
             mintForm.ShowDialog();
+        }
+
+        private void txtINQJson_TextChanged(object sender, EventArgs e)
+        {
+            if (txtINQJson.Text != "")
+            {
+                try
+                {
+                    // Attempt to remove the existing btnINQ control
+                    flowAttachments.Controls.RemoveByKey("btnINQ");
+                }
+                catch (ArgumentException)
+                {
+                    // Control with the specified name doesn't exist, so no need to handle the exception
+                }
+
+                // Create and add the new btnINQ control
+                Button btnINQ = new System.Windows.Forms.Button();
+                btnINQ.Font = new System.Drawing.Font("Segoe UI Emoji", 20.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+                btnINQ.ForeColor = System.Drawing.Color.Black;
+                btnINQ.Name = "btnINQ";
+                btnINQ.Padding = new System.Windows.Forms.Padding(3, 0, 0, 0);
+                btnINQ.RightToLeft = System.Windows.Forms.RightToLeft.No;
+                btnINQ.Size = new System.Drawing.Size(50, 46);
+                btnINQ.Text = "⁉️";
+                btnINQ.UseVisualStyleBackColor = true;
+                btnINQ.MouseUp += new MouseEventHandler(BtnINQ_MouseUp);
+                flowAttachments.Controls.Add(btnINQ);
+            }
+        }
+
+        private void BtnINQ_MouseUp(object sender, MouseEventArgs e)
+        {
+            if (e.Button == MouseButtons.Right)
+            {
+                Button button = (Button)sender;
+                flowAttachments.Controls.Remove(button);
+                txtINQJson.Text = "";
+                txtINQAddress.Text = "";
+            }
         }
     }
 }

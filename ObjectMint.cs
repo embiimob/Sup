@@ -34,7 +34,7 @@ namespace SUP
         private GraphicsRenderer renderer = new GraphicsRenderer(new FixedModuleSize(2, QuietZoneModules.Two));
         private bool ismint = false;
         private string imagecache;
-
+        private Random random = new Random();
         public ObjectMint()
         {
             InitializeComponent();
@@ -54,12 +54,13 @@ namespace SUP
 
             // Assign the context menu to the PictureBox
             pictureBox1.ContextMenuStrip = contextMenu;
+           
+
         }
 
-        static string GetRandomDelimiter()
+        private string GetRandomDelimiter()
         {
             string[] delimiters = { "\\", "/", ":", "*", "?", "\"", "<", ">", "|" };
-            Random random = new Random();
             return delimiters[random.Next(delimiters.Length)];
         }
 

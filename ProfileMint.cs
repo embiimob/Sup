@@ -30,7 +30,7 @@ namespace SUP
         private bool ismint = false;
         private string searchAddress;
         Regex regexTransactionId = new Regex(@"\b[0-9a-f]{64}\b");
-
+        private Random random = new Random();
 
         public ProfileMint(string address = "")
         {
@@ -38,10 +38,9 @@ namespace SUP
             searchAddress = address;
         }
 
-        static string GetRandomDelimiter()
+        private string GetRandomDelimiter()
         {
             string[] delimiters = { "\\", "/", ":", "*", "?", "\"", "<", ">", "|" };
-            Random random = new Random();
             return delimiters[random.Next(delimiters.Length)];
         }
 

@@ -50,6 +50,8 @@
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
             this.fromImage = new System.Windows.Forms.PictureBox();
             this.toImage = new System.Windows.Forms.PictureBox();
+            this.txtINQJson = new System.Windows.Forms.TextBox();
+            this.txtINQAddress = new System.Windows.Forms.TextBox();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.fromImage)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.toImage)).BeginInit();
@@ -290,6 +292,24 @@
             this.toImage.TabIndex = 354;
             this.toImage.TabStop = false;
             // 
+            // txtINQJson
+            // 
+            this.txtINQJson.Location = new System.Drawing.Point(53, 37);
+            this.txtINQJson.Multiline = true;
+            this.txtINQJson.Name = "txtINQJson";
+            this.txtINQJson.Size = new System.Drawing.Size(128, 173);
+            this.txtINQJson.TabIndex = 370;
+            this.txtINQJson.Visible = false;
+            this.txtINQJson.TextChanged += new System.EventHandler(this.txtINQJson_TextChanged);
+            // 
+            // txtINQAddress
+            // 
+            this.txtINQAddress.Location = new System.Drawing.Point(187, 190);
+            this.txtINQAddress.Name = "txtINQAddress";
+            this.txtINQAddress.Size = new System.Drawing.Size(100, 20);
+            this.txtINQAddress.TabIndex = 371;
+            this.txtINQAddress.Visible = false;
+            // 
             // DiscoBall
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -318,6 +338,8 @@
             this.Controls.Add(this.supMessage);
             this.Controls.Add(this.btnPrint);
             this.Controls.Add(this.btnInquiry);
+            this.Controls.Add(this.txtINQJson);
+            this.Controls.Add(this.txtINQAddress);
             this.ForeColor = System.Drawing.Color.White;
             this.MinimumSize = new System.Drawing.Size(463, 625);
             this.Name = "DiscoBall";
@@ -352,10 +374,13 @@
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.Button btnRecord;
         private System.Windows.Forms.Button btnPlay;
+        private System.Windows.Forms.Button btnINQ;
         private System.Windows.Forms.Button button2;
         private System.Windows.Forms.FlowLayoutPanel emojiPanel;
         private System.Windows.Forms.Button btnPrint;
         private System.Windows.Forms.PictureBox pictureBox1;
         private System.Windows.Forms.Button btnInquiry;
+        public System.Windows.Forms.TextBox txtINQJson;
+        public System.Windows.Forms.TextBox txtINQAddress;
     }
 }

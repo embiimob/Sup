@@ -1105,6 +1105,7 @@ namespace SUP
                         List<string> newtransactions = new List<string>();
                         string flattransactions;
                         OBJState isobject = new OBJState();
+      
                         List<OBJState> foundobjects = new List<OBJState>();
                         NetworkCredential credentials = new NetworkCredential("good-user", "better-password");
                         RPCClient rpcClient;
@@ -1316,10 +1317,6 @@ namespace SUP
                                                             Match vmatch = Regex.Match(content, vpattern);
 
 
-
-
-
-
                                                             if (!imgExtensions.Contains(extension) && vmatch.Value.Length < 12)
                                                             {
 
@@ -1505,6 +1502,22 @@ namespace SUP
                                                         supFlow.Controls.Add(padding);
                                                     });
 
+
+                                                }
+                                                if (find && root.File.ContainsKey("INQ"))
+                                                {
+                                                    INQState isINQ = new INQState();
+                                                    isINQ = INQState.GetInquiryByTransactionId(s, "good-user", "better-password", @"http://127.0.0.1:18332");
+
+                                                    if (isINQ.TransactionId != null) {
+
+                                                        this.Invoke((MethodInvoker)delegate
+                                                        {
+                                                            FoundINQControl foundObject = new FoundINQControl(s);
+                                                            supFlow.Controls.Add(foundObject);
+                                                            supFlow.Controls.SetChildIndex(foundObject, 2);
+                                                        });
+                                                    }
 
                                                 }
 
@@ -1827,7 +1840,23 @@ namespace SUP
 
 
                                                     }
+                                                    if (find && root.File.ContainsKey("INQ"))
+                                                    {
+                                                        INQState isINQ = new INQState();
+                                                        isINQ = INQState.GetInquiryByTransactionId(s, "good-user", "better-password", @"http://127.0.0.1:8332", "0");
 
+                                                        if (isINQ.TransactionId != null)
+                                                        {
+
+                                                            this.Invoke((MethodInvoker)delegate
+                                                            {
+                                                                FoundINQControl foundObject = new FoundINQControl(s);
+                                                                supFlow.Controls.Add(foundObject);
+                                                                supFlow.Controls.SetChildIndex(foundObject, 2);
+                                                            });
+                                                        }
+
+                                                    }
 
                                                     isobject = OBJState.GetObjectByTransactionId(s, "good-user", "better-password", @"http://127.0.0.1:8332", "0");
                                                     if (isobject.URN != null && find == true)
@@ -2137,7 +2166,23 @@ namespace SUP
 
 
                                                     }
+                                                    if (find && root.File.ContainsKey("INQ"))
+                                                    {
+                                                        INQState isINQ = new INQState();
+                                                        isINQ = INQState.GetInquiryByTransactionId(s, "good-user", "better-password", @"http://127.0.0.1:12832", "50");
 
+                                                        if (isINQ.TransactionId != null)
+                                                        {
+
+                                                            this.Invoke((MethodInvoker)delegate
+                                                            {
+                                                                FoundINQControl foundObject = new FoundINQControl(s);
+                                                                supFlow.Controls.Add(foundObject);
+                                                                supFlow.Controls.SetChildIndex(foundObject, 2);
+                                                            });
+                                                        }
+
+                                                    }
                                                     isobject = OBJState.GetObjectByTransactionId(s, "good-user", "better-password", @"http://127.0.0.1:12832", "50");
                                                     if (isobject.URN != null && find == true)
                                                     {
@@ -2446,7 +2491,23 @@ namespace SUP
 
 
                                                     }
+                                                    if (find && root.File.ContainsKey("INQ"))
+                                                    {
+                                                        INQState isINQ = new INQState();
+                                                        isINQ = INQState.GetInquiryByTransactionId(s, "good-user", "better-password", @"http://127.0.0.1:9332", "48");
 
+                                                        if (isINQ.TransactionId != null)
+                                                        {
+
+                                                            this.Invoke((MethodInvoker)delegate
+                                                            {
+                                                                FoundINQControl foundObject = new FoundINQControl(s);
+                                                                supFlow.Controls.Add(foundObject);
+                                                                supFlow.Controls.SetChildIndex(foundObject, 2);
+                                                            });
+                                                        }
+
+                                                    }
                                                     isobject = OBJState.GetObjectByTransactionId(s, "good-user", "better-password", @"http://127.0.0.1:9332", "48");
                                                     if (isobject.URN != null && find == true)
                                                     {
@@ -2757,7 +2818,23 @@ namespace SUP
 
 
                                                     }
+                                                    if (find && root.File.ContainsKey("INQ"))
+                                                    {
+                                                        INQState isINQ = new INQState();
+                                                        isINQ = INQState.GetInquiryByTransactionId(s, "good-user", "better-password", @"http://127.0.0.1:22555","30");
 
+                                                        if (isINQ.TransactionId != null)
+                                                        {
+
+                                                            this.Invoke((MethodInvoker)delegate
+                                                            {
+                                                                FoundINQControl foundObject = new FoundINQControl(s);
+                                                                supFlow.Controls.Add(foundObject);
+                                                                supFlow.Controls.SetChildIndex(foundObject, 2);
+                                                            });
+                                                        }
+
+                                                    }
                                                     isobject = OBJState.GetObjectByTransactionId(s, "good-user", "better-password", @"http://127.0.0.1:22555", "30");
                                                     if (isobject.URN != null && find == true)
                                                     {
@@ -2769,8 +2846,6 @@ namespace SUP
                                                         {
                                                             db.Put("found!" + root.BlockDate.ToString("yyyyMMddHHmmss") + "!" + root.SignedBy, "1");
                                                         }
-
-
 
                                                     }
                                                     try { System.IO.Directory.Delete(@"root\" + s, true); } catch { }

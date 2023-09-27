@@ -43,14 +43,14 @@ namespace SUP.P2FK
         //ensures levelDB is thread safely
         private readonly static object SupLocker = new object();
 
-        public static Root GetRootByTransactionId(string transactionid, string username, string password, string url, string versionbyte = "111", byte[] rootbytes = null, string signatureaddress = null, bool blockheight = false)
+        public static Root GetRootByTransactionId(string transactionid, string username, string password, string url, string versionbyte = "111", byte[] rootbytes = null, string signatureaddress = null, bool calculate = false)
         {
             Root P2FKRoot = new Root();
             string diskpath = "root\\" + transactionid + "\\";
             string P2FKJSONString = null;
             bool isMuted = false;
 
-            if (rootbytes == null && blockheight == false)
+            if (rootbytes == null && calculate == false)
             {
                 try
                 {
@@ -134,7 +134,7 @@ namespace SUP.P2FK
                      Convert.ToInt32(deserializedObject.blocktime)
                  ).DateTime;
 
-                if (blockheight)
+                if (calculate && confirmations > 0)
                 {
                     string hash = deserializedObject.blockhash;
                     dynamic deserializedObjectDetails = rpcClient.SendCommand("getblock", hash);
@@ -608,7 +608,7 @@ namespace SUP.P2FK
 
             return P2FKRoot;
         }
-        public static Root[] GetRootsByAddress(string address, string username, string password, string url, int skip = 0, int qty = -1, string versionByte = "111", bool blockheight = false)
+        public static Root[] GetRootsByAddress(string address, string username, string password, string url, int skip = 0, int qty = -1, string versionByte = "111", bool calculate = false)
         {
             var rootList = new List<Root>();
 
@@ -628,7 +628,7 @@ namespace SUP.P2FK
             }
             catch { }
 
-            if (fetched && rootList.Count == 0) { return rootList.ToArray(); }
+            if (fetched && rootList.Count == 0 & !calculate) { return rootList.ToArray(); }
 
             int intProcessHeight = 0;
 
@@ -638,7 +638,7 @@ namespace SUP.P2FK
             try { intProcessHeight = rootList.Max(state => state.Id); } catch { }
    
             
-
+            if (calculate) { intProcessHeight = 0; }
 
             if (intProcessHeight != 0)
             {
@@ -689,7 +689,7 @@ namespace SUP.P2FK
                     intProcessHeight++;
                     string hexId = GetTransactionIdByHexString(deserializedObject[i].ToString());
 
-                    var root = Root.GetRootByTransactionId(hexId, username, password, url, versionByte,null,null, blockheight);
+                    var root = Root.GetRootByTransactionId(hexId, username, password, url, versionByte,null,null, calculate);
 
                     if (root != null && root.TotalByteSize > 0 && root.Output != null && !rootList.Any(ROOT => ROOT.TransactionId == root.TransactionId) && root.Output.ContainsKey(address) && root.BlockDate.Year > 1975)
                     {
