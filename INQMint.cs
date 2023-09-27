@@ -158,7 +158,7 @@ namespace SUP
 
         private void INQMint_Load(object sender, EventArgs e)
         {
-            selectTimeGate.SelectedIndex = 13;
+            selectTimeGate.SelectedIndex = 3;
         }
 
         //GPT3

@@ -68,7 +68,7 @@
             this.lblCost.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.lblCost.AutoSize = true;
             this.lblCost.ForeColor = System.Drawing.Color.White;
-            this.lblCost.Location = new System.Drawing.Point(173, 727);
+            this.lblCost.Location = new System.Drawing.Point(173, 659);
             this.lblCost.Name = "lblCost";
             this.lblCost.Size = new System.Drawing.Size(0, 13);
             this.lblCost.TabIndex = 296;
@@ -79,7 +79,7 @@
             this.lblTransactionID.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.lblTransactionID.AutoSize = true;
             this.lblTransactionID.ForeColor = System.Drawing.Color.White;
-            this.lblTransactionID.Location = new System.Drawing.Point(17, 765);
+            this.lblTransactionID.Location = new System.Drawing.Point(17, 697);
             this.lblTransactionID.Name = "lblTransactionID";
             this.lblTransactionID.Size = new System.Drawing.Size(0, 13);
             this.lblTransactionID.TabIndex = 297;
@@ -89,7 +89,7 @@
             this.lblObjectStatus.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.lblObjectStatus.AutoSize = true;
             this.lblObjectStatus.ForeColor = System.Drawing.Color.White;
-            this.lblObjectStatus.Location = new System.Drawing.Point(17, 737);
+            this.lblObjectStatus.Location = new System.Drawing.Point(17, 669);
             this.lblObjectStatus.Name = "lblObjectStatus";
             this.lblObjectStatus.Size = new System.Drawing.Size(0, 13);
             this.lblObjectStatus.TabIndex = 356;
@@ -102,7 +102,7 @@
             this.flowOWN.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
             this.flowOWN.FlowDirection = System.Windows.Forms.FlowDirection.RightToLeft;
             this.flowOWN.ForeColor = System.Drawing.Color.White;
-            this.flowOWN.Location = new System.Drawing.Point(12, 498);
+            this.flowOWN.Location = new System.Drawing.Point(12, 430);
             this.flowOWN.Name = "flowOWN";
             this.flowOWN.Size = new System.Drawing.Size(424, 69);
             this.flowOWN.TabIndex = 6;
@@ -111,7 +111,7 @@
             // 
             this.btnOWN.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.btnOWN.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold);
-            this.btnOWN.Location = new System.Drawing.Point(448, 498);
+            this.btnOWN.Location = new System.Drawing.Point(448, 430);
             this.btnOWN.Name = "btnOWN";
             this.btnOWN.Size = new System.Drawing.Size(109, 42);
             this.btnOWN.TabIndex = 6;
@@ -123,7 +123,7 @@
             // 
             this.btnCRE.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.btnCRE.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold);
-            this.btnCRE.Location = new System.Drawing.Point(448, 611);
+            this.btnCRE.Location = new System.Drawing.Point(448, 543);
             this.btnCRE.Name = "btnCRE";
             this.btnCRE.Size = new System.Drawing.Size(109, 42);
             this.btnCRE.TabIndex = 7;
@@ -135,7 +135,7 @@
             // 
             this.btnMint.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.btnMint.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold);
-            this.btnMint.Location = new System.Drawing.Point(448, 736);
+            this.btnMint.Location = new System.Drawing.Point(448, 668);
             this.btnMint.Name = "btnMint";
             this.btnMint.Size = new System.Drawing.Size(109, 42);
             this.btnMint.TabIndex = 9;
@@ -152,7 +152,7 @@
             this.flowCRE.Cursor = System.Windows.Forms.Cursors.Default;
             this.flowCRE.FlowDirection = System.Windows.Forms.FlowDirection.RightToLeft;
             this.flowCRE.ForeColor = System.Drawing.Color.White;
-            this.flowCRE.Location = new System.Drawing.Point(12, 611);
+            this.flowCRE.Location = new System.Drawing.Point(12, 543);
             this.flowCRE.Name = "flowCRE";
             this.flowCRE.Size = new System.Drawing.Size(424, 69);
             this.flowCRE.TabIndex = 346;
@@ -169,7 +169,6 @@
             this.txtQUE.Name = "txtQUE";
             this.txtQUE.Size = new System.Drawing.Size(545, 134);
             this.txtQUE.TabIndex = 0;
-            this.txtQUE.Text = "What is your favourite Color?";
             this.txtQUE.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             this.txtQUE.TextChanged += new System.EventHandler(this.txtQUE_TextChanged);
             // 
@@ -220,7 +219,7 @@
             this.flowANS.ForeColor = System.Drawing.Color.White;
             this.flowANS.Location = new System.Drawing.Point(12, 225);
             this.flowANS.Name = "flowANS";
-            this.flowANS.Size = new System.Drawing.Size(424, 212);
+            this.flowANS.Size = new System.Drawing.Size(424, 144);
             this.flowANS.TabIndex = 358;
             // 
             // btnANS
@@ -240,22 +239,22 @@
             this.label1.AutoSize = true;
             this.label1.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label1.ForeColor = System.Drawing.Color.White;
-            this.label1.Location = new System.Drawing.Point(16, 20);
+            this.label1.Location = new System.Drawing.Point(19, 20);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(120, 20);
+            this.label1.Size = new System.Drawing.Size(190, 20);
             this.label1.TabIndex = 360;
-            this.label1.Text = "Enter Question:";
+            this.label1.Text = "Add Question: ( required )";
             // 
             // label2
             // 
             this.label2.AutoSize = true;
             this.label2.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label2.ForeColor = System.Drawing.Color.White;
-            this.label2.Location = new System.Drawing.Point(16, 196);
+            this.label2.Location = new System.Drawing.Point(16, 202);
             this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(107, 20);
+            this.label2.Size = new System.Drawing.Size(187, 20);
             this.label2.TabIndex = 361;
-            this.label2.Text = "Add Answers:";
+            this.label2.Text = "Add Answers: ( required )";
             // 
             // label3
             // 
@@ -263,7 +262,7 @@
             this.label3.AutoSize = true;
             this.label3.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label3.ForeColor = System.Drawing.Color.White;
-            this.label3.Location = new System.Drawing.Point(16, 703);
+            this.label3.Location = new System.Drawing.Point(16, 635);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(214, 20);
             this.label3.TabIndex = 362;
@@ -290,7 +289,7 @@
             "100 years",
             "1000 years",
             "for all of time"});
-            this.selectTimeGate.Location = new System.Drawing.Point(23, 737);
+            this.selectTimeGate.Location = new System.Drawing.Point(23, 669);
             this.selectTimeGate.Name = "selectTimeGate";
             this.selectTimeGate.Size = new System.Drawing.Size(117, 26);
             this.selectTimeGate.TabIndex = 363;
@@ -302,7 +301,7 @@
             this.label4.AutoSize = true;
             this.label4.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label4.ForeColor = System.Drawing.Color.White;
-            this.label4.Location = new System.Drawing.Point(16, 469);
+            this.label4.Location = new System.Drawing.Point(16, 407);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(272, 20);
             this.label4.TabIndex = 364;
@@ -314,7 +313,7 @@
             this.label5.AutoSize = true;
             this.label5.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label5.ForeColor = System.Drawing.Color.White;
-            this.label5.Location = new System.Drawing.Point(16, 582);
+            this.label5.Location = new System.Drawing.Point(16, 520);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(251, 20);
             this.label5.TabIndex = 365;
@@ -324,11 +323,11 @@
             // 
             this.txtEND.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.txtEND.Font = new System.Drawing.Font("Microsoft Sans Serif", 13F);
-            this.txtEND.Location = new System.Drawing.Point(146, 737);
+            this.txtEND.Location = new System.Drawing.Point(146, 669);
             this.txtEND.Name = "txtEND";
             this.txtEND.Size = new System.Drawing.Size(100, 27);
             this.txtEND.TabIndex = 366;
-            this.txtEND.Text = "0";
+            this.txtEND.Text = "144";
             this.txtEND.TextChanged += new System.EventHandler(this.txtEND_TextChanged);
             // 
             // checkBox1
@@ -351,7 +350,7 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.Black;
-            this.ClientSize = new System.Drawing.Size(569, 795);
+            this.ClientSize = new System.Drawing.Size(569, 727);
             this.Controls.Add(this.checkBox1);
             this.Controls.Add(this.txtEND);
             this.Controls.Add(this.label5);

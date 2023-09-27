@@ -147,10 +147,10 @@ namespace SUP
                     lblANS.ForeColor = System.Drawing.Color.White;
                     lblANS.Location = new System.Drawing.Point(3, 10);
                     lblANS.Margin = new System.Windows.Forms.Padding(3, 10, 3, 0);
-                    lblANS.MaximumSize = new System.Drawing.Size(440, 420);
-                    lblANS.MinimumSize = new System.Drawing.Size(440, 25);
+                    lblANS.MaximumSize = new System.Drawing.Size(400, 420);
+                    lblANS.MinimumSize = new System.Drawing.Size(400, 25);
                     lblANS.Name = "lblANS";
-                    lblANS.Size = new System.Drawing.Size(440, 25);
+                    lblANS.Size = new System.Drawing.Size(400, 25);
                     lblANS.TabIndex = 0;
                     lblANS.Text = answer.Answer;
                     flowLayoutPanel1.Controls.Add(lblANS);
@@ -158,7 +158,7 @@ namespace SUP
                     System.Windows.Forms.ProgressBar progressANS = new System.Windows.Forms.ProgressBar();
                     progressANS.Location = new System.Drawing.Point(3, 38);
                     progressANS.Name = "progressANS";
-                    progressANS.Size = new System.Drawing.Size(314, 23);
+                    progressANS.Size = new System.Drawing.Size(254, 23);
 
 
                     if (btnValueTotal.Text == "show values")

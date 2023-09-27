@@ -45,20 +45,22 @@
             // 
             // txtQUE
             // 
+            this.txtQUE.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.txtQUE.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
             this.txtQUE.Font = new System.Drawing.Font("Microsoft Sans Serif", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.txtQUE.ForeColor = System.Drawing.Color.White;
             this.txtQUE.Location = new System.Drawing.Point(0, 0);
             this.txtQUE.Name = "txtQUE";
-            this.txtQUE.Size = new System.Drawing.Size(526, 90);
+            this.txtQUE.Size = new System.Drawing.Size(489, 90);
             this.txtQUE.TabIndex = 6;
             this.txtQUE.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             this.txtQUE.Click += new System.EventHandler(this.foundObjectControl_Click);
             // 
             // txtTransactionId
             // 
-            this.txtTransactionId.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
+            this.txtTransactionId.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.txtTransactionId.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
             this.txtTransactionId.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.txtTransactionId.ForeColor = System.Drawing.Color.White;
@@ -73,13 +75,14 @@
             // 
             // txtStatus
             // 
+            this.txtStatus.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.txtStatus.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
             this.txtStatus.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.txtStatus.ForeColor = System.Drawing.Color.White;
-            this.txtStatus.Location = new System.Drawing.Point(203, 313);
+            this.txtStatus.Location = new System.Drawing.Point(193, 313);
             this.txtStatus.Margin = new System.Windows.Forms.Padding(0);
             this.txtStatus.Name = "txtStatus";
-            this.txtStatus.Size = new System.Drawing.Size(287, 18);
+            this.txtStatus.Size = new System.Drawing.Size(283, 18);
             this.txtStatus.TabIndex = 9;
             this.txtStatus.Text = "status: ";
             this.txtStatus.Click += new System.EventHandler(this.foundObjectControl_Click);
@@ -98,7 +101,7 @@
             this.lblTrash.AutoSize = true;
             this.lblTrash.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
             this.lblTrash.ForeColor = System.Drawing.Color.White;
-            this.lblTrash.Location = new System.Drawing.Point(500, 442);
+            this.lblTrash.Location = new System.Drawing.Point(463, 442);
             this.lblTrash.Name = "lblTrash";
             this.lblTrash.Size = new System.Drawing.Size(19, 13);
             this.lblTrash.TabIndex = 17;
@@ -107,14 +110,18 @@
             // 
             // flowLayoutPanel1
             // 
+            this.flowLayoutPanel1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.flowLayoutPanel1.AutoScroll = true;
             this.flowLayoutPanel1.Location = new System.Drawing.Point(13, 93);
             this.flowLayoutPanel1.Name = "flowLayoutPanel1";
-            this.flowLayoutPanel1.Size = new System.Drawing.Size(500, 211);
+            this.flowLayoutPanel1.Size = new System.Drawing.Size(463, 211);
             this.flowLayoutPanel1.TabIndex = 18;
             // 
             // btnCalculate
             // 
+            this.btnCalculate.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.btnCalculate.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btnCalculate.Location = new System.Drawing.Point(13, 345);
             this.btnCalculate.Name = "btnCalculate";
@@ -126,6 +133,7 @@
             // 
             // btnValueTotal
             // 
+            this.btnValueTotal.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.btnValueTotal.Location = new System.Drawing.Point(13, 310);
             this.btnValueTotal.Name = "btnValueTotal";
             this.btnValueTotal.Size = new System.Drawing.Size(75, 23);
@@ -136,6 +144,7 @@
             // 
             // btnShowAllOrGated
             // 
+            this.btnShowAllOrGated.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.btnShowAllOrGated.Location = new System.Drawing.Point(112, 310);
             this.btnShowAllOrGated.Name = "btnShowAllOrGated";
             this.btnShowAllOrGated.Size = new System.Drawing.Size(75, 23);
@@ -146,9 +155,10 @@
             // 
             // lblVotesOrValue
             // 
+            this.lblVotesOrValue.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.lblVotesOrValue.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lblVotesOrValue.ForeColor = System.Drawing.Color.White;
-            this.lblVotesOrValue.Location = new System.Drawing.Point(226, 347);
+            this.lblVotesOrValue.Location = new System.Drawing.Point(208, 349);
             this.lblVotesOrValue.Margin = new System.Windows.Forms.Padding(3, 3, 3, 0);
             this.lblVotesOrValue.Name = "lblVotesOrValue";
             this.lblVotesOrValue.Size = new System.Drawing.Size(242, 26);
@@ -158,6 +168,7 @@
             // 
             // txtCreatedBy
             // 
+            this.txtCreatedBy.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.txtCreatedBy.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
             this.txtCreatedBy.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.txtCreatedBy.ForeColor = System.Drawing.Color.White;
@@ -170,6 +181,7 @@
             // 
             // txtCreatedDate
             // 
+            this.txtCreatedDate.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.txtCreatedDate.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
             this.txtCreatedDate.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.txtCreatedDate.ForeColor = System.Drawing.Color.White;
@@ -212,7 +224,7 @@
             this.MinimumSize = new System.Drawing.Size(221, 221);
             this.Name = "FoundINQControl";
             this.Padding = new System.Windows.Forms.Padding(10);
-            this.Size = new System.Drawing.Size(526, 469);
+            this.Size = new System.Drawing.Size(489, 469);
             this.Load += new System.EventHandler(this.FoundINQControl_Load);
             this.Click += new System.EventHandler(this.foundObjectControl_Click);
             this.ResumeLayout(false);

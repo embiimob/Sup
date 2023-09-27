@@ -435,7 +435,7 @@ namespace SUP
                         };
 
 
-                        rowPanel.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 300));
+                        rowPanel.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 370));
                         rowPanel.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 0));
 
 
@@ -785,6 +785,20 @@ namespace SUP
                                             {
                                                 CreateRow(imagelocation, fromAddress, supMessagePacket[0], DateTime.ParseExact(tstamp, "yyyyMMddHHmmss", CultureInfo.InvariantCulture), message, supMessagePacket[1], false, supFlow);
                                             });
+
+                                            bool containsFileWithINQ = files.Any(file =>
+                                               file.EndsWith("INQ", StringComparison.OrdinalIgnoreCase) &&
+                                               !file.EndsWith("BLOCK", StringComparison.OrdinalIgnoreCase));
+
+                                            if (containsFileWithINQ)
+                                            {
+                                                //ADD INQ IF IT EXISTS AND IS NOT BLOCKED
+                                                this.Invoke((MethodInvoker)delegate
+                                                {
+                                                    FoundINQControl foundObject = new FoundINQControl(supMessagePacket[1]);
+                                                    supFlow.Controls.Add(foundObject);
+                                                });
+                                            }
 
                                             string pattern = "<<.*?>>";
                                             List<string> imgExtensions = new List<string> { ".bmp", ".gif", ".ico", ".jpeg", ".jpg", ".png", ".tif", ".tiff", ".mp4", ".avi", ".wav", ".mp3" };
@@ -3372,6 +3386,7 @@ namespace SUP
             btnInquiry.Enabled = true;
         }
 
+     
     }
 }
 
