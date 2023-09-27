@@ -53,19 +53,6 @@ namespace SUP
             this.label11 = new System.Windows.Forms.Label();
             this.btnSearch = new System.Windows.Forms.Button();
             this.dgTransactions = new System.Windows.Forms.DataGridView();
-            this.rootid = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.messagecount = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.is_signed = new System.Windows.Forms.DataGridViewCheckBoxColumn();
-            this.signed_by = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.filecount = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.totalfilebytes = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.keywordcount = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.total_bytes = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.block_time = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.transaction_id = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.signature = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.confirmations = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.buildtime = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.btnGetTransactionId = new System.Windows.Forms.Button();
             this.label12 = new System.Windows.Forms.Label();
             this.txtTransactionId = new System.Windows.Forms.TextBox();
@@ -110,6 +97,20 @@ namespace SUP
             this.btnInquiriesCreated = new System.Windows.Forms.Button();
             this.btnGetInquiries = new System.Windows.Forms.Button();
             this.btnGetInquiryByTransactionId = new System.Windows.Forms.Button();
+            this.rootid = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.messagecount = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.is_signed = new System.Windows.Forms.DataGridViewCheckBoxColumn();
+            this.signed_by = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.filecount = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.totalfilebytes = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.keywordcount = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.total_bytes = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.block_time = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.transaction_id = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.signature = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.confirmations = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.BlockHeight = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.buildtime = new System.Windows.Forms.DataGridViewTextBoxColumn();
             ((System.ComponentModel.ISupportInitialize)(this.dgTransactions)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
@@ -309,6 +310,7 @@ namespace SUP
             this.transaction_id,
             this.signature,
             this.confirmations,
+            this.BlockHeight,
             this.buildtime});
             dataGridViewCellStyle3.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
             dataGridViewCellStyle3.BackColor = System.Drawing.SystemColors.Window;
@@ -332,79 +334,6 @@ namespace SUP
             this.dgTransactions.Size = new System.Drawing.Size(1154, 322);
             this.dgTransactions.TabIndex = 30;
             this.dgTransactions.CellClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.DataGridViewClick);
-            // 
-            // rootid
-            // 
-            this.rootid.HeaderText = "Object ID";
-            this.rootid.MinimumWidth = 60;
-            this.rootid.Name = "rootid";
-            // 
-            // messagecount
-            // 
-            dataGridViewCellStyle2.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.messagecount.DefaultCellStyle = dataGridViewCellStyle2;
-            this.messagecount.HeaderText = "Messages";
-            this.messagecount.MaxInputLength = 100000000;
-            this.messagecount.Name = "messagecount";
-            // 
-            // is_signed
-            // 
-            this.is_signed.HeaderText = "Signed";
-            this.is_signed.MinimumWidth = 50;
-            this.is_signed.Name = "is_signed";
-            this.is_signed.Resizable = System.Windows.Forms.DataGridViewTriState.True;
-            this.is_signed.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.Automatic;
-            // 
-            // signed_by
-            // 
-            this.signed_by.HeaderText = "Signed By";
-            this.signed_by.Name = "signed_by";
-            // 
-            // filecount
-            // 
-            this.filecount.HeaderText = "Files";
-            this.filecount.Name = "filecount";
-            // 
-            // totalfilebytes
-            // 
-            this.totalfilebytes.HeaderText = "File Bytes";
-            this.totalfilebytes.Name = "totalfilebytes";
-            this.totalfilebytes.Resizable = System.Windows.Forms.DataGridViewTriState.True;
-            // 
-            // keywordcount
-            // 
-            this.keywordcount.HeaderText = "Keys";
-            this.keywordcount.Name = "keywordcount";
-            // 
-            // total_bytes
-            // 
-            this.total_bytes.HeaderText = "Total Bytes";
-            this.total_bytes.Name = "total_bytes";
-            // 
-            // block_time
-            // 
-            this.block_time.HeaderText = "Block Time";
-            this.block_time.Name = "block_time";
-            // 
-            // transaction_id
-            // 
-            this.transaction_id.HeaderText = "TID";
-            this.transaction_id.Name = "transaction_id";
-            // 
-            // signature
-            // 
-            this.signature.HeaderText = "SIG";
-            this.signature.Name = "signature";
-            // 
-            // confirmations
-            // 
-            this.confirmations.HeaderText = "Confirms";
-            this.confirmations.Name = "confirmations";
-            // 
-            // buildtime
-            // 
-            this.buildtime.HeaderText = "Build Time";
-            this.buildtime.Name = "buildtime";
             // 
             // btnGetTransactionId
             // 
@@ -903,6 +832,84 @@ namespace SUP
             this.btnGetInquiryByTransactionId.UseVisualStyleBackColor = true;
             this.btnGetInquiryByTransactionId.Click += new System.EventHandler(this.btnGetInquiryByTransactionId_Click);
             // 
+            // rootid
+            // 
+            this.rootid.HeaderText = "Object ID";
+            this.rootid.MinimumWidth = 60;
+            this.rootid.Name = "rootid";
+            // 
+            // messagecount
+            // 
+            dataGridViewCellStyle2.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.messagecount.DefaultCellStyle = dataGridViewCellStyle2;
+            this.messagecount.HeaderText = "Messages";
+            this.messagecount.MaxInputLength = 100000000;
+            this.messagecount.Name = "messagecount";
+            // 
+            // is_signed
+            // 
+            this.is_signed.HeaderText = "Signed";
+            this.is_signed.MinimumWidth = 50;
+            this.is_signed.Name = "is_signed";
+            this.is_signed.Resizable = System.Windows.Forms.DataGridViewTriState.True;
+            this.is_signed.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.Automatic;
+            // 
+            // signed_by
+            // 
+            this.signed_by.HeaderText = "Signed By";
+            this.signed_by.Name = "signed_by";
+            // 
+            // filecount
+            // 
+            this.filecount.HeaderText = "Files";
+            this.filecount.Name = "filecount";
+            // 
+            // totalfilebytes
+            // 
+            this.totalfilebytes.HeaderText = "File Bytes";
+            this.totalfilebytes.Name = "totalfilebytes";
+            this.totalfilebytes.Resizable = System.Windows.Forms.DataGridViewTriState.True;
+            // 
+            // keywordcount
+            // 
+            this.keywordcount.HeaderText = "Keys";
+            this.keywordcount.Name = "keywordcount";
+            // 
+            // total_bytes
+            // 
+            this.total_bytes.HeaderText = "Total Bytes";
+            this.total_bytes.Name = "total_bytes";
+            // 
+            // block_time
+            // 
+            this.block_time.HeaderText = "Block Time";
+            this.block_time.Name = "block_time";
+            // 
+            // transaction_id
+            // 
+            this.transaction_id.HeaderText = "TID";
+            this.transaction_id.Name = "transaction_id";
+            // 
+            // signature
+            // 
+            this.signature.HeaderText = "SIG";
+            this.signature.Name = "signature";
+            // 
+            // confirmations
+            // 
+            this.confirmations.HeaderText = "Confirms";
+            this.confirmations.Name = "confirmations";
+            // 
+            // BlockHeight
+            // 
+            this.BlockHeight.HeaderText = "BlockHeight";
+            this.BlockHeight.Name = "BlockHeight";
+            // 
+            // buildtime
+            // 
+            this.buildtime.HeaderText = "Build Time";
+            this.buildtime.Name = "buildtime";
+            // 
             // WorkBench
             // 
             this.AllowDrop = true;
@@ -956,19 +963,6 @@ namespace SUP
         private System.Windows.Forms.Label lblTotalTime;
         private System.Windows.Forms.Label lblKbs;
         private System.Windows.Forms.SplitContainer splitContainer1;
-        private DataGridViewTextBoxColumn rootid;
-        private DataGridViewTextBoxColumn messagecount;
-        private DataGridViewCheckBoxColumn is_signed;
-        private DataGridViewTextBoxColumn signed_by;
-        private DataGridViewTextBoxColumn filecount;
-        private DataGridViewTextBoxColumn totalfilebytes;
-        private DataGridViewTextBoxColumn keywordcount;
-        private DataGridViewTextBoxColumn total_bytes;
-        private DataGridViewTextBoxColumn block_time;
-        private DataGridViewTextBoxColumn transaction_id;
-        private DataGridViewTextBoxColumn signature;
-        private DataGridViewTextBoxColumn confirmations;
-        private DataGridViewTextBoxColumn buildtime;
         private Button btnEncrypt;
         private Button btnDecrypt;
         private Button btnGetObject;
@@ -1003,6 +997,20 @@ namespace SUP
         private Button btnInquiriesCreated;
         private Button btnGetInquiriesByKeyword;
         private Button btnGetInquiryByTransactionId;
+        private DataGridViewTextBoxColumn rootid;
+        private DataGridViewTextBoxColumn messagecount;
+        private DataGridViewCheckBoxColumn is_signed;
+        private DataGridViewTextBoxColumn signed_by;
+        private DataGridViewTextBoxColumn filecount;
+        private DataGridViewTextBoxColumn totalfilebytes;
+        private DataGridViewTextBoxColumn keywordcount;
+        private DataGridViewTextBoxColumn total_bytes;
+        private DataGridViewTextBoxColumn block_time;
+        private DataGridViewTextBoxColumn transaction_id;
+        private DataGridViewTextBoxColumn signature;
+        private DataGridViewTextBoxColumn confirmations;
+        private DataGridViewTextBoxColumn BlockHeight;
+        private DataGridViewTextBoxColumn buildtime;
     }
 }
 

@@ -2801,6 +2801,7 @@ namespace SUP.P2FK
                             string fromAddress = supMessagePacket[0];
                             string toAddress = supMessagePacket[2];
                             string tstamp = it.KeyAsString().Split('!')[1];
+                            string transactionID = supMessagePacket[1];
 
                             // Add the message data to the messages list
                             messages.Add(new
@@ -2808,7 +2809,8 @@ namespace SUP.P2FK
                                 Message = message,
                                 FromAddress = fromAddress,
                                 ToAddress = toAddress,
-                                BlockDate = tstamp
+                                BlockDate = tstamp,
+                                TransactionId = transactionID
                             });
                         }
                         rownum++;

@@ -62,7 +62,7 @@ namespace SUP
             _fromimageurl = fromimageurl;
             _toimageurl = toimageurl;
 
-            if (isprivate) { btnEncryptionStatus.Text = "PRIVATE 🤐"; }
+            if (isprivate) { btnEncryptionStatus.Text = "PRIVATE 🤐"; btnInquiry.Visible = false; }
 
             ContextMenuStrip contextMenu = new ContextMenuStrip();
 

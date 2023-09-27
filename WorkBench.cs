@@ -358,7 +358,9 @@ namespace SUP
                 txtLogin.Text,
                 txtPassword.Text,
                 txtUrl.Text, 0, -1,
-                txtVersionByte.Text
+                txtVersionByte.Text, 
+                chkVerbose.Checked
+
             );
             DateTime tmendCall = DateTime.UtcNow;
 
@@ -402,6 +404,7 @@ namespace SUP
                     roots[i].TransactionId,
                     roots[i].Signature,
                     roots[i].Confirmations,
+                     roots[i].BlockHeight,
                     roots[i].BuildDate.ToString("MM/dd/yyyy hh:mm:ss.ffff tt")
                         };
                     dgTransactions.Rows.Add(rowData);
@@ -427,7 +430,10 @@ namespace SUP
                 txtLogin.Text,
                 txtPassword.Text,
                 txtUrl.Text,
-                txtVersionByte.Text
+                txtVersionByte.Text,
+                null,
+                null,
+                chkVerbose.Checked
             );
             DateTime tmendCall = DateTime.UtcNow;
             lblTotalBytes.Text = "bytes: ";
@@ -471,6 +477,7 @@ namespace SUP
                     root.TransactionId,
                     root.Signature,
                     root.Confirmations,
+                    root.BlockHeight,
                     root.BuildDate.ToString("MM/dd/yyyy hh:mm:ss.ffff tt")
                 };
                 dgTransactions.Rows.Add(rowData);

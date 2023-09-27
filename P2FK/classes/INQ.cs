@@ -220,7 +220,6 @@ namespace SUP.P2FK
 
                                     objectState.ChangedDate = transaction.BlockDate; objectState.MaxBlockHeight = transaction.BlockHeight + objectinspector.end;
 
-
                                 }
 
 
@@ -229,7 +228,7 @@ namespace SUP.P2FK
 
 
 
-
+                            break;
                         }
 
 
@@ -302,7 +301,7 @@ namespace SUP.P2FK
 
                             foreach (Root root in roots)
                             {
-                                if (root.SignedBy != "")
+                                if (root.Signed)
                                 {
                                     hasVoted.Add(root.SignedBy);
                                 }

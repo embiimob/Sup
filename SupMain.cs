@@ -2929,12 +2929,12 @@ namespace SUP
                 });
 
 
-                // supFlow.SuspendLayout();
                 supFlow.Controls.Clear();
                 supPrivateFlow.Controls.Clear();
                 numPrivateMessagesDisplayed = 0;
-                //supFlow.ResumeLayout();
-
+             
+                supFlow.SuspendLayout();
+               
 
                 try { Root[] roots = Root.GetRootsByAddress(profileURN.Links[0].LinkData.ToString(), "good-user", "better-password", "http://127.0.0.1:18332"); } catch { return; }
 
@@ -3001,6 +3001,7 @@ namespace SUP
                                                 {
                                                     message = message + @"<<" + supMessagePacket[1] + @"/" + Path.GetFileName(file) + ">>";
                                                 }
+
                                             }
 
                                             string fromAddress = supMessagePacket[0];
@@ -3443,6 +3444,20 @@ namespace SUP
                                             });
 
 
+                                            bool containsFileWithINQ = files.Any(file =>
+                                                file.EndsWith("INQ", StringComparison.OrdinalIgnoreCase) &&
+                                                !file.EndsWith("BLOCK", StringComparison.OrdinalIgnoreCase));
+
+                                            if (containsFileWithINQ)
+                                            {
+                                                //ADD INQ IF IT EXISTS AND IS NOT BLOCKED
+                                                this.Invoke((MethodInvoker)delegate
+                                                {
+                                                    FoundINQControl foundObject = new FoundINQControl(supMessagePacket[1]);
+                                                    supFlow.Controls.Add(foundObject);
+                                                });
+                                            }
+
                                             string pattern = "<<.*?>>";
                                             List<string> imgExtensions = new List<string> { ".bmp", ".gif", ".ico", ".jpeg", ".jpg", ".png", ".tif", ".tiff", ".mp4", ".avi", ".wav", ".mp3" };
 
@@ -3678,7 +3693,14 @@ namespace SUP
 
 
                 }
+
+                this.Invoke((MethodInvoker)delegate
+                {
+                    supFlow.ResumeLayout();
+                });
             });
+
+       
         }
 
         private void RefreshPrivateSupMessages()
@@ -3975,6 +3997,28 @@ namespace SUP
                                         {
                                             CreateRow(imagelocation, fromAddress, supMessagePacket[0], DateTime.ParseExact(tstamp, "yyyyMMddHHmmss", CultureInfo.InvariantCulture), message, supMessagePacket[1], true, supPrivateFlow);
                                         });
+
+                                        string[] files = Directory.GetFiles(@"root\"+ supMessagePacket[1]);
+
+                                        bool containsFileWithINQ = files.Any(file =>
+                                               file.EndsWith("INQ", StringComparison.OrdinalIgnoreCase) &&
+                                               !file.EndsWith("BLOCK", StringComparison.OrdinalIgnoreCase));
+
+                                        if (containsFileWithINQ)
+                                        {
+                                            try
+                                            {
+                                                dynamic objectinspector = JsonConvert.DeserializeObject<INQ>(File.ReadAllText(@"root\" + supMessagePacket[1] + @"\INQ"));
+
+                                                //ADD INQ IF IT EXISTS AND IS NOT BLOCKED
+                                                this.Invoke((MethodInvoker)delegate
+                                                {
+                                                    FoundINQControl foundObject = new FoundINQControl(supMessagePacket[1]);
+                                                    supPrivateFlow.Controls.Add(foundObject);
+                                                });
+                                            }
+                                            catch { }
+                                        }
 
                                         string pattern = "<<.*?>>";
                                         MatchCollection matches = Regex.Matches(unfilteredmessage, pattern);
@@ -4439,10 +4483,12 @@ namespace SUP
                             var messageProp = message.GetType().GetProperty("Message");
                             var blockDateProp = message.GetType().GetProperty("BlockDate");
                             var toProp = message.GetType().GetProperty("ToAddress");
+                            var transactionIdProp = message.GetType().GetProperty("TransactionId");
                             string _from = fromProp?.GetValue(message).ToString();
                             string _to = toProp?.GetValue(message).ToString();
                             string _message = messageProp?.GetValue(message).ToString();
                             string _blockdate = blockDateProp?.GetValue(message).ToString();
+                            string _transactionid = transactionIdProp?.GetValue(message).ToString();
 
                             if (!friendFeed.Contains(_from + _message + _blockdate))
                             {
@@ -4453,7 +4499,8 @@ namespace SUP
                                     Message = _message,
                                     FromAddress = _from,
                                     ToAddress = _to,
-                                    BlockDate = _blockdate
+                                    BlockDate = _blockdate,
+                                    TransactionId = _transactionid
                                 });
                             }
                         }
@@ -4495,9 +4542,11 @@ namespace SUP
                         var toProp = message.GetType().GetProperty("ToAddress");
                         var messageProp = message.GetType().GetProperty("Message");
                         var blockDateProp = message.GetType().GetProperty("BlockDate");
+                        var transactionIdProp = message.GetType().GetProperty("TransactionId");
 
                         string _from = fromProp?.GetValue(message).ToString();
                         string _to = toProp?.GetValue(message).ToString();
+                        string _transactionId = transactionIdProp?.GetValue(message).ToString();
 
                         string fromURN = fromProp?.GetValue(message).ToString();
                         PROState fromProfile = PROState.GetProfileByAddress(fromURN, "good-user", "better-password", "http://127.0.0.1:18332");
@@ -4531,6 +4580,23 @@ namespace SUP
                             try { imglocation = myFriends[_to]; } catch { }
                             CreateFeedRow(imglocation, toURN, _to, DateTime.ParseExact(_blockdate, "yyyyMMddHHmmss", CultureInfo.InvariantCulture), _message, "", Color.White, supFlow);
                         });
+
+                        string[] files = Directory.GetFiles(@"root\" + _transactionId);
+
+                        bool containsFileWithINQ = files.Any(file =>
+                               file.EndsWith("INQ", StringComparison.OrdinalIgnoreCase) &&
+                               !file.EndsWith("BLOCK", StringComparison.OrdinalIgnoreCase));
+
+                        if (containsFileWithINQ)
+                        {
+                            //ADD INQ IF IT EXISTS AND IS NOT BLOCKED
+                            this.Invoke((MethodInvoker)delegate
+                            {
+                                FoundINQControl foundObject = new FoundINQControl(_transactionId);
+                                supFlow.Controls.Add(foundObject);
+                            });
+                        }
+
                         string pattern = "<<.*?>>";
                         MatchCollection matches = Regex.Matches(unfilteredmessage, pattern);
                         foreach (Match match in matches)

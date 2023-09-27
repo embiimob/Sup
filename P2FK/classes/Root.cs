@@ -32,7 +32,7 @@ namespace SUP.P2FK
         public bool Signed { get; set; }
         public string TransactionId { get; set; }
         public DateTime BlockDate { get; set; }
-        public int BlockHeight { get; set; }    
+        public int BlockHeight { get; set; }
         public int TotalByteSize { get; set; }
         public int Confirmations { get; set; }
         public DateTime BuildDate { get; set; }
@@ -134,16 +134,20 @@ namespace SUP.P2FK
                      Convert.ToInt32(deserializedObject.blocktime)
                  ).DateTime;
 
-                if (calculate && confirmations > 0)
+                if (calculate)
                 {
-                    string hash = deserializedObject.blockhash;
-                    dynamic deserializedObjectDetails = rpcClient.SendCommand("getblock", hash);
-                    var BlockHeightResult = deserializedObjectDetails.Result; // Assuming 'height' is within the 'result' property
-                    var BlockHeight = BlockHeightResult.height;
+                    try
+                    {
+                        string hash = deserializedObject.blockhash;
+                        dynamic deserializedObjectDetails = rpcClient.SendCommand("getblock", hash);
+                        var BlockHeightResult = deserializedObjectDetails.Result; // Assuming 'height' is within the 'result' property
+                        var BlockHeight = BlockHeightResult.height;
+                        P2FKRoot.BlockHeight = BlockHeight;
+                    }
+                    catch { }
 
-                    P2FKRoot.BlockHeight = BlockHeight;
                 }
-                    P2FKRoot.Output = new Dictionary<string, string>();
+                P2FKRoot.Output = new Dictionary<string, string>();
                 // we are spinning through all the out addresses within each bitcoin transaction
                 // we are base58 decdoing each address to obtain a 20 byte payload that is appended to a byte[]
                 foreach (dynamic v_out in deserializedObject.vout)
@@ -255,51 +259,51 @@ namespace SUP.P2FK
                 if (isValid)
                 {
 
-                   
-                        //Process Ledger files until reaching Root
-                        while (regexTransactionId.IsMatch(fileName))
+
+                    //Process Ledger files until reaching Root
+                    while (regexTransactionId.IsMatch(fileName))
+                    {
+
+                        // supports older objects where the file ledger name was repeated inside filecontents
+                        byte[] removeStringBytes = Encoding.ASCII.GetBytes(fileName);
+                        if (fileBytes.Take(removeStringBytes.Length).SequenceEqual(removeStringBytes))
                         {
-
-                            // supports older objects where the file ledger name was repeated inside filecontents
-                            byte[] removeStringBytes = Encoding.ASCII.GetBytes(fileName);
-                            if (fileBytes.Take(removeStringBytes.Length).SequenceEqual(removeStringBytes))
-                            {
-                                byte[] truncatedBytes = new byte[fileBytes.Length - removeStringBytes.Length];
-                                Buffer.BlockCopy(fileBytes, removeStringBytes.Length, truncatedBytes, 0, truncatedBytes.Length);
-                                fileBytes = truncatedBytes;
-                            }
-
-                            isledger = true;
-
-                            P2FKRoot = GetRootByTransactionId(
-                            transactionid,
-                            username,
-                            password,
-                            url,
-                            versionbyte,
-                            GetRootBytesByLedger(
-                                fileName
-                                    + Environment.NewLine
-                                    + Encoding.ASCII.GetString(fileBytes),
-                                username,
-                                password,
-                                url
-                            ), P2FKSignatureAddress
-                        );
-
-                            if (P2FKRoot.File.Count > 0)
-                            {
-                                fileName = P2FKRoot.File.Keys.First();
-                                fileBytes = System.IO.File.ReadAllBytes(@"root\" + P2FKRoot.TransactionId + @"\" + fileName); ;
-                            }
-                            else { fileName = ""; fileBytes = Array.Empty<byte>(); }
-                            P2FKRoot.TotalByteSize += totalByteSize;
-                            P2FKRoot.Confirmations = confirmations;
-                            P2FKRoot.BlockDate = blockdate;
-
+                            byte[] truncatedBytes = new byte[fileBytes.Length - removeStringBytes.Length];
+                            Buffer.BlockCopy(fileBytes, removeStringBytes.Length, truncatedBytes, 0, truncatedBytes.Length);
+                            fileBytes = truncatedBytes;
                         }
 
-                    
+                        isledger = true;
+
+                        P2FKRoot = GetRootByTransactionId(
+                        transactionid,
+                        username,
+                        password,
+                        url,
+                        versionbyte,
+                        GetRootBytesByLedger(
+                            fileName
+                                + Environment.NewLine
+                                + Encoding.ASCII.GetString(fileBytes),
+                            username,
+                            password,
+                            url
+                        ), P2FKSignatureAddress
+                    );
+
+                        if (P2FKRoot.File.Count > 0)
+                        {
+                            fileName = P2FKRoot.File.Keys.First();
+                            fileBytes = System.IO.File.ReadAllBytes(@"root\" + P2FKRoot.TransactionId + @"\" + fileName); ;
+                        }
+                        else { fileName = ""; fileBytes = Array.Empty<byte>(); }
+                        P2FKRoot.TotalByteSize += totalByteSize;
+                        P2FKRoot.Confirmations = confirmations;
+                        P2FKRoot.BlockDate = blockdate;
+
+                    }
+
+
 
                     if (isledger)
                     {
@@ -400,7 +404,7 @@ namespace SUP.P2FK
             if (sigStartByte > 0)
             {
                 // Convert the byte array to an ASCII-encoded string
-//string asciiString = Encoding.ASCII.GetString(transactionBytes);
+                //string asciiString = Encoding.ASCII.GetString(transactionBytes);
 
                 // Create SHA-256 hash
                 System.Security.Cryptography.SHA256 mySHA256 = SHA256Managed.Create();
@@ -433,10 +437,10 @@ namespace SUP.P2FK
                 // Object not signed, stop tracking Signature address
                 P2FKSignatureAddress = "";
             }
-        
 
-        //Populate P2FK object with all values
-        P2FKRoot.Id = -1;
+
+            //Populate P2FK object with all values
+            P2FKRoot.Id = -1;
             P2FKRoot.TransactionId = transactionid;
             P2FKRoot.Signature = signature;
             P2FKRoot.SignedBy = P2FKSignatureAddress;
@@ -454,8 +458,8 @@ namespace SUP.P2FK
 
 
 
-           
-                if (P2FKRoot.BlockDate.Year > 1975)
+
+            if (P2FKRoot.BlockDate.Year > 1975)
             {
                 var rootSerialized = JsonConvert.SerializeObject(P2FKRoot);
                 System.IO.File.WriteAllText(@"root\" + P2FKRoot.TransactionId + @"\" + "ROOT.json", rootSerialized);
@@ -603,7 +607,7 @@ namespace SUP.P2FK
                 }
             }
 
-         
+
 
 
             return P2FKRoot;
@@ -614,8 +618,7 @@ namespace SUP.P2FK
 
             if (address.Length < 34) { return rootList.ToArray(); }
 
-            var credentials = new NetworkCredential(username, password);
-            var rpcClient = new RPCClient(credentials, new Uri(url));
+
             bool fetched = false;
             address = address.Replace("<", "").Replace(">", "");
             try
@@ -634,16 +637,21 @@ namespace SUP.P2FK
 
             dynamic deserializedObject = null;
 
-      
+
             try { intProcessHeight = rootList.Max(state => state.Id); } catch { }
-   
-            
-            if (calculate) { intProcessHeight = 0; }
+
+
+            if (calculate) { 
+                intProcessHeight = 0;
+                rootList = new List<Root>();
+            }
 
             if (intProcessHeight != 0)
             {
                 try
                 {
+                    var credentials = new NetworkCredential(username, password);
+                    var rpcClient = new RPCClient(credentials, new Uri(url));
                     deserializedObject = JsonConvert.DeserializeObject(rpcClient.SendCommand("searchrawtransactions", address, 0, intProcessHeight, 1).ResultString);
                 }
                 catch { return rootList.ToArray(); }
@@ -668,28 +676,24 @@ namespace SUP.P2FK
                 }
 
             }
-            //rootList = new List<Root>();
             int innerskip = intProcessHeight;
-            //intProcessHeight = 0;
+  
             while (true)
             {
-                try
-                {
-                    deserializedObject = JsonConvert.DeserializeObject(rpcClient.SendCommand("searchrawtransactions", address, 0, innerskip, 300).ResultString);
-                }
-                catch { break; }
+                dynamic deserializedObject2 = null;
+                var credentials2 = new NetworkCredential(username, password);
+                var rpcClient2 = new RPCClient(credentials2, new Uri(url));
+                string results = rpcClient2.SendCommand("searchrawtransactions", address, 0, innerskip, 300).ResultString;
+                if (results == "[]") { break; }
+                deserializedObject2 = JsonConvert.DeserializeObject(results);
 
-                if (deserializedObject.Count == 0)
-                    break;
-
-
-                for (int i = 0; i < deserializedObject.Count; i++)
+                for (int i = 0; i < deserializedObject2.Count; i++)
                 {
                     int rootId = i;
                     intProcessHeight++;
-                    string hexId = GetTransactionIdByHexString(deserializedObject[i].ToString());
+                    string hexId = GetTransactionIdByHexString(deserializedObject2[i].ToString());
 
-                    var root = Root.GetRootByTransactionId(hexId, username, password, url, versionByte,null,null, calculate);
+                    var root = Root.GetRootByTransactionId(hexId, username, password, url, versionByte, null, null, calculate);
 
                     if (root != null && root.TotalByteSize > 0 && root.Output != null && !rootList.Any(ROOT => ROOT.TransactionId == root.TransactionId) && root.Output.ContainsKey(address) && root.BlockDate.Year > 1975)
                     {
