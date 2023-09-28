@@ -127,43 +127,25 @@ namespace SUP
 
 
 
-                Root[] TRACKS = Root.GetRootsByAddress(searchAddress, "good-user", "better-password", @"http://127.0.0.1:18332");
+                Root[] INQUIRYS = Root.GetRootsByAddress(searchAddress, "good-user", "better-password", @"http://127.0.0.1:18332");
 
-                if (TRACKS.Count() > 0)
+                if (INQUIRYS.Count() > 0)
                 {
 
-                    foreach (Root TRACK in TRACKS)
+                    foreach (Root INQUIRY in INQUIRYS)
                     {
+                      
+                                               
 
-                        if (TRACK.Message.Count() > 0)
+                        if (INQUIRY.File.Keys.Count() > 0)
                         {
-
-                            foreach (string message in TRACK.Message)
-                            {
-                                // Find all occurrences of strings surrounded by << >> that end in .mp3 or .wav
-                                foreach (Match match in Regex.Matches(message, @"<<([^>]*?(?i:\.mp4\s*(?=>>|$)|\.avi\s*(?=>>|$)|youtube\.com[^\s>]*|youtu\.be[^\s>]*))>>"))
-                                {
-                                    string audioFrom = TRACK.SignedBy;
-                                    string audioPacket = getLocalPath(match.Groups[1].Value) + "," + TRACK.BlockDate + "," + audioFrom + "," + match.Groups[1].Value;
-
-                                    if (!soundFiles.Contains(audioPacket))
-                                    {
-                                        soundFiles.Add(audioPacket);
-                                    }
-
-                                }
-                            }
-                        }
-
-                        if (TRACK.File.Keys.Count() > 0)
-                        {
-                            foreach (string attachment in TRACK.File.Keys)
+                            foreach (string attachment in INQUIRY.File.Keys)
                             {
                                 // Check if the attachment ends in .GIF (case-insensitive)
-                                if (attachment.EndsWith(".MP4", StringComparison.OrdinalIgnoreCase) || attachment.EndsWith(".AVI", StringComparison.OrdinalIgnoreCase))
+                                if (attachment.EndsWith("INQ", StringComparison.OrdinalIgnoreCase))
                                 {
-                                    string audioFrom = TRACK.SignedBy;
-                                    string audioPacket = getLocalPath(TRACK.TransactionId + @"\" + attachment) + "," + TRACK.BlockDate + "," + audioFrom + "," + TRACK.TransactionId + @"\" + attachment;
+                                    string audioFrom = INQUIRY.SignedBy;
+                                    string audioPacket = getLocalPath(INQUIRY.TransactionId + @"\" + attachment) + "," + INQUIRY.BlockDate + "," + audioFrom + "," + INQUIRY.TransactionId + @"\" + attachment;
 
                                     if (!soundFiles.Contains(audioPacket))
                                     {
@@ -184,7 +166,7 @@ namespace SUP
                     foreach (OBJState obj in objects)
                     {
 
-                        if (obj.URN.ToLower().EndsWith(".mp4") || obj.URN.ToLower().EndsWith(".avi"))
+                        if (obj.URN.ToLower().EndsWith("inq"))
                         {
 
                             string creatorKey = null;
@@ -213,7 +195,7 @@ namespace SUP
                     foreach (OBJState obj in objects)
                     {
 
-                        if (obj.URN.ToLower().EndsWith(".mp4") || obj.URN.ToLower().EndsWith(".avi"))
+                        if (obj.URN.ToLower().EndsWith("inq"))
                         {
 
                             string creatorKey = null;
@@ -252,10 +234,9 @@ namespace SUP
             filelocation = filepath;
 
 
-            if (!filepath.ToLower().StartsWith("http"))
+            if (!filepath.ToLower().StartsWith("http") || !filepath.ToLower().StartsWith("ipfs"))
             {
-                filelocation = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + @"\root\" + filepath.Replace("BTC:", "").Replace("MZC:", "").Replace("LTC:", "").Replace("DOG:", "").Replace("IPFS:", "").Replace(@"/", @"\");
-                if (filepath.ToLower().StartsWith("ipfs:")) { filelocation = filelocation.Replace(@"\root\", @"\ipfs\"); if (filepath.Length == 51) { filelocation += @"\artifact"; } }
+                filelocation = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + @"\root\" + filepath.Replace("BTC:", "").Replace("MZC:", "").Replace("LTC:", "").Replace("DOG:", "").Replace(@"/", @"\");
             }
 
             return filelocation;
@@ -292,7 +273,7 @@ namespace SUP
                 string soundURN = soundInfo[3];
 
                 // should prevent all files from trying to build at once will be limited to 30 at a time.
-                buildVideoFiles(soundInfo[0], soundURN);
+
                 AddVideo(soundURN);
 
                 LinkLabel linkLabel = new LinkLabel
@@ -334,110 +315,6 @@ namespace SUP
 
         }
 
-        private void buildVideoFiles(string filelocation, string filepath)
-        {
-
-            Regex regexTransactionId = new Regex(@"\b[0-9a-f]{64}\b");
-            Match imgurnmatch = regexTransactionId.Match(filelocation);
-            string transactionid = imgurnmatch.Value;
-            Root root = new Root();
-            if (!File.Exists(filelocation))
-            {
-                Task BuildMessage = Task.Run(() =>
-                {
-
-
-                    switch (filepath.ToUpper().Substring(0, 4))
-                    {
-                        case "MZC:":
-                            Root.GetRootByTransactionId(transactionid, "good-user", "better-password", @"http://127.0.0.1:12832", "50");
-
-                            break;
-                        case "BTC:":
-
-                            Root.GetRootByTransactionId(transactionid, "good-user", "better-password", @"http://127.0.0.1:8332", "0");
-
-                            break;
-                        case "LTC:":
-
-                            Root.GetRootByTransactionId(transactionid, "good-user", "better-password", @"http://127.0.0.1:9332", "48");
-
-
-                            break;
-                        case "DOG:":
-                            Root.GetRootByTransactionId(transactionid, "good-user", "better-password", @"http://127.0.0.1:22555", "30");
-
-                            break;
-                        case "IPFS":
-                            string transid = "empty";
-                            try { transid = filepath.Substring(5, 46); } catch { }
-
-                            if (!System.IO.Directory.Exists("ipfs/" + transid + "-build"))
-                            {
-                                try { Directory.CreateDirectory("ipfs/" + transid); } catch { };
-                                Directory.CreateDirectory("ipfs/" + transid + "-build");
-                                Process process2 = new Process();
-                                process2.StartInfo.FileName = @"ipfs\ipfs.exe";
-                                process2.StartInfo.Arguments = "get " + filepath.Substring(5, 46) + @" -o ipfs\" + transid;
-                                process2.StartInfo.UseShellExecute = false;
-                                process2.StartInfo.CreateNoWindow = true;
-                                process2.Start();
-                                if (process2.WaitForExit(550000))
-                                {
-                                    string fileName;
-                                    if (System.IO.File.Exists("ipfs/" + transid))
-                                    {
-                                        System.IO.File.Move("ipfs/" + transid, "ipfs/" + transid + "_tmp");
-                                        System.IO.Directory.CreateDirectory("ipfs/" + transid);
-                                        fileName = filepath.Replace(@"//", "").Replace(@"\\", "").Substring(51);
-                                        if (fileName == "") { fileName = "artifact"; } else { fileName = fileName.Replace(@"/", "").Replace(@"\", ""); }
-                                        Directory.CreateDirectory("ipfs/" + transid);
-                                        System.IO.File.Move("ipfs/" + transid + "_tmp", filelocation);
-                                    }
-
-                                    if (System.IO.File.Exists("ipfs/" + transid + "/" + transid))
-                                    {
-                                        fileName = filepath.Replace(@"//", "").Replace(@"\\", "").Substring(51);
-                                        if (fileName == "") { fileName = "artifact"; } else { fileName = fileName.Replace(@"/", "").Replace(@"\", ""); }
-
-                                        System.IO.File.Move("ipfs/" + transid + "/" + transid, filelocation);
-                                    }
-
-
-                                    Process process3 = new Process
-                                    {
-                                        StartInfo = new ProcessStartInfo
-                                        {
-                                            FileName = @"ipfs\ipfs.exe",
-                                            Arguments = "pin add " + transid,
-                                            UseShellExecute = false,
-                                            CreateNoWindow = true
-                                        }
-                                    };
-                                    process3.Start();
-
-                                    try { Directory.Delete("ipfs/" + transid + "-build", true); } catch { }
-                                }
-                                else { process2.Kill(); }
-
-                            }
-
-                            break;
-                        default:
-                            if (!filepath.ToUpper().StartsWith("HTTP") && transactionid != "")
-                            {
-                                Root.GetRootByTransactionId(transactionid, "good-user", "better-password", @"http://127.0.0.1:18332");
-
-                            }
-                            break;
-
-                    }
-                });
-
-            }
-
-
-        }
 
         private void flowLayoutPanel1_Scroll(object sender, ScrollEventArgs e)
         {
@@ -487,19 +364,8 @@ namespace SUP
             {
                 videolocation = videopath;
 
-                //build web viewer with default loading page
-                Microsoft.Web.WebView2.WinForms.WebView2 webviewer = new Microsoft.Web.WebView2.WinForms.WebView2();
-                webviewer.AllowExternalDrop = true;
-                webviewer.BackColor = System.Drawing.Color.Black;
-                webviewer.CreationProperties = null;
-                webviewer.DefaultBackgroundColor = System.Drawing.Color.Black;
-                webviewer.Name = "webviewer";
-
-                webviewer.Size = new System.Drawing.Size(600,500);
-
-
-                webviewer.ZoomFactor = 1D;
-                webviewers.Add(webviewer);
+                
+               
 
                 TableLayoutPanel msg = new TableLayoutPanel
                 {
@@ -536,18 +402,9 @@ namespace SUP
                 }
 
 
-
-                msg.Controls.Add(webviewer);
-                try { await webviewer.EnsureCoreWebView2Async(); } catch { }
-                // immediately load Progress content into the WebView2 control
-                try { webviewer.CoreWebView2.Navigate(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + @"\includes\loading.html"); } catch { }
-
-
-                if (!videopath.ToLower().StartsWith("http"))
+              if (!videopath.ToLower().StartsWith("http") && !videopath.ToLower().StartsWith("ipfs"))
                 {
-                    videolocation = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + @"\root\" + videopath.Replace("BTC:", "").Replace("MZC:", "").Replace("LTC:", "").Replace("DOG:", "").Replace("IPFS:", "").Replace(@"/", @"\");
-                    if (videopath.ToLower().StartsWith("ipfs:")) { videolocation = videolocation.Replace(@"\root\", @"\ipfs\"); if (videopath.Length == 51) { videolocation += @"\artifact"; } }
-
+                    videolocation = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + @"\root\" + videopath.Replace("BTC:", "").Replace("MZC:", "").Replace("LTC:", "").Replace("DOG:", "").Replace(@"/", @"\");
 
                     if (!File.Exists(videolocation))
                     {
@@ -562,91 +419,30 @@ namespace SUP
                             switch (videopath.ToUpper().Substring(0, 4))
                             {
                                 case "MZC:":
-                                    Root.GetRootByTransactionId(transactionid, "good-user", "better-password", @"http://127.0.0.1:12832", "50");
+                                    Root.GetRootByTransactionId(transactionid, "good-user", "better-password", @"http://127.0.0.1:12832", "50", null, null, true);
 
                                     break;
                                 case "BTC:":
 
-                                    Root.GetRootByTransactionId(transactionid, "good-user", "better-password", @"http://127.0.0.1:8332", "0");
+                                    Root.GetRootByTransactionId(transactionid, "good-user", "better-password", @"http://127.0.0.1:8332", "0", null, null, true);
 
                                     break;
                                 case "LTC:":
 
-                                    Root.GetRootByTransactionId(transactionid, "good-user", "better-password", @"http://127.0.0.1:9332", "48");
+                                    Root.GetRootByTransactionId(transactionid, "good-user", "better-password", @"http://127.0.0.1:9332", "48", null, null, true);
 
 
                                     break;
                                 case "DOG:":
-                                    Root.GetRootByTransactionId(transactionid, "good-user", "better-password", @"http://127.0.0.1:22555", "30");
+                                    Root.GetRootByTransactionId(transactionid, "good-user", "better-password", @"http://127.0.0.1:22555", "30", null, null, true);
 
                                     break;
-
-                                case "IPFS":
-                                    string transid = "empty";
-                                    try { transid = videopath.Substring(5, 46); } catch { }
-
-                                    if (!System.IO.Directory.Exists("ipfs/" + transid + "-build"))
-                                    {
-                                        try
-                                        {
-                                            Directory.CreateDirectory("ipfs/" + transid);
-                                        }
-                                        catch { };
-
-                                        Directory.CreateDirectory("ipfs/" + transid + "-build");
-                                        Process process2 = new Process();
-                                        process2.StartInfo.FileName = @"ipfs\ipfs.exe";
-                                        process2.StartInfo.Arguments = "get " + videopath.Substring(5, 46) + @" -o ipfs\" + transid;
-                                        process2.StartInfo.UseShellExecute = false;
-                                        process2.StartInfo.CreateNoWindow = true;
-                                        process2.Start();
-                                        if (process2.WaitForExit(550000))
-                                        {
-                                            string fileName;
-                                            if (System.IO.File.Exists("ipfs/" + transid))
-                                            {
-                                                System.IO.File.Move("ipfs/" + transid, "ipfs/" + transid + "_tmp");
-                                                System.IO.Directory.CreateDirectory("ipfs/" + transid);
-                                                fileName = videopath.Replace(@"//", "").Replace(@"\\", "").Substring(51);
-                                                if (fileName == "") { fileName = "artifact"; } else { fileName = fileName.Replace(@"/", "").Replace(@"\", ""); }
-                                                Directory.CreateDirectory("ipfs/" + transid);
-                                                System.IO.File.Move("ipfs/" + transid + "_tmp", videolocation);
-                                            }
-
-                                            if (System.IO.File.Exists("ipfs/" + transid + "/" + transid))
-                                            {
-                                                fileName = videopath.Replace(@"//", "").Replace(@"\\", "").Substring(51);
-                                                if (fileName == "") { fileName = "artifact"; } else { fileName = fileName.Replace(@"/", "").Replace(@"\", ""); }
-
-                                                System.IO.File.Move("ipfs/" + transid + "/" + transid, videolocation);
-                                            }
-
-                                            Process process3 = new Process
-                                            {
-                                                StartInfo = new ProcessStartInfo
-                                                {
-                                                    FileName = @"ipfs\ipfs.exe",
-                                                    Arguments = "pin add " + transid,
-                                                    UseShellExecute = false,
-                                                    CreateNoWindow = true
-                                                }
-                                            };
-                                            process3.Start();
-
-                                            try { Directory.Delete("ipfs/" + transid + "-build", true); } catch { }
-                                        }
-                                        else { process2.Kill(); }
-
-
-
-                                    }
-
-                                    break;
+                                                                   
 
                                 default:
                                     if (!videopath.ToUpper().StartsWith("HTTP") && transactionid != "")
                                     {
-                                        Root.GetRootByTransactionId(transactionid, "good-user", "better-password", @"http://127.0.0.1:18332");
+                                        Root.GetRootByTransactionId(transactionid, "good-user", "better-password", @"http://127.0.0.1:18332","111", null, null, true);
 
                                     }
                                     break;
@@ -655,28 +451,30 @@ namespace SUP
                             if (File.Exists(videolocation))
                             {
 
-                                this.Invoke((Action)(() =>
+                                string pattern = @"[0-9a-fA-F]{64}";
+
+                       
+                                Match match = Regex.Match(videolocation, pattern);
+
+                              
+                                if (match.Success)
                                 {
+                                   
+                                    string transactionId = match.Value;
 
+                                    this.Invoke((MethodInvoker)delegate
+                                    {
+                                        FoundINQControl foundObject = new FoundINQControl(match.Value);
+                                        msg.Controls.Add(foundObject);
+                                    });
 
-                                    string viewerPath = Path.GetDirectoryName(videolocation) + @"\urnviewer.html";
-                                    string htmlstring = "<html><body><embed src=\"" + videolocation + "\" width=100% height=100% ></body></html>";
-                                    System.IO.File.WriteAllText(viewerPath, htmlstring);
+                                }
 
-                                    try { webviewer.CoreWebView2.Navigate(viewerPath); } catch { }
-
-
-                                }));
+                              
 
 
                             }
-                            else
-                            {
-                                try { webviewer.CoreWebView2.Navigate(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + @"\includes\notfound.html"); } catch { }
-
-                            }
-
-
+                          
 
                         });
 
@@ -686,29 +484,30 @@ namespace SUP
                     }
                     else
                     {
+                        string pattern = @"[0-9a-fA-F]{64}";
 
 
-                        string viewerPath = Path.GetDirectoryName(videolocation) + @"\urnviewer.html";
-                        string htmlstring = "<html><body><embed src=\"" + videolocation + "\" width=100% height=100% ></body></html>";
-                        System.IO.File.WriteAllText(viewerPath, htmlstring);
-                        try { webviewer.CoreWebView2.Navigate(viewerPath); } catch { }
+                        Match match = Regex.Match(videolocation, pattern);
+
+
+                        if (match.Success)
+                        {
+
+                            string transactionId = match.Value;
+
+                            this.Invoke((MethodInvoker)delegate
+                            {
+                                FoundINQControl foundObject = new FoundINQControl(match.Value);
+                                msg.Controls.Add(foundObject);
+                            });
+
+                        }
+
                     }
 
 
                 }
-                else
-                {
-                    string pattern = @"(?:youtu\.be/|youtube(?:-nocookie)?\.com/(?:[^/\n\s]*[/\n\s]*(?:v/|e(?:mbed)?/|.*[?&]v=))?)?([a-zA-Z0-9_-]{11})";
-
-                    Match match = Regex.Match(videopath, pattern);
-                    if (match.Success)
-                    {
-                        videolocation = @"https://www.youtube.com/embed/" + match.Groups[1].Value;
-                    }
-
-                    try { webviewer.CoreWebView2.Navigate(videolocation); } catch { }
-                }
-
+              
 
 
             }

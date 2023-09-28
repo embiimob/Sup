@@ -464,26 +464,30 @@ namespace SUP
             string OBJP2FK = GetRandomDelimiter() + messageBytes.Length + GetRandomDelimiter() + transMessage + txtINQJson.Text;
             byte[] OBJP2FKBytes = new byte[] { };
             PROState toProfile = PROState.GetProfileByAddress(_toaddress, "good-user", "better-password", @"http://127.0.0.1:18332");
-
-
+            string signature = "";
+            string signatureAddress = "";
             NetworkCredential credentials = new NetworkCredential("good-user", "better-password");
             RPCClient rpcClient = new RPCClient(credentials, new Uri(@"http://127.0.0.1:18332"), Network.Main);
-            System.Security.Cryptography.SHA256 mySHA256 = SHA256Managed.Create();
-            byte[] hashValue = new byte[] { };
-            hashValue = mySHA256.ComputeHash(Encoding.UTF8.GetBytes(OBJP2FK));
 
-            string signatureAddress;
-
-            signatureAddress = txtFromAddress.Text;
-            string signature = "";
-            try { signature = rpcClient.SendCommand("signmessage", signatureAddress, BitConverter.ToString(hashValue).Replace("-", String.Empty)).ResultString; }
-            catch (Exception ex)
+            if (txtFromAddress.Text != "")
             {
-                lblObjectStatus.Text = ex.Message;
+  
+                System.Security.Cryptography.SHA256 mySHA256 = SHA256Managed.Create();
+                byte[] hashValue = new byte[] { };
+                hashValue = mySHA256.ComputeHash(Encoding.UTF8.GetBytes(OBJP2FK));
 
-                return;
+               
+
+                signatureAddress = txtFromAddress.Text;
+               
+                try { signature = rpcClient.SendCommand("signmessage", signatureAddress, BitConverter.ToString(hashValue).Replace("-", String.Empty)).ResultString; }
+                catch (Exception ex)
+                {
+                    lblObjectStatus.Text = ex.Message;
+
+                    return;
+                }
             }
-
 
             if (btnEncryptionStatus.Text == "PRIVATE 🤐")
             {
@@ -508,8 +512,11 @@ namespace SUP
             }
             else
             {
-                OBJP2FK = "SIG" + GetRandomDelimiter() + "88" + GetRandomDelimiter() + signature + OBJP2FK;
+                if (txtFromAddress.Text != "")
+                {
+                    OBJP2FK = "SIG" + GetRandomDelimiter() + "88" + GetRandomDelimiter() + signature + OBJP2FK;
 
+                }
 
                 byte[] inputBytes = Encoding.UTF8.GetBytes(OBJP2FK); // Convert the string to bytes
 
@@ -591,8 +598,7 @@ namespace SUP
 
             //this will add the order specific inq address if one exists.
             if (txtINQAddress.Text != "") { encodedList.Add(txtINQAddress.Text); }
-
-            encodedList.Add(signatureAddress);
+            if (txtFromAddress.Text != "") { encodedList.Add(signatureAddress); }
             lblObjectStatus.Text = "cost: " + (0.00000546 * encodedList.Count).ToString("0.00000000") + "  + miner fee";
 
             if (File.Exists(@"WALKIE_TALKIE_ENABLED") && flowAttachments.Contains(this.btnPlay))

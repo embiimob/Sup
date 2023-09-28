@@ -1615,6 +1615,7 @@ namespace SUP
                 {
                     imgLoading.ImageLocation = @"includes\HugPuddle.jpg";
                 }
+                flowLayoutPanel1.Visible = false;
                 await Task.Run(() => BuildSearchResults());
                 flowLayoutPanel1.Visible = true;
                 pages.Visible = true;
@@ -1653,6 +1654,7 @@ namespace SUP
                 {
                     imgLoading.ImageLocation = @"includes\HugPuddle.jpg";
                 }
+                flowLayoutPanel1.Visible = false;
                 await Task.Run(() => BuildSearchResults());
                 flowLayoutPanel1.Visible = true;
                 pages.Visible = true;
@@ -1688,6 +1690,7 @@ namespace SUP
                 {
                     imgLoading.ImageLocation = @"includes\HugPuddle.jpg";
                 }
+                flowLayoutPanel1.Visible = false;
                 await Task.Run(() => BuildSearchResults());
                 flowLayoutPanel1.Visible = true;
                 pages.Visible = true;
@@ -1728,6 +1731,7 @@ namespace SUP
                 {
                     imgLoading.ImageLocation = @"includes\HugPuddle.jpg";
                 }
+                flowLayoutPanel1.Visible = false;
                 await Task.Run(() => BuildSearchResults());
                 flowLayoutPanel1.Visible = true;
                 pages.Visible = true;
@@ -2178,7 +2182,7 @@ namespace SUP
                     {
                         imgLoading.ImageLocation = @"includes\HugPuddle.jpg";
                     }
-
+                    flowLayoutPanel1.Visible = false;
                     await Task.Run(() => BuildSearchResults());
                     flowLayoutPanel1.Visible = true;
                     pages.Visible = true;
@@ -2282,7 +2286,7 @@ namespace SUP
                             {
                                 imgLoading.ImageLocation = @"includes\HugPuddle.jpg";
                             }
-
+                            flowLayoutPanel1.Visible = false;
                             await Task.Run(() => BuildSearchResults());
                             flowLayoutPanel1.Visible = true;
                             pages.Visible = true;
@@ -2314,7 +2318,7 @@ namespace SUP
                             {
                                 imgLoading.ImageLocation = @"includes\HugPuddle.jpg";
                             }
-
+                            flowLayoutPanel1.Visible = false;
                             await Task.Run(() => BuildSearchResults());
                             flowLayoutPanel1.Visible = true;
                             pages.Visible = true;
@@ -2384,7 +2388,7 @@ namespace SUP
                 {
                     imgLoading.ImageLocation = @"includes\HugPuddle.jpg";
                 }
-
+                flowLayoutPanel1.Visible = false;
                 await Task.Run(() => BuildSearchResults());
                 flowLayoutPanel1.Visible = true;
                 pages.Visible = true;
@@ -2438,7 +2442,7 @@ namespace SUP
                     imgLoading.ImageLocation = @"includes\HugPuddle.jpg";
                 }
                 try { pages.Value = int.Parse(txtLast.Text); } catch { }
-
+                flowLayoutPanel1.Visible = false;
                 await Task.Run(() => BuildSearchResults());
                 flowLayoutPanel1.Visible = true;
                 pages.Visible = true;
@@ -2484,7 +2488,7 @@ namespace SUP
             {
                 imgLoading.ImageLocation = @"includes\HugPuddle.jpg";
             }
-
+            flowLayoutPanel1.Visible = false;
             await Task.Run(() => BuildSearchResults());
             flowLayoutPanel1.Visible = true;
             pages.Visible = true;
@@ -2527,6 +2531,7 @@ namespace SUP
                 {
                     imgLoading.ImageLocation = @"includes\HugPuddle.jpg";
                 }
+                flowLayoutPanel1.Visible = false;
                 await Task.Run(() => BuildSearchResults());
                 flowLayoutPanel1.Visible = true;
                 pages.Visible = true;

@@ -11,24 +11,16 @@ namespace SUP
     public partial class FoundINQControl : UserControl
     {
         private string _address;
+        private string _activeprofile;
         private bool calculate = false;
-        public FoundINQControl(string address)
+        public FoundINQControl(string address, string activeprofile = "")
         {
             InitializeComponent();
             _address = address;
+            _activeprofile = activeprofile;
         }
 
-        private void foundObjectControl_Click(object sender, EventArgs e)
-        {
-
-            Form parentForm = this.FindForm();
-            ObjectBrowser childForm = new ObjectBrowser(txtTransactionId.Text);
-
-            childForm.Owner = parentForm;
-
-            childForm.Show();
-
-        }
+    
 
         private void ObjectAddress_Click(object sender, EventArgs e)
         {
@@ -84,6 +76,14 @@ namespace SUP
         private void btnVote_Click(object sender, EventArgs e)
         {
 
+            Button voteButton = (Button)sender;
+
+            DiscoBall disco = new DiscoBall(_activeprofile, "", voteButton.Tag.ToString(), "", false);
+            disco.StartPosition = FormStartPosition.CenterScreen;
+            disco.Show(this);
+            disco.Focus();
+
+
         }
 
         private void btnValueTotal_Click(object sender, EventArgs e)
@@ -119,9 +119,16 @@ namespace SUP
                     // Calculate the time difference between futureTime and currentTime
                     TimeSpan timeRemaining = futureTime - currentTime;
 
-                    // Format the time remaining as "Xhr Y minutes remaining"
-                    string timeRemainingString = $"{(int)timeRemaining.TotalDays} days {(int)timeRemaining.TotalHours} hrs {timeRemaining.Minutes} minutes remain";
-
+                    // Format the time remaining
+                    string timeRemainingString;
+                    if (timeRemaining.TotalDays >= 1)
+                    {
+                        timeRemainingString = $"{(int)timeRemaining.TotalDays} day {(int)timeRemaining.Hours} hrs";
+                    }
+                    else
+                    {
+                        timeRemainingString = $"{(int)timeRemaining.TotalHours} hrs {timeRemaining.Minutes} minutes";
+                    }
                     // Create the final status string
                     string statusString = $"status: {timeRemainingString}";
 
@@ -133,12 +140,31 @@ namespace SUP
 
                 if (btnValueTotal.Text == "show values")
                 {
-                    lblVotesOrValue.Text = "Total Votes: " + iNQState.TotalVotes.ToString();
+                    if (btnShowAllOrGated.Text == "show all") {
+                        lblVotesOrValue.Text = "Total Votes: " + iNQState.TotalGatedVotes.ToString();
+
+                    }
+                    else
+                    {
+                        lblVotesOrValue.Text = "Total Votes: " + iNQState.TotalVotes.ToString();
+
+                    }
+
                 }
                 else
                 {
-                    lblVotesOrValue.Text = "Total Value: " + iNQState.TotalValue.ToString();
+                    if (btnShowAllOrGated.Text == "show all")
+                    {
+                        lblVotesOrValue.Text = "Total Value: " + iNQState.TotalGatedValue.ToString();
+
+                    }
+                    else
+                    {
+                        lblVotesOrValue.Text = "Total Value: " + iNQState.TotalValue.ToString();
+                    };
                 }
+
+
                     foreach (AnswerData answer in iNQState.AnswerData)
                 {
                     System.Windows.Forms.Label lblANS = new System.Windows.Forms.Label();
@@ -241,6 +267,7 @@ namespace SUP
                     flowLayoutPanel1.Controls.Add(lblANSTotal);
 
                     System.Windows.Forms.Button btnVote = new System.Windows.Forms.Button();
+                    if ((_activeprofile == "" && iNQState.RequireSignature ) || !int.TryParse(iNQState.status, out int dummy)) { btnVote.Enabled = false; }
                     btnVote.Location = new System.Drawing.Point(435, 38);
                     btnVote.Name = "btnVote";
                     btnVote.Size = new System.Drawing.Size(51, 23);
@@ -270,6 +297,16 @@ namespace SUP
             this.Invoke((MethodInvoker)delegate
             {
                 RefreshTotals();
+            });
+        }
+
+        private void btnShowAllOrGated_Click(object sender, EventArgs e)
+        {
+            if (btnShowAllOrGated.Text == "show all") { btnShowAllOrGated.Text = "show gated"; } else { btnShowAllOrGated.Text = "show all"; };
+            this.Invoke((MethodInvoker)delegate
+            {
+                RefreshTotals();
+
             });
         }
     }

@@ -1514,6 +1514,7 @@ namespace SUP
                                                         this.Invoke((MethodInvoker)delegate
                                                         {
                                                             FoundINQControl foundObject = new FoundINQControl(s);
+                                                            foundObject.Margin = new Padding(20, 7, 8, 7);
                                                             supFlow.Controls.Add(foundObject);
                                                             supFlow.Controls.SetChildIndex(foundObject, 2);
                                                         });
@@ -1851,6 +1852,7 @@ namespace SUP
                                                             this.Invoke((MethodInvoker)delegate
                                                             {
                                                                 FoundINQControl foundObject = new FoundINQControl(s);
+                                                                foundObject.Margin = new Padding(20, 7, 8, 7);
                                                                 supFlow.Controls.Add(foundObject);
                                                                 supFlow.Controls.SetChildIndex(foundObject, 2);
                                                             });
@@ -2177,6 +2179,7 @@ namespace SUP
                                                             this.Invoke((MethodInvoker)delegate
                                                             {
                                                                 FoundINQControl foundObject = new FoundINQControl(s);
+                                                                foundObject.Margin = new Padding(20, 7, 8, 7);
                                                                 supFlow.Controls.Add(foundObject);
                                                                 supFlow.Controls.SetChildIndex(foundObject, 2);
                                                             });
@@ -2502,6 +2505,7 @@ namespace SUP
                                                             this.Invoke((MethodInvoker)delegate
                                                             {
                                                                 FoundINQControl foundObject = new FoundINQControl(s);
+                                                                foundObject.Margin = new Padding(20, 7, 8, 7);
                                                                 supFlow.Controls.Add(foundObject);
                                                                 supFlow.Controls.SetChildIndex(foundObject, 2);
                                                             });
@@ -2829,6 +2833,7 @@ namespace SUP
                                                             this.Invoke((MethodInvoker)delegate
                                                             {
                                                                 FoundINQControl foundObject = new FoundINQControl(s);
+                                                                foundObject.Margin = new Padding(20, 7, 8, 7);
                                                                 supFlow.Controls.Add(foundObject);
                                                                 supFlow.Controls.SetChildIndex(foundObject, 2);
                                                             });
@@ -3453,8 +3458,13 @@ namespace SUP
                                                 //ADD INQ IF IT EXISTS AND IS NOT BLOCKED
                                                 this.Invoke((MethodInvoker)delegate
                                                 {
-                                                    FoundINQControl foundObject = new FoundINQControl(supMessagePacket[1]);
-                                                    supFlow.Controls.Add(foundObject);
+                                                    string profileowner = "";
+
+                                                    if (profileOwner.Tag != null) { profileowner = profileOwner.Tag.ToString(); }
+                                                    FoundINQControl foundObject = new FoundINQControl(supMessagePacket[1],profileowner);
+
+                                                    foundObject.Margin = new Padding(20, 7, 8, 7); 
+                                                    supFlow.Controls.Add(foundObject);                                                  
                                                 });
                                             }
 
@@ -4013,7 +4023,11 @@ namespace SUP
                                                 //ADD INQ IF IT EXISTS AND IS NOT BLOCKED
                                                 this.Invoke((MethodInvoker)delegate
                                                 {
-                                                    FoundINQControl foundObject = new FoundINQControl(supMessagePacket[1]);
+                                                    string profileowner = "";
+
+                                                    if (profileOwner.Tag != null) { profileowner = profileOwner.Tag.ToString(); }
+                                                    FoundINQControl foundObject = new FoundINQControl(supMessagePacket[1], profileowner);
+                                                    foundObject.Margin = new Padding(20, 7, 8, 7);
                                                     supPrivateFlow.Controls.Add(foundObject);
                                                 });
                                             }
@@ -4592,7 +4606,12 @@ namespace SUP
                             //ADD INQ IF IT EXISTS AND IS NOT BLOCKED
                             this.Invoke((MethodInvoker)delegate
                             {
-                                FoundINQControl foundObject = new FoundINQControl(_transactionId);
+                                string profileowner = "";
+
+                                if (profileOwner.Tag != null) { profileowner = profileOwner.Tag.ToString(); }
+
+                                FoundINQControl foundObject = new FoundINQControl(_transactionId, profileowner);
+                                foundObject.Margin = new Padding(20, 7, 8, 7);
                                 supFlow.Controls.Add(foundObject);
                             });
                         }

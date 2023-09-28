@@ -123,7 +123,7 @@
             // 
             this.btnOfficial.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.btnOfficial.BackColor = System.Drawing.Color.Yellow;
-            this.btnOfficial.Location = new System.Drawing.Point(742, 487);
+            this.btnOfficial.Location = new System.Drawing.Point(738, 483);
             this.btnOfficial.Name = "btnOfficial";
             this.btnOfficial.Size = new System.Drawing.Size(87, 40);
             this.btnOfficial.TabIndex = 105;
@@ -148,7 +148,7 @@
             this.btnLaunchURN.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.btnLaunchURN.BackColor = System.Drawing.SystemColors.ControlDark;
             this.btnLaunchURN.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnLaunchURN.Location = new System.Drawing.Point(795, 492);
+            this.btnLaunchURN.Location = new System.Drawing.Point(792, 489);
             this.btnLaunchURN.Name = "btnLaunchURN";
             this.btnLaunchURN.Size = new System.Drawing.Size(34, 31);
             this.btnLaunchURN.TabIndex = 66;
@@ -640,10 +640,10 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.lblPleaseStandBy.Font = new System.Drawing.Font("Microsoft Sans Serif", 27.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lblPleaseStandBy.ForeColor = System.Drawing.Color.White;
-            this.lblPleaseStandBy.Location = new System.Drawing.Point(319, 12);
+            this.lblPleaseStandBy.Location = new System.Drawing.Point(313, 12);
             this.lblPleaseStandBy.Name = "lblPleaseStandBy";
             this.lblPleaseStandBy.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
-            this.lblPleaseStandBy.Size = new System.Drawing.Size(520, 520);
+            this.lblPleaseStandBy.Size = new System.Drawing.Size(526, 520);
             this.lblPleaseStandBy.TabIndex = 108;
             this.lblPleaseStandBy.Text = "please stand by... locked for loading";
             this.lblPleaseStandBy.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;

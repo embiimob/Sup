@@ -56,7 +56,6 @@
             this.txtQUE.Size = new System.Drawing.Size(489, 90);
             this.txtQUE.TabIndex = 6;
             this.txtQUE.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            this.txtQUE.Click += new System.EventHandler(this.foundObjectControl_Click);
             // 
             // txtTransactionId
             // 
@@ -85,7 +84,6 @@
             this.txtStatus.Size = new System.Drawing.Size(283, 18);
             this.txtStatus.TabIndex = 9;
             this.txtStatus.Text = "status: ";
-            this.txtStatus.Click += new System.EventHandler(this.foundObjectControl_Click);
             // 
             // txtFoundAddress
             // 
@@ -152,6 +150,7 @@
             this.btnShowAllOrGated.Text = "show gated";
             this.btnShowAllOrGated.UseVisualStyleBackColor = true;
             this.btnShowAllOrGated.Visible = false;
+            this.btnShowAllOrGated.Click += new System.EventHandler(this.btnShowAllOrGated_Click);
             // 
             // lblVotesOrValue
             // 
@@ -226,7 +225,6 @@
             this.Padding = new System.Windows.Forms.Padding(10);
             this.Size = new System.Drawing.Size(489, 469);
             this.Load += new System.EventHandler(this.FoundINQControl_Load);
-            this.Click += new System.EventHandler(this.foundObjectControl_Click);
             this.ResumeLayout(false);
             this.PerformLayout();
 

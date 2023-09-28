@@ -303,7 +303,7 @@ namespace SUP.P2FK
                             {
                                 if (root.Signed)
                                 {
-                                    hasVoted.Add(root.SignedBy);
+                                    try { hasVoted.Add(root.SignedBy); } catch { }
                                 }
                             }
 
