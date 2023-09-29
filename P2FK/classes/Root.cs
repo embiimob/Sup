@@ -39,8 +39,6 @@ namespace SUP.P2FK
         public DateTime BuildDate { get; set; }
         public bool Cached { get; set; }
 
-
-
         //ensures levelDB is thread safely
         private readonly static object SupLocker = new object();
 
@@ -226,7 +224,6 @@ namespace SUP.P2FK
                 }
 
 
-
                 string fileName = transactionASCII.Substring(0, match.Index);
                 byte[] fileBytes = transactionBytes
                     .Skip(headerSize + (transactionBytesSize - transactionASCII.Length))
@@ -294,13 +291,13 @@ namespace SUP.P2FK
                             url
                         ), P2FKSignatureAddress
                     );
-
-                        if (P2FKRoot.File.Count > 0)
-                        {
-                            fileName = P2FKRoot.File.Keys.First();
-                            fileBytes = System.IO.File.ReadAllBytes(@"root\" + P2FKRoot.TransactionId + @"\" + fileName); ;
-                        }
-                        else { fileName = ""; fileBytes = Array.Empty<byte>(); }
+                            if (P2FKRoot.File.Count > 0)
+                            {
+                                fileName = P2FKRoot.File.Keys.First();
+                                //fileBytes = System.IO.File.ReadAllBytes(@"root\" + P2FKRoot.TransactionId + @"\" + fileName); ;
+                            }
+                            else { fileName = ""; fileBytes = Array.Empty<byte>(); }
+                        
                         P2FKRoot.TotalByteSize += totalByteSize;
                         P2FKRoot.Confirmations = confirmations;
                         P2FKRoot.BlockDate = blockdate;
@@ -460,8 +457,6 @@ namespace SUP.P2FK
             //Cache Root to disk to speed up future crawls
 
 
-
-
             Task.Run(() =>
             {
 
@@ -619,7 +614,7 @@ namespace SUP.P2FK
         public static Root[] GetRootsByAddress(string address, string username, string password, string url, int skip = 0, int qty = -1, string versionByte = "111", bool calculate = false)
         {
             var rootList = new List<Root>();
-             if (address.Length < 34) { return rootList.ToArray(); }
+            if (address.Length < 34) { return rootList.ToArray(); }
 
             bool fetched = false;
             address = address.Replace("<", "").Replace(">", "");
@@ -636,11 +631,11 @@ namespace SUP.P2FK
             if (fetched && rootList.Count == 0 & !calculate) { return rootList.ToArray(); }
 
             int intProcessHeight = 0;
-                      
+
             try { intProcessHeight = rootList.Max(max => max.Id); } catch { }
 
 
-            if (calculate) {  intProcessHeight = 0;  rootList = new List<Root>(); }
+            if (calculate) { intProcessHeight = 0; rootList = new List<Root>(); }
 
             int innerskip = intProcessHeight;
             bool calculated = false;
@@ -648,13 +643,13 @@ namespace SUP.P2FK
             while (true)
             {
                 dynamic deserializedObject = null;
-                
+
                 var credentials = new NetworkCredential(username, password);
                 var rpcClient = new RPCClient(credentials, new Uri(url));
                 string results = rpcClient.SendCommand("searchrawtransactions", address, 0, innerskip, 300).ResultString;
-                
-                 deserializedObject = JsonConvert.DeserializeObject(results);
-                 if (deserializedObject.Count == 0) { break; }
+
+                deserializedObject = JsonConvert.DeserializeObject(results);
+                if (deserializedObject.Count == 0) { break; }
 
                 for (int i = 0; i < deserializedObject.Count; i++)
                 {
@@ -669,11 +664,12 @@ namespace SUP.P2FK
                         root.Id = intProcessHeight;
 
                         rootList.Add(root);
-                    }else
+                    }
+                    else
                     {
                         if (root != null && root.Output != null && root.BlockDate.Year < 1975) { intProcessHeight--; }
                     }
-                    
+
                 }
                 innerskip += 300;
 
@@ -710,8 +706,8 @@ namespace SUP.P2FK
         {
             Regex regexTransactionId = new Regex(@"\b[0-9a-f]{64}\b");
             byte[] transactionBytes = Array.Empty<byte>();
-            NetworkCredential credentials = new NetworkCredential(username, password);
-            RPCClient rpcClient = new RPCClient(credentials, new Uri(url), Network.Main);
+
+
             int length1;
             int length2;
             byte[] result;
@@ -731,7 +727,11 @@ namespace SUP.P2FK
 };
             foreach (Match match in matches)
             {
+
+
                 byte[] transactionBytesBatch = new byte[0];
+                NetworkCredential credentials = new NetworkCredential(username, password);
+                RPCClient rpcClient = new RPCClient(credentials, new Uri(url), Network.Main);
                 dynamic deserializedObject = JsonConvert.DeserializeObject(
                     rpcClient.SendCommand("getrawtransaction", match.Value, 1).ResultString
                 );
@@ -770,7 +770,9 @@ namespace SUP.P2FK
                 System.Buffer.BlockCopy(transactionBytesBatch, 0, result, length1, length2);
 
                 transactionBytes = result;
+
             }
+
             return transactionBytes;
         }
         public static byte[] GetRootBytesByFile(string[] fileNames)

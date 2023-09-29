@@ -46,9 +46,9 @@ namespace SUP
             this.selectSort = new System.Windows.Forms.ComboBox();
             this.btnVideoSearch = new System.Windows.Forms.Button();
             this.btnJukeBox = new System.Windows.Forms.Button();
+            this.btnInquiry = new System.Windows.Forms.Button();
             this.panel1 = new System.Windows.Forms.Panel();
             this.imgLoading = new System.Windows.Forms.PictureBox();
-            this.btnInquiry = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.pages)).BeginInit();
             this.flowLayoutPanel2.SuspendLayout();
             this.panel1.SuspendLayout();
@@ -150,6 +150,7 @@ namespace SUP
             this.pages.Size = new System.Drawing.Size(1020, 45);
             this.pages.TabIndex = 84;
             this.pages.TickStyle = System.Windows.Forms.TickStyle.Both;
+            this.pages.Visible = false;
             this.pages.Scroll += new System.EventHandler(this.pages_Scroll);
             this.pages.MouseDown += new System.Windows.Forms.MouseEventHandler(this.pages_MouseDown);
             this.pages.MouseUp += new System.Windows.Forms.MouseEventHandler(this.pages_MouseUp);
@@ -268,6 +269,20 @@ namespace SUP
             this.btnJukeBox.UseVisualStyleBackColor = false;
             this.btnJukeBox.Click += new System.EventHandler(this.btnJukeBox_Click);
             // 
+            // btnInquiry
+            // 
+            this.btnInquiry.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.btnInquiry.BackColor = System.Drawing.Color.White;
+            this.btnInquiry.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnInquiry.Font = new System.Drawing.Font("Segoe UI Emoji", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnInquiry.Location = new System.Drawing.Point(987, 3);
+            this.btnInquiry.Name = "btnInquiry";
+            this.btnInquiry.Size = new System.Drawing.Size(26, 26);
+            this.btnInquiry.TabIndex = 103;
+            this.btnInquiry.Text = "⁉️";
+            this.btnInquiry.UseVisualStyleBackColor = false;
+            this.btnInquiry.Click += new System.EventHandler(this.btnInquiry_Click);
+            // 
             // panel1
             // 
             this.panel1.Controls.Add(this.flowLayoutPanel1);
@@ -290,20 +305,6 @@ namespace SUP
             this.imgLoading.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
             this.imgLoading.TabIndex = 81;
             this.imgLoading.TabStop = false;
-            // 
-            // btnInquiry
-            // 
-            this.btnInquiry.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.btnInquiry.BackColor = System.Drawing.Color.White;
-            this.btnInquiry.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnInquiry.Font = new System.Drawing.Font("Segoe UI Emoji", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnInquiry.Location = new System.Drawing.Point(987, 3);
-            this.btnInquiry.Name = "btnInquiry";
-            this.btnInquiry.Size = new System.Drawing.Size(26, 26);
-            this.btnInquiry.TabIndex = 103;
-            this.btnInquiry.Text = "⁉️";
-            this.btnInquiry.UseVisualStyleBackColor = false;
-            this.btnInquiry.Click += new System.EventHandler(this.btnInquiry_Click);
             // 
             // ObjectBrowser
             // 

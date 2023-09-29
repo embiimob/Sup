@@ -2322,30 +2322,7 @@ namespace SUP.P2FK
                         }
 
                     }
-                    else
-                    {
-                        try { objectStates.Last().Id = objectTransactions.Max(max => max.Id); } catch { }
-                        Task.Run(() =>
-                        {
-                            try { File.Delete(@"GET_OBJECTS_BY_ADDRESS"); } catch { }
-                        });
-
-                        if (skip != 0)
-                        {
-                            //GPT3 SUGGESTED
-                            var skippedList = objectStates.SkipWhile(state => state.Id != skip);
-
-
-                            if (qty == -1) { return skippedList.ToList(); }
-                            else { return skippedList.Take(qty).ToList(); }
-                        }
-                        else
-                        {
-                            if (qty == -1) { return objectStates.ToList(); }
-                            else { return objectStates.Take(qty).ToList(); }
-
-                        }
-                    }
+                    
 
                 }
 

@@ -70,68 +70,6 @@ namespace SUP
             {
 
 
-                this.Invoke((Action)(() =>
-                {
-                    if (txtSearchAddress.Text.StartsWith("#"))
-                    {
-
-                        profileURN.Links[0].LinkData = Root.GetPublicAddressByKeyword(txtSearchAddress.Text.Substring(1), "111");
-                        profileURN.LinkColor = System.Drawing.SystemColors.Highlight;
-                        profileURN.Text = txtSearchAddress.Text;
-
-
-                    }
-                    else
-                    {
-
-
-
-
-
-                        try { searchprofile = PROState.GetProfileByAddress(address, "good-user", "better-password", @"http://127.0.0.1:18332"); } catch { }
-
-
-                        try
-                        {
-                            if (searchprofile.URN == null)
-                            {
-                                searchprofile = PROState.GetProfileByURN(address, "good-user", "better-password", @"http://127.0.0.1:18332");
-                            }
-
-                            if (searchprofile.URN != null)
-                            {
-
-
-                                    profileURN.Links[0].LinkData = searchprofile.Creators.First();
-                                    profileURN.LinkColor = System.Drawing.SystemColors.Highlight;
-
-                                    profileURN.Text = TruncateAddress(searchprofile.URN);
-
-                                    profileCheck = searchprofile.Creators.First();
-                               
-
-                            }
-                            else
-                            {
-                                
-                                    profileURN.Links[0].LinkData = address;
-                                    profileURN.LinkColor = System.Drawing.SystemColors.GradientActiveCaption;
-                                    profileURN.Text = "anon";
-                                
-                            }
-                        }
-                        catch
-                        {
-
-                           
-                                profileURN.Links[0].LinkData = address;
-                                profileURN.LinkColor = System.Drawing.SystemColors.GradientActiveCaption;
-                                profileURN.Text = "anon";
-                            
-                        }
-                    }
-                }));
-
                 if (btnCreated.BackColor == Color.Yellow && txtSearchAddress.Text != "")
                 {
                     if (!System.IO.File.Exists("root\\" + profileCheck + "\\GetObjectsCreatedByAddress.json"))
@@ -181,6 +119,35 @@ namespace SUP
                     else
                     {
 
+                                              
+
+
+                        if (!txtSearchAddress.Text.StartsWith("#"))
+                        {
+
+                            try { searchprofile = PROState.GetProfileByAddress(address, "good-user", "better-password", @"http://127.0.0.1:18332"); } catch { }
+
+
+
+                            if (searchprofile.URN == null)
+                            {
+                                searchprofile = PROState.GetProfileByURN(address, "good-user", "better-password", @"http://127.0.0.1:18332");
+                            }
+
+                            if (searchprofile.URN != null)
+                            {
+                                profileCheck = searchprofile.Creators.First();
+
+                            }
+
+                        }
+                        else
+                        {
+
+
+                            profileCheck = Root.GetPublicAddressByKeyword(txtSearchAddress.Text.Substring(1), "111");
+
+                        }
 
                         if (!System.IO.File.Exists("root\\" + profileCheck + "\\GetObjectsByAddress.json"))
                         {
@@ -191,7 +158,16 @@ namespace SUP
                             }));
 
                         }
+
                         createdObjects = OBJState.GetObjectsByAddress(profileCheck, "good-user", "better-password", @"http://127.0.0.1:18332", "111", 0, -1);
+
+                        this.Invoke((Action)(() =>
+                        {
+                            profileURN.Links[0].LinkData = profileCheck;
+                            profileURN.LinkColor = System.Drawing.SystemColors.Highlight;
+                            profileURN.Text = txtSearchAddress.Text;
+                        }));
+
                     }
                 }
 
@@ -201,7 +177,7 @@ namespace SUP
             {
                 this.Invoke((Action)(() =>
                 {
-                  
+
 
                     string selectedValue = selectSort.SelectedItem.ToString();
 
@@ -822,7 +798,7 @@ namespace SUP
                             foundObject.ObjectName.Text = objstate.Name;
                             foundObject.ObjectDescription.Text = objstate.Description;
                             foundObject.ObjectAddress.Text = objstate.URN;
-                            
+
                             string imgurn = "";
                             imgurn = objstate.Image;
 
@@ -1096,7 +1072,7 @@ namespace SUP
                                 flowLayoutPanel1.Controls.Add(foundObject);
                             }));
 
-                                                  
+
                         }
                         catch (Exception ex)
                         {
@@ -1792,7 +1768,7 @@ namespace SUP
                     loadQty -= flowLayoutPanel1.Controls.Count;
 
 
-                   
+
                     if (txtSearchAddress.Text.ToLower().StartsWith("http"))
                     {
                         flowLayoutPanel1.Controls.Clear();
@@ -2041,11 +2017,11 @@ namespace SUP
                     }
 
 
-                   
+
 
 
                 }
-                catch { }              
+                catch { }
 
 
             }
