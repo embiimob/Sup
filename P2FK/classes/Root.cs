@@ -310,7 +310,7 @@ namespace SUP.P2FK
                     {
                         var rootLedger = JsonConvert.SerializeObject(P2FKRoot);
 
-                        System.IO.File.WriteAllText(@"root\" + P2FKRoot.TransactionId + @"\" + "ROOT.json", rootLedger);
+                        try { System.IO.File.WriteAllText(@"root\" + P2FKRoot.TransactionId + @"\" + "ROOT.json", rootLedger); } catch { }
                         return P2FKRoot;
                     }
 
