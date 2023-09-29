@@ -53,6 +53,20 @@ namespace SUP
             this.label11 = new System.Windows.Forms.Label();
             this.btnSearch = new System.Windows.Forms.Button();
             this.dgTransactions = new System.Windows.Forms.DataGridView();
+            this.rootid = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.messagecount = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.is_signed = new System.Windows.Forms.DataGridViewCheckBoxColumn();
+            this.signed_by = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.filecount = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.totalfilebytes = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.keywordcount = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.total_bytes = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.block_time = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.transaction_id = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.signature = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.confirmations = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.BlockHeight = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.buildtime = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.btnGetTransactionId = new System.Windows.Forms.Button();
             this.label12 = new System.Windows.Forms.Label();
             this.txtTransactionId = new System.Windows.Forms.TextBox();
@@ -63,6 +77,11 @@ namespace SUP
             this.lblTotalTime = new System.Windows.Forms.Label();
             this.lblKbs = new System.Windows.Forms.Label();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
+            this.btnGetInquiryByTransactionId = new System.Windows.Forms.Button();
+            this.btnGetInquiries = new System.Windows.Forms.Button();
+            this.btnInquiriesCreated = new System.Windows.Forms.Button();
+            this.btnGetInquiriesByKeyword = new System.Windows.Forms.Button();
+            this.btnGetInquiry = new System.Windows.Forms.Button();
             this.btnCollections = new System.Windows.Forms.Button();
             this.button3 = new System.Windows.Forms.Button();
             this.ButtonGetPublicKeys = new System.Windows.Forms.Button();
@@ -92,25 +111,6 @@ namespace SUP
             this.btnGetObject = new System.Windows.Forms.Button();
             this.btnDecrypt = new System.Windows.Forms.Button();
             this.btnEncrypt = new System.Windows.Forms.Button();
-            this.btnGetInquiry = new System.Windows.Forms.Button();
-            this.btnGetInquiriesByKeyword = new System.Windows.Forms.Button();
-            this.btnInquiriesCreated = new System.Windows.Forms.Button();
-            this.btnGetInquiries = new System.Windows.Forms.Button();
-            this.btnGetInquiryByTransactionId = new System.Windows.Forms.Button();
-            this.rootid = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.messagecount = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.is_signed = new System.Windows.Forms.DataGridViewCheckBoxColumn();
-            this.signed_by = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.filecount = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.totalfilebytes = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.keywordcount = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.total_bytes = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.block_time = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.transaction_id = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.signature = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.confirmations = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.BlockHeight = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.buildtime = new System.Windows.Forms.DataGridViewTextBoxColumn();
             ((System.ComponentModel.ISupportInitialize)(this.dgTransactions)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
@@ -335,6 +335,84 @@ namespace SUP
             this.dgTransactions.TabIndex = 30;
             this.dgTransactions.CellClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.DataGridViewClick);
             // 
+            // rootid
+            // 
+            this.rootid.HeaderText = "Object ID";
+            this.rootid.MinimumWidth = 60;
+            this.rootid.Name = "rootid";
+            // 
+            // messagecount
+            // 
+            dataGridViewCellStyle2.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.messagecount.DefaultCellStyle = dataGridViewCellStyle2;
+            this.messagecount.HeaderText = "Messages";
+            this.messagecount.MaxInputLength = 100000000;
+            this.messagecount.Name = "messagecount";
+            // 
+            // is_signed
+            // 
+            this.is_signed.HeaderText = "Signed";
+            this.is_signed.MinimumWidth = 50;
+            this.is_signed.Name = "is_signed";
+            this.is_signed.Resizable = System.Windows.Forms.DataGridViewTriState.True;
+            this.is_signed.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.Automatic;
+            // 
+            // signed_by
+            // 
+            this.signed_by.HeaderText = "Signed By";
+            this.signed_by.Name = "signed_by";
+            // 
+            // filecount
+            // 
+            this.filecount.HeaderText = "Files";
+            this.filecount.Name = "filecount";
+            // 
+            // totalfilebytes
+            // 
+            this.totalfilebytes.HeaderText = "File Bytes";
+            this.totalfilebytes.Name = "totalfilebytes";
+            this.totalfilebytes.Resizable = System.Windows.Forms.DataGridViewTriState.True;
+            // 
+            // keywordcount
+            // 
+            this.keywordcount.HeaderText = "Keys";
+            this.keywordcount.Name = "keywordcount";
+            // 
+            // total_bytes
+            // 
+            this.total_bytes.HeaderText = "Total Bytes";
+            this.total_bytes.Name = "total_bytes";
+            // 
+            // block_time
+            // 
+            this.block_time.HeaderText = "Block Time";
+            this.block_time.Name = "block_time";
+            // 
+            // transaction_id
+            // 
+            this.transaction_id.HeaderText = "TID";
+            this.transaction_id.Name = "transaction_id";
+            // 
+            // signature
+            // 
+            this.signature.HeaderText = "SIG";
+            this.signature.Name = "signature";
+            // 
+            // confirmations
+            // 
+            this.confirmations.HeaderText = "Confirms";
+            this.confirmations.Name = "confirmations";
+            // 
+            // BlockHeight
+            // 
+            this.BlockHeight.HeaderText = "BlockHeight";
+            this.BlockHeight.Name = "BlockHeight";
+            // 
+            // buildtime
+            // 
+            this.buildtime.HeaderText = "Build Time";
+            this.buildtime.Name = "buildtime";
+            // 
             // btnGetTransactionId
             // 
             this.btnGetTransactionId.Location = new System.Drawing.Point(635, 177);
@@ -497,6 +575,56 @@ namespace SUP
             this.splitContainer1.TabIndex = 42;
             this.splitContainer1.Resize += new System.EventHandler(this.OnContainerResize);
             // 
+            // btnGetInquiryByTransactionId
+            // 
+            this.btnGetInquiryByTransactionId.Location = new System.Drawing.Point(95, 339);
+            this.btnGetInquiryByTransactionId.Name = "btnGetInquiryByTransactionId";
+            this.btnGetInquiryByTransactionId.Size = new System.Drawing.Size(79, 23);
+            this.btnGetInquiryByTransactionId.TabIndex = 84;
+            this.btnGetInquiryByTransactionId.Text = "by txid";
+            this.btnGetInquiryByTransactionId.UseVisualStyleBackColor = true;
+            this.btnGetInquiryByTransactionId.Click += new System.EventHandler(this.btnGetInquiryByTransactionId_Click);
+            // 
+            // btnGetInquiries
+            // 
+            this.btnGetInquiries.Location = new System.Drawing.Point(182, 339);
+            this.btnGetInquiries.Name = "btnGetInquiries";
+            this.btnGetInquiries.Size = new System.Drawing.Size(75, 23);
+            this.btnGetInquiries.TabIndex = 83;
+            this.btnGetInquiries.Text = "get inquiries";
+            this.btnGetInquiries.UseVisualStyleBackColor = true;
+            this.btnGetInquiries.Click += new System.EventHandler(this.button7_Click);
+            // 
+            // btnInquiriesCreated
+            // 
+            this.btnInquiriesCreated.Location = new System.Drawing.Point(354, 340);
+            this.btnInquiriesCreated.Name = "btnInquiriesCreated";
+            this.btnInquiriesCreated.Size = new System.Drawing.Size(79, 23);
+            this.btnInquiriesCreated.TabIndex = 82;
+            this.btnInquiriesCreated.Text = "inq created";
+            this.btnInquiriesCreated.UseVisualStyleBackColor = true;
+            this.btnInquiriesCreated.Click += new System.EventHandler(this.btnInquiriesCreated_Click);
+            // 
+            // btnGetInquiriesByKeyword
+            // 
+            this.btnGetInquiriesByKeyword.Location = new System.Drawing.Point(269, 339);
+            this.btnGetInquiriesByKeyword.Name = "btnGetInquiriesByKeyword";
+            this.btnGetInquiriesByKeyword.Size = new System.Drawing.Size(81, 23);
+            this.btnGetInquiriesByKeyword.TabIndex = 81;
+            this.btnGetInquiriesByKeyword.Text = "by keyword";
+            this.btnGetInquiriesByKeyword.UseVisualStyleBackColor = true;
+            this.btnGetInquiriesByKeyword.Click += new System.EventHandler(this.btnGetInquiriesByKeyword_Click);
+            // 
+            // btnGetInquiry
+            // 
+            this.btnGetInquiry.Location = new System.Drawing.Point(13, 339);
+            this.btnGetInquiry.Name = "btnGetInquiry";
+            this.btnGetInquiry.Size = new System.Drawing.Size(78, 23);
+            this.btnGetInquiry.TabIndex = 80;
+            this.btnGetInquiry.Text = "get inquiry";
+            this.btnGetInquiry.UseVisualStyleBackColor = true;
+            this.btnGetInquiry.Click += new System.EventHandler(this.btnGetInquiry_Click);
+            // 
             // btnCollections
             // 
             this.btnCollections.Location = new System.Drawing.Point(439, 280);
@@ -559,7 +687,7 @@ namespace SUP
             // 
             // btnGetFoundObjects
             // 
-            this.btnGetFoundObjects.Location = new System.Drawing.Point(524, 310);
+            this.btnGetFoundObjects.Location = new System.Drawing.Point(524, 338);
             this.btnGetFoundObjects.Name = "btnGetFoundObjects";
             this.btnGetFoundObjects.Size = new System.Drawing.Size(79, 23);
             this.btnGetFoundObjects.TabIndex = 71;
@@ -725,7 +853,7 @@ namespace SUP
             // 
             // btnGetCreated
             // 
-            this.btnGetCreated.Location = new System.Drawing.Point(525, 342);
+            this.btnGetCreated.Location = new System.Drawing.Point(524, 310);
             this.btnGetCreated.Name = "btnGetCreated";
             this.btnGetCreated.Size = new System.Drawing.Size(79, 23);
             this.btnGetCreated.TabIndex = 51;
@@ -781,134 +909,6 @@ namespace SUP
             this.btnEncrypt.Text = "encrypt";
             this.btnEncrypt.UseVisualStyleBackColor = true;
             this.btnEncrypt.Click += new System.EventHandler(this.ButtonEncryptTransactionIdClick);
-            // 
-            // btnGetInquiry
-            // 
-            this.btnGetInquiry.Location = new System.Drawing.Point(13, 339);
-            this.btnGetInquiry.Name = "btnGetInquiry";
-            this.btnGetInquiry.Size = new System.Drawing.Size(78, 23);
-            this.btnGetInquiry.TabIndex = 80;
-            this.btnGetInquiry.Text = "get inquiry";
-            this.btnGetInquiry.UseVisualStyleBackColor = true;
-            this.btnGetInquiry.Click += new System.EventHandler(this.btnGetInquiry_Click);
-            // 
-            // btnGetInquiriesByKeyword
-            // 
-            this.btnGetInquiriesByKeyword.Location = new System.Drawing.Point(269, 339);
-            this.btnGetInquiriesByKeyword.Name = "btnGetInquiriesByKeyword";
-            this.btnGetInquiriesByKeyword.Size = new System.Drawing.Size(81, 23);
-            this.btnGetInquiriesByKeyword.TabIndex = 81;
-            this.btnGetInquiriesByKeyword.Text = "by keyword";
-            this.btnGetInquiriesByKeyword.UseVisualStyleBackColor = true;
-            this.btnGetInquiriesByKeyword.Click += new System.EventHandler(this.btnGetInquiriesByKeyword_Click);
-            // 
-            // btnInquiriesCreated
-            // 
-            this.btnInquiriesCreated.Location = new System.Drawing.Point(354, 340);
-            this.btnInquiriesCreated.Name = "btnInquiriesCreated";
-            this.btnInquiriesCreated.Size = new System.Drawing.Size(79, 23);
-            this.btnInquiriesCreated.TabIndex = 82;
-            this.btnInquiriesCreated.Text = "inq created";
-            this.btnInquiriesCreated.UseVisualStyleBackColor = true;
-            this.btnInquiriesCreated.Click += new System.EventHandler(this.btnInquiriesCreated_Click);
-            // 
-            // btnGetInquiries
-            // 
-            this.btnGetInquiries.Location = new System.Drawing.Point(182, 339);
-            this.btnGetInquiries.Name = "btnGetInquiries";
-            this.btnGetInquiries.Size = new System.Drawing.Size(75, 23);
-            this.btnGetInquiries.TabIndex = 83;
-            this.btnGetInquiries.Text = "get inquiries";
-            this.btnGetInquiries.UseVisualStyleBackColor = true;
-            this.btnGetInquiries.Click += new System.EventHandler(this.button7_Click);
-            // 
-            // btnGetInquiryByTransactionId
-            // 
-            this.btnGetInquiryByTransactionId.Location = new System.Drawing.Point(95, 339);
-            this.btnGetInquiryByTransactionId.Name = "btnGetInquiryByTransactionId";
-            this.btnGetInquiryByTransactionId.Size = new System.Drawing.Size(79, 23);
-            this.btnGetInquiryByTransactionId.TabIndex = 84;
-            this.btnGetInquiryByTransactionId.Text = "by txid";
-            this.btnGetInquiryByTransactionId.UseVisualStyleBackColor = true;
-            this.btnGetInquiryByTransactionId.Click += new System.EventHandler(this.btnGetInquiryByTransactionId_Click);
-            // 
-            // rootid
-            // 
-            this.rootid.HeaderText = "Object ID";
-            this.rootid.MinimumWidth = 60;
-            this.rootid.Name = "rootid";
-            // 
-            // messagecount
-            // 
-            dataGridViewCellStyle2.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.messagecount.DefaultCellStyle = dataGridViewCellStyle2;
-            this.messagecount.HeaderText = "Messages";
-            this.messagecount.MaxInputLength = 100000000;
-            this.messagecount.Name = "messagecount";
-            // 
-            // is_signed
-            // 
-            this.is_signed.HeaderText = "Signed";
-            this.is_signed.MinimumWidth = 50;
-            this.is_signed.Name = "is_signed";
-            this.is_signed.Resizable = System.Windows.Forms.DataGridViewTriState.True;
-            this.is_signed.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.Automatic;
-            // 
-            // signed_by
-            // 
-            this.signed_by.HeaderText = "Signed By";
-            this.signed_by.Name = "signed_by";
-            // 
-            // filecount
-            // 
-            this.filecount.HeaderText = "Files";
-            this.filecount.Name = "filecount";
-            // 
-            // totalfilebytes
-            // 
-            this.totalfilebytes.HeaderText = "File Bytes";
-            this.totalfilebytes.Name = "totalfilebytes";
-            this.totalfilebytes.Resizable = System.Windows.Forms.DataGridViewTriState.True;
-            // 
-            // keywordcount
-            // 
-            this.keywordcount.HeaderText = "Keys";
-            this.keywordcount.Name = "keywordcount";
-            // 
-            // total_bytes
-            // 
-            this.total_bytes.HeaderText = "Total Bytes";
-            this.total_bytes.Name = "total_bytes";
-            // 
-            // block_time
-            // 
-            this.block_time.HeaderText = "Block Time";
-            this.block_time.Name = "block_time";
-            // 
-            // transaction_id
-            // 
-            this.transaction_id.HeaderText = "TID";
-            this.transaction_id.Name = "transaction_id";
-            // 
-            // signature
-            // 
-            this.signature.HeaderText = "SIG";
-            this.signature.Name = "signature";
-            // 
-            // confirmations
-            // 
-            this.confirmations.HeaderText = "Confirms";
-            this.confirmations.Name = "confirmations";
-            // 
-            // BlockHeight
-            // 
-            this.BlockHeight.HeaderText = "BlockHeight";
-            this.BlockHeight.Name = "BlockHeight";
-            // 
-            // buildtime
-            // 
-            this.buildtime.HeaderText = "Build Time";
-            this.buildtime.Name = "buildtime";
             // 
             // WorkBench
             // 

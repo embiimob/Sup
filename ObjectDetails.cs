@@ -3194,6 +3194,11 @@ namespace SUP
         private void ButtonRefreshTransactionsClick(object sender, EventArgs e)
         {
 
+            this.Invoke((Action)(() =>
+            {
+                btnRefreshTransactions.Enabled = false;
+            }));
+
             transFlow.SuspendLayout();
             txtdesc.Visible = false;
             registrationPanel.Visible = false;
@@ -3278,9 +3283,12 @@ namespace SUP
             transFlow.Visible = true;
             KeysFlow.Visible = true;
 
+            this.Invoke((Action)(() =>
+            {
+                btnRefreshTransactions.Enabled = true;
+            }));
 
-
-        }
+            }
 
         void Attachment_Clicked(string path)
         {
