@@ -114,41 +114,47 @@
             this.flowLayoutPanel1.AutoScroll = true;
             this.flowLayoutPanel1.Location = new System.Drawing.Point(13, 93);
             this.flowLayoutPanel1.Name = "flowLayoutPanel1";
-            this.flowLayoutPanel1.Size = new System.Drawing.Size(463, 211);
+            this.flowLayoutPanel1.Size = new System.Drawing.Size(463, 199);
             this.flowLayoutPanel1.TabIndex = 18;
             // 
             // btnCalculate
             // 
             this.btnCalculate.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.btnCalculate.BackColor = System.Drawing.Color.White;
             this.btnCalculate.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnCalculate.ForeColor = System.Drawing.Color.Black;
             this.btnCalculate.Location = new System.Drawing.Point(13, 345);
             this.btnCalculate.Name = "btnCalculate";
             this.btnCalculate.Size = new System.Drawing.Size(174, 30);
             this.btnCalculate.TabIndex = 19;
             this.btnCalculate.Text = "calculate results";
-            this.btnCalculate.UseVisualStyleBackColor = true;
+            this.btnCalculate.UseVisualStyleBackColor = false;
             this.btnCalculate.Click += new System.EventHandler(this.btnCalculate_Click);
             // 
             // btnValueTotal
             // 
             this.btnValueTotal.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.btnValueTotal.BackColor = System.Drawing.Color.White;
+            this.btnValueTotal.ForeColor = System.Drawing.Color.Black;
             this.btnValueTotal.Location = new System.Drawing.Point(13, 310);
             this.btnValueTotal.Name = "btnValueTotal";
             this.btnValueTotal.Size = new System.Drawing.Size(75, 23);
             this.btnValueTotal.TabIndex = 20;
             this.btnValueTotal.Text = "show values";
-            this.btnValueTotal.UseVisualStyleBackColor = true;
+            this.btnValueTotal.UseVisualStyleBackColor = false;
             this.btnValueTotal.Click += new System.EventHandler(this.btnValueTotal_Click);
             // 
             // btnShowAllOrGated
             // 
             this.btnShowAllOrGated.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.btnShowAllOrGated.BackColor = System.Drawing.Color.White;
+            this.btnShowAllOrGated.ForeColor = System.Drawing.Color.Black;
             this.btnShowAllOrGated.Location = new System.Drawing.Point(112, 310);
             this.btnShowAllOrGated.Name = "btnShowAllOrGated";
             this.btnShowAllOrGated.Size = new System.Drawing.Size(75, 23);
             this.btnShowAllOrGated.TabIndex = 21;
             this.btnShowAllOrGated.Text = "show gated";
-            this.btnShowAllOrGated.UseVisualStyleBackColor = true;
+            this.btnShowAllOrGated.UseVisualStyleBackColor = false;
             this.btnShowAllOrGated.Visible = false;
             this.btnShowAllOrGated.Click += new System.EventHandler(this.btnShowAllOrGated_Click);
             // 
@@ -193,6 +199,8 @@
             // 
             // txtObjectAddress
             // 
+            this.txtObjectAddress.BackColor = System.Drawing.Color.White;
+            this.txtObjectAddress.ForeColor = System.Drawing.Color.Black;
             this.txtObjectAddress.Location = new System.Drawing.Point(368, 385);
             this.txtObjectAddress.Name = "txtObjectAddress";
             this.txtObjectAddress.Size = new System.Drawing.Size(100, 20);

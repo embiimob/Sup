@@ -2198,16 +2198,15 @@ namespace SUP.P2FK
 
                 int intProcessHeight = 0;
 
-                try { intProcessHeight = objectStates.Max(max => max.Id); } catch { }
+                // this one is a bit different... it cannot use max id as the object will have their own Id.   so it stores the cache height at the last id.
+                try { intProcessHeight = objectStates.Last().Id; ; } catch { }
 
 
                 Root[] objectTransactions;
 
                 //return all roots found at address
                 objectTransactions = Root.GetRootsByAddress(objectaddress, username, password, url, intProcessHeight, -1, versionByte);
-                //int maxID = 0;
 
-               // try { maxID = objectTransactions.Max(max => max.Id); } catch { }
 
                 if (intProcessHeight != 0 && objectTransactions.Count() == 0)
                 {
