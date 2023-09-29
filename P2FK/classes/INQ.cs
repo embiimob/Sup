@@ -103,6 +103,7 @@ namespace SUP.P2FK
 
                     }
                     catch { }
+
                     if (fetched && objectState.URN == null && !calculate)
                     {
                         try { File.Delete(@"GET_INQUIRY_BY_ADDRESS"); } catch { }
@@ -114,6 +115,8 @@ namespace SUP.P2FK
 
 
                     Root[] objectTransactions = new Root[0];
+
+                    //calculate blockheight will be needed
                     objectTransactions = Root.GetRootsByAddress(objectaddress, username, password, url, 0, -1, versionByte, true);
 
                     objectState = new INQState();
@@ -801,27 +804,37 @@ namespace SUP.P2FK
                     if (calculate) { intProcessHeight = 0; }
                     else
                     {
-                        try { intProcessHeight = objectStates.Last().Id; } catch { }
+                        try { intProcessHeight = objectStates.Max(max => max.Id); } catch { }
 
                     }
 
                     Root[] objectTransactions;
+                    int maxID = 0;
 
                     //return all roots found at address
                     objectTransactions = Root.GetRootsByAddress(objectaddress, username, password, url, 0, -1, versionByte);
-                    int maxID = 0;
-                    try { maxID = objectTransactions.Count(); }
-                    catch (Exception x)
-                    {
-                        string error = x.Message;
-                    }
-
+                
+                    try { maxID = objectTransactions.Max(max => max.Id); } catch { }
+                    
                     if (intProcessHeight != 0 && intProcessHeight == maxID)
                     {
                         try { File.Delete(@"GET_INQUIRIES_BY_ADDRESS"); } catch { }
 
-                        if (qty == -1) { return objectStates.ToList(); }
-                        else { return objectStates.Skip(skip).Take(qty).ToList(); }
+                        if (skip != 0)
+                        {
+                            //GPT3 SUGGESTED
+                            var skippedList = objectStates.SkipWhile(state => state.Id != skip);
+
+
+                            if (qty == -1) { return skippedList.ToList(); }
+                            else { return skippedList.Take(qty).ToList(); }
+                        }
+                        else
+                        {
+                            if (qty == -1) { return objectStates.ToList(); }
+                            else { return objectStates.Take(qty).ToList(); }
+
+                        }
 
                     }
 
@@ -830,6 +843,7 @@ namespace SUP.P2FK
 
                     //Do not process container address as object.
                     addedValues.Add(objectaddress);
+
                     int rowcount = 0;
                     foreach (Root transaction in objectTransactions)
                     {
@@ -895,8 +909,22 @@ namespace SUP.P2FK
                 }
                 catch { }
                 finally { try { File.Delete(@"GET_INQUIRIES_BY_ADDRESS"); } catch { } }
-                if (qty == -1) { return objectStates.ToList(); }
-                else { return objectStates.Skip(skip).Take(qty).ToList(); }
+                
+                if (skip != 0)
+                {
+                    //GPT3 SUGGESTED
+                    var skippedList = objectStates.SkipWhile(state => state.Id != skip);
+
+
+                    if (qty == -1) { return skippedList.ToList(); }
+                    else { return skippedList.Take(qty).ToList(); }
+                }
+                else
+                {
+                    if (qty == -1) { return objectStates.ToList(); }
+                    else { return objectStates.Take(qty).ToList(); }
+
+                }
 
             }
         }
@@ -930,8 +958,21 @@ namespace SUP.P2FK
                 if (fetched && objectStates.Last().Id == cachedObjectStates.Last().Id)
                 {
 
-                    if (qty == -1) { return objectStates.Skip(skip).ToList(); }
-                    else { return objectStates.Skip(skip).Take(qty).ToList(); }
+                    if (skip != 0)
+                    {
+                        //GPT3 SUGGESTED
+                        var skippedList = objectStates.SkipWhile(state => state.Id != skip);
+
+
+                        if (qty == -1) { return skippedList.ToList(); }
+                        else { return skippedList.Take(qty).ToList(); }
+                    }
+                    else
+                    {
+                        if (qty == -1) { return objectStates.ToList(); }
+                        else { return objectStates.Take(qty).ToList(); }
+
+                    }
 
                 }
 

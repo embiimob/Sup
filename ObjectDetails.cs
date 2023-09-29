@@ -208,7 +208,10 @@ namespace SUP
             CreatorsPanel.Controls.Clear();
             OwnersPanel.Controls.Clear();
             RoyaltiesPanel.Controls.Clear();
-            supPanel.Visible = false;
+            supPanel.Visible = false;   
+            btnRefreshSup.BackColor = Color.White;
+            btnRefreshSup.ForeColor = Color.Black;
+
             numMessagesDisplayed = 0;
 
 
@@ -487,6 +490,8 @@ namespace SUP
             CreatorsPanel.ResumeLayout();
             OwnersPanel.ResumeLayout();
             supPanel.Visible = false;
+            btnRefreshSup.BackColor = Color.White;
+            btnRefreshSup.ForeColor = Color.Black;
             OwnersPanel.Visible = true;
 
         }
@@ -494,13 +499,20 @@ namespace SUP
         private void ShowSupPanel(object sender, EventArgs e)
         {
             supPanel.Visible = true;
+            btnRefreshSup.BackColor = Color.Blue;
+            btnRefreshSup.ForeColor = Color.Yellow;
             RefreshSupMessages();
         }
 
         private void RefreshSupMessages()
         {
-            // ShowSupPanel().;
-            // Clear controls if no messages have been displayed yet
+            if (btnRefreshSup.Enabled == false) { return; }
+
+            this.Invoke((MethodInvoker)delegate
+            {
+                btnRefreshSup.Enabled = false;
+            });
+
             if (numMessagesDisplayed == 0)
             {
                 Task.Run(() =>
@@ -517,7 +529,7 @@ namespace SUP
                 supFlow.Controls.Clear();
                 //supFlow.ResumeLayout();
 
-                btnRefreshSup.Enabled = false;
+               
 
                 Root[] roots = Root.GetRootsByAddress(_objectaddress, "good-user", "better-password", "http://127.0.0.1:18332");
 
@@ -1017,15 +1029,15 @@ namespace SUP
                     }
                     catch { }
 
-                    this.Invoke((MethodInvoker)delegate
-                    {
-                        btnRefreshSup.Enabled = true;
-                    });
-
-
+                    
 
 
                 }
+
+                this.Invoke((MethodInvoker)delegate
+                {
+                    btnRefreshSup.Enabled = true;
+                });
             });
         }
 

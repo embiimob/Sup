@@ -236,7 +236,7 @@ namespace SUP
             if (File.Exists(@"root\" + profileURN.Links[0].LinkData.ToString() + @"\MUTE")) { btnMute.Text = "unmute"; }
 
 
-            lblProcessHeight.Text = "ph: " + activeProfile.ProcessHeight.ToString();
+            lblProcessHeight.Text = "ph: " + activeProfile.Id.ToString();
         profileCreatedDate.Text = "since: " + activeProfile.CreatedDate.ToString("MM/dd/yyyy hh:mm:ss tt");
 
             if (activeProfile.URL != null)
@@ -2912,10 +2912,11 @@ namespace SUP
 
         private void RefreshSupMessages()
         {
-
+           
             // sorry cannot run two searches at a time
             if (refreshFriendFeed.Enabled == false || btnPublicMessage.Enabled == false || btnPrivateMessage.Enabled == false) { return; }
-
+            supFlow.SuspendLayout();
+            
             // Clear controls if no messages have been displayed yet
             if (numMessagesDisplayed == 0)
             {
@@ -2938,7 +2939,7 @@ namespace SUP
                 supPrivateFlow.Controls.Clear();
                 numPrivateMessagesDisplayed = 0;
              
-                supFlow.SuspendLayout();
+               
                
 
                 try { Root[] roots = Root.GetRootsByAddress(profileURN.Links[0].LinkData.ToString(), "good-user", "better-password", "http://127.0.0.1:18332"); } catch { return; }
@@ -3704,20 +3705,18 @@ namespace SUP
 
                 }
 
-                this.Invoke((MethodInvoker)delegate
-                {
-                    supFlow.ResumeLayout();
-                });
+               
             });
 
-       
+                supFlow.ResumeLayout();
+            
         }
 
         private void RefreshPrivateSupMessages()
         {
             // sorry cannot run two searches at a time
             if (refreshFriendFeed.Enabled == false || btnPublicMessage.Enabled == false || btnPrivateMessage.Enabled == false) { return; }
-
+            supPrivateFlow.SuspendLayout();
             // Clear controls if no messages have been displayed yet
             if (numPrivateMessagesDisplayed == 0)
             {
@@ -4421,13 +4420,14 @@ namespace SUP
                 });
             });
 
+            supPrivateFlow.ResumeLayout();
         }
 
         private void RefreshCommunityMessages()
         {
             // sorry cannot run two searches at a time
             if (refreshFriendFeed.Enabled == false || btnPublicMessage.Enabled == false || btnPrivateMessage.Enabled == false) { return; }
-
+            supFlow.SuspendLayout();
             if (System.IO.File.Exists(@"GET_OBJECT_BY_ADDRESS") || System.IO.File.Exists(@"GET_OBJECTS_BY_ADDRESS")) { MessageBox.Show("Please wait for the search to complete.", "Notification"); return; }
 
             refreshFriendFeed.BackColor = System.Drawing.Color.Blue;
@@ -4794,7 +4794,7 @@ namespace SUP
                     });
             }
 
-            
+            supFlow.ResumeLayout(); 
 
         }
 

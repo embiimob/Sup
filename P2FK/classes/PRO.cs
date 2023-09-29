@@ -72,11 +72,15 @@ namespace SUP.P2FK
             catch { }
 
             int intProcessHeight = 0;
-
-            try { intProcessHeight = profileState.ProcessHeight; } catch { }
+            bool calculated = false;
+            try { intProcessHeight = profileState.Id; } catch { }
 
             Root[] objectTransactions;
-            objectTransactions = Root.GetRootsByAddress(profileaddress, username, password, url, intProcessHeight, 1, versionByte);
+           // objectTransactions = Root.GetRootsByAddress(profileaddress, username, password, url, intProcessHeight, 1, versionByte);
+
+            if (verbose == true) { intProcessHeight = 0; profileState = new PROState(); }
+
+            objectTransactions = Root.GetRootsByAddress(profileaddress, username, password, url, intProcessHeight, -1, versionByte);
 
             if (intProcessHeight != 0 && objectTransactions.Count() == 0)
             {
@@ -85,23 +89,20 @@ namespace SUP.P2FK
                 return profileState;
             }
 
-            if (verbose == true) { intProcessHeight = 0; profileState = new PROState(); }
-
-            objectTransactions = Root.GetRootsByAddress(profileaddress, username, password, url, intProcessHeight, -1, versionByte);
-
-
             foreach (Root transaction in objectTransactions)
             {
                 if (transaction.Id > intProcessHeight)
                 {
-                    intProcessHeight = transaction.Id;
-                    string sortableProcessHeight = intProcessHeight.ToString("X").PadLeft(9, '0');
-                    logstatus = null;
-
-
+                   
                     //ignore any transaction that is not signed
                     if (transaction.Signed && (transaction.File.ContainsKey("PRO")))
                     {
+                        calculated = true;
+                        intProcessHeight = transaction.Id;
+                        profileState.ProcessHeight = intProcessHeight;
+
+                        string sortableProcessHeight = intProcessHeight.ToString("X").PadLeft(9, '0');
+                        logstatus = null;
 
                         string sigSeen;
                         lock (SupLocker)
@@ -232,39 +233,43 @@ namespace SUP.P2FK
                     }
 
                 }
-            }
-            if (objectTransactions.Count() > 0)
-            {
-                profileState.ProcessHeight = objectTransactions.Max(state => state.Id);
+                
             }
 
-            var profileSerialized = JsonConvert.SerializeObject(profileState);
+            if (calculated)
+            {
+                if (objectTransactions.Count() > 0)
+                {
+                    profileState.Id = objectTransactions.Max(max => max.Id);
+                }
 
-            try
-            {
-                System.IO.File.WriteAllText(@"root\" + profileaddress + @"\" + "GetProfileByAddress.json", profileSerialized);
-            }
-            catch
-            {
+                var profileSerialized = JsonConvert.SerializeObject(profileState);
 
                 try
                 {
-                    if (!Directory.Exists(@"root\" + profileaddress))
-
-                    {
-                        Directory.CreateDirectory(@"root\" + profileaddress);
-                    }
                     System.IO.File.WriteAllText(@"root\" + profileaddress + @"\" + "GetProfileByAddress.json", profileSerialized);
                 }
-                catch { };
-            }
+                catch
+                {
 
+                    try
+                    {
+                        if (!Directory.Exists(@"root\" + profileaddress))
+
+                        {
+                            Directory.CreateDirectory(@"root\" + profileaddress);
+                        }
+                        System.IO.File.WriteAllText(@"root\" + profileaddress + @"\" + "GetProfileByAddress.json", profileSerialized);
+                    }
+                    catch { };
+                }
+            }
 
             return profileState;
 
         }
         
-        public static PROState GetProfileByURN(string searchstring, string username, string password, string url, string versionByte = "111", bool verbose = false, int skip = 0)
+        public static PROState GetProfileByURN(string searchstring, string username, string password, string url, string versionByte = "111", bool verbose = false)
         {
             PROState profileState = new PROState { };
             var OBJ = new Options { CreateIfMissing = true };
@@ -283,72 +288,77 @@ namespace SUP.P2FK
             catch { }
 
             //if (profileState.URN == null && diskpath.Length > 5) { try { Directory.Delete(diskpath); } catch { } }
-            var intProcessHeight = profileState.ProcessHeight;
+            var intProcessHeight = profileState.Id;
             Root[] profileTransactions;
 
             //return all roots found at address
-            profileTransactions = Root.GetRootsByAddress(profileaddress, username, password, url, intProcessHeight, 1, versionByte);
+            // profileTransactions = Root.GetRootsByAddress(profileaddress, username, password, url, intProcessHeight, 1, versionByte);
+
+
+            if (verbose == true) { intProcessHeight = 0; profileState = new PROState(); }
+            //return all roots found at address
+            profileTransactions = Root.GetRootsByAddress(profileaddress, username, password, url, intProcessHeight, -1, versionByte);
 
             if (intProcessHeight > 0 && profileTransactions.Count() == 0) { return profileState; }
 
 
-            //return all roots found at address
-            profileTransactions = Root.GetRootsByAddress(profileaddress, username, password, url, 0, -1, versionByte);
             HashSet<string> addedValues = new HashSet<string>();
+
             foreach (Root transaction in profileTransactions)
             {
-
-                intProcessHeight = transaction.Id;
-                //ignore any transaction that is not signed
-                if (transaction.Signed && transaction.File.ContainsKey("PRO"))
+                if (transaction.Id > intProcessHeight)
                 {
-                    string findObject = transaction.Keyword.ElementAt(transaction.Keyword.Count - 1).Key;
-
-                    if (!System.IO.File.Exists(@"root\" + findObject + @"\BLOCK"))
+                    intProcessHeight = transaction.Id;
+                    //ignore any transaction that is not signed
+                    if (transaction.Signed && transaction.File.ContainsKey("PRO"))
                     {
+                        string findObject = transaction.Keyword.ElementAt(transaction.Keyword.Count - 1).Key;
 
-
-                        PROState isObject = GetProfileByAddress(findObject, username, password, url, versionByte);
-
-                        if (isObject.URN != null && isObject.URN == searchstring && isObject.ChangeDate > DateTime.Now.AddYears(-3))
+                        if (!System.IO.File.Exists(@"root\" + findObject + @"\BLOCK"))
                         {
-                            if (isObject.Creators.ElementAt(0) == findObject)
+
+
+                            PROState isObject = GetProfileByAddress(findObject, username, password, url, versionByte);
+
+                            if (isObject.URN != null && isObject.URN == searchstring && isObject.ChangeDate > DateTime.Now.AddYears(-3))
                             {
-
-                                isObject.Id = profileTransactions.Count();
-                                isObject.ProcessHeight = intProcessHeight;
-
-                                var profileSerialized = JsonConvert.SerializeObject(isObject);
-                                try
-                                {
-                                    System.IO.File.WriteAllText(@"root\" + profileaddress + @"\" + "GetProfileByURN.json", profileSerialized);
-                                }
-                                catch
+                                if (isObject.Creators.ElementAt(0) == findObject)
                                 {
 
+                                    isObject.Id = profileTransactions.Max(max => max.Id);
+                                    isObject.ProcessHeight = intProcessHeight;
+
+                                    var profileSerialized = JsonConvert.SerializeObject(isObject);
                                     try
                                     {
-                                        if (!Directory.Exists(@"root\" + profileaddress))
-
-                                        {
-                                            Directory.CreateDirectory(@"root\" + profileaddress);
-                                        }
                                         System.IO.File.WriteAllText(@"root\" + profileaddress + @"\" + "GetProfileByURN.json", profileSerialized);
                                     }
-                                    catch { };
+                                    catch
+                                    {
+
+                                        try
+                                        {
+                                            if (!Directory.Exists(@"root\" + profileaddress))
+
+                                            {
+                                                Directory.CreateDirectory(@"root\" + profileaddress);
+                                            }
+                                            System.IO.File.WriteAllText(@"root\" + profileaddress + @"\" + "GetProfileByURN.json", profileSerialized);
+                                        }
+                                        catch { };
+                                    }
+
+
+                                    return isObject;
+
                                 }
 
-
-                                return isObject;
 
                             }
 
-
                         }
-
                     }
                 }
-
 
             }
 
@@ -414,183 +424,7 @@ namespace SUP.P2FK
             return profileStates;
 
         }
-
-        public static List<PROState> GetProfilesByAddress(string objectaddress, string username, string password, string url, string versionByte = "111", int skip = 0, int qty = -1)
-        {
-            using (FileStream fs = File.Create(@"GET_PROFILES_BY_ADDRESS"))
-            {
-
-            }
-
-            lock (SupLocker)
-            {
-                List<PROState> objectStates = new List<PROState> { };
-                try
-                {
-                    var OBJ = new Options { CreateIfMissing = true };
-                    bool fetched = false;
-
-                    if (System.IO.File.Exists(@"root\" + objectaddress + @"\BLOCK"))
-                    {
-                        try { File.Delete(@"GET_PROFILES_BY_ADDRESS"); } catch { }
-
-                        return objectStates;
-                    }
-
-
-                    string JSONOBJ;
-                    string diskpath = "root\\" + objectaddress + "\\";
-
-
-                    // fetch current JSONOBJ from disk if it exists
-                    try
-                    {
-                        JSONOBJ = System.IO.File.ReadAllText(diskpath + "GetProfilesByAddress.json");
-                        objectStates = JsonConvert.DeserializeObject<List<PROState>>(JSONOBJ);
-                        fetched = true;
-
-                    }
-                    catch { }
-                    if (fetched && objectStates.Count < 1)
-                    {
-                        try { File.Delete(@"GET_PROFILES_BY_ADDRESS"); } catch { }
-
-                        return objectStates;
-                    }
-
-                    int intProcessHeight = 0;
-
-                    try { intProcessHeight = objectStates.Last().Id; } catch { }
-
-
-                    Root[] objectTransactions;
-
-                    //return all roots found at address
-                    objectTransactions = Root.GetRootsByAddress(objectaddress, username, password, url, 0, -1, versionByte);
-                    int maxID = 0;
-                    try { maxID = objectTransactions.Count(); }
-                    catch (Exception x)
-                    {
-                        string error = x.Message;
-                    }
-
-                    if (intProcessHeight != 0 && intProcessHeight == maxID)
-                    {
-                        try { File.Delete(@"GET_PROFILES_BY_ADDRESS"); } catch { }
-
-                        if (qty == -1) { return objectStates.ToList(); }
-                        else { return objectStates.Skip(skip).Take(qty).ToList(); }
-
-                    }
-
-
-                    List<string> addedValues = new List<string>();
-
-                    //Do not process container address as object.
-                    addedValues.Add(objectaddress);
-                    int rowcount = 0;
-                    foreach (Root transaction in objectTransactions)
-                    {
-
-                        rowcount++;
-                        //ignore any transaction that is not signed
-                        if (transaction.Signed && rowcount > intProcessHeight)
-                        {
-
-                            // string findId;
-
-                            if (transaction.File.ContainsKey("OBJ") || transaction.File.ContainsKey("GIV") || transaction.File.ContainsKey("BUY") || transaction.File.ContainsKey("BRN") || transaction.File.ContainsKey("LST") || transaction.Message.Count() > 0)
-                            {
-                                if (!transaction.File.ContainsKey("OBJ") && !transaction.File.ContainsKey("BUY"))
-                                {
-                                    foreach (string key in transaction.Keyword.Keys)
-                                    {
-                                        if (!addedValues.Contains(key))
-                                        {
-                                            addedValues.Add(key);
-
-                                            PROState existingObjectState = objectStates.FirstOrDefault(os => os.Creators.First() == key);
-                                            if (existingObjectState != null)
-                                            {
-                                                PROState isObject = GetProfileByAddress(key, username, password, url, versionByte);
-                                                if (isObject.URN != null)
-                                                {
-                                                    //isObject.Id = transaction.Id;
-                                                    objectStates[objectStates.IndexOf(existingObjectState)] = isObject;
-                                                }
-                                            }
-                                            else
-                                            {
-                                                PROState newObject = GetProfileByAddress(key, username, password, url, versionByte);
-                                                if (newObject.URN != null)
-                                                {
-                                                    //newObject.Id = transaction.Id;
-                                                    objectStates.Add(newObject);
-                                                }
-                                            }
-                                        }
-                                    }
-
-
-                                }
-                                else
-                                {
-                                    foreach (string key in transaction.Output.Keys)
-                                    {
-
-                                        if (!addedValues.Contains(key))
-                                        {
-                                            addedValues.Add(key);
-
-
-                                            PROState existingObjectState = objectStates.FirstOrDefault(os => os.Creators.First() == key);
-                                            if (existingObjectState != null)
-                                            {
-                                                PROState isObject = GetProfileByAddress(key, username, password, url, versionByte);
-                                                if (isObject.URN != null)
-                                                {
-                                                    //isObject.Id = transaction.Id;
-                                                    objectStates[objectStates.IndexOf(existingObjectState)] = isObject;
-                                                }
-                                            }
-                                            else
-                                            {
-                                                PROState newObject = GetProfileByAddress(key, username, password, url, versionByte);
-                                                if (newObject.URN != null)
-                                                {
-                                                    //newObject.Id = transaction.Id;
-                                                    objectStates.Add(newObject);
-                                                }
-                                            }
-                                        }
-                                    }
-
-                                }
-
-                            }
-                        }
-
-
-                    }
-                    objectStates.Last().Id = objectTransactions.Count();
-
-                    var objectSerialized = JsonConvert.SerializeObject(objectStates);
-
-                    if (!Directory.Exists(@"root\" + objectaddress))
-                    {
-                        Directory.CreateDirectory(@"root\" + objectaddress);
-                    }
-                    System.IO.File.WriteAllText(@"root\" + objectaddress + @"\" + "GetProfilesByAddress.json", objectSerialized);
-
-                    try { File.Delete(@"GET_PROFILES_BY_ADDRESS"); } catch { }
-                }
-                catch { }
-                finally { try { File.Delete(@"GET_PROFILES_BY_ADDRESS"); } catch { } }
-                if (qty == -1) { return objectStates.ToList(); }
-                else { return objectStates.Skip(skip).Take(qty).ToList(); }
-
-            }
-        }
+       
 
     }
 }

@@ -6,6 +6,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Diagnostics.Eventing.Reader;
 using System.IO;
 using System.Linq;
 using System.Security.Cryptography;
@@ -50,11 +51,11 @@ namespace SUP.P2FK
         public Dictionary<string, string> URL { get; set; }
         public Dictionary<string, string> Location { get; set; }
         public DateTime CreatedDate { get; set; }
-      
+
     }
 
 
-        public class OBJState
+    public class OBJState
     {
         public int Id { get; set; }
         public string TransactionId { get; set; }
@@ -80,10 +81,13 @@ namespace SUP.P2FK
         private readonly static object SupLocker = new object();
         public static OBJState GetObjectByAddress(string objectaddress, string username, string password, string url, string versionByte = "111", bool verbose = false)
         {
-            using (FileStream fs = File.Create(@"GET_OBJECT_BY_ADDRESS"))
+            Task.Run(() =>
             {
+                using (FileStream fs = File.Create(@"GET_OBJECT_BY_ADDRESS"))
+                {
 
-            }
+                }
+            });
 
             lock (SupLocker)
             {
@@ -96,7 +100,11 @@ namespace SUP.P2FK
 
                     if (System.IO.File.Exists(@"root\" + objectaddress + @"\BLOCK"))
                     {
-                        try { File.Delete(@"GET_OBJECT_BY_ADDRESS"); } catch { }
+                        Task.Run(() =>
+                        {
+                            try { File.Delete(@"GET_OBJECT_BY_ADDRESS"); } catch { }
+                        });
+                        
                         return objectState;
                     }
 
@@ -117,7 +125,10 @@ namespace SUP.P2FK
                     catch { }
                     if (fetched && objectState.URN == null && objectState.ProcessHeight == 0)
                     {
-                        try { File.Delete(@"GET_OBJECT_BY_ADDRESS"); } catch { }
+                        Task.Run(() =>
+                        {
+                            try { File.Delete(@"GET_OBJECT_BY_ADDRESS"); } catch { }
+                        });
 
                         return objectState;
                     }
@@ -129,7 +140,10 @@ namespace SUP.P2FK
                         {
                             JSONOBJ = System.IO.File.ReadAllText(diskpath + "GetRootByTransctionId.json");
                             unconfimredobj = JsonConvert.DeserializeObject<Root>(JSONOBJ);
-                            try { File.Delete(@"GET_OBJECT_BY_ADDRESS"); } catch { }
+                            Task.Run(() =>
+                            {
+                                try { File.Delete(@"GET_OBJECT_BY_ADDRESS"); } catch { }
+                            });
                             return OBJState.GetObjectByTransactionId(unconfimredobj.TransactionId, username, password, url, versionByte);
 
 
@@ -142,36 +156,37 @@ namespace SUP.P2FK
                     }
 
                     int intProcessHeight = 0;
-
-                    try { intProcessHeight = objectState.ProcessHeight; } catch { }
+                    string sortableProcessHeight = "";
+                    try { intProcessHeight = objectState.Id; } catch { }
 
                     Root[] objectTransactions;
-                    objectTransactions = Root.GetRootsByAddress(objectaddress, username, password, url, intProcessHeight, 1, versionByte);
-
-                    if (intProcessHeight != 0 && objectTransactions.Count() == 0)
-                    {
-                        try { File.Delete(@"GET_OBJECT_BY_ADDRESS"); } catch { }
-
-                        return objectState;
-                    }
 
                     if (verbose == true) { intProcessHeight = 0; objectState = new OBJState(); }
 
                     objectTransactions = Root.GetRootsByAddress(objectaddress, username, password, url, intProcessHeight, -1, versionByte);
 
+                    if (intProcessHeight != 0 && objectTransactions.Count() == 0)
+                    {
+                        Task.Run(() =>
+                        {
+                            try { File.Delete(@"GET_OBJECT_BY_ADDRESS"); } catch { }
+                        });
+
+                        return objectState;
+                    }
 
                     foreach (Root transaction in objectTransactions)
                     {
                         if (transaction.Id > intProcessHeight)
                         {
                             intProcessHeight = transaction.Id;
-                            string sortableProcessHeight = intProcessHeight.ToString("X").PadLeft(9, '0');
-                            logstatus = "";
-
 
                             if (transaction.Signed && (transaction.File.ContainsKey("OBJ") || transaction.File.ContainsKey("GIV") || transaction.File.ContainsKey("BRN") || transaction.File.ContainsKey("BUY") || transaction.File.ContainsKey("LST")))
                             {
-
+                                //alright you met minnimum criteria lets inspect this further
+                                logstatus = "";
+                                sortableProcessHeight = intProcessHeight.ToString("X").PadLeft(9, '0');
+                                objectState.ProcessHeight = intProcessHeight;
                                 string sigSeen;
 
                                 using (var db = new DB(OBJ, @"root\sig"))
@@ -179,10 +194,8 @@ namespace SUP.P2FK
                                     sigSeen = db.Get(transaction.Signature);
                                 }
 
-
                                 if (sigSeen == null || sigSeen == transaction.TransactionId)
                                 {
-
 
                                     using (var db = new DB(OBJ, @"root\sig"))
                                     {
@@ -217,7 +230,8 @@ namespace SUP.P2FK
 
                                             try
                                             {
-                                                if ((objectinspector.cre != null && objectState.Creators == null && int.TryParse(objectinspector.cre[0], out int intID) && objectaddress == transaction.Keyword.Reverse().ElementAt(intID).Key) || objectinspector.cre != null && objectState.Creators == null && objectinspector.cre[0] == objectaddress)
+                                                //builds the creator element
+                                                if (objectinspector.cre != null && objectState.Creators == null && objectinspector.cre[0] == objectaddress || (objectinspector.cre != null && objectState.Creators == null && int.TryParse(objectinspector.cre[0], out int intID) && objectaddress == transaction.Keyword.Reverse().ElementAt(intID).Key))
 
                                                 {
 
@@ -258,7 +272,8 @@ namespace SUP.P2FK
 
                                             try
                                             {
-                                                //has proper authority to make OBJ changes
+
+                                                //creator grant authorization timestamp if currently null
                                                 if (objectState.Creators != null && objectState.Creators.ContainsKey(transaction.SignedBy))
                                                 {
 
@@ -389,7 +404,6 @@ namespace SUP.P2FK
                                                     logstatus = "[\"" + transaction.SignedBy + "\",\"" + objectaddress + "\",\"inspect\",\"\",\"\",\"failed due to insufficient privileges\"]";
                                                 }
                                                 break;
-
 
 
                                             }
@@ -1446,21 +1460,31 @@ namespace SUP.P2FK
 
                     //used to determine where to begin object State processing when retrieved from cache
 
-                    objectState.ProcessHeight = objectTransactions.Max(state => state.Id);
+                    objectState.Id = objectTransactions.Max(state => state.Id);
                     objectState.Verbose = verbose;
-                    var objectSerialized = JsonConvert.SerializeObject(objectState);
 
-
-                    if (!Directory.Exists(@"root\" + objectaddress))
+                    Task.Run(() =>
                     {
-                        Directory.CreateDirectory(@"root\" + objectaddress);
-                    }
-                    System.IO.File.WriteAllText(@"root\" + objectaddress + @"\" + "OBJ.json", objectSerialized);
+                        var objectSerialized = JsonConvert.SerializeObject(objectState);
 
-                    try { File.Delete(@"GET_OBJECT_BY_ADDRESS"); } catch { }
+                        if (!Directory.Exists(@"root\" + objectaddress))
+                        {
+                            Directory.CreateDirectory(@"root\" + objectaddress);
+                        }
+                        System.IO.File.WriteAllText(@"root\" + objectaddress + @"\" + "OBJ.json", objectSerialized);
+
+                        try { File.Delete(@"GET_OBJECT_BY_ADDRESS"); } catch { }
+                    });
+
                 }
                 catch { }
-                finally { try { File.Delete(@"GET_OBJECT_BY_ADDRESS"); } catch { } }
+                finally {
+
+                    Task.Run(() =>
+                    {
+                        try { File.Delete(@"GET_OBJECT_BY_ADDRESS"); } catch { }
+                    });                
+                }
                 return objectState;
 
             }
@@ -1611,7 +1635,7 @@ namespace SUP.P2FK
             return objectState;
 
         }
-        public static OBJState GetObjectByURN(string searchstring, string username, string password, string url, string versionByte = "111", int skip = 0)
+        public static OBJState GetObjectByURN(string searchstring, string username, string password, string url, string versionByte = "111")
         {
             lock (SupLocker)
             {
@@ -1641,74 +1665,33 @@ namespace SUP.P2FK
                 var intProcessHeight = objectState.Id;
                 Root[] objectTransactions;
 
-                //return all roots found at address
-                objectTransactions = Root.GetRootsByAddress(objectaddress, username, password, url, intProcessHeight, 1, versionByte);
-
-
-                if (intProcessHeight > 0 && objectTransactions.Count() == 0)
-                {
-
-                    return objectState;
-
-                }
 
                 //return all roots found at address
-                objectTransactions = Root.GetRootsByAddress(objectaddress, username, password, url, 0, -1, versionByte);
+                objectTransactions = Root.GetRootsByAddress(objectaddress, username, password, url, intProcessHeight, -1, versionByte);
                 foreach (Root transaction in objectTransactions)
                 {
-
-
-                    //ignore any transaction that is not signed
-                    if (transaction.Signed && transaction.File.ContainsKey("OBJ"))
+                    if (transaction.Id > intProcessHeight)
                     {
-                        string findObject = transaction.Keyword.ElementAt(transaction.Keyword.Count - 1).Key;
-                        OBJState isObject = GetObjectByAddress(findObject, username, password, url, versionByte);
+                        intProcessHeight = transaction.Id;
 
-                        if (isObject.URN != null && isObject.URN == searchstring && isObject.Owners != null && isObject.ChangeDate > DateTime.Now.AddYears(-3))
+                        //ignore any transaction that is not signed
+                        if (transaction.Signed && transaction.File.ContainsKey("OBJ"))
                         {
-                            if (isObject.Creators.ElementAt(0).Key == findObject)
-                            {
-                                isObject.Id = objectTransactions.Count();
-                                var profileSerialized = JsonConvert.SerializeObject(isObject);
-                                try
-                                {
-                                    System.IO.File.WriteAllText(@"root\" + objectaddress + @"\" + "GetObjectByURN.json", profileSerialized);
-                                }
-                                catch
-                                {
+                            objectState.ProcessHeight = intProcessHeight;
 
+                            string findObject = transaction.Keyword.ElementAt(transaction.Keyword.Count - 2).Key;
+                            OBJState isObject = GetObjectByAddress(findObject, username, password, url, versionByte);
+
+                            if (isObject.URN != null && isObject.URN == searchstring && isObject.Owners != null && isObject.ChangeDate > DateTime.Now.AddYears(-3))
+                            {
+                                if (isObject.Creators.ElementAt(0).Key == findObject)
+                                {
+                                    isObject.Id = objectTransactions.Max(max => max.Id);
+
+                                    var profileSerialized1 = JsonConvert.SerializeObject(isObject);
                                     try
                                     {
-                                        if (!Directory.Exists(@"root\" + objectaddress))
-
-                                        {
-                                            Directory.CreateDirectory(@"root\" + objectaddress);
-                                        }
-                                        System.IO.File.WriteAllText(@"root\" + objectaddress + @"\" + "GetObjectByURN.json", profileSerialized);
-                                    }
-                                    catch { };
-                                }
-
-
-                                return isObject;
-
-                            }
-
-                        }
-                        else
-                        {
-                            try
-                            {
-                                findObject = transaction.Keyword.ElementAt(transaction.Keyword.Count - 2).Key;
-                                isObject = GetObjectByAddress(findObject, username, password, url, versionByte);
-
-                                if (isObject.URN != null && isObject.URN == searchstring && isObject.Owners != null && isObject.ChangeDate > DateTime.Now.AddYears(-3) && isObject.Creators.ElementAt(0).Key == findObject)
-                                {
-                                    isObject.Id = objectTransactions.Count();
-                                    var profileSerialized = JsonConvert.SerializeObject(isObject);
-                                    try
-                                    {
-                                        System.IO.File.WriteAllText(@"root\" + objectaddress + @"\" + "GetObjectByURN.json", profileSerialized);
+                                        System.IO.File.WriteAllText(@"root\" + objectaddress + @"\" + "GetObjectByURN.json", profileSerialized1);
                                     }
                                     catch
                                     {
@@ -1720,30 +1703,64 @@ namespace SUP.P2FK
                                             {
                                                 Directory.CreateDirectory(@"root\" + objectaddress);
                                             }
-                                            System.IO.File.WriteAllText(@"root\" + objectaddress + @"\" + "GetObjectByURN.json", profileSerialized);
+                                            System.IO.File.WriteAllText(@"root\" + objectaddress + @"\" + "GetObjectByURN.json", profileSerialized1);
                                         }
                                         catch { };
                                     }
-
 
                                     return isObject;
 
                                 }
 
+                            }
+                            else
+                            {
+                                findObject = transaction.Keyword.ElementAt(transaction.Keyword.Count - 1).Key;
+                                isObject = GetObjectByAddress(findObject, username, password, url, versionByte);
 
+                                if (isObject.URN != null && isObject.URN == searchstring && isObject.Owners != null && isObject.ChangeDate > DateTime.Now.AddYears(-3) && isObject.Creators.ElementAt(0).Key == findObject)
+                                {
+                                    isObject.Id = objectTransactions.Max(max => max.Id);
+
+                                    var profileSerialized2 = JsonConvert.SerializeObject(isObject);
+                                    try
+                                    {
+                                        System.IO.File.WriteAllText(@"root\" + objectaddress + @"\" + "GetObjectByURN.json", profileSerialized2);
+                                    }
+                                    catch
+                                    {
+
+                                        try
+                                        {
+                                            if (!Directory.Exists(@"root\" + objectaddress))
+
+                                            {
+                                                Directory.CreateDirectory(@"root\" + objectaddress);
+                                            }
+                                            System.IO.File.WriteAllText(@"root\" + objectaddress + @"\" + "GetObjectByURN.json", profileSerialized2);
+                                        }
+                                        catch { };
+                                    }
+
+                                    return isObject;
+
+                                }
 
                             }
-                            catch { }
+
                         }
 
-
+                    }
+                    else
+                    {
+                        return objectState;
                     }
                 }
-                objectState.Id = objectTransactions.Count();
-                var profileSerialized2 = JsonConvert.SerializeObject(objectState);
+                try { objectState.Id = objectTransactions.Max(max => max.Id); } catch { }
+                var profileSerialized3 = JsonConvert.SerializeObject(objectState);
                 try
                 {
-                    System.IO.File.WriteAllText(@"root\" + objectaddress + @"\" + "GetObjectByURN.json", profileSerialized2);
+                    System.IO.File.WriteAllText(@"root\" + objectaddress + @"\" + "GetObjectByURN.json", profileSerialized3);
                 }
                 catch
                 {
@@ -1755,12 +1772,12 @@ namespace SUP.P2FK
                         {
                             Directory.CreateDirectory(@"root\" + objectaddress);
                         }
-                        System.IO.File.WriteAllText(@"root\" + objectaddress + @"\" + "GetObjectByURN.json", profileSerialized2);
+                        System.IO.File.WriteAllText(@"root\" + objectaddress + @"\" + "GetObjectByURN.json", profileSerialized3);
                     }
                     catch { };
                 }
-                return objectState;
 
+                return objectState;
 
             }
         }
@@ -2131,84 +2148,104 @@ namespace SUP.P2FK
         }
         public static List<OBJState> GetObjectsByAddress(string objectaddress, string username, string password, string url, string versionByte = "111", int skip = 0, int qty = -1)
         {
-            using (FileStream fs = File.Create(@"GET_OBJECTS_BY_ADDRESS"))
+            Task.Run(() =>
             {
+                using (FileStream fs = File.Create(@"GET_OBJECTS_BY_ADDRESS"))
+                {
+                    // You can perform any file-related operations here
+                    // This code will not block the main thread
+                }
+            });
 
-            }
 
             lock (SupLocker)
             {
                 List<OBJState> objectStates = new List<OBJState> { };
+
+                var OBJ = new Options { CreateIfMissing = true };
+                bool fetched = false;
+
+                if (System.IO.File.Exists(@"root\" + objectaddress + @"\BLOCK"))
+                {
+                    try { File.Delete(@"GET_OBJECTS_BY_ADDRESS"); } catch { }
+
+                    return objectStates;
+                }
+
+
+                string JSONOBJ;
+                string diskpath = "root\\" + objectaddress + "\\";
+
+
+                // fetch current JSONOBJ from disk if it exists
                 try
                 {
-                    var OBJ = new Options { CreateIfMissing = true };
-                    bool fetched = false;
+                    JSONOBJ = System.IO.File.ReadAllText(diskpath + "GetObjectsByAddress.json");
+                    objectStates = JsonConvert.DeserializeObject<List<OBJState>>(JSONOBJ);
+                    fetched = true;
 
-                    if (System.IO.File.Exists(@"root\" + objectaddress + @"\BLOCK"))
+                }
+                catch { }
+                if (fetched && objectStates.Count < 1)
+                {
+                    Task.Run(() =>
                     {
                         try { File.Delete(@"GET_OBJECTS_BY_ADDRESS"); } catch { }
+                    });
 
-                        return objectStates;
-                    }
+                    return objectStates;
+                }
 
+                int intProcessHeight = 0;
 
-                    string JSONOBJ;
-                    string diskpath = "root\\" + objectaddress + "\\";
-
-
-                    // fetch current JSONOBJ from disk if it exists
-                    try
-                    {
-                        JSONOBJ = System.IO.File.ReadAllText(diskpath + "GetObjectsByAddress.json");
-                        objectStates = JsonConvert.DeserializeObject<List<OBJState>>(JSONOBJ);
-                        fetched = true;
-
-                    }
-                    catch { }
-                    if (fetched && objectStates.Count < 1)
-                    {
-                        try { File.Delete(@"GET_OBJECTS_BY_ADDRESS"); } catch { }
-
-                        return objectStates;
-                    }
-
-                    int intProcessHeight = 0;
-
-                    try { intProcessHeight = objectStates.Last().Id; } catch { }
+                try { intProcessHeight = objectStates.Max(max => max.Id); } catch { }
 
 
-                    Root[] objectTransactions;
+                Root[] objectTransactions;
 
-                    //return all roots found at address
-                    objectTransactions = Root.GetRootsByAddress(objectaddress, username, password, url, 0, -1, versionByte);
-                    int maxID = 0;
-                    try { maxID = objectTransactions.Count(); }
-                    catch (Exception x)
-                    {
-                        string error = x.Message;
-                    }
+                //return all roots found at address
+                objectTransactions = Root.GetRootsByAddress(objectaddress, username, password, url, intProcessHeight, -1, versionByte);
+                //int maxID = 0;
 
-                    if (intProcessHeight != 0 && intProcessHeight == maxID)
+               // try { maxID = objectTransactions.Max(max => max.Id); } catch { }
+
+                if (intProcessHeight != 0 && objectTransactions.Count() == 0)
+                {
+                    Task.Run(() =>
                     {
                         try { File.Delete(@"GET_OBJECTS_BY_ADDRESS"); } catch { }
+                    });
 
+                    if (skip != 0)
+                    {
+                        //GPT3 SUGGESTED
+                        var skippedList = objectStates.SkipWhile(state => state.Id != skip);
+
+
+                        if (qty == -1) { return skippedList.ToList(); }
+                        else { return skippedList.Take(qty).ToList(); }
+                    }
+                    else
+                    {
                         if (qty == -1) { return objectStates.ToList(); }
-                        else { return objectStates.Skip(skip).Take(qty).ToList(); }
+                        else { return objectStates.Take(qty).ToList(); }
 
                     }
 
+                }
 
-                    List<string> addedValues = new List<string>();
+                List<string> addedValues = new List<string>();
 
-                    //Do not process container address as object.
-                    addedValues.Add(objectaddress);
-                    int rowcount = 0;
-                    foreach (Root transaction in objectTransactions)
+                //Do not process container address as object.
+                addedValues.Add(objectaddress);
+                foreach (Root transaction in objectTransactions)
+                {
+                    if (transaction.Id > intProcessHeight)
                     {
+                        intProcessHeight = transaction.Id;
 
-                        rowcount++;
                         //ignore any transaction that is not signed
-                        if (transaction.Signed && rowcount > intProcessHeight)
+                        if (transaction.Signed)
                         {
 
                             // string findId;
@@ -2284,10 +2321,39 @@ namespace SUP.P2FK
                             }
                         }
 
-
                     }
-                    objectStates.Last().Id = objectTransactions.Count();
+                    else
+                    {
+                        try { objectStates.Last().Id = objectTransactions.Max(max => max.Id); } catch { }
+                        Task.Run(() =>
+                        {
+                            try { File.Delete(@"GET_OBJECTS_BY_ADDRESS"); } catch { }
+                        });
 
+                        if (skip != 0)
+                        {
+                            //GPT3 SUGGESTED
+                            var skippedList = objectStates.SkipWhile(state => state.Id != skip);
+
+
+                            if (qty == -1) { return skippedList.ToList(); }
+                            else { return skippedList.Take(qty).ToList(); }
+                        }
+                        else
+                        {
+                            if (qty == -1) { return objectStates.ToList(); }
+                            else { return objectStates.Take(qty).ToList(); }
+
+                        }
+                    }
+
+                }
+
+                try { objectStates.Last().Id = objectTransactions.Max(max => max.Id); } catch { }
+
+                
+                Task.Run(() =>
+                {
                     var objectSerialized = JsonConvert.SerializeObject(objectStates);
 
                     if (!Directory.Exists(@"root\" + objectaddress))
@@ -2297,11 +2363,24 @@ namespace SUP.P2FK
                     System.IO.File.WriteAllText(@"root\" + objectaddress + @"\" + "GetObjectsByAddress.json", objectSerialized);
 
                     try { File.Delete(@"GET_OBJECTS_BY_ADDRESS"); } catch { }
+                });
+
+                if (skip != 0)
+                {
+                    //GPT3 SUGGESTED
+                    var skippedList = objectStates.SkipWhile(state => state.Id != skip);
+
+
+                    if (qty == -1) { return skippedList.ToList(); }
+                    else { return skippedList.Take(qty).ToList(); }
                 }
-                catch { }
-                finally { try { File.Delete(@"GET_OBJECTS_BY_ADDRESS"); } catch { } }
-                if (qty == -1) { return objectStates.ToList(); }
-                else { return objectStates.Skip(skip).Take(qty).ToList(); }
+                else
+                {
+                    if (qty == -1) { return objectStates.ToList(); }
+                    else { return objectStates.Take(qty).ToList(); }
+
+                }
+
 
             }
         }
@@ -2448,7 +2527,7 @@ namespace SUP.P2FK
                 bool fetched = false;
                 bool isKeywordSearch = false;
 
-                if (objectaddress.StartsWith("#")) { objectaddress = Root.GetPublicAddressByKeyword(objectaddress.Substring(1),"111"); isKeywordSearch = true; }
+                if (objectaddress.StartsWith("#")) { objectaddress = Root.GetPublicAddressByKeyword(objectaddress.Substring(1), "111"); isKeywordSearch = true; }
 
                 if (System.IO.File.Exists(@"root\" + objectaddress + @"\BLOCK")) { return objectStates; }
 
@@ -2542,7 +2621,7 @@ namespace SUP.P2FK
                         }
                         else
                         {
-                            if (objectstate.URN != null && objectstate.Creators!= null && objectstate.Creators.ContainsKey(objectaddress) && objectstate.Creators[objectaddress].Year > 1975)
+                            if (objectstate.URN != null && objectstate.Creators != null && objectstate.Creators.ContainsKey(objectaddress) && objectstate.Creators[objectaddress].Year > 1975)
                             {
 
                                 if (!addedValues.Contains(objectstate.Creators.ElementAt(1).Key) && !System.IO.File.Exists(@"root\" + objectstate.Creators.ElementAt(1).Key + @"\BLOCK"))

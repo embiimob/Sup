@@ -96,7 +96,7 @@ namespace SUP
                 else if (options.GetObjectByURN)
                 {
 
-                    var root = OBJState.GetObjectByURN(options.URN, options.Username, options.Password, options.Url, options.VersionByte, options.Skip);
+                    var root = OBJState.GetObjectByURN(options.URN, options.Username, options.Password, options.Url, options.VersionByte);
                     var json = JsonConvert.SerializeObject(root);
                     Console.WriteLine(json);
 
@@ -104,7 +104,7 @@ namespace SUP
                 else if (options.GetObjectByFile)
                 {
 
-                    var root = OBJState.GetObjectByFile(options.FilePath, options.Username, options.Password, options.Url, options.VersionByte, options.Skip);
+                    var root = OBJState.GetObjectByFile(options.FilePath, options.Username, options.Password, options.Url, options.VersionByte);
                     var json = JsonConvert.SerializeObject(root);
                     Console.WriteLine(json);
 
@@ -200,7 +200,7 @@ namespace SUP
 
                     List<string> keywords = new List<string>();
                     keywords.Add(options.Keyword);
-                    var root = PROState.GetProfileByURN(options.URN, options.Username, options.Password, options.Url, options.VersionByte, options.Verbose, options.Skip);
+                    var root = PROState.GetProfileByURN(options.URN, options.Username, options.Password, options.Url, options.VersionByte, options.Verbose);
                     var json = JsonConvert.SerializeObject(root);
                     Console.WriteLine(json);
 

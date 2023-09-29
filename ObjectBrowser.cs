@@ -11,6 +11,7 @@ using System.Windows.Forms;
 using NBitcoin;
 using System.Threading.Tasks;
 using System.IO;
+using Newtonsoft.Json.Linq;
 
 namespace SUP
 {
@@ -69,75 +70,67 @@ namespace SUP
             {
 
 
-
-                if (txtSearchAddress.Text.StartsWith("#"))
+                this.Invoke((Action)(() =>
                 {
-                    //try { File.Delete(@"root/" + address + @"/GetObjectsByAddress.json"); } catch { }
-
-
-                    this.Invoke((Action)(() =>
+                    if (txtSearchAddress.Text.StartsWith("#"))
                     {
 
                         profileURN.Links[0].LinkData = Root.GetPublicAddressByKeyword(txtSearchAddress.Text.Substring(1), "111");
                         profileURN.LinkColor = System.Drawing.SystemColors.Highlight;
                         profileURN.Text = txtSearchAddress.Text;
 
-                    }));
 
-                }
-                else
-                {
-
-
-
-
-
-                    try { searchprofile = PROState.GetProfileByAddress(address, "good-user", "better-password", @"http://127.0.0.1:18332"); } catch { }
-
-
-                    try
+                    }
+                    else
                     {
-                        if (searchprofile.URN == null)
-                        {
-                            searchprofile = PROState.GetProfileByURN(address, "good-user", "better-password", @"http://127.0.0.1:18332");
-                        }
 
-                        if (searchprofile.URN != null)
-                        {
 
-                            this.Invoke((Action)(() =>
+
+
+
+                        try { searchprofile = PROState.GetProfileByAddress(address, "good-user", "better-password", @"http://127.0.0.1:18332"); } catch { }
+
+
+                        try
+                        {
+                            if (searchprofile.URN == null)
+                            {
+                                searchprofile = PROState.GetProfileByURN(address, "good-user", "better-password", @"http://127.0.0.1:18332");
+                            }
+
+                            if (searchprofile.URN != null)
                             {
 
-                                profileURN.Links[0].LinkData = searchprofile.Creators.First();
-                                profileURN.LinkColor = System.Drawing.SystemColors.Highlight;
 
-                                profileURN.Text = TruncateAddress(searchprofile.URN);
+                                    profileURN.Links[0].LinkData = searchprofile.Creators.First();
+                                    profileURN.LinkColor = System.Drawing.SystemColors.Highlight;
 
-                                profileCheck = searchprofile.Creators.First();
-                            }));
+                                    profileURN.Text = TruncateAddress(searchprofile.URN);
 
-                        }
-                        else
-                        {
-                            this.Invoke((Action)(() =>
+                                    profileCheck = searchprofile.Creators.First();
+                               
+
+                            }
+                            else
                             {
+                                
+                                    profileURN.Links[0].LinkData = address;
+                                    profileURN.LinkColor = System.Drawing.SystemColors.GradientActiveCaption;
+                                    profileURN.Text = "anon";
+                                
+                            }
+                        }
+                        catch
+                        {
+
+                           
                                 profileURN.Links[0].LinkData = address;
                                 profileURN.LinkColor = System.Drawing.SystemColors.GradientActiveCaption;
                                 profileURN.Text = "anon";
-                            }));
+                            
                         }
                     }
-                    catch
-                    {
-
-                        this.Invoke((Action)(() =>
-                        {
-                            profileURN.Links[0].LinkData = address;
-                            profileURN.LinkColor = System.Drawing.SystemColors.GradientActiveCaption;
-                            profileURN.Text = "anon";
-                        }));
-                    }
-                }
+                }));
 
                 if (btnCreated.BackColor == Color.Yellow && txtSearchAddress.Text != "")
                 {
@@ -1701,8 +1694,10 @@ namespace SUP
 
         private void MainUserNameClick(object sender, LinkLabelLinkClickedEventArgs e)
         {
-
-            txtSearchAddress.Text = profileURN.Links[0].LinkData.ToString();
+            if (profileURN.Links[0].LinkData != null)
+            {
+                txtSearchAddress.Text = profileURN.Links[0].LinkData.ToString();
+            }
 
         }
 
@@ -1797,20 +1792,7 @@ namespace SUP
                     loadQty -= flowLayoutPanel1.Controls.Count;
 
 
-                    if (SearchId == SearchHistory.Count)
-                    {
-                        SearchHistory.Add(txtSearchAddress.Text);
-                        SearchId++;
-                    }
-                    else
-                    {
-
-                        if (SearchId > SearchHistory.Count - 1) { SearchId = SearchHistory.Count - 1; }
-                        SearchHistory[SearchId] = txtSearchAddress.Text;
-
-                    }
-
-
+                   
                     if (txtSearchAddress.Text.ToLower().StartsWith("http"))
                     {
                         flowLayoutPanel1.Controls.Clear();
@@ -2059,27 +2041,11 @@ namespace SUP
                     }
 
 
-                    using (var db = new DB(SUP, @"root\sup"))
-                    {
-                        db.Delete("isBuilding");
-                    }
+                   
 
 
                 }
-                catch { }
-                finally
-                {
-                    try
-                    {
-
-                        using (var db = new DB(SUP, @"root\sup"))
-                        {
-                            db.Delete("isBuilding");
-                        }
-
-                    }
-                    catch { try { Directory.Delete(@"root\sup", true); } catch { } }
-                }
+                catch { }              
 
 
             }

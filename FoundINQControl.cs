@@ -15,6 +15,7 @@ namespace SUP
         private bool calculate = false;
         public FoundINQControl(string address, string activeprofile = "")
         {
+            SuspendLayout();
             InitializeComponent();
             _address = address;
             _activeprofile = activeprofile;
@@ -98,7 +99,7 @@ namespace SUP
 
         private void RefreshTotals()
         {
-
+        
             flowLayoutPanel1.Controls.Clear();
 
             INQState iNQState = INQState.GetInquiryByTransactionId(_address, "good-user", "better-password", @"http://127.0.0.1:18332", "111", calculate);
@@ -294,10 +295,9 @@ namespace SUP
 
         private void FoundINQControl_Load(object sender, EventArgs e)
         {
-            this.Invoke((MethodInvoker)delegate
-            {
+           
                 RefreshTotals();
-            });
+           
         }
 
         private void btnShowAllOrGated_Click(object sender, EventArgs e)
