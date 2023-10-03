@@ -9,7 +9,7 @@ P2FK was directly inspired by the satoshi uploader  see --> https://cirosantilli
 
 ## **Installation**
 
-1. Download the Sup!? v0.2.6-beta.zip file (https://github.com/embiimob/Sup/releases/download/Supv0.2.6-beta/Supv0.2.6-beta.zip)
+1. Download the Sup!? v0.2.7-beta.zip file (https://github.com/embiimob/Sup/releases/download/Supv0.2.7-beta/Supv0.2.7-beta.zip)
 2. Create a folder on your **fastest** disk drive with at least **50GB** free (it will be storing the bitcoin testnet blockchain)
 3. Unzip all contents into the folder
 4. Create a shortcut to SUP.exe and launch
@@ -97,9 +97,9 @@ Muting an address prevents any further transaction comments signed by the addres
 clicking the 🗑️ icon found in message and object search results deletes them from disk including any thumbnails or attachments they may have been displaying at the time.  it also places a null transaction record into the cache to prevent the object or message from outputting onto a disk in the future. 
 <br />
 <br />
-## **Web Applet Querystring Data**
+## **Web applet querystring data with transaction id hash for html based generative objects**
 Trusted index.html and index.htm files are sent the following Sup!? object information via querystring on load:
-"address=", "creator=", "viewer=", "viewer-name=", "owner=", "owner-name=", "urn=", "uri=", "url=", "height="
+"address=", "creator=", "viewer=", "viewername=", "owner=", "ownername=", "urn=", "uri=", "url=", "height=", "transactionid="
 <br />
 <br />
 ## **Search Examples**
