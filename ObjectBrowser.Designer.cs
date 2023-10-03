@@ -205,6 +205,7 @@ namespace SUP
             this.profileURN.Text = "anon";
             this.profileURN.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             this.profileURN.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.MainUserNameClick);
+            this.profileURN.TextChanged += new System.EventHandler(this.profileURN_TextChanged);
             // 
             // btnCollections
             // 

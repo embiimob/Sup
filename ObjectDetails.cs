@@ -33,13 +33,15 @@ namespace SUP
         private int numChangesDisplayed = 0;
         private bool isUserControl = false;
         private bool isInitializing = true;
+        private string _activeprofile;
         List<Microsoft.Web.WebView2.WinForms.WebView2> webviewers = new List<Microsoft.Web.WebView2.WinForms.WebView2>();
 
-        public ObjectDetails(string objectaddress, bool isusercontrol = false)
+        public ObjectDetails(string objectaddress, string activeprofile, bool isusercontrol = false)
         {
             InitializeComponent();
             _objectaddress = objectaddress;
             isUserControl = isusercontrol;
+            _activeprofile = activeprofile;
             supFlow.MouseWheel += supFlow_MouseWheel;
         }
 
@@ -3083,15 +3085,27 @@ namespace SUP
                                     }
 
                                     string _address = _objectaddress;
-                                    string _viewer = objstate.Owners.Last().Key;
-                                    string _viewername = null; //to be implemented
+                                    string _transactionid = objstate.TransactionId;
+                                    string _viewer = _activeprofile;
+                                    string _viewername = null;
+                                    if (_activeprofile != "")
+                                    {
+                                        PROState profile = PROState.GetProfileByAddress(_activeprofile, "good-user", "better-password", @"http://127.0.0.1:18332");
+                                        if (profile.URN != null) { _viewername = HttpUtility.UrlEncode(profile.URN); }
+                                    }
                                     string _creator = objstate.Creators.Last().Key;
-                                    int _owner = objstate.Owners.Count();
+                                    string _owner = objstate.Owners.Last().Key;
+                                    string _ownername = null;
+                                    if (_owner != "")
+                                    {
+                                        PROState profile = PROState.GetProfileByAddress(_owner, "good-user", "better-password", @"http://127.0.0.1:18332");
+                                        if (profile.URN != null) { _ownername = HttpUtility.UrlEncode(profile.URN); }
+                                    }
                                     string _urn = HttpUtility.UrlEncode(objstate.URN);
                                     string _uri = HttpUtility.UrlEncode(objstate.URI);
                                     string _img = HttpUtility.UrlEncode(objstate.Image);
 
-                                    string querystring = "?address=" + _address + "&viewer=" + _viewer + "&viewername=" + _viewername + "&creator=" + _creator + "&owner=" + _owner + "&urn=" + _urn + "&uri=" + _uri + "&img=" + _img;
+                                    string querystring = "?address=" + _address + "&viewer=" + _viewer + "&viewername=" + _viewername + "&creator=" + _creator + "&owner=" + _owner + "&ownername=" + _ownername + "&urn=" + _urn + "&uri=" + _uri + "&img=" + _img + "&transactionid=" + _transactionid;
                                     htmlembed = "<html><body><embed src=\"" + urn + querystring + "\" width=100% height=100%></body></html>";
 
 
@@ -3132,12 +3146,14 @@ namespace SUP
                         break;
                     default:
 
-                        pictureBox1.Invoke(new Action(() => pictureBox1.ImageLocation = imgurn));
-                        if (btnOfficial.Visible == false)
-                        {
-                            btnLaunchURN.Visible = true;
-                            lblWarning.Visible = true;
-                        }
+                            pictureBox1.Invoke(new Action(() => pictureBox1.ImageLocation = imgurn));
+
+                            if (btnOfficial.Visible == false)
+                            {
+                                btnLaunchURN.Visible = true;
+                                lblWarning.Visible = true;
+                            }
+                        
                         break;
                 }
 
@@ -3318,7 +3334,7 @@ namespace SUP
 
         private void btnOfficial_Click(object sender, EventArgs e)
         {
-            new ObjectDetails(txtOfficialURN.Text).Show();
+            new ObjectDetails(txtOfficialURN.Text,_activeprofile).Show();
         }
 
         private void imgPicture_Validated(object sender, EventArgs e)
@@ -3359,17 +3375,17 @@ namespace SUP
 
         private void btnBurn_Click(object sender, EventArgs e)
         {
-            new ObjectBurn(_objectaddress).Show();
+            new ObjectBurn(_objectaddress, _activeprofile).Show();
         }
 
         private void btnGive_Click(object sender, EventArgs e)
         {
-            new ObjectGive(_objectaddress).Show();
+            new ObjectGive(_objectaddress, _activeprofile).Show();
         }
 
         private void btnDisco_Click(object sender, EventArgs e)
         {
-            DiscoBall disco = new DiscoBall("", "", _objectaddress, imgPicture.ImageLocation, false);
+            DiscoBall disco = new DiscoBall(_activeprofile,"", _objectaddress, imgPicture.ImageLocation, false);
             disco.StartPosition = FormStartPosition.CenterScreen;
             disco.Show(this);
             disco.Focus();
@@ -3377,7 +3393,7 @@ namespace SUP
 
         private void btnBuy_Click(object sender, EventArgs e)
         {
-            new ObjectBuy(_objectaddress).Show();
+            new ObjectBuy(_objectaddress,_activeprofile).Show();
         }
 
 

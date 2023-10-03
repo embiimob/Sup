@@ -9,10 +9,14 @@ using System.Windows.Forms;
 namespace SUP
 {
     public partial class FoundObjectControl : UserControl
+
+       
     {
-        public FoundObjectControl()
+        private string _activeprofile;
+        public FoundObjectControl(string activeprofile)
         {
             InitializeComponent();
+            _activeprofile = activeprofile;
         }
 
      
@@ -20,7 +24,7 @@ namespace SUP
         {
 
             Form parentForm = this.FindForm();
-            ObjectDetails childForm = new ObjectDetails(ObjectAddress.Text);
+            ObjectDetails childForm = new ObjectDetails(ObjectAddress.Text, _activeprofile);
             
             childForm.Owner = parentForm;
           
@@ -32,7 +36,7 @@ namespace SUP
         {
 
            Form parentForm = this.FindForm();
-           ObjectBuy childForm = new ObjectBuy(ObjectAddress.Text);
+           ObjectBuy childForm = new ObjectBuy(ObjectAddress.Text, _activeprofile);
 
             childForm.Owner = parentForm;
 
@@ -64,7 +68,7 @@ namespace SUP
         private void btnOfficial_Click(object sender, EventArgs e)
         {
             Form parentForm = this.FindForm();
-            ObjectDetails childForm = new ObjectDetails(txtOfficialURN.Text);
+            ObjectDetails childForm = new ObjectDetails(txtOfficialURN.Text,_activeprofile);
             childForm.Owner = parentForm;
             childForm.Show();
         }

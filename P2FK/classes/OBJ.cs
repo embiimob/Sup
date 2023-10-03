@@ -326,6 +326,7 @@ namespace SUP.P2FK
                                                             if (objectState.Owners == null)
                                                             {
                                                                 objectState.CreatedDate = transaction.BlockDate;
+                                                                objectState.TransactionId = transaction.TransactionId;
                                                                 objectState.Owners = new Dictionary<string, long>();
                                                                 objectState.Royalties = new Dictionary<string, decimal>();
                                                                 logstatus = "[\"" + transaction.SignedBy + "\",\"" + objectaddress + "\",\"create\",\"" + objectinspector.own.Values.Sum() + "\",\"\",\"success\"]";
@@ -2146,7 +2147,7 @@ namespace SUP.P2FK
             return objectState;
 
         }
-        public static List<OBJState> GetObjectsByAddress(string objectaddress, string username, string password, string url, string versionByte = "111", int skip = 0, int qty = -1)
+        public static List<OBJState> GetObjectsByAddress(string objectaddress, string username, string password, string url, string versionByte = "111", int skip = 0, int qty = -1, bool calculate = false)
         {
             Task.Run(() =>
             {
@@ -2201,11 +2202,12 @@ namespace SUP.P2FK
                 // this one is a bit different... it cannot use max id as the object will have their own Id.   so it stores the cache height at the last id.
                 try { intProcessHeight = objectStates.Last().Id; ; } catch { }
 
+                if (calculate) { intProcessHeight = 0; }
 
                 Root[] objectTransactions;
 
                 //return all roots found at address
-                objectTransactions = Root.GetRootsByAddress(objectaddress, username, password, url, intProcessHeight, -1, versionByte);
+                objectTransactions = Root.GetRootsByAddress(objectaddress, username, password, url, intProcessHeight, -1, versionByte, calculate);
 
 
                 if (intProcessHeight != 0 && objectTransactions.Count() == 0)

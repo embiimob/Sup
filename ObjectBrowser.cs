@@ -34,6 +34,7 @@ namespace SUP
         private bool _mouseClicked;
         private int _viewMode = 0;
         private bool ipfsActive;
+        private string _activeProfile = null;
 
         private readonly System.Windows.Forms.Timer _doubleClickTimer = new System.Windows.Forms.Timer();
         public ObjectBrowser(string objectaddress, bool iscontrol = false)
@@ -49,14 +50,16 @@ namespace SUP
 
         }
 
-        private void GetObjectsByAddress(string address)
+        private void GetObjectsByAddress(string address, bool calculate = false)
         {
 
             string profileCheck = address;
             PROState searchprofile = new PROState();
             List<OBJState> createdObjects = new List<OBJState>();
-            int skip = int.Parse(txtLast.Text);
-            int qty = int.Parse(txtQty.Text);
+            int skip = 0; 
+            try { skip = int.Parse(txtLast.Text); } catch { }
+            int qty = -1;
+            try { qty = int.Parse(txtQty.Text); } catch { };
 
             if (address.ToUpper().StartsWith(@"SUP:") || address.ToUpper().StartsWith(@"MZC:") || address.ToUpper().StartsWith(@"BTC:") || address.ToUpper().StartsWith(@"LTC:") || address.ToUpper().StartsWith(@"DOG:"))
             {
@@ -146,6 +149,7 @@ namespace SUP
                         {
 
                             try { searchprofile = PROState.GetProfileByAddress(address, "good-user", "better-password", @"http://127.0.0.1:18332"); } catch { }
+                            
                             if (searchprofile.URN == null)
                             {
                                 searchprofile = PROState.GetProfileByURN(address, "good-user", "better-password", @"http://127.0.0.1:18332");
@@ -174,7 +178,7 @@ namespace SUP
 
                         }
 
-                        createdObjects = OBJState.GetObjectsByAddress(profileCheck, "good-user", "better-password", @"http://127.0.0.1:18332", "111", 0, -1);
+                        createdObjects = OBJState.GetObjectsByAddress(profileCheck, "good-user", "better-password", @"http://127.0.0.1:18332", "111", 0, -1,calculate);
 
                         this.Invoke((Action)(() =>
                         {
@@ -265,7 +269,7 @@ namespace SUP
                             if (objstate.Owners != null)
                             {
                                 string transid = "";
-                                FoundObjectControl foundObject = new FoundObjectControl();
+                                FoundObjectControl foundObject = new FoundObjectControl(_activeProfile);
                                 foundObject.ObjectName.Text = objstate.Name;
                                 foundObject.ObjectDescription.Text = objstate.Description;
                                 foundObject.ObjectAddress.Text = objstate.Creators.First().Key;
@@ -712,7 +716,7 @@ namespace SUP
             }
         }
 
-        private void GetCollectionsByAddress(string address)
+        private void GetCollectionsByAddress(string address, bool calculate = false)
         {
 
             string profileCheck = address;
@@ -1138,7 +1142,7 @@ namespace SUP
                     if (objstate.Owners != null)
                     {
                         string transid = "";
-                        FoundObjectControl foundObject = new FoundObjectControl();
+                        FoundObjectControl foundObject = new FoundObjectControl(_activeProfile);
                         foundObject.ObjectName.Text = objstate.Name;
                         foundObject.ObjectDescription.Text = objstate.Description;
                         foundObject.ObjectAddress.Text = objstate.Creators.First().Key;
@@ -1718,16 +1722,23 @@ namespace SUP
                     imgLoading.ImageLocation = @"includes\HugPuddle.jpg";
                 }
                 flowLayoutPanel1.Visible = false;
-                await Task.Run(() => BuildSearchResults());
+                if (Control.ModifierKeys == Keys.Control)
+                {
+                    await Task.Run(() => BuildSearchResults(true)); // Pass true when Ctrl is pressed
+                }
+                else
+                {
+                    await Task.Run(() => BuildSearchResults());
+                }
                 flowLayoutPanel1.Visible = true;
                 pages.Visible = true;
                 EnableSupInput();
-
             }
+
 
         }
 
-        private async void BuildSearchResults()
+        private async void BuildSearchResults(bool calculate = false)
         {
             lock (SupLocker)
             {
@@ -1825,7 +1836,7 @@ namespace SUP
                             }
                             else
                             {
-                                GetObjectsByAddress(Root.GetPublicAddressByKeyword(txtSearchAddress.Text.Substring(1), "111"));
+                                GetObjectsByAddress(Root.GetPublicAddressByKeyword(txtSearchAddress.Text.Substring(1), "111"), calculate);
                             }
 
                         }
@@ -1867,11 +1878,10 @@ namespace SUP
                                             Process process2 = new Process();
                                             process2.StartInfo.FileName = @"ipfs\ipfs.exe";
                                             process2.StartInfo.Arguments = "get " + ipfsHash + @" -o ipfs\" + ipfsHash;
-                                            process2.StartInfo.UseShellExecute = false;
-                                            process2.StartInfo.CreateNoWindow = false;
                                             process2.Start();
                                             process2.WaitForExit();
-                                            string fileName;
+                                            
+                                                string fileName;
                                             if (System.IO.File.Exists("ipfs/" + ipfsHash))
                                             {
                                                 System.IO.File.Move("ipfs/" + ipfsHash, "ipfs/" + ipfsHash + "_tmp");
@@ -1951,7 +1961,7 @@ namespace SUP
                             {
                                 if (txtSearchAddress.Text.ToUpper().StartsWith(@"SUP:"))
                                 {
-                                    GetObjectsByAddress(txtSearchAddress.Text);
+                                    GetObjectsByAddress(txtSearchAddress.Text,calculate);
 
                                 }
                                 else
@@ -2009,7 +2019,7 @@ namespace SUP
                                         {
                                             if (!string.IsNullOrEmpty(txtSearchAddress.Text))
                                             {
-                                                GetCollectionsByAddress(txtSearchAddress.Text.Replace("@", ""));
+                                                GetCollectionsByAddress(txtSearchAddress.Text.Replace("@", ""),calculate);
                                             }
                                             else
                                             {
@@ -2022,7 +2032,7 @@ namespace SUP
                                         }
                                         else
                                         {
-                                            GetObjectsByAddress(txtSearchAddress.Text.Replace("@", ""));
+                                            GetObjectsByAddress(txtSearchAddress.Text.Replace("@", ""),calculate);
                                         }
                                     }
 
@@ -2549,6 +2559,21 @@ namespace SUP
                 INQSearchForm.Show();
             }
             btnInquiry.Enabled = true;
+        }
+
+        //should keep object browser active profile synched with social
+        private void profileURN_TextChanged(object sender, EventArgs e)
+        {
+
+            if (profileURN.Links[0].LinkData != null)
+            {
+                List<string> islocal = Root.GetPublicKeysByAddress(profileURN.Links[0].LinkData.ToString(), "good-user", "better-password", @"http://127.0.0.1:18332");
+                if
+                     (islocal.Count == 2)
+                {
+                    _activeProfile = profileURN.Links[0].LinkData.ToString();
+                }
+            }
         }
     }
 

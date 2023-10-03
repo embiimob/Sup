@@ -23,10 +23,13 @@ namespace SUP
         bool mint = false;
         private readonly string brnaddress = "";
         private Random random = new Random();
-        public ObjectBurn(string _address="")
+        private string _activeprofile;
+        public ObjectBurn(string _address="", string activeprofile ="")
         {
             InitializeComponent();
             brnaddress = _address;
+            _activeprofile = activeprofile;
+
         }
 
         private string GetRandomDelimiter()
@@ -268,6 +271,7 @@ namespace SUP
         private void ObjectBurn_Load(object sender, EventArgs e)
         {
             addressTextBox.Text = brnaddress;
+            txtSignatureAddress.Text = _activeprofile;
         }
     }
 }

@@ -22,10 +22,12 @@ namespace SUP
         bool mint = false;
         private readonly string givaddress = "";
         private Random random = new Random();
-        public ObjectGive(string _address="")
+        private string _activeprofile;
+        public ObjectGive(string _address="", string acdtiveprofile = "")
         {
             InitializeComponent();
             givaddress = _address;
+            _activeprofile = acdtiveprofile;
         }
 
         private string GetRandomDelimiter()
@@ -273,6 +275,7 @@ namespace SUP
         private void ObjectGive_Load(object sender, EventArgs e)
         {
             txtObjectAddress.Text = givaddress;
+            txtSignatureAddress.Text = _activeprofile;
         }
     }
 }

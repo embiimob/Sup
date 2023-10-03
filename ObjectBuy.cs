@@ -30,11 +30,13 @@ namespace SUP
         bool mint = false;
         private readonly string givaddress = "";
         private Random random = new Random();
+        private string _activeprofile;
 
-        public ObjectBuy(string _address = "")
+        public ObjectBuy(string _address = "", string activeprofile = "")
         {
             InitializeComponent();
             givaddress = _address;
+            _activeprofile = activeprofile;
         }
 
         private string GetRandomDelimiter()
@@ -242,6 +244,7 @@ namespace SUP
         private void ObjectGive_Load(object sender, EventArgs e)
         {
             txtAddressSearch.Text = givaddress;
+            txtSignatureAddress.Text = _activeprofile;
             this.Text = "[ " + txtAddressSearch.Text + " ]";
             RefreshPage();
             tmrSearchMemoryPool.Enabled = true;

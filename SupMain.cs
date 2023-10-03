@@ -899,7 +899,9 @@ namespace SUP
                         if (objstate.Owners != null)
                         {
                             string transid = "";
-                            FoundObjectControl foundObject = new FoundObjectControl();
+                            string profileowner = "";
+                            if (profileOwner.Tag != null) { profileowner = profileOwner.Tag.ToString(); }
+                            FoundObjectControl foundObject = new FoundObjectControl(profileowner);
                             foundObject.SuspendLayout();
                             if (objstate.Image != null)
                             {
@@ -5829,7 +5831,9 @@ namespace SUP
 
         private void profileURN_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
-            try { new ProfileMint(profileURN.Links[0].LinkData.ToString()).Show(); } catch { }
+            string ActiveProfile = "";
+            if (profileURN.Links[0].LinkData!= null) { ActiveProfile = profileURN.Links[0].LinkData.ToString(); }
+            try { new ProfileMint(ActiveProfile).Show(); } catch { }
         }
 
         private void btnPublicMessage_Click(object sender, EventArgs e)
