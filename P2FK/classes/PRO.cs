@@ -80,7 +80,7 @@ namespace SUP.P2FK
 
             if (verbose == true) { intProcessHeight = 0; profileState = new PROState(); }
 
-            objectTransactions = Root.GetRootsByAddress(profileaddress, username, password, url, intProcessHeight, -1, versionByte);
+            objectTransactions = Root.GetRootsByAddress(profileaddress, username, password, url, intProcessHeight, -1, versionByte, verbose);
 
             if (intProcessHeight != 0 && objectTransactions.Count() == 0)
             {
@@ -297,7 +297,7 @@ namespace SUP.P2FK
 
             if (verbose == true) { intProcessHeight = 0; profileState = new PROState(); }
             //return all roots found at address
-            profileTransactions = Root.GetRootsByAddress(profileaddress, username, password, url, intProcessHeight, -1, versionByte);
+            profileTransactions = Root.GetRootsByAddress(profileaddress, username, password, url, intProcessHeight, -1, versionByte, verbose);
 
             if (intProcessHeight > 0 && profileTransactions.Count() == 0) { return profileState; }
 
@@ -310,7 +310,7 @@ namespace SUP.P2FK
                 {
                     intProcessHeight = transaction.Id;
                     //ignore any transaction that is not signed
-                    if (transaction.Signed && transaction.File.ContainsKey("PRO"))
+                    if (transaction.Signed && transaction.File.ContainsKey("PRO") && ((profileState.Creators != null && profileState.Creators.Contains(transaction.SignedBy)) || profileState.Creators == null))
                     {
                         string findObject = transaction.Keyword.ElementAt(transaction.Keyword.Count - 1).Key;
 

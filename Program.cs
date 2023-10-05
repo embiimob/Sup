@@ -205,6 +205,38 @@ namespace SUP
                     Console.WriteLine(json);
 
                 }
+                else if (options.GetInquiryByAddress)
+                {
+
+                    var root = INQState.GetInquiryByAddress(options.Address, options.Username, options.Password, options.Url, options.VersionByte, options.Verbose);
+                    var json = JsonConvert.SerializeObject(root);
+                    Console.WriteLine(json);
+
+                }
+                else if (options.GetInquiryByTransactionId)
+                {
+
+                    var root = INQState.GetInquiryByTransactionId(options.TransactionId, options.Username, options.Password, options.Url, options.VersionByte);
+                    var json = JsonConvert.SerializeObject(root);
+                    Console.WriteLine(json);
+
+                }
+                else if (options.GetInquiriesByAddress)
+                {
+
+                    var root = INQState.GetInquiriesByAddress(options.Address, options.Username, options.Password, options.Url, options.VersionByte, options.Skip, options.Qty, options.Verbose);
+                    var json = JsonConvert.SerializeObject(root);
+                    Console.WriteLine(json);
+
+                }
+                else if (options.GetInquiriesCreatedByAddress)
+                {
+
+                    var root = INQState.GetInquiriesCreatedByAddress(options.Address, options.Username, options.Password, options.Url, options.VersionByte, options.Skip, options.Qty, options.Verbose);
+                    var json = JsonConvert.SerializeObject(root);
+                    Console.WriteLine(json);
+
+                }
                 else
                 {
                     Magician.DisappearConsole();
@@ -281,6 +313,18 @@ namespace SUP
         [Option("getprofilebyurn", Required = false, HelpText = "Get profile by urn")]
         public bool GetProfileByURN { get; set; }
 
+        [Option("getinquirybyaddress", Required = false, HelpText = "Get inquiry by address")]
+        public bool GetInquiryByAddress { get; set; }
+
+        [Option("getinquirybytransactionid", Required = false, HelpText = "Get inquiry by transaction id")]
+        public bool GetInquiryByTransactionId { get; set; }
+
+        [Option("getinquiriesbyaddress", Required = false, HelpText = "Get inquiries by address")]
+        public bool GetInquiriesByAddress { get; set; }
+   
+        [Option("getinquiriescreatedbyaddress", Required = false, HelpText = "Get inquiries created by address")]
+        public bool GetInquiriesCreatedByAddress { get; set; }
+
         [Option('u',"username", Required = false, HelpText = "The username for authentication")]
         public string Username { get; set; }
 
@@ -340,6 +384,10 @@ namespace SUP
                 yield return new Example("get public keys by address", new CommandOptions { GetPublicKeysByAddress = true, Address = "muVrFVk3ErfrnmWosLF4WixxRtDKfMx9bs", Username = "good-user", Password = "better-password", Url = "http://127.0.0.1:18332" });
                 yield return new Example("get profile by address", new CommandOptions { GetProfileByAddress = true, Address = "muVrFVk3ErfrnmWosLF4WixxRtDKfMx9bs", Username = "good-user", Password = "better-password", Url = "http://127.0.0.1:18332", VersionByte = "111" });
                 yield return new Example("get profile by urn", new CommandOptions { GetProfileByURN = true, URN = "embii4u", Username = "good-user", Password = "better-password", Url = "http://127.0.0.1:18332", VersionByte = "111"});
+                yield return new Example("get inquiry by address", new CommandOptions { GetInquiryByAddress = true, Address = "mqjT2e9zzYia9ndiwcT3Xwi4FvED4gw3Da", Username = "good-user", Password = "better-password", Url = "http://127.0.0.1:18332", VersionByte = "111", Verbose = true });
+                yield return new Example("get inquiry by transaction id", new CommandOptions { GetInquiryByTransactionId = true, TransactionId = "1ee795c31455c7674d6c0bed72f8f7b46501df2c86881440b96c9e5bf07de14b", Username = "good-user", Password = "better-password", Url = "http://127.0.0.1:18332", VersionByte = "111", Verbose = true });
+                yield return new Example("get inquires by address", new CommandOptions { GetInquiriesByAddress = true, Address = "muVrFVk3ErfrnmWosLF4WixxRtDKfMx9bs", Username = "good-user", Password = "better-password", Url = "http://127.0.0.1:18332", VersionByte = "111", Skip = 0, Qty = -1, Verbose = true });
+                yield return new Example("get inquiries created by address", new CommandOptions { GetInquiriesCreatedByAddress = true, Address = "muVrFVk3ErfrnmWosLF4WixxRtDKfMx9bs", Username = "good-user", Password = "better-password", Url = "http://127.0.0.1:18332", VersionByte = "111", Skip = 0, Qty = -1, Verbose = true });
 
             }
         }

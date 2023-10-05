@@ -4182,61 +4182,63 @@ namespace SUP
 
                                                     Root decryptedroot = Root.GetRootByTransactionId(transid, "good-user", "better-password", @"http://127.0.0.1:18332", "111", result, profileURN.Links[0].LinkData.ToString());
                                                     List<string> imgExtensions = new List<string> { ".bmp", ".gif", ".ico", ".jpeg", ".jpg", ".png", ".tif", ".tiff", ".mp4", ".avi", ".wav", ".mp3" };
-
-                                                    foreach (string file in decryptedroot.File.Keys)
+                                                    
+                                                    if (decryptedroot.File != null)
                                                     {
-
-
-                                                        string extension = Path.GetExtension(transid + @"\" + file).ToLower();
-                                                        if (!imgExtensions.Contains(extension))
+                                                        foreach (string file in decryptedroot.File.Keys)
                                                         {
-                                                            // Create a new panel to display the metadata
-                                                            Panel panel = new Panel();
-                                                            panel.BorderStyle = BorderStyle.FixedSingle;
-                                                            panel.MinimumSize = new Size(supPrivateFlow.Width - 50, 30);
-                                                            panel.AutoSize = true;
-                                                            // Create a label for the title
-                                                            LinkLabel titleLabel = new LinkLabel();
-                                                            titleLabel.Text = transid + @"\" + file;
-                                                            titleLabel.Links[0].LinkData = transid + @"\" + file;
-                                                            titleLabel.AutoSize = true;
-                                                            titleLabel.Font = new Font("Segoe UI", 8, FontStyle.Bold);
-                                                            titleLabel.LinkColor = System.Drawing.SystemColors.GradientActiveCaption;
-                                                            titleLabel.Padding = new Padding(5);
-                                                            titleLabel.MouseClick += (sender, e) => { Attachment_Clicked(@"root\" + transid + @"\" + file); };
-                                                            panel.Controls.Add(titleLabel);
 
-                                                            this.Invoke((MethodInvoker)delegate
-                                                            {
-                                                                this.supPrivateFlow.Controls.Add(panel);
-                                                            });
 
-                                                        }
-                                                        else
-                                                        {
-                                                            if (extension == ".mp4" || extension == ".avi" || extension == ".wav" || extension == ".mp3")
+                                                            string extension = Path.GetExtension(transid + @"\" + file).ToLower();
+                                                            if (!imgExtensions.Contains(extension))
                                                             {
+                                                                // Create a new panel to display the metadata
+                                                                Panel panel = new Panel();
+                                                                panel.BorderStyle = BorderStyle.FixedSingle;
+                                                                panel.MinimumSize = new Size(supPrivateFlow.Width - 50, 30);
+                                                                panel.AutoSize = true;
+                                                                // Create a label for the title
+                                                                LinkLabel titleLabel = new LinkLabel();
+                                                                titleLabel.Text = transid + @"\" + file;
+                                                                titleLabel.Links[0].LinkData = transid + @"\" + file;
+                                                                titleLabel.AutoSize = true;
+                                                                titleLabel.Font = new Font("Segoe UI", 8, FontStyle.Bold);
+                                                                titleLabel.LinkColor = System.Drawing.SystemColors.GradientActiveCaption;
+                                                                titleLabel.Padding = new Padding(5);
+                                                                titleLabel.MouseClick += (sender, e) => { Attachment_Clicked(@"root\" + transid + @"\" + file); };
+                                                                panel.Controls.Add(titleLabel);
 
                                                                 this.Invoke((MethodInvoker)delegate
                                                                 {
-                                                                    try { AddVideo(transid + @"\" + file, true); } catch { }
+                                                                    this.supPrivateFlow.Controls.Add(panel);
                                                                 });
 
                                                             }
                                                             else
                                                             {
-
-                                                                this.Invoke((MethodInvoker)delegate
+                                                                if (extension == ".mp4" || extension == ".avi" || extension == ".wav" || extension == ".mp3")
                                                                 {
-                                                                    AddImage(transid + @"\" + file, true);
-                                                                });
+
+                                                                    this.Invoke((MethodInvoker)delegate
+                                                                    {
+                                                                        try { AddVideo(transid + @"\" + file, true); } catch { }
+                                                                    });
+
+                                                                }
+                                                                else
+                                                                {
+
+                                                                    this.Invoke((MethodInvoker)delegate
+                                                                    {
+                                                                        AddImage(transid + @"\" + file, true);
+                                                                    });
+                                                                }
+
                                                             }
 
+
                                                         }
-
-
                                                     }
-
 
                                                 }
                                                 else
@@ -4971,6 +4973,7 @@ namespace SUP
                                         else
                                         {
                                             process2.Kill();
+                                            try { Directory.Delete("ipfs/" + transid + "-build", true); } catch { }
 
                                             this.Invoke((Action)(() =>
                                             {
@@ -5274,7 +5277,10 @@ namespace SUP
                                             catch { }
                                             try { Directory.Delete("ipfs/" + transid + "-build", true); } catch { }
                                         }
-                                        else { process2.Kill(); }
+                                        else { process2.Kill();
+
+                                            try { Directory.Delete("ipfs/" + transid + "-build", true); } catch { }
+                                        }
 
 
 

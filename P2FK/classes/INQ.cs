@@ -823,7 +823,7 @@ namespace SUP.P2FK
                         if (skip != 0)
                         {
                             //GPT3 SUGGESTED
-                            var skippedList = objectStates.SkipWhile(state => state.Id != skip);
+                            var skippedList = objectStates.Where(state => state.Id >= skip);
 
 
                             if (qty == -1) { return skippedList.ToList(); }
@@ -913,7 +913,7 @@ namespace SUP.P2FK
                 if (skip != 0)
                 {
                     //GPT3 SUGGESTED
-                    var skippedList = objectStates.SkipWhile(state => state.Id != skip);
+                    var skippedList = objectStates.Where(state => state.Id >= skip);
 
 
                     if (qty == -1) { return skippedList.ToList(); }
@@ -961,7 +961,7 @@ namespace SUP.P2FK
                     if (skip != 0)
                     {
                         //GPT3 SUGGESTED
-                        var skippedList = objectStates.SkipWhile(state => state.Id != skip);
+                        var skippedList = objectStates.Where(state => state.Id >= skip);
 
 
                         if (qty == -1) { return skippedList.ToList(); }

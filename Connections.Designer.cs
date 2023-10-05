@@ -492,7 +492,7 @@
             this.label15.Name = "label15";
             this.label15.Size = new System.Drawing.Size(109, 13);
             this.label15.TabIndex = 124;
-            this.label15.Text = "Sup!? v0.2.7-beta";
+            this.label15.Text = "Sup!? v0.2.8-beta";
             this.label15.TextAlign = System.Drawing.ContentAlignment.TopCenter;
             // 
             // label14

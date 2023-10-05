@@ -1676,7 +1676,7 @@ namespace SUP.P2FK
                         intProcessHeight = transaction.Id;
 
                         //ignore any transaction that is not signed
-                        if (transaction.Signed && transaction.File.ContainsKey("OBJ"))
+                        if (transaction.Signed && transaction.File.ContainsKey("OBJ") && ((objectState.Creators != null && objectState.Creators.ContainsKey(transaction.SignedBy)) || objectState.Creators == null))
                         {
                             objectState.ProcessHeight = intProcessHeight;
 
@@ -2220,7 +2220,7 @@ namespace SUP.P2FK
                     if (skip != 0)
                     {
                         //GPT3 SUGGESTED
-                        var skippedList = objectStates.SkipWhile(state => state.Id != skip);
+                        var skippedList = objectStates.Where(state => state.Id >= skip); ;
 
 
                         if (qty == -1) { return skippedList.ToList(); }
@@ -2346,7 +2346,7 @@ namespace SUP.P2FK
                 if (skip != 0)
                 {
                     //GPT3 SUGGESTED
-                    var skippedList = objectStates.SkipWhile(state => state.Id != skip);
+                    var skippedList = objectStates.Where(state => state.Id >= skip);
 
 
                     if (qty == -1) { return skippedList.ToList(); }
