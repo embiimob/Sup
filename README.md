@@ -9,7 +9,7 @@ P2FK was directly inspired by the satoshi uploader  see --> https://cirosantilli
 
 ## **Installation**
 
-1. Download the Sup!? v0.2.6-beta.zip file (https://github.com/embiimob/Sup/releases/download/Supv0.2.6-beta/Supv0.2.6-beta.zip)
+1. Download the Sup!? v0.2.8-beta.zip file (https://github.com/embiimob/Sup/releases/download/Supv0.2.8-beta/Supv0.2.8-beta.zip)
 2. Create a folder on your **fastest** disk drive with at least **50GB** free (it will be storing the bitcoin testnet blockchain)
 3. Unzip all contents into the folder
 4. Create a shortcut to SUP.exe and launch
@@ -97,9 +97,9 @@ Muting an address prevents any further transaction comments signed by the addres
 clicking the 🗑️ icon found in message and object search results deletes them from disk including any thumbnails or attachments they may have been displaying at the time.  it also places a null transaction record into the cache to prevent the object or message from outputting onto a disk in the future. 
 <br />
 <br />
-## **Web Applet Querystring Data**
+## **Web applet querystring data with transaction id hash for html based generative objects**
 Trusted index.html and index.htm files are sent the following Sup!? object information via querystring on load:
-"address=", "creator=", "viewer=", "viewer-name=", "owner=", "owner-name=", "urn=", "uri=", "url=", "height="
+"address=", "creator=", "viewer=", "viewername=", "owner=", "ownername=", "urn=", "uri=", "url=", "height=", "transactionid="
 <br />
 <br />
 ## **Search Examples**
@@ -210,6 +210,23 @@ SUP.EXE --tid 69ae3a76a9de22ffad7bfb9249824512fc38e01d82e2010877ead179b50f0f77 -
   SUP.EXE --versionbyte 111 --getprofilebyurn --password better-password --url http://127.0.0.1:18332 --username  good-user --urn embii4u <br />
 <br />
 
+**get inquiry by address:**<br />
+  SUP.EXE --address mqjT2e9zzYia9ndiwcT3Xwi4FvED4gw3Da --versionbyte 111 --getinquirybyaddress --password better-password  --url http://127.0.0.1:18332 --username good-user --verbose<br />
+<br />
+
+**get inquiry by transaction id:**<br />
+SUP.EXE --tid 1ee795c31455c7674d6c0bed72f8f7b46501df2c86881440b96c9e5bf07de14b --versionbyte 111 --getinquirybytransactionid --password better-password --url http://127.0.0.1:18332 --username good-user --verbose<br />
+<br />
+
+**get inquiries by address:**<br />
+  SUP.EXE --address muVrFVk3ErfrnmWosLF4WixxRtDKfMx9bs --versionbyte 111 --getinquiriesbyaddress --password  better-password --url http://127.0.0.1:18332 --username good-user --skip 0 --qty -1 --verbose<br />
+<br />
+
+**get inquiries created by address:**<br />
+  SUP.EXE --address muVrFVk3ErfrnmWosLF4WixxRtDKfMx9bs --versionbyte 111 --getinquiriescreatedbyaddress --password  better-password --url http://127.0.0.1:18332 --username good-user --skip 0 --qty -1 --verbose<br />
+<br />
+
+
 **parameters:**
 
   --getrootbytransactionid        
@@ -246,7 +263,15 @@ SUP.EXE --tid 69ae3a76a9de22ffad7bfb9249824512fc38e01d82e2010877ead179b50f0f77 -
 
   --getprofilebyaddress           
 
-  --getprofilebyurn               
+  --getprofilebyurn
+
+  --getinquirybyaddress            
+
+  --getinquirybytransactionid   
+  
+   --getinquiriesbyaddress 
+
+  --getinquiriescreatedbyaddress   
 
   -u, --username                  RPC username for authentication
 
