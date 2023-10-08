@@ -102,7 +102,7 @@
             // 
             // lblObjectStatus
             // 
-            this.lblObjectStatus.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.lblObjectStatus.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.lblObjectStatus.AutoSize = true;
             this.lblObjectStatus.ForeColor = System.Drawing.Color.White;
             this.lblObjectStatus.Location = new System.Drawing.Point(577, 520);

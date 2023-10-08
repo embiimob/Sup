@@ -2569,7 +2569,7 @@ namespace SUP
             }
             else
             {
-                Directory.Delete(@"root\" + txtObjectAddress.Text, true);
+                try { Directory.Delete(@"root\" + txtObjectAddress.Text, true); } catch { }
             }
 
           

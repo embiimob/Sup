@@ -282,7 +282,7 @@ namespace SUP
             this.supFlow.Location = new System.Drawing.Point(9, 159);
             this.supFlow.Name = "supFlow";
             this.supFlow.Padding = new System.Windows.Forms.Padding(0, 3, 0, 0);
-            this.supFlow.Size = new System.Drawing.Size(587, 527);
+            this.supFlow.Size = new System.Drawing.Size(584, 527);
             this.supFlow.TabIndex = 86;
             // 
             // lblAdultsOnly
@@ -356,7 +356,7 @@ namespace SUP
             this.lblProcessHeight.AutoSize = true;
             this.lblProcessHeight.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lblProcessHeight.ForeColor = System.Drawing.Color.White;
-            this.lblProcessHeight.Location = new System.Drawing.Point(485, 84);
+            this.lblProcessHeight.Location = new System.Drawing.Point(485, 86);
             this.lblProcessHeight.Name = "lblProcessHeight";
             this.lblProcessHeight.Size = new System.Drawing.Size(28, 16);
             this.lblProcessHeight.TabIndex = 96;
@@ -432,7 +432,7 @@ namespace SUP
             // 
             this.btnDisco.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.btnDisco.Font = new System.Drawing.Font("Segoe UI Emoji", 13.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnDisco.Location = new System.Drawing.Point(411, 692);
+            this.btnDisco.Location = new System.Drawing.Point(408, 692);
             this.btnDisco.Name = "btnDisco";
             this.btnDisco.Size = new System.Drawing.Size(56, 40);
             this.btnDisco.TabIndex = 85;
@@ -446,7 +446,7 @@ namespace SUP
             this.btnPrivateMessage.BackColor = System.Drawing.Color.White;
             this.btnPrivateMessage.Font = new System.Drawing.Font("Segoe UI Emoji", 13.8F);
             this.btnPrivateMessage.ForeColor = System.Drawing.Color.Black;
-            this.btnPrivateMessage.Location = new System.Drawing.Point(535, 692);
+            this.btnPrivateMessage.Location = new System.Drawing.Point(532, 692);
             this.btnPrivateMessage.Name = "btnPrivateMessage";
             this.btnPrivateMessage.Size = new System.Drawing.Size(56, 40);
             this.btnPrivateMessage.TabIndex = 84;
@@ -460,7 +460,7 @@ namespace SUP
             this.btnPublicMessage.BackColor = System.Drawing.Color.White;
             this.btnPublicMessage.Font = new System.Drawing.Font("Segoe UI Emoji", 13.8F);
             this.btnPublicMessage.ForeColor = System.Drawing.Color.Black;
-            this.btnPublicMessage.Location = new System.Drawing.Point(473, 692);
+            this.btnPublicMessage.Location = new System.Drawing.Point(470, 692);
             this.btnPublicMessage.Name = "btnPublicMessage";
             this.btnPublicMessage.Size = new System.Drawing.Size(56, 40);
             this.btnPublicMessage.TabIndex = 83;
@@ -483,6 +483,7 @@ namespace SUP
             this.Name = "SupMain";
             this.ShowIcon = false;
             this.Text = "Sup!?";
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.SupMain_FormClosing);
             this.Load += new System.EventHandler(this.SupMaincs_Load);
             this.splitContainer1.Panel1.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).EndInit();

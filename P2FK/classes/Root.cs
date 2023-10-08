@@ -616,94 +616,129 @@ namespace SUP.P2FK
         }
         public static Root[] GetRootsByAddress(string address, string username, string password, string url, int skip = 0, int qty = -1, string versionByte = "111", bool calculate = false)
         {
-            var rootList = new List<Root>();
-            if (address.Length < 34) { return rootList.ToArray(); }
-
-            bool fetched = false;
-            address = address.Replace("<", "").Replace(">", "");
-            try
+            Task.Run(() =>
             {
-                string diskpath = "root\\" + address + "\\";
-                string P2FKJSONString = System.IO.File.ReadAllText(diskpath + "ROOTS.json");
-                rootList = JsonConvert.DeserializeObject<List<Root>>(P2FKJSONString);
-                fetched = true;
-
-            }
-            catch { }
-
-            if (fetched && rootList.Count == 0 & !calculate) { return rootList.ToArray(); }
-
-            int intProcessHeight = 0;
-
-            try { intProcessHeight = rootList.Max(max => max.Id); } catch { }
-
-
-            if (calculate) { intProcessHeight = 0; rootList = new List<Root>(); }
-
-            int innerskip = intProcessHeight;
-            bool calculated = false;
-
-            while (true)
-            {
-                dynamic deserializedObject = null;
-
-                var credentials = new NetworkCredential(username, password);
-                var rpcClient = new RPCClient(credentials, new Uri(url));
-                string results = rpcClient.SendCommand("searchrawtransactions", address, 0, innerskip, 300).ResultString;
-
-                deserializedObject = JsonConvert.DeserializeObject(results);
-                if (deserializedObject.Count == 0) { break; }
-
-                for (int i = 0; i < deserializedObject.Count; i++)
+                using (FileStream fs = System.IO.File.Create(@"GET_ROOTS_BY_ADDRESS"))
                 {
-                    calculated = true;
-                    intProcessHeight++;
-                    string hexId = GetTransactionIdByHexString(deserializedObject[i].ToString());
-                    Root root = new Root();
-                    root = Root.GetRootByTransactionId(hexId, username, password, url, versionByte, null, null, calculate);
-
-                    if (root != null && root.TotalByteSize > 0 && root.Output != null && !rootList.Any(ROOT => ROOT.TransactionId == root.TransactionId) && root.Output.ContainsKey(address) && root.BlockDate.Year > 1975)
-                    {
-                        root.Id = intProcessHeight;
-
-                        rootList.Add(root);
-                    }
-                    else
-                    {
-                        if (root != null && root.Output != null && root.BlockDate.Year < 1975) { intProcessHeight--; }
-                    }
 
                 }
-                innerskip += 300;
+            });
 
-            }
 
-            if (calculated)
+            var rootList = new List<Root>();
+
+            try
             {
-                try { rootList.Last().Id = intProcessHeight; } catch { }
+                if (address.Length < 34) {
+
+                    Task.Run(() =>
+                    {
+                        try { System.IO.File.Delete(@"GET_ROOTS_BY_ADDRESS"); } catch { }
+                    });
+
+                    return rootList.ToArray(); }
+
+                bool fetched = false;
+                address = address.Replace("<", "").Replace(">", "");
+                try
+                {
+                    string diskpath = "root\\" + address + "\\";
+                    string P2FKJSONString = System.IO.File.ReadAllText(diskpath + "ROOTS.json");
+                    rootList = JsonConvert.DeserializeObject<List<Root>>(P2FKJSONString);
+                    fetched = true;
+
+                }
+                catch { }
+
+               //At this level should always validate...could be something new coming in.
+               // if (fetched && rootList.Count == 0 & !calculate) { return rootList.ToArray(); }
+
+                int intProcessHeight = 0;
+
+                try { intProcessHeight = rootList.Max(max => max.Id); } catch { }
+
+
+                if (calculate) { intProcessHeight = 0; rootList = new List<Root>(); }
+
+                int innerskip = intProcessHeight;
+                bool calculated = false;
+
+                while (true)
+                {
+                    dynamic deserializedObject = null;
+
+                    var credentials = new NetworkCredential(username, password);
+                    var rpcClient = new RPCClient(credentials, new Uri(url));
+                    string results = rpcClient.SendCommand("searchrawtransactions", address, 0, innerskip, 300).ResultString;
+
+                    deserializedObject = JsonConvert.DeserializeObject(results);
+                    if (deserializedObject.Count == 0) { break; }
+
+                    for (int i = 0; i < deserializedObject.Count; i++)
+                    {
+                        calculated = true;
+                        intProcessHeight++;
+                        string hexId = GetTransactionIdByHexString(deserializedObject[i].ToString());
+                        Root root = new Root();
+                        root = Root.GetRootByTransactionId(hexId, username, password, url, versionByte, null, null, calculate);
+
+                        if (root != null && root.TotalByteSize > 0 && root.Output != null && !rootList.Any(ROOT => ROOT.TransactionId == root.TransactionId) && root.Output.ContainsKey(address) && root.BlockDate.Year > 1975)
+                        {
+                            root.Id = intProcessHeight;
+
+                            rootList.Add(root);
+                        }
+                        else
+                        {
+                            if (root != null && root.Output != null && root.BlockDate.Year < 1975) { intProcessHeight--; }
+                        }
+
+                    }
+                    innerskip += 300;
+
+                }
+
+                if (calculated)
+                {
+                    try { rootList.Last().Id = intProcessHeight; } catch { }
+
+                    Task.Run(() =>
+                    {
+                        try { Directory.CreateDirectory(@"root\" + address); } catch { }
+                        var rootSerialized = JsonConvert.SerializeObject(rootList);
+                        System.IO.File.WriteAllText(@"root\" + address + @"\" + "ROOTS.json", rootSerialized);
+                    });
+                }
 
                 Task.Run(() =>
                 {
-                    try { Directory.CreateDirectory(@"root\" + address); } catch { }
-                    var rootSerialized = JsonConvert.SerializeObject(rootList);
-                    System.IO.File.WriteAllText(@"root\" + address + @"\" + "ROOTS.json", rootSerialized);
+                    try { System.IO.File.Delete(@"GET_ROOTS_BY_ADDRESS"); } catch { }
                 });
-            }
-            if (skip != 0)
-            {
-                //GPT3 SUGGESTED
-                var skippedList = rootList.Where(state => state.Id >= skip);
+
+                if (skip != 0)
+                {
+                    //GPT3 SUGGESTED
+                    var skippedList = rootList.Where(state => state.Id >= skip);
 
 
-                if (qty == -1) { return skippedList.ToArray(); }
-                else { return skippedList.Take(qty).ToArray(); }
-            }
-            else
-            {
-                if (qty == -1) { return rootList.ToArray(); }
-                else { return rootList.Take(qty).ToArray(); }
+                    if (qty == -1) { return skippedList.ToArray(); }
+                    else { return skippedList.Take(qty).ToArray(); }
+                }
+                else
+                {
+                    if (qty == -1) { return rootList.ToArray(); }
+                    else { return rootList.Take(qty).ToArray(); }
 
+                }
             }
+            catch {
+
+                Task.Run(() =>
+                {
+                    try { System.IO.File.Delete(@"GET_ROOTS_BY_ADDRESS"); } catch { }
+                });
+
+                return rootList.ToArray(); }
         }
         public static byte[] GetRootBytesByLedger(string ledger, string username, string password, string url)
         {

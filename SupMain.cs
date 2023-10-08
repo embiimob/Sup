@@ -125,6 +125,7 @@ namespace SUP
 
             try { File.Delete(@"GET_OBJECT_BY_ADDRESS"); } catch { }
             try { File.Delete(@"GET_OBJECTS_BY_ADDRESS"); } catch { }
+            try { File.Delete(@"GET_ROOTS_BY_ADDRESS"); } catch { }
 
             OBcontrol.Dock = DockStyle.Fill;
             OBcontrol.ProfileURNChanged += OBControl_ProfileURNChanged;
@@ -184,7 +185,7 @@ namespace SUP
                     numPrivateMessagesDisplayed = 0;
                     numFriendFeedsDisplayed = 0;
 
-                    if ( File.Exists(@"root\" + profileURN.Links[0].LinkData.ToString() + @"\MUTE")) { btnMute.Text = "unmute"; }
+                    if (File.Exists(@"root\" + profileURN.Links[0].LinkData.ToString() + @"\MUTE")) { btnMute.Text = "unmute"; }
 
                     if (profileURN.Text.StartsWith("#"))
                     {
@@ -237,7 +238,7 @@ namespace SUP
 
 
             lblProcessHeight.Text = "ph: " + activeProfile.Id.ToString();
-        profileCreatedDate.Text = "since: " + activeProfile.CreatedDate.ToString("MM/dd/yyyy hh:mm:ss tt");
+            profileCreatedDate.Text = "since: " + activeProfile.CreatedDate.ToString("MM/dd/yyyy hh:mm:ss tt");
 
             if (activeProfile.URL != null)
             {
@@ -730,7 +731,7 @@ namespace SUP
         }
         private async void btnLive_Click(object sender, EventArgs e)
         {
-            if (System.IO.File.Exists(@"GET_OBJECT_BY_ADDRESS") || System.IO.File.Exists(@"GET_OBJECTS_BY_ADDRESS")) { MessageBox.Show("Please wait for the search to complete.", "Notification"); return; }
+            if (System.IO.File.Exists(@"GET_ROOTS_BY_ADDRESS") || System.IO.File.Exists(@"GET_OBJECT_BY_ADDRESS") || System.IO.File.Exists(@"GET_OBJECTS_BY_ADDRESS")) { MessageBox.Show("Please wait for the search to complete.", "Notification"); return; }
 
             if (btnLive.BackColor == Color.White)
             {
@@ -1107,7 +1108,7 @@ namespace SUP
                         List<string> newtransactions = new List<string>();
                         string flattransactions;
                         OBJState isobject = new OBJState();
-      
+
                         List<OBJState> foundobjects = new List<OBJState>();
                         NetworkCredential credentials = new NetworkCredential("good-user", "better-password");
                         RPCClient rpcClient;
@@ -1511,7 +1512,8 @@ namespace SUP
                                                     INQState isINQ = new INQState();
                                                     isINQ = INQState.GetInquiryByTransactionId(s, "good-user", "better-password", @"http://127.0.0.1:18332");
 
-                                                    if (isINQ.TransactionId != null) {
+                                                    if (isINQ.TransactionId != null)
+                                                    {
 
                                                         this.Invoke((MethodInvoker)delegate
                                                         {
@@ -2827,7 +2829,7 @@ namespace SUP
                                                     if (find && root.File.ContainsKey("INQ"))
                                                     {
                                                         INQState isINQ = new INQState();
-                                                        isINQ = INQState.GetInquiryByTransactionId(s, "good-user", "better-password", @"http://127.0.0.1:22555","30");
+                                                        isINQ = INQState.GetInquiryByTransactionId(s, "good-user", "better-password", @"http://127.0.0.1:22555", "30");
 
                                                         if (isINQ.TransactionId != null)
                                                         {
@@ -2914,11 +2916,11 @@ namespace SUP
 
         private void RefreshSupMessages()
         {
-           
+
             // sorry cannot run two searches at a time
             if (refreshFriendFeed.Enabled == false || btnPublicMessage.Enabled == false || btnPrivateMessage.Enabled == false) { return; }
             supFlow.SuspendLayout();
-            
+
             // Clear controls if no messages have been displayed yet
             if (numMessagesDisplayed == 0)
             {
@@ -2940,9 +2942,9 @@ namespace SUP
                 supFlow.Controls.Clear();
                 supPrivateFlow.Controls.Clear();
                 numPrivateMessagesDisplayed = 0;
-             
-               
-               
+
+
+
 
                 try { Root[] roots = Root.GetRootsByAddress(profileURN.Links[0].LinkData.ToString(), "good-user", "better-password", "http://127.0.0.1:18332"); } catch { return; }
 
@@ -2990,6 +2992,7 @@ namespace SUP
                                         List<string> supMessagePacket = JsonConvert.DeserializeObject<List<string>>(process);
 
                                         string message = "";
+                                        string tid = supMessagePacket[1];
                                         try
                                         {
 
@@ -3447,8 +3450,8 @@ namespace SUP
 
                                             this.Invoke((MethodInvoker)delegate
                                             {
-                                                CreateRow(fromImage, fromAddress, supMessagePacket[0], DateTime.ParseExact("19700101010101", "yyyyMMddHHmmss", CultureInfo.InvariantCulture), "", supMessagePacket[1], false, supFlow);
-                                                CreateRow(toImage, toAddress, supMessagePacket[2], DateTime.ParseExact(tstamp, "yyyyMMddHHmmss", CultureInfo.InvariantCulture), message, "", false, supFlow);
+                                                CreateRow(fromImage, fromAddress, supMessagePacket[0], DateTime.ParseExact("19700101010101", "yyyyMMddHHmmss", CultureInfo.InvariantCulture), "", tid, false, supFlow);
+                                                CreateRow(toImage, toAddress, supMessagePacket[2], DateTime.ParseExact(tstamp, "yyyyMMddHHmmss", CultureInfo.InvariantCulture), message, tid, false, supFlow);
                                             });
 
 
@@ -3464,10 +3467,10 @@ namespace SUP
                                                     string profileowner = "";
 
                                                     if (profileOwner.Tag != null) { profileowner = profileOwner.Tag.ToString(); }
-                                                    FoundINQControl foundObject = new FoundINQControl(supMessagePacket[1],profileowner);
+                                                    FoundINQControl foundObject = new FoundINQControl(supMessagePacket[1], profileowner);
 
-                                                    foundObject.Margin = new Padding(20, 7, 8, 7); 
-                                                    supFlow.Controls.Add(foundObject);                                                  
+                                                    foundObject.Margin = new Padding(20, 7, 8, 7);
+                                                    supFlow.Controls.Add(foundObject);
                                                 });
                                             }
 
@@ -3707,11 +3710,11 @@ namespace SUP
 
                 }
 
-               
+
             });
 
-                supFlow.ResumeLayout();
-            
+            supFlow.ResumeLayout();
+
         }
 
         private void RefreshPrivateSupMessages()
@@ -4009,7 +4012,7 @@ namespace SUP
                                             CreateRow(imagelocation, fromAddress, supMessagePacket[0], DateTime.ParseExact(tstamp, "yyyyMMddHHmmss", CultureInfo.InvariantCulture), message, supMessagePacket[1], true, supPrivateFlow);
                                         });
 
-                                        string[] files = Directory.GetFiles(@"root\"+ supMessagePacket[1]);
+                                        string[] files = Directory.GetFiles(@"root\" + supMessagePacket[1]);
 
                                         bool containsFileWithINQ = files.Any(file =>
                                                file.EndsWith("INQ", StringComparison.OrdinalIgnoreCase) &&
@@ -4182,7 +4185,7 @@ namespace SUP
 
                                                     Root decryptedroot = Root.GetRootByTransactionId(transid, "good-user", "better-password", @"http://127.0.0.1:18332", "111", result, profileURN.Links[0].LinkData.ToString());
                                                     List<string> imgExtensions = new List<string> { ".bmp", ".gif", ".ico", ".jpeg", ".jpg", ".png", ".tif", ".tiff", ".mp4", ".avi", ".wav", ".mp3" };
-                                                    
+
                                                     if (decryptedroot.File != null)
                                                     {
                                                         foreach (string file in decryptedroot.File.Keys)
@@ -4452,7 +4455,7 @@ namespace SUP
                     supFlow.Size = new System.Drawing.Size(supFlow.Width, supFlow.Height + 150); // Change the width and height
                 }
             });
-           
+
 
             numMessagesDisplayed = 0;
             numPrivateMessagesDisplayed = 0;
@@ -4593,10 +4596,10 @@ namespace SUP
                         this.Invoke((MethodInvoker)delegate
                         {
                             try { imglocation = myFriends[_from]; } catch { }
-                            CreateFeedRow(imglocation, fromURN, _from, DateTime.ParseExact("19700101010101", "yyyyMMddHHmmss", CultureInfo.InvariantCulture), "", "", Color.White, supFlow);
+                            CreateRow(imglocation, fromURN, _from, DateTime.ParseExact("19700101010101", "yyyyMMddHHmmss", CultureInfo.InvariantCulture), "", _transactionId, false, supFlow);
 
                             try { imglocation = myFriends[_to]; } catch { }
-                            CreateFeedRow(imglocation, toURN, _to, DateTime.ParseExact(_blockdate, "yyyyMMddHHmmss", CultureInfo.InvariantCulture), _message, "", Color.White, supFlow);
+                            CreateRow(imglocation, toURN, _to, DateTime.ParseExact(_blockdate, "yyyyMMddHHmmss", CultureInfo.InvariantCulture), _message, _transactionId, false, supFlow);
                         });
 
                         string[] files = Directory.GetFiles(@"root\" + _transactionId);
@@ -4798,7 +4801,7 @@ namespace SUP
                     });
             }
 
-            supFlow.ResumeLayout(); 
+            supFlow.ResumeLayout();
 
         }
 
@@ -5277,7 +5280,9 @@ namespace SUP
                                             catch { }
                                             try { Directory.Delete("ipfs/" + transid + "-build", true); } catch { }
                                         }
-                                        else { process2.Kill();
+                                        else
+                                        {
+                                            process2.Kill();
 
                                             try { Directory.Delete("ipfs/" + transid + "-build", true); } catch { }
                                         }
@@ -5378,7 +5383,7 @@ namespace SUP
             TableLayoutPanel row = new TableLayoutPanel
             {
                 RowCount = 1,
-                ColumnCount = 4,
+                ColumnCount = 5,
                 AutoSize = true,
                 BackColor = Color.Black,
                 ForeColor = Color.White,
@@ -5388,7 +5393,8 @@ namespace SUP
             // Add the width of the first column to fixed value and second to fill remaining space
             row.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 50));
             row.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 90));
-            row.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 110));
+            row.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 220));
+            row.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 150));
             row.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 20));
 
             layoutPanel.Controls.Add(row);
@@ -5466,6 +5472,34 @@ namespace SUP
                 row.Controls.Add(tstamp, 2, 0);
 
 
+                Label loveme = new Label
+                {
+                    AutoSize = true,
+                    BackColor = Color.Black,
+                    ForeColor = Color.White,
+                    Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0))),
+                    Text = "🤍",
+                    Margin = new System.Windows.Forms.Padding(0),
+                    Dock = DockStyle.Bottom
+                };
+
+                loveme.Click += (sender, e) => { loveme_LinkClicked(sender, e, transactionid); };
+
+                row.Controls.Add(loveme, 3, 0);
+                Task.Run(() =>
+                {
+
+                    Root[] roots = Root.GetRootsByAddress(Root.GetPublicAddressByKeyword(transactionid), "good-user", "better-password", @"http://127.0.0.1:18332");
+                    if (roots != null && roots.Length > 0)
+                    {
+                        this.Invoke((MethodInvoker)delegate
+                    {
+                        loveme.Text = "🖤 " + roots.Length.ToString();
+                    });
+                    }
+
+                });
+
                 Label deleteme = new Label
                 {
                     AutoSize = true,
@@ -5477,7 +5511,7 @@ namespace SUP
                     Dock = DockStyle.Bottom
                 };
                 deleteme.Click += (sender, e) => { deleteme_LinkClicked(transactionid); };
-                row.Controls.Add(deleteme, 3, 0);
+                row.Controls.Add(deleteme, 4, 0);
             }
 
 
@@ -5807,6 +5841,48 @@ namespace SUP
             System.IO.File.WriteAllText(@"root\" + transactionid + @"\" + "ROOT.json", rootSerialized);
         }
 
+        void loveme_LinkClicked(object sender, EventArgs e, string transactionid)
+        {
+            MouseEventArgs me = e as MouseEventArgs;
+            if (me != null)
+            {
+                if (me.Button == MouseButtons.Left)
+                {
+                    // Code to execute for left click
+                    string profileowner = "";
+                    string toaddress = "";
+                    string postaddress = Root.GetPublicAddressByKeyword(transactionid);
+
+                    if (profileOwner.Tag != null) { profileowner = profileOwner.Tag.ToString(); }
+                    if (profileURN.Links[0].LinkData != null) { toaddress = profileURN.Links[0].LinkData.ToString(); }
+
+                    DiscoBall disco = new DiscoBall(profileowner, profileOwner.ImageLocation, toaddress + "," + postaddress, profileIMG.ImageLocation, false);
+                    disco.StartPosition = FormStartPosition.CenterParent;
+                    disco.Show(this);
+                    disco.Focus();
+                }
+                // Check if the right mouse button was clicked
+                else if (me.Button == MouseButtons.Right)
+                {
+                    // Code to execute for right click
+                    numMessagesDisplayed = 0;
+                    numPrivateMessagesDisplayed = 0;
+                    numFriendFeedsDisplayed = 0;
+
+                    profileBIO.Text = "Click the follow button to add this search to your community feed."; profileCreatedDate.Text = ""; profileIMG.ImageLocation = ""; lblProcessHeight.Text = "";
+
+                    GenerateImage("#" + transactionid.Substring(0, 20));
+                    profileURN.Text = "#" + transactionid.Substring(0, 20);
+                    profileURN.Links[0].LinkData = Root.GetPublicAddressByKeyword(transactionid);
+                    profileIMG.ImageLocation = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + @"\root\keywords\" + profileURN.Text + ".png";
+                    btnPublicMessage.BackColor = Color.Blue;
+                    btnPublicMessage.ForeColor = Color.Yellow;
+                    RefreshSupMessages();
+
+                }
+            }
+        }
+
         string TruncateAddress(string input)
         {
             if (input.Length <= 13)
@@ -5837,14 +5913,16 @@ namespace SUP
 
         private void profileURN_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
+            if (System.IO.File.Exists(@"GET_ROOTS_BY_ADDRESS") || System.IO.File.Exists(@"GET_OBJECT_BY_ADDRESS") || System.IO.File.Exists(@"GET_OBJECTS_BY_ADDRESS")) { MessageBox.Show("Please wait for the search to complete.", "Notification"); return; }
+
             string ActiveProfile = "";
-            if (profileURN.Links[0].LinkData!= null) { ActiveProfile = profileURN.Links[0].LinkData.ToString(); }
+            if (profileURN.Links[0].LinkData != null) { ActiveProfile = profileURN.Links[0].LinkData.ToString(); }
             try { new ProfileMint(ActiveProfile).Show(); } catch { }
         }
 
         private void btnPublicMessage_Click(object sender, EventArgs e)
         {
-            if (System.IO.File.Exists(@"GET_OBJECT_BY_ADDRESS") || System.IO.File.Exists(@"GET_OBJECTS_BY_ADDRESS")) { MessageBox.Show("Please wait for the search to complete.", "Notification"); return; }
+            if (System.IO.File.Exists(@"GET_ROOTS_BY_ADDRESS") || System.IO.File.Exists(@"GET_OBJECT_BY_ADDRESS") || System.IO.File.Exists(@"GET_OBJECTS_BY_ADDRESS")) { MessageBox.Show("Please wait for the search to complete.", "Notification"); return; }
 
             refreshFriendFeed.BackColor = System.Drawing.Color.White;
             refreshFriendFeed.ForeColor = System.Drawing.Color.Black;
@@ -5861,24 +5939,24 @@ namespace SUP
 
         private void RefreshCommunityMessages_Click(object sender, EventArgs e)
         {
-            if (System.IO.File.Exists(@"GET_OBJECT_BY_ADDRESS") || System.IO.File.Exists(@"GET_OBJECTS_BY_ADDRESS")) { MessageBox.Show("Please wait for the search to complete.", "Notification"); return; }
+            if (System.IO.File.Exists(@"GET_ROOTS_BY_ADDRESS") || System.IO.File.Exists(@"GET_OBJECT_BY_ADDRESS") || System.IO.File.Exists(@"GET_OBJECTS_BY_ADDRESS")) { MessageBox.Show("Please wait for the search to complete.", "Notification"); return; }
 
             refreshFriendFeed.BackColor = System.Drawing.Color.Blue; refreshFriendFeed.ForeColor = System.Drawing.Color.Yellow;
-           
-          
+
+
             RefreshCommunityMessages();
 
 
-                btnPrivateMessage.BackColor = System.Drawing.Color.White;
-                btnPrivateMessage.ForeColor = System.Drawing.Color.Black;
-                btnPublicMessage.BackColor = System.Drawing.Color.White;
-                btnPublicMessage.ForeColor = System.Drawing.Color.Black;
-            
+            btnPrivateMessage.BackColor = System.Drawing.Color.White;
+            btnPrivateMessage.ForeColor = System.Drawing.Color.Black;
+            btnPublicMessage.BackColor = System.Drawing.Color.White;
+            btnPublicMessage.ForeColor = System.Drawing.Color.Black;
+
         }
 
         private void btnPrivateMessage_Click(object sender, EventArgs e)
         {
-            if (System.IO.File.Exists(@"GET_OBJECT_BY_ADDRESS") || System.IO.File.Exists(@"GET_OBJECTS_BY_ADDRESS")) { MessageBox.Show("Please wait for the search to complete.", "Notification"); return; }
+            if (System.IO.File.Exists(@"GET_ROOTS_BY_ADDRESS") || System.IO.File.Exists(@"GET_OBJECT_BY_ADDRESS") || System.IO.File.Exists(@"GET_OBJECTS_BY_ADDRESS")) { MessageBox.Show("Please wait for the search to complete.", "Notification"); return; }
 
 
             btnPrivateMessage.BackColor = Color.Blue;
@@ -5960,7 +6038,7 @@ namespace SUP
 
         private void Friend_Click(object sender, EventArgs e)
         {
-            if (System.IO.File.Exists(@"GET_OBJECT_BY_ADDRESS") || System.IO.File.Exists(@"GET_OBJECTS_BY_ADDRESS")) { MessageBox.Show("Please wait for the search to complete.", "Notification"); return; }
+            if (System.IO.File.Exists(@"GET_ROOTS_BY_ADDRESS") || System.IO.File.Exists(@"GET_OBJECT_BY_ADDRESS") || System.IO.File.Exists(@"GET_OBJECTS_BY_ADDRESS")) { MessageBox.Show("Please wait for the search to complete.", "Notification"); return; }
 
             //if any current searches are loading you got to wait.  
             if (!btnPrivateMessage.Enabled || !btnPrivateMessage.Enabled || !refreshFriendFeed.Enabled)
@@ -6015,7 +6093,7 @@ namespace SUP
                     RefreshSupMessages();
                 }
 
-               
+
 
             }
         }
@@ -6045,7 +6123,7 @@ namespace SUP
 
         private void btnMute_Click(object sender, EventArgs e)
         {
-            if (System.IO.File.Exists(@"GET_OBJECT_BY_ADDRESS") || System.IO.File.Exists(@"GET_OBJECTS_BY_ADDRESS")) { MessageBox.Show("Please wait for the search to complete.", "Notification"); return; }
+            if (System.IO.File.Exists(@"GET_ROOTS_BY_ADDRESS") || System.IO.File.Exists(@"GET_OBJECT_BY_ADDRESS") || System.IO.File.Exists(@"GET_OBJECTS_BY_ADDRESS")) { MessageBox.Show("Please wait for the search to complete.", "Notification"); return; }
 
             if (btnMute.Text == "mute")
             {
@@ -6070,7 +6148,7 @@ namespace SUP
 
         private void btnBlock_Click(object sender, EventArgs e)
         {
-            if (System.IO.File.Exists(@"GET_OBJECT_BY_ADDRESS") || System.IO.File.Exists(@"GET_OBJECTS_BY_ADDRESS")) { MessageBox.Show("Please wait for the search to complete.", "Notification"); return; }
+            if (System.IO.File.Exists(@"GET_ROOTS_BY_ADDRESS") || System.IO.File.Exists(@"GET_OBJECT_BY_ADDRESS") || System.IO.File.Exists(@"GET_OBJECTS_BY_ADDRESS")) { MessageBox.Show("Please wait for the search to complete.", "Notification"); return; }
 
             DialogResult result = MessageBox.Show("Are you sure!? Blocking will attempt to remove all associated files!", "Confirmation", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
 
@@ -6172,7 +6250,7 @@ namespace SUP
                     profileBIO.Text = ""; profileCreatedDate.Text = ""; profileIMG.ImageLocation = ""; lblProcessHeight.Text = "";
                     profileURN.Links[0].LinkData = null;
                     profileURN.Text = "anon";
-                    
+
 
                     Task.Run(() =>
                     {
@@ -6198,6 +6276,8 @@ namespace SUP
 
         private void button1_Click(object sender, EventArgs e)
         {
+            if (System.IO.File.Exists(@"GET_ROOTS_BY_ADDRESS") || System.IO.File.Exists(@"GET_OBJECT_BY_ADDRESS") || System.IO.File.Exists(@"GET_OBJECTS_BY_ADDRESS")) { MessageBox.Show("Please wait for the search to complete.", "Notification"); return; }
+
             try
             {
 
@@ -6272,6 +6352,8 @@ namespace SUP
 
         private void button1_Click_1(object sender, EventArgs e)
         {
+            if (System.IO.File.Exists(@"GET_ROOTS_BY_ADDRESS") || System.IO.File.Exists(@"GET_OBJECT_BY_ADDRESS") || System.IO.File.Exists(@"GET_OBJECTS_BY_ADDRESS")) { MessageBox.Show("Please wait for the search to complete.", "Notification"); return; }
+
             btnJukeBox.Enabled = false;
 
             if (profileURN.Links[0].LinkData != null)
@@ -6295,6 +6377,8 @@ namespace SUP
 
         private void btnVideoSearch_Click(object sender, EventArgs e)
         {
+            if (System.IO.File.Exists(@"GET_ROOTS_BY_ADDRESS") || System.IO.File.Exists(@"GET_OBJECT_BY_ADDRESS") || System.IO.File.Exists(@"GET_OBJECTS_BY_ADDRESS")) { MessageBox.Show("Please wait for the search to complete.", "Notification"); return; }
+
             btnVideoSearch.Enabled = false;
 
             if (profileURN.Links[0].LinkData != null)
@@ -6318,6 +6402,7 @@ namespace SUP
 
         private void btnInquirySearch_Click(object sender, EventArgs e)
         {
+            if (System.IO.File.Exists(@"GET_ROOTS_BY_ADDRESS") || System.IO.File.Exists(@"GET_OBJECT_BY_ADDRESS") || System.IO.File.Exists(@"GET_OBJECTS_BY_ADDRESS")) { MessageBox.Show("Please wait for the search to complete.", "Notification"); return; }
             btnVideoSearch.Enabled = false;
 
             if (profileURN.Links[0].LinkData != null)
@@ -6332,6 +6417,21 @@ namespace SUP
             }
 
             btnVideoSearch.Enabled = true;
+        }
+
+        private void SupMain_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            var process = new Process
+            {
+                StartInfo = new ProcessStartInfo
+                {
+                    FileName = @"ipfs\ipfs.exe",
+                    Arguments = "shutdown",
+                    UseShellExecute = false,
+                    CreateNoWindow = true
+                }
+            };
+            process.Start();
         }
     }
 }

@@ -2206,7 +2206,8 @@ namespace SUP
         {
             btnOwned.Enabled = false;
             btnCreated.Enabled = false;
-
+            btnCollections.Enabled = false;
+            selectSort.Enabled = false;
             txtSearchAddress.Enabled = false;
             pages.Enabled = false;
             txtLast.Enabled = false;
@@ -2216,10 +2217,10 @@ namespace SUP
         {
             btnOwned.Enabled = true;
             btnCreated.Enabled = true;
+            btnCollections.Enabled = true;
+            selectSort.Enabled = true;
             txtSearchAddress.Enabled = true;
-
             pages.Enabled = true;
-
             txtLast.Enabled = true;
         }
 
