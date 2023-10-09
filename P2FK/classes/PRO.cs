@@ -93,11 +93,11 @@ namespace SUP.P2FK
             {
                 if (transaction.Id > intProcessHeight)
                 {
-                   
+                    calculated = true;
                     //ignore any transaction that is not signed
                     if (transaction.Signed && (transaction.File.ContainsKey("PRO")))
                     {
-                        calculated = true;
+                        
                         intProcessHeight = transaction.Id;
                         profileState.ProcessHeight = intProcessHeight;
 

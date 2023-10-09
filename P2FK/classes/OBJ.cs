@@ -104,7 +104,7 @@ namespace SUP.P2FK
                         {
                             try { File.Delete(@"GET_OBJECT_BY_ADDRESS"); } catch { }
                         });
-                        
+
                         return objectState;
                     }
 
@@ -132,6 +132,7 @@ namespace SUP.P2FK
 
                         return objectState;
                     }
+
 
                     if (objectState.URN != null && objectState.ChangeDate.Year.ToString() == "1970")
                     {
@@ -207,13 +208,11 @@ namespace SUP.P2FK
                                     {
                                         case "OBJ":
                                             OBJ objectinspector = null;
-
                                             //is this even the right object!?  no!?  goodbye!
                                             if (!transaction.Keyword.ContainsKey(objectaddress))
                                             {
                                                 break;
                                             }
-
                                             try
                                             {
                                                 objectinspector = JsonConvert.DeserializeObject<OBJ>(File.ReadAllText(@"root\" + transaction.TransactionId + @"\OBJ"));
@@ -418,6 +417,12 @@ namespace SUP.P2FK
 
 
                                         case "GIV":
+
+                                            //is this even the right object!?  no!?  goodbye!
+                                            if (!transaction.Keyword.ContainsKey(objectaddress))
+                                            {
+                                                break;
+                                            }
                                             // no sense checking any further
                                             if (objectState.Owners == null) { break; }
                                             List<List<int>> givinspector = new List<List<int>> { };
@@ -673,7 +678,11 @@ namespace SUP.P2FK
                                             break;
 
                                         case "BRN":
-
+                                            //is this even the right object!?  no!?  goodbye!
+                                            if (!transaction.Keyword.ContainsKey(objectaddress))
+                                            {
+                                                break;
+                                            }
                                             List<List<int>> brninspector = new List<List<int>> { };
 
                                             try
@@ -1180,6 +1189,11 @@ namespace SUP.P2FK
                                             break;
 
                                         case "LST":
+                                            //is this even the right object!?  no!?  goodbye!
+                                            if (!transaction.Keyword.ContainsKey(objectaddress))
+                                            {
+                                                break;
+                                            }
                                             // no sense checking any further
                                             if (objectState.Owners == null) { break; }
 
@@ -1464,27 +1478,32 @@ namespace SUP.P2FK
                     objectState.Id = objectTransactions.Max(state => state.Id);
                     objectState.Verbose = verbose;
 
+
+                    var objectSerialized = JsonConvert.SerializeObject(objectState);
+
+                    if (!Directory.Exists(@"root\" + objectaddress))
+                    {
+                        Directory.CreateDirectory(@"root\" + objectaddress);
+                    }
+                    System.IO.File.WriteAllText(@"root\" + objectaddress + @"\" + "OBJ.json", objectSerialized);
+                    
                     Task.Run(() =>
                     {
-                        var objectSerialized = JsonConvert.SerializeObject(objectState);
-
-                        if (!Directory.Exists(@"root\" + objectaddress))
-                        {
-                            Directory.CreateDirectory(@"root\" + objectaddress);
-                        }
-                        System.IO.File.WriteAllText(@"root\" + objectaddress + @"\" + "OBJ.json", objectSerialized);
-
                         try { File.Delete(@"GET_OBJECT_BY_ADDRESS"); } catch { }
                     });
 
                 }
-                catch { }
-                finally {
+                catch
+                {
+
+                }
+                finally
+                {
 
                     Task.Run(() =>
                     {
                         try { File.Delete(@"GET_OBJECT_BY_ADDRESS"); } catch { }
-                    });                
+                    });
                 }
                 return objectState;
 
@@ -2323,13 +2342,13 @@ namespace SUP.P2FK
                         }
 
                     }
-                    
+
 
                 }
 
                 try { objectStates.Last().Id = objectTransactions.Max(max => max.Id); } catch { }
 
-                
+
                 Task.Run(() =>
                 {
                     var objectSerialized = JsonConvert.SerializeObject(objectStates);

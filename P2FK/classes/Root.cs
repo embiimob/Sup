@@ -650,7 +650,7 @@ namespace SUP.P2FK
                 }
                 catch { }
 
-               //At this level should always validate...could be something new coming in.
+               // we want to validate each time to find new things at this level
                // if (fetched && rootList.Count == 0 & !calculate) { return rootList.ToArray(); }
 
                 int intProcessHeight = 0;
@@ -702,12 +702,10 @@ namespace SUP.P2FK
                 {
                     try { rootList.Last().Id = intProcessHeight; } catch { }
 
-                    Task.Run(() =>
-                    {
-                        try { Directory.CreateDirectory(@"root\" + address); } catch { }
-                        var rootSerialized = JsonConvert.SerializeObject(rootList);
-                        System.IO.File.WriteAllText(@"root\" + address + @"\" + "ROOTS.json", rootSerialized);
-                    });
+                    try { Directory.CreateDirectory(@"root\" + address); } catch { }
+                    var rootSerialized = JsonConvert.SerializeObject(rootList);
+                    System.IO.File.WriteAllText(@"root\" + address + @"\" + "ROOTS.json", rootSerialized);
+                   
                 }
 
                 Task.Run(() =>
