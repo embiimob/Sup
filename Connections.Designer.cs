@@ -30,10 +30,10 @@
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Connections));
             this.panel1 = new System.Windows.Forms.Panel();
-            this.checkBox8 = new System.Windows.Forms.CheckBox();
+            this.chkLiveFeedPinning = new System.Windows.Forms.CheckBox();
             this.label17 = new System.Windows.Forms.Label();
-            this.checkBox7 = new System.Windows.Forms.CheckBox();
-            this.checkBox6 = new System.Windows.Forms.CheckBox();
+            this.chkWalkieTalkie = new System.Windows.Forms.CheckBox();
+            this.chkFilterLivePostings = new System.Windows.Forms.CheckBox();
             this.btnPurgeFound = new System.Windows.Forms.Button();
             this.brnPurgeMute = new System.Windows.Forms.Button();
             this.btnPurgeBlock = new System.Windows.Forms.Button();
@@ -105,10 +105,10 @@
             // 
             // panel1
             // 
-            this.panel1.Controls.Add(this.checkBox8);
+            this.panel1.Controls.Add(this.chkLiveFeedPinning);
             this.panel1.Controls.Add(this.label17);
-            this.panel1.Controls.Add(this.checkBox7);
-            this.panel1.Controls.Add(this.checkBox6);
+            this.panel1.Controls.Add(this.chkWalkieTalkie);
+            this.panel1.Controls.Add(this.chkFilterLivePostings);
             this.panel1.Controls.Add(this.btnPurgeFound);
             this.panel1.Controls.Add(this.brnPurgeMute);
             this.panel1.Controls.Add(this.btnPurgeBlock);
@@ -181,14 +181,14 @@
             // 
             // checkBox8
             // 
-            this.checkBox8.AutoSize = true;
-            this.checkBox8.Location = new System.Drawing.Point(9, 145);
-            this.checkBox8.Name = "checkBox8";
-            this.checkBox8.Size = new System.Drawing.Size(138, 17);
-            this.checkBox8.TabIndex = 163;
-            this.checkBox8.Text = "enable live feed pinning";
-            this.checkBox8.UseVisualStyleBackColor = true;
-            this.checkBox8.CheckedChanged += new System.EventHandler(this.checkBox8_CheckedChanged);
+            this.chkLiveFeedPinning.AutoSize = true;
+            this.chkLiveFeedPinning.Location = new System.Drawing.Point(9, 145);
+            this.chkLiveFeedPinning.Name = "checkBox8";
+            this.chkLiveFeedPinning.Size = new System.Drawing.Size(138, 17);
+            this.chkLiveFeedPinning.TabIndex = 163;
+            this.chkLiveFeedPinning.Text = "enable live feed pinning";
+            this.chkLiveFeedPinning.UseVisualStyleBackColor = true;
+            this.chkLiveFeedPinning.CheckedChanged += new System.EventHandler(this.chkLiveFeedPinning_CheckedChanged);
             // 
             // label17
             // 
@@ -202,25 +202,25 @@
             // 
             // checkBox7
             // 
-            this.checkBox7.AutoSize = true;
-            this.checkBox7.Location = new System.Drawing.Point(9, 122);
-            this.checkBox7.Name = "checkBox7";
-            this.checkBox7.Size = new System.Drawing.Size(341, 17);
-            this.checkBox7.TabIndex = 161;
-            this.checkBox7.Text = "immediately deliver audio attachments ( enable walkie talkie mode )";
-            this.checkBox7.UseVisualStyleBackColor = true;
-            this.checkBox7.CheckedChanged += new System.EventHandler(this.checkBox7_CheckedChanged);
+            this.chkWalkieTalkie.AutoSize = true;
+            this.chkWalkieTalkie.Location = new System.Drawing.Point(9, 122);
+            this.chkWalkieTalkie.Name = "checkBox7";
+            this.chkWalkieTalkie.Size = new System.Drawing.Size(341, 17);
+            this.chkWalkieTalkie.TabIndex = 161;
+            this.chkWalkieTalkie.Text = "immediately deliver audio attachments ( enable walkie talkie mode )";
+            this.chkWalkieTalkie.UseVisualStyleBackColor = true;
+            this.chkWalkieTalkie.CheckedChanged += new System.EventHandler(this.chkWalkieTalkie_CheckedChanged);
             // 
             // checkBox6
             // 
-            this.checkBox6.AutoSize = true;
-            this.checkBox6.Location = new System.Drawing.Point(9, 99);
-            this.checkBox6.Name = "checkBox6";
-            this.checkBox6.Size = new System.Drawing.Size(343, 17);
-            this.checkBox6.TabIndex = 160;
-            this.checkBox6.Text = "filter live postings ( only show live posts from who you are following )";
-            this.checkBox6.UseVisualStyleBackColor = true;
-            this.checkBox6.CheckedChanged += new System.EventHandler(this.checkBox6_CheckedChanged);
+            this.chkFilterLivePostings.AutoSize = true;
+            this.chkFilterLivePostings.Location = new System.Drawing.Point(9, 99);
+            this.chkFilterLivePostings.Name = "checkBox6";
+            this.chkFilterLivePostings.Size = new System.Drawing.Size(343, 17);
+            this.chkFilterLivePostings.TabIndex = 160;
+            this.chkFilterLivePostings.Text = "filter live postings ( only show live posts from who you are following )";
+            this.chkFilterLivePostings.UseVisualStyleBackColor = true;
+            this.chkFilterLivePostings.CheckedChanged += new System.EventHandler(this.chkFilterLivePostings_CheckedChanged);
             // 
             // btnPurgeFound
             // 
@@ -260,7 +260,7 @@
             this.btnClearIPFSisLoadingCache.TabIndex = 156;
             this.btnClearIPFSisLoadingCache.Text = "purge isloading cache";
             this.btnClearIPFSisLoadingCache.UseVisualStyleBackColor = true;
-            this.btnClearIPFSisLoadingCache.Click += new System.EventHandler(this.button2_Click_1);
+            this.btnClearIPFSisLoadingCache.Click += new System.EventHandler(this.btnPurgeIPFSBuilding_Click);
             // 
             // label16
             // 
@@ -473,7 +473,7 @@
             this.btnPinIPFS.TabIndex = 126;
             this.btnPinIPFS.Text = "pin cache";
             this.btnPinIPFS.UseVisualStyleBackColor = true;
-            this.btnPinIPFS.Click += new System.EventHandler(this.button2_Click);
+            this.btnPinIPFS.Click += new System.EventHandler(this.btnIPFSPin_Click);
             // 
             // button1
             // 
@@ -482,7 +482,7 @@
             this.button1.Size = new System.Drawing.Size(166, 23);
             this.button1.TabIndex = 125;
             this.button1.UseVisualStyleBackColor = true;
-            this.button1.Click += new System.EventHandler(this.button1_Click);
+            this.button1.Click += new System.EventHandler(this.btnIPFS_Click);
             // 
             // label15
             // 
@@ -928,9 +928,9 @@
         private System.Windows.Forms.Button btnPurgeBlock;
         private System.Windows.Forms.Button btnPurgeFound;
         private System.Windows.Forms.Button brnPurgeMute;
-        private System.Windows.Forms.CheckBox checkBox6;
-        private System.Windows.Forms.CheckBox checkBox7;
+        private System.Windows.Forms.CheckBox chkFilterLivePostings;
+        private System.Windows.Forms.CheckBox chkWalkieTalkie;
         private System.Windows.Forms.Label label17;
-        private System.Windows.Forms.CheckBox checkBox8;
+        private System.Windows.Forms.CheckBox chkLiveFeedPinning;
     }
 }

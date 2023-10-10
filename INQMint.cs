@@ -1,23 +1,13 @@
 ﻿using System;
 using System.Drawing;
-using System.IO;
-using System.Reflection;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
-using LevelDB;
-using System.Diagnostics;
 using System.Windows.Forms;
 using NBitcoin;
 using NBitcoin.RPC;
 using SUP.P2FK;
 using System.Collections.Generic;
-using System.Linq;
 using Newtonsoft.Json;
 using System.Net;
-using System.Security.Cryptography;
-using System.Text;
-using BitcoinNET.RPCClient;
-using System.Windows.Controls.Primitives;
 
 
 namespace SUP

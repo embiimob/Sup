@@ -78,6 +78,46 @@ namespace SUP
             Process.Start(startInfo);
         }
 
+        private void btnLTC_Click(object sender, EventArgs e)
+        {
+            string bitcoinDirectory = AppDomain.CurrentDomain.BaseDirectory + "\\litecoin";
+            string bitcoindPath = AppDomain.CurrentDomain.BaseDirectory + "\\litecoin-qt.exe";
+            System.IO.Directory.CreateDirectory("litecoin");
+
+            ProcessStartInfo startInfo = new ProcessStartInfo
+            {
+                CreateNoWindow = false,
+                UseShellExecute = false,
+                FileName = bitcoindPath,
+                RedirectStandardOutput = true,
+                RedirectStandardError = true,
+                WindowStyle = ProcessWindowStyle.Hidden,
+                Arguments = $"-txindex=1 -addrindex=1 -datadir={bitcoinDirectory} -server -rpcuser=good-user -rpcpassword=better-password -rpcport=9332"
+            };
+
+            Process.Start(startInfo);
+        }
+
+        private void btnDOGE_Click(object sender, EventArgs e)
+        {
+            string bitcoinDirectory = AppDomain.CurrentDomain.BaseDirectory + "\\dogecoin";
+            string bitcoindPath = AppDomain.CurrentDomain.BaseDirectory + "\\dogecoin-qt.exe";
+            System.IO.Directory.CreateDirectory("dogecoin");
+
+            ProcessStartInfo startInfo = new ProcessStartInfo
+            {
+                CreateNoWindow = false,
+                UseShellExecute = false,
+                FileName = bitcoindPath,
+                RedirectStandardOutput = true,
+                RedirectStandardError = true,
+                WindowStyle = ProcessWindowStyle.Hidden,
+                Arguments = $"-txindex=1 -addrindex=1 -datadir={bitcoinDirectory} -server -rpcuser=good-user -rpcpassword=better-password -rpcport=22555"
+            };
+
+            Process.Start(startInfo);
+        }
+
         private void Connections_Load(object sender, EventArgs e)
         {
 
@@ -85,22 +125,20 @@ namespace SUP
 
             if (File.Exists(@"IPFS_PINNING_ENABLED"))
             {
-                checkBox8.Checked = true;
+                chkLiveFeedPinning.Checked = true;
 
             }
 
             if (File.Exists(@"WALKIE_TALKIE_ENABLED"))
             {
-                checkBox7.Checked = true;
+                chkWalkieTalkie.Checked = true;
             }
 
             if (File.Exists(@"LIVE_FILTER_ENABLED"))
             {
-                checkBox6.Checked = true;
+                chkFilterLivePostings.Checked = true;
 
             }
-
-
 
 
             string walletUsername = "good-user";
@@ -131,9 +169,9 @@ namespace SUP
             {
                 try
                 {
-                    walletUrl = @"http://127.0.0.1:8332";
-                    rpcClient = new RPCClient(credentials, new Uri(walletUrl), NBitcoin.Network.Main);
-                    string isActive = rpcClient.GetBalance().ToString();
+                    string walletUrl2 = @"http://127.0.0.1:8332";
+                    RPCClient rpcClient2 = new RPCClient(credentials, new Uri(walletUrl2), NBitcoin.Network.Main);
+                    string isActive = rpcClient2.GetBalance().ToString();
                     if (decimal.TryParse(isActive, out decimal _))
                     {
                         this.Invoke((MethodInvoker)delegate
@@ -153,9 +191,9 @@ namespace SUP
             {
                 try
                 {
-                    walletUrl = @"http://127.0.0.1:9332";
-                    rpcClient = new RPCClient(credentials, new Uri(walletUrl), NBitcoin.Network.Main);
-                    string isActive = rpcClient.GetBalance().ToString();
+                    string walletUrl3 = @"http://127.0.0.1:9332";
+                    RPCClient rpcClient3 = new RPCClient(credentials, new Uri(walletUrl3), NBitcoin.Network.Main);
+                    string isActive = rpcClient3.GetBalance().ToString();
                     if (decimal.TryParse(isActive, out decimal _))
                     {
                         this.Invoke((MethodInvoker)delegate
@@ -175,9 +213,9 @@ namespace SUP
             {
                 try
                 {
-                    walletUrl = @"http://127.0.0.1:12832";
-                    rpcClient = new RPCClient(credentials, new Uri(walletUrl), NBitcoin.Network.Main);
-                    string isActive = rpcClient.GetBalance().ToString();
+                    string walletUrl4 = @"http://127.0.0.1:12832";
+                    RPCClient rpcClient4 = new RPCClient(credentials, new Uri(walletUrl4), NBitcoin.Network.Main);
+                    string isActive = rpcClient4.GetBalance().ToString();
                     if (decimal.TryParse(isActive, out decimal _))
                     {
                         this.Invoke((MethodInvoker)delegate
@@ -196,9 +234,9 @@ namespace SUP
             {
                 try
                 {
-                    walletUrl = @"http://127.0.0.1:22555";
-                    rpcClient = new RPCClient(credentials, new Uri(walletUrl), NBitcoin.Network.Main);
-                    string isActive = rpcClient.GetBalance().ToString();
+                    string walletUrl5 = @"http://127.0.0.1:22555";
+                    RPCClient rpcClient5 = new RPCClient(credentials, new Uri(walletUrl5), NBitcoin.Network.Main);
+                    string isActive = rpcClient5.GetBalance().ToString();
                     if (decimal.TryParse(isActive, out decimal _))
                     {
                         this.Invoke((MethodInvoker)delegate
@@ -246,7 +284,7 @@ namespace SUP
 
         }
 
-        private void button1_Click(object sender, EventArgs e)
+        private void btnIPFS_Click(object sender, EventArgs e)
         {
             if (button1.Text == "IPFS pinning active")
             {
@@ -324,92 +362,127 @@ namespace SUP
             }
         }
 
-        private void button2_Click(object sender, EventArgs e)
+        //JAZZED UP BY GPT3
+        private async void btnIPFSPin_Click(object sender, EventArgs e)
         {
             try
             {
-                string[] subfolderNames = Directory.GetDirectories("ipfs");
-
-
-                foreach (string subfolder in subfolderNames)
+                // Change the text and background color of the button to indicate "pinning" on the UI thread
+                this.Invoke((MethodInvoker)(() =>
                 {
+                    btnPinIPFS.Text = "pinning";
+                    btnPinIPFS.ForeColor = Color.Yellow;
+                    btnPinIPFS.BackColor = Color.Blue;
+                }));
 
-                    try { Directory.Delete(subfolder); } catch { }
-
-                }
-
-                subfolderNames = Directory.GetDirectories("ipfs");
+                string[] subfolderNames = Directory.GetDirectories("ipfs");
 
                 foreach (string subfolder in subfolderNames)
                 {
                     string hash = System.IO.Path.GetFileName(subfolder);
 
-                    try
+                    using (var process2 = new Process())
                     {
-                        Directory.Delete(subfolder);
-                    }
-                    catch
-                    {
-                        // Handle the exception if necessary
-                    }
+                        process2.StartInfo.FileName = @"ipfs\ipfs.exe";
+                        process2.StartInfo.Arguments = "pin add " + hash;
+                        process2.StartInfo.UseShellExecute = false;
 
-                    // Call the Kubo local Pin command using the hash
-                    Process process2 = new Process
-                    {
-                        StartInfo = new ProcessStartInfo
-                        {
-                            FileName = @"ipfs\ipfs.exe",
-                            Arguments = "pin add " + hash,
-                            UseShellExecute = false
-                        }
-                    };
-
-                    Task<int> processTask = Task.Run(() =>
-                    {
                         process2.Start();
-                        process2.WaitForExit();
-                        return process2.ExitCode;
-                    });
 
-                    if (processTask.Wait(TimeSpan.FromSeconds(5)))
-                    {
-
-                    }
-                    else
-                    {
-                        process2.Kill();
+                        // Wait for the process to complete, but not longer than 5 seconds
+                        if (await Task.Run(() => process2.WaitForExit(5000)))
+                        {
+                            // Process completed within 5 seconds
+                            int exitCode = process2.ExitCode;
+                            // Handle the exit code or other logic here if needed
+                        }
+                        else
+                        {
+                            // Process didn't complete within 5 seconds, you can handle this case
+                            // Maybe log or take other actions
+                        }
                     }
                 }
-            }
-            catch { Directory.CreateDirectory("ipfs"); }
 
+                // Revert the text and background color of the button to the original state on the UI thread
+                this.Invoke((MethodInvoker)(() =>
+                {
+                    btnPinIPFS.Text = "pin cache";
+                    btnPinIPFS.ForeColor = Color.Black;
+                    btnPinIPFS.BackColor = Color.White;
+                }));
+            }
+            catch (Exception ex)
+            {
+                // Handle exceptions here
+                // Revert the text and background color of the button in the catch block if necessary
+                this.Invoke((MethodInvoker)(() =>
+                {
+                    btnPinIPFS.Text = "pin cache";
+                    btnPinIPFS.ForeColor = Color.Black;
+                    btnPinIPFS.BackColor = Color.White;
+                }));
+            }
         }
 
-        private void btnUnpinIPFS_Click(object sender, EventArgs e)
+        //GPT3 IS COOL
+        private async void btnUnpinIPFS_Click(object sender, EventArgs e)
         {
-            try{string[] subfolderNames = Directory.GetDirectories("ipfs");
-
-            foreach (string subfolder in subfolderNames)
+            try
             {
-                string hash = System.IO.Path.GetFileName(subfolder);
+                // Change the text and background color of the button to indicate "pinning" on the UI thread
+                this.Invoke((MethodInvoker)(() => {
+                    btnUnpinIPFS.Text = "unpinning";
+                    btnUnpinIPFS.ForeColor = Color.Yellow;
+                    btnUnpinIPFS.BackColor = Color.Blue;
+                }));
 
-                // Call the Kubo local Pin command using the hash
-                Process process2 = new Process
+                string[] subfolderNames = Directory.GetDirectories("ipfs");
+
+                foreach (string subfolder in subfolderNames)
                 {
-                    StartInfo = new ProcessStartInfo
-                    {
-                        FileName = @"ipfs\ipfs.exe",
-                        Arguments = "pin rm " + hash,
-                        UseShellExecute = false,
-                        CreateNoWindow = true
-                    }
-                };
-                process2.Start();
-                process2.WaitForExit();
+                    string hash = System.IO.Path.GetFileName(subfolder);
 
+                    using (var process2 = new Process())
+                    {
+                        process2.StartInfo.FileName = @"ipfs\ipfs.exe";
+                        process2.StartInfo.Arguments = "pin rm " + hash;
+                        process2.StartInfo.UseShellExecute = false;
+
+                        process2.Start();
+
+                        // Wait for the process to complete, but not longer than 5 seconds
+                        if (await Task.Run(() => process2.WaitForExit(5000)))
+                        {
+                            // Process completed within 5 seconds
+                            int exitCode = process2.ExitCode;
+                            // Handle the exit code or other logic here if needed
+                        }
+                        else
+                        {
+                            // Process didn't complete within 5 seconds, you can handle this case
+                            // Maybe log or take other actions
+                        }
+                    }
+                }
+
+                // Revert the text and background color of the button to the original state on the UI thread
+                this.Invoke((MethodInvoker)(() => {
+                    btnUnpinIPFS.Text = "unpin cache";
+                    btnUnpinIPFS.ForeColor = Color.Black;
+                    btnUnpinIPFS.BackColor = Color.White;
+                }));
             }
+            catch (Exception ex)
+            {
+                // Handle exceptions here
+                // Revert the text and background color of the button in the catch block if necessary
+                this.Invoke((MethodInvoker)(() => {
+                    btnUnpinIPFS.Text = "unpin cache";
+                    btnUnpinIPFS.ForeColor = Color.Black;
+                    btnUnpinIPFS.BackColor = Color.White;
+                }));
             }
-            catch { Directory.CreateDirectory("ipfs"); }
         }
 
         private void btnPurgeIPFS_Click(object sender, EventArgs e)
@@ -443,47 +516,7 @@ namespace SUP
 
         }
 
-        private void btnLTC_Click(object sender, EventArgs e)
-        {
-            string bitcoinDirectory = AppDomain.CurrentDomain.BaseDirectory + "\\litecoin";
-            string bitcoindPath = AppDomain.CurrentDomain.BaseDirectory + "\\litecoin-qt.exe";
-            System.IO.Directory.CreateDirectory("litecoin");
-
-            ProcessStartInfo startInfo = new ProcessStartInfo
-            {
-                CreateNoWindow = false,
-                UseShellExecute = false,
-                FileName = bitcoindPath,
-                RedirectStandardOutput = true,
-                RedirectStandardError = true,
-                WindowStyle = ProcessWindowStyle.Hidden,
-                Arguments = $"-txindex=1 -addrindex=1 -datadir={bitcoinDirectory} -server -rpcuser=good-user -rpcpassword=better-password -rpcport=9332"
-            };
-
-            Process.Start(startInfo);
-        }
-
-        private void btnDOGE_Click(object sender, EventArgs e)
-        {
-            string bitcoinDirectory = AppDomain.CurrentDomain.BaseDirectory + "\\dogecoin";
-            string bitcoindPath = AppDomain.CurrentDomain.BaseDirectory + "\\dogecoin-qt.exe";
-            System.IO.Directory.CreateDirectory("dogecoin");
-
-            ProcessStartInfo startInfo = new ProcessStartInfo
-            {
-                CreateNoWindow = false,
-                UseShellExecute = false,
-                FileName = bitcoindPath,
-                RedirectStandardOutput = true,
-                RedirectStandardError = true,
-                WindowStyle = ProcessWindowStyle.Hidden,
-                Arguments = $"-txindex=1 -addrindex=1 -datadir={bitcoinDirectory} -server -rpcuser=good-user -rpcpassword=better-password -rpcport=22555"
-            };
-
-            Process.Start(startInfo);
-        }
-
-        private void button2_Click_1(object sender, EventArgs e)
+        private void btnPurgeIPFSBuilding_Click(object sender, EventArgs e)
         {
             try
             {
@@ -626,9 +659,9 @@ namespace SUP
             catch { }
         }
 
-        private void checkBox6_CheckedChanged(object sender, EventArgs e)
+        private void chkFilterLivePostings_CheckedChanged(object sender, EventArgs e)
         {
-            if (checkBox6.Checked) {
+            if (chkFilterLivePostings.Checked) {
 
                 using (FileStream fs = File.Create(@"LIVE_FILTER_ENABLED"))
                 {
@@ -643,9 +676,9 @@ namespace SUP
 
         }
 
-        private void checkBox7_CheckedChanged(object sender, EventArgs e)
+        private void chkWalkieTalkie_CheckedChanged(object sender, EventArgs e)
         {
-            if (checkBox7.Checked) {
+            if (chkWalkieTalkie.Checked) {
 
                 using (FileStream fs = File.Create(@"WALKIE_TALKIE_ENABLED"))
                 {
@@ -659,9 +692,9 @@ namespace SUP
             }
         }
 
-        private void checkBox8_CheckedChanged(object sender, EventArgs e)
+        private void chkLiveFeedPinning_CheckedChanged(object sender, EventArgs e)
         {
-            if (checkBox8.Checked)
+            if (chkLiveFeedPinning.Checked)
             {
 
                 using (FileStream fs = File.Create(@"IPFS_PINNING_ENABLED"))

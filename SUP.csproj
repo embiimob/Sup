@@ -59,9 +59,6 @@
     <Reference Include="AngleSharp.Css, Version=0.17.0.0, Culture=neutral, PublicKeyToken=e83494dcdc6d31ea, processorArchitecture=MSIL">
       <HintPath>..includes\AngleSharp.Css.dll</HintPath>
     </Reference>
-    <Reference Include="BouncyCastle.Crypto, Version=1.8.5.0, Culture=neutral, PublicKeyToken=0e99375e54769942, processorArchitecture=MSIL">
-      <HintPath>..includes\BouncyCastle.Crypto.dll</HintPath>
-    </Reference>
     <Reference Include="CommandLine">
       <HintPath>includes\CommandLine.dll</HintPath>
       <Private>True</Private>
@@ -509,8 +506,6 @@
     <Content Include="includes\AngleSharp.Css.xml" />
     <Content Include="includes\AngleSharp.dll" />
     <Content Include="includes\AngleSharp.xml" />
-    <Content Include="includes\BouncyCastle.Crypto.dll" />
-    <Content Include="includes\BouncyCastle.Crypto.xml" />
     <None Include="includes\disco.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
