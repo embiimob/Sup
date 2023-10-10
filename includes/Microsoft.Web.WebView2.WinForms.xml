@@ -177,6 +177,51 @@
             environment, or if you begin initialization with one environment and then call this method with no environment specified.
             When this method is called after previous initialization has failed, it will trigger initialization of the control's <see cref="P:Microsoft.Web.WebView2.WinForms.WebView2.CoreWebView2"/> again.
             Note that even though this method is asynchronous and returns a Task, it still must be called on the UI thread like most public functionality of most UI controls.
+            <para>
+            The following summarizes the possible error values and a description of why these errors occur.
+            <list type="table">
+            <listheader>
+            <description>Error Value</description>
+            <description>Description</description>
+            </listheader>
+            <item>
+            <description><c>HRESULT_FROM_WIN32(ERROR_NOT_SUPPORTED)</c></description>
+            <description>*\\Edge\\Application* path used in browserExecutableFolder.</description>
+            </item>
+            <item>
+            <description><c>HRESULT_FROM_WIN32(ERROR_INVALID_STATE)</c></description>
+            <description>Specified options do not match the options of the WebViews that are currently running in the shared browser process.</description>
+            </item>
+            <item>
+            <description><c>HRESULT_FROM_WIN32(ERROR_INVALID_WINDOW_HANDLE)</c></description>
+            <description>WebView2 Initialization failed due to an invalid host HWND parentWindow.</description>
+            </item>
+            <item>
+            <description><c>HRESULT_FROM_WIN32(ERROR_DISK_FULL)</c></description>
+            <description>WebView2 Initialization failed due to reaching the maximum number of installed runtime versions.</description>
+            </item>
+            <item>
+            <description><c>HRESULT_FROM_WIN32(ERROR_PRODUCT_UNINSTALLED</c></description>
+            <description>If the Webview depends upon an installed WebView2 Runtime version and it is uninstalled.</description>
+            </item>
+            <item>
+            <description><c>HRESULT_FROM_WIN32(ERROR_FILE_NOT_FOUND)</c></description>
+            <description>Could not find Edge installation.</description>
+            </item>
+            <item>
+            <description><c>HRESULT_FROM_WIN32(ERROR_FILE_EXISTS)</c></description>
+            <description>User data folder cannot be created because a file with the same name already exists.</description>
+            </item>
+            <item>
+            <description><c>E_ACCESSDENIED</c></description>
+            <description>Unable to create user data folder, Access Denied.</description>
+            </item>
+            <item>
+            <description><c>E_FAIL</c></description>
+            <description>Edge runtime unable to start.</description>
+            </item>
+            </list>
+            </para>
             </remarks>
             <exception cref="T:System.ArgumentException">
             Thrown if this method is called with a different environment than when it was initialized. See Remarks for more info.
