@@ -32,7 +32,6 @@ namespace SUP
         private int numMessagesDisplayed = 0;
         private int numChangesDisplayed = 0;
         private bool isUserControl = false;
-        private bool isInitializing = true;
         private string _activeprofile;
         List<Microsoft.Web.WebView2.WinForms.WebView2> webviewers = new List<Microsoft.Web.WebView2.WinForms.WebView2>();
 
@@ -89,6 +88,7 @@ namespace SUP
                 lblPleaseStandBy.Visible = false;
             }
         }
+
         private void supFlow_MouseWheel(object sender, MouseEventArgs e)
         {
             if (supFlow.VerticalScroll.Value + supFlow.ClientSize.Height >= supFlow.VerticalScroll.Maximum)
@@ -154,7 +154,6 @@ namespace SUP
             var rootSerialized = JsonConvert.SerializeObject(P2FKRoot);
             System.IO.File.WriteAllText(@"root\" + transactionid + @"\" + "ROOT.json", rootSerialized);
         }
-
 
         private string TruncateAddress(string input)
         {
@@ -1834,7 +1833,6 @@ namespace SUP
             new ObjectBrowser(ownerId).Show();
         }
 
-
         private async void MainRefreshClick(object sender, EventArgs e)
         {
             transFlow.Visible = false;
@@ -2018,8 +2016,6 @@ namespace SUP
                                         Process process2 = new Process();
                                         process2.StartInfo.FileName = @"ipfs\ipfs.exe";
                                         process2.StartInfo.Arguments = "get " + objstate.Image.Substring(5, 46) + @" -o ipfs\" + transid;
-                                        process2.StartInfo.UseShellExecute = false;
-                                        process2.StartInfo.CreateNoWindow = true;
                                         process2.Start();
                                         process2.WaitForExit();
                                         string fileName;
@@ -2602,8 +2598,7 @@ namespace SUP
                 foreach (string keyword in keywords)
                 {
 
-                    if (IsStandardASCII(keyword))
-                    {
+                   
                         LinkLabel keywordLabel = new LinkLabel
                         {
                             Text = keyword,
@@ -2615,7 +2610,7 @@ namespace SUP
                         keywordLabel.Margin = new System.Windows.Forms.Padding(0);
                         keywordLabel.Dock = DockStyle.Bottom;
                         KeysFlow.Controls.Add(keywordLabel);
-                    }
+                    
 
                 }
 
@@ -3120,7 +3115,7 @@ namespace SUP
                                 lblWarning.Visible = true;
                                 var sanitizer = new HtmlSanitizer();
                                 var sanitized = sanitizer.Sanitize(potentialyUnsafeHtml);
-                                try { System.IO.File.WriteAllText(urn, sanitized); } catch { }
+                                try { System.IO.File.WriteAllText(urn, sanitized, System.Text.Encoding.UTF8); } catch { }
                             }
 
                             try
@@ -3195,7 +3190,6 @@ namespace SUP
             }
         }
 
-
         private void CopyAddressByCreatedDateClick(object sender, EventArgs e)
         {
             System.Windows.Clipboard.SetText(_objectaddress);
@@ -3205,7 +3199,6 @@ namespace SUP
         {
             System.Windows.Clipboard.SetText(txtdesc.Text);
         }
-
 
         private void ButtonRefreshTransactionsClick(object sender, EventArgs e)
         {
@@ -3320,18 +3313,6 @@ namespace SUP
             }
         }
 
-        private bool IsStandardASCII(string input)
-        {
-            foreach (char c in input)
-            {
-                if (c < 32 || c > 127)
-                {
-                    return false;
-                }
-            }
-            return true;
-        }
-
         private void btnOfficial_Click(object sender, EventArgs e)
         {
             new ObjectDetails(txtOfficialURN.Text,_activeprofile).Show();
@@ -3372,7 +3353,6 @@ namespace SUP
             }
         }
 
-
         private void btnBurn_Click(object sender, EventArgs e)
         {
             new ObjectBurn(_objectaddress, _activeprofile).Show();
@@ -3396,8 +3376,7 @@ namespace SUP
             new ObjectBuy(_objectaddress,_activeprofile).Show();
         }
 
-
-        private void button1_Click(object sender, EventArgs e)
+        private void btnJukeBox_Click(object sender, EventArgs e)
         {
 
             JukeBox jukeBoxForm = new JukeBox(_objectaddress);
@@ -3421,8 +3400,7 @@ namespace SUP
 
             btnInquiry.Enabled = true;
         }
-
-     
+             
     }
 }
 

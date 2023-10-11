@@ -11,7 +11,6 @@ using System.Windows.Forms;
 using NBitcoin;
 using System.Threading.Tasks;
 using System.IO;
-using Newtonsoft.Json.Linq;
 
 namespace SUP
 {
@@ -20,15 +19,7 @@ namespace SUP
     {
         private readonly string _objectaddress;
         private bool _isUserControl;
-        private List<String> SearchHistory = new List<String>();
-        private int SearchId = 0;
-        private HashSet<string> loadedObjects = new HashSet<string>();
         private readonly static object SupLocker = new object();
-        private List<string> BTCMemPool = new List<string>();
-        private List<string> BTCTMemPool = new List<string>();
-        private List<string> MZCMemPool = new List<string>();
-        private List<string> LTCMemPool = new List<string>();
-        private List<string> DOGMemPool = new List<string>();
         private const int DoubleClickInterval = 250;
         private bool _mouseLock;
         private bool _mouseClicked;
@@ -2468,9 +2459,14 @@ namespace SUP
             _mouseLock = false;
         }
 
+        //GPT3 <3
         private void txtLast_TextChanged(object sender, EventArgs e)
         {
-            if (!int.TryParse(txtLast.Text, out int lastint) || lastint < 0) { txtLast.Text = "0"; }
+            string previousText = txtLast.Text;
+            if (!int.TryParse(txtLast.Text, out int lastint) || lastint < 0)
+            {
+                txtLast.Text = previousText;
+            }
         }
 
         private void flowLayoutPanel2_SizeChanged(object sender, EventArgs e)

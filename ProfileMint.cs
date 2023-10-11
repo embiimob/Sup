@@ -3,7 +3,6 @@ using System.Drawing;
 using System.IO;
 using System.Reflection;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 using LevelDB;
 using System.Diagnostics;
 using System.Windows.Forms;
@@ -523,25 +522,20 @@ namespace SUP
                         string filePath = openFileDialog1.FileName;
                         string fileName = openFileDialog1.SafeFileName;
 
-                        // Add file to IPFS
-                        Task<string> addTask = Task.Run(() =>
-                        {
-                            Process process = new Process();
-                            process.StartInfo.FileName = @"ipfs\ipfs.exe";
-                            process.StartInfo.Arguments = "add \"" + filePath + "\"";
-                            process.StartInfo.UseShellExecute = false;
-                            process.StartInfo.RedirectStandardOutput = true;
-                            process.Start();
-                            string output = process.StandardOutput.ReadToEnd();
-                            process.WaitForExit();
-                            string hash = output.Split(' ')[1];
-                            return "IPFS:" + hash;
-                        });
-                        string ipfsHash = await addTask;
+                        lblIMGBlockDate.Text = "[ uploading to IPFS please wait...]";
+                        MessageBox.Show("Uploading a file to IPFS could take a long time. to prevent any issues, Sup!? will lock while it's loading.  just wait for it.");
+                        Process process = new Process();
+                        process.StartInfo.FileName = @"ipfs\ipfs.exe";
+                        process.StartInfo.Arguments = "add \"" + filePath + "\"";
+                        process.StartInfo.RedirectStandardOutput = true;
+                        process.StartInfo.UseShellExecute = false;
+                        process.Start();
+                        string output = process.StandardOutput.ReadToEnd();
+                        process.WaitForExit();
+                        string hash = output.Split(' ')[1];
+                        txtIMG.Text = "IPFS:" + hash + @"\" + fileName;
+                        imgurn = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + @"\ipfs\" + hash + @"\" + fileName;
 
-
-                        // Update text box with IPFS hash
-                        txtIMG.Text = ipfsHash + @"\" + fileName;
                     }
 
 
@@ -552,8 +546,6 @@ namespace SUP
                 string extension = Path.GetExtension(imgurn).ToLower();
                 if (allowedExtensions.Contains(extension))
                 {
-
-
 
                     try
                     {
@@ -610,76 +602,77 @@ namespace SUP
                                 break;
                             case "IPFS":
                                 if (txtIMG.Text.Length == 51) { imgurn += @"\artifact"; }
-                                if (!System.IO.Directory.Exists(@"ipfs/" + txtIMG.Text.Substring(5, 46) + "-build") && !System.IO.File.Exists(@"ipfs/" + txtIMG.Text.Substring(5, 46)))
+                                if (!System.IO.Directory.Exists(@"ipfs/" + txtIMG.Text.Substring(5, 46) + "-build") && !System.IO.Directory.Exists(@"ipfs/" + txtIMG.Text.Substring(5, 46)))
                                 {
 
 
-                                    Task ipfsTask = Task.Run(() =>
+                                    Directory.CreateDirectory(@"ipfs/" + txtIMG.Text.Substring(5, 46) + "-build");
+                                    Process process2 = new Process();
+                                    process2.StartInfo.FileName = @"ipfs\ipfs.exe";
+                                    process2.StartInfo.Arguments = "get " + txtIMG.Text.Substring(5, 46) + @" -o ipfs\" + txtIMG.Text.Substring(5, 46);
+                                    process2.Start();
+                                    process2.WaitForExit();
+
+                                    if (System.IO.File.Exists("ipfs/" + txtIMG.Text.Substring(5, 46)))
                                     {
-                                        Directory.CreateDirectory(@"ipfs/" + txtIMG.Text.Substring(5, 46) + "-build");
-                                        Process process2 = new Process();
-                                        process2.StartInfo.FileName = @"ipfs\ipfs.exe";
-                                        process2.StartInfo.Arguments = "get " + txtIMG.Text.Substring(5, 46) + @" -o ipfs\" + txtIMG.Text.Substring(5, 46);
-                                        process2.Start();
-                                        process2.WaitForExit();
-
-                                        if (System.IO.File.Exists("ipfs/" + txtIMG.Text.Substring(5, 46)))
+                                        try { System.IO.File.Move("ipfs/" + txtIMG.Text.Substring(5, 46), "ipfs/" + txtIMG.Text.Substring(5, 46) + "_tmp"); }
+                                        catch
                                         {
-                                            try { System.IO.File.Move("ipfs/" + txtIMG.Text.Substring(5, 46), "ipfs/" + txtIMG.Text.Substring(5, 46) + "_tmp"); }
-                                            catch
-                                            {
 
-                                                System.IO.File.Delete("ipfs/" + txtIMG.Text.Substring(5, 46) + "_tmp");
-                                                System.IO.File.Move("ipfs/" + txtIMG.Text.Substring(5, 46), "ipfs/" + txtIMG.Text.Substring(5, 46) + "_tmp");
+                                            System.IO.File.Delete("ipfs/" + txtIMG.Text.Substring(5, 46) + "_tmp");
+                                            System.IO.File.Move("ipfs/" + txtIMG.Text.Substring(5, 46), "ipfs/" + txtIMG.Text.Substring(5, 46) + "_tmp");
 
-                                            }
-
-                                            string fileName = txtIMG.Text.Replace(@"//", "").Replace(@"\\", "").Substring(51);
-                                            if (fileName == "")
-                                            {
-                                                fileName = "artifact";
-                                            }
-                                            else { fileName = fileName.Replace(@"/", "").Replace(@"\", ""); }
-                                            Directory.CreateDirectory(@"ipfs/" + txtIMG.Text.Substring(5, 46));
-                                            try { System.IO.File.Move("ipfs/" + txtIMG.Text.Substring(5, 46) + "_tmp", imgurn); } catch { }
                                         }
 
-                                        var SUP = new Options { CreateIfMissing = true };
-
-                                        using (var db = new DB(SUP, @"ipfs"))
+                                        string fileName = txtIMG.Text.Replace(@"//", "").Replace(@"\\", "").Substring(51);
+                                        if (fileName == "")
                                         {
+                                            fileName = "artifact";
+                                        }
+                                        else { fileName = fileName.Replace(@"/", "").Replace(@"\", ""); }
+                                        Directory.CreateDirectory(@"ipfs/" + txtIMG.Text.Substring(5, 46));
+                                        try { System.IO.File.Move("ipfs/" + txtIMG.Text.Substring(5, 46) + "_tmp", imgurn); } catch { }
+                                    }
 
-                                            string ipfsdaemon = db.Get("ipfs-daemon");
+                                    if (File.Exists(imgurn))
+                                    {
+                                        lblIMGBlockDate.Text = "ipfs verified: " + System.DateTime.UtcNow.ToString("ddd, dd MMM yyyy hh:mm:ss");
+                                        btnObjectImage.BackColor = Color.Blue;
+                                        btnObjectImage.ForeColor = Color.Yellow;
+                                    }
 
-                                            if (ipfsdaemon == "true")
+
+                                    var SUP = new Options { CreateIfMissing = true };
+
+                                    using (var db = new DB(SUP, @"ipfs"))
+                                    {
+
+                                        string ipfsdaemon = db.Get("ipfs-daemon");
+
+                                        if (ipfsdaemon == "true")
+                                        {
+                                            Process process3 = new Process
                                             {
-                                                Process process3 = new Process
+                                                StartInfo = new ProcessStartInfo
                                                 {
-                                                    StartInfo = new ProcessStartInfo
-                                                    {
-                                                        FileName = @"ipfs\ipfs.exe",
-                                                        Arguments = "pin add " + txtIMG.Text.Substring(5, 46),
-                                                        UseShellExecute = false,
-                                                        CreateNoWindow = true
-                                                    }
-                                                };
-                                                process3.Start();
-                                            }
+                                                    FileName = @"ipfs\ipfs.exe",
+                                                    Arguments = "pin add " + txtIMG.Text.Substring(5, 46),
+                                                    UseShellExecute = false,
+                                                    CreateNoWindow = true
+                                                }
+                                            };
+                                            process3.Start();
                                         }
+                                    }
 
-                                        try { Directory.Delete(@"ipfs/" + txtIMG.Text.Substring(5, 46)); } catch { }
-                                        try
-                                        {
-                                            Directory.Delete(@"ipfs/" + txtIMG.Text.Substring(5, 46) + "-build");
-                                        }
-                                        catch { }
+                                    try { Directory.Delete(@"ipfs/" + txtIMG.Text.Substring(5, 46)); } catch { }
+                                    try
+                                    {
+                                        Directory.Delete(@"ipfs/" + txtIMG.Text.Substring(5, 46) + "-build");
+                                    }
+                                    catch { }
 
 
-
-                                    });
-                                    lblIMGBlockDate.Text = "ipfs verified: " + System.DateTime.UtcNow.ToString("ddd, dd MMM yyyy hh:mm:ss");
-                                    btnObjectImage.BackColor = Color.Blue;
-                                    btnObjectImage.ForeColor = Color.Yellow;
 
                                 }
                                 else
@@ -767,15 +760,6 @@ namespace SUP
 
         }
 
-        private void btnObjectURI_Click(object sender, EventArgs e)
-        {
-            if (btnMiddleName.BackColor == Color.Blue) { btnMiddleName.BackColor = Color.White; btnMiddleName.ForeColor = Color.Black; }
-            else
-            {
-                btnMiddleName.BackColor = Color.Blue; btnMiddleName.ForeColor = Color.Yellow;
-            }
-            UpdateRemainingChars();
-        }
         //GPT3
         private void btnObjectAttributes_Click(object sender, EventArgs e)
         {

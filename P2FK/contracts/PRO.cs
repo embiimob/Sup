@@ -366,39 +366,57 @@ namespace SUP.P2FK
 
         }
 
-        public static List<PROState> GetLocalProfiles(string username, string password, string url, string versionByte = "111")
+        public static List<PROState> GetLocalProfiles(string username, string password, string url, string versionByte = "111", bool verbose = false)
         {
             List<PROState> profileStates = new List<PROState> { };
             var OBJ = new Options { CreateIfMissing = true };
             string JSONOBJ;
-          
-            // fetch current JSONOBJ from disk if it exists
-            try
-            {
-                JSONOBJ = System.IO.File.ReadAllText(@"root\GetLocalProfiles.json");
-                profileStates = JsonConvert.DeserializeObject<List<PROState>>(JSONOBJ);
-                return profileStates;
-            }
-            catch { }
 
+            if (!verbose)
+            {
+                // fetch current JSONOBJ from disk if it exists
+                try
+                {
+                    JSONOBJ = System.IO.File.ReadAllText(@"root\GetLocalProfiles.json");
+                    profileStates = JsonConvert.DeserializeObject<List<PROState>>(JSONOBJ);
+                    return profileStates;
+                }
+                catch { }
+            }
             NetworkCredential credentials = new NetworkCredential("good-user", "better-password");
             RPCClient rpcClient = new RPCClient(credentials, new Uri(@"http://127.0.0.1:18332"), Network.Main);
-            string accountsString = "";
-            try { accountsString = rpcClient.SendCommand("listaccounts").ResultString; } catch { }
-            var accounts = JsonConvert.DeserializeObject<Dictionary<string, decimal>>(accountsString);
 
-            foreach (string account in accounts.Keys)
+            string addressesString = "";
+            try
             {
-                               
-                PROState isObject = GetProfileByURN(account, username, password, url, versionByte);
+                addressesString = rpcClient.SendCommand("listreceivedbyaddress").ResultString;
+            }
+            catch
+            {
+                // Handle the exception if needed.
+            }
+
+            var addresses = JsonConvert.DeserializeObject<List<Dictionary<string, object>>>(addressesString);
+
+            List<string> bitcoinAddresses = new List<string>();
+
+            foreach (var addressInfo in addresses)
+            {
+                string address = addressInfo["address"].ToString();
+                bitcoinAddresses.Add(address);
+            }
+
+            // Now you have a list of Bitcoin addresses in the 'bitcoinAddresses' list.
+
+            // You can use the addresses for your profile retrieval logic.
+            foreach (string address in bitcoinAddresses)
+            {
+                PROState isObject = GetProfileByAddress(address, username, password, url, versionByte);
 
                 if (isObject.URN != null)
                 {
-
-                    profileStates.Add(isObject);                                        
-
+                    profileStates.Add(isObject);
                 }
-
             }
 
             var profileSerialized = JsonConvert.SerializeObject(profileStates);

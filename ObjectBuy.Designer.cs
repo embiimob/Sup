@@ -43,10 +43,10 @@
             this.tmrSearchMemoryPool = new System.Windows.Forms.Timer(this.components);
             this.flowOffers = new System.Windows.Forms.FlowLayoutPanel();
             this.label1 = new System.Windows.Forms.Label();
-            this.label2 = new System.Windows.Forms.Label();
+            this.lblNonRefundableOffers = new System.Windows.Forms.Label();
             this.flowListings = new System.Windows.Forms.FlowLayoutPanel();
             this.flowInMemoryResults = new System.Windows.Forms.FlowLayoutPanel();
-            this.label5 = new System.Windows.Forms.Label();
+            this.lblCurrentListings = new System.Windows.Forms.Label();
             this.txtListQty = new System.Windows.Forms.TextBox();
             this.txtEachValue = new System.Windows.Forms.TextBox();
             this.label6 = new System.Windows.Forms.Label();
@@ -227,17 +227,17 @@
             this.label1.TabIndex = 375;
             this.label1.Text = "in memory pending transactions";
             // 
-            // label2
+            // lblNonRefundableOffers
             // 
-            this.label2.AutoSize = true;
-            this.label2.Cursor = System.Windows.Forms.Cursors.Arrow;
-            this.label2.ForeColor = System.Drawing.Color.White;
-            this.label2.Location = new System.Drawing.Point(410, 9);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(107, 13);
-            this.label2.TabIndex = 376;
-            this.label2.Text = "non refundable offers";
-            this.label2.DoubleClick += new System.EventHandler(this.label2_DoubleClick);
+            this.lblNonRefundableOffers.AutoSize = true;
+            this.lblNonRefundableOffers.Cursor = System.Windows.Forms.Cursors.Arrow;
+            this.lblNonRefundableOffers.ForeColor = System.Drawing.Color.White;
+            this.lblNonRefundableOffers.Location = new System.Drawing.Point(410, 9);
+            this.lblNonRefundableOffers.Name = "lblNonRefundableOffers";
+            this.lblNonRefundableOffers.Size = new System.Drawing.Size(107, 13);
+            this.lblNonRefundableOffers.TabIndex = 376;
+            this.lblNonRefundableOffers.Text = "non refundable offers";
+            this.lblNonRefundableOffers.DoubleClick += new System.EventHandler(this.lblNonRefundableOffer_DoubleClick);
             // 
             // flowListings
             // 
@@ -261,17 +261,17 @@
             this.flowInMemoryResults.Size = new System.Drawing.Size(395, 364);
             this.flowInMemoryResults.TabIndex = 370;
             // 
-            // label5
+            // lblCurrentListings
             // 
-            this.label5.AutoSize = true;
-            this.label5.Cursor = System.Windows.Forms.Cursors.Arrow;
-            this.label5.ForeColor = System.Drawing.Color.White;
-            this.label5.Location = new System.Drawing.Point(876, 9);
-            this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(74, 13);
-            this.label5.TabIndex = 378;
-            this.label5.Text = "current listings";
-            this.label5.DoubleClick += new System.EventHandler(this.label5_DoubleClick);
+            this.lblCurrentListings.AutoSize = true;
+            this.lblCurrentListings.Cursor = System.Windows.Forms.Cursors.Arrow;
+            this.lblCurrentListings.ForeColor = System.Drawing.Color.White;
+            this.lblCurrentListings.Location = new System.Drawing.Point(876, 9);
+            this.lblCurrentListings.Name = "lblCurrentListings";
+            this.lblCurrentListings.Size = new System.Drawing.Size(74, 13);
+            this.lblCurrentListings.TabIndex = 378;
+            this.lblCurrentListings.Text = "current listings";
+            this.lblCurrentListings.DoubleClick += new System.EventHandler(this.lblCurrentListings_DoubleClick);
             // 
             // txtListQty
             // 
@@ -507,9 +507,9 @@
             this.Controls.Add(this.label6);
             this.Controls.Add(this.txtEachValue);
             this.Controls.Add(this.txtListQty);
-            this.Controls.Add(this.label5);
+            this.Controls.Add(this.lblCurrentListings);
             this.Controls.Add(this.flowListings);
-            this.Controls.Add(this.label2);
+            this.Controls.Add(this.lblNonRefundableOffers);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.flowOffers);
             this.Controls.Add(this.flowInMemoryResults);
@@ -546,10 +546,10 @@
         private System.Windows.Forms.Timer tmrSearchMemoryPool;
         private System.Windows.Forms.FlowLayoutPanel flowOffers;
         private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.Label label2;
+        private System.Windows.Forms.Label lblNonRefundableOffers;
         private System.Windows.Forms.FlowLayoutPanel flowListings;
         private System.Windows.Forms.FlowLayoutPanel flowInMemoryResults;
-        private System.Windows.Forms.Label label5;
+        private System.Windows.Forms.Label lblCurrentListings;
         private System.Windows.Forms.TextBox txtListQty;
         private System.Windows.Forms.TextBox txtEachValue;
         private System.Windows.Forms.Label label6;

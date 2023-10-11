@@ -6,12 +6,10 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Diagnostics.Eventing.Reader;
 using System.IO;
 using System.Linq;
 using System.Security.Cryptography;
 using System.Threading.Tasks;
-using System.Windows.Forms;
 
 namespace SUP.P2FK
 {
@@ -1509,6 +1507,7 @@ namespace SUP.P2FK
 
             }
         }
+
         public static OBJState GetObjectByTransactionId(string transactionid, string username, string password, string url, string versionByte = "111")
         {
 
@@ -1655,6 +1654,7 @@ namespace SUP.P2FK
             return objectState;
 
         }
+
         public static OBJState GetObjectByURN(string searchstring, string username, string password, string url, string versionByte = "111")
         {
             lock (SupLocker)
@@ -1801,6 +1801,7 @@ namespace SUP.P2FK
 
             }
         }
+
         public static OBJState GetObjectByFile(string filepath, string username, string password, string url, string versionByte = "111", int skip = 0)
         {
             OBJState objectState = new OBJState { };
@@ -2166,14 +2167,14 @@ namespace SUP.P2FK
             return objectState;
 
         }
+
         public static List<OBJState> GetObjectsByAddress(string objectaddress, string username, string password, string url, string versionByte = "111", int skip = 0, int qty = -1, bool calculate = false)
         {
             Task.Run(() =>
             {
                 using (FileStream fs = File.Create(@"GET_OBJECTS_BY_ADDRESS"))
                 {
-                    // You can perform any file-related operations here
-                    // This code will not block the main thread
+                    
                 }
             });
 
@@ -2381,6 +2382,7 @@ namespace SUP.P2FK
 
             }
         }
+
         public static List<OBJState> GetObjectsOwnedByAddress(string objectaddress, string username, string password, string url, string versionByte = "111", int skip = 0, int qty = -1)
         {
 
@@ -2444,6 +2446,7 @@ namespace SUP.P2FK
 
             }
         }
+
         public static List<OBJState> GetObjectsCreatedByAddress(string objectaddress, string username, string password, string url, string versionByte = "111", int skip = 0, int qty = -1)
         {
 
@@ -2514,6 +2517,7 @@ namespace SUP.P2FK
             }
 
         }
+
         public static List<COLState> GetObjectCollectionsByAddress(string objectaddress, string username, string password, string url, string versionByte = "111", int skip = 0, int qty = -1)
         {
 
@@ -2696,6 +2700,7 @@ namespace SUP.P2FK
             }
 
         }
+
         public static List<OBJState> GetObjectsByKeyword(List<string> searchstrings, string username, string password, string url, string versionByte = "111", int skip = 0, int qty = -1)
         {
             lock (SupLocker)
@@ -2728,6 +2733,7 @@ namespace SUP.P2FK
             }
 
         }
+
         public static List<OBJState> GetFoundObjects(string username, string password, string url, string versionByte = "111", int skip = 0, int qty = -1)
         {
             lock (SupLocker)
@@ -2812,9 +2818,9 @@ namespace SUP.P2FK
                 return objectStates;
             }
         }
+
         public static List<string> GetKeywordsByAddress(string objectaddress, string username, string password, string url, string versionByte = "111")
         {
-
             Root[] roots = Root.GetRootsByAddress(objectaddress, username, password, url, 0, -1, versionByte);
 
             lock (SupLocker)
@@ -2823,25 +2829,25 @@ namespace SUP.P2FK
 
                 foreach (Root root in roots)
                 {
-
                     foreach (string keyword in root.Keyword.Values)
                     {
-
                         string formattedKeyword = keyword.Replace("#", "").Substring(1);
 
-                        if (!keywords.Contains(formattedKeyword))
-                        {
+                        // Check if the formattedKeyword contains only valid UTF-8 characters
 
-                            keywords.Add(formattedKeyword);
+                       
+                            if (!keywords.Contains(formattedKeyword) && IsStandardASCII(formattedKeyword) )
+                            {
+                                keywords.Add(formattedKeyword);
+                            }       
 
-                        }
                     }
-
                 }
 
                 return keywords;
             }
         }
+
         public static object GetPublicMessagesByAddress(string objectaddress, string username, string password, string url, string versionByte = "111", int skip = 0, int qty = 50)
         {
             Root.GetRootsByAddress(objectaddress, username, password, url, 0, -1, versionByte);
@@ -2898,6 +2904,7 @@ namespace SUP.P2FK
                 return new { Messages = messages };
             }
         }
+
         public static object GetPrivateMessagesByAddress(string objectaddress, string username, string password, string url, string versionByte = "111", int skip = 0, int qty = 10)
         {
             Root.GetRootsByAddress(objectaddress, username, password, url, 0, -1, versionByte);
@@ -2959,6 +2966,18 @@ namespace SUP.P2FK
 
                 return new { Messages = messages };
             }
+        }
+
+        private static bool IsStandardASCII(string input)
+        {
+            foreach (char c in input)
+            {
+                if (c < 32 || c > 127)
+                {
+                    return false;
+                }
+            }
+            return true;
         }
 
     }

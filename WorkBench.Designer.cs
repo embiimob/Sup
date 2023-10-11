@@ -83,7 +83,7 @@ namespace SUP
             this.btnGetInquiriesByKeyword = new System.Windows.Forms.Button();
             this.btnGetInquiry = new System.Windows.Forms.Button();
             this.btnCollections = new System.Windows.Forms.Button();
-            this.button3 = new System.Windows.Forms.Button();
+            this.btnGetLocalProfiles = new System.Windows.Forms.Button();
             this.ButtonGetPublicKeys = new System.Windows.Forms.Button();
             this.ButtonGetPrivateMessages = new System.Windows.Forms.Button();
             this.ButtonGetPublicMessages = new System.Windows.Forms.Button();
@@ -509,7 +509,7 @@ namespace SUP
             this.splitContainer1.Panel1.Controls.Add(this.btnGetInquiriesByKeyword);
             this.splitContainer1.Panel1.Controls.Add(this.btnGetInquiry);
             this.splitContainer1.Panel1.Controls.Add(this.btnCollections);
-            this.splitContainer1.Panel1.Controls.Add(this.button3);
+            this.splitContainer1.Panel1.Controls.Add(this.btnGetLocalProfiles);
             this.splitContainer1.Panel1.Controls.Add(this.ButtonGetPublicKeys);
             this.splitContainer1.Panel1.Controls.Add(this.ButtonGetPrivateMessages);
             this.splitContainer1.Panel1.Controls.Add(this.ButtonGetPublicMessages);
@@ -593,7 +593,7 @@ namespace SUP
             this.btnGetInquiries.TabIndex = 83;
             this.btnGetInquiries.Text = "get inquiries";
             this.btnGetInquiries.UseVisualStyleBackColor = true;
-            this.btnGetInquiries.Click += new System.EventHandler(this.button7_Click);
+            this.btnGetInquiries.Click += new System.EventHandler(this.btnGetInquiries_Click);
             // 
             // btnInquiriesCreated
             // 
@@ -637,13 +637,13 @@ namespace SUP
             // 
             // button3
             // 
-            this.button3.Location = new System.Drawing.Point(182, 280);
-            this.button3.Name = "button3";
-            this.button3.Size = new System.Drawing.Size(81, 23);
-            this.button3.TabIndex = 76;
-            this.button3.Text = "local profiles";
-            this.button3.UseVisualStyleBackColor = true;
-            this.button3.Click += new System.EventHandler(this.button3_Click);
+            this.btnGetLocalProfiles.Location = new System.Drawing.Point(182, 280);
+            this.btnGetLocalProfiles.Name = "button3";
+            this.btnGetLocalProfiles.Size = new System.Drawing.Size(81, 23);
+            this.btnGetLocalProfiles.TabIndex = 76;
+            this.btnGetLocalProfiles.Text = "local profiles";
+            this.btnGetLocalProfiles.UseVisualStyleBackColor = true;
+            this.btnGetLocalProfiles.Click += new System.EventHandler(this.btnGetLocalProfiles_Click);
             // 
             // ButtonGetPublicKeys
             // 
@@ -990,7 +990,7 @@ namespace SUP
         private Button ButtonGetPrivateMessages;
         private Button ButtonGetPublicMessages;
         private Button ButtonGetPublicKeys;
-        private Button button3;
+        private Button btnGetLocalProfiles;
         private Button btnCollections;
         private Button btnGetInquiry;
         private Button btnGetInquiries;

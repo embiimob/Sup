@@ -25,8 +25,6 @@ namespace SUP
         //GPT3 ROCKS
         private readonly static object SupLocker = new object();
         private List<string> BTCTMemPool = new List<string>();
-        private const int MaxRows = 2000;
-        private readonly List<(string address, int qty)> _addressQtyList = new List<(string address, int qty)>();
         bool mint = false;
         private readonly string givaddress = "";
         private Random random = new Random();
@@ -45,7 +43,6 @@ namespace SUP
             
             return delimiters[random.Next(delimiters.Length)];
         }
-
 
         void Owner_LinkClicked(string ownerId)
         {
@@ -937,12 +934,12 @@ namespace SUP
             }
         }
 
-        private void label2_DoubleClick(object sender, EventArgs e)
+        private void lblNonRefundableOffer_DoubleClick(object sender, EventArgs e)
         {
             RefreshPage();
         }
 
-        private void label5_DoubleClick(object sender, EventArgs e)
+        private void lblCurrentListings_DoubleClick(object sender, EventArgs e)
         {
             RefreshPage();
         }

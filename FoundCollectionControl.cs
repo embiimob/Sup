@@ -1,5 +1,4 @@
 ﻿using LevelDB;
-using Newtonsoft.Json;
 using SUP.P2FK;
 using System;
 using System.Collections.Generic;

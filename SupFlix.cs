@@ -1,5 +1,4 @@
-﻿using NAudio.Wave;
-using SUP.P2FK;
+﻿using SUP.P2FK;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;

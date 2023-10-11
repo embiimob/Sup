@@ -39,7 +39,6 @@ namespace SUP
             return delimiters[random.Next(delimiters.Length)];
         }
 
-
         private void addButton_Click(object sender, EventArgs e)
         {
             if (_addressQtyList.Count >= MaxRows)

@@ -137,7 +137,7 @@
             this.btnObjectKeywords.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.btnObjectKeywords.Enabled = false;
             this.btnObjectKeywords.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold);
-            this.btnObjectKeywords.Location = new System.Drawing.Point(752, 620);
+            this.btnObjectKeywords.Location = new System.Drawing.Point(773, 620);
             this.btnObjectKeywords.Name = "btnObjectKeywords";
             this.btnObjectKeywords.Size = new System.Drawing.Size(109, 42);
             this.btnObjectKeywords.TabIndex = 11;
@@ -155,7 +155,7 @@
             this.flowKeywords.Location = new System.Drawing.Point(576, 620);
             this.flowKeywords.Name = "flowKeywords";
             this.flowKeywords.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
-            this.flowKeywords.Size = new System.Drawing.Size(170, 59);
+            this.flowKeywords.Size = new System.Drawing.Size(191, 59);
             this.flowKeywords.TabIndex = 280;
             this.flowKeywords.ControlAdded += new System.Windows.Forms.ControlEventHandler(this.flowKeyword_ControlAdded);
             this.flowKeywords.ControlRemoved += new System.Windows.Forms.ControlEventHandler(this.flowKeyword_ControlRemoved);
@@ -207,10 +207,10 @@
             this.txtMaximum.Enabled = false;
             this.txtMaximum.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
             this.txtMaximum.ForeColor = System.Drawing.Color.White;
-            this.txtMaximum.Location = new System.Drawing.Point(880, 618);
+            this.txtMaximum.Location = new System.Drawing.Point(899, 620);
             this.txtMaximum.Multiline = true;
             this.txtMaximum.Name = "txtMaximum";
-            this.txtMaximum.Size = new System.Drawing.Size(72, 42);
+            this.txtMaximum.Size = new System.Drawing.Size(53, 42);
             this.txtMaximum.TabIndex = 8;
             this.txtMaximum.Tag = "";
             this.txtMaximum.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;

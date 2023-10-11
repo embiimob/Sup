@@ -23,7 +23,6 @@ using Gma.QrCodeNet.Encoding;
 using Gma.QrCodeNet.Encoding.Windows.Render;
 using System.Drawing.Imaging;
 using System.Drawing.Printing;
-using System.Linq.Expressions;
 
 namespace SUP
 {
@@ -673,10 +672,16 @@ namespace SUP
             }
         }
 
-        private void button1_Click(object sender, EventArgs e)
+        private void btnGIF_Click(object sender, EventArgs e)
         {
             GifTool gifToolForm = new GifTool(this); // Pass the reference to the current form as the parent form
             gifToolForm.ShowDialog();
+        }
+
+        private void btnEMOJI_Click(object sender, EventArgs e)
+        {
+            // Show/hide the emoji panel based on its current visibility
+            emojiPanel.Visible = !emojiPanel.Visible;
         }
 
         private void MainForm_FormClosing(object sender, FormClosingEventArgs e)
@@ -1082,12 +1087,6 @@ namespace SUP
 
         }
 
-        private void btnEMOJI_Click(object sender, EventArgs e)
-        {
-            // Show/hide the emoji panel based on its current visibility
-            emojiPanel.Visible = !emojiPanel.Visible;
-        }
-
         private Bitmap GenerateQRCode(string qrData)
         {
             QrCode qrCode = encoder.Encode(qrData);
@@ -1108,6 +1107,7 @@ namespace SUP
                 }
             }
         }
+
         private async void PrintMessage(string message)
         {
 

@@ -1,10 +1,8 @@
 ﻿using AngleSharp.Common;
-using AngleSharp.Css.Dom;
 using LevelDB;
 using NBitcoin;
 using NBitcoin.RPC;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -15,7 +13,6 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
-using System.Windows.Documents;
 
 
 namespace SUP.P2FK
@@ -614,6 +611,7 @@ namespace SUP.P2FK
             catch { }
             return P2FKRoot;
         }
+
         public static Root[] GetRootsByAddress(string address, string username, string password, string url, int skip = 0, int qty = -1, string versionByte = "111", bool calculate = false)
         {
             Task.Run(() =>
@@ -738,6 +736,7 @@ namespace SUP.P2FK
 
                 return rootList.ToArray(); }
         }
+
         public static byte[] GetRootBytesByLedger(string ledger, string username, string password, string url)
         {
             Regex regexTransactionId = new Regex(@"\b[0-9a-f]{64}\b");
@@ -811,6 +810,7 @@ namespace SUP.P2FK
 
             return transactionBytes;
         }
+
         public static byte[] GetRootBytesByFile(string[] fileNames)
         {
             byte[] separators = new byte[] { 92, 47, 58, 42, 63, 34, 60, 62, 124 };
@@ -830,22 +830,7 @@ namespace SUP.P2FK
             }
             return joinedFileBytes;
         }
-        public static byte[] GetRootBytesByMessage(string[] messages)
-        {
-            byte[] separators = new byte[] { 92, 47, 58, 42, 63, 34, 60, 62, 124 };
-            byte[] joinedMessageBytes = new byte[] { };
-            foreach (string message in messages)
-            {
-                byte[] separator1 = new byte[] { separators[new Random().Next(0, separators.Length)] };
-                byte[] separator2 = new byte[] { separators[new Random().Next(0, separators.Length)] };
-                byte[] messageBytes = Encoding.ASCII.GetBytes(message);
-                byte[] messageSizeBytes = Encoding.ASCII.GetBytes(messageBytes.Length.ToString());
 
-                byte[] joinedBytes = joinedMessageBytes.Concat(separator1).Concat(messageSizeBytes).Concat(separator2).Concat(messageBytes).ToArray();
-                joinedMessageBytes = joinedBytes;
-            }
-            return joinedMessageBytes;
-        }
         public static List<String> GetPublicKeysByAddress(string address, string username, string password, string url)
         {
             List<String> Keys = new List<String>();
@@ -866,6 +851,7 @@ namespace SUP.P2FK
 
             return Keys;
         }
+
         public static string GetPublicAddressByKeyword(string keyword, string versionbyte = "111")
         {
             if (keyword == null) { return null; }
@@ -897,6 +883,7 @@ namespace SUP.P2FK
                     .Concat(keywordBytes)
                     .ToArray());
         }
+
         public static string GetKeywordByPublicAddress(string public_address, string encoding = "UTF8")
         {
 
@@ -911,6 +898,7 @@ namespace SUP.P2FK
                 return Encoding.ASCII.GetString(payloadBytes).Replace("#", "").Substring(1);
             }
         }
+
         public static string GetTransactionIdByHexString(string transactionHex)
         {
             // Decode the hex string into a byte array
@@ -925,6 +913,7 @@ namespace SUP.P2FK
             // Convert the hash to a hex string and return it
             return ByteArrayToHexString(hash);
         }
+
         public static byte[] DecryptRootBytes(string username, string password, string url, string address, byte[] rootbytes)
         {
             byte[] separators = new byte[] { 92, 47, 58, 42, 63, 34, 60, 62, 124 };
@@ -962,6 +951,7 @@ namespace SUP.P2FK
             try { decrypted = encryption.Decrypt(privateKey, output); } catch { }
             return decrypted;
         }
+
         public static byte[] EncryptRootBytes(string username, string password, string url, string address, byte[] rootbytes, string pkx = "", string pky = "", bool returnfile = false)
         {
             ECPoint publicKey;
@@ -1002,6 +992,7 @@ namespace SUP.P2FK
             if (!returnfile) { return joinedBytes; } else { return encrypted; }
 
         }
+
         static byte[] HexStringToByteArray(string hex)
         {
             // Check for an even number of characters
@@ -1021,6 +1012,7 @@ namespace SUP.P2FK
 
             return bytes;
         }
+
         static string ByteArrayToHexString(byte[] bytes)
         {
             // Allocate a new string builder

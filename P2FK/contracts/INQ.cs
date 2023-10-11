@@ -423,6 +423,7 @@ namespace SUP.P2FK
 
             }
         }
+
         public static INQState GetInquiryByTransactionId(string transactionid, string username, string password, string url, string versionByte = "111", bool calculate = false)
         {
 
@@ -747,6 +748,7 @@ namespace SUP.P2FK
             return objectState;
 
         }
+
         public static List<INQState> GetInquiriesByAddress(string objectaddress, string username, string password, string url, string versionByte = "111", int skip = 0, int qty = -1, bool calculate = false)
         {
             using (FileStream fs = File.Create(@"GET_INQUIRIES_BY_ADDRESS"))
@@ -919,6 +921,7 @@ namespace SUP.P2FK
 
             }
         }
+
         public static List<INQState> GetInquiriesCreatedByAddress(string objectaddress, string username, string password, string url, string versionByte = "111", int skip = 0, int qty = -1, bool calculate = false)
         {
 
@@ -1002,6 +1005,7 @@ namespace SUP.P2FK
             }
 
         }
+
         public static List<INQState> GetInquiriesByKeyword(List<string> searchstrings, string username, string password, string url, string versionByte = "111", int skip = 0, int qty = -1, bool calculate = false)
         {
             lock (SupLocker)

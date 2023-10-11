@@ -43,7 +43,7 @@
             this.btnRefresh = new System.Windows.Forms.Button();
             this.label3 = new System.Windows.Forms.Label();
             this.btnRecord = new System.Windows.Forms.Button();
-            this.button2 = new System.Windows.Forms.Button();
+            this.btnGIF = new System.Windows.Forms.Button();
             this.emojiPanel = new System.Windows.Forms.FlowLayoutPanel();
             this.btnPrint = new System.Windows.Forms.Button();
             this.btnInquiry = new System.Windows.Forms.Button();
@@ -213,15 +213,15 @@
             // 
             // button2
             // 
-            this.button2.Font = new System.Drawing.Font("Segoe UI Emoji", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.button2.ForeColor = System.Drawing.Color.Black;
-            this.button2.Location = new System.Drawing.Point(375, 244);
-            this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(54, 50);
-            this.button2.TabIndex = 366;
-            this.button2.Text = "GIF";
-            this.button2.UseVisualStyleBackColor = true;
-            this.button2.Click += new System.EventHandler(this.button1_Click);
+            this.btnGIF.Font = new System.Drawing.Font("Segoe UI Emoji", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnGIF.ForeColor = System.Drawing.Color.Black;
+            this.btnGIF.Location = new System.Drawing.Point(375, 244);
+            this.btnGIF.Name = "button2";
+            this.btnGIF.Size = new System.Drawing.Size(54, 50);
+            this.btnGIF.TabIndex = 366;
+            this.btnGIF.Text = "GIF";
+            this.btnGIF.UseVisualStyleBackColor = true;
+            this.btnGIF.Click += new System.EventHandler(this.btnGIF_Click);
             // 
             // emojiPanel
             // 
@@ -318,7 +318,7 @@
             this.ClientSize = new System.Drawing.Size(447, 669);
             this.Controls.Add(this.pictureBox1);
             this.Controls.Add(this.emojiPanel);
-            this.Controls.Add(this.button2);
+            this.Controls.Add(this.btnGIF);
             this.Controls.Add(this.btnRecord);
             this.Controls.Add(this.label3);
             this.Controls.Add(this.btnEMOJI);
@@ -375,7 +375,7 @@
         private System.Windows.Forms.Button btnRecord;
         private System.Windows.Forms.Button btnPlay;
         private System.Windows.Forms.Button btnINQ;
-        private System.Windows.Forms.Button button2;
+        private System.Windows.Forms.Button btnGIF;
         private System.Windows.Forms.FlowLayoutPanel emojiPanel;
         private System.Windows.Forms.Button btnPrint;
         private System.Windows.Forms.PictureBox pictureBox1;

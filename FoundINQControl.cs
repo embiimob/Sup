@@ -1,8 +1,5 @@
-﻿using LevelDB;
-using Newtonsoft.Json;
-using SUP.P2FK;
+﻿using SUP.P2FK;
 using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Windows.Forms;
 
@@ -20,8 +17,7 @@ namespace SUP
             _address = address;
             _activeprofile = activeprofile;
         }
-
-    
+           
 
         private void ObjectAddress_Click(object sender, EventArgs e)
         {
@@ -71,8 +67,6 @@ namespace SUP
             }
 
         }
-
-
 
         private void btnVote_Click(object sender, EventArgs e)
         {

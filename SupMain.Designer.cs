@@ -90,7 +90,6 @@ namespace SUP
             // 
             // splitContainer1.Panel2
             // 
-            this.splitContainer1.Panel2.Paint += new System.Windows.Forms.PaintEventHandler(this.splitContainer1_Panel2_Paint);
             this.splitContainer1.Panel2MinSize = 328;
             this.splitContainer1.Size = new System.Drawing.Size(1004, 741);
             this.splitContainer1.SplitterDistance = 666;
@@ -245,7 +244,7 @@ namespace SUP
             this.btnJukeBox.TabIndex = 98;
             this.btnJukeBox.Text = "🎵";
             this.btnJukeBox.UseVisualStyleBackColor = true;
-            this.btnJukeBox.Click += new System.EventHandler(this.button1_Click_1);
+            this.btnJukeBox.Click += new System.EventHandler(this.btnJukeBox_Click);
             // 
             // refreshFriendFeed
             // 
@@ -348,7 +347,7 @@ namespace SUP
             this.btnHome.TabIndex = 97;
             this.btnHome.Text = "home";
             this.btnHome.UseVisualStyleBackColor = false;
-            this.btnHome.Click += new System.EventHandler(this.button1_Click);
+            this.btnHome.Click += new System.EventHandler(this.btnHome_Click);
             // 
             // lblProcessHeight
             // 

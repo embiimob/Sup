@@ -40,7 +40,6 @@ namespace SUP
         private bool mzcActive;
         private bool ltcActive;
         private bool dogActive;
-        private RichTextBox richTextBox1;
         ObjectBrowserControl OBcontrol = new ObjectBrowserControl();
         private int numMessagesDisplayed;
         private int numPrivateMessagesDisplayed;
@@ -6274,7 +6273,7 @@ namespace SUP
 
         }
 
-        private void button1_Click(object sender, EventArgs e)
+        private void btnHome_Click(object sender, EventArgs e)
         {
             if (System.IO.File.Exists(@"GET_ROOTS_BY_ADDRESS") || System.IO.File.Exists(@"GET_OBJECT_BY_ADDRESS") || System.IO.File.Exists(@"GET_OBJECTS_BY_ADDRESS")) { MessageBox.Show("Please wait for the search to complete.", "Notification"); return; }
 
@@ -6350,7 +6349,7 @@ namespace SUP
             }
         }
 
-        private void button1_Click_1(object sender, EventArgs e)
+        private void btnJukeBox_Click(object sender, EventArgs e)
         {
             if (System.IO.File.Exists(@"GET_ROOTS_BY_ADDRESS") || System.IO.File.Exists(@"GET_OBJECT_BY_ADDRESS") || System.IO.File.Exists(@"GET_OBJECTS_BY_ADDRESS")) { MessageBox.Show("Please wait for the search to complete.", "Notification"); return; }
 
@@ -6393,11 +6392,6 @@ namespace SUP
             }
 
             btnVideoSearch.Enabled = true;
-        }
-
-        private void splitContainer1_Panel2_Paint(object sender, PaintEventArgs e)
-        {
-
         }
 
         private void btnInquirySearch_Click(object sender, EventArgs e)

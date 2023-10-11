@@ -1289,30 +1289,30 @@ namespace SUP
             return input.Substring(startIndex, endIndex - startIndex);
         }
 
-        private void button3_Click(object sender, EventArgs e)
+        private void btnGetLocalProfiles_Click(object sender, EventArgs e)
         {
-            if (chkVerbose.Checked)
-            {
-                try { File.Delete(@"root\GetLocalProfiles.json"); } catch { }
-            }
 
             DateTime tmbeginCall = DateTime.UtcNow;
-            var profiles = PROState.GetLocalProfiles(txtLogin.Text, txtPassword.Text, txtUrl.Text);
-            var json = JsonConvert.SerializeObject(profiles);
-
+            List<PROState> createdObjects = PROState.GetLocalProfiles(txtLogin.Text, txtPassword.Text, txtUrl.Text, txtVersionByte.Text, chkVerbose.Checked);
             DateTime tmendCall = DateTime.UtcNow;
-
             lblTotalBytes.Text = "bytes: ";
             lblTotalTime.Text = "time: ";
             lblKbs.Text = "kb/s: ";
             lblTotal.Text = "total:";
-
             TimeSpan elapsedTime = tmendCall - tmbeginCall;
             double elapsedMilliseconds = elapsedTime.TotalMilliseconds;
-
             lblTotalTime.Text = "time: " + Math.Truncate(elapsedMilliseconds);
+            lblTotal.Text = "total: " + createdObjects.Count();
+            JObject[] ObjectArray = new JObject[createdObjects.Count];
+            int objectcount = 0;
 
-            txtGetValue.Text = json;
+
+            foreach (object obj in createdObjects)
+            {
+
+                ObjectArray[objectcount++] = JObject.FromObject(obj);
+            }
+            DisplayRootJSON(ObjectArray);
         }
     
         private void btnCollections_Click(object sender, EventArgs e)
@@ -1358,7 +1358,7 @@ namespace SUP
             DisplayRootJSON(new JObject[] { JObject.FromObject(Tester) });
         }
 
-        private void button7_Click(object sender, EventArgs e)
+        private void btnGetInquiries_Click(object sender, EventArgs e)
         {
             DateTime tmbeginCall = DateTime.UtcNow;
             List<INQState> createdObjects = INQState.GetInquiriesByAddress(txtSearchAddress.Text, txtLogin.Text, txtPassword.Text, txtUrl.Text, txtVersionByte.Text, int.Parse(txtSkip.Text), int.Parse(txtQty.Text), chkVerbose.Checked);

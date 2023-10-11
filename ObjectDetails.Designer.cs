@@ -469,6 +469,7 @@
             this.txtdesc.Size = new System.Drawing.Size(283, 405);
             this.txtdesc.TabIndex = 77;
             this.txtdesc.Text = "description";
+            this.txtdesc.Click += new System.EventHandler(this.CopyDescriptionByDescriptionClick);
             // 
             // btnBurn
             // 
@@ -580,6 +581,7 @@
             this.lblObjectCreatedDate.TabIndex = 95;
             this.lblObjectCreatedDate.Text = "[ is not immutable ]";
             this.lblObjectCreatedDate.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.lblObjectCreatedDate.Click += new System.EventHandler(this.CopyAddressByCreatedDateClick);
             // 
             // registrationPanel
             // 
@@ -729,7 +731,7 @@
             this.btnJukeBox.TabIndex = 113;
             this.btnJukeBox.Text = "🎵";
             this.btnJukeBox.UseVisualStyleBackColor = true;
-            this.btnJukeBox.Click += new System.EventHandler(this.button1_Click);
+            this.btnJukeBox.Click += new System.EventHandler(this.btnJukeBox_Click);
             // 
             // btnSupFlix
             // 
