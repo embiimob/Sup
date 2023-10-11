@@ -416,12 +416,16 @@ namespace SUP
             {
                 // Handle exceptions here
                 // Revert the text and background color of the button in the catch block if necessary
-                this.Invoke((MethodInvoker)(() =>
+                try
                 {
-                    btnPinIPFS.Text = "pin cache";
-                    btnPinIPFS.ForeColor = Color.Black;
-                    btnPinIPFS.BackColor = Color.White;
-                }));
+                    this.Invoke((MethodInvoker)(() =>
+                 {
+                     btnPinIPFS.Text = "pin cache";
+                     btnPinIPFS.ForeColor = Color.Black;
+                     btnPinIPFS.BackColor = Color.White;
+                 }));
+                }
+                catch { }
             }
         }
 
@@ -477,11 +481,16 @@ namespace SUP
             {
                 // Handle exceptions here
                 // Revert the text and background color of the button in the catch block if necessary
-                this.Invoke((MethodInvoker)(() => {
-                    btnUnpinIPFS.Text = "unpin cache";
-                    btnUnpinIPFS.ForeColor = Color.Black;
-                    btnUnpinIPFS.BackColor = Color.White;
-                }));
+                try
+                {
+                    this.Invoke((MethodInvoker)(() =>
+                    {
+                        btnUnpinIPFS.Text = "unpin cache";
+                        btnUnpinIPFS.ForeColor = Color.Black;
+                        btnUnpinIPFS.BackColor = Color.White;
+                    }));
+                }
+                catch { }
             }
         }
 

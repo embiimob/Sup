@@ -179,11 +179,11 @@
             this.panel1.Size = new System.Drawing.Size(706, 631);
             this.panel1.TabIndex = 1;
             // 
-            // checkBox8
+            // chkLiveFeedPinning
             // 
             this.chkLiveFeedPinning.AutoSize = true;
             this.chkLiveFeedPinning.Location = new System.Drawing.Point(9, 145);
-            this.chkLiveFeedPinning.Name = "checkBox8";
+            this.chkLiveFeedPinning.Name = "chkLiveFeedPinning";
             this.chkLiveFeedPinning.Size = new System.Drawing.Size(138, 17);
             this.chkLiveFeedPinning.TabIndex = 163;
             this.chkLiveFeedPinning.Text = "enable live feed pinning";
@@ -200,22 +200,22 @@
             this.label17.TabIndex = 162;
             this.label17.Text = "user preferences";
             // 
-            // checkBox7
+            // chkWalkieTalkie
             // 
             this.chkWalkieTalkie.AutoSize = true;
             this.chkWalkieTalkie.Location = new System.Drawing.Point(9, 122);
-            this.chkWalkieTalkie.Name = "checkBox7";
+            this.chkWalkieTalkie.Name = "chkWalkieTalkie";
             this.chkWalkieTalkie.Size = new System.Drawing.Size(341, 17);
             this.chkWalkieTalkie.TabIndex = 161;
             this.chkWalkieTalkie.Text = "immediately deliver audio attachments ( enable walkie talkie mode )";
             this.chkWalkieTalkie.UseVisualStyleBackColor = true;
             this.chkWalkieTalkie.CheckedChanged += new System.EventHandler(this.chkWalkieTalkie_CheckedChanged);
             // 
-            // checkBox6
+            // chkFilterLivePostings
             // 
             this.chkFilterLivePostings.AutoSize = true;
             this.chkFilterLivePostings.Location = new System.Drawing.Point(9, 99);
-            this.chkFilterLivePostings.Name = "checkBox6";
+            this.chkFilterLivePostings.Name = "chkFilterLivePostings";
             this.chkFilterLivePostings.Size = new System.Drawing.Size(343, 17);
             this.chkFilterLivePostings.TabIndex = 160;
             this.chkFilterLivePostings.Text = "filter live postings ( only show live posts from who you are following )";
@@ -492,7 +492,7 @@
             this.label15.Name = "label15";
             this.label15.Size = new System.Drawing.Size(109, 13);
             this.label15.TabIndex = 124;
-            this.label15.Text = "Sup!? v0.2.9-beta";
+            this.label15.Text = "Sup!? v0.3.0-beta";
             this.label15.TextAlign = System.Drawing.ContentAlignment.TopCenter;
             // 
             // label14
