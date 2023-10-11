@@ -21,7 +21,7 @@ namespace SUP
 
         private void ObjectAddress_Click(object sender, EventArgs e)
         {
-            Clipboard.SetText(txtTransactionId.Text.Replace("@",""));
+            Clipboard.SetText(txtTransactionId.Text);
         }
 
         private void lblTrash_Click(object sender, EventArgs e)
@@ -39,10 +39,10 @@ namespace SUP
                     try
                     {
 
-                        try { Directory.Delete(@"root\" + txtTransactionId.Text.Replace("@",""), true); } catch { }
-                        try { Directory.CreateDirectory(@"root\" + txtTransactionId.Text.Replace("@", "")); } catch { }
+                        try { Directory.Delete(@"root\" + txtTransactionId.Text, true); } catch { }
+                        try { Directory.CreateDirectory(@"root\" + txtTransactionId.Text); } catch { }
 
-                        using (FileStream fs = File.Create(@"root\" + txtTransactionId.Text.Replace("@", "") + @"\BLOCK"))
+                        using (FileStream fs = File.Create(@"root\" + txtTransactionId.Text + @"\BLOCK"))
                         {
 
                         }
@@ -104,7 +104,7 @@ namespace SUP
                 txtQUE.Text = iNQState.Question;
                 txtCreatedBy.Text = "created by: " + iNQState.CreatedBy.ToString();
                 txtCreatedDate.Text ="created date: " + iNQState.CreatedDate.ToString();
-                txtTransactionId.Text = "@"+ iNQState.TransactionId;
+                txtTransactionId.Text = iNQState.TransactionId;
                 if (iNQState.OwnsObjectGate != null || iNQState.OwnsCreatedByGate != null) { btnShowAllOrGated.Visible = true; }
                 if (int.TryParse(iNQState.status, out int status))
                 {

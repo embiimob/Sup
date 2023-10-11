@@ -66,11 +66,11 @@ namespace SUP
 
                 if (btnCreated.BackColor == Color.Yellow && txtSearchAddress.Text != "")
                 {
-                    try { searchprofile = PROState.GetProfileByAddress(address, "good-user", "better-password", @"http://127.0.0.1:18332"); } catch { }
+                    try { searchprofile = PROState.GetProfileByAddress(address, "good-user", "better-password", @"http://127.0.0.1:18332", "111", calculate); } catch { }
 
                     if (searchprofile.URN == null)
                     {
-                        searchprofile = PROState.GetProfileByURN(address, "good-user", "better-password", @"http://127.0.0.1:18332");
+                        searchprofile = PROState.GetProfileByURN(address, "good-user", "better-password", @"http://127.0.0.1:18332", "111", calculate);
                     }
 
                     if (searchprofile.URN != null)
@@ -91,11 +91,11 @@ namespace SUP
                 }
                 else if (btnOwned.BackColor == Color.Yellow && txtSearchAddress.Text != "")
                 {
-                    try { searchprofile = PROState.GetProfileByAddress(address, "good-user", "better-password", @"http://127.0.0.1:18332"); } catch { }
+                    try { searchprofile = PROState.GetProfileByAddress(address, "good-user", "better-password", @"http://127.0.0.1:18332", "111", calculate); } catch { }
 
                     if (searchprofile.URN == null)
                     {
-                        searchprofile = PROState.GetProfileByURN(address, "good-user", "better-password", @"http://127.0.0.1:18332");
+                        searchprofile = PROState.GetProfileByURN(address, "good-user", "better-password", @"http://127.0.0.1:18332", "111", calculate);
                     }
 
                     if (searchprofile.URN != null)
@@ -139,11 +139,11 @@ namespace SUP
                         if (!txtSearchAddress.Text.StartsWith("#"))
                         {
 
-                            try { searchprofile = PROState.GetProfileByAddress(address, "good-user", "better-password", @"http://127.0.0.1:18332"); } catch { }
+                            try { searchprofile = PROState.GetProfileByAddress(address, "good-user", "better-password", @"http://127.0.0.1:18332", "111", calculate); } catch { }
                             
                             if (searchprofile.URN == null)
                             {
-                                searchprofile = PROState.GetProfileByURN(address, "good-user", "better-password", @"http://127.0.0.1:18332");
+                                searchprofile = PROState.GetProfileByURN(address, "good-user", "better-password", @"http://127.0.0.1:18332", "111", calculate);
                             }
                             if (searchprofile.URN != null)
                             {
@@ -172,10 +172,12 @@ namespace SUP
                         createdObjects = OBJState.GetObjectsByAddress(profileCheck, "good-user", "better-password", @"http://127.0.0.1:18332", "111", 0, -1,calculate);
 
                         this.Invoke((Action)(() =>
-                        {
-                            profileURN.Links[0].LinkData = profileCheck;
-                            profileURN.LinkColor = System.Drawing.SystemColors.Highlight;
-                            profileURN.Text = txtSearchAddress.Text;
+                        {   if (searchprofile.URN != null || createdObjects.Count > 0)
+                            {
+                                profileURN.Links[0].LinkData = profileCheck;
+                                profileURN.LinkColor = System.Drawing.SystemColors.Highlight;
+                                profileURN.Text = txtSearchAddress.Text;
+                            }
                         }));
 
                     }

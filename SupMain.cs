@@ -3020,560 +3020,595 @@ namespace SUP
                                             string toImage = "";
 
 
-                                            if (!profileAddress.ContainsKey(fromAddress))
+                                            string[] blocks = Regex.Matches(message, "<<[^<>]+>>")
+                                                                  .Cast<Match>()
+                                                                  .Select(m => m.Value.Trim(new char[] { '<', '>' }))
+                                                                  .ToArray();
+
+                                            if (blocks.Length > 1 || (blocks.Length == 1 && !int.TryParse(blocks[0], out _)))
                                             {
 
-                                                PROState profile = PROState.GetProfileByAddress(fromAddress, "good-user", "better-password", "http://127.0.0.1:18332");
-
-                                                if (profile.URN != null)
+                                                if (!profileAddress.ContainsKey(fromAddress))
                                                 {
-                                                    fromAddress = TruncateAddress(profile.URN);
 
-                                                    if (profile.Image != null)
+                                                    PROState profile = PROState.GetProfileByAddress(fromAddress, "good-user", "better-password", "http://127.0.0.1:18332");
+
+                                                    if (profile.URN != null)
                                                     {
-                                                        fromImage = profile.Image;
+                                                        fromAddress = TruncateAddress(profile.URN);
+
+                                                        if (profile.Image != null)
+                                                        {
+                                                            fromImage = profile.Image;
 
 
-                                                        if (!profile.Image.ToLower().StartsWith("http"))
-                                                        {
-                                                            fromImage = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + @"\root\" + profile.Image.Replace("BTC:", "").Replace("MZC:", "").Replace("LTC:", "").Replace("DOG:", "").Replace("IPFS:", "").Replace(@"/", @"\");
-                                                            if (profile.Image.ToLower().StartsWith("ipfs:")) { fromImage = fromImage.Replace(@"\root\", @"\ipfs\"); if (profile.Image.Length == 51) { fromImage += @"\artifact"; } }
-                                                        }
-                                                        Regex regexTransactionId = new Regex(@"\b[0-9a-f]{64}\b");
-                                                        Match imgurnmatch = regexTransactionId.Match(fromImage);
-                                                        string transactionid = imgurnmatch.Value;
-                                                        Root root = new Root();
-                                                        if (!File.Exists(fromImage))
-                                                        {
-                                                            switch (profile.Image.ToUpper().Substring(0, 4))
+                                                            if (!profile.Image.ToLower().StartsWith("http"))
                                                             {
-                                                                case "MZC:":
-                                                                    root = Root.GetRootByTransactionId(transactionid, "good-user", "better-password", @"http://127.0.0.1:12832", "50");
+                                                                fromImage = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + @"\root\" + profile.Image.Replace("BTC:", "").Replace("MZC:", "").Replace("LTC:", "").Replace("DOG:", "").Replace("IPFS:", "").Replace(@"/", @"\");
+                                                                if (profile.Image.ToLower().StartsWith("ipfs:")) { fromImage = fromImage.Replace(@"\root\", @"\ipfs\"); if (profile.Image.Length == 51) { fromImage += @"\artifact"; } }
+                                                            }
+                                                            Regex regexTransactionId = new Regex(@"\b[0-9a-f]{64}\b");
+                                                            Match imgurnmatch = regexTransactionId.Match(fromImage);
+                                                            string transactionid = imgurnmatch.Value;
+                                                            Root root = new Root();
+                                                            if (!File.Exists(fromImage))
+                                                            {
+                                                                switch (profile.Image.ToUpper().Substring(0, 4))
+                                                                {
+                                                                    case "MZC:":
+                                                                        root = Root.GetRootByTransactionId(transactionid, "good-user", "better-password", @"http://127.0.0.1:12832", "50");
 
-                                                                    break;
-                                                                case "BTC:":
+                                                                        break;
+                                                                    case "BTC:":
 
-                                                                    root = Root.GetRootByTransactionId(transactionid, "good-user", "better-password", @"http://127.0.0.1:8332", "0");
+                                                                        root = Root.GetRootByTransactionId(transactionid, "good-user", "better-password", @"http://127.0.0.1:8332", "0");
 
-                                                                    break;
-                                                                case "LTC:":
+                                                                        break;
+                                                                    case "LTC:":
 
-                                                                    root = Root.GetRootByTransactionId(transactionid, "good-user", "better-password", @"http://127.0.0.1:9332", "48");
+                                                                        root = Root.GetRootByTransactionId(transactionid, "good-user", "better-password", @"http://127.0.0.1:9332", "48");
 
 
-                                                                    break;
-                                                                case "DOG:":
-                                                                    root = Root.GetRootByTransactionId(transactionid, "good-user", "better-password", @"http://127.0.0.1:22555", "30");
+                                                                        break;
+                                                                    case "DOG:":
+                                                                        root = Root.GetRootByTransactionId(transactionid, "good-user", "better-password", @"http://127.0.0.1:22555", "30");
 
-                                                                    break;
-                                                                case "IPFS":
-                                                                    string transid = "empty";
-                                                                    try { transid = profile.Image.Substring(5, 46); } catch { }
+                                                                        break;
+                                                                    case "IPFS":
+                                                                        string transid = "empty";
+                                                                        try { transid = profile.Image.Substring(5, 46); } catch { }
 
-                                                                    if (!System.IO.Directory.Exists("ipfs/" + transid + "-build"))
-                                                                    {
-                                                                        try
+                                                                        if (!System.IO.Directory.Exists("ipfs/" + transid + "-build"))
                                                                         {
-                                                                            Directory.CreateDirectory("ipfs/" + transid);
-                                                                        }
-                                                                        catch { };
-
-                                                                        Directory.CreateDirectory("ipfs/" + transid + "-build");
-                                                                        Process process2 = new Process();
-                                                                        process2.StartInfo.FileName = @"ipfs\ipfs.exe";
-                                                                        process2.StartInfo.Arguments = "get " + transid + @" -o ipfs\" + transid;
-                                                                        process2.StartInfo.UseShellExecute = false;
-                                                                        process2.StartInfo.CreateNoWindow = true;
-                                                                        process2.Start();
-                                                                        if (process2.WaitForExit(5000))
-                                                                        {
-                                                                            string fileName;
-                                                                            if (System.IO.File.Exists("ipfs/" + transid))
-                                                                            {
-                                                                                System.IO.File.Move("ipfs/" + transid, "ipfs/" + transid + "_tmp");
-                                                                                System.IO.Directory.CreateDirectory("ipfs/" + transid);
-                                                                                fileName = profile.Image.Replace(@"//", "").Replace(@"\\", "").Substring(51);
-                                                                                if (fileName == "") { fileName = "artifact"; } else { fileName = fileName.Replace(@"/", "").Replace(@"\", ""); }
-                                                                                Directory.CreateDirectory("ipfs/" + transid);
-                                                                                System.IO.File.Move("ipfs/" + transid + "_tmp", fromImage);
-                                                                            }
-
-                                                                            if (System.IO.File.Exists("ipfs/" + transid + "/" + transid))
-                                                                            {
-                                                                                fileName = profile.Image.Replace(@"//", "").Replace(@"\\", "").Substring(51);
-                                                                                if (fileName == "") { fileName = "artifact"; } else { fileName = fileName.Replace(@"/", "").Replace(@"\", ""); }
-
-                                                                                System.IO.File.Move("ipfs/" + transid + "/" + transid, fromImage);
-                                                                            }
-
                                                                             try
                                                                             {
-                                                                                if (File.Exists("IPFS_PINNING_ENABLED"))
-                                                                                {
-                                                                                    Process process3 = new Process
-                                                                                    {
-                                                                                        StartInfo = new ProcessStartInfo
-                                                                                        {
-                                                                                            FileName = @"ipfs\ipfs.exe",
-                                                                                            Arguments = "pin add " + transid,
-                                                                                            UseShellExecute = false,
-                                                                                            CreateNoWindow = true
-                                                                                        }
-                                                                                    };
-                                                                                    process3.Start();
-                                                                                }
+                                                                                Directory.CreateDirectory("ipfs/" + transid);
                                                                             }
-                                                                            catch { }
+                                                                            catch { };
 
-                                                                            try { Directory.Delete("ipfs/" + transid + "-build", true); } catch { }
-                                                                        }
-                                                                        else
-                                                                        {
-                                                                            process2.Kill();
-
-                                                                            Task.Run(() =>
+                                                                            Directory.CreateDirectory("ipfs/" + transid + "-build");
+                                                                            Process process2 = new Process();
+                                                                            process2.StartInfo.FileName = @"ipfs\ipfs.exe";
+                                                                            process2.StartInfo.Arguments = "get " + transid + @" -o ipfs\" + transid;
+                                                                            process2.StartInfo.UseShellExecute = false;
+                                                                            process2.StartInfo.CreateNoWindow = true;
+                                                                            process2.Start();
+                                                                            if (process2.WaitForExit(5000))
                                                                             {
-                                                                                process2 = new Process();
-                                                                                process2.StartInfo.FileName = @"ipfs\ipfs.exe";
-                                                                                process2.StartInfo.Arguments = "get " + transid + @" -o ipfs\" + transid;
-                                                                                process2.StartInfo.UseShellExecute = false;
-                                                                                process2.StartInfo.CreateNoWindow = true;
-                                                                                process2.Start();
-                                                                                if (process2.WaitForExit(550000))
+                                                                                string fileName;
+                                                                                if (System.IO.File.Exists("ipfs/" + transid))
                                                                                 {
-                                                                                    string fileName;
-                                                                                    if (System.IO.File.Exists("ipfs/" + transid))
-                                                                                    {
-                                                                                        System.IO.File.Move("ipfs/" + transid, "ipfs/" + transid + "_tmp");
-                                                                                        System.IO.Directory.CreateDirectory("ipfs/" + transid);
-                                                                                        fileName = profile.Image.Replace(@"//", "").Replace(@"\\", "").Substring(51);
-                                                                                        if (fileName == "") { fileName = "artifact"; } else { fileName = fileName.Replace(@"/", "").Replace(@"\", ""); }
-                                                                                        Directory.CreateDirectory("ipfs/" + transid);
-                                                                                        System.IO.File.Move("ipfs/" + transid + "_tmp", fromImage);
-                                                                                    }
+                                                                                    System.IO.File.Move("ipfs/" + transid, "ipfs/" + transid + "_tmp");
+                                                                                    System.IO.Directory.CreateDirectory("ipfs/" + transid);
+                                                                                    fileName = profile.Image.Replace(@"//", "").Replace(@"\\", "").Substring(51);
+                                                                                    if (fileName == "") { fileName = "artifact"; } else { fileName = fileName.Replace(@"/", "").Replace(@"\", ""); }
+                                                                                    Directory.CreateDirectory("ipfs/" + transid);
+                                                                                    System.IO.File.Move("ipfs/" + transid + "_tmp", fromImage);
+                                                                                }
 
-                                                                                    if (System.IO.File.Exists("ipfs/" + transid + "/" + transid))
-                                                                                    {
-                                                                                        fileName = profile.Image.Replace(@"//", "").Replace(@"\\", "").Substring(51);
-                                                                                        if (fileName == "") { fileName = "artifact"; } else { fileName = fileName.Replace(@"/", "").Replace(@"\", ""); }
+                                                                                if (System.IO.File.Exists("ipfs/" + transid + "/" + transid))
+                                                                                {
+                                                                                    fileName = profile.Image.Replace(@"//", "").Replace(@"\\", "").Substring(51);
+                                                                                    if (fileName == "") { fileName = "artifact"; } else { fileName = fileName.Replace(@"/", "").Replace(@"\", ""); }
 
-                                                                                        System.IO.File.Move("ipfs/" + transid + "/" + transid, fromImage);
-                                                                                    }
+                                                                                    System.IO.File.Move("ipfs/" + transid + "/" + transid, fromImage);
+                                                                                }
 
-                                                                                    try
+                                                                                try
+                                                                                {
+                                                                                    if (File.Exists("IPFS_PINNING_ENABLED"))
                                                                                     {
-                                                                                        if (File.Exists("IPFS_PINNING_ENABLED"))
+                                                                                        Process process3 = new Process
                                                                                         {
-                                                                                            Process process3 = new Process
+                                                                                            StartInfo = new ProcessStartInfo
                                                                                             {
-                                                                                                StartInfo = new ProcessStartInfo
-                                                                                                {
-                                                                                                    FileName = @"ipfs\ipfs.exe",
-                                                                                                    Arguments = "pin add " + transid,
-                                                                                                    UseShellExecute = false,
-                                                                                                    CreateNoWindow = true
-                                                                                                }
-                                                                                            };
-                                                                                            process3.Start();
-                                                                                        }
+                                                                                                FileName = @"ipfs\ipfs.exe",
+                                                                                                Arguments = "pin add " + transid,
+                                                                                                UseShellExecute = false,
+                                                                                                CreateNoWindow = true
+                                                                                            }
+                                                                                        };
+                                                                                        process3.Start();
                                                                                     }
-                                                                                    catch { }
-
-                                                                                    try { Directory.Delete("ipfs/" + transid + "-build", true); } catch { }
-
-
                                                                                 }
-                                                                                else
+                                                                                catch { }
+
+                                                                                try { Directory.Delete("ipfs/" + transid + "-build", true); } catch { }
+                                                                            }
+                                                                            else
+                                                                            {
+                                                                                process2.Kill();
+
+                                                                                Task.Run(() =>
                                                                                 {
-                                                                                    process2.Kill();
-                                                                                }
-                                                                            });
+                                                                                    process2 = new Process();
+                                                                                    process2.StartInfo.FileName = @"ipfs\ipfs.exe";
+                                                                                    process2.StartInfo.Arguments = "get " + transid + @" -o ipfs\" + transid;
+                                                                                    process2.StartInfo.UseShellExecute = false;
+                                                                                    process2.StartInfo.CreateNoWindow = true;
+                                                                                    process2.Start();
+                                                                                    if (process2.WaitForExit(550000))
+                                                                                    {
+                                                                                        string fileName;
+                                                                                        if (System.IO.File.Exists("ipfs/" + transid))
+                                                                                        {
+                                                                                            System.IO.File.Move("ipfs/" + transid, "ipfs/" + transid + "_tmp");
+                                                                                            System.IO.Directory.CreateDirectory("ipfs/" + transid);
+                                                                                            fileName = profile.Image.Replace(@"//", "").Replace(@"\\", "").Substring(51);
+                                                                                            if (fileName == "") { fileName = "artifact"; } else { fileName = fileName.Replace(@"/", "").Replace(@"\", ""); }
+                                                                                            Directory.CreateDirectory("ipfs/" + transid);
+                                                                                            System.IO.File.Move("ipfs/" + transid + "_tmp", fromImage);
+                                                                                        }
+
+                                                                                        if (System.IO.File.Exists("ipfs/" + transid + "/" + transid))
+                                                                                        {
+                                                                                            fileName = profile.Image.Replace(@"//", "").Replace(@"\\", "").Substring(51);
+                                                                                            if (fileName == "") { fileName = "artifact"; } else { fileName = fileName.Replace(@"/", "").Replace(@"\", ""); }
+
+                                                                                            System.IO.File.Move("ipfs/" + transid + "/" + transid, fromImage);
+                                                                                        }
+
+                                                                                        try
+                                                                                        {
+                                                                                            if (File.Exists("IPFS_PINNING_ENABLED"))
+                                                                                            {
+                                                                                                Process process3 = new Process
+                                                                                                {
+                                                                                                    StartInfo = new ProcessStartInfo
+                                                                                                    {
+                                                                                                        FileName = @"ipfs\ipfs.exe",
+                                                                                                        Arguments = "pin add " + transid,
+                                                                                                        UseShellExecute = false,
+                                                                                                        CreateNoWindow = true
+                                                                                                    }
+                                                                                                };
+                                                                                                process3.Start();
+                                                                                            }
+                                                                                        }
+                                                                                        catch { }
+
+                                                                                        try { Directory.Delete("ipfs/" + transid + "-build", true); } catch { }
+
+
+                                                                                    }
+                                                                                    else
+                                                                                    {
+                                                                                        process2.Kill();
+                                                                                    }
+                                                                                });
+
+                                                                            }
+
 
                                                                         }
 
+                                                                        break;
+                                                                    default:
+                                                                        if (!profile.Image.ToUpper().StartsWith("HTTP") && transactionid != "")
+                                                                        {
+                                                                            root = Root.GetRootByTransactionId(transactionid, "good-user", "better-password", @"http://127.0.0.1:18332");
 
-                                                                    }
-
-                                                                    break;
-                                                                default:
-                                                                    if (!profile.Image.ToUpper().StartsWith("HTTP") && transactionid != "")
-                                                                    {
-                                                                        root = Root.GetRootByTransactionId(transactionid, "good-user", "better-password", @"http://127.0.0.1:18332");
-
-                                                                    }
-                                                                    break;
+                                                                        }
+                                                                        break;
+                                                                }
                                                             }
-                                                        }
 
+
+
+                                                        }
 
 
                                                     }
+                                                    else
+                                                    { fromAddress = TruncateAddress(fromAddress); }
 
+                                                    string[] profilePacket = new string[2];
+
+                                                    profilePacket[0] = fromAddress;
+                                                    profilePacket[1] = fromImage;
+                                                    profileAddress.Add(supMessagePacket[0], profilePacket);
 
                                                 }
                                                 else
-                                                { fromAddress = TruncateAddress(fromAddress); }
-
-                                                string[] profilePacket = new string[2];
-
-                                                profilePacket[0] = fromAddress;
-                                                profilePacket[1] = fromImage;
-                                                profileAddress.Add(supMessagePacket[0], profilePacket);
-
-                                            }
-                                            else
-                                            {
-                                                string[] profilePacket = new string[] { };
-                                                profileAddress.TryGetValue(fromAddress, out profilePacket);
-                                                fromAddress = profilePacket[0];
-                                                fromImage = profilePacket[1];
-
-                                            }
-
-
-                                            if (!profileAddress.ContainsKey(toAddress))
-                                            {
-
-                                                PROState profile = PROState.GetProfileByAddress(toAddress, "good-user", "better-password", "http://127.0.0.1:18332");
-
-                                                if (profile.URN != null)
                                                 {
-                                                    toAddress = TruncateAddress(profile.URN);
+                                                    string[] profilePacket = new string[] { };
+                                                    profileAddress.TryGetValue(fromAddress, out profilePacket);
+                                                    fromAddress = profilePacket[0];
+                                                    fromImage = profilePacket[1];
 
-                                                    if (profile.Image != null)
+                                                }
+
+
+                                                if (!profileAddress.ContainsKey(toAddress))
+                                                {
+
+                                                    PROState profile = PROState.GetProfileByAddress(toAddress, "good-user", "better-password", "http://127.0.0.1:18332");
+
+                                                    if (profile.URN != null)
                                                     {
-                                                        toImage = profile.Image;
+                                                        toAddress = TruncateAddress(profile.URN);
+
+                                                        if (profile.Image != null)
+                                                        {
+                                                            toImage = profile.Image;
 
 
-                                                        if (!profile.Image.ToLower().StartsWith("http"))
-                                                        {
-                                                            toImage = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + @"\root\" + profile.Image.Replace("BTC:", "").Replace("MZC:", "").Replace("LTC:", "").Replace("DOG:", "").Replace("IPFS:", "").Replace(@"/", @"\");
-                                                            if (profile.Image.ToLower().StartsWith("ipfs:")) { toImage = toImage.Replace(@"\root\", @"\ipfs\"); if (profile.Image.Length == 51) { toImage += @"\artifact"; } }
-                                                        }
-                                                        Regex regexTransactionId = new Regex(@"\b[0-9a-f]{64}\b");
-                                                        Match imgurnmatch = regexTransactionId.Match(toImage);
-                                                        string transactionid = imgurnmatch.Value;
-                                                        Root root = new Root();
-                                                        if (!File.Exists(toImage))
-                                                        {
-                                                            switch (profile.Image.ToUpper().Substring(0, 4))
+                                                            if (!profile.Image.ToLower().StartsWith("http"))
                                                             {
-                                                                case "MZC:":
-                                                                    root = Root.GetRootByTransactionId(transactionid, "good-user", "better-password", @"http://127.0.0.1:12832", "50");
+                                                                toImage = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + @"\root\" + profile.Image.Replace("BTC:", "").Replace("MZC:", "").Replace("LTC:", "").Replace("DOG:", "").Replace("IPFS:", "").Replace(@"/", @"\");
+                                                                if (profile.Image.ToLower().StartsWith("ipfs:")) { toImage = toImage.Replace(@"\root\", @"\ipfs\"); if (profile.Image.Length == 51) { toImage += @"\artifact"; } }
+                                                            }
+                                                            Regex regexTransactionId = new Regex(@"\b[0-9a-f]{64}\b");
+                                                            Match imgurnmatch = regexTransactionId.Match(toImage);
+                                                            string transactionid = imgurnmatch.Value;
+                                                            Root root = new Root();
+                                                            if (!File.Exists(toImage))
+                                                            {
+                                                                switch (profile.Image.ToUpper().Substring(0, 4))
+                                                                {
+                                                                    case "MZC:":
+                                                                        root = Root.GetRootByTransactionId(transactionid, "good-user", "better-password", @"http://127.0.0.1:12832", "50");
 
-                                                                    break;
-                                                                case "BTC:":
+                                                                        break;
+                                                                    case "BTC:":
 
-                                                                    root = Root.GetRootByTransactionId(transactionid, "good-user", "better-password", @"http://127.0.0.1:8332", "0");
+                                                                        root = Root.GetRootByTransactionId(transactionid, "good-user", "better-password", @"http://127.0.0.1:8332", "0");
 
-                                                                    break;
-                                                                case "LTC:":
+                                                                        break;
+                                                                    case "LTC:":
 
-                                                                    root = Root.GetRootByTransactionId(transactionid, "good-user", "better-password", @"http://127.0.0.1:9332", "48");
+                                                                        root = Root.GetRootByTransactionId(transactionid, "good-user", "better-password", @"http://127.0.0.1:9332", "48");
 
 
-                                                                    break;
-                                                                case "DOG:":
-                                                                    root = Root.GetRootByTransactionId(transactionid, "good-user", "better-password", @"http://127.0.0.1:22555", "30");
+                                                                        break;
+                                                                    case "DOG:":
+                                                                        root = Root.GetRootByTransactionId(transactionid, "good-user", "better-password", @"http://127.0.0.1:22555", "30");
 
-                                                                    break;
-                                                                case "IPFS":
-                                                                    string transid = "empty";
-                                                                    try { transid = profile.Image.Substring(5, 46); } catch { }
+                                                                        break;
+                                                                    case "IPFS":
+                                                                        string transid = "empty";
+                                                                        try { transid = profile.Image.Substring(5, 46); } catch { }
 
-                                                                    if (!System.IO.Directory.Exists("ipfs/" + transid + "-build"))
-                                                                    {
-                                                                        try
+                                                                        if (!System.IO.Directory.Exists("ipfs/" + transid + "-build"))
                                                                         {
-                                                                            Directory.CreateDirectory("ipfs/" + transid);
-                                                                        }
-                                                                        catch { };
-
-                                                                        Directory.CreateDirectory("ipfs/" + transid + "-build");
-                                                                        Process process2 = new Process();
-                                                                        process2.StartInfo.FileName = @"ipfs\ipfs.exe";
-                                                                        process2.StartInfo.Arguments = "get " + transid + @" -o ipfs\" + transid;
-                                                                        process2.StartInfo.UseShellExecute = false;
-                                                                        process2.StartInfo.CreateNoWindow = true;
-                                                                        process2.Start();
-                                                                        if (process2.WaitForExit(5000))
-                                                                        {
-                                                                            string fileName;
-                                                                            if (System.IO.File.Exists("ipfs/" + transid))
-                                                                            {
-                                                                                System.IO.File.Move("ipfs/" + transid, "ipfs/" + transid + "_tmp");
-                                                                                System.IO.Directory.CreateDirectory("ipfs/" + transid);
-                                                                                fileName = profile.Image.Replace(@"//", "").Replace(@"\\", "").Substring(51);
-                                                                                if (fileName == "") { fileName = "artifact"; } else { fileName = fileName.Replace(@"/", "").Replace(@"\", ""); }
-                                                                                Directory.CreateDirectory("ipfs/" + transid);
-                                                                                System.IO.File.Move("ipfs/" + transid + "_tmp", toImage);
-                                                                            }
-
-                                                                            if (System.IO.File.Exists("ipfs/" + transid + "/" + transid))
-                                                                            {
-                                                                                fileName = profile.Image.Replace(@"//", "").Replace(@"\\", "").Substring(51);
-                                                                                if (fileName == "") { fileName = "artifact"; } else { fileName = fileName.Replace(@"/", "").Replace(@"\", ""); }
-
-                                                                                System.IO.File.Move("ipfs/" + transid + "/" + transid, toImage);
-                                                                            }
-
                                                                             try
                                                                             {
-                                                                                if (File.Exists("IPFS_PINNING_ENABLED"))
-                                                                                {
-                                                                                    Process process3 = new Process
-                                                                                    {
-                                                                                        StartInfo = new ProcessStartInfo
-                                                                                        {
-                                                                                            FileName = @"ipfs\ipfs.exe",
-                                                                                            Arguments = "pin add " + transid,
-                                                                                            UseShellExecute = false,
-                                                                                            CreateNoWindow = true
-                                                                                        }
-                                                                                    };
-                                                                                    process3.Start();
-                                                                                }
+                                                                                Directory.CreateDirectory("ipfs/" + transid);
                                                                             }
-                                                                            catch { }
+                                                                            catch { };
 
-                                                                            try { Directory.Delete("ipfs/" + transid + "-build", true); } catch { }
-                                                                        }
-                                                                        else
-                                                                        {
-                                                                            process2.Kill();
-
-                                                                            Task.Run(() =>
+                                                                            Directory.CreateDirectory("ipfs/" + transid + "-build");
+                                                                            Process process2 = new Process();
+                                                                            process2.StartInfo.FileName = @"ipfs\ipfs.exe";
+                                                                            process2.StartInfo.Arguments = "get " + transid + @" -o ipfs\" + transid;
+                                                                            process2.StartInfo.UseShellExecute = false;
+                                                                            process2.StartInfo.CreateNoWindow = true;
+                                                                            process2.Start();
+                                                                            if (process2.WaitForExit(5000))
                                                                             {
-                                                                                process2 = new Process();
-                                                                                process2.StartInfo.FileName = @"ipfs\ipfs.exe";
-                                                                                process2.StartInfo.Arguments = "get " + transid + @" -o ipfs\" + transid;
-                                                                                process2.StartInfo.UseShellExecute = false;
-                                                                                process2.StartInfo.CreateNoWindow = true;
-                                                                                process2.Start();
-                                                                                if (process2.WaitForExit(550000))
+                                                                                string fileName;
+                                                                                if (System.IO.File.Exists("ipfs/" + transid))
                                                                                 {
-                                                                                    string fileName;
-                                                                                    if (System.IO.File.Exists("ipfs/" + transid))
-                                                                                    {
-                                                                                        System.IO.File.Move("ipfs/" + transid, "ipfs/" + transid + "_tmp");
-                                                                                        System.IO.Directory.CreateDirectory("ipfs/" + transid);
-                                                                                        fileName = profile.Image.Replace(@"//", "").Replace(@"\\", "").Substring(51);
-                                                                                        if (fileName == "") { fileName = "artifact"; } else { fileName = fileName.Replace(@"/", "").Replace(@"\", ""); }
-                                                                                        Directory.CreateDirectory("ipfs/" + transid);
-                                                                                        System.IO.File.Move("ipfs/" + transid + "_tmp", toImage);
-                                                                                    }
+                                                                                    System.IO.File.Move("ipfs/" + transid, "ipfs/" + transid + "_tmp");
+                                                                                    System.IO.Directory.CreateDirectory("ipfs/" + transid);
+                                                                                    fileName = profile.Image.Replace(@"//", "").Replace(@"\\", "").Substring(51);
+                                                                                    if (fileName == "") { fileName = "artifact"; } else { fileName = fileName.Replace(@"/", "").Replace(@"\", ""); }
+                                                                                    Directory.CreateDirectory("ipfs/" + transid);
+                                                                                    System.IO.File.Move("ipfs/" + transid + "_tmp", toImage);
+                                                                                }
 
-                                                                                    if (System.IO.File.Exists("ipfs/" + transid + "/" + transid))
-                                                                                    {
-                                                                                        fileName = profile.Image.Replace(@"//", "").Replace(@"\\", "").Substring(51);
-                                                                                        if (fileName == "") { fileName = "artifact"; } else { fileName = fileName.Replace(@"/", "").Replace(@"\", ""); }
+                                                                                if (System.IO.File.Exists("ipfs/" + transid + "/" + transid))
+                                                                                {
+                                                                                    fileName = profile.Image.Replace(@"//", "").Replace(@"\\", "").Substring(51);
+                                                                                    if (fileName == "") { fileName = "artifact"; } else { fileName = fileName.Replace(@"/", "").Replace(@"\", ""); }
 
-                                                                                        System.IO.File.Move("ipfs/" + transid + "/" + transid, toImage);
-                                                                                    }
+                                                                                    System.IO.File.Move("ipfs/" + transid + "/" + transid, toImage);
+                                                                                }
 
-                                                                                    try
+                                                                                try
+                                                                                {
+                                                                                    if (File.Exists("IPFS_PINNING_ENABLED"))
                                                                                     {
-                                                                                        if (File.Exists("IPFS_PINNING_ENABLED"))
+                                                                                        Process process3 = new Process
                                                                                         {
-                                                                                            Process process3 = new Process
+                                                                                            StartInfo = new ProcessStartInfo
                                                                                             {
-                                                                                                StartInfo = new ProcessStartInfo
-                                                                                                {
-                                                                                                    FileName = @"ipfs\ipfs.exe",
-                                                                                                    Arguments = "pin add " + transid,
-                                                                                                    UseShellExecute = false,
-                                                                                                    CreateNoWindow = true
-                                                                                                }
-                                                                                            };
-                                                                                            process3.Start();
-                                                                                        }
+                                                                                                FileName = @"ipfs\ipfs.exe",
+                                                                                                Arguments = "pin add " + transid,
+                                                                                                UseShellExecute = false,
+                                                                                                CreateNoWindow = true
+                                                                                            }
+                                                                                        };
+                                                                                        process3.Start();
                                                                                     }
-                                                                                    catch { }
-
-                                                                                    try { Directory.Delete("ipfs/" + transid + "-build", true); } catch { }
-
-
                                                                                 }
-                                                                                else
+                                                                                catch { }
+
+                                                                                try { Directory.Delete("ipfs/" + transid + "-build", true); } catch { }
+                                                                            }
+                                                                            else
+                                                                            {
+                                                                                process2.Kill();
+
+                                                                                Task.Run(() =>
                                                                                 {
-                                                                                    process2.Kill();
-                                                                                }
-                                                                            });
+                                                                                    process2 = new Process();
+                                                                                    process2.StartInfo.FileName = @"ipfs\ipfs.exe";
+                                                                                    process2.StartInfo.Arguments = "get " + transid + @" -o ipfs\" + transid;
+                                                                                    process2.StartInfo.UseShellExecute = false;
+                                                                                    process2.StartInfo.CreateNoWindow = true;
+                                                                                    process2.Start();
+                                                                                    if (process2.WaitForExit(550000))
+                                                                                    {
+                                                                                        string fileName;
+                                                                                        if (System.IO.File.Exists("ipfs/" + transid))
+                                                                                        {
+                                                                                            System.IO.File.Move("ipfs/" + transid, "ipfs/" + transid + "_tmp");
+                                                                                            System.IO.Directory.CreateDirectory("ipfs/" + transid);
+                                                                                            fileName = profile.Image.Replace(@"//", "").Replace(@"\\", "").Substring(51);
+                                                                                            if (fileName == "") { fileName = "artifact"; } else { fileName = fileName.Replace(@"/", "").Replace(@"\", ""); }
+                                                                                            Directory.CreateDirectory("ipfs/" + transid);
+                                                                                            System.IO.File.Move("ipfs/" + transid + "_tmp", toImage);
+                                                                                        }
+
+                                                                                        if (System.IO.File.Exists("ipfs/" + transid + "/" + transid))
+                                                                                        {
+                                                                                            fileName = profile.Image.Replace(@"//", "").Replace(@"\\", "").Substring(51);
+                                                                                            if (fileName == "") { fileName = "artifact"; } else { fileName = fileName.Replace(@"/", "").Replace(@"\", ""); }
+
+                                                                                            System.IO.File.Move("ipfs/" + transid + "/" + transid, toImage);
+                                                                                        }
+
+                                                                                        try
+                                                                                        {
+                                                                                            if (File.Exists("IPFS_PINNING_ENABLED"))
+                                                                                            {
+                                                                                                Process process3 = new Process
+                                                                                                {
+                                                                                                    StartInfo = new ProcessStartInfo
+                                                                                                    {
+                                                                                                        FileName = @"ipfs\ipfs.exe",
+                                                                                                        Arguments = "pin add " + transid,
+                                                                                                        UseShellExecute = false,
+                                                                                                        CreateNoWindow = true
+                                                                                                    }
+                                                                                                };
+                                                                                                process3.Start();
+                                                                                            }
+                                                                                        }
+                                                                                        catch { }
+
+                                                                                        try { Directory.Delete("ipfs/" + transid + "-build", true); } catch { }
+
+
+                                                                                    }
+                                                                                    else
+                                                                                    {
+                                                                                        process2.Kill();
+                                                                                    }
+                                                                                });
+
+                                                                            }
+
 
                                                                         }
 
+                                                                        break;
+                                                                    default:
+                                                                        if (!profile.Image.ToUpper().StartsWith("HTTP") && transactionid != "")
+                                                                        {
+                                                                            root = Root.GetRootByTransactionId(transactionid, "good-user", "better-password", @"http://127.0.0.1:18332");
 
-                                                                    }
-
-                                                                    break;
-                                                                default:
-                                                                    if (!profile.Image.ToUpper().StartsWith("HTTP") && transactionid != "")
-                                                                    {
-                                                                        root = Root.GetRootByTransactionId(transactionid, "good-user", "better-password", @"http://127.0.0.1:18332");
-
-                                                                    }
-                                                                    break;
+                                                                        }
+                                                                        break;
+                                                                }
                                                             }
-                                                        }
 
+
+
+                                                        }
 
 
                                                     }
+                                                    else
+                                                    { toAddress = TruncateAddress(toAddress); }
 
+                                                    string[] profilePacket = new string[2];
+
+                                                    profilePacket[0] = toAddress;
+                                                    profilePacket[1] = toImage;
+                                                    profileAddress.Add(supMessagePacket[2], profilePacket);
 
                                                 }
                                                 else
-                                                { toAddress = TruncateAddress(toAddress); }
+                                                {
+                                                    string[] profilePacket = new string[] { };
+                                                    profileAddress.TryGetValue(toAddress, out profilePacket);
+                                                    toAddress = profilePacket[0];
+                                                    toImage = profilePacket[1];
 
-                                                string[] profilePacket = new string[2];
-
-                                                profilePacket[0] = toAddress;
-                                                profilePacket[1] = toImage;
-                                                profileAddress.Add(supMessagePacket[2], profilePacket);
-
-                                            }
-                                            else
-                                            {
-                                                string[] profilePacket = new string[] { };
-                                                profileAddress.TryGetValue(toAddress, out profilePacket);
-                                                toAddress = profilePacket[0];
-                                                toImage = profilePacket[1];
-
-                                            }
+                                                }
 
 
-                                            string tstamp = it.KeyAsString().Split('!')[1];
-                                            System.Drawing.Color bgcolor = System.Drawing.Color.White;
-                                            string unfilteredmessage = message;
-                                            message = Regex.Replace(message, "<<.*?>>", "");
+                                                string tstamp = it.KeyAsString().Split('!')[1];
+                                                System.Drawing.Color bgcolor = System.Drawing.Color.White;
+                                                string unfilteredmessage = message;
+                                                message = Regex.Replace(message, "<<.*?>>", "");
 
-                                            this.Invoke((MethodInvoker)delegate
-                                            {
-                                                CreateRow(fromImage, fromAddress, supMessagePacket[0], DateTime.ParseExact("19700101010101", "yyyyMMddHHmmss", CultureInfo.InvariantCulture), "", tid, false, supFlow);
-                                                CreateRow(toImage, toAddress, supMessagePacket[2], DateTime.ParseExact(tstamp, "yyyyMMddHHmmss", CultureInfo.InvariantCulture), message, tid, false, supFlow);
-                                            });
-
-
-                                            bool containsFileWithINQ = files.Any(file =>
-                                                file.EndsWith("INQ", StringComparison.OrdinalIgnoreCase) &&
-                                                !file.EndsWith("BLOCK", StringComparison.OrdinalIgnoreCase));
-
-                                            if (containsFileWithINQ)
-                                            {
-                                                //ADD INQ IF IT EXISTS AND IS NOT BLOCKED
                                                 this.Invoke((MethodInvoker)delegate
                                                 {
-                                                    string profileowner = "";
-
-                                                    if (profileOwner.Tag != null) { profileowner = profileOwner.Tag.ToString(); }
-                                                    FoundINQControl foundObject = new FoundINQControl(supMessagePacket[1], profileowner);
-
-                                                    foundObject.Margin = new Padding(20, 7, 8, 7);
-                                                    supFlow.Controls.Add(foundObject);
+                                                    CreateRow(fromImage, fromAddress, supMessagePacket[0], DateTime.ParseExact("19700101010101", "yyyyMMddHHmmss", CultureInfo.InvariantCulture), "", tid, false, supFlow);
+                                                    CreateRow(toImage, toAddress, supMessagePacket[2], DateTime.ParseExact(tstamp, "yyyyMMddHHmmss", CultureInfo.InvariantCulture), message, tid, false, supFlow);
                                                 });
-                                            }
-
-                                            string pattern = "<<.*?>>";
-                                            List<string> imgExtensions = new List<string> { ".bmp", ".gif", ".ico", ".jpeg", ".jpg", ".png", ".tif", ".tiff", ".mp4", ".avi", ".wav", ".mp3" };
-
-                                            MatchCollection matches = Regex.Matches(unfilteredmessage, pattern);
-                                            foreach (Match match in matches)
-                                            {
 
 
-                                                string content = match.Value.Substring(2, match.Value.Length - 4);
+                                                bool containsFileWithINQ = files.Any(file =>
+                                                    file.EndsWith("INQ", StringComparison.OrdinalIgnoreCase) &&
+                                                    !file.EndsWith("BLOCK", StringComparison.OrdinalIgnoreCase));
 
-                                                if (!int.TryParse(content, out int cnt) && !content.Trim().StartsWith("#"))
+                                                if (containsFileWithINQ)
+                                                {
+                                                    //ADD INQ IF IT EXISTS AND IS NOT BLOCKED
+                                                    this.Invoke((MethodInvoker)delegate
+                                                    {
+                                                        string profileowner = "";
+
+                                                        if (profileOwner.Tag != null) { profileowner = profileOwner.Tag.ToString(); }
+                                                        FoundINQControl foundObject = new FoundINQControl(supMessagePacket[1], profileowner);
+
+                                                        foundObject.Margin = new Padding(20, 7, 8, 7);
+                                                        supFlow.Controls.Add(foundObject);
+                                                    });
+                                                }
+
+                                                string pattern = "<<.*?>>";
+                                                List<string> imgExtensions = new List<string> { ".bmp", ".gif", ".ico", ".jpeg", ".jpg", ".png", ".tif", ".tiff", ".mp4", ".avi", ".wav", ".mp3" };
+
+                                                MatchCollection matches = Regex.Matches(unfilteredmessage, pattern);
+                                                foreach (Match match in matches)
                                                 {
 
 
+                                                    string content = match.Value.Substring(2, match.Value.Length - 4);
 
-                                                    string imgurn = content;
-
-                                                    if (!content.ToLower().StartsWith("http"))
-                                                    {
-                                                        imgurn = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + @"\root\" + content.Replace("BTC:", "").Replace("MZC:", "").Replace("LTC:", "").Replace("DOG:", "").Replace("IPFS:", "").Replace("btc:", "").Replace("mzc:", "").Replace("ltc:", "").Replace("dog:", "").Replace("ipfs:", "").Replace(@"/", @"\");
-
-                                                        if (content.ToLower().StartsWith("ipfs:")) { imgurn = imgurn.Replace(@"\root\", @"\ipfs\"); }
-                                                    }
-
-                                                    string extension = Path.GetExtension(imgurn).ToLower();
-                                                    if (!imgExtensions.Contains(extension) && !imgurn.Contains("youtube.com") && !imgurn.Contains("youtu.be"))
+                                                    if (!int.TryParse(content, out int cnt) && !content.Trim().StartsWith("#"))
                                                     {
 
 
-                                                        try
+
+                                                        string imgurn = content;
+
+                                                        if (!content.ToLower().StartsWith("http"))
                                                         {
-                                                            string html = "";
-                                                            WebClient client = new WebClient();
-                                                            // Create a WebClient object to fetch the webpage
-                                                            if (!content.ToLower().EndsWith(".zip"))
+                                                            imgurn = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + @"\root\" + content.Replace("BTC:", "").Replace("MZC:", "").Replace("LTC:", "").Replace("DOG:", "").Replace("IPFS:", "").Replace("btc:", "").Replace("mzc:", "").Replace("ltc:", "").Replace("dog:", "").Replace("ipfs:", "").Replace(@"/", @"\");
+
+                                                            if (content.ToLower().StartsWith("ipfs:")) { imgurn = imgurn.Replace(@"\root\", @"\ipfs\"); }
+                                                        }
+
+                                                        string extension = Path.GetExtension(imgurn).ToLower();
+                                                        if (!imgExtensions.Contains(extension) && !imgurn.Contains("youtube.com") && !imgurn.Contains("youtu.be"))
+                                                        {
+
+
+                                                            try
                                                             {
-                                                                html = client.DownloadString(content.StripLeadingTrailingSpaces());
-                                                            }
-                                                            // Use regular expressions to extract the metadata from the HTML
-                                                            string title = Regex.Match(html, @"<title>\s*(.+?)\s*</title>").Groups[1].Value;
-                                                            string description = Regex.Match(html, @"<meta\s+name\s*=\s*""description""\s+content\s*=\s*""(.+?)""\s*/?>").Groups[1].Value;
-                                                            string imageUrl = Regex.Match(html, @"<meta\s+property\s*=\s*""og:image""\s+content\s*=\s*""(.+?)""\s*/?>").Groups[1].Value;
-
-                                                            if (description != "")
-                                                            {
-                                                                // Create a new panel to display the metadata
-                                                                Panel panel = new Panel();
-                                                                panel.BorderStyle = BorderStyle.FixedSingle;
-                                                                panel.Size = new Size(supFlow.Width - 50, 100);
-
-                                                                // Create a label for the title
-                                                                Label titleLabel = new Label();
-                                                                titleLabel.Text = title;
-                                                                titleLabel.Dock = DockStyle.Top;
-                                                                titleLabel.Font = new Font("Segoe UI", 12, FontStyle.Bold);
-                                                                titleLabel.ForeColor = Color.White;
-                                                                titleLabel.MinimumSize = new Size(supFlow.Width - 150, 30);
-                                                                titleLabel.Padding = new Padding(5);
-                                                                titleLabel.MouseClick += (sender, e) => { Attachment_Clicked(content); };
-                                                                panel.Controls.Add(titleLabel);
-
-                                                                // Create a label for the description
-                                                                Label descriptionLabel = new Label();
-                                                                descriptionLabel.Text = description;
-                                                                descriptionLabel.ForeColor = Color.White;
-                                                                descriptionLabel.Dock = DockStyle.Fill;
-                                                                descriptionLabel.Padding = new Padding(5, 40, 5, 5);
-                                                                descriptionLabel.MouseClick += (sender, e) => { Attachment_Clicked(content); };
-                                                                panel.Controls.Add(descriptionLabel);
-
-                                                                // Add an image to the panel if one is defined
-                                                                if (!String.IsNullOrEmpty(imageUrl))
+                                                                string html = "";
+                                                                WebClient client = new WebClient();
+                                                                // Create a WebClient object to fetch the webpage
+                                                                if (!content.ToLower().EndsWith(".zip"))
                                                                 {
-                                                                    try
-                                                                    {
-                                                                        // Create a MemoryStream object from the image data
-                                                                        byte[] imageData = client.DownloadData(imageUrl);
-                                                                        MemoryStream memoryStream = new MemoryStream(imageData);
-
-                                                                        // Create a new PictureBox control and add it to the panel
-                                                                        PictureBox pictureBox = new PictureBox();
-                                                                        pictureBox.Dock = DockStyle.Left;
-                                                                        pictureBox.Size = new Size(100, 100);
-                                                                        pictureBox.SizeMode = PictureBoxSizeMode.StretchImage;
-                                                                        pictureBox.Image = Image.FromStream(memoryStream);
-                                                                        pictureBox.MouseClick += (sender, e) => { Attachment_Clicked(content); };
-                                                                        panel.Controls.Add(pictureBox);
-                                                                    }
-                                                                    catch
-                                                                    {
-                                                                    }
+                                                                    html = client.DownloadString(content.StripLeadingTrailingSpaces());
                                                                 }
+                                                                // Use regular expressions to extract the metadata from the HTML
+                                                                string title = Regex.Match(html, @"<title>\s*(.+?)\s*</title>").Groups[1].Value;
+                                                                string description = Regex.Match(html, @"<meta\s+name\s*=\s*""description""\s+content\s*=\s*""(.+?)""\s*/?>").Groups[1].Value;
+                                                                string imageUrl = Regex.Match(html, @"<meta\s+property\s*=\s*""og:image""\s+content\s*=\s*""(.+?)""\s*/?>").Groups[1].Value;
 
-                                                                // Add the panel to the flow layout panel
-                                                                this.Invoke((MethodInvoker)delegate
+                                                                if (description != "")
                                                                 {
-                                                                    this.supFlow.Controls.Add(panel);
-                                                                });
+                                                                    // Create a new panel to display the metadata
+                                                                    Panel panel = new Panel();
+                                                                    panel.BorderStyle = BorderStyle.FixedSingle;
+                                                                    panel.Size = new Size(supFlow.Width - 50, 100);
+
+                                                                    // Create a label for the title
+                                                                    Label titleLabel = new Label();
+                                                                    titleLabel.Text = title;
+                                                                    titleLabel.Dock = DockStyle.Top;
+                                                                    titleLabel.Font = new Font("Segoe UI", 12, FontStyle.Bold);
+                                                                    titleLabel.ForeColor = Color.White;
+                                                                    titleLabel.MinimumSize = new Size(supFlow.Width - 150, 30);
+                                                                    titleLabel.Padding = new Padding(5);
+                                                                    titleLabel.MouseClick += (sender, e) => { Attachment_Clicked(content); };
+                                                                    panel.Controls.Add(titleLabel);
+
+                                                                    // Create a label for the description
+                                                                    Label descriptionLabel = new Label();
+                                                                    descriptionLabel.Text = description;
+                                                                    descriptionLabel.ForeColor = Color.White;
+                                                                    descriptionLabel.Dock = DockStyle.Fill;
+                                                                    descriptionLabel.Padding = new Padding(5, 40, 5, 5);
+                                                                    descriptionLabel.MouseClick += (sender, e) => { Attachment_Clicked(content); };
+                                                                    panel.Controls.Add(descriptionLabel);
+
+                                                                    // Add an image to the panel if one is defined
+                                                                    if (!String.IsNullOrEmpty(imageUrl))
+                                                                    {
+                                                                        try
+                                                                        {
+                                                                            // Create a MemoryStream object from the image data
+                                                                            byte[] imageData = client.DownloadData(imageUrl);
+                                                                            MemoryStream memoryStream = new MemoryStream(imageData);
+
+                                                                            // Create a new PictureBox control and add it to the panel
+                                                                            PictureBox pictureBox = new PictureBox();
+                                                                            pictureBox.Dock = DockStyle.Left;
+                                                                            pictureBox.Size = new Size(100, 100);
+                                                                            pictureBox.SizeMode = PictureBoxSizeMode.StretchImage;
+                                                                            pictureBox.Image = Image.FromStream(memoryStream);
+                                                                            pictureBox.MouseClick += (sender, e) => { Attachment_Clicked(content); };
+                                                                            panel.Controls.Add(pictureBox);
+                                                                        }
+                                                                        catch
+                                                                        {
+                                                                        }
+                                                                    }
+
+                                                                    // Add the panel to the flow layout panel
+                                                                    this.Invoke((MethodInvoker)delegate
+                                                                    {
+                                                                        this.supFlow.Controls.Add(panel);
+                                                                    });
+                                                                }
+                                                                else
+                                                                {
+                                                                    // Create a new panel to display the metadata
+                                                                    Panel panel = new Panel();
+                                                                    panel.BorderStyle = BorderStyle.FixedSingle;
+                                                                    panel.Size = new Size(supFlow.Width - 50, 30);
+
+                                                                    // Create a label for the title
+                                                                    LinkLabel titleLabel = new LinkLabel();
+                                                                    titleLabel.Text = content;
+                                                                    titleLabel.Links[0].LinkData = content;
+                                                                    titleLabel.Dock = DockStyle.Top;
+                                                                    titleLabel.Font = new Font("Segoe UI", 8, FontStyle.Bold);
+                                                                    titleLabel.LinkColor = System.Drawing.SystemColors.GradientActiveCaption;
+                                                                    titleLabel.MinimumSize = new Size(supFlow.Width - 150, 30);
+                                                                    titleLabel.Padding = new Padding(5);
+                                                                    titleLabel.MouseClick += (sender, e) => { Attachment_Clicked(content); };
+                                                                    panel.Controls.Add(titleLabel);
+
+                                                                    this.Invoke((MethodInvoker)delegate
+                                                                    {
+                                                                        this.supFlow.Controls.Add(panel);
+                                                                    });
+
+                                                                }
                                                             }
-                                                            else
+                                                            catch
                                                             {
+
                                                                 // Create a new panel to display the metadata
                                                                 Panel panel = new Panel();
                                                                 panel.BorderStyle = BorderStyle.FixedSingle;
@@ -3590,89 +3625,62 @@ namespace SUP
                                                                 titleLabel.Padding = new Padding(5);
                                                                 titleLabel.MouseClick += (sender, e) => { Attachment_Clicked(content); };
                                                                 panel.Controls.Add(titleLabel);
-
                                                                 this.Invoke((MethodInvoker)delegate
                                                                 {
                                                                     this.supFlow.Controls.Add(panel);
                                                                 });
 
+
                                                             }
                                                         }
-                                                        catch
+                                                        else
                                                         {
 
-                                                            // Create a new panel to display the metadata
-                                                            Panel panel = new Panel();
-                                                            panel.BorderStyle = BorderStyle.FixedSingle;
-                                                            panel.Size = new Size(supFlow.Width - 50, 30);
 
-                                                            // Create a label for the title
-                                                            LinkLabel titleLabel = new LinkLabel();
-                                                            titleLabel.Text = content;
-                                                            titleLabel.Links[0].LinkData = content;
-                                                            titleLabel.Dock = DockStyle.Top;
-                                                            titleLabel.Font = new Font("Segoe UI", 8, FontStyle.Bold);
-                                                            titleLabel.LinkColor = System.Drawing.SystemColors.GradientActiveCaption;
-                                                            titleLabel.MinimumSize = new Size(supFlow.Width - 150, 30);
-                                                            titleLabel.Padding = new Padding(5);
-                                                            titleLabel.MouseClick += (sender, e) => { Attachment_Clicked(content); };
-                                                            panel.Controls.Add(titleLabel);
-                                                            this.Invoke((MethodInvoker)delegate
+                                                            if (!int.TryParse(content, out int id))
                                                             {
-                                                                this.supFlow.Controls.Add(panel);
-                                                            });
 
+                                                                if (extension == ".mp4" || extension == ".avi" || content.Contains("youtube.com") || content.Contains("youtu.be") || extension == ".wav" || extension == ".mp3")
+                                                                {
+                                                                    this.Invoke((MethodInvoker)delegate
+                                                                    {
+                                                                        try { AddVideo(content); } catch { }
+                                                                    });
+
+                                                                }
+                                                                else
+                                                                {
+
+                                                                    this.Invoke((MethodInvoker)delegate
+                                                                    {
+                                                                        AddImage(content);
+                                                                    });
+                                                                }
+                                                            }
 
                                                         }
-                                                    }
-                                                    else
-                                                    {
-
-
-                                                        if (!int.TryParse(content, out int id))
-                                                        {
-
-                                                            if (extension == ".mp4" || extension == ".avi" || content.Contains("youtube.com") || content.Contains("youtu.be") || extension == ".wav" || extension == ".mp3")
-                                                            {
-                                                                this.Invoke((MethodInvoker)delegate
-                                                                {
-                                                                    try { AddVideo(content); } catch { }
-                                                                });
-
-                                                            }
-                                                            else
-                                                            {
-
-                                                                this.Invoke((MethodInvoker)delegate
-                                                                {
-                                                                    AddImage(content);
-                                                                });
-                                                            }
-                                                        }
-
                                                     }
                                                 }
+                                                TableLayoutPanel padding = new TableLayoutPanel
+                                                {
+                                                    RowCount = 1,
+                                                    ColumnCount = 1,
+                                                    Dock = DockStyle.Top,
+                                                    BackColor = Color.Black,
+                                                    ForeColor = Color.White,
+                                                    AutoSize = true,
+                                                    CellBorderStyle = TableLayoutPanelCellBorderStyle.Single,
+                                                    Margin = new System.Windows.Forms.Padding(0, 10, 0, 10),
+                                                    Padding = new System.Windows.Forms.Padding(0)
+
+                                                };
+
+                                                padding.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, supFlow.Width - 50));
+                                                this.Invoke((MethodInvoker)delegate
+                                                {
+                                                    supFlow.Controls.Add(padding);
+                                                });
                                             }
-                                            TableLayoutPanel padding = new TableLayoutPanel
-                                            {
-                                                RowCount = 1,
-                                                ColumnCount = 1,
-                                                Dock = DockStyle.Top,
-                                                BackColor = Color.Black,
-                                                ForeColor = Color.White,
-                                                AutoSize = true,
-                                                CellBorderStyle = TableLayoutPanelCellBorderStyle.Single,
-                                                Margin = new System.Windows.Forms.Padding(0, 10, 0, 10),
-                                                Padding = new System.Windows.Forms.Padding(0)
-
-                                            };
-
-                                            padding.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, supFlow.Width - 50));
-                                            this.Invoke((MethodInvoker)delegate
-                                            {
-                                                supFlow.Controls.Add(padding);
-                                            });
-
                                         }
                                         catch (Exception ex)
                                         {
@@ -4458,7 +4466,7 @@ namespace SUP
 
             numMessagesDisplayed = 0;
             numPrivateMessagesDisplayed = 0;
-            List<string> friendFeed = new List<string>();
+            
 
             if (numFriendFeedsDisplayed == 0)
             {
@@ -4484,7 +4492,7 @@ namespace SUP
             {
                 Task BuildMessage = Task.Run(() =>
                 {
-
+                    List<string> friendFeed = new List<string>();
                     var myFriendsJson = File.ReadAllText(@"root\MyFriendList.Json");
                     var myFriends = JsonConvert.DeserializeObject<Dictionary<string, string>>(myFriendsJson);
 
@@ -4492,38 +4500,47 @@ namespace SUP
                     var allMessages = new List<object>();
                     foreach (var key in myFriends.Keys)
                     {
-                        var result = OBJState.GetPublicMessagesByAddress(key, "good-user", "better-password", "http://127.0.0.1:18332");
-                        var messages = result.GetType().GetProperty("Messages").GetValue(result) as List<object>;
-
-                        // Add the "to" element to each message object
-                        foreach (var message in messages)
+                        try
                         {
+                            var result = OBJState.GetPublicMessagesByAddress(key, "good-user", "better-password", "http://127.0.0.1:18332");
+                            var messages = result.GetType().GetProperty("Messages").GetValue(result) as List<object>;
 
-                            var fromProp = message.GetType().GetProperty("FromAddress");
-                            var messageProp = message.GetType().GetProperty("Message");
-                            var blockDateProp = message.GetType().GetProperty("BlockDate");
-                            var toProp = message.GetType().GetProperty("ToAddress");
-                            var transactionIdProp = message.GetType().GetProperty("TransactionId");
-                            string _from = fromProp?.GetValue(message).ToString();
-                            string _to = toProp?.GetValue(message).ToString();
-                            string _message = messageProp?.GetValue(message).ToString();
-                            string _blockdate = blockDateProp?.GetValue(message).ToString();
-                            string _transactionid = transactionIdProp?.GetValue(message).ToString();
+                            // Add the "to" element to each message object
 
-                            if (!friendFeed.Contains(_from + _message + _blockdate))
+                            foreach (var message in messages)
                             {
-                                friendFeed.Add(_from + _message + _blockdate);
-
-                                allMessages.Add(new
+                                try
                                 {
-                                    Message = _message,
-                                    FromAddress = _from,
-                                    ToAddress = _to,
-                                    BlockDate = _blockdate,
-                                    TransactionId = _transactionid
-                                });
-                            }
+                                    var fromProp = message.GetType().GetProperty("FromAddress");
+                                    var messageProp = message.GetType().GetProperty("Message");
+                                    var blockDateProp = message.GetType().GetProperty("BlockDate");
+                                    var toProp = message.GetType().GetProperty("ToAddress");
+                                    var transactionIdProp = message.GetType().GetProperty("TransactionId");
+                                    string _from = fromProp?.GetValue(message).ToString();
+                                    string _to = toProp?.GetValue(message).ToString();
+                                    string _message = messageProp?.GetValue(message).ToString();
+                                    string _blockdate = blockDateProp?.GetValue(message).ToString();
+                                    string _transactionid = transactionIdProp?.GetValue(message).ToString();
+
+                                    if (!friendFeed.Contains(_from + _to + _message))
+                                    {
+                                        friendFeed.Add(_from + _to + _message);
+
+                                        allMessages.Add(new
+                                        {
+                                            Message = _message,
+                                            FromAddress = _from,
+                                            ToAddress = _to,
+                                            BlockDate = _blockdate,
+                                            TransactionId = _transactionid
+                                        });
+                                    }
+                                }
+                                catch { }
+                                }
                         }
+                        catch { }
+                        
                     }
 
                     // Sort the combined list by block date
@@ -4567,224 +4584,236 @@ namespace SUP
                         string _from = fromProp?.GetValue(message).ToString();
                         string _to = toProp?.GetValue(message).ToString();
                         string _transactionId = transactionIdProp?.GetValue(message).ToString();
-
                         string fromURN = fromProp?.GetValue(message).ToString();
-                        PROState fromProfile = PROState.GetProfileByAddress(fromURN, "good-user", "better-password", "http://127.0.0.1:18332");
-                        if (fromProfile.URN != null)
-                        {
-                            fromURN = fromProfile.URN;
-
-                        }
-
-
-                        string toURN = toProp?.GetValue(message).ToString();
-                        PROState toProfile = PROState.GetProfileByAddress(toURN, "good-user", "better-password", "http://127.0.0.1:18332");
-
-                        if (toProfile.URN != null)
-                        {
-                            toURN = toProfile.URN;
-
-                        }
-
                         string _message = messageProp?.GetValue(message).ToString();
                         string _blockdate = blockDateProp?.GetValue(message).ToString();
                         string imglocation = "";
-
                         string unfilteredmessage = _message;
-                        _message = Regex.Replace(_message, "<<.*?>>", "");
-                        this.Invoke((MethodInvoker)delegate
+                        string[] blocks = Regex.Matches(_message, "<<[^<>]+>>")
+                                              .Cast<Match>()
+                                              .Select(m => m.Value.Trim(new char[] { '<', '>' }))
+                                              .ToArray();
+
+                        if (blocks.Length > 1 || (blocks.Length == 1 && !int.TryParse(blocks[0], out _)))
                         {
-                            try { imglocation = myFriends[_from]; } catch { }
-                            CreateRow(imglocation, fromURN, _from, DateTime.ParseExact("19700101010101", "yyyyMMddHHmmss", CultureInfo.InvariantCulture), "", _transactionId, false, supFlow);
 
-                            try { imglocation = myFriends[_to]; } catch { }
-                            CreateRow(imglocation, toURN, _to, DateTime.ParseExact(_blockdate, "yyyyMMddHHmmss", CultureInfo.InvariantCulture), _message, _transactionId, false, supFlow);
-                        });
 
-                        string[] files = Directory.GetFiles(@"root\" + _transactionId);
 
-                        bool containsFileWithINQ = files.Any(file =>
-                               file.EndsWith("INQ", StringComparison.OrdinalIgnoreCase) &&
-                               !file.EndsWith("BLOCK", StringComparison.OrdinalIgnoreCase));
 
-                        if (containsFileWithINQ)
-                        {
-                            //ADD INQ IF IT EXISTS AND IS NOT BLOCKED
-                            this.Invoke((MethodInvoker)delegate
+
+                            _message = Regex.Replace(_message, "<<.*?>>", "");
+                            PROState fromProfile = PROState.GetProfileByAddress(fromURN, "good-user", "better-password", "http://127.0.0.1:18332");
+                            if (fromProfile.URN != null)
                             {
-                                string profileowner = "";
-
-                                if (profileOwner.Tag != null) { profileowner = profileOwner.Tag.ToString(); }
-
-                                FoundINQControl foundObject = new FoundINQControl(_transactionId, profileowner);
-                                foundObject.Margin = new Padding(20, 7, 8, 7);
-                                supFlow.Controls.Add(foundObject);
-                            });
-                        }
-
-                        string pattern = "<<.*?>>";
-                        MatchCollection matches = Regex.Matches(unfilteredmessage, pattern);
-                        foreach (Match match in matches)
-                        {
-
-
-                            string content = match.Value.Substring(2, match.Value.Length - 4);
-                            if (!int.TryParse(content, out int id) && !content.Trim().StartsWith("#"))
-                            {
-
-                                List<string> imgExtensions = new List<string> { ".bmp", ".gif", ".ico", ".jpeg", ".jpg", ".png", ".tif", ".tiff", ".mp4", ".avi", ".wav", ".mp3" };
-
-                                string extension = Path.GetExtension(content).ToLower();
-                                if (!imgExtensions.Contains(extension) && !content.Contains("youtube.com") && !content.Contains("youtu.be"))
-                                {
-                                    WebClient client = new WebClient();
-                                    string html = "";
-                                    try
-                                    {
-                                        html = client.DownloadString(content.StripLeadingTrailingSpaces());
-
-                                    }
-                                    catch { }
-
-                                    // Use regular expressions to extract the metadata from the HTML
-                                    string title = Regex.Match(html, @"<title>\s*(.+?)\s*</title>").Groups[1].Value;
-                                    string description = Regex.Match(html, @"<meta\s+name\s*=\s*""description""\s+content\s*=\s*""(.+?)""\s*/?>").Groups[1].Value;
-                                    string imageUrl = Regex.Match(html, @"<meta\s+property\s*=\s*""og:image""\s+content\s*=\s*""(.+?)""\s*/?>").Groups[1].Value;
-
-                                    if (description != "")
-                                    {
-                                        // Create a new panel to display the metadata
-                                        Panel panel = new Panel();
-                                        panel.BorderStyle = BorderStyle.FixedSingle;
-                                        panel.Size = new Size(supFlow.Width - 30, 100);
-
-
-                                        // Create a label for the title
-                                        Label titleLabel = new Label();
-                                        titleLabel.Text = title;
-                                        titleLabel.Dock = DockStyle.Top;
-                                        titleLabel.Font = new Font("Segoe UI", 12, FontStyle.Bold);
-                                        titleLabel.ForeColor = Color.White;
-                                        titleLabel.MinimumSize = new Size(supFlow.Width - 130, 30);
-                                        titleLabel.Padding = new Padding(5);
-                                        panel.Controls.Add(titleLabel);
-
-                                        // Create a label for the description
-                                        Label descriptionLabel = new Label();
-                                        descriptionLabel.Text = description;
-                                        descriptionLabel.ForeColor = Color.White;
-                                        descriptionLabel.Dock = DockStyle.Fill;
-                                        descriptionLabel.Padding = new Padding(5, 40, 5, 5);
-                                        panel.Controls.Add(descriptionLabel);
-
-                                        // Add an image to the panel if one is defined
-                                        if (!String.IsNullOrEmpty(imageUrl))
-                                        {
-                                            try
-                                            {
-                                                // Create a MemoryStream object from the image data
-                                                byte[] imageData = client.DownloadData(imageUrl);
-                                                MemoryStream memoryStream = new MemoryStream(imageData);
-
-                                                // Create a new PictureBox control and add it to the panel
-                                                PictureBox pictureBox = new PictureBox();
-                                                pictureBox.Dock = DockStyle.Left;
-                                                pictureBox.Size = new Size(100, 100);
-                                                pictureBox.SizeMode = PictureBoxSizeMode.StretchImage;
-                                                pictureBox.Image = Image.FromStream(memoryStream);
-                                                panel.Controls.Add(pictureBox);
-                                            }
-                                            catch
-                                            {
-                                            }
-                                        }
-                                        this.Invoke((MethodInvoker)delegate
-                                        {
-                                            // Add the panel to the flow layout panel
-                                            this.supFlow.Controls.Add(panel);
-                                        });
-                                    }
-                                    else
-                                    {
-                                        // Create a new panel to display the metadata
-                                        Panel panel = new Panel();
-                                        panel.BorderStyle = BorderStyle.FixedSingle;
-                                        panel.MinimumSize = new Size(500, 30);
-                                        panel.AutoSize = true;
-                                        // Create a label for the title
-                                        LinkLabel titleLabel = new LinkLabel();
-                                        titleLabel.Text = content;
-                                        titleLabel.Links[0].LinkData = content;
-                                        titleLabel.AutoSize = true;
-                                        titleLabel.Font = new Font("Segoe UI", 8, FontStyle.Bold);
-                                        titleLabel.LinkColor = System.Drawing.SystemColors.GradientActiveCaption;
-                                        titleLabel.Padding = new Padding(5);
-                                        panel.Controls.Add(titleLabel);
-                                        this.Invoke((MethodInvoker)delegate
-                                        {
-                                            this.supFlow.Controls.Add(panel);
-                                        });
-
-                                    }
-
-                                }
-                                else
-                                {
-
-                                    if (extension == ".mp4" || extension == ".avi" || content.Contains("youtube.com") || content.Contains("youtu.be") || extension == ".wav" || extension == ".mp3")
-                                    {
-
-                                        this.Invoke((MethodInvoker)delegate
-                                        {
-                                            try { AddVideo(content); } catch { }
-                                        });
-
-                                    }
-                                    else
-                                    {
-
-                                        this.Invoke((MethodInvoker)delegate
-                                        {
-                                            AddImage(content);
-                                        });
-                                    }
-
-
-                                }
-
-
+                                fromURN = fromProfile.URN;
 
                             }
 
 
+                            string toURN = toProp?.GetValue(message).ToString();
+                            PROState toProfile = PROState.GetProfileByAddress(toURN, "good-user", "better-password", "http://127.0.0.1:18332");
+
+                            if (toProfile.URN != null)
+                            {
+                                toURN = toProfile.URN;
+
+                            }
+
+
+                            this.Invoke((MethodInvoker)delegate
+                            {
+                                try { imglocation = myFriends[_from]; } catch { }
+                                CreateRow(imglocation, fromURN, _from, DateTime.ParseExact("19700101010101", "yyyyMMddHHmmss", CultureInfo.InvariantCulture), "", _transactionId, false, supFlow);
+
+                                try { imglocation = myFriends[_to]; } catch { }
+                                CreateRow(imglocation, toURN, _to, DateTime.ParseExact(_blockdate, "yyyyMMddHHmmss", CultureInfo.InvariantCulture), _message, _transactionId, false, supFlow);
+                            });
+
+                            string[] files = Directory.GetFiles(@"root\" + _transactionId);
+
+                            bool containsFileWithINQ = files.Any(file =>
+                                   file.EndsWith("INQ", StringComparison.OrdinalIgnoreCase) &&
+                                   !file.EndsWith("BLOCK", StringComparison.OrdinalIgnoreCase));
+
+                            if (containsFileWithINQ)
+                            {
+                                //ADD INQ IF IT EXISTS AND IS NOT BLOCKED
+                                this.Invoke((MethodInvoker)delegate
+                                {
+                                    string profileowner = "";
+
+                                    if (profileOwner.Tag != null) { profileowner = profileOwner.Tag.ToString(); }
+
+                                    FoundINQControl foundObject = new FoundINQControl(_transactionId, profileowner);
+                                    foundObject.Margin = new Padding(20, 7, 8, 7);
+                                    supFlow.Controls.Add(foundObject);
+                                });
+                            }
+
+                            string pattern = "<<.*?>>";
+                            MatchCollection matches = Regex.Matches(unfilteredmessage, pattern);
+                            foreach (Match match in matches)
+                            {
+
+
+                                string content = match.Value.Substring(2, match.Value.Length - 4);
+                                if (!int.TryParse(content, out int id) && !content.Trim().StartsWith("#"))
+                                {
+
+                                    List<string> imgExtensions = new List<string> { ".bmp", ".gif", ".ico", ".jpeg", ".jpg", ".png", ".tif", ".tiff", ".mp4", ".avi", ".wav", ".mp3" };
+
+                                    string extension = Path.GetExtension(content).ToLower();
+                                    if (!imgExtensions.Contains(extension) && !content.Contains("youtube.com") && !content.Contains("youtu.be"))
+                                    {
+                                        WebClient client = new WebClient();
+                                        string html = "";
+                                        try
+                                        {
+                                            html = client.DownloadString(content.StripLeadingTrailingSpaces());
+
+                                        }
+                                        catch { }
+
+                                        // Use regular expressions to extract the metadata from the HTML
+                                        string title = Regex.Match(html, @"<title>\s*(.+?)\s*</title>").Groups[1].Value;
+                                        string description = Regex.Match(html, @"<meta\s+name\s*=\s*""description""\s+content\s*=\s*""(.+?)""\s*/?>").Groups[1].Value;
+                                        string imageUrl = Regex.Match(html, @"<meta\s+property\s*=\s*""og:image""\s+content\s*=\s*""(.+?)""\s*/?>").Groups[1].Value;
+
+                                        if (description != "")
+                                        {
+                                            // Create a new panel to display the metadata
+                                            Panel panel = new Panel();
+                                            panel.BorderStyle = BorderStyle.FixedSingle;
+                                            panel.Size = new Size(supFlow.Width - 30, 100);
+
+
+                                            // Create a label for the title
+                                            Label titleLabel = new Label();
+                                            titleLabel.Text = title;
+                                            titleLabel.Dock = DockStyle.Top;
+                                            titleLabel.Font = new Font("Segoe UI", 12, FontStyle.Bold);
+                                            titleLabel.ForeColor = Color.White;
+                                            titleLabel.MinimumSize = new Size(supFlow.Width - 130, 30);
+                                            titleLabel.Padding = new Padding(5);
+                                            panel.Controls.Add(titleLabel);
+
+                                            // Create a label for the description
+                                            Label descriptionLabel = new Label();
+                                            descriptionLabel.Text = description;
+                                            descriptionLabel.ForeColor = Color.White;
+                                            descriptionLabel.Dock = DockStyle.Fill;
+                                            descriptionLabel.Padding = new Padding(5, 40, 5, 5);
+                                            panel.Controls.Add(descriptionLabel);
+
+                                            // Add an image to the panel if one is defined
+                                            if (!String.IsNullOrEmpty(imageUrl))
+                                            {
+                                                try
+                                                {
+                                                    // Create a MemoryStream object from the image data
+                                                    byte[] imageData = client.DownloadData(imageUrl);
+                                                    MemoryStream memoryStream = new MemoryStream(imageData);
+
+                                                    // Create a new PictureBox control and add it to the panel
+                                                    PictureBox pictureBox = new PictureBox();
+                                                    pictureBox.Dock = DockStyle.Left;
+                                                    pictureBox.Size = new Size(100, 100);
+                                                    pictureBox.SizeMode = PictureBoxSizeMode.StretchImage;
+                                                    pictureBox.Image = Image.FromStream(memoryStream);
+                                                    panel.Controls.Add(pictureBox);
+                                                }
+                                                catch
+                                                {
+                                                }
+                                            }
+                                            this.Invoke((MethodInvoker)delegate
+                                            {
+                                                // Add the panel to the flow layout panel
+                                                this.supFlow.Controls.Add(panel);
+                                            });
+                                        }
+                                        else
+                                        {
+                                            // Create a new panel to display the metadata
+                                            Panel panel = new Panel();
+                                            panel.BorderStyle = BorderStyle.FixedSingle;
+                                            panel.MinimumSize = new Size(500, 30);
+                                            panel.AutoSize = true;
+                                            // Create a label for the title
+                                            LinkLabel titleLabel = new LinkLabel();
+                                            titleLabel.Text = content;
+                                            titleLabel.Links[0].LinkData = content;
+                                            titleLabel.AutoSize = true;
+                                            titleLabel.Font = new Font("Segoe UI", 8, FontStyle.Bold);
+                                            titleLabel.LinkColor = System.Drawing.SystemColors.GradientActiveCaption;
+                                            titleLabel.Padding = new Padding(5);
+                                            panel.Controls.Add(titleLabel);
+                                            this.Invoke((MethodInvoker)delegate
+                                            {
+                                                this.supFlow.Controls.Add(panel);
+                                            });
+
+                                        }
+
+                                    }
+                                    else
+                                    {
+
+                                        if (extension == ".mp4" || extension == ".avi" || content.Contains("youtube.com") || content.Contains("youtu.be") || extension == ".wav" || extension == ".mp3")
+                                        {
+
+                                            this.Invoke((MethodInvoker)delegate
+                                            {
+                                                try { AddVideo(content); } catch { }
+                                            });
+
+                                        }
+                                        else
+                                        {
+
+                                            this.Invoke((MethodInvoker)delegate
+                                            {
+                                                AddImage(content);
+                                            });
+                                        }
+
+
+                                    }
+
+
+
+                                }
+
+
+                            }
+
+                            TableLayoutPanel padding = new TableLayoutPanel
+                            {
+                                RowCount = 1,
+                                ColumnCount = 1,
+                                Dock = DockStyle.Top,
+                                BackColor = Color.Black,
+                                ForeColor = Color.White,
+                                AutoSize = true,
+                                CellBorderStyle = TableLayoutPanelCellBorderStyle.Single,
+                                Margin = new System.Windows.Forms.Padding(0, 10, 0, 10),
+                                Padding = new System.Windows.Forms.Padding(0)
+
+                            };
+
+                            padding.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, supFlow.Width - 20));
+
+                            this.Invoke((MethodInvoker)delegate
+                            {
+                                supFlow.Controls.Add(padding);
+                            });
+
+                           
                         }
-
-                        TableLayoutPanel padding = new TableLayoutPanel
-                        {
-                            RowCount = 1,
-                            ColumnCount = 1,
-                            Dock = DockStyle.Top,
-                            BackColor = Color.Black,
-                            ForeColor = Color.White,
-                            AutoSize = true,
-                            CellBorderStyle = TableLayoutPanelCellBorderStyle.Single,
-                            Margin = new System.Windows.Forms.Padding(0, 10, 0, 10),
-                            Padding = new System.Windows.Forms.Padding(0)
-
-                        };
-
-                        padding.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, supFlow.Width - 20));
-
-                        this.Invoke((MethodInvoker)delegate
-                        {
-                            supFlow.Controls.Add(padding);
-                        });
-
                         numFriendFeedsDisplayed++;
-
                     }
 
-                    this.Invoke((MethodInvoker)delegate
+                        this.Invoke((MethodInvoker)delegate
                     {
                         refreshFriendFeed.Enabled = true;
                     });

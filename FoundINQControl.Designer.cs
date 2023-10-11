@@ -66,9 +66,8 @@
             this.txtTransactionId.ImageAlign = System.Drawing.ContentAlignment.BottomCenter;
             this.txtTransactionId.Location = new System.Drawing.Point(13, 438);
             this.txtTransactionId.Name = "txtTransactionId";
-            this.txtTransactionId.Size = new System.Drawing.Size(481, 21);
+            this.txtTransactionId.Size = new System.Drawing.Size(455, 21);
             this.txtTransactionId.TabIndex = 8;
-            this.txtTransactionId.Text = "@";
             this.txtTransactionId.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             this.txtTransactionId.Click += new System.EventHandler(this.ObjectAddress_Click);
             // 
