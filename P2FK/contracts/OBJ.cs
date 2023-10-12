@@ -2938,21 +2938,23 @@ namespace SUP.P2FK
 
                                 root = Root.GetRootByTransactionId(supMessagePacket[1], "good-user", "better-password", "http://127.0.0.1:18332", versionByte, result, objectaddress);
 
-
-                                foreach (string message in root.Message)
+                                if (root.Message != null)
                                 {
-
-                                    string fromAddress = supMessagePacket[0];
-
-                                    string tstamp = it.KeyAsString().Split('!')[1];
-
-                                    // Add the message data to the messages list
-                                    messages.Add(new
+                                    foreach (string message in root.Message)
                                     {
-                                        Message = message,
-                                        FromAddress = fromAddress,
-                                        BlockDate = tstamp
-                                    });
+
+                                        string fromAddress = supMessagePacket[0];
+
+                                        string tstamp = it.KeyAsString().Split('!')[1];
+
+                                        // Add the message data to the messages list
+                                        messages.Add(new
+                                        {
+                                            Message = message,
+                                            FromAddress = fromAddress,
+                                            BlockDate = tstamp
+                                        });
+                                    }
                                 }
                             }
                             catch { }

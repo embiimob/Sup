@@ -1,4 +1,5 @@
 ﻿using AngleSharp.Common;
+using BitcoinNET.RPCClient;
 using LevelDB;
 using NBitcoin;
 using NBitcoin.RPC;
@@ -94,25 +95,23 @@ namespace SUP.P2FK
                 {
                     var allowedValues = new HashSet<string>
 {
-    "5.46E-06",
-    "5.48E-06",
-    "5.48E-05",
-    "5.5E-05",
-    "5.5E-06",
-    "1E-05",
-    "1E-08",
-    "1.3016426",
-    "0.01",
+    "0.00000001",
+    "0.00000546",
+    "0.00000548",
+    "0.00005480",
+    "0.00000550",
+    "0.00005500",
+    "0.00001000",
+    "0.01000000",
     "1"
 };
-                    NetworkCredential credentials = new NetworkCredential(username, password);
-                    RPCClient rpcClient = new RPCClient(credentials, new Uri(url), Network.Main);
+                  
 
                     try
                     {
-                        deserializedObject = JsonConvert.DeserializeObject(
-                            rpcClient.SendCommand("getrawtransaction", transactionid, 1).ResultString
-                        );
+                        CoinRPC a = new CoinRPC(new Uri(url), new NetworkCredential(username, password));
+                        deserializedObject = a.GetRawDataTransaction(transactionid, 1);
+
                     }
                     catch (Exception ex)
                     {
@@ -125,7 +124,7 @@ namespace SUP.P2FK
                     }
 
                     totalByteSize = deserializedObject.size;
-                    confirmations = deserializedObject.confirmations ?? 0;
+                    confirmations = deserializedObject.confirmations;
                     blockdate =
                      DateTimeOffset.FromUnixTimeSeconds(
                          Convert.ToInt32(deserializedObject.blocktime)
@@ -135,13 +134,14 @@ namespace SUP.P2FK
                     {
                         try
                         {
+                            NetworkCredential credentials = new NetworkCredential(username, password);
+                            RPCClient rpcClient = new RPCClient(credentials, new Uri(url), Network.Main);
                             string hash = deserializedObject.blockhash;
-                            dynamic blockObject = rpcClient.SendCommand("getblock", hash).Result;
-                            //var BlockHeightResult = deserializedObjectDetails.Result; // Assuming 'height' is within the 'result' property
-                            if (blockObject != null)
+                            dynamic blockobject = rpcClient.SendCommand("getblock", hash).Result;
+                            if (blockobject != null)
                             {
-                                var BlockHeight = blockObject.height;
-                                P2FKRoot.BlockHeight = BlockHeight;
+                                var blockheight = blockobject.height;
+                                P2FKRoot.BlockHeight = blockheight;
                             }
                         }
                         catch { }
@@ -663,20 +663,17 @@ namespace SUP.P2FK
 
                 while (true)
                 {
-                    dynamic deserializedObject = null;
 
-                    var credentials = new NetworkCredential(username, password);
-                    var rpcClient = new RPCClient(credentials, new Uri(url));
-                    string results = rpcClient.SendCommand("searchrawtransactions", address, 0, innerskip, 300).ResultString;
+                    CoinRPC a = new CoinRPC(new Uri(url), new NetworkCredential(username, password));
 
-                    deserializedObject = JsonConvert.DeserializeObject(results);
-                    if (deserializedObject.Count == 0) { break; }
+                    var results = a.SearchRawDataTransaction(address, 0, innerskip, 300);
+                    if (results == null || results.Count == 0) { break; }
 
-                    for (int i = 0; i < deserializedObject.Count; i++)
+                    for (int i = 0; i < results.Count; i++)
                     {
                         calculated = true;
                         intProcessHeight++;
-                        string hexId = GetTransactionIdByHexString(deserializedObject[i].ToString());
+                        string hexId = GetTransactionIdByHexString(results[i].hex);
                         Root root = new Root();
                         root = Root.GetRootByTransactionId(hexId, username, password, url, versionByte, null, null, calculate);
 
@@ -749,15 +746,14 @@ namespace SUP.P2FK
             var matches = regexTransactionId.Matches(ledger);
             var allowedValues = new HashSet<string>
 {
-    "5.46E-06",
-    "5.48E-06",
-    "5.48E-05",
-    "5.5E-05",
-    "5.5E-06",
-    "1E-05",
-    "1E-08",
-    "1.3016426",
-    "0.01",
+    "0.00000001",
+    "0.00000546",
+    "0.00000548",
+    "0.00005480",
+    "0.00000550",
+    "0.00005500",
+    "0.00001000",
+    "0.01000000",
     "1"
 };
             foreach (Match match in matches)
@@ -765,16 +761,14 @@ namespace SUP.P2FK
 
 
                 byte[] transactionBytesBatch = new byte[0];
-                NetworkCredential credentials = new NetworkCredential(username, password);
-                RPCClient rpcClient = new RPCClient(credentials, new Uri(url), Network.Main);
-                dynamic deserializedObject = JsonConvert.DeserializeObject(
-                    rpcClient.SendCommand("getrawtransaction", match.Value, 1).ResultString
-                );
+                CoinRPC a = new CoinRPC(new Uri(url), new NetworkCredential(username, password));
+                dynamic deserializedObject = a.GetRawDataTransaction(match.Value, 1);
 
                 foreach (dynamic v_out in deserializedObject.vout)
                 {
                     // checking for all known P2FK bitcoin testnet microtransaction values
-                    string value = v_out.value;
+
+                    string value = v_out.value.ToString();
                     if (allowedValues.Contains(value))
                     {
                         string P2FKSignatureAddress = v_out.scriptPubKey.addresses[0];
@@ -834,12 +828,14 @@ namespace SUP.P2FK
         public static List<String> GetPublicKeysByAddress(string address, string username, string password, string url)
         {
             List<String> Keys = new List<String>();
-            NetworkCredential credentials = new NetworkCredential(username, password);
-            RPCClient rpcClient = new RPCClient(credentials, new Uri(url), Network.Main);
+
+            CoinRPC a = new CoinRPC(new Uri(url), new NetworkCredential(username,password));
+
             string privkey;
 
-            try { privkey = rpcClient.SendCommand("dumpprivkey", address).ResultString; } catch { return Keys; }
+            try { privkey = a.DumpPrivKey(address); } catch { return Keys; }
 
+            if (privkey == null) { return Keys; }
 
             var privKeyHex = BitConverter.ToString(Base58.Decode(privkey)).Replace("-", "");
             privKeyHex = privKeyHex.Substring(2, 64);

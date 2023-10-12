@@ -11,6 +11,9 @@ using System.Windows.Forms;
 using NBitcoin;
 using System.Threading.Tasks;
 using System.IO;
+using NBitcoin.RPC;
+using System.Net;
+using BitcoinNET.RPCClient;
 
 namespace SUP
 {
@@ -2566,12 +2569,17 @@ namespace SUP
 
             if (profileURN.Links[0].LinkData != null)
             {
-                List<string> islocal = Root.GetPublicKeysByAddress(profileURN.Links[0].LinkData.ToString(), "good-user", "better-password", @"http://127.0.0.1:18332");
-                if
-                     (islocal.Count == 2)
+
+                try
                 {
-                    _activeProfile = profileURN.Links[0].LinkData.ToString();
+                    List<string> islocal = Root.GetPublicKeysByAddress(profileURN.Links[0].LinkData.ToString(), "good-user", "better-password", @"http://127.0.0.1:18332");
+                    if
+                         (islocal.Count == 2)
+                    {
+                        _activeProfile = profileURN.Links[0].LinkData.ToString();
+                    }
                 }
+                catch { }
             }
         }
     }
