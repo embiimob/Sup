@@ -3,7 +3,7 @@ using System.Drawing;
 using System.IO;
 using System.Reflection;
 using System.Text.RegularExpressions;
-using LevelDB;
+
 using System.Diagnostics;
 using System.Windows.Forms;
 using Gma.QrCodeNet.Encoding;
@@ -641,15 +641,9 @@ namespace SUP
                                         btnObjectImage.ForeColor = Color.Yellow;
                                     }
 
-
-                                    var SUP = new Options { CreateIfMissing = true };
-
-                                    using (var db = new DB(SUP, @"ipfs"))
+                                    try
                                     {
-
-                                        string ipfsdaemon = db.Get("ipfs-daemon");
-
-                                        if (ipfsdaemon == "true")
+                                        if (File.Exists("IPFS_PINNING_ENABLED"))
                                         {
                                             Process process3 = new Process
                                             {
@@ -664,6 +658,7 @@ namespace SUP
                                             process3.Start();
                                         }
                                     }
+                                    catch { }
 
                                     try { Directory.Delete(@"ipfs/" + txtIMG.Text.Substring(5, 46)); } catch { }
                                     try

@@ -211,12 +211,12 @@
             this.btnRecord.MouseDown += new System.Windows.Forms.MouseEventHandler(this.BtnRecord_MouseDown);
             this.btnRecord.MouseUp += new System.Windows.Forms.MouseEventHandler(this.BtnRecord_MouseUp);
             // 
-            // button2
+            // btnGIF
             // 
             this.btnGIF.Font = new System.Drawing.Font("Segoe UI Emoji", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btnGIF.ForeColor = System.Drawing.Color.Black;
             this.btnGIF.Location = new System.Drawing.Point(375, 244);
-            this.btnGIF.Name = "button2";
+            this.btnGIF.Name = "btnGIF";
             this.btnGIF.Size = new System.Drawing.Size(54, 50);
             this.btnGIF.TabIndex = 366;
             this.btnGIF.Text = "GIF";
@@ -341,7 +341,8 @@
             this.Controls.Add(this.txtINQJson);
             this.Controls.Add(this.txtINQAddress);
             this.ForeColor = System.Drawing.Color.White;
-            this.MinimumSize = new System.Drawing.Size(463, 625);
+            this.MaximumSize = new System.Drawing.Size(463, 708);
+            this.MinimumSize = new System.Drawing.Size(463, 708);
             this.Name = "DiscoBall";
             this.Text = "Disco";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.MainForm_FormClosing);

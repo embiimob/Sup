@@ -15,7 +15,7 @@ using Newtonsoft.Json;
 using SUP.P2FK;
 using AngleSharp.Common;
 using System.Threading.Tasks;
-using LevelDB;
+
 using System.Reflection;
 
 namespace SUP
@@ -583,7 +583,6 @@ namespace SUP
                 {
                     Task SearchMemoryTask = Task.Run(() =>
                     {
-                        var SUP = new Options { CreateIfMissing = true };
                         List<string> differenceQuery = new List<string>();
                         List<string> newtransactions = new List<string>();
                         string flattransactions;

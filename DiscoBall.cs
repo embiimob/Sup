@@ -7,7 +7,6 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Diagnostics;
-using LevelDB;
 using BitcoinNET.RPCClient;
 using NBitcoin.RPC;
 using NBitcoin;
@@ -244,9 +243,29 @@ namespace SUP
                                 flowAttachments.Controls.Add(pictureBox);
                             });
 
-                            return "IPFS:" + hash;
+                            return hash;
                         });
                         ipfsHash = await addTask;
+
+                        try
+                        {
+                            if (File.Exists("IPFS_PINNING_ENABLED"))
+                            {
+                                Process process3 = new Process
+                                {
+                                    StartInfo = new ProcessStartInfo
+                                    {
+                                        FileName = @"ipfs\ipfs.exe",
+                                        Arguments = "pin add " + ipfsHash,
+                                        UseShellExecute = false,
+                                        CreateNoWindow = true
+                                    }
+                                };
+                                process3.Start();
+                            }
+                        }
+                        catch { }
+
                         try { Directory.Delete(@"root\" + processingid, true); } catch { }
                     }
 
@@ -325,14 +344,10 @@ namespace SUP
                                             try { System.IO.File.Move("ipfs/" + txtAttach.Text.Substring(5, 46) + "_tmp", imgurn); } catch { }
                                         }
 
-                                        var SUP = new Options { CreateIfMissing = true };
 
-                                        using (var db = new DB(SUP, @"ipfs"))
+                                        try
                                         {
-
-                                            string ipfsdaemon = db.Get("ipfs-daemon");
-
-                                            if (ipfsdaemon == "true")
+                                            if (File.Exists("IPFS_PINNING_ENABLED"))
                                             {
                                                 Process process3 = new Process
                                                 {
@@ -347,6 +362,9 @@ namespace SUP
                                                 process3.Start();
                                             }
                                         }
+                                        catch { }
+
+
 
                                         try { Directory.Delete(@"ipfs/" + txtAttach.Text.Substring(5, 46)); } catch { }
                                         try

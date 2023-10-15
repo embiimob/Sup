@@ -1,4 +1,4 @@
-﻿using LevelDB;
+﻿
 using Newtonsoft.Json;
 using SUP.P2FK;
 using System;
@@ -87,38 +87,6 @@ namespace SUP
                 // Delete the file
                 try
                 {
-
-
-                    var SUP = new Options { CreateIfMissing = true };
-                    var keysToDelete = new HashSet<string>(); // Create a new HashSet to store the keys to delete
-
-                    using (var db = new DB(SUP, @"root\found"))
-                    {
-                        LevelDB.Iterator it = db.CreateIterator();
-
-                        for (
-                            it.SeekToLast();
-                            it.IsValid();
-                            it.Prev()
-                        )
-                        {
-                            string key = it.KeyAsString();
-                            if (key.Contains(ObjectAddress.Text))
-                            {
-                                keysToDelete.Add(key); // Add the key to the HashSet
-                            }
-                        }
-
-                        it.Dispose();
-
-                        var batch = new WriteBatch(); // Create a new WriteBatch to delete the keys
-                        foreach (var key in keysToDelete)
-                        {
-                            batch.Delete(key); // Add a delete operation for each key in the HashSet
-                        }
-                        db.Write(batch); // Execute the batch to delete the keys from the database
-                    }
-
 
                     if (ObjectImage.ImageLocation != null && !ObjectImage.ImageLocation.StartsWith("includes"))
                     {

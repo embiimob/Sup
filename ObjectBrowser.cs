@@ -1,4 +1,4 @@
-﻿using LevelDB;
+﻿
 using SUP.P2FK;
 using System;
 using System.Collections.Generic;
@@ -1106,20 +1106,6 @@ namespace SUP
                 control.Dispose();
             }
 
-            var SUP = new Options { CreateIfMissing = true };
-            using (var db = new DB(SUP, @"ipfs"))
-            {
-
-                string ipfsdaemon = db.Get("ipfs-daemon");
-
-                if (ipfsdaemon == "true")
-                {
-                    this.Invoke((MethodInvoker)delegate
-                    {
-                        ipfsActive = true;
-                    });
-                }
-            }
 
             flowLayoutPanel1.Controls.Clear();
             int loadQty = (flowLayoutPanel1.Size.Width / 100) * (flowLayoutPanel1.Size.Height / 200) + 3;
@@ -1738,35 +1724,7 @@ namespace SUP
         {
             lock (SupLocker)
             {
-                var SUP = new Options { CreateIfMissing = true };
-                try
-                {
-                    string isBuilding;
-                    DateTime timestamp = DateTime.UtcNow;
-
-
-                    using (var db = new DB(SUP, @"root\sup"))
-                    {
-                        isBuilding = db.Get("isBuilding");
-                    }
-
-
-                    DateTime lastTimestamp;
-                    if (DateTime.TryParse(isBuilding, out lastTimestamp) && (timestamp - lastTimestamp).TotalSeconds <= 60)
-                    {
-
-                        return;
-                    }
-
-
-                    using (var db = new DB(SUP, @"root\sup"))
-                    {
-                        db.Put("isBuilding", timestamp.ToString("o"));
-                    }
-
-                }
-                catch { try { Directory.Delete(@"root\sup"); } catch { } }
-
+              
                 try
                 {
 
@@ -1846,24 +1804,7 @@ namespace SUP
                                 if (!System.IO.Directory.Exists("ipfs/" + ipfsHash))
                                 {
 
-                                    string isLoading;
-
-                                    using (var db = new DB(SUP, @"ipfs"))
-                                    {
-                                        isLoading = db.Get(ipfsHash);
-
-                                    }
-
-
-                                    if (isLoading != "loading")
-                                    {
-
-                                        using (var db = new DB(SUP, @"ipfs"))
-                                        {
-
-                                            db.Put(ipfsHash, "loading");
-
-                                        }
+                                    
 
                                         string imgurl = "";
                                         if (!System.IO.Directory.Exists("ipfs/" + ipfsHash + "-build"))
@@ -1915,19 +1856,26 @@ namespace SUP
                                             }
 
 
-                                            Process process3 = new Process
+                                        try
+                                        {
+                                            if (File.Exists("IPFS_PINNING_ENABLED"))
                                             {
-                                                StartInfo = new ProcessStartInfo
+                                                Process process3 = new Process
                                                 {
-                                                    FileName = @"ipfs\ipfs.exe",
-                                                    Arguments = "pin add " + ipfsHash,
-                                                    UseShellExecute = false,
-                                                    CreateNoWindow = true
-                                                }
-                                            };
-                                            process3.Start();
+                                                    StartInfo = new ProcessStartInfo
+                                                    {
+                                                        FileName = @"ipfs\ipfs.exe",
+                                                        Arguments = "pin add " + ipfsHash,
+                                                        UseShellExecute = false,
+                                                        CreateNoWindow = true
+                                                    }
+                                                };
+                                                process3.Start();
+                                            }
+                                        }
+                                        catch { }
 
-                                            try { Directory.Delete("ipfs/" + ipfsHash + "-build", true); } catch { }
+                                        try { Directory.Delete("ipfs/" + ipfsHash + "-build", true); } catch { }
                                         }
 
                                         if (System.IO.Directory.Exists(System.IO.Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + @"\ipfs\" + ipfsHash))
@@ -1936,14 +1884,9 @@ namespace SUP
                                         }
                                         else { System.Windows.Forms.Label filenotFound = new System.Windows.Forms.Label(); filenotFound.AutoSize = true; filenotFound.Text = "IPFS: Search failed! Verify IPFS pinning is enbaled"; flowLayoutPanel1.Controls.Clear(); flowLayoutPanel1.Controls.Add(filenotFound); }
 
-                                        using (var db = new DB(SUP, @"ipfs"))
-                                        {
-                                            db.Delete(ipfsHash);
-
-                                        }
 
 
-                                    }
+                                    
                                 }
                                 else
                                 {
@@ -2055,26 +1998,7 @@ namespace SUP
             bool isBlue = false;
             selectSort.SelectedIndex = 0;
 
-            try
-            {
-
-                var SUP = new Options { CreateIfMissing = true };
-                using (var db = new DB(SUP, @"ipfs"))
-                {
-
-                    string ipfsdaemon = db.Get("ipfs-daemon");
-
-                    if (ipfsdaemon == "true")
-                    {
-                        this.Invoke((MethodInvoker)delegate
-                        {
-                            ipfsActive = true;
-                        });
-                    }
-                }
-            }
-            catch { }
-
+          
             // Check if the parent form has a button named "btnLive" with blue background color
             try
             {
@@ -2095,24 +2019,7 @@ namespace SUP
             else
             {
 
-
-
-                if (ipfsActive == true)
-                {
-
-                    var process = new Process
-                    {
-                        StartInfo = new ProcessStartInfo
-                        {
-                            FileName = @"ipfs\ipfs.exe",
-                            Arguments = "daemon",
-                            UseShellExecute = false,
-                            CreateNoWindow = true
-                        }
-                    };
-                    process.Start();
-                }
-
+               
 
                 if (_objectaddress.Length > 0)
                 {

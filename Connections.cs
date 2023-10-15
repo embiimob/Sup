@@ -1,5 +1,4 @@
-﻿using LevelDB;
-using NBitcoin.RPC;
+﻿using NBitcoin.RPC;
 using SUP.P2FK;
 using System;
 using System.Diagnostics;
@@ -268,7 +267,7 @@ namespace SUP
             string output = process.StandardOutput.ReadToEnd();
             if (output.Length > 0)
             {
-                button1.Text = "IPFS pinning active";
+                button1.Text = "IPFS dameon active";
                 btnPinIPFS.Enabled = true;
                 btnUnpinIPFS.Enabled = true;
                 button1.ForeColor = Color.Yellow;
@@ -277,7 +276,7 @@ namespace SUP
             }
             else
             {
-                button1.Text = "enable IPFS pinning";
+                button1.Text = "enable IPFS dameon";
                 button1.ForeColor = Color.Black;
                 button1.BackColor = Color.White;
             }
@@ -286,9 +285,9 @@ namespace SUP
 
         private void btnIPFS_Click(object sender, EventArgs e)
         {
-            if (button1.Text == "IPFS pinning active")
+            if (button1.Text == "IPFS dameon active")
             {
-                button1.Text = "enable IPFS pinning";
+                button1.Text = "enable IPFS dameon";
                 button1.BackColor= Color.White;
                 button1.ForeColor = Color.Black;
 
@@ -305,21 +304,13 @@ namespace SUP
                 process.Start();
           
                 btnPinIPFS.Enabled = false;
-                btnUnpinIPFS.Enabled = false;
-
-                var SUP = new Options { CreateIfMissing = true };
-
-                using (var db = new DB(SUP, @"ipfs"))
-                {
-
-                    db.Delete("ipfs-daemon");
-                }
+                btnUnpinIPFS.Enabled = false;              
 
 
             }
             else
             {
-                button1.Text = "IPFS pinning active";
+                button1.Text = "IPFS dameon active";
                 button1.ForeColor = Color.Yellow;
                 button1.BackColor = Color.Blue;
 
@@ -349,15 +340,7 @@ namespace SUP
                 process.Start();
                 btnPinIPFS.Enabled = true;
                 btnUnpinIPFS.Enabled = true;
-
-                var SUP = new Options { CreateIfMissing = true };
-
-                using (var db = new DB(SUP, @"ipfs"))
-                {
-
-                    db.Put("ipfs-daemon", "true");
-
-                }
+                                
 
             }
         }
@@ -644,31 +627,7 @@ namespace SUP
             catch { }
         }
 
-        private void btnPurgeFound_Click(object sender, EventArgs e)
-        {
-            try
-            {
-                string directoryPath = @"root";
-
-                // Get a list of all the subdirectories in the directory
-                string[] subdirectories = Directory.GetDirectories(directoryPath);
-
-                // Loop through each subdirectory
-                foreach (string subdirectory in subdirectories)
-                {
-                    // Get the name of the subdirectory
-                    string subdirectoryName = System.IO.Path.GetFileName(subdirectory);
-
-
-                    if (subdirectoryName == "found")
-                    {
-                        // Delete the subdirectory and all its contents
-                        Directory.Delete(subdirectory, true);
-                    }
-                }
-            }
-            catch { }
-        }
+      
 
         private void chkFilterLivePostings_CheckedChanged(object sender, EventArgs e)
         {

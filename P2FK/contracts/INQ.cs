@@ -1,5 +1,5 @@
 ﻿using AngleSharp.Common;
-using LevelDB;
+
 using NBitcoin;
 using NBitcoin.RPC;
 using Newtonsoft.Json;
@@ -69,9 +69,9 @@ namespace SUP.P2FK
             {
 
                 INQState objectState = new INQState();
+                char[] specialChars = new char[] { '\\', '/', ':', '*', '?', '"', '<', '>', '|' };
                 try
                 {
-                    var OBJ = new Options { CreateIfMissing = true };
                     bool fetched = false;
 
                     if (System.IO.File.Exists(@"root\" + objectaddress + @"\BLOCK"))
@@ -121,25 +121,15 @@ namespace SUP.P2FK
 
                             string sigSeen = null;
 
-                            using (var db = new DB(OBJ, @"root\sig"))
+                            string cleanedSIG = new string(transaction.Signature.Where(c => !specialChars.Contains(c)).ToArray());
+                            if (!System.IO.File.Exists(@"root\sig\" + cleanedSIG))
                             {
-                                sigSeen = db.Get(transaction.Signature);
+                                sigSeen = System.IO.File.ReadAllText(@"root\sig\" + cleanedSIG);
                             }
-
 
 
                             if (sigSeen == null || sigSeen == transaction.TransactionId)
                             {
-
-
-                                if (transaction.Signature != null)
-                                {
-                                    using (var db = new DB(OBJ, @"root\sig"))
-                                    {
-                                        db.Put(transaction.Signature, transaction.TransactionId);
-                                    }
-
-                                }
 
                                 INQ objectinspector = null;
 
@@ -429,8 +419,8 @@ namespace SUP.P2FK
 
             INQState objectState = new INQState();
             INQ objectinspector = new INQ();
-            var OBJ = new Options { CreateIfMissing = true };
-
+            char[] specialChars = new char[] { '\\', '/', ':', '*', '?', '"', '<', '>', '|' };
+           
             var intProcessHeight = 0;
             Root transaction = Root.GetRootByTransactionId(transactionid, username, password, url, versionByte,null,null, calculate);
 
@@ -466,27 +456,17 @@ namespace SUP.P2FK
 
                     string sigSeen = null;
 
-                    using (var db = new DB(OBJ, @"root\sig"))
+                    string cleanedSIG = new string(transaction.Signature.Where(c => !specialChars.Contains(c)).ToArray());
+                    if (!System.IO.File.Exists(@"root\sig\" + cleanedSIG))
                     {
-                        sigSeen = db.Get(transaction.Signature);
+                        sigSeen = System.IO.File.ReadAllText(@"root\sig\" + cleanedSIG);
                     }
-
 
 
                     if (sigSeen == null || sigSeen == transaction.TransactionId)
                     {
 
-
-                        if (transaction.Signature != null)
-                        {
-                            using (var db = new DB(OBJ, @"root\sig"))
-                            {
-                                db.Put(transaction.Signature, transaction.TransactionId);
-                            }
-
-                        }
-
-                         objectinspector = null;
+                        objectinspector = null;
 
                        
                         try
@@ -761,7 +741,6 @@ namespace SUP.P2FK
                 List<INQState> objectStates = new List<INQState> { };
                 try
                 {
-                    var OBJ = new Options { CreateIfMissing = true };
                     bool fetched = false;
 
                     if (System.IO.File.Exists(@"root\" + objectaddress + @"\BLOCK"))
@@ -928,7 +907,6 @@ namespace SUP.P2FK
             lock (SupLocker)
             {
                 List<INQState> objectStates = new List<INQState> { };
-                var OBJ = new Options { CreateIfMissing = true };
                 bool fetched = false;
 
                 if (System.IO.File.Exists(@"root\" + objectaddress + @"\BLOCK")) { return objectStates; }

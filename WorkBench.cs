@@ -1,4 +1,4 @@
-﻿using LevelDB;
+﻿
 using NBitcoin.RPC;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
@@ -16,295 +16,12 @@ namespace SUP
 {
     public partial class WorkBench : Form
     {
-       
+
         public WorkBench()
         {
             InitializeComponent();
         }
 
-        private void ButtonGetLevelDBClick(object sender, EventArgs e)
-        {
-            if (lbTableName.SelectedItem == null)
-            {
-                lbTableName.SelectedIndex = 0;
-            }
-            var SUP = new Options { CreateIfMissing = true };
-
-            switch (lbTableName.SelectedItem.ToString().Trim())
-            {
-                case "sup":
-                   
-                    txtGetValue.Text = "";
-                    
-                        using (var db = new DB(SUP, @"root\"+txtSearchAddress.Text+@"\sup"))
-                        {
-                            LevelDB.Iterator it = db.CreateIterator();
-                            for (
-                                it.Seek(txtlevelDBKey.Text);
-                                it.IsValid() && it.KeyAsString().StartsWith(txtlevelDBKey.Text);
-                                it.Next()
-                            )
-                            {
-                                txtGetValue.Text =
-                                    txtGetValue.Text + "[ " + it.KeyAsString() + " | "+ it.ValueAsString() +" ]" + Environment.NewLine;
-                            }
-                            it.Dispose();
-                        }
-                    
-                    break;
-
-                case "sig":
-
-                    txtGetValue.Text = "";
-
-                    using (var db = new DB(SUP, @"root\sig"))
-                    {
-                        LevelDB.Iterator it = db.CreateIterator();
-                        for (
-                            it.Seek(txtlevelDBKey.Text);
-                            it.IsValid() && it.KeyAsString().StartsWith(txtlevelDBKey.Text);
-                            it.Next()
-                        )
-                        {
-                            txtGetValue.Text =
-                                    txtGetValue.Text + "[ " + it.KeyAsString() + " | " + it.ValueAsString() + " ]" + Environment.NewLine;
-                        }
-                        it.Dispose();
-                    }
-
-                    break;
-
-                case "sec":
-
-                    txtGetValue.Text = "";
-
-                    using (var db = new DB(SUP, @"root\" + txtSearchAddress.Text + @"\sec"))
-                    {
-                        LevelDB.Iterator it = db.CreateIterator();
-                        for (
-                            it.Seek(txtlevelDBKey.Text);
-                            it.IsValid() && it.KeyAsString().StartsWith(txtlevelDBKey.Text);
-                            it.Next()
-                        )
-                        {
-                            txtGetValue.Text =
-                                    txtGetValue.Text + "[ " + it.KeyAsString() + " | " + it.ValueAsString() + " ]" + Environment.NewLine;
-                        }
-                        it.Dispose();
-                    }
-
-                    break;
-
-                case "pro":
-
-                    txtGetValue.Text = "";
-
-                    using (var db = new DB(SUP, @"root\pro"))
-                    {
-                        LevelDB.Iterator it = db.CreateIterator();
-                        for (
-                            it.Seek(txtlevelDBKey.Text);
-                            it.IsValid() && it.KeyAsString().StartsWith(txtlevelDBKey.Text);
-                            it.Next()
-                        )
-                        {
-                            txtGetValue.Text =
-                                    txtGetValue.Text + "[ " + it.KeyAsString() + " | " + it.ValueAsString() + " ]" + Environment.NewLine;
-                        }
-                        it.Dispose();
-                    }
-
-                    break;
-
-                case "oblock":
-
-                    txtGetValue.Text = "";
-
-                    using (var db = new DB(SUP, @"root\oblock"))
-                    {
-                        LevelDB.Iterator it = db.CreateIterator();
-                        for (
-                            it.Seek(txtlevelDBKey.Text);
-                            it.IsValid() && it.KeyAsString().StartsWith(txtlevelDBKey.Text);
-                            it.Next()
-                        )
-                        {
-                            txtGetValue.Text =
-                                    txtGetValue.Text + "[ " + it.KeyAsString() + " | " + it.ValueAsString() + " ]" + Environment.NewLine;
-                        }
-                        it.Dispose();
-                    }
-
-                    break;
-
-                case "obj":
-
-                    txtGetValue.Text = "";
-
-                    using (var db = new DB(SUP, @"root\obj"))
-                    {
-                        LevelDB.Iterator it = db.CreateIterator();
-                        for (
-                            it.Seek(txtlevelDBKey.Text);
-                            it.IsValid() && it.KeyAsString().StartsWith(txtlevelDBKey.Text);
-                            it.Next()
-                        )
-                        {
-                            txtGetValue.Text =
-                                    txtGetValue.Text + "[ " + it.KeyAsString() + " | " + it.ValueAsString() + " ]" + Environment.NewLine;
-                        }
-                        it.Dispose();
-                    }
-
-                    break;
-                case "mute":
-
-                    txtGetValue.Text = "";
-
-                    using (var db = new DB(SUP, @"root\mute"))
-                    {
-                        LevelDB.Iterator it = db.CreateIterator();
-                        for (
-                            it.Seek(txtlevelDBKey.Text);
-                            it.IsValid() && it.KeyAsString().StartsWith(txtlevelDBKey.Text);
-                            it.Next()
-                        )
-                        {
-                            txtGetValue.Text =
-                                    txtGetValue.Text + "[ " + it.KeyAsString() + " | " + it.ValueAsString() + " ]" + Environment.NewLine;
-                        }
-                        it.Dispose();
-                    }
-
-                    break;
-                case "found":
-
-                    txtGetValue.Text = "";
-
-                    using (var db = new DB(SUP, @"root\found"))
-                    {
-                        LevelDB.Iterator it = db.CreateIterator();
-                        for (
-                            it.Seek(txtlevelDBKey.Text);
-                            it.IsValid() && it.KeyAsString().StartsWith(txtlevelDBKey.Text);
-                            it.Next()
-                        )
-                        {
-                            txtGetValue.Text =
-                                    txtGetValue.Text + "[ " + it.KeyAsString() + " | " + it.ValueAsString() + " ]" + Environment.NewLine;
-                        }
-                        it.Dispose();
-                    }
-
-                    break;
-
-                case "event":
-                    var LOG = new Options { CreateIfMissing = true };
-                    txtGetValue.Text = "";
-                    using (var db = new DB(LOG, @"root\event"))
-                    {
-                        LevelDB.Iterator it = db.CreateIterator();
-                        for (
-                            it.Seek(txtlevelDBKey.Text);
-                            it.IsValid() && it.KeyAsString().StartsWith(txtlevelDBKey.Text);
-                            it.Next()
-                        )
-                        {
-                            txtGetValue.Text =
-                                    txtGetValue.Text + "[ " + it.KeyAsString() + " | " + it.ValueAsString() + " ]" + Environment.NewLine;
-                        }
-                        it.Dispose();
-                    }
-                    break;
-
-                default:
-                    MessageBox.Show("something went wrong");
-                    break;
-            }
-        }
-
-        private void ButtonDeleteLevelDBClick(object sender, EventArgs e)
-        {
-            if (lbTableName.SelectedItem == null)
-            {
-                lbTableName.SelectedIndex = 0;
-            }
-            var SUP = new Options { CreateIfMissing = true };
-            switch (lbTableName.SelectedItem.ToString().Trim())
-            {
-                case "sup":
-                    
-                    using (var db = new DB(SUP, @"root\" + txtSearchAddress + @"\sup"))
-                    {
-                        db.Delete(txtlevelDBKey.Text);
-                    }
-                    break;
-                case "sig":
-
-                    using (var db = new DB(SUP, @"root\sig"))
-                    {
-                        db.Delete(txtlevelDBKey.Text);
-                    }
-                    break;
-
-                case "sec":
-
-                    using (var db = new DB(SUP, @"root\" + txtSearchAddress + @"\sec"))
-                    {
-                        db.Delete(txtlevelDBKey.Text);
-                    }
-                    break;
-
-                case "pro":
-
-                    using (var db = new DB(SUP, @"root\pro"))
-                    {
-                        db.Delete(txtlevelDBKey.Text);
-                    }
-                    break;
-
-                case "oblock":
-
-                    using (var db = new DB(SUP, @"root\oblock"))
-                    {
-                        db.Delete(txtlevelDBKey.Text);
-                    }
-                    break;
-                case "obj":
-
-                    using (var db = new DB(SUP, @"root\obj"))
-                    {
-                        db.Delete(txtlevelDBKey.Text);
-                    }
-                    break;
-                case "mute":
-
-                    using (var db = new DB(SUP, @"root\mute"))
-                    {
-                        db.Delete(txtlevelDBKey.Text);
-                    }
-                    break;
-                case "found":
-
-                    using (var db = new DB(SUP, @"root\found"))
-                    {
-                        db.Delete(txtlevelDBKey.Text);
-                    }
-                    break;
-
-                case "event":
-
-                    using (var db = new DB(SUP, @"root\event"))
-                    {
-                        db.Delete(txtlevelDBKey.Text);
-                    }
-                    break;
-
-                default:
-                    MessageBox.Show("something went wrong");
-                    break;
-            }
-        }
 
         private void ButtonTestConnectionClick(object sender, EventArgs e)
         {
@@ -358,7 +75,7 @@ namespace SUP
                 txtLogin.Text,
                 txtPassword.Text,
                 txtUrl.Text, 0, -1,
-                txtVersionByte.Text, 
+                txtVersionByte.Text,
                 chkVerbose.Checked
 
             );
@@ -900,18 +617,18 @@ namespace SUP
 
         private void ButtonBlockTransactionIdClick(object sender, EventArgs e)
         {
-           
+
             if (txtTransactionId.Text.Length > 42)
             {
                 try { System.IO.Directory.Delete(@"root\" + txtTransactionId.Text, true); } catch { }
+
+
+                Root P2FKRoot = new Root();
+                P2FKRoot.Confirmations = 1;
+                var rootSerialized = JsonConvert.SerializeObject(P2FKRoot);
+                System.IO.File.WriteAllText(@"root\" + txtTransactionId.Text + @"\" + "ROOT.json", rootSerialized);
             }
 
-            var WORK = new Options { CreateIfMissing = true };
-            using (var db = new DB(WORK, @"root\tblock"))
-            {
-                db.Put(txtTransactionId.Text, "true");
-
-            }
         }
 
         private void ButtonBlockAddressClick(object sender, EventArgs e)
@@ -919,36 +636,6 @@ namespace SUP
 
             try
             {
-                
-                var SUP = new Options { CreateIfMissing = true };
-                var keysToDelete = new HashSet<string>(); // Create a new HashSet to store the keys to delete
-
-                using (var db = new DB(SUP, @"root\found"))
-                {
-                    LevelDB.Iterator it = db.CreateIterator();
-
-                    for (
-                        it.SeekToLast();
-                        it.IsValid();
-                        it.Prev()
-                    )
-                    {
-                        string key = it.KeyAsString();
-                        if (key.Contains(txtSearchAddress.Text))
-                        {
-                            keysToDelete.Add(key); // Add the key to the HashSet
-                        }
-                    }
-
-                    it.Dispose();
-
-                    var batch = new WriteBatch(); // Create a new WriteBatch to delete the keys
-                    foreach (var key in keysToDelete)
-                    {
-                        batch.Delete(key); // Add a delete operation for each key in the HashSet
-                    }
-                    db.Write(batch); // Execute the batch to delete the keys from the database
-                }
 
 
                 Root[] root = Root.GetRootsByAddress(txtSearchAddress.Text, "good-user", "better-password", @"http://127.0.0.1:18332");
@@ -997,13 +684,13 @@ namespace SUP
                 try { Directory.Delete(@"root\" + txtSearchAddress.Text, true); Directory.CreateDirectory(@"root\" + txtSearchAddress.Text); } catch { }
                 using (FileStream fs = File.Create(@"root\" + txtSearchAddress.Text + @"\BLOCK"))
                 {
-                  
+
                 }
             }
             catch { }
 
 
-            }
+        }
 
         private void ButtonUnBlockAddressClick(object sender, EventArgs e)
         {
@@ -1147,7 +834,7 @@ namespace SUP
         private void ButtonGetFoundObjectsClick(object sender, EventArgs e)
         {
             DateTime tmbeginCall = DateTime.UtcNow;
-            List<OBJState> ownedObjects = OBJState.GetFoundObjects(txtLogin.Text, txtPassword.Text, txtUrl.Text, txtVersionByte.Text,chkVerbose.Checked);
+            List<OBJState> ownedObjects = OBJState.GetFoundObjects(txtLogin.Text, txtPassword.Text, txtUrl.Text, txtVersionByte.Text, chkVerbose.Checked);
             DateTime tmendCall = DateTime.UtcNow;
             lblTotalBytes.Text = "bytes: ";
             lblTotalTime.Text = "time: ";
@@ -1173,7 +860,7 @@ namespace SUP
         {
 
             DateTime tmbeginCall = DateTime.UtcNow;
-            OBJState Tester = OBJState.GetObjectByTransactionId(txtTransactionId.Text,txtLogin.Text,txtPassword.Text,txtUrl.Text,txtVersionByte.Text);
+            OBJState Tester = OBJState.GetObjectByTransactionId(txtTransactionId.Text, txtLogin.Text, txtPassword.Text, txtUrl.Text, txtVersionByte.Text);
             DateTime tmendCall = DateTime.UtcNow;
             lblTotalBytes.Text = "bytes: ";
             lblTotalTime.Text = "time: ";
@@ -1191,7 +878,7 @@ namespace SUP
         private void ButtonGetPublicMessages_Click(object sender, EventArgs e)
         {
             DateTime tmbeginCall = DateTime.UtcNow;
-            List<MessageObject> messages= OBJState.GetPublicMessagesByAddress(txtSearchAddress.Text, txtLogin.Text, txtPassword.Text, txtUrl.Text, txtVersionByte.Text, int.Parse(txtSkip.Text), int.Parse(txtQty.Text));
+            List<MessageObject> messages = OBJState.GetPublicMessagesByAddress(txtSearchAddress.Text, txtLogin.Text, txtPassword.Text, txtUrl.Text, txtVersionByte.Text, int.Parse(txtSkip.Text), int.Parse(txtQty.Text));
             DateTime tmendCall = DateTime.UtcNow;
             // Get the count of messages
             int messageCount = messages.Count();
@@ -1311,7 +998,7 @@ namespace SUP
             }
             DisplayRootJSON(ObjectArray);
         }
-    
+
         private void btnCollections_Click(object sender, EventArgs e)
         {
             DateTime tmbeginCall = DateTime.UtcNow;
@@ -1410,7 +1097,7 @@ namespace SUP
         private void btnInquiriesCreated_Click(object sender, EventArgs e)
         {
             DateTime tmbeginCall = DateTime.UtcNow;
-            List<INQState> createdObjects = INQState.GetInquiriesCreatedByAddress(txtSearchAddress.Text , txtLogin.Text, txtPassword.Text, txtUrl.Text, txtVersionByte.Text, int.Parse(txtSkip.Text), int.Parse(txtQty.Text), chkVerbose.Checked);
+            List<INQState> createdObjects = INQState.GetInquiriesCreatedByAddress(txtSearchAddress.Text, txtLogin.Text, txtPassword.Text, txtUrl.Text, txtVersionByte.Text, int.Parse(txtSkip.Text), int.Parse(txtQty.Text), chkVerbose.Checked);
             DateTime tmendCall = DateTime.UtcNow;
             lblTotalBytes.Text = "bytes: ";
             lblTotalTime.Text = "time: ";
@@ -1450,6 +1137,7 @@ namespace SUP
 
             DisplayRootJSON(new JObject[] { JObject.FromObject(Tester) });
         }
+
     }
 }
 

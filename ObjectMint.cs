@@ -6,7 +6,7 @@ using System.IO;
 using System.Reflection;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
-using LevelDB;
+
 using System.Diagnostics;
 using System.Windows.Forms;
 using Gma.QrCodeNet.Encoding;
@@ -978,30 +978,27 @@ namespace SUP
                                     }
 
 
-                                    var SUP = new Options { CreateIfMissing = true };
-
-                                        using (var db = new DB(SUP, @"ipfs"))
+                                    try
+                                    {
+                                        if (File.Exists("IPFS_PINNING_ENABLED"))
                                         {
-
-                                            string ipfsdaemon = db.Get("ipfs-daemon");
-
-                                            if (ipfsdaemon == "true")
+                                            Process process3 = new Process
                                             {
-                                                Process process3 = new Process
+                                                StartInfo = new ProcessStartInfo
                                                 {
-                                                    StartInfo = new ProcessStartInfo
-                                                    {
-                                                        FileName = @"ipfs\ipfs.exe",
-                                                        Arguments = "pin add " + txtIMG.Text.Substring(5, 46),
-                                                        UseShellExecute = false,
-                                                        CreateNoWindow = true
-                                                    }
-                                                };
-                                                process3.Start();
-                                            }
+                                                    FileName = @"ipfs\ipfs.exe",
+                                                    Arguments = "pin add " + txtIMG.Text.Substring(5, 46),
+                                                    UseShellExecute = false,
+                                                    CreateNoWindow = true
+                                                }
+                                            };
+                                            process3.Start();
                                         }
+                                    }
+                                    catch { }
 
-                                        try { Directory.Delete(@"ipfs/" + txtIMG.Text.Substring(5, 46)); } catch { }
+
+                                    try { Directory.Delete(@"ipfs/" + txtIMG.Text.Substring(5, 46)); } catch { }
                                         try
                                         {
                                             Directory.Delete(@"ipfs/" + txtIMG.Text.Substring(5, 46) + "-build");
@@ -1245,30 +1242,27 @@ namespace SUP
                                     btnObjectURN.BackColor = Color.Blue;
                                     btnObjectURN.ForeColor = Color.Yellow;
                                 }
-                                var SUP = new Options { CreateIfMissing = true };
 
-                                    using (var db = new DB(SUP, @"ipfs"))
+                                try
+                                {
+                                    if (File.Exists("IPFS_PINNING_ENABLED"))
                                     {
-
-                                        string ipfsdaemon = db.Get("ipfs-daemon");
-
-                                        if (ipfsdaemon == "true")
+                                        Process process3 = new Process
                                         {
-                                            Process process3 = new Process
+                                            StartInfo = new ProcessStartInfo
                                             {
-                                                StartInfo = new ProcessStartInfo
-                                                {
-                                                    FileName = @"ipfs\ipfs.exe",
-                                                    Arguments = "pin add " + txtURN.Text.Substring(5, 46),
-                                                    UseShellExecute = false,
-                                                    CreateNoWindow = true
-                                                }
-                                            };
-                                            process3.Start();
-                                        }
+                                                FileName = @"ipfs\ipfs.exe",
+                                                Arguments = "pin add " + txtURN.Text.Substring(5, 46),
+                                                UseShellExecute = false,
+                                                CreateNoWindow = true
+                                            }
+                                        };
+                                        process3.Start();
                                     }
+                                }
+                                catch { }
 
-                                    try { Directory.Delete(@"ipfs/" + txtURN.Text.Substring(5, 46)); } catch { }
+                                try { Directory.Delete(@"ipfs/" + txtURN.Text.Substring(5, 46)); } catch { }
                                     try
                                     {
                                         Directory.Delete(@"ipfs/" + txtURN.Text.Substring(5, 46) + "-build");

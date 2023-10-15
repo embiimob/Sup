@@ -1,6 +1,4 @@
 ﻿using AngleSharp.Common;
-using LevelDB;
-using LevelDB.NativePointer;
 using NBitcoin;
 using Newtonsoft.Json;
 using System;
@@ -9,11 +7,9 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Net;
 using System.Security.Cryptography;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
-using System.Windows.Forms;
 
 namespace SUP.P2FK
 {
@@ -112,7 +108,6 @@ namespace SUP.P2FK
 
             try
             {
-                var OBJ = new Options { CreateIfMissing = true };
                 bool fetched = false;
 
                 if (System.IO.File.Exists(@"root\" + objectaddress + @"\BLOCK"))
@@ -1519,7 +1514,6 @@ namespace SUP.P2FK
 
             OBJState objectState = new OBJState();
             string objectaddress = Root.GetPublicAddressByKeyword(searchstring, versionByte);
-            var OBJ = new Options { CreateIfMissing = true };
             bool fetched = false;
             if (System.IO.File.Exists(@"root\" + objectaddress + @"\BLOCK")) { return objectState; }
 
@@ -1680,7 +1674,6 @@ namespace SUP.P2FK
             payload[0] = 0x6F; // 0x6F is the hexadecimal representation of 111
             string objectaddress = Base58.EncodeWithCheckSum(payload);
 
-            var OBJ = new Options { CreateIfMissing = true };
 
             if (System.IO.File.Exists(@"root\" + objectaddress + @"\BLOCK")) { return objectState; }
 
@@ -1739,18 +1732,24 @@ namespace SUP.P2FK
                                     }
 
 
-                                    //attempt to pin fails silently if daemon is not running
-                                    Process process3 = new Process
+                                    try
                                     {
-                                        StartInfo = new ProcessStartInfo
+                                        if (File.Exists("IPFS_PINNING_ENABLED"))
                                         {
-                                            FileName = @"ipfs\ipfs.exe",
-                                            Arguments = "pin add " + transid,
-                                            UseShellExecute = false,
-                                            CreateNoWindow = true
+                                            Process process3 = new Process
+                                            {
+                                                StartInfo = new ProcessStartInfo
+                                                {
+                                                    FileName = @"ipfs\ipfs.exe",
+                                                    Arguments = "pin add " + transid,
+                                                    UseShellExecute = false,
+                                                    CreateNoWindow = true
+                                                }
+                                            };
+                                            process3.Start();
                                         }
-                                    };
-                                    process3.Start();
+                                    }
+                                    catch { }
 
                                 });
 
@@ -1870,17 +1869,24 @@ namespace SUP.P2FK
 
 
                                     //attempt to pin fails silently if daemon is not running
-                                    Process process3 = new Process
+                                    try
                                     {
-                                        StartInfo = new ProcessStartInfo
+                                        if (File.Exists("IPFS_PINNING_ENABLED"))
                                         {
-                                            FileName = @"ipfs\ipfs.exe",
-                                            Arguments = "pin add " + transid,
-                                            UseShellExecute = false,
-                                            CreateNoWindow = true
+                                            Process process3 = new Process
+                                            {
+                                                StartInfo = new ProcessStartInfo
+                                                {
+                                                    FileName = @"ipfs\ipfs.exe",
+                                                    Arguments = "pin add " + transid,
+                                                    UseShellExecute = false,
+                                                    CreateNoWindow = true
+                                                }
+                                            };
+                                            process3.Start();
                                         }
-                                    };
-                                    process3.Start();
+                                    }
+                                    catch { }
 
                                 });
 
@@ -1981,7 +1987,6 @@ namespace SUP.P2FK
 
             List<OBJState> objectStates = new List<OBJState> { };
 
-            var OBJ = new Options { CreateIfMissing = true };
             bool fetched = false;
 
             if (System.IO.File.Exists(@"root\" + objectaddress + @"\BLOCK"))
@@ -2184,7 +2189,6 @@ namespace SUP.P2FK
         public static List<OBJState> GetObjectsOwnedByAddress(string objectaddress, string username, string password, string url, string versionByte = "111", int skip = 0, int qty = -1)
         {
             List<OBJState> objectStates = new List<OBJState> { };
-            var OBJ = new Options { CreateIfMissing = true };
             bool fetched = false;
 
             if (System.IO.File.Exists(@"root\" + objectaddress + @"\BLOCK")) { return objectStates; }
@@ -2247,7 +2251,6 @@ namespace SUP.P2FK
 
 
             List<OBJState> objectStates = new List<OBJState> { };
-            var OBJ = new Options { CreateIfMissing = true };
             bool fetched = false;
 
             if (System.IO.File.Exists(@"root\" + objectaddress + @"\BLOCK")) { return objectStates; }
@@ -2317,7 +2320,6 @@ namespace SUP.P2FK
 
 
             List<COLState> objectStates = new List<COLState> { };
-            var OBJ = new Options { CreateIfMissing = true };
             bool fetched = false;
             bool isKeywordSearch = false;
 
@@ -2530,7 +2532,6 @@ namespace SUP.P2FK
         {
 
             List<OBJState> objectStates = new List<OBJState> { };
-            var OBJ = new Options { CreateIfMissing = true };
             string JSONOBJ;
             string diskpath = "root\\found\\";
 

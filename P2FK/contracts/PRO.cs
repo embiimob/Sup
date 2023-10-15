@@ -1,4 +1,4 @@
-﻿using LevelDB;
+﻿
 using NBitcoin;
 using NBitcoin.RPC;
 using Newtonsoft.Json;
@@ -49,12 +49,12 @@ namespace SUP.P2FK
         public DateTime ChangeDate { get; set; }
         //ensures levelDB is thread safely
         private readonly static object SupLocker = new object();
+        private static char[] specialChars = new char[] { '\\', '/', ':', '*', '?', '"', '<', '>', '|' };
 
         public static PROState GetProfileByAddress(string profileaddress, string username, string password, string url, string versionByte = "111", bool verbose = false)
         {
 
             PROState profileState = new PROState();
-            var OBJ = new Options { CreateIfMissing = true };
            
             if (System.IO.File.Exists(@"root\" + profileaddress + @"\BLOCK")) { return new PROState { }; }
                
@@ -104,25 +104,17 @@ namespace SUP.P2FK
                         string sortableProcessHeight = intProcessHeight.ToString("X").PadLeft(9, '0');
                         logstatus = null;
 
-                        string sigSeen;
-                        lock (SupLocker)
+                        string sigSeen = null;
+
+                        string cleanedSIG = new string(transaction.Signature.Where(c => !specialChars.Contains(c)).ToArray());
+                        if (!System.IO.File.Exists(@"root\sig\" + cleanedSIG))
                         {
-                            using (var db = new DB(OBJ, @"root\pro"))
-                            {
-                                sigSeen = db.Get(transaction.Signature);
-                            }
+                            sigSeen = System.IO.File.ReadAllText(@"root\sig\" + cleanedSIG);
                         }
+
 
                         if (sigSeen == null || sigSeen == transaction.TransactionId)
                         {
-
-                            lock (SupLocker)
-                            {
-                                using (var db = new DB(OBJ, @"root\pro"))
-                                {
-                                    db.Put(transaction.Signature, transaction.TransactionId);
-                                }
-                            }
 
 
                             PRO profileinspector = null;
@@ -215,21 +207,7 @@ namespace SUP.P2FK
                         }
                         else { logstatus = "txid:" + transaction.TransactionId + " transaction failed due to duplicate signature"; }
 
-                        if (verbose)
-                        {
-                            if (logstatus != "")
-                            {
-
-                                lock (SupLocker)
-                                {
-                                    using (var db = new DB(OBJ, @"root\event"))
-                                    {
-                                        db.Put(profileaddress + "!" + sortableProcessHeight + "!" + "0", logstatus);
-                                    }
-                                }
-
-                            }
-                        }
+                        
                     }
 
                 }
@@ -272,7 +250,6 @@ namespace SUP.P2FK
         public static PROState GetProfileByURN(string searchstring, string username, string password, string url, string versionByte = "111", bool verbose = false)
         {
             PROState profileState = new PROState { };
-            var OBJ = new Options { CreateIfMissing = true };
             string JSONOBJ;
             string profileaddress = Root.GetPublicAddressByKeyword(searchstring, versionByte);
 
@@ -369,7 +346,6 @@ namespace SUP.P2FK
         public static List<PROState> GetLocalProfiles(string username, string password, string url, string versionByte = "111", bool verbose = false)
         {
             List<PROState> profileStates = new List<PROState> { };
-            var OBJ = new Options { CreateIfMissing = true };
             string JSONOBJ;
 
             if (!verbose)

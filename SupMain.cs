@@ -1,4 +1,4 @@
-﻿//using LevelDB;
+﻿//
 using NBitcoin.RPC;
 using NBitcoin;
 using SUP.P2FK;
@@ -863,11 +863,7 @@ namespace SUP
 
                 if (File.Exists("IPFS_PINNING_ENABLED"))
                 {
-                    this.Invoke((MethodInvoker)delegate
-                    {
-                        ipfsActive = true;
-                    });
-
+                
                     var process = new Process
                     {
                         StartInfo = new ProcessStartInfo

@@ -1,6 +1,5 @@
 ﻿using AngleSharp.Common;
 using BitcoinNET.RPCClient;
-using LevelDB;
 using NBitcoin;
 using NBitcoin.RPC;
 using Newtonsoft.Json;
@@ -14,7 +13,6 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
-using static BitcoinNET.RPCClient.GetRawDataTransactionResponse;
 
 
 namespace SUP.P2FK
@@ -547,11 +545,6 @@ namespace SUP.P2FK
                         intProcessHeight++;
                         string hexId = GetTransactionIdByHexString(results[i].hex);
                         Root root = new Root();
-
-                        if ( hexId == "c347f1930032397dd6a7a773e02c436d25eaa5f444ecae1c4747c63cf4151f62")
-                        {
-                            string dummy = null;
-                        }
                         root = Root.GetRootByTransactionId(hexId, username, password, url, versionByte, null, null, calculate);
 
                         if (root != null && root.TotalByteSize > 0 && root.Output != null && !rootList.Any(ROOT => ROOT.TransactionId == root.TransactionId) && root.Output.ContainsKey(address) && root.BlockDate.Year > 1975)
