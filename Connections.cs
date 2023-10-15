@@ -1,5 +1,4 @@
-﻿using NBitcoin.RPC;
-using SUP.P2FK;
+﻿using SUP.P2FK;
 using System;
 using System.Diagnostics;
 using System.Drawing;
@@ -144,7 +143,7 @@ namespace SUP
             string walletPassword = "better-password";
             string walletUrl = @"http://127.0.0.1:18332";
             NetworkCredential credentials = new NetworkCredential(walletUsername, walletPassword);
-            RPCClient rpcClient = new RPCClient(credentials, new Uri(walletUrl), NBitcoin.Network.Main);
+            NBitcoin.RPC.RPCClient rpcClient = new NBitcoin.RPC.RPCClient(credentials, new Uri(walletUrl), NBitcoin.Network.Main);
             Task.Run(() =>
             {
                 try
@@ -169,7 +168,7 @@ namespace SUP
                 try
                 {
                     string walletUrl2 = @"http://127.0.0.1:8332";
-                    RPCClient rpcClient2 = new RPCClient(credentials, new Uri(walletUrl2), NBitcoin.Network.Main);
+                    NBitcoin.RPC.RPCClient rpcClient2 = new NBitcoin.RPC.RPCClient(credentials, new Uri(walletUrl2), NBitcoin.Network.Main);
                     string isActive = rpcClient2.GetBalance().ToString();
                     if (decimal.TryParse(isActive, out decimal _))
                     {
@@ -191,7 +190,7 @@ namespace SUP
                 try
                 {
                     string walletUrl3 = @"http://127.0.0.1:9332";
-                    RPCClient rpcClient3 = new RPCClient(credentials, new Uri(walletUrl3), NBitcoin.Network.Main);
+                    NBitcoin.RPC.RPCClient rpcClient3 = new NBitcoin.RPC.RPCClient(credentials, new Uri(walletUrl3), NBitcoin.Network.Main);
                     string isActive = rpcClient3.GetBalance().ToString();
                     if (decimal.TryParse(isActive, out decimal _))
                     {
@@ -213,7 +212,7 @@ namespace SUP
                 try
                 {
                     string walletUrl4 = @"http://127.0.0.1:12832";
-                    RPCClient rpcClient4 = new RPCClient(credentials, new Uri(walletUrl4), NBitcoin.Network.Main);
+                    NBitcoin.RPC.RPCClient rpcClient4 = new NBitcoin.RPC.RPCClient(credentials, new Uri(walletUrl4), NBitcoin.Network.Main);
                     string isActive = rpcClient4.GetBalance().ToString();
                     if (decimal.TryParse(isActive, out decimal _))
                     {
@@ -234,7 +233,7 @@ namespace SUP
                 try
                 {
                     string walletUrl5 = @"http://127.0.0.1:22555";
-                    RPCClient rpcClient5 = new RPCClient(credentials, new Uri(walletUrl5), NBitcoin.Network.Main);
+                    NBitcoin.RPC.RPCClient rpcClient5 = new NBitcoin.RPC.RPCClient(credentials, new Uri(walletUrl5), NBitcoin.Network.Main);
                     string isActive = rpcClient5.GetBalance().ToString();
                     if (decimal.TryParse(isActive, out decimal _))
                     {

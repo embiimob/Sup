@@ -7,8 +7,7 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Diagnostics;
-using BitcoinNET.RPCClient;
-using NBitcoin.RPC;
+using SUP.RPCClient;
 using NBitcoin;
 using Newtonsoft.Json;
 using System.Linq;
@@ -484,7 +483,7 @@ namespace SUP
             string signature = "";
             string signatureAddress = "";
             NetworkCredential credentials = new NetworkCredential("good-user", "better-password");
-            RPCClient rpcClient = new RPCClient(credentials, new Uri(@"http://127.0.0.1:18332"), Network.Main);
+            NBitcoin.RPC.RPCClient rpcClient = new NBitcoin.RPC.RPCClient(credentials, new Uri(@"http://127.0.0.1:18332"), Network.Main);
 
             if (txtFromAddress.Text != "")
             {

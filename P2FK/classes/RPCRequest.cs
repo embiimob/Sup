@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using Newtonsoft.Json;
 
-namespace BitcoinNET.RPCClient
+namespace SUP.RPCClient
 {
     //Courtesy mb300sd Bitcoin.NET
 	[JsonObject(MemberSerialization=MemberSerialization.Fields)]

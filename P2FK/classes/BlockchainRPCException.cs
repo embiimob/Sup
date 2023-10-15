@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace BitcoinNET.RPCClient
+namespace SUP.RPCClient
 {
     //Courtesy mb300sd Bitcoin.NET
 	class CoinRPCException : Exception 

@@ -1,5 +1,4 @@
 ﻿
-using NBitcoin.RPC;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using SUP.P2FK;
@@ -29,7 +28,7 @@ namespace SUP
             string walletUsername = txtLogin.Text;
             string walletPassword = txtPassword.Text;
             NetworkCredential credentials = new NetworkCredential(walletUsername, walletPassword);
-            RPCClient rpcClient = new RPCClient(credentials, new Uri(walletUrl), NBitcoin.Network.Main);
+            NBitcoin.RPC.RPCClient rpcClient = new NBitcoin.RPC.RPCClient(credentials, new Uri(walletUrl), NBitcoin.Network.Main);
 
             try
             {

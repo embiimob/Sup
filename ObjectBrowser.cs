@@ -1,5 +1,4 @@
-﻿
-using SUP.P2FK;
+﻿using SUP.P2FK;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -11,9 +10,6 @@ using System.Windows.Forms;
 using NBitcoin;
 using System.Threading.Tasks;
 using System.IO;
-using NBitcoin.RPC;
-using System.Net;
-using BitcoinNET.RPCClient;
 
 namespace SUP
 {

@@ -1,8 +1,6 @@
-﻿
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 using SUP.P2FK;
 using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Windows.Forms;
 

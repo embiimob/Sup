@@ -8,14 +8,12 @@ using System.Net;
 using System.Security.Cryptography;
 using System.Text;
 using System.Windows.Forms;
-using BitcoinNET.RPCClient;
-using NBitcoin.RPC;
+using SUP.RPCClient;
 using NBitcoin;
 using Newtonsoft.Json;
 using SUP.P2FK;
 using AngleSharp.Common;
 using System.Threading.Tasks;
-
 using System.Reflection;
 
 namespace SUP
@@ -589,7 +587,7 @@ namespace SUP
                         OBJState isobject = new OBJState();
                         List<OBJState> foundobjects = new List<OBJState>();
                         NetworkCredential credentials = new NetworkCredential("good-user", "better-password");
-                        RPCClient rpcClient;
+                        NBitcoin.RPC.RPCClient rpcClient;
                         string myFriendsJson = "";
                         Dictionary<string, string> myFriends = new Dictionary<string, string>();
 
@@ -603,7 +601,7 @@ namespace SUP
 
                         try
                         {
-                            rpcClient = new RPCClient(credentials, new Uri(@"http://127.0.0.1:18332"), Network.Main);
+                            rpcClient = new NBitcoin.RPC.RPCClient(credentials, new Uri(@"http://127.0.0.1:18332"), Network.Main);
                             flattransactions = rpcClient.SendCommand("getrawmempool").ResultString;
                             flattransactions = flattransactions.Replace("\"", "").Replace("[", "").Replace("]", "").Replace("\r", "").Replace("\n", "").Replace(" ", "");
                             newtransactions = flattransactions.Split(',').ToList();
@@ -966,7 +964,7 @@ namespace SUP
             txtOBJP2FK.Text = "BUY" + GetRandomDelimiter() + txtOBJJSON.Text.Length + GetRandomDelimiter() + txtOBJJSON.Text;
 
             NetworkCredential credentials = new NetworkCredential("good-user", "better-password");
-            RPCClient rpcClient = new RPCClient(credentials, new Uri(@"http://127.0.0.1:18332"), Network.Main);
+            NBitcoin.RPC.RPCClient rpcClient = new NBitcoin.RPC.RPCClient(credentials, new Uri(@"http://127.0.0.1:18332"), Network.Main);
             System.Security.Cryptography.SHA256 mySHA256 = SHA256Managed.Create();
             byte[] hashValue = mySHA256.ComputeHash(Encoding.ASCII.GetBytes(txtOBJP2FK.Text));
             string signatureAddress;
@@ -1083,7 +1081,7 @@ namespace SUP
             txtOBJP2FK.Text = "LST" + GetRandomDelimiter() + txtOBJJSON.Text.Length + GetRandomDelimiter() + txtOBJJSON.Text;
 
             NetworkCredential credentials = new NetworkCredential("good-user", "better-password");
-            RPCClient rpcClient = new RPCClient(credentials, new Uri(@"http://127.0.0.1:18332"), Network.Main);
+            NBitcoin.RPC.RPCClient rpcClient = new NBitcoin.RPC.RPCClient(credentials, new Uri(@"http://127.0.0.1:18332"), Network.Main);
             System.Security.Cryptography.SHA256 mySHA256 = SHA256Managed.Create();
             byte[] hashValue = mySHA256.ComputeHash(Encoding.ASCII.GetBytes(txtOBJP2FK.Text));
             string signatureAddress;

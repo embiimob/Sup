@@ -3,21 +3,19 @@ using System.Drawing;
 using System.IO;
 using System.Reflection;
 using System.Text.RegularExpressions;
-
 using System.Diagnostics;
 using System.Windows.Forms;
 using Gma.QrCodeNet.Encoding;
 using Gma.QrCodeNet.Encoding.Windows.Render;
 using NBitcoin;
-using NBitcoin.RPC;
 using SUP.P2FK;
+using SUP.RPCClient;
 using System.Collections.Generic;
 using System.Linq;
 using Newtonsoft.Json;
 using System.Net;
 using System.Security.Cryptography;
 using System.Text;
-using BitcoinNET.RPCClient;
 
 
 namespace SUP
@@ -150,7 +148,7 @@ namespace SUP
                 txtOBJP2FK.Text = objString;
 
                 NetworkCredential credentials = new NetworkCredential("good-user", "better-password");
-                RPCClient rpcClient = new RPCClient(credentials, new Uri("http://127.0.0.1:18332"), Network.Main);
+                NBitcoin.RPC.RPCClient rpcClient = new NBitcoin.RPC.RPCClient(credentials, new Uri("http://127.0.0.1:18332"), Network.Main);
                 System.Security.Cryptography.SHA256 mySHA256 = SHA256Managed.Create();
                 byte[] hashValue = mySHA256.ComputeHash(Encoding.UTF8.GetBytes(txtOBJP2FK.Text));
 
@@ -437,7 +435,7 @@ namespace SUP
             else
             {
                 NetworkCredential credentials = new NetworkCredential("good-user", "better-password");
-                RPCClient rpcClient = new RPCClient(credentials, new Uri("http://127.0.0.1:18332"), Network.Main);
+                NBitcoin.RPC.RPCClient rpcClient = new NBitcoin.RPC.RPCClient(credentials, new Uri("http://127.0.0.1:18332"), Network.Main);
                 string newAddress = "";
                 string P2FKASCII = "";
                 int attempt = 0;
@@ -1000,7 +998,7 @@ namespace SUP
                 else { }
 
                 NetworkCredential credentials = new NetworkCredential("good-user", "better-password");
-                RPCClient rpcClient = new RPCClient(credentials, new Uri("http://127.0.0.1:18332"), Network.Main);
+                NBitcoin.RPC.RPCClient rpcClient = new NBitcoin.RPC.RPCClient(credentials, new Uri("http://127.0.0.1:18332"), Network.Main);
                 string accountName = "";
                 try { accountName = rpcClient.SendCommand("getaccount", address).ResultString; } catch { }
                 if (accountName != "") { btnMint.Enabled = false; }

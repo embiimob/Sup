@@ -1,7 +1,5 @@
 ﻿using AngleSharp.Common;
-
 using NBitcoin;
-using NBitcoin.RPC;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -372,7 +370,7 @@ namespace SUP.P2FK
                     if (objectState.MaxBlockHeight > 0)
                     {
                         NetworkCredential credentials = new NetworkCredential(username, password);
-                        RPCClient rpcClient = new RPCClient(credentials, new Uri(url), Network.Main);
+                        NBitcoin.RPC.RPCClient rpcClient = new NBitcoin.RPC.RPCClient(credentials, new Uri(url), Network.Main);
                         dynamic blockCountResult = rpcClient.SendCommand("getblockcount");
                         int currentBlockHeight = int.Parse(blockCountResult.ResultString);
 

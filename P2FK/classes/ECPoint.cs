@@ -103,18 +103,6 @@ namespace SUP.P2FK
             return new ECPoint(x, y);
         }
 
-        public ECPoint Negate()
-        {
-            var r = (ECPoint) Clone();
-            r._y = -r._y + Secp256k1.P;
-            return r;
-        }
-
-        public ECPoint Subtract(ECPoint b)
-        {
-            return Add(b.Negate());
-        }
-
         public ECPoint Add(ECPoint b)
         {
             BigInteger m;

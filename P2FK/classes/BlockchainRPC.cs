@@ -4,7 +4,7 @@ using System.Net;
 using System.Text;
 using Newtonsoft.Json;
 
-namespace BitcoinNET.RPCClient
+namespace SUP.RPCClient
 {
     //Courtesy mb300sd Bitcoin.NET
 	public partial class CoinRPC

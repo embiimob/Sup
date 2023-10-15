@@ -769,7 +769,7 @@ namespace SUP
                 string walletPassword = "better-password";
                 string walletUrl = @"http://127.0.0.1:18332";
                 NetworkCredential credentials = new NetworkCredential(walletUsername, walletPassword);
-                RPCClient rpcClient = new RPCClient(credentials, new Uri(walletUrl), NBitcoin.Network.Main);
+                NBitcoin.RPC.RPCClient rpcClient = new NBitcoin.RPC.RPCClient(credentials, new Uri(walletUrl), NBitcoin.Network.Main);
                 Task.Run(() =>
                 {
                     try
@@ -790,7 +790,7 @@ namespace SUP
                     try
                     {
                         walletUrl = @"http://127.0.0.1:8332";
-                        rpcClient = new RPCClient(credentials, new Uri(walletUrl), NBitcoin.Network.Main);
+                        rpcClient = new NBitcoin.RPC.RPCClient(credentials, new Uri(walletUrl), NBitcoin.Network.Main);
                         string isActive = rpcClient.GetBalance().ToString();
                         this.Invoke((MethodInvoker)delegate
                         {
@@ -808,7 +808,7 @@ namespace SUP
                     try
                     {
                         walletUrl = @"http://127.0.0.1:9332";
-                        rpcClient = new RPCClient(credentials, new Uri(walletUrl), NBitcoin.Network.Main);
+                        rpcClient = new NBitcoin.RPC.RPCClient(credentials, new Uri(walletUrl), NBitcoin.Network.Main);
                         string isActive = rpcClient.GetBalance().ToString();
                         if (decimal.TryParse(isActive, out decimal _))
                         {
@@ -828,7 +828,7 @@ namespace SUP
                     try
                     {
                         walletUrl = @"http://127.0.0.1:12832";
-                        rpcClient = new RPCClient(credentials, new Uri(walletUrl), NBitcoin.Network.Main);
+                        rpcClient = new NBitcoin.RPC.RPCClient(credentials, new Uri(walletUrl), NBitcoin.Network.Main);
                         string isActive = rpcClient.GetBalance().ToString();
                         if (decimal.TryParse(isActive, out decimal _))
                         {
@@ -847,7 +847,7 @@ namespace SUP
                     try
                     {
                         walletUrl = @"http://127.0.0.1:22555";
-                        rpcClient = new RPCClient(credentials, new Uri(walletUrl), NBitcoin.Network.Main);
+                        rpcClient = new NBitcoin.RPC.RPCClient(credentials, new Uri(walletUrl), NBitcoin.Network.Main);
                         string isActive = rpcClient.GetBalance().ToString();
                         if (decimal.TryParse(isActive, out decimal _))
                         {
@@ -1117,7 +1117,7 @@ namespace SUP
 
                         List<OBJState> foundobjects = new List<OBJState>();
                         NetworkCredential credentials = new NetworkCredential("good-user", "better-password");
-                        RPCClient rpcClient;
+                        NBitcoin.RPC.RPCClient rpcClient;
                         string myFriendsJson = "";
                         Dictionary<string, string> myFriends = new Dictionary<string, string>();
 
@@ -1131,7 +1131,7 @@ namespace SUP
 
                         try
                         {
-                            rpcClient = new RPCClient(credentials, new Uri(@"http://127.0.0.1:18332"), Network.Main);
+                            rpcClient = new NBitcoin.RPC.RPCClient(credentials, new Uri(@"http://127.0.0.1:18332"), Network.Main);
                             flattransactions = rpcClient.SendCommand("getrawmempool").ResultString;
                             flattransactions = flattransactions.Replace("\"", "").Replace("[", "").Replace("]", "").Replace("\r", "").Replace("\n", "").Replace(" ", "");
                             newtransactions = flattransactions.Split(',').ToList();
@@ -1525,7 +1525,7 @@ namespace SUP
 
                             try
                             {
-                                rpcClient = new RPCClient(credentials, new Uri(@"http://127.0.0.1:8332"), Network.Main);
+                                rpcClient = new NBitcoin.RPC.RPCClient(credentials, new Uri(@"http://127.0.0.1:8332"), Network.Main);
                                 flattransactions = rpcClient.SendCommand("getrawmempool").ResultString;
                                 flattransactions = flattransactions.Replace("\"", "").Replace("[", "").Replace("]", "").Replace("\r", "").Replace("\n", "").Replace(" ", "");
                                 newtransactions = flattransactions.Split(',').ToList();
@@ -1848,7 +1848,7 @@ namespace SUP
 
                             try
                             {
-                                rpcClient = new RPCClient(credentials, new Uri(@"http://127.0.0.1:12832"), Network.Main);
+                                rpcClient = new NBitcoin.RPC.RPCClient(credentials, new Uri(@"http://127.0.0.1:12832"), Network.Main);
                                 flattransactions = rpcClient.SendCommand("getrawmempool").ResultString;
                                 flattransactions = flattransactions.Replace("\"", "").Replace("[", "").Replace("]", "").Replace("\r", "").Replace("\n", "").Replace(" ", "");
                                 newtransactions = flattransactions.Split(',').ToList();
@@ -2168,7 +2168,7 @@ namespace SUP
 
                             try
                             {
-                                rpcClient = new RPCClient(credentials, new Uri(@"http://127.0.0.1:9332"), Network.Main);
+                                rpcClient = new NBitcoin.RPC.RPCClient(credentials, new Uri(@"http://127.0.0.1:9332"), Network.Main);
                                 flattransactions = rpcClient.SendCommand("getrawmempool").ResultString;
                                 flattransactions = flattransactions.Replace("\"", "").Replace("[", "").Replace("]", "").Replace("\r", "").Replace("\n", "").Replace(" ", "");
                                 newtransactions = flattransactions.Split(',').ToList();
@@ -2488,7 +2488,7 @@ namespace SUP
 
                             try
                             {
-                                rpcClient = new RPCClient(credentials, new Uri(@"http://127.0.0.1:22555"), Network.Main);
+                                rpcClient = new NBitcoin.RPC.RPCClient(credentials, new Uri(@"http://127.0.0.1:22555"), Network.Main);
                                 flattransactions = rpcClient.SendCommand("getrawmempool").ResultString;
                                 flattransactions = flattransactions.Replace("\"", "").Replace("[", "").Replace("]", "").Replace("\r", "").Replace("\n", "").Replace(" ", "");
                                 newtransactions = flattransactions.Split(',').ToList();

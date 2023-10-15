@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace BitcoinNET.RPCClient
+namespace SUP.RPCClient
 {
     //Courtesy mb300sd Bitcoin.NET
 	public partial class CoinRPC

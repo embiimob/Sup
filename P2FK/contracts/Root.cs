@@ -1,7 +1,6 @@
 ﻿using AngleSharp.Common;
-using BitcoinNET.RPCClient;
+using SUP.RPCClient;
 using NBitcoin;
-using NBitcoin.RPC;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -137,7 +136,7 @@ namespace SUP.P2FK
                         try
                         {
                             NetworkCredential credentials = new NetworkCredential(username, password);
-                            RPCClient rpcClient = new RPCClient(credentials, new Uri(url), Network.Main);
+                            NBitcoin.RPC.RPCClient rpcClient = new NBitcoin.RPC.RPCClient(credentials, new Uri(url), Network.Main);
                             string hash = deserializedObject.blockhash;
                             dynamic blockobject = rpcClient.SendCommand("getblock", hash).Result;
                             if (blockobject != null)
@@ -420,7 +419,7 @@ namespace SUP.P2FK
                         .Replace("-", String.Empty);
 
                     NetworkCredential credentials = new NetworkCredential(username, password);
-                    RPCClient rpcClient = new RPCClient(credentials, new Uri(url), Network.Main);
+                    NBitcoin.RPC.RPCClient rpcClient = new NBitcoin.RPC.RPCClient(credentials, new Uri(url), Network.Main);
                     try
                     {
                         string result = rpcClient.SendCommand(
@@ -802,7 +801,7 @@ namespace SUP.P2FK
             byte[] output = new byte[rootbytes.Length - (secondIndex + 1)];
             Array.Copy(rootbytes, secondIndex + 1, output, 0, output.Length);
             NetworkCredential credentials = new NetworkCredential(username, password);
-            RPCClient rpcClient = new RPCClient(credentials, new Uri(url));
+            NBitcoin.RPC.RPCClient rpcClient = new NBitcoin.RPC.RPCClient(credentials, new Uri(url));
             string privKeyHex;
             try
             {
@@ -827,7 +826,7 @@ namespace SUP.P2FK
             {
                 // generate public key from private key
                 NetworkCredential credentials = new NetworkCredential(username, password);
-                RPCClient rpcClient = new RPCClient(credentials, new Uri(url));
+                NBitcoin.RPC.RPCClient rpcClient = new NBitcoin.RPC.RPCClient(credentials, new Uri(url));
                 string privKeyHex;
                 try
                 {

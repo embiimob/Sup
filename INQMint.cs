@@ -3,7 +3,6 @@ using System.Drawing;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using NBitcoin;
-using NBitcoin.RPC;
 using SUP.P2FK;
 using System.Collections.Generic;
 using Newtonsoft.Json;
@@ -43,7 +42,7 @@ namespace SUP
             if (ismint)
             {
                 NetworkCredential credentials = new NetworkCredential("good-user", "better-password");
-                RPCClient rpcClient = new RPCClient(credentials, new Uri("http://127.0.0.1:18332"), Network.Main);
+                NBitcoin.RPC.RPCClient rpcClient = new NBitcoin.RPC.RPCClient(credentials, new Uri("http://127.0.0.1:18332"), Network.Main);
              
                 string P2FKASCII = "";
                 char[] specialChars = new char[] { '\\', '/', ':', '*', '?', '"', '<', '>', '|' };
@@ -81,7 +80,7 @@ namespace SUP
                 if (ismint)
                 {
                     NetworkCredential credentials = new NetworkCredential("good-user", "better-password");
-                    RPCClient rpcClient = new RPCClient(credentials, new Uri("http://127.0.0.1:18332"), Network.Main);
+                    NBitcoin.RPC.RPCClient rpcClient = new NBitcoin.RPC.RPCClient(credentials, new Uri("http://127.0.0.1:18332"), Network.Main);
                     ANSAddress = rpcClient.SendCommand("getnewaddress", attributeControl.Text + "!" + DateTime.UtcNow.ToString("yyyyMMddHHmmss")).ResultString;
 
                 }

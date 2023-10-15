@@ -1,6 +1,5 @@
 ﻿
 using NBitcoin;
-using NBitcoin.RPC;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -360,7 +359,7 @@ namespace SUP.P2FK
                 catch { }
             }
             NetworkCredential credentials = new NetworkCredential("good-user", "better-password");
-            RPCClient rpcClient = new RPCClient(credentials, new Uri(@"http://127.0.0.1:18332"), Network.Main);
+            NBitcoin.RPC.RPCClient rpcClient = new NBitcoin.RPC.RPCClient(credentials, new Uri(@"http://127.0.0.1:18332"), Network.Main);
 
             string addressesString = "";
             try
