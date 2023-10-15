@@ -520,8 +520,10 @@ namespace SUP
 
         private void btnPurge_Click(object sender, EventArgs e)
         {
-        
-             try{ Directory.Delete("root", true);} catch{ }
+
+            try { Directory.Delete("root", true); } catch { }
+            try { Directory.CreateDirectory("root\\sig");} catch { }
+
 
         }
 

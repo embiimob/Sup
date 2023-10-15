@@ -1147,7 +1147,7 @@ namespace SUP
         private void ButtonGetFoundObjectsClick(object sender, EventArgs e)
         {
             DateTime tmbeginCall = DateTime.UtcNow;
-            List<OBJState> ownedObjects = OBJState.GetFoundObjects(txtLogin.Text, txtPassword.Text, txtUrl.Text, txtVersionByte.Text, int.Parse(txtSkip.Text), int.Parse(txtQty.Text));
+            List<OBJState> ownedObjects = OBJState.GetFoundObjects(txtLogin.Text, txtPassword.Text, txtUrl.Text, txtVersionByte.Text,chkVerbose.Checked);
             DateTime tmendCall = DateTime.UtcNow;
             lblTotalBytes.Text = "bytes: ";
             lblTotalTime.Text = "time: ";
@@ -1191,16 +1191,10 @@ namespace SUP
         private void ButtonGetPublicMessages_Click(object sender, EventArgs e)
         {
             DateTime tmbeginCall = DateTime.UtcNow;
-            dynamic deserializedObject = OBJState.GetPublicMessagesByAddress(txtSearchAddress.Text, txtLogin.Text, txtPassword.Text, txtUrl.Text, txtVersionByte.Text, int.Parse(txtSkip.Text), int.Parse(txtQty.Text));
+            List<MessageObject> messages= OBJState.GetPublicMessagesByAddress(txtSearchAddress.Text, txtLogin.Text, txtPassword.Text, txtUrl.Text, txtVersionByte.Text, int.Parse(txtSkip.Text), int.Parse(txtQty.Text));
             DateTime tmendCall = DateTime.UtcNow;
-
-            // Cast deserializedObject to a specific type
-            var messages = ((List<object>)deserializedObject.Messages).Cast<dynamic>();
-
             // Get the count of messages
             int messageCount = messages.Count();
-
-
 
             lblTotalBytes.Text = "bytes: ";
             lblTotalTime.Text = "time: ";
@@ -1212,24 +1206,23 @@ namespace SUP
             lblTotalTime.Text = "time: " + Math.Truncate(elapsedMilliseconds);
             lblTotal.Text = "total: " + messageCount.ToString();
             //var json = JsonConvert.SerializeObject(deserializedObject);
-            DisplayRootJSON(new JObject[] { JObject.FromObject(deserializedObject) });
+            JObject[] ObjectArray = new JObject[messages.Count];
+            int objectcount = 0;
+            foreach (object obj in messages)
+            {
+
+                ObjectArray[objectcount++] = JObject.FromObject(obj);
+            }
+            DisplayRootJSON(ObjectArray);
         }
 
         private void ButtonGetPrivateMessages_Click(object sender, EventArgs e)
         {
-
-
             DateTime tmbeginCall = DateTime.UtcNow;
-            dynamic deserializedObject = OBJState.GetPrivateMessagesByAddress(txtSearchAddress.Text, txtLogin.Text, txtPassword.Text, txtUrl.Text, txtVersionByte.Text, int.Parse(txtSkip.Text), int.Parse(txtQty.Text));
+            List<MessageObject> messages = OBJState.GetPrivateMessagesByAddress(txtSearchAddress.Text, txtLogin.Text, txtPassword.Text, txtUrl.Text, txtVersionByte.Text, int.Parse(txtSkip.Text), int.Parse(txtQty.Text));
             DateTime tmendCall = DateTime.UtcNow;
-
-            // Cast deserializedObject to a specific type
-            var messages = ((List<object>)deserializedObject.Messages).Cast<dynamic>();
-
             // Get the count of messages
             int messageCount = messages.Count();
-
-
 
             lblTotalBytes.Text = "bytes: ";
             lblTotalTime.Text = "time: ";
@@ -1241,10 +1234,14 @@ namespace SUP
             lblTotalTime.Text = "time: " + Math.Truncate(elapsedMilliseconds);
             lblTotal.Text = "total: " + messageCount.ToString();
             //var json = JsonConvert.SerializeObject(deserializedObject);
-            DisplayRootJSON(new JObject[] { JObject.FromObject(deserializedObject) });
+            JObject[] ObjectArray = new JObject[messages.Count];
+            int objectcount = 0;
+            foreach (object obj in messages)
+            {
 
-
-
+                ObjectArray[objectcount++] = JObject.FromObject(obj);
+            }
+            DisplayRootJSON(ObjectArray);
 
         }
 

@@ -3246,61 +3246,38 @@ namespace SUP
             }
             catch { }
 
-            OBJState.GetObjectByAddress(_objectaddress, "good-user", "better-password", "http://127.0.0.1:18332", "111", true);
-
-
-            var trans = new Options { CreateIfMissing = true };
-
-            using (var db = new DB(trans, @"root\event"))
+           OBJState OBJEvents = OBJState.GetObjectByAddress(_objectaddress, "good-user", "better-password", "http://127.0.0.1:18332", "111", true);
+            OBJEvents.ChangeLog.Reverse();
+            foreach (string eventMessage in OBJEvents.ChangeLog.Skip(numChangesDisplayed).Take(10))
             {
-                string lastKey = db.Get("lastkey!" + _objectaddress);
-                if (lastKey == null) { return; }
-                LevelDB.Iterator it = db.CreateIterator();
-                for (
-                   it.Seek(lastKey);
-                  it.IsValid() && it.KeyAsString().StartsWith(_objectaddress) && rownum <= numChangesDisplayed + 10;
-                    it.Prev()
-                 )
 
+                string process = eventMessage;
+                List<string> transMessagePacket = JsonConvert.DeserializeObject<List<string>>(process);
+                string fromAddress = TruncateAddress(transMessagePacket[0]);
+                string toAddress = TruncateAddress(transMessagePacket[1]);
+                string action = transMessagePacket[2];
+                string qty = transMessagePacket[3];
+                string amount = transMessagePacket[4];
+                string status = transMessagePacket[5];
+                string tstamp = "19750807121212";//it.KeyAsString().Split('!')[1];
 
+                System.Drawing.Color bgcolor;
+                if (rownum % 2 == 0)
                 {
-                    if (rownum > numChangesDisplayed)
-                    {
-
-                        string process = it.ValueAsString();
-
-                        List<string> transMessagePacket = JsonConvert.DeserializeObject<List<string>>(process);
-
-                        string fromAddress = TruncateAddress(transMessagePacket[0]);
-                        string toAddress = TruncateAddress(transMessagePacket[1]);
-                        string action = transMessagePacket[2];
-                        string qty = transMessagePacket[3];
-                        string amount = transMessagePacket[4];
-                        string status = transMessagePacket[5];
-                        string tstamp = it.KeyAsString().Split('!')[1];
-
-                        System.Drawing.Color bgcolor;
-                        if (rownum % 2 == 0)
-                        {
-                            bgcolor = System.Drawing.Color.White;
-                        }
-                        else
-                        {
-                            bgcolor = System.Drawing.Color.LightGray;
-                        }
-
-
-
-
-                        CreateTransRow(fromAddress, transMessagePacket[0], toAddress, transMessagePacket[1], action, qty, amount, DateTime.ParseExact(tstamp, "yyyyMMddHHmmss", CultureInfo.InvariantCulture), status, bgcolor, transFlow);
-
-                    }
-                    rownum++;
+                    bgcolor = System.Drawing.Color.White;
                 }
-                it.Dispose();
-            }
+                else
+                {
+                    bgcolor = System.Drawing.Color.LightGray;
+                }
 
-            numChangesDisplayed += 10;
+                CreateTransRow(fromAddress, transMessagePacket[0], toAddress, transMessagePacket[1], action, qty, amount, DateTime.ParseExact(tstamp, "yyyyMMddHHmmss", CultureInfo.InvariantCulture), status, bgcolor, transFlow);
+
+
+                rownum++;
+                numChangesDisplayed++;
+            }
+          
             transFlow.ResumeLayout();
             transFlow.Visible = true;
             KeysFlow.Visible = true;

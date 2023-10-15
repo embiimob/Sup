@@ -131,7 +131,7 @@ namespace SUP
                             }));
 
                         }
-                        createdObjects = OBJState.GetFoundObjects("good-user", "better-password", @"http://127.0.0.1:18332", "111", 0, -1);
+                        createdObjects = OBJState.GetFoundObjects("good-user", "better-password", @"http://127.0.0.1:18332", "111", calculate);
 
 
                     }
