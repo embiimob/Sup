@@ -338,8 +338,6 @@ http://bitfossil.org/7033eb8138de0d3f4be111a57dfb8319b400d3b6a6f5b387a22b334ebb9
 
 - this experiment uses mazacoin core; their latest official release has been included in the deployment https://github.com/mazacoin/maza
 
-- this experiment uses oodrive's levelDB; a stable release has been included in the deployment https://github.com/oodrive/leveldb.net
-
 - this experiment uses the most recent ipfs kubo command line tool found here https://github.com/ipfs/kubo/releases/download/v0.22.0/kubo_v0.22.0_windows-amd64.zip
 
 - see the example transaction JSON files https://github.com/embiimob/Sup/tree/master/P2FK/samples to begin experimenting with the entry and trading of your own Sup!? objects
