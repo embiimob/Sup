@@ -570,6 +570,32 @@ namespace SUP
                                                     });
 
                                                 }
+                                                else
+                                                {
+                                                    Task.Run(() =>
+                                                    {
+                                                        DateTime startTime = DateTime.Now;
+
+                                                    while (DateTime.Now - startTime < TimeSpan.FromSeconds(10))
+                                                    {
+                                                        // Check if the file exists
+                                                        if (File.Exists(imgurn))
+                                                        {
+                                                            // File exists, so perform the desired action
+                                                            this.Invoke((Action)(() =>
+                                                            {
+                                                                foundObject.ObjectImage.SizeMode = PictureBoxSizeMode.Zoom;
+                                                                foundObject.ObjectImage.ImageLocation = imgurn;
+                                                            }));
+                                                            break; // Exit the loop since you've found the file
+                                                        }
+
+                                                        // Sleep for 100 milliseconds before the next check
+                                                        System.Threading.Thread.Sleep(100);
+                                                    }
+                                                    });
+
+                                                }
 
                                                 break;
                                             case "HTTP":

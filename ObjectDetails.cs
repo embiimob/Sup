@@ -240,8 +240,8 @@ namespace SUP
                         Padding = new System.Windows.Forms.Padding(3)
                     };
 
-                    rowPanel.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 300));
-                    rowPanel.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 110));
+                    rowPanel.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 310));
+                    rowPanel.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 100));
 
 
                     LinkLabel keyLabel = new LinkLabel();
