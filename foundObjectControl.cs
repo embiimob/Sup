@@ -114,6 +114,8 @@ namespace SUP
                         foreach (string key in rootItem.Keyword.Keys)
                         {
                             try { File.Delete(@"root\" + key + @"\GetObjectsByAddress.json"); }catch { }
+                            try { File.Delete(@"root\" + key + @"\GetObjectsCreatedByAddress.json"); } catch { }
+                            try { File.Delete(@"root\" + key + @"\GetObjectsOwnedByAddress.json"); } catch { }
                         }
 
                     }
@@ -150,9 +152,6 @@ namespace SUP
                         {
 
                         }
-
-                        //this may no longer be necessary...
-                        //if (ObjectId.Text != null) { try { Directory.Delete(@"root\" + ObjectId.Text, true); } catch { } }                        
 
                     }
                     catch { }

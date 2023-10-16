@@ -148,6 +148,7 @@ namespace SUP
                             {
                                 profileCheck = searchprofile.Creators.First();
                             }
+                            
 
                         }
                         else
@@ -171,7 +172,8 @@ namespace SUP
                         createdObjects = OBJState.GetObjectsByAddress(profileCheck, "good-user", "better-password", @"http://127.0.0.1:18332", "111", 0, -1,calculate);
 
                         this.Invoke((Action)(() =>
-                        {   if (searchprofile.URN != null || createdObjects.Count > 0)
+                        {   
+                            if (searchprofile.URN != null || createdObjects.Count > 0 || txtSearchAddress.Text.StartsWith("#"))
                             {
                                 profileURN.Links[0].LinkData = profileCheck;
                                 profileURN.LinkColor = System.Drawing.SystemColors.Highlight;
@@ -1744,18 +1746,20 @@ namespace SUP
                     loadQty -= flowLayoutPanel1.Controls.Count;
 
 
-
                     if (txtSearchAddress.Text.ToLower().StartsWith("http"))
                     {
                         flowLayoutPanel1.Controls.Clear();
                         flowLayoutPanel1.AutoScroll = false;
 
                         var webBrowser1 = new Microsoft.Web.WebView2.WinForms.WebView2();
-                        webBrowser1.Size = flowLayoutPanel1.Size;
+
+                        // Set the initial size of the webBrowser1
+                        webBrowser1.Size = new Size(flowLayoutPanel1.Width - 10, flowLayoutPanel1.Height - 40);
 
                         flowLayoutPanel1.SizeChanged += (sender, e) =>
                         {
-                            webBrowser1.Size = flowLayoutPanel1.Size;
+                            // Adjust the size of webBrowser1 when the flowLayoutPanel's size changes
+                            webBrowser1.Size = new Size(flowLayoutPanel1.Width - 10, flowLayoutPanel1.Height - 40);
                         };
 
                         this.Invoke((Action)(async () =>
@@ -1765,7 +1769,6 @@ namespace SUP
                             flowLayoutPanel1.Controls.Add(webBrowser1);
                             pages.Visible = false;
                         }));
-
                     }
                     else
                     {

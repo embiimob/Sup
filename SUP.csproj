@@ -99,12 +99,15 @@
     </Reference>
     <Reference Include="Microsoft.Web.WebView2.Core, Version=1.0.2045.28, Culture=neutral, PublicKeyToken=2a8ab48044d2601e, processorArchitecture=MSIL">
       <HintPath>..includes\Microsoft.Web.WebView2.Core.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="Microsoft.Web.WebView2.WinForms, Version=1.0.2045.28, Culture=neutral, PublicKeyToken=2a8ab48044d2601e, processorArchitecture=MSIL">
       <HintPath>..includes\Microsoft.Web.WebView2.WinForms.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="Microsoft.Web.WebView2.Wpf, Version=1.0.2045.28, Culture=neutral, PublicKeyToken=2a8ab48044d2601e, processorArchitecture=MSIL">
       <HintPath>..includes\Microsoft.Web.WebView2.Wpf.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="NAudio, Version=2.1.0.0, Culture=neutral, PublicKeyToken=e279aa5131008a41, processorArchitecture=MSIL">
       <HintPath>..includes\NAudio.dll</HintPath>
@@ -171,10 +174,10 @@
       <HintPath>..includes\System.Runtime.CompilerServices.Unsafe.dll</HintPath>
     </Reference>
     <Reference Include="System.Security.AccessControl, Version=4.1.3.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <HintPath>packages\System.Security.AccessControl.4.7.0\lib\net461\System.Security.AccessControl.dll</HintPath>
+      <HintPath>..includes\System.Security.AccessControl.dll</HintPath>
     </Reference>
     <Reference Include="System.Security.Principal.Windows, Version=4.1.3.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <HintPath>packages\System.Security.Principal.Windows.4.7.0\lib\net461\System.Security.Principal.Windows.dll</HintPath>
+      <HintPath>..includes\System.Security.Principal.Windows.dll</HintPath>
     </Reference>
     <Reference Include="System.Text.Encoding.CodePages, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <HintPath>..includes\System.Text.Encoding.CodePages.dll</HintPath>
@@ -503,6 +506,19 @@
     <Content Include="includes\AngleSharp.Css.xml" />
     <Content Include="includes\AngleSharp.dll" />
     <Content Include="includes\AngleSharp.xml" />
+    <Content Include="includes\System.Security.AccessControl.dll" />
+    <Content Include="includes\System.Security.AccessControl.xml" />
+    <Content Include="includes\System.Security.Principal.Windows.dll" />
+    <Content Include="includes\System.Security.Principal.Windows.xml" />
+    <Content Include="runtimes\win-arm64\native\WebView2Loader.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="runtimes\win-x64\native\WebView2Loader.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="runtimes\win-x86\native\WebView2Loader.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <None Include="includes\disco.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
@@ -731,28 +747,14 @@
     <Content Include="maza-qt.exe">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="runtimes\win-x64\native\WebView2Loader.dll">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="runtimes\win-x86\native\WebView2Loader.dll">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="x64\leveldb.dll">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="x86\leveldb.dll">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <Import Project="packages\Microsoft.Web.WebView2.1.0.2045.28\build\Microsoft.Web.WebView2.targets" Condition="Exists('packages\Microsoft.Web.WebView2.1.0.2045.28\build\Microsoft.Web.WebView2.targets')" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>
       <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
     </PropertyGroup>
-    <Error Condition="!Exists('packages\LevelDB.Standard.2.1.6.1\build\net4\LevelDB.Standard.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\LevelDB.Standard.2.1.6.1\build\net4\LevelDB.Standard.targets'))" />
     <Error Condition="!Exists('packages\Microsoft.Web.WebView2.1.0.2045.28\build\Microsoft.Web.WebView2.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\Microsoft.Web.WebView2.1.0.2045.28\build\Microsoft.Web.WebView2.targets'))" />
   </Target>
-  <Import Project="packages\LevelDB.Standard.2.1.6.1\build\net4\LevelDB.Standard.targets" Condition="Exists('packages\LevelDB.Standard.2.1.6.1\build\net4\LevelDB.Standard.targets')" />
-  <Import Project="packages\Microsoft.Web.WebView2.1.0.2045.28\build\Microsoft.Web.WebView2.targets" Condition="Exists('packages\Microsoft.Web.WebView2.1.0.2045.28\build\Microsoft.Web.WebView2.targets')" />
 </Project>

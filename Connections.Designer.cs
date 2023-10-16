@@ -242,7 +242,7 @@
             // 
             // btnClearIPFSisLoadingCache
             // 
-            this.btnClearIPFSisLoadingCache.Location = new System.Drawing.Point(432, 363);
+            this.btnClearIPFSisLoadingCache.Location = new System.Drawing.Point(441, 363);
             this.btnClearIPFSisLoadingCache.Name = "btnClearIPFSisLoadingCache";
             this.btnClearIPFSisLoadingCache.Size = new System.Drawing.Size(122, 23);
             this.btnClearIPFSisLoadingCache.TabIndex = 156;
@@ -433,7 +433,7 @@
             // 
             // btnPurgeIPFS
             // 
-            this.btnPurgeIPFS.Location = new System.Drawing.Point(560, 363);
+            this.btnPurgeIPFS.Location = new System.Drawing.Point(569, 363);
             this.btnPurgeIPFS.Name = "btnPurgeIPFS";
             this.btnPurgeIPFS.Size = new System.Drawing.Size(104, 23);
             this.btnPurgeIPFS.TabIndex = 128;
@@ -444,7 +444,7 @@
             // btnUnpinIPFS
             // 
             this.btnUnpinIPFS.Enabled = false;
-            this.btnUnpinIPFS.Location = new System.Drawing.Point(351, 363);
+            this.btnUnpinIPFS.Location = new System.Drawing.Point(360, 363);
             this.btnUnpinIPFS.Name = "btnUnpinIPFS";
             this.btnUnpinIPFS.Size = new System.Drawing.Size(75, 23);
             this.btnUnpinIPFS.TabIndex = 127;
@@ -455,7 +455,7 @@
             // btnPinIPFS
             // 
             this.btnPinIPFS.Enabled = false;
-            this.btnPinIPFS.Location = new System.Drawing.Point(275, 363);
+            this.btnPinIPFS.Location = new System.Drawing.Point(284, 363);
             this.btnPinIPFS.Name = "btnPinIPFS";
             this.btnPinIPFS.Size = new System.Drawing.Size(70, 23);
             this.btnPinIPFS.TabIndex = 126;
@@ -480,7 +480,7 @@
             this.label15.Name = "label15";
             this.label15.Size = new System.Drawing.Size(109, 13);
             this.label15.TabIndex = 124;
-            this.label15.Text = "Sup!? v0.3.0-beta";
+            this.label15.Text = "Sup!? v0.3.1-beta";
             this.label15.TextAlign = System.Drawing.ContentAlignment.TopCenter;
             // 
             // label14

@@ -1706,14 +1706,9 @@ namespace SUP.P2FK
                             string transid = isObject.URN.Substring(5, 46);
                             if (!System.IO.Directory.Exists("ipfs/" + transid))
                             {
-
-
-                                Task ipfsTask = Task.Run(() =>
-                                {
-                                    Process process2 = new Process();
+                                   Process process2 = new Process();
                                     process2.StartInfo.FileName = @"ipfs\ipfs.exe";
                                     process2.StartInfo.Arguments = "get " + transid + @" -o ipfs\" + transid;
-                                    process2.StartInfo.UseShellExecute = false;
                                     process2.Start();
                                     process2.WaitForExit();
 
@@ -1750,9 +1745,6 @@ namespace SUP.P2FK
                                         }
                                     }
                                     catch { }
-
-                                });
-
 
 
                             }
@@ -1801,7 +1793,6 @@ namespace SUP.P2FK
 
 
 
-
                         try
                         {
                             using (MD5 md5 = MD5.Create())
@@ -1844,12 +1835,9 @@ namespace SUP.P2FK
                             if (!System.IO.Directory.Exists("ipfs/" + transid))
                             {
 
-                                Task ipfsTask = Task.Run(() =>
-                                {
-                                    Process process2 = new Process();
+                                   Process process2 = new Process();
                                     process2.StartInfo.FileName = @"ipfs\ipfs.exe";
                                     process2.StartInfo.Arguments = "get " + transid + @" -o ipfs\" + transid;
-                                    process2.StartInfo.UseShellExecute = false;
                                     process2.Start();
                                     process2.WaitForExit();
 
@@ -1888,8 +1876,7 @@ namespace SUP.P2FK
                                     }
                                     catch { }
 
-                                });
-
+                               
 
                             }
 

@@ -2897,6 +2897,7 @@ namespace SUP
 
                 string message = "";
                 string tid = messagePacket.TransactionId.ToString();
+                string tstamp = messagePacket.BlockDate.ToString("yyyyMMddHHmmss");
                 try
                 {
 
@@ -3358,7 +3359,7 @@ namespace SUP
                         }
 
 
-                        string tstamp = "19700101010101"; //will add shortly
+                       
                         System.Drawing.Color bgcolor = System.Drawing.Color.White;
 
 
@@ -5357,7 +5358,7 @@ namespace SUP
                     Dock = DockStyle.Bottom
                 };
 
-                loveme.Click += (sender, e) => { loveme_LinkClicked(sender, e, transactionid); };
+                loveme.Click += (sender, e) => { loveme_LinkClicked(sender, e, transactionid); loveme.ForeColor = Color.Blue; };
 
                 if (!isprivate)
                 {
@@ -5371,6 +5372,7 @@ namespace SUP
                             this.Invoke((MethodInvoker)delegate
                         {
                             loveme.Text = "🖤 " + roots.Length.ToString();
+                            loveme.ForeColor = Color.Red;
                         });
                         }
 
@@ -5387,7 +5389,11 @@ namespace SUP
                     Margin = new System.Windows.Forms.Padding(0),
                     Dock = DockStyle.Bottom
                 };
-                deleteme.Click += (sender, e) => { deleteme_LinkClicked(transactionid); };
+                deleteme.Click += (sender, e) =>
+                {
+                    deleteme_LinkClicked(transactionid);
+                    deleteme.ForeColor = Color.Black;
+                }; 
                 row.Controls.Add(deleteme, columncount-1, 0);
             }
 
@@ -5714,6 +5720,7 @@ namespace SUP
             }
             catch { }
             Root P2FKRoot = new Root();
+            P2FKRoot.Confirmations = 1;
             var rootSerialized = JsonConvert.SerializeObject(P2FKRoot);
             System.IO.File.WriteAllText(@"root\" + transactionid + @"\" + "ROOT.json", rootSerialized);
         }
