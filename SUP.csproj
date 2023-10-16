@@ -724,8 +724,6 @@
     <Content Include="includes\System.Text.Encoding.CodePages.xml" />
     <Content Include="includes\System.Text.Encodings.Web.dll" />
     <Content Include="includes\System.Text.Encodings.Web.xml" />
-    <Content Include="includes\System.Text.Json.dll" />
-    <Content Include="includes\System.Text.Json.xml" />
     <Content Include="includes\System.Threading.Tasks.Extensions.dll" />
     <Content Include="includes\System.Threading.Tasks.Extensions.xml" />
     <Content Include="includes\System.ValueTuple.dll" />
