@@ -2913,7 +2913,7 @@ namespace SUP
                     {
                         string extension = Path.GetExtension(file);
 
-                        if (!string.IsNullOrEmpty(extension) && !file.Contains("ROOT.json"))
+                        if (Path.GetFileName(file) == "INQ" || ( !string.IsNullOrEmpty(extension) && !file.Contains("ROOT.json")))
                         {
                             message = message + @"<<" + tid + @"/" + Path.GetFileName(file) + ">>";
                         }
@@ -3399,7 +3399,7 @@ namespace SUP
 
                             string content = match.Value.Substring(2, match.Value.Length - 4);
 
-                            if (!int.TryParse(content, out int cnt) && !content.Trim().StartsWith("#"))
+                            if (!int.TryParse(content, out int cnt) && !content.Trim().StartsWith("#") && !content.EndsWith(@"/INQ"))
                             {
 
 
@@ -4439,7 +4439,9 @@ namespace SUP
                         _message = Regex.Replace(_message, "<<.*?>>", "");
 
 
-                        if (_message != "" || blocks.Length > 1 || (blocks.Length == 1 && !int.TryParse(blocks[0], out _)))
+
+
+                        if (_message != "" || blocks.Length > 1 || (blocks.Length == 1 && !int.TryParse(blocks[0], out _)) || File.Exists(@"root\" + _transactionId + @"\INQ"))
                         {
 
                             PROState fromProfile = PROState.GetProfileByAddress(fromURN, "good-user", "better-password", "http://127.0.0.1:18332");

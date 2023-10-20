@@ -569,7 +569,7 @@ namespace SUP
                     {
                         string extension = Path.GetExtension(file);
 
-                        if (!string.IsNullOrEmpty(extension) && !file.Contains("ROOT.json"))
+                        if ((!string.IsNullOrEmpty(extension) && !file.Contains("ROOT.json")) || Path.GetFileName(file) == "INQ")
                         {
                             message = message + @"<<" + tid + @"/" + Path.GetFileName(file) + ">>";
                         }
@@ -1054,7 +1054,7 @@ namespace SUP
 
                             string content = match.Value.Substring(2, match.Value.Length - 4);
 
-                            if (!int.TryParse(content, out int cnt) && !content.Trim().StartsWith("#"))
+                            if (!int.TryParse(content, out int cnt) && !content.Trim().StartsWith("#") && !content.EndsWith(@"/INQ"))
                             {
 
 
@@ -3464,7 +3464,7 @@ namespace SUP
                 string qty = transMessagePacket[3];
                 string amount = transMessagePacket[4];
                 string status = transMessagePacket[5];
-                string tstamp = "19750807121212";//it.KeyAsString().Split('!')[1];
+                DateTime tstamp = DateTime.Parse(transMessagePacket[6]);
 
                 System.Drawing.Color bgcolor;
                 if (rownum % 2 == 0)
@@ -3476,7 +3476,7 @@ namespace SUP
                     bgcolor = System.Drawing.Color.LightGray;
                 }
 
-                CreateTransRow(fromAddress, transMessagePacket[0], toAddress, transMessagePacket[1], action, qty, amount, DateTime.ParseExact(tstamp, "yyyyMMddHHmmss", CultureInfo.InvariantCulture), status, bgcolor, transFlow);
+                CreateTransRow(fromAddress, transMessagePacket[0], toAddress, transMessagePacket[1], action, qty, amount, tstamp, status, bgcolor, transFlow);
 
 
                 rownum++;

@@ -231,7 +231,7 @@ namespace SUP.P2FK
                                         catch (Exception e)
                                         {
 
-                                            logstatus = "[\"" + transaction.SignedBy + "\",\"" + objectaddress + "\",\"inspect\",\"\",\"\",\"failed due to invalid format\"]";
+                                            logstatus = "[\"" + transaction.SignedBy + "\",\"" + objectaddress + "\",\"inspect\",\"\",\"\",\"failed due to invalid format\",\"" + transaction.BlockDate.ToString() + "\"]";
                                             break;
                                         }
 
@@ -270,7 +270,7 @@ namespace SUP.P2FK
                                                 }
                                                 catch
                                                 {
-                                                    logstatus = "[\"" + transaction.SignedBy + "\",\"" + objectaddress + "\",\"create\",\"\",\"\",\"failed due to invalid transaction format\"]";
+                                                    logstatus = "[\"" + transaction.SignedBy + "\",\"" + objectaddress + "\",\"create\",\"\",\"\",\"failed due to invalid transaction format\",\"" + transaction.BlockDate.ToString() + "\"]";
                                                     break;
                                                 }
                                                 objectState.ChangeDate = transaction.BlockDate;
@@ -293,7 +293,7 @@ namespace SUP.P2FK
                                                     if (verbose)
                                                     {
 
-                                                        logstatus = "[\"" + transaction.SignedBy + "\",\"" + objectaddress + "\",\"grant\",\"\",\"\",\"success\"]";
+                                                        logstatus = "[\"" + transaction.SignedBy + "\",\"" + objectaddress + "\",\"grant\",\"\",\"\",\"success\",\"" + transaction.BlockDate.ToString() + "\"]";
                                                         objectState.ChangeLog.Add(logstatus);
 
                                                     }
@@ -317,7 +317,7 @@ namespace SUP.P2FK
                                                         if (!logstatus.Contains("grant"))
                                                         {
 
-                                                            logstatus = "[\"" + transaction.SignedBy + "\",\"" + objectaddress + "\",\"update\",\"\",\"\",\"success\"]";
+                                                            logstatus = "[\"" + transaction.SignedBy + "\",\"" + objectaddress + "\",\"update\",\"\",\"\",\"success\",\"" + transaction.BlockDate.ToString() + "\"]";
                                                         }
                                                         else { logstatus = ""; }
                                                     }
@@ -329,7 +329,7 @@ namespace SUP.P2FK
                                                             objectState.TransactionId = transaction.TransactionId;
                                                             objectState.Owners = new Dictionary<string, long>();
                                                             objectState.Royalties = new Dictionary<string, decimal>();
-                                                            logstatus = "[\"" + transaction.SignedBy + "\",\"" + objectaddress + "\",\"create\",\"" + objectinspector.own.Values.Sum() + "\",\"\",\"success\"]";
+                                                            logstatus = "[\"" + transaction.SignedBy + "\",\"" + objectaddress + "\",\"create\",\"" + objectinspector.own.Values.Sum() + "\",\"\",\"success\",\"" + transaction.BlockDate.ToString() + "\"]";
 
 
 
@@ -353,7 +353,7 @@ namespace SUP.P2FK
                                                             {
                                                                 objectState.Owners[owner] = ownerId.Value;
 
-                                                                logstatus = "[\"" + transaction.SignedBy + "\",\"" + objectaddress + "\",\"update\",\"" + ownerId.Value + "\",\"\",\"success\"]";
+                                                                logstatus = "[\"" + transaction.SignedBy + "\",\"" + objectaddress + "\",\"update\",\"" + ownerId.Value + "\",\"\",\"success\",\"" + transaction.BlockDate.ToString() + "\"]";
                                                             }
 
                                                         }
@@ -381,7 +381,7 @@ namespace SUP.P2FK
                                                             {
                                                                 objectState.Royalties[royalty] = royaltyId.Value;
 
-                                                                logstatus = "[\"" + transaction.SignedBy + "\",\"" + objectaddress + "\",\"update\",\"" + royaltyId.Value + "\",\"\",\"success\"]";
+                                                                logstatus = "[\"" + transaction.SignedBy + "\",\"" + objectaddress + "\",\"update\",\"" + royaltyId.Value + "\",\"\",\"success\",\"" + transaction.BlockDate.ToString() + "\"]";
                                                             }
 
                                                         }
@@ -391,13 +391,13 @@ namespace SUP.P2FK
                                                 }
                                                 else
                                                 {
-                                                    logstatus = "[\"" + transaction.SignedBy + "\",\"" + objectaddress + "\",\"update\",\"\",\"\",\"failed due to object lock\"]";
+                                                    logstatus = "[\"" + transaction.SignedBy + "\",\"" + objectaddress + "\",\"update\",\"\",\"\",\"failed due to object lock\",\"" + transaction.BlockDate.ToString() + "\"]";
                                                     break;
                                                 }
                                             }
                                             else
                                             {
-                                                logstatus = "[\"" + transaction.SignedBy + "\",\"" + objectaddress + "\",\"inspect\",\"\",\"\",\"failed due to insufficient privileges\"]";
+                                                logstatus = "[\"" + transaction.SignedBy + "\",\"" + objectaddress + "\",\"inspect\",\"\",\"\",\"failed due to insufficient privileges\",\"" + transaction.BlockDate.ToString() + "\"]";
                                             }
                                             break;
 
@@ -405,7 +405,7 @@ namespace SUP.P2FK
                                         }
                                         catch
                                         {
-                                            logstatus = "[\"" + transaction.SignedBy + "\",\"" + objectaddress + "\",\"create\",\"\",\"\",\"failed due to invalid transaction format\"]";
+                                            logstatus = "[\"" + transaction.SignedBy + "\",\"" + objectaddress + "\",\"create\",\"\",\"\",\"failed due to invalid transaction format\",\"" + transaction.BlockDate.ToString() + "\"]";
 
                                             break;
                                         }
@@ -428,14 +428,14 @@ namespace SUP.P2FK
                                         }
                                         catch
                                         {
-                                            logstatus = "[\"" + transaction.SignedBy + "\",\"" + objectaddress + "\",\"inspect\",\"\",\"\",\"failed due to invalid transaction format\"]";
+                                            logstatus = "[\"" + transaction.SignedBy + "\",\"" + objectaddress + "\",\"inspect\",\"\",\"\",\"failed due to invalid transaction format\",\"" + transaction.BlockDate.ToString() + "\"]";
 
                                             break;
                                         }
 
                                         if (givinspector == null)
                                         {
-                                            logstatus = "[\"" + transaction.SignedBy + "\",\"" + objectaddress + "\",\"give\",\"\",\"\",\"failed due to no data\"]";
+                                            logstatus = "[\"" + transaction.SignedBy + "\",\"" + objectaddress + "\",\"give\",\"\",\"\",\"failed due to no data\",\"" + transaction.BlockDate.ToString() + "\"]";
                                             break;
                                         }
                                         int giveCount = 0;
@@ -452,7 +452,7 @@ namespace SUP.P2FK
                                             }
                                             catch
                                             {
-                                                logstatus = "[\"" + transaction.SignedBy + "\",\"" + objectaddress + "\",\"give\",\"\",\"\",\"failed due to invalid keyword count\"]";
+                                                logstatus = "[\"" + transaction.SignedBy + "\",\"" + objectaddress + "\",\"give\",\"\",\"\",\"failed due to invalid keyword count\",\"" + transaction.BlockDate.ToString() + "\"]";
                                                 break;
                                             }
                                             try
@@ -461,7 +461,7 @@ namespace SUP.P2FK
                                             }
                                             catch
                                             {
-                                                logstatus = "[\"" + transaction.SignedBy + "\",\"" + objectaddress + "\",\"give\",\"\",\"\",\"failed due to invalid keyword count\"]";
+                                                logstatus = "[\"" + transaction.SignedBy + "\",\"" + objectaddress + "\",\"give\",\"\",\"\",\"failed due to invalid keyword count\",\"" + transaction.BlockDate.ToString() + "\"]";
                                                 break;
                                             }
 
@@ -484,7 +484,7 @@ namespace SUP.P2FK
 
                                                 if (verbose)
                                                 {
-                                                    logstatus = "[\"" + transaction.SignedBy + "\",\"" + reciever + "\",\"give\",\"" + qtyToGive + "\",\"\",\"close all offers" + qtyToGive.ToString() + "\"]";
+                                                    logstatus = "[\"" + transaction.SignedBy + "\",\"" + reciever + "\",\"give\",\"" + qtyToGive + "\",\"\",\"close all offers" + qtyToGive.ToString() + "\",\"" + transaction.BlockDate.ToString() + "\"]";
                                                     objectState.ChangeLog.Add(logstatus);
 
                                                     logstatus = "";
@@ -497,14 +497,14 @@ namespace SUP.P2FK
                                             {
                                                 if (qtyToGive > objectState.Maximum)
                                                 {
-                                                    logstatus = "[\"" + transaction.SignedBy + "\",\"" + reciever + "\",\"give\",\"" + qtyToGive + "\",\"\",\"failed due to over maximum qty\"]";
+                                                    logstatus = "[\"" + transaction.SignedBy + "\",\"" + reciever + "\",\"give\",\"" + qtyToGive + "\",\"\",\"failed due to over maximum qty\",\"" + transaction.BlockDate.ToString() + "\"]";
 
                                                     break;
                                                 }
 
                                                 if (objectState.Owners.TryGetValue(reciever, out long value) && value + qtyToGive >= objectState.Maximum)
                                                 {
-                                                    logstatus = "[\"" + transaction.SignedBy + "\",\"" + reciever + "\",\"give\",\"" + qtyToGive + "\",\"\",\"failed due to over maximum qty\"]";
+                                                    logstatus = "[\"" + transaction.SignedBy + "\",\"" + reciever + "\",\"give\",\"" + qtyToGive + "\",\"\",\"failed due to over maximum qty\",\"" + transaction.BlockDate.ToString() + "\"]";
 
                                                     break;
                                                 }
@@ -519,7 +519,7 @@ namespace SUP.P2FK
                                                 {
                                                     if (verbose)
                                                     {
-                                                        logstatus = "[\"" + transaction.SignedBy + "\",\"" + reciever + "\",\"give\",\"" + qtyToGive + "\",\"\",\"failed due to insufficent qty owned\"]";
+                                                        logstatus = "[\"" + transaction.SignedBy + "\",\"" + reciever + "\",\"give\",\"" + qtyToGive + "\",\"\",\"failed due to insufficent qty owned\",\"" + transaction.BlockDate.ToString() + "\"]";
 
                                                         objectState.ChangeLog.Add(logstatus);
 
@@ -575,7 +575,7 @@ namespace SUP.P2FK
                                                 if (verbose)
                                                 {
 
-                                                    logstatus = "[\"" + transaction.SignedBy + "\",\"" + reciever + "\",\"give\",\"" + qtyToGive + "\",\"\",\"success\"]";
+                                                    logstatus = "[\"" + transaction.SignedBy + "\",\"" + reciever + "\",\"give\",\"" + qtyToGive + "\",\"\",\"success\",\"" + transaction.BlockDate.ToString() + "\"]";
 
 
                                                     objectState.ChangeLog.Add(logstatus);
@@ -592,7 +592,7 @@ namespace SUP.P2FK
                                                         if (verbose)
                                                         {
 
-                                                            logstatus = "[\"" + transaction.SignedBy + "\",\"" + objectaddress + "\",\"grant\",\"\",\"\",\"success\"]";
+                                                            logstatus = "[\"" + transaction.SignedBy + "\",\"" + objectaddress + "\",\"grant\",\"\",\"\",\"success\",\"" + transaction.BlockDate.ToString() + "\"]";
 
                                                             objectState.ChangeLog.Add(logstatus);
 
@@ -609,7 +609,7 @@ namespace SUP.P2FK
                                                     {
                                                         giveCount++;
                                                         sortableGiveCount = giveCount.ToString("X").PadLeft(4, '0');
-                                                        logstatus = "[\"" + transaction.SignedBy + "\",\"" + objectaddress + "\",\"lock\",\"\",\"\",\"success\"]";
+                                                        logstatus = "[\"" + transaction.SignedBy + "\",\"" + objectaddress + "\",\"lock\",\"\",\"\",\"success\",\"" + transaction.BlockDate.ToString() + "\"]";
                                                         objectState.ChangeLog.Add(logstatus);
 
                                                         logstatus = "";
@@ -623,7 +623,7 @@ namespace SUP.P2FK
                                             {
                                                 if (verbose)
                                                 { //Invalid trade attempt
-                                                    logstatus = "[\"" + transaction.SignedBy + "\",\"" + reciever + "\",\"give\",\"" + qtyToGive + "\",\"\",\"failed due to insufficent available qty owned\"]";
+                                                    logstatus = "[\"" + transaction.SignedBy + "\",\"" + reciever + "\",\"give\",\"" + qtyToGive + "\",\"\",\"failed due to insufficent available qty owned\",\"" + transaction.BlockDate.ToString() + "\"]";
                                                     objectState.ChangeLog.Add(logstatus);
                                                     logstatus = "";
                                                 }
@@ -649,13 +649,13 @@ namespace SUP.P2FK
                                         }
                                         catch
                                         {
-                                            logstatus = "[\"" + transaction.SignedBy + "\",\"" + objectaddress + "\",\"inspect\",\"\",\"\",\"failed due to invalid transaction format\"]";
+                                            logstatus = "[\"" + transaction.SignedBy + "\",\"" + objectaddress + "\",\"inspect\",\"\",\"\",\"failed due to invalid transaction format\",\"" + transaction.BlockDate.ToString() + "\"]";
 
                                             break;
                                         }
                                         if (brninspector == null)
                                         {
-                                            logstatus = "[\"" + transaction.SignedBy + "\",\"" + objectaddress + "\",\"burn\",\"\",\"\",\"failed due to no data\"]";
+                                            logstatus = "[\"" + transaction.SignedBy + "\",\"" + objectaddress + "\",\"burn\",\"\",\"\",\"failed due to no data\",\"" + transaction.BlockDate.ToString() + "\"]";
                                             break;
                                         }
                                         int burnCount = 0;
@@ -683,7 +683,7 @@ namespace SUP.P2FK
                                                     if (verbose)
                                                     {
                                                         //Add Invalid trade attempt status
-                                                        logstatus = "[\"" + transaction.SignedBy + "\",\"" + objectaddress + "\",\"burn\",\"" + qtyToBurn + "\",\"\",\"failed due to a insufficent qty owned\"]";
+                                                        logstatus = "[\"" + transaction.SignedBy + "\",\"" + objectaddress + "\",\"burn\",\"" + qtyToBurn + "\",\"\",\"failed due to a insufficent qty owned\",\"" + transaction.BlockDate.ToString() + "\"]";
 
                                                         objectState.ChangeLog.Add(logstatus);
 
@@ -724,7 +724,7 @@ namespace SUP.P2FK
                                                 }
                                                 if (verbose)
                                                 {
-                                                    logstatus = "[\"" + transaction.SignedBy + "\",\"" + objectaddress + "\",\"burn\",\"" + qtyToBurn + "\",\"\",\"success\"]";
+                                                    logstatus = "[\"" + transaction.SignedBy + "\",\"" + objectaddress + "\",\"burn\",\"" + qtyToBurn + "\",\"\",\"success\",\"" + transaction.BlockDate.ToString() + "\"]";
 
                                                     objectState.ChangeLog.Add(logstatus);
                                                     logstatus = "";
@@ -736,7 +736,7 @@ namespace SUP.P2FK
                                                     {
                                                         burnCount++;
                                                         sortableBurnCount = burnCount.ToString("X").PadLeft(4, '0');
-                                                        logstatus = "[\"" + transaction.SignedBy + "\",\"" + objectaddress + "\",\"lock\",\"\",\"\",\"success\"]";
+                                                        logstatus = "[\"" + transaction.SignedBy + "\",\"" + objectaddress + "\",\"lock\",\"\",\"\",\"success\",\"" + transaction.BlockDate.ToString() + "\"]";
 
                                                         objectState.ChangeLog.Add(logstatus);
 
@@ -751,7 +751,7 @@ namespace SUP.P2FK
                                             {
                                                 if (verbose)
                                                 {
-                                                    logstatus = "[\"" + transaction.SignedBy + "\",\"" + objectaddress + "\",\"burn\",\"" + qtyToBurn + "\",\"\",\"failed due to a insufficent qty owned\"]";
+                                                    logstatus = "[\"" + transaction.SignedBy + "\",\"" + objectaddress + "\",\"burn\",\"" + qtyToBurn + "\",\"\",\"failed due to a insufficent qty owned\",\"" + transaction.BlockDate.ToString() + "\"]";
                                                     objectState.ChangeLog.Add(logstatus);
 
                                                     logstatus = "";
@@ -773,13 +773,13 @@ namespace SUP.P2FK
 
                                         if (objectState.Owners == null)
                                         {
-                                            logstatus = "[\"" + transaction.SignedBy + "\",\"" + objectaddress + "\",\"buy\",\"\",\"\",\"failed due to no owners\"]";
+                                            logstatus = "[\"" + transaction.SignedBy + "\",\"" + objectaddress + "\",\"buy\",\"\",\"\",\"failed due to no owners\",\"" + transaction.BlockDate.ToString() + "\"]";
                                             break;
                                         }
 
                                         if (transaction.SignedBy == objectaddress)
                                         {
-                                            logstatus = "[\"" + transaction.SignedBy + "\",\"" + objectaddress + "\",\"buy\",\"\",\"\",\"failed objects cannot buy\"]";
+                                            logstatus = "[\"" + transaction.SignedBy + "\",\"" + objectaddress + "\",\"buy\",\"\",\"\",\"failed objects cannot buy\",\"" + transaction.BlockDate.ToString() + "\"]";
                                             break;
                                         }
 
@@ -791,13 +791,13 @@ namespace SUP.P2FK
                                         }
                                         catch
                                         {
-                                            logstatus = "[\"" + transaction.SignedBy + "\",\"" + objectaddress + "\",\"inspect\",\"\",\"\",\"failed due to invalid transaction format\"]";
+                                            logstatus = "[\"" + transaction.SignedBy + "\",\"" + objectaddress + "\",\"inspect\",\"\",\"\",\"failed due to invalid transaction format\",\"" + transaction.BlockDate.ToString() + "\"]";
 
                                             break;
                                         }
                                         if (buyinspector == null)
                                         {
-                                            logstatus = "[\"" + transaction.SignedBy + "\",\"" + objectaddress + "\",\"buy\",\"\",\"\",\"failed due to no data\"]";
+                                            logstatus = "[\"" + transaction.SignedBy + "\",\"" + objectaddress + "\",\"buy\",\"\",\"\",\"failed due to no data\",\"" + transaction.BlockDate.ToString() + "\"]";
                                             break;
                                         }
                                         int buyCount = 0;
@@ -840,7 +840,7 @@ namespace SUP.P2FK
                                                         {
                                                             if (verbose)
                                                             {
-                                                                logstatus = "[\"" + transaction.SignedBy + "\",\"" + buy[0] + "\",\"buy\",\"" + buy[1] + "\",\"\",\"failed " + pair.Key + " " + logSent + " insuficent royalties paid\"]";
+                                                                logstatus = "[\"" + transaction.SignedBy + "\",\"" + buy[0] + "\",\"buy\",\"" + buy[1] + "\",\"\",\"failed " + pair.Key + " " + logSent + " insuficent royalties paid\",\"" + transaction.BlockDate.ToString() + "\"]";
                                                                 objectState.ChangeLog.Add(logstatus);
 
                                                                 logstatus = "break";
@@ -888,7 +888,7 @@ namespace SUP.P2FK
 
                                                     if (verbose)
                                                     {
-                                                        logstatus = "[\"" + transaction.SignedBy + "\",\"" + buy[0] + "\",\"buy\",\"" + buy[1] + "\",\"\",\"success " + ownerPaid.ToString() + "\"]";
+                                                        logstatus = "[\"" + transaction.SignedBy + "\",\"" + buy[0] + "\",\"buy\",\"" + buy[1] + "\",\"\",\"success " + ownerPaid.ToString() + "\",\"" + transaction.BlockDate.ToString() + "\"]";
 
                                                         objectState.ChangeLog.Add(logstatus);
 
@@ -907,7 +907,7 @@ namespace SUP.P2FK
 
                                                     if (verbose)
                                                     {
-                                                        logstatus = "[\"" + transaction.SignedBy + "\",\"" + buy[0] + "\",\"buy\",\"" + buy[1] + "\",\"\",\"failed " + ownerPaid.ToString() + " insuficent owner paid\"]";
+                                                        logstatus = "[\"" + transaction.SignedBy + "\",\"" + buy[0] + "\",\"buy\",\"" + buy[1] + "\",\"\",\"failed " + ownerPaid.ToString() + " insuficent owner paid\",\"" + transaction.BlockDate.ToString() + "\"]";
                                                         objectState.ChangeLog.Add(logstatus);
 
                                                         logstatus = "";
@@ -950,7 +950,7 @@ namespace SUP.P2FK
                                                         {
                                                             if (verbose)
                                                             {
-                                                                logstatus = "[\"" + transaction.SignedBy + "\",\"" + objectaddress + "\",\"buy\",\"" + buy[1] + "\",\"\",\"failed " + pair.Key + " insuficent royalties paid\"]";
+                                                                logstatus = "[\"" + transaction.SignedBy + "\",\"" + objectaddress + "\",\"buy\",\"" + buy[1] + "\",\"\",\"failed " + pair.Key + " insuficent royalties paid\",\"" + transaction.BlockDate.ToString() + "\"]";
                                                                 objectState.ChangeLog.Add(logstatus);
 
                                                                 logstatus = "break";
@@ -986,7 +986,7 @@ namespace SUP.P2FK
                                                                     {
                                                                         if (verbose)
                                                                         {
-                                                                            logstatus = "[\"" + transaction.SignedBy + "\",\"" + objectaddress + "\",\"buy\",\"" + buy[1] + "\",\"\",\"failed due to insuficent royalties paid\"]";
+                                                                            logstatus = "[\"" + transaction.SignedBy + "\",\"" + objectaddress + "\",\"buy\",\"" + buy[1] + "\",\"\",\"failed due to insuficent royalties paid\",\"" + transaction.BlockDate.ToString() + "\"]";
 
                                                                             objectState.ChangeLog.Add(logstatus);
 
@@ -1018,7 +1018,7 @@ namespace SUP.P2FK
 
                                                             if (verbose)
                                                             {
-                                                                logstatus = "[\"" + transaction.SignedBy + "\",\"" + buy[0] + "\",\"offer\",\"" + buy[1] + "\",\"\",\"success - " + totalPaid / long.Parse(buy[1]) + "\"]";
+                                                                logstatus = "[\"" + transaction.SignedBy + "\",\"" + buy[0] + "\",\"offer\",\"" + buy[1] + "\",\"\",\"success - " + totalPaid / long.Parse(buy[1]) + "\",\"" + transaction.BlockDate.ToString() + "\"]";
 
                                                                 objectState.ChangeLog.Add(logstatus);
 
@@ -1033,7 +1033,7 @@ namespace SUP.P2FK
 
                                                             if (verbose)
                                                             {
-                                                                logstatus = "[\"" + transaction.SignedBy + "\",\"" + objectaddress + "\",\"buy\",\"" + buy[1] + "\",\"\",\"failed due to insuficent royalties paid\"]";
+                                                                logstatus = "[\"" + transaction.SignedBy + "\",\"" + objectaddress + "\",\"buy\",\"" + buy[1] + "\",\"\",\"failed due to insuficent royalties paid\",\"" + transaction.BlockDate.ToString() + "\"]";
 
                                                                 objectState.ChangeLog.Add(logstatus);
 
@@ -1048,7 +1048,7 @@ namespace SUP.P2FK
                                                     {
                                                         if (verbose)
                                                         {
-                                                            logstatus = "[\"" + transaction.SignedBy + "\",\"" + objectaddress + "\",\"buy\",\"" + buy[1] + "\",\"\",\"failed due to insuficent owner payment\"]";
+                                                            logstatus = "[\"" + transaction.SignedBy + "\",\"" + objectaddress + "\",\"buy\",\"" + buy[1] + "\",\"\",\"failed due to insuficent owner payment\",\"" + transaction.BlockDate.ToString() + "\"]";
                                                             objectState.ChangeLog.Add(logstatus);
 
                                                             logstatus = "";
@@ -1066,7 +1066,7 @@ namespace SUP.P2FK
 
                                                     if (verbose)
                                                     {
-                                                        logstatus = "[\"" + transaction.SignedBy + "\",\"" + objectaddress + "\",\"buy\",\"" + buy[1] + "\",\"\",\"failed due to insuficent Qty owned\"]";
+                                                        logstatus = "[\"" + transaction.SignedBy + "\",\"" + objectaddress + "\",\"buy\",\"" + buy[1] + "\",\"\",\"failed due to insuficent Qty owned\",\"" + transaction.BlockDate.ToString() + "\"]";
 
                                                         objectState.ChangeLog.Add(logstatus);
 
@@ -1099,14 +1099,14 @@ namespace SUP.P2FK
                                         }
                                         catch
                                         {
-                                            logstatus = "[\"" + transaction.SignedBy + "\",\"" + objectaddress + "\",\"inspect\",\"\",\"\",\"failed due to invalid transaction format\"]";
+                                            logstatus = "[\"" + transaction.SignedBy + "\",\"" + objectaddress + "\",\"inspect\",\"\",\"\",\"failed due to invalid transaction format\",\"" + transaction.BlockDate.ToString() + "\"]";
 
                                             break;
                                         }
 
                                         if (lstinspector == null)
                                         {
-                                            logstatus = "[\"" + transaction.SignedBy + "\",\"" + objectaddress + "\",\"list\",\"\",\"\",\"failed due to no data\"]";
+                                            logstatus = "[\"" + transaction.SignedBy + "\",\"" + objectaddress + "\",\"list\",\"\",\"\",\"failed due to no data\",\"" + transaction.BlockDate.ToString() + "\"]";
                                             break;
                                         }
                                         int ListCount = 0;
@@ -1124,7 +1124,7 @@ namespace SUP.P2FK
                                             }
                                             catch
                                             {
-                                                logstatus = "[\"" + transaction.SignedBy + "\",\"" + objectaddress + "\",\"List\",\"\",\"\",\"failed due to invalid data\"]";
+                                                logstatus = "[\"" + transaction.SignedBy + "\",\"" + objectaddress + "\",\"List\",\"\",\"\",\"failed due to invalid data\",\"" + transaction.BlockDate.ToString() + "\"]";
                                                 break;
                                             }
 
@@ -1137,7 +1137,7 @@ namespace SUP.P2FK
                                                 }
                                                 catch
                                                 {
-                                                    logstatus = "[\"" + transaction.SignedBy + "\",\"" + objectaddress + "\",\"List\",\"\",\"\",\"failed due to invalid data\"]";
+                                                    logstatus = "[\"" + transaction.SignedBy + "\",\"" + objectaddress + "\",\"List\",\"\",\"\",\"failed due to invalid data\",\"" + transaction.BlockDate.ToString() + "\"]";
                                                     break;
                                                 }
 
@@ -1147,7 +1147,7 @@ namespace SUP.P2FK
                                                 }
                                                 catch
                                                 {
-                                                    logstatus = "[\"" + transaction.SignedBy + "\",\"" + objectaddress + "\",\"List\",\"\",\"\",\"failed due to invalid data\"]";
+                                                    logstatus = "[\"" + transaction.SignedBy + "\",\"" + objectaddress + "\",\"List\",\"\",\"\",\"failed due to invalid data\",\"" + transaction.BlockDate.ToString() + "\"]";
                                                     break;
                                                 }
 
@@ -1172,7 +1172,7 @@ namespace SUP.P2FK
 
                                                     if (verbose)
                                                     {
-                                                        logstatus = "[\"" + transaction.SignedBy + "\",\"" + objectToList + "\",\"List\",\"" + qtyToList.ToString() + "\",\"\",\"close all listings\"]";
+                                                        logstatus = "[\"" + transaction.SignedBy + "\",\"" + objectToList + "\",\"List\",\"" + qtyToList.ToString() + "\",\"\",\"close all listings\",\"" + transaction.BlockDate.ToString() + "\"]";
 
                                                         objectState.ChangeLog.Add(logstatus);
 
@@ -1191,7 +1191,7 @@ namespace SUP.P2FK
                                                     {
                                                         if (verbose)
                                                         {
-                                                            logstatus = "[\"" + transaction.SignedBy + "\",\"" + objectToList + "\",\"List\",\"" + qtyToList + "\",\"\",\"failed due to insufficent qty owned\"]";
+                                                            logstatus = "[\"" + transaction.SignedBy + "\",\"" + objectToList + "\",\"List\",\"" + qtyToList + "\",\"\",\"failed due to insufficent qty owned\",\"" + transaction.BlockDate.ToString() + "\"]";
 
                                                             objectState.ChangeLog.Add(logstatus);
 
@@ -1234,7 +1234,7 @@ namespace SUP.P2FK
                                                         {
                                                             ListCount++;
                                                             sortableListCount = ListCount.ToString("X").PadLeft(4, '0');
-                                                            logstatus = "[\"" + transaction.SignedBy + "\",\"" + objectaddress + "\",\"lock\",\"\",\"\",\"success\"]";
+                                                            logstatus = "[\"" + transaction.SignedBy + "\",\"" + objectaddress + "\",\"lock\",\"\",\"\",\"success\",\"" + transaction.BlockDate.ToString() + "\"]";
 
                                                             objectState.ChangeLog.Add(logstatus);
 
@@ -1253,7 +1253,7 @@ namespace SUP.P2FK
                                                             if (verbose)
                                                             {
 
-                                                                logstatus = "[\"" + transaction.SignedBy + "\",\"" + objectaddress + "\",\"grant\",\"\",\"\",\"success\"]";
+                                                                logstatus = "[\"" + transaction.SignedBy + "\",\"" + objectaddress + "\",\"grant\",\"\",\"\",\"success\",\"" + transaction.BlockDate.ToString() + "\"]";
 
                                                                 objectState.ChangeLog.Add(logstatus);
 
@@ -1272,7 +1272,7 @@ namespace SUP.P2FK
                                                     }
                                                     if (verbose)
                                                     {
-                                                        logstatus = "[\"" + transaction.SignedBy + "\",\"" + objectToList + "\",\"List\",\"" + qtyToList + "\",\"" + eachCost + "\",\"Success\"]";
+                                                        logstatus = "[\"" + transaction.SignedBy + "\",\"" + objectToList + "\",\"List\",\"" + qtyToList + "\",\"" + eachCost + "\",\"Success\",\"" + transaction.BlockDate.ToString() + "\"]";
 
                                                         objectState.ChangeLog.Add(logstatus);
                                                         logstatus = "";
@@ -1283,7 +1283,7 @@ namespace SUP.P2FK
                                                 {
                                                     if (verbose)
                                                     { //Invalid list attempt
-                                                        logstatus = "[\"" + transaction.SignedBy + "\",\"" + objectToList + "\",\"List\",\"" + qtyToList + "\",\"\",\"failed due to insufficent available qty owned\"]";
+                                                        logstatus = "[\"" + transaction.SignedBy + "\",\"" + objectToList + "\",\"List\",\"" + qtyToList + "\",\"\",\"failed due to insufficent available qty owned\",\"" + transaction.BlockDate.ToString() + "\"]";
 
                                                         objectState.ChangeLog.Add(logstatus);
                                                         logstatus = "";
@@ -1305,7 +1305,7 @@ namespace SUP.P2FK
                             }
                             else
                             {
-                                logstatus = "[\"" + transaction.SignedBy + "\",\"" + objectaddress + "\",\"inspect\",\"\",\"\",\"failed due to duplicate signature\"]";
+                                logstatus = "[\"" + transaction.SignedBy + "\",\"" + objectaddress + "\",\"inspect\",\"\",\"\",\"failed due to duplicate signature\",\"" + transaction.BlockDate.ToString() + "\"]";
                             }
 
 
