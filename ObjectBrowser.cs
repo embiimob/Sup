@@ -576,23 +576,23 @@ namespace SUP
                                                     {
                                                         DateTime startTime = DateTime.Now;
 
-                                                    while (DateTime.Now - startTime < TimeSpan.FromSeconds(10))
-                                                    {
-                                                        // Check if the file exists
-                                                        if (File.Exists(imgurn))
+                                                        while (DateTime.Now - startTime < TimeSpan.FromSeconds(10))
                                                         {
-                                                            // File exists, so perform the desired action
-                                                            this.Invoke((Action)(() =>
+                                                            // Check if the file exists
+                                                            if (File.Exists(imgurn))
                                                             {
-                                                                foundObject.ObjectImage.SizeMode = PictureBoxSizeMode.Zoom;
-                                                                foundObject.ObjectImage.ImageLocation = imgurn;
-                                                            }));
-                                                            break; // Exit the loop since you've found the file
-                                                        }
+                                                                // File exists, so perform the desired action
+                                                                this.Invoke((Action)(() =>
+                                                                {
+                                                                    foundObject.ObjectImage.SizeMode = PictureBoxSizeMode.Zoom;
+                                                                    foundObject.ObjectImage.ImageLocation = imgurn;
+                                                                }));
+                                                                break; // Exit the loop since you've found the file
+                                                            }
 
-                                                        // Sleep for 100 milliseconds before the next check
-                                                        System.Threading.Thread.Sleep(100);
-                                                    }
+                                                            // Sleep for 100 milliseconds before the next check
+                                                            System.Threading.Thread.Sleep(100);
+                                                        }
                                                     });
 
                                                 }
@@ -724,6 +724,7 @@ namespace SUP
                                 }
 
 
+
                             }
 
 
@@ -733,7 +734,14 @@ namespace SUP
                             string error = ex.Message;
                         }
                     }
-                    flowLayoutPanel1.ResumeLayout();
+
+                    this.Invoke((Action)(() =>
+                    {
+                        Label bottomSpacer = new Label();
+                        bottomSpacer.Height = 500; // Adjust the height to create enough space.
+                        flowLayoutPanel1.Controls.Add(bottomSpacer);
+                        flowLayoutPanel1.ResumeLayout();
+                    }));
                 }));
             }
             catch (Exception ex)
