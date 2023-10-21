@@ -1015,13 +1015,13 @@ namespace SUP
                         }
 
 
-                        string tstamp = "19700101010101"; //will add shortly
+                        DateTime tstamp = messagePacket.BlockDate;
                         System.Drawing.Color bgcolor = System.Drawing.Color.White;
 
 
                         this.Invoke((MethodInvoker)delegate
                         {
-                            CreateRow(fromImage, fromAddress, messagePacket.FromAddress, DateTime.ParseExact(tstamp, "yyyyMMddHHmmss", CultureInfo.InvariantCulture), message, tid, false, supFlow);
+                            CreateRow(fromImage, fromAddress, messagePacket.FromAddress, tstamp, message, tid, false, supFlow);
                         });
 
 

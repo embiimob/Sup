@@ -57,8 +57,11 @@ namespace SUP
         private void supFlow_MouseWheel(object sender, MouseEventArgs e)
         {
 
+            if (refreshFriendFeed.Enabled == false || btnPublicMessage.Enabled == false || btnPrivateMessage.Enabled == false) { return; }
 
-            if (supFlow.VerticalScroll.Value + supFlow.ClientSize.Height >= supFlow.VerticalScroll.Maximum)
+            if (btnPrivateMessage.BackColor == System.Drawing.Color.Blue) { btnPrivateMessage.BackColor = System.Drawing.Color.White; btnPrivateMessage.ForeColor = System.Drawing.Color.Black; btnPublicMessage.BackColor = System.Drawing.Color.Blue; btnPublicMessage.ForeColor = System.Drawing.Color.Yellow; }
+
+            if (supFlow.VerticalScroll.Value != 0 && supFlow.VerticalScroll.Value + supFlow.ClientSize.Height >= supFlow.VerticalScroll.Maximum)
             {
                 if (panel1.Visible)
                 {
@@ -73,7 +76,11 @@ namespace SUP
                 }
                 else
                 {
-                    refreshFriendFeed.PerformClick();
+
+                    if (refreshFriendFeed.BackColor == System.Drawing.Color.Blue)
+                    {
+                        refreshFriendFeed.PerformClick();
+                    }
                 }
             }
             else if (supFlow.VerticalScroll.Value == 0)
@@ -90,6 +97,11 @@ namespace SUP
 
         private void supPrivateFlow_MouseWheel(object sender, MouseEventArgs e)
         {
+            if (refreshFriendFeed.Enabled == false || btnPublicMessage.Enabled == false || btnPrivateMessage.Enabled == false) { return; }
+
+            if (btnPublicMessage.BackColor == System.Drawing.Color.Blue) { btnPublicMessage.BackColor = System.Drawing.Color.White; btnPublicMessage.ForeColor = System.Drawing.Color.Black; btnPrivateMessage.BackColor = System.Drawing.Color.Blue; btnPrivateMessage.ForeColor = System.Drawing.Color.Yellow; }
+
+
             if (supPrivateFlow.VerticalScroll.Value + supPrivateFlow.ClientSize.Height >= supPrivateFlow.VerticalScroll.Maximum)
             {
                 // Add more PictureBoxes if available
