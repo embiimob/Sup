@@ -5686,9 +5686,6 @@ namespace SUP
             }
             catch { }
 
-            
-           
-
 
             string pattern = "<<.*?>>";
             MatchCollection matches = Regex.Matches(unfilteredmessage, pattern);
