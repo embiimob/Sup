@@ -257,7 +257,7 @@ namespace SUP
             profileURN.Text = activeProfile.URN;
             profileURN.Links[0].LinkData = address;
             profileIMG.Tag = address;
-            if (File.Exists(@"root\" + profileURN.Links[0].LinkData.ToString() + @"\MUTE")) { btnMute.Text = "unmute"; }
+            if (File.Exists(@"root\" + profileURN.Links[0].LinkData.ToString() + @"\MUTE")) { btnMute.Text = "unmute"; } else { btnMute.Text = "mute"; }
 
             if (!panel1.Visible)
             {
@@ -5681,7 +5681,7 @@ namespace SUP
                 string P2FKJSONString = System.IO.File.ReadAllText(@"root/" + transactionid + @"/ROOT.json");
                 Root DeleteRoot = JsonConvert.DeserializeObject<Root>(P2FKJSONString);
                 try { unfilteredmessage = DeleteRoot.Message.FirstOrDefault().ToString(); } catch { }
-                                foreach (string keyword in DeleteRoot.Keyword.Keys) { try { File.Delete(@"root/" + keyword + @"/ROOTS.json"); } catch { } }
+                foreach (string keyword in DeleteRoot.Keyword.Keys) { try { File.Delete(@"root/" + keyword + @"/ROOTS.json"); } catch { } }
             }
             catch { }
 
