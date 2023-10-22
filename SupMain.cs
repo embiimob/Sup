@@ -5676,7 +5676,18 @@ namespace SUP
         {
 
             string unfilteredmessage = "";
-            try { unfilteredmessage = System.IO.File.ReadAllText(@"root/" + transactionid + @"/MSG"); } catch { }
+            try
+            {
+                string P2FKJSONString = System.IO.File.ReadAllText(@"root/" + transactionid + @"/ROOT.json");
+                Root DeleteRoot = JsonConvert.DeserializeObject<Root>(P2FKJSONString);
+                try { unfilteredmessage = DeleteRoot.Message.FirstOrDefault().ToString(); } catch { }
+
+                foreach (string keyword in DeleteRoot.Keyword.Keys) { try { File.Delete(@"root/" + keyword + @"/ROOTS.json"); } catch { } }
+            }
+            catch { }
+
+            
+           
 
 
             string pattern = "<<.*?>>";
