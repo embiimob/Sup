@@ -503,6 +503,9 @@
     <Content Include="includes\AngleSharp.Css.xml" />
     <Content Include="includes\AngleSharp.dll" />
     <Content Include="includes\AngleSharp.xml" />
+    <Content Include="includes\SUPS.gif" />
+    <Content Include="includes\SUPT.gif" />
+    <Content Include="includes\SUPU.gif" />
     <Content Include="includes\System.Security.AccessControl.dll" />
     <Content Include="includes\System.Security.AccessControl.xml" />
     <Content Include="includes\System.Security.Principal.Windows.dll" />
