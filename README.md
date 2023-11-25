@@ -9,7 +9,7 @@ P2FK was directly inspired by the satoshi uploader  see --> https://cirosantilli
 
 ## **Installation**
 
-1. Download the Sup!? v0.3.3-beta.zip file ( https://github.com/embiimob/Sup/releases/download/Supv0.3.3-beta/Sup.v0.3.3-beta.zip )
+1. Download the Sup!? v0.3.4-beta.zip file ( https://github.com/embiimob/Sup/releases/download/Supv0.3.4-beta/Sup.v0.3.4-beta.zip )
 2. Create a folder on your **fastest** disk drive with at least **50GB** free (it will be storing the bitcoin testnet blockchain)
 3. Unzip all contents into the folder
 4. Create a shortcut to SUP.exe and launch
