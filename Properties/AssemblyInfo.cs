@@ -5,7 +5,7 @@ using System.Runtime.InteropServices;
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 [assembly: AssemblyTitle("Sup!?")]
-[assembly: AssemblyDescription("experimental state engine browser")]
+[assembly: AssemblyDescription("decentralized state engine")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
 [assembly: AssemblyProduct("satoshi universal protocol")]
