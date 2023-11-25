@@ -166,21 +166,29 @@ namespace SUP
             {
                 string strmessage = "";
                 BigInteger totalfilebytes = 0;
-                foreach (var rfile in root.Message)
+                if (root.Message != null)
                 {
-                    strmessage += rfile;
+                    foreach (var rfile in root.Message)
+                    {
+                        strmessage += rfile;
 
+                    }
                 }
 
-                foreach (var rfile in root.File)
+                if (root.File != null)
                 {
-                    totalfilebytes += rfile.Value;
+                    foreach (var rfile in root.File)
+                    {
+                        totalfilebytes += rfile.Value;
 
 
+                    }
                 }
 
-                object[] rowData = new object[]
+                try
                 {
+                    object[] rowData = new object[]
+                 {
                     root.Id,
                     strmessage,
                     root.Signed,
@@ -195,9 +203,11 @@ namespace SUP
                     root.Confirmations,
                     root.BlockHeight,
                     root.BuildDate.ToString("MM/dd/yyyy hh:mm:ss.ffff tt")
-                };
-                dgTransactions.Rows.Add(rowData);
-                dgTransactions.AutoResizeRows();
+                 };
+                    dgTransactions.Rows.Add(rowData);
+                }
+                catch { }
+                    dgTransactions.AutoResizeRows();
                 dgTransactions.AutoResizeColumns();
 
                 totalbytes = root.TotalByteSize;

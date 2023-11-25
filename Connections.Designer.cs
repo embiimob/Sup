@@ -38,7 +38,7 @@
             this.btnPurgeBlock = new System.Windows.Forms.Button();
             this.btnClearIPFSisLoadingCache = new System.Windows.Forms.Button();
             this.label16 = new System.Windows.Forms.Label();
-            this.checkBox4 = new System.Windows.Forms.CheckBox();
+            this.chkDOG = new System.Windows.Forms.CheckBox();
             this.textBox16 = new System.Windows.Forms.TextBox();
             this.btnDOG = new System.Windows.Forms.Button();
             this.textBox17 = new System.Windows.Forms.TextBox();
@@ -46,7 +46,7 @@
             this.textBox19 = new System.Windows.Forms.TextBox();
             this.textBox20 = new System.Windows.Forms.TextBox();
             this.textBox21 = new System.Windows.Forms.TextBox();
-            this.checkBox5 = new System.Windows.Forms.CheckBox();
+            this.chkLTC = new System.Windows.Forms.CheckBox();
             this.textBox22 = new System.Windows.Forms.TextBox();
             this.btnLTC = new System.Windows.Forms.Button();
             this.textBox23 = new System.Windows.Forms.TextBox();
@@ -62,7 +62,7 @@
             this.button1 = new System.Windows.Forms.Button();
             this.label15 = new System.Windows.Forms.Label();
             this.label14 = new System.Windows.Forms.Label();
-            this.checkBox2 = new System.Windows.Forms.CheckBox();
+            this.chkMZC = new System.Windows.Forms.CheckBox();
             this.textBox5 = new System.Windows.Forms.TextBox();
             this.btnMZC = new System.Windows.Forms.Button();
             this.textBox11 = new System.Windows.Forms.TextBox();
@@ -80,7 +80,7 @@
             this.label10 = new System.Windows.Forms.Label();
             this.label11 = new System.Windows.Forms.Label();
             this.label12 = new System.Windows.Forms.Label();
-            this.checkBox3 = new System.Windows.Forms.CheckBox();
+            this.chkBTC = new System.Windows.Forms.CheckBox();
             this.textBox6 = new System.Windows.Forms.TextBox();
             this.btnBTC = new System.Windows.Forms.Button();
             this.textBox7 = new System.Windows.Forms.TextBox();
@@ -93,7 +93,7 @@
             this.label4 = new System.Windows.Forms.Label();
             this.label3 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
-            this.checkBox1 = new System.Windows.Forms.CheckBox();
+            this.chkBTCT = new System.Windows.Forms.CheckBox();
             this.textBox26 = new System.Windows.Forms.TextBox();
             this.txtPort = new System.Windows.Forms.TextBox();
             this.btnMainConnection = new System.Windows.Forms.Button();
@@ -112,7 +112,7 @@
             this.panel1.Controls.Add(this.btnPurgeBlock);
             this.panel1.Controls.Add(this.btnClearIPFSisLoadingCache);
             this.panel1.Controls.Add(this.label16);
-            this.panel1.Controls.Add(this.checkBox4);
+            this.panel1.Controls.Add(this.chkDOG);
             this.panel1.Controls.Add(this.textBox16);
             this.panel1.Controls.Add(this.btnDOG);
             this.panel1.Controls.Add(this.textBox17);
@@ -120,7 +120,7 @@
             this.panel1.Controls.Add(this.textBox19);
             this.panel1.Controls.Add(this.textBox20);
             this.panel1.Controls.Add(this.textBox21);
-            this.panel1.Controls.Add(this.checkBox5);
+            this.panel1.Controls.Add(this.chkLTC);
             this.panel1.Controls.Add(this.textBox22);
             this.panel1.Controls.Add(this.btnLTC);
             this.panel1.Controls.Add(this.textBox23);
@@ -136,7 +136,7 @@
             this.panel1.Controls.Add(this.button1);
             this.panel1.Controls.Add(this.label15);
             this.panel1.Controls.Add(this.label14);
-            this.panel1.Controls.Add(this.checkBox2);
+            this.panel1.Controls.Add(this.chkMZC);
             this.panel1.Controls.Add(this.textBox5);
             this.panel1.Controls.Add(this.btnMZC);
             this.panel1.Controls.Add(this.textBox11);
@@ -154,7 +154,7 @@
             this.panel1.Controls.Add(this.label10);
             this.panel1.Controls.Add(this.label11);
             this.panel1.Controls.Add(this.label12);
-            this.panel1.Controls.Add(this.checkBox3);
+            this.panel1.Controls.Add(this.chkBTC);
             this.panel1.Controls.Add(this.textBox6);
             this.panel1.Controls.Add(this.btnBTC);
             this.panel1.Controls.Add(this.textBox7);
@@ -167,7 +167,7 @@
             this.panel1.Controls.Add(this.label4);
             this.panel1.Controls.Add(this.label3);
             this.panel1.Controls.Add(this.label2);
-            this.panel1.Controls.Add(this.checkBox1);
+            this.panel1.Controls.Add(this.chkBTCT);
             this.panel1.Controls.Add(this.textBox26);
             this.panel1.Controls.Add(this.txtPort);
             this.panel1.Controls.Add(this.btnMainConnection);
@@ -260,16 +260,15 @@
             this.label16.TabIndex = 155;
             this.label16.Text = "side chain";
             // 
-            // checkBox4
+            // chkDOG
             // 
-            this.checkBox4.AutoSize = true;
-            this.checkBox4.Enabled = false;
-            this.checkBox4.Location = new System.Drawing.Point(548, 306);
-            this.checkBox4.Name = "checkBox4";
-            this.checkBox4.Size = new System.Drawing.Size(58, 17);
-            this.checkBox4.TabIndex = 146;
-            this.checkBox4.Text = "testnet";
-            this.checkBox4.UseVisualStyleBackColor = true;
+            this.chkDOG.AutoSize = true;
+            this.chkDOG.Location = new System.Drawing.Point(548, 306);
+            this.chkDOG.Name = "chkDOG";
+            this.chkDOG.Size = new System.Drawing.Size(60, 17);
+            this.chkDOG.TabIndex = 146;
+            this.chkDOG.Text = "reindex";
+            this.chkDOG.UseVisualStyleBackColor = true;
             // 
             // textBox16
             // 
@@ -335,16 +334,15 @@
             this.textBox21.TabIndex = 139;
             this.textBox21.Text = "DOG";
             // 
-            // checkBox5
+            // chkLTC
             // 
-            this.checkBox5.AutoSize = true;
-            this.checkBox5.Enabled = false;
-            this.checkBox5.Location = new System.Drawing.Point(548, 277);
-            this.checkBox5.Name = "checkBox5";
-            this.checkBox5.Size = new System.Drawing.Size(58, 17);
-            this.checkBox5.TabIndex = 138;
-            this.checkBox5.Text = "testnet";
-            this.checkBox5.UseVisualStyleBackColor = true;
+            this.chkLTC.AutoSize = true;
+            this.chkLTC.Location = new System.Drawing.Point(548, 277);
+            this.chkLTC.Name = "chkLTC";
+            this.chkLTC.Size = new System.Drawing.Size(60, 17);
+            this.chkLTC.TabIndex = 138;
+            this.chkLTC.Text = "reindex";
+            this.chkLTC.UseVisualStyleBackColor = true;
             // 
             // textBox22
             // 
@@ -480,7 +478,7 @@
             this.label15.Name = "label15";
             this.label15.Size = new System.Drawing.Size(109, 13);
             this.label15.TabIndex = 124;
-            this.label15.Text = "Sup!? v0.3.3-beta";
+            this.label15.Text = "Sup!? v0.3.4-beta";
             this.label15.TextAlign = System.Drawing.ContentAlignment.TopCenter;
             // 
             // label14
@@ -492,16 +490,15 @@
             this.label14.TabIndex = 123;
             this.label14.Text = resources.GetString("label14.Text");
             // 
-            // checkBox2
+            // chkMZC
             // 
-            this.checkBox2.AutoSize = true;
-            this.checkBox2.Enabled = false;
-            this.checkBox2.Location = new System.Drawing.Point(548, 246);
-            this.checkBox2.Name = "checkBox2";
-            this.checkBox2.Size = new System.Drawing.Size(58, 17);
-            this.checkBox2.TabIndex = 122;
-            this.checkBox2.Text = "testnet";
-            this.checkBox2.UseVisualStyleBackColor = true;
+            this.chkMZC.AutoSize = true;
+            this.chkMZC.Location = new System.Drawing.Point(548, 246);
+            this.chkMZC.Name = "chkMZC";
+            this.chkMZC.Size = new System.Drawing.Size(60, 17);
+            this.chkMZC.TabIndex = 122;
+            this.chkMZC.Text = "reindex";
+            this.chkMZC.UseVisualStyleBackColor = true;
             // 
             // textBox5
             // 
@@ -657,16 +654,15 @@
             this.label12.TabIndex = 104;
             this.label12.Text = "login";
             // 
-            // checkBox3
+            // chkBTC
             // 
-            this.checkBox3.AutoSize = true;
-            this.checkBox3.Enabled = false;
-            this.checkBox3.Location = new System.Drawing.Point(548, 217);
-            this.checkBox3.Name = "checkBox3";
-            this.checkBox3.Size = new System.Drawing.Size(58, 17);
-            this.checkBox3.TabIndex = 103;
-            this.checkBox3.Text = "testnet";
-            this.checkBox3.UseVisualStyleBackColor = true;
+            this.chkBTC.AutoSize = true;
+            this.chkBTC.Location = new System.Drawing.Point(548, 217);
+            this.chkBTC.Name = "chkBTC";
+            this.chkBTC.Size = new System.Drawing.Size(60, 17);
+            this.chkBTC.TabIndex = 103;
+            this.chkBTC.Text = "reindex";
+            this.chkBTC.UseVisualStyleBackColor = true;
             // 
             // textBox6
             // 
@@ -778,18 +774,15 @@
             this.label2.TabIndex = 91;
             this.label2.Text = "chain id";
             // 
-            // checkBox1
+            // chkBTCT
             // 
-            this.checkBox1.AutoSize = true;
-            this.checkBox1.Checked = true;
-            this.checkBox1.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.checkBox1.Enabled = false;
-            this.checkBox1.Location = new System.Drawing.Point(546, 41);
-            this.checkBox1.Name = "checkBox1";
-            this.checkBox1.Size = new System.Drawing.Size(58, 17);
-            this.checkBox1.TabIndex = 88;
-            this.checkBox1.Text = "testnet";
-            this.checkBox1.UseVisualStyleBackColor = true;
+            this.chkBTCT.AutoSize = true;
+            this.chkBTCT.Location = new System.Drawing.Point(546, 41);
+            this.chkBTCT.Name = "chkBTCT";
+            this.chkBTCT.Size = new System.Drawing.Size(60, 17);
+            this.chkBTCT.TabIndex = 88;
+            this.chkBTCT.Text = "reindex";
+            this.chkBTCT.UseVisualStyleBackColor = true;
             // 
             // textBox26
             // 
@@ -861,7 +854,7 @@
         private System.Windows.Forms.Label label10;
         private System.Windows.Forms.Label label11;
         private System.Windows.Forms.Label label12;
-        private System.Windows.Forms.CheckBox checkBox3;
+        private System.Windows.Forms.CheckBox chkBTC;
         private System.Windows.Forms.TextBox textBox6;
         private System.Windows.Forms.Button btnBTC;
         private System.Windows.Forms.TextBox textBox7;
@@ -874,12 +867,12 @@
         private System.Windows.Forms.Label label4;
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.Label label2;
-        private System.Windows.Forms.CheckBox checkBox1;
+        private System.Windows.Forms.CheckBox chkBTCT;
         private System.Windows.Forms.TextBox textBox26;
         private System.Windows.Forms.TextBox txtPort;
         private System.Windows.Forms.Button btnMainConnection;
         private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.CheckBox checkBox2;
+        private System.Windows.Forms.CheckBox chkMZC;
         private System.Windows.Forms.TextBox textBox5;
         private System.Windows.Forms.Button btnMZC;
         private System.Windows.Forms.TextBox textBox11;
@@ -895,7 +888,7 @@
         private System.Windows.Forms.Button btnUnpinIPFS;
         private System.Windows.Forms.Button btnPurge;
         private System.Windows.Forms.PictureBox pictureBox1;
-        private System.Windows.Forms.CheckBox checkBox4;
+        private System.Windows.Forms.CheckBox chkDOG;
         private System.Windows.Forms.TextBox textBox16;
         private System.Windows.Forms.Button btnDOG;
         private System.Windows.Forms.TextBox textBox17;
@@ -903,7 +896,7 @@
         private System.Windows.Forms.TextBox textBox19;
         private System.Windows.Forms.TextBox textBox20;
         private System.Windows.Forms.TextBox textBox21;
-        private System.Windows.Forms.CheckBox checkBox5;
+        private System.Windows.Forms.CheckBox chkLTC;
         private System.Windows.Forms.TextBox textBox22;
         private System.Windows.Forms.Button btnLTC;
         private System.Windows.Forms.TextBox textBox23;

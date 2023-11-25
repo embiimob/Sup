@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Net;
+using System.Runtime.Hosting;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
@@ -31,7 +32,10 @@ namespace SUP
                 RedirectStandardError = true,
                 WindowStyle = ProcessWindowStyle.Hidden,
                 Arguments = $"-testnet -txindex=1 -addrindex=1 -datadir={bitcoinDirectory} -server -rpcuser=good-user -rpcpassword=better-password -rpcport=18332"
+
             };
+
+            if (chkBTCT.Checked) { startInfo.Arguments = startInfo.Arguments + " -reindex"; }
 
             Process.Start(startInfo);
         }
@@ -52,6 +56,7 @@ namespace SUP
                 WindowStyle = ProcessWindowStyle.Hidden,
                 Arguments = $"-txindex=1 -addrindex=1 -datadir={bitcoinDirectory} -server -rpcuser=good-user -rpcpassword=better-password -rpcport=8332"
             };
+            if (chkBTC.Checked) { startInfo.Arguments = startInfo.Arguments + " -reindex"; }
 
             Process.Start(startInfo);
         }
@@ -73,6 +78,8 @@ namespace SUP
                 Arguments = $"-txindex=1 -addrindex=1 -datadir={bitcoinDirectory} -server -rpcuser=good-user -rpcpassword=better-password -rpcport=12832"
             };
 
+            if (chkMZC.Checked) { startInfo.Arguments = startInfo.Arguments + " -reindex"; }
+
             Process.Start(startInfo);
         }
 
@@ -93,6 +100,8 @@ namespace SUP
                 Arguments = $"-txindex=1 -addrindex=1 -datadir={bitcoinDirectory} -server -rpcuser=good-user -rpcpassword=better-password -rpcport=9332"
             };
 
+            if (chkLTC.Checked) { startInfo.Arguments = startInfo.Arguments + " -reindex"; }
+
             Process.Start(startInfo);
         }
 
@@ -112,6 +121,8 @@ namespace SUP
                 WindowStyle = ProcessWindowStyle.Hidden,
                 Arguments = $"-txindex=1 -addrindex=1 -datadir={bitcoinDirectory} -server -rpcuser=good-user -rpcpassword=better-password -rpcport=22555"
             };
+
+            if (chkDOG.Checked) { startInfo.Arguments = startInfo.Arguments + " -reindex"; }
 
             Process.Start(startInfo);
         }
