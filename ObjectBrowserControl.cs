@@ -9,11 +9,11 @@ namespace SUP
 
         public event EventHandler ProfileURNChanged;
 
-        public ObjectBrowserControl(string searchstring = "", bool iscontrol = true)
+        public ObjectBrowserControl(string searchstring = "", bool iscontrol = true, bool testnet = true)
         {
             InitializeComponent();
 
-            control = new ObjectBrowser(searchstring, iscontrol);
+            control = new ObjectBrowser(searchstring, iscontrol, testnet);
             control.TopLevel = false;
             control.Visible = true;
             control.ControlBox = false;

@@ -28,11 +28,17 @@ namespace SUP
         private string searchAddress;
         Regex regexTransactionId = new Regex(@"\b[0-9a-f]{64}\b");
         private Random random = new Random();
+        private string mainnetURL = @"http://127.0.0.1:18332";
+        private string mainnetLogin = "good-user";
+        private string mainnetPassword = "better-password";
+        private string mainnetVersionByte = "111";
+     
 
-        public ProfileMint(string address = "")
+        public ProfileMint(string address = "", bool testnet = true)
         {
             InitializeComponent();
             searchAddress = address;
+            if (!testnet) { mainnetURL = @"http://127.0.0.1:8332"; mainnetVersionByte = "0"; }
         }
 
         private string GetRandomDelimiter()
@@ -119,7 +125,7 @@ namespace SUP
 
             try
             {
-                List<string> pubkeys = Root.GetPublicKeysByAddress(txtObjectAddress.Text, "good-user", "better-password", @"http://127.0.0.1:18332");
+                List<string> pubkeys = Root.GetPublicKeysByAddress(txtObjectAddress.Text, mainnetLogin,mainnetPassword,mainnetURL);
                 PROJson.pkx = pubkeys[0];
                 PROJson.pky = pubkeys[1];
             }
@@ -147,8 +153,8 @@ namespace SUP
                 // Assign the result to txtOBJP2FK.Text
                 txtOBJP2FK.Text = objString;
 
-                NetworkCredential credentials = new NetworkCredential("good-user", "better-password");
-                NBitcoin.RPC.RPCClient rpcClient = new NBitcoin.RPC.RPCClient(credentials, new Uri("http://127.0.0.1:18332"), Network.Main);
+                NetworkCredential credentials = new NetworkCredential(mainnetLogin, mainnetPassword);
+                NBitcoin.RPC.RPCClient rpcClient = new NBitcoin.RPC.RPCClient(credentials, new Uri(mainnetURL), Network.Main);
                 System.Security.Cryptography.SHA256 mySHA256 = SHA256Managed.Create();
                 byte[] hashValue = mySHA256.ComputeHash(Encoding.UTF8.GetBytes(txtOBJP2FK.Text));
 
@@ -186,7 +192,7 @@ namespace SUP
                     }
 
                     string chunkBase58 = Base58.EncodeWithCheckSum(
-                        new byte[] { 111 }.Concat(chunkBytes).ToArray());
+                        new byte[] { (byte)Int32.Parse(mainnetVersionByte) }.Concat(chunkBytes).ToArray());
 
                     if (!encodedList.Contains(chunkBase58))
                     {
@@ -200,7 +206,7 @@ namespace SUP
 
 
                 //add URN registration
-                encodedList.Add(Root.GetPublicAddressByKeyword(txtURN.Text));
+                encodedList.Add(Root.GetPublicAddressByKeyword(txtURN.Text, mainnetVersionByte));
 
                 encodedList.Add(signatureAddress);
                 txtAddressListJSON.Text = JsonConvert.SerializeObject(encodedList.Distinct());
@@ -222,7 +228,7 @@ namespace SUP
 
                         }
 
-                        CoinRPC a = new CoinRPC(new Uri("http://127.0.0.1:18332"), new NetworkCredential("good-user", "better-password"));
+                        CoinRPC a = new CoinRPC(new Uri(mainnetURL), new NetworkCredential(mainnetLogin,mainnetPassword));
 
                         try
                         {
@@ -434,8 +440,8 @@ namespace SUP
             }
             else
             {
-                NetworkCredential credentials = new NetworkCredential("good-user", "better-password");
-                NBitcoin.RPC.RPCClient rpcClient = new NBitcoin.RPC.RPCClient(credentials, new Uri("http://127.0.0.1:18332"), Network.Main);
+                NetworkCredential credentials = new NetworkCredential(mainnetLogin,mainnetPassword);
+                NBitcoin.RPC.RPCClient rpcClient = new NBitcoin.RPC.RPCClient(credentials, new Uri(mainnetURL), Network.Main);
                 string newAddress = "";
                 string P2FKASCII = "";
                 int attempt = 0;
@@ -677,7 +683,7 @@ namespace SUP
                                 break;
                             default:
 
-                                root = Root.GetRootByTransactionId(transactionid, "good-user", "better-password", @"http://127.0.0.1:18332");
+                                root = Root.GetRootByTransactionId(transactionid, mainnetLogin, mainnetPassword, mainnetURL,mainnetVersionByte);
                                 try
                                 {
                                     lblIMGBlockDate.Text = "bitcoin-t verified: " + root.BlockDate.ToString("ddd, dd MMM yyyy hh:mm:ss");
@@ -984,7 +990,7 @@ namespace SUP
         public void LoadFormByAddress(string address)
         {
 
-            PROState foundObject = PROState.GetProfileByAddress(address, "good-user", "better-password", "http://127.0.0.1:18332");
+            PROState foundObject = PROState.GetProfileByAddress(address, mainnetLogin, mainnetPassword, mainnetURL, mainnetVersionByte);
             if (foundObject.URN != null)
             {
                 DateTime expirationDate = foundObject.ChangeDate.AddYears(3);
@@ -997,8 +1003,8 @@ namespace SUP
                 }
                 else { }
 
-                NetworkCredential credentials = new NetworkCredential("good-user", "better-password");
-                NBitcoin.RPC.RPCClient rpcClient = new NBitcoin.RPC.RPCClient(credentials, new Uri("http://127.0.0.1:18332"), Network.Main);
+                NetworkCredential credentials = new NetworkCredential(mainnetLogin, mainnetPassword);
+                NBitcoin.RPC.RPCClient rpcClient = new NBitcoin.RPC.RPCClient(credentials, new Uri(mainnetURL), Network.Main);
                 string accountName = "";
                 try { accountName = rpcClient.SendCommand("getaccount", address).ResultString; } catch { }
                 if (accountName != "") { btnMint.Enabled = false; }
@@ -1228,7 +1234,7 @@ namespace SUP
         {
 
             try { File.Delete(@"root\GetLocalProfiles.json"); } catch { }
-            PROState PRO = PROState.GetProfileByAddress(txtObjectAddress.Text, "good-user", "better-password", @"http://127.0.0.1:18332");
+            PROState PRO = PROState.GetProfileByAddress(txtObjectAddress.Text, mainnetLogin, mainnetPassword, mainnetURL, mainnetVersionByte);
 
             if (PRO.URN != null)
             {

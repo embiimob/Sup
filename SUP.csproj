@@ -503,6 +503,12 @@
     <Content Include="includes\AngleSharp.Css.xml" />
     <Content Include="includes\AngleSharp.dll" />
     <Content Include="includes\AngleSharp.xml" />
+    <Content Include="includes\BCT_Logo.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="includes\BC_Logo.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="includes\SUPS.gif" />
     <Content Include="includes\SUPT.gif" />
     <Content Include="includes\SUPU.gif" />

@@ -8,16 +8,29 @@ namespace SUP
 {
     public partial class FoundCollectionControl : UserControl
     {
-        public FoundCollectionControl()
+        private bool _testnet;
+        private string mainnetURL = @"http://127.0.0.1:18332";
+        private string mainnetLogin = "good-user";
+        private string mainnetPassword = "better-password";
+        private string mainnetVersionByte = "111";
+        public FoundCollectionControl(bool testnet = true)
         {
             InitializeComponent();
+            _testnet = testnet;
+            if (!testnet )
+            {
+              mainnetURL = @"http://127.0.0.1:8332";
+        mainnetLogin = "good-user";
+        mainnetPassword = "better-password";
+        mainnetVersionByte = "0";
+    }
         }
      
         private void foundObjectControl_Click(object sender, EventArgs e)
         {
 
             Form parentForm = this.FindForm();
-            ObjectBrowser childForm = new ObjectBrowser(ObjectAddress.Text);
+            ObjectBrowser childForm = new ObjectBrowser(ObjectAddress.Text, _testnet);
             
             childForm.Owner = parentForm;
           
@@ -60,7 +73,7 @@ namespace SUP
                         }
                     }
 
-                    Root[] root = Root.GetRootsByAddress(ObjectAddress.Text, "good-user", "better-password", @"http://127.0.0.1:18332");
+                    Root[] root = Root.GetRootsByAddress(ObjectAddress.Text,mainnetLogin,mainnetPassword,mainnetURL,0,-1,mainnetVersionByte);
 
                     foreach (Root rootItem in root)
                     {

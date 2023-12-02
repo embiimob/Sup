@@ -8,24 +8,37 @@ namespace SUP
 {
     public partial class FoundObjectControl : UserControl
 
-       
+
     {
         private string _activeprofile;
-        public FoundObjectControl(string activeprofile)
+        private string mainnetURL = @"http://127.0.0.1:18332";
+        private string mainnetLogin = "good-user";
+        private string mainnetPassword = "better-password";
+        private string mainnetVersionByte = "111";
+        private bool _testnet;
+        public FoundObjectControl(string activeprofile, bool testnet = true)
         {
             InitializeComponent();
             _activeprofile = activeprofile;
+            if (!testnet)
+            {
+                mainnetURL = @"http://127.0.0.1:8332";
+                mainnetLogin = "good-user";
+                mainnetPassword = "better-password";
+                mainnetVersionByte = "0";
+                _testnet = testnet;
+            }
         }
 
-     
+
         private void foundObjectControl_Click(object sender, EventArgs e)
         {
 
             Form parentForm = this.FindForm();
-            ObjectDetails childForm = new ObjectDetails(ObjectAddress.Text, _activeprofile);
-            
+            ObjectDetails childForm = new ObjectDetails(ObjectAddress.Text, _activeprofile, _testnet);
+
             childForm.Owner = parentForm;
-          
+
             childForm.Show();
 
         }
@@ -33,8 +46,8 @@ namespace SUP
         private void foundListings_Click(object sender, EventArgs e)
         {
 
-           Form parentForm = this.FindForm();
-           ObjectBuy childForm = new ObjectBuy(ObjectAddress.Text, _activeprofile);
+            Form parentForm = this.FindForm();
+            ObjectBuy childForm = new ObjectBuy(ObjectAddress.Text, _activeprofile, _testnet);
 
             childForm.Owner = parentForm;
 
@@ -45,7 +58,7 @@ namespace SUP
         private void ObjectCreators_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
             Form parentForm = this.FindForm();
-            ObjectBrowser childForm = new ObjectBrowser(ObjectCreators.Links[0].LinkData.ToString());
+            ObjectBrowser childForm = new ObjectBrowser(ObjectCreators.Links[0].LinkData.ToString(),false, _testnet);
             childForm.Owner = parentForm;
             childForm.Show();
         }
@@ -53,7 +66,7 @@ namespace SUP
         private void ObjectCreators2_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
             Form parentForm = this.FindForm();
-            ObjectBrowser childForm = new ObjectBrowser(ObjectCreators2.Links[0].LinkData.ToString());
+            ObjectBrowser childForm = new ObjectBrowser(ObjectCreators2.Links[0].LinkData.ToString(),false, _testnet);
             childForm.Owner = parentForm;
             childForm.Show();
         }
@@ -66,7 +79,7 @@ namespace SUP
         private void btnOfficial_Click(object sender, EventArgs e)
         {
             Form parentForm = this.FindForm();
-            ObjectDetails childForm = new ObjectDetails(txtOfficialURN.Text,_activeprofile);
+            ObjectDetails childForm = new ObjectDetails(txtOfficialURN.Text, _activeprofile);
             childForm.Owner = parentForm;
             childForm.Show();
         }
@@ -90,7 +103,7 @@ namespace SUP
                     {
                         try
                         {
-                            string directoryPath = Path.GetDirectoryName(ObjectImage.ImageLocation.Replace(@"/",@"\"));
+                            string directoryPath = Path.GetDirectoryName(ObjectImage.ImageLocation.Replace(@"/", @"\"));
                             Directory.Delete(directoryPath, true);
                         }
                         catch
@@ -99,12 +112,12 @@ namespace SUP
                         }
                     }
 
-                    Root[] root = Root.GetRootsByAddress(ObjectAddress.Text, "good-user", "better-password", @"http://127.0.0.1:18332");
+                    Root[] root = Root.GetRootsByAddress(ObjectAddress.Text, mainnetLogin,mainnetPassword,mainnetURL,0,-1,mainnetVersionByte);
 
                     foreach (Root rootItem in root)
                     {
 
-     
+
                         try
                         {
                             Directory.Delete(@"root\" + rootItem.TransactionId, true);
@@ -113,7 +126,7 @@ namespace SUP
 
                         foreach (string key in rootItem.Keyword.Keys)
                         {
-                            try { File.Delete(@"root\" + key + @"\GetObjectsByAddress.json"); }catch { }
+                            try { File.Delete(@"root\" + key + @"\GetObjectsByAddress.json"); } catch { }
                             try { File.Delete(@"root\" + key + @"\GetObjectsCreatedByAddress.json"); } catch { }
                             try { File.Delete(@"root\" + key + @"\GetObjectsOwnedByAddress.json"); } catch { }
                         }
@@ -131,17 +144,17 @@ namespace SUP
                             string JSONOBJ = System.IO.File.ReadAllText(diskpath + "OBJ.json");
                             OBJState objectState = JsonConvert.DeserializeObject<OBJState>(JSONOBJ);
 
-                                if (objectState.URN != null)
-                                {
-                                    try { Directory.Delete(@"root\" + GetTransactionId(objectState.URN), true); } catch { }
-                                    try { Directory.Delete(@"ipfs\" + GetTransactionId(objectState.URN), true); } catch { }
-                                }
-                                if (objectState.Image != null)
-                                {
-                                    try { Directory.Delete(@"root\" + GetTransactionId(objectState.Image), true); } catch { }
-                                    try { Directory.Delete(@"ipfs\" + GetTransactionId(objectState.Image), true); } catch { }
-                                }
-                            
+                            if (objectState.URN != null)
+                            {
+                                try { Directory.Delete(@"root\" + GetTransactionId(objectState.URN), true); } catch { }
+                                try { Directory.Delete(@"ipfs\" + GetTransactionId(objectState.URN), true); } catch { }
+                            }
+                            if (objectState.Image != null)
+                            {
+                                try { Directory.Delete(@"root\" + GetTransactionId(objectState.Image), true); } catch { }
+                                try { Directory.Delete(@"ipfs\" + GetTransactionId(objectState.Image), true); } catch { }
+                            }
+
                         }
                         catch { }
 

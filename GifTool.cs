@@ -18,14 +18,27 @@ namespace SUP
         private List<string> gifList;
         private int numPictureBoxesToAdd = 20;
         private int currentPictureBoxIndex = 0;
+        private string mainnetURL = @"http://127.0.0.1:18332";
+        private string mainnetLogin = "good-user";
+        private string mainnetPassword = "better-password";
+        private string mainnetVersionByte = "111";
 
-        public GifTool(DiscoBall parentForm)
+        public GifTool(DiscoBall parentForm, bool testnet = true)
         {
             InitializeComponent();
             InitializeDelayTimer();
             this.parentForm = parentForm;
 
-        }
+            if (!testnet)
+            {
+                       mainnetURL = @"http://127.0.0.1:8332";
+        mainnetLogin = "good-user";
+        mainnetPassword = "better-password";
+        mainnetVersionByte = "0";
+
+    }
+
+}
 
         private void GifTool_Load(object sender, EventArgs e)
         {
@@ -92,19 +105,19 @@ namespace SUP
 
 
                 gifList = new List<string>();
-                string searchAddress = Root.GetPublicAddressByKeyword(searchstring);
+                string searchAddress = Root.GetPublicAddressByKeyword(searchstring,mainnetVersionByte);
 
                 if (searchstring.Length > 20) { searchAddress = searchstring; }
                 else
                 {
-                    PROState searchprofile = PROState.GetProfileByURN(searchstring, "good-user", "better-password", @"http://127.0.0.1:18332");
+                    PROState searchprofile = PROState.GetProfileByURN(searchstring, mainnetLogin,mainnetPassword,mainnetURL,mainnetVersionByte);
                     if (searchprofile.Creators != null)
                     {
                         searchAddress = searchprofile.Creators[0];
                     }
                 }
 
-                Root[] GIFS = Root.GetRootsByAddress(searchAddress, "good-user", "better-password", @"http://127.0.0.1:18332");
+                Root[] GIFS = Root.GetRootsByAddress(searchAddress, mainnetLogin, mainnetPassword, mainnetURL,0,-1, mainnetVersionByte);
                    
                     
                     
@@ -294,7 +307,7 @@ namespace SUP
                                 default:
                                     if (!imagepath.ToUpper().StartsWith("HTTP") && transactionid != "")
                                     {
-                                        Root.GetRootByTransactionId(transactionid, "good-user", "better-password", @"http://127.0.0.1:18332");
+                                        Root.GetRootByTransactionId(transactionid, mainnetLogin, mainnetPassword, mainnetURL, mainnetVersionByte);
 
                                     }
                                     break;

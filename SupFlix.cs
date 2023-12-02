@@ -18,16 +18,28 @@ namespace SUP
         private List<string> soundFiles;
         private int numPictureBoxesToAdd = 10;
         private int currentTrackIndex = 0;
+        private string mainnetURL = @"http://127.0.0.1:18332";
+        private string mainnetLogin = "good-user";
+        private string mainnetPassword = "better-password";
+        private string mainnetVersionByte = "111";
 
         private bool playOldestFirst = false;
         List<Microsoft.Web.WebView2.WinForms.WebView2> webviewers = new List<Microsoft.Web.WebView2.WinForms.WebView2>();
 
-        public SupFlix(string searchaddress = "mp4")
+        public SupFlix(string searchaddress = "mp4", bool testnet = true)
         {
             InitializeComponent();
             InitializeDelayTimer();
             soundFiles = new List<string>();
             txtSearch.Text = searchaddress;
+            if (!testnet)
+            {
+                mainnetURL = @"http://127.0.0.1:8332";
+                mainnetLogin = "good-user";
+                mainnetPassword = "better-password";
+                mainnetVersionByte = "0";
+
+            }
 
 
         }
@@ -109,14 +121,14 @@ namespace SUP
                 });
 
                 soundFiles = new List<string>();
-                string searchAddress = Root.GetPublicAddressByKeyword(searchstring.Replace("#", ""));
+                string searchAddress = Root.GetPublicAddressByKeyword(searchstring.Replace("#", ""), mainnetVersionByte);
 
                 if (searchstring.Length > 20) { searchAddress = searchstring; }
                 else
                 {
                     if (!searchstring.StartsWith("#"))
                     {
-                        PROState searchprofile = PROState.GetProfileByURN(searchstring, "good-user", "better-password", @"http://127.0.0.1:18332");
+                        PROState searchprofile = PROState.GetProfileByURN(searchstring, mainnetLogin, mainnetPassword, mainnetURL,mainnetVersionByte);
                         if (searchprofile.Creators != null)
                         {
                             searchAddress = searchprofile.Creators[0];
@@ -126,7 +138,7 @@ namespace SUP
 
 
 
-                Root[] TRACKS = Root.GetRootsByAddress(searchAddress, "good-user", "better-password", @"http://127.0.0.1:18332");
+                Root[] TRACKS = Root.GetRootsByAddress(searchAddress, mainnetLogin, mainnetPassword, mainnetURL,0,-1,mainnetVersionByte);
 
                 if (TRACKS.Count() > 0)
                 {
@@ -176,7 +188,7 @@ namespace SUP
                 List<OBJState> objects = new List<OBJState>();
 
 
-                objects = OBJState.GetObjectsByKeyword(new List<string> { searchstring.Replace("#", "") }, "good-user", "better-password", @"http://127.0.0.1:18332");
+                objects = OBJState.GetObjectsByKeyword(new List<string> { searchstring.Replace("#", "") }, mainnetLogin, mainnetPassword, mainnetURL, mainnetVersionByte);
 
                 if (objects.Count > 0)
                 {
@@ -205,7 +217,7 @@ namespace SUP
                     }
                 }
 
-                objects = OBJState.GetObjectsCreatedByAddress(searchAddress, "good-user", "better-password", @"http://127.0.0.1:18332");
+                objects = OBJState.GetObjectsCreatedByAddress(searchAddress, mainnetLogin, mainnetPassword, mainnetURL, mainnetVersionByte);
 
                 if (objects.Count() > 0)
                 {
@@ -280,7 +292,7 @@ namespace SUP
             {
                 string[] soundInfo = soundFiles[currentTrackIndex].Split(',');
                 string soundFrom = soundInfo[2];
-                PROState searchprofile = PROState.GetProfileByAddress(soundFrom, "good-user", "better-password", @"http://127.0.0.1:18332");
+                PROState searchprofile = PROState.GetProfileByAddress(soundFrom, mainnetLogin, mainnetPassword, mainnetURL, mainnetVersionByte);
                 if (searchprofile.URN != null)
                 {
                     soundFrom = searchprofile.URN;
@@ -425,7 +437,7 @@ namespace SUP
                         default:
                             if (!filepath.ToUpper().StartsWith("HTTP") && transactionid != "")
                             {
-                                Root.GetRootByTransactionId(transactionid, "good-user", "better-password", @"http://127.0.0.1:18332");
+                                Root.GetRootByTransactionId(transactionid, mainnetLogin, mainnetPassword, mainnetURL, mainnetVersionByte);
 
                             }
                             break;
@@ -494,7 +506,7 @@ namespace SUP
                 webviewer.DefaultBackgroundColor = System.Drawing.Color.Black;
                 webviewer.Name = "webviewer";
 
-                webviewer.Size = new System.Drawing.Size(600,500);
+                webviewer.Size = new System.Drawing.Size(600, 500);
 
 
                 webviewer.ZoomFactor = 1D;
@@ -645,7 +657,7 @@ namespace SUP
                                 default:
                                     if (!videopath.ToUpper().StartsWith("HTTP") && transactionid != "")
                                     {
-                                        Root.GetRootByTransactionId(transactionid, "good-user", "better-password", @"http://127.0.0.1:18332");
+                                        Root.GetRootByTransactionId(transactionid, mainnetLogin, mainnetPassword, mainnetURL, mainnetVersionByte);
 
                                     }
                                     break;

@@ -27,18 +27,29 @@ namespace SUP
         private readonly string givaddress = "";
         private Random random = new Random();
         private string _activeprofile;
+        private string mainnetURL = @"http://127.0.0.1:18332";
+        private string mainnetLogin = "good-user";
+        private string mainnetPassword = "better-password";
+        private string mainnetVersionByte = "111";
 
-        public ObjectBuy(string _address = "", string activeprofile = "")
+        public ObjectBuy(string _address = "", string activeprofile = "", bool testnet = true)
         {
             InitializeComponent();
             givaddress = _address;
             _activeprofile = activeprofile;
+            if (!testnet)
+            {
+                mainnetURL = @"http://127.0.0.1:8332";
+                mainnetLogin = "good-user";
+                mainnetPassword = "better-password";
+                mainnetVersionByte = "0";
+            }
         }
 
         private string GetRandomDelimiter()
         {
             string[] delimiters = { "\\", "/", ":", "*", "?", "\"", "<", ">", "|" };
-            
+
             return delimiters[random.Next(delimiters.Length)];
         }
 
@@ -147,21 +158,21 @@ namespace SUP
 
 
 
-            PROState profile = PROState.GetProfileByAddress(SentFrom, "good-user", "better-password", "http://127.0.0.1:18332");
+            PROState profile = PROState.GetProfileByAddress(SentFrom,mainnetLogin,mainnetPassword,mainnetURL,mainnetVersionByte);
 
             if (profile.URN != null)
             {
                 SentFrom = profile.URN;
             }
 
-            profile = PROState.GetProfileByAddress(SentTo, "good-user", "better-password", "http://127.0.0.1:18332");
+            profile = PROState.GetProfileByAddress(SentTo, mainnetLogin, mainnetPassword, mainnetURL, mainnetVersionByte);
 
             if (profile.URN != null)
             {
                 SentTo = profile.URN;
             }
 
-            OBJState isobject = OBJState.GetObjectByAddress(txtAddressSearch.Text, "good-user", "better-password", @"http://127.0.0.1:18332");
+            OBJState isobject = OBJState.GetObjectByAddress(txtAddressSearch.Text, mainnetLogin, mainnetPassword, mainnetURL, mainnetVersionByte);
 
             if (isobject.Creators.ContainsKey(SentFrom)) { SentFrom = "primary"; }
             if (isobject.Creators.ContainsKey(SentTo)) { SentTo = "primary"; }
@@ -249,7 +260,7 @@ namespace SUP
         private void RefreshPage()
         {
 
-            OBJState objstate = OBJState.GetObjectByAddress(txtAddressSearch.Text, "good-user", "better-password", "http://127.0.0.1:18332");
+            OBJState objstate = OBJState.GetObjectByAddress(txtAddressSearch.Text, mainnetLogin, mainnetPassword, mainnetURL, mainnetVersionByte);
             Dictionary<string, string> profileAddress = new Dictionary<string, string> { };
 
             foreach (string creator in objstate.Creators.Keys)
@@ -337,7 +348,7 @@ namespace SUP
                     if (!profileAddress.ContainsKey(searchkey))
                     {
 
-                        PROState profile = PROState.GetProfileByAddress(searchkey, "good-user", "better-password", "http://127.0.0.1:18332");
+                        PROState profile = PROState.GetProfileByAddress(searchkey, mainnetLogin, mainnetPassword, mainnetURL, mainnetVersionByte);
 
                         if (profile.URN != null)
                         {
@@ -444,7 +455,7 @@ namespace SUP
                     if (!profileAddress.ContainsKey(searchkey))
                     {
 
-                        PROState profile = PROState.GetProfileByAddress(searchkey, "good-user", "better-password", "http://127.0.0.1:18332");
+                        PROState profile = PROState.GetProfileByAddress(searchkey, mainnetLogin, mainnetPassword, mainnetURL, mainnetVersionByte);
 
                         if (profile.URN != null)
                         {
@@ -483,7 +494,7 @@ namespace SUP
                     if (!profileAddress.ContainsKey(searchkey))
                     {
 
-                        PROState profile = PROState.GetProfileByAddress(searchkey, "good-user", "better-password", "http://127.0.0.1:18332");
+                        PROState profile = PROState.GetProfileByAddress(searchkey, mainnetLogin, mainnetPassword, mainnetURL, mainnetVersionByte);
 
                         if (profile.URN != null)
                         {
@@ -597,11 +608,11 @@ namespace SUP
                             myFriends = JsonConvert.DeserializeObject<Dictionary<string, string>>(myFriendsJson);
                         }
                         string filter = txtAddressSearch.Text;
-                        isobject = OBJState.GetObjectByAddress(filter, "good-user", "better-password", @"http://127.0.0.1:18332");
+                        isobject = OBJState.GetObjectByAddress(filter, mainnetLogin, mainnetPassword, mainnetURL, mainnetVersionByte);
 
                         try
                         {
-                            rpcClient = new NBitcoin.RPC.RPCClient(credentials, new Uri(@"http://127.0.0.1:18332"), Network.Main);
+                            rpcClient = new NBitcoin.RPC.RPCClient(credentials, new Uri(mainnetURL), Network.Main);
                             flattransactions = rpcClient.SendCommand("getrawmempool").ResultString;
                             flattransactions = flattransactions.Replace("\"", "").Replace("[", "").Replace("]", "").Replace("\r", "").Replace("\n", "").Replace(" ", "");
                             newtransactions = flattransactions.Split(',').ToList();
@@ -622,7 +633,7 @@ namespace SUP
                                 try
                                 {
 
-                                    Root root = Root.GetRootByTransactionId(s, "good-user", "better-password", @"http://127.0.0.1:18332");
+                                    Root root = Root.GetRootByTransactionId(s, mainnetLogin, mainnetPassword, mainnetURL, mainnetVersionByte);
                                     if (root.Signed == true)
                                     {
 
@@ -893,11 +904,11 @@ namespace SUP
                                 string diskpath = "root\\" + panel.Tag.ToString() + "\\";
                                 try { System.IO.File.Delete(diskpath + "ROOT.json"); } catch { }
 
-                                Root root = Root.GetRootByTransactionId(panel.Tag.ToString(), "good-user", "better-password", @"http://127.0.0.1:18332");
+                                Root root = Root.GetRootByTransactionId(panel.Tag.ToString(), mainnetLogin, mainnetPassword, mainnetURL, mainnetVersionByte);
 
                                 if (root != null && root.BlockDate.Year > 1975)
                                 {
-                                    RemoveRowByTransactionId(flowInMemoryResults, panel.Tag.ToString()); 
+                                    RemoveRowByTransactionId(flowInMemoryResults, panel.Tag.ToString());
                                     refresh = true;
                                 }
                             }
@@ -964,7 +975,7 @@ namespace SUP
             txtOBJP2FK.Text = "BUY" + GetRandomDelimiter() + txtOBJJSON.Text.Length + GetRandomDelimiter() + txtOBJJSON.Text;
 
             NetworkCredential credentials = new NetworkCredential("good-user", "better-password");
-            NBitcoin.RPC.RPCClient rpcClient = new NBitcoin.RPC.RPCClient(credentials, new Uri(@"http://127.0.0.1:18332"), Network.Main);
+            NBitcoin.RPC.RPCClient rpcClient = new NBitcoin.RPC.RPCClient(credentials, new Uri(mainnetURL), Network.Main);
             System.Security.Cryptography.SHA256 mySHA256 = SHA256Managed.Create();
             byte[] hashValue = mySHA256.ComputeHash(Encoding.ASCII.GetBytes(txtOBJP2FK.Text));
             string signatureAddress;
@@ -1014,7 +1025,7 @@ namespace SUP
 
                     decimal totalCost = int.Parse(txtBuyQty.Text) * decimal.Parse(txtBuyEachCost.Text);
                     decimal remainingCost = totalCost;
-                    OBJState objstate = OBJState.GetObjectByAddress(txtAddressSearch.Text, "good-user", "better-password", "http://127.0.0.1:18332");
+                    OBJState objstate = OBJState.GetObjectByAddress(txtAddressSearch.Text, mainnetLogin, mainnetPassword, mainnetURL, mainnetVersionByte);
 
                     foreach (var keyvalue in objstate.Royalties)
                     {
@@ -1031,7 +1042,7 @@ namespace SUP
                     recipients.Add(txtSignatureAddress.Text, 0.00000546m);
 
 
-                    CoinRPC a = new CoinRPC(new Uri("http://127.0.0.1:18332"), new NetworkCredential("good-user", "better-password"));
+                    CoinRPC a = new CoinRPC(new Uri(mainnetURL), new NetworkCredential("good-user", "better-password"));
 
                     try
                     {
@@ -1081,7 +1092,7 @@ namespace SUP
             txtOBJP2FK.Text = "LST" + GetRandomDelimiter() + txtOBJJSON.Text.Length + GetRandomDelimiter() + txtOBJJSON.Text;
 
             NetworkCredential credentials = new NetworkCredential("good-user", "better-password");
-            NBitcoin.RPC.RPCClient rpcClient = new NBitcoin.RPC.RPCClient(credentials, new Uri(@"http://127.0.0.1:18332"), Network.Main);
+            NBitcoin.RPC.RPCClient rpcClient = new NBitcoin.RPC.RPCClient(credentials, new Uri(mainnetURL), Network.Main);
             System.Security.Cryptography.SHA256 mySHA256 = SHA256Managed.Create();
             byte[] hashValue = mySHA256.ComputeHash(Encoding.ASCII.GetBytes(txtOBJP2FK.Text));
             string signatureAddress;
@@ -1130,7 +1141,7 @@ namespace SUP
                         try { recipients.Add(encodedAddress, 0.00000546m); } catch { }
                     }
 
-                    CoinRPC a = new CoinRPC(new Uri("http://127.0.0.1:18332"), new NetworkCredential("good-user", "better-password"));
+                    CoinRPC a = new CoinRPC(new Uri(mainnetURL), new NetworkCredential("good-user", "better-password"));
 
                     try
                     {

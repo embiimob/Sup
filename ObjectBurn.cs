@@ -10,7 +10,7 @@ using SUP.RPCClient;
 using NBitcoin;
 using Newtonsoft.Json;
 using SUP.P2FK;
-
+using System.Windows.Media;
 
 namespace SUP
 {
@@ -23,11 +23,22 @@ namespace SUP
         private readonly string brnaddress = "";
         private Random random = new Random();
         private string _activeprofile;
-        public ObjectBurn(string _address="", string activeprofile ="")
+        private string mainnetURL = @"http://127.0.0.1:18332";
+        private string mainnetLogin = "good-user";
+        private string mainnetPassword = "better-password";
+        private string mainnetVersionByte = "111";
+        public ObjectBurn(string _address="", string activeprofile ="",bool testnet = true)
         {
             InitializeComponent();
             brnaddress = _address;
             _activeprofile = activeprofile;
+            if (!testnet)
+            {
+                 mainnetURL = @"http://127.0.0.1:8332";
+       mainnetLogin = "good-user";
+        mainnetPassword = "better-password";
+        mainnetVersionByte = "0";
+    }
 
         }
 
@@ -143,7 +154,7 @@ namespace SUP
             if (btnBurn.Enabled)
             {
                 NetworkCredential credentials = new NetworkCredential("good-user", "better-password");
-                NBitcoin.RPC.RPCClient rpcClient = new NBitcoin.RPC.RPCClient(credentials, new Uri(@"http://127.0.0.1:18332"), Network.Main);
+                NBitcoin.RPC.RPCClient rpcClient = new NBitcoin.RPC.RPCClient(credentials, new Uri(mainnetURL), Network.Main);
                 System.Security.Cryptography.SHA256 mySHA256 = SHA256Managed.Create();
                 byte[] hashValue = mySHA256.ComputeHash(Encoding.ASCII.GetBytes(txtOBJP2FK.Text));
                 string signatureAddress;
@@ -168,7 +179,7 @@ namespace SUP
                     string chunk = txtOBJP2FK.Text.Substring(i, Math.Min(20, txtOBJP2FK.Text.Length - i));
                     if (chunk.Any())
                     {
-                        encodedList.Add(Root.GetPublicAddressByKeyword(chunk));
+                        encodedList.Add(Root.GetPublicAddressByKeyword(chunk,mainnetVersionByte));
                     }
                 }
 
@@ -194,7 +205,7 @@ namespace SUP
                             try { recipients.Add(encodedAddress, 0.00000546m); } catch { }
                         }
 
-                        CoinRPC a = new CoinRPC(new Uri("http://127.0.0.1:18332"), new NetworkCredential("good-user", "better-password"));
+                        CoinRPC a = new CoinRPC(new Uri(mainnetURL), new NetworkCredential("good-user", "better-password"));
 
                         try
                         {

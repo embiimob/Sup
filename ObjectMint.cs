@@ -32,7 +32,11 @@ namespace SUP
         private bool ismint = false;
         private string imagecache;
         private Random random = new Random();
-        public ObjectMint()
+        private string mainnetURL = @"http://127.0.0.1:18332";
+        private string mainnetLogin = "good-user";
+        private string mainnetPassword = "better-password";
+        private string mainnetVersionByte = "111";
+        public ObjectMint(bool testnet = true)
         {
             InitializeComponent();
 
@@ -51,7 +55,15 @@ namespace SUP
 
             // Assign the context menu to the PictureBox
             pictureBox1.ContextMenuStrip = contextMenu;
-           
+            if (!testnet)
+            {
+
+                mainnetURL = @"http://127.0.0.1:8332";
+                mainnetLogin = "good-user";
+                mainnetPassword = "better-password";
+                mainnetVersionByte = "0";
+            }
+
 
         }
 
@@ -64,7 +76,7 @@ namespace SUP
 
         private void UpdateRemainingChars()
         {
-           // lblObjectStatus.Text = "";
+            // lblObjectStatus.Text = "";
 
             if (txtURN.Text != "" && txtTitle.Text != "" && txtObjectAddress.Text != "" && flowOwners.Controls.Count > 0)
             {
@@ -188,8 +200,8 @@ namespace SUP
             // Assign the result to txtOBJP2FK.Text
             txtOBJP2FK.Text = objString;
 
-            NetworkCredential credentials = new NetworkCredential("good-user", "better-password");
-            NBitcoin.RPC.RPCClient rpcClient = new NBitcoin.RPC.RPCClient(credentials, new Uri("http://127.0.0.1:18332"), Network.Main);
+            NetworkCredential credentials = new NetworkCredential(mainnetLogin,mainnetPassword);
+            NBitcoin.RPC.RPCClient rpcClient = new NBitcoin.RPC.RPCClient(credentials, new Uri(mainnetURL), Network.Main);
             System.Security.Cryptography.SHA256 mySHA256 = SHA256Managed.Create();
             byte[] hashValue = mySHA256.ComputeHash(Encoding.UTF8.GetBytes(txtOBJP2FK.Text));
 
@@ -246,7 +258,7 @@ namespace SUP
 
 
             //add URN registration
-            encodedList.Add(Root.GetPublicAddressByKeyword(txtURN.Text));
+            encodedList.Add(Root.GetPublicAddressByKeyword(txtURN.Text, mainnetVersionByte));
 
 
             if (txtURN.Text != "" && ismint)
@@ -301,7 +313,7 @@ namespace SUP
 
             foreach (Button keywordbtn in flowKeywords.Controls)
             {
-                encodedList.Add(Root.GetPublicAddressByKeyword(keywordbtn.Text));
+                encodedList.Add(Root.GetPublicAddressByKeyword(keywordbtn.Text, mainnetVersionByte));
             }
 
             foreach (Button royaltybtn in flowRoyalties.Controls)
@@ -363,7 +375,7 @@ namespace SUP
 
                     }
 
-                    CoinRPC a = new CoinRPC(new Uri("http://127.0.0.1:18332"), new NetworkCredential("good-user", "better-password"));
+                    CoinRPC a = new CoinRPC(new Uri(mainnetURL), new NetworkCredential(mainnetLogin,mainnetPassword));
 
                     try
                     {
@@ -458,7 +470,7 @@ namespace SUP
         private void txtIMG_TextChanged(object sender, EventArgs e)
         {
             UpdateRemainingChars();
-  
+
 
             if (txtIMG.Text != "")
             {
@@ -744,8 +756,8 @@ namespace SUP
             else
             {
 
-                NetworkCredential credentials = new NetworkCredential("good-user", "better-password");
-                NBitcoin.RPC.RPCClient rpcClient = new NBitcoin.RPC.RPCClient(credentials, new Uri("http://127.0.0.1:18332"), Network.Main);
+                NetworkCredential credentials = new NetworkCredential(mainnetLogin,mainnetPassword);
+                NBitcoin.RPC.RPCClient rpcClient = new NBitcoin.RPC.RPCClient(credentials, new Uri(mainnetURL), Network.Main);
                 string newAddress = "";
                 string P2FKASCII = "";
                 char[] specialChars = new char[] { '\\', '/', ':', '*', '?', '"', '<', '>', '|' };
@@ -874,7 +886,7 @@ namespace SUP
 
                 }
 
-            
+
                 List<string> allowedExtensions = new List<string> { ".bmp", ".gif", ".ico", ".jpeg", ".jpg", ".png", ".tif", ".tiff", "" };
                 string extension = Path.GetExtension(imgurn).ToLower();
                 if (allowedExtensions.Contains(extension))
@@ -938,34 +950,34 @@ namespace SUP
                                 if (!System.IO.Directory.Exists(@"ipfs/" + txtIMG.Text.Substring(5, 46) + "-build") && !System.IO.Directory.Exists(@"ipfs/" + txtIMG.Text.Substring(5, 46)))
                                 {
 
-                                                                        
-                                        Directory.CreateDirectory(@"ipfs/" + txtIMG.Text.Substring(5, 46) + "-build");
-                                        Process process2 = new Process();
-                                        process2.StartInfo.FileName = @"ipfs\ipfs.exe";
-                                        process2.StartInfo.Arguments = "get " + txtIMG.Text.Substring(5, 46) + @" -o ipfs\" + txtIMG.Text.Substring(5, 46);
-                                        process2.Start();
-                                        process2.WaitForExit();
 
-                                        if (System.IO.File.Exists("ipfs/" + txtIMG.Text.Substring(5, 46)))
+                                    Directory.CreateDirectory(@"ipfs/" + txtIMG.Text.Substring(5, 46) + "-build");
+                                    Process process2 = new Process();
+                                    process2.StartInfo.FileName = @"ipfs\ipfs.exe";
+                                    process2.StartInfo.Arguments = "get " + txtIMG.Text.Substring(5, 46) + @" -o ipfs\" + txtIMG.Text.Substring(5, 46);
+                                    process2.Start();
+                                    process2.WaitForExit();
+
+                                    if (System.IO.File.Exists("ipfs/" + txtIMG.Text.Substring(5, 46)))
+                                    {
+                                        try { System.IO.File.Move("ipfs/" + txtIMG.Text.Substring(5, 46), "ipfs/" + txtIMG.Text.Substring(5, 46) + "_tmp"); }
+                                        catch
                                         {
-                                            try { System.IO.File.Move("ipfs/" + txtIMG.Text.Substring(5, 46), "ipfs/" + txtIMG.Text.Substring(5, 46) + "_tmp"); }
-                                            catch
-                                            {
 
-                                                System.IO.File.Delete("ipfs/" + txtIMG.Text.Substring(5, 46) + "_tmp");
-                                                System.IO.File.Move("ipfs/" + txtIMG.Text.Substring(5, 46), "ipfs/" + txtIMG.Text.Substring(5, 46) + "_tmp");
+                                            System.IO.File.Delete("ipfs/" + txtIMG.Text.Substring(5, 46) + "_tmp");
+                                            System.IO.File.Move("ipfs/" + txtIMG.Text.Substring(5, 46), "ipfs/" + txtIMG.Text.Substring(5, 46) + "_tmp");
 
-                                            }
-
-                                            string fileName = txtIMG.Text.Replace(@"//", "").Replace(@"\\", "").Substring(51);
-                                            if (fileName == "")
-                                            {
-                                                fileName = "artifact";
-                                            }
-                                            else { fileName = fileName.Replace(@"/", "").Replace(@"\", ""); }
-                                            Directory.CreateDirectory(@"ipfs/" + txtIMG.Text.Substring(5, 46));
-                                            try { System.IO.File.Move("ipfs/" + txtIMG.Text.Substring(5, 46) + "_tmp", imgurn); } catch { }
                                         }
+
+                                        string fileName = txtIMG.Text.Replace(@"//", "").Replace(@"\\", "").Substring(51);
+                                        if (fileName == "")
+                                        {
+                                            fileName = "artifact";
+                                        }
+                                        else { fileName = fileName.Replace(@"/", "").Replace(@"\", ""); }
+                                        Directory.CreateDirectory(@"ipfs/" + txtIMG.Text.Substring(5, 46));
+                                        try { System.IO.File.Move("ipfs/" + txtIMG.Text.Substring(5, 46) + "_tmp", imgurn); } catch { }
+                                    }
 
                                     if (File.Exists(imgurn))
                                     {
@@ -996,12 +1008,12 @@ namespace SUP
 
 
                                     try { Directory.Delete(@"ipfs/" + txtIMG.Text.Substring(5, 46)); } catch { }
-                                        try
-                                        {
-                                            Directory.Delete(@"ipfs/" + txtIMG.Text.Substring(5, 46) + "-build");
-                                        }
-                                        catch { }
-                                                                       
+                                    try
+                                    {
+                                        Directory.Delete(@"ipfs/" + txtIMG.Text.Substring(5, 46) + "-build");
+                                    }
+                                    catch { }
+
 
 
                                 }
@@ -1014,7 +1026,7 @@ namespace SUP
                                 break;
                             default:
 
-                                root = Root.GetRootByTransactionId(transactionid, "good-user", "better-password", @"http://127.0.0.1:18332");
+                                root = Root.GetRootByTransactionId(transactionid, mainnetLogin,mainnetPassword,mainnetURL,mainnetVersionByte);
                                 try
                                 {
                                     lblIMGBlockDate.Text = "bitcoin-t verified: " + root.BlockDate.ToString("ddd, dd MMM yyyy hh:mm:ss");
@@ -1206,32 +1218,32 @@ namespace SUP
                             {
 
 
-                                    Directory.CreateDirectory(@"ipfs/" + txtURN.Text.Substring(5, 46) + "-build");
-                                    Process process2 = new Process();
-                                    process2.StartInfo.FileName = @"ipfs\ipfs.exe";
-                                    process2.StartInfo.Arguments = "get " + txtURN.Text.Substring(5, 46) + @" -o ipfs\" + txtURN.Text.Substring(5, 46);
-                                    process2.Start();
-                                    process2.WaitForExit();
+                                Directory.CreateDirectory(@"ipfs/" + txtURN.Text.Substring(5, 46) + "-build");
+                                Process process2 = new Process();
+                                process2.StartInfo.FileName = @"ipfs\ipfs.exe";
+                                process2.StartInfo.Arguments = "get " + txtURN.Text.Substring(5, 46) + @" -o ipfs\" + txtURN.Text.Substring(5, 46);
+                                process2.Start();
+                                process2.WaitForExit();
 
-                                    if (System.IO.File.Exists("ipfs/" + txtURN.Text.Substring(5, 46)))
+                                if (System.IO.File.Exists("ipfs/" + txtURN.Text.Substring(5, 46)))
+                                {
+                                    try { System.IO.File.Move("ipfs/" + txtURN.Text.Substring(5, 46), "ipfs/" + txtURN.Text.Substring(5, 46) + "_tmp"); }
+                                    catch
                                     {
-                                        try { System.IO.File.Move("ipfs/" + txtURN.Text.Substring(5, 46), "ipfs/" + txtURN.Text.Substring(5, 46) + "_tmp"); }
-                                        catch
-                                        {
-                                            System.IO.File.Delete("ipfs/" + txtURN.Text.Substring(5, 46) + "_tmp");
-                                            System.IO.File.Move("ipfs/" + txtURN.Text.Substring(5, 46), "ipfs/" + txtURN.Text.Substring(5, 46) + "_tmp");
+                                        System.IO.File.Delete("ipfs/" + txtURN.Text.Substring(5, 46) + "_tmp");
+                                        System.IO.File.Move("ipfs/" + txtURN.Text.Substring(5, 46), "ipfs/" + txtURN.Text.Substring(5, 46) + "_tmp");
 
-                                        }
-
-                                        string fileName = txtURN.Text.Replace(@"//", "").Replace(@"\\", "").Substring(51);
-                                        if (fileName == "")
-                                        {
-                                            fileName = "artifact";
-                                        }
-                                        else { fileName = fileName.Replace(@"/", "").Replace(@"\", ""); }
-                                    try { Directory.CreateDirectory(@"ipfs/" + txtURN.Text.Substring(5, 46)); } catch { }
-                                        try { System.IO.File.Move("ipfs/" + txtURN.Text.Substring(5, 46) + "_tmp", urn); } catch { }
                                     }
+
+                                    string fileName = txtURN.Text.Replace(@"//", "").Replace(@"\\", "").Substring(51);
+                                    if (fileName == "")
+                                    {
+                                        fileName = "artifact";
+                                    }
+                                    else { fileName = fileName.Replace(@"/", "").Replace(@"\", ""); }
+                                    try { Directory.CreateDirectory(@"ipfs/" + txtURN.Text.Substring(5, 46)); } catch { }
+                                    try { System.IO.File.Move("ipfs/" + txtURN.Text.Substring(5, 46) + "_tmp", urn); } catch { }
+                                }
 
                                 if (File.Exists(urn))
                                 {
@@ -1260,15 +1272,15 @@ namespace SUP
                                 catch { }
 
                                 try { Directory.Delete(@"ipfs/" + txtURN.Text.Substring(5, 46)); } catch { }
-                                    try
-                                    {
-                                        Directory.Delete(@"ipfs/" + txtURN.Text.Substring(5, 46) + "-build");
-                                    }
-                                    catch { }
+                                try
+                                {
+                                    Directory.Delete(@"ipfs/" + txtURN.Text.Substring(5, 46) + "-build");
+                                }
+                                catch { }
 
 
 
-                                
+
                             }
                             else
                             {
@@ -1279,7 +1291,7 @@ namespace SUP
                             break;
                         default:
 
-                            root = Root.GetRootByTransactionId(transactionid, "good-user", "better-password", @"http://127.0.0.1:18332");
+                            root = Root.GetRootByTransactionId(transactionid, mainnetLogin, mainnetPassword, mainnetURL, mainnetVersionByte);
                             if (transactionid != "")
                             {
                                 if (Directory.Exists(@"root\" + transactionid))
@@ -1528,7 +1540,7 @@ namespace SUP
                                     {
                                         Task.Run(() =>
                                         {
-                                            Root.GetRootByTransactionId(transactionID.Value, "good-user", "better-password", @"http://127.0.0.1:18332");
+                                            Root.GetRootByTransactionId(transactionID.Value, mainnetLogin, mainnetPassword, mainnetURL, mainnetVersionByte);
                                         });
                                     }
                                     break;
@@ -2140,7 +2152,7 @@ namespace SUP
             ismint = true;
             UpdateRemainingChars();
 
-            OBJState OBJ = OBJState.GetObjectByAddress(txtObjectAddress.Text, "good-user", "better-password", @"http://127.0.0.1:18332");
+            OBJState OBJ = OBJState.GetObjectByAddress(txtObjectAddress.Text, mainnetLogin, mainnetPassword, mainnetURL, mainnetVersionByte);
 
             if (OBJ.URN != null)
             {
@@ -2302,19 +2314,19 @@ namespace SUP
             // Show the dialog and set focus to the address text box
             addressForm.ShowDialog();
 
-      
+
         }
 
         public void LoadFormByAddress(string address)
         {
 
-            OBJState foundObject = OBJState.GetObjectByAddress(address, "good-user", "better-password", "http://127.0.0.1:18332");
+            OBJState foundObject = OBJState.GetObjectByAddress(address, mainnetLogin, mainnetPassword, mainnetURL, mainnetVersionByte);
             if (foundObject.URN != null)
             {
                 lblObjectStatus.Text = "created:[" + foundObject.CreatedDate.ToString("MM/dd/yyyy hh:mm:ss") + "]  locked:[" + foundObject.LockedDate.ToString("MM/dd/yyyy hh:mm:ss") + "]  last seen:[" + foundObject.ChangeDate.ToString("MM/dd/yyyy hh:mm:ss") + "]";
 
-                NetworkCredential credentials = new NetworkCredential("good-user", "better-password");
-                NBitcoin.RPC.RPCClient rpcClient = new NBitcoin.RPC.RPCClient(credentials, new Uri("http://127.0.0.1:18332"), Network.Main);
+                NetworkCredential credentials = new NetworkCredential(mainnetLogin, mainnetPassword);
+                NBitcoin.RPC.RPCClient rpcClient = new NBitcoin.RPC.RPCClient(credentials, new Uri(mainnetURL), Network.Main);
                 string accountName = "";
                 try { accountName = rpcClient.SendCommand("getaccount", address).ResultString; } catch { }
                 if (accountName != "") { btnMint.Enabled = true; }
@@ -2368,7 +2380,7 @@ namespace SUP
                 flowKeywords.Controls.Clear();
 
                 List<string> keywords = new List<string>();
-                keywords = OBJState.GetKeywordsByAddress(address, "good-user", "better-password", "http://127.0.0.1:18332");
+                keywords = OBJState.GetKeywordsByAddress(address, mainnetLogin, mainnetPassword, mainnetURL, mainnetVersionByte);
 
                 // Iterate through all attributes of foundObject and create a button for each
                 foreach (string attrib in keywords)
@@ -2563,7 +2575,7 @@ namespace SUP
                 try { Directory.Delete(@"root\" + txtObjectAddress.Text, true); } catch { }
             }
 
-          
+
             btnObjectImage.BackColor = Color.White;
             btnObjectImage.PerformClick();
             btnObjectURN.BackColor = Color.White;

@@ -25,9 +25,14 @@ namespace SUP
         private int _viewMode = 0;
         private bool ipfsActive;
         private string _activeProfile = null;
+        private string mainnetURL = @"http://127.0.0.1:18332";
+        private string mainnetLogin = "good-user";
+        private string mainnetPassword = "better-password";
+        private string mainnetVersionByte = "111";
+        private bool _testnet;
 
         private readonly System.Windows.Forms.Timer _doubleClickTimer = new System.Windows.Forms.Timer();
-        public ObjectBrowser(string objectaddress, bool iscontrol = false)
+        public ObjectBrowser(string objectaddress, bool iscontrol = false, bool testnet = true)
         {
             InitializeComponent();
             if (objectaddress != null)
@@ -38,6 +43,15 @@ namespace SUP
             { _objectaddress = ""; }
             _isUserControl = iscontrol;
 
+            if (!testnet)
+            {
+                mainnetURL = @"http://127.0.0.1:8332";
+                mainnetLogin = "good-user";
+                mainnetPassword = "better-password";
+                mainnetVersionByte = "0";
+
+            }
+            _testnet = testnet;
         }
 
         private void GetObjectsByAddress(string address, bool calculate = false)
@@ -46,7 +60,7 @@ namespace SUP
             string profileCheck = address;
             PROState searchprofile = new PROState();
             List<OBJState> createdObjects = new List<OBJState>();
-            int skip = 0; 
+            int skip = 0;
             try { skip = int.Parse(txtLast.Text); } catch { }
             int qty = -1;
             try { qty = int.Parse(txtQty.Text); } catch { };
@@ -56,7 +70,7 @@ namespace SUP
                 string urnsearch = address;
                 if (address.ToUpper().StartsWith(@"SUP:")) { urnsearch = address.Substring(6); } else { urnsearch = address.Substring(0, 20); }
 
-                createdObjects = new List<OBJState> { OBJState.GetObjectByURN(urnsearch, "good-user", "better-password", @"http://127.0.0.1:18332") };
+                createdObjects = new List<OBJState> { OBJState.GetObjectByURN(urnsearch, mainnetLogin,mainnetPassword,mainnetURL,mainnetVersionByte) };
 
             }
             else
@@ -65,11 +79,11 @@ namespace SUP
 
                 if (btnCreated.BackColor == Color.Yellow && txtSearchAddress.Text != "")
                 {
-                    try { searchprofile = PROState.GetProfileByAddress(address, "good-user", "better-password", @"http://127.0.0.1:18332", "111", calculate); } catch { }
+                    try { searchprofile = PROState.GetProfileByAddress(address, mainnetLogin, mainnetPassword, mainnetURL, mainnetVersionByte, calculate); } catch { }
 
                     if (searchprofile.URN == null)
                     {
-                        searchprofile = PROState.GetProfileByURN(address, "good-user", "better-password", @"http://127.0.0.1:18332", "111", calculate);
+                        searchprofile = PROState.GetProfileByURN(address, mainnetLogin, mainnetPassword, mainnetURL, mainnetVersionByte, calculate);
                     }
 
                     if (searchprofile.URN != null)
@@ -85,16 +99,16 @@ namespace SUP
                         }));
 
                     }
-                    createdObjects = OBJState.GetObjectsCreatedByAddress(profileCheck, "good-user", "better-password", @"http://127.0.0.1:18332", "111", 0, -1);
+                    createdObjects = OBJState.GetObjectsCreatedByAddress(profileCheck, mainnetLogin, mainnetPassword, mainnetURL, mainnetVersionByte, 0, -1);
 
                 }
                 else if (btnOwned.BackColor == Color.Yellow && txtSearchAddress.Text != "")
                 {
-                    try { searchprofile = PROState.GetProfileByAddress(address, "good-user", "better-password", @"http://127.0.0.1:18332", "111", calculate); } catch { }
+                    try { searchprofile = PROState.GetProfileByAddress(address, mainnetLogin, mainnetPassword, mainnetURL, mainnetVersionByte, calculate); } catch { }
 
                     if (searchprofile.URN == null)
                     {
-                        searchprofile = PROState.GetProfileByURN(address, "good-user", "better-password", @"http://127.0.0.1:18332", "111", calculate);
+                        searchprofile = PROState.GetProfileByURN(address, mainnetLogin, mainnetPassword, mainnetURL, mainnetVersionByte, calculate);
                     }
 
                     if (searchprofile.URN != null)
@@ -111,7 +125,7 @@ namespace SUP
                         }));
 
                     }
-                    createdObjects = OBJState.GetObjectsOwnedByAddress(profileCheck, "good-user", "better-password", @"http://127.0.0.1:18332", "111", 0, -1);
+                    createdObjects = OBJState.GetObjectsOwnedByAddress(profileCheck, mainnetLogin, mainnetPassword, mainnetURL, mainnetVersionByte, 0, -1);
 
                 }
                 else
@@ -127,7 +141,7 @@ namespace SUP
                             }));
 
                         }
-                        createdObjects = OBJState.GetFoundObjects("good-user", "better-password", @"http://127.0.0.1:18332", "111", calculate);
+                        createdObjects = OBJState.GetFoundObjects(mainnetLogin, mainnetPassword, mainnetURL, mainnetVersionByte, calculate);
 
 
                     }
@@ -138,24 +152,24 @@ namespace SUP
                         if (!txtSearchAddress.Text.StartsWith("#"))
                         {
 
-                            try { searchprofile = PROState.GetProfileByAddress(address, "good-user", "better-password", @"http://127.0.0.1:18332", "111", calculate); } catch { }
-                            
+                            try { searchprofile = PROState.GetProfileByAddress(address, mainnetLogin, mainnetPassword, mainnetURL, mainnetVersionByte, calculate); } catch { }
+
                             if (searchprofile.URN == null)
                             {
-                                searchprofile = PROState.GetProfileByURN(address, "good-user", "better-password", @"http://127.0.0.1:18332", "111", calculate);
+                                searchprofile = PROState.GetProfileByURN(address, mainnetLogin, mainnetPassword, mainnetURL, mainnetVersionByte, calculate);
                             }
                             if (searchprofile.URN != null)
                             {
                                 profileCheck = searchprofile.Creators.First();
                             }
-                            
+
 
                         }
                         else
                         {
 
 
-                            profileCheck = Root.GetPublicAddressByKeyword(txtSearchAddress.Text.Substring(1), "111");
+                            profileCheck = Root.GetPublicAddressByKeyword(txtSearchAddress.Text.Substring(1), mainnetVersionByte);
 
                         }
 
@@ -169,10 +183,10 @@ namespace SUP
 
                         }
 
-                        createdObjects = OBJState.GetObjectsByAddress(profileCheck, "good-user", "better-password", @"http://127.0.0.1:18332", "111", 0, -1,calculate);
+                        createdObjects = OBJState.GetObjectsByAddress(profileCheck, mainnetLogin, mainnetPassword, mainnetURL, mainnetVersionByte, 0, -1, calculate);
 
                         this.Invoke((Action)(() =>
-                        {   
+                        {
                             if (searchprofile.URN != null || createdObjects.Count > 0 || txtSearchAddress.Text.StartsWith("#"))
                             {
                                 profileURN.Links[0].LinkData = profileCheck;
@@ -263,7 +277,7 @@ namespace SUP
                             if (objstate.Owners != null)
                             {
                                 string transid = "";
-                                FoundObjectControl foundObject = new FoundObjectControl(_activeProfile);
+                                FoundObjectControl foundObject = new FoundObjectControl(_activeProfile,_testnet);
                                 foundObject.ObjectName.Text = objstate.Name;
                                 foundObject.ObjectDescription.Text = objstate.Description;
                                 foundObject.ObjectAddress.Text = objstate.Creators.First().Key;
@@ -287,7 +301,7 @@ namespace SUP
 
 
 
-                                OBJState isOfficial = OBJState.GetObjectByURN(objstate.URN, "good-user", "better-password", @"http://127.0.0.1:18332");
+                                OBJState isOfficial = OBJState.GetObjectByURN(objstate.URN, mainnetLogin, mainnetPassword, mainnetURL, mainnetVersionByte);
                                 if (isOfficial.URN != null)
                                 {
 
@@ -616,7 +630,7 @@ namespace SUP
                                                 Task.Run(() =>
                                                 {
 
-                                                    Root.GetRootByTransactionId(transid, "good-user", "better-password", @"http://127.0.0.1:18332");
+                                                    Root.GetRootByTransactionId(transid, mainnetLogin, mainnetPassword, mainnetURL, mainnetVersionByte);
 
                                                     if (File.Exists(imgurn))
                                                     {
@@ -644,7 +658,7 @@ namespace SUP
 
                                         if (creator.Value.Year > 1)
                                         {
-                                            PROState profile = PROState.GetProfileByAddress(creator.Key, "good-user", "better-password", @"http://127.0.0.1:18332");
+                                            PROState profile = PROState.GetProfileByAddress(creator.Key, mainnetLogin, mainnetPassword, mainnetURL, mainnetVersionByte);
 
 
                                             try
@@ -764,7 +778,7 @@ namespace SUP
 
                 if (!address.StartsWith("#"))
                 {
-                    searchprofile = PROState.GetProfileByURN(address, "good-user", "better-password", @"http://127.0.0.1:18332");
+                    searchprofile = PROState.GetProfileByURN(address, mainnetLogin, mainnetPassword, mainnetURL, mainnetVersionByte);
 
 
                     if (searchprofile.URN != null)
@@ -825,7 +839,7 @@ namespace SUP
                 }));
 
             }
-            createdObjects = OBJState.GetObjectCollectionsByAddress(profileCheck, "good-user", "better-password", @"http://127.0.0.1:18332", "111", 0, -1);
+            createdObjects = OBJState.GetObjectCollectionsByAddress(profileCheck, mainnetLogin, mainnetPassword, mainnetURL, mainnetVersionByte, 0, -1);
 
 
 
@@ -847,7 +861,7 @@ namespace SUP
 
 
                             string transid = "";
-                            FoundCollectionControl foundObject = new FoundCollectionControl();
+                            FoundCollectionControl foundObject = new FoundCollectionControl(_testnet);
                             foundObject.ObjectName.Text = objstate.Name;
                             foundObject.ObjectDescription.Text = objstate.Description;
                             foundObject.ObjectAddress.Text = objstate.URN;
@@ -1098,7 +1112,7 @@ namespace SUP
                                             Task.Run(() =>
                                             {
 
-                                                Root.GetRootByTransactionId(transid, "good-user", "better-password", @"http://127.0.0.1:18332");
+                                                Root.GetRootByTransactionId(transid, mainnetLogin, mainnetPassword, mainnetURL, mainnetVersionByte);
 
                                                 if (File.Exists(imgurn))
                                                 {
@@ -1152,7 +1166,7 @@ namespace SUP
 
             txtQty.Text = loadQty.ToString();
 
-            OBJState objstate = OBJState.GetObjectByFile(filePath, "good-user", "better-password", @"http://127.0.0.1:18332");
+            OBJState objstate = OBJState.GetObjectByFile(filePath, mainnetLogin, mainnetPassword, mainnetURL, mainnetVersionByte);
 
             if (objstate.Owners != null)
             {
@@ -1162,7 +1176,7 @@ namespace SUP
                     if (objstate.Owners != null)
                     {
                         string transid = "";
-                        FoundObjectControl foundObject = new FoundObjectControl(_activeProfile);
+                        FoundObjectControl foundObject = new FoundObjectControl(_activeProfile,_testnet);
                         foundObject.ObjectName.Text = objstate.Name;
                         foundObject.ObjectDescription.Text = objstate.Description;
                         foundObject.ObjectAddress.Text = objstate.Creators.First().Key;
@@ -1184,7 +1198,7 @@ namespace SUP
                             foundObject.ObjectPrice.Text = lowestValue.ToString();
                         }
 
-                        OBJState isOfficial = OBJState.GetObjectByURN(objstate.URN, "good-user", "better-password", @"http://127.0.0.1:18332");
+                        OBJState isOfficial = OBJState.GetObjectByURN(objstate.URN, mainnetLogin, mainnetPassword, mainnetURL, mainnetVersionByte);
                         if (isOfficial.URN != null)
                         {
 
@@ -1473,7 +1487,7 @@ namespace SUP
                                         Task.Run(() =>
                                             {
 
-                                                Root.GetRootByTransactionId(transid, "good-user", "better-password", @"http://127.0.0.1:18332");
+                                                Root.GetRootByTransactionId(transid, mainnetLogin, mainnetPassword, mainnetURL, mainnetVersionByte);
 
                                                 if (File.Exists(imgurn))
                                                 {
@@ -1501,8 +1515,8 @@ namespace SUP
 
                                 if (creator.Value.Year > 1)
                                 {
-                                    PROState profile = PROState.GetProfileByAddress(creator.Key, "good-user", "better-password", @"http://127.0.0.1:18332");
-                                    PROState IsRegistered = PROState.GetProfileByURN(profile.URN, "good-user", "better-password", @"http://127.0.0.1:18332");
+                                    PROState profile = PROState.GetProfileByAddress(creator.Key, mainnetLogin, mainnetPassword, mainnetURL, mainnetVersionByte);
+                                    PROState IsRegistered = PROState.GetProfileByURN(profile.URN, mainnetLogin, mainnetPassword, mainnetURL, mainnetVersionByte);
 
 
                                     try
@@ -1762,7 +1776,7 @@ namespace SUP
         {
             lock (SupLocker)
             {
-              
+
                 try
                 {
 
@@ -1829,7 +1843,7 @@ namespace SUP
                             }
                             else
                             {
-                                GetObjectsByAddress(Root.GetPublicAddressByKeyword(txtSearchAddress.Text.Substring(1), "111"), calculate);
+                                GetObjectsByAddress(Root.GetPublicAddressByKeyword(txtSearchAddress.Text.Substring(1), mainnetVersionByte), calculate);
                             }
 
                         }
@@ -1843,56 +1857,56 @@ namespace SUP
                                 if (!System.IO.Directory.Exists("ipfs/" + ipfsHash))
                                 {
 
-                                    
 
-                                        string imgurl = "";
-                                        if (!System.IO.Directory.Exists("ipfs/" + ipfsHash + "-build"))
+
+                                    string imgurl = "";
+                                    if (!System.IO.Directory.Exists("ipfs/" + ipfsHash + "-build"))
+                                    {
+                                        try { Directory.Delete("ipfs/" + ipfsHash, true); } catch { }
+                                        try { Directory.CreateDirectory("ipfs/" + ipfsHash); } catch { };
+                                        Directory.CreateDirectory("ipfs/" + ipfsHash + "-build");
+                                        Process process2 = new Process();
+                                        process2.StartInfo.FileName = @"ipfs\ipfs.exe";
+                                        process2.StartInfo.Arguments = "get " + ipfsHash + @" -o ipfs\" + ipfsHash;
+                                        process2.Start();
+                                        process2.WaitForExit();
+
+                                        string fileName;
+                                        if (System.IO.File.Exists("ipfs/" + ipfsHash))
                                         {
-                                            try { Directory.Delete("ipfs/" + ipfsHash, true); } catch { }
-                                            try { Directory.CreateDirectory("ipfs/" + ipfsHash); } catch { };
-                                            Directory.CreateDirectory("ipfs/" + ipfsHash + "-build");
-                                            Process process2 = new Process();
-                                            process2.StartInfo.FileName = @"ipfs\ipfs.exe";
-                                            process2.StartInfo.Arguments = "get " + ipfsHash + @" -o ipfs\" + ipfsHash;
-                                            process2.Start();
-                                            process2.WaitForExit();
-                                            
-                                                string fileName;
-                                            if (System.IO.File.Exists("ipfs/" + ipfsHash))
+                                            System.IO.File.Move("ipfs/" + ipfsHash, "ipfs/" + ipfsHash + "_tmp");
+                                            System.IO.Directory.CreateDirectory("ipfs/" + ipfsHash);
+                                            fileName = txtSearchAddress.Text.Replace(@"//", "").Replace(@"\\", "").Substring(51);
+                                            if (fileName == "") { fileName = "artifact"; } else { fileName = fileName.Replace(@"/", "").Replace(@"\", ""); }
+                                            Directory.CreateDirectory("ipfs/" + ipfsHash);
+                                            System.IO.File.Move("ipfs/" + ipfsHash + "_tmp", @"ipfs/" + ipfsHash + @"/" + fileName);
+
+                                            try { System.IO.File.Move("ipfs/" + ipfsHash + "_tmp", @"ipfs/" + ipfsHash + @"/" + fileName); }
+                                            catch (System.ArgumentException ex)
                                             {
-                                                System.IO.File.Move("ipfs/" + ipfsHash, "ipfs/" + ipfsHash + "_tmp");
-                                                System.IO.Directory.CreateDirectory("ipfs/" + ipfsHash);
-                                                fileName = txtSearchAddress.Text.Replace(@"//", "").Replace(@"\\", "").Substring(51);
-                                                if (fileName == "") { fileName = "artifact"; } else { fileName = fileName.Replace(@"/", "").Replace(@"\", ""); }
-                                                Directory.CreateDirectory("ipfs/" + ipfsHash);
-                                                System.IO.File.Move("ipfs/" + ipfsHash + "_tmp", @"ipfs/" + ipfsHash + @"/" + fileName);
 
-                                                try { System.IO.File.Move("ipfs/" + ipfsHash + "_tmp", @"ipfs/" + ipfsHash + @"/" + fileName); }
-                                                catch (System.ArgumentException ex)
-                                                {
-
-                                                    System.IO.File.Move("ipfs/" + ipfsHash + "_tmp", "ipfs/" + ipfsHash + "/artifact" + txtSearchAddress.Text.Substring(txtSearchAddress.Text.LastIndexOf('.')));
-                                                    imgurl = "ipfs/" + ipfsHash + "/artifact" + txtSearchAddress.Text.Substring(txtSearchAddress.Text.LastIndexOf('.'));
-
-                                                }
-
+                                                System.IO.File.Move("ipfs/" + ipfsHash + "_tmp", "ipfs/" + ipfsHash + "/artifact" + txtSearchAddress.Text.Substring(txtSearchAddress.Text.LastIndexOf('.')));
+                                                imgurl = "ipfs/" + ipfsHash + "/artifact" + txtSearchAddress.Text.Substring(txtSearchAddress.Text.LastIndexOf('.'));
 
                                             }
 
-                                            if (System.IO.File.Exists("ipfs/" + ipfsHash + "/" + ipfsHash))
+
+                                        }
+
+                                        if (System.IO.File.Exists("ipfs/" + ipfsHash + "/" + ipfsHash))
+                                        {
+                                            fileName = txtSearchAddress.Text.Replace(@"//", "").Replace(@"\\", "").Substring(51);
+                                            if (fileName == "") { fileName = "artifact"; } else { fileName = fileName.Replace(@"/", "").Replace(@"\", ""); }
+
+                                            try { System.IO.File.Move("ipfs/" + ipfsHash + "/" + ipfsHash, @"ipfs/" + ipfsHash + @"/" + fileName); }
+                                            catch (System.ArgumentException ex)
                                             {
-                                                fileName = txtSearchAddress.Text.Replace(@"//", "").Replace(@"\\", "").Substring(51);
-                                                if (fileName == "") { fileName = "artifact"; } else { fileName = fileName.Replace(@"/", "").Replace(@"\", ""); }
 
-                                                try { System.IO.File.Move("ipfs/" + ipfsHash + "/" + ipfsHash, @"ipfs/" + ipfsHash + @"/" + fileName); }
-                                                catch (System.ArgumentException ex)
-                                                {
+                                                System.IO.File.Move("ipfs/" + ipfsHash + "/" + ipfsHash, "ipfs/" + ipfsHash + "/artifact" + txtSearchAddress.Text.Substring(txtSearchAddress.Text.LastIndexOf('.')));
+                                                imgurl = "ipfs/" + ipfsHash + "/artifact" + txtSearchAddress.Text.Substring(txtSearchAddress.Text.LastIndexOf('.'));
 
-                                                    System.IO.File.Move("ipfs/" + ipfsHash + "/" + ipfsHash, "ipfs/" + ipfsHash + "/artifact" + txtSearchAddress.Text.Substring(txtSearchAddress.Text.LastIndexOf('.')));
-                                                    imgurl = "ipfs/" + ipfsHash + "/artifact" + txtSearchAddress.Text.Substring(txtSearchAddress.Text.LastIndexOf('.'));
-
-                                                }
                                             }
+                                        }
 
 
                                         try
@@ -1915,17 +1929,17 @@ namespace SUP
                                         catch { }
 
                                         try { Directory.Delete("ipfs/" + ipfsHash + "-build", true); } catch { }
-                                        }
+                                    }
 
-                                        if (System.IO.Directory.Exists(System.IO.Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + @"\ipfs\" + ipfsHash))
-                                        {
-                                            Process.Start("explorer.exe", System.IO.Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + @"\ipfs\" + ipfsHash);
-                                        }
-                                        else { System.Windows.Forms.Label filenotFound = new System.Windows.Forms.Label(); filenotFound.AutoSize = true; filenotFound.Text = "IPFS: Search failed! Verify IPFS pinning is enbaled"; flowLayoutPanel1.Controls.Clear(); flowLayoutPanel1.Controls.Add(filenotFound); }
+                                    if (System.IO.Directory.Exists(System.IO.Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + @"\ipfs\" + ipfsHash))
+                                    {
+                                        Process.Start("explorer.exe", System.IO.Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + @"\ipfs\" + ipfsHash);
+                                    }
+                                    else { System.Windows.Forms.Label filenotFound = new System.Windows.Forms.Label(); filenotFound.AutoSize = true; filenotFound.Text = "IPFS: Search failed! Verify IPFS pinning is enbaled"; flowLayoutPanel1.Controls.Clear(); flowLayoutPanel1.Controls.Add(filenotFound); }
 
 
 
-                                    
+
                                 }
                                 else
                                 {
@@ -1939,7 +1953,7 @@ namespace SUP
                             {
                                 if (txtSearchAddress.Text.ToUpper().StartsWith(@"SUP:"))
                                 {
-                                    GetObjectsByAddress(txtSearchAddress.Text,calculate);
+                                    GetObjectsByAddress(txtSearchAddress.Text, calculate);
 
                                 }
                                 else
@@ -1964,7 +1978,7 @@ namespace SUP
                                                 Root.GetRootByTransactionId(txtSearchAddress.Text.Substring(4, 64), "good-user", "better-password", @"http://127.0.0.1:22555", "30");
                                                 break;
                                             default:
-                                                Root.GetRootByTransactionId(txtSearchAddress.Text.Substring(0, 64), "good-user", "better-password", @"http://127.0.0.1:18332");
+                                                Root.GetRootByTransactionId(txtSearchAddress.Text.Substring(0, 64), mainnetLogin, mainnetPassword, mainnetURL, mainnetVersionByte);
                                                 break;
                                         }
                                         Match match = regexTransactionId.Match(txtSearchAddress.Text);
@@ -1997,7 +2011,7 @@ namespace SUP
                                         {
                                             if (!string.IsNullOrEmpty(txtSearchAddress.Text))
                                             {
-                                                GetCollectionsByAddress(txtSearchAddress.Text.Replace("@", ""),calculate);
+                                                GetCollectionsByAddress(txtSearchAddress.Text.Replace("@", ""), calculate);
                                             }
                                             else
                                             {
@@ -2010,7 +2024,7 @@ namespace SUP
                                         }
                                         else
                                         {
-                                            GetObjectsByAddress(txtSearchAddress.Text.Replace("@", ""),calculate);
+                                            GetObjectsByAddress(txtSearchAddress.Text.Replace("@", ""), calculate);
                                         }
                                     }
 
@@ -2037,7 +2051,7 @@ namespace SUP
             bool isBlue = false;
             selectSort.SelectedIndex = 0;
 
-          
+
             // Check if the parent form has a button named "btnLive" with blue background color
             try
             {
@@ -2058,7 +2072,7 @@ namespace SUP
             else
             {
 
-               
+
 
                 if (_objectaddress.Length > 0)
                 {
@@ -2518,7 +2532,7 @@ namespace SUP
 
                 try
                 {
-                    List<string> islocal = Root.GetPublicKeysByAddress(profileURN.Links[0].LinkData.ToString(), "good-user", "better-password", @"http://127.0.0.1:18332");
+                    List<string> islocal = Root.GetPublicKeysByAddress(profileURN.Links[0].LinkData.ToString(), mainnetLogin, mainnetPassword, mainnetURL);
                     if
                          (islocal.Count == 2)
                     {

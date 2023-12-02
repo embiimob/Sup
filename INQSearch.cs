@@ -17,17 +17,26 @@ namespace SUP
         private List<string> soundFiles;
         private int numPictureBoxesToAdd = 10;
         private int currentTrackIndex = 0;
-
+        private string mainnetURL = @"http://127.0.0.1:18332";
+        private string mainnetLogin = "good-user";
+        private string mainnetPassword = "better-password";
+        private string mainnetVersionByte = "111";
         private bool playOldestFirst = false;
         List<Microsoft.Web.WebView2.WinForms.WebView2> webviewers = new List<Microsoft.Web.WebView2.WinForms.WebView2>();
 
-        public INQSearch(string searchaddress = "inq")
+        public INQSearch(string searchaddress = "inq", bool testnet = true)
         {
             InitializeComponent();
             InitializeDelayTimer();
             soundFiles = new List<string>();
             txtSearch.Text = searchaddress;
-
+            if (!testnet)
+            {
+                mainnetURL = @"http://127.0.0.1:8332";
+                mainnetLogin = "good-user";
+                mainnetPassword = "better-password";
+                mainnetVersionByte = "0";
+            }
 
         }
 
@@ -108,14 +117,14 @@ namespace SUP
                 });
 
                 soundFiles = new List<string>();
-                string searchAddress = Root.GetPublicAddressByKeyword(searchstring.Replace("#", ""));
+                string searchAddress = Root.GetPublicAddressByKeyword(searchstring.Replace("#", ""),mainnetVersionByte);
 
                 if (searchstring.Length > 20) { searchAddress = searchstring; }
                 else
                 {
                     if (!searchstring.StartsWith("#"))
                     {
-                        PROState searchprofile = PROState.GetProfileByURN(searchstring, "good-user", "better-password", @"http://127.0.0.1:18332");
+                        PROState searchprofile = PROState.GetProfileByURN(searchstring,mainnetLogin,mainnetPassword,mainnetURL,mainnetVersionByte);
                         if (searchprofile.Creators != null)
                         {
                             searchAddress = searchprofile.Creators[0];
@@ -125,15 +134,15 @@ namespace SUP
 
 
 
-                Root[] INQUIRYS = Root.GetRootsByAddress(searchAddress, "good-user", "better-password", @"http://127.0.0.1:18332");
+                Root[] INQUIRYS = Root.GetRootsByAddress(searchAddress, mainnetLogin, mainnetPassword, mainnetURL,0,-1, mainnetVersionByte);
 
                 if (INQUIRYS.Count() > 0)
                 {
 
                     foreach (Root INQUIRY in INQUIRYS)
                     {
-                      
-                                               
+
+
 
                         if (INQUIRY.File.Keys.Count() > 0)
                         {
@@ -157,7 +166,7 @@ namespace SUP
                 List<OBJState> objects = new List<OBJState>();
 
 
-                objects = OBJState.GetObjectsByKeyword(new List<string> { searchstring.Replace("#", "") }, "good-user", "better-password", @"http://127.0.0.1:18332");
+                objects = OBJState.GetObjectsByKeyword(new List<string> { searchstring.Replace("#", "") }, mainnetLogin, mainnetPassword, mainnetURL, mainnetVersionByte);
 
                 if (objects.Count > 0)
                 {
@@ -186,7 +195,7 @@ namespace SUP
                     }
                 }
 
-                objects = OBJState.GetObjectsCreatedByAddress(searchAddress, "good-user", "better-password", @"http://127.0.0.1:18332");
+                objects = OBJState.GetObjectsCreatedByAddress(searchAddress, mainnetLogin, mainnetPassword, mainnetURL, mainnetVersionByte);
 
                 if (objects.Count() > 0)
                 {
@@ -260,7 +269,7 @@ namespace SUP
             {
                 string[] soundInfo = soundFiles[currentTrackIndex].Split(',');
                 string soundFrom = soundInfo[2];
-                PROState searchprofile = PROState.GetProfileByAddress(soundFrom, "good-user", "better-password", @"http://127.0.0.1:18332");
+                PROState searchprofile = PROState.GetProfileByAddress(soundFrom, mainnetLogin, mainnetPassword, mainnetURL, mainnetVersionByte);
                 if (searchprofile.URN != null)
                 {
                     soundFrom = searchprofile.URN;
@@ -361,8 +370,8 @@ namespace SUP
             {
                 videolocation = videopath;
 
-                
-               
+
+
 
                 TableLayoutPanel msg = new TableLayoutPanel
                 {
@@ -399,7 +408,7 @@ namespace SUP
                 }
 
 
-              if (!videopath.ToLower().StartsWith("http") && !videopath.ToLower().StartsWith("ipfs"))
+                if (!videopath.ToLower().StartsWith("http") && !videopath.ToLower().StartsWith("ipfs"))
                 {
                     videolocation = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + @"\root\" + videopath.Replace("BTC:", "").Replace("MZC:", "").Replace("LTC:", "").Replace("DOG:", "").Replace(@"/", @"\");
 
@@ -434,12 +443,12 @@ namespace SUP
                                     Root.GetRootByTransactionId(transactionid, "good-user", "better-password", @"http://127.0.0.1:22555", "30", null, null, true);
 
                                     break;
-                                                                   
+
 
                                 default:
                                     if (!videopath.ToUpper().StartsWith("HTTP") && transactionid != "")
                                     {
-                                        Root.GetRootByTransactionId(transactionid, "good-user", "better-password", @"http://127.0.0.1:18332","111", null, null, true);
+                                        Root.GetRootByTransactionId(transactionid, mainnetLogin, mainnetPassword, mainnetURL, mainnetVersionByte, null, null, true);
 
                                     }
                                     break;
@@ -450,13 +459,13 @@ namespace SUP
 
                                 string pattern = @"[0-9a-fA-F]{64}";
 
-                       
+
                                 Match match = Regex.Match(videolocation, pattern);
 
-                              
+
                                 if (match.Success)
                                 {
-                                   
+
                                     string transactionId = match.Value;
 
                                     this.Invoke((MethodInvoker)delegate
@@ -467,11 +476,11 @@ namespace SUP
 
                                 }
 
-                              
+
 
 
                             }
-                          
+
 
                         });
 
@@ -504,7 +513,7 @@ namespace SUP
 
 
                 }
-              
+
 
 
             }

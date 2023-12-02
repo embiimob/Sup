@@ -10,14 +10,27 @@ namespace SUP
         private string _address;
         private string _activeprofile;
         private bool calculate = false;
-        public FoundINQControl(string address, string activeprofile = "")
+        private string mainnetURL = @"http://127.0.0.1:18332";
+        private string mainnetLogin = "good-user";
+        private string mainnetPassword = "better-password";
+        private string mainnetVersionByte = "111";
+        private bool _testnet;
+        public FoundINQControl(string address, string activeprofile = "", bool testnet = true)
         {
             SuspendLayout();
             InitializeComponent();
             _address = address;
             _activeprofile = activeprofile;
+            if (!testnet)
+            {
+                mainnetURL = @"http://127.0.0.1:8332";
+                mainnetLogin = "good-user";
+                mainnetPassword = "better-password";
+                mainnetVersionByte = "0";
+            }
+            _testnet = testnet;
         }
-           
+
 
         private void ObjectAddress_Click(object sender, EventArgs e)
         {
@@ -27,25 +40,25 @@ namespace SUP
         private void lblTrash_Click(object sender, EventArgs e)
         {
 
-           
+
 
             // Prompt the user to confirm whether they want to delete the file
             DialogResult result = MessageBox.Show($"Are you sure you want to delete this inquiry?", "Confirm Deletion", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
 
             if (result == DialogResult.Yes)
             {
-                
-                   
-                    try
+
+
+                try
+                {
+
+                    try { Directory.Delete(@"root\" + txtTransactionId.Text, true); } catch { }
+                    try { Directory.CreateDirectory(@"root\" + txtTransactionId.Text); } catch { }
+
+                    using (FileStream fs = File.Create(@"root\" + txtTransactionId.Text + @"\BLOCK"))
                     {
 
-                        try { Directory.Delete(@"root\" + txtTransactionId.Text, true); } catch { }
-                        try { Directory.CreateDirectory(@"root\" + txtTransactionId.Text); } catch { }
-
-                        using (FileStream fs = File.Create(@"root\" + txtTransactionId.Text + @"\BLOCK"))
-                        {
-
-                        }
+                    }
 
                     if (txtObjectAddress.Text != null)
                     {
@@ -60,7 +73,7 @@ namespace SUP
 
 
                 }
-                    catch { }
+                catch { }
 
                 // Remove the user control from its parent flow panel
                 this.Parent.Controls.Remove(this);
@@ -73,7 +86,7 @@ namespace SUP
 
             Button voteButton = (Button)sender;
 
-            DiscoBall disco = new DiscoBall(_activeprofile, "", voteButton.Tag.ToString(), "", false);
+            DiscoBall disco = new DiscoBall(_activeprofile, "", voteButton.Tag.ToString(), "", false,_testnet);
             disco.StartPosition = FormStartPosition.CenterScreen;
             disco.Show(this);
             disco.Focus();
@@ -93,17 +106,17 @@ namespace SUP
 
         private void RefreshTotals()
         {
-        
+
             flowLayoutPanel1.Controls.Clear();
 
-            INQState iNQState = INQState.GetInquiryByTransactionId(_address, "good-user", "better-password", @"http://127.0.0.1:18332", "111", calculate);
+            INQState iNQState = INQState.GetInquiryByTransactionId(_address, mainnetLogin,mainnetPassword,mainnetURL,mainnetVersionByte, calculate);
 
             if (iNQState.AnswerData != null)
-            {  
+            {
                 txtObjectAddress.Text = iNQState.URN.ToString();
                 txtQUE.Text = iNQState.Question;
                 txtCreatedBy.Text = "created by: " + iNQState.CreatedBy.ToString();
-                txtCreatedDate.Text ="created date: " + iNQState.CreatedDate.ToString();
+                txtCreatedDate.Text = "created date: " + iNQState.CreatedDate.ToString();
                 txtTransactionId.Text = iNQState.TransactionId;
                 if (iNQState.OwnsObjectGate != null || iNQState.OwnsCreatedByGate != null) { btnShowAllOrGated.Visible = true; }
                 if (int.TryParse(iNQState.status, out int status))
@@ -129,13 +142,15 @@ namespace SUP
 
                     txtStatus.Text = statusString;
                 }
-                else {
+                else
+                {
                     txtStatus.Text = "status: " + iNQState.status;
-                        }
+                }
 
                 if (btnValueTotal.Text == "show values")
                 {
-                    if (btnShowAllOrGated.Text == "show all") {
+                    if (btnShowAllOrGated.Text == "show all")
+                    {
                         lblVotesOrValue.Text = "Total Votes: " + iNQState.TotalGatedVotes.ToString();
 
                     }
@@ -160,7 +175,7 @@ namespace SUP
                 }
 
 
-                    foreach (AnswerData answer in iNQState.AnswerData)
+                foreach (AnswerData answer in iNQState.AnswerData)
                 {
                     System.Windows.Forms.Label lblANS = new System.Windows.Forms.Label();
                     lblANS.AutoSize = true;
@@ -262,7 +277,7 @@ namespace SUP
                     flowLayoutPanel1.Controls.Add(lblANSTotal);
 
                     System.Windows.Forms.Button btnVote = new System.Windows.Forms.Button();
-                    if ((_activeprofile == "" && iNQState.RequireSignature ) || !int.TryParse(iNQState.status, out int dummy)) { btnVote.Enabled = false; }
+                    if ((_activeprofile == "" && iNQState.RequireSignature) || !int.TryParse(iNQState.status, out int dummy)) { btnVote.Enabled = false; }
                     btnVote.Location = new System.Drawing.Point(435, 38);
                     btnVote.Name = "btnVote";
                     btnVote.Size = new System.Drawing.Size(51, 23);
@@ -289,9 +304,9 @@ namespace SUP
 
         private void FoundINQControl_Load(object sender, EventArgs e)
         {
-           
-                RefreshTotals();
-           
+
+            RefreshTotals();
+
         }
 
         private void btnShowAllOrGated_Click(object sender, EventArgs e)

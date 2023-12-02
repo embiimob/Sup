@@ -38,7 +38,10 @@ namespace SUP
         private WaveFileWriter writer;
         private WaveOut waveOut;
         private WaveFileReader reader;
-
+        private string mainnetURL = @"http://127.0.0.1:18332";
+        private string mainnetLogin = "good-user";
+        private string mainnetPassword = "better-password";
+        private string mainnetVersionByte = "111";
         private string wavFileName = @"sup.wav";
         private bool isRecording = false;
         private bool isPrint = false;
@@ -50,7 +53,7 @@ namespace SUP
         private Random random = new Random();
 
 
-        public DiscoBall(string fromaddress = "", string fromimageurl = "", string toaddress = "", string toimageurl = "", bool isprivate = false)
+        public DiscoBall(string fromaddress = "", string fromimageurl = "", string toaddress = "", string toimageurl = "", bool isprivate = false, bool testnet = true)
         {
             InitializeComponent();
             CreateEmojiPanel();
@@ -76,6 +79,14 @@ namespace SUP
 
             // Assign the context menu to the PictureBox
             pictureBox1.ContextMenuStrip = contextMenu;
+            if (!testnet)
+            {
+              mainnetURL = @"http://127.0.0.1:8332";
+        mainnetLogin = "good-user";
+        mainnetPassword = "better-password";
+        mainnetVersionByte = "0";
+
+    }
 
         }
 
@@ -185,8 +196,8 @@ namespace SUP
                         {
 
                             byte[] rootbytes = Root.GetRootBytesByFile(new string[] { filePath });
-                            PROState toProfile = PROState.GetProfileByAddress(txtToAddress.Text, "good-user", "better-password", @"http://127.0.0.1:18332");
-                            rootbytes = Root.EncryptRootBytes("good-user", "better-password", @"http://127.0.0.1:18332", txtToAddress.Text, rootbytes, toProfile.PKX, toProfile.PKY, true);
+                            PROState toProfile = PROState.GetProfileByAddress(txtToAddress.Text, mainnetLogin,mainnetPassword,mainnetURL,mainnetVersionByte);
+                            rootbytes = Root.EncryptRootBytes(mainnetLogin, mainnetPassword, mainnetURL, txtToAddress.Text, rootbytes, toProfile.PKX, toProfile.PKY, true);
                             string proccessingDirectory = @"root\" + processingid;
                             Directory.CreateDirectory(proccessingDirectory);
                             proccessingFile = proccessingDirectory + @"\SEC";
@@ -384,7 +395,7 @@ namespace SUP
                                 break;
                             default:
 
-                                root = Root.GetRootByTransactionId(transactionid, "good-user", "better-password", @"http://127.0.0.1:18332");
+                                root = Root.GetRootByTransactionId(transactionid, mainnetLogin, mainnetPassword, mainnetURL, mainnetVersionByte);
 
 
                                 break;
@@ -479,11 +490,11 @@ namespace SUP
             byte[] messageBytes = Encoding.UTF8.GetBytes(transMessage);
             string OBJP2FK = GetRandomDelimiter() + messageBytes.Length + GetRandomDelimiter() + transMessage + txtINQJson.Text;
             byte[] OBJP2FKBytes = new byte[] { };
-            PROState toProfile = PROState.GetProfileByAddress(_toaddress, "good-user", "better-password", @"http://127.0.0.1:18332");
+            PROState toProfile = PROState.GetProfileByAddress(_toaddress, mainnetLogin, mainnetPassword, mainnetURL, mainnetVersionByte);
             string signature = "";
             string signatureAddress = "";
-            NetworkCredential credentials = new NetworkCredential("good-user", "better-password");
-            NBitcoin.RPC.RPCClient rpcClient = new NBitcoin.RPC.RPCClient(credentials, new Uri(@"http://127.0.0.1:18332"), Network.Main);
+            NetworkCredential credentials = new NetworkCredential(mainnetLogin,mainnetPassword);
+            NBitcoin.RPC.RPCClient rpcClient = new NBitcoin.RPC.RPCClient(credentials, new Uri(mainnetURL), Network.Main);
 
             if (txtFromAddress.Text != "")
             {
@@ -508,7 +519,7 @@ namespace SUP
             if (btnEncryptionStatus.Text == "PRIVATE 🤐")
             {
                 OBJP2FK = "SIG" + GetRandomDelimiter() + "88" + GetRandomDelimiter() + signature + OBJP2FK;
-                byte[] combinedBytes = Root.EncryptRootBytes("good-user", "better-password", "http://127.0.0.1:18332", signatureAddress, Encoding.UTF8.GetBytes(OBJP2FK), toProfile.PKX, toProfile.PKY);
+                byte[] combinedBytes = Root.EncryptRootBytes(mainnetLogin, mainnetPassword, mainnetURL, signatureAddress, Encoding.UTF8.GetBytes(OBJP2FK), toProfile.PKX, toProfile.PKY);
                 // Split byte array into chunks of maximum length 20
                 for (int i = 0; i < combinedBytes.Length; i += 20)
                 {
@@ -522,7 +533,7 @@ namespace SUP
                         bytechunk = paddedBytes;
                     }
 
-                    address = Base58.EncodeWithCheckSum(new byte[] { byte.Parse("111") }.Concat(bytechunk).ToArray());
+                    address = Base58.EncodeWithCheckSum(new byte[] { byte.Parse(mainnetVersionByte) }.Concat(bytechunk).ToArray());
                     encodedList.Add(address);
                 }
             }
@@ -554,7 +565,7 @@ namespace SUP
                     }
 
                     string chunkBase58 = Base58.EncodeWithCheckSum(
-                        new byte[] { 111 }.Concat(chunkBytes).ToArray());
+                        new byte[] { (byte)Int32.Parse(mainnetVersionByte) }.Concat(chunkBytes).ToArray());
 
                     if (!encodedList.Contains(chunkBase58))
                     {
@@ -578,7 +589,7 @@ namespace SUP
             foreach (Match match in regex.Matches(supMessage.Text))
             {
                 string keyword = match.Value.Substring(1);
-                string encodedKeyword = Root.GetPublicAddressByKeyword(keyword);
+                string encodedKeyword = Root.GetPublicAddressByKeyword(keyword,mainnetVersionByte);
                 string P2FKASCII = Root.GetKeywordByPublicAddress(encodedKeyword, "ASCII");
 
 
@@ -627,7 +638,7 @@ namespace SUP
                     try { recipients.Add(encodedAddress, 0.00000546m); } catch { }
                 }
 
-                CoinRPC a = new CoinRPC(new Uri("http://127.0.0.1:18332"), new NetworkCredential("good-user", "better-password"));
+                CoinRPC a = new CoinRPC(new Uri(mainnetURL), new NetworkCredential(mainnetLogin,mainnetPassword));
 
                 try
                 {
@@ -668,7 +679,7 @@ namespace SUP
                             try { recipients.Add(encodedAddress, 0.00000546m); } catch { }
                         }
 
-                        CoinRPC a = new CoinRPC(new Uri("http://127.0.0.1:18332"), new NetworkCredential("good-user", "better-password"));
+                        CoinRPC a = new CoinRPC(new Uri(mainnetURL), new NetworkCredential(mainnetLogin, mainnetPassword));
 
                         try
                         {
@@ -854,8 +865,8 @@ namespace SUP
                 }
 
                 byte[] rootbytes = Root.GetRootBytesByFile(new string[] { wavFileName });
-                PROState toProfile = PROState.GetProfileByAddress(txtToAddress.Text, "good-user", "better-password", @"http://127.0.0.1:18332");
-                rootbytes = Root.EncryptRootBytes("good-user", "better-password", @"http://127.0.0.1:18332", txtToAddress.Text, rootbytes, toProfile.PKX, toProfile.PKY, true);
+                PROState toProfile = PROState.GetProfileByAddress(txtToAddress.Text, mainnetLogin, mainnetPassword, mainnetURL, mainnetVersionByte);
+                rootbytes = Root.EncryptRootBytes(mainnetLogin, mainnetPassword, mainnetURL, txtToAddress.Text, rootbytes, toProfile.PKX, toProfile.PKY, true);
                 string proccessingDirectory = @"root\" + processingid;
                 Directory.CreateDirectory(proccessingDirectory);
                 proccessingFile = proccessingDirectory + @"\SEC";
@@ -1152,7 +1163,7 @@ namespace SUP
             isPrint = true;
 
 
-            PROState toProfile = PROState.GetProfileByAddress(txtToAddress.Text, "good-user", "better-password", @"http://127.0.0.1:18332");
+            PROState toProfile = PROState.GetProfileByAddress(txtToAddress.Text, mainnetLogin, mainnetPassword, mainnetURL, mainnetVersionByte);
 
             var location = toProfile.Location;
             messagecache = supMessage.Text;

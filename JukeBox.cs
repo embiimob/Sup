@@ -24,17 +24,28 @@ namespace SUP
         private int currentSoundIndex = -1; // Initialize with -1 to indicate no current playing sound
         private bool playNext = true;
         private bool playOldestFirst = false;
+        private string mainnetURL = @"http://127.0.0.1:18332";
+        private string mainnetLogin = "good-user";
+        private string mainnetPassword = "better-password";
+        private string mainnetVersionByte = "111";
 
 
-        public JukeBox(string searchaddress = "mp3")
+        public JukeBox(string searchaddress = "mp3", bool testnet = true)
         {
             InitializeComponent();
             InitializeDelayTimer();
             soundFiles = new List<string>();
             txtSearch.Text = searchaddress;
-   
+            if (!testnet)
+            {
+                      mainnetURL = @"http://127.0.0.1:8332";
+       mainnetLogin = "good-user";
+      mainnetPassword = "better-password";
+         mainnetVersionByte = "0";
 
-        }
+    }
+
+}
 
         private void JukeBox_Load(object sender, EventArgs e)
         {
@@ -101,14 +112,14 @@ namespace SUP
                 });
 
                 soundFiles = new List<string>();
-                string searchAddress = Root.GetPublicAddressByKeyword(searchstring.Replace("#",""));
+                string searchAddress = Root.GetPublicAddressByKeyword(searchstring.Replace("#",""), mainnetVersionByte);
 
                 if (searchstring.Length > 20) { searchAddress = searchstring; }
                 else
                 {
                     if (!searchstring.StartsWith("#"))
                     {
-                        PROState searchprofile = PROState.GetProfileByURN(searchstring, "good-user", "better-password", @"http://127.0.0.1:18332");
+                        PROState searchprofile = PROState.GetProfileByURN(searchstring, mainnetLogin, mainnetPassword, mainnetURL,mainnetVersionByte);
                         if (searchprofile.Creators != null)
                         {
                             searchAddress = searchprofile.Creators[0];
@@ -118,7 +129,7 @@ namespace SUP
 
                                
                 
-                Root[] TRACKS = Root.GetRootsByAddress(searchAddress, "good-user", "better-password", @"http://127.0.0.1:18332");
+                Root[] TRACKS = Root.GetRootsByAddress(searchAddress, mainnetLogin, mainnetPassword, mainnetURL,0,-1,mainnetVersionByte);
 
 
                 foreach (Root TRACK in TRACKS)
@@ -157,7 +168,7 @@ namespace SUP
                 List<OBJState> objects = new List<OBJState>();
 
 
-                objects = OBJState.GetObjectsByKeyword(new List<string> { searchstring.Replace("#", "") }, "good-user", "better-password", @"http://127.0.0.1:18332");
+                objects = OBJState.GetObjectsByKeyword(new List<string> { searchstring.Replace("#", "") }, mainnetLogin, mainnetPassword, mainnetURL, mainnetVersionByte);
 
                 foreach (OBJState obj in objects)
                 {
@@ -184,7 +195,7 @@ namespace SUP
                 }
 
 
-                objects = OBJState.GetObjectsCreatedByAddress(searchAddress, "good-user", "better-password", @"http://127.0.0.1:18332");
+                objects = OBJState.GetObjectsCreatedByAddress(searchAddress, mainnetLogin, mainnetPassword, mainnetURL,mainnetVersionByte);
 
                 foreach (OBJState obj in objects)
                 {
@@ -260,7 +271,7 @@ namespace SUP
             {
                 string[] soundInfo = soundFiles[currentTrackIndex].Split(',');
                 string soundFrom = soundInfo[2];
-                PROState searchprofile = PROState.GetProfileByAddress(soundFrom, "good-user", "better-password", @"http://127.0.0.1:18332");
+                PROState searchprofile = PROState.GetProfileByAddress(soundFrom, mainnetLogin, mainnetPassword, mainnetURL, mainnetVersionByte);
                 if (searchprofile.URN != null)
                 {
                     soundFrom = searchprofile.URN;
@@ -382,7 +393,7 @@ namespace SUP
                         default:
                             if (!filepath.ToUpper().StartsWith("HTTP") && transactionid != "")
                             {
-                                Root.GetRootByTransactionId(transactionid, "good-user", "better-password", @"http://127.0.0.1:18332");
+                                Root.GetRootByTransactionId(transactionid, mainnetLogin, mainnetPassword, mainnetURL, mainnetVersionByte);
 
                             }
                             break;

@@ -27,6 +27,12 @@ namespace SUP
     public partial class SupMain : Form
     {
         private readonly static object SupLocker = new object();
+        private string mainnetURL = @"http://127.0.0.1:18332";
+        private string mainnetLogin = "good-user";
+        private string mainnetPassword = "better-password";
+        private string mainnetVersionByte = "111";
+        private bool testnet = true;
+
         private List<string> BTCMemPool = new List<string>();
         private List<string> BTCTMemPool = new List<string>();
         private List<string> MZCMemPool = new List<string>();
@@ -228,7 +234,7 @@ namespace SUP
 
                             if (profileURN != null)
                             {
-                                List<string> islocal = Root.GetPublicKeysByAddress(profileURN, "good-user", "better-password", @"http://127.0.0.1:18332");
+                                List<string> islocal = Root.GetPublicKeysByAddress(profileURN, mainnetLogin, mainnetPassword, mainnetURL);
                                 if
                                      (islocal.Count == 2)
                                 {
@@ -249,7 +255,7 @@ namespace SUP
 
             //supFlow.SuspendLayout();
             Regex regexTransactionId = new Regex(@"\b[0-9a-f]{64}\b");
-            PROState activeProfile = PROState.GetProfileByAddress(address, "good-user", "better-password", @"http://127.0.0.1:18332");
+            PROState activeProfile = PROState.GetProfileByAddress(address, mainnetLogin, mainnetPassword, mainnetURL,mainnetVersionByte);
             if (activeProfile.URN == null) { profileURN.Text = "anon"; profileBIO.Text = ""; profileCreatedDate.Text = ""; profileIMG.ImageLocation = ""; activeProfile.Image = ""; lblProcessHeight.Text = ""; return; }
 
 
@@ -586,7 +592,7 @@ namespace SUP
                             Task.Run(() =>
                             {
 
-                                Root.GetRootByTransactionId(transid, "good-user", "better-password", @"http://127.0.0.1:18332");
+                                Root.GetRootByTransactionId(transid, mainnetLogin, mainnetPassword, mainnetURL,mainnetVersionByte);
 
                                 if (File.Exists(imgurn))
                                 {
@@ -628,7 +634,7 @@ namespace SUP
                 if (value.ToUpper().StartsWith("@"))
                 {
 
-                    PROState profile = PROState.GetProfileByURN(value.Replace("@", ""), "good-user", "better-password", @"http://127.0.0.1:18332");
+                    PROState profile = PROState.GetProfileByURN(value.Replace("@", ""), mainnetLogin, mainnetPassword, mainnetURL,mainnetVersionByte);
 
                     if (profile.Creators != null) { MakeActiveProfile(profile.Creators.First()); }
 
@@ -638,7 +644,7 @@ namespace SUP
                     if (value.StartsWith("#"))
                     {
 
-                        string searchAddress = Root.GetPublicAddressByKeyword(value.Replace("#", ""), "111");
+                        string searchAddress = Root.GetPublicAddressByKeyword(value.Replace("#", ""), mainnetVersionByte);
                         MakeActiveProfile(searchAddress);
                         profileURN.Text = value;
                         profileURN.Links[0].LinkData = searchAddress;
@@ -701,7 +707,7 @@ namespace SUP
                         buttonForm.Close();
 
                         // Show the "ObjectMint" form and set focus to it
-                        ObjectMint mintform = new ObjectMint();
+                        ObjectMint mintform = new ObjectMint(testnet);
                         mintform.StartPosition = FormStartPosition.CenterScreen;
                         mintform.Show(this);
                         mintform.Focus();
@@ -720,7 +726,7 @@ namespace SUP
                         buttonForm.Close();
 
                         // Show the "ProfileMint" form and set focus to it
-                        ProfileMint mintprofile = new ProfileMint();
+                        ProfileMint mintprofile = new ProfileMint("",testnet);
                         mintprofile.StartPosition = FormStartPosition.CenterScreen;
                         mintprofile.Show(this);
                         mintprofile.Focus();
@@ -777,8 +783,8 @@ namespace SUP
                 }
                 catch { }
 
-                string walletUsername = "good-user";
-                string walletPassword = "better-password";
+                string walletUsername = mainnetLogin;
+                string walletPassword = mainnetPassword;
                 string walletUrl = @"http://127.0.0.1:18332";
                 NetworkCredential credentials = new NetworkCredential(walletUsername, walletPassword);
                 NBitcoin.RPC.RPCClient rpcClient = new NBitcoin.RPC.RPCClient(credentials, new Uri(walletUrl), NBitcoin.Network.Main);
@@ -875,7 +881,7 @@ namespace SUP
 
                 if (File.Exists("IPFS_PINNING_ENABLED"))
                 {
-                
+
                     var process = new Process
                     {
                         StartInfo = new ProcessStartInfo
@@ -921,7 +927,7 @@ namespace SUP
                             string transid = "";
                             string profileowner = "";
                             if (profileOwner.Tag != null) { profileowner = profileOwner.Tag.ToString(); }
-                            FoundObjectControl foundObject = new FoundObjectControl(profileowner);
+                            FoundObjectControl foundObject = new FoundObjectControl(profileowner,testnet);
                             foundObject.SuspendLayout();
                             if (objstate.Image != null)
                             {
@@ -1031,15 +1037,14 @@ namespace SUP
 
 
                                         default:
-                                            if (btctActive)
-                                            {
+                                          
                                                 transid = objstate.Image.Substring(0, 64);
                                                 if (!System.IO.Directory.Exists("root/" + transid))
                                                 {
-                                                    Root root = Root.GetRootByTransactionId(transid, "good-user", "better-password", @"http://127.0.0.1:18332");
+                                                    Root root = Root.GetRootByTransactionId(transid, mainnetLogin, mainnetPassword, mainnetURL,mainnetVersionByte);
                                                 }
                                                 foundObject.ObjectImage.ImageLocation = @"root/" + objstate.Image;
-                                            }
+                                            
                                             break;
                                     }
                                 }
@@ -1164,7 +1169,7 @@ namespace SUP
                                     try
                                     {
 
-                                        Root root = Root.GetRootByTransactionId(s, "good-user", "better-password", @"http://127.0.0.1:18332");
+                                        Root root = Root.GetRootByTransactionId(s, mainnetLogin, mainnetPassword, @"http://127.0.0.1:18332", "111");
                                         if (root.Signed == true || (root.File != null && root.File.ContainsKey("SEC")))
                                         {
 
@@ -1192,8 +1197,8 @@ namespace SUP
                                                 if (find && root.File.ContainsKey("SEC") && root.Keyword.ContainsKey(profileURN.Links[0].LinkData.ToString()))
                                                 {
                                                     //enough delay so the in memory element data is populated
-                                                    root = Root.GetRootByTransactionId(s, "good-user", "better-password", @"http://127.0.0.1:18332");
-                                                    Root[] addToRoot = Root.GetRootsByAddress(profileURN.Links[0].LinkData.ToString(), "good-user", "better-password", @"http://127.0.0.1:18332");//ADD SEC message to leveld DB with system date stamp and refresh supPrivate Screen if active provile.
+                                                    root = Root.GetRootByTransactionId(s, mainnetLogin, mainnetPassword, @"http://127.0.0.1:18332", "111");
+                                                    Root[] addToRoot = Root.GetRootsByAddress(profileURN.Links[0].LinkData.ToString(), mainnetLogin, mainnetPassword, @"http://127.0.0.1:18332");//ADD SEC message to leveld DB with system date stamp and refresh supPrivate Screen if active provile.
                                                     root.Id = addToRoot.Max(x => x.Id) + 1;
 
                                                     // Convert addToRoot to a List
@@ -1233,14 +1238,14 @@ namespace SUP
 
                                                     string _fromId = _from;
 
-                                                    PROState Fromprofile = PROState.GetProfileByAddress(_fromId, "good-user", "better-password", "http://127.0.0.1:18332");
+                                                    PROState Fromprofile = PROState.GetProfileByAddress(_fromId, mainnetLogin, mainnetPassword, @"http://127.0.0.1:18332", "111");
 
                                                     if (Fromprofile.URN != null)
                                                     { _fromId = Fromprofile.URN; }
 
                                                     string _toId = _to;
 
-                                                    PROState Toprofile = PROState.GetProfileByAddress(_toId, "good-user", "better-password", "http://127.0.0.1:18332");
+                                                    PROState Toprofile = PROState.GetProfileByAddress(_toId, mainnetLogin, mainnetPassword, @"http://127.0.0.1:18332", "111");
 
                                                     if (Toprofile.URN != null)
                                                     { _toId = Toprofile.URN; }
@@ -1478,14 +1483,14 @@ namespace SUP
                                                 if (find && root.File.ContainsKey("INQ"))
                                                 {
                                                     INQState isINQ = new INQState();
-                                                    isINQ = INQState.GetInquiryByTransactionId(s, "good-user", "better-password", @"http://127.0.0.1:18332");
+                                                    isINQ = INQState.GetInquiryByTransactionId(s, mainnetLogin, mainnetPassword, @"http://127.0.0.1:18332", "111");
 
                                                     if (isINQ.TransactionId != null)
                                                     {
 
                                                         this.Invoke((MethodInvoker)delegate
                                                         {
-                                                            FoundINQControl foundObject = new FoundINQControl(s);
+                                                            FoundINQControl foundObject = new FoundINQControl(s,"",true);
                                                             foundObject.Margin = new Padding(20, 7, 8, 7);
                                                             supFlow.Controls.Add(foundObject);
                                                             supFlow.Controls.SetChildIndex(foundObject, 2);
@@ -1495,14 +1500,14 @@ namespace SUP
                                                 }
 
 
-                                                isobject = OBJState.GetObjectByTransactionId(s, "good-user", "better-password", @"http://127.0.0.1:18332");
+                                                isobject = OBJState.GetObjectByTransactionId(s, mainnetLogin, mainnetPassword, @"http://127.0.0.1:18332", "111");
                                                 if (isobject.URN != null && find == true)
                                                 {
                                                     isobject.TransactionId = s;
                                                     foundobjects.Add(isobject);
                                                     try { Directory.Delete(@"root\" + s, true); } catch { }
 
-                                                   
+
 
                                                 }
                                                 try { System.IO.Directory.Delete(@"root\" + s, true); } catch { }
@@ -1570,7 +1575,7 @@ namespace SUP
 
                                                         if (filter.StartsWith("#"))
                                                         {
-                                                            find = root.Keyword.ContainsKey(Root.GetPublicAddressByKeyword(filter.Substring(1)));
+                                                            find = root.Keyword.ContainsKey(Root.GetPublicAddressByKeyword(filter.Substring(1),mainnetVersionByte));
                                                         }
                                                         else
                                                         {
@@ -1817,7 +1822,7 @@ namespace SUP
 
                                                             this.Invoke((MethodInvoker)delegate
                                                             {
-                                                                FoundINQControl foundObject = new FoundINQControl(s);
+                                                                FoundINQControl foundObject = new FoundINQControl(s,"",testnet);
                                                                 foundObject.Margin = new Padding(20, 7, 8, 7);
                                                                 supFlow.Controls.Add(foundObject);
                                                                 supFlow.Controls.SetChildIndex(foundObject, 2);
@@ -1834,7 +1839,7 @@ namespace SUP
                                                         try { Directory.Delete(@"root\" + s, true); } catch { }
 
 
-                                                       
+
                                                     }
                                                     try { System.IO.Directory.Delete(@"root\" + s, true); } catch { }
 
@@ -1892,7 +1897,7 @@ namespace SUP
 
                                                         if (filter.StartsWith("#"))
                                                         {
-                                                            find = root.Keyword.ContainsKey(Root.GetPublicAddressByKeyword(filter.Substring(1)));
+                                                            find = root.Keyword.ContainsKey(Root.GetPublicAddressByKeyword(filter.Substring(1),mainnetVersionByte));
                                                         }
                                                         else
                                                         {
@@ -2139,7 +2144,7 @@ namespace SUP
 
                                                             this.Invoke((MethodInvoker)delegate
                                                             {
-                                                                FoundINQControl foundObject = new FoundINQControl(s);
+                                                                FoundINQControl foundObject = new FoundINQControl(s,"",testnet);
                                                                 foundObject.Margin = new Padding(20, 7, 8, 7);
                                                                 supFlow.Controls.Add(foundObject);
                                                                 supFlow.Controls.SetChildIndex(foundObject, 2);
@@ -2154,7 +2159,7 @@ namespace SUP
                                                         isobject.TransactionId = s;
                                                         foundobjects.Add(isobject);
                                                         try { Directory.Delete(@"root\" + s, true); } catch { }
-                                                       
+
                                                     }
                                                     try { System.IO.Directory.Delete(@"root\" + s, true); } catch { }
 
@@ -2212,7 +2217,7 @@ namespace SUP
 
                                                         if (filter.StartsWith("#"))
                                                         {
-                                                            find = root.Keyword.ContainsKey(Root.GetPublicAddressByKeyword(filter.Substring(1)));
+                                                            find = root.Keyword.ContainsKey(Root.GetPublicAddressByKeyword(filter.Substring(1),mainnetVersionByte));
                                                         }
                                                         else
                                                         {
@@ -2459,7 +2464,7 @@ namespace SUP
 
                                                             this.Invoke((MethodInvoker)delegate
                                                             {
-                                                                FoundINQControl foundObject = new FoundINQControl(s);
+                                                                FoundINQControl foundObject = new FoundINQControl(s, "", testnet);
                                                                 foundObject.Margin = new Padding(20, 7, 8, 7);
                                                                 supFlow.Controls.Add(foundObject);
                                                                 supFlow.Controls.SetChildIndex(foundObject, 2);
@@ -2474,7 +2479,7 @@ namespace SUP
                                                         foundobjects.Add(isobject);
                                                         try { Directory.Delete(@"root\" + s, true); } catch { }
 
-                                                        
+
                                                     }
                                                     try { System.IO.Directory.Delete(@"root\" + s, true); } catch { }
 
@@ -2534,7 +2539,7 @@ namespace SUP
 
                                                         if (filter.StartsWith("#"))
                                                         {
-                                                            find = root.Keyword.ContainsKey(Root.GetPublicAddressByKeyword(filter.Substring(1)));
+                                                            find = root.Keyword.ContainsKey(Root.GetPublicAddressByKeyword(filter.Substring(1),mainnetVersionByte));
                                                         }
                                                         else
                                                         {
@@ -2782,7 +2787,7 @@ namespace SUP
 
                                                             this.Invoke((MethodInvoker)delegate
                                                             {
-                                                                FoundINQControl foundObject = new FoundINQControl(s);
+                                                                FoundINQControl foundObject = new FoundINQControl(s, "", testnet);
                                                                 foundObject.Margin = new Padding(20, 7, 8, 7);
                                                                 supFlow.Controls.Add(foundObject);
                                                                 supFlow.Controls.SetChildIndex(foundObject, 2);
@@ -2889,8 +2894,8 @@ namespace SUP
 
             List<MessageObject> messages = new List<MessageObject>();
 
-            try { messages = OBJState.GetPublicMessagesByAddress(profileURN.Links[0].LinkData.ToString(), "good-user", "better-password", "http://127.0.0.1:18332", "111", numMessagesDisplayed, 10); }
-            catch(Exception ex) { string error = ex.Message;  return; }
+            try { messages = OBJState.GetPublicMessagesByAddress(profileURN.Links[0].LinkData.ToString(), mainnetLogin, mainnetPassword, mainnetURL, mainnetVersionByte, numMessagesDisplayed, 10); }
+            catch (Exception ex) { string error = ex.Message; return; }
 
 
 
@@ -2899,7 +2904,7 @@ namespace SUP
                 btnPublicMessage.Enabled = false;
             });
 
-         
+
             Dictionary<string, string[]> profileAddress = new Dictionary<string, string[]> { };
 
 
@@ -2925,7 +2930,7 @@ namespace SUP
                     {
                         string extension = Path.GetExtension(file);
 
-                        if (Path.GetFileName(file) == "INQ" || ( !string.IsNullOrEmpty(extension) && !file.Contains("ROOT.json")))
+                        if (Path.GetFileName(file) == "INQ" || (!string.IsNullOrEmpty(extension) && !file.Contains("ROOT.json")))
                         {
                             message = message + @"<<" + tid + @"/" + Path.GetFileName(file) + ">>";
                         }
@@ -2948,11 +2953,11 @@ namespace SUP
 
                     if (message != "" || blocks.Length > 1 || (blocks.Length == 1 && !int.TryParse(blocks[0], out _)))
                     {
-                      
+
                         if (!profileAddress.ContainsKey(fromAddress))
                         {
 
-                            PROState profile = PROState.GetProfileByAddress(fromAddress, "good-user", "better-password", "http://127.0.0.1:18332");
+                            PROState profile = PROState.GetProfileByAddress(fromAddress, mainnetLogin, mainnetPassword, mainnetURL, mainnetVersionByte);
 
                             if (profile.URN != null)
                             {
@@ -3127,7 +3132,7 @@ namespace SUP
                                             default:
                                                 if (!profile.Image.ToUpper().StartsWith("HTTP") && transactionid != "")
                                                 {
-                                                    root = Root.GetRootByTransactionId(transactionid, "good-user", "better-password", @"http://127.0.0.1:18332");
+                                                    root = Root.GetRootByTransactionId(transactionid, mainnetLogin, mainnetPassword, mainnetURL, mainnetVersionByte);
 
                                                 }
                                                 break;
@@ -3163,7 +3168,7 @@ namespace SUP
                         if (!profileAddress.ContainsKey(toAddress))
                         {
 
-                            PROState profile = PROState.GetProfileByAddress(toAddress, "good-user", "better-password", "http://127.0.0.1:18332");
+                            PROState profile = PROState.GetProfileByAddress(toAddress, mainnetLogin, mainnetPassword, mainnetURL,mainnetVersionByte);
 
                             if (profile.URN != null)
                             {
@@ -3338,7 +3343,7 @@ namespace SUP
                                             default:
                                                 if (!profile.Image.ToUpper().StartsWith("HTTP") && transactionid != "")
                                                 {
-                                                    root = Root.GetRootByTransactionId(transactionid, "good-user", "better-password", @"http://127.0.0.1:18332");
+                                                    root = Root.GetRootByTransactionId(transactionid, mainnetLogin, mainnetPassword, mainnetURL,mainnetVersionByte);
 
                                                 }
                                                 break;
@@ -3371,7 +3376,7 @@ namespace SUP
                         }
 
 
-                       
+
                         System.Drawing.Color bgcolor = System.Drawing.Color.White;
 
 
@@ -3394,7 +3399,7 @@ namespace SUP
                                 string profileowner = "";
 
                                 if (profileOwner.Tag != null) { profileowner = profileOwner.Tag.ToString(); }
-                                FoundINQControl foundObject = new FoundINQControl(messagePacket.TransactionId, profileowner);
+                                FoundINQControl foundObject = new FoundINQControl(messagePacket.TransactionId, profileowner,testnet);
 
                                 foundObject.Margin = new Padding(20, 7, 8, 7);
                                 supFlow.Controls.Add(foundObject);
@@ -3607,7 +3612,7 @@ namespace SUP
                     string help = ex.Message;
                 }//deleted file
 
-               
+
 
             }
 
@@ -3659,7 +3664,7 @@ namespace SUP
                 });
 
                 Dictionary<string, string[]> profileAddress = new Dictionary<string, string[]> { };
-                List<MessageObject> messages = OBJState.GetPrivateMessagesByAddress(profileURN.Links[0].LinkData.ToString(), "good-user", "better-password", "http://127.0.0.1:18332","111",numPrivateMessagesDisplayed,10);
+                List<MessageObject> messages = OBJState.GetPrivateMessagesByAddress(profileURN.Links[0].LinkData.ToString(), mainnetLogin, mainnetPassword, mainnetURL, mainnetVersionByte, numPrivateMessagesDisplayed, 10);
 
                 try
                 {
@@ -3670,10 +3675,10 @@ namespace SUP
                         numPrivateMessagesDisplayed++;
 
 
-                        Root root = Root.GetRootByTransactionId(messagePacket.TransactionId, "good-user", "better-password", "http://127.0.0.1:18332");
+                        Root root = Root.GetRootByTransactionId(messagePacket.TransactionId, mainnetLogin, mainnetPassword, mainnetURL, mainnetVersionByte);
                         byte[] result = Root.GetRootBytesByFile(new string[] { @"root/" + messagePacket.TransactionId + @"/SEC" });
-                        result = Root.DecryptRootBytes("good-user", "better-password", "http://127.0.0.1:18332", profileURN.Links[0].LinkData.ToString(), result);
-                        root = Root.GetRootByTransactionId(messagePacket.TransactionId, "good-user", "better-password", "http://127.0.0.1:18332", "111", result, messagePacket.FromAddress);
+                        result = Root.DecryptRootBytes(mainnetLogin, mainnetPassword, mainnetURL, profileURN.Links[0].LinkData.ToString(), result);
+                        root = Root.GetRootByTransactionId(messagePacket.TransactionId, mainnetLogin, mainnetPassword, mainnetURL, mainnetVersionByte, result, messagePacket.FromAddress);
                         if (root.Signed)
                         {
                             string message = "";
@@ -3687,7 +3692,7 @@ namespace SUP
                             if (!profileAddress.ContainsKey(fromAddress))
                             {
 
-                                PROState profile = PROState.GetProfileByAddress(fromAddress, "good-user", "better-password", "http://127.0.0.1:18332");
+                                PROState profile = PROState.GetProfileByAddress(fromAddress, mainnetLogin, mainnetPassword, mainnetURL, mainnetVersionByte);
 
                                 if (profile.URN != null)
                                 {
@@ -3863,7 +3868,7 @@ namespace SUP
                                                 default:
                                                     if (!profile.Image.ToUpper().StartsWith("HTTP") && transactionid != "")
                                                     {
-                                                        broot = Root.GetRootByTransactionId(transactionid, "good-user", "better-password", @"http://127.0.0.1:18332");
+                                                        broot = Root.GetRootByTransactionId(transactionid, mainnetLogin, mainnetPassword, mainnetURL, mainnetVersionByte);
 
                                                     }
                                                     break;
@@ -4062,9 +4067,9 @@ namespace SUP
 
 
                                             byte[] result2 = Root.GetRootBytesByFile(new string[] { @"root/" + transid + @"/SEC" });
-                                            result = Root.DecryptRootBytes("good-user", "better-password", @"http://127.0.0.1:18332", profileURN.Links[0].LinkData.ToString(), result2);
+                                            result = Root.DecryptRootBytes(mainnetLogin, mainnetPassword, mainnetURL, profileURN.Links[0].LinkData.ToString(), result2);
 
-                                            Root decryptedroot = Root.GetRootByTransactionId(transid, "good-user", "better-password", @"http://127.0.0.1:18332", "111", result, profileURN.Links[0].LinkData.ToString());
+                                            Root decryptedroot = Root.GetRootByTransactionId(transid, mainnetLogin, mainnetPassword, mainnetURL, mainnetVersionByte, result, profileURN.Links[0].LinkData.ToString());
                                             List<string> imgExtensions = new List<string> { ".bmp", ".gif", ".ico", ".jpeg", ".jpg", ".png", ".tif", ".tiff", ".mp4", ".avi", ".wav", ".mp3" };
 
                                             if (decryptedroot.File != null)
@@ -4279,7 +4284,7 @@ namespace SUP
                             }
                         }
                     }
-                            
+
 
                 }
                 catch
@@ -4362,7 +4367,7 @@ namespace SUP
                     {
                         try
                         {
-                            List<MessageObject> result = OBJState.GetPublicMessagesByAddress(key, "good-user", "better-password", "http://127.0.0.1:18332","111",0,50);
+                            List<MessageObject> result = OBJState.GetPublicMessagesByAddress(key, mainnetLogin, mainnetPassword, mainnetURL, mainnetVersionByte, 0, 50);
 
                             // Add the "to" element to each message object
 
@@ -4456,7 +4461,7 @@ namespace SUP
                         if (_message != "" || blocks.Length > 1 || (blocks.Length == 1 && !int.TryParse(blocks[0], out _)) || File.Exists(@"root\" + _transactionId + @"\INQ"))
                         {
 
-                            PROState fromProfile = PROState.GetProfileByAddress(fromURN, "good-user", "better-password", "http://127.0.0.1:18332");
+                            PROState fromProfile = PROState.GetProfileByAddress(fromURN, mainnetLogin, mainnetPassword, mainnetURL, mainnetVersionByte);
                             if (fromProfile.URN != null)
                             {
                                 fromURN = fromProfile.URN;
@@ -4465,8 +4470,7 @@ namespace SUP
 
 
                             string toURN = toProp?.GetValue(message).ToString();
-                            PROState toProfile = PROState.GetProfileByAddress(toURN, "good-user", "better-password", "http://127.0.0.1:18332");
-
+                            PROState toProfile = PROState.GetProfileByAddress(toURN, mainnetLogin, mainnetPassword, mainnetURL,mainnetVersionByte);
                             if (toProfile.URN != null)
                             {
                                 toURN = toProfile.URN;
@@ -4498,7 +4502,7 @@ namespace SUP
 
                                     if (profileOwner.Tag != null) { profileowner = profileOwner.Tag.ToString(); }
 
-                                    FoundINQControl foundObject = new FoundINQControl(_transactionId, profileowner);
+                                    FoundINQControl foundObject = new FoundINQControl(_transactionId, profileowner,testnet);
                                     foundObject.Margin = new Padding(20, 7, 8, 7);
                                     supFlow.Controls.Add(foundObject);
                                 });
@@ -4891,7 +4895,7 @@ namespace SUP
                                 default:
                                     if (!imagepath.ToUpper().StartsWith("HTTP") && transactionid != "")
                                     {
-                                        Root.GetRootByTransactionId(transactionid, "good-user", "better-password", @"http://127.0.0.1:18332");
+                                        Root.GetRootByTransactionId(transactionid, mainnetLogin, mainnetPassword, mainnetURL,mainnetVersionByte);
 
                                     }
                                     break;
@@ -5180,7 +5184,7 @@ namespace SUP
                                 default:
                                     if (!videopath.ToUpper().StartsWith("HTTP") && transactionid != "")
                                     {
-                                        Root.GetRootByTransactionId(transactionid, "good-user", "better-password", @"http://127.0.0.1:18332");
+                                        Root.GetRootByTransactionId(transactionid, mainnetLogin, mainnetPassword, mainnetURL,mainnetVersionByte);
 
                                     }
                                     break;
@@ -5264,7 +5268,7 @@ namespace SUP
         {
 
             int columncount = 5;
-            if (isprivate) {columncount = 4;}
+            if (isprivate) { columncount = 4; }
             // Create a table layout panel for each row
             TableLayoutPanel row = new TableLayoutPanel
             {
@@ -5380,7 +5384,7 @@ namespace SUP
                     Task.Run(() =>
                     {
 
-                        Root[] roots = Root.GetRootsByAddress(Root.GetPublicAddressByKeyword(transactionid), "good-user", "better-password", @"http://127.0.0.1:18332");
+                        Root[] roots = Root.GetRootsByAddress(Root.GetPublicAddressByKeyword(transactionid,mainnetVersionByte), mainnetLogin, mainnetPassword, mainnetURL,0,-1,mainnetVersionByte);
                         if (roots != null && roots.Length > 0)
                         {
                             this.Invoke((MethodInvoker)delegate
@@ -5407,8 +5411,8 @@ namespace SUP
                 {
                     deleteme_LinkClicked(transactionid);
                     deleteme.ForeColor = Color.Black;
-                }; 
-                row.Controls.Add(deleteme, columncount-1, 0);
+                };
+                row.Controls.Add(deleteme, columncount - 1, 0);
             }
 
 
@@ -5756,7 +5760,7 @@ namespace SUP
                     // Code to execute for left click
                     string profileowner = "";
                     string toaddress = "";
-                    string postaddress = Root.GetPublicAddressByKeyword(transactionid);
+                    string postaddress = Root.GetPublicAddressByKeyword(transactionid,mainnetVersionByte);
 
                     if (profileOwner.Tag != null) { profileowner = profileOwner.Tag.ToString(); }
                     if (profileURN.Links[0].LinkData != null) { toaddress = profileURN.Links[0].LinkData.ToString(); }
@@ -5822,7 +5826,7 @@ namespace SUP
 
             string ActiveProfile = "";
             if (profileURN.Links[0].LinkData != null) { ActiveProfile = profileURN.Links[0].LinkData.ToString(); }
-            try { new ProfileMint(ActiveProfile).Show(); } catch { }
+            try { new ProfileMint(ActiveProfile,testnet).Show(); } catch { }
         }
 
         private void btnPublicMessage_Click(object sender, EventArgs e)
@@ -6066,10 +6070,10 @@ namespace SUP
 
                     var keysToDelete = new HashSet<string>(); // Create a new HashSet to store the keys to delete
 
-                  
 
 
-                    Root[] root = Root.GetRootsByAddress(profileURN.Links[0].LinkData.ToString(), "good-user", "better-password", @"http://127.0.0.1:18332");
+
+                    Root[] root = Root.GetRootsByAddress(profileURN.Links[0].LinkData.ToString(), mainnetLogin, mainnetPassword, mainnetURL,0,-1,mainnetVersionByte);
 
                     foreach (Root rootItem in root)
                     {
@@ -6237,12 +6241,12 @@ namespace SUP
 
             if (profileURN.Links[0].LinkData != null)
             {
-                JukeBox jukeBoxForm = new JukeBox(profileURN.Text);
+                JukeBox jukeBoxForm = new JukeBox(profileURN.Text,testnet);
                 jukeBoxForm.Show();
             }
             else
             {
-                JukeBox jukeBoxForm = new JukeBox();
+                JukeBox jukeBoxForm = new JukeBox(null,testnet);
                 jukeBoxForm.Show();
             }
             btnJukeBox.Enabled = true;
@@ -6306,6 +6310,38 @@ namespace SUP
                 }
             };
             process.Start();
+        }
+
+        private void imgBTCSwitch_Click(object sender, EventArgs e)
+        {
+            if (imgBTCSwitch.ImageLocation == @"includes/BCT_Logo.png")
+            {
+                imgBTCSwitch.ImageLocation = @"includes/BC_Logo.png";
+                mainnetURL = @"http://127.0.0.1:8332";
+                mainnetLogin = "good-user";
+                mainnetPassword = "better-password";
+                mainnetVersionByte = "0";
+                testnet = false;
+                OBcontrol = new ObjectBrowserControl("", true, false);
+                OBcontrol.Dock = DockStyle.Fill;
+                OBcontrol.ProfileURNChanged += OBControl_ProfileURNChanged;
+                splitContainer1.Panel2.Controls.Clear();
+                splitContainer1.Panel2.Controls.Add(OBcontrol);
+            }
+            else
+            {
+                imgBTCSwitch.ImageLocation = @"includes/BCT_Logo.png";
+                mainnetURL = @"http://127.0.0.1:18332";
+                mainnetLogin = "good-user";
+                mainnetPassword = "better-password";
+                mainnetVersionByte = "111";
+                testnet = true;
+                OBcontrol = new ObjectBrowserControl("", true, true);
+                OBcontrol.Dock = DockStyle.Fill;
+                OBcontrol.ProfileURNChanged += OBControl_ProfileURNChanged;
+                splitContainer1.Panel2.Controls.Clear();
+                splitContainer1.Panel2.Controls.Add(OBcontrol);
+            }
         }
     }
 }

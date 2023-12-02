@@ -15,19 +15,31 @@ namespace SUP
     {
         private bool ismint = false;
         Regex regexTransactionId = new Regex(@"\b[0-9a-f]{64}\b");
+        private string mainnetURL = @"http://127.0.0.1:18332";
+        private string mainnetLogin = "good-user";
+        private string mainnetPassword = "better-password";
+        private string mainnetVersionByte = "111";
         private DiscoBall parentForm;
         private Random random = new Random();
 
-        public INQMint(DiscoBall parentForm)
+        public INQMint(DiscoBall parentForm, bool testnet = true)
         {
             InitializeComponent();
             this.parentForm = parentForm;
+            if (!testnet)
+            {
+                mainnetURL = @"http://127.0.0.1:8332";
+                mainnetLogin = "good-user";
+                mainnetPassword = "better-password";
+                mainnetVersionByte = "0";
+
+            }
         }
 
         private string GetRandomDelimiter()
         {
             string[] delimiters = { "\\", "/", ":", "*", "?", "\"", "<", ">", "|" };
-          
+
             return delimiters[random.Next(delimiters.Length)];
         }
 
@@ -41,9 +53,9 @@ namespace SUP
 
             if (ismint)
             {
-                NetworkCredential credentials = new NetworkCredential("good-user", "better-password");
-                NBitcoin.RPC.RPCClient rpcClient = new NBitcoin.RPC.RPCClient(credentials, new Uri("http://127.0.0.1:18332"), Network.Main);
-             
+                NetworkCredential credentials = new NetworkCredential(mainnetLogin,mainnetPassword);
+                NBitcoin.RPC.RPCClient rpcClient = new NBitcoin.RPC.RPCClient(credentials, new Uri(mainnetURL), Network.Main);
+
                 string P2FKASCII = "";
                 char[] specialChars = new char[] { '\\', '/', ':', '*', '?', '"', '<', '>', '|' };
                 int attempt = 0;
@@ -66,7 +78,7 @@ namespace SUP
 
                     }
                 }
-                parentForm.txtINQAddress.Text = newAddress;                
+                parentForm.txtINQAddress.Text = newAddress;
             }
             INQJson.que = new Dictionary<string, string> { { newAddress, txtQUE.Text } };
 
@@ -74,13 +86,13 @@ namespace SUP
             Dictionary<string, string> mintANS = new Dictionary<string, string>();
             int answerCnt = 0;
             foreach (Button attributeControl in flowANS.Controls)
-            { 
+            {
                 answerCnt++;
                 string ANSAddress = answerCnt.ToString();
                 if (ismint)
                 {
-                    NetworkCredential credentials = new NetworkCredential("good-user", "better-password");
-                    NBitcoin.RPC.RPCClient rpcClient = new NBitcoin.RPC.RPCClient(credentials, new Uri("http://127.0.0.1:18332"), Network.Main);
+                    NetworkCredential credentials = new NetworkCredential(mainnetLogin,mainnetPassword);
+                    NBitcoin.RPC.RPCClient rpcClient = new NBitcoin.RPC.RPCClient(credentials, new Uri(mainnetURL), Network.Main);
                     ANSAddress = rpcClient.SendCommand("getnewaddress", attributeControl.Text + "!" + DateTime.UtcNow.ToString("yyyyMMddHHmmss")).ResultString;
 
                 }
@@ -136,7 +148,7 @@ namespace SUP
                 this.Close();
             }
 
-            }
+        }
 
         private void btnAttachClick(object sender, EventArgs e)
         {

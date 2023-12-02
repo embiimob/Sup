@@ -32,15 +32,29 @@ namespace SUP
         private int numChangesDisplayed = 0;
         private bool isUserControl = false;
         private string _activeprofile;
+        private string mainnetURL = @"http://127.0.0.1:18332";
+        private string mainnetLogin = "good-user";
+        private string mainnetPassword = "better-password";
+        private string mainnetVersionByte = "111";
+        private bool _testnet;
         List<Microsoft.Web.WebView2.WinForms.WebView2> webviewers = new List<Microsoft.Web.WebView2.WinForms.WebView2>();
 
-        public ObjectDetails(string objectaddress, string activeprofile, bool isusercontrol = false)
+        public ObjectDetails(string objectaddress, string activeprofile, bool isusercontrol = false, bool testnet = true)
         {
             InitializeComponent();
             _objectaddress = objectaddress;
             isUserControl = isusercontrol;
             _activeprofile = activeprofile;
             supFlow.MouseWheel += supFlow_MouseWheel;
+
+            if (!testnet)
+            {
+                mainnetURL = @"http://127.0.0.1:8332";
+                mainnetLogin = "good-user";
+                mainnetPassword = "better-password";
+                mainnetVersionByte = "0";
+            }
+            _testnet = testnet;
         }
 
         private void ObjectDetails_Load(object sender, EventArgs e)
@@ -215,7 +229,7 @@ namespace SUP
             numMessagesDisplayed = 0;
 
 
-            OBJState objstate = OBJState.GetObjectByAddress(_objectaddress, "good-user", "better-password", "http://127.0.0.1:18332");
+            OBJState objstate = OBJState.GetObjectByAddress(_objectaddress, mainnetLogin,mainnetPassword,mainnetURL,mainnetVersionByte);
             Dictionary<string, string> profileAddress = new Dictionary<string, string> { };
 
 
@@ -253,7 +267,7 @@ namespace SUP
                     if (!profileAddress.ContainsKey(searchkey))
                     {
 
-                        PROState profile = PROState.GetProfileByAddress(searchkey, "good-user", "better-password", "http://127.0.0.1:18332");
+                        PROState profile = PROState.GetProfileByAddress(searchkey, mainnetLogin, mainnetPassword, mainnetURL, mainnetVersionByte);
 
                         if (profile.URN != null)
                         {
@@ -353,7 +367,7 @@ namespace SUP
                         if (!profileAddress.ContainsKey(searchkey))
                         {
 
-                            PROState profile = PROState.GetProfileByAddress(searchkey, "good-user", "better-password", "http://127.0.0.1:18332");
+                            PROState profile = PROState.GetProfileByAddress(searchkey, mainnetLogin, mainnetPassword, mainnetURL, mainnetVersionByte);
 
                             if (profile.URN != null)
                             {
@@ -446,7 +460,7 @@ namespace SUP
                         LinkLabel keyLabel = new LinkLabel();
 
                         string searchkey = item.Key;
-                        PROState profile = PROState.GetProfileByAddress(searchkey, "good-user", "better-password", "http://127.0.0.1:18332");
+                        PROState profile = PROState.GetProfileByAddress(searchkey, mainnetLogin, mainnetPassword, mainnetURL, mainnetVersionByte);
 
                         if (profile.URN != null)
                         {
@@ -536,12 +550,12 @@ namespace SUP
 
 
                 supFlow.Controls.Clear();
-               
+
             }
 
             List<MessageObject> messages = new List<MessageObject>();
 
-            try { messages = OBJState.GetPublicMessagesByAddress(_objectaddress, "good-user", "better-password", "http://127.0.0.1:18332", "111", numMessagesDisplayed, 10); }
+            try { messages = OBJState.GetPublicMessagesByAddress(_objectaddress, mainnetLogin, mainnetPassword, mainnetURL, mainnetVersionByte, numMessagesDisplayed, 10); }
             catch (Exception ex) { string error = ex.Message; return; }
 
 
@@ -596,7 +610,7 @@ namespace SUP
                         if (!profileAddress.ContainsKey(fromAddress))
                         {
 
-                            PROState profile = PROState.GetProfileByAddress(fromAddress, "good-user", "better-password", "http://127.0.0.1:18332");
+                            PROState profile = PROState.GetProfileByAddress(fromAddress, mainnetLogin, mainnetPassword, mainnetURL, mainnetVersionByte);
 
                             if (profile.URN != null)
                             {
@@ -771,7 +785,7 @@ namespace SUP
                                             default:
                                                 if (!profile.Image.ToUpper().StartsWith("HTTP") && transactionid != "")
                                                 {
-                                                    root = Root.GetRootByTransactionId(transactionid, "good-user", "better-password", @"http://127.0.0.1:18332");
+                                                    root = Root.GetRootByTransactionId(transactionid, mainnetLogin, mainnetPassword, mainnetURL, mainnetVersionByte);
 
                                                 }
                                                 break;
@@ -807,7 +821,7 @@ namespace SUP
                         if (!profileAddress.ContainsKey(toAddress))
                         {
 
-                            PROState profile = PROState.GetProfileByAddress(toAddress, "good-user", "better-password", "http://127.0.0.1:18332");
+                            PROState profile = PROState.GetProfileByAddress(toAddress, mainnetLogin, mainnetPassword, mainnetURL, mainnetVersionByte);
 
                             if (profile.URN != null)
                             {
@@ -982,7 +996,7 @@ namespace SUP
                                             default:
                                                 if (!profile.Image.ToUpper().StartsWith("HTTP") && transactionid != "")
                                                 {
-                                                    root = Root.GetRootByTransactionId(transactionid, "good-user", "better-password", @"http://127.0.0.1:18332");
+                                                    root = Root.GetRootByTransactionId(transactionid, mainnetLogin, mainnetPassword, mainnetURL, mainnetVersionByte);
 
                                                 }
                                                 break;
@@ -1446,7 +1460,7 @@ namespace SUP
                                 default:
                                     if (!imagepath.ToUpper().StartsWith("HTTP") && transactionid != "")
                                     {
-                                        Root.GetRootByTransactionId(transactionid, "good-user", "better-password", @"http://127.0.0.1:18332");
+                                        Root.GetRootByTransactionId(transactionid, mainnetLogin, mainnetPassword, mainnetURL, mainnetVersionByte);
 
                                     }
                                     break;
@@ -1685,7 +1699,7 @@ namespace SUP
                                 default:
                                     if (!videopath.ToUpper().StartsWith("HTTP") && transactionid != "")
                                     {
-                                        Root.GetRootByTransactionId(transactionid, "good-user", "better-password", @"http://127.0.0.1:18332");
+                                        Root.GetRootByTransactionId(transactionid, mainnetLogin, mainnetPassword, mainnetURL, mainnetVersionByte);
 
                                     }
                                     break;
@@ -2076,7 +2090,7 @@ namespace SUP
             bool isWWW = false;
             Regex regexTransactionId = new Regex(@"\b[0-9a-f]{64}\b");
 
-            OBJState objstate = OBJState.GetObjectByAddress(_objectaddress, "good-user", "better-password", "http://127.0.0.1:18332");
+            OBJState objstate = OBJState.GetObjectByAddress(_objectaddress, mainnetLogin, mainnetPassword, mainnetURL, mainnetVersionByte);
 
             if (objstate.Owners != null)
             {
@@ -2321,7 +2335,7 @@ namespace SUP
                                 if (!txtIMG.Text.ToUpper().StartsWith("HTTP") && transactionid != "")
                                 {
 
-                                    root = Root.GetRootByTransactionId(transactionid, "good-user", "better-password", @"http://127.0.0.1:18332");
+                                    root = Root.GetRootByTransactionId(transactionid, mainnetLogin, mainnetPassword, mainnetURL, mainnetVersionByte);
 
                                     try
                                     {
@@ -2551,7 +2565,7 @@ namespace SUP
                                 if (transactionid != "")
                                 {
 
-                                    root = Root.GetRootByTransactionId(transactionid, "good-user", "better-password", @"http://127.0.0.1:18332");
+                                    root = Root.GetRootByTransactionId(transactionid, mainnetLogin, mainnetPassword, mainnetURL, mainnetVersionByte);
 
                                     try
                                     {
@@ -2775,7 +2789,7 @@ namespace SUP
                             default:
                                 if (!txtURI.Text.ToUpper().StartsWith("HTTP") && transactionid != "")
                                 {
-                                    root = Root.GetRootByTransactionId(transactionid, "good-user", "better-password", @"http://127.0.0.1:18332");
+                                    root = Root.GetRootByTransactionId(transactionid, mainnetLogin, mainnetPassword, mainnetURL, mainnetVersionByte);
 
                                     try
                                     {
@@ -2816,7 +2830,7 @@ namespace SUP
 
                 List<string> keywords = new List<string>();
 
-                keywords = OBJState.GetKeywordsByAddress(_objectaddress, "good-user", "better-password", @"http://127.0.0.1:18332");
+                keywords = OBJState.GetKeywordsByAddress(_objectaddress, mainnetLogin, mainnetPassword, mainnetURL, mainnetVersionByte);
                 foreach (string keyword in keywords)
                 {
 
@@ -2871,7 +2885,7 @@ namespace SUP
                 if (!isUserControl) { registrationPanel.Visible = true; }
 
 
-                OBJState isOfficial = OBJState.GetObjectByURN(objstate.URN, "good-user", "better-password", "http://127.0.0.1:18332");
+                OBJState isOfficial = OBJState.GetObjectByURN(objstate.URN, mainnetLogin, mainnetPassword, mainnetURL, mainnetVersionByte);
                 if (isOfficial.URN != null)
                 {
                     if (isOfficial.Creators.First().Key != this._objectaddress)
@@ -3218,7 +3232,7 @@ namespace SUP
                                         default:
                                             if (!System.IO.Directory.Exists(@"root/" + transactionid))
                                             {
-                                                Root.GetRootByTransactionId(transactionid, "good-user", "better-password", @"http://127.0.0.1:18332");
+                                                Root.GetRootByTransactionId(transactionid, mainnetLogin, mainnetPassword, mainnetURL, mainnetVersionByte);
                                             }
                                             break;
                                     }
@@ -3289,7 +3303,7 @@ namespace SUP
                                                 {
                                                     Task.Run(() =>
                                                     {
-                                                        Root.GetRootByTransactionId(transactionID.Value, "good-user", "better-password", @"http://127.0.0.1:18332");
+                                                        Root.GetRootByTransactionId(transactionID.Value, mainnetLogin, mainnetPassword, mainnetURL, mainnetVersionByte);
                                                     });
                                                 }
                                                 break;
@@ -3303,7 +3317,7 @@ namespace SUP
                                     string _viewername = null;
                                     if (_activeprofile != "")
                                     {
-                                        PROState profile = PROState.GetProfileByAddress(_activeprofile, "good-user", "better-password", @"http://127.0.0.1:18332");
+                                        PROState profile = PROState.GetProfileByAddress(_activeprofile, mainnetLogin, mainnetPassword, mainnetURL, mainnetVersionByte);
                                         if (profile.URN != null) { _viewername = HttpUtility.UrlEncode(profile.URN); }
                                     }
                                     string _creator = objstate.Creators.Last().Key;
@@ -3311,7 +3325,7 @@ namespace SUP
                                     string _ownername = null;
                                     if (_owner != "")
                                     {
-                                        PROState profile = PROState.GetProfileByAddress(_owner, "good-user", "better-password", @"http://127.0.0.1:18332");
+                                        PROState profile = PROState.GetProfileByAddress(_owner, mainnetLogin, mainnetPassword, mainnetURL, mainnetVersionByte);
                                         if (profile.URN != null) { _ownername = HttpUtility.UrlEncode(profile.URN); }
                                     }
                                     string _urn = HttpUtility.UrlEncode(objstate.URN);
@@ -3451,7 +3465,7 @@ namespace SUP
             }
             catch { }
 
-           OBJState OBJEvents = OBJState.GetObjectByAddress(_objectaddress, "good-user", "better-password", "http://127.0.0.1:18332", "111", true);
+            OBJState OBJEvents = OBJState.GetObjectByAddress(_objectaddress, mainnetLogin, mainnetPassword, mainnetURL, mainnetVersionByte, true);
             OBJEvents.ChangeLog.Reverse();
             foreach (string eventMessage in OBJEvents.ChangeLog.Skip(numChangesDisplayed).Take(10))
             {
@@ -3482,7 +3496,7 @@ namespace SUP
                 rownum++;
                 numChangesDisplayed++;
             }
-          
+
             transFlow.ResumeLayout();
             transFlow.Visible = true;
             KeysFlow.Visible = true;
@@ -3510,7 +3524,7 @@ namespace SUP
 
         private void btnOfficial_Click(object sender, EventArgs e)
         {
-            new ObjectDetails(txtOfficialURN.Text, _activeprofile).Show();
+            new ObjectDetails(txtOfficialURN.Text, _activeprofile,_testnet).Show();
         }
 
         private void imgPicture_Validated(object sender, EventArgs e)
@@ -3550,17 +3564,17 @@ namespace SUP
 
         private void btnBurn_Click(object sender, EventArgs e)
         {
-            new ObjectBurn(_objectaddress, _activeprofile).Show();
+            new ObjectBurn(_objectaddress, _activeprofile,_testnet).Show();
         }
 
         private void btnGive_Click(object sender, EventArgs e)
         {
-            new ObjectGive(_objectaddress, _activeprofile).Show();
+            new ObjectGive(_objectaddress, _activeprofile,_testnet).Show();
         }
 
         private void btnDisco_Click(object sender, EventArgs e)
         {
-            DiscoBall disco = new DiscoBall(_activeprofile, "", _objectaddress, imgPicture.ImageLocation, false);
+            DiscoBall disco = new DiscoBall(_activeprofile, "", _objectaddress, imgPicture.ImageLocation, false,_testnet);
             disco.StartPosition = FormStartPosition.CenterScreen;
             disco.Show(this);
             disco.Focus();
@@ -3568,20 +3582,20 @@ namespace SUP
 
         private void btnBuy_Click(object sender, EventArgs e)
         {
-            new ObjectBuy(_objectaddress, _activeprofile).Show();
+            new ObjectBuy(_objectaddress, _activeprofile,_testnet).Show();
         }
 
         private void btnJukeBox_Click(object sender, EventArgs e)
         {
 
-            JukeBox jukeBoxForm = new JukeBox(_objectaddress);
+            JukeBox jukeBoxForm = new JukeBox(_objectaddress,_testnet);
             jukeBoxForm.Show();// Pass the reference to the current form as the parent form
 
         }
 
         private void btnSupFlix_Click(object sender, EventArgs e)
         {
-            SupFlix supflixForm = new SupFlix(_objectaddress);
+            SupFlix supflixForm = new SupFlix(_objectaddress, _testnet);
             supflixForm.Show();
         }
 
@@ -3590,7 +3604,7 @@ namespace SUP
             btnInquiry.Enabled = false;
 
 
-            INQSearch INQSearchForm = new INQSearch(_objectaddress);
+            INQSearch INQSearchForm = new INQSearch(_objectaddress, _testnet);
             INQSearchForm.Show();
 
             btnInquiry.Enabled = true;

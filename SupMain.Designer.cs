@@ -34,6 +34,7 @@ namespace SUP
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(SupMain));
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.splitContainer2 = new System.Windows.Forms.SplitContainer();
+            this.imgBTCSwitch = new System.Windows.Forms.PictureBox();
             this.btnConnections = new System.Windows.Forms.Button();
             this.btnLive = new System.Windows.Forms.Button();
             this.btnWorkBench = new System.Windows.Forms.Button();
@@ -68,6 +69,7 @@ namespace SUP
             this.splitContainer2.Panel1.SuspendLayout();
             this.splitContainer2.Panel2.SuspendLayout();
             this.splitContainer2.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.imgBTCSwitch)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.profileOwner)).BeginInit();
             this.supFlow.SuspendLayout();
             this.panel1.SuspendLayout();
@@ -87,9 +89,6 @@ namespace SUP
             // 
             this.splitContainer1.Panel1.Controls.Add(this.splitContainer2);
             this.splitContainer1.Panel1MinSize = 666;
-            // 
-            // splitContainer1.Panel2
-            // 
             this.splitContainer1.Panel2MinSize = 328;
             this.splitContainer1.Size = new System.Drawing.Size(1004, 741);
             this.splitContainer1.SplitterDistance = 666;
@@ -107,6 +106,7 @@ namespace SUP
             // 
             // splitContainer2.Panel1
             // 
+            this.splitContainer2.Panel1.Controls.Add(this.imgBTCSwitch);
             this.splitContainer2.Panel1.Controls.Add(this.btnConnections);
             this.splitContainer2.Panel1.Controls.Add(this.btnLive);
             this.splitContainer2.Panel1.Controls.Add(this.btnWorkBench);
@@ -133,11 +133,23 @@ namespace SUP
             this.splitContainer2.TabIndex = 0;
             this.splitContainer2.TabStop = false;
             // 
+            // imgBTCSwitch
+            // 
+            this.imgBTCSwitch.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.imgBTCSwitch.ImageLocation = "includes/BCT_Logo.png";
+            this.imgBTCSwitch.Location = new System.Drawing.Point(6, 689);
+            this.imgBTCSwitch.Name = "imgBTCSwitch";
+            this.imgBTCSwitch.Size = new System.Drawing.Size(56, 40);
+            this.imgBTCSwitch.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
+            this.imgBTCSwitch.TabIndex = 0;
+            this.imgBTCSwitch.TabStop = false;
+            this.imgBTCSwitch.Click += new System.EventHandler(this.imgBTCSwitch_Click);
+            // 
             // btnConnections
             // 
             this.btnConnections.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.btnConnections.Font = new System.Drawing.Font("Segoe UI Emoji", 13.8F);
-            this.btnConnections.Location = new System.Drawing.Point(8, 598);
+            this.btnConnections.Location = new System.Drawing.Point(7, 588);
             this.btnConnections.Name = "btnConnections";
             this.btnConnections.Size = new System.Drawing.Size(56, 40);
             this.btnConnections.TabIndex = 82;
@@ -152,7 +164,7 @@ namespace SUP
             this.btnLive.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
             this.btnLive.Font = new System.Drawing.Font("Segoe UI Emoji", 13.8F);
             this.btnLive.ForeColor = System.Drawing.Color.Black;
-            this.btnLive.Location = new System.Drawing.Point(8, 550);
+            this.btnLive.Location = new System.Drawing.Point(7, 496);
             this.btnLive.Name = "btnLive";
             this.btnLive.Size = new System.Drawing.Size(56, 40);
             this.btnLive.TabIndex = 83;
@@ -164,7 +176,7 @@ namespace SUP
             // 
             this.btnWorkBench.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.btnWorkBench.Font = new System.Drawing.Font("Segoe UI Emoji", 13.8F);
-            this.btnWorkBench.Location = new System.Drawing.Point(8, 644);
+            this.btnWorkBench.Location = new System.Drawing.Point(7, 634);
             this.btnWorkBench.Name = "btnWorkBench";
             this.btnWorkBench.Size = new System.Drawing.Size(56, 40);
             this.btnWorkBench.TabIndex = 81;
@@ -182,14 +194,14 @@ namespace SUP
             this.flowFollow.FlowDirection = System.Windows.Forms.FlowDirection.TopDown;
             this.flowFollow.Location = new System.Drawing.Point(7, 7);
             this.flowFollow.Name = "flowFollow";
-            this.flowFollow.Size = new System.Drawing.Size(58, 529);
+            this.flowFollow.Size = new System.Drawing.Size(58, 473);
             this.flowFollow.TabIndex = 94;
             // 
             // btnMint
             // 
             this.btnMint.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.btnMint.Font = new System.Drawing.Font("Segoe UI Emoji", 13.8F);
-            this.btnMint.Location = new System.Drawing.Point(8, 692);
+            this.btnMint.Location = new System.Drawing.Point(7, 542);
             this.btnMint.Name = "btnMint";
             this.btnMint.Size = new System.Drawing.Size(56, 40);
             this.btnMint.TabIndex = 80;
@@ -281,7 +293,7 @@ namespace SUP
             this.supFlow.Location = new System.Drawing.Point(9, 159);
             this.supFlow.Name = "supFlow";
             this.supFlow.Padding = new System.Windows.Forms.Padding(0, 3, 0, 0);
-            this.supFlow.Size = new System.Drawing.Size(584, 527);
+            this.supFlow.Size = new System.Drawing.Size(593, 527);
             this.supFlow.TabIndex = 86;
             // 
             // lblAdultsOnly
@@ -431,7 +443,7 @@ namespace SUP
             // 
             this.btnDisco.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.btnDisco.Font = new System.Drawing.Font("Segoe UI Emoji", 13.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnDisco.Location = new System.Drawing.Point(408, 692);
+            this.btnDisco.Location = new System.Drawing.Point(417, 692);
             this.btnDisco.Name = "btnDisco";
             this.btnDisco.Size = new System.Drawing.Size(56, 40);
             this.btnDisco.TabIndex = 85;
@@ -445,7 +457,7 @@ namespace SUP
             this.btnPrivateMessage.BackColor = System.Drawing.Color.White;
             this.btnPrivateMessage.Font = new System.Drawing.Font("Segoe UI Emoji", 13.8F);
             this.btnPrivateMessage.ForeColor = System.Drawing.Color.Black;
-            this.btnPrivateMessage.Location = new System.Drawing.Point(532, 692);
+            this.btnPrivateMessage.Location = new System.Drawing.Point(541, 692);
             this.btnPrivateMessage.Name = "btnPrivateMessage";
             this.btnPrivateMessage.Size = new System.Drawing.Size(56, 40);
             this.btnPrivateMessage.TabIndex = 84;
@@ -459,7 +471,7 @@ namespace SUP
             this.btnPublicMessage.BackColor = System.Drawing.Color.White;
             this.btnPublicMessage.Font = new System.Drawing.Font("Segoe UI Emoji", 13.8F);
             this.btnPublicMessage.ForeColor = System.Drawing.Color.Black;
-            this.btnPublicMessage.Location = new System.Drawing.Point(470, 692);
+            this.btnPublicMessage.Location = new System.Drawing.Point(479, 692);
             this.btnPublicMessage.Name = "btnPublicMessage";
             this.btnPublicMessage.Size = new System.Drawing.Size(56, 40);
             this.btnPublicMessage.TabIndex = 83;
@@ -491,6 +503,7 @@ namespace SUP
             this.splitContainer2.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer2)).EndInit();
             this.splitContainer2.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.imgBTCSwitch)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.profileOwner)).EndInit();
             this.supFlow.ResumeLayout(false);
             this.panel1.ResumeLayout(false);
@@ -533,5 +546,6 @@ namespace SUP
         private System.Windows.Forms.Button btnSkipAudio;
         private System.Windows.Forms.Button btnVideoSearch;
         private System.Windows.Forms.Button btnInquirySearch;
+        private System.Windows.Forms.PictureBox imgBTCSwitch;
     }
 }
