@@ -2342,11 +2342,22 @@ namespace SUP
 
                                         if (root.BlockDate.Year > 1975)
                                         {
-                                            lblIMGBlockDate.Text = "bitcoin-t verified: " + root.BlockDate.ToString("ddd, dd MMM yyyy hh:mm:ss");
+
+                                            if (mainnetVersionByte == "111")
+                                            {
+                                                lblIMGBlockDate.Text = "bitcoin-t verified: " + root.BlockDate.ToString("ddd, dd MMM yyyy hh:mm:ss");
+                                            }
+                                            else
+                                            {
+                                                lblIMGBlockDate.Text = "bitcoin verified: " + root.BlockDate.ToString("ddd, dd MMM yyyy hh:mm:ss");
+
+                                            }
+
+
                                         }
                                         else
                                         {
-                                            lblIMGBlockDate.Text = "bitcoin-t could not be verified: ";
+                                            lblIMGBlockDate.Text = "could not be verified: ";
 
                                         }
                                     }
@@ -2572,11 +2583,22 @@ namespace SUP
 
                                         if (root.BlockDate.Year > 1975)
                                         {
-                                            lblURNBlockDate.Text = "bitcoin-t verified: " + root.BlockDate.ToString("ddd, dd MMM yyyy hh:mm:ss");
+
+                                            if (mainnetVersionByte == "111")
+                                            {
+                                                lblURNBlockDate.Text = "bitcoin-t verified: " + root.BlockDate.ToString("ddd, dd MMM yyyy hh:mm:ss");
+                                            }
+                                            else
+                                            {
+                                                lblURNBlockDate.Text = "bitcoin verified: " + root.BlockDate.ToString("ddd, dd MMM yyyy hh:mm:ss");
+
+                                            }
+
+
                                         }
                                         else
                                         {
-                                            lblURNBlockDate.Text = "bitcoin-t could not be verified: ";
+                                            lblURNBlockDate.Text = "could not be verified: ";
 
                                         }
                                     }
@@ -2796,11 +2818,21 @@ namespace SUP
 
                                         if (root.BlockDate.Year > 1975)
                                         {
-                                            lblURIBlockDate.Text = "bitcoin-t verified: " + root.BlockDate.ToString("ddd, dd MMM yyyy hh:mm:ss");
+
+                                            if (mainnetVersionByte == "111")
+                                            {
+                                                lblURIBlockDate.Text = "bitcoin-t verified: " + root.BlockDate.ToString("ddd, dd MMM yyyy hh:mm:ss");
+                                            }
+                                            else
+                                            {
+                                                lblURIBlockDate.Text = "bitcoin verified: " + root.BlockDate.ToString("ddd, dd MMM yyyy hh:mm:ss");
+
+                                            }
+
                                         }
                                         else
                                         {
-                                            lblURIBlockDate.Text = "bitcoin-t could not be verified: ";
+                                            lblURIBlockDate.Text = "could not be verified: ";
 
                                         }
                                     }

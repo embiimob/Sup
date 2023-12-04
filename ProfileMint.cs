@@ -686,7 +686,15 @@ namespace SUP
                                 root = Root.GetRootByTransactionId(transactionid, mainnetLogin, mainnetPassword, mainnetURL,mainnetVersionByte);
                                 try
                                 {
-                                    lblIMGBlockDate.Text = "bitcoin-t verified: " + root.BlockDate.ToString("ddd, dd MMM yyyy hh:mm:ss");
+                                    if (mainnetVersionByte == "111")
+                                    {
+                                        lblIMGBlockDate.Text = "bitcoin-t verified: " + root.BlockDate.ToString("ddd, dd MMM yyyy hh:mm:ss");
+                                    }
+                                    else
+                                    {
+                                        lblIMGBlockDate.Text = "bitcoin verified: " + root.BlockDate.ToString("ddd, dd MMM yyyy hh:mm:ss");
+
+                                    }
                                     btnObjectImage.BackColor = Color.Blue;
                                     btnObjectImage.ForeColor = Color.Yellow;
                                 }
