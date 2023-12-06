@@ -1772,7 +1772,7 @@ namespace SUP
 
         }
 
-        private async void BuildSearchResults(bool calculate = false)
+        public async void BuildSearchResults(bool calculate = false)
         {
             lock (SupLocker)
             {
@@ -2032,10 +2032,11 @@ namespace SUP
                             }
                         }
                     }
-
-
-
-
+                    this.Invoke((Action)(async () =>
+                    {
+                        flowLayoutPanel1.Visible = true;
+                    }));
+      
                 }
                 catch { }
 

@@ -337,7 +337,6 @@ namespace SUP
         #endregion
         private System.Windows.Forms.Button btnCreated;
         private System.Windows.Forms.Button btnOwned;
-        private System.Windows.Forms.TextBox txtSearchAddress;
         private System.Windows.Forms.TextBox txtQty;
         private System.Windows.Forms.TextBox txtLast;
         private System.Windows.Forms.PictureBox imgLoading;
@@ -353,5 +352,6 @@ namespace SUP
         private System.Windows.Forms.Button btnVideoSearch;
         private System.Windows.Forms.Button btnJukeBox;
         private System.Windows.Forms.Button btnInquiry;
+        public System.Windows.Forms.TextBox txtSearchAddress;
     }
 }

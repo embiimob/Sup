@@ -32,7 +32,7 @@ namespace SUP
         private string mainnetPassword = "better-password";
         private string mainnetVersionByte = "111";
         private bool testnet = true;
-
+        private bool friendClicked = false;
         private List<string> BTCMemPool = new List<string>();
         private List<string> BTCTMemPool = new List<string>();
         private List<string> MZCMemPool = new List<string>();
@@ -188,7 +188,7 @@ namespace SUP
 
         private void OBControl_ProfileURNChanged(object sender, EventArgs e)
         {
-            if (sender is ObjectBrowserControl objectBrowserControl)
+            if (sender is ObjectBrowserControl objectBrowserControl && !friendClicked)
             {
                 var objectBrowserForm = objectBrowserControl.Controls[0].Controls[0] as ObjectBrowser;
                 if (objectBrowserForm != null)
@@ -248,6 +248,7 @@ namespace SUP
 
                 }
             }
+            friendClicked = false;
         }
 
         private void MakeActiveProfile(string address)
@@ -295,19 +296,23 @@ namespace SUP
 
                 });
 
-                supFlow.Controls.Clear();
-                supPrivateFlow.Controls.Clear();
-                foreach (string key in activeProfile.URL.Keys)
+                if (!friendClicked)
                 {
-                    Button button = new Button();
-                    button.Text = key;
-                    button.Font = new Font("Segoe UI", 12); // Set the button text font size
-                    button.ForeColor = Color.White;
-                    button.Height = 50;
-                    button.Width = supFlow.Width - 40; // Subtract padding of 10 pixels on each side
-                    button.Margin = new Padding(10, 3, 10, 4);
-                    button.Click += new EventHandler((sender, e) => button_Click(sender, e, activeProfile.URL[key]));
-                    supFlow.Controls.Add(button);
+
+                    supFlow.Controls.Clear();
+                    supPrivateFlow.Controls.Clear();
+                    foreach (string key in activeProfile.URL.Keys)
+                    {
+                        Button button = new Button();
+                        button.Text = key;
+                        button.Font = new Font("Segoe UI", 12); // Set the button text font size
+                        button.ForeColor = Color.White;
+                        button.Height = 50;
+                        button.Width = supFlow.Width - 40; // Subtract padding of 10 pixels on each side
+                        button.Margin = new Padding(10, 3, 10, 4);
+                        button.Click += new EventHandler((sender, e) => button_Click(sender, e, activeProfile.URL[key]));
+                        supFlow.Controls.Add(button);
+                    }
                 }
             }
             //supFlow.ResumeLayout();
@@ -5941,6 +5946,7 @@ namespace SUP
 
             string json = JsonConvert.SerializeObject(friendDict);
             string filePath = @"root\MyFriendList.Json";
+            if (!testnet) { filePath = @"root\MyProdFriendList.Json"; }
             File.WriteAllText(filePath, json);
 
         }
@@ -5948,6 +5954,7 @@ namespace SUP
         private void Friend_Click(object sender, EventArgs e)
         {
             if (System.IO.File.Exists(@"GET_ROOTS_BY_ADDRESS") || System.IO.File.Exists(@"GET_OBJECT_BY_ADDRESS") || System.IO.File.Exists(@"GET_OBJECTS_BY_ADDRESS")) { MessageBox.Show("Please wait for the search to complete.", "Notification"); return; }
+            friendClicked = true;
 
             //if any current searches are loading you got to wait.  
             if (!btnPrivateMessage.Enabled || !btnPrivateMessage.Enabled || !refreshFriendFeed.Enabled)
@@ -6000,6 +6007,8 @@ namespace SUP
 
                     }
                     RefreshSupMessages();
+                    OBcontrol.control.txtSearchAddress.Text = profileURN.Text;
+                    OBcontrol.control.BuildSearchResults();
                 }
 
 
@@ -6024,8 +6033,9 @@ namespace SUP
 
                 string json = JsonConvert.SerializeObject(friendDict);
                 string filePath = @"root\MyFriendList.Json";
+                if (!testnet) { filePath = @"root\MyProdFriendList.Json"; }
                 File.WriteAllText(filePath, json);
-                try { File.Delete(@"root\MyFriendFeed.Json"); } catch { }
+                try { File.Delete(filePath); } catch { }
                 numFriendFeedsDisplayed = 0;
             }
         }
@@ -6160,7 +6170,7 @@ namespace SUP
         private void btnHome_Click(object sender, EventArgs e)
         {
             if (System.IO.File.Exists(@"GET_ROOTS_BY_ADDRESS") || System.IO.File.Exists(@"GET_OBJECT_BY_ADDRESS") || System.IO.File.Exists(@"GET_OBJECTS_BY_ADDRESS")) { MessageBox.Show("Please wait for the search to complete.", "Notification"); return; }
-
+            friendClicked = false;
             try
             {
 
@@ -6314,6 +6324,9 @@ namespace SUP
 
         private void imgBTCSwitch_Click(object sender, EventArgs e)
         {
+            profileURN.Text = "anon"; profileBIO.Text = ""; profileCreatedDate.Text = ""; profileIMG.ImageLocation = null; lblProcessHeight.Text = ""; profileURN.Links[0].LinkData = null; profileURN.Links[0].Tag = ""; profileIMG.Tag = ""; profileOwner.ImageLocation = null; profileOwner.Tag = null;
+            supFlow.Controls.Clear();
+
             if (imgBTCSwitch.ImageLocation == @"includes/BCT_Logo.png")
             {
                 imgBTCSwitch.ImageLocation = @"includes/BC_Logo.png";
@@ -6327,6 +6340,42 @@ namespace SUP
                 OBcontrol.ProfileURNChanged += OBControl_ProfileURNChanged;
                 splitContainer1.Panel2.Controls.Clear();
                 splitContainer1.Panel2.Controls.Add(OBcontrol);
+
+                // Read the JSON data from the file
+                string filePath = @"root\MyProdFriendList.Json";
+                try
+                {
+                    flowFollow.Controls.Clear();
+                    string json = File.ReadAllText(filePath);
+                  
+                    // Deserialize the JSON into a Dictionary<string, string> object
+                    Dictionary<string, string> friendDict = JsonConvert.DeserializeObject<Dictionary<string, string>>(json);
+
+                    // Create PictureBox controls for each friend in the dictionary
+                    foreach (var friend in friendDict)
+                    {
+                        // Create a new PictureBox control
+                        PictureBox pictureBox = new PictureBox();
+
+                        // Set the PictureBox properties
+                        pictureBox.Tag = friend.Key;
+                        pictureBox.SizeMode = PictureBoxSizeMode.StretchImage;
+                        pictureBox.Width = 50;
+                        pictureBox.Height = 50;
+                        pictureBox.ImageLocation = friend.Value;
+
+                        // Add event handlers to the PictureBox
+                        pictureBox.Click += new EventHandler(Friend_Click);
+                        pictureBox.MouseUp += new System.Windows.Forms.MouseEventHandler(Friend_MouseUp);
+
+                        // Add the PictureBox to the FlowLayoutPanel
+                        flowFollow.Controls.Add(pictureBox);
+                    }
+                }
+                catch { }
+
+
+
             }
             else
             {
@@ -6341,6 +6390,38 @@ namespace SUP
                 OBcontrol.ProfileURNChanged += OBControl_ProfileURNChanged;
                 splitContainer1.Panel2.Controls.Clear();
                 splitContainer1.Panel2.Controls.Add(OBcontrol);
+
+                string filePath = @"root\MyFriendList.Json";
+                try
+                {
+                    flowFollow.Controls.Clear();
+                    string json = File.ReadAllText(filePath);
+                   
+                    // Deserialize the JSON into a Dictionary<string, string> object
+                    Dictionary<string, string> friendDict = JsonConvert.DeserializeObject<Dictionary<string, string>>(json);
+
+                    // Create PictureBox controls for each friend in the dictionary
+                    foreach (var friend in friendDict)
+                    {
+                        // Create a new PictureBox control
+                        PictureBox pictureBox = new PictureBox();
+
+                        // Set the PictureBox properties
+                        pictureBox.Tag = friend.Key;
+                        pictureBox.SizeMode = PictureBoxSizeMode.StretchImage;
+                        pictureBox.Width = 50;
+                        pictureBox.Height = 50;
+                        pictureBox.ImageLocation = friend.Value;
+
+                        // Add event handlers to the PictureBox
+                        pictureBox.Click += new EventHandler(Friend_Click);
+                        pictureBox.MouseUp += new System.Windows.Forms.MouseEventHandler(Friend_MouseUp);
+
+                        // Add the PictureBox to the FlowLayoutPanel
+                        flowFollow.Controls.Add(pictureBox);
+                    }
+                }
+                catch { }
             }
         }
     }

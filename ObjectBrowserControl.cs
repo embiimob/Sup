@@ -5,7 +5,7 @@ namespace SUP
 {
     public partial class ObjectBrowserControl : UserControl
     {
-        private ObjectBrowser control;
+        public ObjectBrowser control;
 
         public event EventHandler ProfileURNChanged;
 
