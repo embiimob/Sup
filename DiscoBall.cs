@@ -469,7 +469,18 @@ namespace SUP
         private void discoButton_Click(object sender, EventArgs e)
         {
 
-            string transMessage = supMessage.Text;
+            if (txtAttach.Text.Length > 0)
+            {
+                DialogResult result = MessageBox.Show("You have an unattached URL in the attachment box.\nMake sure to click the 📎 to attach a URL to your message.\nAre you sure you want to send this?", "Confirmation", MessageBoxButtons.YesNo);
+
+                if (result == DialogResult.No)
+                {
+                    return;
+                }
+            }
+
+
+                string transMessage = supMessage.Text;
             List<string> encodedList = new List<string>();
             foreach (Control attach in flowAttachments.Controls)
             {

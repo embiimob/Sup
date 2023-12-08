@@ -390,28 +390,38 @@ namespace SUP
                                             // Load the original image from file
                                             Image originalImage = Image.FromFile(imgurn);
 
-                                            // Resize the image if needed
-                                            int maxWidth = foundObject.ObjectImage.Width;
-                                            int maxHeight = foundObject.ObjectImage.Height;
-
-                                            int newWidth, newHeight;
-                                            if (originalImage.Width > originalImage.Height)
+                                            // Check if the original image is a GIF
+                                            if (Path.GetExtension(imgurn).Equals(".gif", StringComparison.OrdinalIgnoreCase))
                                             {
-                                                newWidth = maxWidth;
-                                                newHeight = (int)((double)originalImage.Height / originalImage.Width * newWidth);
+                                                // For GIF images, directly use the original image without creating a thumbnail
+                                                foundObject.ObjectImage.SizeMode = PictureBoxSizeMode.Zoom;
+                                                foundObject.ObjectImage.Image = originalImage;
                                             }
                                             else
                                             {
-                                                newHeight = maxHeight;
-                                                newWidth = (int)((double)originalImage.Width / originalImage.Height * newHeight);
+                                                // Resize the image if needed
+                                                int maxWidth = foundObject.ObjectImage.Width;
+                                                int maxHeight = foundObject.ObjectImage.Height;
+
+                                                int newWidth, newHeight;
+                                                if (originalImage.Width > originalImage.Height)
+                                                {
+                                                    newWidth = maxWidth;
+                                                    newHeight = (int)((double)originalImage.Height / originalImage.Width * newWidth);
+                                                }
+                                                else
+                                                {
+                                                    newHeight = maxHeight;
+                                                    newWidth = (int)((double)originalImage.Width / originalImage.Height * newHeight);
+                                                }
+
+                                                Image resizedImage = new Bitmap(originalImage, newWidth, newHeight);
+                                                originalImage.Dispose();
+                                                foundObject.ObjectImage.Image = resizedImage;
+
+                                                // Save the resized image as a thumbnail
+                                                resizedImage.Save(thumbnailPath, ImageFormat.Jpeg);
                                             }
-
-                                            Image resizedImage = new Bitmap(originalImage, newWidth, newHeight);
-                                            originalImage.Dispose();
-                                            foundObject.ObjectImage.Image = resizedImage;
-
-                                            // Save the resized image as a thumbnail
-                                            resizedImage.Save(thumbnailPath, ImageFormat.Jpeg);
                                         }
                                     }));
                                 }
@@ -711,7 +721,7 @@ namespace SUP
 
 
                                                     foundObject.ObjectCreators.Text = TruncateAddress(profile.URN);
-                                                    foundObject.ObjectCreators.Links.Add(0, creator.Key.Length, creator.Key);
+                                                    foundObject.ObjectCreators.Links.Add(0, profile.URN.Length, profile.URN);
                                                     System.Windows.Forms.ToolTip myTooltip = new System.Windows.Forms.ToolTip();
                                                     myTooltip.SetToolTip(foundObject.ObjectCreators, profile.URN);
                                                 }
@@ -722,7 +732,7 @@ namespace SUP
                                                     if (profile.URN != null && foundObject.ObjectCreators2.Text == "" && objstate.Creators.TryGetValue(creator.Key, out DateTime dateacknowledged2) && dateacknowledged2.Year > 1975)
                                                     {
                                                         foundObject.ObjectCreators2.Text = TruncateAddress(profile.URN);
-                                                        foundObject.ObjectCreators2.Links.Add(0, creator.Key.Length, creator.Key);
+                                                        foundObject.ObjectCreators2.Links.Add(0, profile.URN.Length, profile.URN);
                                                         System.Windows.Forms.ToolTip myTooltip = new System.Windows.Forms.ToolTip();
                                                         myTooltip.SetToolTip(foundObject.ObjectCreators2, profile.URN);
                                                     }
@@ -937,28 +947,38 @@ namespace SUP
                                         // Load the original image from file
                                         Image originalImage = Image.FromFile(imgurn);
 
-                                        // Resize the image if needed
-                                        int maxWidth = foundObject.ObjectImage.Width;
-                                        int maxHeight = foundObject.ObjectImage.Height;
-
-                                        int newWidth, newHeight;
-                                        if (originalImage.Width > originalImage.Height)
+                                        // Check if the original image is a GIF
+                                        if (Path.GetExtension(imgurn).Equals(".gif", StringComparison.OrdinalIgnoreCase))
                                         {
-                                            newWidth = maxWidth;
-                                            newHeight = (int)((double)originalImage.Height / originalImage.Width * newWidth);
+                                            // For GIF images, directly use the original image without creating a thumbnail
+                                            foundObject.ObjectImage.SizeMode = PictureBoxSizeMode.Zoom;
+                                            foundObject.ObjectImage.Image = originalImage;
                                         }
                                         else
                                         {
-                                            newHeight = maxHeight;
-                                            newWidth = (int)((double)originalImage.Width / originalImage.Height * newHeight);
+                                            // Resize the image if needed
+                                            int maxWidth = foundObject.ObjectImage.Width;
+                                            int maxHeight = foundObject.ObjectImage.Height;
+
+                                            int newWidth, newHeight;
+                                            if (originalImage.Width > originalImage.Height)
+                                            {
+                                                newWidth = maxWidth;
+                                                newHeight = (int)((double)originalImage.Height / originalImage.Width * newWidth);
+                                            }
+                                            else
+                                            {
+                                                newHeight = maxHeight;
+                                                newWidth = (int)((double)originalImage.Width / originalImage.Height * newHeight);
+                                            }
+
+                                            Image resizedImage = new Bitmap(originalImage, newWidth, newHeight);
+                                            originalImage.Dispose();
+                                            foundObject.ObjectImage.Image = resizedImage;
+
+                                            // Save the resized image as a thumbnail
+                                            resizedImage.Save(thumbnailPath, ImageFormat.Jpeg);
                                         }
-
-                                        Image resizedImage = new Bitmap(originalImage, newWidth, newHeight);
-                                        originalImage.Dispose();
-                                        foundObject.ObjectImage.Image = resizedImage;
-
-                                        // Save the resized image as a thumbnail
-                                        resizedImage.Save(thumbnailPath, ImageFormat.Jpeg);
                                     }
                                 }));
                             }
@@ -1355,28 +1375,38 @@ namespace SUP
                                     // Load the original image from file
                                     Image originalImage = Image.FromFile(imgurn);
 
-                                    // Resize the image if needed
-                                    int maxWidth = foundObject.ObjectImage.Width;
-                                    int maxHeight = foundObject.ObjectImage.Height;
-
-                                    int newWidth, newHeight;
-                                    if (originalImage.Width > originalImage.Height)
+                                    // Check if the original image is a GIF
+                                    if (Path.GetExtension(imgurn).Equals(".gif", StringComparison.OrdinalIgnoreCase))
                                     {
-                                        newWidth = maxWidth;
-                                        newHeight = (int)((double)originalImage.Height / originalImage.Width * newWidth);
+                                        // For GIF images, directly use the original image without creating a thumbnail
+                                        foundObject.ObjectImage.SizeMode = PictureBoxSizeMode.Zoom;
+                                        foundObject.ObjectImage.Image = originalImage;
                                     }
                                     else
                                     {
-                                        newHeight = maxHeight;
-                                        newWidth = (int)((double)originalImage.Width / originalImage.Height * newHeight);
+                                        // Resize the image if needed
+                                        int maxWidth = foundObject.ObjectImage.Width;
+                                        int maxHeight = foundObject.ObjectImage.Height;
+
+                                        int newWidth, newHeight;
+                                        if (originalImage.Width > originalImage.Height)
+                                        {
+                                            newWidth = maxWidth;
+                                            newHeight = (int)((double)originalImage.Height / originalImage.Width * newWidth);
+                                        }
+                                        else
+                                        {
+                                            newHeight = maxHeight;
+                                            newWidth = (int)((double)originalImage.Width / originalImage.Height * newHeight);
+                                        }
+
+                                        Image resizedImage = new Bitmap(originalImage, newWidth, newHeight);
+                                        originalImage.Dispose();
+                                        foundObject.ObjectImage.Image = resizedImage;
+
+                                        // Save the resized image as a thumbnail
+                                        resizedImage.Save(thumbnailPath, ImageFormat.Jpeg);
                                     }
-
-                                    Image resizedImage = new Bitmap(originalImage, newWidth, newHeight);
-                                    originalImage.Dispose();
-                                    foundObject.ObjectImage.Image = resizedImage;
-
-                                    // Save the resized image as a thumbnail
-                                    resizedImage.Save(thumbnailPath, ImageFormat.Jpeg);
                                 }
                             }));
                         }
@@ -2230,13 +2260,13 @@ namespace SUP
 
         string TruncateAddress(string input)
         {
-            if (input.Length <= 13)
+            if (input.Length <= 20)
             {
                 return input;
             }
             else
             {
-                return input.Substring(0, 5) + "..." + input.Substring(input.Length - 5);
+                return input.Substring(0, 7) + "..." + input.Substring(input.Length - 7);
             }
         }
 

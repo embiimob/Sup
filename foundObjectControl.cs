@@ -15,7 +15,7 @@ namespace SUP
         private string mainnetLogin = "good-user";
         private string mainnetPassword = "better-password";
         private string mainnetVersionByte = "111";
-        private bool _testnet;
+        private bool _testnet = true;
         public FoundObjectControl(string activeprofile, bool testnet = true)
         {
             InitializeComponent();
