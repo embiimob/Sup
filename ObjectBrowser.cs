@@ -10,6 +10,7 @@ using System.Windows.Forms;
 using NBitcoin;
 using System.Threading.Tasks;
 using System.IO;
+using System.Drawing.Imaging;
 
 namespace SUP
 {
@@ -30,6 +31,7 @@ namespace SUP
         private string mainnetPassword = "better-password";
         private string mainnetVersionByte = "111";
         private bool _testnet;
+        List<FoundObjectControl> foundObjects = new List<FoundObjectControl>();
 
         private readonly System.Windows.Forms.Timer _doubleClickTimer = new System.Windows.Forms.Timer();
         public ObjectBrowser(string objectaddress, bool iscontrol = false, bool testnet = true)
@@ -267,7 +269,13 @@ namespace SUP
                     txtTotal.Text = (createdObjects.Count).ToString();
                     pages.Visible = true;
 
+                    //disposeFoundObjects
+                    foreach (var foundobject in foundObjects)
+                    {
 
+                        try { foundobject.Dispose(); } catch { }
+
+                    }
 
                     foreach (OBJState objstate in createdObjects.Skip(skip).Take(qty))
                     {
@@ -367,11 +375,44 @@ namespace SUP
                                 }
                                 if (File.Exists(imgurn))
                                 {
-
                                     this.Invoke((Action)(() =>
                                     {
-                                        foundObject.ObjectImage.SizeMode = PictureBoxSizeMode.Zoom;
-                                        foundObject.ObjectImage.ImageLocation = imgurn;
+                                        string thumbnailPath = Path.Combine(Path.GetDirectoryName(imgurn), "thumbnail.jpg");
+
+                                        // Check if a thumbnail exists
+                                        if (File.Exists(thumbnailPath))
+                                        {
+                                            foundObject.ObjectImage.SizeMode = PictureBoxSizeMode.Zoom;
+                                            foundObject.ObjectImage.ImageLocation = thumbnailPath;
+                                        }
+                                        else
+                                        {
+                                            // Load the original image from file
+                                            Image originalImage = Image.FromFile(imgurn);
+
+                                            // Resize the image if needed
+                                            int maxWidth = foundObject.ObjectImage.Width;
+                                            int maxHeight = foundObject.ObjectImage.Height;
+
+                                            int newWidth, newHeight;
+                                            if (originalImage.Width > originalImage.Height)
+                                            {
+                                                newWidth = maxWidth;
+                                                newHeight = (int)((double)originalImage.Height / originalImage.Width * newWidth);
+                                            }
+                                            else
+                                            {
+                                                newHeight = maxHeight;
+                                                newWidth = (int)((double)originalImage.Width / originalImage.Height * newHeight);
+                                            }
+
+                                            Image resizedImage = new Bitmap(originalImage, newWidth, newHeight);
+                                            originalImage.Dispose();
+                                            foundObject.ObjectImage.Image = resizedImage;
+
+                                            // Save the resized image as a thumbnail
+                                            resizedImage.Save(thumbnailPath, ImageFormat.Jpeg);
+                                        }
                                     }));
                                 }
                                 else
@@ -720,7 +761,7 @@ namespace SUP
                                     }
                                 }
 
-
+                                foundObjects.Add(foundObject);
 
                                 if (_viewMode == 1)
                                 {
@@ -881,10 +922,44 @@ namespace SUP
 
                             if (File.Exists(imgurn))
                             {
-
                                 this.Invoke((Action)(() =>
                                 {
-                                    foundObject.ObjectImage.ImageLocation = imgurn;
+                                    string thumbnailPath = Path.Combine(Path.GetDirectoryName(imgurn), "thumbnail.jpg");
+
+                                    // Check if a thumbnail exists
+                                    if (File.Exists(thumbnailPath))
+                                    {
+                                        foundObject.ObjectImage.SizeMode = PictureBoxSizeMode.Zoom;
+                                        foundObject.ObjectImage.ImageLocation = thumbnailPath;
+                                    }
+                                    else
+                                    {
+                                        // Load the original image from file
+                                        Image originalImage = Image.FromFile(imgurn);
+
+                                        // Resize the image if needed
+                                        int maxWidth = foundObject.ObjectImage.Width;
+                                        int maxHeight = foundObject.ObjectImage.Height;
+
+                                        int newWidth, newHeight;
+                                        if (originalImage.Width > originalImage.Height)
+                                        {
+                                            newWidth = maxWidth;
+                                            newHeight = (int)((double)originalImage.Height / originalImage.Width * newWidth);
+                                        }
+                                        else
+                                        {
+                                            newHeight = maxHeight;
+                                            newWidth = (int)((double)originalImage.Width / originalImage.Height * newHeight);
+                                        }
+
+                                        Image resizedImage = new Bitmap(originalImage, newWidth, newHeight);
+                                        originalImage.Dispose();
+                                        foundObject.ObjectImage.Image = resizedImage;
+
+                                        // Save the resized image as a thumbnail
+                                        resizedImage.Save(thumbnailPath, ImageFormat.Jpeg);
+                                    }
                                 }));
                             }
                             else
@@ -1265,10 +1340,44 @@ namespace SUP
                         }
                         if (File.Exists(imgurn))
                         {
-
                             this.Invoke((Action)(() =>
                             {
-                                foundObject.ObjectImage.ImageLocation = imgurn;
+                                string thumbnailPath = Path.Combine(Path.GetDirectoryName(imgurn), "thumbnail.jpg");
+
+                                // Check if a thumbnail exists
+                                if (File.Exists(thumbnailPath))
+                                {
+                                    foundObject.ObjectImage.SizeMode = PictureBoxSizeMode.Zoom;
+                                    foundObject.ObjectImage.ImageLocation = thumbnailPath;
+                                }
+                                else
+                                {
+                                    // Load the original image from file
+                                    Image originalImage = Image.FromFile(imgurn);
+
+                                    // Resize the image if needed
+                                    int maxWidth = foundObject.ObjectImage.Width;
+                                    int maxHeight = foundObject.ObjectImage.Height;
+
+                                    int newWidth, newHeight;
+                                    if (originalImage.Width > originalImage.Height)
+                                    {
+                                        newWidth = maxWidth;
+                                        newHeight = (int)((double)originalImage.Height / originalImage.Width * newWidth);
+                                    }
+                                    else
+                                    {
+                                        newHeight = maxHeight;
+                                        newWidth = (int)((double)originalImage.Width / originalImage.Height * newHeight);
+                                    }
+
+                                    Image resizedImage = new Bitmap(originalImage, newWidth, newHeight);
+                                    originalImage.Dispose();
+                                    foundObject.ObjectImage.Image = resizedImage;
+
+                                    // Save the resized image as a thumbnail
+                                    resizedImage.Save(thumbnailPath, ImageFormat.Jpeg);
+                                }
                             }));
                         }
                         else
