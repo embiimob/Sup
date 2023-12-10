@@ -30,6 +30,8 @@
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Connections));
             this.panel1 = new System.Windows.Forms.Panel();
+            this.label18 = new System.Windows.Forms.Label();
+            this.textBox29 = new System.Windows.Forms.TextBox();
             this.chkLiveFeedPinning = new System.Windows.Forms.CheckBox();
             this.label17 = new System.Windows.Forms.Label();
             this.chkWalkieTalkie = new System.Windows.Forms.CheckBox();
@@ -98,8 +100,6 @@
             this.txtPort = new System.Windows.Forms.TextBox();
             this.btnMainConnection = new System.Windows.Forms.Button();
             this.label1 = new System.Windows.Forms.Label();
-            this.textBox29 = new System.Windows.Forms.TextBox();
-            this.label18 = new System.Windows.Forms.Label();
             this.panel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.SuspendLayout();
@@ -180,6 +180,25 @@
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(706, 631);
             this.panel1.TabIndex = 1;
+            // 
+            // label18
+            // 
+            this.label18.AutoSize = true;
+            this.label18.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label18.Location = new System.Drawing.Point(16, 31);
+            this.label18.Name = "label18";
+            this.label18.Size = new System.Drawing.Size(44, 13);
+            this.label18.TabIndex = 165;
+            this.label18.Text = "chain id";
+            // 
+            // textBox29
+            // 
+            this.textBox29.Enabled = false;
+            this.textBox29.Location = new System.Drawing.Point(19, 51);
+            this.textBox29.Name = "textBox29";
+            this.textBox29.Size = new System.Drawing.Size(45, 20);
+            this.textBox29.TabIndex = 164;
+            this.textBox29.Text = "TEST";
             // 
             // chkLiveFeedPinning
             // 
@@ -480,9 +499,10 @@
             this.label15.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label15.Location = new System.Drawing.Point(395, 437);
             this.label15.Name = "label15";
-            this.label15.Size = new System.Drawing.Size(116, 13);
+            this.label15.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
+            this.label15.Size = new System.Drawing.Size(199, 13);
             this.label15.TabIndex = 124;
-            this.label15.Text = "Sup!? v0.4.20-beta";
+            this.label15.Text = "Sup!? v0.4.20-beta ( pre release )";
             this.label15.TextAlign = System.Drawing.ContentAlignment.TopCenter;
             // 
             // label14
@@ -825,25 +845,6 @@
             this.label1.Size = new System.Drawing.Size(68, 13);
             this.label1.TabIndex = 50;
             this.label1.Text = "main chain";
-            // 
-            // textBox29
-            // 
-            this.textBox29.Enabled = false;
-            this.textBox29.Location = new System.Drawing.Point(19, 51);
-            this.textBox29.Name = "textBox29";
-            this.textBox29.Size = new System.Drawing.Size(45, 20);
-            this.textBox29.TabIndex = 164;
-            this.textBox29.Text = "TEST";
-            // 
-            // label18
-            // 
-            this.label18.AutoSize = true;
-            this.label18.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label18.Location = new System.Drawing.Point(16, 31);
-            this.label18.Name = "label18";
-            this.label18.Size = new System.Drawing.Size(44, 13);
-            this.label18.TabIndex = 165;
-            this.label18.Text = "chain id";
             // 
             // Connections
             // 
