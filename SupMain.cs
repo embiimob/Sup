@@ -39,9 +39,10 @@ namespace SUP
         private List<string> LTCMemPool = new List<string>();
         private List<string> DOGMemPool = new List<string>();
         List<Microsoft.Web.WebView2.WinForms.WebView2> webviewers = new List<Microsoft.Web.WebView2.WinForms.WebView2>();
+        List<PictureBox> pictures = new List<PictureBox>();
+
 
         private bool ipfsActive;
-        private bool btctActive;
         private bool btcActive;
         private bool mzcActive;
         private bool ltcActive;
@@ -793,20 +794,7 @@ namespace SUP
                 string walletUrl = @"http://127.0.0.1:18332";
                 NetworkCredential credentials = new NetworkCredential(walletUsername, walletPassword);
                 NBitcoin.RPC.RPCClient rpcClient = new NBitcoin.RPC.RPCClient(credentials, new Uri(walletUrl), NBitcoin.Network.Main);
-                Task.Run(() =>
-                {
-                    try
-                    {
-                        string isActive = rpcClient.GetBalance().ToString();
-                        this.Invoke((MethodInvoker)delegate
-                        {
-                            btctActive = true;
-                        });
-
-                    }
-                    catch { }
-                });
-
+                
 
                 Task.Run(() =>
                 {
@@ -2871,29 +2859,40 @@ namespace SUP
 
             // sorry cannot run two searches at a time
             if (refreshFriendFeed.Enabled == false || btnPublicMessage.Enabled == false || btnPrivateMessage.Enabled == false) { return; }
-            supFlow.SuspendLayout();
+            
+            this.Invoke((MethodInvoker)delegate
+            {
+                supFlow.SuspendLayout();
+            });
+
 
             // Clear controls if no messages have been displayed yet
             if (numMessagesDisplayed == 0)
             {
+                supFlow.Controls.Clear();
+
                 Task.Run(() =>
                 {
-                    this.Invoke((MethodInvoker)delegate
+
+                    foreach (var viewer in webviewers)
                     {
-                        foreach (var viewer in webviewers)
-                        {
 
-                            try { viewer.Dispose(); } catch { }
+                        try { viewer.Dispose(); } catch { }
 
-                        }
-                    });
+                    }
+
+                    foreach (var picture in pictures)
+                    {
+
+                        try { picture.Dispose(); } catch { }
+
+                    }
+
 
                 });
-
-
-                supFlow.Controls.Clear();
                 supPrivateFlow.Controls.Clear();
                 numPrivateMessagesDisplayed = 0;
+                supFlow.AutoScrollPosition = new Point(0, 0);
 
             }
 
@@ -3498,6 +3497,7 @@ namespace SUP
                                                     pictureBox.Image = Image.FromStream(memoryStream);
                                                     pictureBox.MouseClick += (sender, e) => { Attachment_Clicked(content); };
                                                     panel.Controls.Add(pictureBox);
+                                                    pictures.Add(pictureBox);
                                                 }
                                                 catch
                                                 {
@@ -4766,6 +4766,7 @@ namespace SUP
                 pictureBox.ImageLocation = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + @"\includes\progress.gif";
 
                 msg.Controls.Add(pictureBox);
+                pictures.Add(pictureBox);
 
                 imagelocation = imagepath;
 
@@ -5310,6 +5311,7 @@ namespace SUP
 
                 };
                 row.Controls.Add(picture, 0, 0);
+                pictures.Add(picture);
             }
             else
             {
@@ -5336,6 +5338,7 @@ namespace SUP
                     Margin = new System.Windows.Forms.Padding(0),
                 };
                 row.Controls.Add(picture, 0, 0);
+                pictures.Add(picture);
             }
 
 
@@ -5519,6 +5522,7 @@ namespace SUP
 
                 };
                 row.Controls.Add(picture, 0, 0);
+                pictures.Add(picture);
             }
             else
             {
@@ -5545,6 +5549,7 @@ namespace SUP
                     Margin = new System.Windows.Forms.Padding(0),
                 };
                 row.Controls.Add(picture, 0, 0);
+                pictures.Add(picture);
             }
 
 
@@ -5970,6 +5975,7 @@ namespace SUP
                 supFlow.Location = new System.Drawing.Point(supFlow.Location.X, supFlow.Location.Y + 150); // Change the X and Y coordinates
                 supFlow.Size = new System.Drawing.Size(supFlow.Width, supFlow.Height - 150); // Change the width and height
             }
+
             // Check if the user left-clicked on the PictureBox
             if (((System.Windows.Forms.MouseEventArgs)e).Button == MouseButtons.Left)
             {

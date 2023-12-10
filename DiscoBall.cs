@@ -405,8 +405,12 @@ namespace SUP
                     }
                     catch { }
 
-                    if (File.Exists(imgurn) || imgurn.ToUpper().StartsWith("HTTP"))
+                    if (File.Exists(imgurn) || (imgurn.ToUpper().StartsWith("HTTP") && extension2 != ""))
                     {
+                       
+                        
+                        
+                        
                         PictureBox pictureBox = new PictureBox();
 
                         // Set the PictureBox properties
@@ -423,7 +427,24 @@ namespace SUP
                         });
 
                     }
+                    else
+                    {
+                        PictureBox pictureBox = new PictureBox();
 
+                        // Set the PictureBox properties
+                        pictureBox.Tag = txtAttach.Text;
+                        pictureBox.SizeMode = PictureBoxSizeMode.StretchImage;
+                        pictureBox.Width = 50;
+                        pictureBox.Height = 50;
+                        pictureBox.ImageLocation = @"includes\HugPuddle.jpg";
+                        pictureBox.MouseClick += PictureBox_MouseClick;
+                        // Add the PictureBox to the FlowLayoutPanel
+                        this.Invoke((MethodInvoker)delegate
+                        {
+                            flowAttachments.Controls.Add(pictureBox);
+                        });
+
+                    }
 
                 }
                 else
