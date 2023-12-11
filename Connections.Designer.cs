@@ -100,12 +100,14 @@
             this.txtPort = new System.Windows.Forms.TextBox();
             this.btnMainConnection = new System.Windows.Forms.Button();
             this.label1 = new System.Windows.Forms.Label();
+            this.btnIPFSAdd = new System.Windows.Forms.Button();
             this.panel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.SuspendLayout();
             // 
             // panel1
             // 
+            this.panel1.Controls.Add(this.btnIPFSAdd);
             this.panel1.Controls.Add(this.label18);
             this.panel1.Controls.Add(this.textBox29);
             this.panel1.Controls.Add(this.chkLiveFeedPinning);
@@ -180,6 +182,7 @@
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(706, 631);
             this.panel1.TabIndex = 1;
+            this.panel1.Paint += new System.Windows.Forms.PaintEventHandler(this.panel1_Paint);
             // 
             // label18
             // 
@@ -198,12 +201,12 @@
             this.textBox29.Name = "textBox29";
             this.textBox29.Size = new System.Drawing.Size(45, 20);
             this.textBox29.TabIndex = 164;
-            this.textBox29.Text = "TEST";
+            this.textBox29.Text = "TMP";
             // 
             // chkLiveFeedPinning
             // 
             this.chkLiveFeedPinning.AutoSize = true;
-            this.chkLiveFeedPinning.Location = new System.Drawing.Point(180, 375);
+            this.chkLiveFeedPinning.Location = new System.Drawing.Point(166, 375);
             this.chkLiveFeedPinning.Name = "chkLiveFeedPinning";
             this.chkLiveFeedPinning.Size = new System.Drawing.Size(89, 17);
             this.chkLiveFeedPinning.TabIndex = 163;
@@ -265,11 +268,11 @@
             // 
             // btnClearIPFSisLoadingCache
             // 
-            this.btnClearIPFSisLoadingCache.Location = new System.Drawing.Point(441, 371);
+            this.btnClearIPFSisLoadingCache.Location = new System.Drawing.Point(493, 371);
             this.btnClearIPFSisLoadingCache.Name = "btnClearIPFSisLoadingCache";
-            this.btnClearIPFSisLoadingCache.Size = new System.Drawing.Size(122, 23);
+            this.btnClearIPFSisLoadingCache.Size = new System.Drawing.Size(92, 23);
             this.btnClearIPFSisLoadingCache.TabIndex = 156;
-            this.btnClearIPFSisLoadingCache.Text = "purge isloading cache";
+            this.btnClearIPFSisLoadingCache.Text = "purge isloading";
             this.btnClearIPFSisLoadingCache.UseVisualStyleBackColor = true;
             this.btnClearIPFSisLoadingCache.Click += new System.EventHandler(this.btnPurgeIPFSBuilding_Click);
             // 
@@ -454,18 +457,18 @@
             // 
             // btnPurgeIPFS
             // 
-            this.btnPurgeIPFS.Location = new System.Drawing.Point(569, 371);
+            this.btnPurgeIPFS.Location = new System.Drawing.Point(591, 371);
             this.btnPurgeIPFS.Name = "btnPurgeIPFS";
-            this.btnPurgeIPFS.Size = new System.Drawing.Size(104, 23);
+            this.btnPurgeIPFS.Size = new System.Drawing.Size(78, 23);
             this.btnPurgeIPFS.TabIndex = 128;
-            this.btnPurgeIPFS.Text = "purge ipfs cache";
+            this.btnPurgeIPFS.Text = "purge cache";
             this.btnPurgeIPFS.UseVisualStyleBackColor = true;
             this.btnPurgeIPFS.Click += new System.EventHandler(this.btnPurgeIPFS_Click);
             // 
             // btnUnpinIPFS
             // 
             this.btnUnpinIPFS.Enabled = false;
-            this.btnUnpinIPFS.Location = new System.Drawing.Point(360, 371);
+            this.btnUnpinIPFS.Location = new System.Drawing.Point(412, 371);
             this.btnUnpinIPFS.Name = "btnUnpinIPFS";
             this.btnUnpinIPFS.Size = new System.Drawing.Size(75, 23);
             this.btnUnpinIPFS.TabIndex = 127;
@@ -476,7 +479,7 @@
             // btnPinIPFS
             // 
             this.btnPinIPFS.Enabled = false;
-            this.btnPinIPFS.Location = new System.Drawing.Point(284, 371);
+            this.btnPinIPFS.Location = new System.Drawing.Point(261, 371);
             this.btnPinIPFS.Name = "btnPinIPFS";
             this.btnPinIPFS.Size = new System.Drawing.Size(70, 23);
             this.btnPinIPFS.TabIndex = 126;
@@ -488,7 +491,7 @@
             // 
             this.button1.Location = new System.Drawing.Point(8, 371);
             this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(166, 23);
+            this.button1.Size = new System.Drawing.Size(152, 23);
             this.button1.TabIndex = 125;
             this.button1.UseVisualStyleBackColor = true;
             this.button1.Click += new System.EventHandler(this.btnIPFS_Click);
@@ -846,6 +849,18 @@
             this.label1.TabIndex = 50;
             this.label1.Text = "main chain";
             // 
+            // btnIPFSAdd
+            // 
+            this.btnIPFSAdd.Enabled = false;
+            this.btnIPFSAdd.Location = new System.Drawing.Point(337, 371);
+            this.btnIPFSAdd.Name = "btnIPFSAdd";
+            this.btnIPFSAdd.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
+            this.btnIPFSAdd.Size = new System.Drawing.Size(70, 23);
+            this.btnIPFSAdd.TabIndex = 166;
+            this.btnIPFSAdd.Text = "add cache";
+            this.btnIPFSAdd.UseVisualStyleBackColor = true;
+            this.btnIPFSAdd.Click += new System.EventHandler(this.btnIPFSAdd_Click);
+            // 
             // Connections
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -938,5 +953,6 @@
         private System.Windows.Forms.CheckBox chkLiveFeedPinning;
         private System.Windows.Forms.Label label18;
         private System.Windows.Forms.TextBox textBox29;
+        private System.Windows.Forms.Button btnIPFSAdd;
     }
 }

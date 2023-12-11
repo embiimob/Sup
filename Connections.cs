@@ -280,6 +280,7 @@ namespace SUP
                 button1.Text = "IPFS dameon active";
                 btnPinIPFS.Enabled = true;
                 btnUnpinIPFS.Enabled = true;
+                btnIPFSAdd.Enabled = true;
                 button1.ForeColor = Color.Yellow;
                 button1.BackColor = Color.Blue;
 
@@ -350,6 +351,7 @@ namespace SUP
                 process.Start();
                 btnPinIPFS.Enabled = true;
                 btnUnpinIPFS.Enabled = true;
+                btnIPFSAdd.Enabled= true;
                                 
 
             }
@@ -421,6 +423,83 @@ namespace SUP
                 catch { }
             }
         }
+
+
+        private async void btnIPFSAdd_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                // Change the text and background color of the button to indicate "pinning" on the UI thread
+                this.Invoke((MethodInvoker)(() =>
+                {
+                    btnIPFSAdd.Text = "adding";
+                    btnIPFSAdd.ForeColor = Color.Yellow;
+                    btnIPFSAdd.BackColor = Color.Blue;
+                }));
+
+                string[] subfolderNames = Directory.GetDirectories("ipfs");
+
+                foreach (string subfolder in subfolderNames)
+                {
+                    string[] files = Directory.GetFiles(subfolder, "*", SearchOption.TopDirectoryOnly);
+
+                    foreach (string file in files)
+                    {
+                        string fileName = System.IO.Path.GetFileName(file);
+
+                        // Check if the file is not named "thumbnail.jpg"
+                        if (!fileName.Equals("thumbnail.jpg", StringComparison.OrdinalIgnoreCase))
+                        {
+                            using (var process2 = new Process())
+                            {
+                                process2.StartInfo.FileName = @"ipfs\ipfs.exe";
+                                process2.StartInfo.Arguments = $"add \"{file}\"";
+                                process2.StartInfo.UseShellExecute = false;
+
+                                process2.Start();
+
+                                // Wait for the process to complete, but not longer than 60 seconds
+                                if (await Task.Run(() => process2.WaitForExit(600000)))
+                                {
+                                    // Process completed within 60 seconds
+                                    int exitCode = process2.ExitCode;
+                                    // Handle the exit code or other logic here if needed
+                                }
+                                else
+                                {
+                                    // Process didn't complete within 60 seconds, you can handle this case
+                                    // Maybe log or take other actions
+                                }
+                            }
+                        }
+                    }
+                }
+
+                // Revert the text and background color of the button to the original state on the UI thread
+                this.Invoke((MethodInvoker)(() =>
+                {
+                    btnIPFSAdd.Text = "add cache";
+                    btnIPFSAdd.ForeColor = Color.Black;
+                    btnIPFSAdd.BackColor = Color.White;
+                }));
+            }
+            catch (Exception ex)
+            {
+                // Handle exceptions here
+                // Revert the text and background color of the button in the catch block if necessary
+                try
+                {
+                    this.Invoke((MethodInvoker)(() =>
+                    {
+                        btnIPFSAdd.Text = "add cache";
+                        btnIPFSAdd.ForeColor = Color.Black;
+                        btnIPFSAdd.BackColor = Color.White;
+                    }));
+                }
+                catch { }
+            }
+        }
+
 
         //GPT3 IS COOL
         private async void btnUnpinIPFS_Click(object sender, EventArgs e)
@@ -689,6 +768,11 @@ namespace SUP
 
 
             }
+        }
+
+        private void panel1_Paint(object sender, PaintEventArgs e)
+        {
+
         }
     }
 }

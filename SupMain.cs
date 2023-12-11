@@ -773,7 +773,6 @@ namespace SUP
         }
         private async void btnLive_Click(object sender, EventArgs e)
         {
-            if (System.IO.File.Exists(@"GET_ROOTS_BY_ADDRESS") || System.IO.File.Exists(@"GET_OBJECT_BY_ADDRESS") || System.IO.File.Exists(@"GET_OBJECTS_BY_ADDRESS")) { MessageBox.Show("Please wait for the search to complete.", "Notification"); return; }
 
             if (btnLive.BackColor == Color.White)
             {
@@ -5832,7 +5831,6 @@ namespace SUP
 
         private void profileURN_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
-            if (System.IO.File.Exists(@"GET_ROOTS_BY_ADDRESS") || System.IO.File.Exists(@"GET_OBJECT_BY_ADDRESS") || System.IO.File.Exists(@"GET_OBJECTS_BY_ADDRESS")) { MessageBox.Show("Please wait for the search to complete.", "Notification"); return; }
 
             string ActiveProfile = "";
             if (profileURN.Links[0].LinkData != null) { ActiveProfile = profileURN.Links[0].LinkData.ToString(); }
@@ -5841,7 +5839,6 @@ namespace SUP
 
         private void btnPublicMessage_Click(object sender, EventArgs e)
         {
-            if (System.IO.File.Exists(@"GET_ROOTS_BY_ADDRESS") || System.IO.File.Exists(@"GET_OBJECT_BY_ADDRESS") || System.IO.File.Exists(@"GET_OBJECTS_BY_ADDRESS")) { MessageBox.Show("Please wait for the search to complete.", "Notification"); return; }
 
             refreshFriendFeed.BackColor = System.Drawing.Color.White;
             refreshFriendFeed.ForeColor = System.Drawing.Color.Black;
@@ -5858,7 +5855,6 @@ namespace SUP
 
         private void RefreshCommunityMessages_Click(object sender, EventArgs e)
         {
-            if (System.IO.File.Exists(@"GET_ROOTS_BY_ADDRESS") || System.IO.File.Exists(@"GET_OBJECT_BY_ADDRESS") || System.IO.File.Exists(@"GET_OBJECTS_BY_ADDRESS")) { MessageBox.Show("Please wait for the search to complete.", "Notification"); return; }
 
             refreshFriendFeed.BackColor = System.Drawing.Color.Blue; refreshFriendFeed.ForeColor = System.Drawing.Color.Yellow;
 
@@ -5875,7 +5871,6 @@ namespace SUP
 
         private void btnPrivateMessage_Click(object sender, EventArgs e)
         {
-            if (System.IO.File.Exists(@"GET_ROOTS_BY_ADDRESS") || System.IO.File.Exists(@"GET_OBJECT_BY_ADDRESS") || System.IO.File.Exists(@"GET_OBJECTS_BY_ADDRESS")) { MessageBox.Show("Please wait for the search to complete.", "Notification"); return; }
 
 
             btnPrivateMessage.BackColor = Color.Blue;
@@ -5958,7 +5953,6 @@ namespace SUP
 
         private void Friend_Click(object sender, EventArgs e)
         {
-            if (System.IO.File.Exists(@"GET_ROOTS_BY_ADDRESS") || System.IO.File.Exists(@"GET_OBJECT_BY_ADDRESS") || System.IO.File.Exists(@"GET_OBJECTS_BY_ADDRESS")) { MessageBox.Show("Please wait for the search to complete.", "Notification"); return; }
             friendClicked = true;
 
             //if any current searches are loading you got to wait.  
@@ -6048,7 +6042,6 @@ namespace SUP
 
         private void btnMute_Click(object sender, EventArgs e)
         {
-            if (System.IO.File.Exists(@"GET_ROOTS_BY_ADDRESS") || System.IO.File.Exists(@"GET_OBJECT_BY_ADDRESS") || System.IO.File.Exists(@"GET_OBJECTS_BY_ADDRESS")) { MessageBox.Show("Please wait for the search to complete.", "Notification"); return; }
 
             if (btnMute.Text == "mute")
             {
@@ -6073,7 +6066,6 @@ namespace SUP
 
         private void btnBlock_Click(object sender, EventArgs e)
         {
-            if (System.IO.File.Exists(@"GET_ROOTS_BY_ADDRESS") || System.IO.File.Exists(@"GET_OBJECT_BY_ADDRESS") || System.IO.File.Exists(@"GET_OBJECTS_BY_ADDRESS")) { MessageBox.Show("Please wait for the search to complete.", "Notification"); return; }
 
             DialogResult result = MessageBox.Show("Are you sure!? Blocking will attempt to remove all associated files!", "Confirmation", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
 
@@ -6175,7 +6167,6 @@ namespace SUP
 
         private void btnHome_Click(object sender, EventArgs e)
         {
-            if (System.IO.File.Exists(@"GET_ROOTS_BY_ADDRESS") || System.IO.File.Exists(@"GET_OBJECT_BY_ADDRESS") || System.IO.File.Exists(@"GET_OBJECTS_BY_ADDRESS")) { MessageBox.Show("Please wait for the search to complete.", "Notification"); return; }
             friendClicked = false;
             try
             {
@@ -6251,7 +6242,6 @@ namespace SUP
 
         private void btnJukeBox_Click(object sender, EventArgs e)
         {
-            if (System.IO.File.Exists(@"GET_ROOTS_BY_ADDRESS") || System.IO.File.Exists(@"GET_OBJECT_BY_ADDRESS") || System.IO.File.Exists(@"GET_OBJECTS_BY_ADDRESS")) { MessageBox.Show("Please wait for the search to complete.", "Notification"); return; }
 
             btnJukeBox.Enabled = false;
 
@@ -6276,7 +6266,6 @@ namespace SUP
 
         private void btnVideoSearch_Click(object sender, EventArgs e)
         {
-            if (System.IO.File.Exists(@"GET_ROOTS_BY_ADDRESS") || System.IO.File.Exists(@"GET_OBJECT_BY_ADDRESS") || System.IO.File.Exists(@"GET_OBJECTS_BY_ADDRESS")) { MessageBox.Show("Please wait for the search to complete.", "Notification"); return; }
 
             btnVideoSearch.Enabled = false;
 
@@ -6296,7 +6285,6 @@ namespace SUP
 
         private void btnInquirySearch_Click(object sender, EventArgs e)
         {
-            if (System.IO.File.Exists(@"GET_ROOTS_BY_ADDRESS") || System.IO.File.Exists(@"GET_OBJECT_BY_ADDRESS") || System.IO.File.Exists(@"GET_OBJECTS_BY_ADDRESS")) { MessageBox.Show("Please wait for the search to complete.", "Notification"); return; }
             btnVideoSearch.Enabled = false;
 
             if (profileURN.Links[0].LinkData != null)
