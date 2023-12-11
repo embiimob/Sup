@@ -165,7 +165,7 @@ namespace SUP
             // 
             // btnTestConnection
             // 
-            this.btnTestConnection.Location = new System.Drawing.Point(386, 28);
+            this.btnTestConnection.Location = new System.Drawing.Point(368, 29);
             this.btnTestConnection.Name = "btnTestConnection";
             this.btnTestConnection.Size = new System.Drawing.Size(86, 23);
             this.btnTestConnection.TabIndex = 21;
@@ -184,9 +184,9 @@ namespace SUP
             // 
             // txtbalance
             // 
-            this.txtbalance.Location = new System.Drawing.Point(386, 83);
+            this.txtbalance.Location = new System.Drawing.Point(468, 34);
             this.txtbalance.Name = "txtbalance";
-            this.txtbalance.Size = new System.Drawing.Size(86, 20);
+            this.txtbalance.Size = new System.Drawing.Size(127, 20);
             this.txtbalance.TabIndex = 22;
             // 
             // txtSearchAddress
@@ -401,7 +401,7 @@ namespace SUP
             // label14
             // 
             this.label14.AutoSize = true;
-            this.label14.Location = new System.Drawing.Point(383, 67);
+            this.label14.Location = new System.Drawing.Point(465, 18);
             this.label14.Name = "label14";
             this.label14.Size = new System.Drawing.Size(45, 13);
             this.label14.TabIndex = 39;
@@ -623,7 +623,7 @@ namespace SUP
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(497, 85);
+            this.label2.Location = new System.Drawing.Point(494, 370);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(26, 13);
             this.label2.TabIndex = 69;
@@ -632,7 +632,7 @@ namespace SUP
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(495, 53);
+            this.label1.Location = new System.Drawing.Point(492, 338);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(21, 13);
             this.label1.TabIndex = 68;
@@ -640,7 +640,7 @@ namespace SUP
             // 
             // txtSkip
             // 
-            this.txtSkip.Location = new System.Drawing.Point(524, 83);
+            this.txtSkip.Location = new System.Drawing.Point(521, 368);
             this.txtSkip.Name = "txtSkip";
             this.txtSkip.Size = new System.Drawing.Size(74, 20);
             this.txtSkip.TabIndex = 67;
@@ -648,7 +648,7 @@ namespace SUP
             // 
             // txtQty
             // 
-            this.txtQty.Location = new System.Drawing.Point(525, 53);
+            this.txtQty.Location = new System.Drawing.Point(522, 338);
             this.txtQty.Name = "txtQty";
             this.txtQty.Size = new System.Drawing.Size(73, 20);
             this.txtQty.TabIndex = 66;
@@ -749,7 +749,7 @@ namespace SUP
             // chkVerbose
             // 
             this.chkVerbose.AutoSize = true;
-            this.chkVerbose.Location = new System.Drawing.Point(524, 26);
+            this.chkVerbose.Location = new System.Drawing.Point(534, 198);
             this.chkVerbose.Name = "chkVerbose";
             this.chkVerbose.Size = new System.Drawing.Size(64, 17);
             this.chkVerbose.TabIndex = 55;

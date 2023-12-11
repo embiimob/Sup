@@ -59,12 +59,33 @@ namespace SUP
             InitializeComponent();
             supFlow.MouseWheel += supFlow_MouseWheel;
             supPrivateFlow.MouseWheel += supPrivateFlow_MouseWheel;
+
+            System.Windows.Forms.ToolTip myTooltip = new System.Windows.Forms.ToolTip();
+            myTooltip.SetToolTip(btnLive, "click 🧿 to enable or disable realtime monitoring.");
+            myTooltip.SetToolTip(btnMint, "click  💎 to open the sup profile and object minting menu.\nif 🔍 click to reload the object search panel.");
+            myTooltip.SetToolTip(btnJukeBox, "click 🎵 to open the jukebox audio searching tool.\nthe active profile will be searched by default.");
+            myTooltip.SetToolTip(btnBlock, "click to attempt to remove and block all transactions signed by the active profile.\n\nnote: signature blocks must be removed from the workbench.");
+            myTooltip.SetToolTip(btnConnections, "click 🗝 to open the sup connections panel.\n\nfrom the connection panel you can:\nlaunch all 5 blockchains included with sup\nenable or disable various user preferences\nenable the IPFS dameon and perform related functions\npurge and clear cached data, blocks and mutes.");
+            myTooltip.SetToolTip(btnDisco, "click 📣 to open the sup direct messaging panel.\nthe to: field is prepopulated with the active profile address.\nclick on 🤐 before clicking 📣 to send the active profile a private message\n\nnote: search for your own local profile first to prepopulate the from: field.");
+            myTooltip.SetToolTip(btnFollow, "click to add the currently active profile or #search term to your follow list.");
+            myTooltip.SetToolTip(btnHome, "click to view the active profile's link list if any have been published.");
+            myTooltip.SetToolTip(btnInquirySearch, "click ⁉️ to open the sup poll searching tool.\nthe active profile will be searched by default.");
+            myTooltip.SetToolTip(btnMute, "click to mute or unmute the active profile.\nmuting prevents any further sup messages signed by their address from being displayed.");
+            myTooltip.SetToolTip(btnPrivateMessage, "click 🤐 to view the active profile's private messages if it's private key exists in your local wallet.\nclick 🤐 before clicking 📣 to send the active profile a direct private message.\n\nnote: your direct private messages are not viewable after sending.");
+            myTooltip.SetToolTip(btnPublicMessage, "click 😍 to view the active profile's public messages.\nclick 😍 before clicking 📣 to send the active profile a public message.");
+            myTooltip.SetToolTip(btnSkipAudio, "click ⏩ skip to skip the currently playing audio file while in live monitoring mode.");
+            myTooltip.SetToolTip(btnVideoSearch, "click 🎬 to open the supflix video searching tool.\nthe active profile will be searched by default.");
+            myTooltip.SetToolTip(btnWorkBench, "click ⚙️ to open the sup workbench panel.\n the workbench is full of tools and metrics to help you understand most sup function calls.");
+            myTooltip.SetToolTip(lblProcessHeight, "the total amount of transactions associated with the active profile.\nincludes social media posts as well as object mints and trades.");
+            myTooltip.SetToolTip(btnCommunityFeed, "click 🌆 to see the top 50 posts from all of the profiles you are following in the order that they were posted.");
+            myTooltip.SetToolTip(btnMainnetSwitch, "click to toggle all sup functions between bitcoin testnet (green) and bitcoin mainnet (orange)");
+
         }
 
         private void supFlow_MouseWheel(object sender, MouseEventArgs e)
         {
 
-            if (refreshFriendFeed.Enabled == false || btnPublicMessage.Enabled == false || btnPrivateMessage.Enabled == false) { return; }
+            if (btnCommunityFeed.Enabled == false || btnPublicMessage.Enabled == false || btnPrivateMessage.Enabled == false) { return; }
 
             if (btnPrivateMessage.BackColor == System.Drawing.Color.Blue) { btnPrivateMessage.BackColor = System.Drawing.Color.White; btnPrivateMessage.ForeColor = System.Drawing.Color.Black; btnPublicMessage.BackColor = System.Drawing.Color.Blue; btnPublicMessage.ForeColor = System.Drawing.Color.Yellow; }
 
@@ -84,9 +105,9 @@ namespace SUP
                 else
                 {
 
-                    if (refreshFriendFeed.BackColor == System.Drawing.Color.Blue)
+                    if (btnCommunityFeed.BackColor == System.Drawing.Color.Blue)
                     {
-                        refreshFriendFeed.PerformClick();
+                        btnCommunityFeed.PerformClick();
                     }
                 }
             }
@@ -104,7 +125,7 @@ namespace SUP
 
         private void supPrivateFlow_MouseWheel(object sender, MouseEventArgs e)
         {
-            if (refreshFriendFeed.Enabled == false || btnPublicMessage.Enabled == false || btnPrivateMessage.Enabled == false) { return; }
+            if (btnCommunityFeed.Enabled == false || btnPublicMessage.Enabled == false || btnPrivateMessage.Enabled == false) { return; }
 
             if (btnPublicMessage.BackColor == System.Drawing.Color.Blue) { btnPublicMessage.BackColor = System.Drawing.Color.White; btnPublicMessage.ForeColor = System.Drawing.Color.Black; btnPrivateMessage.BackColor = System.Drawing.Color.Blue; btnPrivateMessage.ForeColor = System.Drawing.Color.Yellow; }
 
@@ -2857,7 +2878,7 @@ namespace SUP
         {
 
             // sorry cannot run two searches at a time
-            if (refreshFriendFeed.Enabled == false || btnPublicMessage.Enabled == false || btnPrivateMessage.Enabled == false) { return; }
+            if (btnCommunityFeed.Enabled == false || btnPublicMessage.Enabled == false || btnPrivateMessage.Enabled == false) { return; }
             
             this.Invoke((MethodInvoker)delegate
             {
@@ -3641,7 +3662,7 @@ namespace SUP
         private void RefreshPrivateSupMessages()
         {
             // sorry cannot run two searches at a time
-            if (refreshFriendFeed.Enabled == false || btnPublicMessage.Enabled == false || btnPrivateMessage.Enabled == false) { return; }
+            if (btnCommunityFeed.Enabled == false || btnPublicMessage.Enabled == false || btnPrivateMessage.Enabled == false) { return; }
             supPrivateFlow.SuspendLayout();
             // Clear controls if no messages have been displayed yet
             if (numPrivateMessagesDisplayed == 0)
@@ -4309,12 +4330,12 @@ namespace SUP
         private void RefreshCommunityMessages()
         {
             // sorry cannot run two searches at a time
-            if (refreshFriendFeed.Enabled == false || btnPublicMessage.Enabled == false || btnPrivateMessage.Enabled == false) { return; }
+            if (btnCommunityFeed.Enabled == false || btnPublicMessage.Enabled == false || btnPrivateMessage.Enabled == false) { return; }
             supFlow.SuspendLayout();
             if (System.IO.File.Exists(@"GET_OBJECT_BY_ADDRESS") || System.IO.File.Exists(@"GET_OBJECTS_BY_ADDRESS")) { MessageBox.Show("Please wait for the search to complete.", "Notification"); return; }
 
-            refreshFriendFeed.BackColor = System.Drawing.Color.Blue;
-            refreshFriendFeed.ForeColor = System.Drawing.Color.Yellow;
+            btnCommunityFeed.BackColor = System.Drawing.Color.Blue;
+            btnCommunityFeed.ForeColor = System.Drawing.Color.Yellow;
             btnPublicMessage.BackColor = System.Drawing.Color.White;
             btnPrivateMessage.BackColor = System.Drawing.Color.White;
             btnPublicMessage.ForeColor = System.Drawing.Color.Black;
@@ -4322,7 +4343,7 @@ namespace SUP
 
             this.Invoke((MethodInvoker)delegate
             {
-                refreshFriendFeed.Enabled = false;
+                btnCommunityFeed.Enabled = false;
 
                 if (panel1.Visible)
                 {
@@ -4678,7 +4699,7 @@ namespace SUP
                     this.Invoke((MethodInvoker)delegate
                 {
                     supFlow.ResumeLayout();
-                    refreshFriendFeed.Enabled = true;
+                    btnCommunityFeed.Enabled = true;
                 });
 
                 });
@@ -4689,7 +4710,7 @@ namespace SUP
                 this.Invoke((MethodInvoker)delegate
                     {
                         supFlow.ResumeLayout();
-                        refreshFriendFeed.Enabled = true;
+                        btnCommunityFeed.Enabled = true;
                     });
             }
 
@@ -5840,8 +5861,8 @@ namespace SUP
         private void btnPublicMessage_Click(object sender, EventArgs e)
         {
 
-            refreshFriendFeed.BackColor = System.Drawing.Color.White;
-            refreshFriendFeed.ForeColor = System.Drawing.Color.Black;
+            btnCommunityFeed.BackColor = System.Drawing.Color.White;
+            btnCommunityFeed.ForeColor = System.Drawing.Color.Black;
             RefreshSupMessages();
             if (btnPublicMessage.BackColor == Color.White)
             {
@@ -5856,7 +5877,7 @@ namespace SUP
         private void RefreshCommunityMessages_Click(object sender, EventArgs e)
         {
 
-            refreshFriendFeed.BackColor = System.Drawing.Color.Blue; refreshFriendFeed.ForeColor = System.Drawing.Color.Yellow;
+            btnCommunityFeed.BackColor = System.Drawing.Color.Blue; btnCommunityFeed.ForeColor = System.Drawing.Color.Yellow;
 
 
             RefreshCommunityMessages();
@@ -5887,8 +5908,8 @@ namespace SUP
 
             btnPublicMessage.BackColor = Color.White;
             btnPublicMessage.ForeColor = Color.Black;
-            refreshFriendFeed.BackColor = Color.White;
-            refreshFriendFeed.ForeColor = Color.Black;
+            btnCommunityFeed.BackColor = Color.White;
+            btnCommunityFeed.ForeColor = Color.Black;
         }
 
         private void btnRefresh_Click(object sender, EventArgs e)
@@ -5956,7 +5977,7 @@ namespace SUP
             friendClicked = true;
 
             //if any current searches are loading you got to wait.  
-            if (!btnPrivateMessage.Enabled || !btnPrivateMessage.Enabled || !refreshFriendFeed.Enabled)
+            if (!btnPrivateMessage.Enabled || !btnPrivateMessage.Enabled || !btnCommunityFeed.Enabled)
             {
                 System.Media.SystemSounds.Beep.Play();
                 return;
@@ -5980,8 +6001,8 @@ namespace SUP
                     numMessagesDisplayed = 0;
                     numFriendFeedsDisplayed = 0;
                     numPrivateMessagesDisplayed = 0;
-                    refreshFriendFeed.BackColor = System.Drawing.Color.White;
-                    refreshFriendFeed.ForeColor = System.Drawing.Color.Black;
+                    btnCommunityFeed.BackColor = System.Drawing.Color.White;
+                    btnCommunityFeed.ForeColor = System.Drawing.Color.Black;
                     btnPrivateMessage.BackColor = System.Drawing.Color.White;
                     btnPrivateMessage.ForeColor = System.Drawing.Color.Black;
                     btnPublicMessage.BackColor = Color.Blue;
@@ -6174,8 +6195,8 @@ namespace SUP
 
                 MakeActiveProfile(profileURN.Links[0].LinkData.ToString());
                 numMessagesDisplayed = 0;
-                refreshFriendFeed.BackColor = System.Drawing.Color.White;
-                refreshFriendFeed.ForeColor = System.Drawing.Color.Black;
+                btnCommunityFeed.BackColor = System.Drawing.Color.White;
+                btnCommunityFeed.ForeColor = System.Drawing.Color.Black;
             }
             catch { }
         }
@@ -6321,9 +6342,9 @@ namespace SUP
             profileURN.Text = "anon"; profileBIO.Text = ""; profileCreatedDate.Text = ""; profileIMG.ImageLocation = null; lblProcessHeight.Text = ""; profileURN.Links[0].LinkData = null; profileURN.Links[0].Tag = ""; profileIMG.Tag = ""; profileOwner.ImageLocation = null; profileOwner.Tag = null;
             supFlow.Controls.Clear();
 
-            if (imgBTCSwitch.ImageLocation == @"includes/BCT_Logo.png")
+            if (btnMainnetSwitch.ImageLocation == @"includes/BCT_Logo.png")
             {
-                imgBTCSwitch.ImageLocation = @"includes/BC_Logo.png";
+                btnMainnetSwitch.ImageLocation = @"includes/BC_Logo.png";
                 mainnetURL = @"http://127.0.0.1:8332";
                 mainnetLogin = "good-user";
                 mainnetPassword = "better-password";
@@ -6373,7 +6394,7 @@ namespace SUP
             }
             else
             {
-                imgBTCSwitch.ImageLocation = @"includes/BCT_Logo.png";
+                btnMainnetSwitch.ImageLocation = @"includes/BCT_Logo.png";
                 mainnetURL = @"http://127.0.0.1:18332";
                 mainnetLogin = "good-user";
                 mainnetPassword = "better-password";

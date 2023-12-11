@@ -34,7 +34,7 @@ namespace SUP
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(SupMain));
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.splitContainer2 = new System.Windows.Forms.SplitContainer();
-            this.imgBTCSwitch = new System.Windows.Forms.PictureBox();
+            this.btnMainnetSwitch = new System.Windows.Forms.PictureBox();
             this.btnConnections = new System.Windows.Forms.Button();
             this.btnLive = new System.Windows.Forms.Button();
             this.btnWorkBench = new System.Windows.Forms.Button();
@@ -44,7 +44,7 @@ namespace SUP
             this.btnVideoSearch = new System.Windows.Forms.Button();
             this.btnSkipAudio = new System.Windows.Forms.Button();
             this.btnJukeBox = new System.Windows.Forms.Button();
-            this.refreshFriendFeed = new System.Windows.Forms.Button();
+            this.btnCommunityFeed = new System.Windows.Forms.Button();
             this.profileOwner = new System.Windows.Forms.PictureBox();
             this.supFlow = new System.Windows.Forms.FlowLayoutPanel();
             this.lblAdultsOnly = new System.Windows.Forms.Label();
@@ -69,7 +69,7 @@ namespace SUP
             this.splitContainer2.Panel1.SuspendLayout();
             this.splitContainer2.Panel2.SuspendLayout();
             this.splitContainer2.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.imgBTCSwitch)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.btnMainnetSwitch)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.profileOwner)).BeginInit();
             this.supFlow.SuspendLayout();
             this.panel1.SuspendLayout();
@@ -106,7 +106,7 @@ namespace SUP
             // 
             // splitContainer2.Panel1
             // 
-            this.splitContainer2.Panel1.Controls.Add(this.imgBTCSwitch);
+            this.splitContainer2.Panel1.Controls.Add(this.btnMainnetSwitch);
             this.splitContainer2.Panel1.Controls.Add(this.btnConnections);
             this.splitContainer2.Panel1.Controls.Add(this.btnLive);
             this.splitContainer2.Panel1.Controls.Add(this.btnWorkBench);
@@ -120,7 +120,7 @@ namespace SUP
             this.splitContainer2.Panel2.Controls.Add(this.btnVideoSearch);
             this.splitContainer2.Panel2.Controls.Add(this.btnSkipAudio);
             this.splitContainer2.Panel2.Controls.Add(this.btnJukeBox);
-            this.splitContainer2.Panel2.Controls.Add(this.refreshFriendFeed);
+            this.splitContainer2.Panel2.Controls.Add(this.btnCommunityFeed);
             this.splitContainer2.Panel2.Controls.Add(this.profileOwner);
             this.splitContainer2.Panel2.Controls.Add(this.supFlow);
             this.splitContainer2.Panel2.Controls.Add(this.panel1);
@@ -133,17 +133,17 @@ namespace SUP
             this.splitContainer2.TabIndex = 0;
             this.splitContainer2.TabStop = false;
             // 
-            // imgBTCSwitch
+            // btnMainnetSwitch
             // 
-            this.imgBTCSwitch.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.imgBTCSwitch.ImageLocation = "includes/BCT_Logo.png";
-            this.imgBTCSwitch.Location = new System.Drawing.Point(6, 689);
-            this.imgBTCSwitch.Name = "imgBTCSwitch";
-            this.imgBTCSwitch.Size = new System.Drawing.Size(56, 40);
-            this.imgBTCSwitch.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
-            this.imgBTCSwitch.TabIndex = 0;
-            this.imgBTCSwitch.TabStop = false;
-            this.imgBTCSwitch.Click += new System.EventHandler(this.imgBTCSwitch_Click);
+            this.btnMainnetSwitch.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.btnMainnetSwitch.ImageLocation = "includes/BCT_Logo.png";
+            this.btnMainnetSwitch.Location = new System.Drawing.Point(6, 689);
+            this.btnMainnetSwitch.Name = "btnMainnetSwitch";
+            this.btnMainnetSwitch.Size = new System.Drawing.Size(56, 40);
+            this.btnMainnetSwitch.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
+            this.btnMainnetSwitch.TabIndex = 0;
+            this.btnMainnetSwitch.TabStop = false;
+            this.btnMainnetSwitch.Click += new System.EventHandler(this.imgBTCSwitch_Click);
             // 
             // btnConnections
             // 
@@ -258,17 +258,17 @@ namespace SUP
             this.btnJukeBox.UseVisualStyleBackColor = true;
             this.btnJukeBox.Click += new System.EventHandler(this.btnJukeBox_Click);
             // 
-            // refreshFriendFeed
+            // btnCommunityFeed
             // 
-            this.refreshFriendFeed.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.refreshFriendFeed.Font = new System.Drawing.Font("Segoe UI Emoji", 13.8F);
-            this.refreshFriendFeed.Location = new System.Drawing.Point(54, 692);
-            this.refreshFriendFeed.Name = "refreshFriendFeed";
-            this.refreshFriendFeed.Size = new System.Drawing.Size(55, 40);
-            this.refreshFriendFeed.TabIndex = 96;
-            this.refreshFriendFeed.Text = "🌆";
-            this.refreshFriendFeed.UseVisualStyleBackColor = true;
-            this.refreshFriendFeed.Click += new System.EventHandler(this.RefreshCommunityMessages_Click);
+            this.btnCommunityFeed.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.btnCommunityFeed.Font = new System.Drawing.Font("Segoe UI Emoji", 13.8F);
+            this.btnCommunityFeed.Location = new System.Drawing.Point(54, 692);
+            this.btnCommunityFeed.Name = "btnCommunityFeed";
+            this.btnCommunityFeed.Size = new System.Drawing.Size(55, 40);
+            this.btnCommunityFeed.TabIndex = 96;
+            this.btnCommunityFeed.Text = "🌆";
+            this.btnCommunityFeed.UseVisualStyleBackColor = true;
+            this.btnCommunityFeed.Click += new System.EventHandler(this.RefreshCommunityMessages_Click);
             // 
             // profileOwner
             // 
@@ -293,7 +293,7 @@ namespace SUP
             this.supFlow.Location = new System.Drawing.Point(9, 159);
             this.supFlow.Name = "supFlow";
             this.supFlow.Padding = new System.Windows.Forms.Padding(0, 3, 0, 0);
-            this.supFlow.Size = new System.Drawing.Size(584, 527);
+            this.supFlow.Size = new System.Drawing.Size(587, 527);
             this.supFlow.TabIndex = 86;
             // 
             // lblAdultsOnly
@@ -443,7 +443,7 @@ namespace SUP
             // 
             this.btnDisco.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.btnDisco.Font = new System.Drawing.Font("Segoe UI Emoji", 13.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnDisco.Location = new System.Drawing.Point(408, 692);
+            this.btnDisco.Location = new System.Drawing.Point(411, 692);
             this.btnDisco.Name = "btnDisco";
             this.btnDisco.Size = new System.Drawing.Size(56, 40);
             this.btnDisco.TabIndex = 85;
@@ -457,7 +457,7 @@ namespace SUP
             this.btnPrivateMessage.BackColor = System.Drawing.Color.White;
             this.btnPrivateMessage.Font = new System.Drawing.Font("Segoe UI Emoji", 13.8F);
             this.btnPrivateMessage.ForeColor = System.Drawing.Color.Black;
-            this.btnPrivateMessage.Location = new System.Drawing.Point(532, 692);
+            this.btnPrivateMessage.Location = new System.Drawing.Point(535, 692);
             this.btnPrivateMessage.Name = "btnPrivateMessage";
             this.btnPrivateMessage.Size = new System.Drawing.Size(56, 40);
             this.btnPrivateMessage.TabIndex = 84;
@@ -471,7 +471,7 @@ namespace SUP
             this.btnPublicMessage.BackColor = System.Drawing.Color.White;
             this.btnPublicMessage.Font = new System.Drawing.Font("Segoe UI Emoji", 13.8F);
             this.btnPublicMessage.ForeColor = System.Drawing.Color.Black;
-            this.btnPublicMessage.Location = new System.Drawing.Point(470, 692);
+            this.btnPublicMessage.Location = new System.Drawing.Point(473, 692);
             this.btnPublicMessage.Name = "btnPublicMessage";
             this.btnPublicMessage.Size = new System.Drawing.Size(56, 40);
             this.btnPublicMessage.TabIndex = 83;
@@ -503,7 +503,7 @@ namespace SUP
             this.splitContainer2.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer2)).EndInit();
             this.splitContainer2.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.imgBTCSwitch)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.btnMainnetSwitch)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.profileOwner)).EndInit();
             this.supFlow.ResumeLayout(false);
             this.panel1.ResumeLayout(false);
@@ -539,13 +539,13 @@ namespace SUP
         private System.Windows.Forms.Label lblAdultsOnly;
         private System.Windows.Forms.FlowLayoutPanel supFlow;
         private System.Windows.Forms.PictureBox profileOwner;
-        private System.Windows.Forms.Button refreshFriendFeed;
+        private System.Windows.Forms.Button btnCommunityFeed;
         private System.Windows.Forms.Label lblProcessHeight;
         private System.Windows.Forms.Button btnHome;
         private System.Windows.Forms.Button btnJukeBox;
         private System.Windows.Forms.Button btnSkipAudio;
         private System.Windows.Forms.Button btnVideoSearch;
         private System.Windows.Forms.Button btnInquirySearch;
-        private System.Windows.Forms.PictureBox imgBTCSwitch;
+        private System.Windows.Forms.PictureBox btnMainnetSwitch;
     }
 }

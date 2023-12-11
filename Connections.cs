@@ -15,6 +15,37 @@ namespace SUP
         public Connections()
         {
             InitializeComponent();
+
+            System.Windows.Forms.ToolTip myTooltip = new System.Windows.Forms.ToolTip();
+            myTooltip.SetToolTip(chkBTC, "initiate a full reindex of the bitcoin mainnet on launch. this is usefull in the case of block corruption.");
+            myTooltip.SetToolTip(chkBTCT, "initiate a full reindex of the bitcoin testnet on launch. this is usefull in the case of block corruption.");
+            myTooltip.SetToolTip(chkDOG, "initiate a full reindex of the dogecoin mainnet on launch. this is usefull in the case of block corruption.");
+            myTooltip.SetToolTip(chkLTC, "initiate a full reindex of the litecoin mainnet on launch. this is usefull in the case of block corruption.");
+            myTooltip.SetToolTip(chkMZC, "initiate a full reindex of the mazacoin mainnet on launch. this is usefull in the case of block corruption.");
+
+            myTooltip.SetToolTip(chkScanBTC, "initiate a full rescan of the bitcoin mainnet on launch.\nthis is usefull after importing an address into your walle.");
+            myTooltip.SetToolTip(chkScanBTCT, "initiate a full rescan of the bitcoin testnet on launch.\nthis is usefull after importing an address into your wallet.");
+            myTooltip.SetToolTip(chkScanDOG, "initiate a full rescan of the dogecoin mainnet on launch.\nthis is usefull after importing an address into your wallet.");
+            myTooltip.SetToolTip(chkScanLTC, "initiate a full rescan of the litecoin mainnet on launch.\nthis is usefull after importing an address into your wallet.");
+            myTooltip.SetToolTip(chkScanMZC, "initiate a full rescan of the mazacoin mainnet on launch.\nthis is usefull after importing an address into your wallet.");
+
+            myTooltip.SetToolTip(btnTMP, "launches the bitcoin testnet blockchain. displays active if already running.");
+            myTooltip.SetToolTip(btnBTC, "launches the bitcoin mainnet blockchain. displays active if already running.");
+            myTooltip.SetToolTip(btnDOG, "launches the dogecoin mainnet blockchain. displays active if already running.");
+            myTooltip.SetToolTip(btnMZC, "launches the mazacoin mainnet blockchain. displays active if already running.");
+            myTooltip.SetToolTip(btnLTC, "launches the litecoin mainnet blockchain. displays active if already running.");
+
+            myTooltip.SetToolTip(btnIPFS, "launches the IPFS dameon. displays active if currently running.");
+            myTooltip.SetToolTip(chkLiveFeedPinning, "check this box to pin all images and videos displayed in your live feed.\nthis help prevent them from being purged from the network.");
+            myTooltip.SetToolTip(btnAddIPFS, "adds all files currently found in your sup ipfs cache to the IPFS network.\nthis is helpfull if your files have been purged from the network.");
+            myTooltip.SetToolTip(btnPinIPFS, "pins all files currently found in your sup ipfs cache to your local IPFS store.\nthis speeds up access to the files and helps prevent them from being purged from the network.");
+            myTooltip.SetToolTip(btnUnpinIPFS, "removes the pin from all files found in your sup ipfs cache.\nthis is helpful if you want to purge them from the IFPS network.");
+            myTooltip.SetToolTip(btnClearIPFSisLoadingCache, "this removes any blocks preventing sup from launching a new process to download something from IPFS.\nsup will not try to download something if it thinks it's already trying to.");
+            myTooltip.SetToolTip(btnPurgeIPFS, "deletes all files found in the sup ipfs cache.\n\nnote: this does not remove the IPFS dameon hash data.\nto remove all IPFS data, manually delete the .ipfs folder found in C:\\Users\\user_name.");
+            myTooltip.SetToolTip(btnPurge, "this removes all cached files and configuration data found in the sup root folder");
+            myTooltip.SetToolTip(btnPurgeBlock, "this removes the blocks from all blocked transaction ids and addresses.");
+            myTooltip.SetToolTip(btnPurgeMute, "this removes all address based muting that is currently ennabled.");
+           
         }
 
         private void btnMainConnection_Click(object sender, EventArgs e)
@@ -36,6 +67,7 @@ namespace SUP
             };
 
             if (chkBTCT.Checked) { startInfo.Arguments = startInfo.Arguments + " -reindex"; }
+            if (chkScanBTCT.Checked) { startInfo.Arguments = startInfo.Arguments + " -rescan"; }
 
             Process.Start(startInfo);
         }
@@ -57,6 +89,7 @@ namespace SUP
                 Arguments = $"-txindex=1 -addrindex=1 -datadir={bitcoinDirectory} -server -rpcuser=good-user -rpcpassword=better-password -rpcport=8332"
             };
             if (chkBTC.Checked) { startInfo.Arguments = startInfo.Arguments + " -reindex"; }
+            if (chkScanBTC.Checked) { startInfo.Arguments = startInfo.Arguments + " -rescan"; }
 
             Process.Start(startInfo);
         }
@@ -79,6 +112,7 @@ namespace SUP
             };
 
             if (chkMZC.Checked) { startInfo.Arguments = startInfo.Arguments + " -reindex"; }
+            if (chkScanMZC.Checked) { startInfo.Arguments = startInfo.Arguments + " -rescan"; }
 
             Process.Start(startInfo);
         }
@@ -101,6 +135,7 @@ namespace SUP
             };
 
             if (chkLTC.Checked) { startInfo.Arguments = startInfo.Arguments + " -reindex"; }
+            if (chkScanLTC.Checked) { startInfo.Arguments = startInfo.Arguments + " -rescan"; }
 
             Process.Start(startInfo);
         }
@@ -123,6 +158,7 @@ namespace SUP
             };
 
             if (chkDOG.Checked) { startInfo.Arguments = startInfo.Arguments + " -reindex"; }
+            if (chkScanDOG.Checked) { startInfo.Arguments = startInfo.Arguments + " -rescan"; }
 
             Process.Start(startInfo);
         }
@@ -164,9 +200,9 @@ namespace SUP
                     {
                         this.Invoke((MethodInvoker)delegate
                     {
-                        btnMainConnection.BackColor = Color.Blue;
-                        btnMainConnection.ForeColor = Color.Yellow;
-                        btnMainConnection.Text = "active";
+                        btnTMP.BackColor = Color.Blue;
+                        btnTMP.ForeColor = Color.Yellow;
+                        btnTMP.Text = "active";
                     });
                     }
                 }
@@ -277,30 +313,30 @@ namespace SUP
             string output = process.StandardOutput.ReadToEnd();
             if (output.Length > 0)
             {
-                button1.Text = "IPFS dameon active";
+                btnIPFS.Text = "IPFS dameon active";
                 btnPinIPFS.Enabled = true;
                 btnUnpinIPFS.Enabled = true;
-                btnIPFSAdd.Enabled = true;
-                button1.ForeColor = Color.Yellow;
-                button1.BackColor = Color.Blue;
+                btnAddIPFS.Enabled = true;
+                btnIPFS.ForeColor = Color.Yellow;
+                btnIPFS.BackColor = Color.Blue;
 
             }
             else
             {
-                button1.Text = "enable IPFS dameon";
-                button1.ForeColor = Color.Black;
-                button1.BackColor = Color.White;
+                btnIPFS.Text = "enable IPFS dameon";
+                btnIPFS.ForeColor = Color.Black;
+                btnIPFS.BackColor = Color.White;
             }
 
         }
 
         private void btnIPFS_Click(object sender, EventArgs e)
         {
-            if (button1.Text == "IPFS dameon active")
+            if (btnIPFS.Text == "IPFS dameon active")
             {
-                button1.Text = "enable IPFS dameon";
-                button1.BackColor= Color.White;
-                button1.ForeColor = Color.Black;
+                btnIPFS.Text = "enable IPFS dameon";
+                btnIPFS.BackColor= Color.White;
+                btnIPFS.ForeColor = Color.Black;
 
                 var process = new Process
                 {
@@ -321,9 +357,9 @@ namespace SUP
             }
             else
             {
-                button1.Text = "IPFS dameon active";
-                button1.ForeColor = Color.Yellow;
-                button1.BackColor = Color.Blue;
+                btnIPFS.Text = "IPFS dameon active";
+                btnIPFS.ForeColor = Color.Yellow;
+                btnIPFS.BackColor = Color.Blue;
 
                 var init = new Process
                 {
@@ -351,7 +387,7 @@ namespace SUP
                 process.Start();
                 btnPinIPFS.Enabled = true;
                 btnUnpinIPFS.Enabled = true;
-                btnIPFSAdd.Enabled= true;
+                btnAddIPFS.Enabled= true;
                                 
 
             }
@@ -432,9 +468,9 @@ namespace SUP
                 // Change the text and background color of the button to indicate "pinning" on the UI thread
                 this.Invoke((MethodInvoker)(() =>
                 {
-                    btnIPFSAdd.Text = "adding";
-                    btnIPFSAdd.ForeColor = Color.Yellow;
-                    btnIPFSAdd.BackColor = Color.Blue;
+                    btnAddIPFS.Text = "adding";
+                    btnAddIPFS.ForeColor = Color.Yellow;
+                    btnAddIPFS.BackColor = Color.Blue;
                 }));
 
                 string[] subfolderNames = Directory.GetDirectories("ipfs");
@@ -478,9 +514,9 @@ namespace SUP
                 // Revert the text and background color of the button to the original state on the UI thread
                 this.Invoke((MethodInvoker)(() =>
                 {
-                    btnIPFSAdd.Text = "add cache";
-                    btnIPFSAdd.ForeColor = Color.Black;
-                    btnIPFSAdd.BackColor = Color.White;
+                    btnAddIPFS.Text = "add cache";
+                    btnAddIPFS.ForeColor = Color.Black;
+                    btnAddIPFS.BackColor = Color.White;
                 }));
             }
             catch (Exception ex)
@@ -491,9 +527,9 @@ namespace SUP
                 {
                     this.Invoke((MethodInvoker)(() =>
                     {
-                        btnIPFSAdd.Text = "add cache";
-                        btnIPFSAdd.ForeColor = Color.Black;
-                        btnIPFSAdd.BackColor = Color.White;
+                        btnAddIPFS.Text = "add cache";
+                        btnAddIPFS.ForeColor = Color.Black;
+                        btnAddIPFS.BackColor = Color.White;
                     }));
                 }
                 catch { }
@@ -770,9 +806,6 @@ namespace SUP
             }
         }
 
-        private void panel1_Paint(object sender, PaintEventArgs e)
-        {
-
-        }
+        
     }
 }
