@@ -39,6 +39,22 @@ namespace SUP
             InitializeComponent();
             searchAddress = address;
             if (!testnet) { mainnetURL = @"http://127.0.0.1:8332"; mainnetVersionByte = "0"; }
+
+            System.Windows.Forms.ToolTip myTooltip = new System.Windows.Forms.ToolTip();
+            myTooltip.SetToolTip(btnObjectURN, "enter the case sensitive handle you wish to register.\nkeep it simple.  this is what people must enter to find your profile.");
+            myTooltip.SetToolTip(btnObjectAddress, "click 💎 to generate a sup compliant registration address.\nthis address will be used to hold your profile registration.\nyou may also enter an address that already exists in your local wallet.\nclick 💎 and it will be analysed to be sure it's safe to be used for sup registrations");
+            myTooltip.SetToolTip(btnObjectImage, "click to upload your profile image to IPFS and generate a sup IPFS URL.\nyou may also add prexisting IPFS urls, blockchain urls or http(s) urls\nyour image will appear in the top left picture box if it is valid.\nclick the button until it turns blue to include it in the mint.\n\nsupported image urls include:\nIPFS:ipfs_hash\\filename.jpg\ntransactionid\\filename.gif (refrences current mainchain)\nBTC:transactionid\\filename.bmp (references bitcoin sidechain)\nMZC:transactionid\\filename.jpg (references mazacoin sidechain)\nLTC:transactionid\\filename.gif (references litecoin sidechain)\nDOG:transactionid\\filename.bmp (references dogecoin sidechain)");
+            myTooltip.SetToolTip(btnFirstName, "enter an optional first namethe bu.\nclick the button until it turns blue to include it in the mint.");
+            myTooltip.SetToolTip(btnMiddleName, "enter an optional middle name.\nclick the button until it turns blue to include it in the mint.");
+            myTooltip.SetToolTip(btnLastName, "enter an optional last name.\nclick the button until it turns blue to include it in the mint.");
+            myTooltip.SetToolTip(btnSuffix, "enter an optional name suffix.\nclick the button until it turns blue to include it in the mint.");
+            myTooltip.SetToolTip(btnBio, "enter an optional bio which will be displayed next to your profile image.\nclick the button until it turns blue to include it in the mint.");
+            myTooltip.SetToolTip(btnLocation, "enter one or many optional key value pairs that define your location example  planet | earth");
+            myTooltip.SetToolTip(btnURL, "enter one or many optional key value pairs that define links to be displayed on your profile's home menu.\n all url's must be fully qualified example  apertus.io | http://www.apertus.io");
+            myTooltip.SetToolTip(btnMint, "click to mint your profile. a transaction id will be displayed if it was succesfull.\nprofiles are not discoverable until they have at least one confirmation");
+            myTooltip.SetToolTip(btnScan, "click to search for a profile by address.");
+
+
         }
 
         private string GetRandomDelimiter()
