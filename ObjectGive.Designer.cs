@@ -182,7 +182,7 @@
             // txtSignatureAddress
             // 
             this.txtSignatureAddress.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
-            this.txtSignatureAddress.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.txtSignatureAddress.Font = new System.Drawing.Font("Microsoft Sans Serif", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.txtSignatureAddress.ForeColor = System.Drawing.Color.White;
             this.txtSignatureAddress.Location = new System.Drawing.Point(12, 525);
             this.txtSignatureAddress.Multiline = true;
@@ -211,7 +211,7 @@
             // txtObjectAddress
             // 
             this.txtObjectAddress.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
-            this.txtObjectAddress.Font = new System.Drawing.Font("Microsoft Sans Serif", 18F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.txtObjectAddress.Font = new System.Drawing.Font("Microsoft Sans Serif", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.txtObjectAddress.ForeColor = System.Drawing.Color.White;
             this.txtObjectAddress.Location = new System.Drawing.Point(12, 445);
             this.txtObjectAddress.Multiline = true;

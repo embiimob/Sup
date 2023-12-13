@@ -130,7 +130,6 @@ namespace SUP.P2FK
                 {
                     JSONOBJ = System.IO.File.ReadAllText(diskpath + "OBJ.json");
                     objectState = JsonConvert.DeserializeObject<OBJState>(JSONOBJ);
-                    //verbose = objectState.Verbose;
                     fetched = true;
 
                 }

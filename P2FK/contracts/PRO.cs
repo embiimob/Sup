@@ -75,7 +75,6 @@ namespace SUP.P2FK
             try { intProcessHeight = profileState.Id; } catch { }
 
             Root[] objectTransactions;
-           // objectTransactions = Root.GetRootsByAddress(profileaddress, username, password, url, intProcessHeight, 1, versionByte);
 
             if (verbose == true) { intProcessHeight = 0; profileState = new PROState(); }
 
