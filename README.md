@@ -1,7 +1,7 @@
 # Sup!? 
 experimental decentralized state engine
 
-Sup!? (satoshi universal protocol) demonstrates fully trustless, censorship free, social media with private messaging, file shring, DAO voting and tradeable blockchain objects.
+Sup!? (satoshi universal protocol) demonstrates fully trustless, censorship free, social media with private messaging, file sharing, DAO voting and tradeable blockchain objects.
 
 This experiment is using an ancient blockchain protocol called P2FK (Pay to Future Key) invented by http://HugPuddle.org in 2013.
 
