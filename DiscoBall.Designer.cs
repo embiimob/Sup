@@ -193,9 +193,9 @@
             this.label3.AutoSize = true;
             this.label3.Location = new System.Drawing.Point(18, 303);
             this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(163, 13);
+            this.label3.Size = new System.Drawing.Size(324, 13);
             this.label3.TabIndex = 364;
-            this.label3.Text = "URL:  ( HTTP:// , IPFS:  , BTC: )";
+            this.label3.Text = "ENTER URL HERE:  ( HTTP:// ,IPFS:  ,BTC: ,MZC: ,LTC: ,DOG: )";
             // 
             // btnRecord
             // 

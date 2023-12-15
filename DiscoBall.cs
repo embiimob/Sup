@@ -64,6 +64,17 @@ namespace SUP
 
             if (isprivate) { btnEncryptionStatus.Text = "PRIVATE 🤐"; btnInquiry.Visible = false; }
 
+            System.Windows.Forms.ToolTip myTooltip = new System.Windows.Forms.ToolTip();
+            myTooltip.SetToolTip(supMessage, "enter the text of your message here. you can also include searchable #keywords.\nto include #keywords without them showing surround them with <<  >>\nexample << #rad #radical #RAD #RADICAL >>\n\nnote: if you are attaching a gif and you would like to include it in the default gif results\nadd the keyword #gif in your message along with a few #keywords to help other sup users find it.");
+            myTooltip.SetToolTip(btnAttach, "click to attach any url entered in the url text box.  if no url is listed you will be prompted to select a file.\nyour file will be uploaded to IPFS and attached to the message.\nnote: if private your file will be encrypted prior to being uploaded to IPFS and attached.");
+            myTooltip.SetToolTip(btnEMOJI, "click to select and add an emoji to your message.");
+            myTooltip.SetToolTip(btnGIF, "click to select and add a gif to your message.");
+            myTooltip.SetToolTip(btnInquiry, "click to create and add a poll to your message.");
+            myTooltip.SetToolTip(btnPrint, "click to generate a paper message. right click to print or save it to disk.\npaper messages can be sent via US MAIL if private they can only be read by the recipient.\nnote: paper messages require a mobile app to view ( still in development ).");
+            myTooltip.SetToolTip(btnRecord, "click and hold this button to record an audio message.\nrelease the button when finished and it will be attached to your message.\nleft click the attachment to review your recording.\nif you are not happy, right click to remove it and try again.");
+            myTooltip.SetToolTip(btnRefresh, "click to etch your message to the active blockchain");
+            myTooltip.SetToolTip(btnEncryptionStatus, "this indicator informs you if the current message is\npublic ( viewable by everyone ) or private ( viewable by the recipient only )");
+
             ContextMenuStrip contextMenu = new ContextMenuStrip();
 
             // Add a "Save to Disk" menu item
@@ -1202,11 +1213,13 @@ namespace SUP
             // Create a StringBuilder to build the text
             var stringBuilder = new StringBuilder();
 
-            foreach (var kvp in location)
+            if (location != null)
             {
-                stringBuilder.AppendLine($"{kvp.Key} : {kvp.Value}");
+                foreach (var kvp in location)
+                {
+                    stringBuilder.AppendLine($"{kvp.Key} : {kvp.Value}");
+                }
             }
-
             this.Invoke((Action)(() =>
             {
                 supMessage.ForeColor = Color.Black;
