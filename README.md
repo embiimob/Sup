@@ -1,7 +1,7 @@
 # Sup!? 
 experimental decentralized state engine
 
-Sup!? is a demonstration of establishing a decentralized social identity and tracking state changes with public and private comments on immutable blockchain objects in a format familiar to NFT enthusiasts. Experimental Sup!? is currently hardcoded to reference the bitcoin testnet mainchain. A production deployment will be released December 2023. Our goal is to give #teamworld ample time for testing and integrations.
+Sup!? (satoshi universal protocol) demonstrates fully trustless, censorship free, social media with private messaging, file sharing, DAO voting and tradeable blockchain objects.
 
 This experiment is using an ancient blockchain protocol called P2FK (Pay to Future Key) invented by http://HugPuddle.org in 2013.
 
@@ -9,15 +9,15 @@ P2FK was directly inspired by the satoshi uploader  see --> https://cirosantilli
 
 ## **Installation**
 
-1. Download the Sup!? v0.3.4-beta.zip file ( https://github.com/embiimob/Sup/releases/download/Supv0.3.4-beta/Supv0.3.4-beta.zip )
+1. Download Supv0.4.20-beta.zip ( Dropping 12/21/23 )
 2. Create a folder on your **fastest** disk drive with at least **50GB** free (it will be storing the bitcoin testnet blockchain)
 3. Unzip all contents into the folder
-4. Create a shortcut to SUP.exe and launch
+4. Run SUP.exe
 
-**You will need to sync a blockchain to perform your first Sup!? object search**
-1. Click the key button
-2. Launch a full bitcoin testnet mainchain node using the button provided
-3. Launch IPFS using the button provided "enable IPFS pinning"
+**You will need to sync a blockchain to perform your first Sup!? search**
+1. Click the key 🗝️ button
+2. Launch a full bitcoin testnet node by clicking the top launch button
+3. Launch IPFS using the button provided "enable IPFS dameon"
 4. Wait until testnet is fully synced. ( this part will take several hours )
 5. Type #flowersofwar in the main search box and hit enter
 <br />
