@@ -187,6 +187,191 @@ namespace SUP
 
                         if (txtAttach.Text.ToLower().StartsWith("ipfs:")) { imgurn = imgurn.Replace(@"\root\", @"\ipfs\"); }
                     }
+
+
+                    string extension2 = Path.GetExtension(imgurn).ToLower();
+
+                    if (imageExtensions.Contains(extension2))
+                    {
+
+
+                        try
+                        {
+                            Root root = new Root();
+                            Regex regexTransactionId = new Regex(@"\b[0-9a-f]{64}\b");
+                            Match urimatch = regexTransactionId.Match(txtAttach.Text);
+                            string transactionid = urimatch.Value;
+                            switch (txtAttach.Text.Substring(0, 4).ToUpper())
+                            {
+                                case "MZC:":
+
+                                    root = Root.GetRootByTransactionId(transactionid, "good-user", "better-password", @"http://127.0.0.1:12832", "50");
+
+                                    break;
+                                case "BTC:":
+
+                                    root = Root.GetRootByTransactionId(transactionid, "good-user", "better-password", @"http://127.0.0.1:8332", "0");
+
+                                    break;
+                                case "LTC:":
+
+                                    root = Root.GetRootByTransactionId(transactionid, "good-user", "better-password", @"http://127.0.0.1:9332", "48");
+
+                                    break;
+                                case "DOG:":
+
+                                    root = Root.GetRootByTransactionId(transactionid, "good-user", "better-password", @"http://127.0.0.1:22555", "30");
+
+                                    break;
+                                case "IPFS":
+                                    if (txtAttach.Text.Length == 51) { imgurn += @"\artifact"; }
+                                    if (!System.IO.Directory.Exists(@"ipfs/" + txtAttach.Text.Substring(5, 46) + "-build") && !System.IO.File.Exists(@"ipfs/" + txtAttach.Text.Substring(5, 46)))
+                                    {
+
+
+                                        Task ipfsTask = Task.Run(() =>
+                                        {
+                                            Directory.CreateDirectory(@"ipfs/" + txtAttach.Text.Substring(5, 46) + "-build");
+                                            Process process2 = new Process();
+                                            process2.StartInfo.FileName = @"ipfs\ipfs.exe";
+                                            process2.StartInfo.Arguments = "get " + txtAttach.Text.Substring(5, 46) + @" -o ipfs\" + txtAttach.Text.Substring(5, 46);
+                                            process2.Start();
+                                            process2.WaitForExit();
+
+                                            if (System.IO.File.Exists("ipfs/" + txtAttach.Text.Substring(5, 46)))
+                                            {
+                                                try { System.IO.File.Move("ipfs/" + txtAttach.Text.Substring(5, 46), "ipfs/" + txtAttach.Text.Substring(5, 46) + "_tmp"); }
+                                                catch
+                                                {
+
+                                                    System.IO.File.Delete("ipfs/" + txtAttach.Text.Substring(5, 46) + "_tmp");
+                                                    System.IO.File.Move("ipfs/" + txtAttach.Text.Substring(5, 46), "ipfs/" + txtAttach.Text.Substring(5, 46) + "_tmp");
+
+                                                }
+
+                                                string fileName = txtAttach.Text.Replace(@"//", "").Replace(@"\\", "").Substring(51);
+                                                if (fileName == "")
+                                                {
+                                                    fileName = "artifact";
+                                                }
+                                                else { fileName = fileName.Replace(@"/", "").Replace(@"\", ""); }
+                                                Directory.CreateDirectory(@"ipfs/" + txtAttach.Text.Substring(5, 46));
+                                                try { System.IO.File.Move("ipfs/" + txtAttach.Text.Substring(5, 46) + "_tmp", imgurn); } catch { }
+                                            }
+
+
+                                            try
+                                            {
+                                                if (File.Exists("IPFS_PINNING_ENABLED"))
+                                                {
+                                                    Process process3 = new Process
+                                                    {
+                                                        StartInfo = new ProcessStartInfo
+                                                        {
+                                                            FileName = @"ipfs\ipfs.exe",
+                                                            Arguments = "pin add " + txtAttach.Text.Substring(5, 46),
+                                                            UseShellExecute = false,
+                                                            CreateNoWindow = true
+                                                        }
+                                                    };
+                                                    process3.Start();
+                                                }
+                                            }
+                                            catch { }
+
+
+
+                                            try { Directory.Delete(@"ipfs/" + txtAttach.Text.Substring(5, 46)); } catch { }
+                                            try
+                                            {
+                                                Directory.Delete(@"ipfs/" + txtAttach.Text.Substring(5, 46) + "-build");
+                                            }
+                                            catch { }
+
+
+
+                                        });
+
+                                    }
+                                    else
+                                    {
+
+                                    }
+                                    break;
+                                default:
+
+                                    root = Root.GetRootByTransactionId(transactionid, mainnetLogin, mainnetPassword, mainnetURL, mainnetVersionByte);
+
+
+                                    break;
+                            }
+
+
+                        }
+                        catch { }
+
+                        if (File.Exists(imgurn) || (imgurn.ToUpper().StartsWith("HTTP") && extension2 != ""))
+                        {
+
+
+
+
+                            PictureBox pictureBox = new PictureBox();
+
+                            // Set the PictureBox properties
+                            pictureBox.Tag = txtAttach.Text;
+                            pictureBox.SizeMode = PictureBoxSizeMode.StretchImage;
+                            pictureBox.Width = 50;
+                            pictureBox.Height = 50;
+                            pictureBox.ImageLocation = imgurn;
+                            pictureBox.MouseClick += PictureBox_MouseClick;
+                            // Add the PictureBox to the FlowLayoutPanel
+                            this.Invoke((MethodInvoker)delegate
+                            {
+                                flowAttachments.Controls.Add(pictureBox);
+                            });
+
+                        }
+                        else
+                        {
+                            PictureBox pictureBox = new PictureBox();
+
+                            // Set the PictureBox properties
+                            pictureBox.Tag = txtAttach.Text;
+                            pictureBox.SizeMode = PictureBoxSizeMode.StretchImage;
+                            pictureBox.Width = 50;
+                            pictureBox.Height = 50;
+                            pictureBox.ImageLocation = @"includes\HugPuddle.jpg";
+                            pictureBox.MouseClick += PictureBox_MouseClick;
+                            // Add the PictureBox to the FlowLayoutPanel
+                            this.Invoke((MethodInvoker)delegate
+                            {
+                                flowAttachments.Controls.Add(pictureBox);
+                            });
+
+                        }
+
+                    }
+                    else
+                    {
+                        PictureBox pictureBox = new PictureBox();
+
+                        // Set the PictureBox properties
+                        pictureBox.Tag = txtAttach.Text;
+                        pictureBox.SizeMode = PictureBoxSizeMode.StretchImage;
+                        pictureBox.Width = 50;
+                        pictureBox.Height = 50;
+                        pictureBox.ImageLocation = @"includes\HugPuddle.jpg";
+                        pictureBox.MouseClick += PictureBox_MouseClick;
+                        // Add the PictureBox to the FlowLayoutPanel
+                        this.Invoke((MethodInvoker)delegate
+                        {
+                            flowAttachments.Controls.Add(pictureBox);
+                        });
+
+                    }
+
+
                 }
                 else
                 {
@@ -295,190 +480,7 @@ namespace SUP
                 }
 
 
-                string extension2 = Path.GetExtension(imgurn).ToLower();
-
-                if (imageExtensions.Contains(extension2))
-                {
-
-
-                    try
-                    {
-                        Root root = new Root();
-                        Regex regexTransactionId = new Regex(@"\b[0-9a-f]{64}\b");
-                        Match urimatch = regexTransactionId.Match(txtAttach.Text);
-                        string transactionid = urimatch.Value;
-                        switch (txtAttach.Text.Substring(0, 4).ToUpper())
-                        {
-                            case "MZC:":
-
-                                root = Root.GetRootByTransactionId(transactionid, "good-user", "better-password", @"http://127.0.0.1:12832", "50");
-
-                                break;
-                            case "BTC:":
-
-                                root = Root.GetRootByTransactionId(transactionid, "good-user", "better-password", @"http://127.0.0.1:8332", "0");
-
-                                break;
-                            case "LTC:":
-
-                                root = Root.GetRootByTransactionId(transactionid, "good-user", "better-password", @"http://127.0.0.1:9332", "48");
-
-                                break;
-                            case "DOG:":
-
-                                root = Root.GetRootByTransactionId(transactionid, "good-user", "better-password", @"http://127.0.0.1:22555", "30");
-
-                                break;
-                            case "IPFS":
-                                if (txtAttach.Text.Length == 51) { imgurn += @"\artifact"; }
-                                if (!System.IO.Directory.Exists(@"ipfs/" + txtAttach.Text.Substring(5, 46) + "-build") && !System.IO.File.Exists(@"ipfs/" + txtAttach.Text.Substring(5, 46)))
-                                {
-
-
-                                    Task ipfsTask = Task.Run(() =>
-                                    {
-                                        Directory.CreateDirectory(@"ipfs/" + txtAttach.Text.Substring(5, 46) + "-build");
-                                        Process process2 = new Process();
-                                        process2.StartInfo.FileName = @"ipfs\ipfs.exe";
-                                        process2.StartInfo.Arguments = "get " + txtAttach.Text.Substring(5, 46) + @" -o ipfs\" + txtAttach.Text.Substring(5, 46);
-                                        process2.Start();
-                                        process2.WaitForExit();
-
-                                        if (System.IO.File.Exists("ipfs/" + txtAttach.Text.Substring(5, 46)))
-                                        {
-                                            try { System.IO.File.Move("ipfs/" + txtAttach.Text.Substring(5, 46), "ipfs/" + txtAttach.Text.Substring(5, 46) + "_tmp"); }
-                                            catch
-                                            {
-
-                                                System.IO.File.Delete("ipfs/" + txtAttach.Text.Substring(5, 46) + "_tmp");
-                                                System.IO.File.Move("ipfs/" + txtAttach.Text.Substring(5, 46), "ipfs/" + txtAttach.Text.Substring(5, 46) + "_tmp");
-
-                                            }
-
-                                            string fileName = txtAttach.Text.Replace(@"//", "").Replace(@"\\", "").Substring(51);
-                                            if (fileName == "")
-                                            {
-                                                fileName = "artifact";
-                                            }
-                                            else { fileName = fileName.Replace(@"/", "").Replace(@"\", ""); }
-                                            Directory.CreateDirectory(@"ipfs/" + txtAttach.Text.Substring(5, 46));
-                                            try { System.IO.File.Move("ipfs/" + txtAttach.Text.Substring(5, 46) + "_tmp", imgurn); } catch { }
-                                        }
-
-
-                                        try
-                                        {
-                                            if (File.Exists("IPFS_PINNING_ENABLED"))
-                                            {
-                                                Process process3 = new Process
-                                                {
-                                                    StartInfo = new ProcessStartInfo
-                                                    {
-                                                        FileName = @"ipfs\ipfs.exe",
-                                                        Arguments = "pin add " + txtAttach.Text.Substring(5, 46),
-                                                        UseShellExecute = false,
-                                                        CreateNoWindow = true
-                                                    }
-                                                };
-                                                process3.Start();
-                                            }
-                                        }
-                                        catch { }
-
-
-
-                                        try { Directory.Delete(@"ipfs/" + txtAttach.Text.Substring(5, 46)); } catch { }
-                                        try
-                                        {
-                                            Directory.Delete(@"ipfs/" + txtAttach.Text.Substring(5, 46) + "-build");
-                                        }
-                                        catch { }
-
-
-
-                                    });
-
-                                }
-                                else
-                                {
-
-                                }
-                                break;
-                            default:
-
-                                root = Root.GetRootByTransactionId(transactionid, mainnetLogin, mainnetPassword, mainnetURL, mainnetVersionByte);
-
-
-                                break;
-                        }
-
-
-                    }
-                    catch { }
-
-                    if (File.Exists(imgurn) || (imgurn.ToUpper().StartsWith("HTTP") && extension2 != ""))
-                    {
-                       
-                        
-                        
-                        
-                        PictureBox pictureBox = new PictureBox();
-
-                        // Set the PictureBox properties
-                        pictureBox.Tag = txtAttach.Text;
-                        pictureBox.SizeMode = PictureBoxSizeMode.StretchImage;
-                        pictureBox.Width = 50;
-                        pictureBox.Height = 50;
-                        pictureBox.ImageLocation = imgurn;
-                        pictureBox.MouseClick += PictureBox_MouseClick;
-                        // Add the PictureBox to the FlowLayoutPanel
-                        this.Invoke((MethodInvoker)delegate
-                        {
-                            flowAttachments.Controls.Add(pictureBox);
-                        });
-
-                    }
-                    else
-                    {
-                        PictureBox pictureBox = new PictureBox();
-
-                        // Set the PictureBox properties
-                        pictureBox.Tag = txtAttach.Text;
-                        pictureBox.SizeMode = PictureBoxSizeMode.StretchImage;
-                        pictureBox.Width = 50;
-                        pictureBox.Height = 50;
-                        pictureBox.ImageLocation = @"includes\HugPuddle.jpg";
-                        pictureBox.MouseClick += PictureBox_MouseClick;
-                        // Add the PictureBox to the FlowLayoutPanel
-                        this.Invoke((MethodInvoker)delegate
-                        {
-                            flowAttachments.Controls.Add(pictureBox);
-                        });
-
-                    }
-
-                }
-                else
-                {
-                    PictureBox pictureBox = new PictureBox();
-
-                    // Set the PictureBox properties
-                    pictureBox.Tag = txtAttach.Text;
-                    pictureBox.SizeMode = PictureBoxSizeMode.StretchImage;
-                    pictureBox.Width = 50;
-                    pictureBox.Height = 50;
-                    pictureBox.ImageLocation = @"includes\HugPuddle.jpg";
-                    pictureBox.MouseClick += PictureBox_MouseClick;
-                    // Add the PictureBox to the FlowLayoutPanel
-                    this.Invoke((MethodInvoker)delegate
-                    {
-                        flowAttachments.Controls.Add(pictureBox);
-                    });
-
-                }
-
-
-
+          
 
             }
             this.Invoke((MethodInvoker)delegate
