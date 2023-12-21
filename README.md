@@ -28,7 +28,7 @@ Sup!? is an experimental tool made by adults for #adults. Sup!? is not suitable 
 <br />
 <br />
 ## **MAINNET - TESTNET TOGGLE**
-Click the bitcoin logo in the bottom left of the screen to switch all Sup!? functions between bitcoin testnet (🍏 GREEN) and bitcoin mainnet (🍊 ORANGE).  both blockchains must be fully synched to use this feature
+Click the bitcoin logo in the bottom left of the screen to switch all Sup!? functions between bitcoin testnet (🍏 GREEN) and bitcoin mainnet (🍊 ORANGE).  both blockchains must be fully synched to use this feature.
 <br />
 <br />
 ## **Public / Private Messaging / Social / #Keyword Search / GIF Selector / Walkie Talkie / Paper Messaging / Token Gated Polls ⁉️ / Likes ❤️**
