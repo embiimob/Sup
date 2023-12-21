@@ -170,8 +170,9 @@
             this.lblASCIIURN.Name = "lblASCIIURN";
             this.lblASCIIURN.Size = new System.Drawing.Size(500, 500);
             this.lblASCIIURN.TabIndex = 291;
-            this.lblASCIIURN.Text = "NME, 💎, URN and OWN fields are required to mint\r\n\r\nenter the name of an object  " +
-    "in the NME field to begin\r\n\r\nor click 🔍 and enter an object address to update";
+            this.lblASCIIURN.Text = "NME, 💎, URN and OWN fields are required to mint\r\n\r\nenter the name or title of an" +
+    " object in the NME field to begin\r\n\r\nor click 🔍 and enter an object address to " +
+    "update";
             this.lblASCIIURN.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // webviewer

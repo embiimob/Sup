@@ -637,23 +637,16 @@ namespace SUP
 
         private void btnPurgeIPFSBuilding_Click(object sender, EventArgs e)
         {
-            try
+            string basePath = "ipfs";
+            string[] subfolderNames = Directory.GetDirectories(basePath);
+
+            foreach (string subfolder in subfolderNames)
             {
-                string[] subfolderNames = Directory.GetDirectories("ipfs");
-
-                foreach (string subfolder in subfolderNames)
+                if (subfolder.EndsWith("-build") || Directory.GetFiles(subfolder).Length == 0 )
                 {
-                    if (subfolder.EndsWith("-build"))
-                    {
-                        Directory.Delete(subfolder, true);
-                    }
-                    
+                    Directory.Delete(subfolder, true);
                 }
-               
             }
-            catch { }
-
-
 
         }
 
