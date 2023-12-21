@@ -9,7 +9,7 @@ P2FK was directly inspired by the satoshi uploader  see --> https://cirosantilli
 
 ## **Installation**
 
-1. Download Supv0.4.20-beta.zip ( Dropping 12/21/23 )
+1. Download Supv0.4.20-beta.zip ( Drops midnight 12/21/23 )
 2. Create a folder on your **fastest** disk drive with at least **50GB** free (it will be storing the bitcoin testnet blockchain)
 3. Unzip all contents into the folder
 4. Run SUP.exe
@@ -25,6 +25,10 @@ P2FK was directly inspired by the satoshi uploader  see --> https://cirosantilli
 
 ## **NOTICE**
 Sup!? is an experimental tool made by adults for #adults. Sup!? is not suitable for children. 
+<br />
+<br />
+## **MAINNET - TESTNET TOGGLE**
+Click the bitcoin logo in the bottom left of the screen to switch all Sup!? functions between bitcoin testnet (🍏 GREEN) and bitcoin mainnet (🍊 ORANGE).  Both blockchains must be fully synched to use this feature.
 <br />
 <br />
 ## **Public / Private Messaging / Social / #Keyword Search / GIF Selector / Walkie Talkie / Paper Messaging / Token Gated Polls ⁉️ / Likes ❤️**
