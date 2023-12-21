@@ -92,6 +92,7 @@ namespace SUP
                     {
                         profileCheck = searchprofile.Creators.First();
                     }
+                    else { profileCheck = address; }
                     if (!System.IO.File.Exists("root\\" + profileCheck + "\\GetObjectsCreatedByAddress.json"))
                     {
                         this.Invoke((Action)(() =>
@@ -117,6 +118,7 @@ namespace SUP
                     {
                         profileCheck = searchprofile.Creators.First();
                     }
+                    else { profileCheck = address; }
 
                     if (!System.IO.File.Exists("root\\" + profileCheck + "\\GetObjectsOwnedByAddress.json"))
                     {
@@ -164,6 +166,7 @@ namespace SUP
                             {
                                 profileCheck = searchprofile.Creators.First();
                             }
+                            else { profileCheck = address; }
 
 
                         }
@@ -333,26 +336,36 @@ namespace SUP
 
                                 if (objstate.Image == null)
                                 {
+                                    // Check to see if objstate.URN has an image extension
+                                    string[] validImageExtensions = { ".bmp", ".gif", ".jpg", ".jpeg", ".png", ".ico", ".tiff", ".wmf", ".emf" }; // Add more if needed
 
+                                    bool hasValidImageExtension = validImageExtensions.Any(extension =>
+                                        objstate.URN.EndsWith(extension, StringComparison.OrdinalIgnoreCase));
 
-                                    Random rnd = new Random();
-                                    string[] gifFiles = Directory.GetFiles("includes", "*.gif");
-                                    if (gifFiles.Length > 0)
+                                    if (hasValidImageExtension)
                                     {
-                                        int randomIndex = rnd.Next(gifFiles.Length);
-                                        objstate.Image = gifFiles[randomIndex];
-
+                                        objstate.Image = objstate.URN;
                                     }
                                     else
                                     {
-                                        try
+                                        Random rnd = new Random();
+                                        string[] gifFiles = Directory.GetFiles("includes", "*.gif");
+                                        if (gifFiles.Length > 0)
                                         {
+                                            int randomIndex = rnd.Next(gifFiles.Length);
+                                            objstate.Image = gifFiles[randomIndex];
 
-                                            objstate.Image = @"includes\HugPuddle.jpg";
                                         }
-                                        catch { }
-                                    }
+                                        else
+                                        {
+                                            try
+                                            {
 
+                                                objstate.Image = @"includes\HugPuddle.jpg";
+                                            }
+                                            catch { }
+                                        }
+                                    }
 
                                 }
 
@@ -1318,26 +1331,36 @@ namespace SUP
 
                         if (objstate.Image == null)
                         {
+                            // Check to see if objstate.URN has an image extension
+                            string[] validImageExtensions = { ".bmp", ".gif", ".jpg", ".jpeg", ".png", ".ico", ".tiff", ".wmf", ".emf" }; // Add more if needed
 
+                            bool hasValidImageExtension = validImageExtensions.Any(extension =>
+                                objstate.URN.EndsWith(extension, StringComparison.OrdinalIgnoreCase));
 
-                            Random rnd = new Random();
-                            string[] gifFiles = Directory.GetFiles("includes", "*.gif");
-                            if (gifFiles.Length > 0)
+                            if (hasValidImageExtension)
                             {
-                                int randomIndex = rnd.Next(gifFiles.Length);
-                                objstate.Image = gifFiles[randomIndex];
-
+                                objstate.Image = objstate.URN;
                             }
                             else
                             {
-                                try
+                                Random rnd = new Random();
+                                string[] gifFiles = Directory.GetFiles("includes", "*.gif");
+                                if (gifFiles.Length > 0)
                                 {
+                                    int randomIndex = rnd.Next(gifFiles.Length);
+                                    objstate.Image = gifFiles[randomIndex];
 
-                                    objstate.Image = @"includes\HugPuddle.jpg";
                                 }
-                                catch { }
-                            }
+                                else
+                                {
+                                    try
+                                    {
 
+                                        objstate.Image = @"includes\HugPuddle.jpg";
+                                    }
+                                    catch { }
+                                }
+                            }
 
                         }
 

@@ -30,6 +30,11 @@
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Connections));
             this.panel1 = new System.Windows.Forms.Panel();
+            this.chkScanDOG = new System.Windows.Forms.CheckBox();
+            this.chkScanLTC = new System.Windows.Forms.CheckBox();
+            this.chkScanMZC = new System.Windows.Forms.CheckBox();
+            this.chkScanBTC = new System.Windows.Forms.CheckBox();
+            this.chkScanBTCT = new System.Windows.Forms.CheckBox();
             this.btnAddIPFS = new System.Windows.Forms.Button();
             this.label18 = new System.Windows.Forms.Label();
             this.textBox29 = new System.Windows.Forms.TextBox();
@@ -101,11 +106,6 @@
             this.txtPort = new System.Windows.Forms.TextBox();
             this.btnTMP = new System.Windows.Forms.Button();
             this.label1 = new System.Windows.Forms.Label();
-            this.chkScanDOG = new System.Windows.Forms.CheckBox();
-            this.chkScanLTC = new System.Windows.Forms.CheckBox();
-            this.chkScanMZC = new System.Windows.Forms.CheckBox();
-            this.chkScanBTC = new System.Windows.Forms.CheckBox();
-            this.chkScanBTCT = new System.Windows.Forms.CheckBox();
             this.panel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.SuspendLayout();
@@ -193,6 +193,56 @@
             this.panel1.Size = new System.Drawing.Size(706, 631);
             this.panel1.TabIndex = 1;
             // 
+            // chkScanDOG
+            // 
+            this.chkScanDOG.AutoSize = true;
+            this.chkScanDOG.Location = new System.Drawing.Point(548, 322);
+            this.chkScanDOG.Name = "chkScanDOG";
+            this.chkScanDOG.Size = new System.Drawing.Size(58, 17);
+            this.chkScanDOG.TabIndex = 171;
+            this.chkScanDOG.Text = "rescan";
+            this.chkScanDOG.UseVisualStyleBackColor = true;
+            // 
+            // chkScanLTC
+            // 
+            this.chkScanLTC.AutoSize = true;
+            this.chkScanLTC.Location = new System.Drawing.Point(548, 293);
+            this.chkScanLTC.Name = "chkScanLTC";
+            this.chkScanLTC.Size = new System.Drawing.Size(58, 17);
+            this.chkScanLTC.TabIndex = 170;
+            this.chkScanLTC.Text = "rescan";
+            this.chkScanLTC.UseVisualStyleBackColor = true;
+            // 
+            // chkScanMZC
+            // 
+            this.chkScanMZC.AutoSize = true;
+            this.chkScanMZC.Location = new System.Drawing.Point(548, 262);
+            this.chkScanMZC.Name = "chkScanMZC";
+            this.chkScanMZC.Size = new System.Drawing.Size(58, 17);
+            this.chkScanMZC.TabIndex = 169;
+            this.chkScanMZC.Text = "rescan";
+            this.chkScanMZC.UseVisualStyleBackColor = true;
+            // 
+            // chkScanBTC
+            // 
+            this.chkScanBTC.AutoSize = true;
+            this.chkScanBTC.Location = new System.Drawing.Point(546, 79);
+            this.chkScanBTC.Name = "chkScanBTC";
+            this.chkScanBTC.Size = new System.Drawing.Size(58, 17);
+            this.chkScanBTC.TabIndex = 168;
+            this.chkScanBTC.Text = "rescan";
+            this.chkScanBTC.UseVisualStyleBackColor = true;
+            // 
+            // chkScanBTCT
+            // 
+            this.chkScanBTCT.AutoSize = true;
+            this.chkScanBTCT.Location = new System.Drawing.Point(546, 53);
+            this.chkScanBTCT.Name = "chkScanBTCT";
+            this.chkScanBTCT.Size = new System.Drawing.Size(58, 17);
+            this.chkScanBTCT.TabIndex = 167;
+            this.chkScanBTCT.Text = "rescan";
+            this.chkScanBTCT.UseVisualStyleBackColor = true;
+            // 
             // btnAddIPFS
             // 
             this.btnAddIPFS.Enabled = false;
@@ -222,7 +272,7 @@
             this.textBox29.Name = "textBox29";
             this.textBox29.Size = new System.Drawing.Size(45, 20);
             this.textBox29.TabIndex = 164;
-            this.textBox29.Text = "TMP";
+            this.textBox29.Text = "TEST";
             // 
             // chkLiveFeedPinning
             // 
@@ -524,9 +574,9 @@
             this.label15.Location = new System.Drawing.Point(395, 437);
             this.label15.Name = "label15";
             this.label15.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
-            this.label15.Size = new System.Drawing.Size(199, 13);
+            this.label15.Size = new System.Drawing.Size(116, 13);
             this.label15.TabIndex = 124;
-            this.label15.Text = "Sup!? v0.4.20-beta ( pre release )";
+            this.label15.Text = "Sup!? v0.4.20-beta";
             this.label15.TextAlign = System.Drawing.ContentAlignment.TopCenter;
             // 
             // label14
@@ -869,56 +919,6 @@
             this.label1.Size = new System.Drawing.Size(68, 13);
             this.label1.TabIndex = 50;
             this.label1.Text = "main chain";
-            // 
-            // chkScanDOG
-            // 
-            this.chkScanDOG.AutoSize = true;
-            this.chkScanDOG.Location = new System.Drawing.Point(548, 322);
-            this.chkScanDOG.Name = "chkScanDOG";
-            this.chkScanDOG.Size = new System.Drawing.Size(58, 17);
-            this.chkScanDOG.TabIndex = 171;
-            this.chkScanDOG.Text = "rescan";
-            this.chkScanDOG.UseVisualStyleBackColor = true;
-            // 
-            // chkScanLTC
-            // 
-            this.chkScanLTC.AutoSize = true;
-            this.chkScanLTC.Location = new System.Drawing.Point(548, 293);
-            this.chkScanLTC.Name = "chkScanLTC";
-            this.chkScanLTC.Size = new System.Drawing.Size(58, 17);
-            this.chkScanLTC.TabIndex = 170;
-            this.chkScanLTC.Text = "rescan";
-            this.chkScanLTC.UseVisualStyleBackColor = true;
-            // 
-            // chkScanMZC
-            // 
-            this.chkScanMZC.AutoSize = true;
-            this.chkScanMZC.Location = new System.Drawing.Point(548, 262);
-            this.chkScanMZC.Name = "chkScanMZC";
-            this.chkScanMZC.Size = new System.Drawing.Size(58, 17);
-            this.chkScanMZC.TabIndex = 169;
-            this.chkScanMZC.Text = "rescan";
-            this.chkScanMZC.UseVisualStyleBackColor = true;
-            // 
-            // chkScanBTC
-            // 
-            this.chkScanBTC.AutoSize = true;
-            this.chkScanBTC.Location = new System.Drawing.Point(546, 79);
-            this.chkScanBTC.Name = "chkScanBTC";
-            this.chkScanBTC.Size = new System.Drawing.Size(58, 17);
-            this.chkScanBTC.TabIndex = 168;
-            this.chkScanBTC.Text = "rescan";
-            this.chkScanBTC.UseVisualStyleBackColor = true;
-            // 
-            // chkScanBTCT
-            // 
-            this.chkScanBTCT.AutoSize = true;
-            this.chkScanBTCT.Location = new System.Drawing.Point(546, 53);
-            this.chkScanBTCT.Name = "chkScanBTCT";
-            this.chkScanBTCT.Size = new System.Drawing.Size(58, 17);
-            this.chkScanBTCT.TabIndex = 167;
-            this.chkScanBTCT.Text = "rescan";
-            this.chkScanBTCT.UseVisualStyleBackColor = true;
             // 
             // Connections
             // 

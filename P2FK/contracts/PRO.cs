@@ -47,7 +47,6 @@ namespace SUP.P2FK
         public DateTime CreatedDate { get; set; }
         public DateTime ChangeDate { get; set; }
         //ensures levelDB is thread safely
-        private readonly static object SupLocker = new object();
         private static char[] specialChars = new char[] { '\\', '/', ':', '*', '?', '"', '<', '>', '|' };
 
         public static PROState GetProfileByAddress(string profileaddress, string username, string password, string url, string versionByte = "111", bool verbose = false)
@@ -357,8 +356,8 @@ namespace SUP.P2FK
                 }
                 catch { }
             }
-            NetworkCredential credentials = new NetworkCredential("good-user", "better-password");
-            NBitcoin.RPC.RPCClient rpcClient = new NBitcoin.RPC.RPCClient(credentials, new Uri(@"http://127.0.0.1:18332"), Network.Main);
+            NetworkCredential credentials = new NetworkCredential(username, password);
+            NBitcoin.RPC.RPCClient rpcClient = new NBitcoin.RPC.RPCClient(credentials, new Uri(url), Network.Main);
 
             string addressesString = "";
             try

@@ -93,8 +93,8 @@ namespace SUP
             };
             // Add the width of the first column to fixed value and second to fill remaining space
             row.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 50));
-            row.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 90));
-            row.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 90));
+            row.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 85));
+            row.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 85));
             row.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 130));
             row.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 20));
 
@@ -273,6 +273,21 @@ namespace SUP
             lblObjectCreatedDate.Text = objstate.CreatedDate.ToString("ddd, dd MMM yyyy hh:mm:ss");
             lblTotalOwnedDetail.Text = "total: " + objstate.Owners.Values.Sum().ToString();
             lblTotalRoyaltiesDetail.Text = "royalties: " + objstate.Royalties.Values.Sum().ToString();
+            
+            if (objstate.Image == null)
+            {
+                // Check to see if objstate.URN has an image extension
+                string[] validImageExtensions = { ".bmp", ".gif", ".jpg", ".jpeg", ".png", ".ico", ".tiff", ".wmf", ".emf" }; // Add more if needed
+
+                bool hasValidImageExtension = validImageExtensions.Any(extension =>
+                    objstate.URN.EndsWith(extension, StringComparison.OrdinalIgnoreCase));
+
+                if (hasValidImageExtension)
+                {
+                    objstate.Image = objstate.URN;
+                }
+                else { objstate.Image = ""; }
+            }
 
             string imagelocation = "";
 
@@ -837,21 +852,19 @@ namespace SUP
                                                             string _blockdate = root.BlockDate.ToString("yyyyMMddHHmmss");
                                                             string imglocation = "";
 
-                                                            if (give[1] < 0)
+                                                            if (give[1] > 0 && _to == txtAddressSearch.Text)
                                                             {
-                                                                break;
+
+
+                                                                this.Invoke((MethodInvoker)delegate
+                                                                {
+                                                                    try { imglocation = myFriends[_from]; } catch { }
+
+                                                                    CreateFeedRow(imglocation, _to, _from, DateTime.ParseExact(_blockdate, "yyyyMMddHHmmss", CultureInfo.InvariantCulture), _message, root.TransactionId, Color.White, flowInMemoryResults, true);
+
+                                                                });
+
                                                             }
-
-
-                                                            this.Invoke((MethodInvoker)delegate
-                                                            {
-                                                                try { imglocation = myFriends[_from]; } catch { }
-
-                                                                CreateFeedRow(imglocation, _to, _from, DateTime.ParseExact(_blockdate, "yyyyMMddHHmmss", CultureInfo.InvariantCulture), _message, root.TransactionId, Color.White, flowInMemoryResults, true);
-
-                                                            });
-
-
 
 
                                                         }
@@ -1000,7 +1013,7 @@ namespace SUP
                 string chunk = txtOBJP2FK.Text.Substring(i, Math.Min(20, txtOBJP2FK.Text.Length - i));
                 if (chunk.Any())
                 {
-                    encodedList.Add(Root.GetPublicAddressByKeyword(chunk));
+                    encodedList.Add(Root.GetPublicAddressByKeyword(chunk,mainnetVersionByte));
                 }
             }
 
@@ -1117,7 +1130,7 @@ namespace SUP
                 string chunk = txtOBJP2FK.Text.Substring(i, Math.Min(20, txtOBJP2FK.Text.Length - i));
                 if (chunk.Any())
                 {
-                    encodedList.Add(Root.GetPublicAddressByKeyword(chunk));
+                    encodedList.Add(Root.GetPublicAddressByKeyword(chunk,mainnetVersionByte));
                 }
             }
 

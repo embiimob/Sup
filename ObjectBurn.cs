@@ -182,8 +182,8 @@ namespace SUP
                         encodedList.Add(Root.GetPublicAddressByKeyword(chunk,mainnetVersionByte));
                     }
                 }
-
-                foreach (string address in dictionary.Keys)
+                
+                foreach (string address in dictionary.Keys.Reverse())
                 {
                     encodedList.Add(address);
                 }

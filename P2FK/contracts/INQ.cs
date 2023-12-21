@@ -277,7 +277,7 @@ namespace SUP.P2FK
                         {
                             Root[] roots = new Root[0];
 
-                            roots = Root.GetRootsByAddress(answer.Address, username, password, url, 0, -1, "111", true);
+                            roots = Root.GetRootsByAddress(answer.Address, username, password, url, 0, -1, versionByte, true);
 
                             roots = roots.Where(obj => !hasVoted.Contains(obj.SignedBy)).ToArray();
 
@@ -600,7 +600,7 @@ namespace SUP.P2FK
                         {
                             Root[] roots = new Root[0];
 
-                            roots = Root.GetRootsByAddress(answer.Address, username, password, url, 0, -1, "111", true);
+                            roots = Root.GetRootsByAddress(answer.Address, username, password, url, 0, -1, versionByte, true);
 
                             roots = roots.Where(obj => !hasVoted.Contains(obj.SignedBy)).ToArray();
 

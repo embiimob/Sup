@@ -36,6 +36,7 @@ namespace SUP
         private string mainnetLogin = "good-user";
         private string mainnetPassword = "better-password";
         private string mainnetVersionByte = "111";
+        private bool _testnet = true;
         public ObjectMint(bool testnet = true)
         {
             InitializeComponent();
@@ -62,6 +63,7 @@ namespace SUP
                 mainnetLogin = "good-user";
                 mainnetPassword = "better-password";
                 mainnetVersionByte = "0";
+                _testnet = false;
             }
             System.Windows.Forms.ToolTip myTooltip = new System.Windows.Forms.ToolTip();
             myTooltip.SetToolTip(btnObjectName, "enter the object's name. try to keep it short.\nlong object names will be truncated on the object controls.");
@@ -258,7 +260,7 @@ namespace SUP
                 }
 
                 string chunkBase58 = Base58.EncodeWithCheckSum(
-                    new byte[] { 111 }.Concat(chunkBytes).ToArray());
+                    new byte[] { (byte)Int32.Parse(mainnetVersionByte) }.Concat(chunkBytes).ToArray());
 
                 if (!encodedList.Contains(chunkBase58))
                 {
@@ -317,7 +319,15 @@ namespace SUP
                         }
                     }
 
-                    payload[0] = 0x6F; // 0x6F is the hexadecimal representation of 111
+                    if (_testnet)
+                    {
+                        payload[0] = 0x6F; // 0x6F is the hexadecimal representation of 111
+                    }
+                    else
+                    {
+                        payload[0] = 0x00; // Hexadecimal representation of 0
+                    }
+
                     string objectaddress = Base58.EncodeWithCheckSum(payload);
 
                     encodedList.Add(objectaddress);
@@ -1045,7 +1055,15 @@ namespace SUP
                                 root = Root.GetRootByTransactionId(transactionid, mainnetLogin,mainnetPassword,mainnetURL,mainnetVersionByte);
                                 try
                                 {
-                                    lblIMGBlockDate.Text = "bitcoin-t verified: " + root.BlockDate.ToString("ddd, dd MMM yyyy hh:mm:ss");
+                                    if (_testnet)
+                                    {
+                                        lblIMGBlockDate.Text = "bitcoin-t verified: " + root.BlockDate.ToString("ddd, dd MMM yyyy hh:mm:ss");
+                                    }
+                                    else
+                                    {
+                                        lblIMGBlockDate.Text = "bitcoin verified: " + root.BlockDate.ToString("ddd, dd MMM yyyy hh:mm:ss");
+                                    }
+
                                     btnObjectImage.BackColor = Color.Blue;
                                     btnObjectImage.ForeColor = Color.Yellow;
                                 }
@@ -1069,7 +1087,7 @@ namespace SUP
                     if (File.Exists(imgurn) || imgurn.ToUpper().StartsWith("HTTP"))
                     {
 
-                        pictureBox1.ImageLocation = imgurn;
+                      
                         pictureBox2.ImageLocation = imgurn;
                     }
                     else
@@ -1314,8 +1332,14 @@ namespace SUP
                                 {
                                     try
                                     {
-
-                                        lblURNBlockDate.Text = "bitcoin-t verified: " + root.BlockDate.ToString("ddd, dd MMM yyyy hh:mm:ss");
+                                        if (_testnet)
+                                        {
+                                            lblURNBlockDate.Text = "bitcoin-t verified: " + root.BlockDate.ToString("ddd, dd MMM yyyy hh:mm:ss");
+                                        }
+                                        else
+                                        {
+                                            lblURNBlockDate.Text = "bitcoin verified: " + root.BlockDate.ToString("ddd, dd MMM yyyy hh:mm:ss");
+                                        }
                                         btnObjectURN.BackColor = Color.Blue;
                                         btnObjectURN.ForeColor = Color.Yellow;
                                     }
@@ -1393,11 +1417,11 @@ namespace SUP
                     case ".xml":
                     case ".xsl":
                     case ".xslt":
-                        pictureBox1.SuspendLayout();
                         if (File.Exists(urn))
                         {
 
-                            pictureBox1.ImageLocation = urn;
+                            pictureBox1.ImageLocation = pictureBox2.ImageLocation;
+
                         }
                         else
                         {
@@ -1422,14 +1446,12 @@ namespace SUP
 
 
                         }
-                        pictureBox1.ResumeLayout();
 
                         break;
 
                     case ".glb":
                     case ".fbx":
                         //Show image in main box and show open file button
-                        pictureBox1.SuspendLayout();
                         if (File.Exists(urn))
                         {
 
@@ -1458,7 +1480,6 @@ namespace SUP
 
 
                         }
-                        pictureBox1.ResumeLayout();
 
                         break;
                     case ".bmp":
@@ -1470,11 +1491,12 @@ namespace SUP
                     case ".tif":
                     case ".tiff":
                         // Create a new PictureBox
-                        pictureBox1.SuspendLayout();
+                   
                         if (File.Exists(urn))
                         {
 
                             pictureBox1.ImageLocation = urn;
+                            if (txtIMG.Text == "") { pictureBox2.ImageLocation = urn; }
                         }
                         else
                         {
@@ -1499,8 +1521,6 @@ namespace SUP
 
 
                         }
-                        pictureBox1.ResumeLayout();
-
 
                         break;
                     case ".htm":
@@ -1630,7 +1650,6 @@ namespace SUP
 
                     default:
 
-                        pictureBox1.SuspendLayout();
                         if (File.Exists(urn))
                         {
 
@@ -1659,7 +1678,6 @@ namespace SUP
 
 
                         }
-                        pictureBox1.ResumeLayout();
 
                         break;
                 }

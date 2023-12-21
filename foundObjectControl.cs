@@ -35,7 +35,7 @@ namespace SUP
         {
 
             Form parentForm = this.FindForm();
-            ObjectDetails childForm = new ObjectDetails(ObjectAddress.Text, _activeprofile, _testnet);
+            ObjectDetails childForm = new ObjectDetails(ObjectAddress.Text, _activeprofile ,false, _testnet);
 
             childForm.Owner = parentForm;
 
@@ -79,7 +79,7 @@ namespace SUP
         private void btnOfficial_Click(object sender, EventArgs e)
         {
             Form parentForm = this.FindForm();
-            ObjectDetails childForm = new ObjectDetails(txtOfficialURN.Text, _activeprofile);
+            ObjectDetails childForm = new ObjectDetails(txtOfficialURN.Text, _activeprofile,false, _testnet);
             childForm.Owner = parentForm;
             childForm.Show();
         }

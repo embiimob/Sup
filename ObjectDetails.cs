@@ -36,7 +36,7 @@ namespace SUP
         private string mainnetLogin = "good-user";
         private string mainnetPassword = "better-password";
         private string mainnetVersionByte = "111";
-        private bool _testnet;
+        private bool _testnet = true;
         List<Microsoft.Web.WebView2.WinForms.WebView2> webviewers = new List<Microsoft.Web.WebView2.WinForms.WebView2>();
 
         public ObjectDetails(string objectaddress, string activeprofile, bool isusercontrol = false, bool testnet = true)
@@ -211,7 +211,7 @@ namespace SUP
         {
 
             var linkData = e.Link.LinkData;
-            new ObjectBrowser((string)linkData).Show();
+            new ObjectBrowser((string)linkData,false,_testnet).Show();
 
         }
 
@@ -354,8 +354,8 @@ namespace SUP
                             Padding = new System.Windows.Forms.Padding(3)
                         };
 
-                        rowPanel.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 300));
-                        rowPanel.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 110));
+                        rowPanel.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 310));
+                        rowPanel.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 100));
 
 
                         LinkLabel keyLabel = new LinkLabel();
@@ -2074,7 +2074,7 @@ namespace SUP
         void Owner_LinkClicked(string ownerId)
         {
 
-            new ObjectBrowser(ownerId).Show();
+            new ObjectBrowser(ownerId,false,_testnet).Show();
         }
 
         private async void MainRefreshClick(object sender, EventArgs e)
@@ -2082,6 +2082,7 @@ namespace SUP
             transFlow.Visible = false;
             KeysFlow.Visible = false;
             txtdesc.Visible = true;
+            registrationPanel.Visible = true;
             KeysFlow.Controls.Clear();
             string transactionid;
             string ipfsurn = null;
@@ -2099,6 +2100,19 @@ namespace SUP
                 if (objstate.URN != null)
                 {
                     urn = objstate.URN;
+                    if (objstate.Image == null)
+                    {
+                        // Check to see if objstate.URN has an image extension
+                        string[] validImageExtensions = { ".bmp", ".gif", ".jpg", ".jpeg", ".png", ".ico", ".tiff", ".wmf", ".emf" }; // Add more if needed
+
+                        bool hasValidImageExtension = validImageExtensions.Any(ext =>
+                            objstate.URN.EndsWith(ext, StringComparison.OrdinalIgnoreCase));
+
+                        if (hasValidImageExtension)
+                        {
+                            objstate.Image = objstate.URN;
+                        }
+                    }
 
                     if (!objstate.URN.ToLower().StartsWith("http"))
                     {
@@ -3544,7 +3558,7 @@ namespace SUP
         {
             if (path.ToUpper().StartsWith("IPFS:") || path.ToUpper().StartsWith("BTC:") || path.ToUpper().StartsWith("MZC:") || path.ToUpper().StartsWith("LTC:") || path.ToUpper().StartsWith("DOG:"))
             {
-                new ObjectBrowser(path).Show();
+                new ObjectBrowser(path,false,_testnet).Show();
             }
             else
             {

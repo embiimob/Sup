@@ -195,7 +195,6 @@ namespace SUP
             this.txtSearchAddress.Name = "txtSearchAddress";
             this.txtSearchAddress.Size = new System.Drawing.Size(419, 20);
             this.txtSearchAddress.TabIndex = 25;
-            this.txtSearchAddress.Text = "muVrFVk3ErfrnmWosLF4WixxRtDKfMx9bs";
             // 
             // label11
             // 
@@ -369,7 +368,6 @@ namespace SUP
             this.txtTransactionId.Name = "txtTransactionId";
             this.txtTransactionId.Size = new System.Drawing.Size(545, 20);
             this.txtTransactionId.TabIndex = 31;
-            this.txtTransactionId.Text = "7223070fbc3706856e90701b62a8bfb3f5a618dc13d64d8f029260cba187ca26";
             // 
             // btnGetKeyword
             // 

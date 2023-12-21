@@ -239,9 +239,10 @@ namespace SUP.P2FK
                                         try
                                         {
                                             //builds the creator element
-                                            if (objectinspector.cre != null && objectState.Creators == null && objectinspector.cre[0] == objectaddress || (objectinspector.cre != null && objectState.Creators == null && int.TryParse(objectinspector.cre[0], out int intID) && objectaddress == transaction.Keyword.Reverse().ElementAt(intID).Key))
+                                            if (objectinspector.urn != null && objectinspector.cre != null && objectState.Creators == null && objectinspector.cre[0] == objectaddress || (objectinspector.urn != null && objectinspector.cre != null && objectState.Creators == null && int.TryParse(objectinspector.cre[0], out int intID) && objectaddress == transaction.Keyword.Reverse().ElementAt(intID).Key))
 
                                             {
+                                                
 
                                                 objectState.Creators = new Dictionary<string, DateTime> { };
                                                 try
@@ -303,7 +304,32 @@ namespace SUP.P2FK
 
                                                 if (objectState.LockedDate.Year == 1)
                                                 {
-                                                    if (objectinspector.urn != null) { objectState.ChangeDate = transaction.BlockDate; objectState.URN = objectinspector.urn.Replace('“', '"').Replace('”', '"'); }
+                                                    if (objectinspector.urn != null) {
+
+                                                        //prevents someone from trying to claim a previously sigend etching using a different signature
+                                                        if (versionByte != "111")
+                                                        {
+                                                            Root signedRoot = Root.GetRootByTransactionId(objectinspector.urn.Substring(0, 64), username, password, url, versionByte);
+                                                            if (signedRoot.Signed)
+                                                            {
+                                                                if (signedRoot.SignedBy != transaction.SignedBy)
+                                                                {
+                                                                    logstatus = "[\"" + transaction.SignedBy + "\",\"" + objectaddress + "\",\"create\",\"\",\"\",\"failed due to previous claim\",\"" + transaction.BlockDate.ToString() + "\"]";
+                                                                    break;
+                                                                }
+
+                                                            }
+
+                                                            //obtain URN creation date if it exists
+                                                            if (signedRoot.BlockDate.Year > 1975)
+                                                            {
+                                                                objectState.CreatedDate = signedRoot.BlockDate;
+                                                            }
+                                                        }
+
+                                                        objectState.ChangeDate = transaction.BlockDate; objectState.URN = objectinspector.urn.Replace('“', '"').Replace('”', '"');
+                                                    
+                                                    }
                                                     if (objectinspector.uri != null) { objectState.ChangeDate = transaction.BlockDate; objectState.URI = objectinspector.uri.Replace('“', '"').Replace('”', '"'); }
                                                     if (objectinspector.img != null) { objectState.ChangeDate = transaction.BlockDate; objectState.Image = objectinspector.img.Replace('“', '"').Replace('”', '"'); }
                                                     if (objectinspector.nme != null) { objectState.ChangeDate = transaction.BlockDate; objectState.Name = objectinspector.nme.Replace('“', '"').Replace('”', '"'); }
@@ -324,7 +350,12 @@ namespace SUP.P2FK
                                                     {
                                                         if (objectState.Owners == null)
                                                         {
-                                                            objectState.CreatedDate = transaction.BlockDate;
+                                                            //if URN creation date cannot be be determined use date claimed
+                                                            if (objectState.CreatedDate.Year < 1975)
+                                                            {
+                                                                objectState.CreatedDate = transaction.BlockDate;
+                                                            }
+
                                                             objectState.TransactionId = transaction.TransactionId;
                                                             objectState.Owners = new Dictionary<string, long>();
                                                             objectState.Royalties = new Dictionary<string, decimal>();
@@ -1670,7 +1701,14 @@ namespace SUP.P2FK
                 }
             }
 
-            payload[0] = 0x6F; // 0x6F is the hexadecimal representation of 111
+            if (versionByte == "111")
+            {
+                payload[0] = 0x6F; // 0x6F is the hexadecimal representation of 111
+            }
+            else
+            {
+                payload[0] = 0x00; // Hexadecimal representation of 0
+            }
             string objectaddress = Base58.EncodeWithCheckSum(payload);
 
 
@@ -2096,36 +2134,71 @@ namespace SUP.P2FK
                             }
                             else
                             {
-                                foreach (string key in transaction.Output.Keys.Reverse().Take(3))
+                                if (transaction.File.ContainsKey("GIV"))
                                 {
-
-                                    if (!addedValues.Contains(key))
+                                    foreach (string key in transaction.Keyword.Keys)
                                     {
-                                        addedValues.Add(key);
 
-
-                                        OBJState existingObjectState = objectStates.FirstOrDefault(os => os.Creators.First().Key == key);
-                                        if (existingObjectState != null)
+                                        if (!addedValues.Contains(key))
                                         {
-                                            OBJState isObject = GetObjectByAddress(key, username, password, url, versionByte);
-                                            if (isObject.URN != null)
+                                            addedValues.Add(key);
+
+
+                                            OBJState existingObjectState = objectStates.FirstOrDefault(os => os.Creators.First().Key == key);
+                                            if (existingObjectState != null)
                                             {
-                                                //isObject.Id = transaction.Id;
-                                                objectStates[objectStates.IndexOf(existingObjectState)] = isObject;
+                                                OBJState isObject = GetObjectByAddress(key, username, password, url, versionByte);
+                                                if (isObject.URN != null)
+                                                {
+                                                    //isObject.Id = transaction.Id;
+                                                    objectStates[objectStates.IndexOf(existingObjectState)] = isObject;
+                                                }
+                                            }
+                                            else
+                                            {
+                                                OBJState newObject = GetObjectByAddress(key, username, password, url, versionByte);
+                                                if (newObject.URN != null)
+                                                {
+                                                    //newObject.Id = transaction.Id;
+                                                    objectStates.Add(newObject);
+                                                }
                                             }
                                         }
-                                        else
+                                    }
+
+                                }
+                                else
+                                {
+                                    foreach (string key in transaction.Output.Keys.Reverse().Take(3))
+                                    {
+
+                                        if (!addedValues.Contains(key))
                                         {
-                                            OBJState newObject = GetObjectByAddress(key, username, password, url, versionByte);
-                                            if (newObject.URN != null)
+                                            addedValues.Add(key);
+
+
+                                            OBJState existingObjectState = objectStates.FirstOrDefault(os => os.Creators.First().Key == key);
+                                            if (existingObjectState != null)
                                             {
-                                                //newObject.Id = transaction.Id;
-                                                objectStates.Add(newObject);
+                                                OBJState isObject = GetObjectByAddress(key, username, password, url, versionByte);
+                                                if (isObject.URN != null)
+                                                {
+                                                    //isObject.Id = transaction.Id;
+                                                    objectStates[objectStates.IndexOf(existingObjectState)] = isObject;
+                                                }
+                                            }
+                                            else
+                                            {
+                                                OBJState newObject = GetObjectByAddress(key, username, password, url, versionByte);
+                                                if (newObject.URN != null)
+                                                {
+                                                    //newObject.Id = transaction.Id;
+                                                    objectStates.Add(newObject);
+                                                }
                                             }
                                         }
                                     }
                                 }
-
                             }
 
                         }
@@ -2309,7 +2382,7 @@ namespace SUP.P2FK
             bool fetched = false;
             bool isKeywordSearch = false;
 
-            if (objectaddress.StartsWith("#")) { objectaddress = Root.GetPublicAddressByKeyword(objectaddress.Substring(1), "111"); isKeywordSearch = true; }
+            if (objectaddress.StartsWith("#")) { objectaddress = Root.GetPublicAddressByKeyword(objectaddress.Substring(1), versionByte); isKeywordSearch = true; }
 
             if (System.IO.File.Exists(@"root\" + objectaddress + @"\BLOCK")) { return objectStates; }
 
@@ -2662,9 +2735,9 @@ namespace SUP.P2FK
                     byte[] result = Root.GetRootBytesByFile(new string[] { @"root/" + obj.TransactionId + @"/SEC" });
                     result = Root.DecryptRootBytes(username, password, url, objectaddress, result);
 
-                    root = Root.GetRootByTransactionId(obj.TransactionId, "good-user", "better-password", "http://127.0.0.1:18332", versionByte, result, objectaddress);
+                    root = Root.GetRootByTransactionId(obj.TransactionId, username, password, url, versionByte, result, objectaddress);
 
-                    if (root.Message != null)
+                    if (root != null && root.Message != null)
                     {
                         foreach (string message in root.Message)
                         {

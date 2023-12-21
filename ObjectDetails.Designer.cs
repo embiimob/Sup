@@ -604,7 +604,6 @@
             this.registrationPanel.Name = "registrationPanel";
             this.registrationPanel.Size = new System.Drawing.Size(294, 237);
             this.registrationPanel.TabIndex = 106;
-            this.registrationPanel.Visible = false;
             // 
             // lblLaunchURI
             // 

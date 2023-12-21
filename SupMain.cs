@@ -941,6 +941,22 @@ namespace SUP
                             string profileowner = "";
                             if (profileOwner.Tag != null) { profileowner = profileOwner.Tag.ToString(); }
                             FoundObjectControl foundObject = new FoundObjectControl(profileowner,testnet);
+
+                            if (objstate.Image == null)
+                            {
+                                // Check to see if objstate.URN has an image extension
+                                string[] validImageExtensions = { ".bmp", ".gif", ".jpg", ".jpeg", ".png", ".ico", ".tiff", ".wmf", ".emf" }; // Add more if needed
+
+                                bool hasValidImageExtension = validImageExtensions.Any(extension =>
+                                    objstate.URN.EndsWith(extension, StringComparison.OrdinalIgnoreCase));
+
+                                if (hasValidImageExtension)
+                                {
+                                    objstate.Image = objstate.URN;
+                                }
+                            }
+
+
                             foundObject.SuspendLayout();
                             if (objstate.Image != null)
                             {
@@ -3678,10 +3694,11 @@ namespace SUP
                 supPrivateFlow.ResumeLayout();
                 btnPrivateMessage.Enabled = true; return;
             }
+            List<MessageObject> messages = OBJState.GetPrivateMessagesByAddress(profileURN.Links[0].LinkData.ToString(), mainnetLogin, mainnetPassword, mainnetURL, mainnetVersionByte, numPrivateMessagesDisplayed, 10);
+            numPrivateMessagesDisplayed = numPrivateMessagesDisplayed + 10;
 
 
-            Task BuildMessage = Task.Run(() =>
-            {
+          
 
                 this.Invoke((MethodInvoker)delegate
                 {
@@ -3689,15 +3706,15 @@ namespace SUP
                 });
 
                 Dictionary<string, string[]> profileAddress = new Dictionary<string, string[]> { };
-                List<MessageObject> messages = OBJState.GetPrivateMessagesByAddress(profileURN.Links[0].LinkData.ToString(), mainnetLogin, mainnetPassword, mainnetURL, mainnetVersionByte, numPrivateMessagesDisplayed, 10);
-
+               
+     
                 try
                 {
 
 
                     foreach (MessageObject messagePacket in messages)
                     {
-                        numPrivateMessagesDisplayed++;
+                        
 
 
                         Root root = Root.GetRootByTransactionId(messagePacket.TransactionId, mainnetLogin, mainnetPassword, mainnetURL, mainnetVersionByte);
@@ -4312,9 +4329,9 @@ namespace SUP
 
 
                 }
-                catch
+                catch (Exception ex)
                 {
-
+                    string errormessage = ex.Message;
                 }
 
                 this.Invoke((MethodInvoker)delegate
@@ -4322,7 +4339,7 @@ namespace SUP
                     supPrivateFlow.ResumeLayout();
                     btnPrivateMessage.Enabled = true;
                 });
-            });
+            
 
 
         }
@@ -4332,7 +4349,6 @@ namespace SUP
             // sorry cannot run two searches at a time
             if (btnCommunityFeed.Enabled == false || btnPublicMessage.Enabled == false || btnPrivateMessage.Enabled == false) { return; }
             supFlow.SuspendLayout();
-            if (System.IO.File.Exists(@"GET_OBJECT_BY_ADDRESS") || System.IO.File.Exists(@"GET_OBJECTS_BY_ADDRESS")) { MessageBox.Show("Please wait for the search to complete.", "Notification"); return; }
 
             btnCommunityFeed.BackColor = System.Drawing.Color.Blue;
             btnCommunityFeed.ForeColor = System.Drawing.Color.Yellow;
@@ -4378,12 +4394,16 @@ namespace SUP
                 supFlow.Controls.Clear();
             }
 
-            if (File.Exists(@"root\MyFriendList.Json"))
+            string FriendsListPath = "";
+            if (testnet) { FriendsListPath = @"root\MyFriendList.Json"; } else { FriendsListPath = @"root\MyProdFriendList.Json"; }
+
+
+            if (File.Exists(FriendsListPath))
             {
                 Task BuildMessage = Task.Run(() =>
                 {
                     List<string> friendFeed = new List<string>();
-                    var myFriendsJson = File.ReadAllText(@"root\MyFriendList.Json");
+                    var myFriendsJson = File.ReadAllText(FriendsListPath);
                     var myFriends = JsonConvert.DeserializeObject<Dictionary<string, string>>(myFriendsJson);
 
                     // Iterate over each key in the dictionary, get public messages by address, and combine them into a list
@@ -4452,10 +4472,6 @@ namespace SUP
                             return date2.CompareTo(date1);
                         }
                     });
-
-                    // Serialize the combined list to MyFriendsFeed.Json file
-                    var myFriendsFeedJson = JsonConvert.SerializeObject(allMessages);
-                    File.WriteAllText(@"root\MyFriendFeed.Json", myFriendsFeedJson);
 
 
                     foreach (var message in allMessages.Skip(numFriendFeedsDisplayed).Take(10))
@@ -6341,6 +6357,9 @@ namespace SUP
         {
             profileURN.Text = "anon"; profileBIO.Text = ""; profileCreatedDate.Text = ""; profileIMG.ImageLocation = null; lblProcessHeight.Text = ""; profileURN.Links[0].LinkData = null; profileURN.Links[0].Tag = ""; profileIMG.Tag = ""; profileOwner.ImageLocation = null; profileOwner.Tag = null;
             supFlow.Controls.Clear();
+            numMessagesDisplayed = 0;
+            numPrivateMessagesDisplayed = 0;
+            numFriendFeedsDisplayed = 0;
 
             if (btnMainnetSwitch.ImageLocation == @"includes/BCT_Logo.png")
             {

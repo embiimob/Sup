@@ -115,7 +115,8 @@ namespace SUP
             var dictionary = new Dictionary<string, int>();
             var newdictionary = new List<List<string>>();
             List<string> encodedList = new List<string>();
-            int brnOrder = 2;
+            int givOrder = 2;
+   
             foreach (var (address, qty) in _addressQtyList)
             {
                 if (!dictionary.ContainsKey(address))
@@ -137,8 +138,8 @@ namespace SUP
                         dictionary.Add(address, qty);
                         break;
                     }
-                    newdictionary.Add(new List<string> { brnOrder.ToString(), qty.ToString() });
-                    brnOrder++;
+                    newdictionary.Add(new List<string> { givOrder.ToString(), qty.ToString() });
+                    givOrder++;
                 }
             }
 
@@ -191,7 +192,7 @@ namespace SUP
                     }
                 }
 
-                foreach (string address in dictionary.Keys)
+                foreach (string address in dictionary.Keys.Reverse())
                 {
                     encodedList.Add(address);
                 }
