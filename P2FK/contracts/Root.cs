@@ -235,7 +235,9 @@ namespace SUP.P2FK
                     {
                         Directory.CreateDirectory(diskpath);
                     }
-                    if (fileName.Length > 1 & fileName.Replace("#", "") != "BTC" & fileName.Replace("#", "") != "MZC" & fileName.Replace("#", "") != "LTC" & fileName.Replace("#", "") != "DOG" & fileName.Replace("#", "") != "IPFS")
+                    //if (fileName.Length > 1 & fileName.Replace("#", "") != "BTC" & fileName.Replace("#", "") != "MZC" & fileName.Replace("#", "") != "LTC" & fileName.Replace("#", "") != "DOG" & fileName.Replace("#", "") != "IPFS")
+                    if (fileName.Length > 1 & !fileName.StartsWith("#"))
+
                     {
                         try
                         {
@@ -494,7 +496,7 @@ namespace SUP.P2FK
 
             try
             {
-                if (address.Length < 34)
+                if (address.Length < 33)
                 {
 
                     Task.Run(() =>

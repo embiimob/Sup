@@ -3599,13 +3599,48 @@ namespace SUP
             {
                 try
                 {
-                    System.Diagnostics.Process.Start(src);
+                    if (!string.IsNullOrEmpty(src))
+                    {
+                        if (!src.StartsWith("http://") && !src.StartsWith("https://"))
+                        {
+                            // Check if it starts with IPFS
+                            if (src.StartsWith("IPFS:"))
+                            {
+                                // Extract the path after "IPFS:"
+                                string ipfsPath = src.Substring(5).Trim();
+
+                                // Assuming the application folder contains the IPFS folder
+                                string appFolder = Path.GetDirectoryName(Application.ExecutablePath);
+                                string ipfsFolderPath = Path.Combine(appFolder, "ipfs", ipfsPath);
+
+                                // Launch the process
+                                System.Diagnostics.Process.Start(ipfsFolderPath);
+                            }
+                            else
+                            {
+                                // Assuming the application folder contains the root folder
+                                string appFolder = Path.GetDirectoryName(Application.ExecutablePath);
+
+                                // Combine the application folder and the provided relative path
+                                string fullPath = Path.Combine(appFolder, "root", src);
+
+                                // Launch the process
+                                System.Diagnostics.Process.Start(fullPath);
+                            }
+                        }
+                        else
+                        {
+                            // If it's a web URL, launch it directly
+                            System.Diagnostics.Process.Start(src);
+                        }
+                    }
                 }
                 catch
                 {
                     System.Media.SystemSounds.Exclamation.Play();
                 }
             }
+
         }
 
         private void btnBurn_Click(object sender, EventArgs e)

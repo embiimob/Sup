@@ -8,6 +8,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Security.Cryptography;
+using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
@@ -213,7 +214,7 @@ namespace SUP.P2FK
                             {
 
 
-                                switch (transaction.File.Last().Key.ToString().Substring(transaction.File.Last().Key.ToString().Length - 3))
+                                switch (transaction.File.ElementAtOrDefault(1).Key?.ToString())
                                 {
                                     case "OBJ":
                                         OBJ objectinspector = null;
@@ -1549,16 +1550,26 @@ namespace SUP.P2FK
 
             string JSONOBJ;
             string diskpath = "root\\" + objectaddress + "\\";
-
-            // fetch current JSONOBJ from disk if it exists
-            try
+            string filepath = "";
+            // Generate SHA256 hash of searchstring
+            using (System.Security.Cryptography.SHA256 sha256 = System.Security.Cryptography.SHA256.Create())
             {
-                JSONOBJ = System.IO.File.ReadAllText(diskpath + "GetObjectByURN.json");
-                objectState = JsonConvert.DeserializeObject<OBJState>(JSONOBJ);
-                fetched = true;
+                byte[] hashBytes = sha256.ComputeHash(Encoding.UTF8.GetBytes(searchstring.ToLower()));
+                string hashString = BitConverter.ToString(hashBytes).Replace("-", "").ToLower();
 
+                // Use the hash as part of the filename
+                string filename = "GetObjectByURN_" + hashString + ".json";
+                filepath = Path.Combine(diskpath, filename);
+
+                // Fetch current JSONOBJ from disk if it exists
+                try
+                {
+                    JSONOBJ = System.IO.File.ReadAllText(filepath);
+                    objectState = JsonConvert.DeserializeObject<OBJState>(JSONOBJ);
+                    fetched = true;
+                }
+                catch { }
             }
-            catch { }
 
             if (fetched && objectState.URN == null) { return objectState; }
 
@@ -1593,7 +1604,7 @@ namespace SUP.P2FK
                                 var profileSerialized1 = JsonConvert.SerializeObject(isObject);
                                 try
                                 {
-                                    System.IO.File.WriteAllText(@"root\" + objectaddress + @"\" + "GetObjectByURN.json", profileSerialized1);
+                                    System.IO.File.WriteAllText(filepath, profileSerialized1);
                                 }
                                 catch
                                 {
@@ -1605,7 +1616,7 @@ namespace SUP.P2FK
                                         {
                                             Directory.CreateDirectory(@"root\" + objectaddress);
                                         }
-                                        System.IO.File.WriteAllText(@"root\" + objectaddress + @"\" + "GetObjectByURN.json", profileSerialized1);
+                                        System.IO.File.WriteAllText(filepath, profileSerialized1);
                                     }
                                     catch { };
                                 }
@@ -1627,7 +1638,7 @@ namespace SUP.P2FK
                                 var profileSerialized2 = JsonConvert.SerializeObject(isObject);
                                 try
                                 {
-                                    System.IO.File.WriteAllText(@"root\" + objectaddress + @"\" + "GetObjectByURN.json", profileSerialized2);
+                                    System.IO.File.WriteAllText(filepath, profileSerialized2);
                                 }
                                 catch
                                 {
@@ -1639,7 +1650,7 @@ namespace SUP.P2FK
                                         {
                                             Directory.CreateDirectory(@"root\" + objectaddress);
                                         }
-                                        System.IO.File.WriteAllText(@"root\" + objectaddress + @"\" + "GetObjectByURN.json", profileSerialized2);
+                                        System.IO.File.WriteAllText(filepath, profileSerialized2);
                                     }
                                     catch { };
                                 }
@@ -1662,7 +1673,7 @@ namespace SUP.P2FK
             var profileSerialized3 = JsonConvert.SerializeObject(objectState);
             try
             {
-                System.IO.File.WriteAllText(@"root\" + objectaddress + @"\" + "GetObjectByURN.json", profileSerialized3);
+                System.IO.File.WriteAllText(filepath, profileSerialized3);
             }
             catch
             {
@@ -1674,7 +1685,7 @@ namespace SUP.P2FK
                     {
                         Directory.CreateDirectory(@"root\" + objectaddress);
                     }
-                    System.IO.File.WriteAllText(@"root\" + objectaddress + @"\" + "GetObjectByURN.json", profileSerialized3);
+                    System.IO.File.WriteAllText(filepath, profileSerialized3);
                 }
                 catch { };
             }

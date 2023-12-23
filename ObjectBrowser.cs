@@ -390,7 +390,7 @@ namespace SUP
                                 {
                                     this.Invoke((Action)(() =>
                                     {
-                                        string thumbnailPath = Path.Combine(Path.GetDirectoryName(imgurn), "thumbnail.jpg");
+                                        string thumbnailPath = imgurn + "-thumbnail.jpg";
 
                                         // Check if a thumbnail exists
                                         if (File.Exists(thumbnailPath))
@@ -947,7 +947,7 @@ namespace SUP
                             {
                                 this.Invoke((Action)(() =>
                                 {
-                                    string thumbnailPath = Path.Combine(Path.GetDirectoryName(imgurn), "thumbnail.jpg");
+                                    string thumbnailPath = imgurn + "-thumbnail.jpg";
 
                                     // Check if a thumbnail exists
                                     if (File.Exists(thumbnailPath))
@@ -1385,7 +1385,7 @@ namespace SUP
                         {
                             this.Invoke((Action)(() =>
                             {
-                                string thumbnailPath = Path.Combine(Path.GetDirectoryName(imgurn), "thumbnail.jpg");
+                                string thumbnailPath = imgurn + "-thumbnail.jpg";
 
                                 // Check if a thumbnail exists
                                 if (File.Exists(thumbnailPath))
