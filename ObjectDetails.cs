@@ -2912,6 +2912,28 @@ namespace SUP
                 }
 
                 txtdesc.Text = objstate.Description;
+                string urnmsgpath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + @"\root\" + objstate.URN.Replace("BTC:", "").Replace("MZC:", "").Replace("LTC:", "").Replace("DOG:", "").Substring(0, 64) + @"\MSG";
+
+                // Check if the file exists at urnmsgpath
+                if (File.Exists(urnmsgpath))
+                {
+                    // Read the text from the file
+                    string fileText = File.ReadAllText(urnmsgpath);
+
+                    // Append the text to foundObject.ObjectDescription.Text
+                    if (string.IsNullOrEmpty(txtdesc.Text))
+                    {
+                        txtdesc.Text = fileText;
+                    }
+                    else
+                    {
+                        txtdesc.Text += Environment.NewLine + fileText;
+                    }
+                }
+
+
+
+
                 txtName.Text = objstate.Name;
                 long totalQty = objstate.Owners.Values.Sum();
 

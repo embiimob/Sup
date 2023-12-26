@@ -291,6 +291,24 @@ namespace SUP
                                 FoundObjectControl foundObject = new FoundObjectControl(_activeProfile,_testnet);
                                 foundObject.ObjectName.Text = objstate.Name;
                                 foundObject.ObjectDescription.Text = objstate.Description;
+                                string urnmsgpath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + @"\root\" + objstate.URN.Replace("BTC:", "").Replace("MZC:", "").Replace("LTC:", "").Replace("DOG:", "").Substring(0,64) + @"\MSG";
+
+                                // Check if the file exists at urnmsgpath
+                                if (File.Exists(urnmsgpath))
+                                {
+                                    // Read the text from the file
+                                    string fileText = File.ReadAllText(urnmsgpath);
+
+                                    // Append the text to foundObject.ObjectDescription.Text
+                                    if (string.IsNullOrEmpty(foundObject.ObjectDescription.Text))
+                                    {
+                                        foundObject.ObjectDescription.Text = fileText;
+                                    }
+                                    else
+                                    {
+                                        foundObject.ObjectDescription.Text += Environment.NewLine + fileText;
+                                    }
+                                }
                                 foundObject.ObjectAddress.Text = objstate.Creators.First().Key;
                                 foundObject.ObjectQty.Text = objstate.Owners.Values.Sum().ToString() + "x";
                                 foundObject.ObjectId.Text = objstate.Id.ToString();
@@ -928,6 +946,24 @@ namespace SUP
                             FoundCollectionControl foundObject = new FoundCollectionControl(_testnet);
                             foundObject.ObjectName.Text = objstate.Name;
                             foundObject.ObjectDescription.Text = objstate.Description;
+                            string urnmsgpath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + @"\root\" + objstate.URN.Replace("BTC:", "").Replace("MZC:", "").Replace("LTC:", "").Replace("DOG:", "").Substring(0,64) + @"\MSG";
+
+                            // Check if the file exists at urnmsgpath
+                            if (File.Exists(urnmsgpath))
+                            {
+                                // Read the text from the file
+                                string fileText = File.ReadAllText(urnmsgpath);
+
+                                // Append the text to foundObject.ObjectDescription.Text
+                                if (string.IsNullOrEmpty(foundObject.ObjectDescription.Text))
+                                {
+                                    foundObject.ObjectDescription.Text = fileText;
+                                }
+                                else
+                                {
+                                    foundObject.ObjectDescription.Text += Environment.NewLine + fileText;
+                                }
+                            }
                             foundObject.ObjectAddress.Text = objstate.URN;
 
                             string imgurn = "";
@@ -1287,6 +1323,24 @@ namespace SUP
                         FoundObjectControl foundObject = new FoundObjectControl(_activeProfile,_testnet);
                         foundObject.ObjectName.Text = objstate.Name;
                         foundObject.ObjectDescription.Text = objstate.Description;
+                        string urnmsgpath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + @"\root\" + objstate.URN.Replace("BTC:", "").Replace("MZC:", "").Replace("LTC:", "").Replace("DOG:", "").Substring(0, 64) + @"\MSG";
+
+                        // Check if the file exists at urnmsgpath
+                        if (File.Exists(urnmsgpath))
+                        {
+                            // Read the text from the file
+                            string fileText = File.ReadAllText(urnmsgpath);
+
+                            // Append the text to foundObject.ObjectDescription.Text
+                            if (string.IsNullOrEmpty(foundObject.ObjectDescription.Text))
+                            {
+                                foundObject.ObjectDescription.Text = fileText;
+                            }
+                            else
+                            {
+                                foundObject.ObjectDescription.Text += Environment.NewLine + fileText;
+                            }
+                        }
                         foundObject.ObjectAddress.Text = objstate.Creators.First().Key;
                         foundObject.ObjectQty.Text = objstate.Owners.Values.Sum().ToString() + "x";
                         foundObject.ObjectId.Text = objstate.Id.ToString();
