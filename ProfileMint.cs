@@ -123,8 +123,8 @@ namespace SUP
             }
             PROJson.url = mintURL;
 
-            List<int> mintCreators = new List<int>();
-            mintCreators.Add(0);
+            string[] mintCreators = new string[1];
+            mintCreators[0] = "0";
             PROJson.cre = mintCreators;
 
 

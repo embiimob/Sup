@@ -23,7 +23,7 @@ namespace SUP.P2FK
         public Dictionary<string, string> loc { get; set; }
         public string pkx { get; set; }
         public string pky { get; set; }
-        public List<int> cre { get; set; }
+        public string[] cre { get; set; }
 
 
     }
@@ -136,14 +136,23 @@ namespace SUP.P2FK
 
                                 if (profileinspector.cre != null)
                                 {
-                                    foreach (int keywordId in profileinspector.cre)
+                                    foreach (string keywordId in profileinspector.cre)
                                     {
-
-                                        string creator = transaction.Keyword.Reverse().ElementAt(keywordId).Key;
-
-                                        if (!profileState.Creators.Contains(creator))
+                                        if (int.TryParse(keywordId, out int intkey))
                                         {
-                                            profileState.Creators.Add(creator);
+                                            string creator = transaction.Keyword.Reverse().ElementAt(intkey).Key;
+
+                                            if (!profileState.Creators.Contains(creator))
+                                            {
+                                                profileState.Creators.Add(creator);
+                                            }
+                                        }
+                                        else
+                                        {
+                                            if (!profileState.Creators.Contains(keywordId))
+                                            {
+                                                profileState.Creators.Add(keywordId);
+                                            }
                                         }
 
                                     }
@@ -175,13 +184,24 @@ namespace SUP.P2FK
                                 if (profileinspector.cre != null)
                                 {
                                     profileState.Creators.Clear();
-                                    foreach (int keywordId in profileinspector.cre)
-                                    {
-                                        string creator = transaction.Keyword.Reverse().ElementAt(keywordId).Key;
 
-                                        if (!profileState.Creators.Contains(creator))
+                                    foreach (string keywordId in profileinspector.cre)
+                                    {
+                                        if (int.TryParse(keywordId, out int intkey))
                                         {
-                                            profileState.Creators.Add(creator);
+                                            string creator = transaction.Keyword.Reverse().ElementAt(intkey).Key;
+
+                                            if (!profileState.Creators.Contains(creator))
+                                            {
+                                                profileState.Creators.Add(creator);
+                                            }
+                                        }
+                                        else
+                                        {
+                                            if (!profileState.Creators.Contains(keywordId))
+                                            {
+                                                profileState.Creators.Add(keywordId);
+                                            }
                                         }
 
                                     }
