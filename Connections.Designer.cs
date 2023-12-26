@@ -576,7 +576,7 @@
             this.label15.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
             this.label15.Size = new System.Drawing.Size(116, 13);
             this.label15.TabIndex = 124;
-            this.label15.Text = "Sup!? v0.4.21-beta";
+            this.label15.Text = "Sup!? v0.4.22-beta";
             this.label15.TextAlign = System.Drawing.ContentAlignment.TopCenter;
             // 
             // label14
