@@ -24,6 +24,7 @@ namespace SUP
         private readonly static object SupLocker = new object();
         private List<string> BTCTMemPool = new List<string>();
         bool mint = false;
+        int maxHold = 0;
         private readonly string givaddress = "";
         private Random random = new Random();
         private string _activeprofile;
@@ -273,6 +274,12 @@ namespace SUP
             lblObjectCreatedDate.Text = objstate.CreatedDate.ToString("ddd, dd MMM yyyy hh:mm:ss");
             lblTotalOwnedDetail.Text = "total: " + objstate.Owners.Values.Sum().ToString();
             lblTotalRoyaltiesDetail.Text = "royalties: " + objstate.Royalties.Values.Sum().ToString();
+
+            if (objstate.Maximum != null && objstate.Maximum > 0)
+            {
+                lblMAXqty.Text = "MAX: " + objstate.Maximum.ToString();
+                maxHold = objstate.Maximum;
+            }
             
             if (objstate.Image == null)
             {
@@ -589,7 +596,14 @@ namespace SUP
             txtCurrentOwnerAddress.Text = linkData[0];
             try
             {
-                txtBuyQty.Text = linkData[1];
+                if (int.Parse(linkData[1]) > maxHold)
+                {
+                    txtBuyQty.Text = maxHold.ToString();
+                }
+                else
+                {
+                    txtBuyQty.Text = linkData[1];
+                }
                 txtBuyEachCost.Text = linkData[2];
             }
             catch { }
@@ -967,6 +981,13 @@ namespace SUP
 
         private void btnBuy_Click(object sender, EventArgs e)
         {
+            
+            if (maxHold > 0 && int.TryParse(txtBuyQty.Text,out int buyQTY) && buyQTY > maxHold)
+            {
+                MessageBox.Show("Buy Qty exceeds maximum holding amount", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                txtBuyQty.Text = maxHold.ToString();
+                return;
+            }
             var newdictionary = new List<List<string>>();
             List<string> encodedList = new List<string>();
             newdictionary.Add(new List<string> { txtCurrentOwnerAddress.Text, txtBuyQty.Text });
@@ -1044,12 +1065,20 @@ namespace SUP
                     {
                         if (keyvalue.Key != txtCurrentOwnerAddress.Text && keyvalue.Key != txtSignatureAddress.Text)
                         {
-                            try { recipients.Add(keyvalue.Key, totalCost * (keyvalue.Value / 100)); remainingCost = remainingCost - (totalCost * (keyvalue.Value / 100)); } catch { }
+                            try
+                            {
+                                decimal royaltyCost = totalCost * (keyvalue.Value / 100);
+                                if (royaltyCost < 0.00000546m) { royaltyCost = 0.00000546m; }
+                                recipients.Add(keyvalue.Key, royaltyCost);
+
+                                remainingCost = remainingCost - (totalCost * (keyvalue.Value / 100)); 
+                            
+                            } catch { }
 
                         }
                     }
 
-                    if (remainingCost <= 0) { remainingCost = 0.00000546m; }
+                    if (remainingCost < 0.00000546m) { remainingCost = 0.00000546m; }
                     recipients.Add(txtCurrentOwnerAddress.Text, remainingCost);
                     try { recipients.Add(txtAddressSearch.Text, 0.00000546m); } catch { }
                     recipients.Add(txtSignatureAddress.Text, 0.00000546m);
@@ -1183,5 +1212,6 @@ namespace SUP
 
         }
 
+   
     }
 }

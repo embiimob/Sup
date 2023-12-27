@@ -64,6 +64,7 @@
             this.btnBuy = new System.Windows.Forms.Button();
             this.progressBar1 = new System.Windows.Forms.ProgressBar();
             this.lblBuyCost = new System.Windows.Forms.Label();
+            this.lblMAXqty = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.ObjectImage)).BeginInit();
             this.SuspendLayout();
             // 
@@ -159,9 +160,9 @@
             this.label3.ForeColor = System.Drawing.Color.White;
             this.label3.Location = new System.Drawing.Point(803, 410);
             this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(182, 13);
+            this.label3.Size = new System.Drawing.Size(356, 13);
             this.label3.TabIndex = 368;
-            this.label3.Text = "enter owner address to buy from here";
+            this.label3.Text = "click a listing\'s name / address or enter an owner address to buy from here";
             // 
             // label4
             // 
@@ -343,7 +344,7 @@
             this.lblObjectCreatedDate.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.lblObjectCreatedDate.AutoSize = true;
             this.lblObjectCreatedDate.ForeColor = System.Drawing.Color.White;
-            this.lblObjectCreatedDate.Location = new System.Drawing.Point(151, 463);
+            this.lblObjectCreatedDate.Location = new System.Drawing.Point(153, 445);
             this.lblObjectCreatedDate.Margin = new System.Windows.Forms.Padding(0);
             this.lblObjectCreatedDate.Name = "lblObjectCreatedDate";
             this.lblObjectCreatedDate.Size = new System.Drawing.Size(0, 13);
@@ -354,9 +355,9 @@
             // 
             this.lblLicense.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.lblLicense.AutoSize = true;
-            this.lblLicense.Font = new System.Drawing.Font("Microsoft Sans Serif", 6.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblLicense.Font = new System.Drawing.Font("Microsoft Sans Serif", 6.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lblLicense.ForeColor = System.Drawing.Color.White;
-            this.lblLicense.Location = new System.Drawing.Point(154, 483);
+            this.lblLicense.Location = new System.Drawing.Point(153, 464);
             this.lblLicense.Margin = new System.Windows.Forms.Padding(0, 0, 3, 0);
             this.lblLicense.Name = "lblLicense";
             this.lblLicense.Size = new System.Drawing.Size(0, 12);
@@ -371,7 +372,7 @@
             this.txtName.Location = new System.Drawing.Point(153, 423);
             this.txtName.Margin = new System.Windows.Forms.Padding(0);
             this.txtName.Name = "txtName";
-            this.txtName.Size = new System.Drawing.Size(236, 38);
+            this.txtName.Size = new System.Drawing.Size(236, 21);
             this.txtName.TabIndex = 385;
             // 
             // lblTotalOwnedDetail
@@ -379,10 +380,10 @@
             this.lblTotalOwnedDetail.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.lblTotalOwnedDetail.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lblTotalOwnedDetail.ForeColor = System.Drawing.Color.White;
-            this.lblTotalOwnedDetail.Location = new System.Drawing.Point(154, 505);
+            this.lblTotalOwnedDetail.Location = new System.Drawing.Point(151, 506);
             this.lblTotalOwnedDetail.Name = "lblTotalOwnedDetail";
             this.lblTotalOwnedDetail.Padding = new System.Windows.Forms.Padding(3);
-            this.lblTotalOwnedDetail.Size = new System.Drawing.Size(161, 23);
+            this.lblTotalOwnedDetail.Size = new System.Drawing.Size(161, 21);
             this.lblTotalOwnedDetail.TabIndex = 388;
             this.lblTotalOwnedDetail.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
@@ -391,10 +392,10 @@
             this.lblTotalRoyaltiesDetail.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.lblTotalRoyaltiesDetail.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lblTotalRoyaltiesDetail.ForeColor = System.Drawing.Color.White;
-            this.lblTotalRoyaltiesDetail.Location = new System.Drawing.Point(154, 528);
+            this.lblTotalRoyaltiesDetail.Location = new System.Drawing.Point(152, 528);
             this.lblTotalRoyaltiesDetail.Name = "lblTotalRoyaltiesDetail";
             this.lblTotalRoyaltiesDetail.Padding = new System.Windows.Forms.Padding(3);
-            this.lblTotalRoyaltiesDetail.Size = new System.Drawing.Size(161, 23);
+            this.lblTotalRoyaltiesDetail.Size = new System.Drawing.Size(161, 25);
             this.lblTotalRoyaltiesDetail.TabIndex = 389;
             this.lblTotalRoyaltiesDetail.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
@@ -479,6 +480,18 @@
             this.lblBuyCost.Size = new System.Drawing.Size(0, 13);
             this.lblBuyCost.TabIndex = 398;
             // 
+            // lblMAXqty
+            // 
+            this.lblMAXqty.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.lblMAXqty.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblMAXqty.ForeColor = System.Drawing.Color.Yellow;
+            this.lblMAXqty.Location = new System.Drawing.Point(148, 480);
+            this.lblMAXqty.Name = "lblMAXqty";
+            this.lblMAXqty.Padding = new System.Windows.Forms.Padding(3);
+            this.lblMAXqty.Size = new System.Drawing.Size(161, 23);
+            this.lblMAXqty.TabIndex = 399;
+            this.lblMAXqty.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            // 
             // ObjectBuy
             // 
             this.AllowDrop = true;
@@ -486,6 +499,7 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.Black;
             this.ClientSize = new System.Drawing.Size(1203, 607);
+            this.Controls.Add(this.lblMAXqty);
             this.Controls.Add(this.lblBuyCost);
             this.Controls.Add(this.lblObjectStatus);
             this.Controls.Add(this.label8);
@@ -567,5 +581,6 @@
         private System.Windows.Forms.Button btnBuy;
         private System.Windows.Forms.ProgressBar progressBar1;
         private System.Windows.Forms.Label lblBuyCost;
+        private System.Windows.Forms.Label lblMAXqty;
     }
 }

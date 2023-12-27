@@ -1591,8 +1591,15 @@ namespace SUP.P2FK
                     if (transaction.Signed && transaction.File.ContainsKey("OBJ") && ((objectState.Creators != null && objectState.Creators.ContainsKey(transaction.SignedBy)) || objectState.Creators == null))
                     {
                         objectState.ProcessHeight = intProcessHeight;
-
-                        string findObject = transaction.Keyword.ElementAt(transaction.Keyword.Count - 2).Key;
+                        string findObject = ""
+                        if (transaction.Keyword.Count > 1)
+                        {
+                            findObject = transaction.Keyword.ElementAt(transaction.Keyword.Count - 2).Key;
+                        }
+                        else
+                        {
+                            findObject = transaction.Keyword.ElementAt(0).Key;
+                        }
                         OBJState isObject = GetObjectByAddress(findObject, username, password, url, versionByte);
 
                         if (isObject.URN != null && isObject.URN == searchstring && isObject.Owners != null && isObject.ChangeDate > DateTime.Now.AddYears(-3))

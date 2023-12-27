@@ -40,7 +40,6 @@
             this.ObjectName = new System.Windows.Forms.Label();
             this.ObjectCreators = new System.Windows.Forms.LinkLabel();
             this.ObjectCreators2 = new System.Windows.Forms.LinkLabel();
-            this.flowLayoutPanel1 = new System.Windows.Forms.FlowLayoutPanel();
             this.ObjectId = new System.Windows.Forms.TextBox();
             this.btnOfficial = new System.Windows.Forms.Button();
             this.txtOfficialURN = new System.Windows.Forms.TextBox();
@@ -48,7 +47,6 @@
             this.lblTrash = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.ObjectImage)).BeginInit();
             this.panel1.SuspendLayout();
-            this.flowLayoutPanel1.SuspendLayout();
             this.SuspendLayout();
             // 
             // ObjectImage
@@ -145,7 +143,7 @@
             this.ObjectDescription.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
             this.ObjectDescription.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.ObjectDescription.ForeColor = System.Drawing.Color.White;
-            this.ObjectDescription.Location = new System.Drawing.Point(4, 263);
+            this.ObjectDescription.Location = new System.Drawing.Point(4, 271);
             this.ObjectDescription.Name = "ObjectDescription";
             this.ObjectDescription.Size = new System.Drawing.Size(211, 51);
             this.ObjectDescription.TabIndex = 6;
@@ -159,7 +157,7 @@
             this.ObjectQty.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
             this.ObjectQty.Font = new System.Drawing.Font("Microsoft Sans Serif", 6.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.ObjectQty.ForeColor = System.Drawing.Color.White;
-            this.ObjectQty.Location = new System.Drawing.Point(143, 219);
+            this.ObjectQty.Location = new System.Drawing.Point(150, 217);
             this.ObjectQty.Name = "ObjectQty";
             this.ObjectQty.Size = new System.Drawing.Size(63, 20);
             this.ObjectQty.TabIndex = 7;
@@ -173,9 +171,9 @@
             this.ObjectAddress.Font = new System.Drawing.Font("Microsoft Sans Serif", 5.75F);
             this.ObjectAddress.ForeColor = System.Drawing.Color.White;
             this.ObjectAddress.ImageAlign = System.Drawing.ContentAlignment.BottomCenter;
-            this.ObjectAddress.Location = new System.Drawing.Point(6, 311);
+            this.ObjectAddress.Location = new System.Drawing.Point(6, 315);
             this.ObjectAddress.Name = "ObjectAddress";
-            this.ObjectAddress.Size = new System.Drawing.Size(209, 21);
+            this.ObjectAddress.Size = new System.Drawing.Size(209, 31);
             this.ObjectAddress.TabIndex = 8;
             this.ObjectAddress.Text = "@";
             this.ObjectAddress.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
@@ -186,7 +184,7 @@
             this.ObjectName.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
             this.ObjectName.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.ObjectName.ForeColor = System.Drawing.Color.White;
-            this.ObjectName.Location = new System.Drawing.Point(3, 221);
+            this.ObjectName.Location = new System.Drawing.Point(5, 220);
             this.ObjectName.Margin = new System.Windows.Forms.Padding(0);
             this.ObjectName.Name = "ObjectName";
             this.ObjectName.Size = new System.Drawing.Size(143, 18);
@@ -199,7 +197,7 @@
             this.ObjectCreators.AutoSize = true;
             this.ObjectCreators.BackColor = System.Drawing.Color.Transparent;
             this.ObjectCreators.LinkColor = System.Drawing.SystemColors.Highlight;
-            this.ObjectCreators.Location = new System.Drawing.Point(3, 0);
+            this.ObjectCreators.Location = new System.Drawing.Point(7, 237);
             this.ObjectCreators.Name = "ObjectCreators";
             this.ObjectCreators.Size = new System.Drawing.Size(0, 13);
             this.ObjectCreators.TabIndex = 10;
@@ -211,26 +209,12 @@
             this.ObjectCreators2.AutoSize = true;
             this.ObjectCreators2.BackColor = System.Drawing.Color.Transparent;
             this.ObjectCreators2.LinkColor = System.Drawing.SystemColors.Highlight;
-            this.ObjectCreators2.Location = new System.Drawing.Point(9, 0);
+            this.ObjectCreators2.Location = new System.Drawing.Point(7, 255);
             this.ObjectCreators2.Name = "ObjectCreators2";
-            this.ObjectCreators2.Padding = new System.Windows.Forms.Padding(30, 0, 0, 0);
-            this.ObjectCreators2.Size = new System.Drawing.Size(30, 13);
+            this.ObjectCreators2.Size = new System.Drawing.Size(0, 13);
             this.ObjectCreators2.TabIndex = 11;
             this.ObjectCreators2.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             this.ObjectCreators2.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.ObjectCreators2_LinkClicked);
-            // 
-            // flowLayoutPanel1
-            // 
-            this.flowLayoutPanel1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
-            this.flowLayoutPanel1.Controls.Add(this.ObjectCreators);
-            this.flowLayoutPanel1.Controls.Add(this.ObjectCreators2);
-            this.flowLayoutPanel1.ForeColor = System.Drawing.Color.White;
-            this.flowLayoutPanel1.Location = new System.Drawing.Point(1, 244);
-            this.flowLayoutPanel1.Margin = new System.Windows.Forms.Padding(10, 3, 20, 3);
-            this.flowLayoutPanel1.Name = "flowLayoutPanel1";
-            this.flowLayoutPanel1.Size = new System.Drawing.Size(219, 20);
-            this.flowLayoutPanel1.TabIndex = 12;
-            this.flowLayoutPanel1.Click += new System.EventHandler(this.foundObjectControl_Click);
             // 
             // ObjectId
             // 
@@ -292,13 +276,14 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
-            this.Controls.Add(this.flowLayoutPanel1);
+            this.Controls.Add(this.ObjectDescription);
+            this.Controls.Add(this.ObjectCreators);
+            this.Controls.Add(this.ObjectCreators2);
             this.Controls.Add(this.btnOfficial);
             this.Controls.Add(this.lblOfficial);
             this.Controls.Add(this.ObjectImage);
             this.Controls.Add(this.lblTrash);
             this.Controls.Add(this.ObjectAddress);
-            this.Controls.Add(this.ObjectDescription);
             this.Controls.Add(this.txtOfficialURN);
             this.Controls.Add(this.ObjectName);
             this.Controls.Add(this.ObjectQty);
@@ -314,8 +299,6 @@
             ((System.ComponentModel.ISupportInitialize)(this.ObjectImage)).EndInit();
             this.panel1.ResumeLayout(false);
             this.panel1.PerformLayout();
-            this.flowLayoutPanel1.ResumeLayout(false);
-            this.flowLayoutPanel1.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -337,7 +320,6 @@
         public System.Windows.Forms.TextBox ObjectId;
         public System.Windows.Forms.Button btnOfficial;
         public System.Windows.Forms.TextBox txtOfficialURN;
-        public System.Windows.Forms.FlowLayoutPanel flowLayoutPanel1;
         public System.Windows.Forms.Label lblOfficial;
         public System.Windows.Forms.Label lblTrash;
     }

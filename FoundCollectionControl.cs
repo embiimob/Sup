@@ -8,7 +8,7 @@ namespace SUP
 {
     public partial class FoundCollectionControl : UserControl
     {
-        private bool _testnet;
+        private bool _testnet = true;
         private string mainnetURL = @"http://127.0.0.1:18332";
         private string mainnetLogin = "good-user";
         private string mainnetPassword = "better-password";
@@ -16,21 +16,22 @@ namespace SUP
         public FoundCollectionControl(bool testnet = true)
         {
             InitializeComponent();
-            _testnet = testnet;
+           
             if (!testnet )
             {
               mainnetURL = @"http://127.0.0.1:8332";
         mainnetLogin = "good-user";
         mainnetPassword = "better-password";
         mainnetVersionByte = "0";
-    }
+                _testnet = testnet;
+            }
         }
      
         private void foundObjectControl_Click(object sender, EventArgs e)
         {
 
             Form parentForm = this.FindForm();
-            ObjectBrowser childForm = new ObjectBrowser(ObjectAddress.Text, _testnet);
+            ObjectBrowser childForm = new ObjectBrowser(ObjectAddress.Text,false, _testnet);
             
             childForm.Owner = parentForm;
           

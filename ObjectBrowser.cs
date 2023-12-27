@@ -30,7 +30,7 @@ namespace SUP
         private string mainnetLogin = "good-user";
         private string mainnetPassword = "better-password";
         private string mainnetVersionByte = "111";
-        private bool _testnet;
+        private bool _testnet = true;
         List<FoundObjectControl> foundObjects = new List<FoundObjectControl>();
 
         private readonly System.Windows.Forms.Timer _doubleClickTimer = new System.Windows.Forms.Timer();
@@ -51,10 +51,54 @@ namespace SUP
                 mainnetLogin = "good-user";
                 mainnetPassword = "better-password";
                 mainnetVersionByte = "0";
+                _testnet = testnet;
+            }
+
+        }
+
+        private async void ObjectBrowserLoad(object sender, EventArgs e)
+        {
+            if (_isUserControl) { this.Text = String.Empty; this.flowLayoutPanel1.Padding = new Padding(3, 80, 0, 0); this.Size = this.MinimumSize; btnJukeBox.Visible = false; btnVideoSearch.Visible = false; btnInquiry.Visible = false; }
+
+            Form parentForm = this.Owner;
+            bool isBlue = false;
+            selectSort.SelectedIndex = 0;
+
+
+            if (_objectaddress.Length > 0)
+            {
+                txtSearchAddress.Text = _objectaddress;
+                txtLast.Text = "0";
+                //txtQty.Text = "20";
+            
+
+                DisableSupInput();
+                Random rnd = new Random();
+                string[] gifFiles = Directory.GetFiles("includes", "*.gif");
+                if (gifFiles.Length > 0)
+                {
+                    int randomIndex = rnd.Next(gifFiles.Length);
+                    string randomGifFile = gifFiles[randomIndex];
+                    imgLoading.ImageLocation = randomGifFile;
+                }
+                else
+                {
+                    imgLoading.ImageLocation = @"includes\HugPuddle.jpg";
+                }
+                flowLayoutPanel1.Visible = false;
+                await Task.Run(() => BuildSearchResults());
+                flowLayoutPanel1.Visible = true;
+                pages.Visible = true;
+                EnableSupInput();
 
             }
-            _testnet = testnet;
+
+
+
+
+
         }
+
 
         private void GetObjectsByAddress(string address, bool calculate = false)
         {
@@ -64,15 +108,14 @@ namespace SUP
             List<OBJState> createdObjects = new List<OBJState>();
             int skip = 0;
             try { skip = int.Parse(txtLast.Text); } catch { }
-            int qty = -1;
-            try { qty = int.Parse(txtQty.Text); } catch { };
+            int qty =30;
 
             if (address.ToUpper().StartsWith(@"SUP:") || address.ToUpper().StartsWith(@"MZC:") || address.ToUpper().StartsWith(@"BTC:") || address.ToUpper().StartsWith(@"LTC:") || address.ToUpper().StartsWith(@"DOG:"))
             {
                 string urnsearch = address;
                 if (address.ToUpper().StartsWith(@"SUP:")) { urnsearch = address.Substring(6); } else { urnsearch = address.Substring(0, 20); }
 
-                createdObjects = new List<OBJState> { OBJState.GetObjectByURN(urnsearch, mainnetLogin,mainnetPassword,mainnetURL,mainnetVersionByte) };
+                createdObjects = new List<OBJState> { OBJState.GetObjectByURN(urnsearch, mainnetLogin, mainnetPassword, mainnetURL, mainnetVersionByte) };
 
             }
             else
@@ -288,25 +331,28 @@ namespace SUP
                             if (objstate.Owners != null)
                             {
                                 string transid = "";
-                                FoundObjectControl foundObject = new FoundObjectControl(_activeProfile,_testnet);
+                                FoundObjectControl foundObject = new FoundObjectControl(_activeProfile, _testnet);
                                 foundObject.ObjectName.Text = objstate.Name;
                                 foundObject.ObjectDescription.Text = objstate.Description;
-                                string urnmsgpath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + @"\root\" + objstate.URN.Replace("BTC:", "").Replace("MZC:", "").Replace("LTC:", "").Replace("DOG:", "").Substring(0,64) + @"\MSG";
-
-                                // Check if the file exists at urnmsgpath
-                                if (File.Exists(urnmsgpath))
+                                if (!objstate.URN.ToUpper().StartsWith("IPFS") && !objstate.URN.ToUpper().StartsWith("HTTP"))
                                 {
-                                    // Read the text from the file
-                                    string fileText = File.ReadAllText(urnmsgpath);
+                                    string urnmsgpath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + @"\root\" + objstate.URN.Replace("BTC:", "").Replace("MZC:", "").Replace("LTC:", "").Replace("DOG:", "").Substring(0, 64) + @"\MSG";
 
-                                    // Append the text to foundObject.ObjectDescription.Text
-                                    if (string.IsNullOrEmpty(foundObject.ObjectDescription.Text))
+                                    // Check if the file exists at urnmsgpath
+                                    if (File.Exists(urnmsgpath))
                                     {
-                                        foundObject.ObjectDescription.Text = fileText;
-                                    }
-                                    else
-                                    {
-                                        foundObject.ObjectDescription.Text += Environment.NewLine + fileText;
+                                        // Read the text from the file
+                                        string fileText = File.ReadAllText(urnmsgpath);
+
+                                        // Append the text to foundObject.ObjectDescription.Text
+                                        if (string.IsNullOrEmpty(foundObject.ObjectDescription.Text))
+                                        {
+                                            foundObject.ObjectDescription.Text = fileText;
+                                        }
+                                        else
+                                        {
+                                            foundObject.ObjectDescription.Text += Environment.NewLine + fileText;
+                                        }
                                     }
                                 }
                                 foundObject.ObjectAddress.Text = objstate.Creators.First().Key;
@@ -316,14 +362,14 @@ namespace SUP
                                 //GPT3 reformed
                                 if (objstate.Offers != null && objstate.Offers.Count > 0)
                                 {
-                                    foundObject.Height = 389;
+                                    foundObject.Height = 395;
                                     decimal highestValue = objstate.Offers.Max(offer => offer.Value);
                                     foundObject.ObjectOffer.Text = highestValue.ToString();
                                 }
                                 //GPT3 reformed
                                 if (objstate.Listings != null && objstate.Listings.Count > 0)
                                 {
-                                    foundObject.Height = 389;
+                                    foundObject.Height = 395;
                                     decimal lowestValue = objstate.Listings.Values.Min(listing => listing.Value);
                                     foundObject.ObjectPrice.Text = lowestValue.ToString();
                                 }
@@ -946,24 +992,6 @@ namespace SUP
                             FoundCollectionControl foundObject = new FoundCollectionControl(_testnet);
                             foundObject.ObjectName.Text = objstate.Name;
                             foundObject.ObjectDescription.Text = objstate.Description;
-                            string urnmsgpath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + @"\root\" + objstate.URN.Replace("BTC:", "").Replace("MZC:", "").Replace("LTC:", "").Replace("DOG:", "").Substring(0,64) + @"\MSG";
-
-                            // Check if the file exists at urnmsgpath
-                            if (File.Exists(urnmsgpath))
-                            {
-                                // Read the text from the file
-                                string fileText = File.ReadAllText(urnmsgpath);
-
-                                // Append the text to foundObject.ObjectDescription.Text
-                                if (string.IsNullOrEmpty(foundObject.ObjectDescription.Text))
-                                {
-                                    foundObject.ObjectDescription.Text = fileText;
-                                }
-                                else
-                                {
-                                    foundObject.ObjectDescription.Text += Environment.NewLine + fileText;
-                                }
-                            }
                             foundObject.ObjectAddress.Text = objstate.URN;
 
                             string imgurn = "";
@@ -1320,7 +1348,7 @@ namespace SUP
                     if (objstate.Owners != null)
                     {
                         string transid = "";
-                        FoundObjectControl foundObject = new FoundObjectControl(_activeProfile,_testnet);
+                        FoundObjectControl foundObject = new FoundObjectControl(_activeProfile, _testnet);
                         foundObject.ObjectName.Text = objstate.Name;
                         foundObject.ObjectDescription.Text = objstate.Description;
                         string urnmsgpath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + @"\root\" + objstate.URN.Replace("BTC:", "").Replace("MZC:", "").Replace("LTC:", "").Replace("DOG:", "").Substring(0, 64) + @"\MSG";
@@ -2012,8 +2040,8 @@ namespace SUP
 
 
 
-                    int loadQty = (flowLayoutPanel1.Size.Width / 213) * (flowLayoutPanel1.Size.Height / 336);
-                    loadQty -= flowLayoutPanel1.Controls.Count;
+                    int loadQty = 30;// (flowLayoutPanel1.Size.Width / 213) * (flowLayoutPanel1.Size.Height / 336);
+                    //loadQty -= flowLayoutPanel1.Controls.Count;
 
 
                     if (txtSearchAddress.Text.ToLower().StartsWith("http"))
@@ -2252,84 +2280,9 @@ namespace SUP
                     {
                         flowLayoutPanel1.Visible = true;
                     }));
-      
+
                 }
                 catch { }
-
-
-            }
-        }
-
-        private async void ObjectBrowserLoad(object sender, EventArgs e)
-        {
-            if (_isUserControl) { this.Text = String.Empty; this.flowLayoutPanel1.Padding = new Padding(3, 80, 0, 0); this.Size = this.MinimumSize; btnJukeBox.Visible = false; btnVideoSearch.Visible = false; btnInquiry.Visible = false; }
-
-            Form parentForm = this.Owner;
-            bool isBlue = false;
-            selectSort.SelectedIndex = 0;
-
-
-            // Check if the parent form has a button named "btnLive" with blue background color
-            try
-            {
-                if (parentForm != null) { isBlue = parentForm.Controls.OfType<System.Windows.Forms.Button>().Any(b => b.Name == "btnLive" && b.BackColor == System.Drawing.Color.Blue); }
-            }
-            catch { }
-
-            if (isBlue)
-            {
-                // If there is a button with blue background color, show a message box
-                DialogResult result = MessageBox.Show("disable Live monitoring to browse sup!? objects.\r\nignoring this warning may cause temporary data corruption that could require a full purge of the cache", "Warning", MessageBoxButtons.OKCancel, MessageBoxIcon.Warning);
-                if (result == DialogResult.OK)
-                {
-                    // If the user clicks OK, close the form
-                    this.Close();
-                }
-            }
-            else
-            {
-
-
-
-                if (_objectaddress.Length > 0)
-                {
-                    txtSearchAddress.Text = _objectaddress;
-                    txtLast.Text = "0";
-
-                    switch (_viewMode)
-                    {
-                        case 1:
-                            txtQty.Text = "12";
-                            break;
-                        case 0:
-                            txtQty.Text = "9";
-                            break;
-                        default:
-                            break;
-                    }
-
-                    DisableSupInput();
-                    Random rnd = new Random();
-                    string[] gifFiles = Directory.GetFiles("includes", "*.gif");
-                    if (gifFiles.Length > 0)
-                    {
-                        int randomIndex = rnd.Next(gifFiles.Length);
-                        string randomGifFile = gifFiles[randomIndex];
-                        imgLoading.ImageLocation = randomGifFile;
-                    }
-                    else
-                    {
-                        imgLoading.ImageLocation = @"includes\HugPuddle.jpg";
-                    }
-                    flowLayoutPanel1.Visible = false;
-                    await Task.Run(() => BuildSearchResults());
-                    flowLayoutPanel1.Visible = true;
-                    pages.Visible = true;
-                    EnableSupInput();
-
-                }
-
-
 
 
             }
