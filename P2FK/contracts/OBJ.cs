@@ -1591,7 +1591,7 @@ namespace SUP.P2FK
                     if (transaction.Signed && transaction.File.ContainsKey("OBJ") && ((objectState.Creators != null && objectState.Creators.ContainsKey(transaction.SignedBy)) || objectState.Creators == null))
                     {
                         objectState.ProcessHeight = intProcessHeight;
-                        string findObject = ""
+                        string findObject = "";
                         if (transaction.Keyword.Count > 1)
                         {
                             findObject = transaction.Keyword.ElementAt(transaction.Keyword.Count - 2).Key;

@@ -186,7 +186,7 @@ namespace SUP
                         {
                             creatorKey = obj.Creators.Keys.First();
                         }
-                        string audioPacket = getLocalPath(obj.URN) + "," + obj.CreatedDate + "," + creatorKey + "," + obj.URN;
+                        string audioPacket = getLocalPath(obj.URN) + "," + obj.CreatedDate + "," + creatorKey + "," + obj.URN + "," + obj.Creators.First().Key;
                         if (!soundFiles.Contains(audioPacket))
                         {
                             soundFiles.Add(audioPacket);
@@ -214,7 +214,7 @@ namespace SUP
                             creatorKey = obj.Creators.Keys.First();
                         }
 
-                        string audioPacket = getLocalPath(obj.URN) + "," + obj.CreatedDate + "," + creatorKey + "," + obj.URN;
+                        string audioPacket = getLocalPath(obj.URN) + "," + obj.CreatedDate + "," + creatorKey + "," + obj.URN + ","+ obj.Creators.First().Key;
                         if (!soundFiles.Contains(audioPacket))
                         {
                             soundFiles.Add(audioPacket);
@@ -280,9 +280,17 @@ namespace SUP
                 string soundFile = Path.GetFileName(soundInfo[0]);
                 string soundDate = soundInfo[1];
                 string soundURN = soundInfo[3];
+                string description = "";
 
                 // should prevent all files from trying to build at once will be limited to 30 at a time.
                 buildSoundFiles(soundInfo[0], soundURN);
+                if (soundInfo.Length == 5)
+                {
+                   
+                    OBJState getObject = OBJState.GetObjectByAddress(soundInfo[4], mainnetLogin, mainnetPassword, mainnetURL, mainnetVersionByte);
+                    if (getObject != null) { description = getObject.Description; }
+
+                }
 
                 LinkLabel linkLabel = new LinkLabel
                 {
@@ -293,7 +301,7 @@ namespace SUP
                     Font = new Font("Arial", 12, FontStyle.Regular)
                 };
                 linkLabel.Click += LinkLabel_Click;
-                toolTip1.SetToolTip(linkLabel, soundURN);
+                toolTip1.SetToolTip(linkLabel, soundURN +"\n" + description);
                 flowLayoutPanel1.Controls.Add(linkLabel);
                 currentTrackIndex++;
             }

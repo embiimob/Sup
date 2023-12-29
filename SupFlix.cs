@@ -208,7 +208,7 @@ namespace SUP
                             {
                                 creatorKey = obj.Creators.Keys.First();
                             }
-                            string audioPacket = getLocalPath(obj.URN) + "," + obj.CreatedDate + "," + creatorKey + "," + obj.URN;
+                            string audioPacket = getLocalPath(obj.URN) + "," + obj.CreatedDate + "," + creatorKey + "," + obj.URN + "," + obj.Creators.First().Key;
                             if (!soundFiles.Contains(audioPacket))
                             {
                                 soundFiles.Add(audioPacket);
@@ -238,7 +238,7 @@ namespace SUP
                                 creatorKey = obj.Creators.Keys.First();
                             }
 
-                            string audioPacket = getLocalPath(obj.URN) + "," + obj.CreatedDate + "," + creatorKey + "," + obj.URN;
+                            string audioPacket = getLocalPath(obj.URN) + "," + obj.CreatedDate + "," + creatorKey + "," + obj.URN + "," + obj.Creators.First().Key;
                             if (!soundFiles.Contains(audioPacket))
                             {
                                 soundFiles.Add(audioPacket);
@@ -301,10 +301,44 @@ namespace SUP
                 string soundFile = Path.GetFileName(soundInfo[0]);
                 string soundDate = soundInfo[1];
                 string soundURN = soundInfo[3];
+                string description = "";
+                
 
                 // should prevent all files from trying to build at once will be limited to 30 at a time.
                 buildVideoFiles(soundInfo[0], soundURN);
                 AddVideo(soundURN);
+                if (soundInfo.Length == 5)
+                {
+                    OBJState getObject = OBJState.GetObjectByAddress(soundInfo[4], mainnetLogin, mainnetPassword, mainnetURL, mainnetVersionByte);
+                    if (getObject != null) { description = getObject.Description; }
+                    
+                    TableLayoutPanel padding1 = new TableLayoutPanel
+                    {
+                        RowCount = 1,
+                        ColumnCount = 1,
+                        Dock = DockStyle.Top,
+
+                        AutoSize = true,
+                        Margin = new System.Windows.Forms.Padding(0, 10, 0, 10),
+                        Padding = new System.Windows.Forms.Padding(0)
+
+                    };
+
+    
+                    Label myLabel = new Label();
+                    myLabel.Text = description;
+                    myLabel.AutoSize = true; // Adjust the size based on the content
+                    myLabel.ForeColor = Color.White;
+                    // Add Label to FlowLayoutPanel
+                    flowLayoutPanel1.Controls.Add(myLabel);
+
+                    padding1.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, flowLayoutPanel1.Width - 20));
+                    this.Invoke((MethodInvoker)delegate
+                    {
+                        flowLayoutPanel1.Controls.Add(padding1);
+                    });
+                }
+             
 
                 LinkLabel linkLabel = new LinkLabel
                 {

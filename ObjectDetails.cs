@@ -2912,27 +2912,27 @@ namespace SUP
                 }
 
                 txtdesc.Text = objstate.Description;
-                string urnmsgpath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + @"\root\" + objstate.URN.Replace("BTC:", "").Replace("MZC:", "").Replace("LTC:", "").Replace("DOG:", "").Substring(0, 64) + @"\MSG";
-
-                // Check if the file exists at urnmsgpath
-                if (File.Exists(urnmsgpath))
+                if (!objstate.URN.ToUpper().StartsWith("HTTP") && !objstate.URN.ToUpper().StartsWith("IPFS"))
                 {
-                    // Read the text from the file
-                    string fileText = File.ReadAllText(urnmsgpath);
+                    string urnmsgpath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + @"\root\" + objstate.URN.Replace("BTC:", "").Replace("MZC:", "").Replace("LTC:", "").Replace("DOG:", "").Substring(0, 64) + @"\MSG";
 
-                    // Append the text to foundObject.ObjectDescription.Text
-                    if (string.IsNullOrEmpty(txtdesc.Text))
+                    // Check if the file exists at urnmsgpath
+                    if (File.Exists(urnmsgpath))
                     {
-                        txtdesc.Text = fileText;
-                    }
-                    else
-                    {
-                        txtdesc.Text += Environment.NewLine + fileText;
+                        // Read the text from the file
+                        string fileText = File.ReadAllText(urnmsgpath);
+
+                        // Append the text to foundObject.ObjectDescription.Text
+                        if (string.IsNullOrEmpty(txtdesc.Text))
+                        {
+                            txtdesc.Text = fileText;
+                        }
+                        else
+                        {
+                            txtdesc.Text += Environment.NewLine + fileText;
+                        }
                     }
                 }
-
-
-
 
                 txtName.Text = objstate.Name;
                 long totalQty = objstate.Owners.Values.Sum();
@@ -3243,18 +3243,16 @@ namespace SUP
                                             break;
                                         case "IPFS":
                                             ipfsurn = urn;
-                                            if (objstate.URN.Length == 51) { ipfsurn += @"\artifact"; }
 
-                                            if (!System.IO.Directory.Exists(@"ipfs/" + objstate.URN.Substring(5, 46) + "-build") && !System.IO.Directory.Exists(@"ipfs/" + objstate.URN.Substring(5, 46)))
+
+                                            if (!System.IO.Directory.Exists(@"ipfs/" + objstate.URN.Substring(5, 46) + "-build"))
                                             {
-
-
-                                                Task ipfsTask = Task.Run(() =>
-                                                {
+                                               
                                                     Directory.CreateDirectory(@"ipfs/" + objstate.URN.Substring(5, 46) + "-build");
                                                     Process process2 = new Process();
                                                     process2.StartInfo.FileName = @"ipfs\ipfs.exe";
                                                     process2.StartInfo.Arguments = "get " + objstate.URN.Substring(5, 46) + @" -o ipfs\" + objstate.URN.Substring(5, 46);
+                                                    process2.StartInfo.CreateNoWindow = true;
                                                     process2.Start();
                                                     process2.WaitForExit();
 
@@ -3293,7 +3291,7 @@ namespace SUP
 
                                                     Directory.Delete(@"ipfs/" + objstate.URN.Substring(5, 46) + "-build");
 
-                                                });
+                                                
                                             }
 
                                             break;
@@ -3304,6 +3302,7 @@ namespace SUP
                                             }
                                             break;
                                     }
+
                                     try
                                     {
                                         if (Uri.TryCreate(urn, UriKind.Absolute, out Uri uri) && uri.Scheme == Uri.UriSchemeHttp)
@@ -3383,7 +3382,7 @@ namespace SUP
                                     string _transactionid = objstate.TransactionId;
                                     string _viewer = _activeprofile;
                                     string _viewername = null;
-                                    if (_activeprofile != "")
+                                    if (!string.IsNullOrEmpty(_activeprofile))
                                     {
                                         PROState profile = PROState.GetProfileByAddress(_activeprofile, mainnetLogin, mainnetPassword, mainnetURL, mainnetVersionByte);
                                         if (profile.URN != null) { _viewername = HttpUtility.UrlEncode(profile.URN); }
