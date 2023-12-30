@@ -145,7 +145,7 @@
             this.ObjectDescription.ForeColor = System.Drawing.Color.White;
             this.ObjectDescription.Location = new System.Drawing.Point(4, 271);
             this.ObjectDescription.Name = "ObjectDescription";
-            this.ObjectDescription.Size = new System.Drawing.Size(211, 51);
+            this.ObjectDescription.Size = new System.Drawing.Size(211, 49);
             this.ObjectDescription.TabIndex = 6;
             this.ObjectDescription.Text = "a collection of items found on a spaceship";
             this.ObjectDescription.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
@@ -157,11 +157,11 @@
             this.ObjectQty.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
             this.ObjectQty.Font = new System.Drawing.Font("Microsoft Sans Serif", 6.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.ObjectQty.ForeColor = System.Drawing.Color.White;
-            this.ObjectQty.Location = new System.Drawing.Point(150, 217);
+            this.ObjectQty.Location = new System.Drawing.Point(116, 217);
             this.ObjectQty.Name = "ObjectQty";
-            this.ObjectQty.Size = new System.Drawing.Size(63, 20);
+            this.ObjectQty.Size = new System.Drawing.Size(97, 20);
             this.ObjectQty.TabIndex = 7;
-            this.ObjectQty.Text = "10000x";
+            this.ObjectQty.Text = "100 /100000000x";
             this.ObjectQty.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             this.ObjectQty.Click += new System.EventHandler(this.foundObjectControl_Click);
             // 
@@ -187,7 +187,7 @@
             this.ObjectName.Location = new System.Drawing.Point(5, 220);
             this.ObjectName.Margin = new System.Windows.Forms.Padding(0);
             this.ObjectName.Name = "ObjectName";
-            this.ObjectName.Size = new System.Drawing.Size(143, 18);
+            this.ObjectName.Size = new System.Drawing.Size(119, 18);
             this.ObjectName.TabIndex = 9;
             this.ObjectName.Text = "FakeUFO Keywords this hoy sdgfd";
             this.ObjectName.Click += new System.EventHandler(this.foundObjectControl_Click);

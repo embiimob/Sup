@@ -38,14 +38,14 @@ namespace SUP
             txtSearch.Text = searchaddress;
             if (!testnet)
             {
-                      mainnetURL = @"http://127.0.0.1:8332";
-       mainnetLogin = "good-user";
-      mainnetPassword = "better-password";
-         mainnetVersionByte = "0";
+                mainnetURL = @"http://127.0.0.1:8332";
+                mainnetLogin = "good-user";
+                mainnetPassword = "better-password";
+                mainnetVersionByte = "0";
 
-    }
+            }
 
-}
+        }
 
         private void JukeBox_Load(object sender, EventArgs e)
         {
@@ -112,14 +112,14 @@ namespace SUP
                 });
 
                 soundFiles = new List<string>();
-                string searchAddress = Root.GetPublicAddressByKeyword(searchstring.Replace("#",""), mainnetVersionByte);
+                string searchAddress = Root.GetPublicAddressByKeyword(searchstring.Replace("#", ""), mainnetVersionByte);
 
                 if (searchstring.Length > 20) { searchAddress = searchstring; }
                 else
                 {
                     if (!searchstring.StartsWith("#"))
                     {
-                        PROState searchprofile = PROState.GetProfileByURN(searchstring, mainnetLogin, mainnetPassword, mainnetURL,mainnetVersionByte);
+                        PROState searchprofile = PROState.GetProfileByURN(searchstring, mainnetLogin, mainnetPassword, mainnetURL, mainnetVersionByte);
                         if (searchprofile.Creators != null)
                         {
                             searchAddress = searchprofile.Creators[0];
@@ -127,98 +127,129 @@ namespace SUP
                     }
                 }
 
-                               
-                
-                Root[] TRACKS = Root.GetRootsByAddress(searchAddress, mainnetLogin, mainnetPassword, mainnetURL,0,-1,mainnetVersionByte);
+                List<OBJState> objects = new List<OBJState>();
 
-
-                foreach (Root TRACK in TRACKS)
+                if (btnOwned.BackColor == Color.White)
                 {
-                    foreach (string message in TRACK.Message)
-                    {
-                        // Find all occurrences of strings surrounded by << >> that end in .mp3 or .wav
-                        foreach (Match match in Regex.Matches(message, @"<<([^>]*?(\s*\.mp3\s*(?=>>|$)|\.mp3\s*>>|\s*\.wav\s*(?=>>|$)|\.wav\s*>>))"))
-                        {
-                            string audioFrom = TRACK.SignedBy;
-                            string audioPacket = getLocalPath(match.Groups[1].Value) + "," + TRACK.BlockDate + "," + audioFrom + "," + match.Groups[1].Value;
-                            
-                            if (!soundFiles.Contains(audioPacket)) {
-                                soundFiles.Add(audioPacket);
-                            }
 
+                    Root[] TRACKS = Root.GetRootsByAddress(searchAddress, mainnetLogin, mainnetPassword, mainnetURL, 0, -1, mainnetVersionByte);
+
+
+                    foreach (Root TRACK in TRACKS)
+                    {
+                        foreach (string message in TRACK.Message)
+                        {
+                            // Find all occurrences of strings surrounded by << >> that end in .mp3 or .wav
+                            foreach (Match match in Regex.Matches(message, @"<<([^>]*?(\s*\.mp3\s*(?=>>|$)|\.mp3\s*>>|\s*\.wav\s*(?=>>|$)|\.wav\s*>>))"))
+                            {
+                                string audioFrom = TRACK.SignedBy;
+                                string audioPacket = getLocalPath(match.Groups[1].Value) + "," + TRACK.BlockDate + "," + audioFrom + "," + match.Groups[1].Value;
+
+                                if (!soundFiles.Contains(audioPacket))
+                                {
+                                    soundFiles.Add(audioPacket);
+                                }
+
+                            }
+                        }
+
+                        foreach (string attachment in TRACK.File.Keys)
+                        {
+                            // Check if the attachment ends in .GIF (case-insensitive)
+                            if (attachment.EndsWith(".MP3", StringComparison.OrdinalIgnoreCase) || attachment.EndsWith(".WAV", StringComparison.OrdinalIgnoreCase))
+                            {
+                                string audioFrom = TRACK.SignedBy;
+                                string audioPacket = getLocalPath(TRACK.TransactionId + @"\" + attachment) + "," + TRACK.BlockDate + "," + audioFrom + "," + TRACK.TransactionId + @"\" + attachment;
+
+                                if (!soundFiles.Contains(audioPacket))
+                                {
+                                    soundFiles.Add(audioPacket);
+                                }
+                            }
                         }
                     }
 
-                    foreach (string attachment in TRACK.File.Keys)
+                    objects = OBJState.GetObjectsByKeyword(new List<string> { searchstring.Replace("#", "") }, mainnetLogin, mainnetPassword, mainnetURL, mainnetVersionByte);
+
+                    foreach (OBJState obj in objects)
                     {
-                        // Check if the attachment ends in .GIF (case-insensitive)
-                        if (attachment.EndsWith(".MP3", StringComparison.OrdinalIgnoreCase) || attachment.EndsWith(".WAV", StringComparison.OrdinalIgnoreCase))
+
+                        if (obj.URN.ToLower().EndsWith(".mp3") || obj.URN.ToLower().EndsWith(".wav"))
                         {
-                            string audioFrom = TRACK.SignedBy;
-                            string audioPacket = getLocalPath(TRACK.TransactionId + @"\" + attachment) + "," + TRACK.BlockDate + "," + audioFrom + "," + TRACK.TransactionId + @"\" + attachment;
-                            
+
+                            string creatorKey = null;
+
+                            if (obj.Creators.Keys.Count > 1)
+                            {
+                                creatorKey = obj.Creators.Keys.ElementAt(1);
+                            }
+                            else if (obj.Creators.Keys.Count == 1)
+                            {
+                                creatorKey = obj.Creators.Keys.First();
+                            }
+                            string audioPacket = getLocalPath(obj.URN) + "," + obj.CreatedDate + "," + creatorKey + "," + obj.URN + "," + obj.Creators.First().Key;
                             if (!soundFiles.Contains(audioPacket))
                             {
                                 soundFiles.Add(audioPacket);
                             }
                         }
                     }
-                }
-
-                List<OBJState> objects = new List<OBJState>();
 
 
-                objects = OBJState.GetObjectsByKeyword(new List<string> { searchstring.Replace("#", "") }, mainnetLogin, mainnetPassword, mainnetURL, mainnetVersionByte);
+                    objects = OBJState.GetObjectsCreatedByAddress(searchAddress, mainnetLogin, mainnetPassword, mainnetURL, mainnetVersionByte);
 
-                foreach (OBJState obj in objects)
-                {
-
-                    if (obj.URN.ToLower().EndsWith(".mp3") || obj.URN.ToLower().EndsWith(".wav"))
+                    foreach (OBJState obj in objects)
                     {
 
-                        string creatorKey = null;
+                        if (obj.URN.ToLower().EndsWith(".mp3") || obj.URN.ToLower().EndsWith(".wav"))
+                        {
 
-                        if (obj.Creators.Keys.Count > 1)
-                        {
-                            creatorKey = obj.Creators.Keys.ElementAt(1);
-                        }
-                        else if (obj.Creators.Keys.Count == 1)
-                        {
-                            creatorKey = obj.Creators.Keys.First();
-                        }
-                        string audioPacket = getLocalPath(obj.URN) + "," + obj.CreatedDate + "," + creatorKey + "," + obj.URN + "," + obj.Creators.First().Key;
-                        if (!soundFiles.Contains(audioPacket))
-                        {
-                            soundFiles.Add(audioPacket);
+                            string creatorKey = null;
+
+                            if (obj.Creators.Keys.Count > 1)
+                            {
+                                creatorKey = obj.Creators.Keys.ElementAt(1);
+                            }
+                            else if (obj.Creators.Keys.Count == 1)
+                            {
+                                creatorKey = obj.Creators.Keys.First();
+                            }
+
+                            string audioPacket = getLocalPath(obj.URN) + "," + obj.CreatedDate + "," + creatorKey + "," + obj.URN + "," + obj.Creators.First().Key;
+                            if (!soundFiles.Contains(audioPacket))
+                            {
+                                soundFiles.Add(audioPacket);
+
+                            }
                         }
                     }
-                }
-
-
-                objects = OBJState.GetObjectsCreatedByAddress(searchAddress, mainnetLogin, mainnetPassword, mainnetURL,mainnetVersionByte);
-
-                foreach (OBJState obj in objects)
+                }else
                 {
+                    objects = OBJState.GetObjectsOwnedByAddress(searchAddress, mainnetLogin, mainnetPassword, mainnetURL, mainnetVersionByte);
 
-                    if (obj.URN.ToLower().EndsWith(".mp3") || obj.URN.ToLower().EndsWith(".wav"))
+                    foreach (OBJState obj in objects)
                     {
 
-                        string creatorKey = null;
-
-                        if (obj.Creators.Keys.Count > 1)
+                        if (obj.URN.ToLower().EndsWith(".mp3") || obj.URN.ToLower().EndsWith(".wav"))
                         {
-                            creatorKey = obj.Creators.Keys.ElementAt(1);
-                        }
-                        else if (obj.Creators.Keys.Count == 1)
-                        {
-                            creatorKey = obj.Creators.Keys.First();
-                        }
 
-                        string audioPacket = getLocalPath(obj.URN) + "," + obj.CreatedDate + "," + creatorKey + "," + obj.URN + ","+ obj.Creators.First().Key;
-                        if (!soundFiles.Contains(audioPacket))
-                        {
-                            soundFiles.Add(audioPacket);
+                            string creatorKey = null;
 
+                            if (obj.Creators.Keys.Count > 1)
+                            {
+                                creatorKey = obj.Creators.Keys.ElementAt(1);
+                            }
+                            else if (obj.Creators.Keys.Count == 1)
+                            {
+                                creatorKey = obj.Creators.Keys.First();
+                            }
+
+                            string audioPacket = getLocalPath(obj.URN) + "," + obj.CreatedDate + "," + creatorKey + "," + obj.URN + "," + obj.Creators.First().Key;
+                            if (!soundFiles.Contains(audioPacket))
+                            {
+                                soundFiles.Add(audioPacket);
+
+                            }
                         }
                     }
                 }
@@ -247,7 +278,7 @@ namespace SUP
                 filelocation = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + @"\root\" + filepath.Replace("BTC:", "").Replace("MZC:", "").Replace("LTC:", "").Replace("DOG:", "").Replace("IPFS:", "").Replace(@"/", @"\");
                 if (filepath.ToLower().StartsWith("ipfs:")) { filelocation = filelocation.Replace(@"\root\", @"\ipfs\"); if (filepath.Length == 51) { filelocation += @"\artifact"; } }
             }
-           
+
             return filelocation;
         }
 
@@ -286,7 +317,7 @@ namespace SUP
                 buildSoundFiles(soundInfo[0], soundURN);
                 if (soundInfo.Length == 5)
                 {
-                   
+
                     OBJState getObject = OBJState.GetObjectByAddress(soundInfo[4], mainnetLogin, mainnetPassword, mainnetURL, mainnetVersionByte);
                     if (getObject != null) { description = getObject.Description; }
 
@@ -294,14 +325,14 @@ namespace SUP
 
                 LinkLabel linkLabel = new LinkLabel
                 {
-                   
-                    Text = currentTrackIndex + ": "+ soundDate + " from: "+ soundFrom + " - "+soundFile,
+
+                    Text = currentTrackIndex + ": " + soundDate + " from: " + soundFrom + " - " + soundFile,
                     Tag = currentTrackIndex, // Store the index in the Tag property for reference
                     AutoSize = true,
                     Font = new Font("Arial", 12, FontStyle.Regular)
                 };
                 linkLabel.Click += LinkLabel_Click;
-                toolTip1.SetToolTip(linkLabel, soundURN +"\n" + description);
+                toolTip1.SetToolTip(linkLabel, soundURN + "\n" + description);
                 flowLayoutPanel1.Controls.Add(linkLabel);
                 currentTrackIndex++;
             }
@@ -447,7 +478,7 @@ namespace SUP
                 }
             }
 
-      
+
             int nextIndex = currentSoundIndex + 1;
             if (nextIndex < soundFiles.Count)
             {
@@ -477,7 +508,7 @@ namespace SUP
 
 
                 }
-                            
+
 ;
 
             }
@@ -515,7 +546,7 @@ namespace SUP
 
         private void LinkLabel_Click(object sender, EventArgs e)
         {
-           // playNext = false;
+            // playNext = false;
 
             LinkLabel clickedLabel = (LinkLabel)sender;
             int clickedIndex = (int)clickedLabel.Tag;
@@ -529,7 +560,7 @@ namespace SUP
         {
             playNext = false;
 
-            StopPlayback();  
+            StopPlayback();
 
         }
 
@@ -538,7 +569,7 @@ namespace SUP
             if (waveOutDevice != null)
             {
                 waveOutDevice.Stop();
-            
+
             }
 
             if (audioFileReader != null)
@@ -573,6 +604,19 @@ namespace SUP
         private void btnOrder_Click(object sender, EventArgs e)
         {
             if (playOldestFirst) { currentTrackIndex = 0; playOldestFirst = false; FindSounds(txtSearch.Text); } else { currentTrackIndex = 0; playOldestFirst = true; FindSounds(txtSearch.Text); }
+        }
+
+        private void btnOwned_Click(object sender, EventArgs e)
+        {
+            if (btnOwned.BackColor == Color.White)
+            {
+                btnOwned.BackColor = Color.Yellow;
+            }
+            else
+            { btnOwned.BackColor = Color.White; }
+
+            currentTrackIndex = 0;
+            FindSounds(txtSearch.Text);
         }
     }
 }

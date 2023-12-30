@@ -136,113 +136,150 @@ namespace SUP
                     }
                 }
 
-
-
-                Root[] TRACKS = Root.GetRootsByAddress(searchAddress, mainnetLogin, mainnetPassword, mainnetURL,0,-1,mainnetVersionByte);
-
-                if (TRACKS.Count() > 0)
-                {
-
-                    foreach (Root TRACK in TRACKS)
-                    {
-
-                        if (TRACK.Message.Count() > 0)
-                        {
-
-                            foreach (string message in TRACK.Message)
-                            {
-                                // Find all occurrences of strings surrounded by << >> that end in .mp3 or .wav
-                                foreach (Match match in Regex.Matches(message, @"<<([^>]*?(?i:\.mp4\s*(?=>>|$)|\.avi\s*(?=>>|$)|youtube\.com[^\s>]*|youtu\.be[^\s>]*))>>"))
-                                {
-                                    string audioFrom = TRACK.SignedBy;
-                                    string audioPacket = getLocalPath(match.Groups[1].Value) + "," + TRACK.BlockDate + "," + audioFrom + "," + match.Groups[1].Value;
-
-                                    if (!soundFiles.Contains(audioPacket))
-                                    {
-                                        soundFiles.Add(audioPacket);
-                                    }
-
-                                }
-                            }
-                        }
-
-                        if (TRACK.File.Keys.Count() > 0)
-                        {
-                            foreach (string attachment in TRACK.File.Keys)
-                            {
-                                // Check if the attachment ends in .GIF (case-insensitive)
-                                if (attachment.EndsWith(".MP4", StringComparison.OrdinalIgnoreCase) || attachment.EndsWith(".AVI", StringComparison.OrdinalIgnoreCase))
-                                {
-                                    string audioFrom = TRACK.SignedBy;
-                                    string audioPacket = getLocalPath(TRACK.TransactionId + @"\" + attachment) + "," + TRACK.BlockDate + "," + audioFrom + "," + TRACK.TransactionId + @"\" + attachment;
-
-                                    if (!soundFiles.Contains(audioPacket))
-                                    {
-                                        soundFiles.Add(audioPacket);
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
                 List<OBJState> objects = new List<OBJState>();
 
-
-                objects = OBJState.GetObjectsByKeyword(new List<string> { searchstring.Replace("#", "") }, mainnetLogin, mainnetPassword, mainnetURL, mainnetVersionByte);
-
-                if (objects.Count > 0)
+                if (btnOwned.BackColor == Color.White)
                 {
-                    foreach (OBJState obj in objects)
+
+                    Root[] TRACKS = Root.GetRootsByAddress(searchAddress, mainnetLogin, mainnetPassword, mainnetURL, 0, -1, mainnetVersionByte);
+
+                    if (TRACKS.Count() > 0)
                     {
 
-                        if (obj.URN.ToLower().EndsWith(".mp4") || obj.URN.ToLower().EndsWith(".avi"))
+                        foreach (Root TRACK in TRACKS)
                         {
 
-                            string creatorKey = null;
+                            if (TRACK.Message.Count() > 0)
+                            {
 
-                            if (obj.Creators.Keys.Count > 1)
-                            {
-                                creatorKey = obj.Creators.Keys.ElementAt(1);
+                                foreach (string message in TRACK.Message)
+                                {
+                                    // Find all occurrences of strings surrounded by << >> that end in .mp3 or .wav
+                                    foreach (Match match in Regex.Matches(message, @"<<([^>]*?(?i:\.mp4\s*(?=>>|$)|\.avi\s*(?=>>|$)|youtube\.com[^\s>]*|youtu\.be[^\s>]*))>>"))
+                                    {
+                                        string audioFrom = TRACK.SignedBy;
+                                        string audioPacket = getLocalPath(match.Groups[1].Value) + "," + TRACK.BlockDate + "," + audioFrom + "," + match.Groups[1].Value;
+
+                                        if (!soundFiles.Contains(audioPacket))
+                                        {
+                                            soundFiles.Add(audioPacket);
+                                        }
+
+                                    }
+                                }
                             }
-                            else if (obj.Creators.Keys.Count == 1)
+
+                            if (TRACK.File.Keys.Count() > 0)
                             {
-                                creatorKey = obj.Creators.Keys.First();
-                            }
-                            string audioPacket = getLocalPath(obj.URN) + "," + obj.CreatedDate + "," + creatorKey + "," + obj.URN + "," + obj.Creators.First().Key;
-                            if (!soundFiles.Contains(audioPacket))
-                            {
-                                soundFiles.Add(audioPacket);
+                                foreach (string attachment in TRACK.File.Keys)
+                                {
+                                    // Check if the attachment ends in .GIF (case-insensitive)
+                                    if (attachment.EndsWith(".MP4", StringComparison.OrdinalIgnoreCase) || attachment.EndsWith(".AVI", StringComparison.OrdinalIgnoreCase))
+                                    {
+                                        string audioFrom = TRACK.SignedBy;
+                                        string audioPacket = getLocalPath(TRACK.TransactionId + @"\" + attachment) + "," + TRACK.BlockDate + "," + audioFrom + "," + TRACK.TransactionId + @"\" + attachment;
+
+                                        if (!soundFiles.Contains(audioPacket))
+                                        {
+                                            soundFiles.Add(audioPacket);
+                                        }
+                                    }
+                                }
                             }
                         }
                     }
-                }
 
-                objects = OBJState.GetObjectsCreatedByAddress(searchAddress, mainnetLogin, mainnetPassword, mainnetURL, mainnetVersionByte);
 
-                if (objects.Count() > 0)
-                {
-                    foreach (OBJState obj in objects)
+
+                    objects = OBJState.GetObjectsByKeyword(new List<string> { searchstring.Replace("#", "") }, mainnetLogin, mainnetPassword, mainnetURL, mainnetVersionByte);
+
+                    if (objects.Count > 0)
                     {
-
-                        if (obj.URN.ToLower().EndsWith(".mp4") || obj.URN.ToLower().EndsWith(".avi"))
+                        foreach (OBJState obj in objects)
                         {
 
-                            string creatorKey = null;
-
-                            if (obj.Creators.Keys.Count > 1)
+                            if (obj.URN.ToLower().EndsWith(".mp4") || obj.URN.ToLower().EndsWith(".avi"))
                             {
-                                creatorKey = obj.Creators.Keys.ElementAt(1);
+
+                                string creatorKey = null;
+
+                                if (obj.Creators.Keys.Count > 1)
+                                {
+                                    creatorKey = obj.Creators.Keys.ElementAt(1);
+                                }
+                                else if (obj.Creators.Keys.Count == 1)
+                                {
+                                    creatorKey = obj.Creators.Keys.First();
+                                }
+                                string audioPacket = getLocalPath(obj.URN) + "," + obj.CreatedDate + "," + creatorKey + "," + obj.URN + "," + obj.Creators.First().Key;
+                                if (!soundFiles.Contains(audioPacket))
+                                {
+                                    soundFiles.Add(audioPacket);
+                                }
                             }
-                            else if (obj.Creators.Keys.Count == 1)
+                        }
+                    }
+
+                    objects = OBJState.GetObjectsCreatedByAddress(searchAddress, mainnetLogin, mainnetPassword, mainnetURL, mainnetVersionByte);
+
+                    if (objects.Count() > 0)
+                    {
+                        foreach (OBJState obj in objects)
+                        {
+
+                            if (obj.URN.ToLower().EndsWith(".mp4") || obj.URN.ToLower().EndsWith(".avi"))
                             {
-                                creatorKey = obj.Creators.Keys.First();
+
+                                string creatorKey = null;
+
+                                if (obj.Creators.Keys.Count > 1)
+                                {
+                                    creatorKey = obj.Creators.Keys.ElementAt(1);
+                                }
+                                else if (obj.Creators.Keys.Count == 1)
+                                {
+                                    creatorKey = obj.Creators.Keys.First();
+                                }
+
+                                string audioPacket = getLocalPath(obj.URN) + "," + obj.CreatedDate + "," + creatorKey + "," + obj.URN + "," + obj.Creators.First().Key;
+                                if (!soundFiles.Contains(audioPacket))
+                                {
+                                    soundFiles.Add(audioPacket);
+
+                                }
                             }
+                        }
+                    }
+                } 
+                else
+                {
+                    objects = OBJState.GetObjectsOwnedByAddress(searchAddress, mainnetLogin, mainnetPassword, mainnetURL, mainnetVersionByte);
 
-                            string audioPacket = getLocalPath(obj.URN) + "," + obj.CreatedDate + "," + creatorKey + "," + obj.URN + "," + obj.Creators.First().Key;
-                            if (!soundFiles.Contains(audioPacket))
+                    if (objects.Count() > 0)
+                    {
+                        foreach (OBJState obj in objects)
+                        {
+
+                            if (obj.URN.ToLower().EndsWith(".mp4") || obj.URN.ToLower().EndsWith(".avi"))
                             {
-                                soundFiles.Add(audioPacket);
 
+                                string creatorKey = null;
+
+                                if (obj.Creators.Keys.Count > 1)
+                                {
+                                    creatorKey = obj.Creators.Keys.ElementAt(1);
+                                }
+                                else if (obj.Creators.Keys.Count == 1)
+                                {
+                                    creatorKey = obj.Creators.Keys.First();
+                                }
+
+                                string audioPacket = getLocalPath(obj.URN) + "," + obj.CreatedDate + "," + creatorKey + "," + obj.URN + "," + obj.Creators.First().Key;
+                                if (!soundFiles.Contains(audioPacket))
+                                {
+                                    soundFiles.Add(audioPacket);
+
+                                }
                             }
                         }
                     }
@@ -766,5 +803,17 @@ namespace SUP
             if (playOldestFirst) { currentTrackIndex = 0; playOldestFirst = false; FindVideos(txtSearch.Text); } else { currentTrackIndex = 0; playOldestFirst = true; FindVideos(txtSearch.Text); }
         }
 
+        private void btnOwned_Click(object sender, EventArgs e)
+        {
+
+            if (btnOwned.BackColor == Color.White)
+            {
+                btnOwned.BackColor = Color.Yellow;
+            }
+            else
+            { btnOwned.BackColor = Color.White; }
+            currentTrackIndex = 0;
+            FindVideos(txtSearch.Text);
+        }
     }
 }

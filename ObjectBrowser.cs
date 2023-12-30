@@ -70,7 +70,7 @@ namespace SUP
                 txtSearchAddress.Text = _objectaddress;
                 txtLast.Text = "0";
                 //txtQty.Text = "20";
-            
+
 
                 DisableSupInput();
                 Random rnd = new Random();
@@ -108,7 +108,7 @@ namespace SUP
             List<OBJState> createdObjects = new List<OBJState>();
             int skip = 0;
             try { skip = int.Parse(txtLast.Text); } catch { }
-            int qty =30;
+            int qty = 32;
 
             if (address.ToUpper().StartsWith(@"SUP:") || address.ToUpper().StartsWith(@"MZC:") || address.ToUpper().StartsWith(@"BTC:") || address.ToUpper().StartsWith(@"LTC:") || address.ToUpper().StartsWith(@"DOG:"))
             {
@@ -356,7 +356,27 @@ namespace SUP
                                     }
                                 }
                                 foundObject.ObjectAddress.Text = objstate.Creators.First().Key;
-                                foundObject.ObjectQty.Text = objstate.Owners.Values.Sum().ToString() + "x";
+
+                                if (btnOwned.BackColor == Color.Yellow)
+                                {
+                                    // Assuming searchprofile is the key you want to look up in the Owners dictionary
+                                    if (objstate.Owners.TryGetValue(profileCheck, out long ownerQty))
+                                    {
+                                        // If the key is found, set the text to the current owner's qty followed by the sum of all owners
+                                        foundObject.ObjectQty.Text = $"{ownerQty} / {objstate.Owners.Values.Sum()}x";
+                                    }
+                                    else
+                                    {
+                                        // If the key is not found, set the text to the sum of all owners
+                                        foundObject.ObjectQty.Text = $"{objstate.Owners.Values.Sum()}x";
+                                    }
+                                }
+                                else
+                                {
+                                    // Set the text to the sum of all owners for a button color other than yellow
+                                    foundObject.ObjectQty.Text = $"{objstate.Owners.Values.Sum()}x";
+                                }
+
                                 foundObject.ObjectId.Text = objstate.Id.ToString();
 
                                 //GPT3 reformed
@@ -2040,7 +2060,7 @@ namespace SUP
 
 
 
-                    int loadQty = 30;// (flowLayoutPanel1.Size.Width / 213) * (flowLayoutPanel1.Size.Height / 336);
+                    int loadQty = 32;// (flowLayoutPanel1.Size.Width / 213) * (flowLayoutPanel1.Size.Height / 336);
                     //loadQty -= flowLayoutPanel1.Controls.Count;
 
 

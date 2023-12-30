@@ -596,7 +596,7 @@ namespace SUP
             txtCurrentOwnerAddress.Text = linkData[0];
             try
             {
-                if (int.Parse(linkData[1]) > maxHold)
+                if (maxHold > 0 && int.Parse(linkData[1]) > maxHold)
                 {
                     txtBuyQty.Text = maxHold.ToString();
                 }
@@ -988,6 +988,13 @@ namespace SUP
                 txtBuyQty.Text = maxHold.ToString();
                 return;
             }
+
+            if (int.TryParse(txtBuyQty.Text, out int buyQTY2) && buyQTY2 <1)
+            {
+                MessageBox.Show("Buy Qty must be 1 or greater", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
             var newdictionary = new List<List<string>>();
             List<string> encodedList = new List<string>();
             newdictionary.Add(new List<string> { txtCurrentOwnerAddress.Text, txtBuyQty.Text });

@@ -533,7 +533,7 @@ namespace SUP.P2FK
                                                     break;
                                                 }
 
-                                                if (objectState.Owners.TryGetValue(reciever, out long value) && value + qtyToGive >= objectState.Maximum)
+                                                if (objectState.Owners.TryGetValue(reciever, out long value) && value + qtyToGive > objectState.Maximum)
                                                 {
                                                     logstatus = "[\"" + transaction.SignedBy + "\",\"" + reciever + "\",\"give\",\"" + qtyToGive + "\",\"\",\"failed due to over maximum qty\",\"" + transaction.BlockDate.ToString() + "\"]";
 
@@ -846,6 +846,25 @@ namespace SUP.P2FK
 
                                                 break;
                                             }
+
+                                            if (objectState.Maximum > 0)
+                                            {
+                                                if (long.Parse(buy[1]) > objectState.Maximum)
+                                                {
+                                                    logstatus = "[\"" + transaction.SignedBy + "\",\"" + buy[0] + "\",\"buy\",\"" + buy[1] + "\",\"\",\"failed due to over maximum qty\",\"" + transaction.BlockDate.ToString() + "\"]";
+
+                                                    break;
+                                                }
+
+                                                if (objectState.Owners.TryGetValue(transaction.SignedBy, out long value) && value + int.Parse(buy[1]) > objectState.Maximum)
+                                                {
+                                                    logstatus = "[\"" + transaction.SignedBy + "\",\"" + buy[0] + "\",\"buy\",\"" + buy[1] + "\",\"\",\"failed due to over maximum qty\",\"" + transaction.BlockDate.ToString() + "\"]";
+
+                                                    break;
+                                                }
+                                            }
+
+
 
 
                                             // listed
