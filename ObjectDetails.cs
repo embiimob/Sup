@@ -8,8 +8,8 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
-using System.Globalization;
 using System.IO;
+using System.IO.Compression;
 using System.Linq;
 using System.Net;
 using System.Reflection;
@@ -37,6 +37,8 @@ namespace SUP
         private string mainnetPassword = "better-password";
         private string mainnetVersionByte = "111";
         private bool _testnet = true;
+
+
         List<Microsoft.Web.WebView2.WinForms.WebView2> webviewers = new List<Microsoft.Web.WebView2.WinForms.WebView2>();
 
         public ObjectDetails(string objectaddress, string activeprofile, bool isusercontrol = false, bool testnet = true)
@@ -55,6 +57,24 @@ namespace SUP
                 mainnetVersionByte = "0";
             }
             _testnet = testnet;
+
+            System.Windows.Forms.ToolTip myTooltip = new System.Windows.Forms.ToolTip();
+            myTooltip.SetToolTip(btnJukeBox, "click 🎵 to open the jukebox audio searching tool.\nthe active object's public messages will be searched by default.");
+            myTooltip.SetToolTip(btnDisco, "click 📣 to open the sup direct messaging panel.\nthe to: field is prepopulated with the active object's address.\nnote: search for your own local profile first to prepopulate the from: field.");
+            myTooltip.SetToolTip(btnInquiry, "click ⁉️ to open the sup poll searching tool.\nthe active object will be searched by default.");
+            myTooltip.SetToolTip(btnRefreshSup, "click 😍 to view the active object's public messages.");
+            myTooltip.SetToolTip(btnSupFlix, "click 🎬 to open the supflix video searching tool.\nthe active object's public messages will be searched by default.");
+            myTooltip.SetToolTip(lblProcessHeight, "the total amount of transactions associated with the object.\nincludes comments as well as object listings, gives, burns and buys.");
+            myTooltip.SetToolTip(btnReloadObject, "click ♻️ to refresh the object's details.\n");
+            myTooltip.SetToolTip(btnBuy, "click ⚡️ to open the object's marketplace.\n this is where you can list and buy the object.");
+            myTooltip.SetToolTip(btnBurn, "click 🔥 to burn the object.\nburn all units of the object and it will no longer be discoverable.");
+            myTooltip.SetToolTip(btnGive, "click 💞 to give the object.\n");
+            myTooltip.SetToolTip(btnRefreshTransactions, "click 🔍 to show the object's most recent provenance.\nprovenance is a historical record of all object state changes\n click 🔍 again to load additional provenance records.");
+            myTooltip.SetToolTip(btnRefreshOwners, "click 👑 to refresh and or display all ownership information.\n");
+            myTooltip.SetToolTip(lblLaunchURI, "click to launch the associated URI\nnote: this is potentially dangerous. verify the URI before clicking.\nthis button could be used to launch a local script.");
+            myTooltip.SetToolTip(btnLaunchURN, "click to view the active URN using your systems default viewer.\nthis allows fullscreen mode for video and html based content.\nnote: this is potentially dangerous. verify the URN before clicking.\nthis button could be used to launch a local script.");
+            myTooltip.SetToolTip(chkRunTrustedObject, "check this box to allow the object to execute scripts.\nclick ♻️ to reload the object URN with script execution activated.\nnote: this is potentially dangerous. verify the object's publisher and URN before clicking.\nexecuting local scripts could be harmful to your computer.");
+
         }
 
         private void ObjectDetails_Load(object sender, EventArgs e)
@@ -211,7 +231,7 @@ namespace SUP
         {
 
             var linkData = e.Link.LinkData;
-            new ObjectBrowser((string)linkData,false,_testnet).Show();
+            new ObjectBrowser((string)linkData, false, _testnet).Show();
 
         }
 
@@ -229,7 +249,7 @@ namespace SUP
             numMessagesDisplayed = 0;
 
 
-            OBJState objstate = OBJState.GetObjectByAddress(_objectaddress, mainnetLogin,mainnetPassword,mainnetURL,mainnetVersionByte);
+            OBJState objstate = OBJState.GetObjectByAddress(_objectaddress, mainnetLogin, mainnetPassword, mainnetURL, mainnetVersionByte);
             Dictionary<string, string> profileAddress = new Dictionary<string, string> { };
 
 
@@ -2074,7 +2094,7 @@ namespace SUP
         void Owner_LinkClicked(string ownerId)
         {
 
-            new ObjectBrowser(ownerId,false,_testnet).Show();
+            new ObjectBrowser(ownerId, false, _testnet).Show();
         }
 
         private async void MainRefreshClick(object sender, EventArgs e)
@@ -2118,7 +2138,7 @@ namespace SUP
                     {
                         urn = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + @"\root\" + objstate.URN.Replace("BTC:", "").Replace("MZC:", "").Replace("LTC:", "").Replace("DOG:", "").Replace("IPFS:", "").Replace(@"/", @"\");
                         if (objstate.URN.ToLower().StartsWith("ipfs:")) { urn = urn.Replace(@"\root\", @"\ipfs\"); if (objstate.URN.Length == 51) { urn += @"\artifact"; } }
-
+                        
 
                     }
                     else
@@ -2495,79 +2515,77 @@ namespace SUP
                                 if (!System.IO.Directory.Exists(@"ipfs/" + objstate.URN.Substring(5, 46) + "-build"))
                                 {
 
-                                    Task ipfsTask = Task.Run(() =>
+                                    try { Directory.Delete("ipfs/" + objstate.URN.Substring(5, 46), true); } catch { }
+                                    try { Directory.CreateDirectory("ipfs/" + objstate.URN.Substring(5, 46)); } catch { };
+                                    Directory.CreateDirectory(@"ipfs/" + objstate.URN.Substring(5, 46) + "-build");
+                                    Process process2 = new Process();
+                                    process2.StartInfo.FileName = @"ipfs\ipfs.exe";
+                                    process2.StartInfo.Arguments = "get " + objstate.URN.Substring(5, 46) + @" -o ipfs\" + objstate.URN.Substring(5, 46);
+                                    process2.Start();
+                                    process2.WaitForExit();
+
+                                    string fileName;
+                                    if (System.IO.File.Exists("ipfs/" + objstate.URN.Substring(5, 46)))
                                     {
-                                        try { Directory.Delete("ipfs/" + objstate.URN.Substring(5, 46), true); } catch { }
-                                        try { Directory.CreateDirectory("ipfs/" + objstate.URN.Substring(5, 46)); } catch { };
-                                        Directory.CreateDirectory(@"ipfs/" + objstate.URN.Substring(5, 46) + "-build");
-                                        Process process2 = new Process();
-                                        process2.StartInfo.FileName = @"ipfs\ipfs.exe";
-                                        process2.StartInfo.Arguments = "get " + objstate.URN.Substring(5, 46) + @" -o ipfs\" + objstate.URN.Substring(5, 46);
-                                        process2.Start();
-                                        process2.WaitForExit();
+                                        System.IO.File.Move("ipfs/" + objstate.URN.Substring(5, 46), "ipfs/" + objstate.URN.Substring(5, 46) + "_tmp");
+                                        System.IO.Directory.CreateDirectory("ipfs/" + objstate.URN.Substring(5, 46));
+                                        fileName = objstate.URN.Replace(@"//", "").Replace(@"\\", "").Substring(51);
+                                        if (fileName == "") { fileName = "artifact"; } else { fileName = fileName.Replace(@"/", "").Replace(@"\", ""); }
+                                        Directory.CreateDirectory("ipfs/" + objstate.URN.Substring(5, 46));
 
-                                        string fileName;
-                                        if (System.IO.File.Exists("ipfs/" + objstate.URN.Substring(5, 46)))
+                                        try { System.IO.File.Move("ipfs/" + objstate.URN.Substring(5, 46) + "_tmp", urn); }
+                                        catch (System.ArgumentException ex)
                                         {
-                                            System.IO.File.Move("ipfs/" + objstate.URN.Substring(5, 46), "ipfs/" + objstate.URN.Substring(5, 46) + "_tmp");
-                                            System.IO.Directory.CreateDirectory("ipfs/" + objstate.URN.Substring(5, 46));
-                                            fileName = objstate.URN.Replace(@"//", "").Replace(@"\\", "").Substring(51);
-                                            if (fileName == "") { fileName = "artifact"; } else { fileName = fileName.Replace(@"/", "").Replace(@"\", ""); }
-                                            Directory.CreateDirectory("ipfs/" + objstate.URN.Substring(5, 46));
 
-                                            try { System.IO.File.Move("ipfs/" + objstate.URN.Substring(5, 46) + "_tmp", urn); }
-                                            catch (System.ArgumentException ex)
-                                            {
-
-                                                System.IO.File.Move("ipfs/" + objstate.URN.Substring(5, 46) + "_tmp", "ipfs/" + objstate.URN.Substring(5, 46) + "/artifact" + objstate.URN.Substring(objstate.URN.LastIndexOf('.')));
-                                                urn = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + @"\ipfs\" + objstate.URN.Substring(5, 46) + @"\artifact" + objstate.URN.Substring(objstate.URN.LastIndexOf('.'));
-
-                                            }
-
-
+                                            System.IO.File.Move("ipfs/" + objstate.URN.Substring(5, 46) + "_tmp", "ipfs/" + objstate.URN.Substring(5, 46) + "/artifact" + objstate.URN.Substring(objstate.URN.LastIndexOf('.')));
+                                            urn = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + @"\ipfs\" + objstate.URN.Substring(5, 46) + @"\artifact" + objstate.URN.Substring(objstate.URN.LastIndexOf('.'));
 
                                         }
 
-                                        if (System.IO.File.Exists("ipfs/" + objstate.URN.Substring(5, 46) + "/" + objstate.URN.Substring(5, 46)))
+
+
+                                    }
+
+                                    if (System.IO.File.Exists("ipfs/" + objstate.URN.Substring(5, 46) + "/" + objstate.URN.Substring(5, 46)))
+                                    {
+                                        fileName = objstate.URN.Replace(@"//", "").Replace(@"\\", "").Substring(51);
+                                        if (fileName == "") { fileName = "artifact"; } else { fileName = fileName.Replace(@"/", "").Replace(@"\", ""); }
+
+                                        try { System.IO.File.Move("ipfs/" + objstate.URN.Substring(5, 46) + "/" + objstate.URN.Substring(5, 46), urn); }
+                                        catch (System.ArgumentException ex)
                                         {
-                                            fileName = objstate.URN.Replace(@"//", "").Replace(@"\\", "").Substring(51);
-                                            if (fileName == "") { fileName = "artifact"; } else { fileName = fileName.Replace(@"/", "").Replace(@"\", ""); }
 
-                                            try { System.IO.File.Move("ipfs/" + objstate.URN.Substring(5, 46) + "/" + objstate.URN.Substring(5, 46), urn); }
-                                            catch (System.ArgumentException ex)
-                                            {
+                                            System.IO.File.Move("ipfs/" + objstate.URN.Substring(5, 46) + "/" + objstate.URN.Substring(5, 46), "ipfs/" + objstate.URN.Substring(5, 46) + "/artifact" + objstate.URN.Substring(objstate.URN.LastIndexOf('.')));
+                                            urn = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + @"\ipfs\" + objstate.URN.Substring(5, 46) + @"\artifact" + objstate.URN.Substring(objstate.URN.LastIndexOf('.'));
 
-                                                System.IO.File.Move("ipfs/" + objstate.URN.Substring(5, 46) + "/" + objstate.URN.Substring(5, 46), "ipfs/" + objstate.URN.Substring(5, 46) + "/artifact" + objstate.URN.Substring(objstate.URN.LastIndexOf('.')));
-                                                urn = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + @"\ipfs\" + objstate.URN.Substring(5, 46) + @"\artifact" + objstate.URN.Substring(objstate.URN.LastIndexOf('.'));
-
-                                            }
                                         }
+                                    }
 
-                                        try
+                                    try
+                                    {
+                                        if (File.Exists("IPFS_PINNING_ENABLED"))
                                         {
-                                            if (File.Exists("IPFS_PINNING_ENABLED"))
+                                            Process process3 = new Process
                                             {
-                                                Process process3 = new Process
+                                                StartInfo = new ProcessStartInfo
                                                 {
-                                                    StartInfo = new ProcessStartInfo
-                                                    {
-                                                        FileName = @"ipfs\ipfs.exe",
-                                                        Arguments = "pin add " + objstate.URN.Substring(5, 46),
-                                                        UseShellExecute = false,
-                                                        CreateNoWindow = true
-                                                    }
-                                                };
-                                                process3.Start();
-                                            }
+                                                    FileName = @"ipfs\ipfs.exe",
+                                                    Arguments = "pin add " + objstate.URN.Substring(5, 46),
+                                                    UseShellExecute = false,
+                                                    CreateNoWindow = true
+                                                }
+                                            };
+                                            process3.Start();
                                         }
-                                        catch { }
+                                    }
+                                    catch { }
 
 
-                                        try { Directory.Delete(@"ipfs/" + objstate.URN.Substring(5, 46) + "-build"); } catch { }
+                                    try { Directory.Delete(@"ipfs/" + objstate.URN.Substring(5, 46) + "-build"); } catch { }
 
 
 
-                                    });
+
                                 }
                                 else
                                 {
@@ -3190,6 +3208,9 @@ namespace SUP
                         break;
                     case ".htm":
                     case ".html":
+                    case ".zip":
+
+
                         if (isWWW == false)
                         {
                             chkRunTrustedObject.Visible = true;
@@ -3212,8 +3233,10 @@ namespace SUP
                                 lblWarning.Visible = false;
                                 try
                                 {
-
-                                    try { System.IO.Directory.Delete(Path.GetDirectoryName(urn), true); } catch { }
+                                    if (Path.GetFileName(urn).ToLower() != "index.zip")
+                                    {
+                                        try { System.IO.Directory.Delete(Path.GetDirectoryName(urn), true); } catch { }
+                                    }
 
                                     switch (objstate.URN.Substring(0, 4))
                                     {
@@ -3244,10 +3267,11 @@ namespace SUP
                                         case "IPFS":
                                             ipfsurn = urn;
 
-
-                                            if (!System.IO.Directory.Exists(@"ipfs/" + objstate.URN.Substring(5, 46) + "-build"))
+                                            if (Path.GetFileName(urn).ToLower() != "index.zip")
                                             {
-                                               
+                                                if (!System.IO.Directory.Exists(@"ipfs/" + objstate.URN.Substring(5, 46) + "-build"))
+                                                {
+
                                                     Directory.CreateDirectory(@"ipfs/" + objstate.URN.Substring(5, 46) + "-build");
                                                     Process process2 = new Process();
                                                     process2.StartInfo.FileName = @"ipfs\ipfs.exe";
@@ -3266,7 +3290,7 @@ namespace SUP
                                                             fileName = "artifact";
                                                         }
                                                         else { fileName = fileName.Replace(@"/", "").Replace(@"\", ""); }
-                                                        Directory.CreateDirectory(@"ipfs/" + objstate.URN.Substring(5, 46));
+                                                        try { Directory.CreateDirectory(@"ipfs/" + objstate.URN.Substring(5, 46)); } catch { }
                                                         try { System.IO.File.Move("ipfs/" + objstate.URN.Substring(5, 46) + "_tmp", ipfsurn); } catch { }
                                                     }
 
@@ -3291,7 +3315,8 @@ namespace SUP
 
                                                     Directory.Delete(@"ipfs/" + objstate.URN.Substring(5, 46) + "-build");
 
-                                                
+
+                                                }
                                             }
 
                                             break;
@@ -3301,6 +3326,30 @@ namespace SUP
                                                 Root.GetRootByTransactionId(transactionid, mainnetLogin, mainnetPassword, mainnetURL, mainnetVersionByte);
                                             }
                                             break;
+                                    }
+
+                                    if (Path.GetFileName(urn).ToLower() == "index.zip")
+                                    {
+                                        string destinationFolder = Path.GetDirectoryName(urn);
+
+                                        // Check if index.html is not present
+                                        string indexPath = Path.Combine(destinationFolder, "index.html");
+                                        if (!File.Exists(indexPath))
+                                        {
+                                            // Unzip the contents of index.zip to the same folder using System.IO.Compression.ZipFile
+                                            try
+                                            {
+                                                ZipFile.ExtractToDirectory(urn, destinationFolder);
+                                            }
+                                            catch (Exception ex)
+                                            {
+                                                MessageBox.Show("Error extracting zip file: " + ex.Message);
+                                                return;
+                                            }
+                                        }
+
+                                        // Update urn to reference index.html
+                                        urn = indexPath;
                                     }
 
                                     try
@@ -3332,46 +3381,41 @@ namespace SUP
                                             case "MZC:":
                                                 if (!System.IO.Directory.Exists(@"root/" + transactionID.Value))
                                                 {
-                                                    Task.Run(() =>
-                                                    {
+                                                   
                                                         Root.GetRootByTransactionId(transactionID.Value, "good-user", "better-password", @"http://127.0.0.1:12832", "50");
-                                                    });
+                                                    
                                                 }
                                                 break;
                                             case "BTC:":
                                                 if (!System.IO.Directory.Exists(@"root/" + transactionID.Value))
                                                 {
-                                                    Task.Run(() =>
-                                                    {
+                                                   
                                                         Root.GetRootByTransactionId(transactionID.Value, "good-user", "better-password", @"http://127.0.0.1:8332", "0");
-                                                    });
+                                                    
                                                 }
                                                 break;
                                             case "LTC:":
                                                 if (!System.IO.Directory.Exists(@"root/" + transactionID.Value))
                                                 {
-                                                    Task.Run(() =>
-                                                    {
+                                                   
                                                         Root.GetRootByTransactionId(transactionID.Value, "good-user", "better-password", @"http://127.0.0.1:9332", "48");
-                                                    });
+                                                   
                                                 }
                                                 break;
                                             case "DOG:":
                                                 if (!System.IO.Directory.Exists(@"root/" + transactionID.Value))
                                                 {
-                                                    Task.Run(() =>
-                                                    {
+                                                   
                                                         Root.GetRootByTransactionId(transactionID.Value, "good-user", "better-password", @"http://127.0.0.1:22555", "30");
-                                                    });
+                                                    
                                                 }
                                                 break;
                                             default:
                                                 if (!System.IO.Directory.Exists(@"root/" + transactionID.Value))
                                                 {
-                                                    Task.Run(() =>
-                                                    {
+                                                    
                                                         Root.GetRootByTransactionId(transactionID.Value, mainnetLogin, mainnetPassword, mainnetURL, mainnetVersionByte);
-                                                    });
+                                                   
                                                 }
                                                 break;
                                         }
@@ -3412,9 +3456,13 @@ namespace SUP
                             else
                             {
                                 lblWarning.Visible = true;
-                                var sanitizer = new HtmlSanitizer();
-                                var sanitized = sanitizer.Sanitize(potentialyUnsafeHtml);
-                                try { System.IO.File.WriteAllText(urn, sanitized, System.Text.Encoding.UTF8); } catch { }
+
+                                if (Path.GetFileName(urn).ToLower() != "index.zip")
+                                {
+                                    var sanitizer = new HtmlSanitizer();
+                                    var sanitized = sanitizer.Sanitize(potentialyUnsafeHtml);
+                                    try { System.IO.File.WriteAllText(urn, sanitized, System.Text.Encoding.UTF8); } catch { }
+                                }
                             }
 
                             try
@@ -3579,7 +3627,7 @@ namespace SUP
         {
             if (path.ToUpper().StartsWith("IPFS:") || path.ToUpper().StartsWith("BTC:") || path.ToUpper().StartsWith("MZC:") || path.ToUpper().StartsWith("LTC:") || path.ToUpper().StartsWith("DOG:"))
             {
-                new ObjectBrowser(path,false,_testnet).Show();
+                new ObjectBrowser(path, false, _testnet).Show();
             }
             else
             {
@@ -3591,7 +3639,7 @@ namespace SUP
 
         private void btnOfficial_Click(object sender, EventArgs e)
         {
-            new ObjectDetails(txtOfficialURN.Text, _activeprofile,_testnet).Show();
+            new ObjectDetails(txtOfficialURN.Text, _activeprofile, _testnet).Show();
         }
 
         private void imgPicture_Validated(object sender, EventArgs e)
@@ -3666,17 +3714,17 @@ namespace SUP
 
         private void btnBurn_Click(object sender, EventArgs e)
         {
-            new ObjectBurn(_objectaddress, _activeprofile,_testnet).Show();
+            new ObjectBurn(_objectaddress, _activeprofile, _testnet).Show();
         }
 
         private void btnGive_Click(object sender, EventArgs e)
         {
-            new ObjectGive(_objectaddress, _activeprofile,_testnet).Show();
+            new ObjectGive(_objectaddress, _activeprofile, _testnet).Show();
         }
 
         private void btnDisco_Click(object sender, EventArgs e)
         {
-            DiscoBall disco = new DiscoBall(_activeprofile, "", _objectaddress, imgPicture.ImageLocation, false,_testnet);
+            DiscoBall disco = new DiscoBall(_activeprofile, "", _objectaddress, imgPicture.ImageLocation, false, _testnet);
             disco.StartPosition = FormStartPosition.CenterScreen;
             disco.Show(this);
             disco.Focus();
@@ -3684,13 +3732,13 @@ namespace SUP
 
         private void btnBuy_Click(object sender, EventArgs e)
         {
-            new ObjectBuy(_objectaddress, _activeprofile,_testnet).Show();
+            new ObjectBuy(_objectaddress, _activeprofile, _testnet).Show();
         }
 
         private void btnJukeBox_Click(object sender, EventArgs e)
         {
 
-            JukeBox jukeBoxForm = new JukeBox(_objectaddress,_testnet);
+            JukeBox jukeBoxForm = new JukeBox(_objectaddress, _testnet);
             jukeBoxForm.Show();// Pass the reference to the current form as the parent form
 
         }

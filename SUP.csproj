@@ -60,14 +60,14 @@
       <HintPath>..includes\AngleSharp.Css.dll</HintPath>
     </Reference>
     <Reference Include="CommandLine">
-      <HintPath>includes\CommandLine.dll</HintPath>
+      <HintPath>..includes\CommandLine.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Gma.QrCodeNet.Encoding, Version=0.4.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..includes\Gma.QrCodeNet.Encoding.dll</HintPath>
     </Reference>
     <Reference Include="HtmlSanitizer, Version=8.0.0.0, Culture=neutral, PublicKeyToken=61c49a1a9e79cc28, processorArchitecture=MSIL">
-      <HintPath>packages\HtmlSanitizer.8.0.723\lib\net461\HtmlSanitizer.dll</HintPath>
+      <HintPath>..includes\HtmlSanitizer.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Microsoft.Bcl.AsyncInterfaces, Version=7.0.0.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
@@ -159,6 +159,12 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="System.Core">
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.IO.Compression.FileSystem, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL" />
+    <Reference Include="System.IO.Compression.ZipFile, Version=4.0.2.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
+      <HintPath>packages\System.IO.Compression.ZipFile.4.3.0\lib\net46\System.IO.Compression.ZipFile.dll</HintPath>
+      <Private>True</Private>
       <Private>True</Private>
     </Reference>
     <Reference Include="System.Memory, Version=4.0.1.2, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
@@ -509,6 +515,21 @@
     <Content Include="includes\BC_Logo.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Include="includes\CommandLine.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="includes\PresentationCore.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="includes\PresentationCore.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="includes\PresentationFramework.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="includes\PresentationFramework.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="includes\SUPS.gif" />
     <Content Include="includes\SUPT.gif" />
     <Content Include="includes\SUPU.gif" />
@@ -517,6 +538,21 @@
     <Content Include="includes\SUPX.gif" />
     <Content Include="includes\SUPY.gif" />
     <Content Include="includes\SUPZ.gif" />
+    <Content Include="includes\System.Core.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="includes\System.Core.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="includes\System.IO.Compression.FileSystem.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="includes\System.IO.Compression.FileSystem.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="includes\System.IO.Compression.ZipFile.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="includes\System.Security.AccessControl.dll" />
     <Content Include="includes\System.Security.AccessControl.xml" />
     <Content Include="includes\System.Security.Principal.Windows.dll" />

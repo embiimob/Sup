@@ -752,6 +752,21 @@ namespace SUP.P2FK
                                                 {
                                                     // remove the dictionary key
                                                     objectState.Owners.Remove(burnr);
+
+                                                    if (objectState.Owners.Count() < 1)
+                                                    {
+                                                        try
+                                                        {
+                                                            using (FileStream fs = File.Create(@"root\" + objectaddress + @"\BLOCK"))
+                                                            {
+
+                                                            }
+
+                                                            objectState = new OBJState();
+                                                            break;
+                                                        }
+                                                        catch { }
+                                                    }
                                                 }
                                                 if (verbose)
                                                 {
