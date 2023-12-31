@@ -102,7 +102,7 @@ clicking the 🗑️ icon found in message and object search results deletes the
 <br />
 <br />
 ## **IPFS website publishing**
-To publish you complete websites with folder structure as an object, you must zip your entire website into a single file called index.zip.  The index.zip file must contain a launching page named index.html or this feature will not work. Attach the index.zip file to an object using the URN button on the object minting screen.  the URN button will automatically upload and pin your website to IPFS if the dameon is enabled.
+To publish your complete websites with folder structure as an object, you must zip your entire website into a single file called index.zip.  The index.zip file must contain a launching page named index.html or this feature will not work. Attach the index.zip file to an object using the URN button on the object minting screen.  the URN button will automatically upload and pin your website to IPFS if the daemon is enabled.
 <br />
 <br />
 ## **Web applet querystring data with transaction id hash for html based generative objects**
