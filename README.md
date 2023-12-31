@@ -1,7 +1,7 @@
 # Sup!? 
 experimental decentralized state engine
 
-Sup!? (satoshi universal protocol) demonstrates fully trustless, censorship free, social media with private messaging, file sharing, DAO voting and tradeable blockchain objects.
+Sup!? (satoshi universal protocol) demonstrates fully trustless, censorship free, social media with private messaging, file sharing, DAO voting, website publishing and tradeable blockchain objects.
 
 This experiment is using an ancient blockchain protocol called P2FK (Pay to Future Key) invented by http://HugPuddle.org in 2013.
 
@@ -9,7 +9,7 @@ P2FK was directly inspired by the satoshi uploader  see --> https://cirosantilli
 
 ## **Installation**
 
-1. Download Supv0.4.25-beta.zip ( https://github.com/embiimob/Sup/releases/download/Supv0.4.25-beta/Supv0.4.25-beta.zip )
+1. Download Supv0.5.0-beta.zip ( https://github.com/embiimob/Sup/releases/download/Supv0.5.0-beta/Supv0.5.0-beta.zip )
 2. Create a folder on your **fastest** disk drive with at least **50GB** free (it will be storing the bitcoin testnet blockchain)
 3. Unzip all contents into the folder
 4. Run SUP.exe
@@ -99,6 +99,10 @@ Blocking addresses ignores any associations to them going forward, preventing a 
 Muting an address prevents any further transaction comments signed by the address from outputting onto a disk. A purge and reinspection is required to completely eliminate all transaction comments.
 <br />
 clicking the 🗑️ icon found in message and object search results deletes them from disk including any thumbnails or attachments they may have been displaying at the time.  it also places a null transaction record into the cache to prevent the object or message from outputting onto a disk in the future. 
+<br />
+<br />
+## **IPFS website publishing**
+To publish you complete websites with folder structure as an object, you must zip your entire website into a single file called index.zip.  The index.zip file must contain a launching page named index.html or this feature will not work. Attach the index.zip file to an object using the URN button on the object minting screen.  the URN button will automatically upload and pin your website to IPFS if the dameon is enabled.
 <br />
 <br />
 ## **Web applet querystring data with transaction id hash for html based generative objects**
