@@ -88,33 +88,30 @@
             this.txtOBJJSON.Location = new System.Drawing.Point(17, 426);
             this.txtOBJJSON.Multiline = true;
             this.txtOBJJSON.Name = "txtOBJJSON";
-            this.txtOBJJSON.Size = new System.Drawing.Size(123, 42);
+            this.txtOBJJSON.Size = new System.Drawing.Size(123, 32);
             this.txtOBJJSON.TabIndex = 359;
-            this.txtOBJJSON.Visible = false;
             // 
             // txtOBJP2FK
             // 
             this.txtOBJP2FK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.txtOBJP2FK.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.txtOBJP2FK.ForeColor = System.Drawing.Color.Black;
-            this.txtOBJP2FK.Location = new System.Drawing.Point(17, 474);
+            this.txtOBJP2FK.Location = new System.Drawing.Point(17, 464);
             this.txtOBJP2FK.Multiline = true;
             this.txtOBJP2FK.Name = "txtOBJP2FK";
-            this.txtOBJP2FK.Size = new System.Drawing.Size(123, 35);
+            this.txtOBJP2FK.Size = new System.Drawing.Size(123, 36);
             this.txtOBJP2FK.TabIndex = 360;
-            this.txtOBJP2FK.Visible = false;
             // 
             // txtAddressListJSON
             // 
             this.txtAddressListJSON.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.txtAddressListJSON.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.txtAddressListJSON.ForeColor = System.Drawing.Color.Black;
-            this.txtAddressListJSON.Location = new System.Drawing.Point(17, 515);
+            this.txtAddressListJSON.Location = new System.Drawing.Point(17, 505);
             this.txtAddressListJSON.Multiline = true;
             this.txtAddressListJSON.Name = "txtAddressListJSON";
             this.txtAddressListJSON.Size = new System.Drawing.Size(123, 36);
             this.txtAddressListJSON.TabIndex = 358;
-            this.txtAddressListJSON.Visible = false;
             // 
             // txtSignatureAddress
             // 

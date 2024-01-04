@@ -2489,29 +2489,34 @@ namespace SUP
                 try
                 {
                     // Iterate through all attributes of foundObject and create a button for each
-                    foreach (KeyValuePair<string, long> attrib in foundObject.Owners)
+                    // Iterate through all attributes of foundObject and create a button for each
+                    foreach (var kvp in foundObject.Owners)
                     {
-                        // Split the key and value and create a new button with the attribute key and value separated by ':'
-                        string buttonText = attrib.Key + ":" + attrib.Value.ToString();
-                        Button attribButton = new Button();
-                        attribButton.AutoSize = true;
-                        attribButton.Text = buttonText;
-                        attribButton.ForeColor = Color.White;
-                        attribButton.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
+                        // Extract key and value from the tuple
+                        string key = kvp.Key;
+                        long value = kvp.Value.Item1; // Assuming the first item in the tuple represents the quantity
 
-                        // Add an event handler to the button that removes it from the flowAttribute panel when clicked
-                        attribButton.Click += new EventHandler((sender2, e2) =>
+                        // Create a new button with the attribute key and value separated by ':'
+                        string buttonText = $"{key}:{value}";
+                        Button attribButton = new Button
+                        {
+                            AutoSize = true,
+                            Text = buttonText,
+                            ForeColor = Color.White,
+                            BackColor = Color.FromArgb(64, 64, 64)
+                        };
+
+                        // Add an event handler to the button that removes it from the flowOwners panel when clicked
+                        attribButton.Click += (sender2, e2) =>
                         {
                             flowOwners.Controls.Remove(attribButton);
-                        });
+                        };
 
                         // Add an event handler to the button that opens the ObjectBrowser form on right click using the key value
-                        attribButton.MouseUp += new MouseEventHandler((sender2, e2) =>
+                        attribButton.MouseUp += (sender2, e2) =>
                         {
                             if (e2.Button == MouseButtons.Right)
                             {
-                                string[] keyValuePair = attribButton.Text.Split(':');
-                                string key = keyValuePair[0].Trim();
                                 ObjectBrowser form = new ObjectBrowser(key);
                                 form.Show();
                             }
@@ -2519,11 +2524,12 @@ namespace SUP
                             {
                                 flowOwners.Controls.Remove(attribButton);
                             }
-                        });
+                        };
 
                         // Add the button to the flowOwners panel
                         flowOwners.Controls.Add(attribButton);
                     }
+
 
                 }
                 catch { }

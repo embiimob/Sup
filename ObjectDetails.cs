@@ -261,10 +261,8 @@ namespace SUP
                 OwnersPanel.AutoScroll = true;
 
                 int row = 0;
-                foreach (KeyValuePair<string, long> item in objstate.Owners)
+                foreach (var kvp in objstate.Owners)
                 {
-
-
                     TableLayoutPanel rowPanel = new TableLayoutPanel
                     {
                         RowCount = 1,
@@ -277,26 +275,20 @@ namespace SUP
                     rowPanel.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 310));
                     rowPanel.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 100));
 
-
                     LinkLabel keyLabel = new LinkLabel();
-
-
-                    string searchkey = item.Key;
-
+                    string searchkey = kvp.Key;
 
                     if (!profileAddress.ContainsKey(searchkey))
                     {
-
                         PROState profile = PROState.GetProfileByAddress(searchkey, mainnetLogin, mainnetPassword, mainnetURL, mainnetVersionByte);
 
                         if (profile.URN != null)
                         {
                             keyLabel.Text = profile.URN;
-
                         }
                         else
                         {
-                            keyLabel.Text = item.Key;
+                            keyLabel.Text = kvp.Key;
                         }
                         profileAddress.Add(searchkey, keyLabel.Text);
                     }
@@ -306,7 +298,7 @@ namespace SUP
                         keyLabel.Text = ShortName;
                     }
 
-                    keyLabel.Links[0].LinkData = item.Key;
+                    keyLabel.Links[0].LinkData = kvp.Key;
                     keyLabel.AutoSize = true;
                     keyLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
                     keyLabel.LinkBehavior = LinkBehavior.NeverUnderline;
@@ -316,18 +308,15 @@ namespace SUP
                     keyLabel.LinkClicked += new LinkLabelLinkClickedEventHandler(LinkClicked);
                     keyLabel.Dock = DockStyle.Left;
 
-
                     Label valueLabel = new Label
                     {
-                        Text = item.Value.ToString(),
+                        Text = kvp.Value.Item1.ToString(),
                         AutoSize = true,
                         Dock = DockStyle.Right
                     };
 
-
                     rowPanel.Controls.Add(keyLabel, 0, 0);
                     rowPanel.Controls.Add(valueLabel, 1, 0);
-
 
                     if (row % 2 == 0)
                     {
@@ -338,15 +327,12 @@ namespace SUP
                         rowPanel.BackColor = System.Drawing.Color.LightGray;
                     }
 
-
                     OwnersPanel.Controls.Add(rowPanel);
                     row++;
-
-
-
                 }
 
-                long totalQty = objstate.Owners.Values.Sum();
+
+                long totalQty = objstate.Owners.Values.Sum(tuple => tuple.Item1);
 
                 lblTotalOwnedDetail.Text = "total: " + totalQty.ToString("N0");
 
@@ -2953,7 +2939,7 @@ namespace SUP
                 }
 
                 txtName.Text = objstate.Name;
-                long totalQty = objstate.Owners.Values.Sum();
+                long totalQty = objstate.Owners.Values.Sum(tuple => tuple.Item1);
 
 
                 if (OwnersPanel.Visible)

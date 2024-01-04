@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Text;
 
 namespace SUP.P2FK
 {
@@ -101,16 +102,32 @@ namespace SUP.P2FK
                         string sortableProcessHeight = intProcessHeight.ToString("X").PadLeft(9, '0');
                         logstatus = null;
 
+
                         string sigSeen = null;
 
-                        string cleanedSIG = new string(transaction.Signature.Where(c => !specialChars.Contains(c)).ToArray());
-                        if (!System.IO.File.Exists(@"root\sig\" + cleanedSIG))
+                        // Calculate SHA-256 hash of the signature
+                        using (System.Security.Cryptography.SHA256 sha256 = System.Security.Cryptography.SHA256.Create())
                         {
-                            sigSeen = System.IO.File.ReadAllText(@"root\sig\" + cleanedSIG);
+                            byte[] hashBytes = sha256.ComputeHash(Encoding.UTF8.GetBytes(transaction.Signature));
+                            string hashedSignature = BitConverter.ToString(hashBytes).Replace("-", "");
+
+                            string filePath = @"root\" + profileaddress + @"\sig\" + hashedSignature;
+
+                            if (!System.IO.File.Exists(filePath))
+                            {
+                                if (!System.IO.Directory.Exists(@"root\" + profileaddress + @"\sig")) { Directory.CreateDirectory(@"root\" + profileaddress + @"\sig"); }
+                                // If the file does not exist, create it and write the text string to it
+                                System.IO.File.WriteAllText(filePath, transaction.TransactionId);
+                            }
+                            else
+                            {
+                                // If the file exists, read its content
+                                sigSeen = System.IO.File.ReadAllText(filePath);
+                            }
                         }
 
 
-                        if (sigSeen == null || sigSeen == transaction.TransactionId)
+                        if (sigSeen == null || (verbose && sigSeen == transaction.TransactionId))
                         {
 
 

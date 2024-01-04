@@ -77,7 +77,7 @@ namespace SUP.P2FK
         public string License { get; set; }
         public int Maximum { get; set; }
         public Dictionary<string, DateTime> Creators { get; set; }
-        public Dictionary<string, long> Owners { get; set; }
+        public Dictionary<string, (long, string)> Owners { get; set; }
         public Dictionary<string, decimal> Royalties { get; set; }
         public List<BID> Offers { get; set; }
         public Dictionary<string, BID> Listings { get; set; }
@@ -177,7 +177,7 @@ namespace SUP.P2FK
 
                 if (verbose == true) { intProcessHeight = 0; objectState = new OBJState(); objectState.ChangeLog = new List<string>(); }
 
-                objectTransactions = Root.GetRootsByAddress(objectaddress, username, password, url, intProcessHeight, -1, versionByte);
+                objectTransactions = Root.GetRootsByAddress(objectaddress, username, password, url, intProcessHeight, -1, versionByte, verbose);
 
                 if (intProcessHeight != 0 && objectTransactions.Count() == 0)
                 {
@@ -199,20 +199,34 @@ namespace SUP.P2FK
                         {
                             //alright you met minnimum criteria lets inspect this further
                             logstatus = "";
-                            sortableProcessHeight = intProcessHeight.ToString("X").PadLeft(9, '0');
                             objectState.ProcessHeight = intProcessHeight;
+
                             string sigSeen = null;
 
-                            string cleanedSIG = new string(transaction.Signature.Where(c => !specialChars.Contains(c)).ToArray());
-                            if (!System.IO.File.Exists(@"root\sig\" + cleanedSIG))
+                            // Calculate SHA-256 hash of the signature
+                            using (System.Security.Cryptography.SHA256 sha256 = System.Security.Cryptography.SHA256.Create())
                             {
-                                sigSeen = System.IO.File.ReadAllText(@"root\sig\" + cleanedSIG);
+                                byte[] hashBytes = sha256.ComputeHash(Encoding.UTF8.GetBytes(transaction.Signature));
+                                string hashedSignature = BitConverter.ToString(hashBytes).Replace("-", "");
+
+                                string filePath = @"root\"+ objectaddress +@"\sig\" + hashedSignature;
+
+                                if (!System.IO.File.Exists(filePath))
+                                {
+                                    if (!System.IO.Directory.Exists(@"root\" + objectaddress + @"\sig")){Directory.CreateDirectory(@"root\" + objectaddress + @"\sig");}
+                                    // If the file does not exist, create it and write the text string to it
+                                    System.IO.File.WriteAllText(filePath, transaction.TransactionId);
+                                }
+                                else
+                                {
+                                    // If the file exists, read its content
+                                    sigSeen = System.IO.File.ReadAllText(filePath);
+                                }
                             }
 
 
-                            if (sigSeen == null || sigSeen == transaction.TransactionId)
+                            if (sigSeen == null || (verbose && sigSeen == transaction.TransactionId))
                             {
-
 
                                 switch (transaction.File.ElementAtOrDefault(1).Key?.ToString())
                                 {
@@ -230,8 +244,12 @@ namespace SUP.P2FK
                                         }
                                         catch (Exception e)
                                         {
-
-                                            logstatus = "[\"" + transaction.SignedBy + "\",\"" + objectaddress + "\",\"inspect\",\"\",\"\",\"failed due to invalid format\",\"" + transaction.BlockDate.ToString() + "\"]";
+                                            if (verbose)
+                                            {
+                                                logstatus = "[\"" + transaction.SignedBy + "\",\"" + objectaddress + "\",\"inspect\",\"\",\"\",\"failed due to invalid format\",\"" + transaction.BlockDate.ToString() + "\"]";
+                                                objectState.ChangeLog.Add(logstatus);
+                                                logstatus = "";
+                                            }
                                             break;
                                         }
 
@@ -243,7 +261,7 @@ namespace SUP.P2FK
                                             if (objectinspector.urn != null && objectinspector.cre != null && objectState.Creators == null && objectinspector.cre[0] == objectaddress || (objectinspector.urn != null && objectinspector.cre != null && objectState.Creators == null && int.TryParse(objectinspector.cre[0], out int intID) && objectaddress == transaction.Keyword.Reverse().ElementAt(intID).Key))
 
                                             {
-                                                
+
 
                                                 objectState.Creators = new Dictionary<string, DateTime> { };
                                                 try
@@ -271,7 +289,6 @@ namespace SUP.P2FK
                                                 }
                                                 catch
                                                 {
-                                                    logstatus = "[\"" + transaction.SignedBy + "\",\"" + objectaddress + "\",\"create\",\"\",\"\",\"failed due to invalid transaction format\",\"" + transaction.BlockDate.ToString() + "\"]";
                                                     break;
                                                 }
                                                 objectState.ChangeDate = transaction.BlockDate;
@@ -305,7 +322,8 @@ namespace SUP.P2FK
 
                                                 if (objectState.LockedDate.Year == 1)
                                                 {
-                                                    if (objectinspector.urn != null) {
+                                                    if (objectinspector.urn != null)
+                                                    {
 
                                                         //prevents someone from trying to claim a previously sigend etching using a different signature
                                                         if (versionByte != "111")
@@ -315,7 +333,12 @@ namespace SUP.P2FK
                                                             {
                                                                 if (signedRoot.SignedBy != transaction.SignedBy)
                                                                 {
-                                                                    logstatus = "[\"" + transaction.SignedBy + "\",\"" + objectaddress + "\",\"create\",\"\",\"\",\"failed due to previous claim\",\"" + transaction.BlockDate.ToString() + "\"]";
+                                                                    if (verbose)
+                                                                    {
+                                                                        logstatus = "[\"" + transaction.SignedBy + "\",\"" + objectaddress + "\",\"create\",\"\",\"\",\"failed due to previous claim\",\"" + transaction.BlockDate.ToString() + "\"]";
+                                                                        objectState.ChangeLog.Add(logstatus);
+                                                                        logstatus = "";
+                                                                    }
                                                                     break;
                                                                 }
 
@@ -329,7 +352,7 @@ namespace SUP.P2FK
                                                         }
 
                                                         objectState.ChangeDate = transaction.BlockDate; objectState.URN = objectinspector.urn.Replace('“', '"').Replace('”', '"');
-                                                    
+
                                                     }
                                                     if (objectinspector.uri != null) { objectState.ChangeDate = transaction.BlockDate; objectState.URI = objectinspector.uri.Replace('“', '"').Replace('”', '"'); }
                                                     if (objectinspector.img != null) { objectState.ChangeDate = transaction.BlockDate; objectState.Image = objectinspector.img.Replace('“', '"').Replace('”', '"'); }
@@ -342,8 +365,12 @@ namespace SUP.P2FK
                                                     {
                                                         if (!logstatus.Contains("grant"))
                                                         {
-
-                                                            logstatus = "[\"" + transaction.SignedBy + "\",\"" + objectaddress + "\",\"update\",\"\",\"\",\"success\",\"" + transaction.BlockDate.ToString() + "\"]";
+                                                            if (verbose)
+                                                            {
+                                                                logstatus = "[\"" + transaction.SignedBy + "\",\"" + objectaddress + "\",\"update\",\"\",\"\",\"success\",\"" + transaction.BlockDate.ToString() + "\"]";
+                                                                objectState.ChangeLog.Add(logstatus);
+                                                                logstatus = "";
+                                                            }
                                                         }
                                                         else { logstatus = ""; }
                                                     }
@@ -358,10 +385,14 @@ namespace SUP.P2FK
                                                             }
 
                                                             objectState.TransactionId = transaction.TransactionId;
-                                                            objectState.Owners = new Dictionary<string, long>();
+                                                            objectState.Owners = new Dictionary<string, (long, string)>();
                                                             objectState.Royalties = new Dictionary<string, decimal>();
-                                                            logstatus = "[\"" + transaction.SignedBy + "\",\"" + objectaddress + "\",\"create\",\"" + objectinspector.own.Values.Sum() + "\",\"\",\"success\",\"" + transaction.BlockDate.ToString() + "\"]";
-
+                                                            if (verbose)
+                                                            {
+                                                                logstatus = "[\"" + transaction.SignedBy + "\",\"" + objectaddress + "\",\"create\",\"" + objectinspector.own.Values.Sum() + "\",\"\",\"success\",\"" + transaction.BlockDate.ToString() + "\"]";
+                                                                objectState.ChangeLog.Add(logstatus);
+                                                                logstatus = "";
+                                                            }
 
 
                                                         }
@@ -378,14 +409,21 @@ namespace SUP.P2FK
 
                                                             if (!objectState.Owners.ContainsKey(owner))
                                                             {
-                                                                objectState.Owners.Add(owner, ownerId.Value);
+                                                                // If the key doesn't exist, add it with the new tuple value
+                                                                objectState.Owners.Add(owner, (ownerId.Value, null)); // Replace "someStringValue" with an appropriate string value.
                                                             }
                                                             else
                                                             {
-                                                                objectState.Owners[owner] = ownerId.Value;
-
-                                                                logstatus = "[\"" + transaction.SignedBy + "\",\"" + objectaddress + "\",\"update\",\"" + ownerId.Value + "\",\"\",\"success\",\"" + transaction.BlockDate.ToString() + "\"]";
+                                                                // If the key exists, update the tuple with the new ownerId.Value
+                                                                objectState.Owners[owner] = (ownerId.Value, objectState.Owners[owner].Item2);
+                                                                if (verbose)
+                                                                {
+                                                                    logstatus = $"[\"{transaction.SignedBy}\",\"{objectaddress}\",\"update\",\"{ownerId.Value}\",\"\",\"success\",\"{transaction.BlockDate.ToString()}\"]";
+                                                                    objectState.ChangeLog.Add(logstatus);
+                                                                    logstatus = "";
+                                                                }
                                                             }
+
 
                                                         }
                                                     }
@@ -411,8 +449,12 @@ namespace SUP.P2FK
                                                             else
                                                             {
                                                                 objectState.Royalties[royalty] = royaltyId.Value;
-
-                                                                logstatus = "[\"" + transaction.SignedBy + "\",\"" + objectaddress + "\",\"update\",\"" + royaltyId.Value + "\",\"\",\"success\",\"" + transaction.BlockDate.ToString() + "\"]";
+                                                                if (verbose)
+                                                                {
+                                                                    logstatus = "[\"" + transaction.SignedBy + "\",\"" + objectaddress + "\",\"update\",\"" + royaltyId.Value + "\",\"\",\"success\",\"" + transaction.BlockDate.ToString() + "\"]";
+                                                                    objectState.ChangeLog.Add(logstatus);
+                                                                    logstatus = "";
+                                                                }
                                                             }
 
                                                         }
@@ -422,13 +464,23 @@ namespace SUP.P2FK
                                                 }
                                                 else
                                                 {
-                                                    logstatus = "[\"" + transaction.SignedBy + "\",\"" + objectaddress + "\",\"update\",\"\",\"\",\"failed due to object lock\",\"" + transaction.BlockDate.ToString() + "\"]";
+                                                    if (verbose)
+                                                    {
+                                                        logstatus = "[\"" + transaction.SignedBy + "\",\"" + objectaddress + "\",\"update\",\"\",\"\",\"failed due to object lock\",\"" + transaction.BlockDate.ToString() + "\"]";
+                                                        objectState.ChangeLog.Add(logstatus);
+                                                        logstatus = "";
+                                                    }
                                                     break;
                                                 }
                                             }
                                             else
                                             {
-                                                logstatus = "[\"" + transaction.SignedBy + "\",\"" + objectaddress + "\",\"inspect\",\"\",\"\",\"failed due to insufficient privileges\",\"" + transaction.BlockDate.ToString() + "\"]";
+                                                if (verbose)
+                                                {
+                                                    logstatus = "[\"" + transaction.SignedBy + "\",\"" + objectaddress + "\",\"inspect\",\"\",\"\",\"failed due to insufficient privileges\",\"" + transaction.BlockDate.ToString() + "\"]";
+                                                    objectState.ChangeLog.Add(logstatus);
+                                                    logstatus = "";
+                                                }
                                             }
                                             break;
 
@@ -436,8 +488,12 @@ namespace SUP.P2FK
                                         }
                                         catch
                                         {
-                                            logstatus = "[\"" + transaction.SignedBy + "\",\"" + objectaddress + "\",\"create\",\"\",\"\",\"failed due to invalid transaction format\",\"" + transaction.BlockDate.ToString() + "\"]";
-
+                                            if (verbose)
+                                            {
+                                                logstatus = "[\"" + transaction.SignedBy + "\",\"" + objectaddress + "\",\"create\",\"\",\"\",\"failed due to invalid transaction format\",\"" + transaction.BlockDate.ToString() + "\"]";
+                                                objectState.ChangeLog.Add(logstatus);
+                                                logstatus = "";
+                                            }
                                             break;
                                         }
 
@@ -457,19 +513,10 @@ namespace SUP.P2FK
                                         {
                                             givinspector = JsonConvert.DeserializeObject<List<List<int>>>(File.ReadAllText(@"root\" + transaction.TransactionId + @"\GIV"));
                                         }
-                                        catch
-                                        {
-                                            logstatus = "[\"" + transaction.SignedBy + "\",\"" + objectaddress + "\",\"inspect\",\"\",\"\",\"failed due to invalid transaction format\",\"" + transaction.BlockDate.ToString() + "\"]";
+                                        catch { break; }
 
-                                            break;
-                                        }
+                                        if (givinspector == null) { break; }
 
-                                        if (givinspector == null)
-                                        {
-                                            logstatus = "[\"" + transaction.SignedBy + "\",\"" + objectaddress + "\",\"give\",\"\",\"\",\"failed due to no data\",\"" + transaction.BlockDate.ToString() + "\"]";
-                                            break;
-                                        }
-                                        int giveCount = 0;
                                         foreach (var give in givinspector)
                                         {
                                             int qtyToGive = 0;
@@ -483,21 +530,30 @@ namespace SUP.P2FK
                                             }
                                             catch
                                             {
-                                                logstatus = "[\"" + transaction.SignedBy + "\",\"" + objectaddress + "\",\"give\",\"\",\"\",\"failed due to invalid keyword count\",\"" + transaction.BlockDate.ToString() + "\"]";
+                                                if (verbose)
+                                                {
+                                                    logstatus = "[\"" + transaction.SignedBy + "\",\"" + objectaddress + "\",\"give\",\"\",\"\",\"failed due to invalid keyword count\",\"" + transaction.BlockDate.ToString() + "\"]";
+                                                    objectState.ChangeLog.Add(logstatus);
+                                                    logstatus = "";
+                                                }
                                                 break;
                                             }
+
+
                                             try
                                             {
                                                 qtyToGive = give[1];
                                             }
                                             catch
                                             {
-                                                logstatus = "[\"" + transaction.SignedBy + "\",\"" + objectaddress + "\",\"give\",\"\",\"\",\"failed due to invalid keyword count\",\"" + transaction.BlockDate.ToString() + "\"]";
+                                                if (verbose)
+                                                {
+                                                    logstatus = "[\"" + transaction.SignedBy + "\",\"" + objectaddress + "\",\"give\",\"\",\"\",\"failed due to invalid qty format\",\"" + transaction.BlockDate.ToString() + "\"]";
+                                                    objectState.ChangeLog.Add(logstatus);
+                                                    logstatus = "";
+                                                }
                                                 break;
                                             }
-
-                                            giveCount++;
-                                            string sortableGiveCount = giveCount.ToString("X").PadLeft(4, '0');
 
 
 
@@ -528,29 +584,41 @@ namespace SUP.P2FK
                                             {
                                                 if (qtyToGive > objectState.Maximum)
                                                 {
-                                                    logstatus = "[\"" + transaction.SignedBy + "\",\"" + reciever + "\",\"give\",\"" + qtyToGive + "\",\"\",\"failed due to over maximum qty\",\"" + transaction.BlockDate.ToString() + "\"]";
+                                                    if (verbose)
+                                                    {
+                                                        logstatus = "[\"" + transaction.SignedBy + "\",\"" + reciever + "\",\"give\",\"" + qtyToGive + "\",\"\",\"failed due to over maximum qty\",\"" + transaction.BlockDate.ToString() + "\"]";
+                                                        objectState.ChangeLog.Add(logstatus);
 
+                                                        logstatus = "";
+                                                    }
                                                     break;
                                                 }
 
-                                                if (objectState.Owners.TryGetValue(reciever, out long value) && value + qtyToGive > objectState.Maximum)
+                                                if (objectState.Owners.TryGetValue(reciever, out var tuple) && tuple.Item1 + qtyToGive > objectState.Maximum)
                                                 {
-                                                    logstatus = "[\"" + transaction.SignedBy + "\",\"" + reciever + "\",\"give\",\"" + qtyToGive + "\",\"\",\"failed due to over maximum qty\",\"" + transaction.BlockDate.ToString() + "\"]";
+                                                    if (verbose)
+                                                    {
+                                                        logstatus = $"[\"{transaction.SignedBy}\",\"{reciever}\",\"give\",\"{qtyToGive}\",\"\",\"failed due to over maximum qty\",\"{transaction.BlockDate.ToString()}\"]";
+                                                        objectState.ChangeLog.Add(logstatus);
 
+                                                        logstatus = "";
+                                                    }
                                                     break;
                                                 }
+
                                             }
 
 
                                             //is transaction signer not on the Owners list
-                                            if (!objectState.Owners.TryGetValue(transaction.SignedBy, out long qtyOwnedG))
+                                            // Check if the transaction signer is not on the Owners list
+                                            if (!objectState.Owners.TryGetValue(transaction.SignedBy, out var qtyOwnedG))
                                             {
-                                                //is the object container empty
-                                                if (!objectState.Owners.TryGetValue(objectaddress, out long selfOwned))
+                                                // Check if the object container is empty
+                                                if (!objectState.Owners.TryGetValue(objectaddress, out var tuple) || tuple.Item1 <= 0)
                                                 {
                                                     if (verbose)
                                                     {
-                                                        logstatus = "[\"" + transaction.SignedBy + "\",\"" + reciever + "\",\"give\",\"" + qtyToGive + "\",\"\",\"failed due to insufficent qty owned\",\"" + transaction.BlockDate.ToString() + "\"]";
+                                                        logstatus = $"[\"{transaction.SignedBy}\",\"{reciever}\",\"give\",\"{qtyToGive}\",\"\",\"failed due to insufficient qty owned\",\"{transaction.BlockDate.ToString()}\"]";
 
                                                         objectState.ChangeLog.Add(logstatus);
 
@@ -559,46 +627,83 @@ namespace SUP.P2FK
                                                     break;
                                                 }
                                                 else
-                                                {    //if the transaction is signed by a creator who doesn't own any objects emulate container
-                                                    if (objectState.Creators.ContainsKey(transaction.SignedBy) || transaction.SignedBy == objectaddress)
+                                                {
+                                                    // If the transaction is signed by a creator who doesn't own any objects, emulate container
+                                                    if (objectState.Creators.ContainsKey(transaction.SignedBy))
                                                     {
                                                         giver = objectaddress;
-                                                        qtyOwnedG = selfOwned;
+                                                        qtyOwnedG = tuple; // Assuming the first item in the tuple represents the quantity
                                                     }
                                                 }
                                             }
 
+
                                             long qtyListed = 0;
                                             try { if (objectState.Listings != null) { qtyListed = qtyListed + objectState.Listings[giver].Qty; } } catch { }
 
-                                            if (qtyOwnedG - qtyListed >= qtyToGive)
+                                            if (qtyOwnedG.Item1 - qtyListed >= qtyToGive)
                                             {
 
 
+
+                                                //check if Reciever already has a qty if not add a new owner if yes increment
+                                                if (!objectState.Owners.TryGetValue(reciever, out var recieverOwned))
+                                                {
+
+                                                    string genid = "";
+
+                                                    if (giver == objectaddress)
+                                                    {
+                                                        genid = transaction.TransactionId;
+                                                    }
+                                                    else
+                                                    {
+                                                        genid = objectState.Owners[giver].Item2;
+                                                    }
+                                                    // If the key doesn't exist, add it with the new tuple value
+                                                    objectState.Owners.Add(reciever, (qtyToGive, genid));
+                                                }
+                                                else
+                                                {
+                                                    string genid = "";
+
+                                                    if (giver == objectaddress)
+                                                    {
+                                                        genid = transaction.TransactionId;
+                                                    }
+                                                    else
+                                                    {
+                                                        genid = objectState.Owners[giver].Item2;
+                                                    }
+                                                    // If the key exists, update the tuple with the new quantity
+                                                    objectState.Owners[reciever] = (recieverOwned.Item1 + qtyToGive, genid);
+                                                }
+
                                                 // New value to update with
-                                                long newValue = qtyOwnedG - qtyToGive;
+                                                long newValue = qtyOwnedG.Item1 - qtyToGive;
 
 
                                                 // Check if the new value is greater then 0
                                                 if (newValue > 0)
                                                 {
+                                                    string genid = "";
+
+                                                    if (giver == objectaddress)
+                                                    {
+                                                        genid = null;
+                                                    }
+                                                    else
+                                                    {
+                                                        genid = objectState.Owners[giver].Item2;
+                                                    }
                                                     // Update the value
-                                                    objectState.Owners[giver] = newValue;
+                                                    objectState.Owners[giver] = (newValue, genid);
                                                 }
                                                 else
                                                 {
-                                                    // remove the dictionary key
+                                                    // Remove the dictionary key
                                                     objectState.Owners.Remove(giver);
                                                 }
-
-
-                                                //check if Reciever already has a qty if not add a  new owner if yes increment
-                                                if (!objectState.Owners.TryGetValue(reciever, out long recieverOwned))
-                                                {
-                                                    objectState.Owners.Add(reciever, qtyToGive);
-
-                                                }
-                                                else { objectState.Owners[reciever] = recieverOwned + qtyToGive; }
 
                                                 //close all currently open offers from reciever
                                                 try { if (objectState.Offers != null) { objectState.Offers.RemoveAll(offer => offer.Requestor == reciever && offer.Owner == giver); } } catch { }
@@ -607,7 +712,6 @@ namespace SUP.P2FK
                                                 {
 
                                                     logstatus = "[\"" + transaction.SignedBy + "\",\"" + reciever + "\",\"give\",\"" + qtyToGive + "\",\"\",\"success\",\"" + transaction.BlockDate.ToString() + "\"]";
-
 
                                                     objectState.ChangeLog.Add(logstatus);
 
@@ -624,9 +728,8 @@ namespace SUP.P2FK
                                                         {
 
                                                             logstatus = "[\"" + transaction.SignedBy + "\",\"" + objectaddress + "\",\"grant\",\"\",\"\",\"success\",\"" + transaction.BlockDate.ToString() + "\"]";
-
                                                             objectState.ChangeLog.Add(logstatus);
-
+                                                            logstatus = "";
 
                                                         }
 
@@ -638,8 +741,6 @@ namespace SUP.P2FK
 
                                                     if (verbose)
                                                     {
-                                                        giveCount++;
-                                                        sortableGiveCount = giveCount.ToString("X").PadLeft(4, '0');
                                                         logstatus = "[\"" + transaction.SignedBy + "\",\"" + objectaddress + "\",\"lock\",\"\",\"\",\"success\",\"" + transaction.BlockDate.ToString() + "\"]";
                                                         objectState.ChangeLog.Add(logstatus);
 
@@ -667,35 +768,25 @@ namespace SUP.P2FK
                                         break;
 
                                     case "BRN":
-                                        //is this even the right object!?  no!?  goodbye!
-                                        if (!transaction.Keyword.ContainsKey(objectaddress))
-                                        {
-                                            break;
-                                        }
+                                        //does this even contain the right object!?  no!?  goodbye!
+                                        if (!transaction.Keyword.ContainsKey(objectaddress)) { break; }
                                         List<List<int>> brninspector = new List<List<int>> { };
 
                                         try
                                         {
                                             brninspector = JsonConvert.DeserializeObject<List<List<int>>>(File.ReadAllText(@"root\" + transaction.TransactionId + @"\BRN"));
                                         }
-                                        catch
-                                        {
-                                            logstatus = "[\"" + transaction.SignedBy + "\",\"" + objectaddress + "\",\"inspect\",\"\",\"\",\"failed due to invalid transaction format\",\"" + transaction.BlockDate.ToString() + "\"]";
+                                        catch { break; }
 
-                                            break;
-                                        }
-                                        if (brninspector == null)
-                                        {
-                                            logstatus = "[\"" + transaction.SignedBy + "\",\"" + objectaddress + "\",\"burn\",\"\",\"\",\"failed due to no data\",\"" + transaction.BlockDate.ToString() + "\"]";
-                                            break;
-                                        }
-                                        int burnCount = 0;
+                                        if (brninspector == null) { break; }
+
                                         foreach (var burn in brninspector)
                                         {
+                                            //is this the right object to burn?
+                                            if (transaction.Keyword.Reverse().GetItemByIndex(burn[0]).Key != objectaddress) { break; }
+
                                             string burnr = transaction.SignedBy;
                                             int qtyToBurn = burn[1];
-                                            burnCount++;
-                                            string sortableBurnCount = burnCount.ToString("X").PadLeft(4, '0');
 
                                             if (qtyToBurn < 1)
                                             {
@@ -706,18 +797,18 @@ namespace SUP.P2FK
 
                                             if (objectState.Owners == null) { break; }
 
-                                            if (!objectState.Owners.TryGetValue(transaction.SignedBy, out long qtyOwnedG))
+                                            // Check if the transaction signer is not on the Owners list
+                                            if (!objectState.Owners.TryGetValue(transaction.SignedBy, out var qtyOwnedG))
                                             {
-                                                //try grant access to object's self Owned qtyOwned to any creator
-                                                if (!objectState.Owners.TryGetValue(objectaddress, out long selfOwned))
+                                                // Try granting access to the object's self-owned qtyOwned to any creator
+                                                if (!objectState.Owners.TryGetValue(objectaddress, out var tuple) || tuple.Item1 <= 0)
                                                 {
                                                     if (verbose)
                                                     {
-                                                        //Add Invalid trade attempt status
-                                                        logstatus = "[\"" + transaction.SignedBy + "\",\"" + objectaddress + "\",\"burn\",\"" + qtyToBurn + "\",\"\",\"failed due to a insufficent qty owned\",\"" + transaction.BlockDate.ToString() + "\"]";
+                                                        // Add Invalid trade attempt status
+                                                        logstatus = $"[\"{transaction.SignedBy}\",\"{objectaddress}\",\"burn\",\"{qtyToBurn}\",\"\",\"failed due to insufficient qty owned\",\"{transaction.BlockDate.ToString()}\"]";
 
                                                         objectState.ChangeLog.Add(logstatus);
-
 
                                                         logstatus = "";
                                                     }
@@ -725,28 +816,30 @@ namespace SUP.P2FK
                                                 }
                                                 else
                                                 {
+                                                    // If the transaction signer is a creator, emulate container
                                                     if (objectState.Creators.ContainsKey(transaction.SignedBy))
                                                     {
                                                         burnr = objectaddress;
-                                                        qtyOwnedG = selfOwned;
+                                                        qtyOwnedG = tuple; // Assuming the first item in the tuple represents the quantity
                                                     }
                                                 }
                                             }
 
 
-                                            if (qtyOwnedG >= qtyToBurn)
+
+                                            if (qtyOwnedG.Item1 >= qtyToBurn)
                                             {
                                                 //update owners Dictionary with new values
 
                                                 // New value to update with
-                                                long newValue = qtyOwnedG - qtyToBurn;
+                                                long newValue = qtyOwnedG.Item1 - qtyToBurn;
 
 
                                                 // Check if the new value is an integer
                                                 if (newValue > 0)
                                                 {
                                                     // Update the value
-                                                    objectState.Owners[burnr] = newValue;
+                                                    objectState.Owners[burnr] = (newValue, objectState.Owners[burnr].Item2);
                                                 }
                                                 else
                                                 {
@@ -780,8 +873,6 @@ namespace SUP.P2FK
 
                                                     if (verbose)
                                                     {
-                                                        burnCount++;
-                                                        sortableBurnCount = burnCount.ToString("X").PadLeft(4, '0');
                                                         logstatus = "[\"" + transaction.SignedBy + "\",\"" + objectaddress + "\",\"lock\",\"\",\"\",\"success\",\"" + transaction.BlockDate.ToString() + "\"]";
 
                                                         objectState.ChangeLog.Add(logstatus);
@@ -813,19 +904,16 @@ namespace SUP.P2FK
                                         //cannot garuntee the placement of outputs. can occur in possibly two locations.
                                         if (objectaddress != transaction.Output.ElementAt(transaction.Output.Count - 2).Key && objectaddress != transaction.Output.ElementAt(transaction.Output.Count - 3).Key)
                                         {
-                                            logstatus = "";
                                             break;
                                         }
 
                                         if (objectState.Owners == null)
                                         {
-                                            logstatus = "[\"" + transaction.SignedBy + "\",\"" + objectaddress + "\",\"buy\",\"\",\"\",\"failed due to no owners\",\"" + transaction.BlockDate.ToString() + "\"]";
                                             break;
                                         }
 
                                         if (transaction.SignedBy == objectaddress)
                                         {
-                                            logstatus = "[\"" + transaction.SignedBy + "\",\"" + objectaddress + "\",\"buy\",\"\",\"\",\"failed objects cannot buy\",\"" + transaction.BlockDate.ToString() + "\"]";
                                             break;
                                         }
 
@@ -837,23 +925,17 @@ namespace SUP.P2FK
                                         }
                                         catch
                                         {
-                                            logstatus = "[\"" + transaction.SignedBy + "\",\"" + objectaddress + "\",\"inspect\",\"\",\"\",\"failed due to invalid transaction format\",\"" + transaction.BlockDate.ToString() + "\"]";
-
                                             break;
                                         }
                                         if (buyinspector == null)
                                         {
-                                            logstatus = "[\"" + transaction.SignedBy + "\",\"" + objectaddress + "\",\"buy\",\"\",\"\",\"failed due to no data\",\"" + transaction.BlockDate.ToString() + "\"]";
                                             break;
                                         }
-                                        int buyCount = 0;
                                         decimal royaltiesPaid = 0;
 
                                         foreach (var buy in buyinspector)
                                         {
 
-                                            buyCount++;
-                                            string sortableBuyCount = buyCount.ToString("X").PadLeft(4, '0');
 
                                             if (long.Parse(buy[1]) < 1)
                                             {
@@ -866,15 +948,23 @@ namespace SUP.P2FK
                                             {
                                                 if (long.Parse(buy[1]) > objectState.Maximum)
                                                 {
-                                                    logstatus = "[\"" + transaction.SignedBy + "\",\"" + buy[0] + "\",\"buy\",\"" + buy[1] + "\",\"\",\"failed due to over maximum qty\",\"" + transaction.BlockDate.ToString() + "\"]";
-
+                                                    if (verbose)
+                                                    {
+                                                        logstatus = "[\"" + transaction.SignedBy + "\",\"" + buy[0] + "\",\"buy\",\"" + buy[1] + "\",\"\",\"failed due to over maximum qty\",\"" + transaction.BlockDate.ToString() + "\"]";
+                                                        objectState.ChangeLog.Add(logstatus);
+                                                        logstatus = "";
+                                                    }
                                                     break;
                                                 }
 
-                                                if (objectState.Owners.TryGetValue(transaction.SignedBy, out long value) && value + int.Parse(buy[1]) > objectState.Maximum)
+                                                if (objectState.Owners.TryGetValue(transaction.SignedBy, out var tuple) && tuple.Item1 + int.Parse(buy[1]) > objectState.Maximum)
                                                 {
-                                                    logstatus = "[\"" + transaction.SignedBy + "\",\"" + buy[0] + "\",\"buy\",\"" + buy[1] + "\",\"\",\"failed due to over maximum qty\",\"" + transaction.BlockDate.ToString() + "\"]";
-
+                                                    if (verbose)
+                                                    {
+                                                        logstatus = $"[\"{transaction.SignedBy}\",\"{buy[0]}\",\"buy\",\"{buy[1]}\",\"\",\"failed due to over maximum qty\",\"{transaction.BlockDate.ToString()}\"]";
+                                                        objectState.ChangeLog.Add(logstatus);
+                                                        logstatus = "";
+                                                    }
                                                     break;
                                                 }
                                             }
@@ -899,8 +989,6 @@ namespace SUP.P2FK
 
                                                         //have required royalties been paid or greator?
                                                         if (logSent >= ((qtyListed.Value * long.Parse(buy[1])) * (pair.Value / 100))) { royaltiesPaid = royaltiesPaid + ((qtyListed.Value * long.Parse(buy[1])) * (pair.Value / 100)); }
-
-                                                        //conditons were not met log failed event.
                                                         else
                                                         {
                                                             if (verbose)
@@ -908,8 +996,8 @@ namespace SUP.P2FK
                                                                 logstatus = "[\"" + transaction.SignedBy + "\",\"" + buy[0] + "\",\"buy\",\"" + buy[1] + "\",\"\",\"failed " + pair.Key + " " + logSent + " insuficent royalties paid\",\"" + transaction.BlockDate.ToString() + "\"]";
                                                                 objectState.ChangeLog.Add(logstatus);
 
-                                                                logstatus = "break";
                                                             }
+                                                            logstatus = "break";
 
                                                             break;
                                                         }
@@ -931,25 +1019,75 @@ namespace SUP.P2FK
                                                     //remove from listing
                                                     objectState.Listings[buy[0]].Qty = objectState.Listings[buy[0]].Qty - long.Parse(buy[1]);
 
+                                                    //remove from owners
+                                                    long quantityToRemove = long.Parse(buy[1]);
+                                                    string genid = "";
+
+                                                    if (objectState.Owners.TryGetValue(buy[0], out var tuple))
+                                                    {
+
+                                                        if (buy[0] == objectaddress)
+                                                        {
+                                                            genid = transaction.TransactionId;
+                                                        }
+                                                        else
+                                                        {
+                                                            genid = tuple.Item2;
+                                                        }
+
+
+                                                        // Subtract the quantityToRemove from the existing value
+                                                        var updatedTuple = (tuple.Item1 - quantityToRemove, tuple.Item2);
+
+                                                        // Remove previous owner from the list if the quantity is less than 1
+
+                                                        if (updatedTuple.Item1 < 1)
+                                                        {
+                                                            objectState.Owners.Remove(buy[0]);
+                                                        }
+                                                        else
+                                                        {
+                                                            // Update the value in the dictionary
+                                                            objectState.Owners[buy[0]] = updatedTuple;
+                                                        }
+                                                    }
+
+
+                                                    // Increment the new owner if already owned
+                                                    if (objectState.Owners.ContainsKey(transaction.SignedBy))
+                                                    {
+
+                                                        var currentOwnerTuple = objectState.Owners[transaction.SignedBy];
+
+                                                        if (buy[0] == objectaddress)
+                                                        {
+                                                            genid = transaction.TransactionId;
+                                                        }
+                                                        else
+                                                        {
+                                                            genid = tuple.Item2;
+                                                        }
+
+                                                        objectState.Owners[transaction.SignedBy] = (currentOwnerTuple.Item1 + long.Parse(buy[1]), genid);
+                                                    }
+                                                    // Add the new owner to the list if not currently listed
+                                                    else
+                                                    {
+                                                        if (buy[0] == objectaddress)
+                                                        {
+                                                            genid = transaction.TransactionId;
+                                                        }
+                                                        else
+                                                        {
+                                                            genid = tuple.Item2;
+                                                        }
+                                                        objectState.Owners.Add(transaction.SignedBy, (long.Parse(buy[1]), genid));
+                                                    }
+
                                                     //remove previous owner from list if 0
                                                     if (objectState.Listings[buy[0]].Qty < 1) { objectState.Listings.Remove(buy[0]); }
 
-                                                    //remove from previous owner
-                                                    objectState.Owners[buy[0]] = objectState.Owners[buy[0]] - long.Parse(buy[1]);
 
-                                                    //remove previous owner from list if 0
-                                                    if (objectState.Owners[buy[0]] < 1) { objectState.Owners.Remove(buy[0]); }
-
-                                                    //increment new owner if already owned
-                                                    if (objectState.Owners.ContainsKey(transaction.SignedBy))
-                                                    {
-                                                        objectState.Owners[transaction.SignedBy] = objectState.Owners[transaction.SignedBy] + long.Parse(buy[1]);
-                                                    }
-                                                    //add new owner to list if not currently listed
-                                                    else
-                                                    {
-                                                        objectState.Owners.Add(transaction.SignedBy, long.Parse(buy[1]));
-                                                    }
 
                                                     if (verbose)
                                                     {
@@ -961,7 +1099,6 @@ namespace SUP.P2FK
                                                     }
 
                                                     break;
-
 
 
 
@@ -990,8 +1127,9 @@ namespace SUP.P2FK
                                             {
 
                                                 // is qty owned enough to fill the Offer?
-                                                if (objectState.Owners.TryGetValue(buy[0], out long qtyOwned) && qtyOwned >= long.Parse(buy[1]))
+                                                if (objectState.Owners.TryGetValue(buy[0], out var tuple) && tuple.Item1 >= long.Parse(buy[1]))
                                                 {
+
 
                                                     decimal totalPaid;
                                                     decimal totalRoyaltiesPercent = 0;
@@ -1018,8 +1156,8 @@ namespace SUP.P2FK
                                                                 logstatus = "[\"" + transaction.SignedBy + "\",\"" + objectaddress + "\",\"buy\",\"" + buy[1] + "\",\"\",\"failed " + pair.Key + " insuficent royalties paid\",\"" + transaction.BlockDate.ToString() + "\"]";
                                                                 objectState.ChangeLog.Add(logstatus);
 
-                                                                logstatus = "break";
                                                             }
+                                                            logstatus = "break";
                                                             break;
                                                         }
                                                     }
@@ -1055,8 +1193,9 @@ namespace SUP.P2FK
 
                                                                             objectState.ChangeLog.Add(logstatus);
 
-                                                                            logstatus = "break";
                                                                         }
+                                                                        logstatus = "break";
+
 
                                                                         break;
                                                                     }
@@ -1174,7 +1313,6 @@ namespace SUP.P2FK
                                             logstatus = "[\"" + transaction.SignedBy + "\",\"" + objectaddress + "\",\"list\",\"\",\"\",\"failed due to no data\",\"" + transaction.BlockDate.ToString() + "\"]";
                                             break;
                                         }
-                                        int ListCount = 0;
                                         foreach (var List in lstinspector)
                                         {
                                             int qtyToList = 0;
@@ -1189,7 +1327,6 @@ namespace SUP.P2FK
                                             }
                                             catch
                                             {
-                                                logstatus = "[\"" + transaction.SignedBy + "\",\"" + objectaddress + "\",\"List\",\"\",\"\",\"failed due to invalid data\",\"" + transaction.BlockDate.ToString() + "\"]";
                                                 break;
                                             }
 
@@ -1202,7 +1339,6 @@ namespace SUP.P2FK
                                                 }
                                                 catch
                                                 {
-                                                    logstatus = "[\"" + transaction.SignedBy + "\",\"" + objectaddress + "\",\"List\",\"\",\"\",\"failed due to invalid data\",\"" + transaction.BlockDate.ToString() + "\"]";
                                                     break;
                                                 }
 
@@ -1212,15 +1348,8 @@ namespace SUP.P2FK
                                                 }
                                                 catch
                                                 {
-                                                    logstatus = "[\"" + transaction.SignedBy + "\",\"" + objectaddress + "\",\"List\",\"\",\"\",\"failed due to invalid data\",\"" + transaction.BlockDate.ToString() + "\"]";
                                                     break;
                                                 }
-
-
-
-                                                ListCount++;
-                                                string sortableListCount = ListCount.ToString("X").PadLeft(4, '0');
-
 
 
                                                 // salt
@@ -1247,16 +1376,17 @@ namespace SUP.P2FK
                                                 }
 
 
-
-                                                //is transaction signer not on the Owners list
-                                                if (!objectState.Owners.TryGetValue(transaction.SignedBy, out long qtyOwnedG))
+                                                long qtyOwnedG = 0;
+                                                // Check if the transaction signer is not on the Owners list
+                                                if (!objectState.Owners.TryGetValue(transaction.SignedBy, out var tuple))
                                                 {
-                                                    //is the object container empty
-                                                    if (!objectState.Owners.TryGetValue(objectaddress, out long selfOwned))
+                                                    // Check if the object container is empty
+                                                    if (!objectState.Owners.TryGetValue(objectaddress, out var selfOwned))
                                                     {
                                                         if (verbose)
                                                         {
-                                                            logstatus = "[\"" + transaction.SignedBy + "\",\"" + objectToList + "\",\"List\",\"" + qtyToList + "\",\"\",\"failed due to insufficent qty owned\",\"" + transaction.BlockDate.ToString() + "\"]";
+                                                            // Add Invalid trade attempt status
+                                                            logstatus = $"[\"{transaction.SignedBy}\",\"{objectToList}\",\"List\",\"{qtyToList}\",\"\",\"failed due to insufficient qty owned\",\"{transaction.BlockDate.ToString()}\"]";
 
                                                             objectState.ChangeLog.Add(logstatus);
 
@@ -1265,14 +1395,20 @@ namespace SUP.P2FK
                                                         break;
                                                     }
                                                     else
-                                                    {    //if the transaction is signed by a creator who doesn't own any objects emulate container
+                                                    {
+                                                        // If the transaction is signed by a creator who doesn't own any objects, emulate container
                                                         if (objectState.Creators.ContainsKey(transaction.SignedBy) || transaction.SignedBy == objectaddress)
                                                         {
                                                             Listr = objectaddress;
-                                                            qtyOwnedG = selfOwned;
+                                                            qtyOwnedG = selfOwned.Item1; // Assuming the first item in the tuple represents the quantity
                                                         }
                                                     }
                                                 }
+                                                else
+                                                {
+                                                    qtyOwnedG = tuple.Item1;
+                                                }
+
 
 
 
@@ -1297,8 +1433,6 @@ namespace SUP.P2FK
 
                                                         if (verbose)
                                                         {
-                                                            ListCount++;
-                                                            sortableListCount = ListCount.ToString("X").PadLeft(4, '0');
                                                             logstatus = "[\"" + transaction.SignedBy + "\",\"" + objectaddress + "\",\"lock\",\"\",\"\",\"success\",\"" + transaction.BlockDate.ToString() + "\"]";
 
                                                             objectState.ChangeLog.Add(logstatus);
@@ -1367,26 +1501,12 @@ namespace SUP.P2FK
 
                                         break;
                                 }
-                            }
-                            else
-                            {
-                                logstatus = "[\"" + transaction.SignedBy + "\",\"" + objectaddress + "\",\"inspect\",\"\",\"\",\"failed due to duplicate signature\",\"" + transaction.BlockDate.ToString() + "\"]";
-                            }
 
+                            }
 
 
                         }
-                        else { logstatus = ""; }
 
-                        if (verbose)
-                        {
-                            if (logstatus != "")
-                            {
-
-                                objectState.ChangeLog.Add(logstatus);
-
-                            }
-                        }
                     }
                 }
 
@@ -1410,9 +1530,9 @@ namespace SUP.P2FK
                 });
 
             }
-            catch
+            catch (Exception ex) 
             {
-
+                string message = ex.Message;  
             }
             finally
             {
@@ -1506,7 +1626,7 @@ namespace SUP.P2FK
                             if (objectState.Owners == null)
                             {
                                 objectState.CreatedDate = objectTransaction.BlockDate;
-                                objectState.Owners = new Dictionary<string, long>();
+                                objectState.Owners = new Dictionary<string, (long, string)>();
 
 
                             }
@@ -1521,15 +1641,18 @@ namespace SUP.P2FK
                                     owner = objectTransaction.Keyword.Reverse().ElementAt(intId).Key;
                                 }
                                 else { owner = ownerId.Key; }
+
                                 if (!objectState.Owners.ContainsKey(owner))
                                 {
-                                    objectState.Owners.Add(owner, ownerId.Value);
+                                    // If the key doesn't exist, add it with the new tuple value
+                                    objectState.Owners.Add(owner, (ownerId.Value, null));
                                 }
                                 else
                                 {
-                                    objectState.Owners[owner] = ownerId.Value;
-
+                                    // If the key exists, update the tuple with the new ownerId.Value
+                                    objectState.Owners[owner] = (ownerId.Value, objectState.Owners[owner].Item2);
                                 }
+
                             }
                         }
 
@@ -1795,45 +1918,45 @@ namespace SUP.P2FK
                             string transid = isObject.URN.Substring(5, 46);
                             if (!System.IO.Directory.Exists("ipfs/" + transid))
                             {
-                                   Process process2 = new Process();
-                                    process2.StartInfo.FileName = @"ipfs\ipfs.exe";
-                                    process2.StartInfo.Arguments = "get " + transid + @" -o ipfs\" + transid;
-                                    process2.Start();
-                                    process2.WaitForExit();
+                                Process process2 = new Process();
+                                process2.StartInfo.FileName = @"ipfs\ipfs.exe";
+                                process2.StartInfo.Arguments = "get " + transid + @" -o ipfs\" + transid;
+                                process2.Start();
+                                process2.WaitForExit();
 
-                                    if (System.IO.File.Exists("ipfs/" + transid))
+                                if (System.IO.File.Exists("ipfs/" + transid))
+                                {
+                                    System.IO.File.Move("ipfs/" + transid, "ipfs/" + transid + "_tmp");
+                                    System.IO.Directory.CreateDirectory("ipfs/" + transid);
+                                    string fileName = isObject.URN.Replace(@"//", "").Replace(@"\\", "").Substring(51);
+                                    if (fileName == "")
                                     {
-                                        System.IO.File.Move("ipfs/" + transid, "ipfs/" + transid + "_tmp");
-                                        System.IO.Directory.CreateDirectory("ipfs/" + transid);
-                                        string fileName = isObject.URN.Replace(@"//", "").Replace(@"\\", "").Substring(51);
-                                        if (fileName == "")
-                                        {
-                                            fileName = "artifact";
-                                            file2 += @"\artifact";
-                                        }
-                                        else { fileName = fileName.Replace(@"/", "").Replace(@"\", ""); }
-                                        System.IO.File.Move("ipfs/" + transid + "_tmp", @"ipfs/" + transid + @"/" + fileName);
+                                        fileName = "artifact";
+                                        file2 += @"\artifact";
                                     }
+                                    else { fileName = fileName.Replace(@"/", "").Replace(@"\", ""); }
+                                    System.IO.File.Move("ipfs/" + transid + "_tmp", @"ipfs/" + transid + @"/" + fileName);
+                                }
 
 
-                                    try
+                                try
+                                {
+                                    if (File.Exists("IPFS_PINNING_ENABLED"))
                                     {
-                                        if (File.Exists("IPFS_PINNING_ENABLED"))
+                                        Process process3 = new Process
                                         {
-                                            Process process3 = new Process
+                                            StartInfo = new ProcessStartInfo
                                             {
-                                                StartInfo = new ProcessStartInfo
-                                                {
-                                                    FileName = @"ipfs\ipfs.exe",
-                                                    Arguments = "pin add " + transid,
-                                                    UseShellExecute = false,
-                                                    CreateNoWindow = true
-                                                }
-                                            };
-                                            process3.Start();
-                                        }
+                                                FileName = @"ipfs\ipfs.exe",
+                                                Arguments = "pin add " + transid,
+                                                UseShellExecute = false,
+                                                CreateNoWindow = true
+                                            }
+                                        };
+                                        process3.Start();
                                     }
-                                    catch { }
+                                }
+                                catch { }
 
 
                             }
@@ -1924,48 +2047,48 @@ namespace SUP.P2FK
                             if (!System.IO.Directory.Exists("ipfs/" + transid))
                             {
 
-                                   Process process2 = new Process();
-                                    process2.StartInfo.FileName = @"ipfs\ipfs.exe";
-                                    process2.StartInfo.Arguments = "get " + transid + @" -o ipfs\" + transid;
-                                    process2.Start();
-                                    process2.WaitForExit();
+                                Process process2 = new Process();
+                                process2.StartInfo.FileName = @"ipfs\ipfs.exe";
+                                process2.StartInfo.Arguments = "get " + transid + @" -o ipfs\" + transid;
+                                process2.Start();
+                                process2.WaitForExit();
 
-                                    if (System.IO.File.Exists("ipfs/" + transid))
+                                if (System.IO.File.Exists("ipfs/" + transid))
+                                {
+                                    System.IO.File.Move("ipfs/" + transid, "ipfs/" + transid + "_tmp");
+                                    System.IO.Directory.CreateDirectory("ipfs/" + transid);
+                                    string fileName = isObject.URN.Replace(@"//", "").Replace(@"\\", "").Substring(51);
+                                    if (fileName == "")
                                     {
-                                        System.IO.File.Move("ipfs/" + transid, "ipfs/" + transid + "_tmp");
-                                        System.IO.Directory.CreateDirectory("ipfs/" + transid);
-                                        string fileName = isObject.URN.Replace(@"//", "").Replace(@"\\", "").Substring(51);
-                                        if (fileName == "")
-                                        {
-                                            fileName = "artifact";
-                                            file2 += @"\artifact";
-                                        }
-                                        else { fileName = fileName.Replace(@"/", "").Replace(@"\", ""); }
-                                        System.IO.File.Move("ipfs/" + transid + "_tmp", @"ipfs/" + transid + @"/" + fileName);
+                                        fileName = "artifact";
+                                        file2 += @"\artifact";
                                     }
+                                    else { fileName = fileName.Replace(@"/", "").Replace(@"\", ""); }
+                                    System.IO.File.Move("ipfs/" + transid + "_tmp", @"ipfs/" + transid + @"/" + fileName);
+                                }
 
 
-                                    //attempt to pin fails silently if daemon is not running
-                                    try
+                                //attempt to pin fails silently if daemon is not running
+                                try
+                                {
+                                    if (File.Exists("IPFS_PINNING_ENABLED"))
                                     {
-                                        if (File.Exists("IPFS_PINNING_ENABLED"))
+                                        Process process3 = new Process
                                         {
-                                            Process process3 = new Process
+                                            StartInfo = new ProcessStartInfo
                                             {
-                                                StartInfo = new ProcessStartInfo
-                                                {
-                                                    FileName = @"ipfs\ipfs.exe",
-                                                    Arguments = "pin add " + transid,
-                                                    UseShellExecute = false,
-                                                    CreateNoWindow = true
-                                                }
-                                            };
-                                            process3.Start();
-                                        }
+                                                FileName = @"ipfs\ipfs.exe",
+                                                Arguments = "pin add " + transid,
+                                                UseShellExecute = false,
+                                                CreateNoWindow = true
+                                            }
+                                        };
+                                        process3.Start();
                                     }
-                                    catch { }
+                                }
+                                catch { }
 
-                               
+
 
                             }
 
@@ -2163,7 +2286,7 @@ namespace SUP.P2FK
                                         OBJState existingObjectState = objectStates.FirstOrDefault(os => os.Creators.First().Key == key);
                                         if (existingObjectState != null)
                                         {
-                                            OBJState isObject = GetObjectByAddress(key, username, password, url, versionByte);
+                                            OBJState isObject = GetObjectByAddress(key, username, password, url, versionByte, calculate);
                                             if (isObject.URN != null)
                                             {
                                                 //isObject.Id = transaction.Id;
@@ -2172,7 +2295,7 @@ namespace SUP.P2FK
                                         }
                                         else
                                         {
-                                            OBJState newObject = GetObjectByAddress(key, username, password, url, versionByte);
+                                            OBJState newObject = GetObjectByAddress(key, username, password, url, versionByte, calculate);
                                             if (newObject.URN != null)
                                             {
                                                 //newObject.Id = transaction.Id;
@@ -2199,7 +2322,7 @@ namespace SUP.P2FK
                                             OBJState existingObjectState = objectStates.FirstOrDefault(os => os.Creators.First().Key == key);
                                             if (existingObjectState != null)
                                             {
-                                                OBJState isObject = GetObjectByAddress(key, username, password, url, versionByte);
+                                                OBJState isObject = GetObjectByAddress(key, username, password, url, versionByte, calculate);
                                                 if (isObject.URN != null)
                                                 {
                                                     //isObject.Id = transaction.Id;
@@ -2208,7 +2331,7 @@ namespace SUP.P2FK
                                             }
                                             else
                                             {
-                                                OBJState newObject = GetObjectByAddress(key, username, password, url, versionByte);
+                                                OBJState newObject = GetObjectByAddress(key, username, password, url, versionByte, calculate);
                                                 if (newObject.URN != null)
                                                 {
                                                     //newObject.Id = transaction.Id;
@@ -2232,7 +2355,7 @@ namespace SUP.P2FK
                                             OBJState existingObjectState = objectStates.FirstOrDefault(os => os.Creators.First().Key == key);
                                             if (existingObjectState != null)
                                             {
-                                                OBJState isObject = GetObjectByAddress(key, username, password, url, versionByte);
+                                                OBJState isObject = GetObjectByAddress(key, username, password, url, versionByte, calculate);
                                                 if (isObject.URN != null)
                                                 {
                                                     //isObject.Id = transaction.Id;
@@ -2241,7 +2364,7 @@ namespace SUP.P2FK
                                             }
                                             else
                                             {
-                                                OBJState newObject = GetObjectByAddress(key, username, password, url, versionByte);
+                                                OBJState newObject = GetObjectByAddress(key, username, password, url, versionByte, calculate);
                                                 if (newObject.URN != null)
                                                 {
                                                     //newObject.Id = transaction.Id;

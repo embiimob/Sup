@@ -272,7 +272,7 @@ namespace SUP
             txtName.Text = objstate.Name;
             lblLicense.Text = objstate.License;
             lblObjectCreatedDate.Text = objstate.CreatedDate.ToString("ddd, dd MMM yyyy hh:mm:ss");
-            lblTotalOwnedDetail.Text = "total: " + objstate.Owners.Values.Sum().ToString();
+            lblTotalOwnedDetail.Text = "total: " + objstate.Owners.Values.Sum(tuple => tuple.Item1).ToString();
             lblTotalRoyaltiesDetail.Text = "royalties: " + objstate.Royalties.Values.Sum().ToString();
 
             if (objstate.Maximum != null && objstate.Maximum > 0)
@@ -436,8 +436,7 @@ namespace SUP
 
                 }
 
-                long totalQty = objstate.Owners.Values.Sum();
-
+                long totalQty = objstate.Owners.Values.Sum(tuple => tuple.Item1);
             }
 
 

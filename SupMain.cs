@@ -337,6 +337,11 @@ namespace SUP
                     }
                 }
             }
+            else
+            {
+                supFlow.Controls.Clear();
+                supPrivateFlow.Controls.Clear();
+            }
             //supFlow.ResumeLayout();
 
 
@@ -966,7 +971,7 @@ namespace SUP
                             foundObject.ObjectName.Text = objstate.Name;
                             foundObject.ObjectDescription.Text = objstate.Description;
                             foundObject.ObjectAddress.Text = objstate.Creators.First().Key;
-                            foundObject.ObjectQty.Text = objstate.Owners.Values.Sum().ToString() + "x";
+                            foundObject.ObjectQty.Text = objstate.Owners.Values.Sum(tuple => tuple.Item1).ToString() + "x";
                             foundObject.ObjectId.Text = objstate.TransactionId;
                             try
                             {

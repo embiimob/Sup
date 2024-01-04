@@ -463,15 +463,7 @@ namespace SUP.P2FK
                         var rootSerialized = JsonConvert.SerializeObject(P2FKRoot);
                         System.IO.File.WriteAllText(@"root\" + P2FKRoot.TransactionId + @"\" + "ROOT.json", rootSerialized);
                     }
-
-                    if (P2FKRoot.Signed)
-                    {
-                        string cleanedSIG = new string(P2FKRoot.Signature.Where(c => !specialChars.Contains(c)).ToArray());
-                        if (!System.IO.File.Exists(@"root\sig\" + cleanedSIG))
-                        {
-                            System.IO.File.WriteAllText(@"root\sig\" + cleanedSIG, transactionid);
-                        }
-                    }
+                                      
 
               
 
@@ -563,6 +555,7 @@ namespace SUP.P2FK
                     innerskip += 300;
 
                 }
+
 
                 if (calculated)
                 {

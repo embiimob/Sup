@@ -359,23 +359,21 @@ namespace SUP
 
                                 if (btnOwned.BackColor == Color.Yellow)
                                 {
-                                    // Assuming searchprofile is the key you want to look up in the Owners dictionary
-                                    if (objstate.Owners.TryGetValue(profileCheck, out long ownerQty))
+                                    if (objstate.Owners.TryGetValue(profileCheck, out var tuple))
                                     {
-                                        // If the key is found, set the text to the current owner's qty followed by the sum of all owners
-                                        foundObject.ObjectQty.Text = $"{ownerQty} / {objstate.Owners.Values.Sum()}x";
+                                        long ownerQty = tuple.Item1;
+                                        foundObject.ObjectQty.Text = $"{ownerQty} / {objstate.Owners.Values.Sum(t => t.Item1)}x";
                                     }
                                     else
                                     {
-                                        // If the key is not found, set the text to the sum of all owners
-                                        foundObject.ObjectQty.Text = $"{objstate.Owners.Values.Sum()}x";
+                                        foundObject.ObjectQty.Text = $"{objstate.Owners.Values.Sum(t => t.Item1)}x";
                                     }
                                 }
                                 else
                                 {
-                                    // Set the text to the sum of all owners for a button color other than yellow
-                                    foundObject.ObjectQty.Text = $"{objstate.Owners.Values.Sum()}x";
+                                    foundObject.ObjectQty.Text = $"{objstate.Owners.Values.Sum(t => t.Item1)}x";
                                 }
+
 
                                 foundObject.ObjectId.Text = objstate.Id.ToString();
 
@@ -1352,11 +1350,7 @@ namespace SUP
 
 
             flowLayoutPanel1.Controls.Clear();
-            int loadQty = (flowLayoutPanel1.Size.Width / 100) * (flowLayoutPanel1.Size.Height / 200) + 3;
-
-            loadQty -= flowLayoutPanel1.Controls.Count;
-
-            txtQty.Text = loadQty.ToString();
+           
 
             OBJState objstate = OBJState.GetObjectByFile(filePath, mainnetLogin, mainnetPassword, mainnetURL, mainnetVersionByte);
 
@@ -1390,7 +1384,7 @@ namespace SUP
                             }
                         }
                         foundObject.ObjectAddress.Text = objstate.Creators.First().Key;
-                        foundObject.ObjectQty.Text = objstate.Owners.Values.Sum().ToString() + "x";
+                        foundObject.ObjectQty.Text = objstate.Owners.Values.Sum(tuple => tuple.Item1).ToString() + "x";
                         foundObject.ObjectId.Text = objstate.Id.ToString();
 
                         //GPT3 reformed
@@ -1842,13 +1836,14 @@ namespace SUP
                             }
                         }
 
-
-
+                        txtTotal.Text = "1";
+                       
                         if (_viewMode == 1)
                         {
                             foundObject.Height = 221;
                             if (_isUserControl) { foundObject.Margin = new System.Windows.Forms.Padding(3, 3, 2, 3); }
                             flowLayoutPanel1.Controls.Add(foundObject);
+                            
 
 
                         }
@@ -2340,6 +2335,8 @@ namespace SUP
             DisableSupInput();
             pages.Minimum = 0;
             pages.Value = 0;
+            txtTotal.Text = "0";
+            txtLast.Text = "0";
             string[] filePaths = (string[])e.Data.GetData((System.Windows.Forms.DataFormats.FileDrop));
             string filePath = filePaths[0];
             GetObjectByFile(filePath);
