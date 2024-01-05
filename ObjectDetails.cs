@@ -32,6 +32,7 @@ namespace SUP
         private int numChangesDisplayed = 0;
         private bool isUserControl = false;
         private string _activeprofile;
+        private string _genid;
         private string mainnetURL = @"http://127.0.0.1:18332";
         private string mainnetLogin = "good-user";
         private string mainnetPassword = "better-password";
@@ -227,13 +228,24 @@ namespace SUP
 
         }
 
-        private void LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        private void LinkClicked(object sender, MouseEventArgs e)
         {
+            var linkLabel = (LinkLabel)sender;
+            var linkData = linkLabel.Links[0].LinkData;
 
-            var linkData = e.Link.LinkData;
-            new ObjectBrowser((string)linkData, false, _testnet).Show();
+            if (e.Button == MouseButtons.Left)
+            {
+                // Perform left-click action
+                new ObjectBrowser((string)linkData, false, _testnet).Show();
+            }
+            else if (e.Button == MouseButtons.Right)
+            {
+                _activeprofile = (string)linkData;
+                btnReloadObject.PerformClick();
 
+            }
         }
+
 
         private void ButtonShowObjectDetailsClick(object sender, EventArgs e)
         {
@@ -305,7 +317,7 @@ namespace SUP
                     keyLabel.LinkColor = System.Drawing.Color.Black;
                     keyLabel.ActiveLinkColor = System.Drawing.Color.Black;
                     keyLabel.VisitedLinkColor = System.Drawing.Color.Black;
-                    keyLabel.LinkClicked += new LinkLabelLinkClickedEventHandler(LinkClicked);
+                    keyLabel.MouseClick += new MouseEventHandler (LinkClicked);
                     keyLabel.Dock = DockStyle.Left;
 
                     Label valueLabel = new Label
@@ -399,7 +411,7 @@ namespace SUP
                         keyLabel.LinkColor = System.Drawing.Color.Black;
                         keyLabel.ActiveLinkColor = System.Drawing.Color.Black;
                         keyLabel.VisitedLinkColor = System.Drawing.Color.Black;
-                        keyLabel.LinkClicked += new LinkLabelLinkClickedEventHandler(LinkClicked);
+                        keyLabel.MouseClick += new MouseEventHandler(LinkClicked);
                         keyLabel.Dock = DockStyle.Left;
 
 
@@ -485,7 +497,7 @@ namespace SUP
                         keyLabel.LinkColor = System.Drawing.Color.Black;
                         keyLabel.ActiveLinkColor = System.Drawing.Color.Black;
                         keyLabel.VisitedLinkColor = System.Drawing.Color.Black;
-                        keyLabel.LinkClicked += new LinkLabelLinkClickedEventHandler(LinkClicked);
+                        keyLabel.MouseClick += new MouseEventHandler(LinkClicked);
                         keyLabel.Dock = DockStyle.Left; // set dock property for key label 
                         rowPanel.Controls.Add(keyLabel, 0, 0);
 
@@ -3410,6 +3422,10 @@ namespace SUP
 
                                     string _address = _objectaddress;
                                     string _transactionid = objstate.TransactionId;
+                                    _genid = objstate.TransactionId;
+
+                                    if (objstate.Owners.TryGetValue(_activeprofile, out var tupl))
+                                                { _genid = tupl.Item2;}
                                     string _viewer = _activeprofile;
                                     string _viewername = null;
                                     if (!string.IsNullOrEmpty(_activeprofile))
@@ -3429,7 +3445,7 @@ namespace SUP
                                     string _uri = HttpUtility.UrlEncode(objstate.URI);
                                     string _img = HttpUtility.UrlEncode(objstate.Image);
 
-                                    string querystring = "?address=" + _address + "&viewer=" + _viewer + "&viewername=" + _viewername + "&creator=" + _creator + "&owner=" + _owner + "&ownername=" + _ownername + "&urn=" + _urn + "&uri=" + _uri + "&img=" + _img + "&transactionid=" + _transactionid;
+                                    string querystring = "?address=" + _address + "&viewer=" + _viewer + "&viewername=" + _viewername + "&creator=" + _creator + "&owner=" + _owner + "&ownername=" + _ownername + "&urn=" + _urn + "&uri=" + _uri + "&img=" + _img + "&transactionid=" + _transactionid + "&genid=" + _genid;
                                     htmlembed = "<html><body><embed src=\"" + urn + querystring + "\" width=100% height=100%></body></html>";
 
 

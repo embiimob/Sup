@@ -90,6 +90,7 @@
             this.txtOBJJSON.Name = "txtOBJJSON";
             this.txtOBJJSON.Size = new System.Drawing.Size(123, 32);
             this.txtOBJJSON.TabIndex = 359;
+            this.txtOBJJSON.Visible = false;
             // 
             // txtOBJP2FK
             // 
@@ -101,6 +102,7 @@
             this.txtOBJP2FK.Name = "txtOBJP2FK";
             this.txtOBJP2FK.Size = new System.Drawing.Size(123, 36);
             this.txtOBJP2FK.TabIndex = 360;
+            this.txtOBJP2FK.Visible = false;
             // 
             // txtAddressListJSON
             // 
@@ -112,6 +114,7 @@
             this.txtAddressListJSON.Name = "txtAddressListJSON";
             this.txtAddressListJSON.Size = new System.Drawing.Size(123, 36);
             this.txtAddressListJSON.TabIndex = 358;
+            this.txtAddressListJSON.Visible = false;
             // 
             // txtSignatureAddress
             // 

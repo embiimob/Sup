@@ -502,10 +502,7 @@ namespace SUP.P2FK
                                     case "GIV":
 
                                         //is this even the right object!?  no!?  goodbye!
-                                        if (!transaction.Keyword.ContainsKey(objectaddress))
-                                        {
-                                            break;
-                                        }
+                                        if (!transaction.Keyword.ContainsKey(objectaddress)) { break; }
                                         // no sense checking any further
                                         if (objectState.Owners == null) { break; }
                                         List<List<int>> givinspector = new List<List<int>> { };
@@ -556,7 +553,6 @@ namespace SUP.P2FK
                                             }
 
 
-
                                             // cannot give less then 1
                                             if (qtyToGive < 0)
                                             {
@@ -600,7 +596,6 @@ namespace SUP.P2FK
                                                     {
                                                         logstatus = $"[\"{transaction.SignedBy}\",\"{reciever}\",\"give\",\"{qtyToGive}\",\"\",\"failed due to over maximum qty\",\"{transaction.BlockDate.ToString()}\"]";
                                                         objectState.ChangeLog.Add(logstatus);
-
                                                         logstatus = "";
                                                     }
                                                     break;
@@ -609,7 +604,6 @@ namespace SUP.P2FK
                                             }
 
 
-                                            //is transaction signer not on the Owners list
                                             // Check if the transaction signer is not on the Owners list
                                             if (!objectState.Owners.TryGetValue(transaction.SignedBy, out var qtyOwnedG))
                                             {
@@ -710,11 +704,8 @@ namespace SUP.P2FK
 
                                                 if (verbose)
                                                 {
-
                                                     logstatus = "[\"" + transaction.SignedBy + "\",\"" + reciever + "\",\"give\",\"" + qtyToGive + "\",\"\",\"success\",\"" + transaction.BlockDate.ToString() + "\"]";
-
                                                     objectState.ChangeLog.Add(logstatus);
-
                                                     logstatus = "";
                                                 }
 
@@ -726,11 +717,9 @@ namespace SUP.P2FK
                                                         objectState.ChangeDate = transaction.BlockDate;
                                                         if (verbose)
                                                         {
-
                                                             logstatus = "[\"" + transaction.SignedBy + "\",\"" + objectaddress + "\",\"grant\",\"\",\"\",\"success\",\"" + transaction.BlockDate.ToString() + "\"]";
                                                             objectState.ChangeLog.Add(logstatus);
                                                             logstatus = "";
-
                                                         }
 
                                                     }
@@ -770,6 +759,9 @@ namespace SUP.P2FK
                                     case "BRN":
                                         //does this even contain the right object!?  no!?  goodbye!
                                         if (!transaction.Keyword.ContainsKey(objectaddress)) { break; }
+
+                                        if (objectState.Owners == null) { break; }
+
                                         List<List<int>> brninspector = new List<List<int>> { };
 
                                         try
@@ -907,15 +899,9 @@ namespace SUP.P2FK
                                             break;
                                         }
 
-                                        if (objectState.Owners == null)
-                                        {
-                                            break;
-                                        }
+                                        if (objectState.Owners == null) { break; }
 
-                                        if (transaction.SignedBy == objectaddress)
-                                        {
-                                            break;
-                                        }
+                                        if (transaction.SignedBy == objectaddress) { break; }
 
                                         List<List<string>> buyinspector = new List<List<string>> { };
 
@@ -961,7 +947,7 @@ namespace SUP.P2FK
                                                 {
                                                     if (verbose)
                                                     {
-                                                        logstatus = $"[\"{transaction.SignedBy}\",\"{buy[0]}\",\"buy\",\"{buy[1]}\",\"\",\"failed due to over maximum qty\",\"{transaction.BlockDate.ToString()}\"]";
+                                                        logstatus = $"[\"{transaction.SignedBy}\",\"{buy[0]}\",\"buy\",\"{buy[1]}\",\"\",\"failed due to over maximum qty held\",\"{transaction.BlockDate.ToString()}\"]";
                                                         objectState.ChangeLog.Add(logstatus);
                                                         logstatus = "";
                                                     }
@@ -969,10 +955,6 @@ namespace SUP.P2FK
                                                 }
                                             }
 
-
-
-
-                                            // listed
 
                                             // Are their enough listed to buy?
                                             if (objectState.Listings != null && objectState.Listings.TryGetValue(buy[0], out BID qtyListed) && qtyListed.Qty >= long.Parse(buy[1]))
@@ -1052,7 +1034,6 @@ namespace SUP.P2FK
                                                         }
                                                     }
 
-
                                                     // Increment the new owner if already owned
                                                     if (objectState.Owners.ContainsKey(transaction.SignedBy))
                                                     {
@@ -1084,9 +1065,8 @@ namespace SUP.P2FK
                                                         objectState.Owners.Add(transaction.SignedBy, (long.Parse(buy[1]), genid));
                                                     }
 
-                                                    //remove previous owner from list if 0
+                                                    //remove previous owner from list if now 0
                                                     if (objectState.Listings[buy[0]].Qty < 1) { objectState.Listings.Remove(buy[0]); }
-
 
 
                                                     if (verbose)
@@ -1289,10 +1269,7 @@ namespace SUP.P2FK
 
                                     case "LST":
                                         //is this even the right object!?  no!?  goodbye!
-                                        if (!transaction.Keyword.ContainsKey(objectaddress))
-                                        {
-                                            break;
-                                        }
+                                        if (!transaction.Keyword.ContainsKey(objectaddress)) { break; }
                                         // no sense checking any further
                                         if (objectState.Owners == null) { break; }
 
