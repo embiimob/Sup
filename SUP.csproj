@@ -530,6 +530,18 @@
     <Content Include="includes\PresentationFramework.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Include="includes\SUP31.gif">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="includes\SUP32.gif">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="includes\SUP33.gif">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="includes\SUP34.gif">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="includes\SUPS.gif" />
     <Content Include="includes\SUPT.gif" />
     <Content Include="includes\SUPU.gif" />
