@@ -17,7 +17,7 @@ P2FK was directly inspired by the satoshi uploader  see --> https://cirosantilli
 **You will need to sync a blockchain to perform your first Sup!? search**
 1. Click the key 🗝️ button
 2. Launch a full bitcoin testnet node by clicking the top launch button
-3. Launch IPFS using the button provided "enable IPFS dameon"
+3. Launch IPFS using the button provided "enable IPFS daemon"
 4. Wait until testnet is fully synced. ( this part will take several hours )
 5. Type #flowersofwar in the main search box and hit enter
 <br />
@@ -109,7 +109,7 @@ To publish your complete websites with folder structure as an object, you must z
 All trusted index.html and index.htm files are sent the following Sup!? object information via querystring on load:
 "address=", "creator=", "viewer=", "viewername=", "owner=", "ownername=", "urn=", "uri=", "url=", "height=", "transactionid=", "genid="
 <br />
-genid= is unique per claimed primary object unit. due to this, genid can be used to create an unlimited amount of unique generative art mints. every unit collected from the primary pool recieves a unique genid hash that follows it through each secondary trade. this allows your generative works to be traded and still generate the same work based on the hash that was assigned to the unit during the minting process. NOTE: if you wish to maintain a unique 1/1 count of your Sup!? based generative works, be sure to set MAX = 1 when you mint the primary object. 
+genid= is unique per claimed primary object unit. due to this, genid can be used to create an unlimited amount of unique generative art mints. every unit collected from the primary pool receives a unique genid hash that follows it through each secondary trade. this allows your generative works to be traded and still generate the same work based on the hash that was assigned to the unit during the minting process. NOTE: if you wish to maintain a unique 1/1 count of your Sup!? based generative works, be sure to set MAX = 1 when you mint the primary object. 
 
 <br />
 <br />
