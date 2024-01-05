@@ -9,7 +9,7 @@ P2FK was directly inspired by the satoshi uploader  see --> https://cirosantilli
 
 ## **Installation**
 
-1. Download Supv0.5.0-beta.zip ( https://github.com/embiimob/Sup/releases/download/Supv0.5.0-beta/Supv0.5.0-beta.zip )
+1. Download Supv0.5.1-beta.zip ( https://github.com/embiimob/Sup/releases/download/Supv0.5.1-beta/Supv0.5.1-beta.zip )
 2. Create a folder on your **fastest** disk drive with at least **50GB** free (it will be storing the bitcoin testnet blockchain)
 3. Unzip all contents into the folder
 4. Run SUP.exe
@@ -105,9 +105,12 @@ clicking the 🗑️ icon found in message and object search results deletes the
 To publish your complete websites with folder structure as an object, you must zip your entire website into a single file called index.zip.  The index.zip file must contain a launching page named index.html or this feature will not work. Attach the index.zip file to an object using the URN button on the object minting screen.  the URN button will automatically upload and pin your website to IPFS if the daemon is enabled.
 <br />
 <br />
-## **Web applet querystring data with transaction id hash for html based generative objects**
-Trusted index.html and index.htm files are sent the following Sup!? object information via querystring on load:
-"address=", "creator=", "viewer=", "viewername=", "owner=", "ownername=", "urn=", "uri=", "url=", "height=", "transactionid="
+## **Web applet querystring data with transaction id and unique genid hash for html based generative objects**
+All trusted index.html and index.htm files are sent the following Sup!? object information via querystring on load:
+"address=", "creator=", "viewer=", "viewername=", "owner=", "ownername=", "urn=", "uri=", "url=", "height=", "transactionid=", "genid="
+<br />
+genid= is unique per claimed primary object unit. due to this, genid can be used to create an unlimited amount of unique generative art mints. every unit collected from the primary pool recieves a unique genid hash that follows it through each secondary trade. this allows your generative works to be traded and still generate the same work based on the hash that was assigned to the unit during the minting process. NOTE: if you wish to maintain a unique 1/1 count of your Sup!? based generative works, be sure to set MAX = 1 when you mint the primary object. 
+
 <br />
 <br />
 ## **Search Examples**
