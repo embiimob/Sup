@@ -6,6 +6,7 @@ using SUP.P2FK;
 using System.Runtime.InteropServices;
 using CommandLine.Text;
 using System.Collections.Generic;
+using System.Text;
 
 namespace SUP
 {
@@ -50,6 +51,7 @@ namespace SUP
                     if (options.Qty != 0) { _Qty = options.Qty; }
                     var roots = Root.GetRootsByAddress(options.Address, options.Username, options.Password, options.Url, options.Skip, _Qty, options.VersionByte);
                     var json = JsonConvert.SerializeObject(roots);
+                    Console.OutputEncoding = Encoding.UTF8;
                     Console.WriteLine(json);
                     
                 }
@@ -58,6 +60,7 @@ namespace SUP
                    
                     var root = Root.GetRootByTransactionId(options.TransactionId, options.Username, options.Password, options.Url, options.VersionByte);
                     var json = JsonConvert.SerializeObject(root);
+                    Console.OutputEncoding = Encoding.UTF8;
                     Console.WriteLine(json);
 
                 }
@@ -66,6 +69,7 @@ namespace SUP
 
                     var root = Root.GetPublicAddressByKeyword(options.Keyword, options.VersionByte);
                     var json = JsonConvert.SerializeObject(root);
+                    Console.OutputEncoding = Encoding.UTF8;
                     Console.WriteLine(json);
 
                 }
@@ -74,6 +78,7 @@ namespace SUP
 
                     var root = Root.GetKeywordByPublicAddress(options.Address);
                     var json = JsonConvert.SerializeObject(root);
+                    Console.OutputEncoding = Encoding.UTF8;
                     Console.WriteLine(json);
 
                 }
@@ -82,6 +87,7 @@ namespace SUP
 
                     var root = OBJState.GetObjectByAddress(options.Address,options.Username,options.Password,options.Url, options.VersionByte, options.Verbose);
                     var json = JsonConvert.SerializeObject(root);
+                    Console.OutputEncoding = Encoding.UTF8;
                     Console.WriteLine(json);
 
                 }
@@ -90,6 +96,7 @@ namespace SUP
 
                     var root = OBJState.GetObjectByTransactionId(options.TransactionId, options.Username, options.Password, options.Url, options.VersionByte);
                     var json = JsonConvert.SerializeObject(root);
+                    Console.OutputEncoding = Encoding.UTF8;
                     Console.WriteLine(json);
 
                 }
@@ -98,6 +105,7 @@ namespace SUP
 
                     var root = OBJState.GetObjectByURN(options.URN, options.Username, options.Password, options.Url, options.VersionByte);
                     var json = JsonConvert.SerializeObject(root);
+                    Console.OutputEncoding = Encoding.UTF8;
                     Console.WriteLine(json);
 
                 }
@@ -106,6 +114,7 @@ namespace SUP
 
                     var root = OBJState.GetObjectByFile(options.FilePath, options.Username, options.Password, options.Url, options.VersionByte);
                     var json = JsonConvert.SerializeObject(root);
+                    Console.OutputEncoding = Encoding.UTF8;
                     Console.WriteLine(json);
 
                 }
@@ -114,6 +123,7 @@ namespace SUP
 
                     var root = OBJState.GetObjectsByAddress(options.Address, options.Username, options.Password, options.Url, options.VersionByte, options.Skip, options.Qty);
                     var json = JsonConvert.SerializeObject(root);
+                    Console.OutputEncoding = Encoding.UTF8;
                     Console.WriteLine(json);
 
                 }
@@ -122,6 +132,7 @@ namespace SUP
 
                     var root = OBJState.GetObjectsOwnedByAddress(options.Address, options.Username, options.Password, options.Url, options.VersionByte, options.Skip, options.Qty);
                     var json = JsonConvert.SerializeObject(root);
+                    Console.OutputEncoding = Encoding.UTF8;
                     Console.WriteLine(json);
 
                 }
@@ -130,6 +141,7 @@ namespace SUP
 
                     var root = OBJState.GetObjectsCreatedByAddress(options.Address, options.Username, options.Password, options.Url, options.VersionByte, options.Skip, options.Qty);
                     var json = JsonConvert.SerializeObject(root);
+                    Console.OutputEncoding = Encoding.UTF8;
                     Console.WriteLine(json);
 
                 }
@@ -140,6 +152,7 @@ namespace SUP
                     keywords.Add(options.Keyword);
                     var root = OBJState.GetObjectsByKeyword(keywords, options.Username, options.Password, options.Url, options.VersionByte, options.Skip, options.Qty);
                     var json = JsonConvert.SerializeObject(root);
+                    Console.OutputEncoding = Encoding.UTF8;
                     Console.WriteLine(json);
 
                 }
@@ -148,6 +161,7 @@ namespace SUP
 
                     var root = OBJState.GetFoundObjects(options.Username, options.Password, options.Url, options.VersionByte, options.Verbose);
                     var json = JsonConvert.SerializeObject(root);
+                    Console.OutputEncoding = Encoding.UTF8;
                     Console.WriteLine(json);
 
                 }
@@ -157,6 +171,7 @@ namespace SUP
                    
                     var root = OBJState.GetKeywordsByAddress(options.Address, options.Username, options.Password, options.Url, options.VersionByte);
                     var json = JsonConvert.SerializeObject(root);
+                    Console.OutputEncoding = Encoding.UTF8;
                     Console.WriteLine(json);
 
                 }
@@ -166,6 +181,7 @@ namespace SUP
 
                     var root = OBJState.GetPublicMessagesByAddress(options.Address, options.Username, options.Password, options.Url, options.VersionByte, options.Skip, options.Qty);
                     var json = JsonConvert.SerializeObject(root);
+                    Console.OutputEncoding = Encoding.UTF8;
                     Console.WriteLine(json);
 
                 }
@@ -175,6 +191,7 @@ namespace SUP
 
                     var root = OBJState.GetPrivateMessagesByAddress(options.Address, options.Username, options.Password, options.Url, options.VersionByte, options.Skip, options.Qty);
                     var json = JsonConvert.SerializeObject(root);
+                    Console.OutputEncoding = Encoding.UTF8;
                     Console.WriteLine(json);
 
                 }
@@ -182,6 +199,7 @@ namespace SUP
                 {
                     var root = Root.GetPublicKeysByAddress(options.Address, options.Username, options.Password, options.Url);
                     var json = JsonConvert.SerializeObject(root);
+                    Console.OutputEncoding = Encoding.UTF8;
                     Console.WriteLine(json);
 
                 }
@@ -192,6 +210,7 @@ namespace SUP
                     keywords.Add(options.Keyword);
                     var root = PROState.GetProfileByAddress(options.Address, options.Username, options.Password, options.Url, options.VersionByte,options.Verbose);
                     var json = JsonConvert.SerializeObject(root);
+                    Console.OutputEncoding = Encoding.UTF8;
                     Console.WriteLine(json);
 
                 }
@@ -202,6 +221,7 @@ namespace SUP
                     keywords.Add(options.Keyword);
                     var root = PROState.GetProfileByURN(options.URN, options.Username, options.Password, options.Url, options.VersionByte, options.Verbose);
                     var json = JsonConvert.SerializeObject(root);
+                    Console.OutputEncoding = Encoding.UTF8;
                     Console.WriteLine(json);
 
                 }
@@ -210,6 +230,7 @@ namespace SUP
 
                     var root = INQState.GetInquiryByAddress(options.Address, options.Username, options.Password, options.Url, options.VersionByte, options.Verbose);
                     var json = JsonConvert.SerializeObject(root);
+                    Console.OutputEncoding = Encoding.UTF8;
                     Console.WriteLine(json);
 
                 }
@@ -218,6 +239,7 @@ namespace SUP
 
                     var root = INQState.GetInquiryByTransactionId(options.TransactionId, options.Username, options.Password, options.Url, options.VersionByte);
                     var json = JsonConvert.SerializeObject(root);
+                    Console.OutputEncoding = Encoding.UTF8;
                     Console.WriteLine(json);
 
                 }
@@ -226,6 +248,7 @@ namespace SUP
 
                     var root = INQState.GetInquiriesByAddress(options.Address, options.Username, options.Password, options.Url, options.VersionByte, options.Skip, options.Qty, options.Verbose);
                     var json = JsonConvert.SerializeObject(root);
+                    Console.OutputEncoding = Encoding.UTF8;
                     Console.WriteLine(json);
 
                 }
@@ -234,6 +257,7 @@ namespace SUP
 
                     var root = INQState.GetInquiriesCreatedByAddress(options.Address, options.Username, options.Password, options.Url, options.VersionByte, options.Skip, options.Qty, options.Verbose);
                     var json = JsonConvert.SerializeObject(root);
+                    Console.OutputEncoding = Encoding.UTF8;
                     Console.WriteLine(json);
 
                 }
