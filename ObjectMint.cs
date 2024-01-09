@@ -159,7 +159,7 @@ namespace SUP
             if (btnObjectURI.BackColor == Color.Blue) { OBJJson.uri = txtURI.Text; }
             if (btnObjectDescription.BackColor == Color.Blue) { OBJJson.dsc = txtDescription.Text; }
             if (License != "No License / All Rights Reserved") { OBJJson.lic = License; }
-            if (btnObjectMaximum.BackColor == Color.Blue) { if (txtMaximum.Text == "") { } else { try { OBJJson.max = int.Parse(txtMaximum.Text); } catch { OBJJson.max = 0; } } }
+            if (btnObjectMaximum.BackColor == Color.Blue) { if (txtMaximum.Text == "") { } else { try { OBJJson.max = long.Parse(txtMaximum.Text); } catch { OBJJson.max = 0; } } }
 
             Dictionary<string, string> mintAttributes = new Dictionary<string, string>();
             foreach (Button attributeControl in flowAttribute.Controls)
@@ -840,7 +840,7 @@ namespace SUP
                 {
                     try
                     {
-                        if (long.Parse(txtMaximum.Text.Replace(",", "")) <= 5149219112448) { btnObjectMaximum.BackColor = Color.Blue; btnObjectMaximum.ForeColor = Color.Yellow; } else { btnObjectMaximum.BackColor = Color.White; btnObjectMaximum.ForeColor = Color.Black; }
+                        if (long.TryParse(txtMaximum.Text.Replace(",", ""),out long dummy)) { btnObjectMaximum.BackColor = Color.Blue; btnObjectMaximum.ForeColor = Color.Yellow; } else { btnObjectMaximum.BackColor = Color.White; btnObjectMaximum.ForeColor = Color.Black; }
 
                     }
                     catch { btnObjectMaximum.BackColor = Color.White; btnObjectMaximum.ForeColor = Color.Black; }
@@ -2029,7 +2029,7 @@ namespace SUP
                     var owner = ownerTextBox.Text;
                     var qty = qtyTextBox.Text;
 
-                    var isNumeric = int.TryParse(qty, out _);
+                    var isNumeric = long.TryParse(qty, out _);
 
                     if (isNumeric)
                     {
@@ -2134,7 +2134,7 @@ namespace SUP
             {
                 btnObjectMaximum.BackColor = Color.Blue;
                 btnObjectMaximum.ForeColor = Color.Yellow;
-                if (!int.TryParse(txtMaximum.Text, out int value)) { txtMaximum.Text = "0"; }
+                if (!long.TryParse(txtMaximum.Text, out long value)) { txtMaximum.Text = "0"; }
             }
         }
 

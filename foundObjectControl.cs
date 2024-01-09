@@ -1,6 +1,7 @@
 ﻿using Newtonsoft.Json;
 using SUP.P2FK;
 using System;
+using System.Drawing;
 using System.IO;
 using System.Windows.Forms;
 
@@ -204,6 +205,38 @@ namespace SUP
             return input.Substring(startIndex, endIndex - startIndex);
         }
 
+        private void ObjectQty_TextChanged(object sender, EventArgs e)
+        {
+            AdjustFontSize(ObjectQty, ObjectQty.Text);
+        }
 
+        public static void AdjustFontSize(Label label, string text)
+        {
+            float maxFontSize = 8.25f;
+            // Set the original font size and style
+            Font originalFont = new Font("Microsoft Sans Serif", 8.25f, FontStyle.Bold);
+
+            // Get the size of the label with the original font
+            Size originalSize = TextRenderer.MeasureText(text+"xx", originalFont);
+
+            // Set the desired maximum size (adjust as needed)
+            Size maxSize = new Size(label.Width, label.Height);
+
+            // Calculate the scale factor for both width and height
+            float widthScale = maxSize.Width / (float)originalSize.Width;
+            float heightScale = maxSize.Height / (float)originalSize.Height;
+
+            // Use the minimum scale factor to ensure both dimensions fit
+            float scale = Math.Min(widthScale, heightScale);
+
+            // Calculate the new font size (limiting to maxFontSize)
+            float newFontSize = Math.Min(originalFont.Size * scale, maxFontSize);
+
+            // Create a new font with the adjusted size and style
+            Font adjustedFont = new Font("Microsoft Sans Serif", newFontSize, FontStyle.Bold);
+
+            // Apply the new font to the label
+            label.Font = adjustedFont;
+        }
     }
 }

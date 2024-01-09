@@ -141,28 +141,29 @@
             // ObjectDescription
             // 
             this.ObjectDescription.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
-            this.ObjectDescription.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.ObjectDescription.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.ObjectDescription.ForeColor = System.Drawing.Color.White;
-            this.ObjectDescription.Location = new System.Drawing.Point(4, 271);
+            this.ObjectDescription.Location = new System.Drawing.Point(4, 280);
             this.ObjectDescription.Name = "ObjectDescription";
-            this.ObjectDescription.Size = new System.Drawing.Size(211, 49);
+            this.ObjectDescription.Size = new System.Drawing.Size(211, 41);
             this.ObjectDescription.TabIndex = 6;
-            this.ObjectDescription.Text = "a collection of items found on a spaceship";
-            this.ObjectDescription.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.ObjectDescription.Text = "a collection of items found on a UFO";
             this.ObjectDescription.Click += new System.EventHandler(this.foundObjectControl_Click);
             // 
             // ObjectQty
             // 
             this.ObjectQty.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.ObjectQty.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
-            this.ObjectQty.Font = new System.Drawing.Font("Microsoft Sans Serif", 6.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.ObjectQty.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.ObjectQty.ForeColor = System.Drawing.Color.White;
-            this.ObjectQty.Location = new System.Drawing.Point(116, 217);
+            this.ObjectQty.Location = new System.Drawing.Point(118, 218);
+            this.ObjectQty.Margin = new System.Windows.Forms.Padding(0);
             this.ObjectQty.Name = "ObjectQty";
-            this.ObjectQty.Size = new System.Drawing.Size(97, 20);
+            this.ObjectQty.Size = new System.Drawing.Size(99, 33);
             this.ObjectQty.TabIndex = 7;
-            this.ObjectQty.Text = "100 /100000000x";
-            this.ObjectQty.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            this.ObjectQty.Text = "100X";
+            this.ObjectQty.TextAlign = System.Drawing.ContentAlignment.TopRight;
+            this.ObjectQty.TextChanged += new System.EventHandler(this.ObjectQty_TextChanged);
             this.ObjectQty.Click += new System.EventHandler(this.foundObjectControl_Click);
             // 
             // ObjectAddress
@@ -182,14 +183,14 @@
             // ObjectName
             // 
             this.ObjectName.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
-            this.ObjectName.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.ObjectName.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.ObjectName.ForeColor = System.Drawing.Color.White;
-            this.ObjectName.Location = new System.Drawing.Point(5, 220);
+            this.ObjectName.Location = new System.Drawing.Point(5, 216);
             this.ObjectName.Margin = new System.Windows.Forms.Padding(0);
             this.ObjectName.Name = "ObjectName";
-            this.ObjectName.Size = new System.Drawing.Size(119, 18);
+            this.ObjectName.Size = new System.Drawing.Size(117, 31);
             this.ObjectName.TabIndex = 9;
-            this.ObjectName.Text = "FakeUFO Keywords this hoy sdgfd";
+            this.ObjectName.Text = "Fake UFO";
             this.ObjectName.Click += new System.EventHandler(this.foundObjectControl_Click);
             // 
             // ObjectCreators
@@ -197,7 +198,7 @@
             this.ObjectCreators.AutoSize = true;
             this.ObjectCreators.BackColor = System.Drawing.Color.Transparent;
             this.ObjectCreators.LinkColor = System.Drawing.SystemColors.Highlight;
-            this.ObjectCreators.Location = new System.Drawing.Point(7, 237);
+            this.ObjectCreators.Location = new System.Drawing.Point(7, 247);
             this.ObjectCreators.Name = "ObjectCreators";
             this.ObjectCreators.Size = new System.Drawing.Size(0, 13);
             this.ObjectCreators.TabIndex = 10;
@@ -209,7 +210,7 @@
             this.ObjectCreators2.AutoSize = true;
             this.ObjectCreators2.BackColor = System.Drawing.Color.Transparent;
             this.ObjectCreators2.LinkColor = System.Drawing.SystemColors.Highlight;
-            this.ObjectCreators2.Location = new System.Drawing.Point(7, 255);
+            this.ObjectCreators2.Location = new System.Drawing.Point(7, 262);
             this.ObjectCreators2.Name = "ObjectCreators2";
             this.ObjectCreators2.Size = new System.Drawing.Size(0, 13);
             this.ObjectCreators2.TabIndex = 11;
@@ -263,7 +264,7 @@
             this.lblTrash.AutoSize = true;
             this.lblTrash.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
             this.lblTrash.ForeColor = System.Drawing.Color.White;
-            this.lblTrash.Location = new System.Drawing.Point(201, 319);
+            this.lblTrash.Location = new System.Drawing.Point(201, 321);
             this.lblTrash.Name = "lblTrash";
             this.lblTrash.Size = new System.Drawing.Size(19, 13);
             this.lblTrash.TabIndex = 17;
@@ -276,17 +277,17 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
-            this.Controls.Add(this.ObjectDescription);
+            this.Controls.Add(this.ObjectQty);
             this.Controls.Add(this.ObjectCreators);
+            this.Controls.Add(this.lblTrash);
+            this.Controls.Add(this.ObjectDescription);
             this.Controls.Add(this.ObjectCreators2);
             this.Controls.Add(this.btnOfficial);
             this.Controls.Add(this.lblOfficial);
             this.Controls.Add(this.ObjectImage);
-            this.Controls.Add(this.lblTrash);
             this.Controls.Add(this.ObjectAddress);
             this.Controls.Add(this.txtOfficialURN);
             this.Controls.Add(this.ObjectName);
-            this.Controls.Add(this.ObjectQty);
             this.Controls.Add(this.panel1);
             this.Controls.Add(this.ObjectId);
             this.DoubleBuffered = true;

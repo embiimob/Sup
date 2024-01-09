@@ -17,7 +17,7 @@ namespace SUP
     {
         //GPT3 ROCKS
         private const int MaxRows = 2000;
-        private readonly List<(string address, int qty)> _addressQtyList = new List<(string address, int qty)>();
+        private readonly List<(string address, long qty)> _addressQtyList = new List<(string address, long qty)>();
         bool mint = false;
         private readonly string givaddress = "";
         private Random random = new Random();
@@ -62,7 +62,7 @@ namespace SUP
                 return;
             }
 
-            if (!int.TryParse(qtyTextBox.Text, out var qty) || qty < 1)
+            if (!long.TryParse(qtyTextBox.Text, out var qty) || qty < 1)
             {
                 MessageBox.Show("Quantity must be a positive integer.");
                 return;
@@ -112,7 +112,7 @@ namespace SUP
 
         private void giveButton_Click(object sender, EventArgs e)
         {
-            var dictionary = new Dictionary<string, int>();
+            var dictionary = new Dictionary<string, long>();
             var newdictionary = new List<List<string>>();
             List<string> encodedList = new List<string>();
             int givOrder = 2;

@@ -362,16 +362,16 @@ namespace SUP
                                     if (objstate.Owners.TryGetValue(profileCheck, out var tuple))
                                     {
                                         long ownerQty = tuple.Item1;
-                                        foundObject.ObjectQty.Text = $"{ownerQty} / {objstate.Owners.Values.Sum(t => t.Item1)}x";
+                                        foundObject.ObjectQty.Text = $"{ownerQty.ToString("N0")} / {objstate.Owners.Values.Sum(t => t.Item1).ToString("N0")}x";
                                     }
                                     else
                                     {
-                                        foundObject.ObjectQty.Text = $"{objstate.Owners.Values.Sum(t => t.Item1)}x";
+                                        foundObject.ObjectQty.Text = $"{objstate.Owners.Values.Sum(t => t.Item1).ToString("N0")}x";
                                     }
                                 }
                                 else
                                 {
-                                    foundObject.ObjectQty.Text = $"{objstate.Owners.Values.Sum(t => t.Item1)}x";
+                                    foundObject.ObjectQty.Text = $"{objstate.Owners.Values.Sum(t => t.Item1).ToString("N0")}x";
                                 }
 
 
@@ -1384,7 +1384,7 @@ namespace SUP
                             }
                         }
                         foundObject.ObjectAddress.Text = objstate.Creators.First().Key;
-                        foundObject.ObjectQty.Text = objstate.Owners.Values.Sum(tuple => tuple.Item1).ToString() + "x";
+                        foundObject.ObjectQty.Text = objstate.Owners.Values.Sum(tuple => tuple.Item1).ToString("N0") + "x";
                         foundObject.ObjectId.Text = objstate.Id.ToString();
 
                         //GPT3 reformed

@@ -24,7 +24,7 @@ namespace SUP
         private readonly static object SupLocker = new object();
         private List<string> BTCTMemPool = new List<string>();
         bool mint = false;
-        int maxHold = 0;
+        long maxHold = 0;
         private readonly string givaddress = "";
         private Random random = new Random();
         private string _activeprofile;
@@ -272,12 +272,12 @@ namespace SUP
             txtName.Text = objstate.Name;
             lblLicense.Text = objstate.License;
             lblObjectCreatedDate.Text = objstate.CreatedDate.ToString("ddd, dd MMM yyyy hh:mm:ss");
-            lblTotalOwnedDetail.Text = "total: " + objstate.Owners.Values.Sum(tuple => tuple.Item1).ToString();
+            lblTotalOwnedDetail.Text = "total: " + objstate.Owners.Values.Sum(tuple => tuple.Item1).ToString("N0");
             lblTotalRoyaltiesDetail.Text = "royalties: " + objstate.Royalties.Values.Sum().ToString();
 
             if (objstate.Maximum != null && objstate.Maximum > 0)
             {
-                lblMAXqty.Text = "MAX: " + objstate.Maximum.ToString();
+                lblMAXqty.Text = "MAX: " + objstate.Maximum.ToString("N0");
                 maxHold = objstate.Maximum;
             }
             
@@ -402,7 +402,7 @@ namespace SUP
 
                     Label qtyLabel = new Label
                     {
-                        Text = item.Value.Qty.ToString(),
+                        Text = item.Value.Qty.ToString("N0"),
                         AutoSize = true,
                         Dock = DockStyle.Right
                     };
@@ -768,7 +768,7 @@ namespace SUP
                                                             string _blockdate = root.BlockDate.ToString("yyyyMMddHHmmss");
                                                             string imglocation = "";
 
-                                                            if (int.Parse(buy[1]) < 0)
+                                                            if (long.Parse(buy[1]) < 0)
                                                             {
                                                                 break;
                                                             }
@@ -820,7 +820,7 @@ namespace SUP
                                                             string _blockdate = root.BlockDate.ToString("yyyyMMddHHmmss");
                                                             string imglocation = "";
 
-                                                            if (int.Parse(lst[1]) < 0)
+                                                            if (long.Parse(lst[1]) < 0)
                                                             {
                                                                 break;
                                                             }
@@ -840,10 +840,10 @@ namespace SUP
                                                     case "BRN":
 
 
-                                                        List<List<int>> brninspector = new List<List<int>> { };
+                                                        List<List<long>> brninspector = new List<List<long>> { };
                                                         try
                                                         {
-                                                            brninspector = JsonConvert.DeserializeObject<List<List<int>>>(System.IO.File.ReadAllText(@"root\" + root.TransactionId + @"\BRN"));
+                                                            brninspector = JsonConvert.DeserializeObject<List<List<long>>>(System.IO.File.ReadAllText(@"root\" + root.TransactionId + @"\BRN"));
                                                         }
                                                         catch
                                                         {
@@ -860,7 +860,7 @@ namespace SUP
                                                         {
                                                             string _from = root.SignedBy;
                                                             string _to = "";
-                                                            _to = root.Keyword.Reverse().GetItemByIndex(give[0]).Key;
+                                                            _to = root.Keyword.Reverse().GetItemByIndex((int)give[0]).Key;
                                                             string _message = "BRN 🔥 " + give[1];
                                                             string _blockdate = root.BlockDate.ToString("yyyyMMddHHmmss");
                                                             string imglocation = "";
@@ -1049,7 +1049,7 @@ namespace SUP
 
             txtAddressListJSON.Text = JsonConvert.SerializeObject(encodedList.Distinct());
 
-            lblBuyCost.Text = "cost: " + (0.00000546 * encodedList.Count + (int.Parse(txtBuyQty.Text) * double.Parse(txtBuyEachCost.Text))).ToString("0.00000000") + "  + miner fee";
+            lblBuyCost.Text = "cost: " + (0.00000546 * encodedList.Count + (long.Parse(txtBuyQty.Text) * double.Parse(txtBuyEachCost.Text))).ToString("0.00000000") + "  + miner fee";
 
             if (mint)
             {
@@ -1063,7 +1063,7 @@ namespace SUP
                         try { recipients.Add(encodedAddress, 0.00000546m); } catch { }
                     }
 
-                    decimal totalCost = int.Parse(txtBuyQty.Text) * decimal.Parse(txtBuyEachCost.Text);
+                    decimal totalCost = long.Parse(txtBuyQty.Text) * decimal.Parse(txtBuyEachCost.Text);
                     decimal remainingCost = totalCost;
                     OBJState objstate = OBJState.GetObjectByAddress(txtAddressSearch.Text, mainnetLogin, mainnetPassword, mainnetURL, mainnetVersionByte);
 

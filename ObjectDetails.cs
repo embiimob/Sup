@@ -285,7 +285,7 @@ namespace SUP
                     };
 
                     rowPanel.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 310));
-                    rowPanel.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 100));
+                    rowPanel.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 110));
 
                     LinkLabel keyLabel = new LinkLabel();
                     string searchkey = kvp.Key;
@@ -322,7 +322,7 @@ namespace SUP
 
                     Label valueLabel = new Label
                     {
-                        Text = kvp.Value.Item1.ToString(),
+                        Text = kvp.Value.Item1.ToString("N0"),
                         AutoSize = true,
                         Dock = DockStyle.Right
                     };

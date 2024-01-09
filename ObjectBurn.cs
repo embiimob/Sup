@@ -18,7 +18,7 @@ namespace SUP
     {
         //GPT3 ROCKS
         private const int MaxRows = 2000;
-        private readonly List<(string address, int qty)> _addressQtyList = new List<(string address, int qty)>();
+        private readonly List<(string address, long qty)> _addressQtyList = new List<(string address, long qty)>();
         bool mint = false;
         private readonly string brnaddress = "";
         private Random random = new Random();
@@ -64,7 +64,7 @@ namespace SUP
                 return;
             }
 
-            if (!int.TryParse(qtyTextBox.Text, out var qty) || qty < 1)
+            if (!long.TryParse(qtyTextBox.Text, out var qty) || qty < 1)
             {
                 MessageBox.Show("Quantity must be a positive integer.");
                 return;
@@ -114,8 +114,8 @@ namespace SUP
 
         private void burnButton_Click(object sender, EventArgs e)
         {
-            var dictionary = new Dictionary<string, int>();
-            var newdictionary = new List<List<int>>();
+            var dictionary = new Dictionary<string, long>();
+            var newdictionary = new List<List<long>>();
             List<string> encodedList = new List<string>();
             int brnOrder = 1;
             foreach (var (address, qty) in _addressQtyList)
@@ -126,12 +126,12 @@ namespace SUP
                     if (address == txtSignatureAddress.Text)
                     {
                         newdictionary.Clear();
-                        newdictionary.Add(new List<int> { 0, qty });
+                        newdictionary.Add(new List<long> { 0, qty });
                         dictionary.Clear();
                         dictionary.Add(address, qty);
                         break;
                     }
-                    newdictionary.Add(new List<int> { brnOrder, qty });
+                    newdictionary.Add(new List<long> { brnOrder, qty });
                     brnOrder++;
                 }
             }
@@ -142,7 +142,7 @@ namespace SUP
                 rng.GetBytes(saltBytes);
                 salt = -Math.Abs(BitConverter.ToInt32(saltBytes, 0) % 100000);
             }
-            newdictionary.Add(new List<int> { 0, salt });
+            newdictionary.Add(new List<long> { 0, salt });
 
 
 

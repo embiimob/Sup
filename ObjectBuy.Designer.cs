@@ -283,7 +283,7 @@
             this.txtListQty.Location = new System.Drawing.Point(403, 438);
             this.txtListQty.Multiline = true;
             this.txtListQty.Name = "txtListQty";
-            this.txtListQty.Size = new System.Drawing.Size(106, 32);
+            this.txtListQty.Size = new System.Drawing.Size(128, 32);
             this.txtListQty.TabIndex = 379;
             this.txtListQty.Text = "0";
             // 
@@ -293,10 +293,10 @@
             this.txtEachValue.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
             this.txtEachValue.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.txtEachValue.ForeColor = System.Drawing.Color.White;
-            this.txtEachValue.Location = new System.Drawing.Point(521, 439);
+            this.txtEachValue.Location = new System.Drawing.Point(537, 439);
             this.txtEachValue.Multiline = true;
             this.txtEachValue.Name = "txtEachValue";
-            this.txtEachValue.Size = new System.Drawing.Size(133, 31);
+            this.txtEachValue.Size = new System.Drawing.Size(117, 31);
             this.txtEachValue.TabIndex = 380;
             this.txtEachValue.Text = "0";
             // 
@@ -318,7 +318,7 @@
             this.label7.AutoSize = true;
             this.label7.Cursor = System.Windows.Forms.Cursors.Arrow;
             this.label7.ForeColor = System.Drawing.Color.White;
-            this.label7.Location = new System.Drawing.Point(518, 412);
+            this.label7.Location = new System.Drawing.Point(534, 412);
             this.label7.Name = "label7";
             this.label7.Size = new System.Drawing.Size(69, 13);
             this.label7.TabIndex = 382;
@@ -383,7 +383,7 @@
             this.lblTotalOwnedDetail.Location = new System.Drawing.Point(151, 506);
             this.lblTotalOwnedDetail.Name = "lblTotalOwnedDetail";
             this.lblTotalOwnedDetail.Padding = new System.Windows.Forms.Padding(3);
-            this.lblTotalOwnedDetail.Size = new System.Drawing.Size(161, 21);
+            this.lblTotalOwnedDetail.Size = new System.Drawing.Size(238, 21);
             this.lblTotalOwnedDetail.TabIndex = 388;
             this.lblTotalOwnedDetail.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 

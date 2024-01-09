@@ -363,7 +363,7 @@
             // 
             this.btnRefreshOwners.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.btnRefreshOwners.Font = new System.Drawing.Font("Segoe UI Emoji", 13.8F);
-            this.btnRefreshOwners.Location = new System.Drawing.Point(884, 499);
+            this.btnRefreshOwners.Location = new System.Drawing.Point(852, 500);
             this.btnRefreshOwners.Margin = new System.Windows.Forms.Padding(0);
             this.btnRefreshOwners.Name = "btnRefreshOwners";
             this.btnRefreshOwners.Size = new System.Drawing.Size(60, 42);
@@ -426,7 +426,7 @@
             // 
             this.txtName.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.txtName.ForeColor = System.Drawing.Color.White;
-            this.txtName.Location = new System.Drawing.Point(82, 6);
+            this.txtName.Location = new System.Drawing.Point(82, 5);
             this.txtName.Margin = new System.Windows.Forms.Padding(0);
             this.txtName.Name = "txtName";
             this.txtName.Size = new System.Drawing.Size(220, 38);
@@ -549,10 +549,10 @@
             this.lblTotalOwnedDetail.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.lblTotalOwnedDetail.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lblTotalOwnedDetail.ForeColor = System.Drawing.Color.White;
-            this.lblTotalOwnedDetail.Location = new System.Drawing.Point(953, 495);
+            this.lblTotalOwnedDetail.Location = new System.Drawing.Point(921, 495);
             this.lblTotalOwnedDetail.Name = "lblTotalOwnedDetail";
-            this.lblTotalOwnedDetail.Padding = new System.Windows.Forms.Padding(3);
-            this.lblTotalOwnedDetail.Size = new System.Drawing.Size(146, 23);
+            this.lblTotalOwnedDetail.Padding = new System.Windows.Forms.Padding(0, 3, 0, 3);
+            this.lblTotalOwnedDetail.Size = new System.Drawing.Size(178, 23);
             this.lblTotalOwnedDetail.TabIndex = 82;
             this.lblTotalOwnedDetail.Text = "total";
             this.lblTotalOwnedDetail.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
@@ -574,7 +574,7 @@
             // 
             this.lblObjectCreatedDate.AutoSize = true;
             this.lblObjectCreatedDate.ForeColor = System.Drawing.Color.White;
-            this.lblObjectCreatedDate.Location = new System.Drawing.Point(83, 42);
+            this.lblObjectCreatedDate.Location = new System.Drawing.Point(83, 44);
             this.lblObjectCreatedDate.Margin = new System.Windows.Forms.Padding(0);
             this.lblObjectCreatedDate.Name = "lblObjectCreatedDate";
             this.lblObjectCreatedDate.Size = new System.Drawing.Size(94, 13);
@@ -699,10 +699,10 @@
             this.lblTotalRoyaltiesDetail.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.lblTotalRoyaltiesDetail.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lblTotalRoyaltiesDetail.ForeColor = System.Drawing.Color.White;
-            this.lblTotalRoyaltiesDetail.Location = new System.Drawing.Point(956, 518);
+            this.lblTotalRoyaltiesDetail.Location = new System.Drawing.Point(924, 518);
             this.lblTotalRoyaltiesDetail.Name = "lblTotalRoyaltiesDetail";
-            this.lblTotalRoyaltiesDetail.Padding = new System.Windows.Forms.Padding(3);
-            this.lblTotalRoyaltiesDetail.Size = new System.Drawing.Size(143, 23);
+            this.lblTotalRoyaltiesDetail.Padding = new System.Windows.Forms.Padding(0, 3, 0, 3);
+            this.lblTotalRoyaltiesDetail.Size = new System.Drawing.Size(175, 23);
             this.lblTotalRoyaltiesDetail.TabIndex = 111;
             this.lblTotalRoyaltiesDetail.Text = "royalties";
             this.lblTotalRoyaltiesDetail.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;

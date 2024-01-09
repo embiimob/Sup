@@ -23,7 +23,7 @@ namespace SUP.P2FK
         public string dsc { get; set; }
         public Dictionary<string, string> atr { get; set; }
         public string lic { get; set; }
-        public int max { get; set; }
+        public long max { get; set; }
         public string[] cre { get; set; }
         public Dictionary<string, long> own { get; set; }
         public Dictionary<string, decimal> roy { get; set; }
@@ -75,7 +75,7 @@ namespace SUP.P2FK
         public string Description { get; set; }
         public Dictionary<string, string> Attributes { get; set; }
         public string License { get; set; }
-        public int Maximum { get; set; }
+        public long Maximum { get; set; }
         public Dictionary<string, DateTime> Creators { get; set; }
         public Dictionary<string, (long, string)> Owners { get; set; }
         public Dictionary<string, decimal> Royalties { get; set; }
@@ -762,11 +762,11 @@ namespace SUP.P2FK
 
                                         if (objectState.Owners == null) { break; }
 
-                                        List<List<int>> brninspector = new List<List<int>> { };
+                                        List<List<long>> brninspector = new List<List<long>> { };
 
                                         try
                                         {
-                                            brninspector = JsonConvert.DeserializeObject<List<List<int>>>(File.ReadAllText(@"root\" + transaction.TransactionId + @"\BRN"));
+                                            brninspector = JsonConvert.DeserializeObject<List<List<long>>>(File.ReadAllText(@"root\" + transaction.TransactionId + @"\BRN"));
                                         }
                                         catch { break; }
 
@@ -775,10 +775,10 @@ namespace SUP.P2FK
                                         foreach (var burn in brninspector)
                                         {
                                             //is this the right object to burn?
-                                            if (transaction.Keyword.Reverse().GetItemByIndex(burn[0]).Key != objectaddress) { break; }
+                                            if (transaction.Keyword.Reverse().GetItemByIndex((int)burn[0]).Key != objectaddress) { break; }
 
                                             string burnr = transaction.SignedBy;
-                                            int qtyToBurn = burn[1];
+                                            long qtyToBurn = burn[1];
 
                                             if (qtyToBurn < 1)
                                             {
@@ -943,7 +943,7 @@ namespace SUP.P2FK
                                                     break;
                                                 }
 
-                                                if (objectState.Owners.TryGetValue(transaction.SignedBy, out var tuple) && tuple.Item1 + int.Parse(buy[1]) > objectState.Maximum)
+                                                if (objectState.Owners.TryGetValue(transaction.SignedBy, out var tuple) && tuple.Item1 + long.Parse(buy[1]) > objectState.Maximum)
                                                 {
                                                     if (verbose)
                                                     {
@@ -1292,7 +1292,7 @@ namespace SUP.P2FK
                                         }
                                         foreach (var List in lstinspector)
                                         {
-                                            int qtyToList = 0;
+                                            long qtyToList = 0;
                                             string Listr = transaction.SignedBy;
                                             string objectToList;
                                             decimal eachCost = 0;
@@ -1312,7 +1312,7 @@ namespace SUP.P2FK
 
                                                 try
                                                 {
-                                                    qtyToList = int.Parse(List[1]);
+                                                    qtyToList = long.Parse(List[1]);
                                                 }
                                                 catch
                                                 {
