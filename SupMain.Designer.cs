@@ -62,6 +62,7 @@ namespace SUP
             this.btnPrivateMessage = new System.Windows.Forms.Button();
             this.btnPublicMessage = new System.Windows.Forms.Button();
             this.tmrSearchMemoryPool = new System.Windows.Forms.Timer(this.components);
+            this.lblOfficial = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.SuspendLayout();
@@ -293,7 +294,7 @@ namespace SUP
             this.supFlow.Location = new System.Drawing.Point(9, 159);
             this.supFlow.Name = "supFlow";
             this.supFlow.Padding = new System.Windows.Forms.Padding(0, 3, 0, 0);
-            this.supFlow.Size = new System.Drawing.Size(587, 527);
+            this.supFlow.Size = new System.Drawing.Size(590, 527);
             this.supFlow.TabIndex = 86;
             // 
             // lblAdultsOnly
@@ -309,6 +310,7 @@ namespace SUP
             // 
             // panel1
             // 
+            this.panel1.Controls.Add(this.lblOfficial);
             this.panel1.Controls.Add(this.profileCreatedDate);
             this.panel1.Controls.Add(this.profileURN);
             this.panel1.Controls.Add(this.btnHome);
@@ -340,7 +342,7 @@ namespace SUP
             this.profileURN.AutoSize = true;
             this.profileURN.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.profileURN.LinkColor = System.Drawing.SystemColors.GradientActiveCaption;
-            this.profileURN.Location = new System.Drawing.Point(153, 125);
+            this.profileURN.Location = new System.Drawing.Point(155, 125);
             this.profileURN.Name = "profileURN";
             this.profileURN.Size = new System.Drawing.Size(45, 20);
             this.profileURN.TabIndex = 11;
@@ -377,6 +379,7 @@ namespace SUP
             // profileIMG
             // 
             this.profileIMG.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(22)))), ((int)(((byte)(22)))), ((int)(((byte)(22)))));
+            this.profileIMG.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.profileIMG.Location = new System.Drawing.Point(7, 7);
             this.profileIMG.Name = "profileIMG";
             this.profileIMG.Size = new System.Drawing.Size(140, 140);
@@ -484,6 +487,21 @@ namespace SUP
             this.tmrSearchMemoryPool.Interval = 5000;
             this.tmrSearchMemoryPool.Tick += new System.EventHandler(this.tmrSearchMemoryPool_Tick);
             // 
+            // lblOfficial
+            // 
+            this.lblOfficial.AutoSize = true;
+            this.lblOfficial.BackColor = System.Drawing.SystemColors.HotTrack;
+            this.lblOfficial.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblOfficial.ForeColor = System.Drawing.Color.Yellow;
+            this.lblOfficial.Location = new System.Drawing.Point(119, 129);
+            this.lblOfficial.Margin = new System.Windows.Forms.Padding(0);
+            this.lblOfficial.Name = "lblOfficial";
+            this.lblOfficial.Padding = new System.Windows.Forms.Padding(4, 1, 1, 3);
+            this.lblOfficial.Size = new System.Drawing.Size(32, 22);
+            this.lblOfficial.TabIndex = 108;
+            this.lblOfficial.Text = "👑";
+            this.lblOfficial.Visible = false;
+            // 
             // SupMain
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -547,5 +565,6 @@ namespace SUP
         private System.Windows.Forms.Button btnVideoSearch;
         private System.Windows.Forms.Button btnInquirySearch;
         private System.Windows.Forms.PictureBox btnMainnetSwitch;
+        public System.Windows.Forms.Label lblOfficial;
     }
 }

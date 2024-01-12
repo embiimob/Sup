@@ -2930,24 +2930,28 @@ namespace SUP
                 txtdesc.Text = objstate.Description;
                 if (!objstate.URN.ToUpper().StartsWith("HTTP") && !objstate.URN.ToUpper().StartsWith("IPFS"))
                 {
-                    string urnmsgpath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + @"\root\" + objstate.URN.Replace("BTC:", "").Replace("MZC:", "").Replace("LTC:", "").Replace("DOG:", "").Substring(0, 64) + @"\MSG";
-
-                    // Check if the file exists at urnmsgpath
-                    if (File.Exists(urnmsgpath))
+                    try
                     {
-                        // Read the text from the file
-                        string fileText = File.ReadAllText(urnmsgpath);
+                        string urnmsgpath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + @"\root\" + objstate.URN.Replace("BTC:", "").Replace("MZC:", "").Replace("LTC:", "").Replace("DOG:", "").Substring(0, 64) + @"\MSG";
 
-                        // Append the text to foundObject.ObjectDescription.Text
-                        if (string.IsNullOrEmpty(txtdesc.Text))
+                        // Check if the file exists at urnmsgpath
+                        if (File.Exists(urnmsgpath))
                         {
-                            txtdesc.Text = fileText;
-                        }
-                        else
-                        {
-                            txtdesc.Text += Environment.NewLine + fileText;
+                            // Read the text from the file
+                            string fileText = File.ReadAllText(urnmsgpath);
+
+                            // Append the text to foundObject.ObjectDescription.Text
+                            if (string.IsNullOrEmpty(txtdesc.Text))
+                            {
+                                txtdesc.Text = fileText;
+                            }
+                            else
+                            {
+                                txtdesc.Text += Environment.NewLine + fileText;
+                            }
                         }
                     }
+                    catch { }
                 }
 
                 txtName.Text = objstate.Name;

@@ -281,11 +281,18 @@ namespace SUP
             PROState activeProfile = PROState.GetProfileByAddress(address, mainnetLogin, mainnetPassword, mainnetURL,mainnetVersionByte);
             if (activeProfile.URN == null) { profileURN.Text = "anon"; profileBIO.Text = ""; profileCreatedDate.Text = ""; profileIMG.ImageLocation = ""; activeProfile.Image = ""; lblProcessHeight.Text = ""; return; }
 
-
+            lblOfficial.Visible = false;
             profileBIO.Text = activeProfile.Bio;
             profileURN.Text = activeProfile.URN;
             profileURN.Links[0].LinkData = address;
             profileIMG.Tag = address;
+
+            OBJState ownedProfile = OBJState.GetObjectByURN(activeProfile.Image, mainnetLogin, mainnetPassword, mainnetURL, mainnetVersionByte);
+            if (ownedProfile.Owners != null && ownedProfile.Owners.TryGetValue(address, out (long, string) owned) && owned.Item1 > 0)
+            {
+                lblOfficial.Visible = true;
+            }
+
             if (File.Exists(@"root\" + profileURN.Links[0].LinkData.ToString() + @"\MUTE")) { btnMute.Text = "unmute"; } else { btnMute.Text = "mute"; }
 
             if (!panel1.Visible)

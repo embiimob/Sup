@@ -99,6 +99,19 @@ namespace SUP
 
         }
 
+        static bool IsValidWebPageUrl(string uriString)
+        {
+            Uri uri;
+
+            // Try to create a Uri instance
+            if (Uri.TryCreate(uriString, UriKind.Absolute, out uri))
+            {
+                // Check if the scheme is http or https
+                return uri.Scheme == Uri.UriSchemeHttp || uri.Scheme == Uri.UriSchemeHttps;
+            }
+
+            return false; // Invalid URI
+        }
 
         private void GetObjectsByAddress(string address, bool calculate = false)
         {
@@ -116,6 +129,14 @@ namespace SUP
                 if (address.ToUpper().StartsWith(@"SUP:")) { urnsearch = address.Substring(6); } else { urnsearch = address.Substring(0, 20); }
 
                 createdObjects = new List<OBJState> { OBJState.GetObjectByURN(urnsearch, mainnetLogin, mainnetPassword, mainnetURL, mainnetVersionByte) };
+
+                if (createdObjects.Count > 0 && createdObjects[0].URI != null && IsValidWebPageUrl(createdObjects[0].URI))
+                {
+                    Process.Start(createdObjects[0].URI);
+                    return;
+
+                }
+              
 
             }
             else
@@ -310,6 +331,8 @@ namespace SUP
                     }
 
 
+                    if (createdObjects.Count == 1 && createdObjects[0].Owners == null) { return; }
+
                     flowLayoutPanel1.SuspendLayout();
                     pages.Maximum = createdObjects.Count - 1;
                     txtTotal.Text = (createdObjects.Count).ToString();
@@ -334,26 +357,30 @@ namespace SUP
                                 FoundObjectControl foundObject = new FoundObjectControl(_activeProfile, _testnet);
                                 foundObject.ObjectName.Text = objstate.Name;
                                 foundObject.ObjectDescription.Text = objstate.Description;
-                                if (!objstate.URN.ToUpper().StartsWith("IPFS") && !objstate.URN.ToUpper().StartsWith("HTTP"))
+                                if (!objstate.URN.ToUpper().StartsWith("IPFS") && !objstate.URN.ToUpper().StartsWith("HTTP") && !txtSearchAddress.Text.ToUpper().StartsWith("SUP"))
                                 {
-                                    string urnmsgpath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + @"\root\" + objstate.URN.Replace("BTC:", "").Replace("MZC:", "").Replace("LTC:", "").Replace("DOG:", "").Substring(0, 64) + @"\MSG";
-
-                                    // Check if the file exists at urnmsgpath
-                                    if (File.Exists(urnmsgpath))
+                                    try
                                     {
-                                        // Read the text from the file
-                                        string fileText = File.ReadAllText(urnmsgpath);
+                                        string urnmsgpath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + @"\root\" + objstate.URN.Replace("BTC:", "").Replace("MZC:", "").Replace("LTC:", "").Replace("DOG:", "").Substring(0, 64) + @"\MSG";
 
-                                        // Append the text to foundObject.ObjectDescription.Text
-                                        if (string.IsNullOrEmpty(foundObject.ObjectDescription.Text))
+                                        // Check if the file exists at urnmsgpath
+                                        if (File.Exists(urnmsgpath))
                                         {
-                                            foundObject.ObjectDescription.Text = fileText;
-                                        }
-                                        else
-                                        {
-                                            foundObject.ObjectDescription.Text += Environment.NewLine + fileText;
+                                            // Read the text from the file
+                                            string fileText = File.ReadAllText(urnmsgpath);
+
+                                            // Append the text to foundObject.ObjectDescription.Text
+                                            if (string.IsNullOrEmpty(foundObject.ObjectDescription.Text))
+                                            {
+                                                foundObject.ObjectDescription.Text = fileText;
+                                            }
+                                            else
+                                            {
+                                                foundObject.ObjectDescription.Text += Environment.NewLine + fileText;
+                                            }
                                         }
                                     }
+                                    catch { }
                                 }
                                 foundObject.ObjectAddress.Text = objstate.Creators.First().Key;
 

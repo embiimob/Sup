@@ -1807,7 +1807,7 @@ namespace SUP.P2FK
                 }
                 else
                 {
-                    return objectState;
+                   // return objectState;
                 }
             }
             try { objectState.Id = objectTransactions.Max(max => max.Id); } catch { }
