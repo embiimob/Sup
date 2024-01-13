@@ -304,6 +304,42 @@ namespace SUP.P2FK
                                             if (objectState.Creators != null && objectState.Creators.ContainsKey(transaction.SignedBy))
                                             {
 
+
+                                                try
+                                                {
+                                                    if (objectinspector.cre != null)
+                                                    {
+                                                        objectState.Creators = new Dictionary<string, DateTime> { };
+
+                                                        foreach (string keywordId in objectinspector.cre)
+                                                        {
+                                                            string creator = "";
+                                                            if (int.TryParse(keywordId, out int intId))
+                                                            {
+                                                                creator = transaction.Keyword.Reverse().ElementAt(intId).Key;
+                                                            }
+                                                            else
+                                                            {
+                                                                creator = keywordId;
+
+                                                                objectaddress = objectinspector.cre.First();
+                                                            }
+
+                                                            if (!objectState.Creators.ContainsKey(creator))
+                                                            {
+                                                                objectState.Creators.Add(creator, new DateTime());
+                                                            }
+
+                                                        }
+                                                    }
+                                                }
+                                                catch
+                                                {
+                                                    break;
+                                                }
+                                                objectState.ChangeDate = transaction.BlockDate;
+                                                objectinspector.cre = null;
+
                                                 if (objectState.Creators.TryGet(transaction.SignedBy).Year == 1)
                                                 {
                                                     objectState.Creators[transaction.SignedBy] = transaction.BlockDate;
@@ -395,7 +431,7 @@ namespace SUP.P2FK
                                                             }
 
 
-                                                        }
+                                                        }else { objectState.Owners = new Dictionary<string, (long, string)>(); }
 
 
                                                         foreach (var ownerId in objectinspector.own)
@@ -2260,7 +2296,9 @@ namespace SUP.P2FK
                                     {
                                         addedValues.Add(key);
 
-                                        OBJState existingObjectState = objectStates.FirstOrDefault(os => os.Creators.First().Key == key);
+                                        OBJState existingObjectState = null;
+                                        try { existingObjectState = objectStates.FirstOrDefault(os => os.Creators.First().Key == key); } catch { }
+
                                         if (existingObjectState != null)
                                         {
                                             OBJState isObject = GetObjectByAddress(key, username, password, url, versionByte, calculate);
@@ -2329,7 +2367,10 @@ namespace SUP.P2FK
                                             addedValues.Add(key);
 
 
-                                            OBJState existingObjectState = objectStates.FirstOrDefault(os => os.Creators.First().Key == key);
+                                            OBJState existingObjectState = null;
+
+                                            try { existingObjectState = objectStates.FirstOrDefault(os => os.Creators.First().Key == key); } catch { } // MOVE ON
+
                                             if (existingObjectState != null)
                                             {
                                                 OBJState isObject = GetObjectByAddress(key, username, password, url, versionByte, calculate);

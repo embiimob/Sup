@@ -232,6 +232,7 @@ namespace SUP
 
                     if (profileURN.Text.StartsWith("#"))
                     {
+                        lblOfficial.Visible = false;
                         profileBIO.Text = "Click the follow button to add this search to your community feed."; profileCreatedDate.Text = ""; profileIMG.ImageLocation = ""; lblProcessHeight.Text = "";
 
                         GenerateImage(profileURN.Text);
@@ -276,12 +277,12 @@ namespace SUP
         private void MakeActiveProfile(string address)
         {
 
+            lblOfficial.Visible = false;
             //supFlow.SuspendLayout();
             Regex regexTransactionId = new Regex(@"\b[0-9a-f]{64}\b");
             PROState activeProfile = PROState.GetProfileByAddress(address, mainnetLogin, mainnetPassword, mainnetURL,mainnetVersionByte);
             if (activeProfile.URN == null) { profileURN.Text = "anon"; profileBIO.Text = ""; profileCreatedDate.Text = ""; profileIMG.ImageLocation = ""; activeProfile.Image = ""; lblProcessHeight.Text = ""; return; }
 
-            lblOfficial.Visible = false;
             profileBIO.Text = activeProfile.Bio;
             profileURN.Text = activeProfile.URN;
             profileURN.Links[0].LinkData = address;
@@ -6003,7 +6004,7 @@ namespace SUP
         private void Friend_Click(object sender, EventArgs e)
         {
             friendClicked = true;
-
+            lblOfficial.Visible = false;
             //if any current searches are loading you got to wait.  
             if (!btnPrivateMessage.Enabled || !btnPrivateMessage.Enabled || !btnCommunityFeed.Enabled)
             {
@@ -6036,6 +6037,7 @@ namespace SUP
                     btnPublicMessage.BackColor = Color.Blue;
                     btnPublicMessage.ForeColor = Color.Yellow;
                     supPrivateFlow.Controls.Clear();
+                 
 
                     if (!((PictureBox)sender).ImageLocation.ToString().Contains(@"root\keywords"))
                     {
@@ -6372,6 +6374,7 @@ namespace SUP
             numMessagesDisplayed = 0;
             numPrivateMessagesDisplayed = 0;
             numFriendFeedsDisplayed = 0;
+            lblOfficial.Visible = false;
 
             if (btnMainnetSwitch.ImageLocation == @"includes/BCT_Logo.png")
             {
