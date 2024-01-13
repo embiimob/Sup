@@ -9,7 +9,7 @@ P2FK was directly inspired by the satoshi uploader  see --> https://cirosantilli
 
 ## **Installation**
 
-1. Download Supv0.5.3-beta.zip ( https://github.com/embiimob/Sup/releases/download/Supv0.5.3-beta/Supv0.5.3-beta.zip )
+1. Download Supv0.5.4-beta.zip ( https://github.com/embiimob/Sup/releases/download/Supv0.5.4-beta/Supv0.5.4-beta.zip )
 2. Create a folder on your **fastest** disk drive with at least **50GB** free (it will be storing the bitcoin testnet blockchain)
 3. Unzip all contents into the folder
 4. Run SUP.exe
@@ -113,7 +113,7 @@ genid= is unique per claimed primary object unit. due to this, genid can be used
 
 <br />
 <br />
-## **Search Examples**
+### **Search Examples**
 
 ### **muVrFVk3ErfrnmWosLF4WixxRtDKfMx9bs**
 searches mainchain - bitcoin testnet by address returns all object associations and the associated profile
@@ -137,7 +137,7 @@ searches mainchain by urn - shows currently registered profile object links asso
 performs a ipfs get, archives ipfs file(s) locally, pins file(s) if pinning is enabled, and opens a system folder diolouge allowing you to explore any files found
 
 ### **sup://twitter.com**
-searches mainchain by urn - shows currently registered object with uri redirection.  urn registrations are transferable and expire after 3 years of inactivity allowing them to be claimed by other registrants in the future.  ( there are no urn character limits, uri redirects are NOT enabled )
+searches mainchain by urn - shows currently registered object with uri redirection. if uri redirection is a web url it will be opened in the default web browser.  urn registrations are transferable and expire after 3 years of inactivity allowing them to be claimed by other registrants in the future.  ( there are no urn character limits)
 
 ### **http(s)://embii.org**
 navigates to requested url in browser.
