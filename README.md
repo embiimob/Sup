@@ -113,7 +113,7 @@ genid= is unique per claimed primary object unit. due to this, genid can be used
 
 <br />
 <br />
-### **search examples**
+## **search examples**
 
 ### **muVrFVk3ErfrnmWosLF4WixxRtDKfMx9bs**
 searches mainchain - bitcoin testnet by address returns all object associations and the associated profile
