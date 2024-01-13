@@ -110,11 +110,10 @@ All trusted index.html and index.htm files are sent the following Sup!? object i
 "address=", "creator=", "viewer=", "viewername=", "owner=", "ownername=", "urn=", "uri=", "url=", "height=", "transactionid=", "genid="
 <br />
 genid= is unique per claimed primary object unit. due to this, genid can be used to create an unlimited amount of unique generative art mints. every unit collected from the primary pool receives a unique genid hash that follows it through each secondary trade. this allows your generative works to be traded and still generate the same work based on the hash that was assigned to the unit during the minting process. NOTE: if you wish to maintain a unique 1/1 count of your Sup!? based generative works, be sure to set MAX = 1 when you mint the primary object. 
-
 <br />
 <br />
-## **Search Xxanples**
-
+## **Search Exanples**
+<br />
 ### **muVrFVk3ErfrnmWosLF4WixxRtDKfMx9bs**
 searches mainchain - bitcoin testnet by address returns all object associations and the associated profile
 
