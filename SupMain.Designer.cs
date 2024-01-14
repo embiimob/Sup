@@ -49,6 +49,7 @@ namespace SUP
             this.supFlow = new System.Windows.Forms.FlowLayoutPanel();
             this.lblAdultsOnly = new System.Windows.Forms.Label();
             this.panel1 = new System.Windows.Forms.Panel();
+            this.lblOfficial = new System.Windows.Forms.Label();
             this.profileCreatedDate = new System.Windows.Forms.Label();
             this.profileURN = new System.Windows.Forms.LinkLabel();
             this.btnHome = new System.Windows.Forms.Button();
@@ -62,7 +63,6 @@ namespace SUP
             this.btnPrivateMessage = new System.Windows.Forms.Button();
             this.btnPublicMessage = new System.Windows.Forms.Button();
             this.tmrSearchMemoryPool = new System.Windows.Forms.Timer(this.components);
-            this.lblOfficial = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.SuspendLayout();
@@ -294,7 +294,7 @@ namespace SUP
             this.supFlow.Location = new System.Drawing.Point(9, 159);
             this.supFlow.Name = "supFlow";
             this.supFlow.Padding = new System.Windows.Forms.Padding(0, 3, 0, 0);
-            this.supFlow.Size = new System.Drawing.Size(590, 527);
+            this.supFlow.Size = new System.Drawing.Size(579, 527);
             this.supFlow.TabIndex = 86;
             // 
             // lblAdultsOnly
@@ -303,7 +303,7 @@ namespace SUP
             this.lblAdultsOnly.ForeColor = System.Drawing.Color.White;
             this.lblAdultsOnly.Location = new System.Drawing.Point(3, 3);
             this.lblAdultsOnly.Name = "lblAdultsOnly";
-            this.lblAdultsOnly.Size = new System.Drawing.Size(576, 522);
+            this.lblAdultsOnly.Size = new System.Drawing.Size(563, 522);
             this.lblAdultsOnly.TabIndex = 86;
             this.lblAdultsOnly.Text = "greetings teamworld\r\nclick the 🗝️ to begin\r\nmade for adults only";
             this.lblAdultsOnly.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -325,6 +325,21 @@ namespace SUP
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(596, 153);
             this.panel1.TabIndex = 0;
+            // 
+            // lblOfficial
+            // 
+            this.lblOfficial.AutoSize = true;
+            this.lblOfficial.BackColor = System.Drawing.SystemColors.HotTrack;
+            this.lblOfficial.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblOfficial.ForeColor = System.Drawing.Color.Yellow;
+            this.lblOfficial.Location = new System.Drawing.Point(119, 129);
+            this.lblOfficial.Margin = new System.Windows.Forms.Padding(0);
+            this.lblOfficial.Name = "lblOfficial";
+            this.lblOfficial.Padding = new System.Windows.Forms.Padding(4, 1, 1, 3);
+            this.lblOfficial.Size = new System.Drawing.Size(32, 22);
+            this.lblOfficial.TabIndex = 108;
+            this.lblOfficial.Text = "👑";
+            this.lblOfficial.Visible = false;
             // 
             // profileCreatedDate
             // 
@@ -486,21 +501,6 @@ namespace SUP
             // 
             this.tmrSearchMemoryPool.Interval = 5000;
             this.tmrSearchMemoryPool.Tick += new System.EventHandler(this.tmrSearchMemoryPool_Tick);
-            // 
-            // lblOfficial
-            // 
-            this.lblOfficial.AutoSize = true;
-            this.lblOfficial.BackColor = System.Drawing.SystemColors.HotTrack;
-            this.lblOfficial.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblOfficial.ForeColor = System.Drawing.Color.Yellow;
-            this.lblOfficial.Location = new System.Drawing.Point(119, 129);
-            this.lblOfficial.Margin = new System.Windows.Forms.Padding(0);
-            this.lblOfficial.Name = "lblOfficial";
-            this.lblOfficial.Padding = new System.Windows.Forms.Padding(4, 1, 1, 3);
-            this.lblOfficial.Size = new System.Drawing.Size(32, 22);
-            this.lblOfficial.TabIndex = 108;
-            this.lblOfficial.Text = "👑";
-            this.lblOfficial.Visible = false;
             // 
             // SupMain
             // 

@@ -7,6 +7,7 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Text;
 
 namespace SUP.P2FK
 {
@@ -108,25 +109,40 @@ namespace SUP.P2FK
                     //calculate blockheight will be needed
                     objectTransactions = Root.GetRootsByAddress(objectaddress, username, password, url, 0, -1, versionByte, true);
 
-                    objectState = new INQState();
+                    if (calculate) { objectState = new INQState(); }
 
                     foreach (Root transaction in objectTransactions)
                     {
 
 
-                        if (transaction.Signed && transaction.File.ContainsKey("INQ") && objectState.CreatedDate.Year == 1)
+                        if (transaction.Signed && transaction.File.ContainsKey("INQ") )
                         {
 
                             string sigSeen = null;
 
-                            string cleanedSIG = new string(transaction.Signature.Where(c => !specialChars.Contains(c)).ToArray());
-                            if (!System.IO.File.Exists(@"root\sig\" + cleanedSIG))
+                            // Calculate SHA-256 hash of the signature
+                            using (System.Security.Cryptography.SHA256 sha256 = System.Security.Cryptography.SHA256.Create())
                             {
-                                sigSeen = System.IO.File.ReadAllText(@"root\sig\" + cleanedSIG);
+                                byte[] hashBytes = sha256.ComputeHash(Encoding.UTF8.GetBytes(transaction.Signature));
+                                string hashedSignature = BitConverter.ToString(hashBytes).Replace("-", "");
+
+                                string filePath = @"root\" + objectaddress + @"\sig\" + hashedSignature;
+
+                                if (!System.IO.File.Exists(filePath))
+                                {
+                                    if (!System.IO.Directory.Exists(@"root\" + objectaddress + @"\sig")) { Directory.CreateDirectory(@"root\" + objectaddress + @"\sig"); }
+                                    // If the file does not exist, create it and write the text string to it
+                                    System.IO.File.WriteAllText(filePath, transaction.TransactionId);
+                                }
+                                else
+                                {
+                                    // If the file exists, read its content
+                                    sigSeen = System.IO.File.ReadAllText(filePath);
+                                }
                             }
 
 
-                            if (sigSeen == null || sigSeen == transaction.TransactionId)
+                            if (sigSeen == null || (calculate && sigSeen == transaction.TransactionId))
                             {
 
                                 INQ objectinspector = null;
@@ -209,7 +225,7 @@ namespace SUP.P2FK
                             }
 
 
-
+                            //only inspect the FIRST INQ no updates on this one
                             break;
                         }
 
@@ -272,6 +288,8 @@ namespace SUP.P2FK
                         }
 
                         HashSet<string> hasVoted = new HashSet<string>();
+
+
 
                         foreach (AnswerData answer in objectState.AnswerData)
                         {
@@ -438,291 +456,12 @@ namespace SUP.P2FK
 
             // fetch current JSONOBJ from disk if it exists
             try
-            { 
-                if (calculate) { INQState.GetInquiryByAddress(objectinspector.que.First().Key, username, password, url, versionByte, true); }
-                JSONOBJ = System.IO.File.ReadAllText(@"root\" + objectinspector.que.First().Key + @"\INQ.json");
-                objectState = JsonConvert.DeserializeObject<INQState>(JSONOBJ);
-
+            {
+                objectState = INQState.GetInquiryByAddress(objectinspector.que.First().Key, username, password, url, versionByte, calculate);
             }
             catch { }
 
-            try
-            {
-                //has proper authority to make OBJ changes
-                if (transaction.Signed && transaction.File.ContainsKey("INQ") && objectState.CreatedDate.Year == 1)
-                {
-
-                    string sigSeen = null;
-
-                    string cleanedSIG = new string(transaction.Signature.Where(c => !specialChars.Contains(c)).ToArray());
-                    if (!System.IO.File.Exists(@"root\sig\" + cleanedSIG))
-                    {
-                        sigSeen = System.IO.File.ReadAllText(@"root\sig\" + cleanedSIG);
-                    }
-
-
-                    if (sigSeen == null || sigSeen == transaction.TransactionId)
-                    {
-
-                        objectinspector = null;
-
-                       
-                        try
-                        {
-                            objectinspector = JsonConvert.DeserializeObject<INQ>(File.ReadAllText(@"root\" + transaction.TransactionId + @"\INQ"));
-
-                        }
-                        catch (Exception e)
-                        {
-
-                            return objectState;
-                        }
-
-
-
-                        //inquiry object is created
-                        objectState.TransactionId = transaction.TransactionId;
-                        objectState.CreatedDate = transaction.BlockDate;
-                        objectState.CreatedBy = transaction.SignedBy;
-
-                        if (objectinspector.any != 0) { objectState.RequireSignature = false; }
-
-                        if (objectinspector.que != null) { objectState.ChangedDate = transaction.BlockDate; objectState.URN = objectinspector.que.First().Key; objectState.Question = objectinspector.que.First().Value; }
-
-                        if (objectinspector.ans != null)
-                        {
-                            objectState.ChangedDate = transaction.BlockDate;
-                            List<AnswerData> answerDataList = new List<AnswerData>();
-
-                            foreach (var entry in objectinspector.ans)
-                            {
-                                AnswerData answerData = new AnswerData
-                                {
-                                    Address = entry.Key,   // You can use the key from the ans dictionary as Address
-                                    Answer = entry.Value,  // Use the value from the ans dictionary as the Answer
-                                    TotalGatedVotes = 0,   // Initialize total counts to 0
-                                    TotalGatedValue = 0,   // Initialize total counts to 0
-                                    TotalVotes = 0,       // Initialize total counts to 0
-                                    TotalValue = 0        // Initialize total counts to 0
-                                };
-
-                                answerDataList.Add(answerData);
-                            }
-                            objectState.AnswerData = answerDataList;
-
-                        }
-
-
-                        if (objectinspector.own != null)
-                        {
-                            objectState.ChangedDate = transaction.BlockDate; objectState.OwnsObjectGate = objectinspector.own;
-
-                        }
-
-                        if (objectinspector.cre != null)
-                        {
-                            objectState.ChangedDate = transaction.BlockDate; objectState.OwnsCreatedByGate = objectinspector.cre;
-
-                        }
-
-
-                        if (objectinspector.end != 0)
-                        {
-
-                            objectState.ChangedDate = transaction.BlockDate; objectState.MaxBlockHeight = transaction.BlockHeight + objectinspector.end;
-
-
-                        }
-
-
-
-                    }
-
-
-
-                    if (calculate)
-                    {
-                        if (objectState.OwnsObjectGate != null)
-                        {
-                            foreach (string address in objectState.OwnsObjectGate)
-                            {
-
-                                OBJState objecto = new OBJState();
-                                objecto = OBJState.GetObjectByAddress(address, username, password, url, versionByte);
-
-
-                                foreach (string owner in objecto.Owners.Keys)
-                                {
-
-                                    if (!objectState.AuthorizedByGate.Contains(owner))
-                                    {
-                                        objectState.AuthorizedByGate.Add(owner);
-                                    }
-
-                                }
-
-
-
-                            }
-                        }
-
-
-                        if (objectState.OwnsCreatedByGate != null)
-                        {
-                            foreach (string address in objectState.OwnsCreatedByGate)
-                            {
-
-                                List<OBJState> objects = new List<OBJState>();
-                                objects = OBJState.GetObjectsCreatedByAddress(address, username, password, url, versionByte);
-
-                                foreach (OBJState obj in objects)
-                                {
-                                    foreach (string owner in obj.Owners.Keys)
-                                    {
-                                        if (!objectState.AuthorizedByGate.Contains(owner))
-                                        {
-                                            objectState.AuthorizedByGate.Add(owner);
-                                        }
-
-                                    }
-
-
-                                }
-
-
-
-                            }
-                        }
-
-                        HashSet<string> hasVoted = new HashSet<string>();
-
-                        foreach (AnswerData answer in objectState.AnswerData)
-                        {
-                            Root[] roots = new Root[0];
-
-                            roots = Root.GetRootsByAddress(answer.Address, username, password, url, 0, -1, versionByte, true);
-
-                            roots = roots.Where(obj => !hasVoted.Contains(obj.SignedBy)).ToArray();
-
-                            foreach (Root root in roots)
-                            {
-                                if (root.SignedBy != "")
-                                {
-                                    hasVoted.Add(root.SignedBy);
-                                }
-                            }
-
-
-                            if (objectState.RequireSignature)
-                            {
-                                roots = roots.Where(obj => obj.Signed).ToArray();
-                            }
-
-                            if (objectState.MaxBlockHeight > 0)
-                            {
-                                roots = roots.Where(obj => obj.BlockHeight <= objectState.MaxBlockHeight).ToArray();
-                            }
-
-                            if (roots.Length > 0)
-                            {
-                                DateTime newestBlockDate = roots.Max(root => root.BlockDate);
-
-                                //This will update the Last ChangedDate with the latest votes
-                                if (newestBlockDate > objectState.ChangedDate)
-                                {
-                                    objectState.ChangedDate = newestBlockDate;
-                                }
-
-                                // total votes without gate checking
-                                answer.TotalVotes = roots.Count();
-
-                                decimal totalsum = roots
-                                    .Select(obj =>
-                                    {
-                                        if (obj.Output.TryGetValue(answer.Address, out string value))
-                                        {
-
-                                            if (decimal.TryParse(value, System.Globalization.NumberStyles.Float, CultureInfo.InvariantCulture, out decimal parsedValue))
-                                            {
-                                                return parsedValue;
-                                            }
-                                        }
-                                        return 0; // Default to 0 if address not found or parsing fails.
-                                    })
-                                    .Sum();
-
-                                // total sent to answer address without gate checking
-                                answer.TotalValue = totalsum;
-
-                                var gatedObjects = roots
-                                    .Where(obj => obj.Output.TryGetValue(answer.Address, out string value) &&
-                                                  decimal.TryParse(value, System.Globalization.NumberStyles.Float, CultureInfo.InvariantCulture, out decimal parsedValue) &&
-                                                  objectState.AuthorizedByGate.Contains(obj.SignedBy))
-                                    .GroupBy(obj => obj.SignedBy)
-                                    .Select(group => group.First());
-
-                                if (objectState.MaxBlockHeight > 0)
-                                {
-                                    gatedObjects = gatedObjects.Where(obj => obj.BlockHeight <= objectState.MaxBlockHeight);
-                                }
-
-                                decimal gatedSum = gatedObjects
-                                    .Select(obj => decimal.TryParse(obj.Output[answer.Address], System.Globalization.NumberStyles.Float, CultureInfo.InvariantCulture, out decimal parsedValue) ? parsedValue : 0)
-                                    .Sum();
-
-                                int totalGatedCount = gatedObjects.Count();
-
-                                answer.TotalGatedValue = gatedSum;
-                                answer.TotalGatedVotes = totalGatedCount;
-                            }
-                        }
-
-
-                        foreach (AnswerData answerData in objectState.AnswerData)
-                        {
-                            objectState.TotalVotes += answerData.TotalVotes;
-                            objectState.TotalGatedVotes += answerData.TotalGatedVotes;
-                            objectState.TotalValue += answerData.TotalValue;
-                            objectState.TotalGatedValue += answerData.TotalGatedValue;
-                        }
-
-
-
-                    }
-
-                   
-
-                }
-
-
-            }
-            catch
-            {
-                return objectState;
-            }
-
-
-
-
-            var objectSerialized = JsonConvert.SerializeObject(objectState);
-
-
-            if (!Directory.Exists(@"root\" + transaction.SignedBy))
-            {
-                Directory.CreateDirectory(@"root\" + transaction.SignedBy);
-            }
-            System.IO.File.WriteAllText(@"root\" + transaction.SignedBy + @"\" + "INQ.json", objectSerialized);
-
-
-            objectSerialized = JsonConvert.SerializeObject(transaction);
-
-            if (!Directory.Exists(@"root\" + transaction.SignedBy))
-            {
-                Directory.CreateDirectory(@"root\" + transaction.SignedBy);
-            }
-            System.IO.File.WriteAllText(@"root\" + transaction.SignedBy + @"\" + "GetRootByTransactionId.json", objectSerialized);
-
-            //used to determine where to begin object State processing when retrieved from cache
+           
             return objectState;
 
         }

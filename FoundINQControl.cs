@@ -86,7 +86,16 @@ namespace SUP
 
             Button voteButton = (Button)sender;
 
-            DiscoBall disco = new DiscoBall(_activeprofile, "", voteButton.Tag.ToString(), "", false,_testnet);
+            string INQToKey = "";
+            if (_testnet) {
+                INQToKey = Root.GetPublicAddressByKeyword(txtTransactionId.Text);
+            }
+            else
+            {
+                INQToKey = Root.GetPublicAddressByKeyword(txtTransactionId.Text,"0");
+            }
+            string voteDust = INQToKey + "," + voteButton.Tag.ToString();
+            DiscoBall disco = new DiscoBall(_activeprofile, "", voteDust, "", false,_testnet);
             disco.StartPosition = FormStartPosition.CenterScreen;
             disco.Show(this);
             disco.Focus();
