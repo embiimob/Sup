@@ -1392,22 +1392,25 @@ namespace SUP
                         FoundObjectControl foundObject = new FoundObjectControl(_activeProfile, _testnet);
                         foundObject.ObjectName.Text = objstate.Name;
                         foundObject.ObjectDescription.Text = objstate.Description;
-                        string urnmsgpath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + @"\root\" + objstate.URN.Replace("BTC:", "").Replace("MZC:", "").Replace("LTC:", "").Replace("DOG:", "").Substring(0, 64) + @"\MSG";
-
-                        // Check if the file exists at urnmsgpath
-                        if (File.Exists(urnmsgpath))
+                        if (!objstate.URN.ToUpper().StartsWith("IPFS"))
                         {
-                            // Read the text from the file
-                            string fileText = File.ReadAllText(urnmsgpath);
+                            string urnmsgpath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + @"\root\" + objstate.URN.Replace("BTC:", "").Replace("MZC:", "").Replace("LTC:", "").Replace("DOG:", "").Substring(0, 64) + @"\MSG";
 
-                            // Append the text to foundObject.ObjectDescription.Text
-                            if (string.IsNullOrEmpty(foundObject.ObjectDescription.Text))
+                            // Check if the file exists at urnmsgpath
+                            if (File.Exists(urnmsgpath))
                             {
-                                foundObject.ObjectDescription.Text = fileText;
-                            }
-                            else
-                            {
-                                foundObject.ObjectDescription.Text += Environment.NewLine + fileText;
+                                // Read the text from the file
+                                string fileText = File.ReadAllText(urnmsgpath);
+
+                                // Append the text to foundObject.ObjectDescription.Text
+                                if (string.IsNullOrEmpty(foundObject.ObjectDescription.Text))
+                                {
+                                    foundObject.ObjectDescription.Text = fileText;
+                                }
+                                else
+                                {
+                                    foundObject.ObjectDescription.Text += Environment.NewLine + fileText;
+                                }
                             }
                         }
                         foundObject.ObjectAddress.Text = objstate.Creators.First().Key;
@@ -1417,14 +1420,14 @@ namespace SUP
                         //GPT3 reformed
                         if (objstate.Offers != null && objstate.Offers.Count > 0)
                         {
-                            foundObject.Height = 389;
+                            foundObject.Height = 395;
                             decimal highestValue = objstate.Offers.Max(offer => offer.Value);
                             foundObject.ObjectOffer.Text = highestValue.ToString();
                         }
                         //GPT3 reformed
                         if (objstate.Listings != null && objstate.Listings.Count > 0)
                         {
-                            foundObject.Height = 389;
+                            foundObject.Height = 395;
                             decimal lowestValue = objstate.Listings.Values.Min(listing => listing.Value);
                             foundObject.ObjectPrice.Text = lowestValue.ToString();
                         }

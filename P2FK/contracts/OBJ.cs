@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Security.Cryptography;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -264,8 +265,13 @@ namespace SUP.P2FK
 
 
                                                 objectState.Creators = new Dictionary<string, DateTime> { };
+                                             
+
+
                                                 try
                                                 {
+                                                  
+
                                                     foreach (string keywordId in objectinspector.cre)
                                                     {
                                                         string creator = "";
@@ -277,7 +283,7 @@ namespace SUP.P2FK
                                                         {
                                                             creator = keywordId;
 
-                                                            objectaddress = objectinspector.cre.First();
+            
                                                         }
 
                                                         if (!objectState.Creators.ContainsKey(creator))
@@ -286,6 +292,10 @@ namespace SUP.P2FK
                                                         }
 
                                                     }
+
+                                                    
+
+
                                                 }
                                                 catch
                                                 {
@@ -309,7 +319,7 @@ namespace SUP.P2FK
                                                 {
                                                     if (objectinspector.cre != null)
                                                     {
-                                                        objectState.Creators = new Dictionary<string, DateTime> { };
+                                                        objectState.Creators = objectState.Creators.Take(1).ToDictionary(pair => pair.Key, pair => pair.Value);
 
                                                         foreach (string keywordId in objectinspector.cre)
                                                         {
@@ -322,21 +332,33 @@ namespace SUP.P2FK
                                                             {
                                                                 creator = keywordId;
 
-                                                                objectaddress = objectinspector.cre.First();
+                                                   //            objectaddress = objectinspector.cre.First();
                                                             }
+                                                           
 
                                                             if (!objectState.Creators.ContainsKey(creator))
                                                             {
                                                                 objectState.Creators.Add(creator, new DateTime());
                                                             }
+                                                            
+                                                           
 
                                                         }
+                                                     
+
+
                                                     }
                                                 }
                                                 catch
                                                 {
                                                     break;
                                                 }
+
+
+
+                                              
+
+
                                                 objectState.ChangeDate = transaction.BlockDate;
                                                 objectinspector.cre = null;
 
@@ -882,6 +904,18 @@ namespace SUP.P2FK
                                                             {
 
                                                             }
+
+                                                            string urnCLAIM = Root.GetPublicAddressByKeyword(objectState.URN, versionByte);
+
+
+                                                            ///trying various things to remove the urn registratiion
+                                                            try { Directory.Delete(@"root/" + urnCLAIM, true); } catch { }
+                                                            try { Directory.Delete(@"root/" + burnr, true); }  catch { }
+                                                            try { Directory.Delete(@"root/" + objectState.TransactionId, true); } catch { }
+                                                            try { Directory.CreateDirectory(@"root\" + objectState.TransactionId); } catch { }
+
+                                                            var rootSerialized = JsonConvert.SerializeObject(new Root()); ;
+                                                            System.IO.File.WriteAllText(@"root\" + objectState.TransactionId + @"\" + "ROOTS.json", rootSerialized);
 
                                                             objectState = new OBJState();
                                                             break;

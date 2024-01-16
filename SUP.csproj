@@ -545,6 +545,9 @@
     <Content Include="includes\SUP35.gif">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Include="includes\sup42.gif">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="includes\SUPS.gif" />
     <Content Include="includes\SUPT.gif" />
     <Content Include="includes\SUPU.gif" />

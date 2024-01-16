@@ -236,7 +236,7 @@ namespace SUP.P2FK
                         Directory.CreateDirectory(diskpath);
                     }
                     //if (fileName.Length > 1 & fileName.Replace("#", "") != "BTC" & fileName.Replace("#", "") != "MZC" & fileName.Replace("#", "") != "LTC" & fileName.Replace("#", "") != "DOG" & fileName.Replace("#", "") != "IPFS")
-                    if ((fileName.Length > 2 & fileName.Contains(".")) || (!fileName.Contains(".") & fileName.Length == 3) || (!fileName.Contains(".") & fileName.Length == 64))
+                    if ((fileName.Length > 2 & fileName.Contains(".")) || (fileName.Length == 3 && !"BTC,LTC,DOG,MZC,IPFS".Contains(fileName)) || (!fileName.Contains(".") & fileName.Length == 64))
 
                     {
                         try
