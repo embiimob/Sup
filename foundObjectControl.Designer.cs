@@ -156,13 +156,13 @@
             this.ObjectQty.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
             this.ObjectQty.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.ObjectQty.ForeColor = System.Drawing.Color.White;
-            this.ObjectQty.Location = new System.Drawing.Point(118, 218);
+            this.ObjectQty.Location = new System.Drawing.Point(118, 213);
             this.ObjectQty.Margin = new System.Windows.Forms.Padding(0);
             this.ObjectQty.Name = "ObjectQty";
-            this.ObjectQty.Size = new System.Drawing.Size(99, 33);
+            this.ObjectQty.Size = new System.Drawing.Size(99, 31);
             this.ObjectQty.TabIndex = 7;
             this.ObjectQty.Text = "100X";
-            this.ObjectQty.TextAlign = System.Drawing.ContentAlignment.TopRight;
+            this.ObjectQty.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             this.ObjectQty.TextChanged += new System.EventHandler(this.ObjectQty_TextChanged);
             this.ObjectQty.Click += new System.EventHandler(this.foundObjectControl_Click);
             // 
@@ -185,12 +185,13 @@
             this.ObjectName.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
             this.ObjectName.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.ObjectName.ForeColor = System.Drawing.Color.White;
-            this.ObjectName.Location = new System.Drawing.Point(5, 216);
+            this.ObjectName.Location = new System.Drawing.Point(5, 213);
             this.ObjectName.Margin = new System.Windows.Forms.Padding(0);
             this.ObjectName.Name = "ObjectName";
-            this.ObjectName.Size = new System.Drawing.Size(117, 31);
+            this.ObjectName.Size = new System.Drawing.Size(117, 32);
             this.ObjectName.TabIndex = 9;
             this.ObjectName.Text = "Fake UFO";
+            this.ObjectName.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             this.ObjectName.Click += new System.EventHandler(this.foundObjectControl_Click);
             // 
             // ObjectCreators
@@ -198,7 +199,7 @@
             this.ObjectCreators.AutoSize = true;
             this.ObjectCreators.BackColor = System.Drawing.Color.Transparent;
             this.ObjectCreators.LinkColor = System.Drawing.SystemColors.Highlight;
-            this.ObjectCreators.Location = new System.Drawing.Point(7, 247);
+            this.ObjectCreators.Location = new System.Drawing.Point(7, 246);
             this.ObjectCreators.Name = "ObjectCreators";
             this.ObjectCreators.Size = new System.Drawing.Size(0, 13);
             this.ObjectCreators.TabIndex = 10;
@@ -277,17 +278,17 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
+            this.Controls.Add(this.lblOfficial);
+            this.Controls.Add(this.btnOfficial);
+            this.Controls.Add(this.ObjectImage);
             this.Controls.Add(this.ObjectQty);
+            this.Controls.Add(this.ObjectName);
             this.Controls.Add(this.ObjectCreators);
             this.Controls.Add(this.lblTrash);
             this.Controls.Add(this.ObjectDescription);
             this.Controls.Add(this.ObjectCreators2);
-            this.Controls.Add(this.btnOfficial);
-            this.Controls.Add(this.lblOfficial);
-            this.Controls.Add(this.ObjectImage);
             this.Controls.Add(this.ObjectAddress);
             this.Controls.Add(this.txtOfficialURN);
-            this.Controls.Add(this.ObjectName);
             this.Controls.Add(this.panel1);
             this.Controls.Add(this.ObjectId);
             this.DoubleBuffered = true;

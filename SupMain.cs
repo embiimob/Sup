@@ -4763,16 +4763,22 @@ namespace SUP
 
                 };
 
+                int calcwidth;
 
                 if (isprivate)
                 {
-                    msg.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, supPrivateFlow.Width - 50));
+                    calcwidth = supPrivateFlow.Width - 50;
+                    if (calcwidth > 480){ calcwidth = 480;}
+
+                    msg.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, calcwidth));
 
                     supPrivateFlow.Controls.Add(msg);
                 }
                 else
                 {
-                    msg.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, supFlow.Width - 50));
+                    calcwidth = supFlow.Width - 50;
+                    if (calcwidth > 480) { calcwidth = 480; }
+                    msg.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, calcwidth));
 
 
 
@@ -4796,17 +4802,9 @@ namespace SUP
 
                 pictureBox.SizeMode = PictureBoxSizeMode.Zoom;
 
-                if (isprivate)
-                {
-                    pictureBox.Width = supPrivateFlow.Width - 50;
-                    pictureBox.Height = supPrivateFlow.Width - 50;
-                }
-                else
-                {
-
-                    pictureBox.Width = supFlow.Width - 50;
-                    pictureBox.Height = supFlow.Width - 50;
-                }
+                    pictureBox.Width = calcwidth;
+                    pictureBox.Height = calcwidth;
+               
 
                 pictureBox.BackColor = System.Drawing.Color.FromArgb(22, 22, 22);
                 pictureBox.ImageLocation = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + @"\includes\progress.gif";
@@ -5043,24 +5041,35 @@ namespace SUP
 
                 if (videolocation.ToLower().EndsWith(".wav") || videolocation.ToLower().EndsWith(".mp3"))
                 {
+                  
+
                     if (isprivate)
                     {
-                        webviewer.Size = new System.Drawing.Size(supPrivateFlow.Width - 50, 150);
+                        int calcwidth = supPrivateFlow.Width - 50;
+                        if (calcwidth > 480) { calcwidth = 480; }
+
+                        webviewer.Size = new System.Drawing.Size(calcwidth, 150);
                     }
                     else
                     {
-                        webviewer.Size = new System.Drawing.Size(supFlow.Width - 50, 150);
+                        int calcwidth = supFlow.Width - 50;
+                        if (calcwidth > 480) { calcwidth = 480; }
+                        webviewer.Size = new System.Drawing.Size(calcwidth, 150);
                     }
                 }
                 else
                 {
                     if (isprivate)
                     {
-                        webviewer.Size = new System.Drawing.Size(supPrivateFlow.Width - 50, supPrivateFlow.Width - 150);
+                        int calcwidth = supPrivateFlow.Width - 50;
+                        if (calcwidth > 960) { calcwidth = 960; }
+                        webviewer.Size = new System.Drawing.Size(calcwidth,calcwidth - 100);
                     }
                     else
                     {
-                        webviewer.Size = new System.Drawing.Size(supFlow.Width - 50, supFlow.Width - 150);
+                        int calcwidth = supFlow.Width - 50;
+                        if (calcwidth > 960) { calcwidth = 960; }
+                        webviewer.Size = new System.Drawing.Size(calcwidth, calcwidth - 100);
                     }
                 }
                 webviewer.ZoomFactor = 1D;

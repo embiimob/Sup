@@ -31,8 +31,6 @@ namespace SUP
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            this.btnCreated = new System.Windows.Forms.Button();
-            this.btnOwned = new System.Windows.Forms.Button();
             this.txtSearchAddress = new System.Windows.Forms.TextBox();
             this.txtQty = new System.Windows.Forms.TextBox();
             this.txtLast = new System.Windows.Forms.TextBox();
@@ -42,7 +40,10 @@ namespace SUP
             this.doubleClickTimer = new System.Windows.Forms.Timer(this.components);
             this.flowLayoutPanel2 = new System.Windows.Forms.FlowLayoutPanel();
             this.profileURN = new System.Windows.Forms.LinkLabel();
-            this.btnCollections = new System.Windows.Forms.Button();
+            this.btnCreated = new System.Windows.Forms.LinkLabel();
+            this.btnOwned = new System.Windows.Forms.LinkLabel();
+            this.btnCollections = new System.Windows.Forms.LinkLabel();
+            this.btnActivity = new System.Windows.Forms.LinkLabel();
             this.selectSort = new System.Windows.Forms.ComboBox();
             this.btnVideoSearch = new System.Windows.Forms.Button();
             this.btnJukeBox = new System.Windows.Forms.Button();
@@ -55,43 +56,12 @@ namespace SUP
             ((System.ComponentModel.ISupportInitialize)(this.imgLoading)).BeginInit();
             this.SuspendLayout();
             // 
-            // btnCreated
-            // 
-            this.btnCreated.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnCreated.BackColor = System.Drawing.Color.White;
-            this.btnCreated.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnCreated.Font = new System.Drawing.Font("Microsoft Sans Serif", 7.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnCreated.ForeColor = System.Drawing.Color.Black;
-            this.btnCreated.Location = new System.Drawing.Point(466, 3);
-            this.btnCreated.Name = "btnCreated";
-            this.btnCreated.Size = new System.Drawing.Size(64, 26);
-            this.btnCreated.TabIndex = 62;
-            this.btnCreated.Text = "created";
-            this.btnCreated.UseVisualStyleBackColor = false;
-            this.btnCreated.Click += new System.EventHandler(this.ButtonGetCreatedClick);
-            // 
-            // btnOwned
-            // 
-            this.btnOwned.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnOwned.BackColor = System.Drawing.Color.White;
-            this.btnOwned.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnOwned.Font = new System.Drawing.Font("Microsoft Sans Serif", 7.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnOwned.ForeColor = System.Drawing.Color.Black;
-            this.btnOwned.Location = new System.Drawing.Point(396, 3);
-            this.btnOwned.Margin = new System.Windows.Forms.Padding(6, 3, 3, 3);
-            this.btnOwned.Name = "btnOwned";
-            this.btnOwned.Size = new System.Drawing.Size(64, 26);
-            this.btnOwned.TabIndex = 61;
-            this.btnOwned.Text = "owned";
-            this.btnOwned.UseVisualStyleBackColor = false;
-            this.btnOwned.Click += new System.EventHandler(this.ButtonGetOwnedClick);
-            // 
             // txtSearchAddress
             // 
             this.txtSearchAddress.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.txtSearchAddress.CausesValidation = false;
-            this.txtSearchAddress.Location = new System.Drawing.Point(615, 3);
+            this.txtSearchAddress.Location = new System.Drawing.Point(613, 3);
             this.txtSearchAddress.Margin = new System.Windows.Forms.Padding(12, 3, 3, 3);
             this.txtSearchAddress.Multiline = true;
             this.txtSearchAddress.Name = "txtSearchAddress";
@@ -112,11 +82,11 @@ namespace SUP
             // txtLast
             // 
             this.txtLast.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.txtLast.Location = new System.Drawing.Point(297, 3);
-            this.txtLast.Margin = new System.Windows.Forms.Padding(12, 3, 3, 3);
+            this.txtLast.Location = new System.Drawing.Point(297, 10);
+            this.txtLast.Margin = new System.Windows.Forms.Padding(12, 10, 3, 3);
             this.txtLast.Multiline = true;
             this.txtLast.Name = "txtLast";
-            this.txtLast.Size = new System.Drawing.Size(42, 26);
+            this.txtLast.Size = new System.Drawing.Size(42, 19);
             this.txtLast.TabIndex = 78;
             this.txtLast.Text = "0";
             this.txtLast.TextChanged += new System.EventHandler(this.txtLast_TextChanged);
@@ -159,10 +129,11 @@ namespace SUP
             // 
             this.txtTotal.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.txtTotal.Enabled = false;
-            this.txtTotal.Location = new System.Drawing.Point(345, 3);
+            this.txtTotal.Location = new System.Drawing.Point(345, 10);
+            this.txtTotal.Margin = new System.Windows.Forms.Padding(3, 10, 3, 3);
             this.txtTotal.Multiline = true;
             this.txtTotal.Name = "txtTotal";
-            this.txtTotal.Size = new System.Drawing.Size(42, 26);
+            this.txtTotal.Size = new System.Drawing.Size(42, 19);
             this.txtTotal.TabIndex = 85;
             this.txtTotal.Text = "0";
             // 
@@ -177,9 +148,10 @@ namespace SUP
             this.flowLayoutPanel2.Controls.Add(this.profileURN);
             this.flowLayoutPanel2.Controls.Add(this.txtLast);
             this.flowLayoutPanel2.Controls.Add(this.txtTotal);
-            this.flowLayoutPanel2.Controls.Add(this.btnOwned);
             this.flowLayoutPanel2.Controls.Add(this.btnCreated);
+            this.flowLayoutPanel2.Controls.Add(this.btnOwned);
             this.flowLayoutPanel2.Controls.Add(this.btnCollections);
+            this.flowLayoutPanel2.Controls.Add(this.btnActivity);
             this.flowLayoutPanel2.Controls.Add(this.txtSearchAddress);
             this.flowLayoutPanel2.Controls.Add(this.selectSort);
             this.flowLayoutPanel2.Controls.Add(this.btnVideoSearch);
@@ -207,20 +179,73 @@ namespace SUP
             this.profileURN.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.MainUserNameClick);
             this.profileURN.TextChanged += new System.EventHandler(this.profileURN_TextChanged);
             // 
+            // btnCreated
+            // 
+            this.btnCreated.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnCreated.AutoSize = true;
+            this.btnCreated.BackColor = System.Drawing.Color.White;
+            this.btnCreated.ForeColor = System.Drawing.Color.Black;
+            this.btnCreated.LinkColor = System.Drawing.Color.Black;
+            this.btnCreated.Location = new System.Drawing.Point(393, 10);
+            this.btnCreated.Margin = new System.Windows.Forms.Padding(3, 10, 3, 0);
+            this.btnCreated.Name = "btnCreated";
+            this.btnCreated.Padding = new System.Windows.Forms.Padding(2);
+            this.btnCreated.Size = new System.Drawing.Size(47, 17);
+            this.btnCreated.TabIndex = 106;
+            this.btnCreated.TabStop = true;
+            this.btnCreated.Text = "created";
+            this.btnCreated.Click += new System.EventHandler(this.ButtonGetCreatedClick);
+            // 
+            // btnOwned
+            // 
+            this.btnOwned.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnOwned.AutoSize = true;
+            this.btnOwned.BackColor = System.Drawing.Color.White;
+            this.btnOwned.ForeColor = System.Drawing.Color.Black;
+            this.btnOwned.LinkColor = System.Drawing.Color.Black;
+            this.btnOwned.Location = new System.Drawing.Point(446, 10);
+            this.btnOwned.Margin = new System.Windows.Forms.Padding(3, 10, 3, 0);
+            this.btnOwned.Name = "btnOwned";
+            this.btnOwned.Padding = new System.Windows.Forms.Padding(2);
+            this.btnOwned.Size = new System.Drawing.Size(43, 17);
+            this.btnOwned.TabIndex = 104;
+            this.btnOwned.TabStop = true;
+            this.btnOwned.Text = "owned";
+            this.btnOwned.Click += new System.EventHandler(this.ButtonGetOwnedClick);
+            // 
             // btnCollections
             // 
             this.btnCollections.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnCollections.AutoSize = true;
             this.btnCollections.BackColor = System.Drawing.Color.White;
-            this.btnCollections.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnCollections.Font = new System.Drawing.Font("Microsoft Sans Serif", 7.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btnCollections.ForeColor = System.Drawing.Color.Black;
-            this.btnCollections.Location = new System.Drawing.Point(536, 3);
+            this.btnCollections.LinkColor = System.Drawing.Color.Black;
+            this.btnCollections.Location = new System.Drawing.Point(495, 10);
+            this.btnCollections.Margin = new System.Windows.Forms.Padding(3, 10, 3, 0);
             this.btnCollections.Name = "btnCollections";
-            this.btnCollections.Size = new System.Drawing.Size(64, 26);
-            this.btnCollections.TabIndex = 86;
-            this.btnCollections.Text = "collections";
-            this.btnCollections.UseVisualStyleBackColor = false;
+            this.btnCollections.Padding = new System.Windows.Forms.Padding(2);
+            this.btnCollections.Size = new System.Drawing.Size(56, 17);
+            this.btnCollections.TabIndex = 105;
+            this.btnCollections.TabStop = true;
+            this.btnCollections.Text = "collection";
             this.btnCollections.Click += new System.EventHandler(this.btnCollections_Click);
+            // 
+            // btnActivity
+            // 
+            this.btnActivity.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnActivity.AutoSize = true;
+            this.btnActivity.BackColor = System.Drawing.Color.White;
+            this.btnActivity.ForeColor = System.Drawing.Color.Black;
+            this.btnActivity.LinkColor = System.Drawing.Color.Black;
+            this.btnActivity.Location = new System.Drawing.Point(557, 10);
+            this.btnActivity.Margin = new System.Windows.Forms.Padding(3, 10, 3, 0);
+            this.btnActivity.Name = "btnActivity";
+            this.btnActivity.Padding = new System.Windows.Forms.Padding(2);
+            this.btnActivity.Size = new System.Drawing.Size(41, 17);
+            this.btnActivity.TabIndex = 107;
+            this.btnActivity.TabStop = true;
+            this.btnActivity.Text = "history";
+            this.btnActivity.Click += new System.EventHandler(this.btnActivity_Click);
             // 
             // selectSort
             // 
@@ -236,7 +261,7 @@ namespace SUP
             "activity: high",
             "activity: low",
             "oldest"});
-            this.selectSort.Location = new System.Drawing.Point(800, 3);
+            this.selectSort.Location = new System.Drawing.Point(798, 3);
             this.selectSort.Name = "selectSort";
             this.selectSort.Size = new System.Drawing.Size(117, 26);
             this.selectSort.TabIndex = 87;
@@ -248,7 +273,7 @@ namespace SUP
             this.btnVideoSearch.BackColor = System.Drawing.Color.White;
             this.btnVideoSearch.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnVideoSearch.Font = new System.Drawing.Font("Segoe UI Emoji", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnVideoSearch.Location = new System.Drawing.Point(923, 3);
+            this.btnVideoSearch.Location = new System.Drawing.Point(921, 3);
             this.btnVideoSearch.Name = "btnVideoSearch";
             this.btnVideoSearch.Size = new System.Drawing.Size(26, 26);
             this.btnVideoSearch.TabIndex = 102;
@@ -262,7 +287,7 @@ namespace SUP
             this.btnJukeBox.BackColor = System.Drawing.Color.White;
             this.btnJukeBox.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnJukeBox.Font = new System.Drawing.Font("Segoe UI Emoji", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnJukeBox.Location = new System.Drawing.Point(955, 3);
+            this.btnJukeBox.Location = new System.Drawing.Point(953, 3);
             this.btnJukeBox.Name = "btnJukeBox";
             this.btnJukeBox.Size = new System.Drawing.Size(26, 26);
             this.btnJukeBox.TabIndex = 101;
@@ -276,7 +301,7 @@ namespace SUP
             this.btnInquiry.BackColor = System.Drawing.Color.White;
             this.btnInquiry.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnInquiry.Font = new System.Drawing.Font("Segoe UI Emoji", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnInquiry.Location = new System.Drawing.Point(987, 3);
+            this.btnInquiry.Location = new System.Drawing.Point(985, 3);
             this.btnInquiry.Name = "btnInquiry";
             this.btnInquiry.Size = new System.Drawing.Size(26, 26);
             this.btnInquiry.TabIndex = 103;
@@ -335,8 +360,6 @@ namespace SUP
         }
 
         #endregion
-        private System.Windows.Forms.Button btnCreated;
-        private System.Windows.Forms.Button btnOwned;
         private System.Windows.Forms.TextBox txtQty;
         private System.Windows.Forms.TextBox txtLast;
         private System.Windows.Forms.PictureBox imgLoading;
@@ -347,11 +370,14 @@ namespace SUP
         private System.Windows.Forms.FlowLayoutPanel flowLayoutPanel2;
         private System.Windows.Forms.Panel panel1;
         public System.Windows.Forms.LinkLabel profileURN;
-        private System.Windows.Forms.Button btnCollections;
         private System.Windows.Forms.ComboBox selectSort;
         private System.Windows.Forms.Button btnVideoSearch;
         private System.Windows.Forms.Button btnJukeBox;
         private System.Windows.Forms.Button btnInquiry;
         public System.Windows.Forms.TextBox txtSearchAddress;
+        private System.Windows.Forms.LinkLabel btnOwned;
+        private System.Windows.Forms.LinkLabel btnCreated;
+        private System.Windows.Forms.LinkLabel btnCollections;
+        private System.Windows.Forms.LinkLabel btnActivity;
     }
 }

@@ -217,6 +217,13 @@ namespace SUP
             {
                 try
                 {
+                    // Check if src ends with "index.zip"
+                    if (src.EndsWith("index.zip", StringComparison.OrdinalIgnoreCase))
+                    {
+                        // Change the file extension to ".html"
+                        src = src.Substring(0, src.Length - "index.zip".Length) + "index.html";
+                    }
+
                     System.Diagnostics.Process.Start(src);
                 }
                 catch
