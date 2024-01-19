@@ -35,6 +35,7 @@ namespace SUP
         private string mainnetVersionByte = "111";
         private bool _testnet = true;
         int historySeen = 0;
+        bool spaceGiven = false;
 
         List<FoundObjectControl> foundObjects = new List<FoundObjectControl>();
         List<PictureBox> pictureBoxes = new List<PictureBox>();
@@ -1025,6 +1026,7 @@ namespace SUP
 
                 };
                 row.Controls.Add(picture, 0, 0);
+                pictureBoxes.Add(picture);
             }
             else
             {
@@ -1051,6 +1053,7 @@ namespace SUP
                     Margin = new System.Windows.Forms.Padding(0),
                 };
                 row.Controls.Add(picture, 0, 0);
+                pictureBoxes.Add(picture);
             }
 
 
@@ -1098,21 +1101,22 @@ namespace SUP
                     if (imagepath.ToLower().StartsWith("ipfs:")) { objectImagelocation = objectImagelocation.Replace(@"\root\", @"\ipfs\"); if (imagepath.Length == 51) { objectImagelocation += @"\artifact"; } }
                 }
 
+                if (!objectImagelocation.ToLower().EndsWith(".gif")) { objectImagelocation = objectImagelocation + "-thumbnail.jpg"; }
 
                 PictureBox picture = new PictureBox
-                {
-                    Size = new System.Drawing.Size(40, 40),
-                    SizeMode = PictureBoxSizeMode.Zoom,
-                    ImageLocation = objectImagelocation + "-thumbnail.jpg",
-                    Margin = new System.Windows.Forms.Padding(0),
-                };
+                    {
+                        Size = new System.Drawing.Size(40, 40),
+                        SizeMode = PictureBoxSizeMode.Zoom,
+                        ImageLocation = objectImagelocation,
+                        Margin = new System.Windows.Forms.Padding(0),
+                    };
+                    pictureBoxes.Add(picture);
 
+                    picture.MouseClick += (sender, e) => { object_LinkClicked(SentFrom); };
 
-                picture.MouseClick += (sender, e) => { object_LinkClicked(SentFrom); };
+                    row.Controls.Add(picture, 1, 0);
 
-                row.Controls.Add(picture, 1, 0);
-
-            }
+                }
             else
             {
                 // Create a LinkLabel with the owner name
@@ -1147,15 +1151,17 @@ namespace SUP
                     if (imagepath.ToLower().StartsWith("ipfs:")) { objectImagelocation = objectImagelocation.Replace(@"\root\", @"\ipfs\"); if (imagepath.Length == 51) { objectImagelocation += @"\artifact"; } }
                 }
 
+                if (!objectImagelocation.ToLower().EndsWith(".gif")) { objectImagelocation = objectImagelocation + "-thumbnail.jpg"; }
+
 
                 PictureBox picture = new PictureBox
                 {
                     Size = new System.Drawing.Size(40, 40),
                     SizeMode = PictureBoxSizeMode.Zoom,
-                    ImageLocation = objectImagelocation + "-thumbnail.jpg",
+                    ImageLocation = objectImagelocation,
                     Margin = new System.Windows.Forms.Padding(0),
                 };
-
+                pictureBoxes.Add(picture);
 
                 picture.MouseClick += (sender, e) => { object_LinkClicked(SentTo); };
 
@@ -1215,16 +1221,17 @@ namespace SUP
                     objectImagelocation = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + @"\root\" + imagepath.Replace("BTC:", "").Replace("MZC:", "").Replace("LTC:", "").Replace("DOG:", "").Replace("IPFS:", "").Replace(@"/", @"\");
                     if (imagepath.ToLower().StartsWith("ipfs:")) { objectImagelocation = objectImagelocation.Replace(@"\root\", @"\ipfs\"); if (imagepath.Length == 51) { objectImagelocation += @"\artifact"; } }
                 }
+                if (!objectImagelocation.ToLower().EndsWith(".gif")) { objectImagelocation = objectImagelocation + "-thumbnail.jpg"; }
 
                 PictureBox picture = new PictureBox
                 {
                     Size = new System.Drawing.Size(40, 40),
                     SizeMode = PictureBoxSizeMode.Zoom,
-                    ImageLocation = objectImagelocation + "-thumbnail.jpg",
+                    ImageLocation = objectImagelocation,
                     Margin = new System.Windows.Forms.Padding(0),
                 };
 
-
+                pictureBoxes.Add(picture);
                 picture.MouseClick += (sender, e) => { object_LinkClicked(objectaddress); };
                 flowLayoutPanel1.Controls.Add(picture);
             }
@@ -1252,8 +1259,7 @@ namespace SUP
             PROState searchprofile = new PROState();
             if (historySeen == 0)
             {
-                Task.Run(() =>
-                {
+               
                     this.Invoke((MethodInvoker)delegate
                     {
                         foreach (var picturebox in pictureBoxes)
@@ -1264,7 +1270,7 @@ namespace SUP
                         }
                     });
 
-                });
+               
                 pictureBoxes.Clear();
 
             }
@@ -1680,6 +1686,20 @@ namespace SUP
                 {
                     string error = ex.Message;
                 }
+            }
+            if (historySeen >= combinedRoots.Count() && !spaceGiven)
+            {
+                //spaceGiven = true;
+                Label space = new Label
+                {
+                    AutoSize = false,
+                    Margin = new System.Windows.Forms.Padding(0),
+                    MinimumSize = new Size(flowLayoutPanel1.Width -40, 20),
+                    Padding = new System.Windows.Forms.Padding(0),
+                    TextAlign = ContentAlignment.TopLeft
+
+                };
+                flowLayoutPanel1.Controls.Add(space);
             }
             flowLayoutPanel1.ResumeLayout();
         }
@@ -2877,7 +2897,7 @@ namespace SUP
                         {
                             if (btnCollections.BackColor == System.Drawing.Color.Yellow)
                             {
-
+                                historySeen = 0;
                                 GetCollectionsByAddress(txtSearchAddress.Text);
 
 
@@ -2885,7 +2905,7 @@ namespace SUP
                             else
                             {
 
-
+                                historySeen = 0;
                                 GetObjectsByAddress(Root.GetPublicAddressByKeyword(txtSearchAddress.Text.Substring(1), mainnetVersionByte), calculate);
                             }
 
@@ -2996,6 +3016,7 @@ namespace SUP
                             {
                                 if (txtSearchAddress.Text.ToUpper().StartsWith(@"SUP:"))
                                 {
+                                    historySeen = 0;
                                     GetObjectsByAddress(txtSearchAddress.Text, calculate);
 
                                 }
@@ -3054,10 +3075,12 @@ namespace SUP
                                         {
                                             if (!string.IsNullOrEmpty(txtSearchAddress.Text))
                                             {
+                                                historySeen = 0;
                                                 GetCollectionsByAddress(txtSearchAddress.Text.Replace("@", ""), calculate);
                                             }
                                             else
                                             {
+                                                historySeen = 0;
                                                 btnCollections.BackColor = System.Drawing.Color.White;
                                                 GetObjectsByAddress("");
                                             }
@@ -3078,7 +3101,7 @@ namespace SUP
                                                 }
                                                 else
                                                 {
-
+                                                    historySeen = 0;
                                                     btnActivity.BackColor = System.Drawing.Color.White;
                                                     GetObjectsByAddress("");
                                                 }
@@ -3086,7 +3109,7 @@ namespace SUP
                                             else
                                             {
 
-
+                                                historySeen = 0;
                                                 GetObjectsByAddress(txtSearchAddress.Text.Replace("@", ""), calculate);
 
                                             }
