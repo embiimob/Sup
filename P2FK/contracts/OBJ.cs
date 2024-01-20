@@ -1748,6 +1748,7 @@ namespace SUP.P2FK
         {
 
             OBJState objectState = new OBJState();
+            if (searchstring == null) { return objectState; }
             string objectaddress = Root.GetPublicAddressByKeyword(searchstring, versionByte);
             bool fetched = false;
             if (System.IO.File.Exists(@"root\" + objectaddress + @"\BLOCK")) { return objectState; }

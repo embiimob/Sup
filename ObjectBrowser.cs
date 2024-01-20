@@ -111,7 +111,8 @@ namespace SUP
             if (flowLayoutPanel1.VerticalScroll.Value + flowLayoutPanel1.ClientSize.Height >= flowLayoutPanel1.VerticalScroll.Maximum)
             {
                 // Add more PictureBoxes if available              
-                if (btnActivity.BackColor == Color.Yellow) { GetHistoryByAddress(txtSearchAddress.Text); }
+                if (btnActivity.BackColor == Color.Yellow) { GetHistoryByAddress(txtSearchAddress.Text); } 
+                else { BuildSearchResults(false, false); }
 
             }
         }
@@ -136,8 +137,16 @@ namespace SUP
             PROState searchprofile = new PROState();
             List<OBJState> createdObjects = new List<OBJState>();
             int skip = 0;
-            try { skip = int.Parse(txtLast.Text); } catch { }
-            int qty = 32;
+            try { skip = flowLayoutPanel1.Controls.Count; } catch { }
+            int qty = (flowLayoutPanel1.Size.Width / 200) * (flowLayoutPanel1.Size.Height / 200);
+            
+            this.Invoke((Action)(() =>
+            {
+                if (pages.Value > skip) { skip = pages.Value + skip; } else { try { pages.Value = skip; } catch { } }
+                
+                txtLast.Text = skip.ToString();
+
+            }));
 
             if (address.ToUpper().StartsWith(@"SUP:") || address.ToUpper().StartsWith(@"MZC:") || address.ToUpper().StartsWith(@"BTC:") || address.ToUpper().StartsWith(@"LTC:") || address.ToUpper().StartsWith(@"DOG:"))
             {
@@ -352,15 +361,7 @@ namespace SUP
                     flowLayoutPanel1.SuspendLayout();
                     pages.Maximum = createdObjects.Count - 1;
                     txtTotal.Text = (createdObjects.Count).ToString();
-                    pages.Visible = true;
-
-                    //disposeFoundObjects
-                    foreach (var foundobject in foundObjects)
-                    {
-
-                        try { foundobject.Dispose(); } catch { }
-
-                    }
+                    pages.Visible = true;             
 
                     foreach (OBJState objstate in createdObjects.Skip(skip).Take(qty))
                     {
@@ -940,16 +941,24 @@ namespace SUP
 
                     this.Invoke((Action)(() =>
                     {
-                        Label bottomSpacer = new Label();
-                        bottomSpacer.Height = 500; // Adjust the height to create enough space.
-                        flowLayoutPanel1.Controls.Add(bottomSpacer);
+                        if (int.Parse(txtLast.Text) >= createdObjects.Count - 1)
+                        {
+                            txtLast.Text = createdObjects.Count.ToString();
+
+                            Label bottomSpacer = new Label();
+                            bottomSpacer.Height = 40; // Adjust the height to create enough space.
+                            flowLayoutPanel1.Controls.Add(bottomSpacer);
+                        }
                         flowLayoutPanel1.ResumeLayout();
                     }));
                 }));
             }
             catch (Exception ex)
             {
-                string error = ex.Message;
+                this.Invoke((Action)(() =>
+                {
+                    flowLayoutPanel1.ResumeLayout();
+                }));
             }
         }
 
@@ -1066,7 +1075,7 @@ namespace SUP
             }
             else
             {
-                isFromObject = OBJState.GetObjectByAddress(SentTo, mainnetLogin, mainnetPassword, mainnetURL, mainnetVersionByte);
+                isFromObject = OBJState.GetObjectByAddress(SentFrom, mainnetLogin, mainnetPassword, mainnetURL, mainnetVersionByte);
 
             }
 
@@ -1391,7 +1400,7 @@ namespace SUP
             int found = 0;
             int lastSeen = historySeen;
             flowLayoutPanel1.SuspendLayout();
-            for (int i = 0; found < 25 && i < combinedRoots.Skip(lastSeen).Count(); i++)
+            for (int i = 0; found < flowLayoutPanel1.Height / 40 && i < combinedRoots.Skip(lastSeen).Count(); i++)
             {
                 Root root = combinedRoots[historySeen];
                 ++historySeen;
@@ -1543,7 +1552,9 @@ namespace SUP
                                     foreach (var buy in buyinspector)
                                     {
                                         string _from = root.SignedBy;
-                                        string _to = buy[0];
+                                        string _to = "";
+                                        try { _to = root.Keyword.Reverse().GetItemByIndex(1).Key; } catch { }
+
                                         string _message = "BUY 💰 " + buy[1];
                                         string _blockdate = root.BlockDate.ToString("yyyyMMddHHmmss");
                                         string imglocation = "";
@@ -1558,7 +1569,7 @@ namespace SUP
                                         {
                                             try { imglocation = myFriends[_from]; } catch { }
 
-                                            CreateFeedRow(null, imglocation, _to, _from, DateTime.ParseExact(_blockdate, "yyyyMMddHHmmss", CultureInfo.InvariantCulture), _message, root.TransactionId, Color.White, flowLayoutPanel1);
+                                            CreateFeedRow(buy[0], imglocation, _to, _from, DateTime.ParseExact(_blockdate, "yyyyMMddHHmmss", CultureInfo.InvariantCulture), _message, root.TransactionId, Color.White, flowLayoutPanel1);
                                             found++;
                                         });
 
@@ -1687,6 +1698,8 @@ namespace SUP
                     string error = ex.Message;
                 }
             }
+            flowLayoutPanel1.ResumeLayout();
+
             if (historySeen >= combinedRoots.Count() && !spaceGiven)
             {
                 //spaceGiven = true;
@@ -1694,14 +1707,15 @@ namespace SUP
                 {
                     AutoSize = false,
                     Margin = new System.Windows.Forms.Padding(0),
-                    MinimumSize = new Size(flowLayoutPanel1.Width -40, 20),
+                    MinimumSize = new Size(flowLayoutPanel1.Width -40, 10),
                     Padding = new System.Windows.Forms.Padding(0),
                     TextAlign = ContentAlignment.TopLeft
 
                 };
                 flowLayoutPanel1.Controls.Add(space);
+                flowLayoutPanel1.PerformLayout();
             }
-            flowLayoutPanel1.ResumeLayout();
+
         }
 
 
@@ -2833,32 +2847,43 @@ namespace SUP
 
         }
 
-        public async void BuildSearchResults(bool calculate = false)
+        public async void BuildSearchResults(bool calculate = false, bool clearresults = true)
         {
             lock (SupLocker)
             {
 
                 try
                 {
-
-                    this.Invoke((Action)(() =>
+                    if (clearresults)
                     {
-                        flowLayoutPanel1.SuspendLayout();
-                        foreach (Control control in flowLayoutPanel1.Controls)
+                        this.Invoke((Action)(() =>
                         {
-                            foreach (Control _control in control.Controls)
-                            { _control.Dispose(); }
-                            control.Dispose();
-                        }
-                        flowLayoutPanel1.Controls.Clear();
-                        flowLayoutPanel1.ResumeLayout();
+                            flowLayoutPanel1.SuspendLayout();
 
-                    }));
+                            
 
+                            foreach (Control control in flowLayoutPanel1.Controls)
+                            {
+                                foreach (Control _control in control.Controls)
+                                { _control.Dispose(); }
+                                control.Dispose();
+                            }
 
+                            //disposeFoundObjects
+                            foreach (var foundobject in foundObjects)
+                            {
 
-                    int loadQty = 32;// (flowLayoutPanel1.Size.Width / 213) * (flowLayoutPanel1.Size.Height / 336);
-                    //loadQty -= flowLayoutPanel1.Controls.Count;
+                                try { foundobject.Dispose(); } catch { }
+
+                            }
+                            flowLayoutPanel1.Controls.Clear();
+                            flowLayoutPanel1.ResumeLayout();
+
+                        }));
+
+                    }
+
+                   // int loadQty = (flowLayoutPanel1.Size.Width / 200) * (flowLayoutPanel1.Size.Height / 200);
 
 
                     if (txtSearchAddress.Text.ToLower().StartsWith("http"))
@@ -3178,6 +3203,7 @@ namespace SUP
             btnOwned.Enabled = false;
             btnCreated.Enabled = false;
             btnCollections.Enabled = false;
+            btnActivity.Enabled = false;
             selectSort.Enabled = false;
             txtSearchAddress.Enabled = false;
             pages.Enabled = false;
@@ -3189,6 +3215,7 @@ namespace SUP
             btnOwned.Enabled = true;
             btnCreated.Enabled = true;
             btnCollections.Enabled = true;
+            btnActivity.Enabled = true;
             selectSort.Enabled = true;
             txtSearchAddress.Enabled = true;
             pages.Enabled = true;

@@ -2944,7 +2944,7 @@ namespace SUP
 
             List<MessageObject> messages = new List<MessageObject>();
 
-            try { messages = OBJState.GetPublicMessagesByAddress(profileURN.Links[0].LinkData.ToString(), mainnetLogin, mainnetPassword, mainnetURL, mainnetVersionByte, numMessagesDisplayed, 10); }
+            try { messages = OBJState.GetPublicMessagesByAddress(profileURN.Links[0].LinkData.ToString(), mainnetLogin, mainnetPassword, mainnetURL, mainnetVersionByte, numMessagesDisplayed, 5); }
             catch (Exception ex) { string error = ex.Message; return; }
 
 
@@ -3704,8 +3704,8 @@ namespace SUP
                 supPrivateFlow.ResumeLayout();
                 btnPrivateMessage.Enabled = true; return;
             }
-            List<MessageObject> messages = OBJState.GetPrivateMessagesByAddress(profileURN.Links[0].LinkData.ToString(), mainnetLogin, mainnetPassword, mainnetURL, mainnetVersionByte, numPrivateMessagesDisplayed, 10);
-            numPrivateMessagesDisplayed = numPrivateMessagesDisplayed + 10;
+            List<MessageObject> messages = OBJState.GetPrivateMessagesByAddress(profileURN.Links[0].LinkData.ToString(), mainnetLogin, mainnetPassword, mainnetURL, mainnetVersionByte, numPrivateMessagesDisplayed, 5);
+            numPrivateMessagesDisplayed = numPrivateMessagesDisplayed + 5;
 
 
 
@@ -4484,7 +4484,7 @@ namespace SUP
                     });
 
 
-                    foreach (var message in allMessages.Skip(numFriendFeedsDisplayed).Take(10))
+                    foreach (var message in allMessages.Skip(numFriendFeedsDisplayed).Take(5))
                     {
                         var fromProp = message.GetType().GetProperty("FromAddress");
                         var toProp = message.GetType().GetProperty("ToAddress");
