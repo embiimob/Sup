@@ -2733,7 +2733,7 @@ namespace SUP
                     }
                     else
                     {
-                        MessageBox.Show("Qty field only accepts numeric input.");
+                        MessageBox.Show("Percent field only accepts numeric input.");
                     }
                 }
             }

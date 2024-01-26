@@ -361,7 +361,6 @@ namespace SUP
 
         #endregion
         private System.Windows.Forms.TextBox txtQty;
-        private System.Windows.Forms.TextBox txtLast;
         private System.Windows.Forms.PictureBox imgLoading;
         private System.Windows.Forms.FlowLayoutPanel flowLayoutPanel1;
         private System.Windows.Forms.TrackBar pages;
@@ -379,5 +378,6 @@ namespace SUP
         private System.Windows.Forms.LinkLabel btnCreated;
         private System.Windows.Forms.LinkLabel btnCollections;
         private System.Windows.Forms.LinkLabel btnActivity;
+        public System.Windows.Forms.TextBox txtLast;
     }
 }

@@ -384,7 +384,7 @@ namespace SUP.P2FK
                                                     {
 
                                                         //prevents someone from trying to claim a previously sigend etching using a different signature
-                                                        if (versionByte != "111")
+                                                        if (versionByte != "111" && !objectinspector.urn.ToUpper().StartsWith("IPFS:"))
                                                         {
                                                             Root signedRoot = Root.GetRootByTransactionId(objectinspector.urn.Substring(0, 64), username, password, url, versionByte);
                                                             if (signedRoot.Signed)

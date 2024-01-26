@@ -2816,6 +2816,7 @@ namespace SUP
                 e.SuppressKeyPress = true;
                 DisableSupInput();
                 pages.Maximum = 0; pages.Value = 0;
+                txtLast.Text = "0";
                 txtTotal.Text = "0";
                 txtLast.Text = "0";
                 Random rnd = new Random();
@@ -2847,7 +2848,7 @@ namespace SUP
 
         }
 
-        public async void BuildSearchResults(bool calculate = false, bool clearresults = true)
+        public async void BuildSearchResults(bool calculate = false, bool clearresults = true, bool clearpages = true)
         {
             lock (SupLocker)
             {
@@ -2860,7 +2861,11 @@ namespace SUP
                         {
                             flowLayoutPanel1.SuspendLayout();
 
-                            
+                            if (clearpages)
+                            {
+                                txtLast.Text = "0";
+                                pages.Value = 0;
+                            }
 
                             foreach (Control control in flowLayoutPanel1.Controls)
                             {
@@ -3354,7 +3359,7 @@ namespace SUP
                     imgLoading.ImageLocation = @"includes\HugPuddle.jpg";
                 }
                 flowLayoutPanel1.Visible = false;
-                await Task.Run(() => BuildSearchResults());
+                await Task.Run(() => BuildSearchResults(false,true,false));
                 flowLayoutPanel1.Visible = true;
                 pages.Visible = true;
 
@@ -3580,8 +3585,10 @@ namespace SUP
                     {
                         _activeProfile = profileURN.Links[0].LinkData.ToString();
                     }
+
                 }
                 catch { }
+                
             }
         }
 
