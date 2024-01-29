@@ -2308,7 +2308,7 @@ namespace SUP.P2FK
             List<string> addedValues = new List<string>();
 
             //Do not process container address as object.
-            addedValues.Add(objectaddress);
+            //addedValues.Add(objectaddress);
             foreach (Root transaction in objectTransactions)
             {
                 if (transaction.Id > intProcessHeight)
@@ -2517,7 +2517,7 @@ namespace SUP.P2FK
 
             if (cachedObjectStates.Count() > 0)
             {
-                objectStates.Last().Id = cachedObjectStates.Last().Id;
+                try { objectStates.Last().Id = cachedObjectStates.Last().Id; } catch { }
             }
 
             var objectSerialized = JsonConvert.SerializeObject(objectStates);

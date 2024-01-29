@@ -350,13 +350,17 @@ namespace SUP
                 }
             }
 
-            foreach (Button ownerbtn in flowOwners.Controls)
-            {
-                if (ownerbtn.Text.Split(':')[0] != signatureAddress)
+           
+           
+
+                foreach (Button ownerbtn in flowOwners.Controls)
                 {
-                    encodedList.Add(ownerbtn.Text.Split(':')[0]);
+                    if (ownerbtn.Text.Split(':')[0] != signatureAddress)
+                    {
+                        encodedList.Add(ownerbtn.Text.Split(':')[0]);
+                    }
                 }
-            }
+            
 
             foreach (Button creatorbtn in flowCreators.Controls)
             {
@@ -388,6 +392,17 @@ namespace SUP
 
             if (ismint)
             {
+                if (flowOwners.Controls.Count == 0)
+                {
+                    DialogResult nullOwnerresult = MessageBox.Show("Warning: No owners defined! If this is the first minting transaction, it will be rejected.\nClick OK to confirm only if performing an object update.", "Confirmation", MessageBoxButtons.OKCancel);
+
+                    if (nullOwnerresult != DialogResult.OK)
+                    {
+                        return;
+                    }
+                }
+
+
                 DialogResult result = MessageBox.Show("Are you sure you want to mint this object?", "Confirmation", MessageBoxButtons.YesNo);
                 if (result == DialogResult.Yes)
                 {
@@ -519,7 +534,7 @@ namespace SUP
                 if (flowOwners.Controls.Count < 1)
                 {
 
-                    lblASCIIURN.Text = "Add 1 or more owners each with a qty of 1 or more";
+                    lblASCIIURN.Text = "Click OWN to Add 1 or more owners with qty defined\n\ncopy and paste the 💎 address in most scenarios";
                     lblASCIIURN.Visible = true;
 
                 }
@@ -2029,9 +2044,9 @@ namespace SUP
                     var owner = ownerTextBox.Text;
                     var qty = qtyTextBox.Text;
 
-                    var isNumeric = long.TryParse(qty, out _);
+                    var isNumeric = long.TryParse(qty, out long OWNQty);
 
-                    if (isNumeric)
+                    if (isNumeric && OWNQty > 0)
                     {
                         var button = new Button();
                         button.ForeColor = Color.White;

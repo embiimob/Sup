@@ -25,6 +25,7 @@ namespace SUP
         private QrEncoder encoder = new QrEncoder();
         private GraphicsRenderer renderer = new GraphicsRenderer(new FixedModuleSize(2, QuietZoneModules.Two));
         private bool ismint = false;
+        private bool isupdate = false;
         private string searchAddress;
         Regex regexTransactionId = new Regex(@"\b[0-9a-f]{64}\b");
         private Random random = new Random();
@@ -139,13 +140,31 @@ namespace SUP
                 PROJson.loc = mintLocation;
             }
 
-            try
+            if (!isupdate)
             {
-                List<string> pubkeys = Root.GetPublicKeysByAddress(txtObjectAddress.Text, mainnetLogin,mainnetPassword,mainnetURL);
-                PROJson.pkx = pubkeys[0];
-                PROJson.pky = pubkeys[1];
+                try
+                {
+                    List<string> pubkeys = Root.GetPublicKeysByAddress(txtObjectAddress.Text, mainnetLogin, mainnetPassword, mainnetURL);
+                    PROJson.pkx = pubkeys[0];
+                    PROJson.pky = pubkeys[1];
+                }
+                catch { }
             }
-            catch { }
+            else
+            {
+                PROState PRO = PROState.GetProfileByAddress(txtObjectAddress.Text, mainnetLogin, mainnetPassword, mainnetURL, mainnetVersionByte);
+                try
+                {
+                    List<string> pubkeys = Root.GetPublicKeysByAddress(txtObjectAddress.Text, mainnetLogin, mainnetPassword, mainnetURL);
+                    if (PRO.PKX != pubkeys[0])
+                    {
+
+                        PROJson.pkx = pubkeys[0];
+                        PROJson.pky = pubkeys[1];
+                    }
+                }
+                catch { }
+            }
 
             var settings = new JsonSerializerSettings
             {
@@ -1264,6 +1283,7 @@ namespace SUP
             {
                 lblObjectStatus.Text = "created date: [" + PRO.CreatedDate.ToString("MM / dd / yyyy hh: mm: ss") + "]  last seen:[" + PRO.ChangeDate.ToString("MM/dd/yyyy hh:mm:ss") + "]";
                 lblObjectStatus.Text = lblObjectStatus.Text.Replace("Monday, January 1, 0001", " unconfirmed ");
+                isupdate = true;
 
             }        
             else

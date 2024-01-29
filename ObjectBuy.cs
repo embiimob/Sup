@@ -175,8 +175,8 @@ namespace SUP
 
             OBJState isobject = OBJState.GetObjectByAddress(txtAddressSearch.Text, mainnetLogin, mainnetPassword, mainnetURL, mainnetVersionByte);
 
-            if (isobject.Creators.ContainsKey(SentFrom)) { SentFrom = "primary"; }
-            if (isobject.Creators.ContainsKey(SentTo)) { SentTo = "primary"; }
+            if (givaddress == SentFrom) { SentFrom = "primary"; }
+            if (givaddress == SentTo) { SentTo = "primary"; }
 
 
 
@@ -263,12 +263,9 @@ namespace SUP
 
             OBJState objstate = OBJState.GetObjectByAddress(txtAddressSearch.Text, mainnetLogin, mainnetPassword, mainnetURL, mainnetVersionByte);
             Dictionary<string, string> profileAddress = new Dictionary<string, string> { };
-
-            foreach (string creator in objstate.Creators.Keys)
-            {
-                profileAddress.Add(creator, "primary");
-            }
-
+                      
+            profileAddress.Add(givaddress, "primary");
+          
             txtName.Text = objstate.Name;
             lblLicense.Text = objstate.License;
             lblObjectCreatedDate.Text = objstate.CreatedDate.ToString("ddd, dd MMM yyyy hh:mm:ss");
@@ -812,7 +809,7 @@ namespace SUP
                                                             string _from = root.SignedBy;
                                                             string _to = "";
 
-                                                            if (isobject.Creators.ContainsKey(root.SignedBy)) { _to = "primary"; } else { _to = "secondary"; }
+                                                            if (givaddress == root.SignedBy) { _to = "primary"; } else { _to = "secondary"; }
 
 
 
@@ -980,19 +977,93 @@ namespace SUP
 
         private void btnBuy_Click(object sender, EventArgs e)
         {
-            
-            if (maxHold > 0 && int.TryParse(txtBuyQty.Text,out int buyQTY) && buyQTY > maxHold)
+
+            if (int.TryParse(txtBuyQty.Text, out int buyQTY1) && buyQTY1 < 1)
+            {
+                MessageBox.Show("Buy Qty must be 1 or greater", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            if (maxHold > 0 && int.TryParse(txtBuyQty.Text,out int buyQTY2) && buyQTY2 > maxHold)
             {
                 MessageBox.Show("Buy Qty exceeds maximum holding amount", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 txtBuyQty.Text = maxHold.ToString();
                 return;
             }
 
-            if (int.TryParse(txtBuyQty.Text, out int buyQTY2) && buyQTY2 <1)
+
+
+            if (int.TryParse(txtBuyQty.Text, out int buyQTY3) && buyQTY3 <= maxHold)
             {
-                MessageBox.Show("Buy Qty must be 1 or greater", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                return;
+                List<OBJState> currentlyOwnedObjects = OBJState.GetObjectsOwnedByAddress(txtSignatureAddress.Text, mainnetLogin, mainnetPassword, mainnetURL, mainnetVersionByte);
+
+                // Find the OBJState object that corresponds to the specified address in Creators
+                OBJState objStateForAddress = currentlyOwnedObjects?.FirstOrDefault(obj => obj.Creators.ContainsKey(givaddress));
+
+                // Check if the address is found in Creators and if the buy quantity exceeds the maxHold
+                if (objStateForAddress != null && objStateForAddress.Owners.ContainsKey(txtSignatureAddress.Text))
+                {
+                    long currentHoldings = objStateForAddress.Owners[txtSignatureAddress.Text].Item1;
+
+                    // Calculate the maximum quantity that can be bought
+                    long maxBuyQty = Math.Max(0, maxHold - currentHoldings);
+
+                    if (buyQTY3 > maxBuyQty)
+                    {
+                        MessageBox.Show($"This transaction will likely fail. Buy Qty exceeds MAX holding threshold. Maximum Qty allowed: {maxBuyQty}", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                        txtBuyQty.Text = maxBuyQty.ToString();
+                        return;
+                    }
+                }
             }
+
+
+            if (int.TryParse(txtBuyQty.Text, out int buyQTY4))
+            {
+                List<OBJState> currentlyOwnedObjects = OBJState.GetObjectsOwnedByAddress(txtCurrentOwnerAddress.Text, mainnetLogin, mainnetPassword, mainnetURL, mainnetVersionByte);
+
+                // Find the OBJState object that corresponds to the specified address in Creators
+                OBJState objStateForAddress = currentlyOwnedObjects?.FirstOrDefault(obj => obj.Creators.ContainsKey(givaddress));
+
+                // Check if the address is found in Creators and if the buy quantity exceeds the maxHold
+                if (objStateForAddress != null && objStateForAddress.Owners.ContainsKey(txtCurrentOwnerAddress.Text))
+                {
+                    long currentHoldings = objStateForAddress.Owners[txtCurrentOwnerAddress.Text].Item1;
+
+                    // Calculate the maximum quantity that can be bought
+                    long maxBuyQty = currentHoldings;
+
+                    if (buyQTY4 > maxBuyQty)
+                    {
+                        MessageBox.Show($"This transaction will likely fail. Buy Qty exceeds current owner's holdings. Maximum Qty allowed: {maxBuyQty}", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                        txtBuyQty.Text = maxBuyQty.ToString();
+                        return;
+                    }
+                }
+
+                var listingForCurrentOwner = objStateForAddress.Listings.Values.FirstOrDefault(listing => listing.Owner == txtCurrentOwnerAddress.Text);
+
+                if (listingForCurrentOwner != null)
+                {
+                    if (decimal.TryParse(txtBuyEachCost.Text, out decimal buyEachCost))
+                    {
+                        if (buyEachCost < listingForCurrentOwner.Value)
+                        {
+                            MessageBox.Show($"This transaction will likely fail. Each unit cost is less than the listed cost. Listed Cost: {listingForCurrentOwner.Value}", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                            txtBuyEachCost.Text = listingForCurrentOwner.Value.ToString();
+                            return;
+                        }
+                    }
+                    
+                }
+                else
+                {
+                    MessageBox.Show($"No listings found for the current owner\n a non refundable BUY offer will be generated instead: {txtCurrentOwnerAddress.Text}", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                   
+                }
+
+            }
+
 
             var newdictionary = new List<List<string>>();
             List<string> encodedList = new List<string>();
@@ -1119,6 +1190,31 @@ namespace SUP
 
         private void giveButton_Click(object sender, EventArgs e)
         {
+
+            if (int.TryParse(txtListQty.Text, out int listQTY))
+            {
+                List<OBJState> currentlyOwnedObjects = OBJState.GetObjectsOwnedByAddress(txtSignatureAddress.Text, mainnetLogin, mainnetPassword, mainnetURL, mainnetVersionByte);
+
+                // Find the OBJState object that corresponds to the specified address in Creators
+                OBJState objStateForAddress = currentlyOwnedObjects?.FirstOrDefault(obj => obj.Creators.ContainsKey(givaddress));
+
+                // Check if the address is found in Creators and if the buy quantity exceeds the maxHold
+                if (objStateForAddress != null && objStateForAddress.Owners.ContainsKey(txtSignatureAddress.Text))
+                {
+                    long currentHoldings = objStateForAddress.Owners[txtSignatureAddress.Text].Item1;
+
+                    // Calculate the maximum quantity that can be bought
+                    long maxListQty = currentHoldings;
+
+                    if (listQTY > maxListQty)
+                    {
+                        MessageBox.Show($"This transaction will likely fail. List Qty exceeds current owner's holdings. Maximum List allowed: {maxListQty}", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                        txtListQty.Text = maxListQty.ToString();
+                        return;
+                    }
+                }
+            }
+
             var newdictionary = new List<List<string>>();
             List<string> encodedList = new List<string>();
             newdictionary.Add(new List<string> { txtAddressSearch.Text, txtListQty.Text, txtEachValue.Text });

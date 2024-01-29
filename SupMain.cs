@@ -5729,7 +5729,7 @@ namespace SUP
 
         void Attachment_Clicked(string path)
         {
-            if (path.ToUpper().StartsWith("IPFS:") || path.ToUpper().StartsWith("BTC:") || path.ToUpper().StartsWith("MZC:") || path.ToUpper().StartsWith("LTC:") || path.ToUpper().StartsWith("DOG:"))
+            if (Regex.IsMatch(path, "^[1-9A-HJ-NP-Za-km-z]+$") || path.ToUpper().StartsWith("@") || path.ToUpper().StartsWith("SUP:") || path.ToUpper().StartsWith("IPFS:") || path.ToUpper().StartsWith("BTC:") || path.ToUpper().StartsWith("MZC:") || path.ToUpper().StartsWith("LTC:") || path.ToUpper().StartsWith("DOG:"))
             {
                 new ObjectBrowser(path).Show();
             }

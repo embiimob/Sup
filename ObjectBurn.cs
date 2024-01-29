@@ -51,6 +51,13 @@ namespace SUP
 
         private void addButton_Click(object sender, EventArgs e)
         {
+            if (_addressQtyList.Any(item => item.Item1 == addressTextBox.Text))
+            {
+                MessageBox.Show($"You cannot burn the same object twice.");
+                return;
+            }
+
+
             if (_addressQtyList.Count >= MaxRows)
             {
                 MessageBox.Show($"You cannot add more than {MaxRows} rows.");
@@ -68,6 +75,33 @@ namespace SUP
             {
                 MessageBox.Show("Quantity must be a positive integer.");
                 return;
+            }
+
+            List<OBJState> currentlyOwnedObjects = OBJState.GetObjectsOwnedByAddress(txtSignatureAddress.Text, mainnetLogin, mainnetPassword, mainnetURL, mainnetVersionByte);
+
+            // Find the OBJState object that corresponds to the specified address in Creators
+            OBJState objStateForAddress = currentlyOwnedObjects?.FirstOrDefault(obj => obj.Creators.ContainsKey(addressTextBox.Text));
+
+            if (objStateForAddress == null)
+            {
+                MessageBox.Show($"This transaction will likely fail. Signature does not own object.", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                qtyTextBox.Text = "0";
+                return;
+            }
+
+            if (objStateForAddress.Owners.ContainsKey(txtSignatureAddress.Text))
+            {
+                long currentHoldings = objStateForAddress.Owners[txtSignatureAddress.Text].Item1;
+
+                // Calculate the maximum quantity that can be burnt
+                long maxBurnQty = currentHoldings;
+
+                if (qty > maxBurnQty)
+                {
+                    MessageBox.Show($"This transaction will likely fail. Burn Qty exceeds current owner's holdings. Maximum burn allowed: {maxBurnQty}", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    qtyTextBox.Text = maxBurnQty.ToString();
+                    return;
+                }
             }
 
             _addressQtyList.Add((address, qty));

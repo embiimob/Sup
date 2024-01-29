@@ -26,29 +26,36 @@ namespace SUP
         private string mainnetLogin = "good-user";
         private string mainnetPassword = "better-password";
         private string mainnetVersionByte = "111";
-        public ObjectGive(string _address="", string acdtiveprofile = "", bool testnet = true)
+        public ObjectGive(string _address = "", string acdtiveprofile = "", bool testnet = true)
         {
             InitializeComponent();
             givaddress = _address;
             _activeprofile = acdtiveprofile;
 
-            if(!testnet) {
-        mainnetURL = @"http://127.0.0.1:8332";
-       mainnetLogin = "good-user";
-       mainnetPassword = "better-password";
-         mainnetVersionByte = "0";
-    }
+            if (!testnet)
+            {
+                mainnetURL = @"http://127.0.0.1:8332";
+                mainnetLogin = "good-user";
+                mainnetPassword = "better-password";
+                mainnetVersionByte = "0";
+            }
         }
 
         private string GetRandomDelimiter()
         {
             string[] delimiters = { "\\", "/", ":", "*", "?", "\"", "<", ">", "|" };
-          
+
             return delimiters[random.Next(delimiters.Length)];
         }
 
         private void addButton_Click(object sender, EventArgs e)
         {
+            if (_addressQtyList.Any(item => item.Item1 == addressTextBox.Text))
+            {
+                MessageBox.Show($"You cannot give to the same address twice.");
+                return;
+            }
+
             if (_addressQtyList.Count >= MaxRows)
             {
                 MessageBox.Show($"You cannot add more than {MaxRows} rows.");
@@ -67,6 +74,36 @@ namespace SUP
                 MessageBox.Show("Quantity must be a positive integer.");
                 return;
             }
+
+
+            List<OBJState> currentlyOwnedObjects = OBJState.GetObjectsOwnedByAddress(txtSignatureAddress.Text, mainnetLogin, mainnetPassword, mainnetURL, mainnetVersionByte);
+
+            // Find the OBJState object that corresponds to the specified address in Creators
+            OBJState objStateForAddress = currentlyOwnedObjects?.FirstOrDefault(obj => obj.Creators.ContainsKey(givaddress));
+           
+            if (objStateForAddress == null)
+            {
+                MessageBox.Show($"This transaction will likely fail. Signature does not own object.", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                qtyTextBox.Text = "0";
+                return;
+            }
+
+            // Check if the address is found in Creators and if the buy quantity exceeds the maxHold
+            if (objStateForAddress.Owners.ContainsKey(txtSignatureAddress.Text))
+            {
+                long currentHoldings = objStateForAddress.Owners[txtSignatureAddress.Text].Item1;
+
+                // Calculate the maximum quantity that can be bought
+                long maxListQty = currentHoldings;
+
+                if (qty + _addressQtyList.Sum(item => item.Item2) > maxListQty)
+                {
+                    MessageBox.Show($"This transaction will likely fail. List Qty exceeds current owner's holdings. Maximum List allowed: {maxListQty}", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    qtyTextBox.Text = maxListQty.ToString();
+                    return;
+                }
+            }
+
 
             _addressQtyList.Add((address, qty));
             addressQtyDataGridView.Rows.Add(address, qty);
@@ -116,7 +153,7 @@ namespace SUP
             var newdictionary = new List<List<string>>();
             List<string> encodedList = new List<string>();
             int givOrder = 2;
-   
+
             foreach (var (address, qty) in _addressQtyList)
             {
                 if (!dictionary.ContainsKey(address))
@@ -182,13 +219,13 @@ namespace SUP
 
                 txtOBJP2FK.Text = "SIG" + GetRandomDelimiter() + "88" + GetRandomDelimiter() + signature + txtOBJP2FK.Text;
 
-                
+
                 for (int i = 0; i < txtOBJP2FK.Text.Length; i += 20)
                 {
                     string chunk = txtOBJP2FK.Text.Substring(i, Math.Min(20, txtOBJP2FK.Text.Length - i));
                     if (chunk.Any())
                     {
-                        encodedList.Add(Root.GetPublicAddressByKeyword(chunk,mainnetVersionByte));
+                        encodedList.Add(Root.GetPublicAddressByKeyword(chunk, mainnetVersionByte));
                     }
                 }
 
@@ -196,9 +233,9 @@ namespace SUP
                 {
                     encodedList.Add(address);
                 }
-       
+
                 encodedList.Add(txtObjectAddress.Text);
-                encodedList.Add(signatureAddress); 
+                encodedList.Add(signatureAddress);
                 txtAddressListJSON.Text = JsonConvert.SerializeObject(encodedList.Distinct());
 
                 lblCost.Text = "cost: " + (0.00000546 * encodedList.Count).ToString("0.00000000") + "  + miner fee";
