@@ -206,7 +206,7 @@ namespace SUP
                     dgTransactions.Rows.Add(rowData);
                 }
                 catch { }
-                    dgTransactions.AutoResizeRows();
+                dgTransactions.AutoResizeRows();
                 dgTransactions.AutoResizeColumns();
 
                 totalbytes = root.TotalByteSize;
@@ -630,11 +630,6 @@ namespace SUP
             {
                 try { System.IO.Directory.Delete(@"root\" + txtTransactionId.Text, true); } catch { }
 
-
-                Root P2FKRoot = new Root();
-                P2FKRoot.Confirmations = 1;
-                var rootSerialized = JsonConvert.SerializeObject(P2FKRoot);
-                System.IO.File.WriteAllText(@"root\" + txtTransactionId.Text + @"\" + "ROOT.json", rootSerialized);
             }
 
         }
@@ -1146,7 +1141,7 @@ namespace SUP
             DisplayRootJSON(new JObject[] { JObject.FromObject(Tester) });
         }
 
-   
+
     }
 }
 

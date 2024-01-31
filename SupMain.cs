@@ -5725,10 +5725,13 @@ namespace SUP
             bool isprivate = false;
             if (btnPrivateMessage.BackColor == Color.Blue) { isprivate = true; }
 
-            DiscoBall disco = new DiscoBall(profileOwner.Tag.ToString(), profileOwner.ImageLocation, ownerId, imageLocation, isprivate);
-            disco.StartPosition = FormStartPosition.CenterScreen;
-            disco.Show(this);
-            disco.Focus();
+            if (profileOwner.Tag != null) {
+                DiscoBall disco = new DiscoBall(profileOwner.Tag.ToString(), profileOwner.ImageLocation, ownerId, imageLocation, isprivate);
+                disco.StartPosition = FormStartPosition.CenterScreen;
+                disco.Show(this);
+                disco.Focus();
+            }
+           
 
         }
 
