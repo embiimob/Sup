@@ -2673,32 +2673,10 @@ namespace SUP.P2FK
                                         colstate.Name = activeProfile.DisplayName;
                                     }
 
+                                    objectStates.Add(colstate);
                                 }
-                                else
-                                {
-                                    colstate.Name = objectstate.Creators.ElementAt(1).Key;
-                                    Random rnd = new Random();
-                                    string[] gifFiles = Directory.GetFiles("includes", "*.gif");
-                                    if (gifFiles.Length > 0)
-                                    {
-                                        int randomIndex = rnd.Next(gifFiles.Length);
-                                        string randomGifFile = gifFiles[randomIndex];
-                                        colstate.Image = randomGifFile;
-
-                                    }
-                                    else
-                                    {
-                                        try
-                                        {
-
-                                            colstate.Image = @"includes\HugPuddle.jpg";
-                                        }
-                                        catch { }
-                                    }
-                                }
-
-
-                                objectStates.Add(colstate);
+                                
+                               
                             }
                         }
                     }
@@ -2730,32 +2708,10 @@ namespace SUP.P2FK
                                         colstate.Name = activeProfile.DisplayName;
                                     }
 
+                                    objectStates.Add(colstate);
                                 }
-                                else
-                                {
-                                    colstate.Name = objectstate.Creators.ElementAt(1).Key;
-                                    Random rnd = new Random();
-                                    string[] gifFiles = Directory.GetFiles("includes", "*.gif");
-                                    if (gifFiles.Length > 0)
-                                    {
-                                        int randomIndex = rnd.Next(gifFiles.Length);
-                                        string randomGifFile = gifFiles[randomIndex];
-                                        colstate.Image = randomGifFile;
-
-                                    }
-                                    else
-                                    {
-                                        try
-                                        {
-
-                                            colstate.Image = @"includes\HugPuddle.jpg";
-                                        }
-                                        catch { }
-                                    }
-                                }
-
-
-                                objectStates.Add(colstate);
+                               
+                              
                             }
                         }
 

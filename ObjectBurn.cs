@@ -103,7 +103,7 @@ namespace SUP
                     return;
                 }
             }
-
+            btnBurn.Enabled = true;
             _addressQtyList.Add((address, qty));
             addressQtyDataGridView.Rows.Add(address, qty);
 

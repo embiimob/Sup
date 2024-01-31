@@ -134,6 +134,7 @@
             // 
             // btnGive
             // 
+            this.btnGive.Enabled = false;
             this.btnGive.Font = new System.Drawing.Font("Segoe UI Emoji", 13.8F);
             this.btnGive.Location = new System.Drawing.Point(394, 593);
             this.btnGive.Name = "btnGive";

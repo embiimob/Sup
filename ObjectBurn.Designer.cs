@@ -134,6 +134,7 @@
             // btnBurn
             // 
             this.btnBurn.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.btnBurn.Enabled = false;
             this.btnBurn.Font = new System.Drawing.Font("Segoe UI Emoji", 13.8F);
             this.btnBurn.Location = new System.Drawing.Point(392, 580);
             this.btnBurn.Name = "btnBurn";

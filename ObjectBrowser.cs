@@ -1824,7 +1824,7 @@ namespace SUP
                             string imgurn = "";
                             imgurn = objstate.Image;
 
-                            if (!objstate.Image.ToLower().StartsWith("http"))
+                            if (objstate.Image != null && !objstate.Image.ToLower().StartsWith("http"))
                             {
                                 imgurn = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + @"\root\" + objstate.Image.Replace("BTC:", "").Replace("MZC:", "").Replace("LTC:", "").Replace("DOG:", "").Replace("IPFS:", "").Replace(@"/", @"\");
                                 if (objstate.Image.ToLower().StartsWith("ipfs:")) { imgurn = imgurn.Replace(@"\root\", @"\ipfs\"); if (objstate.Image.Length == 51) { imgurn += @"\artifact"; } }

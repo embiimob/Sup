@@ -104,7 +104,7 @@ namespace SUP
                 }
             }
 
-
+            btnGive.Enabled = true;
             _addressQtyList.Add((address, qty));
             addressQtyDataGridView.Rows.Add(address, qty);
 

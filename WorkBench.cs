@@ -28,10 +28,9 @@ namespace SUP
             string walletUsername = txtLogin.Text;
             string walletPassword = txtPassword.Text;
             NetworkCredential credentials = new NetworkCredential(walletUsername, walletPassword);
-            NBitcoin.RPC.RPCClient rpcClient = new NBitcoin.RPC.RPCClient(credentials, new Uri(walletUrl), NBitcoin.Network.Main);
-
             try
             {
+                NBitcoin.RPC.RPCClient rpcClient = new NBitcoin.RPC.RPCClient(credentials, new Uri(walletUrl), NBitcoin.Network.Main);
                 txtbalance.Text = rpcClient.GetBalance().ToString();
             }
             catch (Exception ex)

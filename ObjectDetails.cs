@@ -1117,7 +1117,7 @@ namespace SUP
                                         string html = "";
                                         WebClient client = new WebClient();
                                         // Create a WebClient object to fetch the webpage
-                                        if (!content.ToLower().EndsWith(".zip"))
+                                        if (!content.ToLower().EndsWith("index.zip"))
                                         {
                                             html = client.DownloadString(content.StripLeadingTrailingSpaces());
                                         }
@@ -3219,286 +3219,299 @@ namespace SUP
                     case ".html":
                     case ".zip":
 
-
-                        if (isWWW == false)
-                        {
-                            chkRunTrustedObject.Visible = true;
-                            flowPanel.Visible = false;
-                            flowPanel.Controls.Clear();
-
-                            string htmlembed = "<html><body><embed src=\"" + urn + "\" width=100% height=100%></body></html>";
-                            string potentialyUnsafeHtml = "";
-
-                            try
+                        if (extension.ToLower() == ".htm" || extension.ToLower() == ".html" || Path.GetFileName(urn).ToLower() == "index.zip") {
+                            if (isWWW == false)
                             {
-                                potentialyUnsafeHtml = System.IO.File.ReadAllText(urn);
+                                chkRunTrustedObject.Visible = true;
+                                flowPanel.Visible = false;
+                                flowPanel.Controls.Clear();
 
-                            }
-                            catch { }
+                                string htmlembed = "<html><body><embed src=\"" + urn + "\" width=100% height=100%></body></html>";
+                                string potentialyUnsafeHtml = "";
 
-
-                            if (chkRunTrustedObject.Checked)
-                            {
-                                lblWarning.Visible = false;
                                 try
                                 {
-                                    if (Path.GetFileName(urn).ToLower() != "index.zip")
-                                    {
-                                        try { System.IO.Directory.Delete(Path.GetDirectoryName(urn), true); } catch { }
-                                    }
+                                    potentialyUnsafeHtml = System.IO.File.ReadAllText(urn);
 
-                                    switch (objstate.URN.Substring(0, 4))
-                                    {
-                                        case "MZC:":
-                                            if (!System.IO.Directory.Exists(@"root/" + transactionid))
-                                            {
-                                                Root.GetRootByTransactionId(transactionid, "good-user", "better-password", @"http://127.0.0.1:12832", "50");
-                                            }
-                                            break;
-                                        case "BTC:":
-                                            if (!System.IO.Directory.Exists(@"root/" + transactionid))
-                                            {
-                                                Root.GetRootByTransactionId(transactionid, "good-user", "better-password", @"http://127.0.0.1:8332", "0");
-                                            }
-                                            break;
-                                        case "LTC:":
-                                            if (!System.IO.Directory.Exists(@"root/" + transactionid))
-                                            {
-                                                Root.GetRootByTransactionId(transactionid, "good-user", "better-password", @"http://127.0.0.1:9332", "48");
-                                            }
-                                            break;
-                                        case "DOG:":
-                                            if (!System.IO.Directory.Exists(@"root/" + transactionid))
-                                            {
-                                                Root.GetRootByTransactionId(transactionid, "good-user", "better-password", @"http://127.0.0.1:22555", "30");
-                                            }
-                                            break;
-                                        case "IPFS":
-                                            ipfsurn = urn;
-
-                                            if (Path.GetFileName(urn).ToLower() != "index.zip")
-                                            {
-                                                if (!System.IO.Directory.Exists(@"ipfs/" + objstate.URN.Substring(5, 46) + "-build"))
-                                                {
-
-                                                    Directory.CreateDirectory(@"ipfs/" + objstate.URN.Substring(5, 46) + "-build");
-                                                    Process process2 = new Process();
-                                                    process2.StartInfo.FileName = @"ipfs\ipfs.exe";
-                                                    process2.StartInfo.Arguments = "get " + objstate.URN.Substring(5, 46) + @" -o ipfs\" + objstate.URN.Substring(5, 46);
-                                                    process2.StartInfo.CreateNoWindow = true;
-                                                    process2.Start();
-                                                    process2.WaitForExit();
-
-                                                    if (System.IO.File.Exists("ipfs/" + objstate.URN.Substring(5, 46)))
-                                                    {
-                                                        System.IO.File.Move("ipfs/" + objstate.URN.Substring(5, 46), "ipfs/" + objstate.URN.Substring(5, 46) + "_tmp");
-
-                                                        string fileName = objstate.URN.Replace(@"//", "").Replace(@"\\", "").Substring(51);
-                                                        if (fileName == "")
-                                                        {
-                                                            fileName = "artifact";
-                                                        }
-                                                        else { fileName = fileName.Replace(@"/", "").Replace(@"\", ""); }
-                                                        try { Directory.CreateDirectory(@"ipfs/" + objstate.URN.Substring(5, 46)); } catch { }
-                                                        try { System.IO.File.Move("ipfs/" + objstate.URN.Substring(5, 46) + "_tmp", ipfsurn); } catch { }
-                                                    }
-
-                                                    try
-                                                    {
-                                                        if (File.Exists("IPFS_PINNING_ENABLED"))
-                                                        {
-                                                            Process process3 = new Process
-                                                            {
-                                                                StartInfo = new ProcessStartInfo
-                                                                {
-                                                                    FileName = @"ipfs\ipfs.exe",
-                                                                    Arguments = "pin add " + objstate.URN.Substring(5, 46),
-                                                                    UseShellExecute = false,
-                                                                    CreateNoWindow = true
-                                                                }
-                                                            };
-                                                            process3.Start();
-                                                        }
-                                                    }
-                                                    catch { }
-
-                                                    Directory.Delete(@"ipfs/" + objstate.URN.Substring(5, 46) + "-build");
+                                }
+                                catch { }
 
 
-                                                }
-                                            }
-
-                                            break;
-                                        default:
-                                            if (!System.IO.Directory.Exists(@"root/" + transactionid))
-                                            {
-                                                Root.GetRootByTransactionId(transactionid, mainnetLogin, mainnetPassword, mainnetURL, mainnetVersionByte);
-                                            }
-                                            break;
-                                    }
-
-                                    if (Path.GetFileName(urn).ToLower() == "index.zip")
-                                    {
-                                        string destinationFolder = Path.GetDirectoryName(urn);
-
-                                        // Check if index.html is not present
-                                        string indexPath = Path.Combine(destinationFolder, "index.html");
-                                        if (!File.Exists(indexPath))
-                                        {
-                                            // Unzip the contents of index.zip to the same folder using System.IO.Compression.ZipFile
-                                            try
-                                            {
-                                                ZipFile.ExtractToDirectory(urn, destinationFolder);
-                                            }
-                                            catch (Exception ex)
-                                            {
-                                                MessageBox.Show("Error extracting zip file: " + ex.Message);
-                                                return;
-                                            }
-                                        }
-
-                                        // Update urn to reference index.html
-                                        urn = indexPath;
-                                    }
-
+                                if (chkRunTrustedObject.Checked)
+                                {
+                                    lblWarning.Visible = false;
                                     try
                                     {
-                                        if (Uri.TryCreate(urn, UriKind.Absolute, out Uri uri) && uri.Scheme == Uri.UriSchemeHttp)
+                                        if (Path.GetFileName(urn).ToLower() != "index.zip")
                                         {
-                                            using (var client = new WebClient())
-                                            {
-                                                potentialyUnsafeHtml = client.DownloadString(uri);
-                                                System.Security.Cryptography.SHA256 mySHA256 = SHA256Managed.Create();
-                                                byte[] hashValue = mySHA256.ComputeHash(Encoding.UTF8.GetBytes(potentialyUnsafeHtml));
-                                                urn = @"root\" + BitConverter.ToString(hashValue).Replace("-", String.Empty) + @"\index.html";
-                                            }
-
+                                            try { System.IO.Directory.Delete(Path.GetDirectoryName(urn), true); } catch { }
                                         }
-                                        else
-                                        {
-                                            potentialyUnsafeHtml = System.IO.File.ReadAllText(urn);
-                                        }
-                                    }
-                                    catch { }
-
-                                    var matches = regexTransactionId.Matches(potentialyUnsafeHtml);
-                                    foreach (Match transactionID in matches)
-                                    {
 
                                         switch (objstate.URN.Substring(0, 4))
                                         {
                                             case "MZC:":
-                                                if (!System.IO.Directory.Exists(@"root/" + transactionID.Value))
+                                                if (!System.IO.Directory.Exists(@"root/" + transactionid))
                                                 {
-                                                   
-                                                        Root.GetRootByTransactionId(transactionID.Value, "good-user", "better-password", @"http://127.0.0.1:12832", "50");
-                                                    
+                                                    Root.GetRootByTransactionId(transactionid, "good-user", "better-password", @"http://127.0.0.1:12832", "50");
                                                 }
                                                 break;
                                             case "BTC:":
-                                                if (!System.IO.Directory.Exists(@"root/" + transactionID.Value))
+                                                if (!System.IO.Directory.Exists(@"root/" + transactionid))
                                                 {
-                                                   
-                                                        Root.GetRootByTransactionId(transactionID.Value, "good-user", "better-password", @"http://127.0.0.1:8332", "0");
-                                                    
+                                                    Root.GetRootByTransactionId(transactionid, "good-user", "better-password", @"http://127.0.0.1:8332", "0");
                                                 }
                                                 break;
                                             case "LTC:":
-                                                if (!System.IO.Directory.Exists(@"root/" + transactionID.Value))
+                                                if (!System.IO.Directory.Exists(@"root/" + transactionid))
                                                 {
-                                                   
-                                                        Root.GetRootByTransactionId(transactionID.Value, "good-user", "better-password", @"http://127.0.0.1:9332", "48");
-                                                   
+                                                    Root.GetRootByTransactionId(transactionid, "good-user", "better-password", @"http://127.0.0.1:9332", "48");
                                                 }
                                                 break;
                                             case "DOG:":
-                                                if (!System.IO.Directory.Exists(@"root/" + transactionID.Value))
+                                                if (!System.IO.Directory.Exists(@"root/" + transactionid))
                                                 {
-                                                   
-                                                        Root.GetRootByTransactionId(transactionID.Value, "good-user", "better-password", @"http://127.0.0.1:22555", "30");
-                                                    
+                                                    Root.GetRootByTransactionId(transactionid, "good-user", "better-password", @"http://127.0.0.1:22555", "30");
                                                 }
                                                 break;
-                                            default:
-                                                if (!System.IO.Directory.Exists(@"root/" + transactionID.Value))
+                                            case "IPFS":
+                                                ipfsurn = urn;
+
+                                                if (Path.GetFileName(urn).ToLower() != "index.zip")
                                                 {
-                                                    
-                                                        Root.GetRootByTransactionId(transactionID.Value, mainnetLogin, mainnetPassword, mainnetURL, mainnetVersionByte);
-                                                   
+                                                    if (!System.IO.Directory.Exists(@"ipfs/" + objstate.URN.Substring(5, 46) + "-build"))
+                                                    {
+
+                                                        Directory.CreateDirectory(@"ipfs/" + objstate.URN.Substring(5, 46) + "-build");
+                                                        Process process2 = new Process();
+                                                        process2.StartInfo.FileName = @"ipfs\ipfs.exe";
+                                                        process2.StartInfo.Arguments = "get " + objstate.URN.Substring(5, 46) + @" -o ipfs\" + objstate.URN.Substring(5, 46);
+                                                        process2.StartInfo.CreateNoWindow = true;
+                                                        process2.Start();
+                                                        process2.WaitForExit();
+
+                                                        if (System.IO.File.Exists("ipfs/" + objstate.URN.Substring(5, 46)))
+                                                        {
+                                                            System.IO.File.Move("ipfs/" + objstate.URN.Substring(5, 46), "ipfs/" + objstate.URN.Substring(5, 46) + "_tmp");
+
+                                                            string fileName = objstate.URN.Replace(@"//", "").Replace(@"\\", "").Substring(51);
+                                                            if (fileName == "")
+                                                            {
+                                                                fileName = "artifact";
+                                                            }
+                                                            else { fileName = fileName.Replace(@"/", "").Replace(@"\", ""); }
+                                                            try { Directory.CreateDirectory(@"ipfs/" + objstate.URN.Substring(5, 46)); } catch { }
+                                                            try { System.IO.File.Move("ipfs/" + objstate.URN.Substring(5, 46) + "_tmp", ipfsurn); } catch { }
+                                                        }
+
+                                                        try
+                                                        {
+                                                            if (File.Exists("IPFS_PINNING_ENABLED"))
+                                                            {
+                                                                Process process3 = new Process
+                                                                {
+                                                                    StartInfo = new ProcessStartInfo
+                                                                    {
+                                                                        FileName = @"ipfs\ipfs.exe",
+                                                                        Arguments = "pin add " + objstate.URN.Substring(5, 46),
+                                                                        UseShellExecute = false,
+                                                                        CreateNoWindow = true
+                                                                    }
+                                                                };
+                                                                process3.Start();
+                                                            }
+                                                        }
+                                                        catch { }
+
+                                                        Directory.Delete(@"ipfs/" + objstate.URN.Substring(5, 46) + "-build");
+
+
+                                                    }
+                                                }
+
+                                                break;
+                                            default:
+                                                if (!System.IO.Directory.Exists(@"root/" + transactionid))
+                                                {
+                                                    Root.GetRootByTransactionId(transactionid, mainnetLogin, mainnetPassword, mainnetURL, mainnetVersionByte);
                                                 }
                                                 break;
                                         }
 
-                                    }
+                                        if (Path.GetFileName(urn).ToLower() == "index.zip")
+                                        {
+                                            string destinationFolder = Path.GetDirectoryName(urn);
 
-                                    string _address = _objectaddress;
-                                    string _transactionid = objstate.TransactionId;
-                                    _genid = objstate.TransactionId;
+                                            // Check if index.html is not present
+                                            string indexPath = Path.Combine(destinationFolder, "index.html");
+                                            if (!File.Exists(indexPath))
+                                            {
+                                                // Unzip the contents of index.zip to the same folder using System.IO.Compression.ZipFile
+                                                try
+                                                {
+                                                    ZipFile.ExtractToDirectory(urn, destinationFolder);
+                                                }
+                                                catch (Exception ex)
+                                                {
+                                                    MessageBox.Show("Error extracting zip file: " + ex.Message);
+                                                    return;
+                                                }
+                                            }
 
-                                    if (objstate.Owners.TryGetValue(_activeprofile, out var tupl))
-                                                { _genid = tupl.Item2;}
-                                    string _viewer = _activeprofile;
-                                    string _viewername = null;
-                                    if (!string.IsNullOrEmpty(_activeprofile))
-                                    {
-                                        PROState profile = PROState.GetProfileByAddress(_activeprofile, mainnetLogin, mainnetPassword, mainnetURL, mainnetVersionByte);
-                                        if (profile.URN != null) { _viewername = HttpUtility.UrlEncode(profile.URN); }
-                                    }
-                                    string _creator = objstate.Creators.Last().Key;
-                                    string _owner = objstate.Owners.Last().Key;
-                                    string _ownername = null;
-                                    if (_owner != "")
-                                    {
-                                        PROState profile = PROState.GetProfileByAddress(_owner, mainnetLogin, mainnetPassword, mainnetURL, mainnetVersionByte);
-                                        if (profile.URN != null) { _ownername = HttpUtility.UrlEncode(profile.URN); }
-                                    }
-                                    string _urn = HttpUtility.UrlEncode(objstate.URN);
-                                    string _uri = HttpUtility.UrlEncode(objstate.URI);
-                                    string _img = HttpUtility.UrlEncode(objstate.Image);
+                                            // Update urn to reference index.html
+                                            urn = indexPath;
+                                        }
 
-                                    string querystring = "?address=" + _address + "&viewer=" + _viewer + "&viewername=" + _viewername + "&creator=" + _creator + "&owner=" + _owner + "&ownername=" + _ownername + "&urn=" + _urn + "&uri=" + _uri + "&img=" + _img + "&transactionid=" + _transactionid + "&genid=" + _genid;
-                                    htmlembed = "<html><body><embed src=\"" + urn + querystring + "\" width=100% height=100%></body></html>";
+                                        try
+                                        {
+                                            if (Uri.TryCreate(urn, UriKind.Absolute, out Uri uri) && uri.Scheme == Uri.UriSchemeHttp)
+                                            {
+                                                using (var client = new WebClient())
+                                                {
+                                                    potentialyUnsafeHtml = client.DownloadString(uri);
+                                                    System.Security.Cryptography.SHA256 mySHA256 = SHA256Managed.Create();
+                                                    byte[] hashValue = mySHA256.ComputeHash(Encoding.UTF8.GetBytes(potentialyUnsafeHtml));
+                                                    urn = @"root\" + BitConverter.ToString(hashValue).Replace("-", String.Empty) + @"\index.html";
+                                                }
+
+                                            }
+                                            else
+                                            {
+                                                potentialyUnsafeHtml = System.IO.File.ReadAllText(urn);
+                                            }
+                                        }
+                                        catch { }
+
+                                        var matches = regexTransactionId.Matches(potentialyUnsafeHtml);
+                                        foreach (Match transactionID in matches)
+                                        {
+
+                                            switch (objstate.URN.Substring(0, 4))
+                                            {
+                                                case "MZC:":
+                                                    if (!System.IO.Directory.Exists(@"root/" + transactionID.Value))
+                                                    {
+
+                                                        Root.GetRootByTransactionId(transactionID.Value, "good-user", "better-password", @"http://127.0.0.1:12832", "50");
+
+                                                    }
+                                                    break;
+                                                case "BTC:":
+                                                    if (!System.IO.Directory.Exists(@"root/" + transactionID.Value))
+                                                    {
+
+                                                        Root.GetRootByTransactionId(transactionID.Value, "good-user", "better-password", @"http://127.0.0.1:8332", "0");
+
+                                                    }
+                                                    break;
+                                                case "LTC:":
+                                                    if (!System.IO.Directory.Exists(@"root/" + transactionID.Value))
+                                                    {
+
+                                                        Root.GetRootByTransactionId(transactionID.Value, "good-user", "better-password", @"http://127.0.0.1:9332", "48");
+
+                                                    }
+                                                    break;
+                                                case "DOG:":
+                                                    if (!System.IO.Directory.Exists(@"root/" + transactionID.Value))
+                                                    {
+
+                                                        Root.GetRootByTransactionId(transactionID.Value, "good-user", "better-password", @"http://127.0.0.1:22555", "30");
+
+                                                    }
+                                                    break;
+                                                default:
+                                                    if (!System.IO.Directory.Exists(@"root/" + transactionID.Value))
+                                                    {
+
+                                                        Root.GetRootByTransactionId(transactionID.Value, mainnetLogin, mainnetPassword, mainnetURL, mainnetVersionByte);
+
+                                                    }
+                                                    break;
+                                            }
+
+                                        }
+
+                                        string _address = _objectaddress;
+                                        string _transactionid = objstate.TransactionId;
+                                        _genid = objstate.TransactionId;
+
+                                        if (objstate.Owners.TryGetValue(_activeprofile, out var tupl))
+                                        { _genid = tupl.Item2; }
+                                        string _viewer = _activeprofile;
+                                        string _viewername = null;
+                                        if (!string.IsNullOrEmpty(_activeprofile))
+                                        {
+                                            PROState profile = PROState.GetProfileByAddress(_activeprofile, mainnetLogin, mainnetPassword, mainnetURL, mainnetVersionByte);
+                                            if (profile.URN != null) { _viewername = HttpUtility.UrlEncode(profile.URN); }
+                                        }
+                                        string _creator = objstate.Creators.Last().Key;
+                                        string _owner = objstate.Owners.Last().Key;
+                                        string _ownername = null;
+                                        if (_owner != "")
+                                        {
+                                            PROState profile = PROState.GetProfileByAddress(_owner, mainnetLogin, mainnetPassword, mainnetURL, mainnetVersionByte);
+                                            if (profile.URN != null) { _ownername = HttpUtility.UrlEncode(profile.URN); }
+                                        }
+                                        string _urn = HttpUtility.UrlEncode(objstate.URN);
+                                        string _uri = HttpUtility.UrlEncode(objstate.URI);
+                                        string _img = HttpUtility.UrlEncode(objstate.Image);
+
+                                        string querystring = "?address=" + _address + "&viewer=" + _viewer + "&viewername=" + _viewername + "&creator=" + _creator + "&owner=" + _owner + "&ownername=" + _ownername + "&urn=" + _urn + "&uri=" + _uri + "&img=" + _img + "&transactionid=" + _transactionid + "&genid=" + _genid;
+                                        htmlembed = "<html><body><embed src=\"" + urn + querystring + "\" width=100% height=100%></body></html>";
+
+
+                                    }
+                                    catch { }
+
 
 
                                 }
-                                catch { }
-
-
-
-                            }
-                            else
-                            {
-                                lblWarning.Visible = true;
-
-                                if (Path.GetFileName(urn).ToLower() != "index.zip")
+                                else
                                 {
-                                    var sanitizer = new HtmlSanitizer();
-                                    var sanitized = sanitizer.Sanitize(potentialyUnsafeHtml);
-                                    try { System.IO.File.WriteAllText(urn, sanitized, System.Text.Encoding.UTF8); } catch { }
+                                    lblWarning.Visible = true;
+
+                                    if (Path.GetFileName(urn).ToLower() != "index.zip")
+                                    {
+                                        var sanitizer = new HtmlSanitizer();
+                                        var sanitized = sanitizer.Sanitize(potentialyUnsafeHtml);
+                                        try { System.IO.File.WriteAllText(urn, sanitized, System.Text.Encoding.UTF8); } catch { }
+                                    }
                                 }
-                            }
 
-                            try
-                            {
-                                System.IO.File.WriteAllText(Path.GetDirectoryName(urn) + @"\urnviewer.html", htmlembed);
-                                if (btnOfficial.Visible == false) { btnLaunchURN.Visible = true; }
-
-                                await webviewer.EnsureCoreWebView2Async();
-                                webviewer.CoreWebView2.Navigate(Path.GetDirectoryName(urn) + @"\urnviewer.html");
-                            }
-                            catch
-                            {
-                                Thread.Sleep(500);
                                 try
                                 {
+                                    System.IO.File.WriteAllText(Path.GetDirectoryName(urn) + @"\urnviewer.html", htmlembed);
+                                    if (btnOfficial.Visible == false) { btnLaunchURN.Visible = true; }
+
                                     await webviewer.EnsureCoreWebView2Async();
                                     webviewer.CoreWebView2.Navigate(Path.GetDirectoryName(urn) + @"\urnviewer.html");
                                 }
-                                catch { }
-                            }
+                                catch
+                                {
+                                    Thread.Sleep(500);
+                                    try
+                                    {
+                                        await webviewer.EnsureCoreWebView2Async();
+                                        webviewer.CoreWebView2.Navigate(Path.GetDirectoryName(urn) + @"\urnviewer.html");
+                                    }
+                                    catch { }
+                                }
 
+                            }
+                        } else
+                        {
+                            pictureBox1.Invoke(new Action(() => pictureBox1.ImageLocation = imgurn));
+
+                            if (btnOfficial.Visible == false)
+                            {
+                                btnLaunchURN.Visible = true;
+                                lblWarning.Visible = true;
+                            }
+                                                      
                         }
-                        break;
+
+                            break;
+                        
                     default:
 
                         pictureBox1.Invoke(new Action(() => pictureBox1.ImageLocation = imgurn));

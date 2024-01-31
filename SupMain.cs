@@ -5365,6 +5365,7 @@ namespace SUP
                     Margin = new System.Windows.Forms.Padding(0)
 
                 };
+                picture.Click += (sender, e) => { profileImageClick(ownerId); };
                 row.Controls.Add(picture, 0, 0);
                 pictures.Add(picture);
             }
@@ -5406,7 +5407,7 @@ namespace SUP
                 AutoSize = true
 
             };
-            owner.LinkClicked += (sender, e) => { Owner_LinkClicked(ownerId); };
+            owner.LinkClicked += (sender, e) => { Owner_LinkClicked(ownerId, imageLocation); };
             owner.Font = new System.Drawing.Font("Microsoft Sans Serif", 7.7F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             owner.Margin = new System.Windows.Forms.Padding(3);
             owner.Dock = DockStyle.Bottom;
@@ -5576,6 +5577,8 @@ namespace SUP
                     Margin = new System.Windows.Forms.Padding(0),
 
                 };
+
+                picture.Click += (sender, e) => { profileImageClick(ownerId); };
                 row.Controls.Add(picture, 0, 0);
                 pictures.Add(picture);
             }
@@ -5617,7 +5620,7 @@ namespace SUP
                 AutoSize = true
 
             };
-            owner.LinkClicked += (sender, e) => { Owner_LinkClicked(ownerId); };
+            owner.LinkClicked += (sender, e) => { Owner_LinkClicked(ownerId, imageLocation); };
             owner.Font = new System.Drawing.Font("Microsoft Sans Serif", 7.7F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             owner.Margin = new System.Windows.Forms.Padding(3);
             owner.Dock = DockStyle.Bottom;
@@ -5717,7 +5720,19 @@ namespace SUP
 
         }
 
-        void Owner_LinkClicked(string ownerId)
+        void Owner_LinkClicked(string ownerId, string imageLocation)
+        {
+            bool isprivate = false;
+            if (btnPrivateMessage.BackColor == Color.Blue) { isprivate = true; }
+
+            DiscoBall disco = new DiscoBall(profileOwner.Tag.ToString(), profileOwner.ImageLocation, ownerId, imageLocation, isprivate);
+            disco.StartPosition = FormStartPosition.CenterScreen;
+            disco.Show(this);
+            disco.Focus();
+
+        }
+
+        void profileImageClick(string ownerId)
         {
             numMessagesDisplayed = 0;
             numPrivateMessagesDisplayed = 0;
@@ -5726,6 +5741,7 @@ namespace SUP
             MakeActiveProfile(ownerId);
             RefreshSupMessages();
         }
+
 
         void Attachment_Clicked(string path)
         {
