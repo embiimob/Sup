@@ -72,7 +72,7 @@ namespace SUP
             selectSort.SelectedIndex = 0;
 
 
-            if (_objectaddress.Length > 0)
+            if (!string.IsNullOrEmpty(_objectaddress))
             {
                 txtSearchAddress.Text = _objectaddress;
                 txtLast.Text = "0";
@@ -192,6 +192,15 @@ namespace SUP
 
                     }
                     createdObjects = OBJState.GetObjectsCreatedByAddress(profileCheck, mainnetLogin, mainnetPassword, mainnetURL, mainnetVersionByte, 0, -1);
+                    if (searchprofile.URN != null || createdObjects.Count > 0 || txtSearchAddress.Text.StartsWith("#"))
+                    {
+                        this.Invoke((Action)(() =>
+                        {
+                        profileURN.Links[0].LinkData = profileCheck;
+                        profileURN.LinkColor = System.Drawing.SystemColors.Highlight;
+                        profileURN.Text = txtSearchAddress.Text;
+                        }));
+                    }
 
                 }
                 else if (btnOwned.BackColor == Color.Yellow && txtSearchAddress.Text != "")
@@ -219,6 +228,15 @@ namespace SUP
 
                     }
                     createdObjects = OBJState.GetObjectsOwnedByAddress(profileCheck, mainnetLogin, mainnetPassword, mainnetURL, mainnetVersionByte, 0, -1);
+                    if (searchprofile.URN != null || createdObjects.Count > 0 || txtSearchAddress.Text.StartsWith("#"))
+                    {
+                        this.Invoke((Action)(() =>
+                        {
+                            profileURN.Links[0].LinkData = profileCheck;
+                            profileURN.LinkColor = System.Drawing.SystemColors.Highlight;
+                            profileURN.Text = txtSearchAddress.Text;
+                        }));
+                    }
 
                 }
                 else
@@ -235,7 +253,12 @@ namespace SUP
 
                         }
                         createdObjects = OBJState.GetFoundObjects(mainnetLogin, mainnetPassword, mainnetURL, mainnetVersionByte, calculate);
-
+                        this.Invoke((Action)(() =>
+                        {
+                            profileURN.Links[0].LinkData = "";
+                            profileURN.LinkColor = System.Drawing.SystemColors.Highlight;
+                            profileURN.Text = "anon";
+                        }));
 
                     }
                     else
@@ -359,7 +382,7 @@ namespace SUP
                     if (createdObjects.Count == 1 && createdObjects[0].Owners == null) { return; }
 
                     flowLayoutPanel1.SuspendLayout();
-                    pages.Maximum = createdObjects.Count - 1;
+                    pages.Maximum = Math.Max(0, createdObjects.Count - 1);
                     txtTotal.Text = (createdObjects.Count).ToString();
                     pages.Visible = true;             
 
@@ -1803,7 +1826,7 @@ namespace SUP
             {
                 this.Invoke((Action)(() =>
                 {
-                    pages.Maximum = createdObjects.Count - 1;
+                    pages.Maximum = Math.Max(0, createdObjects.Count - 1);
                     txtTotal.Text = (createdObjects.Count).ToString();
                     pages.Visible = true;
 
@@ -2810,12 +2833,13 @@ namespace SUP
 
             if (e.KeyCode == Keys.Enter)
             {
-                if (txtSearchAddress.Text == "" || txtSearchAddress.Text.StartsWith("#") || txtSearchAddress.Text.ToUpper().StartsWith("SUP:") || txtSearchAddress.Text.ToUpper().StartsWith("HTTP") || txtSearchAddress.Text.ToUpper().StartsWith("BTC:") || txtSearchAddress.Text.ToUpper().StartsWith("MZC:") || txtSearchAddress.Text.ToUpper().StartsWith("LTC:") || txtSearchAddress.Text.ToUpper().StartsWith("DOG:") || txtSearchAddress.Text.ToUpper().StartsWith("IPFS:")) { btnCreated.BackColor = Color.White; btnOwned.BackColor = Color.White; }
+                if (txtSearchAddress.Text == "" || txtSearchAddress.Text.StartsWith("#") || txtSearchAddress.Text.ToUpper().StartsWith("SUP:") || txtSearchAddress.Text.ToUpper().StartsWith("HTTP") || txtSearchAddress.Text.ToUpper().StartsWith("BTC:") || txtSearchAddress.Text.ToUpper().StartsWith("MZC:") || txtSearchAddress.Text.ToUpper().StartsWith("LTC:") || txtSearchAddress.Text.ToUpper().StartsWith("DOG:") || txtSearchAddress.Text.ToUpper().StartsWith("IPFS:")) { btnCreated.BackColor = Color.White; btnOwned.BackColor = Color.White;}
                 profileURN.Text = "";
                 e.Handled = true;
                 e.SuppressKeyPress = true;
                 DisableSupInput();
-                pages.Maximum = 0; pages.Value = 0;
+                pages.Maximum = 0;
+                pages.Value = 0;
                 txtLast.Text = "0";
                 txtTotal.Text = "0";
                 txtLast.Text = "0";
@@ -2860,6 +2884,7 @@ namespace SUP
                         this.Invoke((Action)(() =>
                         {
                             flowLayoutPanel1.SuspendLayout();
+                            flowLayoutPanel1.Controls.Clear();
 
                             if (clearpages)
                             {
@@ -2881,7 +2906,14 @@ namespace SUP
                                 try { foundobject.Dispose(); } catch { }
 
                             }
-                            flowLayoutPanel1.Controls.Clear();
+
+                            foreach (PictureBox picture in pictureBoxes)
+                            {
+
+                                try { picture.Dispose(); } catch { }
+
+                            }
+
                             flowLayoutPanel1.ResumeLayout();
 
                         }));
@@ -3229,77 +3261,26 @@ namespace SUP
 
         private async void ObjectBrowser_Resize(object sender, EventArgs e)
         {
-
-            switch (_viewMode)
+            if (!string.IsNullOrEmpty(_objectaddress) || !string.IsNullOrEmpty(txtSearchAddress.Text))
             {
-                case 1:
-                    if (pages.LargeChange != ((flowLayoutPanel1.Width / 200) * (flowLayoutPanel1.Height / 200)) + (flowLayoutPanel1.Width / 200))
-                    {
-                        pages.LargeChange = ((flowLayoutPanel1.Width / 200) * (flowLayoutPanel1.Height / 200)) + (flowLayoutPanel1.Width / 200);
 
-                        txtQty.Text = pages.LargeChange.ToString();
-
-
-
-                        if (this.WindowState == FormWindowState.Maximized)
-                        {
-
-                            Random rnd = new Random();
-                            string[] gifFiles = Directory.GetFiles("includes", "*.gif");
-                            if (gifFiles.Length > 0)
-                            {
-                                int randomIndex = rnd.Next(gifFiles.Length);
-                                string randomGifFile = gifFiles[randomIndex];
-                                imgLoading.ImageLocation = randomGifFile;
-                            }
-                            else
-                            {
-                                imgLoading.ImageLocation = @"includes\HugPuddle.jpg";
-                            }
-                            flowLayoutPanel1.Visible = false;
-                            await Task.Run(() => BuildSearchResults());
-                            flowLayoutPanel1.Visible = true;
-                            pages.Visible = true;
-                        }
-                    }
-                    break;
-
-
-                case 0:
-                    if (pages.LargeChange != ((flowLayoutPanel1.Width / 200) * (flowLayoutPanel1.Height / 360)) + (flowLayoutPanel1.Width / 200)) ;
-                    {
-                        pages.LargeChange = ((flowLayoutPanel1.Width / 200) * (flowLayoutPanel1.Height / 360)) + (flowLayoutPanel1.Width / 200);
-
-
-                        txtQty.Text = pages.LargeChange.ToString();
-
-                        if (this.WindowState == FormWindowState.Maximized)
-                        {
-
-                            Random rnd = new Random();
-                            string[] gifFiles = Directory.GetFiles("includes", "*.gif");
-                            if (gifFiles.Length > 0)
-                            {
-                                int randomIndex = rnd.Next(gifFiles.Length);
-                                string randomGifFile = gifFiles[randomIndex];
-                                imgLoading.ImageLocation = randomGifFile;
-                            }
-                            else
-                            {
-                                imgLoading.ImageLocation = @"includes\HugPuddle.jpg";
-                            }
-                            flowLayoutPanel1.Visible = false;
-                            await Task.Run(() => BuildSearchResults());
-                            flowLayoutPanel1.Visible = true;
-                            pages.Visible = true;
-                        }
-                    }
-                    break;
-
-                default:
-                    break;
+                Random rnd = new Random();
+                string[] gifFiles = Directory.GetFiles("includes", "*.gif");
+                if (gifFiles.Length > 0)
+                {
+                    int randomIndex = rnd.Next(gifFiles.Length);
+                    string randomGifFile = gifFiles[randomIndex];
+                    imgLoading.ImageLocation = randomGifFile;
+                }
+                else
+                {
+                    imgLoading.ImageLocation = @"includes\HugPuddle.jpg";
+                }
+                flowLayoutPanel1.Visible = false;
+                await Task.Run(() => BuildSearchResults(false, true, false));
+                flowLayoutPanel1.Visible = true;
+                pages.Visible = true;
             }
-
 
         }
 
@@ -3316,35 +3297,6 @@ namespace SUP
         {
             if (_mouseLock == false)
             {
-
-                switch (_viewMode)
-                {
-                    case 1:
-                        if (pages.LargeChange != ((flowLayoutPanel1.Width / 200) * (flowLayoutPanel1.Height / 200)) + (flowLayoutPanel1.Width / 200))
-                        {
-                            pages.LargeChange = ((flowLayoutPanel1.Width / 200) * (flowLayoutPanel1.Height / 200)) + (flowLayoutPanel1.Width / 200);
-
-                            txtQty.Text = pages.LargeChange.ToString();
-
-                        }
-                        break;
-
-
-                    case 0:
-                        if (pages.LargeChange != ((flowLayoutPanel1.Width / 200) * (flowLayoutPanel1.Height / 360)) + (flowLayoutPanel1.Width / 200)) ;
-                        {
-                            pages.LargeChange = ((flowLayoutPanel1.Width / 200) * (flowLayoutPanel1.Height / 360)) + (flowLayoutPanel1.Width / 200);
-
-                            txtQty.Text = pages.LargeChange.ToString();
-
-
-
-                        }
-                        break;
-                    default:
-
-                        break;
-                }
 
                 Random rnd = new Random();
                 string[] gifFiles = Directory.GetFiles("includes", "*.gif");
@@ -3370,34 +3322,7 @@ namespace SUP
         {
             if (e.KeyCode == Keys.Enter)
             {
-                switch (_viewMode)
-                {
-                    case 1:
-                        if (pages.LargeChange != ((flowLayoutPanel1.Width / 200) * (flowLayoutPanel1.Height / 200)) + (flowLayoutPanel1.Width / 200))
-                        {
-                            pages.LargeChange = ((flowLayoutPanel1.Width / 200) * (flowLayoutPanel1.Height / 200)) + (flowLayoutPanel1.Width / 200);
-
-                            txtQty.Text = pages.LargeChange.ToString();
-
-                        }
-                        break;
-
-
-                    case 0:
-                        if (pages.LargeChange != ((flowLayoutPanel1.Width / 200) * (flowLayoutPanel1.Height / 360)) + (flowLayoutPanel1.Width / 200)) ;
-                        {
-                            pages.LargeChange = ((flowLayoutPanel1.Width / 200) * (flowLayoutPanel1.Height / 360)) + (flowLayoutPanel1.Width / 200);
-
-                            txtQty.Text = pages.LargeChange.ToString();
-
-
-
-                        }
-                        break;
-                    default:
-
-                        break;
-                }
+                try { pages.Value = int.Parse(txtLast.Text); } catch { }
 
                 Random rnd = new Random();
                 string[] gifFiles = Directory.GetFiles("includes", "*.gif");
@@ -3411,12 +3336,10 @@ namespace SUP
                 {
                     imgLoading.ImageLocation = @"includes\HugPuddle.jpg";
                 }
-                try { pages.Value = int.Parse(txtLast.Text); } catch { }
                 flowLayoutPanel1.Visible = false;
-                await Task.Run(() => BuildSearchResults());
+                await Task.Run(() => BuildSearchResults(false, true, false));
                 flowLayoutPanel1.Visible = true;
                 pages.Visible = true;
-                txtLast.Text = pages.Value.ToString();
             }
         }
 
@@ -3628,6 +3551,9 @@ namespace SUP
 
             }
         }
+
+   
+        
     }
 
 

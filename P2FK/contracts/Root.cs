@@ -11,7 +11,6 @@ using System.Numerics;
 using System.Security.Cryptography;
 using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 
 
 namespace SUP.P2FK
@@ -35,8 +34,6 @@ namespace SUP.P2FK
         public DateTime BuildDate { get; set; }
         public bool Cached { get; set; }
 
-        //ensures levelDB is thread safely
-        // private readonly static object SupLocker = new object();
 
         public static Root GetRootByTransactionId(string transactionid, string username, string password, string url, string versionbyte = "111", byte[] rootbytes = null, string signatureaddress = null, bool calculate = false)
         {
@@ -475,15 +472,7 @@ namespace SUP.P2FK
 
         public static Root[] GetRootsByAddress(string address, string username, string password, string url, int skip = 0, int qty = -1, string versionByte = "111", bool calculate = false)
         {
-            Task.Run(() =>
-            {
-                using (FileStream fs = System.IO.File.Create(@"GET_ROOTS_BY_ADDRESS"))
-                {
-
-                }
-            });
-
-
+           
             var rootList = new List<Root>();
 
             try
@@ -491,11 +480,7 @@ namespace SUP.P2FK
                 if (address.Length < 33)
                 {
 
-                    Task.Run(() =>
-                    {
-                        try { System.IO.File.Delete(@"GET_ROOTS_BY_ADDRESS"); } catch { }
-                    });
-
+                   
                     return rootList.ToArray();
                 }
 
@@ -526,33 +511,38 @@ namespace SUP.P2FK
 
                 while (true)
                 {
+                    
+                        CoinRPC a = new CoinRPC(new Uri(url), new NetworkCredential(username, password));
 
-                    CoinRPC a = new CoinRPC(new Uri(url), new NetworkCredential(username, password));
+                        List<GetRawDataTransactionResponse> results = null;
 
-                    var results = a.SearchRawDataTransaction(address, 0, innerskip, 300);
-                    if (results == null || results.Count == 0) { break; }
+                    try { results = a.SearchRawDataTransaction(address, 0, innerskip, 300); } catch { break; }
 
-                    for (int i = 0; i < results.Count; i++)
-                    {
-                        calculated = true;
-                        intProcessHeight++;
-                        string hexId = GetTransactionIdByHexString(results[i].hex);
-                        Root root = new Root();
-                        root = Root.GetRootByTransactionId(hexId, username, password, url, versionByte, null, null, calculate);
 
-                        if (root != null && root.TotalByteSize > 0 && root.Output != null && !rootList.Any(ROOT => ROOT.TransactionId == root.TransactionId) && root.Output.ContainsKey(address) && root.BlockDate.Year > 1975)
+                        if (results == null || results.Count == 0) { break; }
+
+                        for (int i = 0; i < results.Count; i++)
                         {
-                            root.Id = intProcessHeight;
+                            calculated = true;
+                            intProcessHeight++;
+                            string hexId = GetTransactionIdByHexString(results[i].hex);
+                            Root root = new Root();
+                            root = Root.GetRootByTransactionId(hexId, username, password, url, versionByte, null, null, calculate);
 
-                            rootList.Add(root);
-                        }
-                        else
-                        {
-                            if (root != null && root.Output != null && root.BlockDate.Year < 1975) { intProcessHeight--; }
-                        }
+                            if (root != null && root.TotalByteSize > 0 && root.Output != null && !rootList.Any(ROOT => ROOT.TransactionId == root.TransactionId) && root.Output.ContainsKey(address) && root.BlockDate.Year > 1975)
+                            {
+                                root.Id = intProcessHeight;
 
-                    }
-                    innerskip += 300;
+                                rootList.Add(root);
+                            }
+                            else
+                            {
+                                if (root != null && root.Output != null && root.BlockDate.Year < 1975) { intProcessHeight--; }
+                            }
+
+                        }
+                        innerskip += 300;
+                   
 
                 }
 
@@ -567,10 +557,7 @@ namespace SUP.P2FK
 
                 }
 
-                Task.Run(() =>
-                {
-                    try { System.IO.File.Delete(@"GET_ROOTS_BY_ADDRESS"); } catch { }
-                });
+               
 
                 if (skip != 0)
                 {
@@ -591,11 +578,7 @@ namespace SUP.P2FK
             catch
             {
 
-                Task.Run(() =>
-                {
-                    try { System.IO.File.Delete(@"GET_ROOTS_BY_ADDRESS"); } catch { }
-                });
-
+               
                 return rootList.ToArray();
             }
         }

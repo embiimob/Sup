@@ -76,31 +76,47 @@ namespace SUP
             }
 
 
-            List<OBJState> currentlyOwnedObjects = OBJState.GetObjectsOwnedByAddress(txtSignatureAddress.Text, mainnetLogin, mainnetPassword, mainnetURL, mainnetVersionByte);
+            OBJState currentObject = OBJState.GetObjectByAddress(givaddress, mainnetLogin, mainnetPassword, mainnetURL, mainnetVersionByte);
 
-            // Find the OBJState object that corresponds to the specified address in Creators
-            OBJState objStateForAddress = currentlyOwnedObjects?.FirstOrDefault(obj => obj.Creators.ContainsKey(givaddress));
-           
-            if (objStateForAddress == null)
+            // Check if the address is found in Creators and if the give quantity exceeds the maxHold
+            if (currentObject.Owners.ContainsKey(txtSignatureAddress.Text))
             {
-                MessageBox.Show($"This transaction will likely fail. Signature does not own object.", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                qtyTextBox.Text = "0";
-                return;
-            }
+                long currentHoldings = 0;
+                try { currentHoldings = currentObject.Owners[txtSignatureAddress.Text].Item1; } catch { }
 
-            // Check if the address is found in Creators and if the buy quantity exceeds the maxHold
-            if (objStateForAddress.Owners.ContainsKey(txtSignatureAddress.Text))
-            {
-                long currentHoldings = objStateForAddress.Owners[txtSignatureAddress.Text].Item1;
 
-                // Calculate the maximum quantity that can be bought
-                long maxListQty = currentHoldings;
+                // Calculate the maximum quantity that can be given
+                long maxGiveQty = currentHoldings;
 
-                if (qty + _addressQtyList.Sum(item => item.Item2) > maxListQty)
+                if (qty + _addressQtyList.Sum(item => item.Item2) > maxGiveQty)
                 {
-                    MessageBox.Show($"This transaction will likely fail. List Qty exceeds current owner's holdings. Maximum List allowed: {maxListQty}", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                    qtyTextBox.Text = maxListQty.ToString();
+                    MessageBox.Show($"This transaction will likely fail. Give Qty exceeds current owner's holdings. Maximum Give allowed: {maxGiveQty}", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    qtyTextBox.Text = maxGiveQty.ToString();
                     return;
+                }
+            }
+            else
+            {
+                if (currentObject.Creators.ContainsKey(txtSignatureAddress.Text))
+                {
+                    long currentHoldings = 0;
+                    try { currentHoldings = currentObject.Owners[givaddress].Item1; } catch { }
+
+                    // Calculate the maximum quantity that can be given
+                    long maxGiveQty = currentHoldings;
+
+                    if (qty + _addressQtyList.Sum(item => item.Item2) > maxGiveQty)
+                    {
+                        MessageBox.Show($"This transaction will likely fail. Give Qty exceeds current owner's holdings. Maximum Give allowed: {maxGiveQty}", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                        qtyTextBox.Text = maxGiveQty.ToString();
+                        return;
+                    }
+                }
+                else
+                {
+                    MessageBox.Show($"This transaction will likely fail. The current signature does not own any objects to give", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    qtyTextBox.Text = "0";
+
                 }
             }
 

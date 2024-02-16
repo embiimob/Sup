@@ -978,9 +978,10 @@ namespace SUP
         private void btnBuy_Click(object sender, EventArgs e)
         {
 
-            if (int.TryParse(txtBuyQty.Text, out int buyQTY1) && buyQTY1 < 1)
+            if (!int.TryParse(txtBuyQty.Text, out int buyQTY1) || buyQTY1 < 1 || txtBuyQty.Text.IndexOf('.') != -1)
             {
                 MessageBox.Show("Buy Qty must be 1 or greater", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                txtBuyQty.Text = "1";
                 return;
             }
 
@@ -1191,19 +1192,20 @@ namespace SUP
         private void giveButton_Click(object sender, EventArgs e)
         {
 
-            if (int.TryParse(txtListQty.Text, out int listQTY))
+            if (int.TryParse(txtListQty.Text, out int listQTY) && txtListQty.Text.IndexOf('.') == -1)
             {
-                List<OBJState> currentlyOwnedObjects = OBJState.GetObjectsOwnedByAddress(txtSignatureAddress.Text, mainnetLogin, mainnetPassword, mainnetURL, mainnetVersionByte);
 
-                // Find the OBJState object that corresponds to the specified address in Creators
-                OBJState objStateForAddress = currentlyOwnedObjects?.FirstOrDefault(obj => obj.Creators.ContainsKey(givaddress));
 
-                // Check if the address is found in Creators and if the buy quantity exceeds the maxHold
-                if (objStateForAddress != null && objStateForAddress.Owners.ContainsKey(txtSignatureAddress.Text))
+                OBJState currentObject = OBJState.GetObjectByAddress(givaddress, mainnetLogin, mainnetPassword, mainnetURL, mainnetVersionByte);
+
+                // Check if the address is found in Creators and if the give quantity exceeds the maxHold
+                if (currentObject.Owners.ContainsKey(txtSignatureAddress.Text))
                 {
-                    long currentHoldings = objStateForAddress.Owners[txtSignatureAddress.Text].Item1;
+                    long currentHoldings = 0;
+                    try { currentHoldings = currentObject.Owners[txtSignatureAddress.Text].Item1; } catch { }
 
-                    // Calculate the maximum quantity that can be bought
+
+                    // Calculate the maximum quantity that can be given
                     long maxListQty = currentHoldings;
 
                     if (listQTY > maxListQty)
@@ -1213,105 +1215,134 @@ namespace SUP
                         return;
                     }
                 }
-            }
-
-            var newdictionary = new List<List<string>>();
-            List<string> encodedList = new List<string>();
-            newdictionary.Add(new List<string> { txtAddressSearch.Text, txtListQty.Text, txtEachValue.Text });
-
-            // Generate a random negative integer salt between -99999 and -1
-            int salt;
-            using (RNGCryptoServiceProvider rng = new RNGCryptoServiceProvider())
-            {
-                byte[] saltBytes = new byte[4];
-                rng.GetBytes(saltBytes);
-                salt = -Math.Abs(BitConverter.ToInt32(saltBytes, 0) % 100000);
-            }
-
-            newdictionary.Add(new List<string> { "0", salt.ToString("D5") });
-
-            var json = JsonConvert.SerializeObject(newdictionary);
-            txtOBJJSON.Text = json;
-
-            txtOBJP2FK.Text = "LST" + GetRandomDelimiter() + txtOBJJSON.Text.Length + GetRandomDelimiter() + txtOBJJSON.Text;
-
-            NetworkCredential credentials = new NetworkCredential("good-user", "better-password");
-            NBitcoin.RPC.RPCClient rpcClient = new NBitcoin.RPC.RPCClient(credentials, new Uri(mainnetURL), Network.Main);
-            System.Security.Cryptography.SHA256 mySHA256 = SHA256Managed.Create();
-            byte[] hashValue = mySHA256.ComputeHash(Encoding.ASCII.GetBytes(txtOBJP2FK.Text));
-            string signatureAddress;
-
-            signatureAddress = txtSignatureAddress.Text;
-            string signature = "";
-            try { signature = rpcClient.SendCommand("signmessage", signatureAddress, BitConverter.ToString(hashValue).Replace("-", String.Empty)).ResultString; }
-            catch (Exception ex)
-            {
-                lblObjectStatus.Text = ex.Message;
-                btnGive.BackColor = System.Drawing.Color.White;
-                btnGive.ForeColor = System.Drawing.Color.Black;
-                mint = false;
-                return;
-            }
-
-            txtOBJP2FK.Text = "SIG" + GetRandomDelimiter() + "88" + GetRandomDelimiter() + signature + txtOBJP2FK.Text;
-
-
-            for (int i = 0; i < txtOBJP2FK.Text.Length; i += 20)
-            {
-                string chunk = txtOBJP2FK.Text.Substring(i, Math.Min(20, txtOBJP2FK.Text.Length - i));
-                if (chunk.Any())
+                else
                 {
-                    encodedList.Add(Root.GetPublicAddressByKeyword(chunk,mainnetVersionByte));
+                    if (currentObject.Creators.ContainsKey(txtSignatureAddress.Text))
+                    {
+                        long currentHoldings = 0;
+                        try { currentHoldings = currentObject.Owners[givaddress].Item1; } catch { }
+
+                        // Calculate the maximum quantity that can be given
+                        long maxListQty = currentHoldings;
+
+                        if (listQTY > maxListQty)
+                        {
+                            MessageBox.Show($"This transaction will likely fail. List Qty exceeds current owner's holdings. Maximum List allowed: {maxListQty}", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                            txtListQty.Text = maxListQty.ToString();
+                            return;
+                        }
+                    }
+                    else
+                    {
+                        MessageBox.Show($"This transaction will likely fail. The current signature does not own any objects to List", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                        txtListQty.Text = "0";
+
+                    }
                 }
-            }
 
 
+                var newdictionary = new List<List<string>>();
+                List<string> encodedList = new List<string>();
+                newdictionary.Add(new List<string> { txtAddressSearch.Text, txtListQty.Text, txtEachValue.Text });
 
-            encodedList.Add(txtAddressSearch.Text);
-            encodedList.Add(signatureAddress);
-            txtAddressListJSON.Text = JsonConvert.SerializeObject(encodedList.Distinct());
-
-            lblCost.Text = "cost: " + (0.00000546 * encodedList.Count).ToString("0.00000000") + "  + miner fee";
-
-            if (mint)
-            {
-                DialogResult result = MessageBox.Show("Are you sure you want to list this?", "Confirmation", MessageBoxButtons.YesNo);
-                if (result == DialogResult.Yes)
+                // Generate a random negative integer salt between -99999 and -1
+                int salt;
+                using (RNGCryptoServiceProvider rng = new RNGCryptoServiceProvider())
                 {
-                    // Perform the action
-                    var recipients = new Dictionary<string, decimal>();
-                    foreach (var encodedAddress in encodedList)
-                    {
-                        try { recipients.Add(encodedAddress, 0.00000546m); } catch { }
-                    }
+                    byte[] saltBytes = new byte[4];
+                    rng.GetBytes(saltBytes);
+                    salt = -Math.Abs(BitConverter.ToInt32(saltBytes, 0) % 100000);
+                }
 
-                    CoinRPC a = new CoinRPC(new Uri(mainnetURL), new NetworkCredential("good-user", "better-password"));
+                newdictionary.Add(new List<string> { "0", salt.ToString("D5") });
 
-                    try
-                    {
-                        string accountsString = "";
-                        try { accountsString = rpcClient.SendCommand("listaccounts").ResultString; } catch { }
-                        var accounts = JsonConvert.DeserializeObject<Dictionary<string, decimal>>(accountsString);
-                        var keyWithLargestValue = accounts.Aggregate((x, y) => x.Value > y.Value ? x : y).Key;
-                        var results = a.SendMany(keyWithLargestValue, recipients);
-                        lblObjectStatus.Text = results;
-                    }
-                    catch (Exception ex) { lblObjectStatus.Text = ex.Message; }
+                var json = JsonConvert.SerializeObject(newdictionary);
+                txtOBJJSON.Text = json;
+
+                txtOBJP2FK.Text = "LST" + GetRandomDelimiter() + txtOBJJSON.Text.Length + GetRandomDelimiter() + txtOBJJSON.Text;
+
+                NetworkCredential credentials = new NetworkCredential("good-user", "better-password");
+                NBitcoin.RPC.RPCClient rpcClient = new NBitcoin.RPC.RPCClient(credentials, new Uri(mainnetURL), Network.Main);
+                System.Security.Cryptography.SHA256 mySHA256 = SHA256Managed.Create();
+                byte[] hashValue = mySHA256.ComputeHash(Encoding.ASCII.GetBytes(txtOBJP2FK.Text));
+                string signatureAddress;
+
+                signatureAddress = txtSignatureAddress.Text;
+                string signature = "";
+                try { signature = rpcClient.SendCommand("signmessage", signatureAddress, BitConverter.ToString(hashValue).Replace("-", String.Empty)).ResultString; }
+                catch (Exception ex)
+                {
+                    lblObjectStatus.Text = ex.Message;
                     btnGive.BackColor = System.Drawing.Color.White;
                     btnGive.ForeColor = System.Drawing.Color.Black;
                     mint = false;
-
+                    return;
                 }
-                btnGive.BackColor = System.Drawing.Color.White;
-                btnGive.ForeColor = System.Drawing.Color.Black;
-                mint = false;
+
+                txtOBJP2FK.Text = "SIG" + GetRandomDelimiter() + "88" + GetRandomDelimiter() + signature + txtOBJP2FK.Text;
+
+
+                for (int i = 0; i < txtOBJP2FK.Text.Length; i += 20)
+                {
+                    string chunk = txtOBJP2FK.Text.Substring(i, Math.Min(20, txtOBJP2FK.Text.Length - i));
+                    if (chunk.Any())
+                    {
+                        encodedList.Add(Root.GetPublicAddressByKeyword(chunk, mainnetVersionByte));
+                    }
+                }
+
+
+
+                encodedList.Add(txtAddressSearch.Text);
+                encodedList.Add(signatureAddress);
+                txtAddressListJSON.Text = JsonConvert.SerializeObject(encodedList.Distinct());
+
+                lblCost.Text = "cost: " + (0.00000546 * encodedList.Count).ToString("0.00000000") + "  + miner fee";
+
+                if (mint)
+                {
+                    DialogResult result = MessageBox.Show("Are you sure you want to list this?", "Confirmation", MessageBoxButtons.YesNo);
+                    if (result == DialogResult.Yes)
+                    {
+                        // Perform the action
+                        var recipients = new Dictionary<string, decimal>();
+                        foreach (var encodedAddress in encodedList)
+                        {
+                            try { recipients.Add(encodedAddress, 0.00000546m); } catch { }
+                        }
+
+                        CoinRPC a = new CoinRPC(new Uri(mainnetURL), new NetworkCredential("good-user", "better-password"));
+
+                        try
+                        {
+                            string accountsString = "";
+                            try { accountsString = rpcClient.SendCommand("listaccounts").ResultString; } catch { }
+                            var accounts = JsonConvert.DeserializeObject<Dictionary<string, decimal>>(accountsString);
+                            var keyWithLargestValue = accounts.Aggregate((x, y) => x.Value > y.Value ? x : y).Key;
+                            var results = a.SendMany(keyWithLargestValue, recipients);
+                            lblObjectStatus.Text = results;
+                        }
+                        catch (Exception ex) { lblObjectStatus.Text = ex.Message; }
+                        btnGive.BackColor = System.Drawing.Color.White;
+                        btnGive.ForeColor = System.Drawing.Color.Black;
+                        mint = false;
+
+                    }
+                    btnGive.BackColor = System.Drawing.Color.White;
+                    btnGive.ForeColor = System.Drawing.Color.Black;
+                    mint = false;
+                }
+
+                btnGive.BackColor = System.Drawing.Color.Blue;
+                btnGive.ForeColor = System.Drawing.Color.Yellow;
+                mint = true;
+
             }
-
-            btnGive.BackColor = System.Drawing.Color.Blue;
-            btnGive.ForeColor = System.Drawing.Color.Yellow;
-            mint = true;
-
-
+            else
+            {
+                MessageBox.Show($"This transaction will likely fail. List Qty is not numeric", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                txtListQty.Text = "0";
+            }
         }
 
    

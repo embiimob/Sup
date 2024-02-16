@@ -77,32 +77,51 @@ namespace SUP
                 return;
             }
 
-            List<OBJState> currentlyOwnedObjects = OBJState.GetObjectsOwnedByAddress(txtSignatureAddress.Text, mainnetLogin, mainnetPassword, mainnetURL, mainnetVersionByte);
+            OBJState currentObject = OBJState.GetObjectByAddress(addressTextBox.Text, mainnetLogin, mainnetPassword, mainnetURL, mainnetVersionByte);
 
-            // Find the OBJState object that corresponds to the specified address in Creators
-            OBJState objStateForAddress = currentlyOwnedObjects?.FirstOrDefault(obj => obj.Creators.ContainsKey(addressTextBox.Text));
-
-            if (objStateForAddress == null)
+            // Check if the address is found in Creators and if the give quantity exceeds the maxHold
+            if (currentObject.Owners.ContainsKey(txtSignatureAddress.Text))
             {
-                MessageBox.Show($"This transaction will likely fail. Signature does not own object.", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                qtyTextBox.Text = "0";
-                return;
-            }
+                long currentHoldings = 0;
+                try { currentHoldings = currentObject.Owners[txtSignatureAddress.Text].Item1; } catch { }
 
-            if (objStateForAddress.Owners.ContainsKey(txtSignatureAddress.Text))
-            {
-                long currentHoldings = objStateForAddress.Owners[txtSignatureAddress.Text].Item1;
 
-                // Calculate the maximum quantity that can be burnt
+                // Calculate the maximum quantity that can be given
                 long maxBurnQty = currentHoldings;
 
-                if (qty > maxBurnQty)
+                if (qty  > maxBurnQty)
                 {
-                    MessageBox.Show($"This transaction will likely fail. Burn Qty exceeds current owner's holdings. Maximum burn allowed: {maxBurnQty}", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    MessageBox.Show($"This transaction will likely fail. Burn Qty exceeds current owner's holdings. Maximum Burn allowed: {maxBurnQty}", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                     qtyTextBox.Text = maxBurnQty.ToString();
                     return;
                 }
             }
+            else
+            {
+                if (currentObject.Creators.ContainsKey(txtSignatureAddress.Text))
+                {
+                    long currentHoldings = 0;
+                    try { currentHoldings = currentObject.Owners[addressTextBox.Text].Item1; } catch { }
+
+                    // Calculate the maximum quantity that can be given
+                    long maxBurnQty = currentHoldings;
+
+                    if (qty > maxBurnQty)
+                    {
+                        MessageBox.Show($"This transaction will likely fail. Burn Qty exceeds current owner's holdings. Maximum Burn allowed: {maxBurnQty}", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                        qtyTextBox.Text = maxBurnQty.ToString();
+                        return;
+                    }
+                }
+                else
+                {
+                    MessageBox.Show($"This transaction will likely fail. The current signature does not own any objects to Burn", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    qtyTextBox.Text = "0";
+
+                }
+            }
+
+
             btnBurn.Enabled = true;
             _addressQtyList.Add((address, qty));
             addressQtyDataGridView.Rows.Add(address, qty);

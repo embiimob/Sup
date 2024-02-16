@@ -12,6 +12,7 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using System.Windows.Media;
 
 namespace SUP.P2FK
 {
@@ -95,15 +96,6 @@ namespace SUP.P2FK
         //       private readonly static object SupLocker = new object();
         public static OBJState GetObjectByAddress(string objectaddress, string username, string password, string url, string versionByte = "111", bool verbose = false)
         {
-            Task.Run(() =>
-            {
-                using (FileStream fs = File.Create(@"GET_OBJECT_BY_ADDRESS"))
-                {
-
-                }
-            });
-
-
 
             OBJState objectState = new OBJState();
             objectState.ChangeLog = new List<string>();
@@ -114,10 +106,6 @@ namespace SUP.P2FK
 
                 if (System.IO.File.Exists(@"root\" + objectaddress + @"\BLOCK"))
                 {
-                    Task.Run(() =>
-                    {
-                        try { File.Delete(@"GET_OBJECT_BY_ADDRESS"); } catch { }
-                    });
 
                     return objectState;
                 }
@@ -138,10 +126,6 @@ namespace SUP.P2FK
                 catch { }
                 if (fetched && objectState.URN == null && objectState.ProcessHeight == 0)
                 {
-                    Task.Run(() =>
-                    {
-                        try { File.Delete(@"GET_OBJECT_BY_ADDRESS"); } catch { }
-                    });
 
                     return objectState;
                 }
@@ -154,10 +138,7 @@ namespace SUP.P2FK
                     {
                         JSONOBJ = System.IO.File.ReadAllText(diskpath + "GetRootByTransctionId.json");
                         unconfimredobj = JsonConvert.DeserializeObject<Root>(JSONOBJ);
-                        Task.Run(() =>
-                        {
-                            try { File.Delete(@"GET_OBJECT_BY_ADDRESS"); } catch { }
-                        });
+
                         return OBJState.GetObjectByTransactionId(unconfimredobj.TransactionId, username, password, url, versionByte);
 
 
@@ -171,7 +152,6 @@ namespace SUP.P2FK
                 }
 
                 int intProcessHeight = 0;
-                string sortableProcessHeight = "";
                 try { intProcessHeight = objectState.Id; } catch { }
 
                 Root[] objectTransactions;
@@ -182,13 +162,9 @@ namespace SUP.P2FK
 
                 if (intProcessHeight != 0 && objectTransactions.Count() == 0)
                 {
-                    Task.Run(() =>
-                    {
-                        try { File.Delete(@"GET_OBJECT_BY_ADDRESS"); } catch { }
-                    });
-
                     return objectState;
                 }
+                string[] requiredKeys = { "OBJ", "GIV", "BRN", "BUY", "LST" };
 
                 foreach (Root transaction in objectTransactions)
                 {
@@ -196,7 +172,8 @@ namespace SUP.P2FK
                     {
                         intProcessHeight = transaction.Id;
 
-                        if (transaction.Signed && (transaction.File.ContainsKey("OBJ") || transaction.File.ContainsKey("GIV") || transaction.File.ContainsKey("BRN") || transaction.File.ContainsKey("BUY") || transaction.File.ContainsKey("LST")))
+
+                        if (requiredKeys.Any(key => transaction.File.ContainsKey(key)) && transaction.Signed)
                         {
                             //alright you met minnimum criteria lets inspect this further
                             logstatus = "";
@@ -210,11 +187,11 @@ namespace SUP.P2FK
                                 byte[] hashBytes = sha256.ComputeHash(Encoding.UTF8.GetBytes(transaction.Signature));
                                 string hashedSignature = BitConverter.ToString(hashBytes).Replace("-", "");
 
-                                string filePath = @"root\"+ objectaddress +@"\sig\" + hashedSignature;
+                                string filePath = @"root\" + objectaddress + @"\sig\" + hashedSignature;
 
                                 if (!System.IO.File.Exists(filePath))
                                 {
-                                    if (!System.IO.Directory.Exists(@"root\" + objectaddress + @"\sig")){Directory.CreateDirectory(@"root\" + objectaddress + @"\sig");}
+                                    if (!System.IO.Directory.Exists(@"root\" + objectaddress + @"\sig")) { Directory.CreateDirectory(@"root\" + objectaddress + @"\sig"); }
                                     // If the file does not exist, create it and write the text string to it
                                     System.IO.File.WriteAllText(filePath, transaction.TransactionId);
                                 }
@@ -265,12 +242,12 @@ namespace SUP.P2FK
 
 
                                                 objectState.Creators = new Dictionary<string, DateTime> { };
-                                             
+
 
 
                                                 try
                                                 {
-                                                  
+
 
                                                     foreach (string keywordId in objectinspector.cre)
                                                     {
@@ -283,7 +260,7 @@ namespace SUP.P2FK
                                                         {
                                                             creator = keywordId;
 
-            
+
                                                         }
 
                                                         if (!objectState.Creators.ContainsKey(creator))
@@ -293,7 +270,7 @@ namespace SUP.P2FK
 
                                                     }
 
-                                                    
+
 
 
                                                 }
@@ -332,19 +309,19 @@ namespace SUP.P2FK
                                                             {
                                                                 creator = keywordId;
 
-                                                   //            objectaddress = objectinspector.cre.First();
+                                                                //            objectaddress = objectinspector.cre.First();
                                                             }
-                                                           
+
 
                                                             if (!objectState.Creators.ContainsKey(creator))
                                                             {
                                                                 objectState.Creators.Add(creator, new DateTime());
                                                             }
-                                                            
-                                                           
+
+
 
                                                         }
-                                                     
+
 
 
                                                     }
@@ -356,7 +333,7 @@ namespace SUP.P2FK
 
 
 
-                                              
+
 
 
                                                 objectState.ChangeDate = transaction.BlockDate;
@@ -453,7 +430,8 @@ namespace SUP.P2FK
                                                             }
 
 
-                                                        }else { objectState.Owners = new Dictionary<string, (long, string)>(); }
+                                                        }
+                                                        else { objectState.Owners = new Dictionary<string, (long, string)>(); }
 
 
                                                         foreach (var ownerId in objectinspector.own)
@@ -910,8 +888,7 @@ namespace SUP.P2FK
 
                                                             ///trying various things to remove the urn registratiion
                                                             try { Directory.Delete(@"root/" + urnCLAIM, true); } catch { }
-                                                            try { Directory.Delete(@"root/" + burnr, true); }  catch { }
-                                                            try { Directory.Delete(@"root/" + objectState.TransactionId, true); } catch { }
+                                                            try { Directory.Delete(@"root/" + burnr, true); } catch { }
                                                             try { Directory.CreateDirectory(@"root\" + objectState.TransactionId); } catch { }
 
                                                             var rootSerialized = JsonConvert.SerializeObject(new Root()); ;
@@ -961,6 +938,7 @@ namespace SUP.P2FK
 
                                         }
                                         break;
+
                                     case "BUY":
                                         //BUY command can only be directed at one object at a time for now.
                                         //cannot garuntee the placement of outputs. can occur in possibly two locations.
@@ -1406,6 +1384,28 @@ namespace SUP.P2FK
                                                     break;
                                                 }
 
+                                                //listing is an opportunity to acknowledge being a creator
+                                                if (objectState.Creators != null && objectState.Creators.ContainsKey(transaction.SignedBy))
+                                                {
+                                                    // update grant date if null and signed by a creator
+                                                    if (objectState.Creators.TryGet(transaction.SignedBy).Year == 1)
+                                                    {
+                                                        objectState.Creators[transaction.SignedBy] = transaction.BlockDate;
+                                                        objectState.ChangeDate = transaction.BlockDate;
+                                                        if (verbose)
+                                                        {
+
+                                                            logstatus = "[\"" + transaction.SignedBy + "\",\"" + objectaddress + "\",\"grant\",\"\",\"\",\"success\",\"" + transaction.BlockDate.ToString() + "\"]";
+
+                                                            objectState.ChangeLog.Add(logstatus);
+
+
+                                                        }
+
+                                                    }
+                                                }
+
+
                                                 // LST Transaction with 0 qty closes all listings
                                                 if (qtyToList == 0)
                                                 {
@@ -1421,6 +1421,8 @@ namespace SUP.P2FK
                                                     }
                                                     break;
                                                 }
+
+
 
 
                                                 long qtyOwnedG = 0;
@@ -1489,25 +1491,7 @@ namespace SUP.P2FK
                                                         objectState.LockedDate = transaction.BlockDate;
                                                     }
 
-                                                    if (objectState.Creators != null && objectState.Creators.ContainsKey(transaction.SignedBy))
-                                                    {
-                                                        // update grant date if null and signed by a creator
-                                                        if (objectState.Creators.TryGet(transaction.SignedBy).Year == 1)
-                                                        {
-                                                            objectState.Creators[transaction.SignedBy] = transaction.BlockDate;
-                                                            objectState.ChangeDate = transaction.BlockDate;
-                                                            if (verbose)
-                                                            {
 
-                                                                logstatus = "[\"" + transaction.SignedBy + "\",\"" + objectaddress + "\",\"grant\",\"\",\"\",\"success\",\"" + transaction.BlockDate.ToString() + "\"]";
-
-                                                                objectState.ChangeLog.Add(logstatus);
-
-
-                                                            }
-
-                                                        }
-                                                    }
 
                                                     //force all assoicated collections to update by purging the cache file when listed on secondary
                                                     foreach (string creatorAddress in objectState.Creators.Keys)
@@ -1571,24 +1555,13 @@ namespace SUP.P2FK
                 }
                 System.IO.File.WriteAllText(@"root\" + objectaddress + @"\" + "OBJ.json", objectSerialized);
 
-                Task.Run(() =>
-                {
-                    try { File.Delete(@"GET_OBJECT_BY_ADDRESS"); } catch { }
-                });
 
             }
-            catch (Exception ex) 
+            catch (Exception ex)
             {
-                string message = ex.Message;  
+                string message = ex.Message;
             }
-            finally
-            {
 
-                Task.Run(() =>
-                {
-                    try { File.Delete(@"GET_OBJECT_BY_ADDRESS"); } catch { }
-                });
-            }
             return objectState;
 
 
@@ -1878,7 +1851,7 @@ namespace SUP.P2FK
                 }
                 else
                 {
-                   // return objectState;
+                    // return objectState;
                 }
             }
             try { objectState.Id = objectTransactions.Max(max => max.Id); } catch { }
@@ -2223,14 +2196,6 @@ namespace SUP.P2FK
 
         public static List<OBJState> GetObjectsByAddress(string objectaddress, string username, string password, string url, string versionByte = "111", int skip = 0, int qty = -1, bool calculate = false)
         {
-            Task.Run(() =>
-            {
-                using (FileStream fs = File.Create(@"GET_OBJECTS_BY_ADDRESS"))
-                {
-
-                }
-            });
-
 
             List<OBJState> objectStates = new List<OBJState> { };
 
@@ -2238,7 +2203,6 @@ namespace SUP.P2FK
 
             if (System.IO.File.Exists(@"root\" + objectaddress + @"\BLOCK"))
             {
-                try { File.Delete(@"GET_OBJECTS_BY_ADDRESS"); } catch { }
 
                 return objectStates;
             }
@@ -2251,18 +2215,14 @@ namespace SUP.P2FK
             // fetch current JSONOBJ from disk if it exists
             try
             {
-                JSONOBJ = System.IO.File.ReadAllText(diskpath + "GetObjectsByAddress.json");
-                objectStates = JsonConvert.DeserializeObject<List<OBJState>>(JSONOBJ);
-                fetched = true;
+                 JSONOBJ = System.IO.File.ReadAllText(diskpath + "GetObjectsByAddress.json");
+                 objectStates = JsonConvert.DeserializeObject<List<OBJState>>(JSONOBJ);
+                 fetched = true;
 
             }
             catch { }
             if (fetched && objectStates.Count < 1)
             {
-                Task.Run(() =>
-                {
-                    try { File.Delete(@"GET_OBJECTS_BY_ADDRESS"); } catch { }
-                });
 
                 return objectStates;
             }
@@ -2282,10 +2242,7 @@ namespace SUP.P2FK
 
             if (intProcessHeight != 0 && objectTransactions.Count() == 0)
             {
-                Task.Run(() =>
-                {
-                    try { File.Delete(@"GET_OBJECTS_BY_ADDRESS"); } catch { }
-                });
+
 
                 if (skip != 0)
                 {
@@ -2306,9 +2263,11 @@ namespace SUP.P2FK
             }
 
             List<string> addedValues = new List<string>();
+            HashSet<string> requiredKeys = new HashSet<string> { "OBJ", "GIV", "BRN", "BUY", "LST" };
+            HashSet<string> searchallKeys = new HashSet<string> { "GIV", "BRN", "LST" };
 
-            //Do not process container address as object.
-            //addedValues.Add(objectaddress);
+
+
             foreach (Root transaction in objectTransactions)
             {
                 if (transaction.Id > intProcessHeight)
@@ -2321,9 +2280,12 @@ namespace SUP.P2FK
 
                         // string findId;
 
-                        if (transaction.File.ContainsKey("OBJ") || transaction.File.ContainsKey("GIV") || transaction.File.ContainsKey("BUY") || transaction.File.ContainsKey("BRN") || transaction.File.ContainsKey("LST"))
+
+                        if (requiredKeys.Overlaps(transaction.File.Keys))
                         {
-                            if (!transaction.File.ContainsKey("OBJ") && !transaction.File.ContainsKey("BUY"))
+
+                            //perform a more in depth analysis as all keywords could be objects
+                            if (searchallKeys.Overlaps(transaction.File.Keys))
                             {
                                 foreach (string key in transaction.Keyword.Keys)
                                 {
@@ -2359,74 +2321,40 @@ namespace SUP.P2FK
                             }
                             else
                             {
-                                if (transaction.File.ContainsKey("GIV"))
+                                // an object address should appear in the first 3 characters
+                                foreach (string key in transaction.Output.Keys.Reverse().Take(3))
                                 {
-                                    foreach (string key in transaction.Keyword.Keys)
+
+                                    if (!addedValues.Contains(key))
                                     {
+                                        addedValues.Add(key);
 
-                                        if (!addedValues.Contains(key))
+
+                                        OBJState existingObjectState = null;
+
+                                        try { existingObjectState = objectStates.FirstOrDefault(os => os.Creators.First().Key == key); } catch { } // MOVE ON
+
+                                        if (existingObjectState != null)
                                         {
-                                            addedValues.Add(key);
-
-
-                                            OBJState existingObjectState = objectStates.FirstOrDefault(os => os.Creators.First().Key == key);
-                                            if (existingObjectState != null)
+                                            OBJState isObject = GetObjectByAddress(key, username, password, url, versionByte, calculate);
+                                            if (isObject.URN != null)
                                             {
-                                                OBJState isObject = GetObjectByAddress(key, username, password, url, versionByte, calculate);
-                                                if (isObject.URN != null)
-                                                {
-                                                    //isObject.Id = transaction.Id;
-                                                    objectStates[objectStates.IndexOf(existingObjectState)] = isObject;
-                                                }
-                                            }
-                                            else
-                                            {
-                                                OBJState newObject = GetObjectByAddress(key, username, password, url, versionByte, calculate);
-                                                if (newObject.URN != null)
-                                                {
-                                                    //newObject.Id = transaction.Id;
-                                                    objectStates.Add(newObject);
-                                                }
+                                                //isObject.Id = transaction.Id;
+                                                objectStates[objectStates.IndexOf(existingObjectState)] = isObject;
                                             }
                                         }
-                                    }
-
-                                }
-                                else
-                                {
-                                    foreach (string key in transaction.Output.Keys.Reverse().Take(3))
-                                    {
-
-                                        if (!addedValues.Contains(key))
+                                        else
                                         {
-                                            addedValues.Add(key);
-
-
-                                            OBJState existingObjectState = null;
-
-                                            try { existingObjectState = objectStates.FirstOrDefault(os => os.Creators.First().Key == key); } catch { } // MOVE ON
-
-                                            if (existingObjectState != null)
+                                            OBJState newObject = GetObjectByAddress(key, username, password, url, versionByte, calculate);
+                                            if (newObject.URN != null)
                                             {
-                                                OBJState isObject = GetObjectByAddress(key, username, password, url, versionByte, calculate);
-                                                if (isObject.URN != null)
-                                                {
-                                                    //isObject.Id = transaction.Id;
-                                                    objectStates[objectStates.IndexOf(existingObjectState)] = isObject;
-                                                }
-                                            }
-                                            else
-                                            {
-                                                OBJState newObject = GetObjectByAddress(key, username, password, url, versionByte, calculate);
-                                                if (newObject.URN != null)
-                                                {
-                                                    //newObject.Id = transaction.Id;
-                                                    objectStates.Add(newObject);
-                                                }
+                                                //newObject.Id = transaction.Id;
+                                                objectStates.Add(newObject);
                                             }
                                         }
                                     }
                                 }
+
                             }
 
                         }
@@ -2436,6 +2364,9 @@ namespace SUP.P2FK
 
 
             }
+
+
+
 
             try { objectStates.Last().Id = objectTransactions.Max(max => max.Id); } catch { }
 
@@ -2450,7 +2381,7 @@ namespace SUP.P2FK
                 }
                 System.IO.File.WriteAllText(@"root\" + objectaddress + @"\" + "GetObjectsByAddress.json", objectSerialized);
 
-                try { File.Delete(@"GET_OBJECTS_BY_ADDRESS"); } catch { }
+
             });
 
             if (skip != 0)
@@ -2675,8 +2606,8 @@ namespace SUP.P2FK
 
                                     objectStates.Add(colstate);
                                 }
-                                
-                               
+
+
                             }
                         }
                     }
@@ -2710,8 +2641,8 @@ namespace SUP.P2FK
 
                                     objectStates.Add(colstate);
                                 }
-                               
-                              
+
+
                             }
                         }
 
@@ -2906,8 +2837,7 @@ namespace SUP.P2FK
             var filteredObjects = AllRoots
                            .Where(obj => obj.File != null && obj.File.Keys.Contains("SEC"))
                            .OrderByDescending(obj => obj.Id)
-                           .Skip(skip)
-                           .Take(qty);
+                           .Skip(skip);
             // Now, filteredObjects contains objects with at least one message or one file
             foreach (var obj in filteredObjects)
             {
@@ -2919,24 +2849,62 @@ namespace SUP.P2FK
                     byte[] result = Root.GetRootBytesByFile(new string[] { @"root/" + obj.TransactionId + @"/SEC" });
                     result = Root.DecryptRootBytes(username, password, url, objectaddress, result);
 
-                    root = Root.GetRootByTransactionId(obj.TransactionId, username, password, url, versionByte, result, objectaddress);
+                    root = Root.GetRootByTransactionId(obj.TransactionId, username, password, url, versionByte, result, obj.Keyword.Keys.Last());
 
-                    if (root != null && root.Message != null)
+                    if (root == null || root.Message == null) {
+
+                        MessageObject messageObject = new MessageObject();
+                        messageObject.Message = "<UNABLE TO DECRYPT>";
+                        messageObject.FromAddress = obj.Keyword.Keys.Last();
+                        messageObject.BlockDate = obj.BlockDate;
+                        messageObject.TransactionId = obj.TransactionId;
+                        messages.Add(messageObject);
+
+                        if (messages.Count() == qty) { break; }
+
+                    }
+                    else
                     {
-                        foreach (string message in root.Message)
+                        if (root.Signed)
                         {
+                            string allMessages = "";
+                            foreach (string message in root.Message)
+                            {
+
+                                allMessages = allMessages + message;
+
+                            }
 
                             MessageObject messageObject = new MessageObject();
-                            messageObject.Message = message;
+                            messageObject.Message = allMessages;
                             messageObject.FromAddress = obj.Keyword.Keys.Last();
                             messageObject.BlockDate = obj.BlockDate;
                             messageObject.TransactionId = obj.TransactionId;
                             messages.Add(messageObject);
+                            if (messages.Count() == qty) { break; }
+                        }
+                        else
+                        {
+                            string allMessages = "";
+                            foreach (string message in root.Message)
+                            {
+
+                                allMessages = allMessages + message;
+
+                            }
+
+                            MessageObject messageObject = new MessageObject();
+                            messageObject.Message = allMessages;
+                            messageObject.FromAddress = "";
+                            messageObject.BlockDate = obj.BlockDate;
+                            messageObject.TransactionId = obj.TransactionId;
+                            messages.Add(messageObject);
+                            if (messages.Count() == qty) { break; }
                         }
                     }
                 }
                 catch { }
-
+                if (messages.Count() == qty) { break; }
             }
 
 

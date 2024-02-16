@@ -373,6 +373,10 @@ namespace SUP
 
         private void ObjectMint_Load(object sender, EventArgs e)
         {
+            string anonImageUrl = System.IO.Path.Combine(Application.StartupPath, "includes\\anon.png");
+            // Load the image
+            pictureBox2.ImageLocation = anonImageUrl;
+
             if (searchAddress != "")
             {
                 LoadFormByAddress(searchAddress);                

@@ -21,6 +21,7 @@ using AngleSharp.Text;
 using System.Drawing.Imaging;
 using NAudio.Wave;
 using System.Text;
+using AngleSharp.Dom;
 
 namespace SUP
 {
@@ -113,7 +114,7 @@ namespace SUP
             }
             else if (supFlow.VerticalScroll.Value == 0)
             {
-                if (!panel1.Visible)
+                if (!panel1.Visible && btnCommunityFeed.BackColor != System.Drawing.Color.Blue)
                 {
                     panel1.Visible = true;
                     supFlow.Location = new System.Drawing.Point(supFlow.Location.X, supFlow.Location.Y + 150); // Change the X and Y coordinates
@@ -173,7 +174,10 @@ namespace SUP
             OBcontrol.Dock = DockStyle.Fill;
             OBcontrol.ProfileURNChanged += OBControl_ProfileURNChanged;
             splitContainer1.Panel2.Controls.Add(OBcontrol);
-
+            // Combine the application's startup path with the relative path
+            string anonImageUrl = System.IO.Path.Combine(Application.StartupPath, "includes\\anon.png");
+            // Load the image
+            profileIMG.ImageLocation = anonImageUrl;
             // Read the JSON data from the file
             string filePath = @"root\MyFriendList.Json";
             try
@@ -281,7 +285,15 @@ namespace SUP
             //supFlow.SuspendLayout();
             Regex regexTransactionId = new Regex(@"\b[0-9a-f]{64}\b");
             PROState activeProfile = PROState.GetProfileByAddress(address, mainnetLogin, mainnetPassword, mainnetURL, mainnetVersionByte);
-            if (activeProfile.URN == null) { profileURN.Text = "anon"; profileBIO.Text = ""; profileCreatedDate.Text = ""; profileIMG.ImageLocation = ""; activeProfile.Image = ""; lblProcessHeight.Text = ""; return; }
+            if (activeProfile.URN == null)
+            {
+                profileURN.Text = "anon"; profileBIO.Text = ""; profileCreatedDate.Text = "";                 
+                string errorImageUrl = System.IO.Path.Combine(Application.StartupPath, "includes\\anon.png");
+
+                profileIMG.ImageLocation = errorImageUrl;
+                lblProcessHeight.Text = ""; return;
+
+            }
 
             profileBIO.Text = activeProfile.Bio;
             profileURN.Text = activeProfile.URN;
@@ -322,6 +334,13 @@ namespace SUP
                             try { viewer.Dispose(); } catch { }
 
                         }
+
+                        foreach (var picture in pictures)
+                        {
+
+                            try { picture.Dispose(); } catch { }
+
+                        }
                     });
 
                 });
@@ -333,16 +352,47 @@ namespace SUP
                     supPrivateFlow.Controls.Clear();
                     foreach (string key in activeProfile.URL.Keys)
                     {
-                        Button button = new Button();
-                        button.Text = key;
-                        button.Font = new Font("Segoe UI", 12); // Set the button text font size
-                        button.ForeColor = Color.White;
-                        button.Height = 50;
-                        button.Width = supFlow.Width - 40; // Subtract padding of 10 pixels on each side
-                        button.Margin = new Padding(10, 3, 10, 4);
-                        button.Click += new EventHandler((sender, e) => button_Click(sender, e, activeProfile.URL[key]));
-                        supFlow.Controls.Add(button);
+                        Panel panel = new Panel();
+                        panel.BackColor = Color.Transparent;
+                        panel.Width = supFlow.Width - 40; // Set the fixed width
+                        panel.Height = 50;
+
+                        Label label = new Label();
+                        label.Text = key;
+                        label.Font = new Font("Segoe UI", 18, FontStyle.Bold); // Adjust font size
+                        label.ForeColor = Color.White;
+                        label.BackColor = Color.Transparent;
+                        label.TextAlign = ContentAlignment.MiddleCenter; // Center the text within the label
+                        label.Dock = DockStyle.Fill; // Fill the entire space within the panel
+                        label.Click += new EventHandler((sender, e) => button_Click(sender, e, activeProfile.URL[key]));
+                        // Add a border to the panel
+                        panel.BorderStyle = BorderStyle.FixedSingle;
+
+
+                        // Handle mouse enter event
+                        label.MouseEnter += (sender, e) =>
+                        {
+                            label.BackColor = Color.DarkGray; // Change the color when the mouse enters
+                        };
+
+                        // Handle mouse leave event
+                        label.MouseLeave += (sender, e) =>
+                        {
+                            label.BackColor = Color.Transparent; // Change back to the original color when the mouse leaves
+                        };
+
+
+                        // Add the label to the panel
+                        panel.Controls.Add(label);
+
+                        // Add the panel to the container (supFlow)
+                        supFlow.Controls.Add(panel);
                     }
+
+
+
+
+
                 }
             }
             else
@@ -373,26 +423,8 @@ namespace SUP
             {
                 this.Invoke((Action)(() =>
                 {
-                    Random rnd = new Random();
-                    string[] gifFiles = Directory.GetFiles("includes", "*.gif");
-                    if (gifFiles.Length > 0)
-                    {
-                        int randomIndex = rnd.Next(gifFiles.Length);
-                        string randomGifFile = gifFiles[randomIndex];
-                        profileIMG.SizeMode = PictureBoxSizeMode.StretchImage;
-                        profileIMG.ImageLocation = randomGifFile;
-
-                    }
-                    else
-                    {
-                        try
-                        {
-
-                            profileIMG.SizeMode = PictureBoxSizeMode.StretchImage;
-                            profileIMG.ImageLocation = @"includes\HugPuddle.jpg";
-                        }
-                        catch { }
-                    }
+                    string anonImageUrl = System.IO.Path.Combine(Application.StartupPath, "includes\\anon.png");
+                    profileIMG.ImageLocation = anonImageUrl;
                 }));
 
                 return;
@@ -424,26 +456,10 @@ namespace SUP
 
                     this.Invoke((Action)(() =>
                     {
-                        Random rnd = new Random();
-                        string[] gifFiles = Directory.GetFiles("includes", "*.gif");
-                        if (gifFiles.Length > 0)
-                        {
-                            int randomIndex = rnd.Next(gifFiles.Length);
-                            string randomGifFile = gifFiles[randomIndex];
-                            profileIMG.SizeMode = PictureBoxSizeMode.StretchImage;
-                            profileIMG.ImageLocation = randomGifFile;
-
-                        }
-                        else
-                        {
-                            try
-                            {
-
-                                profileIMG.SizeMode = PictureBoxSizeMode.StretchImage;
-                                profileIMG.ImageLocation = @"includes\HugPuddle.jpg";
-                            }
-                            catch { }
-                        }
+                      
+                            string anonImageUrl = System.IO.Path.Combine(Application.StartupPath, "includes\\anon.png");
+                            profileIMG.ImageLocation = anonImageUrl;
+                       
                     }));
 
 
@@ -1302,9 +1318,9 @@ namespace SUP
                                                     this.Invoke((MethodInvoker)delegate
                                                     {
                                                         try { imglocation = myFriends[_to]; } catch { }
-                                                        CreateFeedRow(imglocation, _toId, _to, DateTime.ParseExact(_blockdate, "yyyyMMddHHmmss", CultureInfo.InvariantCulture), " ", "", Color.White, supFlow, true);
+                                                        CreateRow(imglocation, _toId, _to, DateTime.ParseExact(_blockdate, "yyyyMMddHHmmss", CultureInfo.InvariantCulture), " ", "",false, supFlow, true);
                                                         try { imglocation = myFriends[_from]; } catch { }
-                                                        CreateFeedRow(imglocation, _fromId, _from, DateTime.ParseExact("19700101010101", "yyyyMMddHHmmss", CultureInfo.InvariantCulture), _message, root.TransactionId, Color.White, supFlow, true);
+                                                        CreateRow(imglocation, _fromId, _from, DateTime.ParseExact("19700101010101", "yyyyMMddHHmmss", CultureInfo.InvariantCulture), _message, root.TransactionId, false, supFlow, true);
 
                                                     });
 
@@ -1645,9 +1661,9 @@ namespace SUP
                                                         this.Invoke((MethodInvoker)delegate
                                                         {
                                                             try { imglocation = myFriends[_to]; } catch { }
-                                                            CreateFeedRow(imglocation, _to, _to, DateTime.ParseExact(_blockdate, "yyyyMMddHHmmss", CultureInfo.InvariantCulture), " ", "", Color.White, supFlow, true);
+                                                            CreateRow(imglocation, _to, _to, DateTime.ParseExact(_blockdate, "yyyyMMddHHmmss", CultureInfo.InvariantCulture), " ", "", false, supFlow, true);
                                                             try { imglocation = myFriends[_from]; } catch { }
-                                                            CreateFeedRow(imglocation, _from, _from, DateTime.ParseExact("19700101010101", "yyyyMMddHHmmss", CultureInfo.InvariantCulture), _message, root.TransactionId, Color.White, supFlow, true);
+                                                            CreateRow(imglocation, _from, _from, DateTime.ParseExact("19700101010101", "yyyyMMddHHmmss", CultureInfo.InvariantCulture), _message, root.TransactionId, false, supFlow, true);
                                                         });
 
                                                         string pattern = "<<.*?>>";
@@ -1967,9 +1983,9 @@ namespace SUP
                                                         this.Invoke((MethodInvoker)delegate
                                                         {
                                                             try { imglocation = myFriends[_to]; } catch { }
-                                                            CreateFeedRow(imglocation, _to, _to, DateTime.ParseExact(_blockdate, "yyyyMMddHHmmss", CultureInfo.InvariantCulture), " ", "", Color.White, supFlow, true);
+                                                            CreateRow(imglocation, _to, _to, DateTime.ParseExact(_blockdate, "yyyyMMddHHmmss", CultureInfo.InvariantCulture), " ", "", false, supFlow, true);
                                                             try { imglocation = myFriends[_from]; } catch { }
-                                                            CreateFeedRow(imglocation, _from, _from, DateTime.ParseExact("19700101010101", "yyyyMMddHHmmss", CultureInfo.InvariantCulture), _message, root.TransactionId, Color.White, supFlow, true);
+                                                            CreateRow(imglocation, _from, _from, DateTime.ParseExact("19700101010101", "yyyyMMddHHmmss", CultureInfo.InvariantCulture), _message, root.TransactionId, false, supFlow, true);
                                                         });
 
                                                         string pattern = "<<.*?>>";
@@ -2287,9 +2303,9 @@ namespace SUP
                                                         this.Invoke((MethodInvoker)delegate
                                                         {
                                                             try { imglocation = myFriends[_to]; } catch { }
-                                                            CreateFeedRow(imglocation, _to, _to, DateTime.ParseExact(_blockdate, "yyyyMMddHHmmss", CultureInfo.InvariantCulture), " ", "", Color.White, supFlow, true);
+                                                            CreateRow(imglocation, _to, _to, DateTime.ParseExact(_blockdate, "yyyyMMddHHmmss", CultureInfo.InvariantCulture), " ", "",false, supFlow, true);
                                                             try { imglocation = myFriends[_from]; } catch { }
-                                                            CreateFeedRow(imglocation, _from, _from, DateTime.ParseExact("19700101010101", "yyyyMMddHHmmss", CultureInfo.InvariantCulture), _message, root.TransactionId, Color.White, supFlow, true);
+                                                            CreateRow(imglocation, _from, _from, DateTime.ParseExact("19700101010101", "yyyyMMddHHmmss", CultureInfo.InvariantCulture), _message, root.TransactionId, false, supFlow, true);
                                                         });
 
                                                         string pattern = "<<.*?>>";
@@ -2609,9 +2625,9 @@ namespace SUP
                                                         this.Invoke((MethodInvoker)delegate
                                                         {
                                                             try { imglocation = myFriends[_to]; } catch { }
-                                                            CreateFeedRow(imglocation, _to, _to, DateTime.ParseExact(_blockdate, "yyyyMMddHHmmss", CultureInfo.InvariantCulture), " ", "", Color.White, supFlow, true);
+                                                            CreateRow(imglocation, _to, _to, DateTime.ParseExact(_blockdate, "yyyyMMddHHmmss", CultureInfo.InvariantCulture), " ", "", false, supFlow, true);
                                                             try { imglocation = myFriends[_from]; } catch { }
-                                                            CreateFeedRow(imglocation, _from, _from, DateTime.ParseExact("19700101010101", "yyyyMMddHHmmss", CultureInfo.InvariantCulture), _message, root.TransactionId, Color.White, supFlow, true);
+                                                            CreateRow(imglocation, _from, _from, DateTime.ParseExact("19700101010101", "yyyyMMddHHmmss", CultureInfo.InvariantCulture), _message, root.TransactionId, false, supFlow, true);
 
                                                         });
 
@@ -3704,8 +3720,8 @@ namespace SUP
                 supPrivateFlow.ResumeLayout();
                 btnPrivateMessage.Enabled = true; return;
             }
-            List<MessageObject> messages = OBJState.GetPrivateMessagesByAddress(profileURN.Links[0].LinkData.ToString(), mainnetLogin, mainnetPassword, mainnetURL, mainnetVersionByte, numPrivateMessagesDisplayed, 5);
-            numPrivateMessagesDisplayed = numPrivateMessagesDisplayed + 5;
+            List<MessageObject> messages = OBJState.GetPrivateMessagesByAddress(profileURN.Links[0].LinkData.ToString(), mainnetLogin, mainnetPassword, mainnetURL, mainnetVersionByte, numPrivateMessagesDisplayed, 10);
+            numPrivateMessagesDisplayed = numPrivateMessagesDisplayed + 10;
 
 
 
@@ -3726,19 +3742,13 @@ namespace SUP
                 {
 
 
-
-                    Root root = Root.GetRootByTransactionId(messagePacket.TransactionId, mainnetLogin, mainnetPassword, mainnetURL, mainnetVersionByte);
-                    byte[] result = Root.GetRootBytesByFile(new string[] { @"root/" + messagePacket.TransactionId + @"/SEC" });
-                    result = Root.DecryptRootBytes(mainnetLogin, mainnetPassword, mainnetURL, profileURN.Links[0].LinkData.ToString(), result);
-                    root = Root.GetRootByTransactionId(messagePacket.TransactionId, mainnetLogin, mainnetPassword, mainnetURL, mainnetVersionByte, result, messagePacket.FromAddress);
-                    if (root.Signed)
-                    {
+                        byte[] result = Array.Empty<byte>();
                         string message = "";
-                        try { message = string.Join(" ", root.Message); } catch { };
+                        try { message = messagePacket.Message; } catch { };
 
 
                         string fromAddress = messagePacket.FromAddress;
-                        string imagelocation = "";
+                        string imagelocation = @"includes\anon.png";
 
 
                         if (!profileAddress.ContainsKey(fromAddress))
@@ -4334,7 +4344,7 @@ namespace SUP
                             });
 
                         }
-                    }
+                    
                 }
 
 
@@ -4531,10 +4541,10 @@ namespace SUP
 
                             this.Invoke((MethodInvoker)delegate
                             {
-                                try { imglocation = myFriends[_from]; } catch { }
+                                try { imglocation = myFriends[_from]; } catch { imglocation = @"includes\anon.png"; }
                                 CreateRow(imglocation, fromURN, _from, DateTime.ParseExact("19700101010101", "yyyyMMddHHmmss", CultureInfo.InvariantCulture), "", _transactionId, false, supFlow);
 
-                                try { imglocation = myFriends[_to]; } catch { }
+                                try { imglocation = myFriends[_to]; } catch { imglocation = @"includes\anon.png"; }
                                 CreateRow(imglocation, toURN, _to, DateTime.ParseExact(_blockdate, "yyyyMMddHHmmss", CultureInfo.InvariantCulture), _message, _transactionId, false, supFlow);
                             });
 
@@ -4768,7 +4778,7 @@ namespace SUP
                 if (isprivate)
                 {
                     calcwidth = supPrivateFlow.Width - 50;
-                    if (calcwidth > 480){ calcwidth = 480;}
+                    if (calcwidth > 480) { calcwidth = 480; }
 
                     msg.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, calcwidth));
 
@@ -4802,9 +4812,9 @@ namespace SUP
 
                 pictureBox.SizeMode = PictureBoxSizeMode.Zoom;
 
-                    pictureBox.Width = calcwidth;
-                    pictureBox.Height = calcwidth;
-               
+                pictureBox.Width = calcwidth;
+                pictureBox.Height = calcwidth;
+
 
                 pictureBox.BackColor = System.Drawing.Color.FromArgb(22, 22, 22);
                 pictureBox.ImageLocation = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + @"\includes\progress.gif";
@@ -5041,7 +5051,7 @@ namespace SUP
 
                 if (videolocation.ToLower().EndsWith(".wav") || videolocation.ToLower().EndsWith(".mp3"))
                 {
-                  
+
 
                     if (isprivate)
                     {
@@ -5063,7 +5073,7 @@ namespace SUP
                     {
                         int calcwidth = supPrivateFlow.Width - 50;
                         if (calcwidth > 960) { calcwidth = 960; }
-                        webviewer.Size = new System.Drawing.Size(calcwidth,calcwidth - 100);
+                        webviewer.Size = new System.Drawing.Size(calcwidth, calcwidth - 100);
                     }
                     else
                     {
@@ -5325,339 +5335,291 @@ namespace SUP
 
         }
 
-        void CreateRow(string imageLocation, string ownerName, string ownerId, DateTime timestamp, string messageText, string transactionid, bool isprivate, FlowLayoutPanel layoutPanel)
+        void CreateRow(string imageLocation, string ownerName, string ownerId, DateTime timestamp, string messageText, string transactionid, bool isprivate, FlowLayoutPanel layoutPanel, bool addtoTop = false)
         {
 
-            int columncount = 5;
-            if (isprivate) { columncount = 4; }
-            // Create a table layout panel for each row
-            TableLayoutPanel row = new TableLayoutPanel
-            {
-                RowCount = 1,
-                ColumnCount = columncount,
-                AutoSize = true,
-                BackColor = Color.Black,
-                ForeColor = Color.White,
-                Padding = new Padding(0),
-                Margin = new Padding(0)
-            };
-            // Add the width of the first column to fixed value and second to fill remaining space
-            row.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 50));
-            row.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 90));
-            row.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 120));
+
             if (!isprivate)
             {
-                row.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 150));
-            }
-            row.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 20));
-
-            layoutPanel.Controls.Add(row);
-
-            // Create a PictureBox with the specified image
-
-            if (File.Exists(imageLocation) || imageLocation.ToUpper().StartsWith("HTTP"))
-            {
-                PictureBox picture = new PictureBox
+                // Create a table layout panel for each row
+                TableLayoutPanel row = new TableLayoutPanel
                 {
-                    Size = new System.Drawing.Size(50, 50),
-                    SizeMode = PictureBoxSizeMode.StretchImage,
-                    ImageLocation = imageLocation,
-                    Margin = new System.Windows.Forms.Padding(0)
-
-                };
-                picture.Click += (sender, e) => { profileImageClick(ownerId); };
-                row.Controls.Add(picture, 0, 0);
-                pictures.Add(picture);
-            }
-            else
-            {
-                Random rnd = new Random();
-                string randomGifFile;
-                string[] gifFiles = Directory.GetFiles("includes", "*.gif");
-                if (gifFiles.Length > 0)
-                {
-                    int randomIndex = rnd.Next(gifFiles.Length);
-                    randomGifFile = gifFiles[randomIndex];
-                }
-                else
-                {
-                    randomGifFile = @"includes\HugPuddle.jpg";
-                }
-
-
-
-                PictureBox picture = new PictureBox
-                {
-                    Size = new System.Drawing.Size(50, 50),
-                    SizeMode = PictureBoxSizeMode.StretchImage,
-                    ImageLocation = randomGifFile,
-                    Margin = new System.Windows.Forms.Padding(0),
-                };
-                row.Controls.Add(picture, 0, 0);
-                pictures.Add(picture);
-            }
-
-
-            // Create a LinkLabel with the owner name
-            LinkLabel owner = new LinkLabel
-            {
-                Text = ownerName,
-                BackColor = Color.Black,
-                ForeColor = Color.White,
-                AutoSize = true
-
-            };
-            owner.LinkClicked += (sender, e) => { Owner_LinkClicked(ownerId, imageLocation); };
-            owner.Font = new System.Drawing.Font("Microsoft Sans Serif", 7.7F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            owner.Margin = new System.Windows.Forms.Padding(3);
-            owner.Dock = DockStyle.Bottom;
-            row.Controls.Add(owner, 1, 0);
-
-            if (timestamp.Year > 1975)
-            {
-                // Create a LinkLabel with the owner name
-                Label tstamp = new Label
-                {
+                    RowCount = 1,
+                    ColumnCount = 5,
                     AutoSize = true,
                     BackColor = Color.Black,
                     ForeColor = Color.White,
-                    Font = new System.Drawing.Font("Microsoft Sans Serif", 7.77F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0))),
-                    Text = timestamp.ToString("MM/dd/yyyy hh:mm:ss"),
-                    Margin = new System.Windows.Forms.Padding(0),
-                    Dock = DockStyle.Bottom
+                    Padding = new Padding(0),
+                    Margin = new Padding(0)
                 };
-                row.Controls.Add(tstamp, 2, 0);
+                // Add the width of the first column to fixed value and second to fill remaining space
+                row.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 50));
+                row.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 200));
+                row.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 180));
+                row.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 80));
+                row.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 40));
 
 
-                Label loveme = new Label
+                // Create a PictureBox with the specified image
+
+                if (File.Exists(imageLocation) || imageLocation.ToUpper().StartsWith("HTTP"))
                 {
-                    AutoSize = true,
-                    BackColor = Color.Black,
-                    ForeColor = Color.White,
-                    Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0))),
-                    Text = "🤍",
-                    Margin = new System.Windows.Forms.Padding(0),
-                    Dock = DockStyle.Bottom
-                };
-
-                loveme.Click += (sender, e) => { loveme_LinkClicked(sender, e, transactionid); loveme.ForeColor = Color.Blue; };
-
-                if (!isprivate)
-                {
-                    row.Controls.Add(loveme, 3, 0);
-                    Task.Run(() =>
+                    PictureBox picture = new PictureBox
                     {
+                        Size = new System.Drawing.Size(50, 50),
+                        SizeMode = PictureBoxSizeMode.StretchImage,
+                        ImageLocation = imageLocation,
+                        Margin = new System.Windows.Forms.Padding(0)
 
-                        Root[] roots = Root.GetRootsByAddress(Root.GetPublicAddressByKeyword(transactionid, mainnetVersionByte), mainnetLogin, mainnetPassword, mainnetURL, 0, -1, mainnetVersionByte);
-                        if (roots != null && roots.Length > 0)
-                        {
-                            this.Invoke((MethodInvoker)delegate
-                        {
-                            loveme.Text = "🖤 " + roots.Length.ToString();
-                            loveme.ForeColor = Color.Red;
-                        });
-                        }
-
-                    });
-                }
-
-                Label deleteme = new Label
-                {
-                    AutoSize = true,
-                    BackColor = Color.Black,
-                    ForeColor = Color.White,
-                    Font = new System.Drawing.Font("Microsoft Sans Serif", 7.77F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0))),
-                    Text = "🗑",
-                    Margin = new System.Windows.Forms.Padding(0),
-                    Dock = DockStyle.Bottom
-                };
-                deleteme.Click += (sender, e) =>
-                {
-                    deleteme_LinkClicked(transactionid);
-                    deleteme.ForeColor = Color.Black;
-                };
-                row.Controls.Add(deleteme, columncount - 1, 0);
-            }
-
-
-            TableLayoutPanel msg = new TableLayoutPanel
-            {
-                RowCount = 1,
-                ColumnCount = 1,
-                Dock = DockStyle.Top,
-                BackColor = Color.Black,
-                ForeColor = Color.White,
-                AutoSize = true,
-                Margin = new System.Windows.Forms.Padding(0),
-                Padding = new System.Windows.Forms.Padding(0, 0, 0, 0),
-                CellBorderStyle = TableLayoutPanelCellBorderStyle.None
-
-            };
-            msg.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, layoutPanel.Width - 50));
-
-
-            layoutPanel.Controls.Add(msg);
-
-            if (messageText != "")
-            {
-                Label message = new Label
-                {
-                    AutoSize = true,
-                    Text = messageText,
-                    MinimumSize = new Size(200, 46),
-                    Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0))),
-                    Margin = new System.Windows.Forms.Padding(0),
-                    Padding = new System.Windows.Forms.Padding(10, 20, 10, 20),
-                    TextAlign = System.Drawing.ContentAlignment.TopLeft
-                };
-
-                msg.Controls.Add(message, 1, 0);
-            }
-            else
-            {
-
-                Label message = new Label
-                {
-                    AutoSize = true,
-                    Text = messageText,
-                    Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0))),
-                    Margin = new System.Windows.Forms.Padding(0),
-                    Padding = new System.Windows.Forms.Padding(0, 0, 0, 0),
-                    TextAlign = System.Drawing.ContentAlignment.TopLeft
-                };
-
-                msg.Controls.Add(message, 1, 0);
-
-            }
-
-
-        }
-
-        void CreateFeedRow(string imageLocation, string ownerName, string ownerId, DateTime timestamp, string messageText, string transactionid, System.Drawing.Color bgcolor, FlowLayoutPanel layoutPanel, bool addtoTop = false)
-        {
-
-            // Create a table layout panel for each row
-            TableLayoutPanel row = new TableLayoutPanel
-            {
-                RowCount = 1,
-                ColumnCount = 4,
-                AutoSize = true,
-                BackColor = Color.Black,
-                ForeColor = Color.White,
-                Padding = new Padding(0),
-                Margin = new Padding(0)
-            };
-            // Add the width of the first column to fixed value and second to fill remaining space
-            row.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 50));
-            row.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 90));
-            row.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 110));
-            row.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 20));
-
-            if (addtoTop)
-            {
-                layoutPanel.Controls.Add(row);
-                layoutPanel.Controls.SetChildIndex(row, 0);
-            }
-            else
-            {
-                layoutPanel.Controls.Add(row);
-            }
-
-
-
-            // Create a PictureBox with the specified image
-
-            if (File.Exists(imageLocation) || imageLocation.ToUpper().StartsWith("HTTP"))
-            {
-                PictureBox picture = new PictureBox
-                {
-                    Size = new System.Drawing.Size(50, 50),
-                    SizeMode = PictureBoxSizeMode.StretchImage,
-                    ImageLocation = imageLocation,
-                    Margin = new System.Windows.Forms.Padding(0),
-
-                };
-
-                picture.Click += (sender, e) => { profileImageClick(ownerId); };
-                row.Controls.Add(picture, 0, 0);
-                pictures.Add(picture);
-            }
-            else
-            {
-                Random rnd = new Random();
-                string randomGifFile;
-                string[] gifFiles = Directory.GetFiles("includes", "*.gif");
-                if (gifFiles.Length > 0)
-                {
-                    int randomIndex = rnd.Next(gifFiles.Length);
-                    randomGifFile = gifFiles[randomIndex];
+                    };
+                    picture.Click += (sender, e) => { profileImageClick(ownerId); };
+                    row.Controls.Add(picture, 0, 0);
+                    pictures.Add(picture);
                 }
                 else
                 {
-                    randomGifFile = @"includes\HugPuddle.jpg";
+                    string errorImageUrl = System.IO.Path.Combine(Application.StartupPath, "includes\\anon.png");
+
+
+                    PictureBox picture = new PictureBox
+                    {
+                        Size = new System.Drawing.Size(50, 50),
+                        SizeMode = PictureBoxSizeMode.StretchImage,
+                        ImageLocation = errorImageUrl,
+                        Margin = new System.Windows.Forms.Padding(0),
+                    };
+                    picture.Click += (sender, e) => { profileImageClick(ownerId); };
+                    row.Controls.Add(picture, 0, 0);
+                    pictures.Add(picture);
                 }
 
 
-
-                PictureBox picture = new PictureBox
+                // Create a LinkLabel with the owner name
+                LinkLabel owner = new LinkLabel
                 {
-                    Size = new System.Drawing.Size(50, 50),
-                    SizeMode = PictureBoxSizeMode.StretchImage,
-                    ImageLocation = randomGifFile,
-                    Margin = new System.Windows.Forms.Padding(0),
+                    Text = ownerName,
+                    BackColor = Color.Black,
+                    ForeColor = Color.White,
+                    AutoSize = true
+
                 };
-                row.Controls.Add(picture, 0, 0);
-                pictures.Add(picture);
+                owner.LinkClicked += (sender, e) => { Owner_LinkClicked(ownerId, imageLocation); };
+                owner.Font = new System.Drawing.Font("Microsoft Sans Serif", 16F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+                owner.Margin = new System.Windows.Forms.Padding(3);
+                owner.Dock = DockStyle.Bottom;
+                row.Controls.Add(owner, 1, 0);
+
+                if (timestamp.Year > 1975)
+                {
+                    // Create a LinkLabel with the owner name
+                    Label tstamp = new Label
+                    {
+                        AutoSize = true,
+                        BackColor = Color.Black,
+                        ForeColor = Color.Gray,
+                        Font = new System.Drawing.Font("Microsoft Sans Serif", 14F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0))),
+                        Text = timestamp.ToString("MM/dd/yyyy hh:mm:ss"),
+                        Margin = new System.Windows.Forms.Padding(0),
+                        Dock = DockStyle.Bottom
+                    };
+                    row.Controls.Add(tstamp, 2, 0);
+
+
+                    Label loveme = new Label
+                    {
+                        AutoSize = true,
+                        BackColor = Color.Black,
+                        ForeColor = Color.Red,
+                        Font = new System.Drawing.Font("Microsoft Sans Serif", 14F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0))),
+                        Text = "🤍",
+                        Margin = new System.Windows.Forms.Padding(0),
+                        Dock = DockStyle.Bottom
+                    };
+
+                    loveme.Click += (sender, e) => { loveme_LinkClicked(sender, e, transactionid); loveme.ForeColor = Color.Blue; };
+
+                  
+                        row.Controls.Add(loveme, 3, 0);
+                        Task.Run(() =>
+                        {
+
+                            Root[] roots = Root.GetRootsByAddress(Root.GetPublicAddressByKeyword(transactionid, mainnetVersionByte), mainnetLogin, mainnetPassword, mainnetURL, 0, -1, mainnetVersionByte);
+                            if (roots != null && roots.Length > 0)
+                            {
+                                this.Invoke((MethodInvoker)delegate
+                                {
+                                    loveme.Text = "🖤 " + roots.Length.ToString();
+                                    loveme.ForeColor = Color.Red;
+                                    loveme.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+                                });
+                            }
+
+                        });
+                    
+
+                    Label deleteme = new Label
+                    {
+                        AutoSize = true,
+                        BackColor = Color.Black,
+                        ForeColor = Color.White,
+                        Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0))),
+                        Text = "🗑",
+                        Margin = new System.Windows.Forms.Padding(0),
+                        Dock = DockStyle.Bottom
+                    };
+                    deleteme.Click += (sender, e) =>
+                    {
+                        deleteme_LinkClicked(transactionid);
+                        deleteme.ForeColor = Color.Black;
+                    };
+                    row.Controls.Add(deleteme, 4, 0);
+                }
+
+
+                if (addtoTop)
+                {
+                    layoutPanel.Controls.Add(row);
+                    layoutPanel.Controls.SetChildIndex(row, 0);
+                }
+                else
+                {
+                    layoutPanel.Controls.Add(row);
+                }
             }
-
-
-            // Create a LinkLabel with the owner name
-            LinkLabel owner = new LinkLabel
+            else
             {
-                Text = ownerName,
-                BackColor = Color.Black,
-                ForeColor = Color.White,
-                AutoSize = true
 
-            };
-            owner.LinkClicked += (sender, e) => { Owner_LinkClicked(ownerId, imageLocation); };
-            owner.Font = new System.Drawing.Font("Microsoft Sans Serif", 7.7F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            owner.Margin = new System.Windows.Forms.Padding(3);
-            owner.Dock = DockStyle.Bottom;
-            row.Controls.Add(owner, 1, 0);
-
-
-            if (timestamp.Year > 1975)
-            {  // Create a LinkLabel with the owner name
-                Label tstamp = new Label
+                // Create a table layout panel for each row
+                TableLayoutPanel row = new TableLayoutPanel
                 {
+                    RowCount = 1,
+                    ColumnCount = 2,
                     AutoSize = true,
                     BackColor = Color.Black,
                     ForeColor = Color.White,
-                    Font = new System.Drawing.Font("Microsoft Sans Serif", 7.77F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0))),
-                    Text = timestamp.ToString("MM/dd/yyyy hh:mm:ss"),
-                    Margin = new System.Windows.Forms.Padding(0),
-                    Dock = DockStyle.Bottom
+                    Padding = new Padding(0),
+                    Margin = new Padding(0)
                 };
-                row.Controls.Add(tstamp, 2, 0);
+                // Add the width of the first column to fixed value and second to fill remaining space
+                row.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 50));
+                row.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 200));
 
-
-                Label deleteme = new Label
+                // Create a table layout panel for each row
+                TableLayoutPanel row2 = new TableLayoutPanel
                 {
+                    RowCount = 1,
+                    ColumnCount = 2,
                     AutoSize = true,
                     BackColor = Color.Black,
                     ForeColor = Color.White,
-                    Font = new System.Drawing.Font("Microsoft Sans Serif", 7.77F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0))),
-                    Text = "🗑",
-                    Margin = new System.Windows.Forms.Padding(0),
-                    Dock = DockStyle.Bottom
+                    Padding = new Padding(0),
+                    Margin = new Padding(0)
                 };
-                deleteme.Click += (sender, e) => { deleteme_LinkClicked(transactionid); };
-                row.Controls.Add(deleteme, 3, 0);
+                row2.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 200));
+                row2.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 50));
+
+
+                // Create a PictureBox with the specified image
+
+                if (File.Exists(imageLocation) || imageLocation.ToUpper().StartsWith("HTTP"))
+                {
+                    PictureBox picture = new PictureBox
+                    {
+                        Size = new System.Drawing.Size(50, 50),
+                        SizeMode = PictureBoxSizeMode.StretchImage,
+                        ImageLocation = imageLocation,
+                        Margin = new System.Windows.Forms.Padding(0)
+
+                    };
+                    picture.Click += (sender, e) => { profileImageClick(ownerId); };
+                    row.Controls.Add(picture, 0, 0);
+                    pictures.Add(picture);
+                }
+                else
+                {
+                    string errorImageUrl = System.IO.Path.Combine(Application.StartupPath, "includes\\anon.png");
+
+
+                    PictureBox picture = new PictureBox
+                    {
+                        Size = new System.Drawing.Size(50, 50),
+                        SizeMode = PictureBoxSizeMode.StretchImage,
+                        ImageLocation = errorImageUrl,
+                        Margin = new System.Windows.Forms.Padding(0),
+                    };
+                    picture.Click += (sender, e) => { profileImageClick(ownerId); };
+                    row.Controls.Add(picture, 0, 0);
+                    pictures.Add(picture);
+                }
+
+
+                // Create a LinkLabel with the owner name
+                LinkLabel owner = new LinkLabel
+                {
+                    Text = ownerName,
+                    BackColor = Color.Black,
+                    ForeColor = Color.White,
+                    AutoSize = true
+
+                };
+                owner.LinkClicked += (sender, e) => { Owner_LinkClicked(ownerId, imageLocation); };
+                owner.Font = new System.Drawing.Font("Microsoft Sans Serif", 16F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+                owner.Margin = new System.Windows.Forms.Padding(3);
+                owner.Dock = DockStyle.Bottom;
+                row.Controls.Add(owner, 1, 0);
+
+                if (timestamp.Year > 1975)
+                {
+                    // Create a LinkLabel with the owner name
+                    Label tstamp = new Label
+                    {
+                        AutoSize = true,
+                        BackColor = Color.Black,
+                        ForeColor = Color.Gray,
+                        Font = new System.Drawing.Font("Microsoft Sans Serif", 14F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0))),
+                        Text = timestamp.ToString("MM/dd/yyyy hh:mm:ss"),
+                        Margin = new System.Windows.Forms.Padding(0),
+                        Dock = DockStyle.Bottom
+                    };
+                    row2.Controls.Add(tstamp, 0, 0);
+
+
+                  
+
+                    Label deleteme = new Label
+                    {
+                        AutoSize = true,
+                        BackColor = Color.Black,
+                        ForeColor = Color.White,
+                        Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0))),
+                        Text = "🗑",
+                        Margin = new System.Windows.Forms.Padding(0),
+                        Dock = DockStyle.Bottom
+                    };
+                    deleteme.Click += (sender, e) =>
+                    {
+                        deleteme_LinkClicked(transactionid);
+                        deleteme.ForeColor = Color.Black;
+                    };
+                    row2.Controls.Add(deleteme, 1, 0);
+                }
+
+                if (addtoTop)
+                {
+
+                    layoutPanel.Controls.Add(row);
+                    layoutPanel.Controls.SetChildIndex(row, 0);
+                    layoutPanel.Controls.Add(row2);
+                    layoutPanel.Controls.SetChildIndex(row, 1);
+                }
+                else
+                {
+                    layoutPanel.Controls.Add(row);
+                    layoutPanel.Controls.Add(row2);
+
+                }
+
             }
-
-
-
 
             TableLayoutPanel msg = new TableLayoutPanel
             {
@@ -5673,6 +5635,7 @@ namespace SUP
 
             };
             msg.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, layoutPanel.Width - 50));
+
 
             if (addtoTop)
             {
@@ -5684,7 +5647,6 @@ namespace SUP
                 layoutPanel.Controls.Add(msg);
             }
 
-
             if (messageText != "")
             {
                 Label message = new Label
@@ -5692,7 +5654,7 @@ namespace SUP
                     AutoSize = true,
                     Text = messageText,
                     MinimumSize = new Size(200, 46),
-                    Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0))),
+                    Font = new System.Drawing.Font("Segoe UI", 18F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0))),
                     Margin = new System.Windows.Forms.Padding(0),
                     Padding = new System.Windows.Forms.Padding(10, 20, 10, 20),
                     TextAlign = System.Drawing.ContentAlignment.TopLeft
@@ -5707,7 +5669,7 @@ namespace SUP
                 {
                     AutoSize = true,
                     Text = messageText,
-                    Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0))),
+                    Font = new System.Drawing.Font("Segoe UI", 18F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0))),
                     Margin = new System.Windows.Forms.Padding(0),
                     Padding = new System.Windows.Forms.Padding(0, 0, 0, 0),
                     TextAlign = System.Drawing.ContentAlignment.TopLeft
@@ -5725,13 +5687,14 @@ namespace SUP
             bool isprivate = false;
             if (btnPrivateMessage.BackColor == Color.Blue) { isprivate = true; }
 
-            if (profileOwner.Tag != null) {
+            if (profileOwner.Tag != null)
+            {
                 DiscoBall disco = new DiscoBall(profileOwner.Tag.ToString(), profileOwner.ImageLocation, ownerId, imageLocation, isprivate);
                 disco.StartPosition = FormStartPosition.CenterScreen;
                 disco.Show(this);
                 disco.Focus();
             }
-           
+
 
         }
 
@@ -5740,11 +5703,10 @@ namespace SUP
             numMessagesDisplayed = 0;
             numPrivateMessagesDisplayed = 0;
             numFriendFeedsDisplayed = 0;
-
+            if (btnCommunityFeed.BackColor == Color.Blue) { btnCommunityFeed.BackColor = Color.White; btnCommunityFeed.ForeColor = Color.Black; btnPublicMessage.BackColor = Color.Blue; btnPublicMessage.ForeColor = Color.Yellow; }
             MakeActiveProfile(ownerId);
             RefreshSupMessages();
         }
-
 
         void Attachment_Clicked(string path)
         {
@@ -6050,7 +6012,7 @@ namespace SUP
             {
 
 
-                if (((PictureBox)sender).ImageLocation != null)
+                if (!((PictureBox)sender).ImageLocation.Contains("anon.png") || profileURN.Text != "anon")
                 {
                     numMessagesDisplayed = 0;
                     numFriendFeedsDisplayed = 0;
@@ -6394,7 +6356,7 @@ namespace SUP
 
         private void imgBTCSwitch_Click(object sender, EventArgs e)
         {
-            profileURN.Text = "anon"; profileBIO.Text = ""; profileCreatedDate.Text = ""; profileIMG.ImageLocation = null; lblProcessHeight.Text = ""; profileURN.Links[0].LinkData = null; profileURN.Links[0].Tag = ""; profileIMG.Tag = ""; profileOwner.ImageLocation = null; profileOwner.Tag = null;
+            profileURN.Text = "anon"; profileBIO.Text = ""; profileCreatedDate.Text = ""; profileIMG.ImageLocation = @"includes/anon.png"; lblProcessHeight.Text = ""; profileURN.Links[0].LinkData = null; profileURN.Links[0].Tag = ""; profileIMG.Tag = ""; profileOwner.ImageLocation = null; profileOwner.Tag = null;
             supFlow.Controls.Clear();
             numMessagesDisplayed = 0;
             numPrivateMessagesDisplayed = 0;
@@ -6498,5 +6460,19 @@ namespace SUP
                 catch { }
             }
         }
+
+        private void profileIMG_LoadCompleted(object sender, System.ComponentModel.AsyncCompletedEventArgs e)
+        {
+            if (e.Error != null)
+            {
+                // Combine the application's startup path with the relative path
+                string errorImageUrl = System.IO.Path.Combine(Application.StartupPath, "includes\\anon.png");
+
+                // Load the image
+                profileIMG.ImageLocation = errorImageUrl;
+            }
+        }
+
+
     }
 }
