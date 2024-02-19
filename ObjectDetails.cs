@@ -1732,8 +1732,9 @@ namespace SUP
 
                             if (File.Exists(videolocation))
                             {
+                                string encodedPath = "file:///" + Uri.EscapeUriString(videolocation.Replace('\\', '/'));
                                 string viewerPath = Path.GetDirectoryName(videolocation) + @"\urnviewer.html";
-                                string htmlstring = "<html><body><embed src=\"" + videolocation + "\" width=100% height=100% ></body></html>";
+                                string htmlstring = "<html><body><embed src=\"" + encodedPath + "\" width=100% height=100% ></body></html>";
                                 System.IO.File.WriteAllText(viewerPath, htmlstring);
 
                                 this.Invoke((Action)(() =>
@@ -1793,8 +1794,9 @@ namespace SUP
                     }
                     else
                     {
+                        string encodedPath = "file:///" + Uri.EscapeUriString(videolocation.Replace('\\', '/'));
                         string viewerPath = Path.GetDirectoryName(videolocation) + @"\urnviewer.html";
-                        string htmlstring = "<html><body><embed src=\"" + videolocation + "\" width=100% height=100% ></body></html>";
+                        string htmlstring = "<html><body><embed src=\"" + encodedPath + "\" width=100% height=100% ></body></html>";
                         System.IO.File.WriteAllText(viewerPath, htmlstring);
                         webviewer.CoreWebView2.Navigate(viewerPath);
                     }
@@ -2198,213 +2200,275 @@ namespace SUP
                     {
                         switch (objstate.Image.ToUpper().Substring(0, 4))
                         {
+                            // MZC case
                             case "MZC:":
-                                root = Root.GetRootByTransactionId(transactionid, "good-user", "better-password", @"http://127.0.0.1:12832", "50");
-                                try
+                                Task verificationTask = Task.Run(() =>
                                 {
-
-                                    if (root.BlockDate.Year > 1975)
-                                    {
-                                        lblIMGBlockDate.Text = "mazacoin verified: " + root.BlockDate.ToString("ddd, dd MMM yyyy hh:mm:ss");
-                                    }
-                                    else
-                                    {
-                                        lblIMGBlockDate.Text = "mazacoin could not be verified: ";
-
-                                    }
-                                }
-                                catch { }
-
-
-
-                                break;
-                            case "BTC:":
-
-                                root = Root.GetRootByTransactionId(transactionid, "good-user", "better-password", @"http://127.0.0.1:8332", "0");
-                                try
-                                {
-                                    if (root.BlockDate.Year > 1975)
-                                    {
-                                        lblIMGBlockDate.Text = "bitcoin verified: " + root.BlockDate.ToString("ddd, dd MMM yyyy hh:mm:ss");
-                                    }
-                                    else
-                                    {
-                                        lblIMGBlockDate.Text = "bitcoin could not be verified: ";
-
-                                    }
-
-                                }
-                                catch { }
-
-
-
-                                break;
-                            case "LTC:":
-
-
-                                root = Root.GetRootByTransactionId(transactionid, "good-user", "better-password", @"http://127.0.0.1:9332", "48");
-
-                                try
-                                {
-
-                                    if (root.BlockDate.Year > 1975)
-                                    {
-                                        lblIMGBlockDate.Text = "litecoin verified: " + root.BlockDate.ToString("ddd, dd MMM yyyy hh:mm:ss");
-                                    }
-                                    else
-                                    {
-                                        lblIMGBlockDate.Text = "litecoin could not be verified: ";
-
-                                    }
-                                }
-                                catch { }
-
-
-
-                                break;
-                            case "DOG:":
-
-                                root = Root.GetRootByTransactionId(transactionid, "good-user", "better-password", @"http://127.0.0.1:22555", "30");
-
-                                try
-                                {
-
-                                    if (root.BlockDate.Year > 1975)
-                                    {
-                                        lblIMGBlockDate.Text = "dogecoin verified: " + root.BlockDate.ToString("ddd, dd MMM yyyy hh:mm:ss");
-                                    }
-                                    else
-                                    {
-                                        lblIMGBlockDate.Text = "dogecoin could not be verified: ";
-
-                                    }
-                                }
-                                catch { }
-
-
-
-                                break;
-                            case "IPFS":
-                                string transid = "empty";
-                                try { transid = objstate.Image.Substring(5, 46); } catch { }
-
-                                if (!File.Exists(imgurn) && !File.Exists("ipfs/" + transid + "/artifact") && !File.Exists("ipfs/" + transid + "/artifact" + objstate.Image.Substring(objstate.Image.LastIndexOf('.'))))
-                                {
-
-                                    if (!System.IO.Directory.Exists("ipfs/" + transid + "-build"))
-                                    {
-                                        try { Directory.Delete("ipfs/" + transid, true); } catch { }
-                                        try { Directory.CreateDirectory("ipfs/" + transid); } catch { };
-                                        Directory.CreateDirectory("ipfs/" + transid + "-build");
-                                        Process process2 = new Process();
-                                        process2.StartInfo.FileName = @"ipfs\ipfs.exe";
-                                        process2.StartInfo.Arguments = "get " + objstate.Image.Substring(5, 46) + @" -o ipfs\" + transid;
-                                        process2.Start();
-                                        process2.WaitForExit();
-                                        string fileName;
-                                        if (System.IO.File.Exists("ipfs/" + transid))
-                                        {
-                                            System.IO.File.Move("ipfs/" + transid, "ipfs/" + transid + "_tmp");
-                                            System.IO.Directory.CreateDirectory("ipfs/" + transid);
-                                            fileName = objstate.Image.Replace(@"//", "").Replace(@"\\", "").Substring(51);
-                                            if (fileName == "") { fileName = "artifact"; } else { fileName = fileName.Replace(@"/", "").Replace(@"\", ""); }
-                                            Directory.CreateDirectory("ipfs/" + transid);
-
-                                            try { System.IO.File.Move("ipfs/" + transid + "_tmp", imgurn); }
-                                            catch (System.ArgumentException ex)
-                                            {
-
-                                                System.IO.File.Move("ipfs/" + transid + "_tmp", "ipfs/" + transid + "/artifact" + objstate.Image.Substring(objstate.Image.LastIndexOf('.')));
-                                                imgurn = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + @"\ipfs\" + transid + @"\artifact" + objstate.Image.Substring(objstate.Image.LastIndexOf('.'));
-
-                                            }
-
-
-                                        }
-
-                                        if (System.IO.File.Exists("ipfs/" + transid + "/" + transid))
-                                        {
-                                            fileName = objstate.Image.Replace(@"//", "").Replace(@"\\", "").Substring(51);
-                                            if (fileName == "") { fileName = "artifact"; } else { fileName = fileName.Replace(@"/", "").Replace(@"\", ""); }
-
-
-                                            try { System.IO.File.Move("ipfs/" + transid + "/" + transid, imgurn); }
-                                            catch (System.ArgumentException ex)
-                                            {
-
-                                                System.IO.File.Move("ipfs/" + transid + "/" + transid, "ipfs/" + transid + "/artifact" + objstate.Image.Substring(objstate.Image.LastIndexOf('.')));
-                                                imgurn = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + @"\ipfs\" + transid + @"\artifact" + objstate.Image.Substring(objstate.Image.LastIndexOf('.'));
-
-                                            }
-
-
-
-                                        }
-
-
-                                        Process process3 = new Process
-                                        {
-                                            StartInfo = new ProcessStartInfo
-                                            {
-                                                FileName = @"ipfs\ipfs.exe",
-                                                Arguments = "pin add " + transid,
-                                                UseShellExecute = false,
-                                                CreateNoWindow = true
-                                            }
-                                        };
-                                        process3.Start();
-
-                                        try { Directory.Delete("ipfs/" + transid + "-build", true); } catch { }
-
-
-                                    }
-                                }
-                                else
-                                {
-                                    if (File.Exists("ipfs/" + transid + "/artifact")) { imgurn = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + @"\ipfs\" + transid + @"\artifact"; }
-                                    else
-                                    {
-                                        if (File.Exists("ipfs/" + objstate.Image.Substring(5, 46) + "/artifact" + objstate.Image.Substring(objstate.Image.LastIndexOf('.')))) { imgurn = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + @"\ipfs\" + objstate.Image.Substring(5, 46) + @"\artifact" + objstate.Image.Substring(objstate.Image.LastIndexOf('.')); }
-
-                                    }
-
-                                }
-                                break;
-                            default:
-                                if (!txtIMG.Text.ToUpper().StartsWith("HTTP") && transactionid != "")
-                                {
-
-                                    root = Root.GetRootByTransactionId(transactionid, mainnetLogin, mainnetPassword, mainnetURL, mainnetVersionByte);
-
                                     try
                                     {
+                                        root = Root.GetRootByTransactionId(transactionid, "good-user", "better-password", @"http://127.0.0.1:12832", "50");
 
                                         if (root.BlockDate.Year > 1975)
                                         {
-
-                                            if (mainnetVersionByte == "111")
+                                            lblIMGBlockDate.Invoke(new Action(() =>
                                             {
-                                                lblIMGBlockDate.Text = "bitcoin-t verified: " + root.BlockDate.ToString("ddd, dd MMM yyyy hh:mm:ss");
-                                            }
-                                            else
-                                            {
-                                                lblIMGBlockDate.Text = "bitcoin verified: " + root.BlockDate.ToString("ddd, dd MMM yyyy hh:mm:ss");
-
-                                            }
-
-
+                                                lblIMGBlockDate.Text = "mazacoin verified: " + root.BlockDate.ToString("ddd, dd MMM yyyy hh:mm:ss");
+                                            }));
                                         }
                                         else
                                         {
-                                            lblIMGBlockDate.Text = "could not be verified: ";
-
+                                            lblIMGBlockDate.Invoke(new Action(() =>
+                                            {
+                                                lblIMGBlockDate.Text = "mazacoin could not be verified: ";
+                                            }));
                                         }
                                     }
-                                    catch { }
+                                    catch (Exception ex)
+                                    {
+                                        lblIMGBlockDate.Invoke(new Action(() =>
+                                        {
+                                            lblIMGBlockDate.Text = "mazacoin could not be verified: ";
+                                        }));
+                                    }
+                                });
 
+                                break;
+
+                            // BTC case
+                            case "BTC:":
+                                Task.Run(() =>
+                                {
+                                    try
+                                    {
+                                        root = Root.GetRootByTransactionId(transactionid, "good-user", "better-password", @"http://127.0.0.1:8332", "0");
+
+                                        if (root.BlockDate.Year > 1975)
+                                        {
+                                            lblIMGBlockDate.Invoke(new Action(() =>
+                                            {
+                                                lblIMGBlockDate.Text = "bitcoin verified: " + root.BlockDate.ToString("ddd, dd MMM yyyy hh:mm:ss");
+                                            }));
+                                        }
+                                        else
+                                        {
+                                            lblIMGBlockDate.Invoke(new Action(() =>
+                                            {
+                                                lblIMGBlockDate.Text = "bitcoin could not be verified: ";
+                                            }));
+                                        }
+                                    }
+                                    catch (Exception ex)
+                                    {
+                                        lblIMGBlockDate.Invoke(new Action(() =>
+                                        {
+                                            lblIMGBlockDate.Text = "bitcoin could not be verified: ";
+                                        }));
+                                    }
+                                });
+
+                                break;
+
+                            // LTC case
+                            case "LTC:":
+                                Task.Run(() =>
+                                {
+                                    try
+                                    {
+                                        root = Root.GetRootByTransactionId(transactionid, "good-user", "better-password", @"http://127.0.0.1:9332", "48");
+
+                                        if (root.BlockDate.Year > 1975)
+                                        {
+                                            lblIMGBlockDate.Invoke(new Action(() =>
+                                            {
+                                                lblIMGBlockDate.Text = "litecoin verified: " + root.BlockDate.ToString("ddd, dd MMM yyyy hh:mm:ss");
+                                            }));
+                                        }
+                                        else
+                                        {
+                                            lblIMGBlockDate.Invoke(new Action(() =>
+                                            {
+                                                lblIMGBlockDate.Text = "litecoin could not be verified: ";
+                                            }));
+                                        }
+                                    }
+                                    catch (Exception ex)
+                                    {
+                                        lblIMGBlockDate.Invoke(new Action(() =>
+                                        {
+                                            lblIMGBlockDate.Text = "litecoin could not be verified: ";
+                                        }));
+                                    }
+                                });
+
+                                break;
+
+                            // DOG case
+                            case "DOG:":
+                                Task.Run(() =>
+                                {
+                                    try
+                                    {
+                                        root = Root.GetRootByTransactionId(transactionid, "good-user", "better-password", @"http://127.0.0.1:22555", "30");
+
+                                        if (root.BlockDate.Year > 1975)
+                                        {
+                                            lblIMGBlockDate.Invoke(new Action(() =>
+                                            {
+                                                lblIMGBlockDate.Text = "dogecoin verified: " + root.BlockDate.ToString("ddd, dd MMM yyyy hh:mm:ss");
+                                            }));
+                                        }
+                                        else
+                                        {
+                                            lblIMGBlockDate.Invoke(new Action(() =>
+                                            {
+                                                lblIMGBlockDate.Text = "dogecoin could not be verified: ";
+                                            }));
+                                        }
+                                    }
+                                    catch (Exception ex)
+                                    {
+                                        lblIMGBlockDate.Invoke(new Action(() =>
+                                        {
+                                            lblIMGBlockDate.Text = "dogecoin could not be verified: ";
+                                        }));
+                                    }
+                                });
+
+                                break;
+
+                            case "IPFS":
+                                Task.Run(() =>
+                                {
+                                    string transid = "empty";
+                                    try { transid = objstate.Image.Substring(5, 46); } catch { }
+
+                                    if (!File.Exists(imgurn) && !File.Exists("ipfs/" + transid + "/artifact") && !File.Exists("ipfs/" + transid + "/artifact" + objstate.Image.Substring(objstate.Image.LastIndexOf('.'))))
+                                    {
+                                        if (!System.IO.Directory.Exists("ipfs/" + transid + "-build"))
+                                        {
+                                            try { Directory.Delete("ipfs/" + transid, true); } catch { }
+                                            try { Directory.CreateDirectory("ipfs/" + transid); } catch { };
+                                            Directory.CreateDirectory("ipfs/" + transid + "-build");
+                                            Process process2 = new Process();
+                                            process2.StartInfo.FileName = @"ipfs\ipfs.exe";
+                                            process2.StartInfo.Arguments = "get " + objstate.Image.Substring(5, 46) + @" -o ipfs\" + transid;
+                                            process2.Start();
+                                            process2.WaitForExit();
+                                            string fileName;
+
+                                            if (System.IO.File.Exists("ipfs/" + transid))
+                                            {
+                                                System.IO.File.Move("ipfs/" + transid, "ipfs/" + transid + "_tmp");
+                                                System.IO.Directory.CreateDirectory("ipfs/" + transid);
+                                                fileName = objstate.Image.Replace(@"//", "").Replace(@"\\", "").Substring(51);
+
+                                                if (fileName == "") { fileName = "artifact"; } else { fileName = fileName.Replace(@"/", "").Replace(@"\", ""); }
+                                                Directory.CreateDirectory("ipfs/" + transid);
+
+                                                try { System.IO.File.Move("ipfs/" + transid + "_tmp", imgurn); }
+                                                catch (System.ArgumentException ex)
+                                                {
+                                                    System.IO.File.Move("ipfs/" + transid + "_tmp", "ipfs/" + transid + "/artifact" + objstate.Image.Substring(objstate.Image.LastIndexOf('.')));
+                                                    imgurn = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + @"\ipfs\" + transid + @"\artifact" + objstate.Image.Substring(objstate.Image.LastIndexOf('.'));
+                                                }
+                                            }
+
+                                            if (System.IO.File.Exists("ipfs/" + transid + "/" + transid))
+                                            {
+                                                fileName = objstate.Image.Replace(@"//", "").Replace(@"\\", "").Substring(51);
+
+                                                if (fileName == "") { fileName = "artifact"; } else { fileName = fileName.Replace(@"/", "").Replace(@"\", ""); }
+
+                                                try { System.IO.File.Move("ipfs/" + transid + "/" + transid, imgurn); }
+                                                catch (System.ArgumentException ex)
+                                                {
+                                                    System.IO.File.Move("ipfs/" + transid + "/" + transid, "ipfs/" + transid + "/artifact" + objstate.Image.Substring(objstate.Image.LastIndexOf('.')));
+                                                    imgurn = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + @"\ipfs\" + transid + @"\artifact" + objstate.Image.Substring(objstate.Image.LastIndexOf('.'));
+                                                }
+                                            }
+
+                                            Process process3 = new Process
+                                            {
+                                                StartInfo = new ProcessStartInfo
+                                                {
+                                                    FileName = @"ipfs\ipfs.exe",
+                                                    Arguments = "pin add " + transid,
+                                                    UseShellExecute = false,
+                                                    CreateNoWindow = true
+                                                }
+                                            };
+                                            process3.Start();
+
+                                            try { Directory.Delete("ipfs/" + transid + "-build", true); } catch { }
+                                        }
+                                    }
+                                    else
+                                    {
+                                        if (File.Exists("ipfs/" + transid + "/artifact"))
+                                        {
+                                            lblIMGBlockDate.Invoke(new Action(() =>
+                                            {
+                                                lblIMGBlockDate.Text = "IPFS verified: " + DateTime.Now.ToString("ddd, dd MMM yyyy hh:mm:ss");
+                                            }));
+                                        }
+                                        else
+                                        {
+                                            if (File.Exists("ipfs/" + objstate.Image.Substring(5, 46) + "/artifact" + objstate.Image.Substring(objstate.Image.LastIndexOf('.'))))
+                                            {
+                                                lblIMGBlockDate.Invoke(new Action(() =>
+                                                {
+                                                    lblIMGBlockDate.Text = "IPFS could not be verified: ";
+                                                }));
+                                            }
+                                        }
+                                    }
+                                });
+
+                                break;
+
+                            default:
+                                if (!txtIMG.Text.ToUpper().StartsWith("HTTP") && transactionid != "")
+                                {
+                                    Task.Run(() =>
+                                    {
+                                        try
+                                        {
+                                            root = Root.GetRootByTransactionId(transactionid, mainnetLogin, mainnetPassword, mainnetURL, mainnetVersionByte);
+
+                                            if (root.BlockDate.Year > 1975)
+                                            {
+                                                lblIMGBlockDate.Invoke(new Action(() =>
+                                                {
+                                                    if (mainnetVersionByte == "111")
+                                                    {
+                                                        lblIMGBlockDate.Text = "bitcoin-t verified: " + root.BlockDate.ToString("ddd, dd MMM yyyy hh:mm:ss");
+                                                    }
+                                                    else
+                                                    {
+                                                        lblIMGBlockDate.Text = "bitcoin verified: " + root.BlockDate.ToString("ddd, dd MMM yyyy hh:mm:ss");
+                                                    }
+                                                }));
+                                            }
+                                            else
+                                            {
+                                                lblIMGBlockDate.Invoke(new Action(() =>
+                                                {
+                                                    lblIMGBlockDate.Text = "could not be verified: ";
+                                                }));
+                                            }
+                                        }
+                                        catch (Exception ex)
+                                        {
+                                            lblIMGBlockDate.Invoke(new Action(() =>
+                                            {
+                                                lblIMGBlockDate.Text = "could not be verified: ";
+                                            }));
+                                        }
+                                    });
                                 }
 
                                 break;
+
                         }
                     }
 
@@ -2423,146 +2487,208 @@ namespace SUP
 
                     switch (objstate.URN.Substring(0, 4))
                     {
+                        // MZC case
                         case "MZC:":
-
-
-                            root = Root.GetRootByTransactionId(transactionid, "good-user", "better-password", @"http://127.0.0.1:12832", "50");
-
-                            try
+                            Task.Run(() =>
                             {
-
-                                if (root.BlockDate.Year > 1975)
+                                try
                                 {
-                                    lblURNBlockDate.Text = "mazacoin verified: " + root.BlockDate.ToString("ddd, dd MMM yyyy hh:mm:ss");
+                                    root = Root.GetRootByTransactionId(transactionid, "good-user", "better-password", @"http://127.0.0.1:12832", "50");
+
+                                    if (root.BlockDate.Year > 1975)
+                                    {
+                                        lblURNBlockDate.Invoke(new Action(() =>
+                                        {
+                                            lblURNBlockDate.Text = "mazacoin verified: " + root.BlockDate.ToString("ddd, dd MMM yyyy hh:mm:ss");
+                                        }));
+                                    }
+                                    else
+                                    {
+                                        lblURNBlockDate.Invoke(new Action(() =>
+                                        {
+                                            lblURNBlockDate.Text = "mazacoin could not be verified: ";
+                                        }));
+                                    }
                                 }
-                                else
+                                catch (Exception ex)
                                 {
-                                    lblURNBlockDate.Text = "mazacoin could not be verified: ";
-
+                                    lblURNBlockDate.Invoke(new Action(() =>
+                                    {
+                                        lblURNBlockDate.Text = "mazacoin could not be verified: ";
+                                    }));
                                 }
-                            }
-                            catch { }
-
+                            });
 
                             break;
+
+                        // BTC case
                         case "BTC:":
-
-
-                            root = Root.GetRootByTransactionId(transactionid, "good-user", "better-password", @"http://127.0.0.1:8332", "0");
-
-                            try
+                            Task.Run(() =>
                             {
-
-                                if (root.BlockDate.Year > 1975)
+                                try
                                 {
-                                    lblURNBlockDate.Text = "bitcoin verified: " + root.BlockDate.ToString("ddd, dd MMM yyyy hh:mm:ss");
+                                    root = Root.GetRootByTransactionId(transactionid, "good-user", "better-password", @"http://127.0.0.1:8332", "0");
+
+                                    if (root.BlockDate.Year > 1975)
+                                    {
+                                        lblURNBlockDate.Invoke(new Action(() =>
+                                        {
+                                            lblURNBlockDate.Text = "bitcoin verified: " + root.BlockDate.ToString("ddd, dd MMM yyyy hh:mm:ss");
+                                        }));
+                                    }
+                                    else
+                                    {
+                                        lblURNBlockDate.Invoke(new Action(() =>
+                                        {
+                                            lblURNBlockDate.Text = "bitcoin could not be verified: ";
+                                        }));
+                                    }
                                 }
-                                else
+                                catch (Exception ex)
                                 {
-                                    lblURNBlockDate.Text = "bitcoin could not be verified: ";
-
+                                    lblURNBlockDate.Invoke(new Action(() =>
+                                    {
+                                        lblURNBlockDate.Text = "bitcoin could not be verified: ";
+                                    }));
                                 }
-                            }
-                            catch { }
-
-
+                            });
 
                             break;
+
+                        // LTC case
                         case "LTC:":
-
-
-                            root = Root.GetRootByTransactionId(transactionid, "good-user", "better-password", @"http://127.0.0.1:9332", "48");
-
-                            try
+                            Task.Run(() =>
                             {
-
-                                if (root.BlockDate.Year > 1975)
+                                try
                                 {
-                                    lblURNBlockDate.Text = "litecoin verified: " + root.BlockDate.ToString("ddd, dd MMM yyyy hh:mm:ss");
+                                    root = Root.GetRootByTransactionId(transactionid, "good-user", "better-password", @"http://127.0.0.1:9332", "48");
+
+                                    if (root.BlockDate.Year > 1975)
+                                    {
+                                        lblURNBlockDate.Invoke(new Action(() =>
+                                        {
+                                            lblURNBlockDate.Text = "litecoin verified: " + root.BlockDate.ToString("ddd, dd MMM yyyy hh:mm:ss");
+                                        }));
+                                    }
+                                    else
+                                    {
+                                        lblURNBlockDate.Invoke(new Action(() =>
+                                        {
+                                            lblURNBlockDate.Text = "litecoin could not be verified: ";
+                                        }));
+                                    }
                                 }
-                                else
+                                catch (Exception ex)
                                 {
-                                    lblURNBlockDate.Text = "litecoin could not be verified: ";
-
+                                    lblURNBlockDate.Invoke(new Action(() =>
+                                    {
+                                        lblURNBlockDate.Text = "litecoin could not be verified: ";
+                                    }));
                                 }
-                            }
-                            catch { }
-
+                            });
 
                             break;
+
+                        // DOG case
                         case "DOG:":
+                            Task.Run(() =>
+                            {
+                                try
+                                {
+                                    root = Root.GetRootByTransactionId(transactionid, "good-user", "better-password", @"http://127.0.0.1:22555", "30");
 
+                                    if (root.BlockDate.Year > 1975)
+                                    {
+                                        lblURNBlockDate.Invoke(new Action(() =>
+                                        {
+                                            lblURNBlockDate.Text = "dogecoin verified: " + root.BlockDate.ToString("ddd, dd MMM yyyy hh:mm:ss");
+                                        }));
+                                    }
+                                    else
+                                    {
+                                        lblURNBlockDate.Invoke(new Action(() =>
+                                        {
+                                            lblURNBlockDate.Text = "dogecoin could not be verified: ";
+                                        }));
+                                    }
+                                }
+                                catch (Exception ex)
+                                {
+                                    lblURNBlockDate.Invoke(new Action(() =>
+                                    {
+                                        lblURNBlockDate.Text = "dogecoin could not be verified: ";
+                                    }));
+                                }
+                            });
 
-                            root = Root.GetRootByTransactionId(transactionid, "good-user", "better-password", @"http://127.0.0.1:22555", "30");
+                            break;
+
+                        case "IPFS":
+                            Task.Run(() =>
+                            {
+                            string transid = "empty";
 
                             try
                             {
-
-                                if (root.BlockDate.Year > 1975)
-                                {
-                                    lblURNBlockDate.Text = "dogecoin verified: " + root.BlockDate.ToString("ddd, dd MMM yyyy hh:mm:ss");
-                                }
-                                else
-                                {
-                                    lblURNBlockDate.Text = "dogecoin could not be verified: ";
-
-                                }
+                                transid = objstate.URN.Substring(5, 46);
                             }
                             catch { }
 
-
-
-                            break;
-                        case "IPFS":
-                            if (!File.Exists(urn) && !File.Exists("ipfs/" + objstate.URN.Substring(5, 46) + "/artifact") && !File.Exists("ipfs/" + objstate.URN.Substring(5, 46) + "/artifact" + objstate.URN.Substring(objstate.URN.LastIndexOf('.'))))
+                            if (!File.Exists(urn) && !File.Exists("ipfs/" + transid + "/artifact") && !File.Exists("ipfs/" + transid + "/artifact" + objstate.URN.Substring(objstate.URN.LastIndexOf('.'))))
                             {
-
-                                if (!System.IO.Directory.Exists(@"ipfs/" + objstate.URN.Substring(5, 46) + "-build"))
+                                if (!System.IO.Directory.Exists(@"ipfs/" + transid + "-build"))
                                 {
-
-                                    try { Directory.Delete("ipfs/" + objstate.URN.Substring(5, 46), true); } catch { }
-                                    try { Directory.CreateDirectory("ipfs/" + objstate.URN.Substring(5, 46)); } catch { };
-                                    Directory.CreateDirectory(@"ipfs/" + objstate.URN.Substring(5, 46) + "-build");
+                                    try
+                                    {
+                                        Directory.Delete("ipfs/" + transid, true);
+                                    }
+                                    catch { }
+                                    try
+                                    {
+                                        Directory.CreateDirectory("ipfs/" + transid);
+                                    }
+                                    catch { };
+                                    Directory.CreateDirectory(@"ipfs/" + transid + "-build");
                                     Process process2 = new Process();
                                     process2.StartInfo.FileName = @"ipfs\ipfs.exe";
-                                    process2.StartInfo.Arguments = "get " + objstate.URN.Substring(5, 46) + @" -o ipfs\" + objstate.URN.Substring(5, 46);
+                                    process2.StartInfo.Arguments = "get " + transid + @" -o ipfs\" + transid;
                                     process2.Start();
                                     process2.WaitForExit();
 
                                     string fileName;
-                                    if (System.IO.File.Exists("ipfs/" + objstate.URN.Substring(5, 46)))
+
+                                    if (System.IO.File.Exists("ipfs/" + transid))
                                     {
-                                        System.IO.File.Move("ipfs/" + objstate.URN.Substring(5, 46), "ipfs/" + objstate.URN.Substring(5, 46) + "_tmp");
-                                        System.IO.Directory.CreateDirectory("ipfs/" + objstate.URN.Substring(5, 46));
+                                        System.IO.File.Move("ipfs/" + transid, "ipfs/" + transid + "_tmp");
+                                        System.IO.Directory.CreateDirectory("ipfs/" + transid);
                                         fileName = objstate.URN.Replace(@"//", "").Replace(@"\\", "").Substring(51);
                                         if (fileName == "") { fileName = "artifact"; } else { fileName = fileName.Replace(@"/", "").Replace(@"\", ""); }
-                                        Directory.CreateDirectory("ipfs/" + objstate.URN.Substring(5, 46));
+                                        Directory.CreateDirectory("ipfs/" + transid);
 
-                                        try { System.IO.File.Move("ipfs/" + objstate.URN.Substring(5, 46) + "_tmp", urn); }
+                                        try
+                                        {
+                                            System.IO.File.Move("ipfs/" + transid + "_tmp", urn);
+                                        }
                                         catch (System.ArgumentException ex)
                                         {
-
-                                            System.IO.File.Move("ipfs/" + objstate.URN.Substring(5, 46) + "_tmp", "ipfs/" + objstate.URN.Substring(5, 46) + "/artifact" + objstate.URN.Substring(objstate.URN.LastIndexOf('.')));
-                                            urn = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + @"\ipfs\" + objstate.URN.Substring(5, 46) + @"\artifact" + objstate.URN.Substring(objstate.URN.LastIndexOf('.'));
-
+                                            System.IO.File.Move("ipfs/" + transid + "_tmp", "ipfs/" + transid + "/artifact" + objstate.URN.Substring(objstate.URN.LastIndexOf('.')));
+                                            urn = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + @"\ipfs\" + transid + @"\artifact" + objstate.URN.Substring(objstate.URN.LastIndexOf('.'));
                                         }
-
-
-
                                     }
 
-                                    if (System.IO.File.Exists("ipfs/" + objstate.URN.Substring(5, 46) + "/" + objstate.URN.Substring(5, 46)))
+                                    if (System.IO.File.Exists("ipfs/" + transid + "/" + transid))
                                     {
                                         fileName = objstate.URN.Replace(@"//", "").Replace(@"\\", "").Substring(51);
                                         if (fileName == "") { fileName = "artifact"; } else { fileName = fileName.Replace(@"/", "").Replace(@"\", ""); }
 
-                                        try { System.IO.File.Move("ipfs/" + objstate.URN.Substring(5, 46) + "/" + objstate.URN.Substring(5, 46), urn); }
+                                        try
+                                        {
+                                            System.IO.File.Move("ipfs/" + transid + "/" + transid, urn);
+                                        }
                                         catch (System.ArgumentException ex)
                                         {
-
-                                            System.IO.File.Move("ipfs/" + objstate.URN.Substring(5, 46) + "/" + objstate.URN.Substring(5, 46), "ipfs/" + objstate.URN.Substring(5, 46) + "/artifact" + objstate.URN.Substring(objstate.URN.LastIndexOf('.')));
-                                            urn = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + @"\ipfs\" + objstate.URN.Substring(5, 46) + @"\artifact" + objstate.URN.Substring(objstate.URN.LastIndexOf('.'));
-
+                                            System.IO.File.Move("ipfs/" + transid + "/" + transid, "ipfs/" + transid + "/artifact" + objstate.URN.Substring(objstate.URN.LastIndexOf('.')));
+                                            urn = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + @"\ipfs\" + transid + @"\artifact" + objstate.URN.Substring(objstate.URN.LastIndexOf('.'));
                                         }
                                     }
 
@@ -2575,7 +2701,7 @@ namespace SUP
                                                 StartInfo = new ProcessStartInfo
                                                 {
                                                     FileName = @"ipfs\ipfs.exe",
-                                                    Arguments = "pin add " + objstate.URN.Substring(5, 46),
+                                                    Arguments = "pin add " + transid,
                                                     UseShellExecute = false,
                                                     CreateNoWindow = true
                                                 }
@@ -2585,69 +2711,65 @@ namespace SUP
                                     }
                                     catch { }
 
-
-                                    try { Directory.Delete(@"ipfs/" + objstate.URN.Substring(5, 46) + "-build"); } catch { }
-
-
-
-
-                                }
-                                else
-                                {
-                                    lblURNBlockDate.Text = "ipfs verified: " + System.DateTime.UtcNow.ToString("ddd, dd MMM yyyy hh:mm:ss");
-                                }
-                            }
-                            else
-                            {
-                                if (File.Exists("ipfs/" + objstate.URN.Substring(5, 46) + "/artifact")) { urn = "ipfs/" + objstate.URN.Substring(5, 46) + "/artifact"; }
-                                else
-                                {
-                                    if (File.Exists("ipfs/" + objstate.URN.Substring(5, 46) + "/artifact" + objstate.URN.Substring(objstate.URN.LastIndexOf('.')))) { urn = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + @"\ipfs\" + objstate.URN.Substring(5, 46) + @"\artifact" + objstate.URN.Substring(objstate.URN.LastIndexOf('.')); }
-
-                                }
-                            }
-                            break;
-                        default:
-                            if (!txtURN.Text.ToUpper().StartsWith("HTTP"))
-                            {
-                                if (transactionid != "")
-                                {
-
-                                    root = Root.GetRootByTransactionId(transactionid, mainnetLogin, mainnetPassword, mainnetURL, mainnetVersionByte);
-
                                     try
                                     {
-
-                                        if (root.BlockDate.Year > 1975)
-                                        {
-
-                                            if (mainnetVersionByte == "111")
-                                            {
-                                                lblURNBlockDate.Text = "bitcoin-t verified: " + root.BlockDate.ToString("ddd, dd MMM yyyy hh:mm:ss");
-                                            }
-                                            else
-                                            {
-                                                lblURNBlockDate.Text = "bitcoin verified: " + root.BlockDate.ToString("ddd, dd MMM yyyy hh:mm:ss");
-
-                                            }
-
-
-                                        }
-                                        else
-                                        {
-                                            lblURNBlockDate.Text = "could not be verified: ";
-
-                                        }
+                                        Directory.Delete(@"ipfs/" + transid + "-build");
                                     }
                                     catch { }
 
+                                    this.Invoke(new Action(() => { 
+                                    btnReloadObject.PerformClick();
+                                }));
+                                    }
                                 }
-
-
-                            }
-
+                                
+                            });
 
                             break;
+
+                        default:
+                            if (!txtURN.Text.ToUpper().StartsWith("HTTP") && transactionid != "")
+                            {
+                                Task.Run(() =>
+                                {
+                                    try
+                                    {
+                                        root = Root.GetRootByTransactionId(transactionid, mainnetLogin, mainnetPassword, mainnetURL, mainnetVersionByte);
+
+                                        if (root.BlockDate.Year > 1975)
+                                        {
+                                            lblURNBlockDate.Invoke(new Action(() =>
+                                            {
+                                                if (mainnetVersionByte == "111")
+                                                {
+                                                    lblURNBlockDate.Text = "bitcoin-t verified: " + root.BlockDate.ToString("ddd, dd MMM yyyy hh:mm:ss");
+                                                }
+                                                else
+                                                {
+                                                    lblURNBlockDate.Text = "bitcoin verified: " + root.BlockDate.ToString("ddd, dd MMM yyyy hh:mm:ss");
+                                                }
+                                            }));
+                                        }
+                                        else
+                                        {
+                                            lblURNBlockDate.Invoke(new Action(() =>
+                                            {
+                                                lblURNBlockDate.Text = "could not be verified: ";
+                                            }));
+                                        }
+                                    }
+                                    catch (Exception ex)
+                                    {
+                                        lblURNBlockDate.Invoke(new Action(() =>
+                                        {
+                                            lblURNBlockDate.Text = "could not be verified: ";
+                                        }));
+                                    }
+                                });
+                            }
+
+                            break;
+
                     }
 
 
@@ -2667,151 +2789,209 @@ namespace SUP
                     {
                         switch (objstate.URI.Substring(0, 4))
                         {
+                            // MZC case
                             case "MZC:":
-
-
-                                root = Root.GetRootByTransactionId(transactionid, "good-user", "better-password", @"http://127.0.0.1:12832", "50");
-
-                                try
+                                Task.Run(() =>
                                 {
-
-                                    if (root.BlockDate.Year > 1975)
+                                    try
                                     {
-                                        lblURIBlockDate.Text = "mazacoin verified: " + root.BlockDate.ToString("ddd, dd MMM yyyy hh:mm:ss");
+                                        root = Root.GetRootByTransactionId(transactionid, "good-user", "better-password", @"http://127.0.0.1:12832", "50");
+
+                                        if (root.BlockDate.Year > 1975)
+                                        {
+                                            lblURIBlockDate.Invoke(new Action(() =>
+                                            {
+                                                lblURIBlockDate.Text = "mazacoin verified: " + root.BlockDate.ToString("ddd, dd MMM yyyy hh:mm:ss");
+                                            }));
+                                        }
+                                        else
+                                        {
+                                            lblURIBlockDate.Invoke(new Action(() =>
+                                            {
+                                                lblURIBlockDate.Text = "mazacoin could not be verified: ";
+                                            }));
+                                        }
                                     }
-                                    else
+                                    catch (Exception ex)
                                     {
-                                        lblURIBlockDate.Text = "mazacoin could not be verified: ";
-
+                                        lblURIBlockDate.Invoke(new Action(() =>
+                                        {
+                                            lblURIBlockDate.Text = "mazacoin could not be verified: ";
+                                        }));
                                     }
-                                }
-                                catch { }
-
+                                });
 
                                 break;
+
+                            // BTC case
                             case "BTC:":
-
-
-                                root = Root.GetRootByTransactionId(transactionid, "good-user", "better-password", @"http://127.0.0.1:8332", "0");
-
-                                try
+                                Task.Run(() =>
                                 {
-
-                                    if (root.BlockDate.Year > 1975)
+                                    try
                                     {
-                                        lblURIBlockDate.Text = "bitcoin verified: " + root.BlockDate.ToString("ddd, dd MMM yyyy hh:mm:ss");
+                                        root = Root.GetRootByTransactionId(transactionid, "good-user", "better-password", @"http://127.0.0.1:8332", "0");
+
+                                        if (root.BlockDate.Year > 1975)
+                                        {
+                                            lblURIBlockDate.Invoke(new Action(() =>
+                                            {
+                                                lblURIBlockDate.Text = "bitcoin verified: " + root.BlockDate.ToString("ddd, dd MMM yyyy hh:mm:ss");
+                                            }));
+                                        }
+                                        else
+                                        {
+                                            lblURIBlockDate.Invoke(new Action(() =>
+                                            {
+                                                lblURIBlockDate.Text = "bitcoin could not be verified: ";
+                                            }));
+                                        }
                                     }
-                                    else
+                                    catch (Exception ex)
                                     {
-                                        lblURIBlockDate.Text = "bitcoin could not be verified: ";
-
+                                        lblURIBlockDate.Invoke(new Action(() =>
+                                        {
+                                            lblURIBlockDate.Text = "bitcoin could not be verified: ";
+                                        }));
                                     }
-                                }
-                                catch { }
-
+                                });
 
                                 break;
+
+                            // LTC case
                             case "LTC:":
-
-
-                                root = Root.GetRootByTransactionId(transactionid, "good-user", "better-password", @"http://127.0.0.1:9332", "48");
-
-                                try
+                                Task.Run(() =>
                                 {
-
-                                    if (root.BlockDate.Year > 1975)
+                                    try
                                     {
-                                        lblURIBlockDate.Text = "litecoin verified: " + root.BlockDate.ToString("ddd, dd MMM yyyy hh:mm:ss");
+                                        root = Root.GetRootByTransactionId(transactionid, "good-user", "better-password", @"http://127.0.0.1:9332", "48");
+
+                                        if (root.BlockDate.Year > 1975)
+                                        {
+                                            lblURIBlockDate.Invoke(new Action(() =>
+                                            {
+                                                lblURIBlockDate.Text = "litecoin verified: " + root.BlockDate.ToString("ddd, dd MMM yyyy hh:mm:ss");
+                                            }));
+                                        }
+                                        else
+                                        {
+                                            lblURIBlockDate.Invoke(new Action(() =>
+                                            {
+                                                lblURIBlockDate.Text = "litecoin could not be verified: ";
+                                            }));
+                                        }
                                     }
-                                    else
+                                    catch (Exception ex)
                                     {
-                                        lblURIBlockDate.Text = "litecoin could not be verified: ";
-
+                                        lblURIBlockDate.Invoke(new Action(() =>
+                                        {
+                                            lblURIBlockDate.Text = "litecoin could not be verified: ";
+                                        }));
                                     }
-                                }
-                                catch { }
-
-
+                                });
 
                                 break;
+
+                            // DOG case
                             case "DOG:":
-
-
-
-                                root = Root.GetRootByTransactionId(transactionid, "good-user", "better-password", @"http://127.0.0.1:22555", "30");
-
-                                try
+                                Task.Run(() =>
                                 {
-
-                                    if (root.BlockDate.Year > 1975)
+                                    try
                                     {
-                                        lblURIBlockDate.Text = "dogecoin verified: " + root.BlockDate.ToString("ddd, dd MMM yyyy hh:mm:ss");
+                                        root = Root.GetRootByTransactionId(transactionid, "good-user", "better-password", @"http://127.0.0.1:22555", "30");
+
+                                        if (root.BlockDate.Year > 1975)
+                                        {
+                                            lblURIBlockDate.Invoke(new Action(() =>
+                                            {
+                                                lblURIBlockDate.Text = "dogecoin verified: " + root.BlockDate.ToString("ddd, dd MMM yyyy hh:mm:ss");
+                                            }));
+                                        }
+                                        else
+                                        {
+                                            lblURIBlockDate.Invoke(new Action(() =>
+                                            {
+                                                lblURIBlockDate.Text = "dogecoin could not be verified: ";
+                                            }));
+                                        }
                                     }
-                                    else
+                                    catch (Exception ex)
                                     {
-                                        lblURIBlockDate.Text = "dogecoin could not be verified: ";
-
+                                        lblURIBlockDate.Invoke(new Action(() =>
+                                        {
+                                            lblURIBlockDate.Text = "dogecoin could not be verified: ";
+                                        }));
                                     }
-                                }
-                                catch { }
-
+                                });
 
                                 break;
+
                             case "IPFS":
-
-
-                                if (!System.IO.Directory.Exists(@"ipfs/" + objstate.URI.Substring(5, 46) + "-build") && !System.IO.Directory.Exists(@"ipfs/" + objstate.URI.Substring(5, 46)))
+                                Task.Run(() =>
                                 {
+                                    string transid = "empty";
 
-
-                                    Task ipfsTask = Task.Run(() =>
+                                    try
                                     {
+                                        transid = objstate.URI.Substring(5, 46);
+                                    }
+                                    catch { }
 
-                                        try { Directory.Delete("ipfs/" + objstate.URI.Substring(5, 46), true); } catch { }
-                                        try { Directory.CreateDirectory("ipfs/" + objstate.URI.Substring(5, 46)); } catch { };
-                                        Directory.CreateDirectory(@"ipfs/" + objstate.URI.Substring(5, 46) + "-build");
+                                    if (!System.IO.Directory.Exists(@"ipfs/" + transid + "-build") && !System.IO.Directory.Exists(@"ipfs/" + transid))
+                                    {
+                                        try
+                                        {
+                                            Directory.Delete("ipfs/" + transid, true);
+                                        }
+                                        catch { }
+                                        try
+                                        {
+                                            Directory.CreateDirectory("ipfs/" + transid);
+                                        }
+                                        catch { };
+                                        Directory.CreateDirectory(@"ipfs/" + transid + "-build");
                                         Process process2 = new Process();
                                         process2.StartInfo.FileName = @"ipfs\ipfs.exe";
-                                        process2.StartInfo.Arguments = "get " + objstate.URI.Substring(5, 46) + @" -o ipfs\" + objstate.URI.Substring(5, 46);
+                                        process2.StartInfo.Arguments = "get " + transid + @" -o ipfs\" + transid;
                                         process2.Start();
                                         process2.WaitForExit();
 
                                         string fileName;
-                                        if (System.IO.File.Exists("ipfs/" + objstate.URI.Substring(5, 46)))
+                                        if (System.IO.File.Exists("ipfs/" + transid))
                                         {
-                                            System.IO.File.Move("ipfs/" + objstate.URI.Substring(5, 46), "ipfs/" + objstate.URI.Substring(5, 46) + "_tmp");
-                                            System.IO.Directory.CreateDirectory("ipfs/" + objstate.URI.Substring(5, 46));
+                                            System.IO.File.Move("ipfs/" + transid, "ipfs/" + transid + "_tmp");
+                                            System.IO.Directory.CreateDirectory("ipfs/" + transid);
                                             fileName = objstate.URI.Replace(@"//", "").Replace(@"\\", "").Substring(51);
                                             if (fileName == "") { fileName = "artifact"; } else { fileName = fileName.Replace(@"/", "").Replace(@"\", ""); }
-                                            Directory.CreateDirectory("ipfs/" + objstate.URI.Substring(5, 46));
-                                            System.IO.File.Move("ipfs/" + objstate.URI.Substring(5, 46) + "_tmp", uriurn);
+                                            Directory.CreateDirectory("ipfs/" + transid);
+                                            System.IO.File.Move("ipfs/" + transid + "_tmp", uriurn);
 
-                                            try { System.IO.File.Move("ipfs/" + objstate.URI.Substring(5, 46) + "_tmp", uriurn); }
+                                            try
+                                            {
+                                                System.IO.File.Move("ipfs/" + transid + "_tmp", uriurn);
+                                            }
                                             catch (System.ArgumentException ex)
                                             {
-
-                                                System.IO.File.Move("ipfs/" + objstate.URI.Substring(5, 46) + "_tmp", "ipfs/" + objstate.URI.Substring(5, 46) + "/artifact" + objstate.URI.Substring(objstate.URI.LastIndexOf('.')));
-                                                uriurn = "ipfs/" + objstate.URI.Substring(5, 46) + "/artifact" + objstate.URI.Substring(objstate.URI.LastIndexOf('.'));
-
+                                                System.IO.File.Move("ipfs/" + transid + "_tmp", "ipfs/" + transid + "/artifact" + objstate.URI.Substring(objstate.URI.LastIndexOf('.')));
+                                                uriurn = "ipfs/" + transid + "/artifact" + objstate.URI.Substring(objstate.URI.LastIndexOf('.'));
                                             }
-
-
                                         }
 
-                                        if (System.IO.File.Exists("ipfs/" + objstate.URI.Substring(5, 46) + "/" + objstate.URI.Substring(5, 46)))
+                                        if (System.IO.File.Exists("ipfs/" + transid + "/" + transid))
                                         {
                                             fileName = objstate.URI.Replace(@"//", "").Replace(@"\\", "").Substring(51);
                                             if (fileName == "") { fileName = "artifact"; } else { fileName = fileName.Replace(@"/", "").Replace(@"\", ""); }
 
-                                            try { System.IO.File.Move("ipfs/" + objstate.URI.Substring(5, 46) + "/" + objstate.URI.Substring(5, 46), uriurn); }
+                                            try
+                                            {
+                                                System.IO.File.Move("ipfs/" + transid + "/" + transid, uriurn);
+                                            }
                                             catch (System.ArgumentException ex)
                                             {
-
-                                                System.IO.File.Move("ipfs/" + objstate.URI.Substring(5, 46) + "/" + objstate.URI.Substring(5, 46), "ipfs/" + objstate.URI.Substring(5, 46) + "/artifact" + objstate.URI.Substring(objstate.URI.LastIndexOf('.')));
-                                                uriurn = "ipfs/" + objstate.URI.Substring(5, 46) + "/artifact" + objstate.URI.Substring(objstate.URI.LastIndexOf('.'));
-
+                                                System.IO.File.Move("ipfs/" + transid + "/" + transid, "ipfs/" + transid + "/artifact" + objstate.URI.Substring(objstate.URI.LastIndexOf('.')));
+                                                uriurn = "ipfs/" + transid + "/artifact" + objstate.URI.Substring(objstate.URI.LastIndexOf('.'));
                                             }
                                         }
+
                                         try
                                         {
                                             if (File.Exists("IPFS_PINNING_ENABLED"))
@@ -2821,7 +3001,7 @@ namespace SUP
                                                     StartInfo = new ProcessStartInfo
                                                     {
                                                         FileName = @"ipfs\ipfs.exe",
-                                                        Arguments = "pin add " + objstate.URI.Substring(5, 46),
+                                                        Arguments = "pin add " + transid,
                                                         UseShellExecute = false,
                                                         CreateNoWindow = true
                                                     }
@@ -2831,52 +3011,61 @@ namespace SUP
                                         }
                                         catch { }
 
-
-                                        Directory.Delete(@"ipfs/" + objstate.URI.Substring(5, 46) + "-build");
-
-
-
-                                    });
-                                }
-                                else
-                                {
-                                    lblURIBlockDate.Text = "ipfs verified: " + DateTime.UtcNow.ToString("ddd, dd MMM yyyy hh:mm:ss");
-
-                                }
+                                        Directory.Delete(@"ipfs/" + transid + "-build");
+                                    }
+                                    else
+                                    {
+                                        lblURIBlockDate.Invoke(new Action(() =>
+                                        {
+                                            lblURIBlockDate.Text = "ipfs verified: " + DateTime.UtcNow.ToString("ddd, dd MMM yyyy hh:mm:ss");
+                                        }));
+                                    }
+                                });
 
                                 break;
+
                             default:
                                 if (!txtURI.Text.ToUpper().StartsWith("HTTP") && transactionid != "")
                                 {
-                                    root = Root.GetRootByTransactionId(transactionid, mainnetLogin, mainnetPassword, mainnetURL, mainnetVersionByte);
-
-                                    try
+                                    Task.Run(() =>
                                     {
-
-                                        if (root.BlockDate.Year > 1975)
+                                        try
                                         {
+                                            root = Root.GetRootByTransactionId(transactionid, mainnetLogin, mainnetPassword, mainnetURL, mainnetVersionByte);
 
-                                            if (mainnetVersionByte == "111")
+                                            if (root.BlockDate.Year > 1975)
                                             {
-                                                lblURIBlockDate.Text = "bitcoin-t verified: " + root.BlockDate.ToString("ddd, dd MMM yyyy hh:mm:ss");
+                                                lblURIBlockDate.Invoke(new Action(() =>
+                                                {
+                                                    if (mainnetVersionByte == "111")
+                                                    {
+                                                        lblURIBlockDate.Text = "bitcoin-t verified: " + root.BlockDate.ToString("ddd, dd MMM yyyy hh:mm:ss");
+                                                    }
+                                                    else
+                                                    {
+                                                        lblURIBlockDate.Text = "bitcoin verified: " + root.BlockDate.ToString("ddd, dd MMM yyyy hh:mm:ss");
+                                                    }
+                                                }));
                                             }
                                             else
                                             {
-                                                lblURIBlockDate.Text = "bitcoin verified: " + root.BlockDate.ToString("ddd, dd MMM yyyy hh:mm:ss");
-
+                                                lblURIBlockDate.Invoke(new Action(() =>
+                                                {
+                                                    lblURIBlockDate.Text = "could not be verified: ";
+                                                }));
                                             }
-
                                         }
-                                        else
+                                        catch (Exception ex)
                                         {
-                                            lblURIBlockDate.Text = "could not be verified: ";
-
+                                            lblURIBlockDate.Invoke(new Action(() =>
+                                            {
+                                                lblURIBlockDate.Text = "could not be verified: ";
+                                            }));
                                         }
-                                    }
-                                    catch { }
-
+                                    });
                                 }
                                 break;
+
                         }
                     }
 
@@ -3190,8 +3379,8 @@ namespace SUP
                         flowPanel.Visible = false;
                         string viewerPath = Path.GetDirectoryName(urn) + @"\urnviewer.html";
                         flowPanel.Controls.Clear();
-
-                        string htmlstring = "<html><body><embed src=\"" + urn + "\" width=100% height=100%></body></html>";
+                        string encodedPath = "file:///" + Uri.EscapeUriString(urn.Replace('\\', '/'));
+                        string htmlstring = "<html><body><embed src=\"" + encodedPath + "\" width=100% height=100%></body></html>";
 
                         try
                         {

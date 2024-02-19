@@ -55,10 +55,10 @@
             this.ObjectImage.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.ObjectImage.ImageLocation = "";
             this.ObjectImage.InitialImage = null;
-            this.ObjectImage.Location = new System.Drawing.Point(7, 5);
+            this.ObjectImage.Location = new System.Drawing.Point(4, 5);
             this.ObjectImage.Margin = new System.Windows.Forms.Padding(0);
             this.ObjectImage.Name = "ObjectImage";
-            this.ObjectImage.Size = new System.Drawing.Size(208, 208);
+            this.ObjectImage.Size = new System.Drawing.Size(230, 230);
             this.ObjectImage.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
             this.ObjectImage.TabIndex = 0;
             this.ObjectImage.TabStop = false;
@@ -74,9 +74,9 @@
             this.panel1.Controls.Add(this.label4);
             this.panel1.Controls.Add(this.ObjectOffer);
             this.panel1.Controls.Add(this.label3);
-            this.panel1.Location = new System.Drawing.Point(6, 292);
+            this.panel1.Location = new System.Drawing.Point(6, 337);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(209, 40);
+            this.panel1.Size = new System.Drawing.Size(226, 46);
             this.panel1.TabIndex = 5;
             this.panel1.Click += new System.EventHandler(this.foundListings_Click);
             // 
@@ -85,7 +85,7 @@
             this.ObjectPrice.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.ObjectPrice.BackColor = System.Drawing.SystemColors.GradientInactiveCaption;
             this.ObjectPrice.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.ObjectPrice.Location = new System.Drawing.Point(2, 19);
+            this.ObjectPrice.Location = new System.Drawing.Point(2, 23);
             this.ObjectPrice.Name = "ObjectPrice";
             this.ObjectPrice.Size = new System.Drawing.Size(92, 20);
             this.ObjectPrice.TabIndex = 9;
@@ -97,7 +97,7 @@
             this.label4.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.label4.AutoSize = true;
             this.label4.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label4.Location = new System.Drawing.Point(172, -1);
+            this.label4.Location = new System.Drawing.Point(189, 3);
             this.label4.MaximumSize = new System.Drawing.Size(170, 0);
             this.label4.Name = "label4";
             this.label4.Padding = new System.Windows.Forms.Padding(0, 3, 0, 0);
@@ -113,7 +113,7 @@
             // 
             this.ObjectOffer.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.ObjectOffer.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.ObjectOffer.Location = new System.Drawing.Point(109, 19);
+            this.ObjectOffer.Location = new System.Drawing.Point(127, 23);
             this.ObjectOffer.Name = "ObjectOffer";
             this.ObjectOffer.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
             this.ObjectOffer.Size = new System.Drawing.Size(95, 20);
@@ -126,7 +126,7 @@
             this.label3.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.label3.AutoSize = true;
             this.label3.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label3.Location = new System.Drawing.Point(3, -2);
+            this.label3.Location = new System.Drawing.Point(3, 2);
             this.label3.MaximumSize = new System.Drawing.Size(170, 0);
             this.label3.Name = "label3";
             this.label3.Padding = new System.Windows.Forms.Padding(0, 3, 0, 0);
@@ -141,11 +141,12 @@
             // ObjectDescription
             // 
             this.ObjectDescription.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
-            this.ObjectDescription.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.ObjectDescription.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.ObjectDescription.ForeColor = System.Drawing.Color.White;
-            this.ObjectDescription.Location = new System.Drawing.Point(4, 280);
+            this.ObjectDescription.Location = new System.Drawing.Point(0, 313);
             this.ObjectDescription.Name = "ObjectDescription";
-            this.ObjectDescription.Size = new System.Drawing.Size(211, 41);
+            this.ObjectDescription.Padding = new System.Windows.Forms.Padding(8, 0, 8, 0);
+            this.ObjectDescription.Size = new System.Drawing.Size(238, 70);
             this.ObjectDescription.TabIndex = 6;
             this.ObjectDescription.Text = "a collection of items found on a UFO";
             this.ObjectDescription.Click += new System.EventHandler(this.foundObjectControl_Click);
@@ -156,10 +157,10 @@
             this.ObjectQty.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
             this.ObjectQty.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.ObjectQty.ForeColor = System.Drawing.Color.White;
-            this.ObjectQty.Location = new System.Drawing.Point(118, 213);
+            this.ObjectQty.Location = new System.Drawing.Point(134, 235);
             this.ObjectQty.Margin = new System.Windows.Forms.Padding(0);
             this.ObjectQty.Name = "ObjectQty";
-            this.ObjectQty.Size = new System.Drawing.Size(99, 31);
+            this.ObjectQty.Size = new System.Drawing.Size(99, 38);
             this.ObjectQty.TabIndex = 7;
             this.ObjectQty.Text = "100X";
             this.ObjectQty.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
@@ -168,13 +169,14 @@
             // 
             // ObjectAddress
             // 
+            this.ObjectAddress.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.ObjectAddress.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
             this.ObjectAddress.Font = new System.Drawing.Font("Microsoft Sans Serif", 5.75F);
             this.ObjectAddress.ForeColor = System.Drawing.Color.White;
             this.ObjectAddress.ImageAlign = System.Drawing.ContentAlignment.BottomCenter;
-            this.ObjectAddress.Location = new System.Drawing.Point(6, 315);
+            this.ObjectAddress.Location = new System.Drawing.Point(8, 383);
             this.ObjectAddress.Name = "ObjectAddress";
-            this.ObjectAddress.Size = new System.Drawing.Size(209, 31);
+            this.ObjectAddress.Size = new System.Drawing.Size(203, 27);
             this.ObjectAddress.TabIndex = 8;
             this.ObjectAddress.Text = "@";
             this.ObjectAddress.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
@@ -185,10 +187,10 @@
             this.ObjectName.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
             this.ObjectName.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.ObjectName.ForeColor = System.Drawing.Color.White;
-            this.ObjectName.Location = new System.Drawing.Point(5, 213);
+            this.ObjectName.Location = new System.Drawing.Point(6, 235);
             this.ObjectName.Margin = new System.Windows.Forms.Padding(0);
             this.ObjectName.Name = "ObjectName";
-            this.ObjectName.Size = new System.Drawing.Size(117, 32);
+            this.ObjectName.Size = new System.Drawing.Size(135, 38);
             this.ObjectName.TabIndex = 9;
             this.ObjectName.Text = "Fake UFO";
             this.ObjectName.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
@@ -199,7 +201,7 @@
             this.ObjectCreators.AutoSize = true;
             this.ObjectCreators.BackColor = System.Drawing.Color.Transparent;
             this.ObjectCreators.LinkColor = System.Drawing.SystemColors.Highlight;
-            this.ObjectCreators.Location = new System.Drawing.Point(7, 246);
+            this.ObjectCreators.Location = new System.Drawing.Point(17, 275);
             this.ObjectCreators.Name = "ObjectCreators";
             this.ObjectCreators.Size = new System.Drawing.Size(0, 13);
             this.ObjectCreators.TabIndex = 10;
@@ -211,7 +213,7 @@
             this.ObjectCreators2.AutoSize = true;
             this.ObjectCreators2.BackColor = System.Drawing.Color.Transparent;
             this.ObjectCreators2.LinkColor = System.Drawing.SystemColors.Highlight;
-            this.ObjectCreators2.Location = new System.Drawing.Point(7, 262);
+            this.ObjectCreators2.Location = new System.Drawing.Point(17, 293);
             this.ObjectCreators2.Name = "ObjectCreators2";
             this.ObjectCreators2.Size = new System.Drawing.Size(0, 13);
             this.ObjectCreators2.TabIndex = 11;
@@ -228,7 +230,7 @@
             // btnOfficial
             // 
             this.btnOfficial.BackColor = System.Drawing.Color.Yellow;
-            this.btnOfficial.Location = new System.Drawing.Point(67, 172);
+            this.btnOfficial.Location = new System.Drawing.Point(75, 183);
             this.btnOfficial.Name = "btnOfficial";
             this.btnOfficial.Size = new System.Drawing.Size(134, 28);
             this.btnOfficial.TabIndex = 14;
@@ -251,7 +253,7 @@
             this.lblOfficial.BackColor = System.Drawing.SystemColors.HotTrack;
             this.lblOfficial.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lblOfficial.ForeColor = System.Drawing.Color.Yellow;
-            this.lblOfficial.Location = new System.Drawing.Point(0, 0);
+            this.lblOfficial.Location = new System.Drawing.Point(1, 0);
             this.lblOfficial.Margin = new System.Windows.Forms.Padding(0);
             this.lblOfficial.Name = "lblOfficial";
             this.lblOfficial.Padding = new System.Windows.Forms.Padding(1, 1, 1, 3);
@@ -262,10 +264,11 @@
             // 
             // lblTrash
             // 
+            this.lblTrash.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.lblTrash.AutoSize = true;
             this.lblTrash.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
             this.lblTrash.ForeColor = System.Drawing.Color.White;
-            this.lblTrash.Location = new System.Drawing.Point(201, 321);
+            this.lblTrash.Location = new System.Drawing.Point(215, 391);
             this.lblTrash.Name = "lblTrash";
             this.lblTrash.Size = new System.Drawing.Size(19, 13);
             this.lblTrash.TabIndex = 17;
@@ -278,25 +281,26 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
+            this.Controls.Add(this.ObjectName);
+            this.Controls.Add(this.ObjectDescription);
             this.Controls.Add(this.lblOfficial);
             this.Controls.Add(this.btnOfficial);
             this.Controls.Add(this.ObjectImage);
             this.Controls.Add(this.ObjectQty);
-            this.Controls.Add(this.ObjectName);
             this.Controls.Add(this.ObjectCreators);
             this.Controls.Add(this.lblTrash);
-            this.Controls.Add(this.ObjectDescription);
             this.Controls.Add(this.ObjectCreators2);
-            this.Controls.Add(this.ObjectAddress);
             this.Controls.Add(this.txtOfficialURN);
             this.Controls.Add(this.panel1);
             this.Controls.Add(this.ObjectId);
+            this.Controls.Add(this.ObjectAddress);
             this.DoubleBuffered = true;
             this.Margin = new System.Windows.Forms.Padding(8, 7, 8, 7);
-            this.MinimumSize = new System.Drawing.Size(221, 221);
+            this.MaximumSize = new System.Drawing.Size(238, 466);
+            this.MinimumSize = new System.Drawing.Size(238, 300);
             this.Name = "FoundObjectControl";
             this.Padding = new System.Windows.Forms.Padding(10);
-            this.Size = new System.Drawing.Size(221, 341);
+            this.Size = new System.Drawing.Size(238, 410);
             this.Click += new System.EventHandler(this.foundObjectControl_Click);
             ((System.ComponentModel.ISupportInitialize)(this.ObjectImage)).EndInit();
             this.panel1.ResumeLayout(false);

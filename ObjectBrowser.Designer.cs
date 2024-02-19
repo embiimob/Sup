@@ -348,7 +348,7 @@ namespace SUP
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "Object Browser";
             this.Load += new System.EventHandler(this.ObjectBrowserLoad);
-            this.Resize += new System.EventHandler(this.ObjectBrowser_Resize);
+            this.SizeChanged += new System.EventHandler(this.ObjectBrowser_Resize);
             ((System.ComponentModel.ISupportInitialize)(this.pages)).EndInit();
             this.flowLayoutPanel2.ResumeLayout(false);
             this.flowLayoutPanel2.PerformLayout();

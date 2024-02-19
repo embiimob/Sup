@@ -36,6 +36,7 @@ namespace SUP
         private bool _testnet = true;
         int historySeen = 0;
         bool spaceGiven = false;
+        Timer resizeTimer;
 
         List<FoundObjectControl> foundObjects = new List<FoundObjectControl>();
         List<PictureBox> pictureBoxes = new List<PictureBox>();
@@ -44,6 +45,11 @@ namespace SUP
         public ObjectBrowser(string objectaddress, bool iscontrol = false, bool testnet = true)
         {
             InitializeComponent();
+
+            resizeTimer = new System.Windows.Forms.Timer();
+            resizeTimer.Interval = 500; // Set the delay in milliseconds (adjust as needed)
+            resizeTimer.Tick += ResizeTimer_Tick;
+
             if (objectaddress != null)
             {
                 _objectaddress = objectaddress;
@@ -111,7 +117,7 @@ namespace SUP
             if (flowLayoutPanel1.VerticalScroll.Value + flowLayoutPanel1.ClientSize.Height >= flowLayoutPanel1.VerticalScroll.Maximum)
             {
                 // Add more PictureBoxes if available              
-                if (btnActivity.BackColor == Color.Yellow) { GetHistoryByAddress(txtSearchAddress.Text); } 
+                if (btnActivity.BackColor == Color.Yellow) { GetHistoryByAddress(txtSearchAddress.Text); }
                 else { BuildSearchResults(false, false); }
 
             }
@@ -139,11 +145,11 @@ namespace SUP
             int skip = 0;
             try { skip = flowLayoutPanel1.Controls.Count; } catch { }
             int qty = (flowLayoutPanel1.Size.Width / 200) * (flowLayoutPanel1.Size.Height / 200);
-            
+
             this.Invoke((Action)(() =>
             {
                 if (pages.Value > skip) { skip = pages.Value + skip; } else { try { pages.Value = skip; } catch { } }
-                
+
                 txtLast.Text = skip.ToString();
 
             }));
@@ -196,9 +202,9 @@ namespace SUP
                     {
                         this.Invoke((Action)(() =>
                         {
-                        profileURN.Links[0].LinkData = profileCheck;
-                        profileURN.LinkColor = System.Drawing.SystemColors.Highlight;
-                        profileURN.Text = txtSearchAddress.Text;
+                            profileURN.Links[0].LinkData = profileCheck;
+                            profileURN.LinkColor = System.Drawing.SystemColors.Highlight;
+                            profileURN.Text = txtSearchAddress.Text;
                         }));
                     }
 
@@ -384,7 +390,7 @@ namespace SUP
                     flowLayoutPanel1.SuspendLayout();
                     pages.Maximum = Math.Max(0, createdObjects.Count - 1);
                     txtTotal.Text = (createdObjects.Count).ToString();
-                    pages.Visible = true;             
+                    pages.Visible = true;
 
                     foreach (OBJState objstate in createdObjects.Skip(skip).Take(qty))
                     {
@@ -395,6 +401,7 @@ namespace SUP
                             {
                                 string transid = "";
                                 FoundObjectControl foundObject = new FoundObjectControl(_activeProfile, _testnet);
+                                foundObject.SuspendLayout();
                                 foundObject.ObjectName.Text = objstate.Name;
                                 foundObject.ObjectDescription.Text = objstate.Description;
                                 if (!objstate.URN.ToUpper().StartsWith("IPFS") && !objstate.URN.ToUpper().StartsWith("HTTP") && !txtSearchAddress.Text.ToUpper().StartsWith("SUP"))
@@ -447,14 +454,14 @@ namespace SUP
                                 //GPT3 reformed
                                 if (objstate.Offers != null && objstate.Offers.Count > 0)
                                 {
-                                    foundObject.Height = 395;
+                                    foundObject.Height = 466;
                                     decimal highestValue = objstate.Offers.Max(offer => offer.Value);
                                     foundObject.ObjectOffer.Text = highestValue.ToString();
                                 }
                                 //GPT3 reformed
                                 if (objstate.Listings != null && objstate.Listings.Count > 0)
                                 {
-                                    foundObject.Height = 395;
+                                    foundObject.Height = 466;
                                     decimal lowestValue = objstate.Listings.Values.Min(listing => listing.Value);
                                     foundObject.ObjectPrice.Text = lowestValue.ToString();
                                 }
@@ -938,7 +945,7 @@ namespace SUP
 
                                 if (_viewMode == 1)
                                 {
-                                    foundObject.Height = 250;
+                                    foundObject.Height = 300;
                                     flowLayoutPanel1.Controls.Add(foundObject);
 
 
@@ -950,6 +957,7 @@ namespace SUP
 
                                 }
 
+                                foundObject.ResumeLayout(true);
 
 
                             }
@@ -1136,19 +1144,19 @@ namespace SUP
                 if (!objectImagelocation.ToLower().EndsWith(".gif")) { objectImagelocation = objectImagelocation + "-thumbnail.jpg"; }
 
                 PictureBox picture = new PictureBox
-                    {
-                        Size = new System.Drawing.Size(40, 40),
-                        SizeMode = PictureBoxSizeMode.Zoom,
-                        ImageLocation = objectImagelocation,
-                        Margin = new System.Windows.Forms.Padding(0),
-                    };
-                    pictureBoxes.Add(picture);
+                {
+                    Size = new System.Drawing.Size(40, 40),
+                    SizeMode = PictureBoxSizeMode.Zoom,
+                    ImageLocation = objectImagelocation,
+                    Margin = new System.Windows.Forms.Padding(0),
+                };
+                pictureBoxes.Add(picture);
 
-                    picture.MouseClick += (sender, e) => { object_LinkClicked(SentFrom); };
+                picture.MouseClick += (sender, e) => { object_LinkClicked(SentFrom); };
 
-                    row.Controls.Add(picture, 1, 0);
+                row.Controls.Add(picture, 1, 0);
 
-                }
+            }
             else
             {
                 // Create a LinkLabel with the owner name
@@ -1222,7 +1230,7 @@ namespace SUP
             }
 
 
- 
+
             Label message = new Label
             {
                 AutoSize = true,
@@ -1239,7 +1247,7 @@ namespace SUP
             }
             else
             {
-                try{ message.MinimumSize = new Size(flowLayoutPanel1.Width - (400 + objectadjustment), 46); }catch{ }
+                try { message.MinimumSize = new Size(flowLayoutPanel1.Width - (400 + objectadjustment), 46); } catch { }
             }
             row.Controls.Add(message, 3, 0);
 
@@ -1291,18 +1299,18 @@ namespace SUP
             PROState searchprofile = new PROState();
             if (historySeen == 0)
             {
-               
-                    this.Invoke((MethodInvoker)delegate
+
+                this.Invoke((MethodInvoker)delegate
+                {
+                    foreach (var picturebox in pictureBoxes)
                     {
-                        foreach (var picturebox in pictureBoxes)
-                        {
 
-                            try { picturebox.Dispose(); } catch { }
+                        try { picturebox.Dispose(); } catch { }
 
-                        }
-                    });
+                    }
+                });
 
-               
+
                 pictureBoxes.Clear();
 
             }
@@ -1513,10 +1521,10 @@ namespace SUP
             .Select(sublist => sublist[0])
             .ToList();
 
-                                        // Find the lowest integer among the selected first elements
-                                        int lowestFirstElement = firstElements.Min();
-                                        Console.WriteLine("The lowest integer among the first elements greater than or equal to -1 is: " + lowestFirstElement);
-                                    
+                                    // Find the lowest integer among the selected first elements
+                                    int lowestFirstElement = firstElements.Min();
+                                    Console.WriteLine("The lowest integer among the first elements greater than or equal to -1 is: " + lowestFirstElement);
+
 
                                     foreach (var give in givinspector)
                                     {
@@ -1670,36 +1678,36 @@ namespace SUP
                                     {
                                         break;
                                     }
-                                    
+
 
                                     foreach (var burn in brninspector)
                                     {
                                         if (root.Keyword.GetItemByIndex(burn[0]).Key != null)
                                         {
-                                           
-                                                string _from = root.SignedBy;
-                                                string _to = "";
-                                                string objectaddress = root.Keyword.GetItemByIndex(burn[0]).Key;
 
-                                                try { _to = root.Keyword.Reverse().GetItemByIndex(burn[0]).Key; } catch { }
-                                                string _message = "BURN 🔥 ";
-                                                try { _message = _message + burn[1]; } catch { }
-                                                string _blockdate = root.BlockDate.ToString("yyyyMMddHHmmss");
-                                                string imglocation = "";
+                                            string _from = root.SignedBy;
+                                            string _to = "";
+                                            string objectaddress = root.Keyword.GetItemByIndex(burn[0]).Key;
 
-                                                if (burn[1] > 0)
+                                            try { _to = root.Keyword.Reverse().GetItemByIndex(burn[0]).Key; } catch { }
+                                            string _message = "BURN 🔥 ";
+                                            try { _message = _message + burn[1]; } catch { }
+                                            string _blockdate = root.BlockDate.ToString("yyyyMMddHHmmss");
+                                            string imglocation = "";
+
+                                            if (burn[1] > 0)
+                                            {
+
+
+                                                this.Invoke((MethodInvoker)delegate
                                                 {
+                                                    try { imglocation = myFriends[_from]; } catch { }
 
+                                                    CreateFeedRow(objectaddress, imglocation, _to, _from, DateTime.ParseExact(_blockdate, "yyyyMMddHHmmss", CultureInfo.InvariantCulture), _message, root.TransactionId, Color.White, flowLayoutPanel1);
+                                                    found++;
+                                                });
+                                            }
 
-                                                    this.Invoke((MethodInvoker)delegate
-                                                    {
-                                                        try { imglocation = myFriends[_from]; } catch { }
-
-                                                        CreateFeedRow(objectaddress, imglocation, _to, _from, DateTime.ParseExact(_blockdate, "yyyyMMddHHmmss", CultureInfo.InvariantCulture), _message, root.TransactionId, Color.White, flowLayoutPanel1);
-                                                        found++;
-                                                    });
-                                                }
-                                            
                                         }
 
                                     }
@@ -1730,7 +1738,7 @@ namespace SUP
                 {
                     AutoSize = false,
                     Margin = new System.Windows.Forms.Padding(0),
-                    MinimumSize = new Size(flowLayoutPanel1.Width -40, 10),
+                    MinimumSize = new Size(flowLayoutPanel1.Width - 40, 10),
                     Padding = new System.Windows.Forms.Padding(0),
                     TextAlign = ContentAlignment.TopLeft
 
@@ -2225,14 +2233,14 @@ namespace SUP
                         //GPT3 reformed
                         if (objstate.Offers != null && objstate.Offers.Count > 0)
                         {
-                            foundObject.Height = 395;
+                            foundObject.Height = 466;
                             decimal highestValue = objstate.Offers.Max(offer => offer.Value);
                             foundObject.ObjectOffer.Text = highestValue.ToString();
                         }
                         //GPT3 reformed
                         if (objstate.Listings != null && objstate.Listings.Count > 0)
                         {
-                            foundObject.Height = 395;
+                            foundObject.Height = 466;
                             decimal lowestValue = objstate.Listings.Values.Min(listing => listing.Value);
                             foundObject.ObjectPrice.Text = lowestValue.ToString();
                         }
@@ -2833,7 +2841,7 @@ namespace SUP
 
             if (e.KeyCode == Keys.Enter)
             {
-                if (txtSearchAddress.Text == "" || txtSearchAddress.Text.StartsWith("#") || txtSearchAddress.Text.ToUpper().StartsWith("SUP:") || txtSearchAddress.Text.ToUpper().StartsWith("HTTP") || txtSearchAddress.Text.ToUpper().StartsWith("BTC:") || txtSearchAddress.Text.ToUpper().StartsWith("MZC:") || txtSearchAddress.Text.ToUpper().StartsWith("LTC:") || txtSearchAddress.Text.ToUpper().StartsWith("DOG:") || txtSearchAddress.Text.ToUpper().StartsWith("IPFS:")) { btnCreated.BackColor = Color.White; btnOwned.BackColor = Color.White;}
+                if (txtSearchAddress.Text == "" || txtSearchAddress.Text.StartsWith("#") || txtSearchAddress.Text.ToUpper().StartsWith("SUP:") || txtSearchAddress.Text.ToUpper().StartsWith("HTTP") || txtSearchAddress.Text.ToUpper().StartsWith("BTC:") || txtSearchAddress.Text.ToUpper().StartsWith("MZC:") || txtSearchAddress.Text.ToUpper().StartsWith("LTC:") || txtSearchAddress.Text.ToUpper().StartsWith("DOG:") || txtSearchAddress.Text.ToUpper().StartsWith("IPFS:")) { btnCreated.BackColor = Color.White; btnOwned.BackColor = Color.White; }
                 profileURN.Text = "";
                 e.Handled = true;
                 e.SuppressKeyPress = true;
@@ -2884,6 +2892,7 @@ namespace SUP
                         this.Invoke((Action)(() =>
                         {
                             flowLayoutPanel1.SuspendLayout();
+                            List<Control> controlsList = flowLayoutPanel1.Controls.Cast<Control>().ToList();
                             flowLayoutPanel1.Controls.Clear();
 
                             if (clearpages)
@@ -2892,35 +2901,36 @@ namespace SUP
                                 pages.Value = 0;
                             }
 
-                            foreach (Control control in flowLayoutPanel1.Controls)
-                            {
-                                foreach (Control _control in control.Controls)
-                                { _control.Dispose(); }
-                                control.Dispose();
-                            }
-
-                            //disposeFoundObjects
-                            foreach (var foundobject in foundObjects)
+                            Task memoryPrune = Task.Run(() =>
                             {
 
-                                try { foundobject.Dispose(); } catch { }
+                                foreach (Control control in controlsList)
+                                {
+                                    try  { control.Dispose(); }  catch { }
+                                }
 
-                            }
+                          
+                                foreach (var foundobject in foundObjects)
+                                {
 
-                            foreach (PictureBox picture in pictureBoxes)
-                            {
+                                    try { foundobject.Dispose(); } catch { }
 
-                                try { picture.Dispose(); } catch { }
+                                }
 
-                            }
+                                foreach (PictureBox picture in pictureBoxes)
+                                {
 
-                            flowLayoutPanel1.ResumeLayout();
+                                    try { picture.Dispose(); } catch { }
+
+                                }
+
+                                flowLayoutPanel1.ResumeLayout();
+                            });
 
                         }));
 
                     }
 
-                   // int loadQty = (flowLayoutPanel1.Size.Width / 200) * (flowLayoutPanel1.Size.Height / 200);
 
 
                     if (txtSearchAddress.Text.ToLower().StartsWith("http"))
@@ -3259,29 +3269,49 @@ namespace SUP
             txtLast.Enabled = true;
         }
 
-        private async void ObjectBrowser_Resize(object sender, EventArgs e)
+        private void ObjectBrowser_Resize(object sender, EventArgs e)
         {
             if (!string.IsNullOrEmpty(_objectaddress) || !string.IsNullOrEmpty(txtSearchAddress.Text))
             {
+                if (flowLayoutPanel1.Visible == true)
+                {
+                    Random rnd = new Random();
+                    string[] gifFiles = Directory.GetFiles("includes", "*.gif");
 
-                Random rnd = new Random();
-                string[] gifFiles = Directory.GetFiles("includes", "*.gif");
-                if (gifFiles.Length > 0)
-                {
-                    int randomIndex = rnd.Next(gifFiles.Length);
-                    string randomGifFile = gifFiles[randomIndex];
-                    imgLoading.ImageLocation = randomGifFile;
+                    if (gifFiles.Length > 0)
+                    {
+                        int randomIndex = rnd.Next(gifFiles.Length);
+                        string randomGifFile = gifFiles[randomIndex];
+                        imgLoading.ImageLocation = randomGifFile;
+                    }
+                    else
+                    {
+                        imgLoading.ImageLocation = @"includes\HugPuddle.jpg";
+                    }
+
+                    flowLayoutPanel1.Visible = false;
                 }
-                else
-                {
-                    imgLoading.ImageLocation = @"includes\HugPuddle.jpg";
-                }
-                flowLayoutPanel1.Visible = false;
+                // Stop the timer when the resize event occurs
+                resizeTimer.Stop();
+
+                // Start the timer again
+                resizeTimer.Start();
+            }
+
+        }
+
+        private async void ResizeTimer_Tick(object sender, EventArgs e)
+        {
+            // This code will be executed after the specified delay
+
+            resizeTimer.Stop(); // Stop the timer
+
+            if (!string.IsNullOrEmpty(_objectaddress) || !string.IsNullOrEmpty(txtSearchAddress.Text))
+            {
                 await Task.Run(() => BuildSearchResults(false, true, false));
                 flowLayoutPanel1.Visible = true;
                 pages.Visible = true;
             }
-
         }
 
         private void pages_Scroll(object sender, EventArgs e)
@@ -3311,7 +3341,7 @@ namespace SUP
                     imgLoading.ImageLocation = @"includes\HugPuddle.jpg";
                 }
                 flowLayoutPanel1.Visible = false;
-                await Task.Run(() => BuildSearchResults(false,true,false));
+                await Task.Run(() => BuildSearchResults(false, true, false));
                 flowLayoutPanel1.Visible = true;
                 pages.Visible = true;
 
@@ -3511,7 +3541,7 @@ namespace SUP
 
                 }
                 catch { }
-                
+
             }
         }
 
@@ -3552,8 +3582,8 @@ namespace SUP
             }
         }
 
-   
-        
+
+
     }
 
 

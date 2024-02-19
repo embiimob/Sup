@@ -294,7 +294,7 @@ namespace SUP
             this.supFlow.Location = new System.Drawing.Point(9, 159);
             this.supFlow.Name = "supFlow";
             this.supFlow.Padding = new System.Windows.Forms.Padding(0, 3, 0, 0);
-            this.supFlow.Size = new System.Drawing.Size(579, 527);
+            this.supFlow.Size = new System.Drawing.Size(582, 527);
             this.supFlow.TabIndex = 86;
             // 
             // lblAdultsOnly
@@ -343,7 +343,7 @@ namespace SUP
             // 
             // profileCreatedDate
             // 
-            this.profileCreatedDate.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.profileCreatedDate.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.profileCreatedDate.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.profileCreatedDate.ForeColor = System.Drawing.Color.White;
             this.profileCreatedDate.Location = new System.Drawing.Point(345, 129);
@@ -355,11 +355,11 @@ namespace SUP
             // 
             this.profileURN.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.profileURN.AutoSize = true;
-            this.profileURN.Font = new System.Drawing.Font("Microsoft Sans Serif", 18F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.profileURN.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.profileURN.LinkColor = System.Drawing.SystemColors.GradientActiveCaption;
             this.profileURN.Location = new System.Drawing.Point(155, 125);
             this.profileURN.Name = "profileURN";
-            this.profileURN.Size = new System.Drawing.Size(70, 29);
+            this.profileURN.Size = new System.Drawing.Size(45, 20);
             this.profileURN.TabIndex = 11;
             this.profileURN.TabStop = true;
             this.profileURN.Text = "anon";
@@ -370,7 +370,6 @@ namespace SUP
             this.btnHome.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.btnHome.BackColor = System.Drawing.Color.White;
             this.btnHome.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnHome.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btnHome.Location = new System.Drawing.Point(532, 125);
             this.btnHome.Name = "btnHome";
             this.btnHome.Size = new System.Drawing.Size(56, 23);
@@ -383,11 +382,11 @@ namespace SUP
             // 
             this.lblProcessHeight.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.lblProcessHeight.AutoSize = true;
-            this.lblProcessHeight.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblProcessHeight.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lblProcessHeight.ForeColor = System.Drawing.Color.White;
-            this.lblProcessHeight.Location = new System.Drawing.Point(469, 83);
+            this.lblProcessHeight.Location = new System.Drawing.Point(485, 86);
             this.lblProcessHeight.Name = "lblProcessHeight";
-            this.lblProcessHeight.Size = new System.Drawing.Size(39, 20);
+            this.lblProcessHeight.Size = new System.Drawing.Size(28, 16);
             this.lblProcessHeight.TabIndex = 96;
             this.lblProcessHeight.Text = "ph: ";
             this.lblProcessHeight.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -424,10 +423,9 @@ namespace SUP
             this.btnFollow.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.btnFollow.BackColor = System.Drawing.Color.White;
             this.btnFollow.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnFollow.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnFollow.Location = new System.Drawing.Point(463, 125);
+            this.btnFollow.Location = new System.Drawing.Point(470, 125);
             this.btnFollow.Name = "btnFollow";
-            this.btnFollow.Size = new System.Drawing.Size(63, 23);
+            this.btnFollow.Size = new System.Drawing.Size(56, 23);
             this.btnFollow.TabIndex = 10;
             this.btnFollow.Text = "follow";
             this.btnFollow.UseVisualStyleBackColor = false;
@@ -451,11 +449,11 @@ namespace SUP
             // 
             this.profileBIO.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.profileBIO.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.profileBIO.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.profileBIO.ForeColor = System.Drawing.Color.White;
             this.profileBIO.Location = new System.Drawing.Point(153, 11);
             this.profileBIO.Name = "profileBIO";
-            this.profileBIO.Padding = new System.Windows.Forms.Padding(2, 2, 0, 0);
+            this.profileBIO.Padding = new System.Windows.Forms.Padding(0, 2, 0, 0);
             this.profileBIO.Size = new System.Drawing.Size(316, 120);
             this.profileBIO.TabIndex = 2;
             this.profileBIO.Text = resources.GetString("profileBIO.Text");
@@ -464,7 +462,7 @@ namespace SUP
             // 
             this.btnDisco.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.btnDisco.Font = new System.Drawing.Font("Segoe UI Emoji", 13.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnDisco.Location = new System.Drawing.Point(408, 692);
+            this.btnDisco.Location = new System.Drawing.Point(411, 692);
             this.btnDisco.Name = "btnDisco";
             this.btnDisco.Size = new System.Drawing.Size(56, 40);
             this.btnDisco.TabIndex = 85;
@@ -478,7 +476,7 @@ namespace SUP
             this.btnPrivateMessage.BackColor = System.Drawing.Color.White;
             this.btnPrivateMessage.Font = new System.Drawing.Font("Segoe UI Emoji", 13.8F);
             this.btnPrivateMessage.ForeColor = System.Drawing.Color.Black;
-            this.btnPrivateMessage.Location = new System.Drawing.Point(532, 692);
+            this.btnPrivateMessage.Location = new System.Drawing.Point(535, 692);
             this.btnPrivateMessage.Name = "btnPrivateMessage";
             this.btnPrivateMessage.Size = new System.Drawing.Size(56, 40);
             this.btnPrivateMessage.TabIndex = 84;
@@ -492,7 +490,7 @@ namespace SUP
             this.btnPublicMessage.BackColor = System.Drawing.Color.White;
             this.btnPublicMessage.Font = new System.Drawing.Font("Segoe UI Emoji", 13.8F);
             this.btnPublicMessage.ForeColor = System.Drawing.Color.Black;
-            this.btnPublicMessage.Location = new System.Drawing.Point(470, 692);
+            this.btnPublicMessage.Location = new System.Drawing.Point(473, 692);
             this.btnPublicMessage.Name = "btnPublicMessage";
             this.btnPublicMessage.Size = new System.Drawing.Size(56, 40);
             this.btnPublicMessage.TabIndex = 83;
@@ -511,6 +509,7 @@ namespace SUP
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1004, 741);
             this.Controls.Add(this.splitContainer1);
+            this.DoubleBuffered = true;
             this.MinimumSize = new System.Drawing.Size(1020, 780);
             this.Name = "SupMain";
             this.ShowIcon = false;

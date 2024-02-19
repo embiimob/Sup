@@ -55,11 +55,12 @@
             // ObjectDescription
             // 
             this.ObjectDescription.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
-            this.ObjectDescription.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.ObjectDescription.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.ObjectDescription.ForeColor = System.Drawing.Color.White;
-            this.ObjectDescription.Location = new System.Drawing.Point(8, 314);
+            this.ObjectDescription.Location = new System.Drawing.Point(8, 330);
+            this.ObjectDescription.Margin = new System.Windows.Forms.Padding(10, 0, 10, 0);
             this.ObjectDescription.Name = "ObjectDescription";
-            this.ObjectDescription.Size = new System.Drawing.Size(274, 154);
+            this.ObjectDescription.Size = new System.Drawing.Size(274, 139);
             this.ObjectDescription.TabIndex = 6;
             this.ObjectDescription.Click += new System.EventHandler(this.foundObjectControl_Click);
             // 
@@ -82,12 +83,12 @@
             // ObjectName
             // 
             this.ObjectName.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
-            this.ObjectName.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.ObjectName.Font = new System.Drawing.Font("Microsoft Sans Serif", 14.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.ObjectName.ForeColor = System.Drawing.Color.White;
             this.ObjectName.Location = new System.Drawing.Point(8, 290);
             this.ObjectName.Margin = new System.Windows.Forms.Padding(0);
             this.ObjectName.Name = "ObjectName";
-            this.ObjectName.Size = new System.Drawing.Size(271, 18);
+            this.ObjectName.Size = new System.Drawing.Size(271, 25);
             this.ObjectName.TabIndex = 9;
             this.ObjectName.Text = "FakeUFO";
             this.ObjectName.Click += new System.EventHandler(this.foundObjectControl_Click);
