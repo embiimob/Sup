@@ -7,6 +7,7 @@ using SUP.P2FK;
 using System.Collections.Generic;
 using Newtonsoft.Json;
 using System.Net;
+using System.Globalization;
 
 
 namespace SUP
@@ -125,7 +126,7 @@ namespace SUP
             INQJson.cre = mintCRE.ToArray();
 
             if (!checkBox1.Checked) { INQJson.any = 1; }
-            if (int.TryParse(txtEND.Text, out int intEND) && intEND > 0) { INQJson.end = intEND; }
+            if (int.TryParse(txtEND.Text, NumberStyles.Any, CultureInfo.GetCultureInfo("en-US"), out int intEND) && intEND > 0) { INQJson.end = intEND; }
 
 
             var settings = new JsonSerializerSettings

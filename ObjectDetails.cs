@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
+using System.Globalization;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
@@ -148,7 +149,7 @@ namespace SUP
             foreach (Match match in matches)
             {
                 string content = match.Value.Substring(2, match.Value.Length - 4);
-                if (!int.TryParse(content, out int id))
+                if (!int.TryParse(content, NumberStyles.Any, CultureInfo.GetCultureInfo("en-US"), out int id))
                 {
 
                     string imagelocation = "";
@@ -629,7 +630,7 @@ namespace SUP
                     message = Regex.Replace(message, "<<.*?>>", "");
 
 
-                    if (message != "" || blocks.Length > 1 || (blocks.Length == 1 && !int.TryParse(blocks[0], out _)))
+                    if (message != "" || blocks.Length > 1 || (blocks.Length == 1 && !int.TryParse(blocks[0], NumberStyles.Any, CultureInfo.GetCultureInfo("en-US"), out _)))
                     {
 
                         if (!profileAddress.ContainsKey(fromAddress))
@@ -1093,7 +1094,7 @@ namespace SUP
 
                             string content = match.Value.Substring(2, match.Value.Length - 4);
 
-                            if (!int.TryParse(content, out int cnt) && !content.Trim().StartsWith("#") && !content.EndsWith(@"/INQ"))
+                            if (!int.TryParse(content, NumberStyles.Any, CultureInfo.GetCultureInfo("en-US"), out int cnt) && !content.Trim().StartsWith("#") && !content.EndsWith(@"/INQ"))
                             {
 
 
@@ -1239,7 +1240,7 @@ namespace SUP
                                 {
 
 
-                                    if (!int.TryParse(content, out int id))
+                                    if (!int.TryParse(content, NumberStyles.Any, CultureInfo.GetCultureInfo("en-US"), out int id))
                                     {
 
                                         if (extension == ".mp4" || extension == ".avi" || content.Contains("youtube.com") || content.Contains("youtu.be") || extension == ".wav" || extension == ".mp3")

@@ -972,7 +972,7 @@ namespace SUP
 
                     this.Invoke((Action)(() =>
                     {
-                        if (int.Parse(txtLast.Text) >= createdObjects.Count - 1)
+                        if (int.Parse(txtLast.Text, NumberStyles.Any, CultureInfo.GetCultureInfo("en-US")) >= createdObjects.Count - 1)
                         {
                             txtLast.Text = createdObjects.Count.ToString();
 
@@ -1590,7 +1590,7 @@ namespace SUP
                                         string _blockdate = root.BlockDate.ToString("yyyyMMddHHmmss");
                                         string imglocation = "";
 
-                                        if (long.Parse(buy[1]) < 0)
+                                        if (long.Parse(buy[1], NumberStyles.Any, CultureInfo.GetCultureInfo("en-US")) < 0)
                                         {
                                             break;
                                         }
@@ -1642,7 +1642,7 @@ namespace SUP
                                         string _blockdate = root.BlockDate.ToString("yyyyMMddHHmmss");
                                         string imglocation = "";
 
-                                        if (long.Parse(lst[1]) < 0)
+                                        if (long.Parse(lst[1], NumberStyles.Any, CultureInfo.GetCultureInfo("en-US")) < 0)
                                         {
                                             break;
                                         }
@@ -1756,8 +1756,8 @@ namespace SUP
             string profileCheck = address;
             PROState searchprofile = new PROState();
             List<COLState> createdObjects = new List<COLState>();
-            int skip = int.Parse(txtLast.Text);
-            int qty = int.Parse(txtQty.Text);
+            int skip = int.Parse(txtLast.Text, NumberStyles.Any, CultureInfo.GetCultureInfo("en-US"));
+            int qty = int.Parse(txtQty.Text, NumberStyles.Any, CultureInfo.GetCultureInfo("en-US"));
 
             try
             {
@@ -3352,7 +3352,7 @@ namespace SUP
         {
             if (e.KeyCode == Keys.Enter)
             {
-                try { pages.Value = int.Parse(txtLast.Text); } catch { }
+                try { pages.Value = int.Parse(txtLast.Text, NumberStyles.Any, CultureInfo.GetCultureInfo("en-US")); } catch { }
 
                 Random rnd = new Random();
                 string[] gifFiles = Directory.GetFiles("includes", "*.gif");
@@ -3428,7 +3428,7 @@ namespace SUP
         private void txtLast_TextChanged(object sender, EventArgs e)
         {
             string previousText = txtLast.Text;
-            if (!int.TryParse(txtLast.Text, out int lastint) || lastint < 0)
+            if (!int.TryParse(txtLast.Text, NumberStyles.Any, CultureInfo.GetCultureInfo("en-US"), out int lastint) || lastint < 0)
             {
                 txtLast.Text = previousText;
             }

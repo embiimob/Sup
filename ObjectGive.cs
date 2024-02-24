@@ -10,6 +10,7 @@ using SUP.RPCClient;
 using NBitcoin;
 using Newtonsoft.Json;
 using SUP.P2FK;
+using System.Globalization;
 
 namespace SUP
 {
@@ -69,7 +70,7 @@ namespace SUP
                 return;
             }
 
-            if (!long.TryParse(qtyTextBox.Text, out var qty) || qty < 1)
+            if (!long.TryParse(qtyTextBox.Text, NumberStyles.Any, CultureInfo.GetCultureInfo("en-US"), out var qty) || qty < 1)
             {
                 MessageBox.Show("Quantity must be a positive integer.");
                 return;
@@ -331,7 +332,7 @@ namespace SUP
                 var address = parts[0].Trim();
                 if (string.IsNullOrWhiteSpace(address)) continue;
 
-                if (!int.TryParse(parts[1].Trim(), out var qty) || qty < 1) continue;
+                if (!int.TryParse(parts[1].Trim(), NumberStyles.Any, CultureInfo.GetCultureInfo("en-US"), out var qty) || qty < 1) continue;
 
                 if (_addressQtyList.Count >= MaxRows) break;
 

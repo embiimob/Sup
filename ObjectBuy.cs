@@ -592,7 +592,7 @@ namespace SUP
             txtCurrentOwnerAddress.Text = linkData[0];
             try
             {
-                if (maxHold > 0 && int.Parse(linkData[1]) > maxHold)
+                if (maxHold > 0 && int.Parse(linkData[1], NumberStyles.Any, CultureInfo.GetCultureInfo("en-US")) > maxHold)
                 {
                     txtBuyQty.Text = maxHold.ToString();
                 }
@@ -765,7 +765,7 @@ namespace SUP
                                                             string _blockdate = root.BlockDate.ToString("yyyyMMddHHmmss");
                                                             string imglocation = "";
 
-                                                            if (long.Parse(buy[1]) < 0)
+                                                            if (long.Parse(buy[1], NumberStyles.Any, CultureInfo.GetCultureInfo("en-US")) < 0)
                                                             {
                                                                 break;
                                                             }
@@ -817,7 +817,7 @@ namespace SUP
                                                             string _blockdate = root.BlockDate.ToString("yyyyMMddHHmmss");
                                                             string imglocation = "";
 
-                                                            if (long.Parse(lst[1]) < 0)
+                                                            if (long.Parse(lst[1], NumberStyles.Any, CultureInfo.GetCultureInfo("en-US")) < 0)
                                                             {
                                                                 break;
                                                             }
@@ -978,14 +978,14 @@ namespace SUP
         private void btnBuy_Click(object sender, EventArgs e)
         {
 
-            if (!int.TryParse(txtBuyQty.Text, out int buyQTY1) || buyQTY1 < 1 || txtBuyQty.Text.IndexOf('.') != -1)
+            if (!int.TryParse(txtBuyQty.Text, NumberStyles.Any, CultureInfo.GetCultureInfo("en-US"), out int buyQTY1) || buyQTY1 < 1 || txtBuyQty.Text.IndexOf('.') != -1)
             {
                 MessageBox.Show("Buy Qty must be 1 or greater", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 txtBuyQty.Text = "1";
                 return;
             }
 
-            if (maxHold > 0 && int.TryParse(txtBuyQty.Text,out int buyQTY2) && buyQTY2 > maxHold)
+            if (maxHold > 0 && int.TryParse(txtBuyQty.Text, NumberStyles.Any, CultureInfo.GetCultureInfo("en-US"), out int buyQTY2) && buyQTY2 > maxHold)
             {
                 MessageBox.Show("Buy Qty exceeds maximum holding amount", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 txtBuyQty.Text = maxHold.ToString();
@@ -994,7 +994,7 @@ namespace SUP
 
 
 
-            if (int.TryParse(txtBuyQty.Text, out int buyQTY3) && buyQTY3 <= maxHold)
+            if (int.TryParse(txtBuyQty.Text, NumberStyles.Any, CultureInfo.GetCultureInfo("en-US"), out int buyQTY3) && buyQTY3 <= maxHold)
             {
                 List<OBJState> currentlyOwnedObjects = OBJState.GetObjectsOwnedByAddress(txtSignatureAddress.Text, mainnetLogin, mainnetPassword, mainnetURL, mainnetVersionByte);
 
@@ -1019,7 +1019,7 @@ namespace SUP
             }
 
 
-            if (int.TryParse(txtBuyQty.Text, out int buyQTY4))
+            if (int.TryParse(txtBuyQty.Text, NumberStyles.Any, CultureInfo.GetCultureInfo("en-US"), out int buyQTY4))
             {
                 List<OBJState> currentlyOwnedObjects = OBJState.GetObjectsOwnedByAddress(txtCurrentOwnerAddress.Text, mainnetLogin, mainnetPassword, mainnetURL, mainnetVersionByte);
 
@@ -1046,7 +1046,7 @@ namespace SUP
 
                 if (listingForCurrentOwner != null)
                 {
-                    if (decimal.TryParse(txtBuyEachCost.Text, out decimal buyEachCost))
+                    if (decimal.TryParse(txtBuyEachCost.Text, NumberStyles.Any, CultureInfo.GetCultureInfo("en-US"), out decimal buyEachCost))
                     {
                         if (buyEachCost < listingForCurrentOwner.Value)
                         {
@@ -1121,7 +1121,7 @@ namespace SUP
 
             txtAddressListJSON.Text = JsonConvert.SerializeObject(encodedList.Distinct());
 
-            lblBuyCost.Text = "cost: " + (0.00000546 * encodedList.Count + (long.Parse(txtBuyQty.Text) * double.Parse(txtBuyEachCost.Text))).ToString("0.00000000") + "  + miner fee";
+            lblBuyCost.Text = "cost: " + (0.00000546 * encodedList.Count + (long.Parse(txtBuyQty.Text, NumberStyles.Any, CultureInfo.GetCultureInfo("en-US")) * double.Parse(txtBuyEachCost.Text, NumberStyles.Any, CultureInfo.GetCultureInfo("en-US")))).ToString("0.00000000") + "  + miner fee";
 
             if (mint)
             {
@@ -1135,7 +1135,7 @@ namespace SUP
                         try { recipients.Add(encodedAddress, 0.00000546m); } catch { }
                     }
 
-                    decimal totalCost = long.Parse(txtBuyQty.Text) * decimal.Parse(txtBuyEachCost.Text);
+                    decimal totalCost = long.Parse(txtBuyQty.Text, NumberStyles.Any, CultureInfo.GetCultureInfo("en-US")) * decimal.Parse(txtBuyEachCost.Text, NumberStyles.Any, CultureInfo.GetCultureInfo("en-US"));
                     decimal remainingCost = totalCost;
                     OBJState objstate = OBJState.GetObjectByAddress(txtAddressSearch.Text, mainnetLogin, mainnetPassword, mainnetURL, mainnetVersionByte);
 
@@ -1192,7 +1192,7 @@ namespace SUP
         private void giveButton_Click(object sender, EventArgs e)
         {
 
-            if (int.TryParse(txtListQty.Text, out int listQTY) && txtListQty.Text.IndexOf('.') == -1)
+            if (int.TryParse(txtListQty.Text, NumberStyles.Any, CultureInfo.GetCultureInfo("en-US"), out int listQTY) && txtListQty.Text.IndexOf('.') == -1)
             {
 
 

@@ -11,6 +11,7 @@ using System.Numerics;
 using System.Security.Cryptography;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Globalization;
 
 
 namespace SUP.P2FK
@@ -208,7 +209,7 @@ namespace SUP.P2FK
                     int headerSize;
                     try
                     {
-                        packetSize = Int32.Parse(match.Value.ToString().Remove(0, 1));
+                        packetSize = Int32.Parse(match.Value.ToString().Remove(0, 1), NumberStyles.Any, CultureInfo.GetCultureInfo("en-US"));
                         headerSize = match.Index + match.Length + 1;
                     }
                     catch { break; }

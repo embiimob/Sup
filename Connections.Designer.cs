@@ -574,9 +574,9 @@
             this.label15.Location = new System.Drawing.Point(395, 437);
             this.label15.Name = "label15";
             this.label15.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
-            this.label15.Size = new System.Drawing.Size(109, 13);
+            this.label15.Size = new System.Drawing.Size(157, 13);
             this.label15.TabIndex = 124;
-            this.label15.Text = "Sup!? v0.6.0-beta";
+            this.label15.Text = "Sup!? v0.6.1-THE WHALE";
             this.label15.TextAlign = System.Drawing.ContentAlignment.TopCenter;
             // 
             // label14

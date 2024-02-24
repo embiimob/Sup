@@ -5,6 +5,7 @@ using SUP.P2FK;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Net;
@@ -443,7 +444,7 @@ namespace SUP
         private void ButtonGetOwnedClick(object sender, EventArgs e)
         {
             DateTime tmbeginCall = DateTime.UtcNow;
-            List<OBJState> ownedObjects = OBJState.GetObjectsOwnedByAddress(txtSearchAddress.Text, txtLogin.Text, txtPassword.Text, txtUrl.Text, txtVersionByte.Text, int.Parse(txtSkip.Text), int.Parse(txtQty.Text));
+            List<OBJState> ownedObjects = OBJState.GetObjectsOwnedByAddress(txtSearchAddress.Text, txtLogin.Text, txtPassword.Text, txtUrl.Text, txtVersionByte.Text, int.Parse(txtSkip.Text, NumberStyles.Any, CultureInfo.GetCultureInfo("en-US")), int.Parse(txtQty.Text, NumberStyles.Any, CultureInfo.GetCultureInfo("en-US")));
             DateTime tmendCall = DateTime.UtcNow;
             lblTotalBytes.Text = "bytes: ";
             lblTotalTime.Text = "time: ";
@@ -468,7 +469,7 @@ namespace SUP
         private void ButtonGetCreatedClick(object sender, EventArgs e)
         {
             DateTime tmbeginCall = DateTime.UtcNow;
-            List<OBJState> createdObjects = OBJState.GetObjectsCreatedByAddress(txtSearchAddress.Text, txtLogin.Text, txtPassword.Text, txtUrl.Text, txtVersionByte.Text, int.Parse(txtSkip.Text), int.Parse(txtQty.Text));
+            List<OBJState> createdObjects = OBJState.GetObjectsCreatedByAddress(txtSearchAddress.Text, txtLogin.Text, txtPassword.Text, txtUrl.Text, txtVersionByte.Text, int.Parse(txtSkip.Text, NumberStyles.Any, CultureInfo.GetCultureInfo("en-US")), int.Parse(txtQty.Text, NumberStyles.Any, CultureInfo.GetCultureInfo("en-US")));
             DateTime tmendCall = DateTime.UtcNow;
             lblTotalBytes.Text = "bytes: ";
             lblTotalTime.Text = "time: ";
@@ -493,7 +494,7 @@ namespace SUP
         private void ButtonGetObjectsByAddressClick(object sender, EventArgs e)
         {
             DateTime tmbeginCall = DateTime.UtcNow;
-            List<OBJState> createdObjects = OBJState.GetObjectsByAddress(txtSearchAddress.Text, txtLogin.Text, txtPassword.Text, txtUrl.Text, txtVersionByte.Text, int.Parse(txtSkip.Text), int.Parse(txtQty.Text));
+            List<OBJState> createdObjects = OBJState.GetObjectsByAddress(txtSearchAddress.Text, txtLogin.Text, txtPassword.Text, txtUrl.Text, txtVersionByte.Text, int.Parse(txtSkip.Text, NumberStyles.Any, CultureInfo.GetCultureInfo("en-US")), int.Parse(txtQty.Text, NumberStyles.Any, CultureInfo.GetCultureInfo("en-US")));
             DateTime tmendCall = DateTime.UtcNow;
             lblTotalBytes.Text = "bytes: ";
             lblTotalTime.Text = "time: ";
@@ -521,7 +522,7 @@ namespace SUP
 
             List<string> searchList = new List<string> { txtSearchAddress.Text };
             DateTime tmbeginCall = DateTime.UtcNow;
-            List<OBJState> createdObjects = OBJState.GetObjectsByKeyword(searchList, txtLogin.Text, txtPassword.Text, txtUrl.Text, txtVersionByte.Text, int.Parse(txtSkip.Text), int.Parse(txtQty.Text));
+            List<OBJState> createdObjects = OBJState.GetObjectsByKeyword(searchList, txtLogin.Text, txtPassword.Text, txtUrl.Text, txtVersionByte.Text, int.Parse(txtSkip.Text, NumberStyles.Any, CultureInfo.GetCultureInfo("en-US")), int.Parse(txtQty.Text, NumberStyles.Any, CultureInfo.GetCultureInfo("en-US")));
             DateTime tmendCall = DateTime.UtcNow;
             lblTotalBytes.Text = "bytes: ";
             lblTotalTime.Text = "time: ";
@@ -881,7 +882,7 @@ namespace SUP
         private void ButtonGetPublicMessages_Click(object sender, EventArgs e)
         {
             DateTime tmbeginCall = DateTime.UtcNow;
-            List<MessageObject> messages = OBJState.GetPublicMessagesByAddress(txtSearchAddress.Text, txtLogin.Text, txtPassword.Text, txtUrl.Text, txtVersionByte.Text, int.Parse(txtSkip.Text), int.Parse(txtQty.Text));
+            List<MessageObject> messages = OBJState.GetPublicMessagesByAddress(txtSearchAddress.Text, txtLogin.Text, txtPassword.Text, txtUrl.Text, txtVersionByte.Text, int.Parse(txtSkip.Text, NumberStyles.Any, CultureInfo.GetCultureInfo("en-US")), int.Parse(txtQty.Text, NumberStyles.Any, CultureInfo.GetCultureInfo("en-US")));
             DateTime tmendCall = DateTime.UtcNow;
             // Get the count of messages
             int messageCount = messages.Count();
@@ -909,7 +910,7 @@ namespace SUP
         private void ButtonGetPrivateMessages_Click(object sender, EventArgs e)
         {
             DateTime tmbeginCall = DateTime.UtcNow;
-            List<MessageObject> messages = OBJState.GetPrivateMessagesByAddress(txtSearchAddress.Text, txtLogin.Text, txtPassword.Text, txtUrl.Text, txtVersionByte.Text, int.Parse(txtSkip.Text), int.Parse(txtQty.Text));
+            List<MessageObject> messages = OBJState.GetPrivateMessagesByAddress(txtSearchAddress.Text, txtLogin.Text, txtPassword.Text, txtUrl.Text, txtVersionByte.Text, int.Parse(txtSkip.Text, NumberStyles.Any, CultureInfo.GetCultureInfo("en-US")), int.Parse(txtQty.Text, NumberStyles.Any, CultureInfo.GetCultureInfo("en-US")));
             DateTime tmendCall = DateTime.UtcNow;
             // Get the count of messages
             int messageCount = messages.Count();
@@ -1005,7 +1006,7 @@ namespace SUP
         private void btnCollections_Click(object sender, EventArgs e)
         {
             DateTime tmbeginCall = DateTime.UtcNow;
-            List<COLState> createdObjects = OBJState.GetObjectCollectionsByAddress(txtSearchAddress.Text, txtLogin.Text, txtPassword.Text, txtUrl.Text, txtVersionByte.Text, int.Parse(txtSkip.Text), int.Parse(txtQty.Text));
+            List<COLState> createdObjects = OBJState.GetObjectCollectionsByAddress(txtSearchAddress.Text, txtLogin.Text, txtPassword.Text, txtUrl.Text, txtVersionByte.Text, int.Parse(txtSkip.Text, NumberStyles.Any, CultureInfo.GetCultureInfo("en-US")), int.Parse(txtQty.Text, NumberStyles.Any, CultureInfo.GetCultureInfo("en-US")));
             DateTime tmendCall = DateTime.UtcNow;
             lblTotalBytes.Text = "bytes: ";
             lblTotalTime.Text = "time: ";
@@ -1048,7 +1049,7 @@ namespace SUP
         private void btnGetInquiries_Click(object sender, EventArgs e)
         {
             DateTime tmbeginCall = DateTime.UtcNow;
-            List<INQState> createdObjects = INQState.GetInquiriesByAddress(txtSearchAddress.Text, txtLogin.Text, txtPassword.Text, txtUrl.Text, txtVersionByte.Text, int.Parse(txtSkip.Text), int.Parse(txtQty.Text), chkVerbose.Checked);
+            List<INQState> createdObjects = INQState.GetInquiriesByAddress(txtSearchAddress.Text, txtLogin.Text, txtPassword.Text, txtUrl.Text, txtVersionByte.Text, int.Parse(txtSkip.Text, NumberStyles.Any, CultureInfo.GetCultureInfo("en-US")), int.Parse(txtQty.Text, NumberStyles.Any, CultureInfo.GetCultureInfo("en-US")), chkVerbose.Checked);
             DateTime tmendCall = DateTime.UtcNow;
             lblTotalBytes.Text = "bytes: ";
             lblTotalTime.Text = "time: ";
@@ -1074,7 +1075,7 @@ namespace SUP
         private void btnGetInquiriesByKeyword_Click(object sender, EventArgs e)
         {
             DateTime tmbeginCall = DateTime.UtcNow;
-            List<INQState> createdObjects = INQState.GetInquiriesByKeyword(new List<string> { txtSearchAddress.Text }, txtLogin.Text, txtPassword.Text, txtUrl.Text, txtVersionByte.Text, int.Parse(txtSkip.Text), int.Parse(txtQty.Text), chkVerbose.Checked);
+            List<INQState> createdObjects = INQState.GetInquiriesByKeyword(new List<string> { txtSearchAddress.Text }, txtLogin.Text, txtPassword.Text, txtUrl.Text, txtVersionByte.Text, int.Parse(txtSkip.Text, NumberStyles.Any, CultureInfo.GetCultureInfo("en-US")), int.Parse(txtQty.Text, NumberStyles.Any, CultureInfo.GetCultureInfo("en-US")), chkVerbose.Checked);
             DateTime tmendCall = DateTime.UtcNow;
             lblTotalBytes.Text = "bytes: ";
             lblTotalTime.Text = "time: ";
@@ -1100,7 +1101,7 @@ namespace SUP
         private void btnInquiriesCreated_Click(object sender, EventArgs e)
         {
             DateTime tmbeginCall = DateTime.UtcNow;
-            List<INQState> createdObjects = INQState.GetInquiriesCreatedByAddress(txtSearchAddress.Text, txtLogin.Text, txtPassword.Text, txtUrl.Text, txtVersionByte.Text, int.Parse(txtSkip.Text), int.Parse(txtQty.Text), chkVerbose.Checked);
+            List<INQState> createdObjects = INQState.GetInquiriesCreatedByAddress(txtSearchAddress.Text, txtLogin.Text, txtPassword.Text, txtUrl.Text, txtVersionByte.Text, int.Parse(txtSkip.Text, NumberStyles.Any, CultureInfo.GetCultureInfo("en-US")), int.Parse(txtQty.Text, NumberStyles.Any, CultureInfo.GetCultureInfo("en-US")), chkVerbose.Checked);
             DateTime tmendCall = DateTime.UtcNow;
             lblTotalBytes.Text = "bytes: ";
             lblTotalTime.Text = "time: ";

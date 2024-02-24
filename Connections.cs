@@ -2,6 +2,7 @@
 using System;
 using System.Diagnostics;
 using System.Drawing;
+using System.Globalization;
 using System.IO;
 using System.Net;
 using System.Runtime.Hosting;
@@ -196,7 +197,7 @@ namespace SUP
                 try
                 {
                     string isActive = rpcClient.GetBalance().ToString();
-                    if (decimal.TryParse(isActive, out decimal _))
+                    if (decimal.TryParse(isActive, NumberStyles.Any, CultureInfo.GetCultureInfo("en-US"), out decimal _))
                     {
                         this.Invoke((MethodInvoker)delegate
                     {
@@ -206,7 +207,10 @@ namespace SUP
                     });
                     }
                 }
-                catch { }
+                catch (Exception ex) {
+                    string mess = ex.Message;
+
+                }
             });
 
 
@@ -217,7 +221,7 @@ namespace SUP
                     string walletUrl2 = @"http://127.0.0.1:8332";
                     NBitcoin.RPC.RPCClient rpcClient2 = new NBitcoin.RPC.RPCClient(credentials, new Uri(walletUrl2), NBitcoin.Network.Main);
                     string isActive = rpcClient2.GetBalance().ToString();
-                    if (decimal.TryParse(isActive, out decimal _))
+                    if (decimal.TryParse(isActive, NumberStyles.Any, CultureInfo.GetCultureInfo("en-US"), out decimal _))
                     {
                         this.Invoke((MethodInvoker)delegate
                     {
@@ -239,7 +243,7 @@ namespace SUP
                     string walletUrl3 = @"http://127.0.0.1:9332";
                     NBitcoin.RPC.RPCClient rpcClient3 = new NBitcoin.RPC.RPCClient(credentials, new Uri(walletUrl3), NBitcoin.Network.Main);
                     string isActive = rpcClient3.GetBalance().ToString();
-                    if (decimal.TryParse(isActive, out decimal _))
+                    if (decimal.TryParse(isActive, NumberStyles.Any, CultureInfo.GetCultureInfo("en-US"), out decimal _))
                     {
                         this.Invoke((MethodInvoker)delegate
                         {
@@ -261,7 +265,7 @@ namespace SUP
                     string walletUrl4 = @"http://127.0.0.1:12832";
                     NBitcoin.RPC.RPCClient rpcClient4 = new NBitcoin.RPC.RPCClient(credentials, new Uri(walletUrl4), NBitcoin.Network.Main);
                     string isActive = rpcClient4.GetBalance().ToString();
-                    if (decimal.TryParse(isActive, out decimal _))
+                    if (decimal.TryParse(isActive, NumberStyles.Any, CultureInfo.GetCultureInfo("en-US"), out decimal _))
                     {
                         this.Invoke((MethodInvoker)delegate
                         {
@@ -282,7 +286,7 @@ namespace SUP
                     string walletUrl5 = @"http://127.0.0.1:22555";
                     NBitcoin.RPC.RPCClient rpcClient5 = new NBitcoin.RPC.RPCClient(credentials, new Uri(walletUrl5), NBitcoin.Network.Main);
                     string isActive = rpcClient5.GetBalance().ToString();
-                    if (decimal.TryParse(isActive, out decimal _))
+                    if (decimal.TryParse(isActive, NumberStyles.Any, CultureInfo.GetCultureInfo("en-US"), out decimal _))
                     {
                         this.Invoke((MethodInvoker)delegate
                         {

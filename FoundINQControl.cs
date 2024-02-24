@@ -1,5 +1,6 @@
 ﻿using SUP.P2FK;
 using System;
+using System.Globalization;
 using System.IO;
 using System.Windows.Forms;
 
@@ -128,7 +129,7 @@ namespace SUP
                 txtCreatedDate.Text = "created date: " + iNQState.CreatedDate.ToString();
                 txtTransactionId.Text = iNQState.TransactionId;
                 if (iNQState.OwnsObjectGate != null || iNQState.OwnsCreatedByGate != null) { btnShowAllOrGated.Visible = true; }
-                if (int.TryParse(iNQState.status, out int status))
+                if (int.TryParse(iNQState.status, NumberStyles.Any, CultureInfo.GetCultureInfo("en-US"), out int status))
                 {
                     DateTime currentTime = DateTime.Now;
                     DateTime futureTime = currentTime.AddMinutes(status * 10); // Each unit represents 10 minutes
@@ -286,7 +287,7 @@ namespace SUP
                     flowLayoutPanel1.Controls.Add(lblANSTotal);
 
                     System.Windows.Forms.Button btnVote = new System.Windows.Forms.Button();
-                    if ((_activeprofile == "" && iNQState.RequireSignature) || !int.TryParse(iNQState.status, out int dummy)) { btnVote.Enabled = false; }
+                    if ((_activeprofile == "" && iNQState.RequireSignature) || !int.TryParse(iNQState.status, NumberStyles.Any, CultureInfo.GetCultureInfo("en-US"), out int dummy)) { btnVote.Enabled = false; }
                     btnVote.Location = new System.Drawing.Point(435, 38);
                     btnVote.Name = "btnVote";
                     btnVote.Size = new System.Drawing.Size(51, 23);

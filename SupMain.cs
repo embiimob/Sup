@@ -97,14 +97,33 @@ namespace SUP
 
                 if (btnPublicMessage.BackColor == System.Drawing.Color.Blue)
                 {
+                    int startNum = numMessagesDisplayed;
                     RefreshSupMessages();
+
+                    if (numMessagesDisplayed == startNum + 10)
+                    {
+                        this.Invoke((MethodInvoker)delegate
+                        {
+                            supFlow.AutoScrollPosition = new Point(0, 10);
+                        });
+                    }
+
                 }
                 else
                 {
 
                     if (btnCommunityFeed.BackColor == System.Drawing.Color.Blue)
                     {
-                        btnCommunityFeed.PerformClick();
+                        int startNum = numFriendFeedsDisplayed;
+                        RefreshCommunityMessages();
+
+                        if (numFriendFeedsDisplayed == startNum + 10)
+                        {
+                            this.Invoke((MethodInvoker)delegate
+                            {
+                                supFlow.AutoScrollPosition = new Point(0, 10);
+                            });
+                        }
                     }
                 }
             }
@@ -115,6 +134,49 @@ namespace SUP
                     panel1.Visible = true;
                     supFlow.Location = new System.Drawing.Point(supFlow.Location.X, supFlow.Location.Y + 150); // Change the X and Y coordinates
                     supFlow.Size = new System.Drawing.Size(supFlow.Width, supFlow.Height - 150); // Change the width and height
+                }
+
+
+
+
+
+
+                if (btnPublicMessage.BackColor == System.Drawing.Color.Blue)
+                {
+
+                    if (numMessagesDisplayed > 10)
+                    {
+                        numMessagesDisplayed = numMessagesDisplayed - 20; if (numMessagesDisplayed < 0) { numMessagesDisplayed = 0; }
+                        else
+                        {
+                            RefreshSupMessages();
+                            this.Invoke((MethodInvoker)delegate
+                        {
+                            supFlow.AutoScrollPosition = new Point(0, supFlow.VerticalScroll.Maximum - 10);
+
+                        });
+                        }
+                    }
+                }
+                else
+                {
+
+                    if (btnCommunityFeed.BackColor == System.Drawing.Color.Blue)
+                    {
+                        if (numFriendFeedsDisplayed > 10)
+                        {
+                            numFriendFeedsDisplayed = numFriendFeedsDisplayed - 20; if (numFriendFeedsDisplayed < 0) { numFriendFeedsDisplayed = 0; }
+                            else
+                            {
+                                RefreshCommunityMessages();
+                                this.Invoke((MethodInvoker)delegate
+                                {
+                                    supFlow.AutoScrollPosition = new Point(0, supFlow.VerticalScroll.Maximum - 10);
+
+                                });
+                            }
+                        }
+                    }
                 }
             }
 
@@ -129,10 +191,34 @@ namespace SUP
 
             if (supPrivateFlow.VerticalScroll.Value + supPrivateFlow.ClientSize.Height >= supPrivateFlow.VerticalScroll.Maximum)
             {
-                // Add more PictureBoxes if available
+                int startNum = numPrivateMessagesDisplayed;
                 RefreshPrivateSupMessages();
+
+                if (numPrivateMessagesDisplayed == startNum + 10)
+                {
+                    this.Invoke((MethodInvoker)delegate
+                    {
+                        supPrivateFlow.AutoScrollPosition = new Point(0, 10);
+                    });
+                }
             }
-        }
+            else if (supPrivateFlow.VerticalScroll.Value == 0)
+            {
+                if (numPrivateMessagesDisplayed > 10)
+                {
+                    numPrivateMessagesDisplayed = numPrivateMessagesDisplayed - 20; if (numPrivateMessagesDisplayed < 0) { numPrivateMessagesDisplayed = 0; }
+                    else
+                    {
+                           RefreshPrivateSupMessages();
+                        this.Invoke((MethodInvoker)delegate
+                        {
+                            supPrivateFlow.AutoScrollPosition = new Point(0, supPrivateFlow.VerticalScroll.Maximum - 10);
+
+                        });
+                    }
+                }
+            }
+            }
 
         private void SupMaincs_Load(object sender, EventArgs e)
         {
@@ -240,7 +326,11 @@ namespace SUP
                         profileIMG.ImageLocation = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + @"\root\keywords\" + profileURN.Text + ".png";
                         btnPublicMessage.BackColor = Color.Blue;
                         btnPublicMessage.ForeColor = Color.Yellow;
-
+                        this.Invoke((Action)(() =>
+                        {
+                            ClearMessages(supFlow);
+                        }));
+                      
                         RefreshSupMessages();
                     }
                     else
@@ -276,15 +366,15 @@ namespace SUP
 
         private void MakeActiveProfile(string address)
         {
-           // panel1.SuspendLayout();
 
             lblOfficial.Visible = false;
 
             this.Invoke((Action)(() =>
             {
-                ClearMessages();
+                ClearMessages(supFlow);
+                ClearMessages(supPrivateFlow);
             }));
-            
+
             Regex regexTransactionId = new Regex(@"\b[0-9a-f]{64}\b");
             PROState activeProfile = PROState.GetProfileByAddress(address, mainnetLogin, mainnetPassword, mainnetURL, mainnetVersionByte);
             if (activeProfile.URN == null)
@@ -334,7 +424,7 @@ namespace SUP
 
                 if (!friendClicked)
                 {
-               
+
                     //supPrivateFlow.Controls.Clear();
                     foreach (string key in activeProfile.URL.Keys)
                     {
@@ -652,7 +742,7 @@ namespace SUP
 
             }
 
-           // panel1.ResumeLayout();
+            // panel1.ResumeLayout();
 
         }
 
@@ -850,7 +940,7 @@ namespace SUP
                         walletUrl = @"http://127.0.0.1:9332";
                         rpcClient = new NBitcoin.RPC.RPCClient(credentials, new Uri(walletUrl), NBitcoin.Network.Main);
                         string isActive = rpcClient.GetBalance().ToString();
-                        if (decimal.TryParse(isActive, out decimal _))
+                        if (decimal.TryParse(isActive, NumberStyles.Any, CultureInfo.GetCultureInfo("en-US"), out decimal _))
                         {
                             this.Invoke((MethodInvoker)delegate
                             {
@@ -870,7 +960,7 @@ namespace SUP
                         walletUrl = @"http://127.0.0.1:12832";
                         rpcClient = new NBitcoin.RPC.RPCClient(credentials, new Uri(walletUrl), NBitcoin.Network.Main);
                         string isActive = rpcClient.GetBalance().ToString();
-                        if (decimal.TryParse(isActive, out decimal _))
+                        if (decimal.TryParse(isActive, NumberStyles.Any, CultureInfo.GetCultureInfo("en-US"), out decimal _))
                         {
                             this.Invoke((MethodInvoker)delegate
                             {
@@ -889,7 +979,7 @@ namespace SUP
                         walletUrl = @"http://127.0.0.1:22555";
                         rpcClient = new NBitcoin.RPC.RPCClient(credentials, new Uri(walletUrl), NBitcoin.Network.Main);
                         string isActive = rpcClient.GetBalance().ToString();
-                        if (decimal.TryParse(isActive, out decimal _))
+                        if (decimal.TryParse(isActive, NumberStyles.Any, CultureInfo.GetCultureInfo("en-US"), out decimal _))
                         {
                             this.Invoke((MethodInvoker)delegate
                             {
@@ -1311,7 +1401,7 @@ namespace SUP
 
 
                                                         string content = match.Value.Substring(2, match.Value.Length - 4);
-                                                        if (!int.TryParse(content, out int r) && !content.Trim().StartsWith("#"))
+                                                        if (!int.TryParse(content, NumberStyles.Any, CultureInfo.GetCultureInfo("en-US"), out int r) && !content.Trim().StartsWith("#"))
                                                         {
 
                                                             string imgurn = content;
@@ -1469,7 +1559,7 @@ namespace SUP
                                                             {
 
 
-                                                                if (!int.TryParse(content, out int id))
+                                                                if (!int.TryParse(content, NumberStyles.Any, CultureInfo.GetCultureInfo("en-US"), out int id))
                                                                 {
 
 
@@ -1653,7 +1743,7 @@ namespace SUP
 
 
                                                             string content = match.Value.Substring(2, match.Value.Length - 4);
-                                                            if (!int.TryParse(content, out int r) && !content.Trim().StartsWith("#"))
+                                                            if (!int.TryParse(content, NumberStyles.Any, CultureInfo.GetCultureInfo("en-US"), out int r) && !content.Trim().StartsWith("#"))
                                                             {
 
                                                                 string imgurn = content;
@@ -1803,7 +1893,7 @@ namespace SUP
                                                                 {
 
 
-                                                                    if (!int.TryParse(content, out int id))
+                                                                    if (!int.TryParse(content, NumberStyles.Any, CultureInfo.GetCultureInfo("en-US"), out int id))
                                                                     {
                                                                         if (vmatch.Success || extension == ".mp4" || extension == ".avi" || extension == ".wav" || extension == ".mp3")
                                                                         {
@@ -1975,7 +2065,7 @@ namespace SUP
 
 
                                                             string content = match.Value.Substring(2, match.Value.Length - 4);
-                                                            if (!int.TryParse(content, out int r) && !content.Trim().StartsWith("#"))
+                                                            if (!int.TryParse(content, NumberStyles.Any, CultureInfo.GetCultureInfo("en-US"), out int r) && !content.Trim().StartsWith("#"))
                                                             {
 
                                                                 string imgurn = content;
@@ -2125,7 +2215,7 @@ namespace SUP
                                                                 {
 
 
-                                                                    if (!int.TryParse(content, out int id))
+                                                                    if (!int.TryParse(content, NumberStyles.Any, CultureInfo.GetCultureInfo("en-US"), out int id))
                                                                     {
                                                                         if (vmatch.Success || extension == ".mp4" || extension == ".avi" || extension == ".wav" || extension == ".mp3")
                                                                         {
@@ -2295,7 +2385,7 @@ namespace SUP
 
 
                                                             string content = match.Value.Substring(2, match.Value.Length - 4);
-                                                            if (!int.TryParse(content, out int r) && !content.Trim().StartsWith("#"))
+                                                            if (!int.TryParse(content, NumberStyles.Any, CultureInfo.GetCultureInfo("en-US"), out int r) && !content.Trim().StartsWith("#"))
                                                             {
 
                                                                 string imgurn = content;
@@ -2445,7 +2535,7 @@ namespace SUP
                                                                 {
 
 
-                                                                    if (!int.TryParse(content, out int id))
+                                                                    if (!int.TryParse(content, NumberStyles.Any, CultureInfo.GetCultureInfo("en-US"), out int id))
                                                                     {
                                                                         if (vmatch.Success || extension == ".mp4" || extension == ".avi" || extension == ".wav" || extension == ".mp3")
                                                                         {
@@ -2618,7 +2708,7 @@ namespace SUP
 
 
                                                             string content = match.Value.Substring(2, match.Value.Length - 4);
-                                                            if (!int.TryParse(content, out int r) && !content.Trim().StartsWith("#"))
+                                                            if (!int.TryParse(content, NumberStyles.Any, CultureInfo.GetCultureInfo("en-US"), out int r) && !content.Trim().StartsWith("#"))
                                                             {
 
                                                                 string imgurn = content;
@@ -2768,7 +2858,7 @@ namespace SUP
                                                                 {
 
 
-                                                                    if (!int.TryParse(content, out int id))
+                                                                    if (!int.TryParse(content, NumberStyles.Any, CultureInfo.GetCultureInfo("en-US"), out int id))
                                                                     {
                                                                         if (vmatch.Success || extension == ".mp4" || extension == ".avi" || extension == ".wav" || extension == ".mp3")
                                                                         {
@@ -2901,68 +2991,42 @@ namespace SUP
 
         private void RemoveOverFlowMessages(FlowLayoutPanel flowLayoutPanel)
         {
-            List<Control> controlsToRemove = new List<Control>();
-            int messageCount = 0;
 
             // Iterate through the controls in the FlowLayoutPanel
             List<Control> controlsList = flowLayoutPanel.Controls.Cast<Control>().ToList();
-
-            for (int i = controlsList.Count - 1; i >= 0; i--)
+            foreach (Control control in controlsList)
             {
-                Control control = controlsList[i];
 
-                if (IsPaddingControl(control))
+                Task memoryPrune = Task.Run(() =>
                 {
-                    messageCount++;
-                }
-
-                if (messageCount > 1)
-                {
-                    Task memoryPrune = Task.Run(() =>
+                    this.BeginInvoke((MethodInvoker)delegate
                     {
-                        this.BeginInvoke((MethodInvoker)delegate
-                        {
                         flowLayoutPanel.Controls.Remove(control);
                         control.Dispose();
-                        });
-
                     });
+                });
+
+            }
+        }
+
+
+        private void ClearMessages(FlowLayoutPanel flowLayoutPanel)
+        {
+
+            this.BeginInvoke((MethodInvoker)delegate
+            {
+                List<Control> controlsList = flowLayoutPanel.Controls.Cast<Control>().ToList();
+                flowLayoutPanel.Controls.Clear();
+
+                foreach (Control control in controlsList)
+                {
+
+                    control.Dispose();
                 }
-            }
 
-        }
-
-        private void ClearMessages()
-        {
-                   
-                        this.BeginInvoke((MethodInvoker)delegate
-                        {
-                           List<Control> controlsList = supFlow.Controls.Cast<Control>().ToList();
-                           supFlow.Controls.Clear();
-                            
-                                foreach (Control control in controlsList) {
-
-                                        control.Dispose();                                    
-                                }
-                            
-                        });
-           
-
-        }
+            });
 
 
-        private bool IsPaddingControl(Control control)
-        {
-            if (control is TableLayoutPanel tableLayoutPanel)
-            {
-                return tableLayoutPanel.RowCount == 1 &&
-                       tableLayoutPanel.ColumnCount == 1 &&
-                       tableLayoutPanel.CellBorderStyle == TableLayoutPanelCellBorderStyle.Single;
-            }
-            else
-            {
-                return false;
-            }
         }
 
 
@@ -2975,28 +3039,37 @@ namespace SUP
 
             btnPublicMessage.Enabled = false;
 
-            supFlow.SuspendLayout();
-
-            // int startScrollSize = supFlow.si
-            Task memoryPrune = Task.Run(() =>
-            {
-
-                RemoveOverFlowMessages(supFlow);
-
-            });
-         
-
-                numFriendFeedsDisplayed = 0;
-                numPrivateMessagesDisplayed = 0;
-         
-
-
-                List<MessageObject> messages = new List<MessageObject>();
+            List<MessageObject> messages = new List<MessageObject>();
 
             try { messages = OBJState.GetPublicMessagesByAddress(profileURN.Links[0].LinkData.ToString(), mainnetLogin, mainnetPassword, mainnetURL, mainnetVersionByte, numMessagesDisplayed, 10); }
-            catch (Exception ex) { string error = ex.Message; return; }
+            catch (Exception ex)
+            {
+                string error = ex.Message;
 
-   
+                MessageBox.Show("An error occurred: " + error, "Error", System.Windows.Forms.MessageBoxButtons.OK, System.Windows.Forms.MessageBoxIcon.Error);
+                btnPublicMessage.Enabled = true;
+                return;
+            }
+
+
+
+            supFlow.SuspendLayout();
+
+            if (messages.Count == 10)
+            {
+                Task memoryPrune = Task.Run(() =>
+                {
+
+                    RemoveOverFlowMessages(supFlow);
+
+                });
+            }
+
+            numFriendFeedsDisplayed = 0;
+            numPrivateMessagesDisplayed = 0;
+
+
+
             Dictionary<string, string[]> profileAddress = new Dictionary<string, string[]> { };
 
             foreach (MessageObject messagePacket in messages)
@@ -3042,7 +3115,7 @@ namespace SUP
                     message = Regex.Replace(message, "<<.*?>>", "");
 
 
-                    if (message != "" || blocks.Length > 1 || (blocks.Length == 1 && !int.TryParse(blocks[0], out _)))
+                    if (message != "" || blocks.Length > 1 || (blocks.Length == 1 && !int.TryParse(blocks[0], NumberStyles.Any, CultureInfo.GetCultureInfo("en-US"), out _)))
                     {
 
                         if (!profileAddress.ContainsKey(fromAddress))
@@ -3503,7 +3576,7 @@ namespace SUP
 
                             string content = match.Value.Substring(2, match.Value.Length - 4);
 
-                            if (!int.TryParse(content, out int cnt) && !content.Trim().StartsWith("#") && !content.EndsWith(@"/INQ"))
+                            if (!int.TryParse(content, NumberStyles.Any, CultureInfo.GetCultureInfo("en-US"), out int cnt) && !content.Trim().StartsWith("#") && !content.EndsWith(@"/INQ"))
                             {
 
 
@@ -3644,7 +3717,7 @@ namespace SUP
                                 {
 
 
-                                    if (!int.TryParse(content, out int id))
+                                    if (!int.TryParse(content, NumberStyles.Any, CultureInfo.GetCultureInfo("en-US"), out int id))
                                     {
 
                                         if (extension == ".mp4" || extension == ".avi" || content.Contains("youtube.com") || content.Contains("youtu.be") || extension == ".wav" || extension == ".mp3")
@@ -3696,7 +3769,7 @@ namespace SUP
                             padding.Width = splitContainer2.Panel2.Width - 100;
 
                             // Refresh or Invalidate the FlowLayoutPanel (supFlow)
-                           // or supFlow.Refresh();
+                            // or supFlow.Refresh();
                         };
 
 
@@ -3716,7 +3789,7 @@ namespace SUP
 
             this.BeginInvoke((MethodInvoker)delegate
             {
-                supFlow.AutoScrollPosition = new Point(0, 0);
+
                 supFlow.ResumeLayout();
                 btnPublicMessage.Enabled = true;
             });
@@ -3736,7 +3809,6 @@ namespace SUP
             if (numPrivateMessagesDisplayed == 0)
             {
                 splitContainer1.Panel2.Controls.Clear();
-                supPrivateFlow.Controls.Clear();
                 supPrivateFlow.Dock = DockStyle.Fill;
                 supPrivateFlow.AutoScroll = true;
                 supPrivateFlow.FlowDirection = FlowDirection.LeftToRight;
@@ -3748,9 +3820,16 @@ namespace SUP
                 btnPrivateMessage.Enabled = true; return;
             }
             List<MessageObject> messages = OBJState.GetPrivateMessagesByAddress(profileURN.Links[0].LinkData.ToString(), mainnetLogin, mainnetPassword, mainnetURL, mainnetVersionByte, numPrivateMessagesDisplayed, 10);
-            numPrivateMessagesDisplayed = numPrivateMessagesDisplayed + 10;
 
+            if (messages.Count == 10)
+            {
+                Task memoryPrune = Task.Run(() =>
+                {
 
+                    RemoveOverFlowMessages(supPrivateFlow);
+
+                });
+            }
 
 
             this.Invoke((MethodInvoker)delegate
@@ -3767,7 +3846,7 @@ namespace SUP
 
                 foreach (MessageObject messagePacket in messages)
                 {
-
+                    numPrivateMessagesDisplayed++;
 
                     byte[] result = Array.Empty<byte>();
                     string message = "";
@@ -4003,7 +4082,7 @@ namespace SUP
                                              .ToArray();
                     message = Regex.Replace(message, "<<.*?>>", "");
 
-                    if (message != "" || blocks.Length > 1 || (blocks.Length == 1 && !int.TryParse(blocks[0], out _)))
+                    if (message != "" || blocks.Length > 1 || (blocks.Length == 1 && !int.TryParse(blocks[0], NumberStyles.Any, CultureInfo.GetCultureInfo("en-US"), out _)))
                     {
 
 
@@ -4018,7 +4097,7 @@ namespace SUP
                         foreach (Match match in matches)
                         {
                             string content = match.Value.Substring(2, match.Value.Length - 4);
-                            if (!int.TryParse(content, out int id) && !content.Trim().StartsWith("#"))
+                            if (!int.TryParse(content, NumberStyles.Any, CultureInfo.GetCultureInfo("en-US"), out int id) && !content.Trim().StartsWith("#"))
                             {
 
                                 if (content.StartsWith("IPFS:") && content.EndsWith(@"\SEC"))
@@ -4396,18 +4475,10 @@ namespace SUP
         {
             // sorry cannot run two searches at a time
             if (btnCommunityFeed.Enabled == false || btnPublicMessage.Enabled == false || btnPrivateMessage.Enabled == false) { return; }
-           
+
             supFlow.SuspendLayout();
 
-            // int startScrollSize = supFlow.si
-            Task memoryPrune = Task.Run(() =>
-            {
 
-                RemoveOverFlowMessages(supFlow);
-
-            });
-
-           
 
             this.Invoke((MethodInvoker)delegate
             {
@@ -4431,331 +4502,340 @@ namespace SUP
             numMessagesDisplayed = 0;
             numPrivateMessagesDisplayed = 0;
 
-           
+
             string FriendsListPath = "";
             if (testnet) { FriendsListPath = @"root\MyFriendList.Json"; } else { FriendsListPath = @"root\MyProdFriendList.Json"; }
 
 
             if (File.Exists(FriendsListPath))
             {
-               
-                    List<string> friendFeed = new List<string>();
-                    var myFriendsJson = File.ReadAllText(FriendsListPath);
-                    var myFriends = JsonConvert.DeserializeObject<Dictionary<string, string>>(myFriendsJson);
 
-                    // Iterate over each key in the dictionary, get public messages by address, and combine them into a list
-                    var allMessages = new List<object>();
-                    foreach (var key in myFriends.Keys)
+                List<string> friendFeed = new List<string>();
+                var myFriendsJson = File.ReadAllText(FriendsListPath);
+                var myFriends = JsonConvert.DeserializeObject<Dictionary<string, string>>(myFriendsJson);
+
+                // Iterate over each key in the dictionary, get public messages by address, and combine them into a list
+                var allMessages = new List<object>();
+                foreach (var key in myFriends.Keys)
+                {
+                    try
                     {
-                        try
+                        List<MessageObject> result = OBJState.GetPublicMessagesByAddress(key, mainnetLogin, mainnetPassword, mainnetURL, mainnetVersionByte, 0, 50);
+
+                        // Add the "to" element to each message object
+
+                        foreach (var message in result)
                         {
-                            List<MessageObject> result = OBJState.GetPublicMessagesByAddress(key, mainnetLogin, mainnetPassword, mainnetURL, mainnetVersionByte, 0, 50);
-
-                            // Add the "to" element to each message object
-
-                            foreach (var message in result)
+                            try
                             {
-                                try
+
+                                string _from = message.FromAddress;
+                                string _to = message.ToAddress;
+                                string _message = message.Message;
+                                string _blockdate = message.BlockDate.ToString("yyyyMMddHHmmss");
+                                string _transactionid = message.TransactionId;
+
+                                if (!friendFeed.Contains(_from + _to + _message))
                                 {
+                                    friendFeed.Add(_from + _to + _message);
 
-                                    string _from = message.FromAddress;
-                                    string _to = message.ToAddress;
-                                    string _message = message.Message;
-                                    string _blockdate = message.BlockDate.ToString("yyyyMMddHHmmss");
-                                    string _transactionid = message.TransactionId;
-
-                                    if (!friendFeed.Contains(_from + _to + _message))
+                                    allMessages.Add(new
                                     {
-                                        friendFeed.Add(_from + _to + _message);
-
-                                        allMessages.Add(new
-                                        {
-                                            Message = _message,
-                                            FromAddress = _from,
-                                            ToAddress = _to,
-                                            BlockDate = _blockdate,
-                                            TransactionId = _transactionid
-                                        });
-                                    }
+                                        Message = _message,
+                                        FromAddress = _from,
+                                        ToAddress = _to,
+                                        BlockDate = _blockdate,
+                                        TransactionId = _transactionid
+                                    });
                                 }
-                                catch { }
                             }
+                            catch { }
                         }
-                        catch { }
-
                     }
+                    catch { }
 
-                    // Sort the combined list by block date
-                    allMessages.Sort((m1, m2) =>
+                }
+
+                // Sort the combined list by block date
+                allMessages.Sort((m1, m2) =>
+                {
+                    var date1Prop = m1?.GetType().GetProperty("BlockDate");
+                    var date2Prop = m2?.GetType().GetProperty("BlockDate");
+                    if (date1Prop == null && date2Prop == null)
                     {
-                        var date1Prop = m1?.GetType().GetProperty("BlockDate");
-                        var date2Prop = m2?.GetType().GetProperty("BlockDate");
-                        if (date1Prop == null && date2Prop == null)
-                        {
-                            return 0;
-                        }
-                        else if (date1Prop == null)
-                        {
-                            return -1;
-                        }
-                        else if (date2Prop == null)
-                        {
-                            return 1;
-                        }
-                        else
-                        {
-                            var date1 = DateTime.ParseExact(date1Prop.GetValue(m1).ToString(), "yyyyMMddHHmmss", CultureInfo.InvariantCulture);
-                            var date2 = DateTime.ParseExact(date2Prop.GetValue(m2).ToString(), "yyyyMMddHHmmss", CultureInfo.InvariantCulture);
-                            return date2.CompareTo(date1);
-                        }
+                        return 0;
+                    }
+                    else if (date1Prop == null)
+                    {
+                        return -1;
+                    }
+                    else if (date2Prop == null)
+                    {
+                        return 1;
+                    }
+                    else
+                    {
+                        var date1 = DateTime.ParseExact(date1Prop.GetValue(m1).ToString(), "yyyyMMddHHmmss", CultureInfo.InvariantCulture);
+                        var date2 = DateTime.ParseExact(date2Prop.GetValue(m2).ToString(), "yyyyMMddHHmmss", CultureInfo.InvariantCulture);
+                        return date2.CompareTo(date1);
+                    }
+                });
+
+
+                if (allMessages.Skip(numFriendFeedsDisplayed).Take(10).Count() == 10)
+                {
+                    Task memoryPrune = Task.Run(() =>
+                    {
+
+                        RemoveOverFlowMessages(supFlow);
+
                     });
+                }
+
+                foreach (var message in allMessages.Skip(numFriendFeedsDisplayed).Take(10))
+                {
+                    var fromProp = message.GetType().GetProperty("FromAddress");
+                    var toProp = message.GetType().GetProperty("ToAddress");
+                    var messageProp = message.GetType().GetProperty("Message");
+                    var blockDateProp = message.GetType().GetProperty("BlockDate");
+                    var transactionIdProp = message.GetType().GetProperty("TransactionId");
+
+                    string _from = fromProp?.GetValue(message).ToString();
+                    string _to = toProp?.GetValue(message).ToString();
+                    string _transactionId = transactionIdProp?.GetValue(message).ToString();
+                    string fromURN = fromProp?.GetValue(message).ToString();
+                    string _message = messageProp?.GetValue(message).ToString();
+                    string _blockdate = blockDateProp?.GetValue(message).ToString();
+                    string imglocation = "";
+                    string unfilteredmessage = _message;
+                    string[] blocks = Regex.Matches(_message, "<<[^<>]+>>")
+                                             .Cast<Match>()
+                                             .Select(m => m.Value.Trim(new char[] { '<', '>' }))
+                                             .ToArray();
+                    _message = Regex.Replace(_message, "<<.*?>>", "");
 
 
-                    foreach (var message in allMessages.Skip(numFriendFeedsDisplayed).Take(10))
+
+
+                    if (_message != "" || blocks.Length > 1 || (blocks.Length == 1 && !int.TryParse(blocks[0], NumberStyles.Any, CultureInfo.GetCultureInfo("en-US"), out _)) || File.Exists(@"root\" + _transactionId + @"\INQ"))
                     {
-                        var fromProp = message.GetType().GetProperty("FromAddress");
-                        var toProp = message.GetType().GetProperty("ToAddress");
-                        var messageProp = message.GetType().GetProperty("Message");
-                        var blockDateProp = message.GetType().GetProperty("BlockDate");
-                        var transactionIdProp = message.GetType().GetProperty("TransactionId");
 
-                        string _from = fromProp?.GetValue(message).ToString();
-                        string _to = toProp?.GetValue(message).ToString();
-                        string _transactionId = transactionIdProp?.GetValue(message).ToString();
-                        string fromURN = fromProp?.GetValue(message).ToString();
-                        string _message = messageProp?.GetValue(message).ToString();
-                        string _blockdate = blockDateProp?.GetValue(message).ToString();
-                        string imglocation = "";
-                        string unfilteredmessage = _message;
-                        string[] blocks = Regex.Matches(_message, "<<[^<>]+>>")
-                                                 .Cast<Match>()
-                                                 .Select(m => m.Value.Trim(new char[] { '<', '>' }))
-                                                 .ToArray();
-                        _message = Regex.Replace(_message, "<<.*?>>", "");
-
-
-
-
-                        if (_message != "" || blocks.Length > 1 || (blocks.Length == 1 && !int.TryParse(blocks[0], out _)) || File.Exists(@"root\" + _transactionId + @"\INQ"))
+                        PROState fromProfile = PROState.GetProfileByAddress(fromURN, mainnetLogin, mainnetPassword, mainnetURL, mainnetVersionByte);
+                        if (fromProfile.URN != null)
                         {
+                            fromURN = fromProfile.URN;
 
-                            PROState fromProfile = PROState.GetProfileByAddress(fromURN, mainnetLogin, mainnetPassword, mainnetURL, mainnetVersionByte);
-                            if (fromProfile.URN != null)
-                            {
-                                fromURN = fromProfile.URN;
-
-                            }
+                        }
 
 
-                            string toURN = toProp?.GetValue(message).ToString();
-                            PROState toProfile = PROState.GetProfileByAddress(toURN, mainnetLogin, mainnetPassword, mainnetURL, mainnetVersionByte);
-                            if (toProfile.URN != null)
-                            {
-                                toURN = toProfile.URN;
+                        string toURN = toProp?.GetValue(message).ToString();
+                        PROState toProfile = PROState.GetProfileByAddress(toURN, mainnetLogin, mainnetPassword, mainnetURL, mainnetVersionByte);
+                        if (toProfile.URN != null)
+                        {
+                            toURN = toProfile.URN;
 
-                            }
+                        }
 
 
+                        this.Invoke((MethodInvoker)delegate
+                        {
+                            try { imglocation = myFriends[_from]; } catch { imglocation = @"includes\anon.png"; }
+                            CreateRow(imglocation, fromURN, _from, DateTime.ParseExact("19700101010101", "yyyyMMddHHmmss", CultureInfo.InvariantCulture), "", _transactionId, false, supFlow);
+
+                            try { imglocation = myFriends[_to]; } catch { imglocation = @"includes\anon.png"; }
+                            CreateRow(imglocation, toURN, _to, DateTime.ParseExact(_blockdate, "yyyyMMddHHmmss", CultureInfo.InvariantCulture), _message, _transactionId, false, supFlow);
+                        });
+
+                        string[] files = Directory.GetFiles(@"root\" + _transactionId);
+
+                        bool containsFileWithINQ = files.Any(file =>
+                               file.EndsWith("INQ", StringComparison.OrdinalIgnoreCase) &&
+                               !file.EndsWith("BLOCK", StringComparison.OrdinalIgnoreCase));
+
+                        if (containsFileWithINQ)
+                        {
+                            //ADD INQ IF IT EXISTS AND IS NOT BLOCKED
                             this.Invoke((MethodInvoker)delegate
                             {
-                                try { imglocation = myFriends[_from]; } catch { imglocation = @"includes\anon.png"; }
-                                CreateRow(imglocation, fromURN, _from, DateTime.ParseExact("19700101010101", "yyyyMMddHHmmss", CultureInfo.InvariantCulture), "", _transactionId, false, supFlow);
+                                string profileowner = "";
 
-                                try { imglocation = myFriends[_to]; } catch { imglocation = @"includes\anon.png"; }
-                                CreateRow(imglocation, toURN, _to, DateTime.ParseExact(_blockdate, "yyyyMMddHHmmss", CultureInfo.InvariantCulture), _message, _transactionId, false, supFlow);
+                                if (profileOwner.Tag != null) { profileowner = profileOwner.Tag.ToString(); }
+
+                                FoundINQControl foundObject = new FoundINQControl(_transactionId, profileowner, testnet);
+                                foundObject.Margin = new Padding(20, 7, 8, 7);
+                                supFlow.Controls.Add(foundObject);
                             });
+                        }
 
-                            string[] files = Directory.GetFiles(@"root\" + _transactionId);
+                        string pattern = "<<.*?>>";
+                        MatchCollection matches = Regex.Matches(unfilteredmessage, pattern);
+                        foreach (Match match in matches)
+                        {
 
-                            bool containsFileWithINQ = files.Any(file =>
-                                   file.EndsWith("INQ", StringComparison.OrdinalIgnoreCase) &&
-                                   !file.EndsWith("BLOCK", StringComparison.OrdinalIgnoreCase));
 
-                            if (containsFileWithINQ)
-                            {
-                                //ADD INQ IF IT EXISTS AND IS NOT BLOCKED
-                                this.Invoke((MethodInvoker)delegate
-                                {
-                                    string profileowner = "";
-
-                                    if (profileOwner.Tag != null) { profileowner = profileOwner.Tag.ToString(); }
-
-                                    FoundINQControl foundObject = new FoundINQControl(_transactionId, profileowner, testnet);
-                                    foundObject.Margin = new Padding(20, 7, 8, 7);
-                                    supFlow.Controls.Add(foundObject);
-                                });
-                            }
-
-                            string pattern = "<<.*?>>";
-                            MatchCollection matches = Regex.Matches(unfilteredmessage, pattern);
-                            foreach (Match match in matches)
+                            string content = match.Value.Substring(2, match.Value.Length - 4);
+                            if (!int.TryParse(content, NumberStyles.Any, CultureInfo.GetCultureInfo("en-US"), out int id) && !content.Trim().StartsWith("#"))
                             {
 
+                                List<string> imgExtensions = new List<string> { ".bmp", ".gif", ".ico", ".jpeg", ".jpg", ".png", ".tif", ".tiff", ".mp4", ".avi", ".wav", ".mp3" };
 
-                                string content = match.Value.Substring(2, match.Value.Length - 4);
-                                if (!int.TryParse(content, out int id) && !content.Trim().StartsWith("#"))
+                                string extension = Path.GetExtension(content).ToLower();
+                                if (!imgExtensions.Contains(extension) && !content.Contains("youtube.com") && !content.Contains("youtu.be"))
                                 {
-
-                                    List<string> imgExtensions = new List<string> { ".bmp", ".gif", ".ico", ".jpeg", ".jpg", ".png", ".tif", ".tiff", ".mp4", ".avi", ".wav", ".mp3" };
-
-                                    string extension = Path.GetExtension(content).ToLower();
-                                    if (!imgExtensions.Contains(extension) && !content.Contains("youtube.com") && !content.Contains("youtu.be"))
+                                    WebClient client = new WebClient();
+                                    string html = "";
+                                    try
                                     {
-                                        WebClient client = new WebClient();
-                                        string html = "";
-                                        try
+                                        html = client.DownloadString(content.StripLeadingTrailingSpaces());
+
+                                    }
+                                    catch { }
+
+                                    // Use regular expressions to extract the metadata from the HTML
+                                    string title = Regex.Match(html, @"<title>\s*(.+?)\s*</title>").Groups[1].Value;
+                                    string description = Regex.Match(html, @"<meta\s+name\s*=\s*""description""\s+content\s*=\s*""(.+?)""\s*/?>").Groups[1].Value;
+                                    string imageUrl = Regex.Match(html, @"<meta\s+property\s*=\s*""og:image""\s+content\s*=\s*""(.+?)""\s*/?>").Groups[1].Value;
+
+                                    if (description != "")
+                                    {
+                                        // Create a new panel to display the metadata
+                                        Panel panel = new Panel();
+                                        panel.BorderStyle = BorderStyle.FixedSingle;
+                                        panel.Size = new Size(supFlow.Width - 30, 100);
+
+
+                                        // Create a label for the title
+                                        Label titleLabel = new Label();
+                                        titleLabel.Text = title;
+                                        titleLabel.Dock = DockStyle.Top;
+                                        titleLabel.Font = new Font("Segoe UI", 12, FontStyle.Bold);
+                                        titleLabel.ForeColor = Color.White;
+                                        titleLabel.MinimumSize = new Size(supFlow.Width - 130, 30);
+                                        titleLabel.Padding = new Padding(5);
+                                        panel.Controls.Add(titleLabel);
+
+                                        // Create a label for the description
+                                        Label descriptionLabel = new Label();
+                                        descriptionLabel.Text = description;
+                                        descriptionLabel.ForeColor = Color.White;
+                                        descriptionLabel.Dock = DockStyle.Fill;
+                                        descriptionLabel.Padding = new Padding(5, 40, 5, 5);
+                                        panel.Controls.Add(descriptionLabel);
+
+                                        // Add an image to the panel if one is defined
+                                        if (!String.IsNullOrEmpty(imageUrl))
                                         {
-                                            html = client.DownloadString(content.StripLeadingTrailingSpaces());
-
-                                        }
-                                        catch { }
-
-                                        // Use regular expressions to extract the metadata from the HTML
-                                        string title = Regex.Match(html, @"<title>\s*(.+?)\s*</title>").Groups[1].Value;
-                                        string description = Regex.Match(html, @"<meta\s+name\s*=\s*""description""\s+content\s*=\s*""(.+?)""\s*/?>").Groups[1].Value;
-                                        string imageUrl = Regex.Match(html, @"<meta\s+property\s*=\s*""og:image""\s+content\s*=\s*""(.+?)""\s*/?>").Groups[1].Value;
-
-                                        if (description != "")
-                                        {
-                                            // Create a new panel to display the metadata
-                                            Panel panel = new Panel();
-                                            panel.BorderStyle = BorderStyle.FixedSingle;
-                                            panel.Size = new Size(supFlow.Width - 30, 100);
-
-
-                                            // Create a label for the title
-                                            Label titleLabel = new Label();
-                                            titleLabel.Text = title;
-                                            titleLabel.Dock = DockStyle.Top;
-                                            titleLabel.Font = new Font("Segoe UI", 12, FontStyle.Bold);
-                                            titleLabel.ForeColor = Color.White;
-                                            titleLabel.MinimumSize = new Size(supFlow.Width - 130, 30);
-                                            titleLabel.Padding = new Padding(5);
-                                            panel.Controls.Add(titleLabel);
-
-                                            // Create a label for the description
-                                            Label descriptionLabel = new Label();
-                                            descriptionLabel.Text = description;
-                                            descriptionLabel.ForeColor = Color.White;
-                                            descriptionLabel.Dock = DockStyle.Fill;
-                                            descriptionLabel.Padding = new Padding(5, 40, 5, 5);
-                                            panel.Controls.Add(descriptionLabel);
-
-                                            // Add an image to the panel if one is defined
-                                            if (!String.IsNullOrEmpty(imageUrl))
+                                            try
                                             {
-                                                try
-                                                {
-                                                    // Create a MemoryStream object from the image data
-                                                    byte[] imageData = client.DownloadData(imageUrl);
-                                                    MemoryStream memoryStream = new MemoryStream(imageData);
+                                                // Create a MemoryStream object from the image data
+                                                byte[] imageData = client.DownloadData(imageUrl);
+                                                MemoryStream memoryStream = new MemoryStream(imageData);
 
-                                                    // Create a new PictureBox control and add it to the panel
-                                                    PictureBox pictureBox = new PictureBox();
-                                                    pictureBox.Dock = DockStyle.Left;
-                                                    pictureBox.Size = new Size(100, 100);
-                                                    pictureBox.SizeMode = PictureBoxSizeMode.StretchImage;
-                                                    pictureBox.Image = Image.FromStream(memoryStream);
-                                                    panel.Controls.Add(pictureBox);
-                                                }
-                                                catch
-                                                {
-                                                }
+                                                // Create a new PictureBox control and add it to the panel
+                                                PictureBox pictureBox = new PictureBox();
+                                                pictureBox.Dock = DockStyle.Left;
+                                                pictureBox.Size = new Size(100, 100);
+                                                pictureBox.SizeMode = PictureBoxSizeMode.StretchImage;
+                                                pictureBox.Image = Image.FromStream(memoryStream);
+                                                panel.Controls.Add(pictureBox);
                                             }
-                                            this.Invoke((MethodInvoker)delegate
+                                            catch
                                             {
-                                                // Add the panel to the flow layout panel
-                                                this.supFlow.Controls.Add(panel);
-                                            });
+                                            }
                                         }
-                                        else
+                                        this.Invoke((MethodInvoker)delegate
                                         {
-                                            // Create a new panel to display the metadata
-                                            Panel panel = new Panel();
-                                            panel.BorderStyle = BorderStyle.FixedSingle;
-                                            panel.MinimumSize = new Size(500, 30);
-                                            panel.AutoSize = true;
-                                            // Create a label for the title
-                                            LinkLabel titleLabel = new LinkLabel();
-                                            titleLabel.Text = content;
-                                            titleLabel.Links[0].LinkData = content;
-                                            titleLabel.AutoSize = true;
-                                            titleLabel.Font = new Font("Segoe UI", 8, FontStyle.Bold);
-                                            titleLabel.LinkColor = System.Drawing.SystemColors.GradientActiveCaption;
-                                            titleLabel.Padding = new Padding(5);
-                                            panel.Controls.Add(titleLabel);
-                                            this.Invoke((MethodInvoker)delegate
-                                            {
-                                                this.supFlow.Controls.Add(panel);
-                                            });
+                                            // Add the panel to the flow layout panel
+                                            this.supFlow.Controls.Add(panel);
+                                        });
+                                    }
+                                    else
+                                    {
+                                        // Create a new panel to display the metadata
+                                        Panel panel = new Panel();
+                                        panel.BorderStyle = BorderStyle.FixedSingle;
+                                        panel.MinimumSize = new Size(500, 30);
+                                        panel.AutoSize = true;
+                                        // Create a label for the title
+                                        LinkLabel titleLabel = new LinkLabel();
+                                        titleLabel.Text = content;
+                                        titleLabel.Links[0].LinkData = content;
+                                        titleLabel.AutoSize = true;
+                                        titleLabel.Font = new Font("Segoe UI", 8, FontStyle.Bold);
+                                        titleLabel.LinkColor = System.Drawing.SystemColors.GradientActiveCaption;
+                                        titleLabel.Padding = new Padding(5);
+                                        panel.Controls.Add(titleLabel);
+                                        this.Invoke((MethodInvoker)delegate
+                                        {
+                                            this.supFlow.Controls.Add(panel);
+                                        });
 
-                                        }
+                                    }
+
+                                }
+                                else
+                                {
+
+                                    if (extension == ".mp4" || extension == ".avi" || content.Contains("youtube.com") || content.Contains("youtu.be") || extension == ".wav" || extension == ".mp3")
+                                    {
+
+                                        this.Invoke((MethodInvoker)delegate
+                                        {
+                                            try { AddMedia(content); } catch { }
+                                        });
 
                                     }
                                     else
                                     {
 
-                                        if (extension == ".mp4" || extension == ".avi" || content.Contains("youtube.com") || content.Contains("youtu.be") || extension == ".wav" || extension == ".mp3")
+                                        this.Invoke((MethodInvoker)delegate
                                         {
-
-                                            this.Invoke((MethodInvoker)delegate
-                                            {
-                                                try { AddMedia(content); } catch { }
-                                            });
-
-                                        }
-                                        else
-                                        {
-
-                                            this.Invoke((MethodInvoker)delegate
-                                            {
-                                                AddImage(content);
-                                            });
-                                        }
-
-
+                                            AddImage(content);
+                                        });
                                     }
-
 
 
                                 }
 
 
+
                             }
-
-                            TableLayoutPanel padding = new TableLayoutPanel
-                            {
-                                RowCount = 1,
-                                ColumnCount = 1,
-                                Dock = DockStyle.Top,
-                                BackColor = Color.Black,
-                                ForeColor = Color.White,
-                                AutoSize = true,
-                                CellBorderStyle = TableLayoutPanelCellBorderStyle.Single,
-                                Margin = new System.Windows.Forms.Padding(0, 10, 0, 10),
-                                Padding = new System.Windows.Forms.Padding(0)
-
-                            };
-
-                            padding.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, supFlow.Width - 20));
-
-                            this.Invoke((MethodInvoker)delegate
-                            {
-                                supFlow.Controls.Add(padding);
-                            });
 
 
                         }
-                        numFriendFeedsDisplayed++;
+
+                        TableLayoutPanel padding = new TableLayoutPanel
+                        {
+                            RowCount = 1,
+                            ColumnCount = 1,
+                            Dock = DockStyle.Top,
+                            BackColor = Color.Black,
+                            ForeColor = Color.White,
+                            AutoSize = true,
+                            CellBorderStyle = TableLayoutPanelCellBorderStyle.Single,
+                            Margin = new System.Windows.Forms.Padding(0, 10, 0, 10),
+                            Padding = new System.Windows.Forms.Padding(0)
+
+                        };
+
+                        padding.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, supFlow.Width - 20));
+
+                        this.Invoke((MethodInvoker)delegate
+                        {
+                            supFlow.Controls.Add(padding);
+                        });
+
+
                     }
-                                 
-                                    
+                    numFriendFeedsDisplayed++;
+                }
+
+
 
             }
 
             this.BeginInvoke((MethodInvoker)delegate
             {
-                supFlow.AutoScrollPosition = new Point(0, 0);
                 supFlow.ResumeLayout();
                 btnCommunityFeed.Enabled = true;
             });
@@ -5100,9 +5180,9 @@ namespace SUP
                     }
                 }
                 webviewer.ZoomFactor = 1D;
-               
 
-                 
+
+
 
                 TableLayoutPanel msg = new TableLayoutPanel
                 {
@@ -5763,7 +5843,7 @@ namespace SUP
             foreach (Match match in matches)
             {
                 string content = match.Value.Substring(2, match.Value.Length - 4);
-                if (!int.TryParse(content, out int id) && !content.Trim().StartsWith("#"))
+                if (!int.TryParse(content, NumberStyles.Any, CultureInfo.GetCultureInfo("en-US"), out int id) && !content.Trim().StartsWith("#"))
                 {
 
                     string imagelocation = "";
@@ -5898,11 +5978,11 @@ namespace SUP
 
         private void btnPublicMessage_Click(object sender, EventArgs e)
         {
-            if (btnPublicMessage.BackColor != Color.Blue) { ClearMessages(); }
+            if (btnPublicMessage.BackColor != Color.Blue) { ClearMessages(supFlow); }
 
             btnCommunityFeed.BackColor = System.Drawing.Color.White;
             btnCommunityFeed.ForeColor = System.Drawing.Color.Black;
-            
+
             RefreshSupMessages();
             if (btnPublicMessage.BackColor == Color.White)
             {
@@ -5916,14 +5996,9 @@ namespace SUP
 
         private void RefreshCommunityMessages_Click(object sender, EventArgs e)
         {
-
-            if (btnCommunityFeed.BackColor != Color.Blue) { ClearMessages(); }
+            if (btnCommunityFeed.BackColor != Color.Blue) { ClearMessages(supFlow); }
             btnCommunityFeed.BackColor = System.Drawing.Color.Blue; btnCommunityFeed.ForeColor = System.Drawing.Color.Yellow;
-
-
-
             RefreshCommunityMessages();
-
 
             btnPrivateMessage.BackColor = System.Drawing.Color.White;
             btnPrivateMessage.ForeColor = System.Drawing.Color.Black;
@@ -5935,6 +6010,7 @@ namespace SUP
         private void btnPrivateMessage_Click(object sender, EventArgs e)
         {
 
+            if (btnPrivateMessage.BackColor != Color.Blue) { ClearMessages(supPrivateFlow); }
 
             btnPrivateMessage.BackColor = Color.Blue;
             btnPrivateMessage.ForeColor = Color.Yellow;
@@ -6038,7 +6114,7 @@ namespace SUP
             {
 
 
-         
+
                 if (!((PictureBox)sender).ImageLocation.Contains("anon.png") || profileURN.Text != "anon")
                 {
                     numMessagesDisplayed = 0;
@@ -6051,8 +6127,8 @@ namespace SUP
                     btnPublicMessage.BackColor = Color.Blue;
                     btnPublicMessage.ForeColor = Color.Yellow;
 
-                  
-                  
+
+
 
                     if (!((PictureBox)sender).ImageLocation.ToString().Contains(@"root\keywords"))
                     {
@@ -6085,10 +6161,10 @@ namespace SUP
                         profileIMG.ImageLocation = ((PictureBox)sender).ImageLocation.ToString();
 
                     }
-                   
-                    RefreshSupMessages();                  
 
-                  
+                    RefreshSupMessages();
+
+
                 }
 
 
@@ -6221,8 +6297,8 @@ namespace SUP
                     profileBIO.Text = ""; profileCreatedDate.Text = ""; profileIMG.ImageLocation = ""; lblProcessHeight.Text = "";
                     profileURN.Links[0].LinkData = null;
                     profileURN.Text = "anon";
-                    ClearMessages();
-                   
+                    ClearMessages(supFlow);
+
                 }
                 catch { }
             }
@@ -6383,7 +6459,8 @@ namespace SUP
         private void imgBTCSwitch_Click(object sender, EventArgs e)
         {
             profileURN.Text = "anon"; profileBIO.Text = ""; profileCreatedDate.Text = ""; profileIMG.ImageLocation = @"includes/anon.png"; lblProcessHeight.Text = ""; profileURN.Links[0].LinkData = null; profileURN.Links[0].Tag = ""; profileIMG.Tag = ""; profileOwner.ImageLocation = null; profileOwner.Tag = null;
-            ClearMessages();
+            ClearMessages(supFlow);
+            ClearMessages(supPrivateFlow);
             numMessagesDisplayed = 0;
             numPrivateMessagesDisplayed = 0;
             numFriendFeedsDisplayed = 0;
@@ -6499,7 +6576,7 @@ namespace SUP
             }
         }
 
-      
+
 
 
     }

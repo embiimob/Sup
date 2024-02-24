@@ -5,6 +5,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Net;
@@ -971,7 +972,7 @@ namespace SUP.P2FK
                                         {
 
 
-                                            if (long.Parse(buy[1]) < 1)
+                                            if (long.Parse(buy[1], NumberStyles.Any, CultureInfo.GetCultureInfo("en-US")) < 1)
                                             {
                                                 //salt
 
@@ -980,7 +981,7 @@ namespace SUP.P2FK
 
                                             if (objectState.Maximum > 0)
                                             {
-                                                if (long.Parse(buy[1]) > objectState.Maximum)
+                                                if (long.Parse(buy[1], NumberStyles.Any, CultureInfo.GetCultureInfo("en-US")) > objectState.Maximum)
                                                 {
                                                     if (verbose)
                                                     {
@@ -991,7 +992,7 @@ namespace SUP.P2FK
                                                     break;
                                                 }
 
-                                                if (objectState.Owners.TryGetValue(transaction.SignedBy, out var tuple) && tuple.Item1 + long.Parse(buy[1]) > objectState.Maximum)
+                                                if (objectState.Owners.TryGetValue(transaction.SignedBy, out var tuple) && tuple.Item1 + long.Parse(buy[1], NumberStyles.Any, CultureInfo.GetCultureInfo("en-US")) > objectState.Maximum)
                                                 {
                                                     if (verbose)
                                                     {
@@ -1005,7 +1006,7 @@ namespace SUP.P2FK
 
 
                                             // Are their enough listed to buy?
-                                            if (objectState.Listings != null && objectState.Listings.TryGetValue(buy[0], out BID qtyListed) && qtyListed.Qty >= long.Parse(buy[1]))
+                                            if (objectState.Listings != null && objectState.Listings.TryGetValue(buy[0], out BID qtyListed) && qtyListed.Qty >= long.Parse(buy[1], NumberStyles.Any, CultureInfo.GetCultureInfo("en-US")))
                                             {
 
                                                 foreach (KeyValuePair<string, decimal> pair in objectState.Royalties)
@@ -1015,10 +1016,10 @@ namespace SUP.P2FK
                                                     {
                                                         string outputSent;
                                                         transaction.Output.TryGetValue(pair.Key, out outputSent);
-                                                        decimal logSent = decimal.Parse(outputSent, System.Globalization.NumberStyles.Float);
+                                                        decimal logSent = decimal.Parse(outputSent, System.Globalization.NumberStyles.Float, CultureInfo.GetCultureInfo("en-US"));
 
                                                         //have required royalties been paid or greator?
-                                                        if (logSent >= ((qtyListed.Value * long.Parse(buy[1])) * (pair.Value / 100))) { royaltiesPaid = royaltiesPaid + ((qtyListed.Value * long.Parse(buy[1])) * (pair.Value / 100)); }
+                                                        if (logSent >= ((qtyListed.Value * long.Parse(buy[1], NumberStyles.Any, CultureInfo.GetCultureInfo("en-US"))) * (pair.Value / 100))) { royaltiesPaid = royaltiesPaid + ((qtyListed.Value * long.Parse(buy[1], NumberStyles.Any, CultureInfo.GetCultureInfo("en-US"))) * (pair.Value / 100)); }
                                                         else
                                                         {
                                                             if (verbose)
@@ -1041,16 +1042,16 @@ namespace SUP.P2FK
                                                 decimal ownerPaid = 0;
                                                 string ownerValue;
                                                 transaction.Output.TryGetValue(buy[0], out ownerValue);
-                                                ownerPaid = decimal.Parse(ownerValue, System.Globalization.NumberStyles.Float);
+                                                ownerPaid = decimal.Parse(ownerValue, System.Globalization.NumberStyles.Float, CultureInfo.GetCultureInfo("en-US"));
 
-                                                if (ownerPaid >= (qtyListed.Value * long.Parse(buy[1])) - royaltiesPaid)
+                                                if (ownerPaid >= (qtyListed.Value * long.Parse(buy[1], NumberStyles.Any, CultureInfo.GetCultureInfo("en-US"))) - royaltiesPaid)
                                                 {
 
                                                     //remove from listing
-                                                    objectState.Listings[buy[0]].Qty = objectState.Listings[buy[0]].Qty - long.Parse(buy[1]);
+                                                    objectState.Listings[buy[0]].Qty = objectState.Listings[buy[0]].Qty - long.Parse(buy[1], NumberStyles.Any, CultureInfo.GetCultureInfo("en-US"));
 
                                                     //remove from owners
-                                                    long quantityToRemove = long.Parse(buy[1]);
+                                                    long quantityToRemove = long.Parse(buy[1], NumberStyles.Any, CultureInfo.GetCultureInfo("en-US"));
                                                     string genid = "";
 
                                                     if (objectState.Owners.TryGetValue(buy[0], out var tuple))
@@ -1097,7 +1098,7 @@ namespace SUP.P2FK
                                                             genid = tuple.Item2;
                                                         }
 
-                                                        objectState.Owners[transaction.SignedBy] = (currentOwnerTuple.Item1 + long.Parse(buy[1]), genid);
+                                                        objectState.Owners[transaction.SignedBy] = (currentOwnerTuple.Item1 + long.Parse(buy[1], NumberStyles.Any, CultureInfo.GetCultureInfo("en-US")), genid);
                                                     }
                                                     // Add the new owner to the list if not currently listed
                                                     else
@@ -1110,7 +1111,7 @@ namespace SUP.P2FK
                                                         {
                                                             genid = tuple.Item2;
                                                         }
-                                                        objectState.Owners.Add(transaction.SignedBy, (long.Parse(buy[1]), genid));
+                                                        objectState.Owners.Add(transaction.SignedBy, (long.Parse(buy[1], NumberStyles.Any, CultureInfo.GetCultureInfo("en-US")), genid));
                                                     }
 
                                                     //remove previous owner from list if now 0
@@ -1155,7 +1156,7 @@ namespace SUP.P2FK
                                             {
 
                                                 // is qty owned enough to fill the Offer?
-                                                if (objectState.Owners.TryGetValue(buy[0], out var tuple) && tuple.Item1 >= long.Parse(buy[1]))
+                                                if (objectState.Owners.TryGetValue(buy[0], out var tuple) && tuple.Item1 >= long.Parse(buy[1], NumberStyles.Any, CultureInfo.GetCultureInfo("en-US")))
                                                 {
 
 
@@ -1209,7 +1210,7 @@ namespace SUP.P2FK
                                                                 if (pair.Key != buy[0])
                                                                 {
                                                                     //have required royalties been paid or greator?
-                                                                    if (transaction.Output.TryGetValue(pair.Key, out string output) && decimal.TryParse(output, out decimal sentValue) && sentValue >= ((totalPaid * long.Parse(buy[1])) * (pair.Value / 100)))
+                                                                    if (transaction.Output.TryGetValue(pair.Key, out string output) && decimal.TryParse(output, NumberStyles.Any, CultureInfo.GetCultureInfo("en-US"), out decimal sentValue) && sentValue >= ((totalPaid * long.Parse(buy[1], NumberStyles.Any, CultureInfo.GetCultureInfo("en-US"))) * (pair.Value / 100)))
                                                                     { }
 
                                                                     //transaction failed insufficent royalties paid - reject
@@ -1237,8 +1238,8 @@ namespace SUP.P2FK
                                                             BID offer = new BID();
                                                             offer.Requestor = transaction.SignedBy;
                                                             offer.Owner = buy[0];
-                                                            offer.Value = totalPaid / long.Parse(buy[1]);
-                                                            offer.Qty = long.Parse(buy[1]);
+                                                            offer.Value = totalPaid / long.Parse(buy[1], NumberStyles.Any, CultureInfo.GetCultureInfo("en-US"));
+                                                            offer.Qty = long.Parse(buy[1], NumberStyles.Any, CultureInfo.GetCultureInfo("en-US"));
                                                             offer.BlockDate = transaction.BlockDate;
 
                                                             if (objectState.Offers == null)
@@ -1250,7 +1251,7 @@ namespace SUP.P2FK
 
                                                             if (verbose)
                                                             {
-                                                                logstatus = "[\"" + transaction.SignedBy + "\",\"" + buy[0] + "\",\"offer\",\"" + buy[1] + "\",\"\",\"success - " + totalPaid / long.Parse(buy[1]) + "\",\"" + transaction.BlockDate.ToString() + "\"]";
+                                                                logstatus = "[\"" + transaction.SignedBy + "\",\"" + buy[0] + "\",\"offer\",\"" + buy[1] + "\",\"\",\"success - " + totalPaid / long.Parse(buy[1], NumberStyles.Any, CultureInfo.GetCultureInfo("en-US")) + "\",\"" + transaction.BlockDate.ToString() + "\"]";
 
                                                                 objectState.ChangeLog.Add(logstatus);
 
@@ -1360,7 +1361,7 @@ namespace SUP.P2FK
 
                                                 try
                                                 {
-                                                    qtyToList = long.Parse(List[1]);
+                                                    qtyToList = long.Parse(List[1], NumberStyles.Any, CultureInfo.GetCultureInfo("en-US"));
                                                 }
                                                 catch
                                                 {
@@ -1369,7 +1370,7 @@ namespace SUP.P2FK
 
                                                 try
                                                 {
-                                                    eachCost = decimal.Parse(List[2], System.Globalization.NumberStyles.Float);
+                                                    eachCost = decimal.Parse(List[2], System.Globalization.NumberStyles.Float, CultureInfo.GetCultureInfo("en-US"));
                                                 }
                                                 catch
                                                 {

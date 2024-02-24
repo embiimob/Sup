@@ -21,6 +21,7 @@ using System.Net;
 using System.Security.Cryptography;
 using System.Text;
 using SUP.RPCClient;
+using System.Globalization;
 
 
 namespace SUP
@@ -159,7 +160,7 @@ namespace SUP
             if (btnObjectURI.BackColor == Color.Blue) { OBJJson.uri = txtURI.Text; }
             if (btnObjectDescription.BackColor == Color.Blue) { OBJJson.dsc = txtDescription.Text; }
             if (License != "No License / All Rights Reserved") { OBJJson.lic = License; }
-            if (btnObjectMaximum.BackColor == Color.Blue) { if (txtMaximum.Text == "") { } else { try { OBJJson.max = long.Parse(txtMaximum.Text); } catch { OBJJson.max = 0; } } }
+            if (btnObjectMaximum.BackColor == Color.Blue) { if (txtMaximum.Text == "") { } else { try { OBJJson.max = long.Parse(txtMaximum.Text, NumberStyles.Any, CultureInfo.GetCultureInfo("en-US")); } catch { OBJJson.max = 0; } } }
 
             Dictionary<string, string> mintAttributes = new Dictionary<string, string>();
             foreach (Button attributeControl in flowAttribute.Controls)
@@ -183,7 +184,7 @@ namespace SUP
                 foreach (Button ownerControl in flowOwners.Controls)
                 {
                     string[] parts = ownerControl.Text.Split(':');
-                    try { mintOwners.Add(parts[0], long.Parse(parts[1])); } catch { }
+                    try { mintOwners.Add(parts[0], long.Parse(parts[1], NumberStyles.Any, CultureInfo.GetCultureInfo("en-US"))); } catch { }
                 }
                 OBJJson.own = mintOwners;
             }
@@ -194,7 +195,7 @@ namespace SUP
                 foreach (Button royaltyControl in flowRoyalties.Controls)
                 {
                     string[] parts = royaltyControl.Text.Split(':');
-                    try { mintRoyalties.Add(parts[0], decimal.Parse(parts[1])); } catch { }
+                    try { mintRoyalties.Add(parts[0], decimal.Parse(parts[1], NumberStyles.Any, CultureInfo.GetCultureInfo("en-US"))); } catch { }
                 }
                 OBJJson.roy = mintRoyalties;
             }
@@ -260,7 +261,7 @@ namespace SUP
                 }
 
                 string chunkBase58 = Base58.EncodeWithCheckSum(
-                    new byte[] { (byte)Int32.Parse(mainnetVersionByte) }.Concat(chunkBytes).ToArray());
+                    new byte[] { (byte)Int32.Parse(mainnetVersionByte, NumberStyles.Any, CultureInfo.GetCultureInfo("en-US")) }.Concat(chunkBytes).ToArray());
 
                 if (!encodedList.Contains(chunkBase58))
                 {
@@ -855,7 +856,7 @@ namespace SUP
                 {
                     try
                     {
-                        if (long.TryParse(txtMaximum.Text.Replace(",", ""),out long dummy)) { btnObjectMaximum.BackColor = Color.Blue; btnObjectMaximum.ForeColor = Color.Yellow; } else { btnObjectMaximum.BackColor = Color.White; btnObjectMaximum.ForeColor = Color.Black; }
+                        if (long.TryParse(txtMaximum.Text.Replace(",", ""), NumberStyles.Any, CultureInfo.GetCultureInfo("en-US"), out long dummy)) { btnObjectMaximum.BackColor = Color.Blue; btnObjectMaximum.ForeColor = Color.Yellow; } else { btnObjectMaximum.BackColor = Color.White; btnObjectMaximum.ForeColor = Color.Black; }
 
                     }
                     catch { btnObjectMaximum.BackColor = Color.White; btnObjectMaximum.ForeColor = Color.Black; }
@@ -2044,7 +2045,7 @@ namespace SUP
                     var owner = ownerTextBox.Text;
                     var qty = qtyTextBox.Text;
 
-                    var isNumeric = long.TryParse(qty, out long OWNQty);
+                    var isNumeric = long.TryParse(qty, NumberStyles.Any, CultureInfo.GetCultureInfo("en-US"), out long OWNQty);
 
                     if (isNumeric && OWNQty > 0)
                     {
@@ -2149,7 +2150,7 @@ namespace SUP
             {
                 btnObjectMaximum.BackColor = Color.Blue;
                 btnObjectMaximum.ForeColor = Color.Yellow;
-                if (!long.TryParse(txtMaximum.Text, out long value)) { txtMaximum.Text = "0"; }
+                if (!long.TryParse(txtMaximum.Text, NumberStyles.Any, CultureInfo.GetCultureInfo("en-US"), out long value)) { txtMaximum.Text = "0"; }
             }
         }
 
@@ -2484,7 +2485,7 @@ namespace SUP
                     // Add an event handler to the button that opens the ObjectBrowser form on right click if the value is not an int
                     attribButton.MouseUp += new MouseEventHandler((sender2, e2) =>
                     {
-                        if (e2.Button == MouseButtons.Right && !int.TryParse(attrib.Value.ToString(), out _))
+                        if (e2.Button == MouseButtons.Right && !int.TryParse(attrib.Value.ToString(), NumberStyles.Any, CultureInfo.GetCultureInfo("en-US"), out _))
                         {
                             ObjectBrowser form = new ObjectBrowser(attribButton.Text);
                             form.Show();
@@ -2706,7 +2707,7 @@ namespace SUP
                     var royalty = ownerTextBox.Text;
                     var dec = decTextBox.Text;
 
-                    var isNumeric = decimal.TryParse(dec, out _);
+                    var isNumeric = decimal.TryParse(dec, NumberStyles.Any, CultureInfo.GetCultureInfo("en-US"), out _);
 
                     if (isNumeric)
                     {
