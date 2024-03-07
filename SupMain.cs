@@ -209,7 +209,7 @@ namespace SUP
                     numPrivateMessagesDisplayed = numPrivateMessagesDisplayed - 20; if (numPrivateMessagesDisplayed < 0) { numPrivateMessagesDisplayed = 0; }
                     else
                     {
-                           RefreshPrivateSupMessages();
+                        RefreshPrivateSupMessages();
                         this.Invoke((MethodInvoker)delegate
                         {
                             supPrivateFlow.AutoScrollPosition = new Point(0, supPrivateFlow.VerticalScroll.Maximum - 10);
@@ -218,7 +218,7 @@ namespace SUP
                     }
                 }
             }
-            }
+        }
 
         private void SupMaincs_Load(object sender, EventArgs e)
         {
@@ -6162,12 +6162,15 @@ namespace SUP
 
                             Task obControlTask = Task.Run(() =>
                             {
-                                this.BeginInvoke((MethodInvoker)delegate
+                                try
                                 {
-                                    OBcontrol.control.txtSearchAddress.Text = profileURN.Text;
-                                });
-
-                                OBcontrol.control.BuildSearchResults();
+                                    this.BeginInvoke((MethodInvoker)delegate
+                                 {
+                                     OBcontrol.control.txtSearchAddress.Text = profileURN.Text;
+                                     OBcontrol.control.BuildSearchResults();
+                                 });
+                                }
+                                catch { }
                             });
 
 
