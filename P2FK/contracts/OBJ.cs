@@ -1004,7 +1004,6 @@ namespace SUP.P2FK
                                                 }
                                             }
 
-
                                             // Are their enough listed to buy?
                                             if (objectState.Listings != null && objectState.Listings.TryGetValue(buy[0], out BID qtyListed) && qtyListed.Qty >= long.Parse(buy[1], NumberStyles.Any, CultureInfo.GetCultureInfo("en-US")))
                                             {
@@ -1151,162 +1150,185 @@ namespace SUP.P2FK
 
 
                                             }
-                                            //not listed check is valid offer?
+                                            //not enough listed check is still valid offer?
                                             else
                                             {
 
-                                                // is qty owned enough to fill the Offer?
-                                                if (objectState.Owners.TryGetValue(buy[0], out var tuple) && tuple.Item1 >= long.Parse(buy[1], NumberStyles.Any, CultureInfo.GetCultureInfo("en-US")))
+
+                                                //attempt buy out if any listings remain
+                                                if (objectState.Listings != null && objectState.Listings.TryGetValue(buy[0], out BID qtyListed2) && long.TryParse(buy[1], NumberStyles.Any, CultureInfo.GetCultureInfo("en-US"), out long buyQty) && buyQty > qtyListed2.Qty)
                                                 {
 
+                                                    buy[1] = qtyListed2.Qty.ToString();
 
-                                                    decimal totalPaid;
-                                                    decimal totalRoyaltiesPercent = 0;
 
-                                                    //determine all required royalties have been paid
                                                     foreach (KeyValuePair<string, decimal> pair in objectState.Royalties)
                                                     {
-                                                        if (transaction.Output.TryGetValue(pair.Key, out string output) && decimal.TryParse(output, out decimal sentValue))
+
+                                                        if (pair.Key != transaction.SignedBy)
                                                         {
+                                                            string outputSent;
+                                                            transaction.Output.TryGetValue(pair.Key, out outputSent);
+                                                            decimal logSent = decimal.Parse(outputSent, System.Globalization.NumberStyles.Float, CultureInfo.GetCultureInfo("en-US"));
 
-                                                            //royalties not necessary if seller is defined as a royalties recipient
-                                                            if (pair.Key != buy[0])
+                                                            //have required royalties been paid or greator?
+                                                            if (logSent >= ((qtyListed2.Value * long.Parse(buy[1], NumberStyles.Any, CultureInfo.GetCultureInfo("en-US"))) * (pair.Value / 100))) { royaltiesPaid = royaltiesPaid + ((qtyListed2.Value * long.Parse(buy[1], NumberStyles.Any, CultureInfo.GetCultureInfo("en-US"))) * (pair.Value / 100)); }
+                                                            else
                                                             {
-                                                                royaltiesPaid = royaltiesPaid + sentValue;
-                                                                totalRoyaltiesPercent = totalRoyaltiesPercent + pair.Value;
-                                                            }
-                                                        }
+                                                                if (verbose)
+                                                                {
+                                                                    logstatus = "[\"" + transaction.SignedBy + "\",\"" + buy[0] + "\",\"buy\",\"" + buy[1] + "\",\"\",\"failed " + pair.Key + " " + logSent + " insuficent royalties paid\",\"" + transaction.BlockDate.ToString() + "\"]";
+                                                                    objectState.ChangeLog.Add(logstatus);
 
-                                                        //transaction failed due to insufficent royalties paid
-                                                        else
-                                                        {
-                                                            if (verbose)
-                                                            {
-                                                                logstatus = "[\"" + transaction.SignedBy + "\",\"" + objectaddress + "\",\"buy\",\"" + buy[1] + "\",\"\",\"failed " + pair.Key + " insuficent royalties paid\",\"" + transaction.BlockDate.ToString() + "\"]";
-                                                                objectState.ChangeLog.Add(logstatus);
+                                                                }
+                                                                logstatus = "break";
 
+                                                                break;
                                                             }
-                                                            logstatus = "break";
-                                                            break;
                                                         }
                                                     }
 
                                                     if (logstatus == "break") { logstatus = ""; break; }
 
 
-                                                    //has owner been paid some amount?
-                                                    if (transaction.Output.TryGetValue(buy[0], out string ownerValue) && decimal.TryParse(ownerValue, out decimal ownerPaid))
+                                                    //was the current owner paid what was listed with required royalties removed or greator?
+                                                    decimal ownerPaid = 0;
+                                                    string ownerValue;
+                                                    transaction.Output.TryGetValue(buy[0], out ownerValue);
+                                                    ownerPaid = decimal.Parse(ownerValue, System.Globalization.NumberStyles.Float, CultureInfo.GetCultureInfo("en-US"));
+
+                                                    if (ownerPaid >= (qtyListed2.Value * long.Parse(buy[1], NumberStyles.Any, CultureInfo.GetCultureInfo("en-US"))) - royaltiesPaid)
                                                     {
-                                                        totalPaid = ownerPaid + royaltiesPaid;
 
+                                                        //remove from listing
+                                                        objectState.Listings[buy[0]].Qty = objectState.Listings[buy[0]].Qty - long.Parse(buy[1], NumberStyles.Any, CultureInfo.GetCultureInfo("en-US"));
 
-                                                        if (totalPaid * (totalRoyaltiesPercent / 100) == royaltiesPaid)
+                                                        //remove from owners
+                                                        long quantityToRemove = long.Parse(buy[1], NumberStyles.Any, CultureInfo.GetCultureInfo("en-US"));
+                                                        string genid = "";
+
+                                                        if (objectState.Owners.TryGetValue(buy[0], out var tuple))
                                                         {
 
-                                                            //finalroyalties check
-                                                            foreach (KeyValuePair<string, decimal> pair in objectState.Royalties)
+                                                            if (buy[0] == objectaddress)
                                                             {
-
-                                                                if (pair.Key != buy[0])
-                                                                {
-                                                                    //have required royalties been paid or greator?
-                                                                    if (transaction.Output.TryGetValue(pair.Key, out string output) && decimal.TryParse(output, NumberStyles.Any, CultureInfo.GetCultureInfo("en-US"), out decimal sentValue) && sentValue >= ((totalPaid * long.Parse(buy[1], NumberStyles.Any, CultureInfo.GetCultureInfo("en-US"))) * (pair.Value / 100)))
-                                                                    { }
-
-                                                                    //transaction failed insufficent royalties paid - reject
-                                                                    else
-                                                                    {
-                                                                        if (verbose)
-                                                                        {
-                                                                            logstatus = "[\"" + transaction.SignedBy + "\",\"" + objectaddress + "\",\"buy\",\"" + buy[1] + "\",\"\",\"failed due to insuficent royalties paid\",\"" + transaction.BlockDate.ToString() + "\"]";
-
-                                                                            objectState.ChangeLog.Add(logstatus);
-
-                                                                        }
-                                                                        logstatus = "break";
-
-
-                                                                        break;
-                                                                    }
-                                                                }
+                                                                genid = transaction.TransactionId;
+                                                            }
+                                                            else
+                                                            {
+                                                                genid = tuple.Item2;
                                                             }
 
-                                                            if (logstatus == "break") { logstatus = ""; break; }
 
+                                                            // Subtract the quantityToRemove from the existing value
+                                                            var updatedTuple = (tuple.Item1 - quantityToRemove, tuple.Item2);
 
-                                                            // success add valid Offer
-                                                            BID offer = new BID();
-                                                            offer.Requestor = transaction.SignedBy;
-                                                            offer.Owner = buy[0];
-                                                            offer.Value = totalPaid / long.Parse(buy[1], NumberStyles.Any, CultureInfo.GetCultureInfo("en-US"));
-                                                            offer.Qty = long.Parse(buy[1], NumberStyles.Any, CultureInfo.GetCultureInfo("en-US"));
-                                                            offer.BlockDate = transaction.BlockDate;
+                                                            // Remove previous owner from the list if the quantity is less than 1
 
-                                                            if (objectState.Offers == null)
+                                                            if (updatedTuple.Item1 < 1)
                                                             {
-                                                                objectState.Offers = new List<BID>();
+                                                                objectState.Owners.Remove(buy[0]);
                                                             }
-
-                                                            objectState.Offers.Add(offer);
-
-                                                            if (verbose)
+                                                            else
                                                             {
-                                                                logstatus = "[\"" + transaction.SignedBy + "\",\"" + buy[0] + "\",\"offer\",\"" + buy[1] + "\",\"\",\"success - " + totalPaid / long.Parse(buy[1], NumberStyles.Any, CultureInfo.GetCultureInfo("en-US")) + "\",\"" + transaction.BlockDate.ToString() + "\"]";
-
-                                                                objectState.ChangeLog.Add(logstatus);
-
-                                                                logstatus = "";
+                                                                // Update the value in the dictionary
+                                                                objectState.Owners[buy[0]] = updatedTuple;
                                                             }
-                                                            break;
-
                                                         }
-                                                        //transaction failed insufficent royalties paid - reject
+
+                                                        // Increment the new owner if already owned
+                                                        if (objectState.Owners.ContainsKey(transaction.SignedBy))
+                                                        {
+
+                                                            var currentOwnerTuple = objectState.Owners[transaction.SignedBy];
+
+                                                            if (buy[0] == objectaddress)
+                                                            {
+                                                                genid = transaction.TransactionId;
+                                                            }
+                                                            else
+                                                            {
+                                                                genid = tuple.Item2;
+                                                            }
+
+                                                            objectState.Owners[transaction.SignedBy] = (currentOwnerTuple.Item1 + long.Parse(buy[1], NumberStyles.Any, CultureInfo.GetCultureInfo("en-US")), genid);
+                                                        }
+                                                        // Add the new owner to the list if not currently listed
                                                         else
                                                         {
-
-                                                            if (verbose)
+                                                            if (buy[0] == objectaddress)
                                                             {
-                                                                logstatus = "[\"" + transaction.SignedBy + "\",\"" + objectaddress + "\",\"buy\",\"" + buy[1] + "\",\"\",\"failed due to insuficent royalties paid\",\"" + transaction.BlockDate.ToString() + "\"]";
-
-                                                                objectState.ChangeLog.Add(logstatus);
-
-                                                                logstatus = "";
+                                                                genid = transaction.TransactionId;
                                                             }
-                                                            break;
-
+                                                            else
+                                                            {
+                                                                genid = tuple.Item2;
+                                                            }
+                                                            objectState.Owners.Add(transaction.SignedBy, (long.Parse(buy[1], NumberStyles.Any, CultureInfo.GetCultureInfo("en-US")), genid));
                                                         }
-                                                    }
-                                                    //transaction failed insuficent owner payment - reject
-                                                    else
-                                                    {
+
+                                                        //remove previous owner from list if now 0
+                                                        if (objectState.Listings[buy[0]].Qty < 1) { objectState.Listings.Remove(buy[0]); }
+
+
                                                         if (verbose)
                                                         {
-                                                            logstatus = "[\"" + transaction.SignedBy + "\",\"" + objectaddress + "\",\"buy\",\"" + buy[1] + "\",\"\",\"failed due to insuficent owner payment\",\"" + transaction.BlockDate.ToString() + "\"]";
+                                                            logstatus = "[\"" + transaction.SignedBy + "\",\"" + buy[0] + "\",\"buy\",\"" + buy[1] + "\",\"\",\"success " + ownerPaid.ToString() + "\",\"" + transaction.BlockDate.ToString() + "\"]";
+
                                                             objectState.ChangeLog.Add(logstatus);
 
                                                             logstatus = "";
                                                         }
+
                                                         break;
 
 
 
                                                     }
+                                                    //conditons were not met log failed event.
+                                                    else
+                                                    {
+
+                                                        if (verbose)
+                                                        {
+                                                            logstatus = "[\"" + transaction.SignedBy + "\",\"" + buy[0] + "\",\"buy\",\"" + buy[1] + "\",\"\",\"failed " + ownerPaid.ToString() + " insuficent owner paid\",\"" + transaction.BlockDate.ToString() + "\"]";
+                                                            objectState.ChangeLog.Add(logstatus);
+
+                                                            logstatus = "";
+                                                        }
+
+                                                        break;
+                                                    }
+
+
+
+
 
                                                 }
-                                                //not enough owned to fill a buy request - reject
                                                 else
                                                 {
 
                                                     if (verbose)
                                                     {
-                                                        logstatus = "[\"" + transaction.SignedBy + "\",\"" + objectaddress + "\",\"buy\",\"" + buy[1] + "\",\"\",\"failed due to insuficent Qty owned\",\"" + transaction.BlockDate.ToString() + "\"]";
-
+                                                        logstatus = "[\"" + transaction.SignedBy + "\",\"" + buy[0] + "\",\"buy\",\"" + buy[1] + "\",\"\",\"failed all requirments not met\",\"" + transaction.BlockDate.ToString() + "\"]";
                                                         objectState.ChangeLog.Add(logstatus);
 
                                                         logstatus = "";
                                                     }
+
                                                     break;
+
                                                 }
+
+
+
+
+
+
+
+
+
+
 
                                             }
 

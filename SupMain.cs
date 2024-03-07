@@ -296,72 +296,76 @@ namespace SUP
 
         private void OBControl_ProfileURNChanged(object sender, EventArgs e)
         {
-            if (sender is ObjectBrowserControl objectBrowserControl && !friendClicked)
+            try
             {
-                var objectBrowserForm = objectBrowserControl.Controls[0].Controls[0] as ObjectBrowser;
-                if (objectBrowserForm != null)
+                if (sender is ObjectBrowserControl objectBrowserControl && !friendClicked)
                 {
-                    if (!panel1.Visible)
+                    var objectBrowserForm = objectBrowserControl.Controls[0].Controls[0] as ObjectBrowser;
+                    if (objectBrowserForm != null)
                     {
-                        panel1.Visible = true;
-                        supFlow.Location = new System.Drawing.Point(supFlow.Location.X, supFlow.Location.Y + 150); // Change the X and Y coordinates
-                        supFlow.Size = new System.Drawing.Size(supFlow.Width, supFlow.Height - 150); // Change the width and height
-                    }
-
-                    profileURN.Links[0].LinkData = objectBrowserForm.profileURN.Links[0].LinkData;
-                    profileURN.Text = objectBrowserForm.profileURN.Text;
-                    numMessagesDisplayed = 0;
-                    numPrivateMessagesDisplayed = 0;
-                    numFriendFeedsDisplayed = 0;
-
-                    if (File.Exists(@"root\" + profileURN.Links[0].LinkData.ToString() + @"\MUTE")) { btnMute.Text = "unmute"; }
-
-                    if (profileURN.Text.StartsWith("#"))
-                    {
-                        lblOfficial.Visible = false;
-                        profileBIO.Text = "Click the follow button to add this search to your community feed."; profileCreatedDate.Text = ""; profileIMG.ImageLocation = ""; lblProcessHeight.Text = "";
-
-                        GenerateImage(profileURN.Text);
-
-                        profileIMG.ImageLocation = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + @"\root\keywords\" + profileURN.Text + ".png";
-                        btnPublicMessage.BackColor = Color.Blue;
-                        btnPublicMessage.ForeColor = Color.Yellow;
-                        this.Invoke((Action)(() =>
+                        if (!panel1.Visible)
                         {
-                            ClearMessages(supFlow);
-                        }));
-                      
-                        RefreshSupMessages();
-                    }
-                    else
-                    {
-                        MakeActiveProfile(objectBrowserForm.profileURN.Links[0].LinkData.ToString());
-                        btnPublicMessage.BackColor = Color.White;
-                        btnPublicMessage.ForeColor = Color.Black;
+                            panel1.Visible = true;
+                            supFlow.Location = new System.Drawing.Point(supFlow.Location.X, supFlow.Location.Y + 150); // Change the X and Y coordinates
+                            supFlow.Size = new System.Drawing.Size(supFlow.Width, supFlow.Height - 150); // Change the width and height
+                        }
 
+                        profileURN.Links[0].LinkData = objectBrowserForm.profileURN.Links[0].LinkData;
+                        profileURN.Text = objectBrowserForm.profileURN.Text;
+                        numMessagesDisplayed = 0;
+                        numPrivateMessagesDisplayed = 0;
+                        numFriendFeedsDisplayed = 0;
 
-                        if (profileURN.Links[0].LinkData != null)
+                        if (File.Exists(@"root\" + profileURN.Links[0].LinkData.ToString() + @"\MUTE")) { btnMute.Text = "unmute"; }
+
+                        if (profileURN.Text.StartsWith("#"))
                         {
+                            lblOfficial.Visible = false;
+                            profileBIO.Text = "Click the follow button to add this search to your community feed."; profileCreatedDate.Text = ""; profileIMG.ImageLocation = ""; lblProcessHeight.Text = "";
 
-                            string profileURN = objectBrowserForm.profileURN.Links[0].LinkData.ToString();
+                            GenerateImage(profileURN.Text);
 
-                            if (profileURN != null)
+                            profileIMG.ImageLocation = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + @"\root\keywords\" + profileURN.Text + ".png";
+                            btnPublicMessage.BackColor = Color.Blue;
+                            btnPublicMessage.ForeColor = Color.Yellow;
+                            this.Invoke((Action)(() =>
                             {
-                                List<string> islocal = Root.GetPublicKeysByAddress(profileURN, mainnetLogin, mainnetPassword, mainnetURL);
-                                if
-                                     (islocal.Count == 2)
-                                {
-                                    profileOwner.ImageLocation = profileIMG.ImageLocation;
-                                    profileOwner.Tag = objectBrowserForm.profileURN.Links[0].LinkData.ToString();
-                                }
+                                ClearMessages(supFlow);
+                            }));
 
+                            RefreshSupMessages();
+                        }
+                        else
+                        {
+                            MakeActiveProfile(objectBrowserForm.profileURN.Links[0].LinkData.ToString());
+                            btnPublicMessage.BackColor = Color.White;
+                            btnPublicMessage.ForeColor = Color.Black;
+
+
+                            if (profileURN.Links[0].LinkData != null)
+                            {
+
+                                string profileURN = objectBrowserForm.profileURN.Links[0].LinkData.ToString();
+
+                                if (profileURN != null)
+                                {
+                                    List<string> islocal = Root.GetPublicKeysByAddress(profileURN, mainnetLogin, mainnetPassword, mainnetURL);
+                                    if
+                                         (islocal.Count == 2)
+                                    {
+                                        profileOwner.ImageLocation = profileIMG.ImageLocation;
+                                        profileOwner.Tag = objectBrowserForm.profileURN.Links[0].LinkData.ToString();
+                                    }
+
+                                }
                             }
                         }
-                    }
 
+                    }
                 }
+                friendClicked = false;
             }
-            friendClicked = false;
+            catch { }
         }
 
         private void MakeActiveProfile(string address)
@@ -993,19 +997,36 @@ namespace SUP
 
                 if (File.Exists("IPFS_PINNING_ENABLED"))
                 {
+                    string ipfsDir = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
 
+                    // Set the environment variable IPFS_PATH to the same directory
+                    Environment.SetEnvironmentVariable("IPFS_PATH", ipfsDir + @"\ipfs");
+
+                    // Create the process to initialize the repo
+                    var init = new Process
+                    {
+                        StartInfo = new ProcessStartInfo
+                        {
+                            FileName = @"ipfs\ipfs.exe",
+                            Arguments = "init",
+                            UseShellExecute = false,
+                            CreateNoWindow = true
+                        }
+                    };
+                    init.Start();
+                    init.WaitForExit();
+                    // Set the cache location to the same directory
                     var process = new Process
                     {
                         StartInfo = new ProcessStartInfo
                         {
                             FileName = @"ipfs\ipfs.exe",
-                            Arguments = "daemon",
+                            Arguments = $"daemon --repo-dir {ipfsDir + @"\ipfs"}",
                             UseShellExecute = false,
                             CreateNoWindow = true
                         }
                     };
                     process.Start();
-
                 }
 
                 tmrSearchMemoryPool.Enabled = true;

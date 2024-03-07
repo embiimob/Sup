@@ -1125,7 +1125,7 @@ namespace SUP
 
             if (mint)
             {
-                DialogResult result = MessageBox.Show("Are you sure you want to buy this?", "Confirmation", MessageBoxButtons.YesNo);
+                DialogResult result = MessageBox.Show("Are you sure you want to buy a qty of ( "+ txtBuyQty.Text + " ) \n" + lblBuyCost.Text, "Confirmation", MessageBoxButtons.YesNo);
                 if (result == DialogResult.Yes)
                 {
                     // Perform the action

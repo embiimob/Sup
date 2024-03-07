@@ -5,6 +5,7 @@ using System.Drawing;
 using System.Globalization;
 using System.IO;
 using System.Net;
+using System.Reflection;
 using System.Runtime.Hosting;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -365,6 +366,13 @@ namespace SUP
                 btnIPFS.ForeColor = Color.Yellow;
                 btnIPFS.BackColor = Color.Blue;
 
+                // Get the current directory of the ipfs.exe file
+                string ipfsDir = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+
+                // Set the environment variable IPFS_PATH to the same directory
+                Environment.SetEnvironmentVariable("IPFS_PATH", ipfsDir + @"\ipfs");
+
+                // Create the process to initialize the repo
                 var init = new Process
                 {
                     StartInfo = new ProcessStartInfo
@@ -378,17 +386,19 @@ namespace SUP
                 init.Start();
                 init.WaitForExit();
 
+                // Create the process to start the daemon
                 var process = new Process
                 {
                     StartInfo = new ProcessStartInfo
                     {
                         FileName = @"ipfs\ipfs.exe",
-                        Arguments = "daemon",
+                        Arguments = $"daemon --repo-dir {ipfsDir + @"\ipfs"}",
                         UseShellExecute = false,
                         CreateNoWindow = true
                     }
                 };
                 process.Start();
+
                 btnPinIPFS.Enabled = true;
                 btnUnpinIPFS.Enabled = true;
                 btnAddIPFS.Enabled= true;
@@ -425,7 +435,7 @@ namespace SUP
                         process2.Start();
 
                         // Wait for the process to complete, but not longer than 5 seconds
-                        if (await Task.Run(() => process2.WaitForExit(5000)))
+                        if (await Task.Run(() => process2.WaitForExit(10000)))
                         {
                             // Process completed within 5 seconds
                             int exitCode = process2.ExitCode;
@@ -488,7 +498,7 @@ namespace SUP
                         string fileName = System.IO.Path.GetFileName(file);
 
                         // Check if the file is not named "thumbnail.jpg"
-                        if (!fileName.Equals("thumbnail.jpg", StringComparison.OrdinalIgnoreCase))
+                        if (!fileName.EndsWith("-thumbnail.jpg", StringComparison.OrdinalIgnoreCase))
                         {
                             using (var process2 = new Process())
                             {
