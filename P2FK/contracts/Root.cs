@@ -336,7 +336,7 @@ namespace SUP.P2FK
                     }
                     else
                     {
-                        if (fileName == "" && fileBytes.Length > 4)
+                        if (fileName == "" && fileBytes.Length == packetSize)
                         {
                             sigEndByte += packetSize + headerSize;
                             MessageList.Add(Encoding.UTF8.GetString(fileBytes));
