@@ -81,47 +81,21 @@ namespace SUP
 
         private void ObjectDetails_Load(object sender, EventArgs e)
         {
-            // Check if the parent form has a button named "btnLive" with blue background color
-            // Get a reference to the parent form
-            Form parentForm = this.Owner;
-            bool isBlue = false;
 
-            // Check if the parent form has a button named "btnLive" with blue background color
-            try
+
+
+            this.Text = String.Empty;
+
+            if (!isUserControl)
             {
-                if (parentForm != null)
-                {
-                    isBlue = parentForm.Controls.OfType<System.Windows.Forms.Button>().Any(b => b.Name == "btnLive" && b.BackColor == System.Drawing.Color.Blue);
-                }
-            }
-            catch
-            {
+                this.Text = "[ " + _objectaddress + " ]";
+                registrationPanel.Visible = true;
             }
 
-            if (isBlue)
-            {
-                // If there is a button with blue background color, show a message box
-                DialogResult result = System.Windows.Forms.MessageBox.Show("disable Live monitoring to browse sup!? objects.\r\nignoring this warning may cause temporary data corruption that could require a full purge of the cache", "Warning", MessageBoxButtons.OKCancel, MessageBoxIcon.Warning);
-                if (result == DialogResult.OK)
-                {
-                    // If the user clicks OK, close the form
-                    this.Close();
-                }
-            }
-            else
-            {
-                this.Text = String.Empty;
 
-                if (!isUserControl)
-                {
-                    this.Text = "[ " + _objectaddress + " ]";
-                    registrationPanel.Visible = true;
-                }
+            btnReloadObject.PerformClick();
+            lblPleaseStandBy.Visible = false;
 
-
-                btnReloadObject.PerformClick();
-                lblPleaseStandBy.Visible = false;
-            }
         }
 
         private void supFlow_MouseWheel(object sender, MouseEventArgs e)
@@ -325,7 +299,7 @@ namespace SUP
                     keyLabel.LinkColor = System.Drawing.Color.Black;
                     keyLabel.ActiveLinkColor = System.Drawing.Color.Black;
                     keyLabel.VisitedLinkColor = System.Drawing.Color.Black;
-                    keyLabel.MouseClick += new MouseEventHandler (LinkClicked);
+                    keyLabel.MouseClick += new MouseEventHandler(LinkClicked);
                     keyLabel.Dock = DockStyle.Left;
 
                     Label valueLabel = new Label
@@ -2146,7 +2120,7 @@ namespace SUP
                     {
                         urn = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + @"\root\" + objstate.URN.Replace("BTC:", "").Replace("MZC:", "").Replace("LTC:", "").Replace("DOG:", "").Replace("IPFS:", "").Replace(@"/", @"\");
                         if (objstate.URN.ToLower().StartsWith("ipfs:")) { urn = urn.Replace(@"\root\", @"\ipfs\"); if (objstate.URN.Length == 51) { urn += @"\artifact"; } }
-                        
+
 
                     }
                     else
@@ -2627,103 +2601,110 @@ namespace SUP
                         case "IPFS":
                             Task.Run(() =>
                             {
-                            string transid = "empty";
+                                string transid = "empty";
 
-                            try
-                            {
-                                transid = objstate.URN.Substring(5, 46);
-                            }
-                            catch { }
-
-                            if (!File.Exists(urn) && !File.Exists("ipfs/" + transid + "/artifact") && !File.Exists("ipfs/" + transid + "/artifact" + objstate.URN.Substring(objstate.URN.LastIndexOf('.'))))
-                            {
-                                if (!System.IO.Directory.Exists(@"ipfs/" + transid + "-build"))
+                                try
                                 {
-                                    try
-                                    {
-                                        Directory.Delete("ipfs/" + transid, true);
-                                    }
-                                    catch { }
-                                    try
-                                    {
-                                        Directory.CreateDirectory("ipfs/" + transid);
-                                    }
-                                    catch { };
-                                    Directory.CreateDirectory(@"ipfs/" + transid + "-build");
-                                    Process process2 = new Process();
-                                    process2.StartInfo.FileName = @"ipfs\ipfs.exe";
-                                    process2.StartInfo.Arguments = "get " + transid + @" -o ipfs\" + transid;
-                                    process2.Start();
-                                    process2.WaitForExit();
+                                    transid = objstate.URN.Substring(5, 46);
+                                }
+                                catch { }
 
-                                    string fileName;
-
-                                    if (System.IO.File.Exists("ipfs/" + transid))
+                                if (!File.Exists(urn) && !File.Exists("ipfs/" + transid + "/artifact") && !File.Exists("ipfs/" + transid + "/artifact" + objstate.URN.Substring(objstate.URN.LastIndexOf('.'))))
+                                {
+                                    if (!System.IO.Directory.Exists(@"ipfs/" + transid + "-build"))
                                     {
-                                        System.IO.File.Move("ipfs/" + transid, "ipfs/" + transid + "_tmp");
-                                        System.IO.Directory.CreateDirectory("ipfs/" + transid);
-                                        fileName = objstate.URN.Replace(@"//", "").Replace(@"\\", "").Substring(51);
-                                        if (fileName == "") { fileName = "artifact"; } else { fileName = fileName.Replace(@"/", "").Replace(@"\", ""); }
-                                        Directory.CreateDirectory("ipfs/" + transid);
-
                                         try
                                         {
-                                            System.IO.File.Move("ipfs/" + transid + "_tmp", urn);
+                                            Directory.Delete("ipfs/" + transid, true);
                                         }
-                                        catch (System.ArgumentException ex)
-                                        {
-                                            System.IO.File.Move("ipfs/" + transid + "_tmp", "ipfs/" + transid + "/artifact" + objstate.URN.Substring(objstate.URN.LastIndexOf('.')));
-                                            urn = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + @"\ipfs\" + transid + @"\artifact" + objstate.URN.Substring(objstate.URN.LastIndexOf('.'));
-                                        }
-                                    }
-
-                                    if (System.IO.File.Exists("ipfs/" + transid + "/" + transid))
-                                    {
-                                        fileName = objstate.URN.Replace(@"//", "").Replace(@"\\", "").Substring(51);
-                                        if (fileName == "") { fileName = "artifact"; } else { fileName = fileName.Replace(@"/", "").Replace(@"\", ""); }
-
+                                        catch { }
                                         try
                                         {
-                                            System.IO.File.Move("ipfs/" + transid + "/" + transid, urn);
+                                            Directory.CreateDirectory("ipfs/" + transid);
                                         }
-                                        catch (System.ArgumentException ex)
-                                        {
-                                            System.IO.File.Move("ipfs/" + transid + "/" + transid, "ipfs/" + transid + "/artifact" + objstate.URN.Substring(objstate.URN.LastIndexOf('.')));
-                                            urn = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + @"\ipfs\" + transid + @"\artifact" + objstate.URN.Substring(objstate.URN.LastIndexOf('.'));
-                                        }
-                                    }
+                                        catch { };
+                                        Directory.CreateDirectory(@"ipfs/" + transid + "-build");
+                                        Process process2 = new Process();
+                                        process2.StartInfo.FileName = @"ipfs\ipfs.exe";
+                                        process2.StartInfo.Arguments = "get " + transid + @" -o ipfs\" + transid;
+                                        process2.Start();
+                                        process2.WaitForExit();
 
-                                    try
-                                    {
-                                        if (File.Exists("IPFS_PINNING_ENABLED"))
+                                        string fileName;
+
+                                        if (System.IO.File.Exists("ipfs/" + transid))
                                         {
-                                            Process process3 = new Process
+                                            System.IO.File.Move("ipfs/" + transid, "ipfs/" + transid + "_tmp");
+                                            System.IO.Directory.CreateDirectory("ipfs/" + transid);
+                                            fileName = objstate.URN.Replace(@"//", "").Replace(@"\\", "").Substring(51);
+                                            if (fileName == "") { fileName = "artifact"; } else { fileName = fileName.Replace(@"/", "").Replace(@"\", ""); }
+                                            Directory.CreateDirectory("ipfs/" + transid);
+
+                                            try
                                             {
-                                                StartInfo = new ProcessStartInfo
-                                                {
-                                                    FileName = @"ipfs\ipfs.exe",
-                                                    Arguments = "pin add " + transid,
-                                                    UseShellExecute = false,
-                                                    CreateNoWindow = true
-                                                }
-                                            };
-                                            process3.Start();
+                                                System.IO.File.Move("ipfs/" + transid + "_tmp", urn);
+                                            }
+                                            catch (System.ArgumentException ex)
+                                            {
+                                                System.IO.File.Move("ipfs/" + transid + "_tmp", "ipfs/" + transid + "/artifact" + objstate.URN.Substring(objstate.URN.LastIndexOf('.')));
+                                                urn = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + @"\ipfs\" + transid + @"\artifact" + objstate.URN.Substring(objstate.URN.LastIndexOf('.'));
+                                            }
                                         }
-                                    }
-                                    catch { }
 
-                                    try
+                                        if (System.IO.File.Exists("ipfs/" + transid + "/" + transid))
+                                        {
+                                            fileName = objstate.URN.Replace(@"//", "").Replace(@"\\", "").Substring(51);
+                                            if (fileName == "") { fileName = "artifact"; } else { fileName = fileName.Replace(@"/", "").Replace(@"\", ""); }
+
+                                            try
+                                            {
+                                                System.IO.File.Move("ipfs/" + transid + "/" + transid, urn);
+                                            }
+                                            catch (System.ArgumentException ex)
+                                            {
+                                                System.IO.File.Move("ipfs/" + transid + "/" + transid, "ipfs/" + transid + "/artifact" + objstate.URN.Substring(objstate.URN.LastIndexOf('.')));
+                                                urn = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + @"\ipfs\" + transid + @"\artifact" + objstate.URN.Substring(objstate.URN.LastIndexOf('.'));
+                                            }
+                                        }
+
+                                        try
+                                        {
+                                            if (File.Exists("IPFS_PINNING_ENABLED"))
+                                            {
+                                                Process process3 = new Process
+                                                {
+                                                    StartInfo = new ProcessStartInfo
+                                                    {
+                                                        FileName = @"ipfs\ipfs.exe",
+                                                        Arguments = "pin add " + transid,
+                                                        UseShellExecute = false,
+                                                        CreateNoWindow = true
+                                                    }
+                                                };
+                                                process3.Start();
+                                            }
+                                        }
+                                        catch { }
+
+                                        try
+                                        {
+                                            Directory.Delete(@"ipfs/" + transid + "-build");
+                                        }
+                                        catch { }
+
+
+
+                                    }
+
+                                    if (File.Exists(urn))
                                     {
-                                        Directory.Delete(@"ipfs/" + transid + "-build");
-                                    }
-                                    catch { }
-
-                                    this.Invoke(new Action(() => { 
-                                    btnReloadObject.PerformClick();
-                                }));
+                                        this.Invoke(new Action(() =>
+                                        {
+                                            btnReloadObject.PerformClick();
+                                        }));
                                     }
                                 }
-                                
+
                             });
 
                             break;
@@ -3409,7 +3390,8 @@ namespace SUP
                     case ".html":
                     case ".zip":
 
-                        if (extension.ToLower() == ".htm" || extension.ToLower() == ".html" || Path.GetFileName(urn).ToLower() == "index.zip") {
+                        if (extension.ToLower() == ".htm" || extension.ToLower() == ".html" || Path.GetFileName(urn).ToLower() == "index.zip")
+                        {
                             if (isWWW == false)
                             {
                                 chkRunTrustedObject.Visible = true;
@@ -3688,7 +3670,8 @@ namespace SUP
                                 }
 
                             }
-                        } else
+                        }
+                        else
                         {
                             pictureBox1.Invoke(new Action(() => pictureBox1.ImageLocation = imgurn));
 
@@ -3697,11 +3680,11 @@ namespace SUP
                                 btnLaunchURN.Visible = true;
                                 lblWarning.Visible = true;
                             }
-                                                      
+
                         }
 
-                            break;
-                        
+                        break;
+
                     default:
 
                         pictureBox1.Invoke(new Action(() => pictureBox1.ImageLocation = imgurn));

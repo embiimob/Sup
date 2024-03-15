@@ -85,13 +85,16 @@ namespace SUP
                 long currentHoldings = 0;
                 try { currentHoldings = currentObject.Owners[txtSignatureAddress.Text].Item1; } catch { }
 
+                // Calculate the maximum quantity that can be given
+                long currentListings = 0;
+                try { currentListings = currentObject.Listings[txtSignatureAddress.Text].Qty; } catch { }
 
                 // Calculate the maximum quantity that can be given
-                long maxGiveQty = currentHoldings;
+                long maxGiveQty = currentHoldings - currentListings;
 
                 if (qty + _addressQtyList.Sum(item => item.Item2) > maxGiveQty)
                 {
-                    MessageBox.Show($"This transaction will likely fail. Give Qty exceeds current owner's holdings. Maximum Give allowed: {maxGiveQty}", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    MessageBox.Show($"This transaction will likely fail. Give Qty exceeds current owner's holdings minus their active listings. Maximum Give allowed: {maxGiveQty}", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                     qtyTextBox.Text = maxGiveQty.ToString();
                     return;
                 }
@@ -104,11 +107,15 @@ namespace SUP
                     try { currentHoldings = currentObject.Owners[givaddress].Item1; } catch { }
 
                     // Calculate the maximum quantity that can be given
-                    long maxGiveQty = currentHoldings;
+                    long currentListings = 0;
+                    try { currentListings = currentObject.Listings[givaddress].Qty; } catch { }
+
+                    long maxGiveQty = currentHoldings - currentListings;
+
 
                     if (qty + _addressQtyList.Sum(item => item.Item2) > maxGiveQty)
                     {
-                        MessageBox.Show($"This transaction will likely fail. Give Qty exceeds current owner's holdings. Maximum Give allowed: {maxGiveQty}", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                        MessageBox.Show($"This transaction will likely fail. Give Qty exceeds current owner's holdings minus their active listings. Maximum Give allowed: {maxGiveQty}", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                         qtyTextBox.Text = maxGiveQty.ToString();
                         return;
                     }

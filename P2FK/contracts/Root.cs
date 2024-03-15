@@ -336,7 +336,7 @@ namespace SUP.P2FK
                     }
                     else
                     {
-                        if (fileName == "" && fileBytes.Length == packetSize)
+                        if (fileName == "" && fileBytes.Length > 1)
                         {
                             sigEndByte += packetSize + headerSize;
                             MessageList.Add(Encoding.UTF8.GetString(fileBytes));
@@ -473,7 +473,9 @@ namespace SUP.P2FK
 
         public static Root[] GetRootsByAddress(string address, string username, string password, string url, int skip = 0, int qty = -1, string versionByte = "111", bool calculate = false)
         {
-           
+
+            try { using (System.IO.File.Create("ROOTS-PROCESSING")) { } }catch { }
+
             var rootList = new List<Root>();
 
             try
@@ -481,7 +483,7 @@ namespace SUP.P2FK
                 if (address.Length < 33)
                 {
 
-                   
+                    try { System.IO.File.Delete("ROOTS-PROCESSING"); } catch { }
                     return rootList.ToArray();
                 }
 
@@ -558,7 +560,8 @@ namespace SUP.P2FK
 
                 }
 
-               
+                try { System.IO.File.Delete("ROOTS-PROCESSING"); } catch { }
+
 
                 if (skip != 0)
                 {
@@ -579,7 +582,8 @@ namespace SUP.P2FK
             catch
             {
 
-               
+                try { System.IO.File.Delete("ROOTS-PROCESSING"); } catch { }
+
                 return rootList.ToArray();
             }
         }

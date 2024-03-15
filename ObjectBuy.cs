@@ -992,7 +992,11 @@ namespace SUP
                 return;
             }
 
-
+            if (txtCurrentOwnerAddress.Text == "")
+            {
+                MessageBox.Show($"You must enter an Owner Address to Buy from in the Current Owner to Buy from field.", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
 
             if (int.TryParse(txtBuyQty.Text, NumberStyles.Any, CultureInfo.GetCultureInfo("en-US"), out int buyQTY3) && buyQTY3 <= maxHold)
             {
@@ -1041,6 +1045,8 @@ namespace SUP
                         return;
                     }
                 }
+
+
 
                 var listingForCurrentOwner = objStateForAddress.Listings.Values.FirstOrDefault(listing => listing.Owner == txtCurrentOwnerAddress.Text);
 
