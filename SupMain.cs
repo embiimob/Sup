@@ -1276,9 +1276,7 @@ namespace SUP
             {
                 tmrSearchMemoryPool.Stop();
 
-                if (!System.IO.File.Exists("ROOTS-PROCESSING"))
-                {
-
+              
                     try
                     {
                         Task SearchMemoryTask = Task.Run(() =>
@@ -3011,7 +3009,7 @@ namespace SUP
                         });
 
                     }
-                }
+                
 
 
             }
