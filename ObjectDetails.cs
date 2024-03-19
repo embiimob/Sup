@@ -1946,131 +1946,137 @@ namespace SUP
         void CreateTransRow(string fromName, string fromId, string toName, string toId, string action, string qty, string amount, DateTime timestamp, string status, System.Drawing.Color bgcolor, FlowLayoutPanel layoutPanel)
         {
 
-            // Create a table layout panel for each row
-            TableLayoutPanel row = new TableLayoutPanel
-            {
-                RowCount = 1,
-                ColumnCount = 3,
-                Dock = DockStyle.Top,
-                AutoSize = true,
-                Padding = new System.Windows.Forms.Padding(0),
-                BackColor = bgcolor,
-                Margin = new System.Windows.Forms.Padding(0)
-            };
-            row.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 107));
-            row.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 62));
-            row.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 107));
-            layoutPanel.Controls.Add(row);
-
-
-            LinkLabel fromname = new LinkLabel
-            {
-                Text = fromName,
-                AutoSize = true
-            };
-            fromname.LinkClicked += (sender, e) => { Owner_LinkClicked(fromId); };
-            fromname.Dock = DockStyle.Left;
-            fromname.TextAlign = System.Drawing.ContentAlignment.TopLeft;
-            fromname.Margin = new System.Windows.Forms.Padding(0);
-            row.Controls.Add(fromname, 0, 0);
-
-            Label laction = new Label
-            {
-                Text = action,
-                AutoSize = true,
-                Dock = DockStyle.Left,
-                TextAlign = System.Drawing.ContentAlignment.TopLeft,
-                Margin = new System.Windows.Forms.Padding(0)
-            };
-            row.Controls.Add(laction, 1, 0);
-
-
-            LinkLabel toname = new LinkLabel
-            {
-                Text = toName,
-                AutoSize = true
-            };
-            toname.LinkClicked += (sender, e) => { Owner_LinkClicked(toId); };
-            toname.Dock = DockStyle.Right;
-            toname.TextAlign = System.Drawing.ContentAlignment.TopLeft;
-            toname.Margin = new System.Windows.Forms.Padding(0);
-            row.Controls.Add(toname, 2, 0);
-
-
-            if (qty.Length + amount.Length > 0)
+            this.Invoke((Action)(() =>
             {
 
-
-                TableLayoutPanel stats = new TableLayoutPanel
+                // Create a table layout panel for each row
+                TableLayoutPanel row = new TableLayoutPanel
                 {
                     RowCount = 1,
-                    ColumnCount = 2,
+                    ColumnCount = 3,
                     Dock = DockStyle.Top,
+                    AutoSize = true,
+                    Padding = new System.Windows.Forms.Padding(0),
+                    BackColor = bgcolor,
+                    Margin = new System.Windows.Forms.Padding(0)
+                };
+                row.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 107));
+                row.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 62));
+                row.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 107));
+                layoutPanel.Controls.Add(row);
+
+
+                LinkLabel fromname = new LinkLabel
+                {
+                    Text = fromName,
+                    AutoSize = true
+                };
+                fromname.LinkClicked += (sender, e) => { Owner_LinkClicked(fromId); };
+                fromname.Dock = DockStyle.Left;
+                fromname.TextAlign = System.Drawing.ContentAlignment.TopLeft;
+                fromname.Margin = new System.Windows.Forms.Padding(0);
+                row.Controls.Add(fromname, 0, 0);
+
+                Label laction = new Label
+                {
+                    Text = action,
+                    AutoSize = true,
+                    Dock = DockStyle.Left,
+                    TextAlign = System.Drawing.ContentAlignment.TopLeft,
+                    Margin = new System.Windows.Forms.Padding(0)
+                };
+                row.Controls.Add(laction, 1, 0);
+
+
+                LinkLabel toname = new LinkLabel
+                {
+                    Text = toName,
+                    AutoSize = true
+                };
+                toname.LinkClicked += (sender, e) => { Owner_LinkClicked(toId); };
+                toname.Dock = DockStyle.Right;
+                toname.TextAlign = System.Drawing.ContentAlignment.TopLeft;
+                toname.Margin = new System.Windows.Forms.Padding(0);
+                row.Controls.Add(toname, 2, 0);
+
+
+                if (qty.Length + amount.Length > 0)
+                {
+
+
+                    TableLayoutPanel stats = new TableLayoutPanel
+                    {
+                        RowCount = 1,
+                        ColumnCount = 2,
+                        Dock = DockStyle.Top,
+                        AutoSize = true,
+                        BackColor = bgcolor,
+                        Padding = new System.Windows.Forms.Padding(0),
+                        Margin = new System.Windows.Forms.Padding(0)
+                    };
+                    // Add the width of the first column to fixed value and second to fill remaining space
+                    stats.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 138));
+                    stats.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 138));
+                    layoutPanel.Controls.Add(stats);
+
+
+                    Label lqty = new Label
+                    {
+                        Text = qty,
+                        AutoSize = true,
+                        TextAlign = System.Drawing.ContentAlignment.TopLeft,
+                        Margin = new System.Windows.Forms.Padding(0)
+                    };
+                    stats.Controls.Add(lqty, 0, 0);
+
+
+                    Label lamount = new Label
+                    {
+                        Text = amount,
+                        AutoSize = true,
+                        TextAlign = System.Drawing.ContentAlignment.TopLeft,
+                        Margin = new System.Windows.Forms.Padding(0)
+                    };
+                    stats.Controls.Add(lamount, 1, 0);
+                }
+
+
+                TableLayoutPanel msg = new TableLayoutPanel
+                {
+                    RowCount = 2,
+                    ColumnCount = 1,
+                    Dock = DockStyle.Bottom,
                     AutoSize = true,
                     BackColor = bgcolor,
                     Padding = new System.Windows.Forms.Padding(0),
                     Margin = new System.Windows.Forms.Padding(0)
                 };
                 // Add the width of the first column to fixed value and second to fill remaining space
-                stats.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 138));
-                stats.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 138));
-                layoutPanel.Controls.Add(stats);
+                msg.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 276));
 
 
-                Label lqty = new Label
+                layoutPanel.Controls.Add(msg);
+
+                Label lstatus = new Label
                 {
-                    Text = qty,
+                    Text = status,
                     AutoSize = true,
                     TextAlign = System.Drawing.ContentAlignment.TopLeft,
                     Margin = new System.Windows.Forms.Padding(0)
                 };
-                stats.Controls.Add(lqty, 0, 0);
+                msg.Controls.Add(lstatus, 0, 0);
 
-
-                Label lamount = new Label
+                // Create a LinkLabel with the owner name
+                Label tstamp = new Label
                 {
-                    Text = amount,
                     AutoSize = true,
+                    Font = new System.Drawing.Font("Microsoft Sans Serif", 7.77F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0))),
+                    Text = timestamp.ToString("MM/dd/yyyy hh:mm:ss"),
                     TextAlign = System.Drawing.ContentAlignment.TopLeft,
                     Margin = new System.Windows.Forms.Padding(0)
                 };
-                stats.Controls.Add(lamount, 1, 0);
-            }
-
-
-            TableLayoutPanel msg = new TableLayoutPanel
-            {
-                RowCount = 2,
-                ColumnCount = 1,
-                Dock = DockStyle.Bottom,
-                AutoSize = true,
-                BackColor = bgcolor,
-                Padding = new System.Windows.Forms.Padding(0),
-                Margin = new System.Windows.Forms.Padding(0)
-            };
-            // Add the width of the first column to fixed value and second to fill remaining space
-            msg.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 276));
-            layoutPanel.Controls.Add(msg);
-
-            Label lstatus = new Label
-            {
-                Text = status,
-                AutoSize = true,
-                TextAlign = System.Drawing.ContentAlignment.TopLeft,
-                Margin = new System.Windows.Forms.Padding(0)
-            };
-            msg.Controls.Add(lstatus, 0, 0);
-
-            // Create a LinkLabel with the owner name
-            Label tstamp = new Label
-            {
-                AutoSize = true,
-                Font = new System.Drawing.Font("Microsoft Sans Serif", 7.77F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0))),
-                Text = timestamp.ToString("MM/dd/yyyy hh:mm:ss"),
-                TextAlign = System.Drawing.ContentAlignment.TopLeft,
-                Margin = new System.Windows.Forms.Padding(0)
-            };
-            msg.Controls.Add(tstamp, 0, 1);
+                msg.Controls.Add(tstamp, 0, 1);
+            }));
         }
 
         void Owner_LinkClicked(string ownerId)
@@ -3810,13 +3816,13 @@ namespace SUP
                 rownum++;
                 numChangesDisplayed++;
             }
-
+            this.Invoke((Action)(() =>
+            {
             transFlow.ResumeLayout();
             transFlow.Visible = true;
             KeysFlow.Visible = true;
 
-            this.Invoke((Action)(() =>
-            {
+          
                 btnRefreshTransactions.Enabled = true;
             }));
 
