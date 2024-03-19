@@ -250,7 +250,7 @@ namespace SUP
             catch { }
 
             try { File.Delete(@"ROOTS-PROCESSING"); } catch { }
- 
+
 
             OBcontrol.Dock = DockStyle.Fill;
             OBcontrol.ProfileURNChanged += OBControl_ProfileURNChanged;
@@ -1276,54 +1276,448 @@ namespace SUP
             {
                 tmrSearchMemoryPool.Stop();
 
-              
-                    try
+
+                try
+                {
+                    Task SearchMemoryTask = Task.Run(() =>
                     {
-                        Task SearchMemoryTask = Task.Run(() =>
+                        List<string> differenceQuery = new List<string>();
+                        List<string> newtransactions = new List<string>();
+                        string flattransactions;
+                        OBJState isobject = new OBJState();
+
+                        List<OBJState> foundobjects = new List<OBJState>();
+                        NetworkCredential credentials = new NetworkCredential("good-user", "better-password");
+                        NBitcoin.RPC.RPCClient rpcClient;
+                        string myFriendsJson = "";
+                        Dictionary<string, string> myFriends = new Dictionary<string, string>();
+
+                        if (File.Exists(@"root\MyFriendList.Json"))
                         {
-                            List<string> differenceQuery = new List<string>();
-                            List<string> newtransactions = new List<string>();
-                            string flattransactions;
-                            OBJState isobject = new OBJState();
+                            myFriendsJson = File.ReadAllText(@"root\MyFriendList.Json");
+                            myFriends = JsonConvert.DeserializeObject<Dictionary<string, string>>(myFriendsJson);
+                        }
+                        string filter = "";
 
-                            List<OBJState> foundobjects = new List<OBJState>();
-                            NetworkCredential credentials = new NetworkCredential("good-user", "better-password");
-                            NBitcoin.RPC.RPCClient rpcClient;
-                            string myFriendsJson = "";
-                            Dictionary<string, string> myFriends = new Dictionary<string, string>();
 
-                            if (File.Exists(@"root\MyFriendList.Json"))
+                        try
+                        {
+                            rpcClient = new NBitcoin.RPC.RPCClient(credentials, new Uri(@"http://127.0.0.1:18332"), Network.Main);
+                            flattransactions = rpcClient.SendCommand("getrawmempool").ResultString;
+                            flattransactions = flattransactions.Replace("\"", "").Replace("[", "").Replace("]", "").Replace("\r", "").Replace("\n", "").Replace(" ", "");
+                            newtransactions = flattransactions.Split(',').ToList();
+
+                            if (BTCTMemPool.Count == 0)
                             {
-                                myFriendsJson = File.ReadAllText(@"root\MyFriendList.Json");
-                                myFriends = JsonConvert.DeserializeObject<Dictionary<string, string>>(myFriendsJson);
+                                BTCTMemPool = newtransactions;
                             }
-                            string filter = "";
+                            else
+                            {
+                                differenceQuery =
+                                (List<string>)newtransactions.Except(BTCTMemPool).ToList(); ;
+
+                                BTCTMemPool = newtransactions;
+
+                                foreach (var s in differenceQuery)
+                                {
+                                    try
+                                    {
+
+                                        Root root = Root.GetRootByTransactionId(s, mainnetLogin, mainnetPassword, @"http://127.0.0.1:18332", "111");
+                                        if (root.Signed == true || (root.File != null && root.File.ContainsKey("SEC")))
+                                        {
+
+                                            if (!System.IO.File.Exists(@"root\" + root.Keyword.Keys.Last() + @"\BLOCK") && !System.IO.File.Exists(@"root\" + root.Keyword.Keys.Last() + @"\MUTE"))
+                                            {
+                                                bool find = false;
+
+                                                if (filter != "")
+                                                {
+
+                                                    if (filter.StartsWith("#"))
+                                                    {
+                                                        find = root.Keyword.ContainsKey(Root.GetPublicAddressByKeyword(filter.Substring(1)));
+                                                    }
+                                                    else
+                                                    {
+
+                                                        find = root.Keyword.ContainsKey(filter);
+
+                                                    }
+                                                }
+                                                else { find = true; }
+
+                                                if (File.Exists(@"LIVE_FILTER_ENABLED")) { find = myFriends.ContainsKey(root.Keyword.Keys.Last()); }
+                                                if (find && root.File.ContainsKey("SEC") && root.Keyword.ContainsKey(profileURN.Links[0].LinkData.ToString()))
+                                                {
+                                                    //enough delay so the in memory element data is populated
+                                                    root = Root.GetRootByTransactionId(s, mainnetLogin, mainnetPassword, @"http://127.0.0.1:18332", "111");
+                                                    Root[] addToRoot = Root.GetRootsByAddress(profileURN.Links[0].LinkData.ToString(), mainnetLogin, mainnetPassword, @"http://127.0.0.1:18332");//ADD SEC message to leveld DB with system date stamp and refresh supPrivate Screen if active provile.
+                                                    root.Id = addToRoot.Max(x => x.Id) + 1;
+
+                                                    // Convert addToRoot to a List
+                                                    List<Root> addToRootList = new List<Root>(addToRoot);
+
+                                                    // Add the root object to the list
+                                                    addToRootList.Add(root);
+
+                                                    // Convert the list back to an array if needed
+                                                    addToRoot = addToRootList.ToArray();
+
+                                                    try { Directory.CreateDirectory(@"root\" + profileURN.Links[0].LinkData.ToString()); } catch { }
+                                                    var rootSerialized = JsonConvert.SerializeObject(addToRoot);
+                                                    System.IO.File.WriteAllText(@"root\" + profileURN.Links[0].LinkData.ToString() + @"\" + "ROOTS.json", rootSerialized);
+
+                                                    this.Invoke((MethodInvoker)delegate
+                                                    {
+                                                        numPrivateMessagesDisplayed = 0;
+
+                                                        RefreshPrivateSupMessages();
 
 
+                                                        if (splitContainer1.Panel2Collapsed)
+                                                        {
+                                                            splitContainer1.Panel2Collapsed = false;
+                                                        }
+                                                    });
+
+                                                }
+
+                                                if (find && root.Message.Count() > 0)
+                                                {
+
+                                                    string _from = root.SignedBy;
+                                                    string _to = "";
+                                                    if (root.Keyword.Count() > 1) { _to = root.Keyword.Keys.First(); } else { _to = root.Keyword.Keys.Last(); }
+
+                                                    string _fromId = _from;
+
+                                                    PROState Fromprofile = PROState.GetProfileByAddress(_fromId, mainnetLogin, mainnetPassword, @"http://127.0.0.1:18332", "111");
+
+                                                    if (Fromprofile.URN != null)
+                                                    { _fromId = Fromprofile.URN; }
+
+                                                    string _toId = _to;
+
+                                                    PROState Toprofile = PROState.GetProfileByAddress(_toId, mainnetLogin, mainnetPassword, @"http://127.0.0.1:18332", "111");
+
+                                                    if (Toprofile.URN != null)
+                                                    { _toId = Toprofile.URN; }
+
+                                                    string _message = string.Join(" ", root.Message);
+                                                    string _blockdate = root.BlockDate.ToString("yyyyMMddHHmmss");
+                                                    string imglocation = "";
+                                                    string unfilteredmessage = _message;
+                                                    _message = Regex.Replace(_message, "<<.*?>>", "");
+
+
+                                                    this.Invoke((MethodInvoker)delegate
+                                                    {
+                                                        try { imglocation = myFriends[_from]; } catch { }
+                                                        CreateRow(imglocation, _fromId, _from, DateTime.ParseExact(_blockdate, "yyyyMMddHHmmss", CultureInfo.InvariantCulture), " ", "", false, supFlow, true);
+
+                                                        try { imglocation = myFriends[_to]; } catch { }
+                                                        CreateRow(imglocation, _toId, _to, DateTime.ParseExact("19700101010101", "yyyyMMddHHmmss", CultureInfo.InvariantCulture), _message, root.TransactionId, false, supFlow, true);
+
+                                                    });
+
+                                                    string pattern = "<<.*?>>";
+                                                    MatchCollection matches = Regex.Matches(unfilteredmessage, pattern);
+                                                    foreach (Match match in matches)
+                                                    {
+
+
+                                                        string content = match.Value.Substring(2, match.Value.Length - 4);
+                                                        if (!int.TryParse(content, NumberStyles.Any, CultureInfo.GetCultureInfo("en-US"), out int r) && !content.Trim().StartsWith("#"))
+                                                        {
+
+                                                            string imgurn = content;
+
+                                                            if (!content.ToLower().StartsWith("http"))
+                                                            {
+                                                                imgurn = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + @"\root\" + content.Replace("BTC:", "").Replace("MZC:", "").Replace("LTC:", "").Replace("DOG:", "").Replace("IPFS:", "").Replace("btc:", "").Replace("mzc:", "").Replace("ltc:", "").Replace("dog:", "").Replace("ipfs:", "").Replace(@"/", @"\");
+
+                                                                if (content.ToLower().StartsWith("ipfs:")) { imgurn = imgurn.Replace(@"\root\", @"\ipfs\"); }
+                                                            }
+
+                                                            string extension = Path.GetExtension(imgurn).ToLower();
+                                                            List<string> imgExtensions = new List<string> { ".bmp", ".gif", ".ico", ".jpeg", ".jpg", ".png", ".tif", ".tiff", ".mp4", ".avi", ".wav", ".mp3" };
+
+
+                                                            string vpattern = @"(?:youtu\.be/|youtube(?:-nocookie)?\.com/(?:[^/\n\s]*[/\n\s]*(?:v/|e(?:mbed)?/|.*[?&]v=))?)?([a-zA-Z0-9_-]{11})";
+                                                            Match vmatch = Regex.Match(content, vpattern);
+
+
+                                                            if (!imgExtensions.Contains(extension) && vmatch.Value.Length < 12)
+                                                            {
+
+
+                                                                try
+                                                                {
+                                                                    string html = "";
+                                                                    WebClient client = new WebClient();
+                                                                    // Create a WebClient object to fetch the webpage
+                                                                    if (!content.ToLower().EndsWith(".zip"))
+                                                                    {
+                                                                        html = client.DownloadString(content.StripLeadingTrailingSpaces());
+                                                                    }
+
+                                                                    // Use regular expressions to extract the metadata from the HTML
+                                                                    string title = Regex.Match(html, @"<title>\s*(.+?)\s*</title>").Groups[1].Value;
+                                                                    string description = Regex.Match(html, @"<meta\s+name\s*=\s*""description""\s+content\s*=\s*""(.+?)""\s*/?>").Groups[1].Value;
+                                                                    string imageUrl = Regex.Match(html, @"<meta\s+property\s*=\s*""og:image""\s+content\s*=\s*""(.+?)""\s*/?>").Groups[1].Value;
+
+                                                                    if (description != "")
+                                                                    {
+                                                                        this.Invoke((MethodInvoker)delegate
+                                                                        {
+                                                                            // Create a new panel to display the metadata
+                                                                            Panel panel = new Panel();
+                                                                            panel.BorderStyle = BorderStyle.FixedSingle;
+                                                                            panel.Size = new Size(supFlow.Width - 50, 100);
+
+                                                                            // Create a label for the title
+                                                                            Label titleLabel = new Label();
+                                                                            titleLabel.Text = title;
+                                                                            titleLabel.Dock = DockStyle.Top;
+                                                                            titleLabel.Font = new Font("Segoe UI", 12, FontStyle.Bold);
+                                                                            titleLabel.ForeColor = Color.White;
+                                                                            titleLabel.MinimumSize = new Size(supFlow.Width - 150, 30);
+                                                                            titleLabel.Padding = new Padding(5);
+                                                                            titleLabel.MouseClick += (sender2, e2) => { Attachment_Clicked(content); };
+                                                                            panel.Controls.Add(titleLabel);
+
+                                                                            // Create a label for the description
+                                                                            Label descriptionLabel = new Label();
+                                                                            descriptionLabel.Text = description;
+                                                                            descriptionLabel.ForeColor = Color.White;
+                                                                            descriptionLabel.Dock = DockStyle.Fill;
+                                                                            descriptionLabel.Padding = new Padding(5, 40, 5, 5);
+                                                                            descriptionLabel.MouseClick += (sender2, e2) => { Attachment_Clicked(content); };
+                                                                            panel.Controls.Add(descriptionLabel);
+
+                                                                            // Add an image to the panel if one is defined
+                                                                            if (!String.IsNullOrEmpty(imageUrl))
+                                                                            {
+                                                                                try
+                                                                                {
+                                                                                    // Create a MemoryStream object from the image data
+                                                                                    byte[] imageData = client.DownloadData(imageUrl);
+                                                                                    MemoryStream memoryStream = new MemoryStream(imageData);
+
+                                                                                    // Create a new PictureBox control and add it to the panel
+                                                                                    PictureBox pictureBox = new PictureBox();
+                                                                                    pictureBox.Dock = DockStyle.Left;
+                                                                                    pictureBox.Size = new Size(100, 100);
+                                                                                    pictureBox.SizeMode = PictureBoxSizeMode.StretchImage;
+                                                                                    pictureBox.Image = Image.FromStream(memoryStream);
+                                                                                    pictureBox.MouseClick += (sender2, e2) => { Attachment_Clicked(content); };
+                                                                                    panel.Controls.Add(pictureBox);
+                                                                                }
+                                                                                catch
+                                                                                {
+                                                                                }
+                                                                            }
+
+
+                                                                            this.supFlow.Controls.Add(panel);
+                                                                            supFlow.Controls.SetChildIndex(panel, 0);
+                                                                        });
+
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        this.Invoke((MethodInvoker)delegate
+                                                                        {  // Create a new panel to display the metadata
+                                                                            Panel panel = new Panel();
+                                                                            panel.BorderStyle = BorderStyle.FixedSingle;
+                                                                            panel.Size = new Size(supFlow.Width - 50, 30);
+
+                                                                            // Create a label for the title
+                                                                            LinkLabel titleLabel = new LinkLabel();
+                                                                            titleLabel.Text = content;
+                                                                            titleLabel.Links[0].LinkData = imgurn;
+                                                                            titleLabel.Dock = DockStyle.Top;
+                                                                            titleLabel.Font = new Font("Segoe UI", 8, FontStyle.Bold);
+                                                                            titleLabel.LinkColor = System.Drawing.SystemColors.GradientActiveCaption;
+                                                                            titleLabel.MinimumSize = new Size(supFlow.Width - 150, 30);
+                                                                            titleLabel.Padding = new Padding(5);
+                                                                            titleLabel.MouseClick += (sender2, e2) => { Attachment_Clicked(imgurn); };
+                                                                            panel.Controls.Add(titleLabel);
+
+
+                                                                            this.supFlow.Controls.Add(panel);
+                                                                            supFlow.Controls.SetChildIndex(panel, 0);
+                                                                        });
+
+                                                                    }
+                                                                }
+                                                                catch
+                                                                {
+
+                                                                    this.Invoke((MethodInvoker)delegate
+                                                                    {  // Create a new panel to display the metadata
+                                                                        Panel panel = new Panel();
+                                                                        panel.BorderStyle = BorderStyle.FixedSingle;
+                                                                        panel.Size = new Size(supFlow.Width - 50, 30);
+
+                                                                        // Create a label for the title
+                                                                        LinkLabel titleLabel = new LinkLabel();
+                                                                        titleLabel.Text = content;
+                                                                        titleLabel.Links[0].LinkData = imgurn;
+                                                                        titleLabel.Dock = DockStyle.Top;
+                                                                        titleLabel.Font = new Font("Segoe UI", 8, FontStyle.Bold);
+                                                                        titleLabel.LinkColor = System.Drawing.SystemColors.GradientActiveCaption;
+                                                                        titleLabel.MinimumSize = new Size(supFlow.Width - 150, 30);
+                                                                        titleLabel.Padding = new Padding(5);
+                                                                        titleLabel.MouseClick += (sender2, e2) => { Attachment_Clicked(imgurn); };
+                                                                        panel.Controls.Add(titleLabel);
+
+
+                                                                        this.supFlow.Controls.Add(panel);
+                                                                        supFlow.Controls.SetChildIndex(panel, 0);
+                                                                    });
+
+
+
+                                                                }
+                                                            }
+                                                            else
+                                                            {
+
+
+                                                                if (!int.TryParse(content, NumberStyles.Any, CultureInfo.GetCultureInfo("en-US"), out int id))
+                                                                {
+
+
+                                                                    if ((vmatch.Success && !imgExtensions.Contains(extension)) || extension == ".mp4" || extension == ".avi" || extension == ".wav" || extension == ".mp3")
+                                                                    {
+                                                                        this.Invoke((MethodInvoker)delegate
+                                                                        {
+                                                                            AddMedia(content, false, true, true);
+                                                                        });
+                                                                    }
+                                                                    else
+                                                                    {
+
+
+                                                                        this.Invoke((MethodInvoker)delegate
+                                                                        {
+                                                                            AddImage(content, false, true);
+                                                                        });
+                                                                    }
+                                                                }
+
+                                                            }
+                                                        }
+                                                    }
+
+                                                    TableLayoutPanel padding = new TableLayoutPanel
+                                                    {
+                                                        RowCount = 1,
+                                                        ColumnCount = 1,
+                                                        Dock = DockStyle.Top,
+                                                        BackColor = Color.Black,
+                                                        ForeColor = Color.White,
+                                                        AutoSize = true,
+                                                        CellBorderStyle = TableLayoutPanelCellBorderStyle.Single,
+                                                        Margin = new System.Windows.Forms.Padding(0, 0, 0, 40),
+                                                        Padding = new System.Windows.Forms.Padding(0)
+
+                                                    };
+
+                                                    padding.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, supFlow.Width - 50));
+
+                                                    this.Invoke((MethodInvoker)delegate
+                                                    {
+                                                        supFlow.Controls.Add(padding);
+                                                    });
+
+
+                                                }
+                                                if (find && root.File.ContainsKey("INQ"))
+                                                {
+                                                    INQState isINQ = new INQState();
+                                                    isINQ = INQState.GetInquiryByTransactionId(s, mainnetLogin, mainnetPassword, @"http://127.0.0.1:18332", "111");
+
+                                                    if (isINQ.TransactionId != null)
+                                                    {
+
+                                                        this.Invoke((MethodInvoker)delegate
+                                                        {
+                                                            FoundINQControl foundObject = new FoundINQControl(s, "", true);
+                                                            foundObject.Margin = new Padding(20, 7, 8, 7);
+                                                            supFlow.Controls.Add(foundObject);
+                                                            supFlow.Controls.SetChildIndex(foundObject, 2);
+                                                        });
+                                                    }
+
+                                                }
+
+
+                                                isobject = OBJState.GetObjectByTransactionId(s, mainnetLogin, mainnetPassword, @"http://127.0.0.1:18332", "111");
+                                                if (isobject.URN != null && find == true)
+                                                {
+                                                    isobject.TransactionId = s;
+                                                    foundobjects.Add(isobject);
+                                                    try { Directory.Delete(@"root\" + s, true); } catch { }
+
+
+
+                                                }
+                                                try { System.IO.Directory.Delete(@"root\" + s, true); } catch { }
+
+                                            }
+                                            else { try { System.IO.Directory.Delete(@"root\" + s, true); } catch { } }
+
+                                        }
+                                        else
+                                        {
+
+                                        }
+
+                                    }
+                                    catch (Exception ex)
+                                    {
+                                        string error = ex.Message;
+                                    }
+                                }
+
+                            }
+                        }
+                        catch
+                        {
+
+                        }
+
+
+                        if (btcActive)
+                        {
+                            newtransactions = new List<string>();
                             try
                             {
-                                rpcClient = new NBitcoin.RPC.RPCClient(credentials, new Uri(@"http://127.0.0.1:18332"), Network.Main);
+                                rpcClient = new NBitcoin.RPC.RPCClient(credentials, new Uri(@"http://127.0.0.1:8332"), Network.Main);
                                 flattransactions = rpcClient.SendCommand("getrawmempool").ResultString;
                                 flattransactions = flattransactions.Replace("\"", "").Replace("[", "").Replace("]", "").Replace("\r", "").Replace("\n", "").Replace(" ", "");
                                 newtransactions = flattransactions.Split(',').ToList();
 
-                                if (BTCTMemPool.Count == 0)
+                                if (BTCMemPool.Count == 0)
                                 {
-                                    BTCTMemPool = newtransactions;
+                                    BTCMemPool = newtransactions;
                                 }
                                 else
                                 {
                                     differenceQuery =
-                                    (List<string>)newtransactions.Except(BTCTMemPool).ToList(); ;
+                                    (List<string>)newtransactions.Except(BTCMemPool).ToList(); ;
 
-                                    BTCTMemPool = newtransactions;
+                                    BTCMemPool = newtransactions;
 
                                     foreach (var s in differenceQuery)
                                     {
                                         try
                                         {
 
-                                            Root root = Root.GetRootByTransactionId(s, mainnetLogin, mainnetPassword, @"http://127.0.0.1:18332", "111");
+                                            Root root = Root.GetRootByTransactionId(s, mainnetLogin, mainnetPassword, @"http://127.0.0.1:8332", "0");
                                             if (root.Signed == true || (root.File != null && root.File.ContainsKey("SEC")))
                                             {
 
@@ -1336,7 +1730,7 @@ namespace SUP
 
                                                         if (filter.StartsWith("#"))
                                                         {
-                                                            find = root.Keyword.ContainsKey(Root.GetPublicAddressByKeyword(filter.Substring(1)));
+                                                            find = root.Keyword.ContainsKey(Root.GetPublicAddressByKeyword(filter.Substring(1), "0"));
                                                         }
                                                         else
                                                         {
@@ -1351,8 +1745,8 @@ namespace SUP
                                                     if (find && root.File.ContainsKey("SEC") && root.Keyword.ContainsKey(profileURN.Links[0].LinkData.ToString()))
                                                     {
                                                         //enough delay so the in memory element data is populated
-                                                        root = Root.GetRootByTransactionId(s, mainnetLogin, mainnetPassword, @"http://127.0.0.1:18332", "111");
-                                                        Root[] addToRoot = Root.GetRootsByAddress(profileURN.Links[0].LinkData.ToString(), mainnetLogin, mainnetPassword, @"http://127.0.0.1:18332");//ADD SEC message to leveld DB with system date stamp and refresh supPrivate Screen if active provile.
+                                                        root = Root.GetRootByTransactionId(s, mainnetLogin, mainnetPassword, @"http://127.0.0.1:8332", "0");
+                                                        Root[] addToRoot = Root.GetRootsByAddress(profileURN.Links[0].LinkData.ToString(), mainnetLogin, mainnetPassword, @"http://127.0.0.1:8332", 0, -1, "0");//ADD SEC message to leveld DB with system date stamp and refresh supPrivate Screen if active provile.
                                                         root.Id = addToRoot.Max(x => x.Id) + 1;
 
                                                         // Convert addToRoot to a List
@@ -1392,14 +1786,14 @@ namespace SUP
 
                                                         string _fromId = _from;
 
-                                                        PROState Fromprofile = PROState.GetProfileByAddress(_fromId, mainnetLogin, mainnetPassword, @"http://127.0.0.1:18332", "111");
+                                                        PROState Fromprofile = PROState.GetProfileByAddress(_fromId, mainnetLogin, mainnetPassword, @"http://127.0.0.1:8332", "0");
 
                                                         if (Fromprofile.URN != null)
                                                         { _fromId = Fromprofile.URN; }
 
                                                         string _toId = _to;
 
-                                                        PROState Toprofile = PROState.GetProfileByAddress(_toId, mainnetLogin, mainnetPassword, @"http://127.0.0.1:18332", "111");
+                                                        PROState Toprofile = PROState.GetProfileByAddress(_toId, mainnetLogin, mainnetPassword, @"http://127.0.0.1:8332", "0");
 
                                                         if (Toprofile.URN != null)
                                                         { _toId = Toprofile.URN; }
@@ -1413,10 +1807,11 @@ namespace SUP
 
                                                         this.Invoke((MethodInvoker)delegate
                                                         {
-                                                            try { imglocation = myFriends[_to]; } catch { }
-                                                            CreateRow(imglocation, _toId, _to, DateTime.ParseExact(_blockdate, "yyyyMMddHHmmss", CultureInfo.InvariantCulture), " ", "", false, supFlow, true);
                                                             try { imglocation = myFriends[_from]; } catch { }
-                                                            CreateRow(imglocation, _fromId, _from, DateTime.ParseExact("19700101010101", "yyyyMMddHHmmss", CultureInfo.InvariantCulture), _message, root.TransactionId, false, supFlow, true);
+                                                            CreateRow(imglocation, _fromId, _from, DateTime.ParseExact(_blockdate, "yyyyMMddHHmmss", CultureInfo.InvariantCulture), " ", "", false, supFlow, true);
+
+                                                            try { imglocation = myFriends[_to]; } catch { }
+                                                            CreateRow(imglocation, _toId, _to, DateTime.ParseExact("19700101010101", "yyyyMMddHHmmss", CultureInfo.InvariantCulture), _message, root.TransactionId, false, supFlow, true);
 
                                                         });
 
@@ -1637,7 +2032,7 @@ namespace SUP
                                                     if (find && root.File.ContainsKey("INQ"))
                                                     {
                                                         INQState isINQ = new INQState();
-                                                        isINQ = INQState.GetInquiryByTransactionId(s, mainnetLogin, mainnetPassword, @"http://127.0.0.1:18332", "111");
+                                                        isINQ = INQState.GetInquiryByTransactionId(s, mainnetLogin, mainnetPassword, @"http://127.0.0.1:8332", "0");
 
                                                         if (isINQ.TransactionId != null)
                                                         {
@@ -1654,7 +2049,7 @@ namespace SUP
                                                     }
 
 
-                                                    isobject = OBJState.GetObjectByTransactionId(s, mainnetLogin, mainnetPassword, @"http://127.0.0.1:18332", "111");
+                                                    isobject = OBJState.GetObjectByTransactionId(s, mainnetLogin, mainnetPassword, @"http://127.0.0.1:8332", "0");
                                                     if (isobject.URN != null && find == true)
                                                     {
                                                         isobject.TransactionId = s;
@@ -1690,204 +2085,177 @@ namespace SUP
                             }
 
 
-                            if (btcActive)
+                        }
+
+                        if (mzcActive)
+                        {
+                            newtransactions = new List<string>();
+
+                            try
                             {
-                                newtransactions = new List<string>();
-
-                                try
+                                rpcClient = new NBitcoin.RPC.RPCClient(credentials, new Uri(@"http://127.0.0.1:12832"), Network.Main);
+                                flattransactions = rpcClient.SendCommand("getrawmempool").ResultString;
+                                flattransactions = flattransactions.Replace("\"", "").Replace("[", "").Replace("]", "").Replace("\r", "").Replace("\n", "").Replace(" ", "");
+                                newtransactions = flattransactions.Split(',').ToList();
+                                if (MZCMemPool.Count == 0)
                                 {
-                                    rpcClient = new NBitcoin.RPC.RPCClient(credentials, new Uri(@"http://127.0.0.1:8332"), Network.Main);
-                                    flattransactions = rpcClient.SendCommand("getrawmempool").ResultString;
-                                    flattransactions = flattransactions.Replace("\"", "").Replace("[", "").Replace("]", "").Replace("\r", "").Replace("\n", "").Replace(" ", "");
-                                    newtransactions = flattransactions.Split(',').ToList();
+                                    MZCMemPool = newtransactions;
+                                }
+                                else
+                                {
+                                    differenceQuery =
+                                    (List<string>)newtransactions.Except(MZCMemPool).ToList(); ;
 
-                                    if (BTCMemPool.Count == 0)
+                                    MZCMemPool = newtransactions;
+
+                                    foreach (var s in differenceQuery)
                                     {
-                                        BTCMemPool = newtransactions;
-                                    }
-                                    else
-                                    {
-                                        differenceQuery =
-                                        (List<string>)newtransactions.Except(BTCMemPool).ToList(); ;
-
-                                        BTCMemPool = newtransactions;
-
-                                        foreach (var s in differenceQuery)
+                                        try
                                         {
-                                            try
+
+                                            Root root = Root.GetRootByTransactionId(s, "good-user", "better-password", @"http://127.0.0.1:12832", "50");
+                                            if (root.Signed == true)
                                             {
-
-                                                Root root = Root.GetRootByTransactionId(s, "good-user", "better-password", @"http://127.0.0.1:8332", "0");
-                                                if (root.Signed == true)
+                                                if (!System.IO.File.Exists(@"root\" + root.Keyword.Keys.Last() + @"\BLOCK") && !System.IO.File.Exists(@"root\" + root.Keyword.Keys.Last() + @"\MUTE"))
                                                 {
-                                                    if (!System.IO.File.Exists(@"root\" + root.Keyword.Keys.Last() + @"\BLOCK") && !System.IO.File.Exists(@"root\" + root.Keyword.Keys.Last() + @"\MUTE"))
+                                                    bool find = false;
+
+                                                    if (filter != "")
                                                     {
-                                                        bool find = false;
 
-                                                        if (filter != "")
+                                                        if (filter.StartsWith("#"))
                                                         {
-
-                                                            if (filter.StartsWith("#"))
-                                                            {
-                                                                find = root.Keyword.ContainsKey(Root.GetPublicAddressByKeyword(filter.Substring(1), mainnetVersionByte));
-                                                            }
-                                                            else
-                                                            {
-
-                                                                find = root.Keyword.ContainsKey(filter);
-
-
-                                                            }
+                                                            find = root.Keyword.ContainsKey(Root.GetPublicAddressByKeyword(filter.Substring(1), mainnetVersionByte));
                                                         }
-                                                        else { find = true; }
-                                                        if (File.Exists(@"LIVE_FILTER_ENABLED")) { find = myFriends.ContainsKey(root.SignedBy); }
-                                                        if (find && root.Message.Count() > 0)
+                                                        else
                                                         {
 
-                                                            string _from = root.SignedBy;
-                                                            string _to = "";
-                                                            if (root.Keyword.Count() > 1) { _to = root.Keyword.Keys.GetItemByIndex(root.Keyword.Count() - 2); } else { _to = root.Keyword.Keys.Last(); }
-                                                            string _message = string.Join(" ", root.Message);
-                                                            string _blockdate = root.BlockDate.ToString("yyyyMMddHHmmss");
-                                                            string imglocation = "";
-                                                            string unfilteredmessage = _message;
-                                                            _message = Regex.Replace(_message, "<<.*?>>", "");
+                                                            find = root.Keyword.ContainsKey(filter);
 
 
-                                                            this.Invoke((MethodInvoker)delegate
+                                                        }
+                                                    }
+                                                    else { find = true; }
+                                                    if (File.Exists(@"LIVE_FILTER_ENABLED")) { find = myFriends.ContainsKey(root.SignedBy); }
+                                                    if (find && root.Message.Count() > 0)
+                                                    {
+
+                                                        string _from = root.SignedBy;
+                                                        string _to = "";
+                                                        if (root.Keyword.Count() > 1) { _to = root.Keyword.Keys.GetItemByIndex(root.Keyword.Count() - 2); } else { _to = root.Keyword.Keys.Last(); }
+                                                        string _message = string.Join(" ", root.Message);
+                                                        string _blockdate = root.BlockDate.ToString("yyyyMMddHHmmss");
+                                                        string imglocation = "";
+                                                        string unfilteredmessage = _message;
+                                                        _message = Regex.Replace(_message, "<<.*?>>", "");
+
+
+                                                        this.Invoke((MethodInvoker)delegate
+                                                        {
+                                                            try { imglocation = myFriends[_from]; } catch { }
+                                                            CreateRow(imglocation, _from, _from, DateTime.ParseExact(_blockdate, "yyyyMMddHHmmss", CultureInfo.InvariantCulture), " ", "", false, supFlow, true);
+                                                            try { imglocation = myFriends[_to]; } catch { }
+                                                            CreateRow(imglocation, _to, _to, DateTime.ParseExact("19700101010101", "yyyyMMddHHmmss", CultureInfo.InvariantCulture), _message, root.TransactionId, false, supFlow, true);
+                                                        });
+
+                                                        string pattern = "<<.*?>>";
+                                                        MatchCollection matches = Regex.Matches(unfilteredmessage, pattern);
+                                                        foreach (Match match in matches)
+                                                        {
+
+
+                                                            string content = match.Value.Substring(2, match.Value.Length - 4);
+                                                            if (!int.TryParse(content, NumberStyles.Any, CultureInfo.GetCultureInfo("en-US"), out int r) && !content.Trim().StartsWith("#"))
                                                             {
-                                                                try { imglocation = myFriends[_to]; } catch { }
-                                                                CreateRow(imglocation, _to, _to, DateTime.ParseExact(_blockdate, "yyyyMMddHHmmss", CultureInfo.InvariantCulture), " ", "", false, supFlow, true);
-                                                                try { imglocation = myFriends[_from]; } catch { }
-                                                                CreateRow(imglocation, _from, _from, DateTime.ParseExact("19700101010101", "yyyyMMddHHmmss", CultureInfo.InvariantCulture), _message, root.TransactionId, false, supFlow, true);
-                                                            });
 
-                                                            string pattern = "<<.*?>>";
-                                                            MatchCollection matches = Regex.Matches(unfilteredmessage, pattern);
-                                                            foreach (Match match in matches)
-                                                            {
+                                                                string imgurn = content;
 
+                                                                if (!content.ToLower().StartsWith("http"))
+                                                                {
+                                                                    imgurn = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + @"\root\" + content.Replace("BTC:", "").Replace("MZC:", "").Replace("LTC:", "").Replace("DOG:", "").Replace("IPFS:", "").Replace("btc:", "").Replace("mzc:", "").Replace("ltc:", "").Replace("dog:", "").Replace("ipfs:", "").Replace(@"/", @"\");
 
-                                                                string content = match.Value.Substring(2, match.Value.Length - 4);
-                                                                if (!int.TryParse(content, NumberStyles.Any, CultureInfo.GetCultureInfo("en-US"), out int r) && !content.Trim().StartsWith("#"))
+                                                                    if (content.ToLower().StartsWith("ipfs:")) { imgurn = imgurn.Replace(@"\root\", @"\ipfs\"); }
+                                                                }
+
+                                                                string extension = Path.GetExtension(imgurn).ToLower();
+                                                                List<string> imgExtensions = new List<string> { ".bmp", ".gif", ".ico", ".jpeg", ".jpg", ".png", ".tif", ".tiff", ".mp4", ".avi", ".wav", ".mp3" };
+                                                                string vpattern = @"(?:youtu\.be/|youtube(?:-nocookie)?\.com/(?:[^/\n\s]*[/\n\s]*(?:v/|e(?:mbed)?/|.*[?&]v=))?)?([a-zA-Z0-9_-]{11})";
+                                                                Match vmatch = Regex.Match(content, vpattern);
+                                                                if (!imgExtensions.Contains(extension) && vmatch.Value.Length < 12)
                                                                 {
 
-                                                                    string imgurn = content;
 
-                                                                    if (!content.ToLower().StartsWith("http"))
+                                                                    try
                                                                     {
-                                                                        imgurn = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + @"\root\" + content.Replace("BTC:", "").Replace("MZC:", "").Replace("LTC:", "").Replace("DOG:", "").Replace("IPFS:", "").Replace("btc:", "").Replace("mzc:", "").Replace("ltc:", "").Replace("dog:", "").Replace("ipfs:", "").Replace(@"/", @"\");
+                                                                        // Create a WebClient object to fetch the webpage
+                                                                        WebClient client = new WebClient();
+                                                                        string html = client.DownloadString(content.StripLeadingTrailingSpaces());
 
-                                                                        if (content.ToLower().StartsWith("ipfs:")) { imgurn = imgurn.Replace(@"\root\", @"\ipfs\"); }
-                                                                    }
+                                                                        // Use regular expressions to extract the metadata from the HTML
+                                                                        string title = Regex.Match(html, @"<title>\s*(.+?)\s*</title>").Groups[1].Value;
+                                                                        string description = Regex.Match(html, @"<meta\s+name\s*=\s*""description""\s+content\s*=\s*""(.+?)""\s*/?>").Groups[1].Value;
+                                                                        string imageUrl = Regex.Match(html, @"<meta\s+property\s*=\s*""og:image""\s+content\s*=\s*""(.+?)""\s*/?>").Groups[1].Value;
 
-                                                                    string extension = Path.GetExtension(imgurn).ToLower();
-                                                                    List<string> imgExtensions = new List<string> { ".bmp", ".gif", ".ico", ".jpeg", ".jpg", ".png", ".tif", ".tiff", ".mp4", ".avi", ".wav", ".mp3" };
-                                                                    string vpattern = @"(?:youtu\.be/|youtube(?:-nocookie)?\.com/(?:[^/\n\s]*[/\n\s]*(?:v/|e(?:mbed)?/|.*[?&]v=))?)?([a-zA-Z0-9_-]{11})";
-                                                                    Match vmatch = Regex.Match(content, vpattern);
-                                                                    if (!imgExtensions.Contains(extension) && vmatch.Value.Length < 12)
-                                                                    {
-
-
-                                                                        try
+                                                                        if (description != "")
                                                                         {
-                                                                            // Create a WebClient object to fetch the webpage
-                                                                            WebClient client = new WebClient();
-                                                                            string html = client.DownloadString(content.StripLeadingTrailingSpaces());
-
-                                                                            // Use regular expressions to extract the metadata from the HTML
-                                                                            string title = Regex.Match(html, @"<title>\s*(.+?)\s*</title>").Groups[1].Value;
-                                                                            string description = Regex.Match(html, @"<meta\s+name\s*=\s*""description""\s+content\s*=\s*""(.+?)""\s*/?>").Groups[1].Value;
-                                                                            string imageUrl = Regex.Match(html, @"<meta\s+property\s*=\s*""og:image""\s+content\s*=\s*""(.+?)""\s*/?>").Groups[1].Value;
-
-                                                                            if (description != "")
+                                                                            this.Invoke((MethodInvoker)delegate
                                                                             {
-                                                                                this.Invoke((MethodInvoker)delegate
+                                                                                // Create a new panel to display the metadata
+                                                                                Panel panel = new Panel();
+                                                                                panel.BorderStyle = BorderStyle.FixedSingle;
+                                                                                panel.Size = new Size(supFlow.Width - 30, 100);
+
+                                                                                // Create a label for the title
+                                                                                Label titleLabel = new Label();
+                                                                                titleLabel.Text = title;
+                                                                                titleLabel.Dock = DockStyle.Top;
+                                                                                titleLabel.Font = new Font("Segoe UI", 12, FontStyle.Bold);
+                                                                                titleLabel.ForeColor = Color.White;
+                                                                                titleLabel.MinimumSize = new Size(supFlow.Width - 150, 30);
+                                                                                titleLabel.Padding = new Padding(5);
+                                                                                titleLabel.MouseClick += (sender2, e2) => { Attachment_Clicked(content); };
+                                                                                panel.Controls.Add(titleLabel);
+
+                                                                                // Create a label for the description
+                                                                                Label descriptionLabel = new Label();
+                                                                                descriptionLabel.Text = description;
+                                                                                descriptionLabel.ForeColor = Color.White;
+                                                                                descriptionLabel.Dock = DockStyle.Fill;
+                                                                                descriptionLabel.Padding = new Padding(5, 40, 5, 5);
+                                                                                descriptionLabel.MouseClick += (sender2, e2) => { Attachment_Clicked(content); };
+                                                                                panel.Controls.Add(descriptionLabel);
+
+                                                                                // Add an image to the panel if one is defined
+                                                                                if (!String.IsNullOrEmpty(imageUrl))
                                                                                 {
-                                                                                    // Create a new panel to display the metadata
-                                                                                    Panel panel = new Panel();
-                                                                                    panel.BorderStyle = BorderStyle.FixedSingle;
-                                                                                    panel.Size = new Size(supFlow.Width - 50, 100);
-
-                                                                                    // Create a label for the title
-                                                                                    Label titleLabel = new Label();
-                                                                                    titleLabel.Text = title;
-                                                                                    titleLabel.Dock = DockStyle.Top;
-                                                                                    titleLabel.Font = new Font("Segoe UI", 12, FontStyle.Bold);
-                                                                                    titleLabel.ForeColor = Color.White;
-                                                                                    titleLabel.MinimumSize = new Size(supFlow.Width - 150, 30);
-                                                                                    titleLabel.Padding = new Padding(5);
-                                                                                    titleLabel.MouseClick += (sender2, e2) => { Attachment_Clicked(content); };
-                                                                                    panel.Controls.Add(titleLabel);
-
-                                                                                    // Create a label for the description
-                                                                                    Label descriptionLabel = new Label();
-                                                                                    descriptionLabel.Text = description;
-                                                                                    descriptionLabel.ForeColor = Color.White;
-                                                                                    descriptionLabel.Dock = DockStyle.Fill;
-                                                                                    descriptionLabel.Padding = new Padding(5, 40, 5, 5);
-                                                                                    descriptionLabel.MouseClick += (sender2, e2) => { Attachment_Clicked(content); };
-                                                                                    panel.Controls.Add(descriptionLabel);
-
-                                                                                    // Add an image to the panel if one is defined
-                                                                                    if (!String.IsNullOrEmpty(imageUrl))
+                                                                                    try
                                                                                     {
-                                                                                        try
-                                                                                        {
-                                                                                            // Create a MemoryStream object from the image data
-                                                                                            byte[] imageData = client.DownloadData(imageUrl);
-                                                                                            MemoryStream memoryStream = new MemoryStream(imageData);
+                                                                                        // Create a MemoryStream object from the image data
+                                                                                        byte[] imageData = client.DownloadData(imageUrl);
+                                                                                        MemoryStream memoryStream = new MemoryStream(imageData);
 
-                                                                                            // Create a new PictureBox control and add it to the panel
-                                                                                            PictureBox pictureBox = new PictureBox();
-                                                                                            pictureBox.Dock = DockStyle.Left;
-                                                                                            pictureBox.Size = new Size(100, 100);
-                                                                                            pictureBox.SizeMode = PictureBoxSizeMode.StretchImage;
-                                                                                            pictureBox.Image = Image.FromStream(memoryStream);
-                                                                                            pictureBox.MouseClick += (sender2, e2) => { Attachment_Clicked(content); };
-                                                                                            panel.Controls.Add(pictureBox);
-                                                                                        }
-                                                                                        catch
-                                                                                        {
-                                                                                        }
+                                                                                        // Create a new PictureBox control and add it to the panel
+                                                                                        PictureBox pictureBox = new PictureBox();
+                                                                                        pictureBox.Dock = DockStyle.Left;
+                                                                                        pictureBox.Size = new Size(100, 100);
+                                                                                        pictureBox.SizeMode = PictureBoxSizeMode.StretchImage;
+                                                                                        pictureBox.Image = Image.FromStream(memoryStream);
+                                                                                        pictureBox.MouseClick += (sender2, e2) => { Attachment_Clicked(content); };
+                                                                                        panel.Controls.Add(pictureBox);
                                                                                     }
+                                                                                    catch
+                                                                                    {
+                                                                                    }
+                                                                                }
 
 
-                                                                                    this.supFlow.Controls.Add(panel);
-                                                                                    supFlow.Controls.SetChildIndex(panel, 0);
-                                                                                });
+                                                                                this.supFlow.Controls.Add(panel);
+                                                                                supFlow.Controls.SetChildIndex(panel, 0);
+                                                                            });
 
-                                                                            }
-                                                                            else
-                                                                            {
-                                                                                this.Invoke((MethodInvoker)delegate
-                                                                                {  // Create a new panel to display the metadata
-                                                                                    Panel panel = new Panel();
-                                                                                    panel.BorderStyle = BorderStyle.FixedSingle;
-                                                                                    panel.Size = new Size(supFlow.Width - 50, 30);
-
-                                                                                    // Create a label for the title
-                                                                                    LinkLabel titleLabel = new LinkLabel();
-                                                                                    titleLabel.Text = content;
-                                                                                    titleLabel.Links[0].LinkData = imgurn;
-                                                                                    titleLabel.Dock = DockStyle.Top;
-                                                                                    titleLabel.Font = new Font("Segoe UI", 8, FontStyle.Bold);
-                                                                                    titleLabel.LinkColor = System.Drawing.SystemColors.GradientActiveCaption;
-                                                                                    titleLabel.MinimumSize = new Size(supFlow.Width - 150, 30);
-                                                                                    titleLabel.Padding = new Padding(5);
-                                                                                    titleLabel.MouseClick += (sender2, e2) => { Attachment_Clicked(imgurn); };
-                                                                                    panel.Controls.Add(titleLabel);
-
-
-                                                                                    this.supFlow.Controls.Add(panel);
-                                                                                    supFlow.Controls.SetChildIndex(panel, 0);
-                                                                                });
-
-                                                                            }
                                                                         }
-                                                                        catch
+                                                                        else
                                                                         {
-
                                                                             this.Invoke((MethodInvoker)delegate
                                                                             {  // Create a new panel to display the metadata
                                                                                 Panel panel = new Panel();
@@ -1911,305 +2279,303 @@ namespace SUP
                                                                                 supFlow.Controls.SetChildIndex(panel, 0);
                                                                             });
 
-
-
                                                                         }
                                                                     }
-                                                                    else
+                                                                    catch
                                                                     {
 
+                                                                        this.Invoke((MethodInvoker)delegate
+                                                                        {  // Create a new panel to display the metadata
+                                                                            Panel panel = new Panel();
+                                                                            panel.BorderStyle = BorderStyle.FixedSingle;
+                                                                            panel.Size = new Size(supFlow.Width - 50, 30);
 
-                                                                        if (!int.TryParse(content, NumberStyles.Any, CultureInfo.GetCultureInfo("en-US"), out int id))
-                                                                        {
-                                                                            if (vmatch.Success || extension == ".mp4" || extension == ".avi" || extension == ".wav" || extension == ".mp3")
-                                                                            {
-                                                                                this.Invoke((MethodInvoker)delegate
-                                                                                {
-                                                                                    AddMedia(content, false, true, true);
-                                                                                });
-                                                                            }
-                                                                            else
-                                                                            {
+                                                                            // Create a label for the title
+                                                                            LinkLabel titleLabel = new LinkLabel();
+                                                                            titleLabel.Text = content;
+                                                                            titleLabel.Links[0].LinkData = imgurn;
+                                                                            titleLabel.Dock = DockStyle.Top;
+                                                                            titleLabel.Font = new Font("Segoe UI", 8, FontStyle.Bold);
+                                                                            titleLabel.LinkColor = System.Drawing.SystemColors.GradientActiveCaption;
+                                                                            titleLabel.MinimumSize = new Size(supFlow.Width - 150, 30);
+                                                                            titleLabel.Padding = new Padding(5);
+                                                                            titleLabel.MouseClick += (sender2, e2) => { Attachment_Clicked(imgurn); };
+                                                                            panel.Controls.Add(titleLabel);
 
 
-                                                                                this.Invoke((MethodInvoker)delegate
-                                                                                {
-                                                                                    AddImage(content, false, true);
-                                                                                });
-                                                                            }
-                                                                        }
+                                                                            this.supFlow.Controls.Add(panel);
+                                                                            supFlow.Controls.SetChildIndex(panel, 0);
+                                                                        });
+
+
 
                                                                     }
                                                                 }
-                                                            }
-
-                                                            TableLayoutPanel padding = new TableLayoutPanel
-                                                            {
-                                                                RowCount = 1,
-                                                                ColumnCount = 1,
-                                                                Dock = DockStyle.Top,
-                                                                BackColor = Color.Black,
-                                                                ForeColor = Color.White,
-                                                                AutoSize = true,
-                                                                CellBorderStyle = TableLayoutPanelCellBorderStyle.Single,
-                                                                Margin = new System.Windows.Forms.Padding(0, 0, 0, 40),
-                                                                Padding = new System.Windows.Forms.Padding(0)
-
-                                                            };
-
-                                                            padding.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, supFlow.Width - 50));
-
-                                                            this.Invoke((MethodInvoker)delegate
-                                                            {
-                                                                supFlow.Controls.Add(padding);
-                                                            });
-
-
-                                                        }
-                                                        if (find && root.File.ContainsKey("INQ"))
-                                                        {
-                                                            INQState isINQ = new INQState();
-                                                            isINQ = INQState.GetInquiryByTransactionId(s, "good-user", "better-password", @"http://127.0.0.1:8332", "0");
-
-                                                            if (isINQ.TransactionId != null)
-                                                            {
-
-                                                                this.Invoke((MethodInvoker)delegate
-                                                                {
-                                                                    FoundINQControl foundObject = new FoundINQControl(s, "", testnet);
-                                                                    foundObject.Margin = new Padding(20, 7, 8, 7);
-                                                                    supFlow.Controls.Add(foundObject);
-                                                                    supFlow.Controls.SetChildIndex(foundObject, 2);
-                                                                });
-                                                            }
-
-                                                        }
-
-                                                        isobject = OBJState.GetObjectByTransactionId(s, "good-user", "better-password", @"http://127.0.0.1:8332", "0");
-                                                        if (isobject.URN != null && find == true)
-                                                        {
-                                                            isobject.TransactionId = s;
-                                                            foundobjects.Add(isobject);
-                                                            try { Directory.Delete(@"root\" + s, true); } catch { }
-
-
-
-                                                        }
-                                                        try { System.IO.Directory.Delete(@"root\" + s, true); } catch { }
-
-                                                    }
-                                                    else { try { System.IO.Directory.Delete(@"root\" + s, true); } catch { } }
-
-                                                }
-                                                else { }
-
-                                            }
-                                            catch { }
-
-                                        }
-
-                                    }
-                                }
-                                catch { }
-                            }
-
-                            if (mzcActive)
-                            {
-                                newtransactions = new List<string>();
-
-                                try
-                                {
-                                    rpcClient = new NBitcoin.RPC.RPCClient(credentials, new Uri(@"http://127.0.0.1:12832"), Network.Main);
-                                    flattransactions = rpcClient.SendCommand("getrawmempool").ResultString;
-                                    flattransactions = flattransactions.Replace("\"", "").Replace("[", "").Replace("]", "").Replace("\r", "").Replace("\n", "").Replace(" ", "");
-                                    newtransactions = flattransactions.Split(',').ToList();
-                                    if (MZCMemPool.Count == 0)
-                                    {
-                                        MZCMemPool = newtransactions;
-                                    }
-                                    else
-                                    {
-                                        differenceQuery =
-                                        (List<string>)newtransactions.Except(MZCMemPool).ToList(); ;
-
-                                        MZCMemPool = newtransactions;
-
-                                        foreach (var s in differenceQuery)
-                                        {
-                                            try
-                                            {
-
-                                                Root root = Root.GetRootByTransactionId(s, "good-user", "better-password", @"http://127.0.0.1:12832", "50");
-                                                if (root.Signed == true)
-                                                {
-                                                    if (!System.IO.File.Exists(@"root\" + root.Keyword.Keys.Last() + @"\BLOCK") && !System.IO.File.Exists(@"root\" + root.Keyword.Keys.Last() + @"\MUTE"))
-                                                    {
-                                                        bool find = false;
-
-                                                        if (filter != "")
-                                                        {
-
-                                                            if (filter.StartsWith("#"))
-                                                            {
-                                                                find = root.Keyword.ContainsKey(Root.GetPublicAddressByKeyword(filter.Substring(1), mainnetVersionByte));
-                                                            }
-                                                            else
-                                                            {
-
-                                                                find = root.Keyword.ContainsKey(filter);
-
-
-                                                            }
-                                                        }
-                                                        else { find = true; }
-                                                        if (File.Exists(@"LIVE_FILTER_ENABLED")) { find = myFriends.ContainsKey(root.SignedBy); }
-                                                        if (find && root.Message.Count() > 0)
-                                                        {
-
-                                                            string _from = root.SignedBy;
-                                                            string _to = "";
-                                                            if (root.Keyword.Count() > 1) { _to = root.Keyword.Keys.GetItemByIndex(root.Keyword.Count() - 2); } else { _to = root.Keyword.Keys.Last(); }
-                                                            string _message = string.Join(" ", root.Message);
-                                                            string _blockdate = root.BlockDate.ToString("yyyyMMddHHmmss");
-                                                            string imglocation = "";
-                                                            string unfilteredmessage = _message;
-                                                            _message = Regex.Replace(_message, "<<.*?>>", "");
-
-
-                                                            this.Invoke((MethodInvoker)delegate
-                                                            {
-                                                                try { imglocation = myFriends[_to]; } catch { }
-                                                                CreateRow(imglocation, _to, _to, DateTime.ParseExact(_blockdate, "yyyyMMddHHmmss", CultureInfo.InvariantCulture), " ", "", false, supFlow, true);
-                                                                try { imglocation = myFriends[_from]; } catch { }
-                                                                CreateRow(imglocation, _from, _from, DateTime.ParseExact("19700101010101", "yyyyMMddHHmmss", CultureInfo.InvariantCulture), _message, root.TransactionId, false, supFlow, true);
-                                                            });
-
-                                                            string pattern = "<<.*?>>";
-                                                            MatchCollection matches = Regex.Matches(unfilteredmessage, pattern);
-                                                            foreach (Match match in matches)
-                                                            {
-
-
-                                                                string content = match.Value.Substring(2, match.Value.Length - 4);
-                                                                if (!int.TryParse(content, NumberStyles.Any, CultureInfo.GetCultureInfo("en-US"), out int r) && !content.Trim().StartsWith("#"))
+                                                                else
                                                                 {
 
-                                                                    string imgurn = content;
 
-                                                                    if (!content.ToLower().StartsWith("http"))
+                                                                    if (!int.TryParse(content, NumberStyles.Any, CultureInfo.GetCultureInfo("en-US"), out int id))
                                                                     {
-                                                                        imgurn = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + @"\root\" + content.Replace("BTC:", "").Replace("MZC:", "").Replace("LTC:", "").Replace("DOG:", "").Replace("IPFS:", "").Replace("btc:", "").Replace("mzc:", "").Replace("ltc:", "").Replace("dog:", "").Replace("ipfs:", "").Replace(@"/", @"\");
+                                                                        if (vmatch.Success || extension == ".mp4" || extension == ".avi" || extension == ".wav" || extension == ".mp3")
+                                                                        {
+                                                                            this.Invoke((MethodInvoker)delegate
+                                                                            {
+                                                                                AddMedia(content, false, true, true);
+                                                                            });
+                                                                        }
+                                                                        else
+                                                                        {
 
-                                                                        if (content.ToLower().StartsWith("ipfs:")) { imgurn = imgurn.Replace(@"\root\", @"\ipfs\"); }
+
+                                                                            this.Invoke((MethodInvoker)delegate
+                                                                            {
+                                                                                AddImage(content, false, true);
+                                                                            });
+                                                                        }
                                                                     }
 
-                                                                    string extension = Path.GetExtension(imgurn).ToLower();
-                                                                    List<string> imgExtensions = new List<string> { ".bmp", ".gif", ".ico", ".jpeg", ".jpg", ".png", ".tif", ".tiff", ".mp4", ".avi", ".wav", ".mp3" };
-                                                                    string vpattern = @"(?:youtu\.be/|youtube(?:-nocookie)?\.com/(?:[^/\n\s]*[/\n\s]*(?:v/|e(?:mbed)?/|.*[?&]v=))?)?([a-zA-Z0-9_-]{11})";
-                                                                    Match vmatch = Regex.Match(content, vpattern);
-                                                                    if (!imgExtensions.Contains(extension) && vmatch.Value.Length < 12)
+                                                                }
+                                                            }
+                                                        }
+
+                                                        TableLayoutPanel padding = new TableLayoutPanel
+                                                        {
+                                                            RowCount = 1,
+                                                            ColumnCount = 1,
+                                                            Dock = DockStyle.Top,
+                                                            BackColor = Color.Black,
+                                                            ForeColor = Color.White,
+                                                            AutoSize = true,
+                                                            CellBorderStyle = TableLayoutPanelCellBorderStyle.Single,
+                                                            Margin = new System.Windows.Forms.Padding(0, 0, 0, 40),
+                                                            Padding = new System.Windows.Forms.Padding(0)
+
+                                                        };
+
+                                                        padding.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, supFlow.Width - 50));
+
+                                                        this.Invoke((MethodInvoker)delegate
+                                                        {
+                                                            supFlow.Controls.Add(padding);
+                                                        });
+
+
+                                                    }
+                                                    if (find && root.File.ContainsKey("INQ"))
+                                                    {
+                                                        INQState isINQ = new INQState();
+                                                        isINQ = INQState.GetInquiryByTransactionId(s, "good-user", "better-password", @"http://127.0.0.1:12832", "50");
+
+                                                        if (isINQ.TransactionId != null)
+                                                        {
+
+                                                            this.Invoke((MethodInvoker)delegate
+                                                            {
+                                                                FoundINQControl foundObject = new FoundINQControl(s, "", testnet);
+                                                                foundObject.Margin = new Padding(20, 7, 8, 7);
+                                                                supFlow.Controls.Add(foundObject);
+                                                                supFlow.Controls.SetChildIndex(foundObject, 2);
+                                                            });
+                                                        }
+
+                                                    }
+                                                    isobject = OBJState.GetObjectByTransactionId(s, "good-user", "better-password", @"http://127.0.0.1:12832", "50");
+                                                    if (isobject.URN != null && find == true)
+                                                    {
+
+                                                        isobject.TransactionId = s;
+                                                        foundobjects.Add(isobject);
+                                                        try { Directory.Delete(@"root\" + s, true); } catch { }
+
+                                                    }
+                                                    try { System.IO.Directory.Delete(@"root\" + s, true); } catch { }
+
+                                                }
+                                                else { try { System.IO.Directory.Delete(@"root\" + s, true); } catch { } }
+
+                                            }
+                                            else { }
+
+                                        }
+                                        catch { }
+
+                                    }
+
+                                }
+                            }
+                            catch { }
+                        }
+
+                        if (ltcActive)
+                        {
+                            newtransactions = new List<string>();
+
+                            try
+                            {
+                                rpcClient = new NBitcoin.RPC.RPCClient(credentials, new Uri(@"http://127.0.0.1:9332"), Network.Main);
+                                flattransactions = rpcClient.SendCommand("getrawmempool").ResultString;
+                                flattransactions = flattransactions.Replace("\"", "").Replace("[", "").Replace("]", "").Replace("\r", "").Replace("\n", "").Replace(" ", "");
+                                newtransactions = flattransactions.Split(',').ToList();
+                                if (LTCMemPool.Count == 0)
+                                {
+                                    LTCMemPool = newtransactions;
+                                }
+                                else
+                                {
+                                    differenceQuery =
+                                    (List<string>)newtransactions.Except(LTCMemPool).ToList(); ;
+
+                                    LTCMemPool = newtransactions;
+
+                                    foreach (var s in differenceQuery)
+                                    {
+                                        try
+                                        {
+
+                                            Root root = Root.GetRootByTransactionId(s, "good-user", "better-password", @"http://127.0.0.1:9332", "48");
+                                            if (root.Signed == true)
+                                            {
+                                                if (!System.IO.File.Exists(@"root\" + root.Keyword.Keys.Last() + @"\BLOCK") && !System.IO.File.Exists(@"root\" + root.Keyword.Keys.Last() + @"\MUTE"))
+                                                {
+                                                    bool find = false;
+
+                                                    if (filter != "")
+                                                    {
+
+                                                        if (filter.StartsWith("#"))
+                                                        {
+                                                            find = root.Keyword.ContainsKey(Root.GetPublicAddressByKeyword(filter.Substring(1), mainnetVersionByte));
+                                                        }
+                                                        else
+                                                        {
+
+                                                            find = root.Keyword.ContainsKey(filter);
+
+
+                                                        }
+                                                    }
+                                                    else { find = true; }
+                                                    if (File.Exists(@"LIVE_FILTER_ENABLED")) { find = myFriends.ContainsKey(root.SignedBy); }
+                                                    if (find && root.Message.Count() > 0)
+                                                    {
+
+                                                        string _from = root.SignedBy;
+                                                        string _to = "";
+                                                        if (root.Keyword.Count() > 1) { _to = root.Keyword.Keys.GetItemByIndex(root.Keyword.Count() - 2); } else { _to = root.Keyword.Keys.Last(); }
+                                                        string _message = string.Join(" ", root.Message);
+                                                        string _blockdate = root.BlockDate.ToString("yyyyMMddHHmmss");
+                                                        string imglocation = "";
+                                                        string unfilteredmessage = _message;
+                                                        _message = Regex.Replace(_message, "<<.*?>>", "");
+
+
+                                                        this.Invoke((MethodInvoker)delegate
+                                                        {
+                                                            try { imglocation = myFriends[_from]; } catch { }
+                                                            CreateRow(imglocation, _from, _from, DateTime.ParseExact(_blockdate, "yyyyMMddHHmmss", CultureInfo.InvariantCulture), " ", "", false, supFlow, true);
+                                                            try { imglocation = myFriends[_to]; } catch { }
+                                                            CreateRow(imglocation, _to, _to, DateTime.ParseExact("19700101010101", "yyyyMMddHHmmss", CultureInfo.InvariantCulture), _message, root.TransactionId, false, supFlow, true);
+                                                        });
+
+                                                        string pattern = "<<.*?>>";
+                                                        MatchCollection matches = Regex.Matches(unfilteredmessage, pattern);
+                                                        foreach (Match match in matches)
+                                                        {
+
+
+                                                            string content = match.Value.Substring(2, match.Value.Length - 4);
+                                                            if (!int.TryParse(content, NumberStyles.Any, CultureInfo.GetCultureInfo("en-US"), out int r) && !content.Trim().StartsWith("#"))
+                                                            {
+
+                                                                string imgurn = content;
+
+                                                                if (!content.ToLower().StartsWith("http"))
+                                                                {
+                                                                    imgurn = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + @"\root\" + content.Replace("BTC:", "").Replace("MZC:", "").Replace("LTC:", "").Replace("DOG:", "").Replace("IPFS:", "").Replace("btc:", "").Replace("mzc:", "").Replace("ltc:", "").Replace("dog:", "").Replace("ipfs:", "").Replace(@"/", @"\");
+
+                                                                    if (content.ToLower().StartsWith("ipfs:")) { imgurn = imgurn.Replace(@"\root\", @"\ipfs\"); }
+                                                                }
+
+                                                                string extension = Path.GetExtension(imgurn).ToLower();
+                                                                List<string> imgExtensions = new List<string> { ".bmp", ".gif", ".ico", ".jpeg", ".jpg", ".png", ".tif", ".tiff", ".mp4", ".avi", ".wav", ".mp3" };
+                                                                string vpattern = @"(?:youtu\.be/|youtube(?:-nocookie)?\.com/(?:[^/\n\s]*[/\n\s]*(?:v/|e(?:mbed)?/|.*[?&]v=))?)?([a-zA-Z0-9_-]{11})";
+                                                                Match vmatch = Regex.Match(content, vpattern);
+                                                                if (!imgExtensions.Contains(extension) && vmatch.Value.Length < 12)
+                                                                {
+
+
+                                                                    try
                                                                     {
+                                                                        // Create a WebClient object to fetch the webpage
+                                                                        WebClient client = new WebClient();
+                                                                        string html = client.DownloadString(content.StripLeadingTrailingSpaces());
 
+                                                                        // Use regular expressions to extract the metadata from the HTML
+                                                                        string title = Regex.Match(html, @"<title>\s*(.+?)\s*</title>").Groups[1].Value;
+                                                                        string description = Regex.Match(html, @"<meta\s+name\s*=\s*""description""\s+content\s*=\s*""(.+?)""\s*/?>").Groups[1].Value;
+                                                                        string imageUrl = Regex.Match(html, @"<meta\s+property\s*=\s*""og:image""\s+content\s*=\s*""(.+?)""\s*/?>").Groups[1].Value;
 
-                                                                        try
+                                                                        if (description != "")
                                                                         {
-                                                                            // Create a WebClient object to fetch the webpage
-                                                                            WebClient client = new WebClient();
-                                                                            string html = client.DownloadString(content.StripLeadingTrailingSpaces());
-
-                                                                            // Use regular expressions to extract the metadata from the HTML
-                                                                            string title = Regex.Match(html, @"<title>\s*(.+?)\s*</title>").Groups[1].Value;
-                                                                            string description = Regex.Match(html, @"<meta\s+name\s*=\s*""description""\s+content\s*=\s*""(.+?)""\s*/?>").Groups[1].Value;
-                                                                            string imageUrl = Regex.Match(html, @"<meta\s+property\s*=\s*""og:image""\s+content\s*=\s*""(.+?)""\s*/?>").Groups[1].Value;
-
-                                                                            if (description != "")
+                                                                            this.Invoke((MethodInvoker)delegate
                                                                             {
-                                                                                this.Invoke((MethodInvoker)delegate
+                                                                                // Create a new panel to display the metadata
+                                                                                Panel panel = new Panel();
+                                                                                panel.BorderStyle = BorderStyle.FixedSingle;
+                                                                                panel.Size = new Size(supFlow.Width - 50, 100);
+
+                                                                                // Create a label for the title
+                                                                                Label titleLabel = new Label();
+                                                                                titleLabel.Text = title;
+                                                                                titleLabel.Dock = DockStyle.Top;
+                                                                                titleLabel.Font = new Font("Segoe UI", 12, FontStyle.Bold);
+                                                                                titleLabel.ForeColor = Color.White;
+                                                                                titleLabel.MinimumSize = new Size(supFlow.Width - 150, 30);
+                                                                                titleLabel.Padding = new Padding(5);
+                                                                                titleLabel.MouseClick += (sender2, e2) => { Attachment_Clicked(content); };
+                                                                                panel.Controls.Add(titleLabel);
+
+                                                                                // Create a label for the description
+                                                                                Label descriptionLabel = new Label();
+                                                                                descriptionLabel.Text = description;
+                                                                                descriptionLabel.ForeColor = Color.White;
+                                                                                descriptionLabel.Dock = DockStyle.Fill;
+                                                                                descriptionLabel.Padding = new Padding(5, 40, 5, 5);
+                                                                                descriptionLabel.MouseClick += (sender2, e2) => { Attachment_Clicked(content); };
+                                                                                panel.Controls.Add(descriptionLabel);
+
+                                                                                // Add an image to the panel if one is defined
+                                                                                if (!String.IsNullOrEmpty(imageUrl))
                                                                                 {
-                                                                                    // Create a new panel to display the metadata
-                                                                                    Panel panel = new Panel();
-                                                                                    panel.BorderStyle = BorderStyle.FixedSingle;
-                                                                                    panel.Size = new Size(supFlow.Width - 30, 100);
-
-                                                                                    // Create a label for the title
-                                                                                    Label titleLabel = new Label();
-                                                                                    titleLabel.Text = title;
-                                                                                    titleLabel.Dock = DockStyle.Top;
-                                                                                    titleLabel.Font = new Font("Segoe UI", 12, FontStyle.Bold);
-                                                                                    titleLabel.ForeColor = Color.White;
-                                                                                    titleLabel.MinimumSize = new Size(supFlow.Width - 150, 30);
-                                                                                    titleLabel.Padding = new Padding(5);
-                                                                                    titleLabel.MouseClick += (sender2, e2) => { Attachment_Clicked(content); };
-                                                                                    panel.Controls.Add(titleLabel);
-
-                                                                                    // Create a label for the description
-                                                                                    Label descriptionLabel = new Label();
-                                                                                    descriptionLabel.Text = description;
-                                                                                    descriptionLabel.ForeColor = Color.White;
-                                                                                    descriptionLabel.Dock = DockStyle.Fill;
-                                                                                    descriptionLabel.Padding = new Padding(5, 40, 5, 5);
-                                                                                    descriptionLabel.MouseClick += (sender2, e2) => { Attachment_Clicked(content); };
-                                                                                    panel.Controls.Add(descriptionLabel);
-
-                                                                                    // Add an image to the panel if one is defined
-                                                                                    if (!String.IsNullOrEmpty(imageUrl))
+                                                                                    try
                                                                                     {
-                                                                                        try
-                                                                                        {
-                                                                                            // Create a MemoryStream object from the image data
-                                                                                            byte[] imageData = client.DownloadData(imageUrl);
-                                                                                            MemoryStream memoryStream = new MemoryStream(imageData);
+                                                                                        // Create a MemoryStream object from the image data
+                                                                                        byte[] imageData = client.DownloadData(imageUrl);
+                                                                                        MemoryStream memoryStream = new MemoryStream(imageData);
 
-                                                                                            // Create a new PictureBox control and add it to the panel
-                                                                                            PictureBox pictureBox = new PictureBox();
-                                                                                            pictureBox.Dock = DockStyle.Left;
-                                                                                            pictureBox.Size = new Size(100, 100);
-                                                                                            pictureBox.SizeMode = PictureBoxSizeMode.StretchImage;
-                                                                                            pictureBox.Image = Image.FromStream(memoryStream);
-                                                                                            pictureBox.MouseClick += (sender2, e2) => { Attachment_Clicked(content); };
-                                                                                            panel.Controls.Add(pictureBox);
-                                                                                        }
-                                                                                        catch
-                                                                                        {
-                                                                                        }
+                                                                                        // Create a new PictureBox control and add it to the panel
+                                                                                        PictureBox pictureBox = new PictureBox();
+                                                                                        pictureBox.Dock = DockStyle.Left;
+                                                                                        pictureBox.Size = new Size(100, 100);
+                                                                                        pictureBox.SizeMode = PictureBoxSizeMode.StretchImage;
+                                                                                        pictureBox.Image = Image.FromStream(memoryStream);
+                                                                                        pictureBox.MouseClick += (sender2, e2) => { Attachment_Clicked(content); };
+                                                                                        panel.Controls.Add(pictureBox);
                                                                                     }
+                                                                                    catch
+                                                                                    {
+                                                                                    }
+                                                                                }
 
 
-                                                                                    this.supFlow.Controls.Add(panel);
-                                                                                    supFlow.Controls.SetChildIndex(panel, 0);
-                                                                                });
+                                                                                this.supFlow.Controls.Add(panel);
+                                                                                supFlow.Controls.SetChildIndex(panel, 0);
+                                                                            });
 
-                                                                            }
-                                                                            else
-                                                                            {
-                                                                                this.Invoke((MethodInvoker)delegate
-                                                                                {  // Create a new panel to display the metadata
-                                                                                    Panel panel = new Panel();
-                                                                                    panel.BorderStyle = BorderStyle.FixedSingle;
-                                                                                    panel.Size = new Size(supFlow.Width - 50, 30);
-
-                                                                                    // Create a label for the title
-                                                                                    LinkLabel titleLabel = new LinkLabel();
-                                                                                    titleLabel.Text = content;
-                                                                                    titleLabel.Links[0].LinkData = imgurn;
-                                                                                    titleLabel.Dock = DockStyle.Top;
-                                                                                    titleLabel.Font = new Font("Segoe UI", 8, FontStyle.Bold);
-                                                                                    titleLabel.LinkColor = System.Drawing.SystemColors.GradientActiveCaption;
-                                                                                    titleLabel.MinimumSize = new Size(supFlow.Width - 150, 30);
-                                                                                    titleLabel.Padding = new Padding(5);
-                                                                                    titleLabel.MouseClick += (sender2, e2) => { Attachment_Clicked(imgurn); };
-                                                                                    panel.Controls.Add(titleLabel);
-
-
-                                                                                    this.supFlow.Controls.Add(panel);
-                                                                                    supFlow.Controls.SetChildIndex(panel, 0);
-                                                                                });
-
-                                                                            }
                                                                         }
-                                                                        catch
+                                                                        else
                                                                         {
-
                                                                             this.Invoke((MethodInvoker)delegate
                                                                             {  // Create a new panel to display the metadata
                                                                                 Panel panel = new Panel();
@@ -2233,303 +2599,306 @@ namespace SUP
                                                                                 supFlow.Controls.SetChildIndex(panel, 0);
                                                                             });
 
-
-
                                                                         }
                                                                     }
-                                                                    else
+                                                                    catch
                                                                     {
 
+                                                                        this.Invoke((MethodInvoker)delegate
+                                                                        {  // Create a new panel to display the metadata
+                                                                            Panel panel = new Panel();
+                                                                            panel.BorderStyle = BorderStyle.FixedSingle;
+                                                                            panel.Size = new Size(supFlow.Width - 50, 30);
 
-                                                                        if (!int.TryParse(content, NumberStyles.Any, CultureInfo.GetCultureInfo("en-US"), out int id))
-                                                                        {
-                                                                            if (vmatch.Success || extension == ".mp4" || extension == ".avi" || extension == ".wav" || extension == ".mp3")
-                                                                            {
-                                                                                this.Invoke((MethodInvoker)delegate
-                                                                                {
-                                                                                    AddMedia(content, false, true, true);
-                                                                                });
-                                                                            }
-                                                                            else
-                                                                            {
+                                                                            // Create a label for the title
+                                                                            LinkLabel titleLabel = new LinkLabel();
+                                                                            titleLabel.Text = content;
+                                                                            titleLabel.Links[0].LinkData = imgurn;
+                                                                            titleLabel.Dock = DockStyle.Top;
+                                                                            titleLabel.Font = new Font("Segoe UI", 8, FontStyle.Bold);
+                                                                            titleLabel.LinkColor = System.Drawing.SystemColors.GradientActiveCaption;
+                                                                            titleLabel.MinimumSize = new Size(supFlow.Width - 150, 30);
+                                                                            titleLabel.Padding = new Padding(5);
+                                                                            titleLabel.MouseClick += (sender2, e2) => { Attachment_Clicked(imgurn); };
+                                                                            panel.Controls.Add(titleLabel);
 
 
-                                                                                this.Invoke((MethodInvoker)delegate
-                                                                                {
-                                                                                    AddImage(content, false, true);
-                                                                                });
-                                                                            }
-                                                                        }
+                                                                            this.supFlow.Controls.Add(panel);
+                                                                            supFlow.Controls.SetChildIndex(panel, 0);
+                                                                        });
+
+
 
                                                                     }
                                                                 }
-                                                            }
-
-                                                            TableLayoutPanel padding = new TableLayoutPanel
-                                                            {
-                                                                RowCount = 1,
-                                                                ColumnCount = 1,
-                                                                Dock = DockStyle.Top,
-                                                                BackColor = Color.Black,
-                                                                ForeColor = Color.White,
-                                                                AutoSize = true,
-                                                                CellBorderStyle = TableLayoutPanelCellBorderStyle.Single,
-                                                                Margin = new System.Windows.Forms.Padding(0, 0, 0, 40),
-                                                                Padding = new System.Windows.Forms.Padding(0)
-
-                                                            };
-
-                                                            padding.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, supFlow.Width - 50));
-
-                                                            this.Invoke((MethodInvoker)delegate
-                                                            {
-                                                                supFlow.Controls.Add(padding);
-                                                            });
-
-
-                                                        }
-                                                        if (find && root.File.ContainsKey("INQ"))
-                                                        {
-                                                            INQState isINQ = new INQState();
-                                                            isINQ = INQState.GetInquiryByTransactionId(s, "good-user", "better-password", @"http://127.0.0.1:12832", "50");
-
-                                                            if (isINQ.TransactionId != null)
-                                                            {
-
-                                                                this.Invoke((MethodInvoker)delegate
-                                                                {
-                                                                    FoundINQControl foundObject = new FoundINQControl(s, "", testnet);
-                                                                    foundObject.Margin = new Padding(20, 7, 8, 7);
-                                                                    supFlow.Controls.Add(foundObject);
-                                                                    supFlow.Controls.SetChildIndex(foundObject, 2);
-                                                                });
-                                                            }
-
-                                                        }
-                                                        isobject = OBJState.GetObjectByTransactionId(s, "good-user", "better-password", @"http://127.0.0.1:12832", "50");
-                                                        if (isobject.URN != null && find == true)
-                                                        {
-
-                                                            isobject.TransactionId = s;
-                                                            foundobjects.Add(isobject);
-                                                            try { Directory.Delete(@"root\" + s, true); } catch { }
-
-                                                        }
-                                                        try { System.IO.Directory.Delete(@"root\" + s, true); } catch { }
-
-                                                    }
-                                                    else { try { System.IO.Directory.Delete(@"root\" + s, true); } catch { } }
-
-                                                }
-                                                else { }
-
-                                            }
-                                            catch { }
-
-                                        }
-
-                                    }
-                                }
-                                catch { }
-                            }
-
-                            if (ltcActive)
-                            {
-                                newtransactions = new List<string>();
-
-                                try
-                                {
-                                    rpcClient = new NBitcoin.RPC.RPCClient(credentials, new Uri(@"http://127.0.0.1:9332"), Network.Main);
-                                    flattransactions = rpcClient.SendCommand("getrawmempool").ResultString;
-                                    flattransactions = flattransactions.Replace("\"", "").Replace("[", "").Replace("]", "").Replace("\r", "").Replace("\n", "").Replace(" ", "");
-                                    newtransactions = flattransactions.Split(',').ToList();
-                                    if (LTCMemPool.Count == 0)
-                                    {
-                                        LTCMemPool = newtransactions;
-                                    }
-                                    else
-                                    {
-                                        differenceQuery =
-                                        (List<string>)newtransactions.Except(LTCMemPool).ToList(); ;
-
-                                        LTCMemPool = newtransactions;
-
-                                        foreach (var s in differenceQuery)
-                                        {
-                                            try
-                                            {
-
-                                                Root root = Root.GetRootByTransactionId(s, "good-user", "better-password", @"http://127.0.0.1:9332", "48");
-                                                if (root.Signed == true)
-                                                {
-                                                    if (!System.IO.File.Exists(@"root\" + root.Keyword.Keys.Last() + @"\BLOCK") && !System.IO.File.Exists(@"root\" + root.Keyword.Keys.Last() + @"\MUTE"))
-                                                    {
-                                                        bool find = false;
-
-                                                        if (filter != "")
-                                                        {
-
-                                                            if (filter.StartsWith("#"))
-                                                            {
-                                                                find = root.Keyword.ContainsKey(Root.GetPublicAddressByKeyword(filter.Substring(1), mainnetVersionByte));
-                                                            }
-                                                            else
-                                                            {
-
-                                                                find = root.Keyword.ContainsKey(filter);
-
-
-                                                            }
-                                                        }
-                                                        else { find = true; }
-                                                        if (File.Exists(@"LIVE_FILTER_ENABLED")) { find = myFriends.ContainsKey(root.SignedBy); }
-                                                        if (find && root.Message.Count() > 0)
-                                                        {
-
-                                                            string _from = root.SignedBy;
-                                                            string _to = "";
-                                                            if (root.Keyword.Count() > 1) { _to = root.Keyword.Keys.GetItemByIndex(root.Keyword.Count() - 2); } else { _to = root.Keyword.Keys.Last(); }
-                                                            string _message = string.Join(" ", root.Message);
-                                                            string _blockdate = root.BlockDate.ToString("yyyyMMddHHmmss");
-                                                            string imglocation = "";
-                                                            string unfilteredmessage = _message;
-                                                            _message = Regex.Replace(_message, "<<.*?>>", "");
-
-
-                                                            this.Invoke((MethodInvoker)delegate
-                                                            {
-                                                                try { imglocation = myFriends[_to]; } catch { }
-                                                                CreateRow(imglocation, _to, _to, DateTime.ParseExact(_blockdate, "yyyyMMddHHmmss", CultureInfo.InvariantCulture), " ", "", false, supFlow, true);
-                                                                try { imglocation = myFriends[_from]; } catch { }
-                                                                CreateRow(imglocation, _from, _from, DateTime.ParseExact("19700101010101", "yyyyMMddHHmmss", CultureInfo.InvariantCulture), _message, root.TransactionId, false, supFlow, true);
-                                                            });
-
-                                                            string pattern = "<<.*?>>";
-                                                            MatchCollection matches = Regex.Matches(unfilteredmessage, pattern);
-                                                            foreach (Match match in matches)
-                                                            {
-
-
-                                                                string content = match.Value.Substring(2, match.Value.Length - 4);
-                                                                if (!int.TryParse(content, NumberStyles.Any, CultureInfo.GetCultureInfo("en-US"), out int r) && !content.Trim().StartsWith("#"))
+                                                                else
                                                                 {
 
-                                                                    string imgurn = content;
 
-                                                                    if (!content.ToLower().StartsWith("http"))
+                                                                    if (!int.TryParse(content, NumberStyles.Any, CultureInfo.GetCultureInfo("en-US"), out int id))
                                                                     {
-                                                                        imgurn = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + @"\root\" + content.Replace("BTC:", "").Replace("MZC:", "").Replace("LTC:", "").Replace("DOG:", "").Replace("IPFS:", "").Replace("btc:", "").Replace("mzc:", "").Replace("ltc:", "").Replace("dog:", "").Replace("ipfs:", "").Replace(@"/", @"\");
+                                                                        if (vmatch.Success || extension == ".mp4" || extension == ".avi" || extension == ".wav" || extension == ".mp3")
+                                                                        {
+                                                                            this.Invoke((MethodInvoker)delegate
+                                                                            {
+                                                                                AddMedia(content, false, true, true);
+                                                                            });
+                                                                        }
+                                                                        else
+                                                                        {
 
-                                                                        if (content.ToLower().StartsWith("ipfs:")) { imgurn = imgurn.Replace(@"\root\", @"\ipfs\"); }
+
+                                                                            this.Invoke((MethodInvoker)delegate
+                                                                            {
+                                                                                AddImage(content, false, true);
+                                                                            });
+                                                                        }
                                                                     }
 
-                                                                    string extension = Path.GetExtension(imgurn).ToLower();
-                                                                    List<string> imgExtensions = new List<string> { ".bmp", ".gif", ".ico", ".jpeg", ".jpg", ".png", ".tif", ".tiff", ".mp4", ".avi", ".wav", ".mp3" };
-                                                                    string vpattern = @"(?:youtu\.be/|youtube(?:-nocookie)?\.com/(?:[^/\n\s]*[/\n\s]*(?:v/|e(?:mbed)?/|.*[?&]v=))?)?([a-zA-Z0-9_-]{11})";
-                                                                    Match vmatch = Regex.Match(content, vpattern);
-                                                                    if (!imgExtensions.Contains(extension) && vmatch.Value.Length < 12)
+                                                                }
+                                                            }
+                                                        }
+
+                                                        TableLayoutPanel padding = new TableLayoutPanel
+                                                        {
+                                                            RowCount = 1,
+                                                            ColumnCount = 1,
+                                                            Dock = DockStyle.Top,
+                                                            BackColor = Color.Black,
+                                                            ForeColor = Color.White,
+                                                            AutoSize = true,
+                                                            CellBorderStyle = TableLayoutPanelCellBorderStyle.Single,
+                                                            Margin = new System.Windows.Forms.Padding(0, 0, 0, 40),
+                                                            Padding = new System.Windows.Forms.Padding(0)
+
+                                                        };
+
+                                                        padding.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, supFlow.Width - 50));
+
+                                                        this.Invoke((MethodInvoker)delegate
+                                                        {
+                                                            supFlow.Controls.Add(padding);
+                                                        });
+
+
+                                                    }
+                                                    if (find && root.File.ContainsKey("INQ"))
+                                                    {
+                                                        INQState isINQ = new INQState();
+                                                        isINQ = INQState.GetInquiryByTransactionId(s, "good-user", "better-password", @"http://127.0.0.1:9332", "48");
+
+                                                        if (isINQ.TransactionId != null)
+                                                        {
+
+                                                            this.Invoke((MethodInvoker)delegate
+                                                            {
+                                                                FoundINQControl foundObject = new FoundINQControl(s, "", testnet);
+                                                                foundObject.Margin = new Padding(20, 7, 8, 7);
+                                                                supFlow.Controls.Add(foundObject);
+                                                                supFlow.Controls.SetChildIndex(foundObject, 2);
+                                                            });
+                                                        }
+
+                                                    }
+                                                    isobject = OBJState.GetObjectByTransactionId(s, "good-user", "better-password", @"http://127.0.0.1:9332", "48");
+                                                    if (isobject.URN != null && find == true)
+                                                    {
+                                                        isobject.TransactionId = s;
+                                                        foundobjects.Add(isobject);
+                                                        try { Directory.Delete(@"root\" + s, true); } catch { }
+
+
+                                                    }
+                                                    try { System.IO.Directory.Delete(@"root\" + s, true); } catch { }
+
+                                                }
+                                                else { try { System.IO.Directory.Delete(@"root\" + s, true); } catch { } }
+
+                                            }
+                                            else { }
+
+                                        }
+                                        catch { }
+
+                                    }
+
+                                }
+                            }
+                            catch { }
+                        }
+
+                        if (dogActive)
+                        {
+                            newtransactions = new List<string>();
+
+                            try
+                            {
+                                rpcClient = new NBitcoin.RPC.RPCClient(credentials, new Uri(@"http://127.0.0.1:22555"), Network.Main);
+                                flattransactions = rpcClient.SendCommand("getrawmempool").ResultString;
+                                flattransactions = flattransactions.Replace("\"", "").Replace("[", "").Replace("]", "").Replace("\r", "").Replace("\n", "").Replace(" ", "");
+                                newtransactions = flattransactions.Split(',').ToList();
+
+                                if (DOGMemPool.Count == 0)
+                                {
+                                    DOGMemPool = newtransactions;
+                                }
+                                else
+                                {
+                                    differenceQuery =
+                                    (List<string>)newtransactions.Except(DOGMemPool).ToList(); ;
+
+                                    DOGMemPool = newtransactions;
+
+                                    foreach (var s in differenceQuery)
+                                    {
+                                        try
+                                        {
+
+                                            Root root = Root.GetRootByTransactionId(s, "good-user", "better-password", @"http://127.0.0.1:22555", "30");
+                                            if (root.Signed == true)
+                                            {
+
+                                                if (!System.IO.File.Exists(@"root\" + root.Keyword.Keys.Last() + @"\BLOCK") && !System.IO.File.Exists(@"root\" + root.Keyword.Keys.Last() + @"\MUTE"))
+                                                {
+                                                    bool find = false;
+
+                                                    if (filter.Length > 0)
+                                                    {
+
+                                                        if (filter.StartsWith("#"))
+                                                        {
+                                                            find = root.Keyword.ContainsKey(Root.GetPublicAddressByKeyword(filter.Substring(1), mainnetVersionByte));
+                                                        }
+                                                        else
+                                                        {
+
+                                                            find = root.Keyword.ContainsKey(filter);
+
+
+                                                        }
+                                                    }
+                                                    else { find = true; }
+                                                    if (File.Exists(@"LIVE_FILTER_ENABLED")) { find = myFriends.ContainsKey(root.SignedBy); }
+                                                    if (find && root.Message.Count() > 0)
+                                                    {
+
+                                                        string _from = root.SignedBy;
+                                                        string _to = "";
+                                                        if (root.Keyword.Count() > 1) { _to = root.Keyword.Keys.GetItemByIndex(root.Keyword.Count() - 2); } else { _to = root.Keyword.Keys.Last(); }
+                                                        string _message = string.Join(" ", root.Message);
+                                                        string _blockdate = root.BlockDate.ToString("yyyyMMddHHmmss");
+                                                        string imglocation = "";
+                                                        string unfilteredmessage = _message;
+                                                        _message = Regex.Replace(_message, "<<.*?>>", "");
+
+
+                                                        this.Invoke((MethodInvoker)delegate
+                                                        {
+                                                            try { imglocation = myFriends[_from]; } catch { }
+                                                            CreateRow(imglocation, _from, _from, DateTime.ParseExact(_blockdate, "yyyyMMddHHmmss", CultureInfo.InvariantCulture), " ", "", false, supFlow, true);
+                                                            try { imglocation = myFriends[_to]; } catch { }
+                                                            CreateRow(imglocation, _to, _to, DateTime.ParseExact("19700101010101", "yyyyMMddHHmmss", CultureInfo.InvariantCulture), _message, root.TransactionId, false, supFlow, true);
+
+                                                        });
+
+                                                        string pattern = "<<.*?>>";
+                                                        MatchCollection matches = Regex.Matches(unfilteredmessage, pattern);
+                                                        foreach (Match match in matches)
+                                                        {
+
+
+                                                            string content = match.Value.Substring(2, match.Value.Length - 4);
+                                                            if (!int.TryParse(content, NumberStyles.Any, CultureInfo.GetCultureInfo("en-US"), out int r) && !content.Trim().StartsWith("#"))
+                                                            {
+
+                                                                string imgurn = content;
+
+                                                                if (!content.ToLower().StartsWith("http"))
+                                                                {
+                                                                    imgurn = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + @"\root\" + content.Replace("BTC:", "").Replace("MZC:", "").Replace("LTC:", "").Replace("DOG:", "").Replace("IPFS:", "").Replace("btc:", "").Replace("mzc:", "").Replace("ltc:", "").Replace("dog:", "").Replace("ipfs:", "").Replace(@"/", @"\");
+
+                                                                    if (content.ToLower().StartsWith("ipfs:")) { imgurn = imgurn.Replace(@"\root\", @"\ipfs\"); }
+                                                                }
+
+                                                                string extension = Path.GetExtension(imgurn).ToLower();
+                                                                List<string> imgExtensions = new List<string> { ".bmp", ".gif", ".ico", ".jpeg", ".jpg", ".png", ".tif", ".tiff", ".mp4", ".avi", ".wav", ".mp3" };
+                                                                string vpattern = @"(?:youtu\.be/|youtube(?:-nocookie)?\.com/(?:[^/\n\s]*[/\n\s]*(?:v/|e(?:mbed)?/|.*[?&]v=))?)?([a-zA-Z0-9_-]{11})";
+                                                                Match vmatch = Regex.Match(content, vpattern);
+                                                                if (!imgExtensions.Contains(extension) && vmatch.Value.Length < 12)
+                                                                {
+
+
+                                                                    try
                                                                     {
+                                                                        // Create a WebClient object to fetch the webpage
+                                                                        WebClient client = new WebClient();
+                                                                        string html = client.DownloadString(content.StripLeadingTrailingSpaces());
 
+                                                                        // Use regular expressions to extract the metadata from the HTML
+                                                                        string title = Regex.Match(html, @"<title>\s*(.+?)\s*</title>").Groups[1].Value;
+                                                                        string description = Regex.Match(html, @"<meta\s+name\s*=\s*""description""\s+content\s*=\s*""(.+?)""\s*/?>").Groups[1].Value;
+                                                                        string imageUrl = Regex.Match(html, @"<meta\s+property\s*=\s*""og:image""\s+content\s*=\s*""(.+?)""\s*/?>").Groups[1].Value;
 
-                                                                        try
+                                                                        if (description != "")
                                                                         {
-                                                                            // Create a WebClient object to fetch the webpage
-                                                                            WebClient client = new WebClient();
-                                                                            string html = client.DownloadString(content.StripLeadingTrailingSpaces());
-
-                                                                            // Use regular expressions to extract the metadata from the HTML
-                                                                            string title = Regex.Match(html, @"<title>\s*(.+?)\s*</title>").Groups[1].Value;
-                                                                            string description = Regex.Match(html, @"<meta\s+name\s*=\s*""description""\s+content\s*=\s*""(.+?)""\s*/?>").Groups[1].Value;
-                                                                            string imageUrl = Regex.Match(html, @"<meta\s+property\s*=\s*""og:image""\s+content\s*=\s*""(.+?)""\s*/?>").Groups[1].Value;
-
-                                                                            if (description != "")
+                                                                            this.Invoke((MethodInvoker)delegate
                                                                             {
-                                                                                this.Invoke((MethodInvoker)delegate
+                                                                                // Create a new panel to display the metadata
+                                                                                Panel panel = new Panel();
+                                                                                panel.BorderStyle = BorderStyle.FixedSingle;
+                                                                                panel.Size = new Size(supFlow.Width - 50, 100);
+
+                                                                                // Create a label for the title
+                                                                                Label titleLabel = new Label();
+                                                                                titleLabel.Text = title;
+                                                                                titleLabel.Dock = DockStyle.Top;
+                                                                                titleLabel.Font = new Font("Segoe UI", 12, FontStyle.Bold);
+                                                                                titleLabel.ForeColor = Color.White;
+                                                                                titleLabel.MinimumSize = new Size(supFlow.Width - 150, 30);
+                                                                                titleLabel.Padding = new Padding(5);
+                                                                                titleLabel.MouseClick += (sender2, e2) => { Attachment_Clicked(content); };
+                                                                                panel.Controls.Add(titleLabel);
+
+                                                                                // Create a label for the description
+                                                                                Label descriptionLabel = new Label();
+                                                                                descriptionLabel.Text = description;
+                                                                                descriptionLabel.ForeColor = Color.White;
+                                                                                descriptionLabel.Dock = DockStyle.Fill;
+                                                                                descriptionLabel.Padding = new Padding(5, 40, 5, 5);
+                                                                                descriptionLabel.MouseClick += (sender2, e2) => { Attachment_Clicked(content); };
+                                                                                panel.Controls.Add(descriptionLabel);
+
+                                                                                // Add an image to the panel if one is defined
+                                                                                if (!String.IsNullOrEmpty(imageUrl))
                                                                                 {
-                                                                                    // Create a new panel to display the metadata
-                                                                                    Panel panel = new Panel();
-                                                                                    panel.BorderStyle = BorderStyle.FixedSingle;
-                                                                                    panel.Size = new Size(supFlow.Width - 50, 100);
-
-                                                                                    // Create a label for the title
-                                                                                    Label titleLabel = new Label();
-                                                                                    titleLabel.Text = title;
-                                                                                    titleLabel.Dock = DockStyle.Top;
-                                                                                    titleLabel.Font = new Font("Segoe UI", 12, FontStyle.Bold);
-                                                                                    titleLabel.ForeColor = Color.White;
-                                                                                    titleLabel.MinimumSize = new Size(supFlow.Width - 150, 30);
-                                                                                    titleLabel.Padding = new Padding(5);
-                                                                                    titleLabel.MouseClick += (sender2, e2) => { Attachment_Clicked(content); };
-                                                                                    panel.Controls.Add(titleLabel);
-
-                                                                                    // Create a label for the description
-                                                                                    Label descriptionLabel = new Label();
-                                                                                    descriptionLabel.Text = description;
-                                                                                    descriptionLabel.ForeColor = Color.White;
-                                                                                    descriptionLabel.Dock = DockStyle.Fill;
-                                                                                    descriptionLabel.Padding = new Padding(5, 40, 5, 5);
-                                                                                    descriptionLabel.MouseClick += (sender2, e2) => { Attachment_Clicked(content); };
-                                                                                    panel.Controls.Add(descriptionLabel);
-
-                                                                                    // Add an image to the panel if one is defined
-                                                                                    if (!String.IsNullOrEmpty(imageUrl))
+                                                                                    try
                                                                                     {
-                                                                                        try
-                                                                                        {
-                                                                                            // Create a MemoryStream object from the image data
-                                                                                            byte[] imageData = client.DownloadData(imageUrl);
-                                                                                            MemoryStream memoryStream = new MemoryStream(imageData);
+                                                                                        // Create a MemoryStream object from the image data
+                                                                                        byte[] imageData = client.DownloadData(imageUrl);
+                                                                                        MemoryStream memoryStream = new MemoryStream(imageData);
 
-                                                                                            // Create a new PictureBox control and add it to the panel
-                                                                                            PictureBox pictureBox = new PictureBox();
-                                                                                            pictureBox.Dock = DockStyle.Left;
-                                                                                            pictureBox.Size = new Size(100, 100);
-                                                                                            pictureBox.SizeMode = PictureBoxSizeMode.StretchImage;
-                                                                                            pictureBox.Image = Image.FromStream(memoryStream);
-                                                                                            pictureBox.MouseClick += (sender2, e2) => { Attachment_Clicked(content); };
-                                                                                            panel.Controls.Add(pictureBox);
-                                                                                        }
-                                                                                        catch
-                                                                                        {
-                                                                                        }
+                                                                                        // Create a new PictureBox control and add it to the panel
+                                                                                        PictureBox pictureBox = new PictureBox();
+                                                                                        pictureBox.Dock = DockStyle.Left;
+                                                                                        pictureBox.Size = new Size(100, 100);
+                                                                                        pictureBox.SizeMode = PictureBoxSizeMode.StretchImage;
+                                                                                        pictureBox.Image = Image.FromStream(memoryStream);
+                                                                                        pictureBox.MouseClick += (sender2, e2) => { Attachment_Clicked(content); };
+                                                                                        panel.Controls.Add(pictureBox);
                                                                                     }
+                                                                                    catch
+                                                                                    {
+                                                                                    }
+                                                                                }
 
 
-                                                                                    this.supFlow.Controls.Add(panel);
-                                                                                    supFlow.Controls.SetChildIndex(panel, 0);
-                                                                                });
+                                                                                this.supFlow.Controls.Add(panel);
+                                                                                supFlow.Controls.SetChildIndex(panel, 0);
+                                                                            });
 
-                                                                            }
-                                                                            else
-                                                                            {
-                                                                                this.Invoke((MethodInvoker)delegate
-                                                                                {  // Create a new panel to display the metadata
-                                                                                    Panel panel = new Panel();
-                                                                                    panel.BorderStyle = BorderStyle.FixedSingle;
-                                                                                    panel.Size = new Size(supFlow.Width - 50, 30);
-
-                                                                                    // Create a label for the title
-                                                                                    LinkLabel titleLabel = new LinkLabel();
-                                                                                    titleLabel.Text = content;
-                                                                                    titleLabel.Links[0].LinkData = imgurn;
-                                                                                    titleLabel.Dock = DockStyle.Top;
-                                                                                    titleLabel.Font = new Font("Segoe UI", 8, FontStyle.Bold);
-                                                                                    titleLabel.LinkColor = System.Drawing.SystemColors.GradientActiveCaption;
-                                                                                    titleLabel.MinimumSize = new Size(supFlow.Width - 150, 30);
-                                                                                    titleLabel.Padding = new Padding(5);
-                                                                                    titleLabel.MouseClick += (sender2, e2) => { Attachment_Clicked(imgurn); };
-                                                                                    panel.Controls.Add(titleLabel);
-
-
-                                                                                    this.supFlow.Controls.Add(panel);
-                                                                                    supFlow.Controls.SetChildIndex(panel, 0);
-                                                                                });
-
-                                                                            }
                                                                         }
-                                                                        catch
+                                                                        else
                                                                         {
-
                                                                             this.Invoke((MethodInvoker)delegate
                                                                             {  // Create a new panel to display the metadata
                                                                                 Panel panel = new Panel();
@@ -2553,463 +2922,168 @@ namespace SUP
                                                                                 supFlow.Controls.SetChildIndex(panel, 0);
                                                                             });
 
-
-
                                                                         }
                                                                     }
-                                                                    else
+                                                                    catch
                                                                     {
 
+                                                                        this.Invoke((MethodInvoker)delegate
+                                                                        {  // Create a new panel to display the metadata
+                                                                            Panel panel = new Panel();
+                                                                            panel.BorderStyle = BorderStyle.FixedSingle;
+                                                                            panel.Size = new Size(supFlow.Width - 50, 30);
 
-                                                                        if (!int.TryParse(content, NumberStyles.Any, CultureInfo.GetCultureInfo("en-US"), out int id))
-                                                                        {
-                                                                            if (vmatch.Success || extension == ".mp4" || extension == ".avi" || extension == ".wav" || extension == ".mp3")
-                                                                            {
-                                                                                this.Invoke((MethodInvoker)delegate
-                                                                                {
-                                                                                    AddMedia(content, false, true, true);
-                                                                                });
-                                                                            }
-                                                                            else
-                                                                            {
+                                                                            // Create a label for the title
+                                                                            LinkLabel titleLabel = new LinkLabel();
+                                                                            titleLabel.Text = content;
+                                                                            titleLabel.Links[0].LinkData = imgurn;
+                                                                            titleLabel.Dock = DockStyle.Top;
+                                                                            titleLabel.Font = new Font("Segoe UI", 8, FontStyle.Bold);
+                                                                            titleLabel.LinkColor = System.Drawing.SystemColors.GradientActiveCaption;
+                                                                            titleLabel.MinimumSize = new Size(supFlow.Width - 150, 30);
+                                                                            titleLabel.Padding = new Padding(5);
+                                                                            titleLabel.MouseClick += (sender2, e2) => { Attachment_Clicked(imgurn); };
+                                                                            panel.Controls.Add(titleLabel);
 
 
-                                                                                this.Invoke((MethodInvoker)delegate
-                                                                                {
-                                                                                    AddImage(content, false, true);
-                                                                                });
-                                                                            }
-                                                                        }
+                                                                            this.supFlow.Controls.Add(panel);
+                                                                            supFlow.Controls.SetChildIndex(panel, 0);
+                                                                        });
+
+
 
                                                                     }
                                                                 }
-                                                            }
-
-                                                            TableLayoutPanel padding = new TableLayoutPanel
-                                                            {
-                                                                RowCount = 1,
-                                                                ColumnCount = 1,
-                                                                Dock = DockStyle.Top,
-                                                                BackColor = Color.Black,
-                                                                ForeColor = Color.White,
-                                                                AutoSize = true,
-                                                                CellBorderStyle = TableLayoutPanelCellBorderStyle.Single,
-                                                                Margin = new System.Windows.Forms.Padding(0, 0, 0, 40),
-                                                                Padding = new System.Windows.Forms.Padding(0)
-
-                                                            };
-
-                                                            padding.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, supFlow.Width - 50));
-
-                                                            this.Invoke((MethodInvoker)delegate
-                                                            {
-                                                                supFlow.Controls.Add(padding);
-                                                            });
-
-
-                                                        }
-                                                        if (find && root.File.ContainsKey("INQ"))
-                                                        {
-                                                            INQState isINQ = new INQState();
-                                                            isINQ = INQState.GetInquiryByTransactionId(s, "good-user", "better-password", @"http://127.0.0.1:9332", "48");
-
-                                                            if (isINQ.TransactionId != null)
-                                                            {
-
-                                                                this.Invoke((MethodInvoker)delegate
-                                                                {
-                                                                    FoundINQControl foundObject = new FoundINQControl(s, "", testnet);
-                                                                    foundObject.Margin = new Padding(20, 7, 8, 7);
-                                                                    supFlow.Controls.Add(foundObject);
-                                                                    supFlow.Controls.SetChildIndex(foundObject, 2);
-                                                                });
-                                                            }
-
-                                                        }
-                                                        isobject = OBJState.GetObjectByTransactionId(s, "good-user", "better-password", @"http://127.0.0.1:9332", "48");
-                                                        if (isobject.URN != null && find == true)
-                                                        {
-                                                            isobject.TransactionId = s;
-                                                            foundobjects.Add(isobject);
-                                                            try { Directory.Delete(@"root\" + s, true); } catch { }
-
-
-                                                        }
-                                                        try { System.IO.Directory.Delete(@"root\" + s, true); } catch { }
-
-                                                    }
-                                                    else { try { System.IO.Directory.Delete(@"root\" + s, true); } catch { } }
-
-                                                }
-                                                else { }
-
-                                            }
-                                            catch { }
-
-                                        }
-
-                                    }
-                                }
-                                catch { }
-                            }
-
-                            if (dogActive)
-                            {
-                                newtransactions = new List<string>();
-
-                                try
-                                {
-                                    rpcClient = new NBitcoin.RPC.RPCClient(credentials, new Uri(@"http://127.0.0.1:22555"), Network.Main);
-                                    flattransactions = rpcClient.SendCommand("getrawmempool").ResultString;
-                                    flattransactions = flattransactions.Replace("\"", "").Replace("[", "").Replace("]", "").Replace("\r", "").Replace("\n", "").Replace(" ", "");
-                                    newtransactions = flattransactions.Split(',').ToList();
-
-                                    if (DOGMemPool.Count == 0)
-                                    {
-                                        DOGMemPool = newtransactions;
-                                    }
-                                    else
-                                    {
-                                        differenceQuery =
-                                        (List<string>)newtransactions.Except(DOGMemPool).ToList(); ;
-
-                                        DOGMemPool = newtransactions;
-
-                                        foreach (var s in differenceQuery)
-                                        {
-                                            try
-                                            {
-
-                                                Root root = Root.GetRootByTransactionId(s, "good-user", "better-password", @"http://127.0.0.1:22555", "30");
-                                                if (root.Signed == true)
-                                                {
-
-                                                    if (!System.IO.File.Exists(@"root\" + root.Keyword.Keys.Last() + @"\BLOCK") && !System.IO.File.Exists(@"root\" + root.Keyword.Keys.Last() + @"\MUTE"))
-                                                    {
-                                                        bool find = false;
-
-                                                        if (filter.Length > 0)
-                                                        {
-
-                                                            if (filter.StartsWith("#"))
-                                                            {
-                                                                find = root.Keyword.ContainsKey(Root.GetPublicAddressByKeyword(filter.Substring(1), mainnetVersionByte));
-                                                            }
-                                                            else
-                                                            {
-
-                                                                find = root.Keyword.ContainsKey(filter);
-
-
-                                                            }
-                                                        }
-                                                        else { find = true; }
-                                                        if (File.Exists(@"LIVE_FILTER_ENABLED")) { find = myFriends.ContainsKey(root.SignedBy); }
-                                                        if (find && root.Message.Count() > 0)
-                                                        {
-
-                                                            string _from = root.SignedBy;
-                                                            string _to = "";
-                                                            if (root.Keyword.Count() > 1) { _to = root.Keyword.Keys.GetItemByIndex(root.Keyword.Count() - 2); } else { _to = root.Keyword.Keys.Last(); }
-                                                            string _message = string.Join(" ", root.Message);
-                                                            string _blockdate = root.BlockDate.ToString("yyyyMMddHHmmss");
-                                                            string imglocation = "";
-                                                            string unfilteredmessage = _message;
-                                                            _message = Regex.Replace(_message, "<<.*?>>", "");
-
-
-                                                            this.Invoke((MethodInvoker)delegate
-                                                            {
-                                                                try { imglocation = myFriends[_to]; } catch { }
-                                                                CreateRow(imglocation, _to, _to, DateTime.ParseExact(_blockdate, "yyyyMMddHHmmss", CultureInfo.InvariantCulture), " ", "", false, supFlow, true);
-                                                                try { imglocation = myFriends[_from]; } catch { }
-                                                                CreateRow(imglocation, _from, _from, DateTime.ParseExact("19700101010101", "yyyyMMddHHmmss", CultureInfo.InvariantCulture), _message, root.TransactionId, false, supFlow, true);
-
-                                                            });
-
-                                                            string pattern = "<<.*?>>";
-                                                            MatchCollection matches = Regex.Matches(unfilteredmessage, pattern);
-                                                            foreach (Match match in matches)
-                                                            {
-
-
-                                                                string content = match.Value.Substring(2, match.Value.Length - 4);
-                                                                if (!int.TryParse(content, NumberStyles.Any, CultureInfo.GetCultureInfo("en-US"), out int r) && !content.Trim().StartsWith("#"))
+                                                                else
                                                                 {
 
-                                                                    string imgurn = content;
 
-                                                                    if (!content.ToLower().StartsWith("http"))
+                                                                    if (!int.TryParse(content, NumberStyles.Any, CultureInfo.GetCultureInfo("en-US"), out int id))
                                                                     {
-                                                                        imgurn = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + @"\root\" + content.Replace("BTC:", "").Replace("MZC:", "").Replace("LTC:", "").Replace("DOG:", "").Replace("IPFS:", "").Replace("btc:", "").Replace("mzc:", "").Replace("ltc:", "").Replace("dog:", "").Replace("ipfs:", "").Replace(@"/", @"\");
-
-                                                                        if (content.ToLower().StartsWith("ipfs:")) { imgurn = imgurn.Replace(@"\root\", @"\ipfs\"); }
-                                                                    }
-
-                                                                    string extension = Path.GetExtension(imgurn).ToLower();
-                                                                    List<string> imgExtensions = new List<string> { ".bmp", ".gif", ".ico", ".jpeg", ".jpg", ".png", ".tif", ".tiff", ".mp4", ".avi", ".wav", ".mp3" };
-                                                                    string vpattern = @"(?:youtu\.be/|youtube(?:-nocookie)?\.com/(?:[^/\n\s]*[/\n\s]*(?:v/|e(?:mbed)?/|.*[?&]v=))?)?([a-zA-Z0-9_-]{11})";
-                                                                    Match vmatch = Regex.Match(content, vpattern);
-                                                                    if (!imgExtensions.Contains(extension) && vmatch.Value.Length < 12)
-                                                                    {
-
-
-                                                                        try
+                                                                        if (vmatch.Success || extension == ".mp4" || extension == ".avi" || extension == ".wav" || extension == ".mp3")
                                                                         {
-                                                                            // Create a WebClient object to fetch the webpage
-                                                                            WebClient client = new WebClient();
-                                                                            string html = client.DownloadString(content.StripLeadingTrailingSpaces());
-
-                                                                            // Use regular expressions to extract the metadata from the HTML
-                                                                            string title = Regex.Match(html, @"<title>\s*(.+?)\s*</title>").Groups[1].Value;
-                                                                            string description = Regex.Match(html, @"<meta\s+name\s*=\s*""description""\s+content\s*=\s*""(.+?)""\s*/?>").Groups[1].Value;
-                                                                            string imageUrl = Regex.Match(html, @"<meta\s+property\s*=\s*""og:image""\s+content\s*=\s*""(.+?)""\s*/?>").Groups[1].Value;
-
-                                                                            if (description != "")
+                                                                            this.Invoke((MethodInvoker)delegate
                                                                             {
-                                                                                this.Invoke((MethodInvoker)delegate
-                                                                                {
-                                                                                    // Create a new panel to display the metadata
-                                                                                    Panel panel = new Panel();
-                                                                                    panel.BorderStyle = BorderStyle.FixedSingle;
-                                                                                    panel.Size = new Size(supFlow.Width - 50, 100);
-
-                                                                                    // Create a label for the title
-                                                                                    Label titleLabel = new Label();
-                                                                                    titleLabel.Text = title;
-                                                                                    titleLabel.Dock = DockStyle.Top;
-                                                                                    titleLabel.Font = new Font("Segoe UI", 12, FontStyle.Bold);
-                                                                                    titleLabel.ForeColor = Color.White;
-                                                                                    titleLabel.MinimumSize = new Size(supFlow.Width - 150, 30);
-                                                                                    titleLabel.Padding = new Padding(5);
-                                                                                    titleLabel.MouseClick += (sender2, e2) => { Attachment_Clicked(content); };
-                                                                                    panel.Controls.Add(titleLabel);
-
-                                                                                    // Create a label for the description
-                                                                                    Label descriptionLabel = new Label();
-                                                                                    descriptionLabel.Text = description;
-                                                                                    descriptionLabel.ForeColor = Color.White;
-                                                                                    descriptionLabel.Dock = DockStyle.Fill;
-                                                                                    descriptionLabel.Padding = new Padding(5, 40, 5, 5);
-                                                                                    descriptionLabel.MouseClick += (sender2, e2) => { Attachment_Clicked(content); };
-                                                                                    panel.Controls.Add(descriptionLabel);
-
-                                                                                    // Add an image to the panel if one is defined
-                                                                                    if (!String.IsNullOrEmpty(imageUrl))
-                                                                                    {
-                                                                                        try
-                                                                                        {
-                                                                                            // Create a MemoryStream object from the image data
-                                                                                            byte[] imageData = client.DownloadData(imageUrl);
-                                                                                            MemoryStream memoryStream = new MemoryStream(imageData);
-
-                                                                                            // Create a new PictureBox control and add it to the panel
-                                                                                            PictureBox pictureBox = new PictureBox();
-                                                                                            pictureBox.Dock = DockStyle.Left;
-                                                                                            pictureBox.Size = new Size(100, 100);
-                                                                                            pictureBox.SizeMode = PictureBoxSizeMode.StretchImage;
-                                                                                            pictureBox.Image = Image.FromStream(memoryStream);
-                                                                                            pictureBox.MouseClick += (sender2, e2) => { Attachment_Clicked(content); };
-                                                                                            panel.Controls.Add(pictureBox);
-                                                                                        }
-                                                                                        catch
-                                                                                        {
-                                                                                        }
-                                                                                    }
-
-
-                                                                                    this.supFlow.Controls.Add(panel);
-                                                                                    supFlow.Controls.SetChildIndex(panel, 0);
-                                                                                });
-
-                                                                            }
-                                                                            else
-                                                                            {
-                                                                                this.Invoke((MethodInvoker)delegate
-                                                                                {  // Create a new panel to display the metadata
-                                                                                    Panel panel = new Panel();
-                                                                                    panel.BorderStyle = BorderStyle.FixedSingle;
-                                                                                    panel.Size = new Size(supFlow.Width - 50, 30);
-
-                                                                                    // Create a label for the title
-                                                                                    LinkLabel titleLabel = new LinkLabel();
-                                                                                    titleLabel.Text = content;
-                                                                                    titleLabel.Links[0].LinkData = imgurn;
-                                                                                    titleLabel.Dock = DockStyle.Top;
-                                                                                    titleLabel.Font = new Font("Segoe UI", 8, FontStyle.Bold);
-                                                                                    titleLabel.LinkColor = System.Drawing.SystemColors.GradientActiveCaption;
-                                                                                    titleLabel.MinimumSize = new Size(supFlow.Width - 150, 30);
-                                                                                    titleLabel.Padding = new Padding(5);
-                                                                                    titleLabel.MouseClick += (sender2, e2) => { Attachment_Clicked(imgurn); };
-                                                                                    panel.Controls.Add(titleLabel);
-
-
-                                                                                    this.supFlow.Controls.Add(panel);
-                                                                                    supFlow.Controls.SetChildIndex(panel, 0);
-                                                                                });
-
-                                                                            }
+                                                                                AddMedia(content, false, true, true);
+                                                                            });
                                                                         }
-                                                                        catch
+                                                                        else
                                                                         {
+
 
                                                                             this.Invoke((MethodInvoker)delegate
-                                                                            {  // Create a new panel to display the metadata
-                                                                                Panel panel = new Panel();
-                                                                                panel.BorderStyle = BorderStyle.FixedSingle;
-                                                                                panel.Size = new Size(supFlow.Width - 50, 30);
-
-                                                                                // Create a label for the title
-                                                                                LinkLabel titleLabel = new LinkLabel();
-                                                                                titleLabel.Text = content;
-                                                                                titleLabel.Links[0].LinkData = imgurn;
-                                                                                titleLabel.Dock = DockStyle.Top;
-                                                                                titleLabel.Font = new Font("Segoe UI", 8, FontStyle.Bold);
-                                                                                titleLabel.LinkColor = System.Drawing.SystemColors.GradientActiveCaption;
-                                                                                titleLabel.MinimumSize = new Size(supFlow.Width - 150, 30);
-                                                                                titleLabel.Padding = new Padding(5);
-                                                                                titleLabel.MouseClick += (sender2, e2) => { Attachment_Clicked(imgurn); };
-                                                                                panel.Controls.Add(titleLabel);
-
-
-                                                                                this.supFlow.Controls.Add(panel);
-                                                                                supFlow.Controls.SetChildIndex(panel, 0);
+                                                                            {
+                                                                                AddImage(content, false, true);
                                                                             });
-
-
-
                                                                         }
                                                                     }
-                                                                    else
-                                                                    {
 
-
-                                                                        if (!int.TryParse(content, NumberStyles.Any, CultureInfo.GetCultureInfo("en-US"), out int id))
-                                                                        {
-                                                                            if (vmatch.Success || extension == ".mp4" || extension == ".avi" || extension == ".wav" || extension == ".mp3")
-                                                                            {
-                                                                                this.Invoke((MethodInvoker)delegate
-                                                                                {
-                                                                                    AddMedia(content, false, true, true);
-                                                                                });
-                                                                            }
-                                                                            else
-                                                                            {
-
-
-                                                                                this.Invoke((MethodInvoker)delegate
-                                                                                {
-                                                                                    AddImage(content, false, true);
-                                                                                });
-                                                                            }
-                                                                        }
-
-                                                                    }
                                                                 }
                                                             }
+                                                        }
 
-                                                            TableLayoutPanel padding = new TableLayoutPanel
-                                                            {
-                                                                RowCount = 1,
-                                                                ColumnCount = 1,
-                                                                Dock = DockStyle.Top,
-                                                                BackColor = Color.Black,
-                                                                ForeColor = Color.White,
-                                                                AutoSize = true,
-                                                                CellBorderStyle = TableLayoutPanelCellBorderStyle.Single,
-                                                                Margin = new System.Windows.Forms.Padding(0, 0, 0, 40),
-                                                                Padding = new System.Windows.Forms.Padding(0)
+                                                        TableLayoutPanel padding = new TableLayoutPanel
+                                                        {
+                                                            RowCount = 1,
+                                                            ColumnCount = 1,
+                                                            Dock = DockStyle.Top,
+                                                            BackColor = Color.Black,
+                                                            ForeColor = Color.White,
+                                                            AutoSize = true,
+                                                            CellBorderStyle = TableLayoutPanelCellBorderStyle.Single,
+                                                            Margin = new System.Windows.Forms.Padding(0, 0, 0, 40),
+                                                            Padding = new System.Windows.Forms.Padding(0)
 
-                                                            };
+                                                        };
 
-                                                            padding.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, supFlow.Width - 50));
+                                                        padding.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, supFlow.Width - 50));
+
+                                                        this.Invoke((MethodInvoker)delegate
+                                                        {
+                                                            supFlow.Controls.Add(padding);
+                                                        });
+
+
+                                                    }
+                                                    if (find && root.File.ContainsKey("INQ"))
+                                                    {
+                                                        INQState isINQ = new INQState();
+                                                        isINQ = INQState.GetInquiryByTransactionId(s, "good-user", "better-password", @"http://127.0.0.1:22555", "30");
+
+                                                        if (isINQ.TransactionId != null)
+                                                        {
 
                                                             this.Invoke((MethodInvoker)delegate
                                                             {
-                                                                supFlow.Controls.Add(padding);
+                                                                FoundINQControl foundObject = new FoundINQControl(s, "", testnet);
+                                                                foundObject.Margin = new Padding(20, 7, 8, 7);
+                                                                supFlow.Controls.Add(foundObject);
+                                                                supFlow.Controls.SetChildIndex(foundObject, 2);
                                                             });
-
-
                                                         }
-                                                        if (find && root.File.ContainsKey("INQ"))
-                                                        {
-                                                            INQState isINQ = new INQState();
-                                                            isINQ = INQState.GetInquiryByTransactionId(s, "good-user", "better-password", @"http://127.0.0.1:22555", "30");
-
-                                                            if (isINQ.TransactionId != null)
-                                                            {
-
-                                                                this.Invoke((MethodInvoker)delegate
-                                                                {
-                                                                    FoundINQControl foundObject = new FoundINQControl(s, "", testnet);
-                                                                    foundObject.Margin = new Padding(20, 7, 8, 7);
-                                                                    supFlow.Controls.Add(foundObject);
-                                                                    supFlow.Controls.SetChildIndex(foundObject, 2);
-                                                                });
-                                                            }
-
-                                                        }
-                                                        isobject = OBJState.GetObjectByTransactionId(s, "good-user", "better-password", @"http://127.0.0.1:22555", "30");
-                                                        if (isobject.URN != null && find == true)
-                                                        {
-                                                            isobject.TransactionId = s;
-                                                            foundobjects.Add(isobject);
-                                                            try { Directory.Delete(@"root\" + s, true); } catch { }
-
-
-                                                        }
-                                                        try { System.IO.Directory.Delete(@"root\" + s, true); } catch { }
 
                                                     }
-                                                    else { try { System.IO.Directory.Delete(@"root\" + s, true); } catch { } }
+                                                    isobject = OBJState.GetObjectByTransactionId(s, "good-user", "better-password", @"http://127.0.0.1:22555", "30");
+                                                    if (isobject.URN != null && find == true)
+                                                    {
+                                                        isobject.TransactionId = s;
+                                                        foundobjects.Add(isobject);
+                                                        try { Directory.Delete(@"root\" + s, true); } catch { }
+
+
+                                                    }
+                                                    try { System.IO.Directory.Delete(@"root\" + s, true); } catch { }
 
                                                 }
-                                                else { }
+                                                else { try { System.IO.Directory.Delete(@"root\" + s, true); } catch { } }
 
                                             }
-                                            catch { }
+                                            else { }
 
                                         }
+                                        catch { }
 
                                     }
+
                                 }
-                                catch { }
                             }
+                            catch { }
+                        }
 
 
 
 
-                            if (foundobjects.Count > 0)
-                            {
-
-                                this.Invoke((MethodInvoker)delegate
-                                {
-                                    AddToSearchResults(foundobjects);
-                                });
-
-                            }
-
+                        if (foundobjects.Count > 0)
+                        {
 
                             this.Invoke((MethodInvoker)delegate
                             {
-                                tmrSearchMemoryPool.Start();
+                                AddToSearchResults(foundobjects);
                             });
 
-                        });
+                        }
 
 
-
-                    }
-                    catch (Exception ex)
-                    {
-                        string error = ex.Message;
                         this.Invoke((MethodInvoker)delegate
                         {
                             tmrSearchMemoryPool.Start();
                         });
 
-                    }
-                
+                    });
+
+
+
+                }
+                catch (Exception ex)
+                {
+                    string error = ex.Message;
+                    this.Invoke((MethodInvoker)delegate
+                    {
+                        tmrSearchMemoryPool.Start();
+                    });
+
+                }
+
 
 
             }
@@ -3572,8 +3646,8 @@ namespace SUP
 
 
 
-                        CreateRow(fromImage, fromAddress, messagePacket.FromAddress, DateTime.ParseExact("19700101010101", "yyyyMMddHHmmss", CultureInfo.InvariantCulture), "", tid, false, supFlow);
-                        CreateRow(toImage, toAddress, messagePacket.ToAddress, DateTime.ParseExact(tstamp, "yyyyMMddHHmmss", CultureInfo.InvariantCulture), message, tid, false, supFlow);
+                        CreateRow(fromImage, fromAddress, messagePacket.FromAddress, DateTime.ParseExact(tstamp, "yyyyMMddHHmmss", CultureInfo.InvariantCulture), message, tid, false, supFlow);
+                        CreateRow(toImage, toAddress, messagePacket.ToAddress, DateTime.ParseExact("19700101010101", "yyyyMMddHHmmss", CultureInfo.InvariantCulture), "", tid, false, supFlow);
 
                         bool containsFileWithINQ = files.Any(file =>
                         file.EndsWith("INQ", StringComparison.OrdinalIgnoreCase) &&
@@ -4674,11 +4748,13 @@ namespace SUP
 
                         this.Invoke((MethodInvoker)delegate
                         {
+
                             try { imglocation = myFriends[_from]; } catch { imglocation = @"includes\anon.png"; }
-                            CreateRow(imglocation, fromURN, _from, DateTime.ParseExact("19700101010101", "yyyyMMddHHmmss", CultureInfo.InvariantCulture), "", _transactionId, false, supFlow);
+                            CreateRow(imglocation, fromURN, _from, DateTime.ParseExact(_blockdate, "yyyyMMddHHmmss", CultureInfo.InvariantCulture), _message, _transactionId, false, supFlow);
 
                             try { imglocation = myFriends[_to]; } catch { imglocation = @"includes\anon.png"; }
-                            CreateRow(imglocation, toURN, _to, DateTime.ParseExact(_blockdate, "yyyyMMddHHmmss", CultureInfo.InvariantCulture), _message, _transactionId, false, supFlow);
+                            CreateRow(imglocation, toURN, _to, DateTime.ParseExact("19700101010101", "yyyyMMddHHmmss", CultureInfo.InvariantCulture), "", _transactionId, false, supFlow);
+
                         });
 
                         string[] files = Directory.GetFiles(@"root\" + _transactionId);
@@ -5539,7 +5615,7 @@ namespace SUP
                     AutoSize = true
 
                 };
-                owner.LinkClicked += (sender, e) => { Owner_LinkClicked(ownerId, imageLocation); };
+                owner.LinkClicked += (sender, e) => { Owner_LinkClicked(sender, e, ownerId, imageLocation); };
                 owner.Font = new System.Drawing.Font("Microsoft Sans Serif", 16F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
                 owner.Margin = new System.Windows.Forms.Padding(3);
                 owner.Dock = DockStyle.Bottom;
@@ -5572,7 +5648,7 @@ namespace SUP
                         Dock = DockStyle.Bottom
                     };
 
-                    loveme.Click += (sender, e) => { loveme_LinkClicked(sender, e, transactionid); loveme.ForeColor = Color.Blue; };
+                    loveme.Click += (sender, e) => { Owner_LinkClicked(sender, e, ownerId, imageLocation, transactionid); loveme.ForeColor = Color.Blue; };
 
 
                     row.Controls.Add(loveme, 3, 0);
@@ -5698,7 +5774,7 @@ namespace SUP
                     AutoSize = true
 
                 };
-                owner.LinkClicked += (sender, e) => { Owner_LinkClicked(ownerId, imageLocation); };
+                owner.LinkClicked += (sender, e) => { Owner_LinkClicked(sender, e, ownerId, imageLocation); };
                 owner.Font = new System.Drawing.Font("Microsoft Sans Serif", 16F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
                 owner.Margin = new System.Windows.Forms.Padding(3);
                 owner.Dock = DockStyle.Bottom;
@@ -5818,18 +5894,78 @@ namespace SUP
 
         }
 
-        void Owner_LinkClicked(string ownerId, string imageLocation)
+        void Owner_LinkClicked(object sender, EventArgs e, string ownerId, string imageLocation, string transactionId = "")
         {
-            bool isprivate = false;
-            if (btnPrivateMessage.BackColor == Color.Blue) { isprivate = true; }
 
-            if (profileOwner.Tag != null)
+            MouseEventArgs me = e as MouseEventArgs;
+            bool isTestnet = true;
+
+            if (mainnetVersionByte == "0") { isTestnet = false; }
+
+            if (me != null)
             {
-                DiscoBall disco = new DiscoBall(profileOwner.Tag.ToString(), profileOwner.ImageLocation, ownerId, imageLocation, isprivate);
-                disco.StartPosition = FormStartPosition.CenterScreen;
-                disco.Show(this);
-                disco.Focus();
+                if (me.Button == MouseButtons.Left)
+                {
+
+
+
+                    if (profileOwner.Tag != null)
+                    {
+                        if (transactionId != "")
+                        {
+                            ownerId = ownerId + "," + Root.GetPublicAddressByKeyword(transactionId, mainnetVersionByte);
+                        }
+
+                        DiscoBall disco = new DiscoBall(profileOwner.Tag.ToString(), profileOwner.ImageLocation, ownerId, imageLocation, false, isTestnet);
+                        disco.StartPosition = FormStartPosition.CenterScreen;
+                        disco.Show(this);
+                        disco.Focus();
+                    }
+
+                }
+                // Check if the right mouse button was clicked
+                else if (me.Button == MouseButtons.Right && transactionId != "")
+                {
+                    // Code to execute for right click
+                    numMessagesDisplayed = 0;
+                    numPrivateMessagesDisplayed = 0;
+                    numFriendFeedsDisplayed = 0;
+
+                    profileBIO.Text = "Click the follow button to add this search to your community feed."; profileCreatedDate.Text = ""; profileIMG.ImageLocation = ""; lblProcessHeight.Text = "";
+
+                    GenerateImage("#" + transactionId.Substring(0, 20));
+                    profileURN.Text = "#" + transactionId.Substring(0, 20);
+                    profileURN.Links[0].LinkData = Root.GetPublicAddressByKeyword(transactionId);
+                    profileIMG.ImageLocation = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + @"\root\keywords\" + profileURN.Text + ".png";
+                    btnPublicMessage.BackColor = Color.Blue;
+                    btnPublicMessage.ForeColor = Color.Yellow;
+                    this.Invoke((Action)(() =>
+                    {
+                        ClearMessages(supFlow);
+                    }));
+                    RefreshSupMessages();
+
+                }
             }
+            else
+            {
+                bool isprivate = false;
+                if (btnPrivateMessage.BackColor == Color.Blue) { isprivate = true; }
+
+
+                if (profileOwner.Tag != null)
+                {
+                    DiscoBall disco = new DiscoBall(profileOwner.Tag.ToString(), profileOwner.ImageLocation, ownerId, imageLocation, isprivate, isTestnet);
+                    disco.StartPosition = FormStartPosition.CenterScreen;
+                    disco.Show(this);
+                    disco.Focus();
+                }
+            }
+
+
+
+
+
 
 
         }
@@ -5933,51 +6069,6 @@ namespace SUP
             System.IO.File.WriteAllText(@"root\" + transactionid + @"\" + "ROOT.json", rootSerialized);
         }
 
-        void loveme_LinkClicked(object sender, EventArgs e, string transactionid)
-        {
-            MouseEventArgs me = e as MouseEventArgs;
-            if (me != null)
-            {
-                if (me.Button == MouseButtons.Left)
-                {
-                    // Code to execute for left click
-                    string profileowner = "";
-                    string toaddress = "";
-                    string postaddress = Root.GetPublicAddressByKeyword(transactionid, mainnetVersionByte);
-
-                    if (profileOwner.Tag != null) { profileowner = profileOwner.Tag.ToString(); }
-                    if (profileURN.Links[0].LinkData != null) { toaddress = profileURN.Links[0].LinkData.ToString(); }
-
-                    DiscoBall disco = new DiscoBall(profileowner, profileOwner.ImageLocation, toaddress + "," + postaddress, profileIMG.ImageLocation, false);
-                    disco.StartPosition = FormStartPosition.CenterParent;
-                    disco.Show(this);
-                    disco.Focus();
-                }
-                // Check if the right mouse button was clicked
-                else if (me.Button == MouseButtons.Right)
-                {
-                    // Code to execute for right click
-                    numMessagesDisplayed = 0;
-                    numPrivateMessagesDisplayed = 0;
-                    numFriendFeedsDisplayed = 0;
-
-                    profileBIO.Text = "Click the follow button to add this search to your community feed."; profileCreatedDate.Text = ""; profileIMG.ImageLocation = ""; lblProcessHeight.Text = "";
-
-                    GenerateImage("#" + transactionid.Substring(0, 20));
-                    profileURN.Text = "#" + transactionid.Substring(0, 20);
-                    profileURN.Links[0].LinkData = Root.GetPublicAddressByKeyword(transactionid);
-                    profileIMG.ImageLocation = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + @"\root\keywords\" + profileURN.Text + ".png";
-                    btnPublicMessage.BackColor = Color.Blue;
-                    btnPublicMessage.ForeColor = Color.Yellow;
-                    this.Invoke((Action)(() =>
-                    {
-                        ClearMessages(supFlow);
-                    }));
-                    RefreshSupMessages();
-
-                }
-            }
-        }
 
         string TruncateAddress(string input)
         {

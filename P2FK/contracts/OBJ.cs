@@ -158,145 +158,96 @@ namespace SUP.P2FK
                 lock (SupLocker)
                 {
                     objectTransactions = Root.GetRootsByAddress(objectaddress, username, password, url, intProcessHeight, -1, versionByte, verbose);
-                }
 
-                if (intProcessHeight != 0 && objectTransactions.Count() == 0)
-                {
-                    return objectState;
-                }
-                string[] requiredKeys = { "OBJ", "GIV", "BRN", "BUY", "LST" };
 
-                foreach (Root transaction in objectTransactions)
-                {
-                    if (transaction.Id > intProcessHeight)
+                    if (intProcessHeight != 0 && objectTransactions.Count() == 0)
                     {
-                        intProcessHeight = transaction.Id;
+                        return objectState;
+                    }
+                    string[] requiredKeys = { "OBJ", "GIV", "BRN", "BUY", "LST" };
 
-
-                        if (requiredKeys.Any(key => transaction.File.ContainsKey(key)) && transaction.Signed)
+                    foreach (Root transaction in objectTransactions)
+                    {
+                        if (transaction.Id > intProcessHeight)
                         {
-                            //alright you met minnimum criteria lets inspect this further
-                            logstatus = "";
-                            objectState.ProcessHeight = intProcessHeight;
+                            intProcessHeight = transaction.Id;
 
-                            string sigSeen = null;
 
-                            // Calculate SHA-256 hash of the signature
-                            using (System.Security.Cryptography.SHA256 sha256 = System.Security.Cryptography.SHA256.Create())
+                            if (requiredKeys.Any(key => transaction.File.ContainsKey(key)) && transaction.Signed)
                             {
-                                byte[] hashBytes = sha256.ComputeHash(Encoding.UTF8.GetBytes(transaction.Signature));
-                                string hashedSignature = BitConverter.ToString(hashBytes).Replace("-", "");
+                                //alright you met minnimum criteria lets inspect this further
+                                logstatus = "";
+                                objectState.ProcessHeight = intProcessHeight;
 
-                                string filePath = @"root\" + objectaddress + @"\sig\" + hashedSignature;
+                                string sigSeen = null;
 
-                                if (!System.IO.File.Exists(filePath))
+                                // Calculate SHA-256 hash of the signature
+                                using (System.Security.Cryptography.SHA256 sha256 = System.Security.Cryptography.SHA256.Create())
                                 {
-                                    if (!System.IO.Directory.Exists(@"root\" + objectaddress + @"\sig")) { Directory.CreateDirectory(@"root\" + objectaddress + @"\sig"); }
-                                    // If the file does not exist, create it and write the text string to it
-                                    System.IO.File.WriteAllText(filePath, transaction.TransactionId);
+                                    byte[] hashBytes = sha256.ComputeHash(Encoding.UTF8.GetBytes(transaction.Signature));
+                                    string hashedSignature = BitConverter.ToString(hashBytes).Replace("-", "");
+
+                                    string filePath = @"root\" + objectaddress + @"\sig\" + hashedSignature;
+
+                                    if (!System.IO.File.Exists(filePath))
+                                    {
+                                        if (!System.IO.Directory.Exists(@"root\" + objectaddress + @"\sig")) { Directory.CreateDirectory(@"root\" + objectaddress + @"\sig"); }
+                                        // If the file does not exist, create it and write the text string to it
+                                        System.IO.File.WriteAllText(filePath, transaction.TransactionId);
+                                    }
+                                    else
+                                    {
+                                        // If the file exists, read its content
+                                        sigSeen = System.IO.File.ReadAllText(filePath);
+                                    }
                                 }
-                                else
+
+
+                                if (sigSeen == null || (verbose && sigSeen == transaction.TransactionId))
                                 {
-                                    // If the file exists, read its content
-                                    sigSeen = System.IO.File.ReadAllText(filePath);
-                                }
-                            }
 
-
-                            if (sigSeen == null || (verbose && sigSeen == transaction.TransactionId))
-                            {
-
-                                switch (transaction.File.ElementAtOrDefault(1).Key?.ToString())
-                                {
-                                    case "OBJ":
-                                        OBJ objectinspector = null;
-                                        //is this even the right object!?  no!?  goodbye!
-                                        if (!transaction.Keyword.ContainsKey(objectaddress))
-                                        {
-                                            break;
-                                        }
-                                        try
-                                        {
-                                            objectinspector = JsonConvert.DeserializeObject<OBJ>(File.ReadAllText(@"root\" + transaction.TransactionId + @"\OBJ"));
-
-                                        }
-                                        catch (Exception e)
-                                        {
-                                            if (verbose)
+                                    switch (transaction.File.ElementAtOrDefault(1).Key?.ToString())
+                                    {
+                                        case "OBJ":
+                                            OBJ objectinspector = null;
+                                            //is this even the right object!?  no!?  goodbye!
+                                            if (!transaction.Keyword.ContainsKey(objectaddress))
                                             {
-                                                logstatus = "[\"" + transaction.SignedBy + "\",\"" + objectaddress + "\",\"inspect\",\"\",\"\",\"failed due to invalid format\",\"" + transaction.BlockDate.ToString() + "\"]";
-                                                objectState.ChangeLog.Add(logstatus);
-                                                logstatus = "";
+                                                break;
                                             }
-                                            break;
-                                        }
-
-
-
-                                        try
-                                        {
-                                            //builds the creator element
-                                            if (objectinspector.urn != null && objectinspector.cre != null && objectState.Creators == null && objectinspector.cre[0] == objectaddress || (objectinspector.urn != null && objectinspector.cre != null && objectState.Creators == null && int.TryParse(objectinspector.cre[0], out int intID) && objectaddress == transaction.Keyword.Reverse().ElementAt(intID).Key))
-
+                                            try
                                             {
+                                                objectinspector = JsonConvert.DeserializeObject<OBJ>(File.ReadAllText(@"root\" + transaction.TransactionId + @"\OBJ"));
 
-
-                                                objectState.Creators = new Dictionary<string, DateTime> { };
-
-
-
-                                                try
-                                                {
-
-
-                                                    foreach (string keywordId in objectinspector.cre)
-                                                    {
-                                                        string creator = "";
-                                                        if (int.TryParse(keywordId, out int intId))
-                                                        {
-                                                            creator = transaction.Keyword.Reverse().ElementAt(intId).Key;
-                                                        }
-                                                        else
-                                                        {
-                                                            creator = keywordId;
-
-
-                                                        }
-
-                                                        if (!objectState.Creators.ContainsKey(creator))
-                                                        {
-                                                            objectState.Creators.Add(creator, new DateTime());
-                                                        }
-
-                                                    }
-
-
-
-
-                                                }
-                                                catch
-                                                {
-                                                    break;
-                                                }
-                                                objectState.ChangeDate = transaction.BlockDate;
-                                                objectinspector.cre = null;
                                             }
-                                        }
-                                        catch { }///allows ack signature confirmation
-
-                                        try
-                                        {
-
-                                            //creator grant authorization timestamp if currently null
-                                            if (objectState.Creators != null && objectState.Creators.ContainsKey(transaction.SignedBy))
+                                            catch (Exception e)
                                             {
-
-
-                                                try
+                                                if (verbose)
                                                 {
-                                                    if (objectinspector.cre != null)
+                                                    logstatus = "[\"" + transaction.SignedBy + "\",\"" + objectaddress + "\",\"inspect\",\"\",\"\",\"failed due to invalid format\",\"" + transaction.BlockDate.ToString() + "\"]";
+                                                    objectState.ChangeLog.Add(logstatus);
+                                                    logstatus = "";
+                                                }
+                                                break;
+                                            }
+
+
+
+                                            try
+                                            {
+                                                //builds the creator element
+                                                if (objectinspector.urn != null && objectinspector.cre != null && objectState.Creators == null && objectinspector.cre[0] == objectaddress || (objectinspector.urn != null && objectinspector.cre != null && objectState.Creators == null && int.TryParse(objectinspector.cre[0], out int intID) && objectaddress == transaction.Keyword.Reverse().ElementAt(intID).Key))
+
+                                                {
+
+
+                                                    objectState.Creators = new Dictionary<string, DateTime> { };
+
+
+
+                                                    try
                                                     {
-                                                        objectState.Creators = objectState.Creators.Take(1).ToDictionary(pair => pair.Key, pair => pair.Value);
+
 
                                                         foreach (string keywordId in objectinspector.cre)
                                                         {
@@ -309,478 +260,273 @@ namespace SUP.P2FK
                                                             {
                                                                 creator = keywordId;
 
-                                                                //            objectaddress = objectinspector.cre.First();
-                                                            }
 
+                                                            }
 
                                                             if (!objectState.Creators.ContainsKey(creator))
                                                             {
                                                                 objectState.Creators.Add(creator, new DateTime());
                                                             }
 
-
-
                                                         }
 
 
 
+
                                                     }
-                                                }
-                                                catch
-                                                {
-                                                    break;
-                                                }
-
-
-
-
-
-
-                                                objectState.ChangeDate = transaction.BlockDate;
-                                                objectinspector.cre = null;
-
-                                                if (objectState.Creators.TryGet(transaction.SignedBy).Year == 1)
-                                                {
-                                                    objectState.Creators[transaction.SignedBy] = transaction.BlockDate;
+                                                    catch
+                                                    {
+                                                        break;
+                                                    }
                                                     objectState.ChangeDate = transaction.BlockDate;
-                                                    if (verbose)
-                                                    {
-
-                                                        logstatus = "[\"" + transaction.SignedBy + "\",\"" + objectaddress + "\",\"grant\",\"\",\"\",\"success\",\"" + transaction.BlockDate.ToString() + "\"]";
-                                                        objectState.ChangeLog.Add(logstatus);
-
-                                                    }
-
-                                                }
-
-
-
-                                                if (objectState.LockedDate.Year == 1)
-                                                {
-                                                    if (objectinspector.urn != null)
-                                                    {
-
-                                                        //prevents someone from trying to claim a previously sigend etching using a different signature
-                                                        if (versionByte != "111" && !objectinspector.urn.ToUpper().StartsWith("IPFS:"))
-                                                        {
-                                                            Root signedRoot = Root.GetRootByTransactionId(objectinspector.urn.Substring(0, 64), username, password, url, versionByte);
-                                                            if (signedRoot.Signed)
-                                                            {
-                                                                if (signedRoot.SignedBy != transaction.SignedBy)
-                                                                {
-                                                                    if (verbose)
-                                                                    {
-                                                                        logstatus = "[\"" + transaction.SignedBy + "\",\"" + objectaddress + "\",\"create\",\"\",\"\",\"failed due to previous claim\",\"" + transaction.BlockDate.ToString() + "\"]";
-                                                                        objectState.ChangeLog.Add(logstatus);
-                                                                        logstatus = "";
-                                                                    }
-                                                                    break;
-                                                                }
-
-                                                            }
-
-                                                            //obtain URN creation date if it exists
-                                                            if (signedRoot.BlockDate.Year > 1975)
-                                                            {
-                                                                objectState.CreatedDate = signedRoot.BlockDate;
-                                                            }
-                                                        }
-
-                                                        objectState.ChangeDate = transaction.BlockDate; objectState.URN = objectinspector.urn.Replace('“', '"').Replace('”', '"');
-
-                                                    }
-                                                    if (objectinspector.uri != null) { objectState.ChangeDate = transaction.BlockDate; objectState.URI = objectinspector.uri.Replace('“', '"').Replace('”', '"'); }
-                                                    if (objectinspector.img != null) { objectState.ChangeDate = transaction.BlockDate; objectState.Image = objectinspector.img.Replace('“', '"').Replace('”', '"'); }
-                                                    if (objectinspector.nme != null) { objectState.ChangeDate = transaction.BlockDate; objectState.Name = objectinspector.nme.Replace('“', '"').Replace('”', '"'); }
-                                                    if (objectinspector.dsc != null) { objectState.ChangeDate = transaction.BlockDate; objectState.Description = objectinspector.dsc.Replace('“', '"').Replace('”', '"'); }
-                                                    if (objectinspector.atr != null) { objectState.ChangeDate = transaction.BlockDate; objectState.Attributes = objectinspector.atr; }
-                                                    if (objectinspector.lic != null) { objectState.ChangeDate = transaction.BlockDate; objectState.License = objectinspector.lic.Replace('“', '"').Replace('”', '"'); }
-                                                    if (objectinspector.max != objectState.Maximum) { objectState.ChangeDate = transaction.BlockDate; objectState.Maximum = objectinspector.max; }
-                                                    if (intProcessHeight > 0 && objectState.ChangeDate == transaction.BlockDate)
-                                                    {
-                                                        if (!logstatus.Contains("grant"))
-                                                        {
-                                                            if (verbose)
-                                                            {
-                                                                logstatus = "[\"" + transaction.SignedBy + "\",\"" + objectaddress + "\",\"update\",\"\",\"\",\"success\",\"" + transaction.BlockDate.ToString() + "\"]";
-                                                                objectState.ChangeLog.Add(logstatus);
-                                                                logstatus = "";
-                                                            }
-                                                        }
-                                                        else { logstatus = ""; }
-                                                    }
-                                                    if (objectinspector.own != null)
-                                                    {
-                                                        if (objectState.Owners == null)
-                                                        {
-                                                            //if URN creation date cannot be be determined use date claimed
-                                                            if (objectState.CreatedDate.Year < 1975)
-                                                            {
-                                                                objectState.CreatedDate = transaction.BlockDate;
-                                                            }
-
-                                                            objectState.TransactionId = transaction.TransactionId;
-                                                            objectState.Owners = new Dictionary<string, (long, string)>();
-                                                            objectState.Royalties = new Dictionary<string, decimal>();
-                                                            if (verbose)
-                                                            {
-                                                                logstatus = "[\"" + transaction.SignedBy + "\",\"" + objectaddress + "\",\"create\",\"" + objectinspector.own.Values.Sum() + "\",\"\",\"success\",\"" + transaction.BlockDate.ToString() + "\"]";
-                                                                objectState.ChangeLog.Add(logstatus);
-                                                                logstatus = "";
-                                                            }
-
-
-                                                        }
-                                                        else { objectState.Owners = new Dictionary<string, (long, string)>(); }
-
-
-                                                        foreach (var ownerId in objectinspector.own)
-                                                        {
-                                                            string owner = "";
-                                                            if (int.TryParse(ownerId.Key, out int intId))
-                                                            {
-                                                                owner = transaction.Keyword.Reverse().ElementAt(intId).Key;
-                                                            }
-                                                            else { owner = ownerId.Key; }
-
-                                                            if (!objectState.Owners.ContainsKey(owner))
-                                                            {
-                                                                // If the key doesn't exist, add it with the new tuple value
-                                                                objectState.Owners.Add(owner, (ownerId.Value, null)); // Replace "someStringValue" with an appropriate string value.
-                                                            }
-                                                            else
-                                                            {
-                                                                // If the key exists, update the tuple with the new ownerId.Value
-                                                                objectState.Owners[owner] = (ownerId.Value, objectState.Owners[owner].Item2);
-                                                                if (verbose)
-                                                                {
-                                                                    logstatus = $"[\"{transaction.SignedBy}\",\"{objectaddress}\",\"update\",\"{ownerId.Value}\",\"\",\"success\",\"{transaction.BlockDate.ToString()}\"]";
-                                                                    objectState.ChangeLog.Add(logstatus);
-                                                                    logstatus = "";
-                                                                }
-                                                            }
-
-
-                                                        }
-                                                    }
-
-
-                                                    if (objectinspector.roy != null)
-                                                    {
-                                                        objectState.Royalties = new Dictionary<string, decimal>();
-
-                                                        foreach (var royaltyId in objectinspector.roy)
-                                                        {
-                                                            string royalty = "";
-                                                            if (int.TryParse(royaltyId.Key, out int intId))
-                                                            {
-                                                                royalty = transaction.Keyword.Reverse().ElementAt(intId).Key;
-                                                            }
-                                                            else { royalty = royaltyId.Key; }
-
-                                                            if (!objectState.Royalties.ContainsKey(royalty))
-                                                            {
-                                                                objectState.Royalties.Add(royalty, royaltyId.Value);
-                                                            }
-                                                            else
-                                                            {
-                                                                objectState.Royalties[royalty] = royaltyId.Value;
-                                                                if (verbose)
-                                                                {
-                                                                    logstatus = "[\"" + transaction.SignedBy + "\",\"" + objectaddress + "\",\"update\",\"" + royaltyId.Value + "\",\"\",\"success\",\"" + transaction.BlockDate.ToString() + "\"]";
-                                                                    objectState.ChangeLog.Add(logstatus);
-                                                                    logstatus = "";
-                                                                }
-                                                            }
-
-                                                        }
-                                                    }
-
-
-                                                }
-                                                else
-                                                {
-                                                    if (verbose)
-                                                    {
-                                                        logstatus = "[\"" + transaction.SignedBy + "\",\"" + objectaddress + "\",\"update\",\"\",\"\",\"failed due to object lock\",\"" + transaction.BlockDate.ToString() + "\"]";
-                                                        objectState.ChangeLog.Add(logstatus);
-                                                        logstatus = "";
-                                                    }
-                                                    break;
+                                                    objectinspector.cre = null;
                                                 }
                                             }
-                                            else
-                                            {
-                                                if (verbose)
-                                                {
-                                                    logstatus = "[\"" + transaction.SignedBy + "\",\"" + objectaddress + "\",\"inspect\",\"\",\"\",\"failed due to insufficient privileges\",\"" + transaction.BlockDate.ToString() + "\"]";
-                                                    objectState.ChangeLog.Add(logstatus);
-                                                    logstatus = "";
-                                                }
-                                            }
-                                            break;
-
-
-                                        }
-                                        catch
-                                        {
-                                            if (verbose)
-                                            {
-                                                logstatus = "[\"" + transaction.SignedBy + "\",\"" + objectaddress + "\",\"create\",\"\",\"\",\"failed due to invalid transaction format\",\"" + transaction.BlockDate.ToString() + "\"]";
-                                                objectState.ChangeLog.Add(logstatus);
-                                                logstatus = "";
-                                            }
-                                            break;
-                                        }
-
-
-
-                                    case "GIV":
-
-                                        //is this even the right object!?  no!?  goodbye!
-                                        if (!transaction.Keyword.ContainsKey(objectaddress)) { break; }
-                                        // no sense checking any further
-                                        if (objectState.Owners == null) { break; }
-                                        List<List<int>> givinspector = new List<List<int>> { };
-                                        try
-                                        {
-                                            givinspector = JsonConvert.DeserializeObject<List<List<int>>>(File.ReadAllText(@"root\" + transaction.TransactionId + @"\GIV"));
-                                        }
-                                        catch { break; }
-
-                                        if (givinspector == null) { break; }
-
-                                        foreach (var give in givinspector)
-                                        {
-                                            int qtyToGive = 0;
-                                            string giver = transaction.SignedBy;
-                                            string reciever;
+                                            catch { }///allows ack signature confirmation
 
                                             try
                                             {
-                                                reciever = transaction.Keyword.Reverse().ElementAt(give[0]).Key;
 
-                                            }
-                                            catch
-                                            {
-                                                if (verbose)
-                                                {
-                                                    logstatus = "[\"" + transaction.SignedBy + "\",\"" + objectaddress + "\",\"give\",\"\",\"\",\"failed due to invalid keyword count\",\"" + transaction.BlockDate.ToString() + "\"]";
-                                                    objectState.ChangeLog.Add(logstatus);
-                                                    logstatus = "";
-                                                }
-                                                break;
-                                            }
-
-
-                                            try
-                                            {
-                                                qtyToGive = give[1];
-                                            }
-                                            catch
-                                            {
-                                                if (verbose)
-                                                {
-                                                    logstatus = "[\"" + transaction.SignedBy + "\",\"" + objectaddress + "\",\"give\",\"\",\"\",\"failed due to invalid qty format\",\"" + transaction.BlockDate.ToString() + "\"]";
-                                                    objectState.ChangeLog.Add(logstatus);
-                                                    logstatus = "";
-                                                }
-                                                break;
-                                            }
-
-
-                                            // cannot give less then 1
-                                            if (qtyToGive < 0)
-                                            {
-                                                //salt
-                                                break;
-                                            }
-
-                                            // GIV Transaction with 0 qty closes all pending offers
-                                            if (qtyToGive == 0)
-                                            {
-                                                objectState.Offers.RemoveAll(offer => offer.Requestor == reciever && offer.Owner == transaction.SignedBy);
-
-                                                if (verbose)
-                                                {
-                                                    logstatus = "[\"" + transaction.SignedBy + "\",\"" + reciever + "\",\"give\",\"" + qtyToGive + "\",\"\",\"close all offers" + qtyToGive.ToString() + "\",\"" + transaction.BlockDate.ToString() + "\"]";
-                                                    objectState.ChangeLog.Add(logstatus);
-
-                                                    logstatus = "";
-                                                }
-                                                break;
-                                            }
-
-
-                                            if (objectState.Maximum > 0)
-                                            {
-                                                if (qtyToGive > objectState.Maximum)
-                                                {
-                                                    if (verbose)
-                                                    {
-                                                        logstatus = "[\"" + transaction.SignedBy + "\",\"" + reciever + "\",\"give\",\"" + qtyToGive + "\",\"\",\"failed due to over maximum qty\",\"" + transaction.BlockDate.ToString() + "\"]";
-                                                        objectState.ChangeLog.Add(logstatus);
-
-                                                        logstatus = "";
-                                                    }
-                                                    break;
-                                                }
-
-                                                if (objectState.Owners.TryGetValue(reciever, out var tuple) && tuple.Item1 + qtyToGive > objectState.Maximum)
-                                                {
-                                                    if (verbose)
-                                                    {
-                                                        logstatus = $"[\"{transaction.SignedBy}\",\"{reciever}\",\"give\",\"{qtyToGive}\",\"\",\"failed due to over maximum qty\",\"{transaction.BlockDate.ToString()}\"]";
-                                                        objectState.ChangeLog.Add(logstatus);
-                                                        logstatus = "";
-                                                    }
-                                                    break;
-                                                }
-
-                                            }
-
-
-                                            // Check if the transaction signer is not on the Owners list
-                                            if (!objectState.Owners.TryGetValue(transaction.SignedBy, out var qtyOwnedG))
-                                            {
-                                                // Check if the object container is empty
-                                                if (!objectState.Owners.TryGetValue(objectaddress, out var tuple) || tuple.Item1 <= 0)
-                                                {
-                                                    if (verbose)
-                                                    {
-                                                        logstatus = $"[\"{transaction.SignedBy}\",\"{reciever}\",\"give\",\"{qtyToGive}\",\"\",\"failed due to insufficient qty owned\",\"{transaction.BlockDate.ToString()}\"]";
-
-                                                        objectState.ChangeLog.Add(logstatus);
-
-                                                        logstatus = "";
-                                                    }
-                                                    break;
-                                                }
-                                                else
-                                                {
-                                                    // If the transaction is signed by a creator who doesn't own any objects, emulate container
-                                                    if (objectState.Creators.ContainsKey(transaction.SignedBy))
-                                                    {
-                                                        giver = objectaddress;
-                                                        qtyOwnedG = tuple; // Assuming the first item in the tuple represents the quantity
-                                                    }
-                                                }
-                                            }
-
-
-                                            long qtyListed = 0;
-                                            try { if (objectState.Listings != null) { qtyListed = qtyListed + objectState.Listings[giver].Qty; } } catch { }
-
-                                            if (qtyOwnedG.Item1 - qtyListed >= qtyToGive)
-                                            {
-
-
-
-                                                //check if Reciever already has a qty if not add a new owner if yes increment
-                                                if (!objectState.Owners.TryGetValue(reciever, out var recieverOwned))
-                                                {
-
-                                                    string genid = "";
-
-                                                    if (giver == objectaddress)
-                                                    {
-                                                        genid = transaction.TransactionId;
-                                                    }
-                                                    else
-                                                    {
-                                                        genid = objectState.Owners[giver].Item2;
-                                                    }
-                                                    // If the key doesn't exist, add it with the new tuple value
-                                                    objectState.Owners.Add(reciever, (qtyToGive, genid));
-                                                }
-                                                else
-                                                {
-                                                    string genid = "";
-
-                                                    if (giver == objectaddress)
-                                                    {
-                                                        genid = transaction.TransactionId;
-                                                    }
-                                                    else
-                                                    {
-                                                        genid = objectState.Owners[giver].Item2;
-                                                    }
-                                                    // If the key exists, update the tuple with the new quantity
-                                                    objectState.Owners[reciever] = (recieverOwned.Item1 + qtyToGive, genid);
-                                                }
-
-                                                // New value to update with
-                                                long newValue = qtyOwnedG.Item1 - qtyToGive;
-
-
-                                                // Check if the new value is greater then 0
-                                                if (newValue > 0)
-                                                {
-                                                    string genid = "";
-
-                                                    if (giver == objectaddress)
-                                                    {
-                                                        genid = null;
-                                                    }
-                                                    else
-                                                    {
-                                                        genid = objectState.Owners[giver].Item2;
-                                                    }
-                                                    // Update the value
-                                                    objectState.Owners[giver] = (newValue, genid);
-                                                }
-                                                else
-                                                {
-                                                    // Remove the dictionary key
-                                                    objectState.Owners.Remove(giver);
-                                                }
-
-                                                //close all currently open offers from reciever
-                                                try { if (objectState.Offers != null) { objectState.Offers.RemoveAll(offer => offer.Requestor == reciever && offer.Owner == giver); } } catch { }
-
-                                                if (verbose)
-                                                {
-                                                    logstatus = "[\"" + transaction.SignedBy + "\",\"" + reciever + "\",\"give\",\"" + qtyToGive + "\",\"\",\"success\",\"" + transaction.BlockDate.ToString() + "\"]";
-                                                    objectState.ChangeLog.Add(logstatus);
-                                                    logstatus = "";
-                                                }
-
+                                                //creator grant authorization timestamp if currently null
                                                 if (objectState.Creators != null && objectState.Creators.ContainsKey(transaction.SignedBy))
                                                 {
+
+
+                                                    try
+                                                    {
+                                                        if (objectinspector.cre != null)
+                                                        {
+                                                            objectState.Creators = objectState.Creators.Take(1).ToDictionary(pair => pair.Key, pair => pair.Value);
+
+                                                            foreach (string keywordId in objectinspector.cre)
+                                                            {
+                                                                string creator = "";
+                                                                if (int.TryParse(keywordId, out int intId))
+                                                                {
+                                                                    creator = transaction.Keyword.Reverse().ElementAt(intId).Key;
+                                                                }
+                                                                else
+                                                                {
+                                                                    creator = keywordId;
+
+                                                                    //            objectaddress = objectinspector.cre.First();
+                                                                }
+
+
+                                                                if (!objectState.Creators.ContainsKey(creator))
+                                                                {
+                                                                    objectState.Creators.Add(creator, new DateTime());
+                                                                }
+
+
+
+                                                            }
+
+
+
+                                                        }
+                                                    }
+                                                    catch
+                                                    {
+                                                        break;
+                                                    }
+
+
+
+
+
+
+                                                    objectState.ChangeDate = transaction.BlockDate;
+                                                    objectinspector.cre = null;
+
                                                     if (objectState.Creators.TryGet(transaction.SignedBy).Year == 1)
                                                     {
                                                         objectState.Creators[transaction.SignedBy] = transaction.BlockDate;
                                                         objectState.ChangeDate = transaction.BlockDate;
                                                         if (verbose)
                                                         {
+
                                                             logstatus = "[\"" + transaction.SignedBy + "\",\"" + objectaddress + "\",\"grant\",\"\",\"\",\"success\",\"" + transaction.BlockDate.ToString() + "\"]";
+                                                            objectState.ChangeLog.Add(logstatus);
+
+                                                        }
+
+                                                    }
+
+
+
+                                                    if (objectState.LockedDate.Year == 1)
+                                                    {
+                                                        if (objectinspector.urn != null)
+                                                        {
+
+                                                            //prevents someone from trying to claim a previously sigend etching using a different signature
+                                                            if (versionByte != "111" && !objectinspector.urn.ToUpper().StartsWith("IPFS:"))
+                                                            {
+                                                                Root signedRoot = Root.GetRootByTransactionId(objectinspector.urn.Substring(0, 64), username, password, url, versionByte);
+                                                                if (signedRoot.Signed)
+                                                                {
+                                                                    if (signedRoot.SignedBy != transaction.SignedBy)
+                                                                    {
+                                                                        if (verbose)
+                                                                        {
+                                                                            logstatus = "[\"" + transaction.SignedBy + "\",\"" + objectaddress + "\",\"create\",\"\",\"\",\"failed due to previous claim\",\"" + transaction.BlockDate.ToString() + "\"]";
+                                                                            objectState.ChangeLog.Add(logstatus);
+                                                                            logstatus = "";
+                                                                        }
+                                                                        break;
+                                                                    }
+
+                                                                }
+
+                                                                //obtain URN creation date if it exists
+                                                                if (signedRoot.BlockDate.Year > 1975)
+                                                                {
+                                                                    objectState.CreatedDate = signedRoot.BlockDate;
+                                                                }
+                                                            }
+
+                                                            objectState.ChangeDate = transaction.BlockDate; objectState.URN = objectinspector.urn.Replace('“', '"').Replace('”', '"');
+
+                                                        }
+                                                        if (objectinspector.uri != null) { objectState.ChangeDate = transaction.BlockDate; objectState.URI = objectinspector.uri.Replace('“', '"').Replace('”', '"'); }
+                                                        if (objectinspector.img != null) { objectState.ChangeDate = transaction.BlockDate; objectState.Image = objectinspector.img.Replace('“', '"').Replace('”', '"'); }
+                                                        if (objectinspector.nme != null) { objectState.ChangeDate = transaction.BlockDate; objectState.Name = objectinspector.nme.Replace('“', '"').Replace('”', '"'); }
+                                                        if (objectinspector.dsc != null) { objectState.ChangeDate = transaction.BlockDate; objectState.Description = objectinspector.dsc.Replace('“', '"').Replace('”', '"'); }
+                                                        if (objectinspector.atr != null) { objectState.ChangeDate = transaction.BlockDate; objectState.Attributes = objectinspector.atr; }
+                                                        if (objectinspector.lic != null) { objectState.ChangeDate = transaction.BlockDate; objectState.License = objectinspector.lic.Replace('“', '"').Replace('”', '"'); }
+                                                        if (objectinspector.max != objectState.Maximum) { objectState.ChangeDate = transaction.BlockDate; objectState.Maximum = objectinspector.max; }
+                                                        if (intProcessHeight > 0 && objectState.ChangeDate == transaction.BlockDate)
+                                                        {
+                                                            if (!logstatus.Contains("grant"))
+                                                            {
+                                                                if (verbose)
+                                                                {
+                                                                    logstatus = "[\"" + transaction.SignedBy + "\",\"" + objectaddress + "\",\"update\",\"\",\"\",\"success\",\"" + transaction.BlockDate.ToString() + "\"]";
+                                                                    objectState.ChangeLog.Add(logstatus);
+                                                                    logstatus = "";
+                                                                }
+                                                            }
+                                                            else { logstatus = ""; }
+                                                        }
+                                                        if (objectinspector.own != null)
+                                                        {
+                                                            if (objectState.Owners == null)
+                                                            {
+                                                                //if URN creation date cannot be be determined use date claimed
+                                                                if (objectState.CreatedDate.Year < 1975)
+                                                                {
+                                                                    objectState.CreatedDate = transaction.BlockDate;
+                                                                }
+
+                                                                objectState.TransactionId = transaction.TransactionId;
+                                                                objectState.Owners = new Dictionary<string, (long, string)>();
+                                                                objectState.Royalties = new Dictionary<string, decimal>();
+                                                                if (verbose)
+                                                                {
+                                                                    logstatus = "[\"" + transaction.SignedBy + "\",\"" + objectaddress + "\",\"create\",\"" + objectinspector.own.Values.Sum() + "\",\"\",\"success\",\"" + transaction.BlockDate.ToString() + "\"]";
+                                                                    objectState.ChangeLog.Add(logstatus);
+                                                                    logstatus = "";
+                                                                }
+
+
+                                                            }
+                                                            else { objectState.Owners = new Dictionary<string, (long, string)>(); }
+
+
+                                                            foreach (var ownerId in objectinspector.own)
+                                                            {
+                                                                string owner = "";
+                                                                if (int.TryParse(ownerId.Key, out int intId))
+                                                                {
+                                                                    owner = transaction.Keyword.Reverse().ElementAt(intId).Key;
+                                                                }
+                                                                else { owner = ownerId.Key; }
+
+                                                                if (!objectState.Owners.ContainsKey(owner))
+                                                                {
+                                                                    // If the key doesn't exist, add it with the new tuple value
+                                                                    objectState.Owners.Add(owner, (ownerId.Value, null)); // Replace "someStringValue" with an appropriate string value.
+                                                                }
+                                                                else
+                                                                {
+                                                                    // If the key exists, update the tuple with the new ownerId.Value
+                                                                    objectState.Owners[owner] = (ownerId.Value, objectState.Owners[owner].Item2);
+                                                                    if (verbose)
+                                                                    {
+                                                                        logstatus = $"[\"{transaction.SignedBy}\",\"{objectaddress}\",\"update\",\"{ownerId.Value}\",\"\",\"success\",\"{transaction.BlockDate.ToString()}\"]";
+                                                                        objectState.ChangeLog.Add(logstatus);
+                                                                        logstatus = "";
+                                                                    }
+                                                                }
+
+
+                                                            }
+                                                        }
+
+
+                                                        if (objectinspector.roy != null)
+                                                        {
+                                                            objectState.Royalties = new Dictionary<string, decimal>();
+
+                                                            foreach (var royaltyId in objectinspector.roy)
+                                                            {
+                                                                string royalty = "";
+                                                                if (int.TryParse(royaltyId.Key, out int intId))
+                                                                {
+                                                                    royalty = transaction.Keyword.Reverse().ElementAt(intId).Key;
+                                                                }
+                                                                else { royalty = royaltyId.Key; }
+
+                                                                if (!objectState.Royalties.ContainsKey(royalty))
+                                                                {
+                                                                    objectState.Royalties.Add(royalty, royaltyId.Value);
+                                                                }
+                                                                else
+                                                                {
+                                                                    objectState.Royalties[royalty] = royaltyId.Value;
+                                                                    if (verbose)
+                                                                    {
+                                                                        logstatus = "[\"" + transaction.SignedBy + "\",\"" + objectaddress + "\",\"update\",\"" + royaltyId.Value + "\",\"\",\"success\",\"" + transaction.BlockDate.ToString() + "\"]";
+                                                                        objectState.ChangeLog.Add(logstatus);
+                                                                        logstatus = "";
+                                                                    }
+                                                                }
+
+                                                            }
+                                                        }
+
+
+                                                    }
+                                                    else
+                                                    {
+                                                        if (verbose)
+                                                        {
+                                                            logstatus = "[\"" + transaction.SignedBy + "\",\"" + objectaddress + "\",\"update\",\"\",\"\",\"failed due to object lock\",\"" + transaction.BlockDate.ToString() + "\"]";
                                                             objectState.ChangeLog.Add(logstatus);
                                                             logstatus = "";
                                                         }
-
+                                                        break;
                                                     }
                                                 }
-
-                                                if (objectState.LockedDate.Year == 1)
+                                                else
                                                 {
-
                                                     if (verbose)
                                                     {
-                                                        logstatus = "[\"" + transaction.SignedBy + "\",\"" + objectaddress + "\",\"lock\",\"\",\"\",\"success\",\"" + transaction.BlockDate.ToString() + "\"]";
+                                                        logstatus = "[\"" + transaction.SignedBy + "\",\"" + objectaddress + "\",\"inspect\",\"\",\"\",\"failed due to insufficient privileges\",\"" + transaction.BlockDate.ToString() + "\"]";
                                                         objectState.ChangeLog.Add(logstatus);
-
                                                         logstatus = "";
                                                     }
-                                                    objectState.LockedDate = transaction.BlockDate;
                                                 }
-                                                objectState.ChangeDate = transaction.BlockDate;
+                                                break;
+
 
                                             }
-                                            else
+                                            catch
                                             {
                                                 if (verbose)
-                                                { //Invalid trade attempt
-                                                    logstatus = "[\"" + transaction.SignedBy + "\",\"" + reciever + "\",\"give\",\"" + qtyToGive + "\",\"\",\"failed due to insufficent available qty owned\",\"" + transaction.BlockDate.ToString() + "\"]";
+                                                {
+                                                    logstatus = "[\"" + transaction.SignedBy + "\",\"" + objectaddress + "\",\"create\",\"\",\"\",\"failed due to invalid transaction format\",\"" + transaction.BlockDate.ToString() + "\"]";
                                                     objectState.ChangeLog.Add(logstatus);
                                                     logstatus = "";
                                                 }
@@ -789,388 +535,491 @@ namespace SUP.P2FK
 
 
 
-                                        }
-                                        break;
+                                        case "GIV":
 
-                                    case "BRN":
-                                        //does this even contain the right object!?  no!?  goodbye!
-                                        if (!transaction.Keyword.ContainsKey(objectaddress)) { break; }
-
-                                        if (objectState.Owners == null) { break; }
-
-                                        List<List<long>> brninspector = new List<List<long>> { };
-
-                                        try
-                                        {
-                                            brninspector = JsonConvert.DeserializeObject<List<List<long>>>(File.ReadAllText(@"root\" + transaction.TransactionId + @"\BRN"));
-                                        }
-                                        catch { break; }
-
-                                        if (brninspector == null) { break; }
-
-                                        foreach (var burn in brninspector)
-                                        {
-                                            //is this the right object to burn?
-                                            if (transaction.Keyword.Reverse().GetItemByIndex((int)burn[0]).Key != objectaddress) { break; }
-
-                                            string burnr = transaction.SignedBy;
-                                            long qtyToBurn = burn[1];
-
-                                            if (qtyToBurn < 1)
+                                            //is this even the right object!?  no!?  goodbye!
+                                            if (!transaction.Keyword.ContainsKey(objectaddress)) { break; }
+                                            // no sense checking any further
+                                            if (objectState.Owners == null) { break; }
+                                            List<List<int>> givinspector = new List<List<int>> { };
+                                            try
                                             {
-                                                //salt
-                                                break;
+                                                givinspector = JsonConvert.DeserializeObject<List<List<int>>>(File.ReadAllText(@"root\" + transaction.TransactionId + @"\GIV"));
                                             }
+                                            catch { break; }
 
+                                            if (givinspector == null) { break; }
+
+                                            foreach (var give in givinspector)
+                                            {
+                                                int qtyToGive = 0;
+                                                string giver = transaction.SignedBy;
+                                                string reciever;
+
+                                                try
+                                                {
+                                                    reciever = transaction.Keyword.Reverse().ElementAt(give[0]).Key;
+
+                                                }
+                                                catch
+                                                {
+                                                    if (verbose)
+                                                    {
+                                                        logstatus = "[\"" + transaction.SignedBy + "\",\"" + objectaddress + "\",\"give\",\"\",\"\",\"failed due to invalid keyword count\",\"" + transaction.BlockDate.ToString() + "\"]";
+                                                        objectState.ChangeLog.Add(logstatus);
+                                                        logstatus = "";
+                                                    }
+                                                    break;
+                                                }
+
+
+                                                try
+                                                {
+                                                    qtyToGive = give[1];
+                                                }
+                                                catch
+                                                {
+                                                    if (verbose)
+                                                    {
+                                                        logstatus = "[\"" + transaction.SignedBy + "\",\"" + objectaddress + "\",\"give\",\"\",\"\",\"failed due to invalid qty format\",\"" + transaction.BlockDate.ToString() + "\"]";
+                                                        objectState.ChangeLog.Add(logstatus);
+                                                        logstatus = "";
+                                                    }
+                                                    break;
+                                                }
+
+
+                                                // cannot give less then 1
+                                                if (qtyToGive < 0)
+                                                {
+                                                    //salt
+                                                    break;
+                                                }
+
+                                                // GIV Transaction with 0 qty closes all pending offers
+                                                if (qtyToGive == 0)
+                                                {
+                                                    objectState.Offers.RemoveAll(offer => offer.Requestor == reciever && offer.Owner == transaction.SignedBy);
+
+                                                    if (verbose)
+                                                    {
+                                                        logstatus = "[\"" + transaction.SignedBy + "\",\"" + reciever + "\",\"give\",\"" + qtyToGive + "\",\"\",\"close all offers" + qtyToGive.ToString() + "\",\"" + transaction.BlockDate.ToString() + "\"]";
+                                                        objectState.ChangeLog.Add(logstatus);
+
+                                                        logstatus = "";
+                                                    }
+                                                    break;
+                                                }
+
+
+                                                if (objectState.Maximum > 0)
+                                                {
+                                                    if (qtyToGive > objectState.Maximum)
+                                                    {
+                                                        if (verbose)
+                                                        {
+                                                            logstatus = "[\"" + transaction.SignedBy + "\",\"" + reciever + "\",\"give\",\"" + qtyToGive + "\",\"\",\"failed due to over maximum qty\",\"" + transaction.BlockDate.ToString() + "\"]";
+                                                            objectState.ChangeLog.Add(logstatus);
+
+                                                            logstatus = "";
+                                                        }
+                                                        break;
+                                                    }
+
+                                                    if (objectState.Owners.TryGetValue(reciever, out var tuple) && tuple.Item1 + qtyToGive > objectState.Maximum)
+                                                    {
+                                                        if (verbose)
+                                                        {
+                                                            logstatus = $"[\"{transaction.SignedBy}\",\"{reciever}\",\"give\",\"{qtyToGive}\",\"\",\"failed due to over maximum qty\",\"{transaction.BlockDate.ToString()}\"]";
+                                                            objectState.ChangeLog.Add(logstatus);
+                                                            logstatus = "";
+                                                        }
+                                                        break;
+                                                    }
+
+                                                }
+
+
+                                                // Check if the transaction signer is not on the Owners list
+                                                if (!objectState.Owners.TryGetValue(transaction.SignedBy, out var qtyOwnedG))
+                                                {
+                                                    // Check if the object container is empty
+                                                    if (!objectState.Owners.TryGetValue(objectaddress, out var tuple) || tuple.Item1 <= 0)
+                                                    {
+                                                        if (verbose)
+                                                        {
+                                                            logstatus = $"[\"{transaction.SignedBy}\",\"{reciever}\",\"give\",\"{qtyToGive}\",\"\",\"failed due to insufficient qty owned\",\"{transaction.BlockDate.ToString()}\"]";
+
+                                                            objectState.ChangeLog.Add(logstatus);
+
+                                                            logstatus = "";
+                                                        }
+                                                        break;
+                                                    }
+                                                    else
+                                                    {
+                                                        // If the transaction is signed by a creator who doesn't own any objects, emulate container
+                                                        if (objectState.Creators.ContainsKey(transaction.SignedBy))
+                                                        {
+                                                            giver = objectaddress;
+                                                            qtyOwnedG = tuple; // Assuming the first item in the tuple represents the quantity
+                                                        }
+                                                    }
+                                                }
+
+
+                                                long qtyListed = 0;
+                                                try { if (objectState.Listings != null) { qtyListed = qtyListed + objectState.Listings[giver].Qty; } } catch { }
+
+                                                if (qtyOwnedG.Item1 - qtyListed >= qtyToGive)
+                                                {
+
+
+
+                                                    //check if Reciever already has a qty if not add a new owner if yes increment
+                                                    if (!objectState.Owners.TryGetValue(reciever, out var recieverOwned))
+                                                    {
+
+                                                        string genid = "";
+
+                                                        if (giver == objectaddress)
+                                                        {
+                                                            genid = transaction.TransactionId;
+                                                        }
+                                                        else
+                                                        {
+                                                            genid = objectState.Owners[giver].Item2;
+                                                        }
+                                                        // If the key doesn't exist, add it with the new tuple value
+                                                        objectState.Owners.Add(reciever, (qtyToGive, genid));
+                                                    }
+                                                    else
+                                                    {
+                                                        string genid = "";
+
+                                                        if (giver == objectaddress)
+                                                        {
+                                                            genid = transaction.TransactionId;
+                                                        }
+                                                        else
+                                                        {
+                                                            genid = objectState.Owners[giver].Item2;
+                                                        }
+                                                        // If the key exists, update the tuple with the new quantity
+                                                        objectState.Owners[reciever] = (recieverOwned.Item1 + qtyToGive, genid);
+                                                    }
+
+                                                    // New value to update with
+                                                    long newValue = qtyOwnedG.Item1 - qtyToGive;
+
+
+                                                    // Check if the new value is greater then 0
+                                                    if (newValue > 0)
+                                                    {
+                                                        string genid = "";
+
+                                                        if (giver == objectaddress)
+                                                        {
+                                                            genid = null;
+                                                        }
+                                                        else
+                                                        {
+                                                            genid = objectState.Owners[giver].Item2;
+                                                        }
+                                                        // Update the value
+                                                        objectState.Owners[giver] = (newValue, genid);
+                                                    }
+                                                    else
+                                                    {
+                                                        // Remove the dictionary key
+                                                        objectState.Owners.Remove(giver);
+                                                    }
+
+                                                    //close all currently open offers from reciever
+                                                    try { if (objectState.Offers != null) { objectState.Offers.RemoveAll(offer => offer.Requestor == reciever && offer.Owner == giver); } } catch { }
+
+                                                    if (verbose)
+                                                    {
+                                                        logstatus = "[\"" + transaction.SignedBy + "\",\"" + reciever + "\",\"give\",\"" + qtyToGive + "\",\"\",\"success\",\"" + transaction.BlockDate.ToString() + "\"]";
+                                                        objectState.ChangeLog.Add(logstatus);
+                                                        logstatus = "";
+                                                    }
+
+                                                    if (objectState.Creators != null && objectState.Creators.ContainsKey(transaction.SignedBy))
+                                                    {
+                                                        if (objectState.Creators.TryGet(transaction.SignedBy).Year == 1)
+                                                        {
+                                                            objectState.Creators[transaction.SignedBy] = transaction.BlockDate;
+                                                            objectState.ChangeDate = transaction.BlockDate;
+                                                            if (verbose)
+                                                            {
+                                                                logstatus = "[\"" + transaction.SignedBy + "\",\"" + objectaddress + "\",\"grant\",\"\",\"\",\"success\",\"" + transaction.BlockDate.ToString() + "\"]";
+                                                                objectState.ChangeLog.Add(logstatus);
+                                                                logstatus = "";
+                                                            }
+
+                                                        }
+                                                    }
+
+                                                    if (objectState.LockedDate.Year == 1)
+                                                    {
+
+                                                        if (verbose)
+                                                        {
+                                                            logstatus = "[\"" + transaction.SignedBy + "\",\"" + objectaddress + "\",\"lock\",\"\",\"\",\"success\",\"" + transaction.BlockDate.ToString() + "\"]";
+                                                            objectState.ChangeLog.Add(logstatus);
+
+                                                            logstatus = "";
+                                                        }
+                                                        objectState.LockedDate = transaction.BlockDate;
+                                                    }
+                                                    objectState.ChangeDate = transaction.BlockDate;
+
+                                                }
+                                                else
+                                                {
+                                                    if (verbose)
+                                                    { //Invalid trade attempt
+                                                        logstatus = "[\"" + transaction.SignedBy + "\",\"" + reciever + "\",\"give\",\"" + qtyToGive + "\",\"\",\"failed due to insufficent available qty owned\",\"" + transaction.BlockDate.ToString() + "\"]";
+                                                        objectState.ChangeLog.Add(logstatus);
+                                                        logstatus = "";
+                                                    }
+                                                    break;
+                                                }
+
+
+
+                                            }
+                                            break;
+
+                                        case "BRN":
+                                            //does this even contain the right object!?  no!?  goodbye!
+                                            if (!transaction.Keyword.ContainsKey(objectaddress)) { break; }
 
                                             if (objectState.Owners == null) { break; }
 
-                                            // Check if the transaction signer is not on the Owners list
-                                            if (!objectState.Owners.TryGetValue(transaction.SignedBy, out var qtyOwnedG))
+                                            List<List<long>> brninspector = new List<List<long>> { };
+
+                                            try
                                             {
-                                                // Try granting access to the object's self-owned qtyOwned to any creator
-                                                if (!objectState.Owners.TryGetValue(objectaddress, out var tuple) || tuple.Item1 <= 0)
+                                                brninspector = JsonConvert.DeserializeObject<List<List<long>>>(File.ReadAllText(@"root\" + transaction.TransactionId + @"\BRN"));
+                                            }
+                                            catch { break; }
+
+                                            if (brninspector == null) { break; }
+
+                                            foreach (var burn in brninspector)
+                                            {
+                                                //is this the right object to burn?
+                                                if (transaction.Keyword.Reverse().GetItemByIndex((int)burn[0]).Key != objectaddress) { break; }
+
+                                                string burnr = transaction.SignedBy;
+                                                long qtyToBurn = burn[1];
+
+                                                if (qtyToBurn < 1)
                                                 {
-                                                    if (verbose)
-                                                    {
-                                                        // Add Invalid trade attempt status
-                                                        logstatus = $"[\"{transaction.SignedBy}\",\"{objectaddress}\",\"burn\",\"{qtyToBurn}\",\"\",\"failed due to insufficient qty owned\",\"{transaction.BlockDate.ToString()}\"]";
-
-                                                        objectState.ChangeLog.Add(logstatus);
-
-                                                        logstatus = "";
-                                                    }
+                                                    //salt
                                                     break;
                                                 }
-                                                else
+
+
+                                                if (objectState.Owners == null) { break; }
+
+                                                // Check if the transaction signer is not on the Owners list
+                                                if (!objectState.Owners.TryGetValue(transaction.SignedBy, out var qtyOwnedG))
                                                 {
-                                                    // If the transaction signer is a creator, emulate container
-                                                    if (objectState.Creators.ContainsKey(transaction.SignedBy))
+                                                    // Try granting access to the object's self-owned qtyOwned to any creator
+                                                    if (!objectState.Owners.TryGetValue(objectaddress, out var tuple) || tuple.Item1 <= 0)
                                                     {
-                                                        burnr = objectaddress;
-                                                        qtyOwnedG = tuple; // Assuming the first item in the tuple represents the quantity
-                                                    }
-                                                }
-                                            }
-
-
-
-                                            if (qtyOwnedG.Item1 >= qtyToBurn)
-                                            {
-                                                //update owners Dictionary with new values
-
-                                                // New value to update with
-                                                long newValue = qtyOwnedG.Item1 - qtyToBurn;
-
-
-                                                // Check if the new value is an integer
-                                                if (newValue > 0)
-                                                {
-                                                    // Update the value
-                                                    objectState.Owners[burnr] = (newValue, objectState.Owners[burnr].Item2);
-
-                                                    if (objectState.Listings[burnr] != null)
-                                                    {
-                                                        if (objectState.Listings[burnr].Qty > newValue)
+                                                        if (verbose)
                                                         {
-                                                            objectState.Listings[burnr].Qty = newValue;
+                                                            // Add Invalid trade attempt status
+                                                            logstatus = $"[\"{transaction.SignedBy}\",\"{objectaddress}\",\"burn\",\"{qtyToBurn}\",\"\",\"failed due to insufficient qty owned\",\"{transaction.BlockDate.ToString()}\"]";
 
+                                                            objectState.ChangeLog.Add(logstatus);
+
+                                                            logstatus = "";
                                                         }
-
+                                                        break;
+                                                    }
+                                                    else
+                                                    {
+                                                        // If the transaction signer is a creator, emulate container
+                                                        if (objectState.Creators.ContainsKey(transaction.SignedBy))
+                                                        {
+                                                            burnr = objectaddress;
+                                                            qtyOwnedG = tuple; // Assuming the first item in the tuple represents the quantity
+                                                        }
                                                     }
                                                 }
-                                                else
-                                                {
-                                                    // remove the dictionary key
-                                                    objectState.Owners.Remove(burnr);
-                                                    try { objectState.Listings.Remove(burnr); } catch { }
 
-                                                    if (objectState.Owners.Count() < 1)
+
+
+                                                if (qtyOwnedG.Item1 >= qtyToBurn)
+                                                {
+                                                    //update owners Dictionary with new values
+
+                                                    // New value to update with
+                                                    long newValue = qtyOwnedG.Item1 - qtyToBurn;
+
+
+                                                    // Check if the new value is an integer
+                                                    if (newValue > 0)
                                                     {
+                                                        // Update the value
+                                                        objectState.Owners[burnr] = (newValue, objectState.Owners[burnr].Item2);
                                                         try
                                                         {
-                                                            using (FileStream fs = File.Create(@"root\" + objectaddress + @"\BLOCK"))
+                                                            if (objectState.Listings != null && objectState.Listings.ContainsKey(burnr))
                                                             {
-
+                                                                if (objectState.Listings[burnr].Qty > newValue)
+                                                                {
+                                                                    objectState.Listings[burnr].Qty = newValue;
+                                                                }
                                                             }
 
-                                                            string urnCLAIM = Root.GetPublicAddressByKeyword(objectState.URN, versionByte);
 
-
-                                                            ///trying various things to remove the urn registratiion
-                                                            try { Directory.Delete(@"root/" + urnCLAIM, true); } catch { }
-                                                            try { Directory.Delete(@"root/" + burnr, true); } catch { }
-                                                            try { Directory.CreateDirectory(@"root\" + objectState.TransactionId); } catch { }
-
-                                                            var rootSerialized = JsonConvert.SerializeObject(new Root()); ;
-                                                            System.IO.File.WriteAllText(@"root\" + objectState.TransactionId + @"\" + "ROOTS.json", rootSerialized);
-
-                                                            objectState = new OBJState();
-                                                            break;
                                                         }
                                                         catch { }
                                                     }
-                                                }
-                                                if (verbose)
-                                                {
-                                                    logstatus = "[\"" + transaction.SignedBy + "\",\"" + objectaddress + "\",\"burn\",\"" + qtyToBurn + "\",\"\",\"success\",\"" + transaction.BlockDate.ToString() + "\"]";
-
-                                                    objectState.ChangeLog.Add(logstatus);
-                                                    logstatus = "";
-                                                }
-                                                if (objectState.LockedDate.Year == 1)
-                                                {
-
-                                                    if (verbose)
-                                                    {
-                                                        logstatus = "[\"" + transaction.SignedBy + "\",\"" + objectaddress + "\",\"lock\",\"\",\"\",\"success\",\"" + transaction.BlockDate.ToString() + "\"]";
-
-                                                        objectState.ChangeLog.Add(logstatus);
-
-                                                        logstatus = "";
-                                                    }
-                                                    objectState.LockedDate = transaction.BlockDate;
-                                                }
-                                                objectState.ChangeDate = transaction.BlockDate;
-
-                                            }
-                                            else
-                                            {
-                                                if (verbose)
-                                                {
-                                                    logstatus = "[\"" + transaction.SignedBy + "\",\"" + objectaddress + "\",\"burn\",\"" + qtyToBurn + "\",\"\",\"failed due to a insufficent qty owned\",\"" + transaction.BlockDate.ToString() + "\"]";
-                                                    objectState.ChangeLog.Add(logstatus);
-
-                                                    logstatus = "";
-                                                }
-                                                break;
-                                            }
-
-
-                                        }
-                                        break;
-
-                                    case "BUY":
-                                        //BUY command can only be directed at one object at a time for now.
-                                        //cannot garuntee the placement of outputs. can occur in possibly two locations.
-                                        if (objectaddress != transaction.Output.ElementAt(transaction.Output.Count - 2).Key && objectaddress != transaction.Output.ElementAt(transaction.Output.Count - 3).Key)
-                                        {
-                                            break;
-                                        }
-
-                                        if (objectState.Owners == null) { break; }
-
-                                        if (transaction.SignedBy == objectaddress) { break; }
-
-                                        List<List<string>> buyinspector = new List<List<string>> { };
-
-                                        try
-                                        {
-                                            buyinspector = JsonConvert.DeserializeObject<List<List<string>>>(File.ReadAllText(@"root\" + transaction.TransactionId + @"\BUY"));
-                                        }
-                                        catch
-                                        {
-                                            break;
-                                        }
-                                        if (buyinspector == null)
-                                        {
-                                            break;
-                                        }
-                                        decimal royaltiesPaid = 0;
-
-                                        foreach (var buy in buyinspector)
-                                        {
-
-
-                                            if (long.Parse(buy[1], NumberStyles.Any, CultureInfo.GetCultureInfo("en-US")) < 1)
-                                            {
-                                                //salt
-
-                                                break;
-                                            }
-
-                                            if (objectState.Maximum > 0)
-                                            {
-                                                if (long.Parse(buy[1], NumberStyles.Any, CultureInfo.GetCultureInfo("en-US")) > objectState.Maximum)
-                                                {
-                                                    if (verbose)
-                                                    {
-                                                        logstatus = "[\"" + transaction.SignedBy + "\",\"" + buy[0] + "\",\"buy\",\"" + buy[1] + "\",\"\",\"failed due to over maximum qty\",\"" + transaction.BlockDate.ToString() + "\"]";
-                                                        objectState.ChangeLog.Add(logstatus);
-                                                        logstatus = "";
-                                                    }
-                                                    break;
-                                                }
-
-                                                if (objectState.Owners.TryGetValue(transaction.SignedBy, out var tuple) && tuple.Item1 + long.Parse(buy[1], NumberStyles.Any, CultureInfo.GetCultureInfo("en-US")) > objectState.Maximum)
-                                                {
-                                                    if (verbose)
-                                                    {
-                                                        logstatus = $"[\"{transaction.SignedBy}\",\"{buy[0]}\",\"buy\",\"{buy[1]}\",\"\",\"failed due to over maximum qty held\",\"{transaction.BlockDate.ToString()}\"]";
-                                                        objectState.ChangeLog.Add(logstatus);
-                                                        logstatus = "";
-                                                    }
-                                                    break;
-                                                }
-                                            }
-
-                                            // Are their enough listed to buy?
-                                            if (objectState.Listings != null && objectState.Listings.TryGetValue(buy[0], out BID qtyListed) && qtyListed.Qty >= long.Parse(buy[1], NumberStyles.Any, CultureInfo.GetCultureInfo("en-US")))
-                                            {
-
-                                                foreach (KeyValuePair<string, decimal> pair in objectState.Royalties)
-                                                {
-
-                                                    if (pair.Key != transaction.SignedBy)
-                                                    {
-                                                        string outputSent;
-                                                        transaction.Output.TryGetValue(pair.Key, out outputSent);
-                                                        decimal logSent = decimal.Parse(outputSent, System.Globalization.NumberStyles.Float, CultureInfo.GetCultureInfo("en-US"));
-
-                                                        //have required royalties been paid or greator?
-                                                        if (logSent >= ((qtyListed.Value * long.Parse(buy[1], NumberStyles.Any, CultureInfo.GetCultureInfo("en-US"))) * (pair.Value / 100))) { royaltiesPaid = royaltiesPaid + ((qtyListed.Value * long.Parse(buy[1], NumberStyles.Any, CultureInfo.GetCultureInfo("en-US"))) * (pair.Value / 100)); }
-                                                        else
-                                                        {
-                                                            if (verbose)
-                                                            {
-                                                                logstatus = "[\"" + transaction.SignedBy + "\",\"" + buy[0] + "\",\"buy\",\"" + buy[1] + "\",\"\",\"failed " + pair.Key + " " + logSent + " insuficent royalties paid\",\"" + transaction.BlockDate.ToString() + "\"]";
-                                                                objectState.ChangeLog.Add(logstatus);
-
-                                                            }
-                                                            logstatus = "break";
-
-                                                            break;
-                                                        }
-                                                    }
-                                                }
-
-                                                if (logstatus == "break") { logstatus = ""; break; }
-
-
-                                                //was the current owner paid what was listed with required royalties removed or greator?
-                                                decimal ownerPaid = 0;
-                                                string ownerValue;
-                                                transaction.Output.TryGetValue(buy[0], out ownerValue);
-                                                ownerPaid = decimal.Parse(ownerValue, System.Globalization.NumberStyles.Float, CultureInfo.GetCultureInfo("en-US"));
-
-                                                if (ownerPaid >= (qtyListed.Value * long.Parse(buy[1], NumberStyles.Any, CultureInfo.GetCultureInfo("en-US"))) - royaltiesPaid)
-                                                {
-
-                                                    //remove from listing
-                                                    objectState.Listings[buy[0]].Qty = objectState.Listings[buy[0]].Qty - long.Parse(buy[1], NumberStyles.Any, CultureInfo.GetCultureInfo("en-US"));
-
-                                                    //remove from owners
-                                                    long quantityToRemove = long.Parse(buy[1], NumberStyles.Any, CultureInfo.GetCultureInfo("en-US"));
-                                                    string genid = "";
-
-                                                    if (objectState.Owners.TryGetValue(buy[0], out var tuple))
-                                                    {
-
-                                                        if (buy[0] == objectaddress)
-                                                        {
-                                                            genid = transaction.TransactionId;
-                                                        }
-                                                        else
-                                                        {
-                                                            genid = tuple.Item2;
-                                                        }
-
-
-                                                        // Subtract the quantityToRemove from the existing value
-                                                        var updatedTuple = (tuple.Item1 - quantityToRemove, tuple.Item2);
-
-                                                        // Remove previous owner from the list if the quantity is less than 1
-
-                                                        if (updatedTuple.Item1 < 1)
-                                                        {
-                                                            objectState.Owners.Remove(buy[0]);
-                                                        }
-                                                        else
-                                                        {
-                                                            // Update the value in the dictionary
-                                                            objectState.Owners[buy[0]] = updatedTuple;
-                                                        }
-                                                    }
-
-                                                    // Increment the new owner if already owned
-                                                    if (objectState.Owners.ContainsKey(transaction.SignedBy))
-                                                    {
-
-                                                        var currentOwnerTuple = objectState.Owners[transaction.SignedBy];
-
-                                                        if (buy[0] == objectaddress)
-                                                        {
-                                                            genid = transaction.TransactionId;
-                                                        }
-                                                        else
-                                                        {
-                                                            genid = tuple.Item2;
-                                                        }
-
-                                                        objectState.Owners[transaction.SignedBy] = (currentOwnerTuple.Item1 + long.Parse(buy[1], NumberStyles.Any, CultureInfo.GetCultureInfo("en-US")), genid);
-                                                    }
-                                                    // Add the new owner to the list if not currently listed
                                                     else
                                                     {
-                                                        if (buy[0] == objectaddress)
+                                                        // remove the dictionary key
+                                                        objectState.Owners.Remove(burnr);
+                                                        try { objectState.Listings.Remove(burnr); } catch { }
+
+                                                        if (objectState.Owners.Count() < 1)
                                                         {
-                                                            genid = transaction.TransactionId;
+                                                            try
+                                                            {
+                                                                using (FileStream fs = File.Create(@"root\" + objectaddress + @"\BLOCK"))
+                                                                {
+
+                                                                }
+
+                                                                string urnCLAIM = Root.GetPublicAddressByKeyword(objectState.URN, versionByte);
+
+
+                                                                ///trying various things to remove the urn registratiion
+                                                                try { Directory.Delete(@"root/" + urnCLAIM, true); } catch { }
+                                                                try { Directory.Delete(@"root/" + burnr, true); } catch { }
+                                                                try { Directory.CreateDirectory(@"root\" + objectState.TransactionId); } catch { }
+
+                                                                var rootSerialized = JsonConvert.SerializeObject(new Root()); ;
+                                                                System.IO.File.WriteAllText(@"root\" + objectState.TransactionId + @"\" + "ROOTS.json", rootSerialized);
+
+                                                                objectState = new OBJState();
+                                                                break;
+                                                            }
+                                                            catch { }
                                                         }
-                                                        else
-                                                        {
-                                                            genid = tuple.Item2;
-                                                        }
-                                                        objectState.Owners.Add(transaction.SignedBy, (long.Parse(buy[1], NumberStyles.Any, CultureInfo.GetCultureInfo("en-US")), genid));
                                                     }
-
-                                                    //remove previous owner from list if now 0
-                                                    if (objectState.Listings[buy[0]].Qty < 1) { objectState.Listings.Remove(buy[0]); }
-
-
                                                     if (verbose)
                                                     {
-                                                        logstatus = "[\"" + transaction.SignedBy + "\",\"" + buy[0] + "\",\"buy\",\"" + buy[1] + "\",\"\",\"success " + ownerPaid.ToString() + "\",\"" + transaction.BlockDate.ToString() + "\"]";
+                                                        logstatus = "[\"" + transaction.SignedBy + "\",\"" + objectaddress + "\",\"burn\",\"" + qtyToBurn + "\",\"\",\"success\",\"" + transaction.BlockDate.ToString() + "\"]";
 
                                                         objectState.ChangeLog.Add(logstatus);
-
                                                         logstatus = "";
                                                     }
+                                                    if (objectState.LockedDate.Year == 1)
+                                                    {
 
-                                                    break;
+                                                        if (verbose)
+                                                        {
+                                                            logstatus = "[\"" + transaction.SignedBy + "\",\"" + objectaddress + "\",\"lock\",\"\",\"\",\"success\",\"" + transaction.BlockDate.ToString() + "\"]";
 
+                                                            objectState.ChangeLog.Add(logstatus);
 
+                                                            logstatus = "";
+                                                        }
+                                                        objectState.LockedDate = transaction.BlockDate;
+                                                    }
+                                                    objectState.ChangeDate = transaction.BlockDate;
 
                                                 }
-                                                //conditons were not met log failed event.
                                                 else
                                                 {
-
                                                     if (verbose)
                                                     {
-                                                        logstatus = "[\"" + transaction.SignedBy + "\",\"" + buy[0] + "\",\"buy\",\"" + buy[1] + "\",\"\",\"failed " + ownerPaid.ToString() + " insuficent owner paid\",\"" + transaction.BlockDate.ToString() + "\"]";
+                                                        logstatus = "[\"" + transaction.SignedBy + "\",\"" + objectaddress + "\",\"burn\",\"" + qtyToBurn + "\",\"\",\"failed due to a insufficent qty owned\",\"" + transaction.BlockDate.ToString() + "\"]";
                                                         objectState.ChangeLog.Add(logstatus);
 
                                                         logstatus = "";
                                                     }
-
                                                     break;
                                                 }
-
-
 
 
                                             }
+                                            break;
 
-                                            //not enough listed check is still valid offer?
-                                            else
+                                        case "BUY":
+                                            //BUY command can only be directed at one object at a time for now.
+                                            //cannot garuntee the placement of outputs. can occur in possibly two locations.
+                                            if (objectaddress != transaction.Output.ElementAt(transaction.Output.Count - 2).Key && objectaddress != transaction.Output.ElementAt(transaction.Output.Count - 3).Key)
+                                            {
+                                                break;
+                                            }
+
+                                            if (objectState.Owners == null) { break; }
+
+                                            if (transaction.SignedBy == objectaddress) { break; }
+
+                                            List<List<string>> buyinspector = new List<List<string>> { };
+
+                                            try
+                                            {
+                                                buyinspector = JsonConvert.DeserializeObject<List<List<string>>>(File.ReadAllText(@"root\" + transaction.TransactionId + @"\BUY"));
+                                            }
+                                            catch
+                                            {
+                                                break;
+                                            }
+                                            if (buyinspector == null)
+                                            {
+                                                break;
+                                            }
+                                            decimal royaltiesPaid = 0;
+
+                                            foreach (var buy in buyinspector)
                                             {
 
-                                                //attempt buy out if any listings remain
-                                                if (objectState.Listings != null && objectState.Listings.TryGetValue(buy[0], out BID qtyListed2) && long.TryParse(buy[1], NumberStyles.Any, CultureInfo.GetCultureInfo("en-US"), out long buyQty) && buyQty > qtyListed2.Qty)
+
+                                                if (long.Parse(buy[1], NumberStyles.Any, CultureInfo.GetCultureInfo("en-US")) < 1)
                                                 {
+                                                    //salt
 
-                                                    buy[1] = qtyListed2.Qty.ToString();
+                                                    break;
+                                                }
 
+                                                if (objectState.Maximum > 0)
+                                                {
+                                                    if (long.Parse(buy[1], NumberStyles.Any, CultureInfo.GetCultureInfo("en-US")) > objectState.Maximum)
+                                                    {
+                                                        if (verbose)
+                                                        {
+                                                            logstatus = "[\"" + transaction.SignedBy + "\",\"" + buy[0] + "\",\"buy\",\"" + buy[1] + "\",\"\",\"failed due to over maximum qty\",\"" + transaction.BlockDate.ToString() + "\"]";
+                                                            objectState.ChangeLog.Add(logstatus);
+                                                            logstatus = "";
+                                                        }
+                                                        break;
+                                                    }
+
+                                                    if (objectState.Owners.TryGetValue(transaction.SignedBy, out var tuple) && tuple.Item1 + long.Parse(buy[1], NumberStyles.Any, CultureInfo.GetCultureInfo("en-US")) > objectState.Maximum)
+                                                    {
+                                                        if (verbose)
+                                                        {
+                                                            logstatus = $"[\"{transaction.SignedBy}\",\"{buy[0]}\",\"buy\",\"{buy[1]}\",\"\",\"failed due to over maximum qty held\",\"{transaction.BlockDate.ToString()}\"]";
+                                                            objectState.ChangeLog.Add(logstatus);
+                                                            logstatus = "";
+                                                        }
+                                                        break;
+                                                    }
+                                                }
+
+                                                // Are their enough listed to buy?
+                                                if (objectState.Listings != null && objectState.Listings.TryGetValue(buy[0], out BID qtyListed) && qtyListed.Qty >= long.Parse(buy[1], NumberStyles.Any, CultureInfo.GetCultureInfo("en-US")))
+                                                {
 
                                                     foreach (KeyValuePair<string, decimal> pair in objectState.Royalties)
                                                     {
@@ -1182,7 +1031,7 @@ namespace SUP.P2FK
                                                             decimal logSent = decimal.Parse(outputSent, System.Globalization.NumberStyles.Float, CultureInfo.GetCultureInfo("en-US"));
 
                                                             //have required royalties been paid or greator?
-                                                            if (logSent >= ((qtyListed2.Value * long.Parse(buy[1], NumberStyles.Any, CultureInfo.GetCultureInfo("en-US"))) * (pair.Value / 100))) { royaltiesPaid = royaltiesPaid + ((qtyListed2.Value * long.Parse(buy[1], NumberStyles.Any, CultureInfo.GetCultureInfo("en-US"))) * (pair.Value / 100)); }
+                                                            if (logSent >= ((qtyListed.Value * long.Parse(buy[1], NumberStyles.Any, CultureInfo.GetCultureInfo("en-US"))) * (pair.Value / 100))) { royaltiesPaid = royaltiesPaid + ((qtyListed.Value * long.Parse(buy[1], NumberStyles.Any, CultureInfo.GetCultureInfo("en-US"))) * (pair.Value / 100)); }
                                                             else
                                                             {
                                                                 if (verbose)
@@ -1207,7 +1056,7 @@ namespace SUP.P2FK
                                                     transaction.Output.TryGetValue(buy[0], out ownerValue);
                                                     ownerPaid = decimal.Parse(ownerValue, System.Globalization.NumberStyles.Float, CultureInfo.GetCultureInfo("en-US"));
 
-                                                    if (ownerPaid >= (qtyListed2.Value * long.Parse(buy[1], NumberStyles.Any, CultureInfo.GetCultureInfo("en-US"))) - royaltiesPaid)
+                                                    if (ownerPaid >= (qtyListed.Value * long.Parse(buy[1], NumberStyles.Any, CultureInfo.GetCultureInfo("en-US"))) - royaltiesPaid)
                                                     {
 
                                                         //remove from listing
@@ -1310,300 +1159,432 @@ namespace SUP.P2FK
                                                         break;
                                                     }
 
+
+
+
                                                 }
 
+                                                //not enough listed check is still valid offer?
                                                 else
                                                 {
 
-                                                    // is qty owned enough to fill the Offer?
-                                                    if (objectState.Owners.TryGetValue(buy[0], out var tuple) && tuple.Item1 >= long.Parse(buy[1]))
+                                                    //attempt buy out if any listings remain
+                                                    if (objectState.Listings != null && objectState.Listings.TryGetValue(buy[0], out BID qtyListed2) && long.TryParse(buy[1], NumberStyles.Any, CultureInfo.GetCultureInfo("en-US"), out long buyQty) && buyQty > qtyListed2.Qty)
                                                     {
 
+                                                        buy[1] = qtyListed2.Qty.ToString();
 
-                                                        decimal totalPaid;
-                                                        decimal totalRoyaltiesPercent = 0;
 
-                                                        //determine all required royalties have been paid
                                                         foreach (KeyValuePair<string, decimal> pair in objectState.Royalties)
                                                         {
-                                                            if (transaction.Output.TryGetValue(pair.Key, out string output) && decimal.TryParse(output, out decimal sentValue))
+
+                                                            if (pair.Key != transaction.SignedBy)
                                                             {
+                                                                string outputSent;
+                                                                transaction.Output.TryGetValue(pair.Key, out outputSent);
+                                                                decimal logSent = decimal.Parse(outputSent, System.Globalization.NumberStyles.Float, CultureInfo.GetCultureInfo("en-US"));
 
-                                                                //royalties not necessary if seller is defined as a royalties recipient
-                                                                if (pair.Key != buy[0])
+                                                                //have required royalties been paid or greator?
+                                                                if (logSent >= ((qtyListed2.Value * long.Parse(buy[1], NumberStyles.Any, CultureInfo.GetCultureInfo("en-US"))) * (pair.Value / 100))) { royaltiesPaid = royaltiesPaid + ((qtyListed2.Value * long.Parse(buy[1], NumberStyles.Any, CultureInfo.GetCultureInfo("en-US"))) * (pair.Value / 100)); }
+                                                                else
                                                                 {
-                                                                    royaltiesPaid = royaltiesPaid + sentValue;
-                                                                    totalRoyaltiesPercent = totalRoyaltiesPercent + pair.Value;
-                                                                }
-                                                            }
+                                                                    if (verbose)
+                                                                    {
+                                                                        logstatus = "[\"" + transaction.SignedBy + "\",\"" + buy[0] + "\",\"buy\",\"" + buy[1] + "\",\"\",\"failed " + pair.Key + " " + logSent + " insuficent royalties paid\",\"" + transaction.BlockDate.ToString() + "\"]";
+                                                                        objectState.ChangeLog.Add(logstatus);
 
-                                                            //transaction failed due to insufficent royalties paid
-                                                            else
-                                                            {
-                                                                if (verbose)
-                                                                {
-                                                                    logstatus = "[\"" + transaction.SignedBy + "\",\"" + objectaddress + "\",\"buy\",\"" + buy[1] + "\",\"\",\"failed " + pair.Key + " insuficent royalties paid\",\"" + transaction.BlockDate.ToString() + "\"]";
-                                                                    objectState.ChangeLog.Add(logstatus);
+                                                                    }
+                                                                    logstatus = "break";
 
+                                                                    break;
                                                                 }
-                                                                logstatus = "break";
-                                                                break;
                                                             }
                                                         }
 
                                                         if (logstatus == "break") { logstatus = ""; break; }
 
 
-                                                        //has owner been paid some amount?
-                                                        if (transaction.Output.TryGetValue(buy[0], out string ownerValue) && decimal.TryParse(ownerValue, out decimal ownerPaid))
+                                                        //was the current owner paid what was listed with required royalties removed or greator?
+                                                        decimal ownerPaid = 0;
+                                                        string ownerValue;
+                                                        transaction.Output.TryGetValue(buy[0], out ownerValue);
+                                                        ownerPaid = decimal.Parse(ownerValue, System.Globalization.NumberStyles.Float, CultureInfo.GetCultureInfo("en-US"));
+
+                                                        if (ownerPaid >= (qtyListed2.Value * long.Parse(buy[1], NumberStyles.Any, CultureInfo.GetCultureInfo("en-US"))) - royaltiesPaid)
                                                         {
-                                                            totalPaid = ownerPaid + royaltiesPaid;
 
+                                                            //remove from listing
+                                                            objectState.Listings[buy[0]].Qty = objectState.Listings[buy[0]].Qty - long.Parse(buy[1], NumberStyles.Any, CultureInfo.GetCultureInfo("en-US"));
 
-                                                            if (totalPaid * (totalRoyaltiesPercent / 100) == royaltiesPaid)
+                                                            //remove from owners
+                                                            long quantityToRemove = long.Parse(buy[1], NumberStyles.Any, CultureInfo.GetCultureInfo("en-US"));
+                                                            string genid = "";
+
+                                                            if (objectState.Owners.TryGetValue(buy[0], out var tuple))
                                                             {
 
-                                                                //finalroyalties check
-                                                                foreach (KeyValuePair<string, decimal> pair in objectState.Royalties)
+                                                                if (buy[0] == objectaddress)
                                                                 {
-
-                                                                    if (pair.Key != buy[0])
-                                                                    {
-                                                                        //have required royalties been paid or greator?
-                                                                        if (transaction.Output.TryGetValue(pair.Key, out string output) && decimal.TryParse(output, out decimal sentValue) && sentValue >= ((totalPaid * long.Parse(buy[1])) * (pair.Value / 100)))
-                                                                        { }
-
-                                                                        //transaction failed insufficent royalties paid - reject
-                                                                        else
-                                                                        {
-                                                                            if (verbose)
-                                                                            {
-                                                                                logstatus = "[\"" + transaction.SignedBy + "\",\"" + objectaddress + "\",\"buy\",\"" + buy[1] + "\",\"\",\"failed due to insuficent royalties paid\",\"" + transaction.BlockDate.ToString() + "\"]";
-
-                                                                                objectState.ChangeLog.Add(logstatus);
-
-                                                                            }
-                                                                            logstatus = "break";
-
-
-                                                                            break;
-                                                                        }
-                                                                    }
+                                                                    genid = transaction.TransactionId;
+                                                                }
+                                                                else
+                                                                {
+                                                                    genid = tuple.Item2;
                                                                 }
 
-                                                                if (logstatus == "break") { logstatus = ""; break; }
 
+                                                                // Subtract the quantityToRemove from the existing value
+                                                                var updatedTuple = (tuple.Item1 - quantityToRemove, tuple.Item2);
 
-                                                                // success add valid Offer
-                                                                BID offer = new BID();
-                                                                offer.Requestor = transaction.SignedBy;
-                                                                offer.Owner = buy[0];
-                                                                offer.Value = totalPaid / long.Parse(buy[1]);
-                                                                offer.Qty = long.Parse(buy[1]);
-                                                                offer.BlockDate = transaction.BlockDate;
+                                                                // Remove previous owner from the list if the quantity is less than 1
 
-                                                                if (objectState.Offers == null)
+                                                                if (updatedTuple.Item1 < 1)
                                                                 {
-                                                                    objectState.Offers = new List<BID>();
+                                                                    objectState.Owners.Remove(buy[0]);
                                                                 }
-
-                                                                objectState.Offers.Add(offer);
-
-                                                                if (verbose)
+                                                                else
                                                                 {
-                                                                    logstatus = "[\"" + transaction.SignedBy + "\",\"" + buy[0] + "\",\"offer\",\"" + buy[1] + "\",\"\",\"success - " + totalPaid / long.Parse(buy[1]) + "\",\"" + transaction.BlockDate.ToString() + "\"]";
-
-                                                                    objectState.ChangeLog.Add(logstatus);
-
-                                                                    logstatus = "";
+                                                                    // Update the value in the dictionary
+                                                                    objectState.Owners[buy[0]] = updatedTuple;
                                                                 }
-                                                                break;
-
                                                             }
-                                                            //transaction failed insufficent royalties paid - reject
+
+                                                            // Increment the new owner if already owned
+                                                            if (objectState.Owners.ContainsKey(transaction.SignedBy))
+                                                            {
+
+                                                                var currentOwnerTuple = objectState.Owners[transaction.SignedBy];
+
+                                                                if (buy[0] == objectaddress)
+                                                                {
+                                                                    genid = transaction.TransactionId;
+                                                                }
+                                                                else
+                                                                {
+                                                                    genid = tuple.Item2;
+                                                                }
+
+                                                                objectState.Owners[transaction.SignedBy] = (currentOwnerTuple.Item1 + long.Parse(buy[1], NumberStyles.Any, CultureInfo.GetCultureInfo("en-US")), genid);
+                                                            }
+                                                            // Add the new owner to the list if not currently listed
                                                             else
                                                             {
-
-                                                                if (verbose)
+                                                                if (buy[0] == objectaddress)
                                                                 {
-                                                                    logstatus = "[\"" + transaction.SignedBy + "\",\"" + objectaddress + "\",\"buy\",\"" + buy[1] + "\",\"\",\"failed due to insuficent royalties paid\",\"" + transaction.BlockDate.ToString() + "\"]";
-
-                                                                    objectState.ChangeLog.Add(logstatus);
-
-                                                                    logstatus = "";
+                                                                    genid = transaction.TransactionId;
                                                                 }
-                                                                break;
-
+                                                                else
+                                                                {
+                                                                    genid = tuple.Item2;
+                                                                }
+                                                                objectState.Owners.Add(transaction.SignedBy, (long.Parse(buy[1], NumberStyles.Any, CultureInfo.GetCultureInfo("en-US")), genid));
                                                             }
-                                                        }
-                                                        //transaction failed insuficent owner payment - reject
-                                                        else
-                                                        {
+
+                                                            //remove previous owner from list if now 0
+                                                            if (objectState.Listings[buy[0]].Qty < 1) { objectState.Listings.Remove(buy[0]); }
+
+
                                                             if (verbose)
                                                             {
-                                                                logstatus = "[\"" + transaction.SignedBy + "\",\"" + objectaddress + "\",\"buy\",\"" + buy[1] + "\",\"\",\"failed due to insuficent owner payment\",\"" + transaction.BlockDate.ToString() + "\"]";
+                                                                logstatus = "[\"" + transaction.SignedBy + "\",\"" + buy[0] + "\",\"buy\",\"" + buy[1] + "\",\"\",\"success " + ownerPaid.ToString() + "\",\"" + transaction.BlockDate.ToString() + "\"]";
+
                                                                 objectState.ChangeLog.Add(logstatus);
 
                                                                 logstatus = "";
                                                             }
+
                                                             break;
 
 
 
                                                         }
+                                                        //conditons were not met log failed event.
+                                                        else
+                                                        {
+
+                                                            if (verbose)
+                                                            {
+                                                                logstatus = "[\"" + transaction.SignedBy + "\",\"" + buy[0] + "\",\"buy\",\"" + buy[1] + "\",\"\",\"failed " + ownerPaid.ToString() + " insuficent owner paid\",\"" + transaction.BlockDate.ToString() + "\"]";
+                                                                objectState.ChangeLog.Add(logstatus);
+
+                                                                logstatus = "";
+                                                            }
+
+                                                            break;
+                                                        }
 
                                                     }
-                                                    //not enough owned to fill a buy request - reject
+
                                                     else
                                                     {
 
-                                                        if (verbose)
+                                                        // is qty owned enough to fill the Offer?
+                                                        if (objectState.Owners.TryGetValue(buy[0], out var tuple) && tuple.Item1 >= long.Parse(buy[1]))
                                                         {
-                                                            logstatus = "[\"" + transaction.SignedBy + "\",\"" + objectaddress + "\",\"buy\",\"" + buy[1] + "\",\"\",\"failed due to insuficent Qty owned\",\"" + transaction.BlockDate.ToString() + "\"]";
 
-                                                            objectState.ChangeLog.Add(logstatus);
 
-                                                            logstatus = "";
+                                                            decimal totalPaid;
+                                                            decimal totalRoyaltiesPercent = 0;
+
+                                                            //determine all required royalties have been paid
+                                                            foreach (KeyValuePair<string, decimal> pair in objectState.Royalties)
+                                                            {
+                                                                if (transaction.Output.TryGetValue(pair.Key, out string output) && decimal.TryParse(output, out decimal sentValue))
+                                                                {
+
+                                                                    //royalties not necessary if seller is defined as a royalties recipient
+                                                                    if (pair.Key != buy[0])
+                                                                    {
+                                                                        royaltiesPaid = royaltiesPaid + sentValue;
+                                                                        totalRoyaltiesPercent = totalRoyaltiesPercent + pair.Value;
+                                                                    }
+                                                                }
+
+                                                                //transaction failed due to insufficent royalties paid
+                                                                else
+                                                                {
+                                                                    if (verbose)
+                                                                    {
+                                                                        logstatus = "[\"" + transaction.SignedBy + "\",\"" + objectaddress + "\",\"buy\",\"" + buy[1] + "\",\"\",\"failed " + pair.Key + " insuficent royalties paid\",\"" + transaction.BlockDate.ToString() + "\"]";
+                                                                        objectState.ChangeLog.Add(logstatus);
+
+                                                                    }
+                                                                    logstatus = "break";
+                                                                    break;
+                                                                }
+                                                            }
+
+                                                            if (logstatus == "break") { logstatus = ""; break; }
+
+
+                                                            //has owner been paid some amount?
+                                                            if (transaction.Output.TryGetValue(buy[0], out string ownerValue) && decimal.TryParse(ownerValue, out decimal ownerPaid))
+                                                            {
+                                                                totalPaid = ownerPaid + royaltiesPaid;
+
+
+                                                                if (totalPaid * (totalRoyaltiesPercent / 100) == royaltiesPaid)
+                                                                {
+
+                                                                    //finalroyalties check
+                                                                    foreach (KeyValuePair<string, decimal> pair in objectState.Royalties)
+                                                                    {
+
+                                                                        if (pair.Key != buy[0])
+                                                                        {
+                                                                            //have required royalties been paid or greator?
+                                                                            if (transaction.Output.TryGetValue(pair.Key, out string output) && decimal.TryParse(output, out decimal sentValue) && sentValue >= ((totalPaid * long.Parse(buy[1])) * (pair.Value / 100)))
+                                                                            { }
+
+                                                                            //transaction failed insufficent royalties paid - reject
+                                                                            else
+                                                                            {
+                                                                                if (verbose)
+                                                                                {
+                                                                                    logstatus = "[\"" + transaction.SignedBy + "\",\"" + objectaddress + "\",\"buy\",\"" + buy[1] + "\",\"\",\"failed due to insuficent royalties paid\",\"" + transaction.BlockDate.ToString() + "\"]";
+
+                                                                                    objectState.ChangeLog.Add(logstatus);
+
+                                                                                }
+                                                                                logstatus = "break";
+
+
+                                                                                break;
+                                                                            }
+                                                                        }
+                                                                    }
+
+                                                                    if (logstatus == "break") { logstatus = ""; break; }
+
+
+                                                                    // success add valid Offer
+                                                                    BID offer = new BID();
+                                                                    offer.Requestor = transaction.SignedBy;
+                                                                    offer.Owner = buy[0];
+                                                                    offer.Value = totalPaid / long.Parse(buy[1]);
+                                                                    offer.Qty = long.Parse(buy[1]);
+                                                                    offer.BlockDate = transaction.BlockDate;
+
+                                                                    if (objectState.Offers == null)
+                                                                    {
+                                                                        objectState.Offers = new List<BID>();
+                                                                    }
+
+                                                                    objectState.Offers.Add(offer);
+
+                                                                    if (verbose)
+                                                                    {
+                                                                        logstatus = "[\"" + transaction.SignedBy + "\",\"" + buy[0] + "\",\"offer\",\"" + buy[1] + "\",\"\",\"success - " + totalPaid / long.Parse(buy[1]) + "\",\"" + transaction.BlockDate.ToString() + "\"]";
+
+                                                                        objectState.ChangeLog.Add(logstatus);
+
+                                                                        logstatus = "";
+                                                                    }
+                                                                    break;
+
+                                                                }
+                                                                //transaction failed insufficent royalties paid - reject
+                                                                else
+                                                                {
+
+                                                                    if (verbose)
+                                                                    {
+                                                                        logstatus = "[\"" + transaction.SignedBy + "\",\"" + objectaddress + "\",\"buy\",\"" + buy[1] + "\",\"\",\"failed due to insuficent royalties paid\",\"" + transaction.BlockDate.ToString() + "\"]";
+
+                                                                        objectState.ChangeLog.Add(logstatus);
+
+                                                                        logstatus = "";
+                                                                    }
+                                                                    break;
+
+                                                                }
+                                                            }
+                                                            //transaction failed insuficent owner payment - reject
+                                                            else
+                                                            {
+                                                                if (verbose)
+                                                                {
+                                                                    logstatus = "[\"" + transaction.SignedBy + "\",\"" + objectaddress + "\",\"buy\",\"" + buy[1] + "\",\"\",\"failed due to insuficent owner payment\",\"" + transaction.BlockDate.ToString() + "\"]";
+                                                                    objectState.ChangeLog.Add(logstatus);
+
+                                                                    logstatus = "";
+                                                                }
+                                                                break;
+
+
+
+                                                            }
+
                                                         }
-                                                        break;
+                                                        //not enough owned to fill a buy request - reject
+                                                        else
+                                                        {
+
+                                                            if (verbose)
+                                                            {
+                                                                logstatus = "[\"" + transaction.SignedBy + "\",\"" + objectaddress + "\",\"buy\",\"" + buy[1] + "\",\"\",\"failed due to insuficent Qty owned\",\"" + transaction.BlockDate.ToString() + "\"]";
+
+                                                                objectState.ChangeLog.Add(logstatus);
+
+                                                                logstatus = "";
+                                                            }
+                                                            break;
+                                                        }
+
                                                     }
 
-                                                }
 
+
+                                                }
 
 
                                             }
 
 
-                                        }
 
 
-
-
-
-                                        break;
-
-                                    case "LST":
-                                        //is this even the right object!?  no!?  goodbye!
-                                        if (!transaction.Keyword.ContainsKey(objectaddress)) { break; }
-                                        // no sense checking any further
-                                        if (objectState.Owners == null) { break; }
-
-                                        List<List<string>> lstinspector = new List<List<string>> { };
-                                        try
-                                        {
-                                            lstinspector = JsonConvert.DeserializeObject<List<List<string>>>(File.ReadAllText(@"root\" + transaction.TransactionId + @"\LST"));
-                                        }
-                                        catch
-                                        {
-                                            logstatus = "[\"" + transaction.SignedBy + "\",\"" + objectaddress + "\",\"inspect\",\"\",\"\",\"failed due to invalid transaction format\",\"" + transaction.BlockDate.ToString() + "\"]";
 
                                             break;
-                                        }
 
-                                        if (lstinspector == null)
-                                        {
-                                            logstatus = "[\"" + transaction.SignedBy + "\",\"" + objectaddress + "\",\"list\",\"\",\"\",\"failed due to no data\",\"" + transaction.BlockDate.ToString() + "\"]";
-                                            break;
-                                        }
-                                        foreach (var List in lstinspector)
-                                        {
-                                            long qtyToList = 0;
-                                            string Listr = transaction.SignedBy;
-                                            string objectToList;
-                                            decimal eachCost = 0;
+                                        case "LST":
+                                            //is this even the right object!?  no!?  goodbye!
+                                            if (!transaction.Keyword.ContainsKey(objectaddress)) { break; }
+                                            // no sense checking any further
+                                            if (objectState.Owners == null) { break; }
 
+                                            List<List<string>> lstinspector = new List<List<string>> { };
                                             try
                                             {
-                                                objectToList = List[0];
-
+                                                lstinspector = JsonConvert.DeserializeObject<List<List<string>>>(File.ReadAllText(@"root\" + transaction.TransactionId + @"\LST"));
                                             }
                                             catch
                                             {
+                                                logstatus = "[\"" + transaction.SignedBy + "\",\"" + objectaddress + "\",\"inspect\",\"\",\"\",\"failed due to invalid transaction format\",\"" + transaction.BlockDate.ToString() + "\"]";
+
                                                 break;
                                             }
 
-                                            if (objectToList == objectaddress)
+                                            if (lstinspector == null)
                                             {
+                                                logstatus = "[\"" + transaction.SignedBy + "\",\"" + objectaddress + "\",\"list\",\"\",\"\",\"failed due to no data\",\"" + transaction.BlockDate.ToString() + "\"]";
+                                                break;
+                                            }
+                                            foreach (var List in lstinspector)
+                                            {
+                                                long qtyToList = 0;
+                                                string Listr = transaction.SignedBy;
+                                                string objectToList;
+                                                decimal eachCost = 0;
 
                                                 try
                                                 {
-                                                    qtyToList = long.Parse(List[1], NumberStyles.Any, CultureInfo.GetCultureInfo("en-US"));
+                                                    objectToList = List[0];
+
                                                 }
                                                 catch
                                                 {
                                                     break;
                                                 }
 
-                                                try
-                                                {
-                                                    eachCost = decimal.Parse(List[2], System.Globalization.NumberStyles.Float, CultureInfo.GetCultureInfo("en-US"));
-                                                }
-                                                catch
-                                                {
-                                                    break;
-                                                }
-
-
-                                                // salt
-                                                if (qtyToList < 0)
+                                                if (objectToList == objectaddress)
                                                 {
 
-                                                    break;
-                                                }
-
-                                                //listing is an opportunity to acknowledge being a creator
-                                                if (objectState.Creators != null && objectState.Creators.ContainsKey(transaction.SignedBy))
-                                                {
-                                                    // update grant date if null and signed by a creator
-                                                    if (objectState.Creators.TryGet(transaction.SignedBy).Year == 1)
+                                                    try
                                                     {
-                                                        objectState.Creators[transaction.SignedBy] = transaction.BlockDate;
-                                                        objectState.ChangeDate = transaction.BlockDate;
-                                                        if (verbose)
+                                                        qtyToList = long.Parse(List[1], NumberStyles.Any, CultureInfo.GetCultureInfo("en-US"));
+                                                    }
+                                                    catch
+                                                    {
+                                                        break;
+                                                    }
+
+                                                    try
+                                                    {
+                                                        eachCost = decimal.Parse(List[2], System.Globalization.NumberStyles.Float, CultureInfo.GetCultureInfo("en-US"));
+                                                    }
+                                                    catch
+                                                    {
+                                                        break;
+                                                    }
+
+
+                                                    // salt
+                                                    if (qtyToList < 0)
+                                                    {
+
+                                                        break;
+                                                    }
+
+                                                    //listing is an opportunity to acknowledge being a creator
+                                                    if (objectState.Creators != null && objectState.Creators.ContainsKey(transaction.SignedBy))
+                                                    {
+                                                        // update grant date if null and signed by a creator
+                                                        if (objectState.Creators.TryGet(transaction.SignedBy).Year == 1)
                                                         {
+                                                            objectState.Creators[transaction.SignedBy] = transaction.BlockDate;
+                                                            objectState.ChangeDate = transaction.BlockDate;
+                                                            if (verbose)
+                                                            {
 
-                                                            logstatus = "[\"" + transaction.SignedBy + "\",\"" + objectaddress + "\",\"grant\",\"\",\"\",\"success\",\"" + transaction.BlockDate.ToString() + "\"]";
+                                                                logstatus = "[\"" + transaction.SignedBy + "\",\"" + objectaddress + "\",\"grant\",\"\",\"\",\"success\",\"" + transaction.BlockDate.ToString() + "\"]";
 
-                                                            objectState.ChangeLog.Add(logstatus);
+                                                                objectState.ChangeLog.Add(logstatus);
 
+
+                                                            }
 
                                                         }
-
                                                     }
-                                                }
 
 
-                                                // LST Transaction with 0 qty closes all listings
-                                                if (qtyToList == 0)
-                                                {
-                                                    try { if (objectState.Listings != null) { objectState.Listings.Remove(Listr); } } catch { }
-
-                                                    if (verbose)
+                                                    // LST Transaction with 0 qty closes all listings
+                                                    if (qtyToList == 0)
                                                     {
-                                                        logstatus = "[\"" + transaction.SignedBy + "\",\"" + objectToList + "\",\"List\",\"" + qtyToList.ToString() + "\",\"\",\"close all listings\",\"" + transaction.BlockDate.ToString() + "\"]";
+                                                        try { if (objectState.Listings != null) { objectState.Listings.Remove(Listr); } } catch { }
 
-                                                        objectState.ChangeLog.Add(logstatus);
-
-                                                        logstatus = "";
-                                                    }
-                                                    break;
-                                                }
-
-
-
-
-                                                long qtyOwnedG = 0;
-                                                // Check if the transaction signer is not on the Owners list
-                                                if (!objectState.Owners.TryGetValue(transaction.SignedBy, out var tuple))
-                                                {
-                                                    // Check if the object container is empty
-                                                    if (!objectState.Owners.TryGetValue(objectaddress, out var selfOwned))
-                                                    {
                                                         if (verbose)
                                                         {
-                                                            // Add Invalid trade attempt status
-                                                            logstatus = $"[\"{transaction.SignedBy}\",\"{objectToList}\",\"List\",\"{qtyToList}\",\"\",\"failed due to insufficient qty owned\",\"{transaction.BlockDate.ToString()}\"]";
+                                                            logstatus = "[\"" + transaction.SignedBy + "\",\"" + objectToList + "\",\"List\",\"" + qtyToList.ToString() + "\",\"\",\"close all listings\",\"" + transaction.BlockDate.ToString() + "\"]";
 
                                                             objectState.ChangeLog.Add(logstatus);
 
@@ -1611,118 +1592,140 @@ namespace SUP.P2FK
                                                         }
                                                         break;
                                                     }
+
+
+
+
+                                                    long qtyOwnedG = 0;
+                                                    // Check if the transaction signer is not on the Owners list
+                                                    if (!objectState.Owners.TryGetValue(transaction.SignedBy, out var tuple))
+                                                    {
+                                                        // Check if the object container is empty
+                                                        if (!objectState.Owners.TryGetValue(objectaddress, out var selfOwned))
+                                                        {
+                                                            if (verbose)
+                                                            {
+                                                                // Add Invalid trade attempt status
+                                                                logstatus = $"[\"{transaction.SignedBy}\",\"{objectToList}\",\"List\",\"{qtyToList}\",\"\",\"failed due to insufficient qty owned\",\"{transaction.BlockDate.ToString()}\"]";
+
+                                                                objectState.ChangeLog.Add(logstatus);
+
+                                                                logstatus = "";
+                                                            }
+                                                            break;
+                                                        }
+                                                        else
+                                                        {
+                                                            // If the transaction is signed by a creator who doesn't own any objects, emulate container
+                                                            if (objectState.Creators.ContainsKey(transaction.SignedBy) || transaction.SignedBy == objectaddress)
+                                                            {
+                                                                Listr = objectaddress;
+                                                                qtyOwnedG = selfOwned.Item1; // Assuming the first item in the tuple represents the quantity
+                                                            }
+                                                        }
+                                                    }
                                                     else
                                                     {
-                                                        // If the transaction is signed by a creator who doesn't own any objects, emulate container
-                                                        if (objectState.Creators.ContainsKey(transaction.SignedBy) || transaction.SignedBy == objectaddress)
-                                                        {
-                                                            Listr = objectaddress;
-                                                            qtyOwnedG = selfOwned.Item1; // Assuming the first item in the tuple represents the quantity
-                                                        }
+                                                        qtyOwnedG = tuple.Item1;
                                                     }
-                                                }
-                                                else
-                                                {
-                                                    qtyOwnedG = tuple.Item1;
-                                                }
 
 
 
 
-                                                if (qtyOwnedG >= qtyToList)
-                                                {
-                                                    if (objectState.Listings == null) { objectState.Listings = new Dictionary<string, BID>(); }
-
-                                                    try { objectState.Listings.Remove(Listr); } catch { }
-
-                                                    BID listing = new BID();
-
-                                                    listing.Owner = Listr;
-                                                    listing.Requestor = transaction.SignedBy;
-                                                    listing.Qty = qtyToList;
-                                                    listing.Value = eachCost;
-                                                    listing.BlockDate = transaction.BlockDate;
-                                                    objectState.Listings.Add(Listr, listing);
-
-                                                    //Lock Object upon successfull Listing
-                                                    if (objectState.LockedDate.Year == 1)
+                                                    if (qtyOwnedG >= qtyToList)
                                                     {
+                                                        if (objectState.Listings == null) { objectState.Listings = new Dictionary<string, BID>(); }
 
+                                                        try { objectState.Listings.Remove(Listr); } catch { }
+
+                                                        BID listing = new BID();
+
+                                                        listing.Owner = Listr;
+                                                        listing.Requestor = transaction.SignedBy;
+                                                        listing.Qty = qtyToList;
+                                                        listing.Value = eachCost;
+                                                        listing.BlockDate = transaction.BlockDate;
+                                                        objectState.Listings.Add(Listr, listing);
+
+                                                        //Lock Object upon successfull Listing
+                                                        if (objectState.LockedDate.Year == 1)
+                                                        {
+
+                                                            if (verbose)
+                                                            {
+                                                                logstatus = "[\"" + transaction.SignedBy + "\",\"" + objectaddress + "\",\"lock\",\"\",\"\",\"success\",\"" + transaction.BlockDate.ToString() + "\"]";
+
+                                                                objectState.ChangeLog.Add(logstatus);
+
+                                                                logstatus = "";
+                                                            }
+                                                            objectState.LockedDate = transaction.BlockDate;
+                                                        }
+
+
+
+                                                        //force all assoicated collections to update by purging the cache file when listed on secondary
+                                                        foreach (string creatorAddress in objectState.Creators.Keys)
+                                                        {
+                                                            try { System.IO.File.Delete(@"root\" + creatorAddress + @"\" + "GetObjectsByAddress.json"); } catch { }
+                                                            try { System.IO.File.Delete(@"root\" + creatorAddress + @"\" + "GetObjectsCreatedByAddress.json"); } catch { }
+
+                                                        }
                                                         if (verbose)
                                                         {
-                                                            logstatus = "[\"" + transaction.SignedBy + "\",\"" + objectaddress + "\",\"lock\",\"\",\"\",\"success\",\"" + transaction.BlockDate.ToString() + "\"]";
+                                                            logstatus = "[\"" + transaction.SignedBy + "\",\"" + objectToList + "\",\"List\",\"" + qtyToList + "\",\"" + eachCost + "\",\"Success\",\"" + transaction.BlockDate.ToString() + "\"]";
 
                                                             objectState.ChangeLog.Add(logstatus);
-
                                                             logstatus = "";
                                                         }
-                                                        objectState.LockedDate = transaction.BlockDate;
+
                                                     }
-
-
-
-                                                    //force all assoicated collections to update by purging the cache file when listed on secondary
-                                                    foreach (string creatorAddress in objectState.Creators.Keys)
+                                                    else
                                                     {
-                                                        try { System.IO.File.Delete(@"root\" + creatorAddress + @"\" + "GetObjectsByAddress.json"); } catch { }
-                                                        try { System.IO.File.Delete(@"root\" + creatorAddress + @"\" + "GetObjectsCreatedByAddress.json"); } catch { }
+                                                        if (verbose)
+                                                        { //Invalid list attempt
+                                                            logstatus = "[\"" + transaction.SignedBy + "\",\"" + objectToList + "\",\"List\",\"" + qtyToList + "\",\"\",\"failed due to insufficent available qty owned\",\"" + transaction.BlockDate.ToString() + "\"]";
 
+                                                            objectState.ChangeLog.Add(logstatus);
+                                                            logstatus = "";
+                                                        }
+                                                        break;
                                                     }
-                                                    if (verbose)
-                                                    {
-                                                        logstatus = "[\"" + transaction.SignedBy + "\",\"" + objectToList + "\",\"List\",\"" + qtyToList + "\",\"" + eachCost + "\",\"Success\",\"" + transaction.BlockDate.ToString() + "\"]";
-
-                                                        objectState.ChangeLog.Add(logstatus);
-                                                        logstatus = "";
-                                                    }
-
                                                 }
-                                                else
-                                                {
-                                                    if (verbose)
-                                                    { //Invalid list attempt
-                                                        logstatus = "[\"" + transaction.SignedBy + "\",\"" + objectToList + "\",\"List\",\"" + qtyToList + "\",\"\",\"failed due to insufficent available qty owned\",\"" + transaction.BlockDate.ToString() + "\"]";
 
-                                                        objectState.ChangeLog.Add(logstatus);
-                                                        logstatus = "";
-                                                    }
-                                                    break;
-                                                }
+
                                             }
+                                            break;
 
 
-                                        }
-                                        break;
+                                        default:
+                                            // ignore
 
+                                            break;
+                                    }
 
-                                    default:
-                                        // ignore
-
-                                        break;
                                 }
+
 
                             }
 
-
                         }
-
                     }
+
+                    //used to determine where to begin object State processing when retrieved from cache
+
+                    objectState.Id = objectTransactions.Max(state => state.Id);
+                    objectState.Verbose = verbose;
+
+
+                    var objectSerialized = JsonConvert.SerializeObject(objectState);
+
+                    if (!Directory.Exists(@"root\" + objectaddress))
+                    {
+                        Directory.CreateDirectory(@"root\" + objectaddress);
+                    }
+                    System.IO.File.WriteAllText(@"root\" + objectaddress + @"\" + "OBJ.json", objectSerialized);
                 }
-
-                //used to determine where to begin object State processing when retrieved from cache
-
-                objectState.Id = objectTransactions.Max(state => state.Id);
-                objectState.Verbose = verbose;
-
-
-                var objectSerialized = JsonConvert.SerializeObject(objectState);
-
-                if (!Directory.Exists(@"root\" + objectaddress))
-                {
-                    Directory.CreateDirectory(@"root\" + objectaddress);
-                }
-                System.IO.File.WriteAllText(@"root\" + objectaddress + @"\" + "OBJ.json", objectSerialized);
-
 
             }
             catch (Exception ex)
