@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
+using System.Drawing.Imaging;
 using System.Globalization;
 using System.IO;
 using System.IO.Compression;
@@ -3713,25 +3714,64 @@ namespace SUP
                 }
                 else
                 {
-                    Random rnd = new Random();
-                    string[] gifFiles = Directory.GetFiles("includes", "*.gif");
-                    if (gifFiles.Length > 0)
+                    if (extension == "")
                     {
-                        int randomIndex = rnd.Next(gifFiles.Length);
-                        string randomGifFile = gifFiles[randomIndex];
 
-                        imgPicture.ImageLocation = randomGifFile;
+                        Match urnmatch = regexTransactionId.Match(urn);
+                        transactionid = urnmatch.Value;
+
+                        if (File.Exists(@"root/" + transactionid + @"/MSG"))
+                        {
+                            string text = File.ReadAllText(@"root/" + transactionid + @"/MSG");
+                            GenerateImage(text);
+                            string hashedString = "";
+                            byte[] bytes = Encoding.ASCII.GetBytes(text);
+
+                            // Create a SHA256 hash object
+                            using (System.Security.Cryptography.SHA256 sha256Hash = System.Security.Cryptography.SHA256.Create())
+                            {
+                                // Compute hash value from the input
+                                byte[] hashBytes = sha256Hash.ComputeHash(bytes);
+
+                                // Convert byte array to a string representation
+                                StringBuilder stringBuilder = new StringBuilder();
+                                for (int i = 0; i < hashBytes.Length; i++)
+                                {
+                                    stringBuilder.Append(hashBytes[i].ToString("x2"));
+                                }
+                                hashedString = stringBuilder.ToString();
+
+                            }
+                            // Save the image to the specified folder
+                            filePath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + @"\root\keywords\" + hashedString + ".png";
+                            pictureBox1.ImageLocation = filePath;
+                            if (txtIMG.Text == "") { imgPicture.ImageLocation = filePath; }
+
+                        }
+
 
                     }
                     else
                     {
-                        try
+                        Random rnd = new Random();
+                        string[] gifFiles = Directory.GetFiles("includes", "*.gif");
+                        if (gifFiles.Length > 0)
                         {
-                            imgPicture.ImageLocation = @"includes\HugPuddle.jpg";
-                        }
-                        catch { }
-                    }
+                            int randomIndex = rnd.Next(gifFiles.Length);
+                            string randomGifFile = gifFiles[randomIndex];
 
+                            pictureBox1.ImageLocation = randomGifFile;
+
+                        }
+                        else
+                        {
+                            try
+                            {
+                                pictureBox1.ImageLocation = @"includes\HugPuddle.jpg";
+                            }
+                            catch { }
+                        }
+                    }
 
                 }
 
@@ -3741,6 +3781,81 @@ namespace SUP
 
             }
         }
+
+        static void GenerateImage(string text)
+        {
+            // Set the image size
+            int width = 1000;
+            int height = 1000;
+
+            if (!Directory.Exists(@"root\keywords")) { Directory.CreateDirectory(@"root\keywords"); }
+
+            // Create a new bitmap image with the specified size
+            using (Bitmap bmp = new Bitmap(width, height))
+            {
+                // Create a graphics object to draw on the image
+                using (Graphics graphics = Graphics.FromImage(bmp))
+                {
+                    // Clear the image with a random background color
+                    Random random = new Random();
+                    int red = random.Next(128, 256); // From 128 to 255 (avoiding very dark colors)
+                    int green = random.Next(128, 256);
+                    int blue = random.Next(128, 256);
+
+                    graphics.Clear(Color.FromArgb(red, green, blue));
+
+                    // Set up the font and text formatting
+                    float fontSize = 150;
+                    Font font = null;
+
+                    // Calculate the font size dynamically based on the image size and text length
+                    while (true)
+                    {
+                        font?.Dispose();
+                        font = new Font("Segoe UI Emoji", fontSize);
+                        SizeF textSize = graphics.MeasureString(text, font, width);
+
+                        if (textSize.Width < width && textSize.Height < height)
+                            break;
+
+                        fontSize -= 1;
+                    }
+
+                    StringFormat stringFormat = new StringFormat
+                    {
+                        Alignment = StringAlignment.Center,
+                        LineAlignment = StringAlignment.Center
+                    };
+
+                    // Draw the text with word wrap
+                    RectangleF rect = new RectangleF(0, 0, width, height);
+                    graphics.DrawString(text, font, Brushes.Black, rect, stringFormat);
+                    string hashedString = "";
+                    // get a hash of the text for image storage.
+                    byte[] bytes = Encoding.ASCII.GetBytes(text);
+
+                    // Create a SHA256 hash object
+                    using (System.Security.Cryptography.SHA256 sha256Hash = System.Security.Cryptography.SHA256.Create())
+                    {
+                        // Compute hash value from the input
+                        byte[] hashBytes = sha256Hash.ComputeHash(bytes);
+
+                        // Convert byte array to a string representation
+                        StringBuilder stringBuilder = new StringBuilder();
+                        for (int i = 0; i < hashBytes.Length; i++)
+                        {
+                            stringBuilder.Append(hashBytes[i].ToString("x2"));
+                        }
+                        hashedString = stringBuilder.ToString();
+
+                    }
+                    // Save the image to the specified folder
+                    string filePath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + @"\root\keywords\" + hashedString + ".png";
+                    bmp.Save(filePath, ImageFormat.Png);
+                }
+            }
+        }
+
 
         private void CopyAddressByCreatedDateClick(object sender, EventArgs e)
         {

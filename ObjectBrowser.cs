@@ -14,6 +14,8 @@ using System.Drawing.Imaging;
 using AngleSharp.Common;
 using Newtonsoft.Json;
 using System.Globalization;
+using System.Text;
+using System.Windows.Media.TextFormatting;
 
 namespace SUP
 {
@@ -134,6 +136,81 @@ namespace SUP
 
             return false; // Invalid URI
         }
+
+        static void GenerateImage(string text)
+        {
+            // Set the image size
+            int width = 1000;
+            int height = 1000;
+
+            if (!Directory.Exists(@"root\keywords")) { Directory.CreateDirectory(@"root\keywords"); }
+
+            // Create a new bitmap image with the specified size
+            using (Bitmap bmp = new Bitmap(width, height))
+            {
+                // Create a graphics object to draw on the image
+                using (Graphics graphics = Graphics.FromImage(bmp))
+                {
+                    // Clear the image with a random background color
+                    Random random = new Random();
+                    int red = random.Next(128, 256); // From 128 to 255 (avoiding very dark colors)
+                    int green = random.Next(128, 256);
+                    int blue = random.Next(128, 256);
+
+                    graphics.Clear(Color.FromArgb(red, green, blue));
+
+                    // Set up the font and text formatting
+                    float fontSize = 150;
+                    Font font = null;
+
+                    // Calculate the font size dynamically based on the image size and text length
+                    while (true)
+                    {
+                        font?.Dispose();
+                        font = new Font("Segoe UI Emoji", fontSize);
+                        SizeF textSize = graphics.MeasureString(text, font, width);
+
+                        if (textSize.Width < width && textSize.Height < height)
+                            break;
+
+                        fontSize -= 1;
+                    }
+
+                    StringFormat stringFormat = new StringFormat
+                    {
+                        Alignment = StringAlignment.Center,
+                        LineAlignment = StringAlignment.Center
+                    };
+
+                    // Draw the text with word wrap
+                    RectangleF rect = new RectangleF(0, 0, width, height);
+                    graphics.DrawString(text, font, Brushes.Black, rect, stringFormat);
+                    string hashedString = "";
+                    // get a hash of the text for image storage.
+                    byte[] bytes = Encoding.ASCII.GetBytes(text);
+
+                    // Create a SHA256 hash object
+                    using (System.Security.Cryptography.SHA256 sha256Hash = System.Security.Cryptography.SHA256.Create())
+                    {
+                        // Compute hash value from the input
+                        byte[] hashBytes = sha256Hash.ComputeHash(bytes);
+
+                        // Convert byte array to a string representation
+                        StringBuilder stringBuilder = new StringBuilder();
+                        for (int i = 0; i < hashBytes.Length; i++)
+                        {
+                            stringBuilder.Append(hashBytes[i].ToString("x2"));
+                        }
+                        hashedString = stringBuilder.ToString();
+
+                    }
+                    // Save the image to the specified folder
+                    string filePath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + @"\root\keywords\" + hashedString + ".png";
+                    bmp.Save(filePath, ImageFormat.Png);
+                }
+            }
+        }
+
 
         private void GetObjectsByAddress(string address, bool calculate = false)
         {
@@ -508,22 +585,62 @@ namespace SUP
                                     }
                                     else
                                     {
-                                        Random rnd = new Random();
-                                        string[] gifFiles = Directory.GetFiles("includes", "*.gif");
-                                        if (gifFiles.Length > 0)
+
+                                        Regex regexTransactionId = new Regex(@"\b[0-9a-f]{64}\b");
+
+                                        Match urnmatch = regexTransactionId.Match(objstate.URN);
+                                        string transactionid = urnmatch.Value;
+
+                                        if (File.Exists(@"root/" + transactionid + @"/MSG"))
                                         {
-                                            int randomIndex = rnd.Next(gifFiles.Length);
-                                            objstate.Image = gifFiles[randomIndex];
+                                            string text = File.ReadAllText(@"root/" + transactionid + @"/MSG");
+                                            GenerateImage(text);
+                                            string hashedString = "";
+                                            byte[] bytes = Encoding.ASCII.GetBytes(text);
+
+                                            // Create a SHA256 hash object
+                                            using (System.Security.Cryptography.SHA256 sha256Hash = System.Security.Cryptography.SHA256.Create())
+                                            {
+                                                // Compute hash value from the input
+                                                byte[] hashBytes = sha256Hash.ComputeHash(bytes);
+
+                                                // Convert byte array to a string representation
+                                                StringBuilder stringBuilder = new StringBuilder();
+                                                for (int i = 0; i < hashBytes.Length; i++)
+                                                {
+                                                    stringBuilder.Append(hashBytes[i].ToString("x2"));
+                                                }
+                                                hashedString = stringBuilder.ToString();
+
+                                            }
+                                            // Save the image to the specified folder
+                                            string filePath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + @"\root\keywords\" + hashedString + ".png";
+                                            objstate.Image = filePath;
 
                                         }
                                         else
                                         {
-                                            try
-                                            {
 
-                                                objstate.Image = @"includes\HugPuddle.jpg";
+
+
+
+                                            Random rnd = new Random();
+                                            string[] gifFiles = Directory.GetFiles("includes", "*.gif");
+                                            if (gifFiles.Length > 0)
+                                            {
+                                                int randomIndex = rnd.Next(gifFiles.Length);
+                                                objstate.Image = gifFiles[randomIndex];
+
                                             }
-                                            catch { }
+                                            else
+                                            {
+                                                try
+                                                {
+
+                                                    objstate.Image = @"includes\HugPuddle.jpg";
+                                                }
+                                                catch { }
+                                            }
                                         }
                                     }
 
@@ -535,13 +652,14 @@ namespace SUP
                                 if (objstate.Image != null)
                                 {
                                     imgurn = objstate.Image;
-
-                                    if (!objstate.Image.ToLower().StartsWith("http"))
+                                    if (!imgurn.Contains(@"root\keywords\"))
                                     {
-                                        imgurn = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + @"\root\" + objstate.Image.Replace("BTC:", "").Replace("MZC:", "").Replace("LTC:", "").Replace("DOG:", "").Replace("IPFS:", "").Replace(@"/", @"\");
-                                        if (objstate.Image.ToLower().StartsWith("ipfs:")) { imgurn = imgurn.Replace(@"\root\", @"\ipfs\"); if (objstate.Image.Length == 51) { imgurn += @"\artifact"; } }
+                                        if (!objstate.Image.ToLower().StartsWith("http"))
+                                        {
+                                            imgurn = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + @"\root\" + objstate.Image.Replace("BTC:", "").Replace("MZC:", "").Replace("LTC:", "").Replace("DOG:", "").Replace("IPFS:", "").Replace(@"/", @"\");
+                                            if (objstate.Image.ToLower().StartsWith("ipfs:")) { imgurn = imgurn.Replace(@"\root\", @"\ipfs\"); if (objstate.Image.Length == 51) { imgurn += @"\artifact"; } }
+                                        }
                                     }
-
                                     Regex regexTransactionId = new Regex(@"\b[0-9a-f]{64}\b");
                                     Match imgurnmatch = regexTransactionId.Match(imgurn);
                                     transid = imgurnmatch.Value;

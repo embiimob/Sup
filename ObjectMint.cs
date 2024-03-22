@@ -219,7 +219,7 @@ namespace SUP
             // Assign the result to txtOBJP2FK.Text
             txtOBJP2FK.Text = objString;
 
-            NetworkCredential credentials = new NetworkCredential(mainnetLogin,mainnetPassword);
+            NetworkCredential credentials = new NetworkCredential(mainnetLogin, mainnetPassword);
             NBitcoin.RPC.RPCClient rpcClient = new NBitcoin.RPC.RPCClient(credentials, new Uri(mainnetURL), Network.Main);
             System.Security.Cryptography.SHA256 mySHA256 = SHA256Managed.Create();
             byte[] hashValue = mySHA256.ComputeHash(Encoding.UTF8.GetBytes(txtOBJP2FK.Text));
@@ -351,17 +351,17 @@ namespace SUP
                 }
             }
 
-           
-           
 
-                foreach (Button ownerbtn in flowOwners.Controls)
+
+
+            foreach (Button ownerbtn in flowOwners.Controls)
+            {
+                if (ownerbtn.Text.Split(':')[0] != signatureAddress)
                 {
-                    if (ownerbtn.Text.Split(':')[0] != signatureAddress)
-                    {
-                        encodedList.Add(ownerbtn.Text.Split(':')[0]);
-                    }
+                    encodedList.Add(ownerbtn.Text.Split(':')[0]);
                 }
-            
+            }
+
 
             foreach (Button creatorbtn in flowCreators.Controls)
             {
@@ -417,7 +417,7 @@ namespace SUP
 
                     }
 
-                    CoinRPC a = new CoinRPC(new Uri(mainnetURL), new NetworkCredential(mainnetLogin,mainnetPassword));
+                    CoinRPC a = new CoinRPC(new Uri(mainnetURL), new NetworkCredential(mainnetLogin, mainnetPassword));
 
                     try
                     {
@@ -798,7 +798,7 @@ namespace SUP
             else
             {
 
-                NetworkCredential credentials = new NetworkCredential(mainnetLogin,mainnetPassword);
+                NetworkCredential credentials = new NetworkCredential(mainnetLogin, mainnetPassword);
                 NBitcoin.RPC.RPCClient rpcClient = new NBitcoin.RPC.RPCClient(credentials, new Uri(mainnetURL), Network.Main);
                 string newAddress = "";
                 string P2FKASCII = "";
@@ -1068,7 +1068,7 @@ namespace SUP
                                 break;
                             default:
 
-                                root = Root.GetRootByTransactionId(transactionid, mainnetLogin,mainnetPassword,mainnetURL,mainnetVersionByte);
+                                root = Root.GetRootByTransactionId(transactionid, mainnetLogin, mainnetPassword, mainnetURL, mainnetVersionByte);
                                 try
                                 {
                                     if (_testnet)
@@ -1103,7 +1103,7 @@ namespace SUP
                     if (File.Exists(imgurn) || imgurn.ToUpper().StartsWith("HTTP"))
                     {
 
-                      
+
                         pictureBox2.ImageLocation = imgurn;
                     }
                     else
@@ -1507,7 +1507,7 @@ namespace SUP
                     case ".tif":
                     case ".tiff":
                         // Create a new PictureBox
-                   
+
                         if (File.Exists(urn))
                         {
 
@@ -1673,25 +1673,63 @@ namespace SUP
                         }
                         else
                         {
-                            Random rnd = new Random();
-                            string[] gifFiles = Directory.GetFiles("includes", "*.gif");
-                            if (gifFiles.Length > 0)
-                            {
-                                int randomIndex = rnd.Next(gifFiles.Length);
-                                string randomGifFile = gifFiles[randomIndex];
+                            if (extension == "") {
 
-                                pictureBox1.ImageLocation = randomGifFile;
+                                Match urnmatch = regexTransactionId.Match(txtURN.Text);
+                                string transactionid = urnmatch.Value;
+
+                                if (File.Exists(@"root/" + transactionid + @"/MSG"))
+                                {
+                                    string text = File.ReadAllText(@"root/" + transactionid + @"/MSG");
+                                    GenerateImage(text);
+                                    string hashedString = "";
+                                    byte[] bytes = Encoding.ASCII.GetBytes(text);
+
+                                    // Create a SHA256 hash object
+                                    using (System.Security.Cryptography.SHA256 sha256Hash = System.Security.Cryptography.SHA256.Create())
+                                    {
+                                        // Compute hash value from the input
+                                        byte[] hashBytes = sha256Hash.ComputeHash(bytes);
+
+                                        // Convert byte array to a string representation
+                                        StringBuilder stringBuilder = new StringBuilder();
+                                        for (int i = 0; i < hashBytes.Length; i++)
+                                        {
+                                            stringBuilder.Append(hashBytes[i].ToString("x2"));
+                                        }
+                                        hashedString = stringBuilder.ToString();
+
+                                    }
+                                    // Save the image to the specified folder
+                                    string filePath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + @"\root\keywords\" + hashedString + ".png";
+                                    pictureBox1.ImageLocation = filePath;
+                                    if (txtIMG.Text == "") { pictureBox2.ImageLocation = filePath; }
+
+                                }
+                               
 
                             }
                             else
                             {
-                                try
+                                Random rnd = new Random();
+                                string[] gifFiles = Directory.GetFiles("includes", "*.gif");
+                                if (gifFiles.Length > 0)
                                 {
-                                    pictureBox1.ImageLocation = @"includes\HugPuddle.jpg";
-                                }
-                                catch { }
-                            }
+                                    int randomIndex = rnd.Next(gifFiles.Length);
+                                    string randomGifFile = gifFiles[randomIndex];
 
+                                    pictureBox1.ImageLocation = randomGifFile;
+
+                                }
+                                else
+                                {
+                                    try
+                                    {
+                                        pictureBox1.ImageLocation = @"includes\HugPuddle.jpg";
+                                    }
+                                    catch { }
+                                }
+                            }
 
                         }
 
@@ -1701,6 +1739,81 @@ namespace SUP
             UpdateRemainingChars();
 
         }
+
+        static void GenerateImage(string text)
+        {
+            // Set the image size
+            int width = 1000;
+            int height = 1000;
+
+            if (!Directory.Exists(@"root\keywords")) { Directory.CreateDirectory(@"root\keywords"); }
+
+            // Create a new bitmap image with the specified size
+            using (Bitmap bmp = new Bitmap(width, height))
+            {
+                // Create a graphics object to draw on the image
+                using (Graphics graphics = Graphics.FromImage(bmp))
+                {
+                    // Clear the image with a random background color
+                    Random random = new Random();
+                    int red = random.Next(128, 256); // From 128 to 255 (avoiding very dark colors)
+                    int green = random.Next(128, 256);
+                    int blue = random.Next(128, 256);
+
+                    graphics.Clear(Color.FromArgb(red, green, blue));
+
+                    // Set up the font and text formatting
+                    float fontSize = 150;
+                    Font font = null;
+
+                    // Calculate the font size dynamically based on the image size and text length
+                    while (true)
+                    {
+                        font?.Dispose();
+                        font = new Font("Segoe UI Emoji", fontSize);
+                        SizeF textSize = graphics.MeasureString(text, font, width);
+
+                        if (textSize.Width < width && textSize.Height < height)
+                            break;
+
+                        fontSize -= 1;
+                    }
+
+                    StringFormat stringFormat = new StringFormat
+                    {
+                        Alignment = StringAlignment.Center,
+                        LineAlignment = StringAlignment.Center
+                    };
+
+                    // Draw the text with word wrap
+                    RectangleF rect = new RectangleF(0, 0, width, height);
+                    graphics.DrawString(text, font, Brushes.Black, rect, stringFormat);
+                    string hashedString = "";
+                    // get a hash of the text for image storage.
+                    byte[] bytes = Encoding.ASCII.GetBytes(text);
+
+                    // Create a SHA256 hash object
+                    using (System.Security.Cryptography.SHA256 sha256Hash = System.Security.Cryptography.SHA256.Create())
+                    {
+                        // Compute hash value from the input
+                        byte[] hashBytes = sha256Hash.ComputeHash(bytes);
+
+                        // Convert byte array to a string representation
+                        StringBuilder stringBuilder = new StringBuilder();
+                        for (int i = 0; i < hashBytes.Length; i++)
+                        {
+                            stringBuilder.Append(hashBytes[i].ToString("x2"));
+                        }
+                        hashedString = stringBuilder.ToString();
+
+                    }
+                    // Save the image to the specified folder
+                    string filePath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + @"\root\keywords\" + hashedString + ".png";
+                    bmp.Save(filePath, ImageFormat.Png);
+                }
+            }
+        }
+
 
         private void btnObjectURI_Click(object sender, EventArgs e)
         {

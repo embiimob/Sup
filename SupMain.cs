@@ -20,6 +20,8 @@ using Message = System.Windows.Forms.Message;
 using AngleSharp.Text;
 using System.Drawing.Imaging;
 using NAudio.Wave;
+using System.Text;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace SUP
 {
@@ -256,7 +258,7 @@ namespace SUP
             OBcontrol.ProfileURNChanged += OBControl_ProfileURNChanged;
             splitContainer1.Panel2.Controls.Add(OBcontrol);
             // Combine the application's startup path with the relative path
-            string anonImageUrl = System.IO.Path.Combine(Application.StartupPath, "includes\\anon.png");
+            string anonImageUrl = System.IO.Path.Combine(System.Windows.Forms.Application.StartupPath, "includes\\anon.png");
             // Load the image
             profileIMG.ImageLocation = anonImageUrl;
             // Read the JSON data from the file
@@ -324,7 +326,26 @@ namespace SUP
 
                             GenerateImage(profileURN.Text);
 
-                            profileIMG.ImageLocation = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + @"\root\keywords\" + profileURN.Text + ".png";
+                            string hashedString = "";
+                            // get a hash of the text for image storage.
+                            byte[] bytes = Encoding.ASCII.GetBytes(profileURN.Text);
+
+                            // Create a SHA256 hash object
+                            using (System.Security.Cryptography.SHA256 sha256Hash = System.Security.Cryptography.SHA256.Create())
+                            {
+                                // Compute hash value from the input
+                                byte[] hashBytes = sha256Hash.ComputeHash(bytes);
+
+                                // Convert byte array to a string representation
+                                StringBuilder stringBuilder = new StringBuilder();
+                                for (int i = 0; i < hashBytes.Length; i++)
+                                {
+                                    stringBuilder.Append(hashBytes[i].ToString("x2"));
+                                }
+                                hashedString = stringBuilder.ToString();
+
+                            }
+                            profileIMG.ImageLocation = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + @"\root\keywords\" + hashedString + ".png";
                             btnPublicMessage.BackColor = Color.Blue;
                             btnPublicMessage.ForeColor = Color.Yellow;
                             this.Invoke((Action)(() =>
@@ -389,7 +410,7 @@ namespace SUP
             if (activeProfile.URN == null)
             {
                 profileURN.Text = "anon"; profileBIO.Text = ""; profileCreatedDate.Text = "";
-                string errorImageUrl = System.IO.Path.Combine(Application.StartupPath, "includes\\anon.png");
+                string errorImageUrl = System.IO.Path.Combine(System.Windows.Forms.Application.StartupPath, "includes\\anon.png");
 
                 profileIMG.ImageLocation = errorImageUrl;
                 lblProcessHeight.Text = ""; return;
@@ -502,7 +523,7 @@ namespace SUP
             {
                 this.Invoke((Action)(() =>
                 {
-                    string anonImageUrl = System.IO.Path.Combine(Application.StartupPath, "includes\\anon.png");
+                    string anonImageUrl = System.IO.Path.Combine(System.Windows.Forms.Application.StartupPath, "includes\\anon.png");
                     profileIMG.ImageLocation = anonImageUrl;
                 }));
 
@@ -536,7 +557,7 @@ namespace SUP
                     this.Invoke((Action)(() =>
                     {
 
-                        string anonImageUrl = System.IO.Path.Combine(Application.StartupPath, "includes\\anon.png");
+                        string anonImageUrl = System.IO.Path.Combine(System.Windows.Forms.Application.StartupPath, "includes\\anon.png");
                         profileIMG.ImageLocation = anonImageUrl;
 
                     }));
@@ -787,7 +808,27 @@ namespace SUP
 
                         GenerateImage(value);
 
-                        profileIMG.ImageLocation = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + @"\root\keywords\" + value + ".png";
+                        string hashedString = "";
+                        // get a hash of the text for image storage.
+                        byte[] bytes = Encoding.ASCII.GetBytes(value);
+
+                        // Create a SHA256 hash object
+                        using (System.Security.Cryptography.SHA256 sha256Hash = System.Security.Cryptography.SHA256.Create())
+                        {
+                            // Compute hash value from the input
+                            byte[] hashBytes = sha256Hash.ComputeHash(bytes);
+
+                            // Convert byte array to a string representation
+                            StringBuilder stringBuilder = new StringBuilder();
+                            for (int i = 0; i < hashBytes.Length; i++)
+                            {
+                                stringBuilder.Append(hashBytes[i].ToString("x2"));
+                            }
+                            hashedString = stringBuilder.ToString();
+
+                        }
+
+                        profileIMG.ImageLocation = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + @"\root\keywords\" +hashedString+ ".png";
                         btnPublicMessage.BackColor = Color.Blue;
                         btnPublicMessage.ForeColor = Color.Yellow;
 
@@ -1510,7 +1551,7 @@ namespace SUP
                                                                                     pictureBox.Dock = DockStyle.Left;
                                                                                     pictureBox.Size = new Size(100, 100);
                                                                                     pictureBox.SizeMode = PictureBoxSizeMode.StretchImage;
-                                                                                    pictureBox.Image = Image.FromStream(memoryStream);
+                                                                                    pictureBox.Image = System.Drawing.Image.FromStream(memoryStream);
                                                                                     pictureBox.MouseClick += (sender2, e2) => { Attachment_Clicked(content); };
                                                                                     panel.Controls.Add(pictureBox);
                                                                                 }
@@ -1904,7 +1945,7 @@ namespace SUP
                                                                                         pictureBox.Dock = DockStyle.Left;
                                                                                         pictureBox.Size = new Size(100, 100);
                                                                                         pictureBox.SizeMode = PictureBoxSizeMode.StretchImage;
-                                                                                        pictureBox.Image = Image.FromStream(memoryStream);
+                                                                                        pictureBox.Image = System.Drawing.Image.FromStream(memoryStream);
                                                                                         pictureBox.MouseClick += (sender2, e2) => { Attachment_Clicked(content); };
                                                                                         panel.Controls.Add(pictureBox);
                                                                                     }
@@ -2239,7 +2280,7 @@ namespace SUP
                                                                                         pictureBox.Dock = DockStyle.Left;
                                                                                         pictureBox.Size = new Size(100, 100);
                                                                                         pictureBox.SizeMode = PictureBoxSizeMode.StretchImage;
-                                                                                        pictureBox.Image = Image.FromStream(memoryStream);
+                                                                                        pictureBox.Image = System.Drawing.Image.FromStream(memoryStream);
                                                                                         pictureBox.MouseClick += (sender2, e2) => { Attachment_Clicked(content); };
                                                                                         panel.Controls.Add(pictureBox);
                                                                                     }
@@ -2559,7 +2600,7 @@ namespace SUP
                                                                                         pictureBox.Dock = DockStyle.Left;
                                                                                         pictureBox.Size = new Size(100, 100);
                                                                                         pictureBox.SizeMode = PictureBoxSizeMode.StretchImage;
-                                                                                        pictureBox.Image = Image.FromStream(memoryStream);
+                                                                                        pictureBox.Image = System.Drawing.Image.FromStream(memoryStream);
                                                                                         pictureBox.MouseClick += (sender2, e2) => { Attachment_Clicked(content); };
                                                                                         panel.Controls.Add(pictureBox);
                                                                                     }
@@ -2882,7 +2923,7 @@ namespace SUP
                                                                                         pictureBox.Dock = DockStyle.Left;
                                                                                         pictureBox.Size = new Size(100, 100);
                                                                                         pictureBox.SizeMode = PictureBoxSizeMode.StretchImage;
-                                                                                        pictureBox.Image = Image.FromStream(memoryStream);
+                                                                                        pictureBox.Image = System.Drawing.Image.FromStream(memoryStream);
                                                                                         pictureBox.MouseClick += (sender2, e2) => { Attachment_Clicked(content); };
                                                                                         panel.Controls.Add(pictureBox);
                                                                                     }
@@ -3751,7 +3792,7 @@ namespace SUP
                                                     pictureBox.Dock = DockStyle.Left;
                                                     pictureBox.Size = new Size(100, 100);
                                                     pictureBox.SizeMode = PictureBoxSizeMode.StretchImage;
-                                                    pictureBox.Image = Image.FromStream(memoryStream);
+                                                    pictureBox.Image = System.Drawing.Image.FromStream(memoryStream);
                                                     pictureBox.MouseClick += (sender, e) => { Attachment_Clicked(content); };
                                                     panel.Controls.Add(pictureBox);
                                                     //pictures.Add(pictureBox);
@@ -4468,7 +4509,7 @@ namespace SUP
                                                     pictureBox.Dock = DockStyle.Left;
                                                     pictureBox.Size = new Size(100, 100);
                                                     pictureBox.SizeMode = PictureBoxSizeMode.StretchImage;
-                                                    pictureBox.Image = Image.FromStream(memoryStream);
+                                                    pictureBox.Image = System.Drawing.Image.FromStream(memoryStream);
                                                     pictureBox.MouseClick += (sender, e) => { Attachment_Clicked(content); };
                                                     panel.Controls.Add(pictureBox);
                                                 }
@@ -4847,7 +4888,7 @@ namespace SUP
                                                 pictureBox.Dock = DockStyle.Left;
                                                 pictureBox.Size = new Size(100, 100);
                                                 pictureBox.SizeMode = PictureBoxSizeMode.StretchImage;
-                                                pictureBox.Image = Image.FromStream(memoryStream);
+                                                pictureBox.Image = System.Drawing.Image.FromStream(memoryStream);
                                                 panel.Controls.Add(pictureBox);
                                             }
                                             catch
@@ -5590,7 +5631,7 @@ namespace SUP
                 }
                 else
                 {
-                    string errorImageUrl = System.IO.Path.Combine(Application.StartupPath, "includes\\anon.png");
+                    string errorImageUrl = System.IO.Path.Combine(System.Windows.Forms.Application.StartupPath, "includes\\anon.png");
 
 
                     PictureBox picture = new PictureBox
@@ -5749,7 +5790,7 @@ namespace SUP
                 }
                 else
                 {
-                    string errorImageUrl = System.IO.Path.Combine(Application.StartupPath, "includes\\anon.png");
+                    string errorImageUrl = System.IO.Path.Combine(System.Windows.Forms.Application.StartupPath, "includes\\anon.png");
 
 
                     PictureBox picture = new PictureBox
@@ -5936,7 +5977,28 @@ namespace SUP
                     GenerateImage("#" + transactionId.Substring(0, 20));
                     profileURN.Text = "#" + transactionId.Substring(0, 20);
                     profileURN.Links[0].LinkData = Root.GetPublicAddressByKeyword(transactionId);
-                    profileIMG.ImageLocation = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + @"\root\keywords\" + profileURN.Text + ".png";
+
+                    string hashedString = "";
+                    // get a hash of the text for image storage.
+                    byte[] bytes = Encoding.ASCII.GetBytes(profileURN.Text);
+
+                    // Create a SHA256 hash object
+                    using (System.Security.Cryptography.SHA256 sha256Hash = System.Security.Cryptography.SHA256.Create())
+                    {
+                        // Compute hash value from the input
+                        byte[] hashBytes = sha256Hash.ComputeHash(bytes);
+
+                        // Convert byte array to a string representation
+                        StringBuilder stringBuilder = new StringBuilder();
+                        for (int i = 0; i < hashBytes.Length; i++)
+                        {
+                            stringBuilder.Append(hashBytes[i].ToString("x2"));
+                        }
+                        hashedString = stringBuilder.ToString();
+
+                    }
+
+                    profileIMG.ImageLocation = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + @"\root\keywords\" + hashedString +".png";
                     btnPublicMessage.BackColor = Color.Blue;
                     btnPublicMessage.ForeColor = Color.Yellow;
                     this.Invoke((Action)(() =>
@@ -6479,15 +6541,13 @@ namespace SUP
                     float fontSize = 150;
                     Font font = null;
 
-                    // Declare textSize outside the loop
-                    SizeF textSize;
-
                     // Calculate the font size dynamically based on the image size and text length
                     while (true)
                     {
                         font?.Dispose();
                         font = new Font("Segoe UI Emoji", fontSize);
-                        textSize = graphics.MeasureString(text, font);
+                        SizeF textSize = graphics.MeasureString(text, font, width);
+
                         if (textSize.Width < width && textSize.Height < height)
                             break;
 
@@ -6500,18 +6560,36 @@ namespace SUP
                         LineAlignment = StringAlignment.Center
                     };
 
-                    // Calculate the center positions for the text
-                    float x = 0;//(width - textSize.Width) / 2;
-                    float y = 0; //(height - textSize.Height) / 2;
+                    // Draw the text with word wrap
+                    RectangleF rect = new RectangleF(0, 0, width, height);
+                    graphics.DrawString(text, font, Brushes.Black, rect, stringFormat);
+                    string hashedString = "";
+                    // get a hash of the text for image storage.
+                    byte[] bytes = Encoding.ASCII.GetBytes(text);
 
-                    graphics.DrawString(text, font, Brushes.Black, new RectangleF(x, y, width, height), stringFormat);
+                    // Create a SHA256 hash object
+                    using (System.Security.Cryptography.SHA256 sha256Hash = System.Security.Cryptography.SHA256.Create())
+                    {
+                        // Compute hash value from the input
+                        byte[] hashBytes = sha256Hash.ComputeHash(bytes);
 
+                        // Convert byte array to a string representation
+                        StringBuilder stringBuilder = new StringBuilder();
+                        for (int i = 0; i < hashBytes.Length; i++)
+                        {
+                            stringBuilder.Append(hashBytes[i].ToString("x2"));
+                        }
+                        hashedString = stringBuilder.ToString();
+
+                    }
                     // Save the image to the specified folder
-                    string filePath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + @"\root\keywords\" + text + ".png";
+                    string filePath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + @"\root\keywords\" + hashedString + ".png";
                     bmp.Save(filePath, ImageFormat.Png);
                 }
             }
         }
+
+
 
         private void btnJukeBox_Click(object sender, EventArgs e)
         {
@@ -6705,7 +6783,7 @@ namespace SUP
             if (e.Error != null)
             {
                 // Combine the application's startup path with the relative path
-                string errorImageUrl = System.IO.Path.Combine(Application.StartupPath, "includes\\anon.png");
+                string errorImageUrl = System.IO.Path.Combine(System.Windows.Forms.Application.StartupPath, "includes\\anon.png");
 
                 // Load the image
                 profileIMG.ImageLocation = errorImageUrl;
