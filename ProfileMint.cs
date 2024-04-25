@@ -1320,6 +1320,10 @@ namespace SUP
             UpdateRemainingChars();
         }
 
-       
+        private void txtURN_Leave(object sender, EventArgs e)
+        {
+            PROState PRO = PROState.GetProfileByURN(txtURN.Text, mainnetLogin, mainnetPassword, mainnetURL, mainnetVersionByte);
+           if (PRO.Creators != null) { MessageBox.Show("Sorry, the profile urn "+ txtURN.Text + " has already been claimed."); LoadFormByAddress(PRO.Creators[0]); }
+        }
     }
 }

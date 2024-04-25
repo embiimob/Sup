@@ -1159,8 +1159,10 @@ namespace SUP
                 lblASCIIURN.Visible = false;
                 if (txtURN.Text != "")
                 {
-                    urn = txtURN.Text;
+                    OBJState OBJ = OBJState.GetObjectByURN(txtURN.Text, mainnetLogin, mainnetPassword, mainnetURL, mainnetVersionByte);
+                    if (OBJ.Creators != null) { MessageBox.Show("Sorry, the object urn " + txtURN.Text + " has already been claimed."); txtURN.Text = ""; return; }
 
+                    urn = txtURN.Text;
                     if (!txtURN.Text.ToLower().StartsWith("http"))
                     {
                         urn = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + @"\root\" + txtURN.Text.Replace("BTC:", "").Replace("MZC:", "").Replace("LTC:", "").Replace("DOG:", "").Replace("IPFS:", "").Replace("btc:", "").Replace("mzc:", "").Replace("ltc:", "").Replace("dog:", "").Replace("ipfs:", "").Replace(@"/", @"\");
@@ -1168,12 +1170,16 @@ namespace SUP
                     }
                     else
                     {
-                        webviewer.Visible = true;
-                        await webviewer.EnsureCoreWebView2Async();
-                        webviewer.CoreWebView2.Navigate(txtURN.Text);
-                        lblURNBlockDate.Text = "http get: " + DateTime.UtcNow.ToString("ddd, dd MMM yyyy hh:mm:ss");
-                        btnObjectURN.BackColor = Color.Blue;
-                        btnObjectURN.ForeColor = Color.Yellow;
+                        try
+                        {
+                            webviewer.Visible = true;
+                            await webviewer.EnsureCoreWebView2Async();
+                            webviewer.CoreWebView2.Navigate(txtURN.Text);
+                            lblURNBlockDate.Text = "http get: " + DateTime.UtcNow.ToString("ddd, dd MMM yyyy hh:mm:ss");
+                            btnObjectURN.BackColor = Color.Blue;
+                            btnObjectURN.ForeColor = Color.Yellow;
+                        }
+                        catch { }
                         return;
                     }
                 }
@@ -1198,6 +1204,9 @@ namespace SUP
                         process.WaitForExit();
                         string hash = output.Split(' ')[1];
                         txtURN.Text = "IPFS:" + hash + @"\" + fileName;
+
+                        OBJState OBJ = OBJState.GetObjectByURN(txtURN.Text, mainnetLogin, mainnetPassword, mainnetURL, mainnetVersionByte);
+                        if (OBJ.Creators != null) { MessageBox.Show("Sorry, the object urn " + txtURN.Text + " has already been claimed."); lblURNBlockDate.Text = ""; txtURN.Text = ""; return; }
                         urn = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + @"\ipfs\" + hash + @"\" + fileName;
 
                     }
@@ -2954,6 +2963,19 @@ namespace SUP
 
                 // Scroll to the beginning of the text
                 textBox.ScrollToCaret();
+            }
+
+           
+        }
+
+        private void txtURN_Leave(object sender, EventArgs e)
+        {
+            OBJState OBJ = OBJState.GetObjectByURN(txtURN.Text, mainnetLogin, mainnetPassword, mainnetURL, mainnetVersionByte);
+            if (OBJ.Creators != null) { MessageBox.Show("Sorry, the object urn " + txtURN.Text + " has already been claimed."); lblURNBlockDate.Text = ""; txtURN.Text = ""; } else
+            {
+                txtURN.SelectionStart = 0;
+                txtURN.SelectionLength = 0;
+                txtURN.ScrollToCaret();
             }
         }
     }

@@ -484,8 +484,8 @@
             this.txtURN.Name = "txtURN";
             this.txtURN.Size = new System.Drawing.Size(417, 42);
             this.txtURN.TabIndex = 2;
-            this.txtURN.TextChanged += new System.EventHandler(this.txtURN_TextChanged);
-            this.txtURN.Leave += new System.EventHandler(this.TextBox_LostFocus);
+            this.txtURN.TabStopChanged += new System.EventHandler(this.txtURN_TextChanged);
+            this.txtURN.Leave += new System.EventHandler(this.txtURN_Leave);
             // 
             // txtTitle
             // 

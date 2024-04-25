@@ -377,6 +377,7 @@
             this.txtURN.Size = new System.Drawing.Size(817, 42);
             this.txtURN.TabIndex = 0;
             this.txtURN.TextChanged += new System.EventHandler(this.txtURN_TextChanged);
+            this.txtURN.Leave += new System.EventHandler(this.txtURN_Leave);
             // 
             // txtFirstName
             // 
