@@ -261,6 +261,7 @@ namespace SUP
             string anonImageUrl = System.IO.Path.Combine(System.Windows.Forms.Application.StartupPath, "includes\\anon.png");
             // Load the image
             profileIMG.ImageLocation = anonImageUrl;
+            profileOwner.ImageLocation = anonImageUrl;
             // Read the JSON data from the file
             string filePath = @"root\MyFriendList.Json";
             try
@@ -3184,15 +3185,7 @@ namespace SUP
             List<MessageObject> messages = new List<MessageObject>();
 
             try { messages = OBJState.GetPublicMessagesByAddress(profileURN.Links[0].LinkData.ToString(), mainnetLogin, mainnetPassword, mainnetURL, mainnetVersionByte, numMessagesDisplayed, 10); }
-            catch (Exception ex)
-            {
-                string error = ex.Message;
-
-                MessageBox.Show("An error occurred: " + error, "Error", System.Windows.Forms.MessageBoxButtons.OK, System.Windows.Forms.MessageBoxIcon.Error);
-                btnPublicMessage.Enabled = true;
-                return;
-            }
-
+            catch {}
 
 
             supFlow.SuspendLayout();

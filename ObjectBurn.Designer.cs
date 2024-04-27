@@ -28,8 +28,8 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle4 = new System.Windows.Forms.DataGridViewCellStyle();
             this.addressTextBox = new System.Windows.Forms.TextBox();
             this.qtyTextBox = new System.Windows.Forms.TextBox();
             this.addressQtyDataGridView = new System.Windows.Forms.DataGridView();
@@ -47,6 +47,7 @@
             this.label4 = new System.Windows.Forms.Label();
             this.label1 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
+            this.btnFromSelector = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.addressQtyDataGridView)).BeginInit();
             this.SuspendLayout();
             // 
@@ -88,8 +89,8 @@
             // 
             // address
             // 
-            dataGridViewCellStyle1.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.address.DefaultCellStyle = dataGridViewCellStyle1;
+            dataGridViewCellStyle3.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.address.DefaultCellStyle = dataGridViewCellStyle3;
             this.address.HeaderText = "object address to burn";
             this.address.MaxInputLength = 46;
             this.address.MinimumWidth = 6;
@@ -99,8 +100,8 @@
             // 
             // qty
             // 
-            dataGridViewCellStyle2.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.qty.DefaultCellStyle = dataGridViewCellStyle2;
+            dataGridViewCellStyle4.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.qty.DefaultCellStyle = dataGridViewCellStyle4;
             this.qty.HeaderText = "qty to burn";
             this.qty.MinimumWidth = 6;
             this.qty.Name = "qty";
@@ -184,12 +185,12 @@
             // 
             this.txtSignatureAddress.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.txtSignatureAddress.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
-            this.txtSignatureAddress.Font = new System.Drawing.Font("Microsoft Sans Serif", 15.75F);
+            this.txtSignatureAddress.Font = new System.Drawing.Font("Microsoft Sans Serif", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.txtSignatureAddress.ForeColor = System.Drawing.Color.White;
-            this.txtSignatureAddress.Location = new System.Drawing.Point(12, 521);
+            this.txtSignatureAddress.Location = new System.Drawing.Point(12, 522);
             this.txtSignatureAddress.Multiline = true;
             this.txtSignatureAddress.Name = "txtSignatureAddress";
-            this.txtSignatureAddress.Size = new System.Drawing.Size(489, 53);
+            this.txtSignatureAddress.Size = new System.Drawing.Size(433, 53);
             this.txtSignatureAddress.TabIndex = 361;
             // 
             // lblObjectStatus
@@ -243,6 +244,20 @@
             this.label2.TabIndex = 372;
             this.label2.Text = "enter qty to burn and hit   +";
             // 
+            // btnFromSelector
+            // 
+            this.btnFromSelector.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnFromSelector.Font = new System.Drawing.Font("Segoe UI Emoji", 20.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnFromSelector.ForeColor = System.Drawing.Color.Black;
+            this.btnFromSelector.Location = new System.Drawing.Point(451, 521);
+            this.btnFromSelector.Name = "btnFromSelector";
+            this.btnFromSelector.Padding = new System.Windows.Forms.Padding(3, 0, 0, 0);
+            this.btnFromSelector.Size = new System.Drawing.Size(50, 53);
+            this.btnFromSelector.TabIndex = 374;
+            this.btnFromSelector.Text = "👤";
+            this.btnFromSelector.UseVisualStyleBackColor = true;
+            this.btnFromSelector.Click += new System.EventHandler(this.btnFromSelector_Click);
+            // 
             // ObjectBurn
             // 
             this.AllowDrop = true;
@@ -250,6 +265,7 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.Black;
             this.ClientSize = new System.Drawing.Size(516, 646);
+            this.Controls.Add(this.btnFromSelector);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.label4);
@@ -297,5 +313,6 @@
         private System.Windows.Forms.Label label4;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Label label2;
+        private System.Windows.Forms.Button btnFromSelector;
     }
 }

@@ -1040,7 +1040,7 @@ namespace SUP
             PROState foundObject = PROState.GetProfileByAddress(address, mainnetLogin, mainnetPassword, mainnetURL, mainnetVersionByte);
             if (foundObject.URN != null)
             {
-                DateTime expirationDate = foundObject.ChangeDate.AddYears(3);
+                DateTime expirationDate = foundObject.ChangeDate.AddYears(10);
                 lblObjectStatus.Text = "created date: [" + foundObject.CreatedDate.ToString("MM/dd/yyyy hh:mm:ss") + "]  last change: [" + foundObject.ChangeDate.ToString("MM/dd/yyyy hh:mm:ss") + "]  expires: [" + expirationDate.ToString("MM/dd/yyyy hh:mm:ss") + "]";
 
                 if (lblObjectStatus.Text.Contains("Monday, January 1, 0001"))

@@ -331,7 +331,7 @@ namespace SUP.P2FK
 
                             PROState isObject = GetProfileByAddress(findObject, username, password, url, versionByte);
 
-                            if (isObject.URN != null && isObject.URN == searchstring && isObject.ChangeDate > DateTime.Now.AddYears(-3))
+                            if (isObject.URN != null && isObject.URN == searchstring && isObject.ChangeDate > DateTime.Now.AddYears(-10))
                             {
                                 if (isObject.Creators.ElementAt(0) == findObject)
                                 {
@@ -423,9 +423,14 @@ namespace SUP.P2FK
             {
                 PROState isObject = GetProfileByAddress(address, username, password, url, versionByte);
 
-                if (isObject.URN != null)
+                if (isObject.URN != null && isObject.Creators != null)
                 {
-                    profileStates.Add(isObject);
+                    PROState activeprofile = PROState.GetProfileByURN(isObject.URN, username, password, url, versionByte);
+                    
+                    if (string.Concat(activeprofile.Creators) == string.Concat(isObject.Creators))
+                    {
+                        profileStates.Add(isObject);
+                    }
                 }
             }
 
@@ -448,8 +453,8 @@ namespace SUP.P2FK
                 }
                 catch { };
             }
-
-            return profileStates;
+            var sortedprofileStatese = profileStates.OrderBy(urn => urn.URN);
+            return sortedprofileStatese.ToList();
 
         }
        

@@ -257,13 +257,28 @@ namespace SUP
                     if (searchprofile.URN == null)
                     {
                         searchprofile = PROState.GetProfileByURN(address, mainnetLogin, mainnetPassword, mainnetURL, mainnetVersionByte, calculate);
+
                     }
 
                     if (searchprofile.URN != null)
                     {
+
                         profileCheck = searchprofile.Creators.First();
                     }
-                    else { profileCheck = address; }
+                    else
+                    {
+                        PROState activeprofile = PROState.GetProfileByURN(searchprofile.URN, mainnetLogin, mainnetPassword, mainnetURL, mainnetVersionByte, calculate);
+                        if (string.Concat(activeprofile.Creators) != string.Concat(searchprofile.Creators))
+                        {
+                            searchprofile = new PROState();
+
+                        }
+
+
+                        profileCheck = address;
+                    }
+
+
                     if (!System.IO.File.Exists("root\\" + profileCheck + "\\GetObjectsCreatedByAddress.json"))
                     {
                         this.Invoke((Action)(() =>
@@ -298,7 +313,17 @@ namespace SUP
                     {
                         profileCheck = searchprofile.Creators.First();
                     }
-                    else { profileCheck = address; }
+                    else
+                    {
+                        PROState activeprofile = PROState.GetProfileByURN(searchprofile.URN, mainnetLogin, mainnetPassword, mainnetURL, mainnetVersionByte, calculate);
+                        if (string.Concat(activeprofile.Creators) != string.Concat(searchprofile.Creators))
+                        {
+                            searchprofile = new PROState();
+
+                        }
+
+                        profileCheck = address;
+                    }
 
                     if (!System.IO.File.Exists("root\\" + profileCheck + "\\GetObjectsOwnedByAddress.json"))
                     {
@@ -355,12 +380,26 @@ namespace SUP
                             if (searchprofile.URN == null)
                             {
                                 searchprofile = PROState.GetProfileByURN(address, mainnetLogin, mainnetPassword, mainnetURL, mainnetVersionByte, calculate);
+                                if (searchprofile.URN != null)
+                                {
+
+                                    profileCheck = searchprofile.Creators.First();
+                                }
                             }
-                            if (searchprofile.URN != null)
+
+                            else
                             {
-                                profileCheck = searchprofile.Creators.First();
+
+                                PROState activeprofile = PROState.GetProfileByURN(searchprofile.URN, mainnetLogin, mainnetPassword, mainnetURL, mainnetVersionByte, calculate);
+                                if (string.Concat(activeprofile.Creators) != string.Concat(searchprofile.Creators))
+                                {
+                                    searchprofile = new PROState();
+
+                                }
+
+
+                                profileCheck = address;
                             }
-                            else { profileCheck = address; }
 
 
                         }

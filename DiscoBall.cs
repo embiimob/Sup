@@ -21,6 +21,7 @@ using Gma.QrCodeNet.Encoding;
 using Gma.QrCodeNet.Encoding.Windows.Render;
 using System.Drawing.Imaging;
 using System.Drawing.Printing;
+using AngleSharp.Html.Dom;
 
 namespace SUP
 {
@@ -74,6 +75,8 @@ namespace SUP
             myTooltip.SetToolTip(btnRecord, "click and hold this button to record an audio message.\nrelease the button when finished and it will be attached to your message.\nleft click the attachment to review your recording.\nif you are not happy, right click to remove it and try again.");
             myTooltip.SetToolTip(btnRefresh, "click to etch your message to the active blockchain");
             myTooltip.SetToolTip(btnEncryptionStatus, "this indicator informs you if the current message is\npublic ( viewable by everyone ) or private ( viewable by the recipient only )");
+            myTooltip.SetToolTip(btnFromSelector, "click to select from a list of local profiles.");
+            myTooltip.SetToolTip(btnToSelector, "click to select a profile you are currently following.");
 
             ContextMenuStrip contextMenu = new ContextMenuStrip();
 
@@ -92,12 +95,12 @@ namespace SUP
             pictureBox1.ContextMenuStrip = contextMenu;
             if (!testnet)
             {
-              mainnetURL = @"http://127.0.0.1:8332";
-        mainnetLogin = "good-user";
-        mainnetPassword = "better-password";
-        mainnetVersionByte = "0";
+                mainnetURL = @"http://127.0.0.1:8332";
+                mainnetLogin = "good-user";
+                mainnetPassword = "better-password";
+                mainnetVersionByte = "0";
 
-    }
+            }
 
         }
 
@@ -375,104 +378,11 @@ namespace SUP
                 }
                 else
                 {
-                    string ipfsHash = "";
-                    // Open file dialog and get file path and name
                     System.Windows.Forms.OpenFileDialog openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
                     if (openFileDialog1.ShowDialog() == DialogResult.OK)
                     {
                         string filePath = openFileDialog1.FileName;
-                        string fileName = openFileDialog1.SafeFileName;
-
-
-
-                        string proccessingFile = filePath;
-                        string processingid = Guid.NewGuid().ToString();
-
-                        if (btnEncryptionStatus.Text == "PRIVATE 🤐")
-                        {
-
-                            byte[] rootbytes = Root.GetRootBytesByFile(new string[] { filePath });
-                            PROState toProfile = PROState.GetProfileByAddress(txtToAddress.Text, mainnetLogin,mainnetPassword,mainnetURL,mainnetVersionByte);
-                            rootbytes = Root.EncryptRootBytes(mainnetLogin, mainnetPassword, mainnetURL, txtToAddress.Text, rootbytes, toProfile.PKX, toProfile.PKY, true);
-                            string proccessingDirectory = @"root\" + processingid;
-                            Directory.CreateDirectory(proccessingDirectory);
-                            proccessingFile = proccessingDirectory + @"\SEC";
-                            File.WriteAllBytes(proccessingFile, rootbytes);
-
-                        }
-
-
-
-                        // Add file to IPFS
-                        Task<string> addTask = Task.Run(() =>
-                        {
-                            Process process = new Process();
-                            process.StartInfo.FileName = @"ipfs\ipfs.exe";
-                            process.StartInfo.Arguments = "add \"" + proccessingFile + "\"";
-                            process.StartInfo.UseShellExecute = false;
-                            process.StartInfo.CreateNoWindow = false;
-                            process.StartInfo.RedirectStandardOutput = true;
-                            process.Start();
-                            string output = process.StandardOutput.ReadToEnd();
-                            process.WaitForExit();
-                            string hash = output.Split(' ')[1];
-
-                            PictureBox pictureBox = new PictureBox();
-                            if (btnEncryptionStatus.Text == "PRIVATE 🤐")
-                            { pictureBox.Tag = "IPFS:" + hash + @"\SEC"; }
-                            else
-                            {
-                                // Set the PictureBox properties
-                                pictureBox.Tag = "IPFS:" + hash + @"\" + fileName;
-                            }
-                            pictureBox.SizeMode = PictureBoxSizeMode.StretchImage;
-                            pictureBox.Width = 50;
-                            pictureBox.Height = 50;
-
-
-                            string extension = Path.GetExtension(filePath).ToLower();
-                            if (imageExtensions.Contains(extension))
-                            {
-
-                                pictureBox.ImageLocation = filePath;
-                                pictureBox.MouseClick += PictureBox_MouseClick;
-
-                            }
-                            else
-                            {
-                                pictureBox.ImageLocation = @"includes\HugPuddle.jpg";
-                                pictureBox.MouseClick += PictureBox_MouseClick;
-                            }
-
-                            this.Invoke((MethodInvoker)delegate
-                            {
-                                flowAttachments.Controls.Add(pictureBox);
-                            });
-
-                            return hash;
-                        });
-                        ipfsHash = await addTask;
-
-                        try
-                        {
-                            if (File.Exists("IPFS_PINNING_ENABLED"))
-                            {
-                                Process process3 = new Process
-                                {
-                                    StartInfo = new ProcessStartInfo
-                                    {
-                                        FileName = @"ipfs\ipfs.exe",
-                                        Arguments = "pin add " + ipfsHash,
-                                        UseShellExecute = false,
-                                        CreateNoWindow = true
-                                    }
-                                };
-                                process3.Start();
-                            }
-                        }
-                        catch { }
-
-                        try { Directory.Delete(@"root\" + processingid, true); } catch { }
+                        ProcessFileAsync(filePath);
                     }
 
 
@@ -480,7 +390,7 @@ namespace SUP
                 }
 
 
-          
+
 
             }
             this.Invoke((MethodInvoker)delegate
@@ -514,7 +424,7 @@ namespace SUP
             }
 
 
-                string transMessage = supMessage.Text;
+            string transMessage = supMessage.Text;
             List<string> encodedList = new List<string>();
             foreach (Control attach in flowAttachments.Controls)
             {
@@ -538,20 +448,20 @@ namespace SUP
             PROState toProfile = PROState.GetProfileByAddress(_toaddress, mainnetLogin, mainnetPassword, mainnetURL, mainnetVersionByte);
             string signature = "";
             string signatureAddress = "";
-            NetworkCredential credentials = new NetworkCredential(mainnetLogin,mainnetPassword);
+            NetworkCredential credentials = new NetworkCredential(mainnetLogin, mainnetPassword);
             NBitcoin.RPC.RPCClient rpcClient = new NBitcoin.RPC.RPCClient(credentials, new Uri(mainnetURL), Network.Main);
 
             if (txtFromAddress.Text != "")
             {
-  
+
                 System.Security.Cryptography.SHA256 mySHA256 = SHA256Managed.Create();
                 byte[] hashValue = new byte[] { };
                 hashValue = mySHA256.ComputeHash(Encoding.UTF8.GetBytes(OBJP2FK));
 
-               
+
 
                 signatureAddress = txtFromAddress.Text;
-               
+
                 try { signature = rpcClient.SendCommand("signmessage", signatureAddress, BitConverter.ToString(hashValue).Replace("-", String.Empty)).ResultString; }
                 catch (Exception ex)
                 {
@@ -634,7 +544,7 @@ namespace SUP
             foreach (Match match in regex.Matches(supMessage.Text))
             {
                 string keyword = match.Value.Substring(1);
-                string encodedKeyword = Root.GetPublicAddressByKeyword(keyword,mainnetVersionByte);
+                string encodedKeyword = Root.GetPublicAddressByKeyword(keyword, mainnetVersionByte);
                 string P2FKASCII = Root.GetKeywordByPublicAddress(encodedKeyword, "ASCII");
 
 
@@ -683,7 +593,7 @@ namespace SUP
                     try { recipients.Add(encodedAddress, 0.00000546m); } catch { }
                 }
 
-                CoinRPC a = new CoinRPC(new Uri(mainnetURL), new NetworkCredential(mainnetLogin,mainnetPassword));
+                CoinRPC a = new CoinRPC(new Uri(mainnetURL), new NetworkCredential(mainnetLogin, mainnetPassword));
 
                 try
                 {
@@ -1142,7 +1052,7 @@ namespace SUP
  };
 
 
-            foreach (string emoji in emojis)
+            foreach (string emoji in emojis.Distinct())
             {
                 Button emojiButton = new Button();
                 emojiButton.Text = emoji;
@@ -1231,7 +1141,7 @@ namespace SUP
             this.Invoke((Action)(() =>
             {
                 supMessage.Text = stringBuilder.ToString();
-                
+
             }));
 
             Application.DoEvents();
@@ -1243,7 +1153,7 @@ namespace SUP
             }));
 
 
-            }
+        }
 
         private void PrintMenuItem_Click(object sender, EventArgs e)
         {
@@ -1358,6 +1268,323 @@ namespace SUP
                 flowAttachments.Controls.Remove(button);
                 txtINQJson.Text = "";
                 txtINQAddress.Text = "";
+            }
+        }
+
+
+        //GPT3.5 INSPIRED CODE
+        string ipfsHash = "";
+
+        // Handle paste event
+        private void HandlePaste()
+        {
+            IDataObject data = Clipboard.GetDataObject();
+            if (data.GetDataPresent(DataFormats.FileDrop))
+            {
+                string[] files = (string[])data.GetData(DataFormats.FileDrop);
+                foreach (string filePath in files)
+                {
+                    ProcessFileAsync(filePath);
+                }
+            }
+            else if (data.GetDataPresent(DataFormats.Bitmap))
+            {
+                Image image = (Image)data.GetData(DataFormats.Bitmap);
+                ProcessImage(image);
+            }
+        }
+
+        // Process pasted file
+        private async Task ProcessFileAsync(string filePath)
+        {
+            string fileName = Path.GetFileName(filePath);
+            string proccessingFile = filePath;
+            string processingid = Guid.NewGuid().ToString();
+            List<string> imageExtensions = new List<string> { ".bmp", ".gif", ".ico", ".jpeg", ".jpg", ".png", ".tif", ".tiff", "" };
+
+            if (btnEncryptionStatus.Text == "PRIVATE 🤐")
+            {
+                byte[] rootbytes = Root.GetRootBytesByFile(new string[] { filePath });
+                PROState toProfile = PROState.GetProfileByAddress(txtToAddress.Text, mainnetLogin, mainnetPassword, mainnetURL, mainnetVersionByte);
+                rootbytes = Root.EncryptRootBytes(mainnetLogin, mainnetPassword, mainnetURL, txtToAddress.Text, rootbytes, toProfile.PKX, toProfile.PKY, true);
+                string proccessingDirectory = @"root\" + processingid;
+                Directory.CreateDirectory(proccessingDirectory);
+                proccessingFile = proccessingDirectory + @"\SEC";
+                File.WriteAllBytes(proccessingFile, rootbytes);
+            }
+
+            Task<string> addTask = Task.Run(() =>
+            {
+                Process process = new Process();
+                process.StartInfo.FileName = @"ipfs\ipfs.exe";
+                process.StartInfo.Arguments = "add \"" + proccessingFile + "\"";
+                process.StartInfo.UseShellExecute = false;
+                process.StartInfo.CreateNoWindow = false;
+                process.StartInfo.RedirectStandardOutput = true;
+                process.Start();
+                string output = process.StandardOutput.ReadToEnd();
+                process.WaitForExit();
+                string hash = output.Split(' ')[1];
+
+                PictureBox pictureBox = new PictureBox();
+                if (btnEncryptionStatus.Text == "PRIVATE 🤐")
+                { pictureBox.Tag = "IPFS:" + hash + @"\SEC"; }
+                else
+                {
+                    pictureBox.Tag = "IPFS:" + hash + @"\" + fileName;
+                }
+                pictureBox.SizeMode = PictureBoxSizeMode.StretchImage;
+                pictureBox.Width = 50;
+                pictureBox.Height = 50;
+
+                string extension = Path.GetExtension(filePath).ToLower();
+                if (imageExtensions.Contains(extension))
+                {
+                    pictureBox.ImageLocation = filePath;
+                    pictureBox.MouseClick += PictureBox_MouseClick;
+                }
+                else
+                {
+                    pictureBox.ImageLocation = @"includes\HugPuddle.jpg";
+                    pictureBox.MouseClick += PictureBox_MouseClick;
+                }
+
+                this.Invoke((MethodInvoker)delegate
+                {
+                    flowAttachments.Controls.Add(pictureBox);
+                });
+
+                return hash;
+            });
+
+            ipfsHash = await addTask;
+
+            try
+            {
+                if (File.Exists("IPFS_PINNING_ENABLED"))
+                {
+                    Process process3 = new Process
+                    {
+                        StartInfo = new ProcessStartInfo
+                        {
+                            FileName = @"ipfs\ipfs.exe",
+                            Arguments = "pin add " + ipfsHash,
+                            UseShellExecute = false,
+                            CreateNoWindow = true
+                        }
+                    };
+                    process3.Start();
+                }
+            }
+            catch { }
+
+            try { Directory.Delete(@"root\" + processingid, true); } catch { }
+        }
+
+        // Process pasted image
+        private void ProcessImage(Image image)
+        {
+            // Save the image to a temporary file
+            string tempFilePath = Path.GetTempFileName() + ".bmp";
+            image.Save(tempFilePath);
+
+            // Process the temporary file
+            ProcessFileAsync(tempFilePath);
+        }
+
+        // Call this method when paste event occurs
+        private void OnPaste(object sender, EventArgs e)
+        {
+            HandlePaste();
+        }
+
+        private void supMessage_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Control && e.KeyCode == Keys.V)
+            {
+                // Handle paste action
+                HandlePaste();
+            }
+        }
+
+        private void btnFromSelector_Click(object sender, EventArgs e)
+        {
+            List<PROState> profiles = PROState.GetLocalProfiles(mainnetLogin, mainnetPassword, mainnetURL, mainnetVersionByte, true);
+
+            using (var dialog = new Form())
+            {
+                dialog.Text = "Select a local profile";
+                dialog.StartPosition = FormStartPosition.CenterParent;
+                dialog.AutoSize = true;
+                dialog.ControlBox = false;
+                dialog.FormBorderStyle = FormBorderStyle.FixedDialog;
+                dialog.ClientSize = new Size(240, 90);
+
+
+                var nameComboBox = new ComboBox();
+                nameComboBox.DropDownStyle = ComboBoxStyle.DropDownList;
+                nameComboBox.Font = new Font(nameComboBox.Font.FontFamily, 12f);
+                nameComboBox.Width = 200;
+                foreach (PROState pro in profiles)
+                {
+                    if (!nameComboBox.Items.Contains(pro.URN))
+                    {
+                        nameComboBox.Items.Add(pro.URN);
+                    }
+                }
+                nameComboBox.SelectedIndex = 0;
+
+                var okButton = new Button();
+                okButton.Text = "OK";
+                okButton.DialogResult = DialogResult.OK;
+                okButton.Anchor = AnchorStyles.Right;
+
+                var cancelButton = new Button();
+                cancelButton.Text = "Cancel";
+                cancelButton.DialogResult = DialogResult.Cancel;
+                cancelButton.Anchor = AnchorStyles.Right;
+
+                dialog.Controls.Add(nameComboBox);
+                dialog.Controls.Add(okButton);
+                dialog.Controls.Add(cancelButton);
+
+
+                nameComboBox.Location = new Point(20, 20);
+                okButton.Location = new Point(40, 60);
+                cancelButton.Location = new Point(120, 60);
+
+                dialog.AcceptButton = okButton;
+                dialog.CancelButton = cancelButton;
+
+                if (dialog.ShowDialog() == DialogResult.OK)
+                {
+                    PROState selectedProState = PROState.GetProfileByURN(nameComboBox.SelectedItem.ToString(), mainnetLogin, mainnetPassword, mainnetURL, mainnetVersionByte);
+                    txtFromAddress.Text = selectedProState.Creators[0];
+                    Dictionary<string, string> friendDict = new Dictionary<string, string>();
+                    string filePath = "";
+
+                    if (mainnetVersionByte == "111")
+                    { filePath = @"root\MyFriendList.Json"; }
+                    else { filePath = @"root\MyProdFriendList.Json"; }
+                    try
+                    {
+                        string json = File.ReadAllText(filePath);
+                        friendDict = JsonConvert.DeserializeObject<Dictionary<string, string>>(json);
+                    }
+                    catch { }
+
+                    try
+                    {
+                        if (friendDict.TryGetValue(selectedProState.Creators[0], out string fileLoc))
+                        {
+                            fromImage.ImageLocation = fileLoc;
+                        }
+                        else { fromImage.ImageLocation = @"includes\anon.png"; }
+                    }
+                    catch { fromImage.ImageLocation = @"includes\anon.png"; }
+                }
+
+            }
+
+
+        }
+
+        private void btnToSelector_Click(object sender, EventArgs e)
+        {
+            string filePath = "";
+            Dictionary<string, string> friendDict = new Dictionary<string, string>();
+            if (mainnetVersionByte == "111")
+            { filePath = @"root\MyFriendList.Json"; }
+            else { filePath = @"root\MyProdFriendList.Json"; }
+
+
+
+            using (var dialog = new Form())
+            {
+                dialog.Text = "Select a local profile";
+                dialog.StartPosition = FormStartPosition.CenterParent;
+                dialog.AutoSize = true;
+                dialog.ControlBox = false;
+                dialog.FormBorderStyle = FormBorderStyle.FixedDialog;
+                dialog.ClientSize = new Size(240, 90);
+
+
+                var nameComboBox = new ComboBox();
+                nameComboBox.DropDownStyle = ComboBoxStyle.DropDownList;
+                nameComboBox.Font = new Font(nameComboBox.Font.FontFamily, 12f);
+                nameComboBox.Width = 200;
+                try
+                {
+
+                    string json = File.ReadAllText(filePath);
+
+                    // Deserialize the JSON into a Dictionary<string, string> object
+                    friendDict = JsonConvert.DeserializeObject<Dictionary<string, string>>(json);
+
+                    // Create PictureBox controls for each friend in the dictionary
+                    foreach (var friend in friendDict)
+                    {
+                        PROState Friend = PROState.GetProfileByAddress(friend.Key, mainnetLogin, mainnetPassword, mainnetURL, mainnetVersionByte);
+                        if (Friend.URN != null)
+                        {
+                            nameComboBox.Items.Add(Friend.URN);
+                        }
+
+                    }
+                }
+                catch { }
+
+                nameComboBox.SelectedIndex = 0;
+
+                var okButton = new Button();
+                okButton.Text = "OK";
+                okButton.DialogResult = DialogResult.OK;
+                okButton.Anchor = AnchorStyles.Right;
+
+                var cancelButton = new Button();
+                cancelButton.Text = "Cancel";
+                cancelButton.DialogResult = DialogResult.Cancel;
+                cancelButton.Anchor = AnchorStyles.Right;
+
+                dialog.Controls.Add(nameComboBox);
+                dialog.Controls.Add(okButton);
+                dialog.Controls.Add(cancelButton);
+
+
+                nameComboBox.Location = new Point(20, 20);
+                okButton.Location = new Point(40, 60);
+                cancelButton.Location = new Point(120, 60);
+
+                dialog.AcceptButton = okButton;
+                dialog.CancelButton = cancelButton;
+
+                if (dialog.ShowDialog() == DialogResult.OK)
+                {
+                    PROState selectedProState = PROState.GetProfileByURN(nameComboBox.SelectedItem.ToString(), mainnetLogin, mainnetPassword, mainnetURL, mainnetVersionByte);
+                    txtToAddress.Text = selectedProState.Creators[0];
+                    try
+                    {
+                        if (friendDict.TryGetValue(selectedProState.Creators[0], out string fileLoc))
+                        {
+                            toImage.ImageLocation = fileLoc;
+                        }
+                        else { toImage.ImageLocation = @"includes\anon.png"; }
+                        toImage.ImageLocation = fileLoc;
+                    }
+                    catch { toImage.ImageLocation = @"includes\anon.png"; }
+                }
+
+            }
+
+
+        }
+
+        private void txtAttach_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Control && e.KeyCode == Keys.V)
+            {
+                // Handle paste action
+                HandlePaste();
             }
         }
     }

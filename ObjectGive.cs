@@ -11,6 +11,7 @@ using NBitcoin;
 using Newtonsoft.Json;
 using SUP.P2FK;
 using System.Globalization;
+using System.Drawing;
 
 namespace SUP
 {
@@ -352,6 +353,64 @@ namespace SUP
         {
             txtObjectAddress.Text = givaddress;
             txtSignatureAddress.Text = _activeprofile;
+        }
+
+        private void btnFromSelector_Click(object sender, EventArgs e)
+        {
+            List<PROState> profiles = PROState.GetLocalProfiles(mainnetLogin, mainnetPassword, mainnetURL, mainnetVersionByte, true);
+
+            using (var dialog = new Form())
+            {
+                dialog.Text = "Select a local profile";
+                dialog.StartPosition = FormStartPosition.CenterParent;
+                dialog.AutoSize = true;
+                dialog.ControlBox = false;
+                dialog.FormBorderStyle = FormBorderStyle.FixedDialog;
+                dialog.ClientSize = new Size(240, 90);
+
+
+                var nameComboBox = new ComboBox();
+                nameComboBox.DropDownStyle = ComboBoxStyle.DropDownList;
+                nameComboBox.Font = new Font(nameComboBox.Font.FontFamily, 12f);
+                nameComboBox.Width = 200;
+                foreach (PROState pro in profiles)
+                {
+                    if (!nameComboBox.Items.Contains(pro.URN))
+                    {
+                        nameComboBox.Items.Add(pro.URN);
+                    }
+                }
+                nameComboBox.SelectedIndex = 0;
+
+                var okButton = new Button();
+                okButton.Text = "OK";
+                okButton.DialogResult = DialogResult.OK;
+                okButton.Anchor = AnchorStyles.Right;
+
+                var cancelButton = new Button();
+                cancelButton.Text = "Cancel";
+                cancelButton.DialogResult = DialogResult.Cancel;
+                cancelButton.Anchor = AnchorStyles.Right;
+
+                dialog.Controls.Add(nameComboBox);
+                dialog.Controls.Add(okButton);
+                dialog.Controls.Add(cancelButton);
+
+
+                nameComboBox.Location = new Point(20, 20);
+                okButton.Location = new Point(40, 60);
+                cancelButton.Location = new Point(120, 60);
+
+                dialog.AcceptButton = okButton;
+                dialog.CancelButton = cancelButton;
+
+                if (dialog.ShowDialog() == DialogResult.OK)
+                {
+                    PROState selectedProState = PROState.GetProfileByURN(nameComboBox.SelectedItem.ToString(), mainnetLogin, mainnetPassword, mainnetURL, mainnetVersionByte);
+                   txtSignatureAddress.Text = selectedProState.Creators[0];
+                }
+
+            }
         }
     }
 }

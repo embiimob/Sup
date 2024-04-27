@@ -49,6 +49,7 @@
             this.label2 = new System.Windows.Forms.Label();
             this.label3 = new System.Windows.Forms.Label();
             this.label4 = new System.Windows.Forms.Label();
+            this.btnFromSelector = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.addressQtyDataGridView)).BeginInit();
             this.SuspendLayout();
             // 
@@ -183,12 +184,12 @@
             // txtSignatureAddress
             // 
             this.txtSignatureAddress.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
-            this.txtSignatureAddress.Font = new System.Drawing.Font("Microsoft Sans Serif", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.txtSignatureAddress.Font = new System.Drawing.Font("Microsoft Sans Serif", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.txtSignatureAddress.ForeColor = System.Drawing.Color.White;
             this.txtSignatureAddress.Location = new System.Drawing.Point(12, 525);
             this.txtSignatureAddress.Multiline = true;
             this.txtSignatureAddress.Name = "txtSignatureAddress";
-            this.txtSignatureAddress.Size = new System.Drawing.Size(491, 53);
+            this.txtSignatureAddress.Size = new System.Drawing.Size(436, 53);
             this.txtSignatureAddress.TabIndex = 361;
             // 
             // lblObjectStatus
@@ -264,6 +265,20 @@
             this.label4.TabIndex = 369;
             this.label4.Text = "enter signature address";
             // 
+            // btnFromSelector
+            // 
+            this.btnFromSelector.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnFromSelector.Font = new System.Drawing.Font("Segoe UI Emoji", 20.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnFromSelector.ForeColor = System.Drawing.Color.Black;
+            this.btnFromSelector.Location = new System.Drawing.Point(453, 525);
+            this.btnFromSelector.Name = "btnFromSelector";
+            this.btnFromSelector.Padding = new System.Windows.Forms.Padding(3, 0, 0, 0);
+            this.btnFromSelector.Size = new System.Drawing.Size(50, 53);
+            this.btnFromSelector.TabIndex = 373;
+            this.btnFromSelector.Text = "👤";
+            this.btnFromSelector.UseVisualStyleBackColor = true;
+            this.btnFromSelector.Click += new System.EventHandler(this.btnFromSelector_Click);
+            // 
             // ObjectGive
             // 
             this.AllowDrop = true;
@@ -271,6 +286,7 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.Black;
             this.ClientSize = new System.Drawing.Size(517, 660);
+            this.Controls.Add(this.btnFromSelector);
             this.Controls.Add(this.label4);
             this.Controls.Add(this.label3);
             this.Controls.Add(this.label2);
@@ -322,5 +338,6 @@
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.Label label4;
+        private System.Windows.Forms.Button btnFromSelector;
     }
 }

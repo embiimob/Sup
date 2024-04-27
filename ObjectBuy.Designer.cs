@@ -65,6 +65,7 @@
             this.progressBar1 = new System.Windows.Forms.ProgressBar();
             this.lblBuyCost = new System.Windows.Forms.Label();
             this.lblMAXqty = new System.Windows.Forms.Label();
+            this.btnFromSelector = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.ObjectImage)).BeginInit();
             this.SuspendLayout();
             // 
@@ -125,7 +126,7 @@
             this.txtSignatureAddress.Location = new System.Drawing.Point(401, 513);
             this.txtSignatureAddress.Multiline = true;
             this.txtSignatureAddress.Name = "txtSignatureAddress";
-            this.txtSignatureAddress.Size = new System.Drawing.Size(382, 36);
+            this.txtSignatureAddress.Size = new System.Drawing.Size(338, 36);
             this.txtSignatureAddress.TabIndex = 361;
             // 
             // lblCost
@@ -492,6 +493,20 @@
             this.lblMAXqty.TabIndex = 399;
             this.lblMAXqty.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
+            // btnFromSelector
+            // 
+            this.btnFromSelector.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnFromSelector.Font = new System.Drawing.Font("Segoe UI Emoji", 15.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnFromSelector.ForeColor = System.Drawing.Color.Black;
+            this.btnFromSelector.Location = new System.Drawing.Point(745, 513);
+            this.btnFromSelector.Name = "btnFromSelector";
+            this.btnFromSelector.Padding = new System.Windows.Forms.Padding(3, 0, 0, 0);
+            this.btnFromSelector.Size = new System.Drawing.Size(38, 36);
+            this.btnFromSelector.TabIndex = 400;
+            this.btnFromSelector.Text = "👤";
+            this.btnFromSelector.UseVisualStyleBackColor = true;
+            this.btnFromSelector.Click += new System.EventHandler(this.btnFromSelector_Click);
+            // 
             // ObjectBuy
             // 
             this.AllowDrop = true;
@@ -499,6 +514,7 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.Black;
             this.ClientSize = new System.Drawing.Size(1203, 607);
+            this.Controls.Add(this.btnFromSelector);
             this.Controls.Add(this.lblMAXqty);
             this.Controls.Add(this.lblBuyCost);
             this.Controls.Add(this.lblObjectStatus);
@@ -582,5 +598,6 @@
         private System.Windows.Forms.ProgressBar progressBar1;
         private System.Windows.Forms.Label lblBuyCost;
         private System.Windows.Forms.Label lblMAXqty;
+        private System.Windows.Forms.Button btnFromSelector;
     }
 }
