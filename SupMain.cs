@@ -6318,7 +6318,9 @@ namespace SUP
                     if (!((PictureBox)sender).ImageLocation.ToString().Contains(@"root\keywords"))
                     {
                         // Get the tag text from the PictureBox
-                        string address = ((PictureBox)sender).Tag.ToString();
+                        string address = null;
+                        try { address = ((PictureBox)sender).Tag.ToString(); } catch { }
+
                         if (address != null)
                         {
 

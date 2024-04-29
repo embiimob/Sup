@@ -73,7 +73,6 @@
             this.lblLaunchURI = new System.Windows.Forms.Label();
             this.lblOfficial = new System.Windows.Forms.Label();
             this.lblPleaseStandBy = new System.Windows.Forms.Label();
-            this.btnDisco = new System.Windows.Forms.Button();
             this.RoyaltiesPanel = new System.Windows.Forms.FlowLayoutPanel();
             this.label1 = new System.Windows.Forms.Label();
             this.label5 = new System.Windows.Forms.Label();
@@ -381,7 +380,7 @@
             this.btnRefreshSup.Name = "btnRefreshSup";
             this.btnRefreshSup.Size = new System.Drawing.Size(60, 42);
             this.btnRefreshSup.TabIndex = 67;
-            this.btnRefreshSup.Text = "😍";
+            this.btnRefreshSup.Text = "📣";
             this.btnRefreshSup.UseVisualStyleBackColor = true;
             this.btnRefreshSup.Click += new System.EventHandler(this.ShowSupPanel);
             // 
@@ -649,18 +648,6 @@
             this.lblPleaseStandBy.Text = "please stand by... locked for loading";
             this.lblPleaseStandBy.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
-            // btnDisco
-            // 
-            this.btnDisco.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnDisco.Font = new System.Drawing.Font("Segoe UI Emoji", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnDisco.Location = new System.Drawing.Point(1237, 499);
-            this.btnDisco.Name = "btnDisco";
-            this.btnDisco.Size = new System.Drawing.Size(60, 42);
-            this.btnDisco.TabIndex = 79;
-            this.btnDisco.Text = "📣";
-            this.btnDisco.UseVisualStyleBackColor = true;
-            this.btnDisco.Click += new System.EventHandler(this.btnDisco_Click);
-            // 
             // RoyaltiesPanel
             // 
             this.RoyaltiesPanel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
@@ -723,7 +710,7 @@
             // 
             this.btnJukeBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.btnJukeBox.Font = new System.Drawing.Font("Segoe UI Emoji", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnJukeBox.Location = new System.Drawing.Point(1171, 500);
+            this.btnJukeBox.Location = new System.Drawing.Point(1237, 500);
             this.btnJukeBox.Name = "btnJukeBox";
             this.btnJukeBox.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
             this.btnJukeBox.Size = new System.Drawing.Size(60, 42);
@@ -736,7 +723,7 @@
             // 
             this.btnSupFlix.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.btnSupFlix.Font = new System.Drawing.Font("Segoe UI Emoji", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnSupFlix.Location = new System.Drawing.Point(1105, 499);
+            this.btnSupFlix.Location = new System.Drawing.Point(1171, 500);
             this.btnSupFlix.Name = "btnSupFlix";
             this.btnSupFlix.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
             this.btnSupFlix.Size = new System.Drawing.Size(60, 42);
@@ -749,7 +736,7 @@
             // 
             this.btnInquiry.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.btnInquiry.Font = new System.Drawing.Font("Segoe UI Emoji", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnInquiry.Location = new System.Drawing.Point(176, 500);
+            this.btnInquiry.Location = new System.Drawing.Point(1105, 501);
             this.btnInquiry.Name = "btnInquiry";
             this.btnInquiry.Size = new System.Drawing.Size(60, 42);
             this.btnInquiry.TabIndex = 115;
@@ -801,7 +788,6 @@
             this.Controls.Add(this.btnRefreshTransactions);
             this.Controls.Add(this.btnReloadObject);
             this.Controls.Add(this.txtName);
-            this.Controls.Add(this.btnDisco);
             this.Controls.Add(this.btnBurn);
             this.Controls.Add(this.btnGive);
             this.Controls.Add(this.label2);
@@ -883,7 +869,6 @@
         private System.Windows.Forms.Label lblPleaseStandBy;
         private System.Windows.Forms.Label lblLaunchURI;
         private System.Windows.Forms.FlowLayoutPanel supFlow;
-        private System.Windows.Forms.Button btnDisco;
         private System.Windows.Forms.FlowLayoutPanel RoyaltiesPanel;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Label label5;

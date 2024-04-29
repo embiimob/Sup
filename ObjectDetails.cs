@@ -40,7 +40,7 @@ namespace SUP
         private string mainnetPassword = "better-password";
         private string mainnetVersionByte = "111";
         private bool _testnet = true;
-
+        private bool isDiscoBallOpen = false;
 
         List<Microsoft.Web.WebView2.WinForms.WebView2> webviewers = new List<Microsoft.Web.WebView2.WinForms.WebView2>();
 
@@ -63,9 +63,8 @@ namespace SUP
 
             System.Windows.Forms.ToolTip myTooltip = new System.Windows.Forms.ToolTip();
             myTooltip.SetToolTip(btnJukeBox, "click 🎵 to open the jukebox audio searching tool.\nthe active object's public messages will be searched by default.");
-            myTooltip.SetToolTip(btnDisco, "click 📣 to open the sup direct messaging panel.\nthe to: field is prepopulated with the active object's address.\nnote: search for your own local profile first to prepopulate the from: field.");
+            myTooltip.SetToolTip(btnRefreshSup, "click 📣 to to view the active object's public messages and open the sup direct messaging panel.\nthe to: field is prepopulated with the active object's address.\nnote: search for your own local profile first to prepopulate the from: field.");
             myTooltip.SetToolTip(btnInquiry, "click ⁉️ to open the sup poll searching tool.\nthe active object will be searched by default.");
-            myTooltip.SetToolTip(btnRefreshSup, "click 😍 to view the active object's public messages.");
             myTooltip.SetToolTip(btnSupFlix, "click 🎬 to open the supflix video searching tool.\nthe active object's public messages will be searched by default.");
             myTooltip.SetToolTip(lblProcessHeight, "the total amount of transactions associated with the object.\nincludes comments as well as object listings, gives, burns and buys.");
             myTooltip.SetToolTip(btnReloadObject, "click ♻️ to refresh the object's details.\n");
@@ -513,10 +512,24 @@ namespace SUP
 
         private void ShowSupPanel(object sender, EventArgs e)
         {
-            supPanel.Visible = true;
-            btnRefreshSup.BackColor = Color.Blue;
-            btnRefreshSup.ForeColor = Color.Yellow;
-            RefreshSupMessages();
+            if (!isDiscoBallOpen)
+            {
+                // Set the flag to true since the window is being opened
+                isDiscoBallOpen = true;
+
+                // Open the window
+                DiscoBall disco = new DiscoBall(_activeprofile, "", _objectaddress, imgPicture.ImageLocation, false, _testnet);
+                disco.StartPosition = FormStartPosition.CenterScreen;
+                disco.FormClosed += (s, d) => { isDiscoBallOpen = false; }; // Reset the flag when the window is closed
+                disco.Show(this);
+                disco.Focus();
+
+                // Other actions you want to perform
+                supPanel.Visible = true;
+                btnRefreshSup.BackColor = Color.Blue;
+                btnRefreshSup.ForeColor = Color.Yellow;
+                RefreshSupMessages();
+            }
         }
 
         private void RefreshSupMessages()
@@ -4042,13 +4055,6 @@ namespace SUP
             new ObjectGive(_objectaddress, _activeprofile, _testnet).Show();
         }
 
-        private void btnDisco_Click(object sender, EventArgs e)
-        {
-            DiscoBall disco = new DiscoBall(_activeprofile, "", _objectaddress, imgPicture.ImageLocation, false, _testnet);
-            disco.StartPosition = FormStartPosition.CenterScreen;
-            disco.Show(this);
-            disco.Focus();
-        }
 
         private void btnBuy_Click(object sender, EventArgs e)
         {

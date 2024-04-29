@@ -71,9 +71,9 @@ namespace SUP
                 return;
             }
 
-            if (!long.TryParse(qtyTextBox.Text, NumberStyles.Any, CultureInfo.GetCultureInfo("en-US"), out var qty) || qty < 1)
+            if (!long.TryParse(qtyTextBox.Text, NumberStyles.Any, CultureInfo.GetCultureInfo("en-US"), out var qty) || qty < 0)
             {
-                MessageBox.Show("Quantity must be a positive integer.");
+                MessageBox.Show("Quantity must be 0 or a positive integer.");
                 return;
             }
 

@@ -95,7 +95,6 @@ namespace SUP
 
         private void UpdateRemainingChars()
         {
-            // lblObjectStatus.Text = "";
 
             if (txtURN.Text != "" && txtTitle.Text != "" && txtObjectAddress.Text != "" && flowOwners.Controls.Count > 0)
             {

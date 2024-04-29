@@ -98,7 +98,7 @@
             this.flowAttachments.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.flowAttachments.Location = new System.Drawing.Point(19, 244);
             this.flowAttachments.Name = "flowAttachments";
-            this.flowAttachments.Size = new System.Drawing.Size(287, 50);
+            this.flowAttachments.Size = new System.Drawing.Size(314, 50);
             this.flowAttachments.TabIndex = 89;
             // 
             // btnEncryptionStatus
@@ -377,7 +377,8 @@
             this.Controls.Add(this.btnFromSelector);
             this.Controls.Add(this.btnToSelector);
             this.ForeColor = System.Drawing.Color.White;
-            this.MinimumSize = new System.Drawing.Size(463, 708);
+            this.MaximumSize = new System.Drawing.Size(490, 708);
+            this.MinimumSize = new System.Drawing.Size(490, 708);
             this.Name = "DiscoBall";
             this.Text = "Disco";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.MainForm_FormClosing);

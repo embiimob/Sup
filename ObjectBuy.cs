@@ -16,8 +16,8 @@ using AngleSharp.Common;
 using System.Threading.Tasks;
 using System.Reflection;
 using System.Text.RegularExpressions;
-using System.Windows.Media.TextFormatting;
 using System.Drawing.Imaging;
+using System.Linq.Expressions;
 
 namespace SUP
 {
@@ -26,6 +26,8 @@ namespace SUP
         //GPT3 ROCKS
         private readonly static object SupLocker = new object();
         private List<string> BTCTMemPool = new List<string>();
+        private Dictionary<string, long> pendingBUY = new Dictionary<string, long>();
+
         bool mint = false;
         long maxHold = 0;
         private readonly string givaddress = "";
@@ -77,7 +79,66 @@ namespace SUP
                 flowLayoutPanel.Controls.Remove(panel);
                 panel.Dispose(); // Optional: Dispose of the removed control to free up resources
             }
+
+            //remove pending BUY transactions
+            Root root = Root.GetRootByTransactionId(transactionId, mainnetLogin, mainnetPassword, mainnetURL, mainnetVersionByte);
+            switch (root.File.Last().Key.ToString().Substring(root.File.Last().Key.ToString().Length - 3))
+            {
+                case "BUY":
+
+
+                    List<List<string>> buyinspector = new List<List<string>> { };
+                    try
+                    {
+                        buyinspector = JsonConvert.DeserializeObject<List<List<string>>>(System.IO.File.ReadAllText(@"root\" + root.TransactionId + @"\BUY"));
+                    }
+                    catch
+                    {
+
+                        break;
+                    }
+
+                    if (buyinspector == null)
+                    {
+                        break;
+                    }
+
+                    foreach (var buy in buyinspector)
+                    {
+                        string _from = root.SignedBy;
+                        string _to = buy[0];
+                        string _message = "BUY 💰 " + buy[1];
+                        string _blockdate = root.BlockDate.ToString("yyyyMMddHHmmss");
+                        string imglocation = "";
+
+                        if (long.Parse(buy[1], NumberStyles.Any, CultureInfo.GetCultureInfo("en-US")) < 0)
+                        {
+                            break;
+                        }
+
+
+                        this.Invoke((MethodInvoker)delegate
+                        {
+
+                            if (pendingBUY.ContainsKey(buy[0]))
+                            {
+                                pendingBUY[buy[0]] = pendingBUY[buy[0]] - long.Parse(buy[1], NumberStyles.Any, CultureInfo.GetCultureInfo("en-US"));
+                            }
+
+                        });
+
+
+                    }
+                    break;
+
+                default:
+
+                    break;
+            }
+
         }
+
+
 
         void CreateFeedRow(string imageLocation, string SentTo, string SentFrom, DateTime timestamp, string messageText, string transactionid, System.Drawing.Color bgcolor, FlowLayoutPanel layoutPanel, bool addtoTop = false)
         {
@@ -158,11 +219,7 @@ namespace SUP
 
 
 
-
-
-
-
-            PROState profile = PROState.GetProfileByAddress(SentFrom,mainnetLogin,mainnetPassword,mainnetURL,mainnetVersionByte);
+            PROState profile = PROState.GetProfileByAddress(SentFrom, mainnetLogin, mainnetPassword, mainnetURL, mainnetVersionByte);
 
             if (profile.URN != null)
             {
@@ -340,9 +397,9 @@ namespace SUP
 
             OBJState objstate = OBJState.GetObjectByAddress(txtAddressSearch.Text, mainnetLogin, mainnetPassword, mainnetURL, mainnetVersionByte);
             Dictionary<string, string> profileAddress = new Dictionary<string, string> { };
-                      
+
             profileAddress.Add(givaddress, "primary");
-          
+
             txtName.Text = objstate.Name;
             lblLicense.Text = objstate.License;
             lblObjectCreatedDate.Text = objstate.CreatedDate.ToString("ddd, dd MMM yyyy hh:mm:ss");
@@ -354,7 +411,7 @@ namespace SUP
                 lblMAXqty.Text = "MAX: " + objstate.Maximum.ToString("N0");
                 maxHold = objstate.Maximum;
             }
-            
+
             if (objstate.Image == null)
             {
                 // Check to see if objstate.URN has an image extension
@@ -887,6 +944,14 @@ namespace SUP
                                                             {
                                                                 try { imglocation = myFriends[_from]; } catch { }
 
+                                                                if (!pendingBUY.ContainsKey(buy[0]))
+                                                                {
+                                                                    pendingBUY.Add(buy[0], long.Parse(buy[1], NumberStyles.Any, CultureInfo.GetCultureInfo("en-US")));
+                                                                }
+                                                                else
+                                                                {
+                                                                    pendingBUY[buy[0]] = pendingBUY[buy[0]] + long.Parse(buy[1], NumberStyles.Any, CultureInfo.GetCultureInfo("en-US"));
+                                                                }
                                                                 CreateFeedRow(imglocation, _to, _from, DateTime.ParseExact(_blockdate, "yyyyMMddHHmmss", CultureInfo.InvariantCulture), _message, root.TransactionId, Color.White, flowInMemoryResults, true);
 
                                                             });
@@ -1156,29 +1221,55 @@ namespace SUP
                         txtBuyQty.Text = maxBuyQty.ToString();
                         return;
                     }
-                }
 
 
 
-                var listingForCurrentOwner = objStateForAddress.Listings.Values.FirstOrDefault(listing => listing.Owner == txtCurrentOwnerAddress.Text);
-
-                if (listingForCurrentOwner != null)
-                {
-                    if (decimal.TryParse(txtBuyEachCost.Text, NumberStyles.Any, CultureInfo.GetCultureInfo("en-US"), out decimal buyEachCost))
+                    try
                     {
-                        if (buyEachCost < listingForCurrentOwner.Value)
+                        var listingForCurrentOwner = objStateForAddress.Listings.Values.FirstOrDefault(listing => listing.Owner == txtCurrentOwnerAddress.Text);
+
+                        if (listingForCurrentOwner != null)
                         {
-                            MessageBox.Show($"This transaction will likely fail. Each unit cost is less than the listed cost. Listed Cost: {listingForCurrentOwner.Value}", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                            txtBuyEachCost.Text = listingForCurrentOwner.Value.ToString();
-                            return;
+                            if (decimal.TryParse(txtBuyEachCost.Text, NumberStyles.Any, CultureInfo.GetCultureInfo("en-US"), out decimal buyEachCost))
+                            {
+                                if (buyEachCost < listingForCurrentOwner.Value)
+                                {
+                                    MessageBox.Show($"This transaction will likely fail. Each unit cost is less than the listed cost. Listed Cost: {listingForCurrentOwner.Value}", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                                    txtBuyEachCost.Text = listingForCurrentOwner.Value.ToString();
+                                    return;
+                                }
+                            }
+
+                            if (pendingBUY.ContainsKey(txtCurrentOwnerAddress.Text) && buyQTY4 > listingForCurrentOwner.Qty - pendingBUY[txtCurrentOwnerAddress.Text])
+                            {
+                                DialogResult result = MessageBox.Show($"This transaction will likely fail.\nPending BUY transactions exceed the current owner's listing. Click Ok to ignore this warning.", "Warning", MessageBoxButtons.OKCancel, MessageBoxIcon.Warning);
+                                if (result == DialogResult.Cancel)
+                                {
+                                    return; 
+                                }
+                            }
                         }
                     }
-                    
+                    catch
+                    {
+                        MessageBox.Show("This listing has been updated..please verify and try again", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                        RefreshPage();
+                        return;
+
+                    }
+
+
+
+
                 }
                 else
                 {
-                    MessageBox.Show($"No listings found for the current owner\n a non refundable BUY offer will be generated instead: {txtCurrentOwnerAddress.Text}", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                   
+                    DialogResult result = MessageBox.Show($"No listings found for the current owner\n a non refundable BUY offer will be generated instead: {txtCurrentOwnerAddress.Text}", "Warning", MessageBoxButtons.OKCancel, MessageBoxIcon.Warning);
+                    if (result == DialogResult.Cancel)
+                    {
+                        return; 
+                    }
+
                 }
 
             }
@@ -1230,7 +1321,7 @@ namespace SUP
                 string chunk = txtOBJP2FK.Text.Substring(i, Math.Min(20, txtOBJP2FK.Text.Length - i));
                 if (chunk.Any())
                 {
-                    encodedList.Add(Root.GetPublicAddressByKeyword(chunk,mainnetVersionByte));
+                    encodedList.Add(Root.GetPublicAddressByKeyword(chunk, mainnetVersionByte));
                 }
             }
 
@@ -1243,7 +1334,7 @@ namespace SUP
 
             if (mint)
             {
-                DialogResult result = MessageBox.Show("Are you sure you want to buy a qty of ( "+ txtBuyQty.Text + " ) \n" + lblBuyCost.Text, "Confirmation", MessageBoxButtons.YesNo);
+                DialogResult result = MessageBox.Show("Are you sure you want to buy a qty of ( " + txtBuyQty.Text + " ) \n" + lblBuyCost.Text, "Confirmation", MessageBoxButtons.YesNo);
                 if (result == DialogResult.Yes)
                 {
                     // Perform the action
@@ -1267,9 +1358,10 @@ namespace SUP
                                 if (royaltyCost < 0.00000546m) { royaltyCost = 0.00000546m; }
                                 recipients.Add(keyvalue.Key, royaltyCost);
 
-                                remainingCost = remainingCost - (totalCost * (keyvalue.Value / 100)); 
-                            
-                            } catch { }
+                                remainingCost = remainingCost - (totalCost * (keyvalue.Value / 100));
+
+                            }
+                            catch { }
 
                         }
                     }
