@@ -499,8 +499,6 @@ namespace SUP.P2FK
                 }
                 catch { }
 
-                // we want to validate each time to find new things at this level
-                // if (fetched && rootList.Count == 0 & !calculate) { return rootList.ToArray(); }
 
                 int intProcessHeight = 0;
 
@@ -554,7 +552,7 @@ namespace SUP.P2FK
 
 
 
-                if (calculated)
+                if (calculated && rootList.Count() > 0)
                 {
                     try { rootList.Last().Id = intProcessHeight; } catch { }
 

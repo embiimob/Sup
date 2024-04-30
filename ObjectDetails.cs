@@ -278,7 +278,8 @@ namespace SUP
 
                         if (profile.URN != null)
                         {
-                            keyLabel.Text = profile.URN;
+                            PROState URNHolder = PROState.GetProfileByURN(profile.URN, mainnetLogin, mainnetPassword, mainnetURL, mainnetVersionByte);
+                            if (URNHolder.Creators[0] == searchkey) { keyLabel.Text = profile.URN; }else { keyLabel.Text = kvp.Key; }
                         }
                         else
                         {

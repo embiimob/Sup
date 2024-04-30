@@ -1531,10 +1531,11 @@ namespace SUP
                         }
 
                     }
+
+
+                    nameComboBox.SelectedIndex = 0;
                 }
                 catch { }
-
-                nameComboBox.SelectedIndex = 0;
 
                 var okButton = new Button();
                 okButton.Text = "OK";
@@ -1560,10 +1561,11 @@ namespace SUP
 
                 if (dialog.ShowDialog() == DialogResult.OK)
                 {
-                    PROState selectedProState = PROState.GetProfileByURN(nameComboBox.SelectedItem.ToString(), mainnetLogin, mainnetPassword, mainnetURL, mainnetVersionByte);
-                    txtToAddress.Text = selectedProState.Creators[0];
                     try
                     {
+                        PROState selectedProState = PROState.GetProfileByURN(nameComboBox.SelectedItem.ToString(), mainnetLogin, mainnetPassword, mainnetURL, mainnetVersionByte);
+                        txtToAddress.Text = selectedProState.Creators[0];
+
                         if (friendDict.TryGetValue(selectedProState.Creators[0], out string fileLoc))
                         {
                             toImage.ImageLocation = fileLoc;

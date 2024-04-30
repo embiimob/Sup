@@ -33,7 +33,7 @@ namespace SUP
         private string mainnetLogin = "good-user";
         private string mainnetPassword = "better-password";
         private string mainnetVersionByte = "111";
-     
+
 
         public ProfileMint(string address = "", bool testnet = true)
         {
@@ -68,7 +68,7 @@ namespace SUP
         {
             if (txtURN.Text != "" && txtObjectAddress.Text != "")
             {
-                if ((btnFirstName.BackColor == Color.Blue || btnObjectURN.BackColor == Color.Blue || btnMiddleName.BackColor == Color.Blue || btnSuffix.BackColor == Color.Blue || btnLocation.BackColor == Color.Blue || btnURL.BackColor == Color.Blue || btnObjectImage.BackColor == Color.Blue || btnLastName.BackColor == Color.Blue || btnBio.BackColor == Color.Blue )) { btnMint.Enabled = true; }
+                if ((btnFirstName.BackColor == Color.Blue || btnObjectURN.BackColor == Color.Blue || btnMiddleName.BackColor == Color.Blue || btnSuffix.BackColor == Color.Blue || btnLocation.BackColor == Color.Blue || btnURL.BackColor == Color.Blue || btnObjectImage.BackColor == Color.Blue || btnLastName.BackColor == Color.Blue || btnBio.BackColor == Color.Blue)) { btnMint.Enabled = true; }
             }
 
 
@@ -166,24 +166,48 @@ namespace SUP
                 catch { }
             }
 
-            var settings = new JsonSerializerSettings
+
+            if (ismint)
             {
-                NullValueHandling = NullValueHandling.Ignore
-            };
 
-            // Serialize the modified JObject back into a JSON string
-            var objectSerialized = JsonConvert.SerializeObject(PROJson, Formatting.None, settings);
+                string signatureAddress = txtObjectAddress.Text;
+                PROState PRO2 = PROState.GetProfileByURN(txtURN.Text, mainnetLogin, mainnetPassword, mainnetURL, mainnetVersionByte);
+                if (PRO2.Creators != null && txtObjectAddress.Text != "" && PRO2.Creators[0] != txtObjectAddress.Text)
+                {
+                    DialogResult result1 = MessageBox.Show("Are you sure you want to transfer this URN to a new signature address?", "Confirmation", MessageBoxButtons.OKCancel);
+                    if (result1 == DialogResult.OK)
+                    {
+                        mintCreators = new string[2];
+                        mintCreators[0] = txtObjectAddress.Text;
+                        mintCreators[1] = PRO2.Creators[0];
+                        PROJson.cre = mintCreators;
+                        signatureAddress = PRO2.Creators[0];
+                    }
+                }
 
-            txtOBJJSON.Text = objectSerialized.Replace(",\"url\":{}", "").Replace(",\"loc\":{}", "").Replace(",\"urn\":\"\"", "").Replace(",\"dnm\":\"\"", "").Replace(",\"fnm\":\"\"", "").Replace(",\"mnm\":\"\"", "").Replace(",\"lnm\":\"\"", "").Replace(",\"sfx\":\"\"", "").Replace(",\"bio\":\"\"", "").Replace(",\"img\":\"\"", "");
 
 
-            if (btnMint.Enabled)
-            {
+                var settings = new JsonSerializerSettings
+                {
+                    NullValueHandling = NullValueHandling.Ignore
+                };
+
+                // Serialize the modified JObject back into a JSON string
+                var objectSerialized = JsonConvert.SerializeObject(PROJson, Formatting.None, settings);
+
+                txtOBJJSON.Text = objectSerialized.Replace(",\"url\":{}", "").Replace(",\"loc\":{}", "").Replace(",\"urn\":\"\"", "").Replace(",\"dnm\":\"\"", "").Replace(",\"bio\":\"\"", "").Replace(",\"img\":\"\"", "");
+
+                if (btnFirstName.BackColor != Color.Blue) { txtOBJJSON.Text = txtOBJJSON.Text.Replace(",\"fnm\":\"\"", ""); }
+                if (btnLastName.BackColor != Color.Blue) { txtOBJJSON.Text = txtOBJJSON.Text.Replace(",\"lnm\":\"\"", ""); }
+                if (btnMiddleName.BackColor != Color.Blue) { txtOBJJSON.Text = txtOBJJSON.Text.Replace(",\"mnm\":\"\"", ""); }
+                if (btnSuffix.BackColor != Color.Blue) { txtOBJJSON.Text = txtOBJJSON.Text.Replace(",\"sfx\":\"\"", ""); }
+
+
                 byte[] utf8Bytes = System.Text.Encoding.UTF8.GetBytes(txtOBJJSON.Text);
 
                 int lengthInBytes = utf8Bytes.Length;
 
-                string objString = "PRO"+ GetRandomDelimiter() + lengthInBytes + GetRandomDelimiter() + txtOBJJSON.Text;
+                string objString = "PRO" + GetRandomDelimiter() + lengthInBytes + GetRandomDelimiter() + txtOBJJSON.Text;
 
                 // Assign the result to txtOBJP2FK.Text
                 txtOBJP2FK.Text = objString;
@@ -194,7 +218,6 @@ namespace SUP
                 byte[] hashValue = mySHA256.ComputeHash(Encoding.UTF8.GetBytes(txtOBJP2FK.Text));
 
 
-                string signatureAddress = txtObjectAddress.Text;
 
                 string signature = "";
                 try { signature = rpcClient.SendCommand("signmessage", signatureAddress, BitConverter.ToString(hashValue).Replace("-", String.Empty)).ResultString; }
@@ -235,21 +258,21 @@ namespace SUP
                     }
                     else
                     {
-                        DialogResult result = MessageBox.Show("The following duplicate information was detected: [  " + chunkBase58 + "  ]. Sorry, you must still use Apertus.io for etchings that require repetitive data", "Confirmation", MessageBoxButtons.OK);
+                        MessageBox.Show("The following duplicate information was detected: [  " + chunkBase58 + "  ]. Sorry, you must still use Apertus.io for etchings that require repetitive data", "Confirmation", MessageBoxButtons.OK);
+                        return;
                     }
                 }
 
 
                 //add URN registration
                 encodedList.Add(Root.GetPublicAddressByKeyword(txtURN.Text, mainnetVersionByte));
-
+                if (txtObjectAddress.Text != signatureAddress && !encodedList.Contains(txtObjectAddress.Text)) { encodedList.Add(txtObjectAddress.Text); }
                 encodedList.Add(signatureAddress);
                 txtAddressListJSON.Text = JsonConvert.SerializeObject(encodedList.Distinct());
 
                 lblCost.Text = "cost: " + (0.00000546 * encodedList.Count).ToString("0.00000000") + "  + miner fee";
 
-                if (ismint)
-                {
+              
 
                     DialogResult result = MessageBox.Show("Are you sure you want to mint this profile?", "Confirmation", MessageBoxButtons.YesNo);
                     if (result == DialogResult.Yes)
@@ -263,7 +286,7 @@ namespace SUP
 
                         }
 
-                        CoinRPC a = new CoinRPC(new Uri(mainnetURL), new NetworkCredential(mainnetLogin,mainnetPassword));
+                        CoinRPC a = new CoinRPC(new Uri(mainnetURL), new NetworkCredential(mainnetLogin, mainnetPassword));
 
                         try
                         {
@@ -277,13 +300,13 @@ namespace SUP
                         catch (Exception ex) { lblCost.Text = ex.Message; }
 
 
-                        
+
                     }
                     ismint = false;
                 }
 
 
-                }
+           
 
 
 
@@ -296,7 +319,7 @@ namespace SUP
 
         private void txtURN_TextChanged(object sender, EventArgs e)
         {
-            
+
 
             btnObjectURN.BackColor = Color.Blue;
             btnObjectURN.ForeColor = Color.Yellow;
@@ -318,7 +341,7 @@ namespace SUP
                 txtMiddleName.Enabled = true;
                 txtLastName.Enabled = true;
                 txtSuffix.Enabled = true;
-              
+
             }
             else
             {
@@ -345,12 +368,12 @@ namespace SUP
 
 
             }
-            UpdateRemainingChars();
+            //UpdateRemainingChars();
         }
 
         private void flowAttribute_ControlAdded(object sender, ControlEventArgs e)
         {
-           
+
             btnURL.BackColor = Color.Blue;
             btnURL.ForeColor = Color.Yellow;
             UpdateRemainingChars();
@@ -379,13 +402,13 @@ namespace SUP
 
             if (searchAddress != "")
             {
-                LoadFormByAddress(searchAddress);                
+                LoadFormByAddress(searchAddress);
             }
         }
 
         private void txtDescription_TextChanged(object sender, EventArgs e)
         {
-            
+
             if (txtBio.Text != "")
             {
                 btnBio.BackColor = Color.Blue;
@@ -403,7 +426,7 @@ namespace SUP
 
         private void flowOwners_ControlAdded(object sender, ControlEventArgs e)
         {
-           
+
             btnLocation.BackColor = Color.Blue;
             btnLocation.ForeColor = Color.Yellow;
             UpdateRemainingChars();
@@ -466,7 +489,7 @@ namespace SUP
         {
             if (!string.IsNullOrEmpty(txtObjectAddress.Text))
             {
-                string P2FKASCII = Root.GetKeywordByPublicAddress(txtObjectAddress.Text,"ASCII");
+                string P2FKASCII = Root.GetKeywordByPublicAddress(txtObjectAddress.Text, "ASCII");
                 char[] specialChars = new char[] { '\\', '/', ':', '*', '?', '"', '<', '>', '|' };
                 // Check for presence of special character followed by a number using regular expression
                 string pattern = "[" + Regex.Escape(new string(specialChars)) + "][0-9]";
@@ -479,7 +502,7 @@ namespace SUP
             }
             else
             {
-                NetworkCredential credentials = new NetworkCredential(mainnetLogin,mainnetPassword);
+                NetworkCredential credentials = new NetworkCredential(mainnetLogin, mainnetPassword);
                 NBitcoin.RPC.RPCClient rpcClient = new NBitcoin.RPC.RPCClient(credentials, new Uri(mainnetURL), Network.Main);
                 string newAddress = "";
                 string P2FKASCII = "";
@@ -490,12 +513,12 @@ namespace SUP
                 {
                     try
                     {
-                        newAddress = rpcClient.SendCommand("getnewaddress", txtURN.Text + "!" + DateTime.UtcNow.ToString("yyyyMMddHHmmss")+"!"+attempt.ToString()).ResultString;
-                        P2FKASCII = Root.GetKeywordByPublicAddress(newAddress,"ASCII");
+                        newAddress = rpcClient.SendCommand("getnewaddress", txtURN.Text + "!" + DateTime.UtcNow.ToString("yyyyMMddHHmmss") + "!" + attempt.ToString()).ResultString;
+                        P2FKASCII = Root.GetKeywordByPublicAddress(newAddress, "ASCII");
                         string pattern = "[" + Regex.Escape(new string(specialChars)) + "][0-9]";
                         if (!Regex.IsMatch(P2FKASCII, pattern))
                         {
-                         
+
                             break;
                         }
                         attempt++;
@@ -722,7 +745,7 @@ namespace SUP
                                 break;
                             default:
 
-                                root = Root.GetRootByTransactionId(transactionid, mainnetLogin, mainnetPassword, mainnetURL,mainnetVersionByte);
+                                root = Root.GetRootByTransactionId(transactionid, mainnetLogin, mainnetPassword, mainnetURL, mainnetVersionByte);
                                 try
                                 {
                                     if (mainnetVersionByte == "111")
@@ -949,7 +972,7 @@ namespace SUP
                 qtyTextBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
                 qtyTextBox.Size = new Size(170, 70);
                 qtyTextBox.Multiline = true;
-                
+
                 tableLayout.Controls.Add(ownerLabel, 0, 0);
                 tableLayout.Controls.Add(qtyLabel, 1, 0);
                 tableLayout.Controls.Add(ownerTextBox, 0, 1);
@@ -981,30 +1004,30 @@ namespace SUP
                     var owner = ownerTextBox.Text;
                     var qty = qtyTextBox.Text;
 
-                   
-                        var button = new Button();
+
+                    var button = new Button();
                     button.ForeColor = Color.White;
                     button.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
 
 
                     button.Text = $"{owner}:{qty}";
-                        button.AutoSize = true;
-                        button.MouseClick += (s, ev) =>
+                    button.AutoSize = true;
+                    button.MouseClick += (s, ev) =>
+                    {
+                        // only proceed if left mouse button is clicked
+                        if (ev.Button == MouseButtons.Left)
                         {
-                            // only proceed if left mouse button is clicked
-                            if (ev.Button == MouseButtons.Left)
-                            {
-                                // disable the button to prevent double-clicks
-                                button.Enabled = false;
+                            // disable the button to prevent double-clicks
+                            button.Enabled = false;
 
-                                // remove the button from the flow layout panel and dispose of it
-                                flowLocation.Controls.Remove(button);
-                                button.Dispose();
-                            }
-                        };                       
+                            // remove the button from the flow layout panel and dispose of it
+                            flowLocation.Controls.Remove(button);
+                            button.Dispose();
+                        }
+                    };
 
-                        flowLocation.Controls.Add(button);
-                   
+                    flowLocation.Controls.Add(button);
+
                 }
             }
             UpdateRemainingChars();
@@ -1020,7 +1043,7 @@ namespace SUP
             }
             UpdateRemainingChars();
         }
-     
+
         private void flowOwners_ControlRemoved(object sender, ControlEventArgs e)
         {
 
@@ -1097,7 +1120,7 @@ namespace SUP
                 }
                 catch { }
 
-           
+
                 flowLocation.Controls.Clear();
 
                 try
@@ -1149,6 +1172,7 @@ namespace SUP
                 {
                     btnObjectImage.PerformClick();
                 }
+                else { pictureBox2.ImageLocation = ""; }
             }
             else
             {
@@ -1264,7 +1288,7 @@ namespace SUP
             {
                 btnObjectImage.PerformClick();
             }
-         
+
         }
 
         private void btnMiddleName_Click(object sender, EventArgs e)
@@ -1289,7 +1313,7 @@ namespace SUP
                 lblObjectStatus.Text = lblObjectStatus.Text.Replace("Monday, January 1, 0001", " unconfirmed ");
                 isupdate = true;
 
-            }        
+            }
             else
             {
                 try { Directory.Delete(@"root\" + txtObjectAddress.Text, true); } catch { }
@@ -1323,7 +1347,9 @@ namespace SUP
         private void txtURN_Leave(object sender, EventArgs e)
         {
             PROState PRO = PROState.GetProfileByURN(txtURN.Text, mainnetLogin, mainnetPassword, mainnetURL, mainnetVersionByte);
-           if (PRO.Creators != null) { MessageBox.Show("Sorry, the profile urn "+ txtURN.Text + " has already been claimed."); LoadFormByAddress(PRO.Creators[0]); }
+            if (PRO.Creators != null && PRO.Creators[0] != txtObjectAddress.Text ) { MessageBox.Show("Sorry, the profile urn " + txtURN.Text + " has already been claimed."); LoadFormByAddress(PRO.Creators[0]); }
         }
+
+
     }
 }

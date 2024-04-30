@@ -2544,14 +2544,16 @@ namespace SUP.P2FK
 
             Task.Run(() =>
             {
-                var objectSerialized = JsonConvert.SerializeObject(objectStates);
-
-                if (!Directory.Exists(@"root\" + objectaddress))
+                if (objectStates.Count > 0)
                 {
-                    Directory.CreateDirectory(@"root\" + objectaddress);
-                }
-                System.IO.File.WriteAllText(@"root\" + objectaddress + @"\" + "GetObjectsByAddress.json", objectSerialized);
+                    var objectSerialized = JsonConvert.SerializeObject(objectStates);
 
+                    if (!Directory.Exists(@"root\" + objectaddress))
+                    {
+                        Directory.CreateDirectory(@"root\" + objectaddress);
+                    }
+                    System.IO.File.WriteAllText(@"root\" + objectaddress + @"\" + "GetObjectsByAddress.json", objectSerialized);
+                }
 
             });
 

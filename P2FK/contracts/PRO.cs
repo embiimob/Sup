@@ -185,20 +185,7 @@ namespace SUP.P2FK
                             //has proper authority to make OBJ changes
                             if (logstatus == null && profileState.Creators != null && profileState.Creators.Contains(transaction.SignedBy))
                             {
-
-                                if (profileinspector.urn != null) { profileState.ChangeDate = transaction.BlockDate; profileState.URN = profileinspector.urn; }
-                                if (profileinspector.dnm != null) { profileState.ChangeDate = transaction.BlockDate; profileState.DisplayName = profileinspector.dnm; }
-                                if (profileinspector.fnm != null) { profileState.ChangeDate = transaction.BlockDate; profileState.FirstName = profileinspector.fnm; }
-                                if (profileinspector.mnm != null) { profileState.ChangeDate = transaction.BlockDate; profileState.MiddleName = profileinspector.mnm; }
-                                if (profileinspector.lnm != null) { profileState.ChangeDate = transaction.BlockDate; profileState.LastName = profileinspector.lnm; }
-                                if (profileinspector.sfx != null) { profileState.ChangeDate = transaction.BlockDate; profileState.Suffix = profileinspector.sfx; }
-                                if (profileinspector.bio != null) { profileState.ChangeDate = transaction.BlockDate; profileState.Bio = profileinspector.bio; }
-                                if (profileinspector.img != null) { profileState.ChangeDate = transaction.BlockDate; profileState.Image = profileinspector.img; }
-                                if (profileinspector.url != null) { profileState.ChangeDate = transaction.BlockDate; profileState.URL = profileinspector.url; }
-                                if (profileinspector.loc != null) { profileState.ChangeDate = transaction.BlockDate; profileState.Location = profileinspector.loc; }
-                                if (profileinspector.pkx != null) { profileState.ChangeDate = transaction.BlockDate; profileState.PKX = profileinspector.pkx; }
-                                if (profileinspector.pky != null) { profileState.ChangeDate = transaction.BlockDate; profileState.PKY = profileinspector.pky; }
-                                if (profileinspector.cre != null)
+                                if (profileinspector.cre != null && profileinspector.cre.Contains(transaction.SignedBy))
                                 {
                                     profileState.Creators.Clear();
 
@@ -222,24 +209,32 @@ namespace SUP.P2FK
                                         }
 
                                     }
+
+
                                     profileState.ChangeDate = transaction.BlockDate;
 
                                 }
+                                if (profileinspector.urn != null) { profileState.ChangeDate = transaction.BlockDate; profileState.URN = profileinspector.urn; }
+                                if (profileinspector.dnm != null) { profileState.ChangeDate = transaction.BlockDate; profileState.DisplayName = profileinspector.dnm; }
+                                if (profileinspector.fnm != null) { profileState.ChangeDate = transaction.BlockDate; profileState.FirstName = profileinspector.fnm; }
+                                if (profileinspector.mnm != null) { profileState.ChangeDate = transaction.BlockDate; profileState.MiddleName = profileinspector.mnm; }
+                                if (profileinspector.lnm != null) { profileState.ChangeDate = transaction.BlockDate; profileState.LastName = profileinspector.lnm; }
+                                if (profileinspector.sfx != null) { profileState.ChangeDate = transaction.BlockDate; profileState.Suffix = profileinspector.sfx; }
+                                if (profileinspector.bio != null) { profileState.ChangeDate = transaction.BlockDate; profileState.Bio = profileinspector.bio; }
+                                if (profileinspector.img != null) { profileState.ChangeDate = transaction.BlockDate; profileState.Image = profileinspector.img; }
+                                if (profileinspector.url != null) { profileState.ChangeDate = transaction.BlockDate; profileState.URL = profileinspector.url; }
+                                if (profileinspector.loc != null) { profileState.ChangeDate = transaction.BlockDate; profileState.Location = profileinspector.loc; }
+                                if (profileinspector.pkx != null) { profileState.ChangeDate = transaction.BlockDate; profileState.PKX = profileinspector.pkx; }
+                                if (profileinspector.pky != null) { profileState.ChangeDate = transaction.BlockDate; profileState.PKY = profileinspector.pky; }
+                               
 
-                                if (profileState.ChangeDate == transaction.BlockDate)
-                                {
-                                    logstatus = "txid:" + transaction.TransactionId + ",profile,update,\"success\"";
-                                }
-                                else
-                                {
-                                    logstatus = "txid:" + transaction.TransactionId + ",profile,update,\"failed due to nothing to update\"";
-                                }
+                               
 
                             }
-                            else { logstatus = "txid:" + transaction.TransactionId + " failed due to insufficent privlidges"; }
+                            
 
                         }
-                        else { logstatus = "txid:" + transaction.TransactionId + " transaction failed due to duplicate signature"; }
+                        
 
                         
                     }
@@ -333,7 +328,7 @@ namespace SUP.P2FK
 
                             if (isObject.URN != null && isObject.URN == searchstring && isObject.ChangeDate > DateTime.Now.AddYears(-10))
                             {
-                                if (isObject.Creators.ElementAt(0) == findObject)
+                                if (isObject.Creators.Contains(findObject))
                                 {
 
                                     isObject.Id = profileTransactions.Max(max => max.Id);
