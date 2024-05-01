@@ -339,22 +339,6 @@ namespace SUP.P2FK
                                                     objectState.ChangeDate = transaction.BlockDate;
                                                     objectinspector.cre = null;
 
-                                                    if (objectState.Creators.TryGet(transaction.SignedBy).Year == 1)
-                                                    {
-                                                        objectState.Creators[transaction.SignedBy] = transaction.BlockDate;
-                                                        objectState.ChangeDate = transaction.BlockDate;
-                                                        if (verbose)
-                                                        {
-
-                                                            logstatus = "[\"" + transaction.SignedBy + "\",\"" + objectaddress + "\",\"grant\",\"\",\"\",\"success\",\"" + transaction.BlockDate.ToString() + "\"]";
-                                                            objectState.ChangeLog.Add(logstatus);
-
-                                                        }
-
-                                                    }
-
-
-
                                                     if (objectState.LockedDate.Year == 1)
                                                     {
                                                         if (objectinspector.urn != null)
@@ -363,7 +347,31 @@ namespace SUP.P2FK
                                                             //prevents someone from trying to claim a previously sigend etching using a different signature
                                                             if (versionByte != "111" && !objectinspector.urn.ToUpper().StartsWith("IPFS:"))
                                                             {
-                                                                Root signedRoot = Root.GetRootByTransactionId(objectinspector.urn.Substring(0, 64), username, password, url, versionByte);
+                                                                var _url = url;
+                                                                var _versionByte = versionByte;
+
+                                                                if (objectinspector.urn.ToUpper().StartsWith("MZC:"))
+                                                                {
+                                                                    _url = @"http://127.0.0.1:12832";
+                                                                    _versionByte = "50";
+
+                                                                }
+                                                                else if (objectinspector.urn.ToUpper().StartsWith("LTC:") )
+                                                                {
+                                                                    _url = @"http://127.0.0.1:9332";
+                                                                    _versionByte = "48";
+                                                                   
+                                                                }
+                                                                else if (objectinspector.urn.ToUpper().StartsWith("DOG:") )
+                                                                {
+                                                                    _url = @"http://127.0.0.1:22555";
+                                                                    _versionByte = "30";
+                                                                    
+                                                                }
+                                                               
+
+                                                                Root signedRoot = Root.GetRootByTransactionId(objectinspector.urn.Replace("BTC:", "").Replace("MZC:","").Replace("LTC:", "").Replace("DOG:", "").Replace("btc:", "").Replace("mzc:", "").Replace("ltc:", "").Replace("dog:", "").Substring(0, 64), username, password, _url, _versionByte);
+                                                               
                                                                 if (signedRoot.Signed)
                                                                 {
                                                                     if (signedRoot.SignedBy != transaction.SignedBy)
@@ -383,6 +391,12 @@ namespace SUP.P2FK
                                                                 if (signedRoot.BlockDate.Year > 1975)
                                                                 {
                                                                     objectState.CreatedDate = signedRoot.BlockDate;
+                                                                    if (verbose)
+                                                                    {
+                                                                        logstatus = "[\"" + transaction.SignedBy + "\",\"" + objectaddress + "\",\"create\",\"\",\"\",\"success\",\"" + signedRoot.BlockDate.ToString() + "\"]";
+                                                                        objectState.ChangeLog.Add(logstatus);
+                                                 
+                                                                    }
                                                                 }
                                                             }
 
@@ -396,19 +410,6 @@ namespace SUP.P2FK
                                                         if (objectinspector.atr != null) { objectState.ChangeDate = transaction.BlockDate; objectState.Attributes = objectinspector.atr; }
                                                         if (objectinspector.lic != null) { objectState.ChangeDate = transaction.BlockDate; objectState.License = objectinspector.lic.Replace('“', '"').Replace('”', '"'); }
                                                         if (objectinspector.max != objectState.Maximum) { objectState.ChangeDate = transaction.BlockDate; objectState.Maximum = objectinspector.max; }
-                                                        if (intProcessHeight > 0 && objectState.ChangeDate == transaction.BlockDate)
-                                                        {
-                                                            if (!logstatus.Contains("grant"))
-                                                            {
-                                                                if (verbose)
-                                                                {
-                                                                    logstatus = "[\"" + transaction.SignedBy + "\",\"" + objectaddress + "\",\"update\",\"\",\"\",\"success\",\"" + transaction.BlockDate.ToString() + "\"]";
-                                                                    objectState.ChangeLog.Add(logstatus);
-                                                                    logstatus = "";
-                                                                }
-                                                            }
-                                                            else { logstatus = ""; }
-                                                        }
                                                         if (objectinspector.own != null)
                                                         {
                                                             if (objectState.Owners == null)
@@ -424,7 +425,7 @@ namespace SUP.P2FK
                                                                 objectState.Royalties = new Dictionary<string, decimal>();
                                                                 if (verbose)
                                                                 {
-                                                                    logstatus = "[\"" + transaction.SignedBy + "\",\"" + objectaddress + "\",\"create\",\"" + objectinspector.own.Values.Sum() + "\",\"\",\"success\",\"" + transaction.BlockDate.ToString() + "\"]";
+                                                                    logstatus = "[\"" + transaction.SignedBy + "\",\"" + objectaddress + "\",\"claim\",\"" + objectinspector.own.Values.Sum() + "\",\"\",\"success\",\"" + transaction.BlockDate.ToString() + "\"]";
                                                                     objectState.ChangeLog.Add(logstatus);
                                                                     logstatus = "";
                                                                 }
@@ -463,8 +464,6 @@ namespace SUP.P2FK
 
                                                             }
                                                         }
-
-
                                                         if (objectinspector.roy != null)
                                                         {
                                                             objectState.Royalties = new Dictionary<string, decimal>();
@@ -496,6 +495,33 @@ namespace SUP.P2FK
                                                             }
                                                         }
 
+                                                        if (objectState.Creators.TryGet(transaction.SignedBy).Year == 1)
+                                                        {
+                                                            objectState.Creators[transaction.SignedBy] = transaction.BlockDate;
+                                                            objectState.ChangeDate = transaction.BlockDate;
+                                                            if (verbose)
+                                                            {
+
+                                                                logstatus = "[\"" + transaction.SignedBy + "\",\"" + objectaddress + "\",\"grant\",\"\",\"\",\"success\",\"" + transaction.BlockDate.ToString() + "\"]";
+                                                                objectState.ChangeLog.Add(logstatus);
+
+                                                            }
+
+                                                        }
+
+                                                        if (intProcessHeight > 0 && objectState.ChangeDate == transaction.BlockDate)
+                                                        {
+                                                            if (!logstatus.Contains("success"))
+                                                            {
+                                                                if (verbose)
+                                                                {
+                                                                    logstatus = "[\"" + transaction.SignedBy + "\",\"" + objectaddress + "\",\"update\",\"\",\"\",\"success\",\"" + transaction.BlockDate.ToString() + "\"]";
+                                                                    objectState.ChangeLog.Add(logstatus);
+                                                                    logstatus = "";
+                                                                }
+                                                            }
+                                                            else { logstatus = ""; }
+                                                        }
 
                                                     }
                                                     else
