@@ -9,8 +9,8 @@ P2FK was directly inspired by the satoshi uploader  see --> https://cirosantilli
 
 ## **Installation**
 
-1. Download Supv0.6.5-beta.zip ( https://github.com/embiimob/Sup/releases/download/Supv0.6.5-beta/Supv0.6.5-beta.zip )
-2. Create a folder on your **fastest** disk drive with at least **50GB** free (it will be storing the bitcoin testnet blockchain)
+1. Download Supv0.7.0-beta.zip ( https://github.com/embiimob/Sup/releases/download/Supv0.7.0-beta/Supv0.7.0-beta.zip )
+2. Create a folder on your **fastest** disk drive with at least **80GB** free (it will be storing the bitcoin testnet blockchain)
 3. Unzip all contents into the folder
 4. Run SUP.exe
 
@@ -50,7 +50,7 @@ Click the new 🎬 and the currently active profile will be searched for mp4 and
 search for boxpoem to see a registered collection of 2021 embii video box poems recently delisted by OpenSea
 <br />
 ## **Profile Minting / Editing**
-Click the mint button and select the profile mint button. Enter a urn and a profile address or click the diamond button to generate a new profile address. These two fields are all that are required to register a profile urn. You may optionally enter a PFP image url, your full name and suffix, web links, contact information and keywords. NOTE: Every profile becomes an entry point for which private messages may be delivered as every profile displays public keys to be used for Secp256k1 encrypted messaging.   
+Click the mint button and select the profile mint button. Enter a urn and a profile address or click the diamond button to generate a new profile address. if a urn is already claimed it will be loaded for your review. These two fields are all that are required to register a profile urn. You may optionally enter a PFP image url, your full name and suffix, web links, contact information and keywords. NOTE: Every profile becomes an entry point for which private messages may be delivered as every profile displays public keys to be used for Secp256k1 encrypted messaging.   
 <br />
 Once you are satisfied with your profile information. click mint. Your profile will take effect following a successful confirmation of the transaction.
 <br />
@@ -60,7 +60,7 @@ Your profile urn registration is valid for 3 years past the last change date. Th
 <br />
 <br />
 ## **Object Minting with Royalties / Printing / Editing / Batch Burning / Batch Giving**
-Click the mint button and select the object mint button. Enter an object name, object address, owner address(s) with qty and a urn. These fields are required. Click mint. If no creator address is entered, the object will be self-signed using a new address generated at your minting station wallet. To further enhance your collector's experience, a profile can be setup on a collection address and the collection address can be added as a creator. Now, both the collection shortname name and the creator short name will be discoverable in the browser. Searching for the creator shortname returns all objects.  Searching for the collection shortname returns just the collection. in preparation for the future BUY and LST transaction types, royalties can now be defined in the object mint screen. up to 100% of all future sales royalties can be claimed on the roy tab and theoretically divided in to 1000s of recipient addresses in a single p2fk transaction.
+Click the mint button and select the object mint button. Enter an object name, object address, owner address(s) with qty and a urn. if a urn is already claimed you will be warned and it will be loaded for your review. These fields are required. Click mint. If no creator address is entered, the object will be self-signed using a new address generated at your minting station wallet. To further enhance your collector's experience, a profile can be setup on a collection address and the collection address can be added as a creator. Now, both the collection shortname name and the creator short name will be discoverable in the browser. Searching for the creator shortname returns all objects.  Searching for the collection shortname returns just the collection. in preparation for the future BUY and LST transaction types, royalties can now be defined in the object mint screen. up to 100% of all future sales royalties can be claimed on the roy tab and theoretically divided in to 1000s of recipient addresses in a single p2fk transaction.
 <br />
 Click print instead of mint and you can use a paper transaction alone to prove ownership. Any person can scan a paper mint & send a small confirmation transaction to the addresses within the QR code printed on the paper to make the paper transaction public. A Sup!? paper transaction can be used in lieu of a public confirmation as it contains all the necessary signature and transaction data necessary to confirm it against a current scan of the object address it is associated with. (a mobile decoder app is in development)
 <br />
