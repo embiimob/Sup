@@ -72,6 +72,7 @@ namespace SUP.P2FK
                 Dictionary<string, string> keywords = new Dictionary<string, string>();
                 DateTime blockdate = new DateTime();
                 int confirmations = -1;
+                int blockheight = 0;
                 Dictionary<string, string> outputs;
                 bool isledger = false;
                 dynamic deserializedObject;
@@ -139,11 +140,14 @@ namespace SUP.P2FK
                             dynamic blockobject = rpcClient.SendCommand("getblock", hash).Result;
                             if (blockobject != null)
                             {
-                                var blockheight = blockobject.height;
+                                blockheight = blockobject.height;
                                 P2FKRoot.BlockHeight = blockheight;
                             }
                         }
-                        catch { }
+                        catch(Exception ex) {
+                            string er = ex.Message;
+
+                        }
 
                     }
                     P2FKRoot.Output = new Dictionary<string, string>();
@@ -300,6 +304,7 @@ namespace SUP.P2FK
                             P2FKRoot.Confirmations = confirmations;
                             P2FKRoot.BlockDate = blockdate;
                             P2FKRoot.Output = outputs;
+                            P2FKRoot.BlockHeight = blockheight;
 
                         }
 
@@ -451,6 +456,7 @@ namespace SUP.P2FK
                 P2FKRoot.Keyword = keywords;
                 P2FKRoot.TotalByteSize = totalByteSize;
                 P2FKRoot.BuildDate = DateTime.UtcNow;
+                P2FKRoot.BlockHeight = blockheight;
                 P2FKRoot.Cached = true;
 
                 //Cache Root to disk to speed up future crawls
