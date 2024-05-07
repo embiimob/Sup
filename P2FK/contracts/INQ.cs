@@ -510,7 +510,7 @@ namespace SUP.P2FK
 
                     int intProcessHeight = 0;
 
-                    if (calculate) { intProcessHeight = 0; }
+                    if (calculate) { intProcessHeight = 0; objectStates = new List<INQState> { }; }
                     else
                     {
                         try { intProcessHeight = objectStates.Max(max => max.Id); } catch { }
