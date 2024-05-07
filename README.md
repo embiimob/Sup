@@ -176,7 +176,7 @@ SUP.EXE --tid 69ae3a76a9de22ffad7bfb9249824512fc38e01d82e2010877ead179b50f0f77 -
 <br />
 
 **get objects by address:**<br />
-  SUP.EXE --address muVrFVk3ErfrnmWosLF4WixxRtDKfMx9bs --versionbyte 111 --getobjectsbyaddress --password  better-password --url http://127.0.0.1:18332 --username good-user --skip 0 --qty -1<br />
+  SUP.EXE --address muVrFVk3ErfrnmWosLF4WixxRtDKfMx9bs --versionbyte 111 --getobjectsbyaddress --password  better-password --url http://127.0.0.1:18332 --username good-user --skip 0 --qty -1 --verbose<br />
 <br />
 
 **get objects owned by address:**<br />
