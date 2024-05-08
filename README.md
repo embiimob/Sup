@@ -9,7 +9,7 @@ P2FK was directly inspired by the satoshi uploader  see --> https://cirosantilli
 
 ## **Installation**
 
-1. Download Supv0.7.0-beta.zip ( https://github.com/embiimob/Sup/releases/download/Supv0.7.0-beta/Supv0.7.0-beta.zip )
+1. Download Supv0.7.1-beta.zip ( https://github.com/embiimob/Sup/releases/download/Supv0.7.1-beta/Supv0.7.1-beta.zip )
 2. Create a folder on your **fastest** disk drive with at least **80GB** free (it will be storing the bitcoin testnet blockchain)
 3. Unzip all contents into the folder
 4. Run SUP.exe
@@ -309,9 +309,16 @@ SUP.EXE --tid 1ee795c31455c7674d6c0bed72f8f7b46501df2c86881440b96c9e5bf07de14b -
   --help                          Display this help screen.
 
   --version                       Display version information.
+   
+
+## Check out P2FK.IO a Sup!? CLI powered API for the traditional web
+https://github.com/embiimob/p2fk.io
+
+## LIVE DEMO
+https://p2fk.io
 
 
-## **URN IMG & URI Referencing Standards**<br />
+## URN IMG & URI Referencing Standards<br />
 <br />
 IPFS:Qma7o6Yx2HQfCkNJEHv1gpiDzoZU8rNc6JFQXijfyt8cGc<br />
 ( references an IPFS gif file creates a default file named {hash}/artifact  )<br />
@@ -353,5 +360,8 @@ http://bitfossil.org/7033eb8138de0d3f4be111a57dfb8319b400d3b6a6f5b387a22b334ebb9
 
 - Sup!? blockchain objects can be discovered and browsed without internet access because Sup!? is communicating with a local copy of the blockchain
 
-## **explore Sup!? on youtube**
+
+
+## explore Sup!? on youtube
  https://www.youtube.com/playlist?list=PLDNMoJ2rHmfoxt1AX417-lWt2zvWUnKUH
+

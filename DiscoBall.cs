@@ -603,6 +603,9 @@ namespace SUP
                     var keyWithLargestValue = accounts.Aggregate((x, y) => x.Value > y.Value ? x : y).Key;
                     var results = a.SendMany(keyWithLargestValue, recipients);
                     lblTransactionId.Text = results;
+                    txtAttach.Text = "";
+                    flowAttachments.Controls.Clear();
+                    supMessage.Text = "";
                 }
                 catch (Exception ex) { lblObjectStatus.Text = ex.Message; }
 
@@ -644,6 +647,9 @@ namespace SUP
                             var keyWithLargestValue = accounts.Aggregate((x, y) => x.Value > y.Value ? x : y).Key;
                             var results = a.SendMany(keyWithLargestValue, recipients);
                             lblTransactionId.Text = results;
+                            txtAttach.Text = "";
+                            flowAttachments.Controls.Clear();
+                            supMessage.Text = "";
                         }
                         catch (Exception ex) { lblObjectStatus.Text = ex.Message; }
 
