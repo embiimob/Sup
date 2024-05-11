@@ -2418,16 +2418,12 @@ namespace SUP.P2FK
 
             }
             catch { }
-            if (fetched && objectStates.Count != null && objectStates.Count < 1)
-            {
-
-                return objectStates;
-            }
+           
 
             int intProcessHeight = 0;
 
             // this one is a bit different... it cannot use max id as the object will have their own Id.   so it stores the cache height at the last id.
-            try { intProcessHeight = objectStates.Last().Id; ; } catch { }
+            try { intProcessHeight = objectStates.Last().Id; ; } catch { objectStates = new List<OBJState> { }; }
 
             if (calculate) { intProcessHeight = 0; }
 
