@@ -2418,7 +2418,7 @@ namespace SUP.P2FK
 
             }
             catch { }
-            if (fetched && objectStates.Count < 1)
+            if (fetched && objectStates.Count != null && objectStates.Count < 1)
             {
 
                 return objectStates;
@@ -2622,7 +2622,7 @@ namespace SUP.P2FK
                 fetched = true;
             }
             catch { }
-            if (fetched && objectStates.Count < 1) { return objectStates; }
+            if (fetched && objectStates.Count != null && objectStates.Count < 1) { return objectStates; }
 
             List<OBJState> cachedObjectStates = OBJState.GetObjectsByAddress(objectaddress, username, password, url, versionByte, 0, -1);
             if (fetched && objectStates.Last().Id == cachedObjectStates.Last().Id)
@@ -2685,7 +2685,7 @@ namespace SUP.P2FK
 
             }
             catch { }
-            if (fetched && objectStates.Count < 1) { return objectStates; }
+            if (fetched && objectStates.Count != null && objectStates.Count < 1) { return objectStates; }
 
             List<OBJState> cachedObjectStates = OBJState.GetObjectsByAddress(objectaddress, username, password, url, versionByte, 0, -1);
             if (fetched && objectStates.Last().Id == cachedObjectStates.Last().Id)
@@ -2757,7 +2757,7 @@ namespace SUP.P2FK
 
             }
             catch { }
-            if (fetched && objectStates.Count < 1) { return objectStates; }
+            if (fetched && objectStates.Count != null && objectStates.Count < 1) { return objectStates; }
 
             List<OBJState> cachedObjectStates = OBJState.GetObjectsByAddress(objectaddress, username, password, url, versionByte, 0, -1);
             if (fetched && objectStates.Last().Id == cachedObjectStates.Last().Id)
