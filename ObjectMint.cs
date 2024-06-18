@@ -229,6 +229,18 @@ namespace SUP
             if (flowCreators.Controls.Count > 0)
             { signatureAddress = flowCreators.Controls[0].Text; }
             else { signatureAddress = txtObjectAddress.Text; }
+
+            try
+            {
+                Root ROOT = Root.GetRootByTransactionId(txtURN.Text.Substring(0, 64), mainnetLogin, mainnetPassword, mainnetURL, mainnetVersionByte);
+                if (ROOT.Signed == true && ROOT.SignedBy != signatureAddress) { MessageBox.Show("sorry, the object urn " + txtURN.Text + " can only be claimed by " + ROOT.SignedBy); return; }
+            }
+            catch (Exception ex)
+            {
+                lblObjectStatus.Text = ex.Message;
+                return;
+            }
+
             string signature = "";
             try { signature = rpcClient.SendCommand("signmessage", signatureAddress, BitConverter.ToString(hashValue).Replace("-", String.Empty)).ResultString; }
             catch (Exception ex)
@@ -2976,6 +2988,7 @@ namespace SUP
                 txtURN.SelectionLength = 0;
                 txtURN.ScrollToCaret();
             }
+    
         }
     }
 

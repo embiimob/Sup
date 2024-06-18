@@ -1455,12 +1455,14 @@ namespace SUP
 
                                                     this.Invoke((MethodInvoker)delegate
                                                     {
-                                                        try { imglocation = myFriends[_from]; } catch { }
-                                                        CreateRow(imglocation, _fromId, _from, DateTime.ParseExact(_blockdate, "yyyyMMddHHmmss", CultureInfo.InvariantCulture), " ", "", false, supFlow, true);
 
                                                         try { imglocation = myFriends[_to]; } catch { }
-                                                        CreateRow(imglocation, _toId, _to, DateTime.ParseExact("19700101010101", "yyyyMMddHHmmss", CultureInfo.InvariantCulture), _message, root.TransactionId, false, supFlow, true);
+                                                        CreateRow(imglocation, _toId, _to, DateTime.ParseExact("19700101010101", "yyyyMMddHHmmss", CultureInfo.InvariantCulture), " ", "", false, supFlow, true);
 
+                                                        try { imglocation = myFriends[_from]; } catch { }
+                                                        CreateRow(imglocation, _fromId, _from, DateTime.ParseExact(_blockdate, "yyyyMMddHHmmss", CultureInfo.InvariantCulture), _message, root.TransactionId , false, supFlow, true);
+
+  
                                                     });
 
                                                     string pattern = "<<.*?>>";
@@ -1849,11 +1851,12 @@ namespace SUP
 
                                                         this.Invoke((MethodInvoker)delegate
                                                         {
-                                                            try { imglocation = myFriends[_from]; } catch { }
-                                                            CreateRow(imglocation, _fromId, _from, DateTime.ParseExact(_blockdate, "yyyyMMddHHmmss", CultureInfo.InvariantCulture), " ", "", false, supFlow, true);
-
                                                             try { imglocation = myFriends[_to]; } catch { }
-                                                            CreateRow(imglocation, _toId, _to, DateTime.ParseExact("19700101010101", "yyyyMMddHHmmss", CultureInfo.InvariantCulture), _message, root.TransactionId, false, supFlow, true);
+                                                            CreateRow(imglocation, _toId, _to, DateTime.ParseExact("19700101010101", "yyyyMMddHHmmss", CultureInfo.InvariantCulture), " ", "", false, supFlow, true);
+
+                                                            try { imglocation = myFriends[_from]; } catch { }
+                                                            CreateRow(imglocation, _fromId, _from, DateTime.ParseExact(_blockdate, "yyyyMMddHHmmss", CultureInfo.InvariantCulture), _message, root.TransactionId, false, supFlow, true);
+
 
                                                         });
 
@@ -2194,10 +2197,11 @@ namespace SUP
 
                                                         this.Invoke((MethodInvoker)delegate
                                                         {
-                                                            try { imglocation = myFriends[_from]; } catch { }
-                                                            CreateRow(imglocation, _from, _from, DateTime.ParseExact(_blockdate, "yyyyMMddHHmmss", CultureInfo.InvariantCulture), " ", "", false, supFlow, true);
                                                             try { imglocation = myFriends[_to]; } catch { }
-                                                            CreateRow(imglocation, _to, _to, DateTime.ParseExact("19700101010101", "yyyyMMddHHmmss", CultureInfo.InvariantCulture), _message, root.TransactionId, false, supFlow, true);
+                                                            CreateRow(imglocation, _to, _to, DateTime.ParseExact("19700101010101", "yyyyMMddHHmmss", CultureInfo.InvariantCulture), " ", "", false, supFlow, true);
+
+                                                            try { imglocation = myFriends[_from]; } catch { }
+                                                            CreateRow(imglocation, _from, _from, DateTime.ParseExact(_blockdate, "yyyyMMddHHmmss", CultureInfo.InvariantCulture), _message, root.TransactionId, false, supFlow, true);
                                                         });
 
                                                         string pattern = "<<.*?>>";
@@ -2514,10 +2518,11 @@ namespace SUP
 
                                                         this.Invoke((MethodInvoker)delegate
                                                         {
-                                                            try { imglocation = myFriends[_from]; } catch { }
-                                                            CreateRow(imglocation, _from, _from, DateTime.ParseExact(_blockdate, "yyyyMMddHHmmss", CultureInfo.InvariantCulture), " ", "", false, supFlow, true);
                                                             try { imglocation = myFriends[_to]; } catch { }
-                                                            CreateRow(imglocation, _to, _to, DateTime.ParseExact("19700101010101", "yyyyMMddHHmmss", CultureInfo.InvariantCulture), _message, root.TransactionId, false, supFlow, true);
+                                                            CreateRow(imglocation, _to, _to, DateTime.ParseExact("19700101010101", "yyyyMMddHHmmss", CultureInfo.InvariantCulture), " ", "", false, supFlow, true);
+
+                                                            try { imglocation = myFriends[_from]; } catch { }
+                                                            CreateRow(imglocation, _from, _from, DateTime.ParseExact(_blockdate, "yyyyMMddHHmmss", CultureInfo.InvariantCulture), _message, root.TransactionId , false, supFlow, true);
                                                         });
 
                                                         string pattern = "<<.*?>>";
@@ -2836,11 +2841,12 @@ namespace SUP
 
                                                         this.Invoke((MethodInvoker)delegate
                                                         {
-                                                            try { imglocation = myFriends[_from]; } catch { }
-                                                            CreateRow(imglocation, _from, _from, DateTime.ParseExact(_blockdate, "yyyyMMddHHmmss", CultureInfo.InvariantCulture), " ", "", false, supFlow, true);
                                                             try { imglocation = myFriends[_to]; } catch { }
-                                                            CreateRow(imglocation, _to, _to, DateTime.ParseExact("19700101010101", "yyyyMMddHHmmss", CultureInfo.InvariantCulture), _message, root.TransactionId, false, supFlow, true);
+                                                            CreateRow(imglocation, _to, _to, DateTime.ParseExact("19700101010101", "yyyyMMddHHmmss", CultureInfo.InvariantCulture), " ", "", false, supFlow, true);
 
+
+                                                            try { imglocation = myFriends[_from]; } catch { }
+                                                            CreateRow(imglocation, _from, _from, DateTime.ParseExact(_blockdate, "yyyyMMddHHmmss", CultureInfo.InvariantCulture), _message, root.TransactionId , false, supFlow, true);
                                                         });
 
                                                         string pattern = "<<.*?>>";
