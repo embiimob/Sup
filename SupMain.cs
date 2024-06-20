@@ -5967,44 +5967,23 @@ namespace SUP
                 else if (me.Button == MouseButtons.Right && transactionId != "")
                 {
                     // Code to execute for right click
-                    numMessagesDisplayed = 0;
-                    numPrivateMessagesDisplayed = 0;
-                    numFriendFeedsDisplayed = 0;
-
-                    profileBIO.Text = "Click the follow button to add this search to your community feed."; profileCreatedDate.Text = ""; profileIMG.ImageLocation = ""; lblProcessHeight.Text = "";
-
-                    GenerateImage("#" + transactionId.Substring(0, 20));
-                    profileURN.Text = "#" + transactionId.Substring(0, 20);
                     profileURN.Links[0].LinkData = Root.GetPublicAddressByKeyword(transactionId);
+                    string activeUser = "";
+                    string activeUserImage = "";
 
-                    string hashedString = "";
-                    // get a hash of the text for image storage.
-                    byte[] bytes = Encoding.ASCII.GetBytes(profileURN.Text);
-
-                    // Create a SHA256 hash object
-                    using (System.Security.Cryptography.SHA256 sha256Hash = System.Security.Cryptography.SHA256.Create())
+                    try
                     {
-                        // Compute hash value from the input
-                        byte[] hashBytes = sha256Hash.ComputeHash(bytes);
-
-                        // Convert byte array to a string representation
-                        StringBuilder stringBuilder = new StringBuilder();
-                        for (int i = 0; i < hashBytes.Length; i++)
-                        {
-                            stringBuilder.Append(hashBytes[i].ToString("x2"));
-                        }
-                        hashedString = stringBuilder.ToString();
-
+                        activeUser = profileOwner.Tag.ToString();
+                        activeUserImage = profileOwner.ImageLocation;
                     }
+                    catch { }
 
-                    profileIMG.ImageLocation = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + @"\root\keywords\" + hashedString +".png";
-                    btnPublicMessage.BackColor = Color.Blue;
-                    btnPublicMessage.ForeColor = Color.Yellow;
-                    this.Invoke((Action)(() =>
-                    {
-                        ClearMessages(supFlow);
-                    }));
-                    RefreshSupMessages();
+                    
+                        SupThread thread = new SupThread(Root.GetPublicAddressByKeyword(transactionId), activeUser, activeUserImage, isTestnet);
+                        thread.StartPosition = FormStartPosition.CenterScreen;
+                        thread.Show(this);
+                        thread.Focus();
+                    
 
                 }
             }
