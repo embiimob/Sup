@@ -394,7 +394,7 @@ namespace SUP
                                              .Cast<Match>()
                                              .Select(m => m.Value.Trim(new char[] { '<', '>' }))
                                              .ToArray();
-                    message = Regex.Replace(message, "<<.*?>>", "");
+                    message = Regex.Replace(message, "<<.*?>>", "❤️");
 
 
                     if (message != "" || blocks.Length > 1 || (blocks.Length == 1 && !int.TryParse(blocks[0], NumberStyles.Any, CultureInfo.GetCultureInfo("en-US"), out _)))
@@ -1042,7 +1042,16 @@ namespace SUP
                         // Set the initial column style
                         // Set the initial width of the first column
                         padding.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, supFlow.Width - 50));
+                       supFlow.SizeChanged += (sender, e) =>
+                        {
+                            //supFlow.Refresh();
+                            // Ensure the new width is at least the minimum width
+                            padding.ColumnStyles[0].Width = supFlow.Width - 100;
+                            padding.Width = supFlow.Width - 100;
 
+                            // Refresh or Invalidate the FlowLayoutPanel (supFlow)
+                            // or supFlow.Refresh();
+                        };
 
 
                     }

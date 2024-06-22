@@ -41,7 +41,6 @@ namespace SUP
         private List<string> DOGMemPool = new List<string>();
 
 
-        private bool ipfsActive;
         private bool btcActive;
         private bool mzcActive;
         private bool ltcActive;
@@ -829,7 +828,7 @@ namespace SUP
 
                         }
 
-                        profileIMG.ImageLocation = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + @"\root\keywords\" +hashedString+ ".png";
+                        profileIMG.ImageLocation = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + @"\root\keywords\" + hashedString + ".png";
                         btnPublicMessage.BackColor = Color.Blue;
                         btnPublicMessage.ForeColor = Color.Yellow;
 
@@ -1125,127 +1124,360 @@ namespace SUP
 
 
                             foundObject.SuspendLayout();
-                            if (objstate.Image != null)
-                            {
-                                try { transid = objstate.Image.Substring(4, 64).Replace(":", ""); } catch { try { transid = objstate.Image.Substring(5, 46); } catch { } }
-                                try { foundObject.ObjectImage.ImageLocation = @"root/" + objstate.Image.Replace("BTC:", "").Replace("MZC:", "").Replace("LTC:", "").Replace("DOG:", ""); } catch { }
-                            }
                             foundObject.ObjectName.Text = objstate.Name;
                             foundObject.ObjectDescription.Text = objstate.Description;
                             foundObject.ObjectAddress.Text = objstate.Creators.First().Key;
                             foundObject.ObjectQty.Text = objstate.Owners.Values.Sum(tuple => tuple.Item1).ToString() + "x";
                             foundObject.ObjectId.Text = objstate.TransactionId;
-                            try
+
+                            string imgurn = "";
+
+
+                            if (objstate.Image != null)
                             {
-                                if (objstate.Image != null)
+                                imgurn = objstate.Image;
+                                if (!imgurn.Contains(@"root\keywords\"))
                                 {
+                                    if (!objstate.Image.ToLower().StartsWith("http"))
+                                    {
+                                        imgurn = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + @"\root\" + objstate.Image.Replace("BTC:", "").Replace("MZC:", "").Replace("LTC:", "").Replace("DOG:", "").Replace("IPFS:", "").Replace(@"/", @"\");
+                                        if (objstate.Image.ToLower().StartsWith("ipfs:")) { imgurn = imgurn.Replace(@"\root\", @"\ipfs\"); if (objstate.Image.Length == 51) { imgurn += @"\artifact"; } }
+                                    }
+                                }
+                                Regex regexTransactionId = new Regex(@"\b[0-9a-f]{64}\b");
+                                Match imgurnmatch = regexTransactionId.Match(imgurn);
+                                transid = imgurnmatch.Value;
+                            }
+                            if (System.IO.File.Exists(imgurn))
+                            {
+                                this.Invoke((Action)(() =>
+                                {
+                                    string thumbnailPath = imgurn + "-thumbnail.jpg";
+
+                                    // Check if a thumbnail exists
+                                    if (System.IO.File.Exists(thumbnailPath))
+                                    {
+                                        foundObject.ObjectImage.SizeMode = PictureBoxSizeMode.Zoom;
+                                        foundObject.ObjectImage.ImageLocation = thumbnailPath;
+                                    }
+                                    else
+                                    {
+                                        // Load the original image from file
+                                        System.Drawing.Image originalImage = System.Drawing.Image.FromFile(imgurn);
+
+                                        // Check if the original image is a GIF
+                                        if (Path.GetExtension(imgurn).Equals(".gif", StringComparison.OrdinalIgnoreCase))
+                                        {
+                                            // For GIF images, directly use the original image without creating a thumbnail
+                                            foundObject.ObjectImage.SizeMode = PictureBoxSizeMode.Zoom;
+                                            foundObject.ObjectImage.Image = originalImage;
+                                        }
+                                        else
+                                        {
+                                            // Resize the image if needed
+                                            int maxWidth = foundObject.ObjectImage.Width;
+                                            int maxHeight = foundObject.ObjectImage.Height;
+
+                                            int newWidth, newHeight;
+                                            if (originalImage.Width > originalImage.Height)
+                                            {
+                                                newWidth = maxWidth;
+                                                newHeight = (int)((double)originalImage.Height / originalImage.Width * newWidth);
+                                            }
+                                            else
+                                            {
+                                                newHeight = maxHeight;
+                                                newWidth = (int)((double)originalImage.Width / originalImage.Height * newHeight);
+                                            }
+
+                                            System.Drawing.Image resizedImage = new Bitmap(originalImage, newWidth, newHeight);
+                                            originalImage.Dispose();
+                                            foundObject.ObjectImage.Image = resizedImage;
+
+                                            // Save the resized image as a thumbnail
+                                            resizedImage.Save(thumbnailPath, ImageFormat.Jpeg);
+                                        }
+                                    }
+                                }));
+                            }
+                            else
+                            {
+
+                                if (objstate.Image.LastIndexOf('.') > 0 && System.IO.File.Exists("ipfs/" + transid + "/artifact" + objstate.Image.Substring(objstate.Image.LastIndexOf('.'))))
+                                {
+                                    this.Invoke((Action)(() =>
+                                    {
+                                        foundObject.ObjectImage.ImageLocation = "ipfs/" + transid + "/artifact" + objstate.Image.Substring(objstate.Image.LastIndexOf('.'));
+                                    }));
+                                }
+                                else
+                                {
+
+                                    this.Invoke((Action)(() =>
+                                    {
+                                        Random rnd = new Random();
+                                        string[] gifFiles = Directory.GetFiles("includes", "*.gif");
+                                        if (gifFiles.Length > 0)
+                                        {
+                                            int randomIndex = rnd.Next(gifFiles.Length);
+                                            string randomGifFile = gifFiles[randomIndex];
+                                            foundObject.ObjectImage.SizeMode = PictureBoxSizeMode.StretchImage;
+                                            foundObject.ObjectImage.ImageLocation = randomGifFile;
+
+                                        }
+                                        else
+                                        {
+                                            try
+                                            {
+
+                                                foundObject.ObjectImage.SizeMode = PictureBoxSizeMode.StretchImage;
+                                                foundObject.ObjectImage.ImageLocation = @"includes\HugPuddle.jpg";
+                                            }
+                                            catch { }
+                                        }
+                                    }));
+
+
                                     switch (objstate.Image.ToUpper().Substring(0, 4))
                                     {
                                         case "BTC:":
-                                            if (btcActive)
+
+                                            Task.Run(() =>
                                             {
-                                                if (!System.IO.Directory.Exists("root/" + transid))
+                                                Root.GetRootByTransactionId(transid, "good-user", "better-password", @"http://127.0.0.1:8332", "0");
+
+                                                if (System.IO.File.Exists(imgurn))
                                                 {
-                                                    Root.GetRootByTransactionId(transid, "good-user", "better-password", @"http://127.0.0.1:8332", "0");
+
+                                                    this.Invoke((Action)(() =>
+                                                    {
+                                                        foundObject.ObjectImage.SizeMode = PictureBoxSizeMode.Zoom;
+                                                        foundObject.ObjectImage.ImageLocation = imgurn;
+                                                    }));
                                                 }
-                                            }
+
+                                            });
+
+
                                             break;
                                         case "MZC:":
-                                            if (mzcActive)
+
+                                            Task.Run(() =>
                                             {
-                                                if (!System.IO.Directory.Exists("root/" + transid))
+
+                                                Root.GetRootByTransactionId(transid, "good-user", "better-password", @"http://127.0.0.1:12832", "50");
+
+                                                if (System.IO.File.Exists(imgurn))
                                                 {
-                                                    Root.GetRootByTransactionId(transid, "good-user", "better-password", @"http://127.0.0.1:12832", "50");
+
+                                                    this.Invoke((Action)(() =>
+                                                    {
+                                                        foundObject.ObjectImage.SizeMode = PictureBoxSizeMode.Zoom;
+                                                        foundObject.ObjectImage.ImageLocation = imgurn;
+                                                    }));
                                                 }
-                                            }
+
+                                            });
+
                                             break;
                                         case "LTC:":
-                                            if (ltcActive)
+
+                                            Task.Run(() =>
                                             {
-                                                if (!System.IO.Directory.Exists("root/" + transid))
+
+                                                Root.GetRootByTransactionId(transid, "good-user", "better-password", @"http://127.0.0.1:9332", "48");
+
+                                                if (System.IO.File.Exists(imgurn))
                                                 {
-                                                    Root.GetRootByTransactionId(transid, "good-user", "better-password", @"http://127.0.0.1:9332", "48");
+
+                                                    this.Invoke((Action)(() =>
+                                                    {
+                                                        foundObject.ObjectImage.SizeMode = PictureBoxSizeMode.Zoom;
+                                                        foundObject.ObjectImage.ImageLocation = imgurn;
+                                                    }));
                                                 }
-                                            }
+
+                                            });
+
                                             break;
                                         case "DOG:":
-                                            if (dogActive)
+
+
+                                            Task.Run(() =>
                                             {
-                                                if (!System.IO.Directory.Exists("root/" + transid))
+
+                                                Root.GetRootByTransactionId(transid, "good-user", "better-password", @"http://127.0.0.1:22555", "30");
+
+                                                if (System.IO.File.Exists(imgurn))
                                                 {
-                                                    Root.GetRootByTransactionId(transid, "good-user", "better-password", @"http://127.0.0.1:22555", "30");
+
+                                                    this.Invoke((Action)(() =>
+                                                    {
+                                                        foundObject.ObjectImage.SizeMode = PictureBoxSizeMode.Zoom;
+                                                        foundObject.ObjectImage.ImageLocation = imgurn;
+                                                    }));
                                                 }
-                                            }
+
+                                            });
+
                                             break;
                                         case "IPFS":
-                                            if (ipfsActive)
+                                            transid = "empty";
+                                            try { transid = objstate.Image.Substring(5, 46); } catch { }
+
+                                            if (!System.IO.Directory.Exists("ipfs/" + transid + "-build"))
                                             {
-                                                if (!System.IO.Directory.Exists("ipfs/" + transid))
+
+
+                                                Task.Run(() =>
                                                 {
+                                                    try { Directory.Delete("ipfs/" + transid, true); } catch { }
+                                                    try { Directory.CreateDirectory("ipfs/" + transid); } catch { };
+                                                    Directory.CreateDirectory("ipfs/" + transid + "-build");
                                                     Process process2 = new Process();
                                                     process2.StartInfo.FileName = @"ipfs\ipfs.exe";
                                                     process2.StartInfo.Arguments = "get " + objstate.Image.Substring(5, 46) + @" -o ipfs\" + transid;
                                                     process2.StartInfo.UseShellExecute = false;
                                                     process2.StartInfo.CreateNoWindow = true;
                                                     process2.Start();
-                                                    process2.WaitForExit();
-                                                    string fileName;
-                                                    if (System.IO.File.Exists("ipfs/" + transid))
-                                                    {
-                                                        System.IO.File.Move("ipfs/" + transid, "ipfs/" + transid + "_tmp");
-                                                        System.IO.Directory.CreateDirectory("ipfs/" + transid);
-                                                        fileName = objstate.Image.Replace(@"//", "").Replace(@"\\", "").Substring(51);
-                                                        if (fileName == "") { fileName = "artifact"; } else { fileName = fileName.Replace(@"/", "").Replace(@"\", ""); }
-                                                        System.IO.File.Move("ipfs/" + transid + "_tmp", @"ipfs/" + transid + @"/" + fileName);
-                                                    }
 
-
-                                                    try
+                                                    if (process2.WaitForExit(30000))
                                                     {
-                                                        if (File.Exists("IPFS_PINNING_ENABLED"))
+                                                        string fileName;
+                                                        if (System.IO.File.Exists("ipfs/" + transid))
                                                         {
-                                                            Process process3 = new Process
+                                                            System.IO.File.Move("ipfs/" + transid, "ipfs/" + transid + "_tmp");
+                                                            System.IO.Directory.CreateDirectory("ipfs/" + transid);
+                                                            fileName = objstate.Image.Replace(@"//", "").Replace(@"\\", "").Substring(51);
+                                                            if (fileName == "") { fileName = "artifact"; } else { fileName = fileName.Replace(@"/", "").Replace(@"\", ""); }
+                                                            Directory.CreateDirectory("ipfs/" + transid);
+
+                                                            try { System.IO.File.Move("ipfs/" + transid + "_tmp", @"ipfs/" + transid + @"/" + fileName); }
+                                                            catch (System.ArgumentException ex)
                                                             {
-                                                                StartInfo = new ProcessStartInfo
-                                                                {
-                                                                    FileName = @"ipfs\ipfs.exe",
-                                                                    Arguments = "pin add " + transid,
-                                                                    UseShellExecute = false,
-                                                                    CreateNoWindow = true
-                                                                }
-                                                            };
-                                                            process3.Start();
+
+                                                                System.IO.File.Move("ipfs/" + transid + "_tmp", "ipfs/" + transid + "/artifact" + objstate.Image.Substring(objstate.Image.LastIndexOf('.')));
+                                                                imgurn = "ipfs/" + transid + "/artifact" + objstate.Image.Substring(objstate.Image.LastIndexOf('.'));
+
+                                                            }
+
+
                                                         }
+
+                                                        if (System.IO.File.Exists("ipfs/" + transid + "/" + transid))
+                                                        {
+                                                            fileName = objstate.Image.Replace(@"//", "").Replace(@"\\", "").Substring(51);
+                                                            if (fileName == "") { fileName = "artifact"; } else { fileName = fileName.Replace(@"/", "").Replace(@"\", ""); }
+
+                                                            try { System.IO.File.Move("ipfs/" + transid + "/" + transid, @"ipfs/" + transid + @"/" + fileName); }
+                                                            catch (System.ArgumentException ex)
+                                                            {
+
+                                                                System.IO.File.Move("ipfs/" + transid + "/" + transid, "ipfs/" + transid + "/artifact" + objstate.Image.Substring(objstate.Image.LastIndexOf('.')));
+                                                                imgurn = "ipfs/" + transid + "/artifact" + objstate.Image.Substring(objstate.Image.LastIndexOf('.'));
+
+                                                            }
+                                                        }
+
+
+                                                        Process process3 = new Process
+                                                        {
+                                                            StartInfo = new ProcessStartInfo
+                                                            {
+                                                                FileName = @"ipfs\ipfs.exe",
+                                                                Arguments = "pin add " + transid,
+                                                                UseShellExecute = false,
+                                                                CreateNoWindow = true
+                                                            }
+                                                        };
+                                                        process3.Start();
+
+                                                        try { Directory.Delete("ipfs/" + transid + "-build", true); } catch { }
+
+                                                        this.Invoke((Action)(() =>
+                                                        {
+                                                            foundObject.ObjectImage.SizeMode = PictureBoxSizeMode.Zoom;
+                                                            foundObject.ObjectImage.ImageLocation = imgurn;
+                                                        }));
+
+
                                                     }
-                                                    catch { }
+                                                    else { process2.Kill(); }
 
 
-                                                }
 
-                                                if (objstate.Image.Length == 51)
-                                                { foundObject.ObjectImage.ImageLocation = objstate.Image.Replace("IPFS:", @"ipfs/") + @"/artifact"; }
-                                                else { foundObject.ObjectImage.ImageLocation = objstate.Image.Replace("IPFS:", @"ipfs/"); }
+
+                                                });
+
                                             }
+                                            else
+                                            {
+                                                Task.Run(() =>
+                                                {
+                                                    DateTime startTime = DateTime.Now;
+
+                                                    while (DateTime.Now - startTime < TimeSpan.FromSeconds(10))
+                                                    {
+                                                        // Check if the file exists
+                                                        if (System.IO.File.Exists(imgurn))
+                                                        {
+                                                            // File exists, so perform the desired action
+                                                            this.Invoke((Action)(() =>
+                                                            {
+                                                                foundObject.ObjectImage.SizeMode = PictureBoxSizeMode.Zoom;
+                                                                foundObject.ObjectImage.ImageLocation = imgurn;
+                                                            }));
+                                                            break; // Exit the loop since you've found the file
+                                                        }
+
+                                                        // Sleep for 100 milliseconds before the next check
+                                                        System.Threading.Thread.Sleep(100);
+                                                    }
+                                                });
+
+                                            }
+
                                             break;
                                         case "HTTP":
-                                            foundObject.ObjectImage.ImageLocation = objstate.Image;
+                                            Task.Run(() =>
+                                            {
+                                                this.Invoke((Action)(() =>
+                                                {
+                                                    foundObject.ObjectImage.SizeMode = PictureBoxSizeMode.Zoom;
+                                                    foundObject.ObjectImage.ImageLocation = objstate.Image;
+
+                                                }));
+                                            });
                                             break;
 
 
                                         default:
 
-                                            transid = objstate.Image.Substring(0, 64);
-                                            if (!System.IO.Directory.Exists("root/" + transid))
+                                            Task.Run(() =>
                                             {
-                                                Root root = Root.GetRootByTransactionId(transid, mainnetLogin, mainnetPassword, mainnetURL, mainnetVersionByte);
-                                            }
-                                            foundObject.ObjectImage.ImageLocation = @"root/" + objstate.Image;
+
+                                                Root.GetRootByTransactionId(transid, mainnetLogin, mainnetPassword, mainnetURL, mainnetVersionByte);
+
+                                                if (System.IO.File.Exists(imgurn))
+                                                {
+
+                                                    this.Invoke((Action)(() =>
+                                                    {
+                                                        foundObject.ObjectImage.SizeMode = PictureBoxSizeMode.Zoom;
+                                                        foundObject.ObjectImage.ImageLocation = imgurn;
+                                                    }));
+                                                }
+
+                                            });
+
 
                                             break;
                                     }
                                 }
+
                             }
-                            catch { }
+
+
 
                             foreach (KeyValuePair<string, DateTime> creator in objstate.Creators.Skip(1))
                             {
@@ -1460,9 +1692,9 @@ namespace SUP
                                                         CreateRow(imglocation, _toId, _to, DateTime.ParseExact("19700101010101", "yyyyMMddHHmmss", CultureInfo.InvariantCulture), " ", "", false, supFlow, true);
 
                                                         try { imglocation = myFriends[_from]; } catch { }
-                                                        CreateRow(imglocation, _fromId, _from, DateTime.ParseExact(_blockdate, "yyyyMMddHHmmss", CultureInfo.InvariantCulture), _message, root.TransactionId , false, supFlow, true);
+                                                        CreateRow(imglocation, _fromId, _from, DateTime.ParseExact(_blockdate, "yyyyMMddHHmmss", CultureInfo.InvariantCulture), _message, root.TransactionId, false, supFlow, true);
 
-  
+
                                                     });
 
                                                     string pattern = "<<.*?>>";
@@ -1679,6 +1911,34 @@ namespace SUP
 
 
                                                 }
+
+                                                if (find && root.File.ContainsKey("PRO"))
+                                                {
+                                                    PRO profileinspector = null;
+                                                    try
+                                                    {
+                                                        profileinspector = JsonConvert.DeserializeObject<PRO>(File.ReadAllText(@"root\" + root.TransactionId + @"\PRO"));
+
+                                                        if (profileinspector != null)
+                                                        {
+
+                                                            // Create and add the welcome label
+                                                            if (profileinspector.urn != null && profileinspector.cre != null && profileinspector.img != null)
+                                                            {
+                                                                this.Invoke((MethodInvoker)delegate
+                                                                {
+                                                                    AddProfile(profileinspector.img, profileinspector.urn, root.SignedBy);
+
+                                                                });
+
+
+                                                            }
+                                                        }
+                                                    }
+                                                    catch {  }
+                                                }
+
+
                                                 if (find && root.File.ContainsKey("INQ"))
                                                 {
                                                     INQState isINQ = new INQState();
@@ -2074,6 +2334,34 @@ namespace SUP
 
 
                                                     }
+
+                                                    if (find && root.File.ContainsKey("PRO"))
+                                                    {
+                                                        PRO profileinspector = null;
+                                                        try
+                                                        {
+                                                            profileinspector = JsonConvert.DeserializeObject<PRO>(File.ReadAllText(@"root\" + root.TransactionId + @"\PRO"));
+
+                                                            if (profileinspector != null)
+                                                            {
+
+                                                                // Create and add the welcome label
+                                                                if (profileinspector.urn != null && profileinspector.cre != null && profileinspector.img != null)
+                                                                {
+                                                                    this.Invoke((MethodInvoker)delegate
+                                                                    {
+                                                                        AddProfile(profileinspector.img, profileinspector.urn, root.SignedBy);
+
+                                                                    });
+
+
+                                                                }
+                                                            }
+                                                        }
+                                                        catch { }
+                                                    }
+
+
                                                     if (find && root.File.ContainsKey("INQ"))
                                                     {
                                                         INQState isINQ = new INQState();
@@ -2092,7 +2380,6 @@ namespace SUP
                                                         }
 
                                                     }
-
 
                                                     isobject = OBJState.GetObjectByTransactionId(s, mainnetLogin, mainnetPassword, @"http://127.0.0.1:8332", "0");
                                                     if (isobject.URN != null && find == true)
@@ -2408,6 +2695,32 @@ namespace SUP
 
 
                                                     }
+                                                    if (find && root.File.ContainsKey("PRO"))
+                                                    {
+                                                        PRO profileinspector = null;
+                                                        try
+                                                        {
+                                                            profileinspector = JsonConvert.DeserializeObject<PRO>(File.ReadAllText(@"root\" + root.TransactionId + @"\PRO"));
+
+                                                            if (profileinspector != null)
+                                                            {
+
+                                                                // Create and add the welcome label
+                                                                if (profileinspector.urn != null && profileinspector.cre != null && profileinspector.img != null)
+                                                                {
+                                                                    this.Invoke((MethodInvoker)delegate
+                                                                    {
+                                                                        AddProfile(profileinspector.img, profileinspector.urn, root.SignedBy);
+
+                                                                    });
+
+
+                                                                }
+                                                            }
+                                                        }
+                                                        catch { }
+                                                    }
+
                                                     if (find && root.File.ContainsKey("INQ"))
                                                     {
                                                         INQState isINQ = new INQState();
@@ -2522,7 +2835,7 @@ namespace SUP
                                                             CreateRow(imglocation, _to, _to, DateTime.ParseExact("19700101010101", "yyyyMMddHHmmss", CultureInfo.InvariantCulture), " ", "", false, supFlow, true);
 
                                                             try { imglocation = myFriends[_from]; } catch { }
-                                                            CreateRow(imglocation, _from, _from, DateTime.ParseExact(_blockdate, "yyyyMMddHHmmss", CultureInfo.InvariantCulture), _message, root.TransactionId , false, supFlow, true);
+                                                            CreateRow(imglocation, _from, _from, DateTime.ParseExact(_blockdate, "yyyyMMddHHmmss", CultureInfo.InvariantCulture), _message, root.TransactionId, false, supFlow, true);
                                                         });
 
                                                         string pattern = "<<.*?>>";
@@ -2729,6 +3042,34 @@ namespace SUP
 
 
                                                     }
+
+                                                    if (find && root.File.ContainsKey("PRO"))
+                                                    {
+                                                        PRO profileinspector = null;
+                                                        try
+                                                        {
+                                                            profileinspector = JsonConvert.DeserializeObject<PRO>(File.ReadAllText(@"root\" + root.TransactionId + @"\PRO"));
+
+                                                            if (profileinspector != null)
+                                                            {
+
+                                                                // Create and add the welcome label
+                                                                if (profileinspector.urn != null && profileinspector.cre != null && profileinspector.img != null)
+                                                                {
+                                                                    this.Invoke((MethodInvoker)delegate
+                                                                    {
+                                                                        AddProfile(profileinspector.img, profileinspector.urn, root.SignedBy);
+
+                                                                    });
+
+
+                                                                }
+                                                            }
+                                                        }
+                                                        catch { }
+                                                    }
+
+
                                                     if (find && root.File.ContainsKey("INQ"))
                                                     {
                                                         INQState isINQ = new INQState();
@@ -2846,7 +3187,7 @@ namespace SUP
 
 
                                                             try { imglocation = myFriends[_from]; } catch { }
-                                                            CreateRow(imglocation, _from, _from, DateTime.ParseExact(_blockdate, "yyyyMMddHHmmss", CultureInfo.InvariantCulture), _message, root.TransactionId , false, supFlow, true);
+                                                            CreateRow(imglocation, _from, _from, DateTime.ParseExact(_blockdate, "yyyyMMddHHmmss", CultureInfo.InvariantCulture), _message, root.TransactionId, false, supFlow, true);
                                                         });
 
                                                         string pattern = "<<.*?>>";
@@ -3053,6 +3394,35 @@ namespace SUP
 
 
                                                     }
+
+
+                                                    if (find && root.File.ContainsKey("PRO"))
+                                                    {
+                                                        PRO profileinspector = null;
+                                                        try
+                                                        {
+                                                            profileinspector = JsonConvert.DeserializeObject<PRO>(File.ReadAllText(@"root\" + root.TransactionId + @"\PRO"));
+
+                                                            if (profileinspector != null)
+                                                            {
+
+                                                                // Create and add the welcome label
+                                                                if (profileinspector.urn != null && profileinspector.cre != null && profileinspector.img != null)
+                                                                {
+                                                                    this.Invoke((MethodInvoker)delegate
+                                                                    {
+                                                                        AddProfile(profileinspector.img, profileinspector.urn, root.SignedBy);
+
+                                                                    });
+
+
+                                                                }
+                                                            }
+                                                        }
+                                                        catch { }
+                                                    }
+
+
                                                     if (find && root.File.ContainsKey("INQ"))
                                                     {
                                                         INQState isINQ = new INQState();
@@ -3191,7 +3561,7 @@ namespace SUP
             List<MessageObject> messages = new List<MessageObject>();
 
             try { messages = OBJState.GetPublicMessagesByAddress(profileURN.Links[0].LinkData.ToString(), mainnetLogin, mainnetPassword, mainnetURL, mainnetVersionByte, numMessagesDisplayed, 10); }
-            catch {}
+            catch { }
 
 
             supFlow.SuspendLayout();
@@ -5274,6 +5644,277 @@ namespace SUP
 
         }
 
+        void AddProfile(string imagepath, string profileurn, string profileaddress)
+        {
+            string imagelocation = "";
+            if (imagepath != null)
+            {
+                TableLayoutPanel msg = new TableLayoutPanel
+                {
+                    RowCount = 2,
+                    ColumnCount = 1,
+                    Dock = DockStyle.Top,
+                    BackColor = Color.Black,
+                    ForeColor = Color.White,
+                    AutoSize = true,
+                    CellBorderStyle = TableLayoutPanelCellBorderStyle.None,
+                    Margin = new System.Windows.Forms.Padding(10), // Add margin for spacing
+                    Padding = new System.Windows.Forms.Padding(10) // Add padding for spacing
+                };
+
+                int calcwidth = 200;
+                msg.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, calcwidth));
+                msg.RowStyles.Add(new RowStyle(SizeType.AutoSize)); // First row for PictureBox
+                msg.RowStyles.Add(new RowStyle(SizeType.AutoSize)); // Second row for Label
+
+                Label welcomeLabel = new Label();
+                welcomeLabel.Text = "Sup!? " + profileurn;
+                welcomeLabel.ForeColor = Color.White; // Ensure the text is visible on the black background
+                welcomeLabel.Font = new Font("Arial", 12, FontStyle.Bold); // Change font style and size
+                welcomeLabel.TextAlign = ContentAlignment.MiddleCenter; // Center align text
+                welcomeLabel.AutoSize = true; // Enable AutoSize for the label
+                welcomeLabel.Dock = DockStyle.Fill; // Make the label fill the cell
+                welcomeLabel.Padding = new Padding(0); // Remove padding if text is cut off
+                welcomeLabel.Margin = new Padding(0); // Remove margin if text is cut off
+
+                // Add click event handler
+                welcomeLabel.Click += (sender2, e2) =>
+                {
+                    MakeActiveProfile(profileaddress);
+                };
+
+                // Add the label to the second row and first column
+                msg.Controls.Add(welcomeLabel, 0, 1);
+
+                PictureBox pictureBox = new PictureBox();
+
+                // Set the PictureBox properties
+                pictureBox.SizeMode = PictureBoxSizeMode.Zoom;
+                pictureBox.Width = calcwidth;
+                pictureBox.Height = calcwidth;
+                pictureBox.BorderStyle = BorderStyle.Fixed3D;
+                pictureBox.BackColor = System.Drawing.Color.FromArgb(22, 22, 22);
+                pictureBox.ImageLocation = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + @"\includes\progress.gif";
+
+                // Add the PictureBox to the first row and first column
+                msg.Controls.Add(pictureBox, 0, 0);
+
+                supFlow.Controls.Add(msg);
+                supFlow.Controls.SetChildIndex(msg, 2);
+
+
+
+                imagelocation = imagepath;
+
+                if (!imagepath.ToLower().StartsWith("http"))
+                {
+                    imagelocation = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + @"\root\" + imagepath.Replace("BTC:", "").Replace("MZC:", "").Replace("LTC:", "").Replace("DOG:", "").Replace("IPFS:", "").Replace(@"/", @"\");
+                    if (imagepath.ToLower().StartsWith("ipfs:")) { imagelocation = imagelocation.Replace(@"\root\", @"\ipfs\"); if (imagepath.Length == 51) { imagelocation += @"\artifact"; } }
+
+                    Regex regexTransactionId = new Regex(@"\b[0-9a-f]{64}\b");
+                    Match imgurnmatch = regexTransactionId.Match(imagelocation);
+                    string transactionid = imgurnmatch.Value;
+                    Root root = new Root();
+                    if (!File.Exists(imagelocation))
+                    {
+
+                        Task.Run(() =>
+                        {
+
+                            switch (imagepath.ToUpper().Substring(0, 4))
+                            {
+                                case "MZC:":
+                                    Root.GetRootByTransactionId(transactionid, "good-user", "better-password", @"http://127.0.0.1:12832", "50");
+
+                                    break;
+                                case "BTC:":
+
+                                    Root.GetRootByTransactionId(transactionid, "good-user", "better-password", @"http://127.0.0.1:8332", "0");
+
+                                    break;
+                                case "LTC:":
+
+                                    Root.GetRootByTransactionId(transactionid, "good-user", "better-password", @"http://127.0.0.1:9332", "48");
+
+
+                                    break;
+                                case "DOG:":
+                                    Root.GetRootByTransactionId(transactionid, "good-user", "better-password", @"http://127.0.0.1:22555", "30");
+
+                                    break;
+                                case "IPFS":
+                                    string transid = "empty";
+                                    try { transid = imagepath.Substring(5, 46); } catch { }
+
+                                    if (!System.IO.Directory.Exists("ipfs/" + transid + "-build"))
+                                    {
+                                        try
+                                        {
+                                            Directory.CreateDirectory("ipfs/" + transid);
+                                        }
+                                        catch { };
+
+                                        Directory.CreateDirectory("ipfs/" + transid + "-build");
+                                        Process process2 = new Process();
+                                        process2.StartInfo.FileName = @"ipfs\ipfs.exe";
+                                        process2.StartInfo.Arguments = "get " + imagepath.Substring(5, 46) + @" -o ipfs\" + transid;
+                                        process2.StartInfo.UseShellExecute = false;
+                                        process2.StartInfo.CreateNoWindow = true;
+                                        process2.Start();
+                                        if (process2.WaitForExit(550000))
+                                        {
+                                            string fileName;
+                                            if (System.IO.File.Exists("ipfs/" + transid))
+                                            {
+                                                System.IO.File.Move("ipfs/" + transid, "ipfs/" + transid + "_tmp");
+                                                System.IO.Directory.CreateDirectory("ipfs/" + transid);
+                                                fileName = imagepath.Replace(@"//", "").Replace(@"\\", "").Substring(51);
+                                                if (fileName == "") { fileName = "artifact"; } else { fileName = fileName.Replace(@"/", "").Replace(@"\", ""); }
+                                                Directory.CreateDirectory("ipfs/" + transid);
+                                                System.IO.File.Move("ipfs/" + transid + "_tmp", imagelocation);
+                                            }
+
+                                            if (System.IO.File.Exists("ipfs/" + transid + "/" + transid))
+                                            {
+                                                fileName = imagepath.Replace(@"//", "").Replace(@"\\", "").Substring(51);
+                                                if (fileName == "") { fileName = "artifact"; } else { fileName = fileName.Replace(@"/", "").Replace(@"\", ""); }
+
+                                                System.IO.File.Move("ipfs/" + transid + "/" + transid, imagelocation);
+                                            }
+
+                                            try
+                                            {
+                                                if (File.Exists("IPFS_PINNING_ENABLED"))
+                                                {
+                                                    Process process3 = new Process
+                                                    {
+                                                        StartInfo = new ProcessStartInfo
+                                                        {
+                                                            FileName = @"ipfs\ipfs.exe",
+                                                            Arguments = "pin add " + transid,
+                                                            UseShellExecute = false,
+                                                            CreateNoWindow = true
+                                                        }
+                                                    };
+                                                    process3.Start();
+                                                }
+                                            }
+                                            catch { }
+
+                                            try { Directory.Delete("ipfs/" + transid + "-build", true); } catch { }
+                                        }
+                                        else
+                                        {
+                                            process2.Kill();
+                                            try { Directory.Delete("ipfs/" + transid + "-build", true); } catch { }
+
+                                            this.Invoke((Action)(() =>
+                                            {
+
+                                                Random rnd = new Random();
+                                                string[] gifFiles = Directory.GetFiles("includes", "*.gif");
+                                                if (gifFiles.Length > 0)
+                                                {
+                                                    int randomIndex = rnd.Next(gifFiles.Length);
+                                                    pictureBox.ImageLocation = gifFiles[randomIndex];
+
+                                                }
+                                                else
+                                                {
+                                                    try
+                                                    {
+
+                                                        pictureBox.ImageLocation = @"includes\HugPuddle.jpg";
+                                                    }
+                                                    catch { }
+                                                }
+                                            }));
+                                        }
+
+                                    }
+
+                                    break;
+                                default:
+                                    if (!imagepath.ToUpper().StartsWith("HTTP") && transactionid != "")
+                                    {
+                                        Root.GetRootByTransactionId(transactionid, mainnetLogin, mainnetPassword, mainnetURL, mainnetVersionByte);
+
+                                    }
+                                    break;
+
+                            }
+                            if (File.Exists(imagelocation))
+                            {
+                                this.Invoke((Action)(() =>
+                                {
+                                    pictureBox.ImageLocation = imagelocation;
+                                    pictureBox.MouseClick += (sender, e) => { MakeActiveProfile(profileaddress); };
+
+                                }));
+                            }
+                            else
+                            {
+                                this.Invoke((Action)(() =>
+                                {
+
+                                    Random rnd = new Random();
+                                    string[] gifFiles = Directory.GetFiles("includes", "*.gif");
+                                    if (gifFiles.Length > 0)
+                                    {
+                                        int randomIndex = rnd.Next(gifFiles.Length);
+                                        pictureBox.ImageLocation = gifFiles[randomIndex];
+
+                                    }
+                                    else
+                                    {
+                                        try
+                                        {
+
+                                            pictureBox.ImageLocation = @"includes\HugPuddle.jpg";
+                                        }
+                                        catch { }
+                                    }
+                                }));
+                            }
+
+
+                        });
+
+
+
+                    }
+                    else
+                    {
+                        pictureBox.ImageLocation = imagelocation;
+                        pictureBox.MouseClick += (sender, e) => { MakeActiveProfile(profileaddress);};
+
+                    }
+                }
+                else
+                {
+
+                    Task.Run(() =>
+                    {
+                        this.Invoke((Action)(() =>
+                        {
+
+                            pictureBox.ImageLocation = imagelocation;
+
+
+                            pictureBox.MouseClick += (sender, e) => { MakeActiveProfile(profileaddress); };
+                        }));
+
+                    });
+
+                }
+
+
+            }
+
+
+        }
+
+
         async void AddMedia(string videopath, bool isprivate = false, bool addtoTop = false, bool autoPlay = false)
         {
             string videolocation = "";
@@ -5688,7 +6329,8 @@ namespace SUP
                         Dock = DockStyle.Bottom
                     };
 
-                    loveme.Click += (sender, e) => { Owner_LinkClicked(sender, e, ownerId, imageLocation, transactionid); loveme.ForeColor = Color.Blue; };
+                    loveme.Click += (sender, e) => { Owner_LinkClicked(sender, e, ownerId, imageLocation, transactionid);
+                    if (profileOwner.Tag == null) { MessageBox.Show("Search for a local user to login.", "Login Required", MessageBoxButtons.OK, MessageBoxIcon.Warning); } else { loveme.ForeColor = Color.Blue; } };
 
 
                     row.Controls.Add(loveme, 3, 0);
@@ -5953,10 +6595,10 @@ namespace SUP
                     {
                         if (transactionId != "")
                         {
-                            ownerId = ownerId + "," + Root.GetPublicAddressByKeyword(transactionId, mainnetVersionByte);
+                            ownerId = Root.GetPublicAddressByKeyword(transactionId, mainnetVersionByte);
                         }
 
-                        DiscoBall disco = new DiscoBall(profileOwner.Tag.ToString(), profileOwner.ImageLocation, ownerId, imageLocation, false, isTestnet);
+                        DiscoBall disco = new DiscoBall(profileOwner.Tag.ToString(), profileOwner.ImageLocation, ownerId, "includes\\Hugpuddle.jpg", false, isTestnet);
                         disco.StartPosition = FormStartPosition.CenterScreen;
                         disco.Show(this);
                         disco.Focus();
@@ -5967,7 +6609,7 @@ namespace SUP
                 else if (me.Button == MouseButtons.Right && transactionId != "")
                 {
                     // Code to execute for right click
-                    profileURN.Links[0].LinkData = Root.GetPublicAddressByKeyword(transactionId);
+                    profileURN.Links[0].LinkData = Root.GetPublicAddressByKeyword(transactionId, mainnetVersionByte);
                     string activeUser = "";
                     string activeUserImage = "";
 
@@ -5978,12 +6620,12 @@ namespace SUP
                     }
                     catch { }
 
-                    
-                        SupThread thread = new SupThread(Root.GetPublicAddressByKeyword(transactionId), activeUser, activeUserImage, isTestnet);
-                        thread.StartPosition = FormStartPosition.CenterScreen;
-                        thread.Show(this);
-                        thread.Focus();
-                    
+
+                    SupThread thread = new SupThread(Root.GetPublicAddressByKeyword(transactionId, mainnetVersionByte), activeUser, activeUserImage, isTestnet);
+                    thread.StartPosition = FormStartPosition.CenterScreen;
+                    thread.Show(this);
+                    thread.Focus();
+
 
                 }
             }

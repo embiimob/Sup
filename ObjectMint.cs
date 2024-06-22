@@ -230,15 +230,18 @@ namespace SUP
             { signatureAddress = flowCreators.Controls[0].Text; }
             else { signatureAddress = txtObjectAddress.Text; }
 
-            try
+            if (txtURN.Text.Length > 63)
             {
-                Root ROOT = Root.GetRootByTransactionId(txtURN.Text.Substring(0, 64), mainnetLogin, mainnetPassword, mainnetURL, mainnetVersionByte);
-                if (ROOT.Signed == true && ROOT.SignedBy != signatureAddress) { MessageBox.Show("sorry, the object urn " + txtURN.Text + " can only be claimed by " + ROOT.SignedBy); return; }
-            }
-            catch (Exception ex)
-            {
-                lblObjectStatus.Text = ex.Message;
-                return;
+                try
+                {
+                    Root ROOT = Root.GetRootByTransactionId(txtURN.Text.Substring(0, 64), mainnetLogin, mainnetPassword, mainnetURL, mainnetVersionByte);
+                    if (ROOT.Signed == true && ROOT.SignedBy != signatureAddress) { MessageBox.Show("sorry, the object urn " + txtURN.Text + " can only be claimed by " + ROOT.SignedBy); return; }
+                }
+                catch (Exception ex)
+                {
+                    lblObjectStatus.Text = ex.Message;
+                    return;
+                }
             }
 
             string signature = "";
@@ -2345,7 +2348,7 @@ namespace SUP
             }
             else
             {
-                Directory.Delete(@"root\" + txtObjectAddress.Text, true);
+                try { Directory.Delete(@"root\" + txtObjectAddress.Text, true); } catch { }
             }
         }
 
