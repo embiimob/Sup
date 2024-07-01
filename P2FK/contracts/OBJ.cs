@@ -236,7 +236,7 @@ namespace SUP.P2FK
                                             try
                                             {
                                                 //builds the creator element
-                                                if (objectinspector.urn != null && objectinspector.cre != null && objectState.Creators == null && objectinspector.cre[0] == objectaddress || (objectinspector.urn != null && objectinspector.cre != null && objectState.Creators == null && int.TryParse(objectinspector.cre[0], out int intID) && objectaddress == transaction.Keyword.Reverse().ElementAt(intID).Key))
+                                                if (objectinspector.urn != null && objectinspector.cre != null && objectState.Creators == null && objectinspector.cre[0] == objectaddress || (objectinspector.urn != null && objectinspector.cre != null && objectState.Creators == null && int.TryParse(objectinspector.cre[0], NumberStyles.Any, CultureInfo.GetCultureInfo("en-US"), out int intID) && objectaddress == transaction.Keyword.Reverse().ElementAt(intID).Key))
 
                                                 {
 
@@ -301,7 +301,7 @@ namespace SUP.P2FK
                                                             foreach (string keywordId in objectinspector.cre)
                                                             {
                                                                 string creator = "";
-                                                                if (int.TryParse(keywordId, out int intId))
+                                                                if (int.TryParse(keywordId, NumberStyles.Any, CultureInfo.GetCultureInfo("en-US"), out int intId))
                                                                 {
                                                                     creator = transaction.Keyword.Reverse().ElementAt(intId).Key;
                                                                 }
@@ -438,7 +438,7 @@ namespace SUP.P2FK
                                                             foreach (var ownerId in objectinspector.own)
                                                             {
                                                                 string owner = "";
-                                                                if (int.TryParse(ownerId.Key, out int intId))
+                                                                if (int.TryParse(ownerId.Key, NumberStyles.Any, CultureInfo.GetCultureInfo("en-US"), out int intId))
                                                                 {
                                                                     owner = transaction.Keyword.Reverse().ElementAt(intId).Key;
                                                                 }
@@ -471,7 +471,7 @@ namespace SUP.P2FK
                                                             foreach (var royaltyId in objectinspector.roy)
                                                             {
                                                                 string royalty = "";
-                                                                if (int.TryParse(royaltyId.Key, out int intId))
+                                                                if (int.TryParse(royaltyId.Key, NumberStyles.Any, CultureInfo.GetCultureInfo("en-US"), out int intId))
                                                                 {
                                                                     royalty = transaction.Keyword.Reverse().ElementAt(intId).Key;
                                                                 }
@@ -1355,7 +1355,7 @@ namespace SUP.P2FK
                                                             //determine all required royalties have been paid
                                                             foreach (KeyValuePair<string, decimal> pair in objectState.Royalties)
                                                             {
-                                                                if (transaction.Output.TryGetValue(pair.Key, out string output) && decimal.TryParse(output, out decimal sentValue))
+                                                                if (transaction.Output.TryGetValue(pair.Key, out string output) && decimal.TryParse(output, NumberStyles.Any, CultureInfo.GetCultureInfo("en-US"), out decimal sentValue))
                                                                 {
 
                                                                     //royalties not necessary if seller is defined as a royalties recipient
@@ -1384,7 +1384,7 @@ namespace SUP.P2FK
 
 
                                                             //has owner been paid some amount?
-                                                            if (transaction.Output.TryGetValue(buy[0], out string ownerValue) && decimal.TryParse(ownerValue, out decimal ownerPaid))
+                                                            if (transaction.Output.TryGetValue(buy[0], out string ownerValue) && decimal.TryParse(ownerValue, NumberStyles.Any, CultureInfo.GetCultureInfo("en-US"), out decimal ownerPaid))
                                                             {
                                                                 totalPaid = ownerPaid + royaltiesPaid;
 
@@ -1399,7 +1399,7 @@ namespace SUP.P2FK
                                                                         if (pair.Key != buy[0])
                                                                         {
                                                                             //have required royalties been paid or greator?
-                                                                            if (transaction.Output.TryGetValue(pair.Key, out string output) && decimal.TryParse(output, out decimal sentValue) && sentValue >= ((totalPaid * long.Parse(buy[1])) * (pair.Value / 100)))
+                                                                            if (transaction.Output.TryGetValue(pair.Key, out string output) && decimal.TryParse(output, NumberStyles.Any, CultureInfo.GetCultureInfo("en-US"), out decimal sentValue) && sentValue >= ((totalPaid * long.Parse(buy[1])) * (pair.Value / 100)))
                                                                             { }
 
                                                                             //transaction failed insufficent royalties paid - reject
@@ -1795,7 +1795,7 @@ namespace SUP.P2FK
                 foreach (string keywordId in objectinspector.cre)
                 {
                     string creator = "";
-                    if (int.TryParse(keywordId, out int intId))
+                    if (int.TryParse(keywordId, NumberStyles.Any, CultureInfo.GetCultureInfo("en-US"), out int intId))
                     {
                         creator = objectTransaction.Keyword.Reverse().ElementAt(intId).Key;
                     }
@@ -1853,7 +1853,7 @@ namespace SUP.P2FK
                             {
                                 string owner = "";
 
-                                if (int.TryParse(ownerId.Key, out int intId))
+                                if (int.TryParse(ownerId.Key, NumberStyles.Any, CultureInfo.GetCultureInfo("en-US"), out int intId))
                                 {
                                     owner = objectTransaction.Keyword.Reverse().ElementAt(intId).Key;
                                 }

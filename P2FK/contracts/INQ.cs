@@ -330,14 +330,14 @@ namespace SUP.P2FK
 
                                 // total votes without gate checking
                                 answer.TotalVotes = roots.Count();
-
+                           
                                 decimal totalsum = roots
                                     .Select(obj =>
                                     {
                                         if (obj.Output.TryGetValue(answer.Address, out string value))
                                         {
 
-                                            if (decimal.TryParse(value, System.Globalization.NumberStyles.Float, CultureInfo.InvariantCulture, out decimal parsedValue))
+                                            if (decimal.TryParse(value, System.Globalization.NumberStyles.Float, CultureInfo.GetCultureInfo("en-US"), out decimal parsedValue))
                                             {
                                                 return parsedValue;
                                             }
@@ -351,7 +351,7 @@ namespace SUP.P2FK
 
                                 var gatedObjects = roots
                                     .Where(obj => obj.Output.TryGetValue(answer.Address, out string value) &&
-                                                  decimal.TryParse(value, System.Globalization.NumberStyles.Float, CultureInfo.InvariantCulture, out decimal parsedValue) &&
+                                                  decimal.TryParse(value, System.Globalization.NumberStyles.Float, CultureInfo.GetCultureInfo("en-US"), out decimal parsedValue) &&
                                                   objectState.AuthorizedByGate.Contains(obj.SignedBy))
                                     .GroupBy(obj => obj.SignedBy)
                                     .Select(group => group.First());
@@ -362,7 +362,7 @@ namespace SUP.P2FK
                                 }
 
                                 decimal gatedSum = gatedObjects
-                                    .Select(obj => decimal.TryParse(obj.Output[answer.Address], System.Globalization.NumberStyles.Float, CultureInfo.InvariantCulture, out decimal parsedValue) ? parsedValue : 0)
+                                    .Select(obj => decimal.TryParse(obj.Output[answer.Address], System.Globalization.NumberStyles.Float, CultureInfo.GetCultureInfo("en-US"), out decimal parsedValue) ? parsedValue : 0)
                                     .Sum();
 
                                 int totalGatedCount = gatedObjects.Count();

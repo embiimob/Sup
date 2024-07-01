@@ -3,6 +3,7 @@ using NBitcoin;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Net;
@@ -155,7 +156,7 @@ namespace SUP.P2FK
                                 {
                                     foreach (string keywordId in profileinspector.cre)
                                     {
-                                        if (int.TryParse(keywordId, out int intkey))
+                                        if (int.TryParse(keywordId, NumberStyles.Any, CultureInfo.GetCultureInfo("en-US"), out int intkey))
                                         {
                                             string creator = transaction.Keyword.Reverse().ElementAt(intkey).Key;
 
@@ -191,7 +192,7 @@ namespace SUP.P2FK
 
                                     foreach (string keywordId in profileinspector.cre)
                                     {
-                                        if (int.TryParse(keywordId, out int intkey))
+                                        if (int.TryParse(keywordId, NumberStyles.Any, CultureInfo.GetCultureInfo("en-US"), out int intkey))
                                         {
                                             string creator = transaction.Keyword.Reverse().ElementAt(intkey).Key;
 
