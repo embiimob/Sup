@@ -90,8 +90,8 @@ namespace SUP
             // 
             this.splitContainer1.Panel1.Controls.Add(this.splitContainer2);
             this.splitContainer1.Panel1MinSize = 666;
-            this.splitContainer1.Panel2MinSize = 328;
-            this.splitContainer1.Size = new System.Drawing.Size(1004, 741);
+            this.splitContainer1.Panel2MinSize = 517;
+            this.splitContainer1.Size = new System.Drawing.Size(1193, 741);
             this.splitContainer1.SplitterDistance = 666;
             this.splitContainer1.SplitterWidth = 10;
             this.splitContainer1.TabIndex = 0;
@@ -295,7 +295,7 @@ namespace SUP
             this.supFlow.Location = new System.Drawing.Point(9, 159);
             this.supFlow.Name = "supFlow";
             this.supFlow.Padding = new System.Windows.Forms.Padding(0, 3, 0, 0);
-            this.supFlow.Size = new System.Drawing.Size(579, 527);
+            this.supFlow.Size = new System.Drawing.Size(582, 527);
             this.supFlow.TabIndex = 86;
             // 
             // lblAdultsOnly
@@ -508,10 +508,10 @@ namespace SUP
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1004, 741);
+            this.ClientSize = new System.Drawing.Size(1193, 741);
             this.Controls.Add(this.splitContainer1);
             this.DoubleBuffered = true;
-            this.MinimumSize = new System.Drawing.Size(1020, 780);
+            this.MinimumSize = new System.Drawing.Size(1209, 780);
             this.Name = "SupMain";
             this.ShowIcon = false;
             this.Text = "Sup!?";

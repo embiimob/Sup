@@ -1176,7 +1176,7 @@ namespace SUP
             TableLayoutPanel row = new TableLayoutPanel
             {
                 RowCount = 1,
-                ColumnCount = 4,
+                ColumnCount = 5,
                 AutoSize = true,
                 BackColor = Color.Black,
                 ForeColor = Color.White,
@@ -1187,19 +1187,12 @@ namespace SUP
             };
 
             int objectadjustment = 0;
-            if (objectaddress != null) { objectadjustment = 40; }
             // Add the width of the first column to fixed value and second to fill remaining space
-            row.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 40));
+            row.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 80));
             row.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 85));
+            row.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 100));
+            row.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 80));
             row.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 85));
-            if (flowLayoutPanel1.Width < 400)
-            {
-                row.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, flowLayoutPanel1.Width - (240 + objectadjustment)));
-            }
-            else
-            {
-                row.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, flowLayoutPanel1.Width - (400 + objectadjustment)));
-            }
 
 
             if (addtoTop)
@@ -1216,13 +1209,13 @@ namespace SUP
 
             // Create a PictureBox with the specified image
 
-            if (System.IO.File.Exists(imageLocation + "-thumbnail.jpg") || imageLocation.ToUpper().StartsWith("HTTP"))
+            if (System.IO.File.Exists(imageLocation) || imageLocation.ToUpper().StartsWith("HTTP"))
             {
                 PictureBox picture = new PictureBox
                 {
-                    Size = new System.Drawing.Size(40, 40),
-                    SizeMode = PictureBoxSizeMode.StretchImage,
-                    ImageLocation = imageLocation + "-thumbnail.jpg",
+                    Size = new System.Drawing.Size(80, 80),
+                    SizeMode = PictureBoxSizeMode.Zoom,
+                    ImageLocation = imageLocation,
                     Margin = new System.Windows.Forms.Padding(0),
 
                 };
@@ -1231,27 +1224,13 @@ namespace SUP
             }
             else
             {
-                Random rnd = new Random();
-                string randomGifFile;
-                string[] gifFiles = Directory.GetFiles("includes", "*.gif");
-                if (gifFiles.Length > 0)
-                {
-                    int randomIndex = rnd.Next(gifFiles.Length);
-                    randomGifFile = gifFiles[randomIndex];
-                }
-                else
-                {
-                    randomGifFile = @"includes\HugPuddle.jpg";
-                }
-
-
-
                 PictureBox picture = new PictureBox
                 {
-                    Size = new System.Drawing.Size(40, 40),
+                    Size = new System.Drawing.Size(80, 80),
                     SizeMode = PictureBoxSizeMode.Zoom,
-                    ImageLocation = randomGifFile,
+                    ImageLocation = @"includes\anon.png",
                     Margin = new System.Windows.Forms.Padding(0),
+
                 };
                 row.Controls.Add(picture, 0, 0);
                 pictureBoxes.Add(picture);
@@ -1280,7 +1259,7 @@ namespace SUP
             else
             {
                 isToObject = OBJState.GetObjectByAddress(SentTo, mainnetLogin, mainnetPassword, mainnetURL, mainnetVersionByte);
-                messageText = isToObject.Name + "\n" + messageText;
+
             }
 
             if (objectaddress != null)
@@ -1304,18 +1283,42 @@ namespace SUP
 
                 if (!objectImagelocation.ToLower().EndsWith(".gif")) { objectImagelocation = objectImagelocation + "-thumbnail.jpg"; }
 
-                PictureBox picture = new PictureBox
+
+                if (File.Exists(objectImagelocation)){
+
+                    PictureBox picture = new PictureBox
+                    {
+                        Size = new System.Drawing.Size(80, 80),
+                        SizeMode = PictureBoxSizeMode.Zoom,
+                        ImageLocation = objectImagelocation,
+                        Margin = new System.Windows.Forms.Padding(0),
+                    };
+                    pictureBoxes.Add(picture);
+
+                    picture.MouseClick += (sender, e) => { object_LinkClicked(SentFrom); };
+
+                    row.Controls.Add(picture, 1, 0);
+                }
+                else
                 {
-                    Size = new System.Drawing.Size(40, 40),
-                    SizeMode = PictureBoxSizeMode.Zoom,
-                    ImageLocation = objectImagelocation,
-                    Margin = new System.Windows.Forms.Padding(0),
-                };
-                pictureBoxes.Add(picture);
+                    // Create a LinkLabel with the owner name
+                    LinkLabel sentfrom = new LinkLabel
+                    {
+                        Text = SentFrom,
+                        BackColor = Color.Black,
+                        ForeColor = Color.White,
+                        AutoSize = true,
+                        Dock = DockStyle.Bottom
 
-                picture.MouseClick += (sender, e) => { object_LinkClicked(SentFrom); };
-
-                row.Controls.Add(picture, 1, 0);
+                    };
+                    if (SentTo != "primary")
+                    {
+                        sentfrom.LinkClicked += (sender, e) => { Owner_LinkClicked(SentFrom); };
+                    }
+                    sentfrom.Font = new System.Drawing.Font("Microsoft Sans Serif", 7.7F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+                    sentfrom.Margin = new System.Windows.Forms.Padding(3);
+                    row.Controls.Add(sentfrom, 1, 0);
+                }
 
             }
             else
@@ -1339,6 +1342,47 @@ namespace SUP
                 row.Controls.Add(sentfrom, 1, 0);
             }
 
+            Label message = new Label
+            {
+                AutoSize = true,
+                Text = messageText,
+                Font = new System.Drawing.Font("Segoe UI", 7.77F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0))),
+                Margin = new System.Windows.Forms.Padding(0),
+                Padding = new System.Windows.Forms.Padding(0),
+                TextAlign = ContentAlignment.BottomLeft
+
+            };
+      
+            try { message.MinimumSize = new Size(100, 46); } catch { }
+           
+            row.Controls.Add(message, 2, 0);
+
+            if (isGiveObject.URN != null)
+            {
+                string objectImagelocation = "";
+                string imagepath = "";
+                if (isGiveObject.Image == null) { imagepath = isGiveObject.URN; } else { imagepath = isGiveObject.Image; }
+                if (!imagepath.ToLower().StartsWith("http"))
+                {
+                    objectImagelocation = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + @"\root\" + imagepath.Replace("BTC:", "").Replace("MZC:", "").Replace("LTC:", "").Replace("DOG:", "").Replace("IPFS:", "").Replace(@"/", @"\");
+                    if (imagepath.ToLower().StartsWith("ipfs:")) { objectImagelocation = objectImagelocation.Replace(@"\root\", @"\ipfs\"); if (imagepath.Length == 51) { objectImagelocation += @"\artifact"; } }
+                }
+                if (!objectImagelocation.ToLower().EndsWith(".gif")) { objectImagelocation = objectImagelocation + "-thumbnail.jpg"; }
+
+                PictureBox picture = new PictureBox
+                {
+                    Size = new System.Drawing.Size(80, 80),
+                    SizeMode = PictureBoxSizeMode.Zoom,
+                    ImageLocation = objectImagelocation,
+                    Margin = new System.Windows.Forms.Padding(0),
+                };
+
+                pictureBoxes.Add(picture);
+                picture.MouseClick += (sender, e) => { object_LinkClicked(objectaddress); };
+                row.Controls.Add(picture, 3, 0);
+            }
+
+
 
             if (isToObject.Creators != null)
             {
@@ -1357,7 +1401,7 @@ namespace SUP
 
                 PictureBox picture = new PictureBox
                 {
-                    Size = new System.Drawing.Size(40, 40),
+                    Size = new System.Drawing.Size(80, 80),
                     SizeMode = PictureBoxSizeMode.Zoom,
                     ImageLocation = objectImagelocation,
                     Margin = new System.Windows.Forms.Padding(0),
@@ -1366,7 +1410,7 @@ namespace SUP
 
                 picture.MouseClick += (sender, e) => { object_LinkClicked(SentTo); };
 
-                row.Controls.Add(picture, 2, 0);
+                row.Controls.Add(picture, 4, 0);
 
             }
             else
@@ -1387,55 +1431,11 @@ namespace SUP
                 }
                 sentto.Font = new System.Drawing.Font("Microsoft Sans Serif", 7.7F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
                 sentto.Margin = new System.Windows.Forms.Padding(3);
-                row.Controls.Add(sentto, 2, 0);
+                row.Controls.Add(sentto, 4, 0);
             }
 
 
 
-            Label message = new Label
-            {
-                AutoSize = true,
-                Text = messageText,
-                Font = new System.Drawing.Font("Segoe UI", 7.77F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0))),
-                Margin = new System.Windows.Forms.Padding(0),
-                Padding = new System.Windows.Forms.Padding(0),
-                TextAlign = ContentAlignment.TopLeft
-
-            };
-            if (flowLayoutPanel1.Width < 400)
-            {
-                try { message.MinimumSize = new Size(flowLayoutPanel1.Width - (240 + objectadjustment), 46); } catch { }
-            }
-            else
-            {
-                try { message.MinimumSize = new Size(flowLayoutPanel1.Width - (400 + objectadjustment), 46); } catch { }
-            }
-            row.Controls.Add(message, 3, 0);
-
-            if (isGiveObject.URN != null)
-            {
-                string objectImagelocation = "";
-                string imagepath = "";
-                if (isGiveObject.Image == null) { imagepath = isGiveObject.URN; } else { imagepath = isGiveObject.Image; }
-                if (!imagepath.ToLower().StartsWith("http"))
-                {
-                    objectImagelocation = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + @"\root\" + imagepath.Replace("BTC:", "").Replace("MZC:", "").Replace("LTC:", "").Replace("DOG:", "").Replace("IPFS:", "").Replace(@"/", @"\");
-                    if (imagepath.ToLower().StartsWith("ipfs:")) { objectImagelocation = objectImagelocation.Replace(@"\root\", @"\ipfs\"); if (imagepath.Length == 51) { objectImagelocation += @"\artifact"; } }
-                }
-                if (!objectImagelocation.ToLower().EndsWith(".gif")) { objectImagelocation = objectImagelocation + "-thumbnail.jpg"; }
-
-                PictureBox picture = new PictureBox
-                {
-                    Size = new System.Drawing.Size(40, 40),
-                    SizeMode = PictureBoxSizeMode.Zoom,
-                    ImageLocation = objectImagelocation,
-                    Margin = new System.Windows.Forms.Padding(0),
-                };
-
-                pictureBoxes.Add(picture);
-                picture.MouseClick += (sender, e) => { object_LinkClicked(objectaddress); };
-                flowLayoutPanel1.Controls.Add(picture);
-            }
 
             Label timeStamp = new Label
             {
@@ -1546,47 +1546,7 @@ namespace SUP
 
             List<Root> combinedRoots = Root.GetRootsByAddress(profileCheck, mainnetLogin, mainnetPassword, mainnetURL, 0, -1, mainnetVersionByte, calculate).ToList();
 
-            List<OBJState> objStates = OBJState.GetObjectsCreatedByAddress(profileCheck, mainnetLogin, mainnetPassword, mainnetURL, mainnetVersionByte);
-
-            try
-            {
-                foreach (OBJState objState in objStates)
-                {
-                    // Assuming Creators is a List<string>, change the type accordingly
-                    string creator = objState.Creators.Count > 0 ? objState.Creators.First().Key : null;
-
-                    if (creator != null)
-                    {
-                        Root[] roots = Root.GetRootsByAddress(creator, mainnetLogin, mainnetPassword, mainnetURL, 0, -1, mainnetVersionByte, calculate);
-                        combinedRoots.AddRange(roots);
-                    }
-                }
-            }
-            catch { }
-
-            try
-            {
-                objStates = OBJState.GetObjectsOwnedByAddress(profileCheck, mainnetLogin, mainnetPassword, mainnetURL, mainnetVersionByte);
-
-                foreach (OBJState objState in objStates)
-                {
-                    // Assuming Creators is a List<string>, change the type accordingly
-                    string creator = objState.Creators.Count > 0 ? objState.Creators.First().Key : null;
-
-                    if (creator != null)
-                    {
-                        Root[] roots = Root.GetRootsByAddress(creator, mainnetLogin, mainnetPassword, mainnetURL, 0, -1, mainnetVersionByte, calculate);
-                        combinedRoots.AddRange(roots);
-                    }
-                }
-            }
-            catch { }
-            // Filter out duplicates based on TransactionId
-            combinedRoots = combinedRoots.GroupBy(root => root.TransactionId)
-                                         .Select(group => group.First())
-                                         .ToList();
-            // Sort the combinedRoots by BlockDate
-            combinedRoots.Sort((root1, root2) => root2.BlockDate.CompareTo(root1.BlockDate));
+            combinedRoots.Reverse();
 
             // Now combinedRoots contains all roots sorted by BlockDate
             int found = 0;
@@ -1640,20 +1600,24 @@ namespace SUP
                                             string _message = "";
 
                                             try { _to = objinspector.cre.First(); } catch { }
-                                            try { if (objinspector.own != null) { _message = "MINT 💎 " + objinspector.own.Values.Sum(); } } catch { }
-                                            string _blockdate = root.BlockDate.ToString("yyyyMMddHHmmss");
-                                            string imglocation = objinspector.img;
-                                            if (imglocation == null) { imglocation = objinspector.urn; }
-                                            if (imglocation == null) { imglocation = ""; }
+                                            if (_to == profileCheck || _from == profileCheck)
+                                            {
+                                                try { if (objinspector.own != null) { _message = "MINT 💎 " + objinspector.own.Values.Sum(); } else { _message = "OBJ 💎"; } } catch { }
+                                                string _blockdate = root.BlockDate.ToString("yyyyMMddHHmmss");
+                                                string imglocation = objinspector.img;
+                                                if (imglocation == null) { imglocation = objinspector.urn; }
+                                                if (imglocation == null) { imglocation = ""; }
 
 
-                                            this.Invoke((MethodInvoker)delegate
-                                                    {
-                                                        try { imglocation = myFriends[_from]; } catch { }
+                                                this.Invoke((MethodInvoker)delegate
+                                                        {
+                                                            try { imglocation = myFriends[_from]; } catch { }
 
-                                                        CreateFeedRow(null, imglocation, _to, _from, DateTime.ParseExact(_blockdate, "yyyyMMddHHmmss", CultureInfo.InvariantCulture), _message, root.TransactionId, Color.White, flowLayoutPanel1);
-                                                        found++;
-                                                    });
+                                                            CreateFeedRow(_to, imglocation, null, _from, DateTime.ParseExact(_blockdate, "yyyyMMddHHmmss", CultureInfo.InvariantCulture), _message, root.TransactionId, Color.White, flowLayoutPanel1);
+                                                            found++;
+                                                        });
+
+                                            }
 
                                         }
 
@@ -1685,10 +1649,7 @@ namespace SUP
                 .Select(sublist => sublist[0])
                 .ToList();
 
-                                        // Find the lowest integer among the selected first elements
                                         int lowestFirstElement = firstElements.Min();
-                                        Console.WriteLine("The lowest integer among the first elements greater than or equal to -1 is: " + lowestFirstElement);
-
 
                                         foreach (var give in givinspector)
                                         {
@@ -1701,22 +1662,25 @@ namespace SUP
                                                     string objectaddress = root.Keyword.Reverse().GetItemByIndex(g).Key;
 
                                                     try { _to = root.Keyword.Reverse().GetItemByIndex(give[0]).Key; } catch { }
-                                                    string _message = "GIV 💕 ";
-                                                    try { _message = _message + give[1]; } catch { }
-                                                    string _blockdate = root.BlockDate.ToString("yyyyMMddHHmmss");
-                                                    string imglocation = "";
-
-                                                    if (give[1] > 0)
+                                                    if (_to == profileCheck || _from == profileCheck)
                                                     {
+                                                        string _message = "GIV 💕 ";
+                                                        try { _message = _message + give[1]; } catch { }
+                                                        string _blockdate = root.BlockDate.ToString("yyyyMMddHHmmss");
+                                                        string imglocation = "";
 
-
-                                                        this.Invoke((MethodInvoker)delegate
+                                                        if (give[1] > 0)
                                                         {
-                                                            try { imglocation = myFriends[_from]; } catch { }
 
-                                                            CreateFeedRow(objectaddress, imglocation, _to, _from, DateTime.ParseExact(_blockdate, "yyyyMMddHHmmss", CultureInfo.InvariantCulture), _message, root.TransactionId, Color.White, flowLayoutPanel1);
-                                                            found++;
-                                                        });
+
+                                                            this.Invoke((MethodInvoker)delegate
+                                                            {
+                                                                try { imglocation = myFriends[_from]; } catch { }
+
+                                                                CreateFeedRow(objectaddress, imglocation, _to, _from, DateTime.ParseExact(_blockdate, "yyyyMMddHHmmss", CultureInfo.InvariantCulture), _message, root.TransactionId, Color.White, flowLayoutPanel1);
+                                                                found++;
+                                                            });
+                                                        }
                                                     }
                                                 }
                                             }
@@ -1749,26 +1713,27 @@ namespace SUP
                                             string _from = root.SignedBy;
                                             string _to = "";
                                             try { _to = root.Keyword.Reverse().GetItemByIndex(1).Key; } catch { }
-
-                                            string _message = "BUY 💰 " + buy[1];
-                                            string _blockdate = root.BlockDate.ToString("yyyyMMddHHmmss");
-                                            string imglocation = "";
-
-                                            if (long.Parse(buy[1], NumberStyles.Any, CultureInfo.GetCultureInfo("en-US")) < 0)
+                                            if (_to == profileCheck || _from == profileCheck || buy[0] == profileCheck)
                                             {
-                                                break;
+                                                string _message = "BUY 💰 " + buy[1];
+                                                string _blockdate = root.BlockDate.ToString("yyyyMMddHHmmss");
+                                                string imglocation = "";
+
+                                                if (long.Parse(buy[1], NumberStyles.Any, CultureInfo.GetCultureInfo("en-US")) < 0)
+                                                {
+                                                    break;
+                                                }
+
+
+                                                this.Invoke((MethodInvoker)delegate
+                                                {
+                                                    try { imglocation = myFriends[_from]; } catch { }
+
+                                                    CreateFeedRow(_to, imglocation, buy[0],_from , DateTime.ParseExact(_blockdate, "yyyyMMddHHmmss", CultureInfo.InvariantCulture), _message, root.TransactionId, Color.White, flowLayoutPanel1);
+                                                    found++;
+                                                });
+
                                             }
-
-
-                                            this.Invoke((MethodInvoker)delegate
-                                            {
-                                                try { imglocation = myFriends[_from]; } catch { }
-
-                                                CreateFeedRow(buy[0], imglocation, _to, _from, DateTime.ParseExact(_blockdate, "yyyyMMddHHmmss", CultureInfo.InvariantCulture), _message, root.TransactionId, Color.White, flowLayoutPanel1);
-                                                found++;
-                                            });
-
-
 
 
                                         }
@@ -1798,28 +1763,29 @@ namespace SUP
                                             string _from = root.SignedBy;
                                             string _to = lst[0];
 
-
-                                            string _message = "LST 📰 ";
-
-                                            try { _message = _message + lst[1] + " at "; } catch { }
-                                            try { _message = _message + lst[2] + " each"; } catch { }
-                                            string _blockdate = root.BlockDate.ToString("yyyyMMddHHmmss");
-                                            string imglocation = "";
-
-                                            if (long.Parse(lst[1], NumberStyles.Any, CultureInfo.GetCultureInfo("en-US")) < 0)
+                                            if (_to == profileCheck || _from == profileCheck)
                                             {
-                                                break;
+                                                string _message = "LST 📰 ";
+
+                                                try { _message = _message + lst[1] + " at "; } catch { }
+                                                try { _message = _message + lst[2] + " each"; } catch { }
+                                                string _blockdate = root.BlockDate.ToString("yyyyMMddHHmmss");
+                                                string imglocation = "";
+
+                                                if (long.Parse(lst[1], NumberStyles.Any, CultureInfo.GetCultureInfo("en-US")) < 0)
+                                                {
+                                                    break;
+                                                }
+
+
+                                                this.Invoke((MethodInvoker)delegate
+                                                {
+                                                    try { imglocation = myFriends[_from]; } catch { }
+
+                                                    CreateFeedRow(_to, imglocation, null, _from, DateTime.ParseExact(_blockdate, "yyyyMMddHHmmss", CultureInfo.InvariantCulture), _message, root.TransactionId, Color.White, flowLayoutPanel1);
+                                                    found++;
+                                                });
                                             }
-
-
-                                            this.Invoke((MethodInvoker)delegate
-                                            {
-                                                try { imglocation = myFriends[_from]; } catch { }
-
-                                                CreateFeedRow(null, imglocation, _to, _from, DateTime.ParseExact(_blockdate, "yyyyMMddHHmmss", CultureInfo.InvariantCulture), _message, root.TransactionId, Color.White, flowLayoutPanel1);
-                                                found++;
-                                            });
-
 
                                         }
                                         break;
@@ -1854,24 +1820,26 @@ namespace SUP
                                                 string objectaddress = root.Keyword.GetItemByIndex(burn[0]).Key;
 
                                                 try { _to = root.Keyword.Reverse().GetItemByIndex(burn[0]).Key; } catch { }
-                                                string _message = "BURN 🔥 ";
-                                                try { _message = _message + burn[1]; } catch { }
-                                                string _blockdate = root.BlockDate.ToString("yyyyMMddHHmmss");
-                                                string imglocation = "";
-
-                                                if (burn[1] > 0)
+                                                if (_to == profileCheck || _from == profileCheck)
                                                 {
+                                                    string _message = "BURN 🔥 ";
+                                                    try { _message = _message + burn[1]; } catch { }
+                                                    string _blockdate = root.BlockDate.ToString("yyyyMMddHHmmss");
+                                                    string imglocation = "";
 
-
-                                                    this.Invoke((MethodInvoker)delegate
+                                                    if (burn[1] > 0)
                                                     {
-                                                        try { imglocation = myFriends[_from]; } catch { }
 
-                                                        CreateFeedRow(objectaddress, imglocation, _to, _from, DateTime.ParseExact(_blockdate, "yyyyMMddHHmmss", CultureInfo.InvariantCulture), _message, root.TransactionId, Color.White, flowLayoutPanel1);
-                                                        found++;
-                                                    });
+
+                                                        this.Invoke((MethodInvoker)delegate
+                                                        {
+                                                            try { imglocation = myFriends[_from]; } catch { }
+
+                                                            CreateFeedRow(objectaddress, imglocation, _to, _from, DateTime.ParseExact(_blockdate, "yyyyMMddHHmmss", CultureInfo.InvariantCulture), _message, root.TransactionId, Color.White, flowLayoutPanel1);
+                                                            found++;
+                                                        });
+                                                    }
                                                 }
-
                                             }
 
                                         }

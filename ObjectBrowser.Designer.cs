@@ -58,21 +58,21 @@ namespace SUP
             // 
             // txtSearchAddress
             // 
-            this.txtSearchAddress.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
+            this.txtSearchAddress.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.txtSearchAddress.CausesValidation = false;
-            this.txtSearchAddress.Location = new System.Drawing.Point(613, 3);
-            this.txtSearchAddress.Margin = new System.Windows.Forms.Padding(12, 3, 3, 3);
+            this.txtSearchAddress.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.txtSearchAddress.Location = new System.Drawing.Point(605, 10);
+            this.txtSearchAddress.Margin = new System.Windows.Forms.Padding(3, 10, 3, 3);
             this.txtSearchAddress.Multiline = true;
             this.txtSearchAddress.Name = "txtSearchAddress";
-            this.txtSearchAddress.Size = new System.Drawing.Size(179, 26);
+            this.txtSearchAddress.Size = new System.Drawing.Size(284, 26);
             this.txtSearchAddress.TabIndex = 58;
             this.txtSearchAddress.KeyDown += new System.Windows.Forms.KeyEventHandler(this.SearchAddressKeyDown);
             // 
             // txtQty
             // 
             this.txtQty.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.txtQty.Location = new System.Drawing.Point(901, 157);
+            this.txtQty.Location = new System.Drawing.Point(1126, 157);
             this.txtQty.Name = "txtQty";
             this.txtQty.Size = new System.Drawing.Size(43, 20);
             this.txtQty.TabIndex = 77;
@@ -82,11 +82,12 @@ namespace SUP
             // txtLast
             // 
             this.txtLast.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.txtLast.Location = new System.Drawing.Point(297, 10);
-            this.txtLast.Margin = new System.Windows.Forms.Padding(12, 10, 3, 3);
+            this.txtLast.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F);
+            this.txtLast.Location = new System.Drawing.Point(509, 10);
+            this.txtLast.Margin = new System.Windows.Forms.Padding(3, 10, 3, 3);
             this.txtLast.Multiline = true;
             this.txtLast.Name = "txtLast";
-            this.txtLast.Size = new System.Drawing.Size(42, 19);
+            this.txtLast.Size = new System.Drawing.Size(42, 26);
             this.txtLast.TabIndex = 78;
             this.txtLast.Text = "0";
             this.txtLast.TextChanged += new System.EventHandler(this.txtLast_TextChanged);
@@ -103,7 +104,7 @@ namespace SUP
             this.flowLayoutPanel1.Margin = new System.Windows.Forms.Padding(0);
             this.flowLayoutPanel1.Name = "flowLayoutPanel1";
             this.flowLayoutPanel1.Padding = new System.Windows.Forms.Padding(3, 30, 0, 0);
-            this.flowLayoutPanel1.Size = new System.Drawing.Size(1020, 545);
+            this.flowLayoutPanel1.Size = new System.Drawing.Size(1245, 707);
             this.flowLayoutPanel1.TabIndex = 82;
             this.flowLayoutPanel1.DragDrop += new System.Windows.Forms.DragEventHandler(this.flowLayoutPanel1_DragDrop);
             this.flowLayoutPanel1.DragEnter += new System.Windows.Forms.DragEventHandler(this.flowLayoutPanel1_DragEnter);
@@ -115,9 +116,9 @@ namespace SUP
             this.pages.AutoSize = false;
             this.pages.BackColor = System.Drawing.SystemColors.InactiveCaptionText;
             this.pages.LargeChange = 12;
-            this.pages.Location = new System.Drawing.Point(0, 500);
+            this.pages.Location = new System.Drawing.Point(0, 662);
             this.pages.Name = "pages";
-            this.pages.Size = new System.Drawing.Size(1020, 45);
+            this.pages.Size = new System.Drawing.Size(1245, 45);
             this.pages.TabIndex = 84;
             this.pages.TickStyle = System.Windows.Forms.TickStyle.Both;
             this.pages.Visible = false;
@@ -129,11 +130,12 @@ namespace SUP
             // 
             this.txtTotal.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.txtTotal.Enabled = false;
-            this.txtTotal.Location = new System.Drawing.Point(345, 10);
+            this.txtTotal.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F);
+            this.txtTotal.Location = new System.Drawing.Point(557, 10);
             this.txtTotal.Margin = new System.Windows.Forms.Padding(3, 10, 3, 3);
             this.txtTotal.Multiline = true;
             this.txtTotal.Name = "txtTotal";
-            this.txtTotal.Size = new System.Drawing.Size(42, 19);
+            this.txtTotal.Size = new System.Drawing.Size(42, 26);
             this.txtTotal.TabIndex = 85;
             this.txtTotal.Text = "0";
             // 
@@ -146,12 +148,12 @@ namespace SUP
             this.flowLayoutPanel2.AutoSize = true;
             this.flowLayoutPanel2.BackColor = System.Drawing.SystemColors.ActiveCaptionText;
             this.flowLayoutPanel2.Controls.Add(this.profileURN);
-            this.flowLayoutPanel2.Controls.Add(this.txtLast);
-            this.flowLayoutPanel2.Controls.Add(this.txtTotal);
             this.flowLayoutPanel2.Controls.Add(this.btnCreated);
             this.flowLayoutPanel2.Controls.Add(this.btnOwned);
             this.flowLayoutPanel2.Controls.Add(this.btnCollections);
             this.flowLayoutPanel2.Controls.Add(this.btnActivity);
+            this.flowLayoutPanel2.Controls.Add(this.txtLast);
+            this.flowLayoutPanel2.Controls.Add(this.txtTotal);
             this.flowLayoutPanel2.Controls.Add(this.txtSearchAddress);
             this.flowLayoutPanel2.Controls.Add(this.selectSort);
             this.flowLayoutPanel2.Controls.Add(this.btnVideoSearch);
@@ -160,18 +162,18 @@ namespace SUP
             this.flowLayoutPanel2.Dock = System.Windows.Forms.DockStyle.Top;
             this.flowLayoutPanel2.Location = new System.Drawing.Point(0, 0);
             this.flowLayoutPanel2.Name = "flowLayoutPanel2";
-            this.flowLayoutPanel2.Size = new System.Drawing.Size(1020, 32);
+            this.flowLayoutPanel2.Size = new System.Drawing.Size(1245, 39);
             this.flowLayoutPanel2.TabIndex = 86;
             this.flowLayoutPanel2.SizeChanged += new System.EventHandler(this.flowLayoutPanel2_SizeChanged);
             // 
             // profileURN
             // 
-            this.profileURN.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.profileURN.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.profileURN.LinkColor = System.Drawing.SystemColors.GradientActiveCaption;
-            this.profileURN.Location = new System.Drawing.Point(3, 0);
+            this.profileURN.Location = new System.Drawing.Point(6, 0);
+            this.profileURN.Margin = new System.Windows.Forms.Padding(6, 0, 3, 0);
             this.profileURN.Name = "profileURN";
-            this.profileURN.Padding = new System.Windows.Forms.Padding(10, 0, 0, 0);
-            this.profileURN.Size = new System.Drawing.Size(279, 30);
+            this.profileURN.Size = new System.Drawing.Size(247, 30);
             this.profileURN.TabIndex = 71;
             this.profileURN.TabStop = true;
             this.profileURN.Text = "anon";
@@ -184,13 +186,14 @@ namespace SUP
             this.btnCreated.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.btnCreated.AutoSize = true;
             this.btnCreated.BackColor = System.Drawing.Color.White;
+            this.btnCreated.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F);
             this.btnCreated.ForeColor = System.Drawing.Color.Black;
             this.btnCreated.LinkColor = System.Drawing.Color.Black;
-            this.btnCreated.Location = new System.Drawing.Point(393, 10);
+            this.btnCreated.Location = new System.Drawing.Point(259, 10);
             this.btnCreated.Margin = new System.Windows.Forms.Padding(3, 10, 3, 0);
             this.btnCreated.Name = "btnCreated";
             this.btnCreated.Padding = new System.Windows.Forms.Padding(2);
-            this.btnCreated.Size = new System.Drawing.Size(47, 17);
+            this.btnCreated.Size = new System.Drawing.Size(57, 20);
             this.btnCreated.TabIndex = 106;
             this.btnCreated.TabStop = true;
             this.btnCreated.Text = "created";
@@ -201,13 +204,14 @@ namespace SUP
             this.btnOwned.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.btnOwned.AutoSize = true;
             this.btnOwned.BackColor = System.Drawing.Color.White;
+            this.btnOwned.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F);
             this.btnOwned.ForeColor = System.Drawing.Color.Black;
             this.btnOwned.LinkColor = System.Drawing.Color.Black;
-            this.btnOwned.Location = new System.Drawing.Point(446, 10);
+            this.btnOwned.Location = new System.Drawing.Point(322, 10);
             this.btnOwned.Margin = new System.Windows.Forms.Padding(3, 10, 3, 0);
             this.btnOwned.Name = "btnOwned";
             this.btnOwned.Padding = new System.Windows.Forms.Padding(2);
-            this.btnOwned.Size = new System.Drawing.Size(43, 17);
+            this.btnOwned.Size = new System.Drawing.Size(51, 20);
             this.btnOwned.TabIndex = 104;
             this.btnOwned.TabStop = true;
             this.btnOwned.Text = "owned";
@@ -218,13 +222,14 @@ namespace SUP
             this.btnCollections.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.btnCollections.AutoSize = true;
             this.btnCollections.BackColor = System.Drawing.Color.White;
+            this.btnCollections.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F);
             this.btnCollections.ForeColor = System.Drawing.Color.Black;
             this.btnCollections.LinkColor = System.Drawing.Color.Black;
-            this.btnCollections.Location = new System.Drawing.Point(495, 10);
+            this.btnCollections.Location = new System.Drawing.Point(379, 10);
             this.btnCollections.Margin = new System.Windows.Forms.Padding(3, 10, 3, 0);
             this.btnCollections.Name = "btnCollections";
             this.btnCollections.Padding = new System.Windows.Forms.Padding(2);
-            this.btnCollections.Size = new System.Drawing.Size(56, 17);
+            this.btnCollections.Size = new System.Drawing.Size(68, 20);
             this.btnCollections.TabIndex = 105;
             this.btnCollections.TabStop = true;
             this.btnCollections.Text = "collection";
@@ -235,13 +240,14 @@ namespace SUP
             this.btnActivity.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.btnActivity.AutoSize = true;
             this.btnActivity.BackColor = System.Drawing.Color.White;
+            this.btnActivity.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F);
             this.btnActivity.ForeColor = System.Drawing.Color.Black;
             this.btnActivity.LinkColor = System.Drawing.Color.Black;
-            this.btnActivity.Location = new System.Drawing.Point(557, 10);
+            this.btnActivity.Location = new System.Drawing.Point(453, 10);
             this.btnActivity.Margin = new System.Windows.Forms.Padding(3, 10, 3, 0);
             this.btnActivity.Name = "btnActivity";
             this.btnActivity.Padding = new System.Windows.Forms.Padding(2);
-            this.btnActivity.Size = new System.Drawing.Size(41, 17);
+            this.btnActivity.Size = new System.Drawing.Size(50, 20);
             this.btnActivity.TabIndex = 107;
             this.btnActivity.TabStop = true;
             this.btnActivity.Text = "history";
@@ -249,6 +255,7 @@ namespace SUP
             // 
             // selectSort
             // 
+            this.selectSort.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.selectSort.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.selectSort.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.selectSort.FormattingEnabled = true;
@@ -261,7 +268,8 @@ namespace SUP
             "activity: high",
             "activity: low",
             "oldest"});
-            this.selectSort.Location = new System.Drawing.Point(798, 3);
+            this.selectSort.Location = new System.Drawing.Point(895, 10);
+            this.selectSort.Margin = new System.Windows.Forms.Padding(3, 10, 3, 3);
             this.selectSort.Name = "selectSort";
             this.selectSort.Size = new System.Drawing.Size(117, 26);
             this.selectSort.TabIndex = 87;
@@ -269,25 +277,27 @@ namespace SUP
             // 
             // btnVideoSearch
             // 
-            this.btnVideoSearch.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.btnVideoSearch.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.btnVideoSearch.BackColor = System.Drawing.Color.White;
             this.btnVideoSearch.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnVideoSearch.Font = new System.Drawing.Font("Segoe UI Emoji", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnVideoSearch.Location = new System.Drawing.Point(921, 3);
+            this.btnVideoSearch.Location = new System.Drawing.Point(1018, 10);
+            this.btnVideoSearch.Margin = new System.Windows.Forms.Padding(3, 10, 3, 3);
             this.btnVideoSearch.Name = "btnVideoSearch";
             this.btnVideoSearch.Size = new System.Drawing.Size(26, 26);
             this.btnVideoSearch.TabIndex = 102;
-            this.btnVideoSearch.Text = "🎬";
+            this.btnVideoSearch.Text = "🎬 avi";
             this.btnVideoSearch.UseVisualStyleBackColor = false;
             this.btnVideoSearch.Click += new System.EventHandler(this.btnVideoSearch_Click);
             // 
             // btnJukeBox
             // 
-            this.btnJukeBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.btnJukeBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.btnJukeBox.BackColor = System.Drawing.Color.White;
             this.btnJukeBox.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnJukeBox.Font = new System.Drawing.Font("Segoe UI Emoji", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnJukeBox.Location = new System.Drawing.Point(953, 3);
+            this.btnJukeBox.Location = new System.Drawing.Point(1050, 10);
+            this.btnJukeBox.Margin = new System.Windows.Forms.Padding(3, 10, 3, 3);
             this.btnJukeBox.Name = "btnJukeBox";
             this.btnJukeBox.Size = new System.Drawing.Size(26, 26);
             this.btnJukeBox.TabIndex = 101;
@@ -297,11 +307,12 @@ namespace SUP
             // 
             // btnInquiry
             // 
-            this.btnInquiry.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.btnInquiry.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.btnInquiry.BackColor = System.Drawing.Color.White;
             this.btnInquiry.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnInquiry.Font = new System.Drawing.Font("Segoe UI Emoji", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnInquiry.Location = new System.Drawing.Point(985, 3);
+            this.btnInquiry.Location = new System.Drawing.Point(1082, 10);
+            this.btnInquiry.Margin = new System.Windows.Forms.Padding(3, 10, 3, 3);
             this.btnInquiry.Name = "btnInquiry";
             this.btnInquiry.Size = new System.Drawing.Size(26, 26);
             this.btnInquiry.TabIndex = 103;
@@ -316,7 +327,7 @@ namespace SUP
             this.panel1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panel1.Location = new System.Drawing.Point(0, 0);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(1020, 545);
+            this.panel1.Size = new System.Drawing.Size(1245, 707);
             this.panel1.TabIndex = 88;
             // 
             // imgLoading
@@ -327,7 +338,7 @@ namespace SUP
             this.imgLoading.ImageLocation = "";
             this.imgLoading.Location = new System.Drawing.Point(3, 3);
             this.imgLoading.Name = "imgLoading";
-            this.imgLoading.Size = new System.Drawing.Size(1017, 539);
+            this.imgLoading.Size = new System.Drawing.Size(1242, 701);
             this.imgLoading.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
             this.imgLoading.TabIndex = 81;
             this.imgLoading.TabStop = false;
@@ -337,7 +348,7 @@ namespace SUP
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.SystemColors.ActiveCaptionText;
-            this.ClientSize = new System.Drawing.Size(1020, 545);
+            this.ClientSize = new System.Drawing.Size(1245, 707);
             this.Controls.Add(this.pages);
             this.Controls.Add(this.flowLayoutPanel2);
             this.Controls.Add(this.panel1);

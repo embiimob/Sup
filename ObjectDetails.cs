@@ -1101,129 +1101,85 @@ namespace SUP
                                 if (!imgExtensions.Contains(extension) && !imgurn.Contains("youtube.com") && !imgurn.Contains("youtu.be"))
                                 {
 
+                                    string title = content;
+                                    string description = content;
+                                    string imageUrl = @"includes\disco.png";
 
-                                    try
+                                    // Create a new panel to display the metadata
+                                    Panel panel = new Panel();
+                                    panel.BorderStyle = BorderStyle.FixedSingle;
+                                    panel.Size = new Size(supFlow.Width - 50, 100);
+
+                                    // Create a label for the title
+                                    Label titleLabel = new Label();
+                                    titleLabel.Text = title;
+                                    titleLabel.Dock = DockStyle.Top;
+                                    titleLabel.Font = new Font("Segoe UI", 12, FontStyle.Bold);
+                                    titleLabel.ForeColor = Color.White;
+                                    titleLabel.MinimumSize = new Size(supFlow.Width - 150, 30);
+                                    titleLabel.Padding = new Padding(5);
+                                    titleLabel.MouseClick += (sender, e) => { Attachment_Clicked(content); };
+                                    panel.Controls.Add(titleLabel);
+
+                                    // Create a label for the description
+                                    Label descriptionLabel = new Label();
+                                    descriptionLabel.Text = description;
+                                    descriptionLabel.ForeColor = Color.White;
+                                    descriptionLabel.Dock = DockStyle.Fill;
+                                    descriptionLabel.Padding = new Padding(5, 40, 5, 5);
+                                    descriptionLabel.MouseClick += (sender, e) => { Attachment_Clicked(content); };
+                                    panel.Controls.Add(descriptionLabel);
+
+
+
+                                    // Create a new PictureBox control and add it to the panel
+                                    PictureBox pictureBox = new PictureBox();
+                                    pictureBox.Dock = DockStyle.Left;
+                                    pictureBox.Size = new Size(100, 100);
+                                    pictureBox.SizeMode = PictureBoxSizeMode.Zoom;
+                                    pictureBox.ImageLocation = imageUrl;
+                                    pictureBox.MouseClick += (sender, e) => { Attachment_Clicked(content); };
+                                    panel.Controls.Add(pictureBox);
+                                    //pictures.Add(pictureBox);
+
+                                    this.supFlow.Controls.Add(panel);
+
+                                    Task.Run(() =>
                                     {
-                                        string html = "";
-                                        WebClient client = new WebClient();
-                                        // Create a WebClient object to fetch the webpage
-                                        if (!content.ToLower().EndsWith("index.zip"))
+                                        try
                                         {
-                                            html = client.DownloadString(content.StripLeadingTrailingSpaces());
-                                        }
-                                        // Use regular expressions to extract the metadata from the HTML
-                                        string title = Regex.Match(html, @"<title>\s*(.+?)\s*</title>").Groups[1].Value;
-                                        string description = Regex.Match(html, @"<meta\s+name\s*=\s*""description""\s+content\s*=\s*""(.+?)""\s*/?>").Groups[1].Value;
-                                        string imageUrl = Regex.Match(html, @"<meta\s+property\s*=\s*""og:image""\s+content\s*=\s*""(.+?)""\s*/?>").Groups[1].Value;
-
-                                        if (description != "")
-                                        {
-                                            // Create a new panel to display the metadata
-                                            Panel panel = new Panel();
-                                            panel.BorderStyle = BorderStyle.FixedSingle;
-                                            panel.Size = new Size(supFlow.Width - 50, 100);
-
-                                            // Create a label for the title
-                                            Label titleLabel = new Label();
-                                            titleLabel.Text = title;
-                                            titleLabel.Dock = DockStyle.Top;
-                                            titleLabel.Font = new Font("Segoe UI", 12, FontStyle.Bold);
-                                            titleLabel.ForeColor = Color.White;
-                                            titleLabel.MinimumSize = new Size(supFlow.Width - 150, 30);
-                                            titleLabel.Padding = new Padding(5);
-                                            titleLabel.MouseClick += (sender, e) => { Attachment_Clicked(content); };
-                                            panel.Controls.Add(titleLabel);
-
-                                            // Create a label for the description
-                                            Label descriptionLabel = new Label();
-                                            descriptionLabel.Text = description;
-                                            descriptionLabel.ForeColor = Color.White;
-                                            descriptionLabel.Dock = DockStyle.Fill;
-                                            descriptionLabel.Padding = new Padding(5, 40, 5, 5);
-                                            descriptionLabel.MouseClick += (sender, e) => { Attachment_Clicked(content); };
-                                            panel.Controls.Add(descriptionLabel);
-
-                                            // Add an image to the panel if one is defined
-                                            if (!String.IsNullOrEmpty(imageUrl))
+                                            string html = "";
+                                            WebClient client = new WebClient();
+                                            // Create a WebClient object to fetch the webpage
+                                            if (!content.ToLower().EndsWith(".zip"))
                                             {
-                                                try
-                                                {
-                                                    // Create a MemoryStream object from the image data
-                                                    byte[] imageData = client.DownloadData(imageUrl);
-                                                    MemoryStream memoryStream = new MemoryStream(imageData);
-
-                                                    // Create a new PictureBox control and add it to the panel
-                                                    PictureBox pictureBox = new PictureBox();
-                                                    pictureBox.Dock = DockStyle.Left;
-                                                    pictureBox.Size = new Size(100, 100);
-                                                    pictureBox.SizeMode = PictureBoxSizeMode.StretchImage;
-                                                    pictureBox.Image = Image.FromStream(memoryStream);
-                                                    pictureBox.MouseClick += (sender, e) => { Attachment_Clicked(content); };
-                                                    panel.Controls.Add(pictureBox);
-                                                }
-                                                catch
-                                                {
-                                                }
+                                                html = client.DownloadString(content.StripLeadingTrailingSpaces());
                                             }
+                                            // Create a MemoryStream object from the image data
 
-                                            // Add the panel to the flow layout panel
-                                            this.Invoke((MethodInvoker)delegate
-                                            {
-                                                this.supFlow.Controls.Add(panel);
-                                            });
-                                        }
-                                        else
-                                        {
-                                            // Create a new panel to display the metadata
-                                            Panel panel = new Panel();
-                                            panel.BorderStyle = BorderStyle.FixedSingle;
-                                            panel.Size = new Size(supFlow.Width - 50, 30);
+                                            // Use regular expressions to extract the metadata from the HTML
+                                            title = Regex.Match(html, @"<title>\s*(.+?)\s*</title>").Groups[1].Value;
+                                            description = Regex.Match(html, @"<meta\s+name\s*=\s*""description""\s+content\s*=\s*""(.+?)""\s*/?>").Groups[1].Value;
+                                            imageUrl = Regex.Match(html, @"<meta\s+property\s*=\s*""og:image""\s+content\s*=\s*""(.+?)""\s*/?>").Groups[1].Value;
 
-                                            // Create a label for the title
-                                            LinkLabel titleLabel = new LinkLabel();
-                                            titleLabel.Text = content;
-                                            titleLabel.Links[0].LinkData = content;
-                                            titleLabel.Dock = DockStyle.Top;
-                                            titleLabel.Font = new Font("Segoe UI", 8, FontStyle.Bold);
-                                            titleLabel.LinkColor = System.Drawing.SystemColors.GradientActiveCaption;
-                                            titleLabel.MinimumSize = new Size(supFlow.Width - 150, 30);
-                                            titleLabel.Padding = new Padding(5);
-                                            titleLabel.MouseClick += (sender, e) => { Attachment_Clicked(content); };
-                                            panel.Controls.Add(titleLabel);
+                                            byte[] imageData = client.DownloadData(imageUrl);
+                                            MemoryStream memoryStream = new MemoryStream(imageData);
 
                                             this.Invoke((MethodInvoker)delegate
                                             {
-                                                this.supFlow.Controls.Add(panel);
+                                                titleLabel.Text = title;
+                                                descriptionLabel.Text = description;
+                                                pictureBox.ImageLocation = null;
+                                                pictureBox.Image = System.Drawing.Image.FromStream(memoryStream);
                                             });
 
+
+
                                         }
-                                    }
-                                    catch
-                                    {
-
-                                        // Create a new panel to display the metadata
-                                        Panel panel = new Panel();
-                                        panel.BorderStyle = BorderStyle.FixedSingle;
-                                        panel.Size = new Size(supFlow.Width - 50, 30);
-
-                                        // Create a label for the title
-                                        LinkLabel titleLabel = new LinkLabel();
-                                        titleLabel.Text = content;
-                                        titleLabel.Links[0].LinkData = content;
-                                        titleLabel.Dock = DockStyle.Top;
-                                        titleLabel.Font = new Font("Segoe UI", 8, FontStyle.Bold);
-                                        titleLabel.LinkColor = System.Drawing.SystemColors.GradientActiveCaption;
-                                        titleLabel.MinimumSize = new Size(supFlow.Width - 150, 30);
-                                        titleLabel.Padding = new Padding(5);
-                                        titleLabel.MouseClick += (sender, e) => { Attachment_Clicked(content); };
-                                        panel.Controls.Add(titleLabel);
-                                        this.Invoke((MethodInvoker)delegate
-                                        {
-                                            this.supFlow.Controls.Add(panel);
-                                        });
+                                        catch { }
+                                    });
 
 
-                                    }
                                 }
                                 else
                                 {
