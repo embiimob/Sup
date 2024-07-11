@@ -355,6 +355,92 @@ namespace SUP
             txtSignatureAddress.Text = _activeprofile;
         }
 
+        private void btnToSelector_Click(object sender, EventArgs e)
+        {
+            string filePath = "";
+            Dictionary<string, string> friendDict = new Dictionary<string, string>();
+            if (mainnetVersionByte == "111")
+            { filePath = @"root\MyFriendList.Json"; }
+            else { filePath = @"root\MyProdFriendList.Json"; }
+
+
+
+            using (var dialog = new Form())
+            {
+                dialog.Text = "Select a local profile";
+                dialog.StartPosition = FormStartPosition.CenterParent;
+                dialog.AutoSize = true;
+                dialog.ControlBox = false;
+                dialog.FormBorderStyle = FormBorderStyle.FixedDialog;
+                dialog.ClientSize = new Size(240, 90);
+
+
+                var nameComboBox = new ComboBox();
+                nameComboBox.DropDownStyle = ComboBoxStyle.DropDownList;
+                nameComboBox.Font = new Font(nameComboBox.Font.FontFamily, 12f);
+                nameComboBox.Width = 200;
+                try
+                {
+
+                    string json = File.ReadAllText(filePath);
+
+                    // Deserialize the JSON into a Dictionary<string, string> object
+                    friendDict = JsonConvert.DeserializeObject<Dictionary<string, string>>(json);
+
+                    // Create PictureBox controls for each friend in the dictionary
+                    foreach (var friend in friendDict)
+                    {
+                        PROState Friend = PROState.GetProfileByAddress(friend.Key, mainnetLogin, mainnetPassword, mainnetURL, mainnetVersionByte);
+                        if (Friend.URN != null)
+                        {
+                            nameComboBox.Items.Add(Friend.URN);
+                        }
+
+                    }
+
+
+                    nameComboBox.SelectedIndex = 0;
+                }
+                catch { }
+
+                var okButton = new Button();
+                okButton.Text = "OK";
+                okButton.DialogResult = DialogResult.OK;
+                okButton.Anchor = AnchorStyles.Right;
+
+                var cancelButton = new Button();
+                cancelButton.Text = "Cancel";
+                cancelButton.DialogResult = DialogResult.Cancel;
+                cancelButton.Anchor = AnchorStyles.Right;
+
+                dialog.Controls.Add(nameComboBox);
+                dialog.Controls.Add(okButton);
+                dialog.Controls.Add(cancelButton);
+
+
+                nameComboBox.Location = new Point(20, 20);
+                okButton.Location = new Point(40, 60);
+                cancelButton.Location = new Point(120, 60);
+
+                dialog.AcceptButton = okButton;
+                dialog.CancelButton = cancelButton;
+
+                if (dialog.ShowDialog() == DialogResult.OK)
+                {
+                    try
+                    {
+                        PROState selectedProState = PROState.GetProfileByURN(nameComboBox.SelectedItem.ToString(), mainnetLogin, mainnetPassword, mainnetURL, mainnetVersionByte);
+                        addressTextBox.Text = selectedProState.Creators[0];
+                                               
+                    }
+                    catch {  }
+                }
+
+            }
+
+
+        }
+
         private void btnFromSelector_Click(object sender, EventArgs e)
         {
             List<PROState> profiles = PROState.GetLocalProfiles(mainnetLogin, mainnetPassword, mainnetURL, mainnetVersionByte, true);

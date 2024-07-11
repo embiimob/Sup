@@ -147,29 +147,25 @@ namespace SUP
                     {
                         if (transactionId != "")
                         {
-                            ownerId = ownerId + "," + Root.GetPublicAddressByKeyword(transactionId, mainnetVersionByte);
+                            ownerId = Root.GetPublicAddressByKeyword(transactionId, mainnetVersionByte);
                         }
 
-                        DiscoBall disco = new DiscoBall(activeUserAddress.ToString(), activeUserImage, ownerId, imageLocation, false, testnet);
+                        DiscoBall disco = new DiscoBall(activeUserAddress.ToString(), activeUserImage, ownerId,  "includes\\Hugpuddle.jpg", false, testnet);
                         disco.StartPosition = FormStartPosition.CenterScreen;
                         disco.Show(this);
                         disco.Focus();
                     }
 
                 }
-                // Check if the right mouse button was clicked
                 else if (me.Button == MouseButtons.Right && transactionId != "")
                 {
-                    // Code to execute for right click
-                    numMessagesDisplayed = 0;
 
-                    searchAddress = Root.GetPublicAddressByKeyword(transactionId);
 
-                    this.Invoke((Action)(() =>
-                    {
-                        ClearMessages(supFlow);
-                    }));
-                    RefreshSupMessages();
+                    SupThread thread = new SupThread(Root.GetPublicAddressByKeyword(transactionId, mainnetVersionByte), activeUserAddress, activeUserImage, testnet);
+                    thread.StartPosition = FormStartPosition.CenterScreen;
+                    thread.Show(this);
+                    thread.Focus();
+
 
                 }
             }
@@ -1671,6 +1667,7 @@ namespace SUP
                     row.Controls.Add(tstamp, 2, 0);
 
 
+                    // Create the label
                     Label loveme = new Label
                     {
                         AutoSize = true,
@@ -1682,25 +1679,32 @@ namespace SUP
                         Dock = DockStyle.Bottom
                     };
 
+                    // Add click event handler
                     loveme.Click += (sender, e) => { Owner_LinkClicked(sender, e, ownerId, imageLocation, transactionid); loveme.ForeColor = Color.Blue; };
 
-
+                    // Add label to the TableLayoutPanel
                     row.Controls.Add(loveme, 3, 0);
+
+                    // Make sure the form's handle is created before starting the task
+                    var handle = this.Handle;
+
                     Task.Run(() =>
                     {
-
+                        // Fetch the roots
                         Root[] roots = Root.GetRootsByAddress(Root.GetPublicAddressByKeyword(transactionid, mainnetVersionByte), mainnetLogin, mainnetPassword, mainnetURL, 0, -1, mainnetVersionByte);
+
                         if (roots != null && roots.Length > 0)
                         {
-                            this.Invoke((MethodInvoker)delegate
+                            // Update the label on the UI thread
+                            loveme.Invoke((MethodInvoker)delegate
                             {
                                 loveme.Text = "🖤 " + roots.Length.ToString();
                                 loveme.ForeColor = Color.Red;
                                 loveme.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
                             });
                         }
-
                     });
+
 
 
                     Label deleteme = new Label

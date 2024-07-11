@@ -61,7 +61,7 @@ namespace SUP
             this.txtSearchAddress.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.txtSearchAddress.CausesValidation = false;
             this.txtSearchAddress.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.txtSearchAddress.Location = new System.Drawing.Point(605, 10);
+            this.txtSearchAddress.Location = new System.Drawing.Point(509, 10);
             this.txtSearchAddress.Margin = new System.Windows.Forms.Padding(3, 10, 3, 3);
             this.txtSearchAddress.Multiline = true;
             this.txtSearchAddress.Name = "txtSearchAddress";
@@ -83,7 +83,7 @@ namespace SUP
             // 
             this.txtLast.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.txtLast.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F);
-            this.txtLast.Location = new System.Drawing.Point(509, 10);
+            this.txtLast.Location = new System.Drawing.Point(799, 10);
             this.txtLast.Margin = new System.Windows.Forms.Padding(3, 10, 3, 3);
             this.txtLast.Multiline = true;
             this.txtLast.Name = "txtLast";
@@ -131,7 +131,7 @@ namespace SUP
             this.txtTotal.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.txtTotal.Enabled = false;
             this.txtTotal.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F);
-            this.txtTotal.Location = new System.Drawing.Point(557, 10);
+            this.txtTotal.Location = new System.Drawing.Point(847, 10);
             this.txtTotal.Margin = new System.Windows.Forms.Padding(3, 10, 3, 3);
             this.txtTotal.Multiline = true;
             this.txtTotal.Name = "txtTotal";
@@ -152,9 +152,9 @@ namespace SUP
             this.flowLayoutPanel2.Controls.Add(this.btnOwned);
             this.flowLayoutPanel2.Controls.Add(this.btnCollections);
             this.flowLayoutPanel2.Controls.Add(this.btnActivity);
+            this.flowLayoutPanel2.Controls.Add(this.txtSearchAddress);
             this.flowLayoutPanel2.Controls.Add(this.txtLast);
             this.flowLayoutPanel2.Controls.Add(this.txtTotal);
-            this.flowLayoutPanel2.Controls.Add(this.txtSearchAddress);
             this.flowLayoutPanel2.Controls.Add(this.selectSort);
             this.flowLayoutPanel2.Controls.Add(this.btnVideoSearch);
             this.flowLayoutPanel2.Controls.Add(this.btnJukeBox);
