@@ -8,6 +8,8 @@ using System.Collections.Generic;
 using Newtonsoft.Json;
 using System.Net;
 using System.Globalization;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement.StartPanel;
+using SUP.RPCClient;
 
 
 namespace SUP
@@ -94,7 +96,16 @@ namespace SUP
                 {
                     NetworkCredential credentials = new NetworkCredential(mainnetLogin,mainnetPassword);
                     NBitcoin.RPC.RPCClient rpcClient = new NBitcoin.RPC.RPCClient(credentials, new Uri(mainnetURL), Network.Main);
-                    ANSAddress = rpcClient.SendCommand("getnewaddress", attributeControl.Text + "!" + DateTime.UtcNow.ToString("yyyyMMddHHmmss")).ResultString;
+                    // Loop until an address with no transactions is found
+                    while (true)
+                    {
+                        ANSAddress = rpcClient.SendCommand("getnewaddress", attributeControl.Text + "!" + DateTime.UtcNow.ToString("yyyyMMddHHmmss")).ResultString;
+                        CoinRPC a = new CoinRPC(new Uri(mainnetURL), new NetworkCredential(mainnetLogin, mainnetPassword));
+                        List<GetRawDataTransactionResponse> results = null;
+
+                        try { results = a.SearchRawDataTransaction(ANSAddress, 0, 0, 2); if (results.Count == 0) { break; } } catch { break; }
+                       
+                    }
 
                 }
                 mintANS.Add(ANSAddress, attributeControl.Text);

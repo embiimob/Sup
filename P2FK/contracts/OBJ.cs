@@ -244,7 +244,6 @@ namespace SUP.P2FK
                                                     objectState.Creators = new Dictionary<string, DateTime> { };
 
 
-
                                                     try
                                                     {
 
@@ -309,7 +308,6 @@ namespace SUP.P2FK
                                                                 {
                                                                     creator = keywordId;
 
-                                                                    //            objectaddress = objectinspector.cre.First();
                                                                 }
 
 
@@ -2471,7 +2469,6 @@ namespace SUP.P2FK
                     if (transaction.Signed)
                     {
 
-                        // string findId;
 
 
                         if (requiredKeys.Overlaps(transaction.File.Keys))
@@ -2494,7 +2491,6 @@ namespace SUP.P2FK
                                             OBJState isObject = GetObjectByAddress(key, username, password, url, versionByte, calculate);
                                             if (isObject.URN != null)
                                             {
-                                                //isObject.Id = transaction.Id;
                                                 objectStates[objectStates.IndexOf(existingObjectState)] = isObject;
                                             }
                                         }
@@ -2503,7 +2499,6 @@ namespace SUP.P2FK
                                             OBJState newObject = GetObjectByAddress(key, username, password, url, versionByte, calculate);
                                             if (newObject.URN != null)
                                             {
-                                                //newObject.Id = transaction.Id;
                                                 objectStates.Add(newObject);
                                             }
                                         }
@@ -2532,7 +2527,6 @@ namespace SUP.P2FK
                                             OBJState isObject = GetObjectByAddress(key, username, password, url, versionByte, calculate);
                                             if (isObject.URN != null)
                                             {
-                                                //isObject.Id = transaction.Id;
                                                 objectStates[objectStates.IndexOf(existingObjectState)] = isObject;
                                             }
                                         }
@@ -2541,7 +2535,6 @@ namespace SUP.P2FK
                                             OBJState newObject = GetObjectByAddress(key, username, password, url, versionByte, calculate);
                                             if (newObject.URN != null)
                                             {
-                                                //newObject.Id = transaction.Id;
                                                 objectStates.Add(newObject);
                                             }
                                         }

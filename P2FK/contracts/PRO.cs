@@ -48,7 +48,6 @@ namespace SUP.P2FK
         public int ProcessHeight { get; set; }
         public DateTime CreatedDate { get; set; }
         public DateTime ChangeDate { get; set; }
-        //ensures levelDB is thread safely
         private static char[] specialChars = new char[] { '\\', '/', ':', '*', '?', '"', '<', '>', '|' };
 
         public static PROState GetProfileByAddress(string profileaddress, string username, string password, string url, string versionByte = "111", bool verbose = false)
@@ -100,9 +99,6 @@ namespace SUP.P2FK
                         intProcessHeight = transaction.Id;
                         profileState.ProcessHeight = intProcessHeight;
 
-                        string sortableProcessHeight = intProcessHeight.ToString("X").PadLeft(9, '0');
-                        logstatus = null;
-
 
                         string sigSeen = null;
 
@@ -137,17 +133,11 @@ namespace SUP.P2FK
                             {
                                 profileinspector = JsonConvert.DeserializeObject<PRO>(File.ReadAllText(@"root\" + transaction.TransactionId + @"\PRO"));
                             }
-                            catch
-                            {
-
-                                logstatus = "txid:" + transaction.TransactionId + ",profile,inspect,\"failed due to invalid transaction format\"";
-
-                            }
+                            catch{}
 
 
 
-
-                            if (logstatus == null && profileState.Creators == null && transaction.SignedBy == profileaddress)
+                            if (profileinspector != null && profileState.Creators == null && transaction.SignedBy == profileaddress)
                             {
 
                                 profileState.Creators = new List<string> { };
@@ -184,7 +174,7 @@ namespace SUP.P2FK
 
 
                             //has proper authority to make OBJ changes
-                            if (logstatus == null && profileState.Creators != null && profileState.Creators.Contains(transaction.SignedBy))
+                            if (profileinspector != null && profileState.Creators != null && profileState.Creators.Contains(transaction.SignedBy))
                             {
                                 if (profileinspector.cre != null && profileinspector.cre.Contains(transaction.SignedBy))
                                 {
@@ -286,7 +276,6 @@ namespace SUP.P2FK
 
             string diskpath = "root\\" + profileaddress + "\\";
 
-            // fetch current JSONOBJ from disk if it exists
             try
             {
                 JSONOBJ = System.IO.File.ReadAllText(diskpath + "GetProfileByURN.json");
@@ -294,13 +283,8 @@ namespace SUP.P2FK
             }
             catch { }
 
-            //if (profileState.URN == null && diskpath.Length > 5) { try { Directory.Delete(diskpath); } catch { } }
             var intProcessHeight = profileState.Id;
             Root[] profileTransactions;
-
-            //return all roots found at address
-            // profileTransactions = Root.GetRootsByAddress(profileaddress, username, password, url, intProcessHeight, 1, versionByte);
-
 
             if (verbose == true) { intProcessHeight = 0; profileState = new PROState(); }
             //return all roots found at address
@@ -399,7 +383,6 @@ namespace SUP.P2FK
             }
             catch
             {
-                // Handle the exception if needed.
             }
 
             var addresses = JsonConvert.DeserializeObject<List<Dictionary<string, object>>>(addressesString);
@@ -412,9 +395,7 @@ namespace SUP.P2FK
                 bitcoinAddresses.Add(address);
             }
 
-            // Now you have a list of Bitcoin addresses in the 'bitcoinAddresses' list.
 
-            // You can use the addresses for your profile retrieval logic.
             foreach (string address in bitcoinAddresses)
             {
                 PROState isObject = GetProfileByAddress(address, username, password, url, versionByte);

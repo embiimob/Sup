@@ -21,7 +21,9 @@ using AngleSharp.Text;
 using System.Drawing.Imaging;
 using NAudio.Wave;
 using System.Text;
+using NReco.VideoConverter;
 using static System.Net.Mime.MediaTypeNames;
+using Microsoft.Win32;
 
 namespace SUP
 {
@@ -1717,7 +1719,7 @@ namespace SUP
                                                             }
 
                                                             string extension = Path.GetExtension(imgurn).ToLower();
-                                                            List<string> imgExtensions = new List<string> { ".bmp", ".gif", ".ico", ".jpeg", ".jpg", ".png", ".tif", ".tiff", ".mp4", ".avi", ".wav", ".mp3" };
+                                                            List<string> imgExtensions = new List<string> { ".bmp", ".gif", ".ico", ".jpeg", ".jpg", ".png", ".tif", ".tiff", ".mp4", ".mov", ".avi", ".wav", ".mp3" };
 
 
                                                             string vpattern = @"(?:youtu\.be/|youtube(?:-nocookie)?\.com/(?:[^/\n\s]*[/\n\s]*(?:v/|e(?:mbed)?/|.*[?&]v=))?)?([a-zA-Z0-9_-]{11})";
@@ -1866,7 +1868,7 @@ namespace SUP
                                                                 {
 
 
-                                                                    if ((vmatch.Success && !imgExtensions.Contains(extension)) || extension == ".mp4" || extension == ".avi" || extension == ".wav" || extension == ".mp3")
+                                                                    if ((vmatch.Success && !imgExtensions.Contains(extension)) || extension == ".mp4" || extension == ".mov" || extension == ".avi" || extension == ".wav" || extension == ".mp3")
                                                                     {
                                                                         this.Invoke((MethodInvoker)delegate
                                                                         {
@@ -2140,7 +2142,7 @@ namespace SUP
                                                                 }
 
                                                                 string extension = Path.GetExtension(imgurn).ToLower();
-                                                                List<string> imgExtensions = new List<string> { ".bmp", ".gif", ".ico", ".jpeg", ".jpg", ".png", ".tif", ".tiff", ".mp4", ".avi", ".wav", ".mp3" };
+                                                                List<string> imgExtensions = new List<string> { ".bmp", ".gif", ".ico", ".jpeg", ".jpg", ".png", ".tif", ".tiff", ".mov", ".avi", ".wav", ".mp3" };
 
 
                                                                 string vpattern = @"(?:youtu\.be/|youtube(?:-nocookie)?\.com/(?:[^/\n\s]*[/\n\s]*(?:v/|e(?:mbed)?/|.*[?&]v=))?)?([a-zA-Z0-9_-]{11})";
@@ -2289,7 +2291,7 @@ namespace SUP
                                                                     {
 
 
-                                                                        if ((vmatch.Success && !imgExtensions.Contains(extension)) || extension == ".mp4" || extension == ".avi" || extension == ".wav" || extension == ".mp3")
+                                                                        if ((vmatch.Success && !imgExtensions.Contains(extension)) || extension == ".mov" || extension == ".mp4" || extension == ".avi" || extension == ".wav" || extension == ".mp3")
                                                                         {
                                                                             this.Invoke((MethodInvoker)delegate
                                                                             {
@@ -2511,7 +2513,7 @@ namespace SUP
                                                                 }
 
                                                                 string extension = Path.GetExtension(imgurn).ToLower();
-                                                                List<string> imgExtensions = new List<string> { ".bmp", ".gif", ".ico", ".jpeg", ".jpg", ".png", ".tif", ".tiff", ".mp4", ".avi", ".wav", ".mp3" };
+                                                                List<string> imgExtensions = new List<string> { ".bmp", ".gif", ".ico", ".jpeg", ".jpg", ".png", ".tif", ".tiff", ".mp4", ".mov", ".avi", ".wav", ".mp3" };
                                                                 string vpattern = @"(?:youtu\.be/|youtube(?:-nocookie)?\.com/(?:[^/\n\s]*[/\n\s]*(?:v/|e(?:mbed)?/|.*[?&]v=))?)?([a-zA-Z0-9_-]{11})";
                                                                 Match vmatch = Regex.Match(content, vpattern);
                                                                 if (!imgExtensions.Contains(extension) && vmatch.Value.Length < 12)
@@ -2650,7 +2652,7 @@ namespace SUP
 
                                                                     if (!int.TryParse(content, NumberStyles.Any, CultureInfo.GetCultureInfo("en-US"), out int id))
                                                                     {
-                                                                        if (vmatch.Success || extension == ".mp4" || extension == ".avi" || extension == ".wav" || extension == ".mp3")
+                                                                        if (vmatch.Success || extension == ".mov" || extension == ".mp4" || extension == ".avi" || extension == ".wav" || extension == ".mp3")
                                                                         {
                                                                             this.Invoke((MethodInvoker)delegate
                                                                             {
@@ -2858,7 +2860,7 @@ namespace SUP
                                                                 }
 
                                                                 string extension = Path.GetExtension(imgurn).ToLower();
-                                                                List<string> imgExtensions = new List<string> { ".bmp", ".gif", ".ico", ".jpeg", ".jpg", ".png", ".tif", ".tiff", ".mp4", ".avi", ".wav", ".mp3" };
+                                                                List<string> imgExtensions = new List<string> { ".bmp", ".gif", ".ico", ".jpeg", ".jpg", ".png", ".tif", ".tiff", ".mp4", ".mov", ".avi", ".wav", ".mp3" };
                                                                 string vpattern = @"(?:youtu\.be/|youtube(?:-nocookie)?\.com/(?:[^/\n\s]*[/\n\s]*(?:v/|e(?:mbed)?/|.*[?&]v=))?)?([a-zA-Z0-9_-]{11})";
                                                                 Match vmatch = Regex.Match(content, vpattern);
                                                                 if (!imgExtensions.Contains(extension) && vmatch.Value.Length < 12)
@@ -2997,7 +2999,7 @@ namespace SUP
 
                                                                     if (!int.TryParse(content, NumberStyles.Any, CultureInfo.GetCultureInfo("en-US"), out int id))
                                                                     {
-                                                                        if (vmatch.Success || extension == ".mp4" || extension == ".avi" || extension == ".wav" || extension == ".mp3")
+                                                                        if (vmatch.Success || extension == ".mov" || extension == ".mp4" || extension == ".avi" || extension == ".wav" || extension == ".mp3")
                                                                         {
                                                                             this.Invoke((MethodInvoker)delegate
                                                                             {
@@ -3210,7 +3212,7 @@ namespace SUP
                                                                 }
 
                                                                 string extension = Path.GetExtension(imgurn).ToLower();
-                                                                List<string> imgExtensions = new List<string> { ".bmp", ".gif", ".ico", ".jpeg", ".jpg", ".png", ".tif", ".tiff", ".mp4", ".avi", ".wav", ".mp3" };
+                                                                List<string> imgExtensions = new List<string> { ".bmp", ".gif", ".ico", ".jpeg", ".jpg", ".png", ".tif", ".tiff", ".mp4", ".mov", ".avi", ".wav", ".mp3" };
                                                                 string vpattern = @"(?:youtu\.be/|youtube(?:-nocookie)?\.com/(?:[^/\n\s]*[/\n\s]*(?:v/|e(?:mbed)?/|.*[?&]v=))?)?([a-zA-Z0-9_-]{11})";
                                                                 Match vmatch = Regex.Match(content, vpattern);
                                                                 if (!imgExtensions.Contains(extension) && vmatch.Value.Length < 12)
@@ -3349,7 +3351,7 @@ namespace SUP
 
                                                                     if (!int.TryParse(content, NumberStyles.Any, CultureInfo.GetCultureInfo("en-US"), out int id))
                                                                     {
-                                                                        if (vmatch.Success || extension == ".mp4" || extension == ".avi" || extension == ".wav" || extension == ".mp3")
+                                                                        if (vmatch.Success || extension == ".mov" || extension == ".mp4" || extension == ".avi" || extension == ".wav" || extension == ".mp3")
                                                                         {
                                                                             this.Invoke((MethodInvoker)delegate
                                                                             {
@@ -4078,7 +4080,7 @@ namespace SUP
                         }
 
                         string pattern = "<<.*?>>";
-                        List<string> imgExtensions = new List<string> { ".bmp", ".gif", ".ico", ".jpeg", ".jpg", ".png", ".tif", ".tiff", ".mp4", ".avi", ".wav", ".mp3" };
+                        List<string> imgExtensions = new List<string> { ".bmp", ".gif", ".ico", ".jpeg", ".jpg", ".png", ".tif", ".tiff", ".mp4",".mov" , ".avi", ".wav", ".mp3" };
 
                         MatchCollection matches = Regex.Matches(unfilteredmessage, pattern);
                         foreach (Match match in matches)
@@ -4192,7 +4194,7 @@ namespace SUP
                                     if (!int.TryParse(content, NumberStyles.Any, CultureInfo.GetCultureInfo("en-US"), out int id))
                                     {
 
-                                        if (extension == ".mp4" || extension == ".avi" || content.Contains("youtube.com") || content.Contains("youtu.be") || extension == ".wav" || extension == ".mp3")
+                                        if (extension == ".mp4" || extension == ".mov" || extension == ".avi" || content.Contains("youtube.com") || content.Contains("youtu.be") || extension == ".wav" || extension == ".mp3")
                                         {
 
                                             try { AddMedia(content); } catch { }
@@ -4235,13 +4237,11 @@ namespace SUP
 
                         splitContainer2.Panel2.SizeChanged += (sender, e) =>
                         {
-                            //supFlow.Refresh();
-                            // Ensure the new width is at least the minimum width
+
                             padding.ColumnStyles[0].Width = splitContainer2.Panel2.Width - 100;
                             padding.Width = splitContainer2.Panel2.Width - 100;
 
-                            // Refresh or Invalidate the FlowLayoutPanel (supFlow)
-                            // or supFlow.Refresh();
+
                         };
 
 
@@ -4714,7 +4714,7 @@ namespace SUP
                                     result = Root.DecryptRootBytes(mainnetLogin, mainnetPassword, mainnetURL, profileURN.Links[0].LinkData.ToString(), result2);
 
                                     Root decryptedroot = Root.GetRootByTransactionId(transid, mainnetLogin, mainnetPassword, mainnetURL, mainnetVersionByte, result, profileURN.Links[0].LinkData.ToString());
-                                    List<string> imgExtensions = new List<string> { ".bmp", ".gif", ".ico", ".jpeg", ".jpg", ".png", ".tif", ".tiff", ".mp4", ".avi", ".wav", ".mp3" };
+                                    List<string> imgExtensions = new List<string> { ".bmp", ".gif", ".ico", ".jpeg", ".jpg", ".png", ".tif", ".tiff", ".mp4", ".mov", ".avi", ".wav", ".mp3" };
 
                                     if (decryptedroot.File != null)
                                     {
@@ -4750,7 +4750,7 @@ namespace SUP
                                             }
                                             else
                                             {
-                                                if (extension == ".mp4" || extension == ".avi" || extension == ".wav" || extension == ".mp3")
+                                                if (extension == ".mp4" || extension == ".mov" || extension == ".avi" || extension == ".wav" || extension == ".mp3")
                                                 {
 
                                                     this.Invoke((MethodInvoker)delegate
@@ -4779,7 +4779,7 @@ namespace SUP
                                 {
 
 
-                                    List<string> imgExtensions = new List<string> { ".bmp", ".gif", ".ico", ".jpeg", ".jpg", ".png", ".tif", ".tiff", ".mp4", ".avi", ".wav", ".mp3" };
+                                    List<string> imgExtensions = new List<string> { ".bmp", ".gif", ".ico", ".jpeg", ".jpg", ".png", ".tif", ".tiff", ".mp4", ".mov", ".avi", ".wav", ".mp3" };
 
                                     string extension = Path.GetExtension(content).ToLower();
                                     if (!imgExtensions.Contains(extension) && !content.Contains("youtube.com") && !content.Contains("youtu.be"))
@@ -4866,7 +4866,7 @@ namespace SUP
                                     }
                                     else
                                     {
-                                        if (extension == ".mp4" || extension == ".avi" || content.Contains("youtube.com") || content.Contains("youtu.be") || extension == ".wav" || extension == ".mp3")
+                                        if (extension == ".mp4" || extension == ".mov" || extension == ".avi" || content.Contains("youtube.com") || content.Contains("youtu.be") || extension == ".wav" || extension == ".mp3")
                                         {
 
                                             this.Invoke((MethodInvoker)delegate
@@ -5145,7 +5145,7 @@ namespace SUP
                             if (!int.TryParse(content, NumberStyles.Any, CultureInfo.GetCultureInfo("en-US"), out int id) && !content.Trim().StartsWith("#"))
                             {
 
-                                List<string> imgExtensions = new List<string> { ".bmp", ".gif", ".ico", ".jpeg", ".jpg", ".png", ".tif", ".tiff", ".mp4", ".avi", ".wav", ".mp3" };
+                                List<string> imgExtensions = new List<string> { ".bmp", ".gif", ".ico", ".jpeg", ".jpg", ".png", ".tif", ".tiff", ".mp4", ".mov", ".avi", ".wav", ".mp3" };
 
                                 string extension = Path.GetExtension(content).ToLower();
                                 if (!imgExtensions.Contains(extension) && !content.Contains("youtube.com") && !content.Contains("youtu.be"))
@@ -5233,7 +5233,7 @@ namespace SUP
                                 else
                                 {
 
-                                    if (extension == ".mp4" || extension == ".avi" || content.Contains("youtube.com") || content.Contains("youtu.be") || extension == ".wav" || extension == ".mp3")
+                                    if (extension == ".mp4" || extension == ".mov" || extension == ".avi" || content.Contains("youtube.com") || content.Contains("youtu.be") || extension == ".wav" || extension == ".mp3")
                                     {
 
                                         this.Invoke((MethodInvoker)delegate
@@ -5551,8 +5551,56 @@ namespace SUP
                     }
                     else
                     {
-                        pictureBox.ImageLocation = imagelocation;
-                        pictureBox.MouseClick += (sender, e) => { Attachment_Clicked(imagelocation); };
+
+
+
+                        string thumbnailPath = imagelocation + "-thumbnail.jpg";
+
+                        // Check if a thumbnail exists
+                        if (System.IO.File.Exists(thumbnailPath))
+                        {
+                            pictureBox.ImageLocation = thumbnailPath;
+                            pictureBox.MouseClick += (sender, e) => { Attachment_Clicked(imagelocation); };
+                        }
+                        else
+                        {
+                            // Load the original image from file
+                            System.Drawing.Image originalImage = System.Drawing.Image.FromFile(imagelocation);
+
+                            // Check if the original image is a GIF
+                            if (Path.GetExtension(imagelocation).Equals(".gif", StringComparison.OrdinalIgnoreCase))
+                            {
+                                // For GIF images, directly use the original image without creating a thumbnail
+                                pictureBox.ImageLocation = imagelocation;
+                                pictureBox.MouseClick += (sender, e) => { Attachment_Clicked(imagelocation); };
+                            }
+                            else
+                            {
+                                // Resize the image if needed
+                                int maxWidth = pictureBox.Width;
+                                int maxHeight = pictureBox.Height;
+
+                                int newWidth, newHeight;
+                                if (originalImage.Width > originalImage.Height)
+                                {
+                                    newWidth = maxWidth;
+                                    newHeight = (int)((double)originalImage.Height / originalImage.Width * newWidth);
+                                }
+                                else
+                                {
+                                    newHeight = maxHeight;
+                                    newWidth = (int)((double)originalImage.Width / originalImage.Height * newHeight);
+                                }
+
+                                System.Drawing.Image resizedImage = new Bitmap(originalImage, newWidth, newHeight);
+                                originalImage.Dispose();
+                                pictureBox.Image = resizedImage;
+
+                                // Save the resized image as a thumbnail
+                                resizedImage.Save(thumbnailPath, ImageFormat.Jpeg);
+                            }
+                        }
+
 
                     }
                 }
@@ -5636,7 +5684,7 @@ namespace SUP
                 msg.Controls.Add(pictureBox, 0, 0);
 
                 supFlow.Controls.Add(msg);
-                supFlow.Controls.SetChildIndex(msg, 2);
+                supFlow.Controls.SetChildIndex(msg, 0);
 
 
 
@@ -6087,7 +6135,22 @@ namespace SUP
 
                             if (File.Exists(videolocation))
                             {
-
+                                if (videolocation.ToLower().EndsWith(".mov"))
+                                {
+                                    string inputFilePath = videolocation;
+                                    string outputFilePath = System.IO.Path.ChangeExtension(inputFilePath, ".mp4");
+                                    if (!File.Exists(outputFilePath))
+                                    {
+                                        try
+                                        {
+                                            var ffMpeg = new FFMpegConverter();
+                                            ffMpeg.ConvertMedia(inputFilePath, outputFilePath, Format.mp4);
+                                            videolocation = outputFilePath;
+                                        }
+                                        catch { }
+                                    }
+                                    else { videolocation = outputFilePath; }
+                                }
 
                                 this.Invoke((Action)(() =>
                                 {
@@ -6131,8 +6194,14 @@ namespace SUP
                         {
                             audioPlayer.AddToPlaylist(videolocation);
                         }
-                        string encodedPath = "file:///" + Uri.EscapeUriString(videolocation.Replace('\\', '/'));
 
+                        if (videolocation.ToLower().EndsWith(".mov"))
+                        {
+                            string inputFilePath = videolocation;
+                            string outputFilePath = System.IO.Path.ChangeExtension(inputFilePath, ".mp4");
+                            videolocation = outputFilePath; 
+                        }
+                        string encodedPath = "file:///" + Uri.EscapeUriString(videolocation.Replace('\\', '/'));
                         string viewerPath = Path.GetDirectoryName(videolocation) + @"\urnviewer.html";
                         string htmlstring = $"<html><body><embed src=\"{encodedPath}\" width=100% height=100% ></body></html>";
 

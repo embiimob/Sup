@@ -21,7 +21,6 @@ using Gma.QrCodeNet.Encoding;
 using Gma.QrCodeNet.Encoding.Windows.Render;
 using System.Drawing.Imaging;
 using System.Drawing.Printing;
-using AngleSharp.Html.Dom;
 
 namespace SUP
 {
@@ -650,6 +649,8 @@ namespace SUP
                             txtAttach.Text = "";
                             flowAttachments.Controls.Clear();
                             supMessage.Text = "";
+                            txtINQAddress.Text = "";
+                            txtINQJson.Text = "";
                         }
                         catch (Exception ex) { lblObjectStatus.Text = ex.Message; }
 
@@ -1594,6 +1595,14 @@ namespace SUP
                 // Handle paste action
                 HandlePaste();
             }
+        }
+
+        private void btnCameraCapture_Click(object sender, EventArgs e)
+        {
+            
+            pictureBox1.Visible = true;
+
+
         }
     }
 }

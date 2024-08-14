@@ -1,9 +1,9 @@
 ﻿using AngleSharp.Text;
 using Newtonsoft.Json;
+using NReco.VideoConverter;
 using SUP.P2FK;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
 using System.Diagnostics;
 using System.Drawing;
@@ -55,13 +55,6 @@ namespace SUP
 
             if (supFlow.VerticalScroll.Value != 0 && supFlow.VerticalScroll.Value + supFlow.ClientSize.Height >= supFlow.VerticalScroll.Maximum)
             {
-                // if (panel1.Visible)
-                //{
-                //    panel1.Visible = false;
-                //    supFlow.Location = new System.Drawing.Point(supFlow.Location.X, supFlow.Location.Y - 150); // Change the X and Y coordinates
-                //    supFlow.Size = new System.Drawing.Size(supFlow.Width, supFlow.Height + 150); // Change the width and height
-                //}
-
 
                 int startNum = numMessagesDisplayed;
                 RefreshSupMessages();
@@ -79,17 +72,7 @@ namespace SUP
             }
             else if (supFlow.VerticalScroll.Value == 0)
             {
-                // if (!panel1.Visible)
-                // {
-                //     panel1.Visible = true;
-                //     supFlow.Location = new System.Drawing.Point(supFlow.Location.X, supFlow.Location.Y + 150); // Change the X and Y coordinates
-                //     supFlow.Size = new System.Drawing.Size(supFlow.Width, supFlow.Height - 150); // Change the width and height
-                //}
-
-
-
-
-
+              
 
                 if (numMessagesDisplayed > 10)
                 {
@@ -333,6 +316,34 @@ namespace SUP
 
             try { messages = OBJState.GetPublicMessagesByAddress(searchAddress.ToString(), mainnetLogin, mainnetPassword, mainnetURL, mainnetVersionByte, numMessagesDisplayed, 10); }
             catch { }
+
+            if (messages.Count == 0 && numMessagesDisplayed == 0)
+            {
+                Label noMentionsLabel = new Label();
+                noMentionsLabel.Text = "No mentions found";
+                noMentionsLabel.AutoSize = true;
+                noMentionsLabel.TextAlign = ContentAlignment.MiddleCenter;
+
+                // Set padding to space it nicely from the top
+                noMentionsLabel.Padding = new Padding(0, 20, 0, 0);
+
+                // Set a bigger font
+                noMentionsLabel.Font = new Font(noMentionsLabel.Font.FontFamily, 16);
+
+                // Center the label within the FlowLayoutPanel
+                noMentionsLabel.Anchor = AnchorStyles.None;
+                noMentionsLabel.Dock = DockStyle.None;
+
+                // Add the label to the FlowLayoutPanel
+                supFlow.Controls.Add(noMentionsLabel);
+
+                // Center the label manually
+                noMentionsLabel.Location = new Point(
+                    (supFlow.ClientSize.Width - noMentionsLabel.Width) / 2,
+                    noMentionsLabel.Padding.Top
+                );
+                noMentionsLabel.Anchor = AnchorStyles.Top;
+            }
 
 
             supFlow.SuspendLayout();
@@ -845,7 +856,7 @@ namespace SUP
                         }
 
                         string pattern = "<<.*?>>";
-                        List<string> imgExtensions = new List<string> { ".bmp", ".gif", ".ico", ".jpeg", ".jpg", ".png", ".tif", ".tiff", ".mp4", ".avi", ".wav", ".mp3" };
+                        List<string> imgExtensions = new List<string> { ".bmp", ".gif", ".ico", ".jpeg", ".jpg", ".png", ".tif", ".tiff", ".mp4", ".mov", ".avi", ".wav", ".mp3" };
 
                         MatchCollection matches = Regex.Matches(unfilteredmessage, pattern);
                         foreach (Match match in matches)
@@ -910,7 +921,6 @@ namespace SUP
                                     pictureBox.ImageLocation = imageUrl;
                                     pictureBox.MouseClick += (sender, e) => { Attachment_Clicked(content); };
                                     panel.Controls.Add(pictureBox);
-                                    //pictures.Add(pictureBox);
 
                                     this.supFlow.Controls.Add(panel);
 
@@ -958,7 +968,7 @@ namespace SUP
                                     if (!int.TryParse(content, NumberStyles.Any, CultureInfo.GetCultureInfo("en-US"), out int id))
                                     {
 
-                                        if (extension == ".mp4" || extension == ".avi" || content.Contains("youtube.com") || content.Contains("youtu.be") || extension == ".wav" || extension == ".mp3")
+                                        if (extension == ".mp4" || extension == ".mov" || extension == ".avi" || content.Contains("youtube.com") || content.Contains("youtu.be") || extension == ".wav" || extension == ".mp3")
                                         {
 
                                             try { AddMedia(content); } catch { }
@@ -1000,13 +1010,10 @@ namespace SUP
                         padding.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, supFlow.Width - 50));
                        supFlow.SizeChanged += (sender, e) =>
                         {
-                            //supFlow.Refresh();
-                            // Ensure the new width is at least the minimum width
+
                             padding.ColumnStyles[0].Width = supFlow.Width - 100;
                             padding.Width = supFlow.Width - 100;
 
-                            // Refresh or Invalidate the FlowLayoutPanel (supFlow)
-                            // or supFlow.Refresh();
                         };
 
 
@@ -1500,7 +1507,22 @@ namespace SUP
 
                             if (File.Exists(videolocation))
                             {
-
+                                if (videolocation.ToLower().EndsWith(".mov"))
+                                {
+                                    string inputFilePath = videolocation;
+                                    string outputFilePath = System.IO.Path.ChangeExtension(inputFilePath, ".mp4");
+                                    if (!File.Exists(outputFilePath))
+                                    {
+                                        try
+                                        {
+                                            var ffMpeg = new FFMpegConverter();
+                                            ffMpeg.ConvertMedia(inputFilePath, outputFilePath, Format.mp4);
+                                            videolocation = outputFilePath;
+                                        }
+                                        catch { }
+                                    }
+                                    else { videolocation = outputFilePath; }
+                                }
 
                                 this.Invoke((Action)(() =>
                                 {
@@ -1544,8 +1566,14 @@ namespace SUP
                         {
                             audioPlayer.AddToPlaylist(videolocation);
                         }
-                        string encodedPath = "file:///" + Uri.EscapeUriString(videolocation.Replace('\\', '/'));
+                        if (videolocation.ToLower().EndsWith(".mov"))
+                        {
+                            string inputFilePath = videolocation;
+                            string outputFilePath = System.IO.Path.ChangeExtension(inputFilePath, ".mp4");
+                            videolocation = outputFilePath;
+                        }
 
+                        string encodedPath = "file:///" + Uri.EscapeUriString(videolocation.Replace('\\', '/'));
                         string viewerPath = Path.GetDirectoryName(videolocation) + @"\urnviewer.html";
                         string htmlstring = $"<html><body><embed src=\"{encodedPath}\" width=100% height=100% ></body></html>";
 

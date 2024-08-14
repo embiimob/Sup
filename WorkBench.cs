@@ -924,7 +924,6 @@ namespace SUP
 
             lblTotalTime.Text = "time: " + Math.Truncate(elapsedMilliseconds);
             lblTotal.Text = "total: " + messageCount.ToString();
-            //var json = JsonConvert.SerializeObject(deserializedObject);
             JObject[] ObjectArray = new JObject[messages.Count];
             int objectcount = 0;
             foreach (object obj in messages)
@@ -1041,7 +1040,6 @@ namespace SUP
             double elapsedMilliseconds = elapsedTime.TotalMilliseconds;
 
             lblTotalTime.Text = "time: " + Math.Truncate(elapsedMilliseconds);
-            //lblTotal.Text = "total: " + Tester.ProcessHeight.ToString();
 
             DisplayRootJSON(new JObject[] { JObject.FromObject(Tester) });
         }

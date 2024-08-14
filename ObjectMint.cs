@@ -22,6 +22,7 @@ using System.Security.Cryptography;
 using System.Text;
 using SUP.RPCClient;
 using System.Globalization;
+using NReco.VideoConverter;
 
 
 namespace SUP
@@ -1174,7 +1175,9 @@ namespace SUP
                 if (txtURN.Text != "")
                 {
                     OBJState OBJ = OBJState.GetObjectByURN(txtURN.Text, mainnetLogin, mainnetPassword, mainnetURL, mainnetVersionByte);
-                    if (OBJ.Creators != null) { MessageBox.Show("Sorry, the object urn " + txtURN.Text + " has already been claimed."); txtURN.Text = ""; return; }
+                    if (OBJ.Creators != null) { MessageBox.Show("WARNING: The object URN " + txtURN.Text + " has already been claimed.");
+                        btnObjectURN.BackColor = Color.Blue;
+                        btnObjectURN.ForeColor = Color.Yellow; }
 
                     urn = txtURN.Text;
                     if (!txtURN.Text.ToLower().StartsWith("http"))
@@ -1222,6 +1225,22 @@ namespace SUP
                         OBJState OBJ = OBJState.GetObjectByURN(txtURN.Text, mainnetLogin, mainnetPassword, mainnetURL, mainnetVersionByte);
                         if (OBJ.Creators != null) { MessageBox.Show("Sorry, the object urn " + txtURN.Text + " has already been claimed."); lblURNBlockDate.Text = ""; txtURN.Text = ""; return; }
                         urn = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + @"\ipfs\" + hash + @"\" + fileName;
+                        
+                        if (urn.ToLower().EndsWith(".mov"))
+                        {
+                            string inputFilePath = urn;
+                            string outputFilePath = System.IO.Path.ChangeExtension(inputFilePath, ".mp4");
+                            if (!File.Exists(outputFilePath))
+                            {
+                                try
+                                {
+                                    var ffMpeg = new FFMpegConverter();
+                                    ffMpeg.ConvertMedia(inputFilePath, outputFilePath, Format.mp4);                                   
+                                }
+                                catch { }
+                            }
+                           
+                        }
 
                     }
 
@@ -1663,10 +1682,20 @@ namespace SUP
 
                         break;
                     case ".mp4":
+                    case ".mov":
                     case ".avi":
                     case ".mp3":
                     case ".wav":
                     case ".pdf":
+
+
+                        if (extension.ToLower() == ".mov")
+                        {
+                            string inputFilePath = urn;
+                            string outputFilePath = System.IO.Path.ChangeExtension(inputFilePath, ".mp4");
+                            urn = outputFilePath;
+                        }
+
                         webviewer.Visible = true;
                         string viewerPath2 = Path.GetDirectoryName(urn) + @"\urnviewer.html";
                         string htmlstring2 = "<html><body><embed src=\"" + urn + "\" width=100% height=100%></body></html>";
@@ -2985,7 +3014,7 @@ namespace SUP
         private void txtURN_Leave(object sender, EventArgs e)
         {
             OBJState OBJ = OBJState.GetObjectByURN(txtURN.Text, mainnetLogin, mainnetPassword, mainnetURL, mainnetVersionByte);
-            if (OBJ.Creators != null) { MessageBox.Show("Sorry, the object urn " + txtURN.Text + " has already been claimed."); lblURNBlockDate.Text = ""; txtURN.Text = ""; } else
+            if (OBJ.Creators != null) { MessageBox.Show("WARNING: The object URN " + txtURN.Text + " has already been claimed."); lblURNBlockDate.Text = "";} else
             {
                 txtURN.SelectionStart = 0;
                 txtURN.SelectionLength = 0;

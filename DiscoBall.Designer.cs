@@ -258,7 +258,7 @@
             this.btnInquiry.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.btnInquiry.Font = new System.Drawing.Font("Segoe UI Emoji", 20.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btnInquiry.ForeColor = System.Drawing.Color.Black;
-            this.btnInquiry.Location = new System.Drawing.Point(283, 606);
+            this.btnInquiry.Location = new System.Drawing.Point(286, 606);
             this.btnInquiry.Name = "btnInquiry";
             this.btnInquiry.Padding = new System.Windows.Forms.Padding(3, 0, 0, 0);
             this.btnInquiry.Size = new System.Drawing.Size(50, 46);

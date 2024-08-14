@@ -1187,7 +1187,6 @@ namespace SUP
             };
 
             int objectadjustment = 0;
-            // Add the width of the first column to fixed value and second to fill remaining space
             row.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 80));
             row.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 85));
             row.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 100));
@@ -1450,6 +1449,25 @@ namespace SUP
 
             };
             flowLayoutPanel1.Controls.Add(timeStamp);
+
+            TableLayoutPanel padding = new TableLayoutPanel
+            {
+                RowCount = 1,
+                ColumnCount = 1,
+                Dock = DockStyle.Top,
+                BackColor = Color.Black,
+                ForeColor = Color.White,
+                AutoSize = true,
+                CellBorderStyle = TableLayoutPanelCellBorderStyle.Single,
+                Margin = new System.Windows.Forms.Padding(0, 1, 0, 1),
+                Padding = new System.Windows.Forms.Padding(0)
+
+            };
+
+            padding.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, flowLayoutPanel1.Width - 20));
+          
+                flowLayoutPanel1.Controls.Add(padding);
+        
 
 
         }

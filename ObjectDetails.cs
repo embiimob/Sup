@@ -3,6 +3,7 @@ using Ganss.Xss;
 using NAudio.Wave;
 using NBitcoin;
 using Newtonsoft.Json;
+using NReco.VideoConverter;
 using SUP.P2FK;
 using System;
 using System.Collections.Generic;
@@ -1074,7 +1075,7 @@ namespace SUP
                         }
 
                         string pattern = "<<.*?>>";
-                        List<string> imgExtensions = new List<string> { ".bmp", ".gif", ".ico", ".jpeg", ".jpg", ".png", ".tif", ".tiff", ".mp4", ".avi", ".wav", ".mp3" };
+                        List<string> imgExtensions = new List<string> { ".bmp", ".gif", ".ico", ".jpeg", ".jpg", ".png", ".tif", ".tiff", ".mp4", ".mov", ".avi", ".wav", ".mp3" };
 
                         MatchCollection matches = Regex.Matches(unfilteredmessage, pattern);
                         foreach (Match match in matches)
@@ -1188,7 +1189,7 @@ namespace SUP
                                     if (!int.TryParse(content, NumberStyles.Any, CultureInfo.GetCultureInfo("en-US"), out int id))
                                     {
 
-                                        if (extension == ".mp4" || extension == ".avi" || content.Contains("youtube.com") || content.Contains("youtu.be") || extension == ".wav" || extension == ".mp3")
+                                        if (extension == ".mp4" || extension == ".mov" || extension == ".avi" || content.Contains("youtube.com") || content.Contains("youtu.be") || extension == ".wav" || extension == ".mp3")
                                         {
                                             this.Invoke((MethodInvoker)delegate
                                             {
@@ -1678,6 +1679,25 @@ namespace SUP
 
                             if (File.Exists(videolocation))
                             {
+                                if (videolocation.ToLower().EndsWith(".mov"))
+                                {
+                                    string inputFilePath = videolocation;
+                                    string outputFilePath = System.IO.Path.ChangeExtension(inputFilePath, ".mp4");
+                                    if (!File.Exists(outputFilePath))
+                                    {
+                                        try
+                                        {
+                                            var ffMpeg = new FFMpegConverter();
+                                            ffMpeg.ConvertMedia(inputFilePath, outputFilePath, Format.mp4);
+                                            videolocation = outputFilePath;
+                                        }
+                                        catch { }
+                                    }
+                                    else { videolocation = outputFilePath; }
+                                }
+
+
+
                                 string encodedPath = "file:///" + Uri.EscapeUriString(videolocation.Replace('\\', '/'));
                                 string viewerPath = Path.GetDirectoryName(videolocation) + @"\urnviewer.html";
                                 string htmlstring = "<html><body><embed src=\"" + encodedPath + "\" width=100% height=100% ></body></html>";
@@ -1740,6 +1760,14 @@ namespace SUP
                     }
                     else
                     {
+
+                        if (videolocation.ToLower().EndsWith(".mov"))
+                        {
+                            string inputFilePath = videolocation;
+                            string outputFilePath = System.IO.Path.ChangeExtension(inputFilePath, ".mp4");
+                            videolocation = outputFilePath;
+                        }
+
                         string encodedPath = "file:///" + Uri.EscapeUriString(videolocation.Replace('\\', '/'));
                         string viewerPath = Path.GetDirectoryName(videolocation) + @"\urnviewer.html";
                         string htmlstring = "<html><body><embed src=\"" + encodedPath + "\" width=100% height=100% ></body></html>";
@@ -2675,6 +2703,23 @@ namespace SUP
 
                                     if (File.Exists(urn))
                                     {
+                                        if (urn.ToLower().EndsWith(".mov"))
+                                        {
+                                            string inputFilePath = urn;
+                                            string outputFilePath = System.IO.Path.ChangeExtension(inputFilePath, ".mp4");
+                                            if (!File.Exists(outputFilePath))
+                                            {
+                                                try
+                                                {
+                                                    var ffMpeg = new FFMpegConverter();
+                                                    ffMpeg.ConvertMedia(inputFilePath, outputFilePath, Format.mp4);
+                                                   
+                                                }
+                                                catch { }
+                                            }
+                                           
+                                        }
+
                                         this.Invoke(new Action(() =>
                                         {
                                             btnReloadObject.PerformClick();
@@ -3329,21 +3374,29 @@ namespace SUP
                         if (btnOfficial.Visible == false) { btnLaunchURN.Visible = true; }
                         break;
                     case ".mp4":
+                    case ".mov":
                     case ".avi":
                     case ".mp3":
                     case ".wav":
                     case ".pdf":
 
+                        string outputFilePath = urn;
+                        if (extension.ToLower() == ".mov")
+                        {
+                            string inputFilePath = urn;
+                            outputFilePath = System.IO.Path.ChangeExtension(inputFilePath, ".mp4");
+                           
+                        }
 
                         flowPanel.Visible = false;
-                        string viewerPath = Path.GetDirectoryName(urn) + @"\urnviewer.html";
+                        string viewerPath = Path.GetDirectoryName(outputFilePath) + @"\urnviewer.html";
                         flowPanel.Controls.Clear();
-                        string encodedPath = "file:///" + Uri.EscapeUriString(urn.Replace('\\', '/'));
+                        string encodedPath = "file:///" + Uri.EscapeUriString(outputFilePath.Replace('\\', '/'));
                         string htmlstring = "<html><body><embed src=\"" + encodedPath + "\" width=100% height=100%></body></html>";
 
                         try
                         {
-                            System.IO.File.WriteAllText(Path.GetDirectoryName(urn) + @"\urnviewer.html", htmlstring);
+                            System.IO.File.WriteAllText(Path.GetDirectoryName(outputFilePath) + @"\urnviewer.html", htmlstring);
                             if (btnOfficial.Visible == false) { btnLaunchURN.Visible = true; }
                             await webviewer.EnsureCoreWebView2Async();
                             webviewer.CoreWebView2.Navigate(viewerPath);
@@ -3529,67 +3582,68 @@ namespace SUP
                                             }
                                         }
                                         catch { }
-
-                                        var matches = regexTransactionId.Matches(potentialyUnsafeHtml);
-                                        foreach (Match transactionID in matches)
-                                        {
-
-                                            switch (objstate.URN.Substring(0, 4))
+                                       
+                                            var matches = regexTransactionId.Matches(potentialyUnsafeHtml);
+                                       
+                                            foreach (Match transactionID in matches)
                                             {
-                                                case "MZC:":
-                                                    if (!System.IO.Directory.Exists(@"root/" + transactionID.Value))
-                                                    {
 
-                                                        Root.GetRootByTransactionId(transactionID.Value, "good-user", "better-password", @"http://127.0.0.1:12832", "50");
+                                                switch (objstate.URN.Substring(0, 4))
+                                                {
+                                                    case "MZC:":
+                                                        if (!System.IO.Directory.Exists(@"root/" + transactionID.Value))
+                                                        {
 
-                                                    }
-                                                    break;
-                                                case "BTC:":
-                                                    if (!System.IO.Directory.Exists(@"root/" + transactionID.Value))
-                                                    {
+                                                            Root.GetRootByTransactionId(transactionID.Value, "good-user", "better-password", @"http://127.0.0.1:12832", "50");
 
-                                                        Root.GetRootByTransactionId(transactionID.Value, "good-user", "better-password", @"http://127.0.0.1:8332", "0");
+                                                        }
+                                                        break;
+                                                    case "BTC:":
+                                                        if (!System.IO.Directory.Exists(@"root/" + transactionID.Value))
+                                                        {
 
-                                                    }
-                                                    break;
-                                                case "LTC:":
-                                                    if (!System.IO.Directory.Exists(@"root/" + transactionID.Value))
-                                                    {
+                                                            Root.GetRootByTransactionId(transactionID.Value, "good-user", "better-password", @"http://127.0.0.1:8332", "0");
 
-                                                        Root.GetRootByTransactionId(transactionID.Value, "good-user", "better-password", @"http://127.0.0.1:9332", "48");
+                                                        }
+                                                        break;
+                                                    case "LTC:":
+                                                        if (!System.IO.Directory.Exists(@"root/" + transactionID.Value))
+                                                        {
 
-                                                    }
-                                                    break;
-                                                case "DOG:":
-                                                    if (!System.IO.Directory.Exists(@"root/" + transactionID.Value))
-                                                    {
+                                                            Root.GetRootByTransactionId(transactionID.Value, "good-user", "better-password", @"http://127.0.0.1:9332", "48");
 
-                                                        Root.GetRootByTransactionId(transactionID.Value, "good-user", "better-password", @"http://127.0.0.1:22555", "30");
+                                                        }
+                                                        break;
+                                                    case "DOG:":
+                                                        if (!System.IO.Directory.Exists(@"root/" + transactionID.Value))
+                                                        {
 
-                                                    }
-                                                    break;
-                                                default:
-                                                    if (!System.IO.Directory.Exists(@"root/" + transactionID.Value))
-                                                    {
+                                                            Root.GetRootByTransactionId(transactionID.Value, "good-user", "better-password", @"http://127.0.0.1:22555", "30");
 
-                                                        Root.GetRootByTransactionId(transactionID.Value, mainnetLogin, mainnetPassword, mainnetURL, mainnetVersionByte);
+                                                        }
+                                                        break;
+                                                    default:
+                                                        if (!System.IO.Directory.Exists(@"root/" + transactionID.Value))
+                                                        {
 
-                                                    }
-                                                    break;
+                                                            Root.GetRootByTransactionId(transactionID.Value, mainnetLogin, mainnetPassword, mainnetURL, mainnetVersionByte);
+
+                                                        }
+                                                        break;
+                                                }
+
                                             }
-
-                                        }
-
+                                        
                                         string _address = _objectaddress;
                                         string _transactionid = objstate.TransactionId;
                                         _genid = objstate.TransactionId;
-
-                                        if (objstate.Owners.TryGetValue(_activeprofile, out var tupl))
-                                        { _genid = tupl.Item2; }
                                         string _viewer = _activeprofile;
                                         string _viewername = null;
                                         if (!string.IsNullOrEmpty(_activeprofile))
                                         {
+                                            if (objstate.Owners.TryGetValue(_activeprofile, out var tupl))
+                                            { _genid = tupl.Item2; }
+
                                             PROState profile = PROState.GetProfileByAddress(_activeprofile, mainnetLogin, mainnetPassword, mainnetURL, mainnetVersionByte);
                                             if (profile.URN != null) { _viewername = HttpUtility.UrlEncode(profile.URN); }
                                         }

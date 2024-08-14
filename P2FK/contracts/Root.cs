@@ -61,9 +61,7 @@ namespace SUP.P2FK
 
                 }
 
-                //P2FK Object Cache does not exist
-                //build P2FK Object from Blockchain
-
+    
                 //used as P2FK Delimiters
                 char[] specialChars = new char[] { '\\', '/', ':', '*', '?', '"', '<', '>', '|' };
                 Regex regexSpecialChars = new Regex(@"([\\/:*?""<>|])\d+");
@@ -237,7 +235,6 @@ namespace SUP.P2FK
                     {
                         Directory.CreateDirectory(diskpath);
                     }
-                    //if (fileName.Length > 1 & fileName.Replace("#", "") != "BTC" & fileName.Replace("#", "") != "MZC" & fileName.Replace("#", "") != "LTC" & fileName.Replace("#", "") != "DOG" & fileName.Replace("#", "") != "IPFS")
                     if ((fileName.Length > 2 & fileName.Contains(".")) || (fileName.Length == 3 && !"BTC,LTC,DOG,MZC,IPFS".Contains(fileName)) || (!fileName.Contains(".") & fileName.Length == 64))
 
                     {
