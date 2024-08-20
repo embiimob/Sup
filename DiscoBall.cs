@@ -1439,7 +1439,7 @@ namespace SUP
                         nameComboBox.Items.Add(pro.URN);
                     }
                 }
-                nameComboBox.SelectedIndex = 0;
+                try { nameComboBox.SelectedIndex = 0; }catch { }
 
                 var okButton = new Button();
                 okButton.Text = "OK";
@@ -1465,30 +1465,34 @@ namespace SUP
 
                 if (dialog.ShowDialog() == DialogResult.OK)
                 {
-                    PROState selectedProState = PROState.GetProfileByURN(nameComboBox.SelectedItem.ToString(), mainnetLogin, mainnetPassword, mainnetURL, mainnetVersionByte);
-                    txtFromAddress.Text = selectedProState.Creators[0];
-                    Dictionary<string, string> friendDict = new Dictionary<string, string>();
-                    string filePath = "";
-
-                    if (mainnetVersionByte == "111")
-                    { filePath = @"root\MyFriendList.Json"; }
-                    else { filePath = @"root\MyProdFriendList.Json"; }
                     try
                     {
-                        string json = File.ReadAllText(filePath);
-                        friendDict = JsonConvert.DeserializeObject<Dictionary<string, string>>(json);
+                        PROState selectedProState = PROState.GetProfileByURN(nameComboBox.SelectedItem.ToString(), mainnetLogin, mainnetPassword, mainnetURL, mainnetVersionByte);
+                        txtFromAddress.Text = selectedProState.Creators[0];
+                        Dictionary<string, string> friendDict = new Dictionary<string, string>();
+                        string filePath = "";
+
+                        if (mainnetVersionByte == "111")
+                        { filePath = @"root\MyFriendList.Json"; }
+                        else { filePath = @"root\MyProdFriendList.Json"; }
+                        try
+                        {
+                            string json = File.ReadAllText(filePath);
+                            friendDict = JsonConvert.DeserializeObject<Dictionary<string, string>>(json);
+                        }
+                        catch { }
+
+                        try
+                        {
+                            if (friendDict.TryGetValue(selectedProState.Creators[0], out string fileLoc))
+                            {
+                                fromImage.ImageLocation = fileLoc;
+                            }
+                            else { fromImage.ImageLocation = @"includes\anon.png"; }
+                        }
+                        catch { fromImage.ImageLocation = @"includes\anon.png"; }
                     }
                     catch { }
-
-                    try
-                    {
-                        if (friendDict.TryGetValue(selectedProState.Creators[0], out string fileLoc))
-                        {
-                            fromImage.ImageLocation = fileLoc;
-                        }
-                        else { fromImage.ImageLocation = @"includes\anon.png"; }
-                    }
-                    catch { fromImage.ImageLocation = @"includes\anon.png"; }
                 }
 
             }

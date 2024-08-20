@@ -287,7 +287,7 @@ namespace SUP.P2FK
             Root[] profileTransactions;
 
             if (verbose == true) { intProcessHeight = 0; profileState = new PROState(); }
-            //return all roots found at address
+
             profileTransactions = Root.GetRootsByAddress(profileaddress, username, password, url, intProcessHeight, -1, versionByte, verbose);
 
             if (intProcessHeight > 0 && profileTransactions.Count() == 0) { return profileState; }
@@ -383,6 +383,7 @@ namespace SUP.P2FK
             }
             catch
             {
+                return profileStates;
             }
 
             var addresses = JsonConvert.DeserializeObject<List<Dictionary<string, object>>>(addressesString);
@@ -406,7 +407,7 @@ namespace SUP.P2FK
                     
                     if (string.Concat(activeprofile.Creators) == string.Concat(isObject.Creators))
                     {
-                        profileStates.Add(isObject);
+                        profileStates.Add(activeprofile);
                     }
                 }
             }

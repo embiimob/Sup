@@ -267,14 +267,6 @@ namespace SUP
                     }
                     else
                     {
-                        PROState activeprofile = PROState.GetProfileByURN(searchprofile.URN, mainnetLogin, mainnetPassword, mainnetURL, mainnetVersionByte, calculate);
-                        if (string.Concat(activeprofile.Creators) != string.Concat(searchprofile.Creators))
-                        {
-                            searchprofile = new PROState();
-
-                        }
-
-
                         profileCheck = address;
                     }
 
@@ -315,13 +307,7 @@ namespace SUP
                     }
                     else
                     {
-                        PROState activeprofile = PROState.GetProfileByURN(searchprofile.URN, mainnetLogin, mainnetPassword, mainnetURL, mainnetVersionByte, calculate);
-                        if (string.Concat(activeprofile.Creators) != string.Concat(searchprofile.Creators))
-                        {
-                            searchprofile = new PROState();
-
-                        }
-
+   
                         profileCheck = address;
                     }
 

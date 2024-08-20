@@ -354,22 +354,22 @@ namespace SUP.P2FK
                                                                     _versionByte = "50";
 
                                                                 }
-                                                                else if (objectinspector.urn.ToUpper().StartsWith("LTC:") )
+                                                                else if (objectinspector.urn.ToUpper().StartsWith("LTC:"))
                                                                 {
                                                                     _url = @"http://127.0.0.1:9332";
                                                                     _versionByte = "48";
-                                                                   
+
                                                                 }
-                                                                else if (objectinspector.urn.ToUpper().StartsWith("DOG:") )
+                                                                else if (objectinspector.urn.ToUpper().StartsWith("DOG:"))
                                                                 {
                                                                     _url = @"http://127.0.0.1:22555";
                                                                     _versionByte = "30";
-                                                                    
-                                                                }
-                                                               
 
-                                                                Root signedRoot = Root.GetRootByTransactionId(objectinspector.urn.Replace("BTC:", "").Replace("MZC:","").Replace("LTC:", "").Replace("DOG:", "").Replace("btc:", "").Replace("mzc:", "").Replace("ltc:", "").Replace("dog:", "").Substring(0, 64), username, password, _url, _versionByte);
-                                                               
+                                                                }
+
+
+                                                                Root signedRoot = Root.GetRootByTransactionId(objectinspector.urn.Replace("BTC:", "").Replace("MZC:", "").Replace("LTC:", "").Replace("DOG:", "").Replace("btc:", "").Replace("mzc:", "").Replace("ltc:", "").Replace("dog:", "").Substring(0, 64), username, password, _url, _versionByte);
+
                                                                 if (signedRoot.Signed)
                                                                 {
                                                                     if (signedRoot.SignedBy != transaction.SignedBy)
@@ -391,9 +391,9 @@ namespace SUP.P2FK
                                                                     objectState.CreatedDate = signedRoot.BlockDate;
                                                                     if (verbose)
                                                                     {
-                                                                        logstatus = "[\"" + transaction.SignedBy + "\",\"" + objectaddress + "\",\"create\",\"\",\"\",\"success\",\"" + signedRoot.BlockDate.ToString() + "\"]";
+                                                                        logstatus = "[\"" + signedRoot.SignedBy + "\",\"" + objectaddress + "\",\"create\",\"\",\"\",\"success\",\"" + signedRoot.BlockDate.ToString() + "\"]";
                                                                         objectState.ChangeLog.Add(logstatus);
-                                                 
+
                                                                     }
                                                                 }
                                                             }
@@ -1918,7 +1918,6 @@ namespace SUP.P2FK
             OBJState objectState = new OBJState();
             if (searchstring == null) { return objectState; }
             string objectaddress = Root.GetPublicAddressByKeyword(searchstring, versionByte);
-            bool fetched = false;
             if (System.IO.File.Exists(@"root\" + objectaddress + @"\BLOCK")) { return objectState; }
 
             string JSONOBJ;
@@ -1939,12 +1938,10 @@ namespace SUP.P2FK
                 {
                     JSONOBJ = System.IO.File.ReadAllText(filepath);
                     objectState = JsonConvert.DeserializeObject<OBJState>(JSONOBJ);
-                    fetched = true;
                 }
                 catch { }
             }
 
-            if (fetched && objectState.URN == null) { return objectState; }
 
             if (objectState.URN != null && objectState.ChangeDate.Year.ToString() == "1970") { objectState = new OBJState(); }
 
@@ -2394,8 +2391,6 @@ namespace SUP.P2FK
 
             List<OBJState> objectStates = new List<OBJState> { };
 
-            bool fetched = false;
-
             if (System.IO.File.Exists(@"root\" + objectaddress + @"\BLOCK"))
             {
 
@@ -2412,11 +2407,10 @@ namespace SUP.P2FK
             {
                 JSONOBJ = System.IO.File.ReadAllText(diskpath + "GetObjectsByAddress.json");
                 objectStates = JsonConvert.DeserializeObject<List<OBJState>>(JSONOBJ);
-                fetched = true;
 
             }
             catch { }
-           
+
 
             int intProcessHeight = 0;
 
@@ -2595,7 +2589,6 @@ namespace SUP.P2FK
         public static List<OBJState> GetObjectsOwnedByAddress(string objectaddress, string username, string password, string url, string versionByte = "111", int skip = 0, int qty = -1)
         {
             List<OBJState> objectStates = new List<OBJState> { };
-            bool fetched = false;
 
             if (System.IO.File.Exists(@"root\" + objectaddress + @"\BLOCK")) { return objectStates; }
 
@@ -2608,19 +2601,22 @@ namespace SUP.P2FK
             {
                 JSONOBJ = System.IO.File.ReadAllText(diskpath + "GetObjectsOwnedByAddress.json");
                 objectStates = JsonConvert.DeserializeObject<List<OBJState>>(JSONOBJ);
-                fetched = true;
             }
             catch { }
-            if (fetched && objectStates.Count != null && objectStates.Count < 1) { return objectStates; }
 
             List<OBJState> cachedObjectStates = OBJState.GetObjectsByAddress(objectaddress, username, password, url, versionByte, 0, -1);
-            if (fetched && objectStates.Last().Id == cachedObjectStates.Last().Id)
+            try
             {
+                if (objectStates.Last().Id == cachedObjectStates.Last().Id)
+                {
 
-                if (qty == -1) { return objectStates.Skip(skip).ToList(); }
-                else { return objectStates.Skip(skip).Take(qty).ToList(); }
+                    if (qty == -1) { return objectStates.Skip(skip).ToList(); }
+                    else { return objectStates.Skip(skip).Take(qty).ToList(); }
 
+                }
             }
+            catch { }
+
             objectStates = new List<OBJState>();
             //return all roots found at address
             foreach (OBJState objectstate in cachedObjectStates)
@@ -2657,7 +2653,6 @@ namespace SUP.P2FK
 
 
             List<OBJState> objectStates = new List<OBJState> { };
-            bool fetched = false;
 
             if (System.IO.File.Exists(@"root\" + objectaddress + @"\BLOCK")) { return objectStates; }
 
@@ -2670,20 +2665,22 @@ namespace SUP.P2FK
             {
                 JSONOBJ = System.IO.File.ReadAllText(diskpath + "GetObjectsCreatedByAddress.json");
                 objectStates = JsonConvert.DeserializeObject<List<OBJState>>(JSONOBJ);
-                fetched = true;
 
             }
             catch { }
-            if (fetched && objectStates.Count != null && objectStates.Count < 1) { return objectStates; }
 
             List<OBJState> cachedObjectStates = OBJState.GetObjectsByAddress(objectaddress, username, password, url, versionByte, 0, -1);
-            if (fetched && objectStates.Last().Id == cachedObjectStates.Last().Id)
+            try
             {
+                if (objectStates.Last().Id == cachedObjectStates.Last().Id)
+                {
 
-                if (qty == -1) { return objectStates.Skip(skip).ToList(); }
-                else { return objectStates.Skip(skip).Take(qty).ToList(); }
+                    if (qty == -1) { return objectStates.Skip(skip).ToList(); }
+                    else { return objectStates.Skip(skip).Take(qty).ToList(); }
 
+                }
             }
+            catch { }
 
             objectStates = new List<OBJState>();
 
@@ -2726,7 +2723,6 @@ namespace SUP.P2FK
 
 
             List<COLState> objectStates = new List<COLState> { };
-            bool fetched = false;
             bool isKeywordSearch = false;
 
             if (objectaddress.StartsWith("#")) { objectaddress = Root.GetPublicAddressByKeyword(objectaddress.Substring(1), versionByte); isKeywordSearch = true; }
@@ -2742,20 +2738,22 @@ namespace SUP.P2FK
             {
                 JSONOBJ = System.IO.File.ReadAllText(diskpath + "GetObjectsCollectionsByAddress.json");
                 objectStates = JsonConvert.DeserializeObject<List<COLState>>(JSONOBJ);
-                fetched = true;
 
             }
             catch { }
-            if (fetched && objectStates.Count != null && objectStates.Count < 1) { return objectStates; }
 
             List<OBJState> cachedObjectStates = OBJState.GetObjectsByAddress(objectaddress, username, password, url, versionByte, 0, -1);
-            if (fetched && objectStates.Last().Id == cachedObjectStates.Last().Id)
+            try
             {
+                if (objectStates.Last().Id == cachedObjectStates.Last().Id)
+                {
 
-                if (qty == -1) { return objectStates.Skip(skip).ToList(); }
-                else { return objectStates.Skip(skip).Take(qty).ToList(); }
+                    if (qty == -1) { return objectStates.Skip(skip).ToList(); }
+                    else { return objectStates.Skip(skip).Take(qty).ToList(); }
 
+                }
             }
+            catch { }
 
             objectStates = new List<COLState>();
             List<string> addedValues = new List<string>();

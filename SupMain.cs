@@ -3607,7 +3607,7 @@ namespace SUP
                     {
                         string extension = Path.GetExtension(file);
 
-                        if (Path.GetFileName(file) == "INQ" || (!string.IsNullOrEmpty(extension) && !file.Contains("ROOT.json")))
+                        if (Path.GetFileName(file) == "INQ" || (!string.IsNullOrEmpty(extension) && !file.Contains("ROOT.json") && !file.EndsWith("-thumbnail.jpg")))
                         {
                             message = message + @"<<" + tid + @"/" + Path.GetFileName(file) + ">>";
                         }
@@ -5368,7 +5368,6 @@ namespace SUP
                 pictureBox.ImageLocation = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + @"\includes\progress.gif";
 
                 msg.Controls.Add(pictureBox);
-                //pictures.Add(pictureBox);
 
                 imagelocation = imagepath;
 
@@ -5559,8 +5558,11 @@ namespace SUP
                         // Check if a thumbnail exists
                         if (System.IO.File.Exists(thumbnailPath))
                         {
+
                             pictureBox.ImageLocation = thumbnailPath;
                             pictureBox.MouseClick += (sender, e) => { Attachment_Clicked(imagelocation); };
+                     
+
                         }
                         else
                         {
@@ -5573,6 +5575,7 @@ namespace SUP
                                 // For GIF images, directly use the original image without creating a thumbnail
                                 pictureBox.ImageLocation = imagelocation;
                                 pictureBox.MouseClick += (sender, e) => { Attachment_Clicked(imagelocation); };
+                                
                             }
                             else
                             {
@@ -5594,7 +5597,12 @@ namespace SUP
 
                                 System.Drawing.Image resizedImage = new Bitmap(originalImage, newWidth, newHeight);
                                 originalImage.Dispose();
-                                pictureBox.Image = resizedImage;
+                                this.Invoke((Action)(() =>
+                                {
+                                    pictureBox.ImageLocation = null;
+                                    pictureBox.Image = resizedImage;
+
+                                }));
 
                                 // Save the resized image as a thumbnail
                                 resizedImage.Save(thumbnailPath, ImageFormat.Jpeg);

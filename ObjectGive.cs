@@ -194,6 +194,7 @@ namespace SUP
                     }
                     if (txtObjectAddress.Text == txtSignatureAddress.Text)
                     {
+                        MessageBox.Show($"WARNING: a batch give is not currently possible from the primary pool address... only the top recpient will be given an object", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                         newdictionary.Clear();
                         newdictionary.Add(new List<string> { "1", qty.ToString() });
                         dictionary.Clear();
