@@ -6865,7 +6865,7 @@ namespace SUP
 
             if (btnPrivateMessage.BackColor == Color.Blue) { isprivate = true; }
 
-            DiscoBall disco = new DiscoBall(profileowner, profileOwner.ImageLocation, toaddress, profileIMG.ImageLocation, isprivate);
+            DiscoBall disco = new DiscoBall(profileowner, profileOwner.ImageLocation, toaddress, profileIMG.ImageLocation, isprivate,testnet);
             disco.StartPosition = FormStartPosition.CenterScreen;
             disco.Show(this);
             disco.Focus();
