@@ -19,7 +19,7 @@ P2FK was directly inspired by the satoshi uploader  see --> https://cirosantilli
 2. Launch a full bitcoin testnet node by clicking the top launch button
 3. Launch IPFS using the button provided "enable IPFS daemon"
 4. Wait until testnet is fully synced. ( this part will take several hours )
-5. Type #flowersofwar in the main search box and hit enter
+5. Type embii4u in the main search box, hit enter and wait while the profile loads for the first time
 <br />
 <br /> 
 
