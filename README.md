@@ -56,7 +56,7 @@ Once you are satisfied with your profile information. click mint. Your profile w
 <br />
 To edit a profile, click on the magnifying glass and enter the profile address to edit. If a profile is found at the address, Sup!? will build and display it on the screen. Modifying any of the fields will cause the corresponding fields' modified indicator to turn blue. Remove any data that is not being updated from the transaction by clicking its corresponding button until it is not blue. Click mint when you have completed making updates. Your changes will take effect following a successful confirmation of the transaction.
 <br />
-Your profile urn registration is valid for 3 years past the last change date. This means that in order for your profile to expire, there must not be a single change transaction placed to its holding address for a period of 3 years. Should this occur, the urn registration will be claimed by the next available registration that falls under the same time restriction. If no claims exist, the profile will no longer be discoverable and can be claimed by anyone.
+Your profile urn registration is valid for 3 years past the last change date. This means that in order for your profile to expire, there must not be a single change transaction placed to its holding address for a period of 10 years. Should this occur, the urn registration will be claimed by the next available registration that falls under the same time restriction. If no claims exist, the profile will no longer be discoverable and can be claimed by anyone.
 <br />
 <br />
 ## **Object Minting with Royalties / Printing / Editing / Batch Burning / Batch Giving**
