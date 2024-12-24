@@ -576,7 +576,7 @@ namespace SUP.P2FK
 
                                             foreach (var give in givinspector)
                                             {
-                                                int qtyToGive = 0;
+                                                long qtyToGive = 0;
                                                 string giver = transaction.SignedBy;
                                                 string reciever;
 
@@ -640,14 +640,7 @@ namespace SUP.P2FK
                                                 {
                                                     if (qtyToGive > objectState.Maximum)
                                                     {
-                                                        if (verbose)
-                                                        {
-                                                            logstatus = "[\"" + transaction.SignedBy + "\",\"" + reciever + "\",\"give\",\"" + qtyToGive + "\",\"\",\"failed due to over maximum qty\",\"" + transaction.BlockDate.ToString() + "\"]";
-                                                            objectState.ChangeLog.Add(logstatus);
-
-                                                            logstatus = "";
-                                                        }
-                                                        break;
+                                                        qtyToGive = objectState.Maximum;
                                                     }
 
                                                     if (objectState.Owners.TryGetValue(reciever, out var tuple) && tuple.Item1 + qtyToGive > objectState.Maximum)
