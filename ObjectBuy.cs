@@ -761,7 +761,7 @@ namespace SUP
             txtCurrentOwnerAddress.Text = linkData[0];
             try
             {
-                if (maxHold > 0 && int.Parse(linkData[1], NumberStyles.Any, CultureInfo.GetCultureInfo("en-US")) > maxHold)
+                if (maxHold > 0 && long.Parse(linkData[1], NumberStyles.Any, CultureInfo.GetCultureInfo("en-US")) > maxHold)
                 {
                     txtBuyQty.Text = maxHold.ToString();
                 }
@@ -861,10 +861,10 @@ namespace SUP
                                                     case "GIV":
 
 
-                                                        List<List<int>> givinspector = new List<List<int>> { };
+                                                        List<List<long>> givinspector = new List<List<long>> { };
                                                         try
                                                         {
-                                                            givinspector = JsonConvert.DeserializeObject<List<List<int>>>(System.IO.File.ReadAllText(@"root\" + root.TransactionId + @"\GIV"));
+                                                            givinspector = JsonConvert.DeserializeObject<List<List<long>>>(System.IO.File.ReadAllText(@"root\" + root.TransactionId + @"\GIV"));
                                                         }
                                                         catch
                                                         {
@@ -881,7 +881,7 @@ namespace SUP
                                                         {
                                                             string _from = root.SignedBy;
                                                             string _to = "";
-                                                            _to = root.Keyword.Reverse().GetItemByIndex(give[0]).Key;
+                                                            _to = root.Keyword.Reverse().GetItemByIndex((int)give[0]).Key;
                                                             string _message = "GIV 💕 " + give[1];
                                                             string _blockdate = root.BlockDate.ToString("yyyyMMddHHmmss");
                                                             string imglocation = "";
@@ -1155,14 +1155,14 @@ namespace SUP
         private void btnBuy_Click(object sender, EventArgs e)
         {
 
-            if (!int.TryParse(txtBuyQty.Text, NumberStyles.Any, CultureInfo.GetCultureInfo("en-US"), out int buyQTY1) || buyQTY1 < 1 || txtBuyQty.Text.IndexOf('.') != -1)
+            if (!long.TryParse(txtBuyQty.Text, NumberStyles.Any, CultureInfo.GetCultureInfo("en-US"), out long buyQTY1) || buyQTY1 < 1 || txtBuyQty.Text.IndexOf('.') != -1)
             {
                 MessageBox.Show("Buy Qty must be 1 or greater", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 txtBuyQty.Text = "1";
                 return;
             }
 
-            if (maxHold > 0 && int.TryParse(txtBuyQty.Text, NumberStyles.Any, CultureInfo.GetCultureInfo("en-US"), out int buyQTY2) && buyQTY2 > maxHold)
+            if (maxHold > 0 && long.TryParse(txtBuyQty.Text, NumberStyles.Any, CultureInfo.GetCultureInfo("en-US"), out long buyQTY2) && buyQTY2 > maxHold)
             {
                 MessageBox.Show("Buy Qty exceeds maximum holding amount", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 txtBuyQty.Text = maxHold.ToString();
@@ -1175,7 +1175,7 @@ namespace SUP
                 return;
             }
 
-            if (int.TryParse(txtBuyQty.Text, NumberStyles.Any, CultureInfo.GetCultureInfo("en-US"), out int buyQTY3) && buyQTY3 <= maxHold)
+            if (long.TryParse(txtBuyQty.Text, NumberStyles.Any, CultureInfo.GetCultureInfo("en-US"), out long buyQTY3) && buyQTY3 <= maxHold)
             {
                 List<OBJState> currentlyOwnedObjects = OBJState.GetObjectsOwnedByAddress(txtSignatureAddress.Text, mainnetLogin, mainnetPassword, mainnetURL, mainnetVersionByte);
 
@@ -1200,7 +1200,7 @@ namespace SUP
             }
 
 
-            if (int.TryParse(txtBuyQty.Text, NumberStyles.Any, CultureInfo.GetCultureInfo("en-US"), out int buyQTY4))
+            if (long.TryParse(txtBuyQty.Text, NumberStyles.Any, CultureInfo.GetCultureInfo("en-US"), out long buyQTY4))
             {
                 List<OBJState> currentlyOwnedObjects = OBJState.GetObjectsOwnedByAddress(txtCurrentOwnerAddress.Text, mainnetLogin, mainnetPassword, mainnetURL, mainnetVersionByte);
 
@@ -1402,7 +1402,7 @@ namespace SUP
         private void giveButton_Click(object sender, EventArgs e)
         {
 
-            if (int.TryParse(txtListQty.Text, NumberStyles.Any, CultureInfo.GetCultureInfo("en-US"), out int listQTY) && txtListQty.Text.IndexOf('.') == -1)
+            if (long.TryParse(txtListQty.Text, NumberStyles.Any, CultureInfo.GetCultureInfo("en-US"), out long listQTY) && txtListQty.Text.IndexOf('.') == -1)
             {
 
 

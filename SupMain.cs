@@ -5105,13 +5105,15 @@ namespace SUP
 
                         this.Invoke((MethodInvoker)delegate
                         {
+                            try
+                            {
+                                try { imglocation = myFriends[_from]; } catch { imglocation = @"includes\anon.png"; }
+                                CreateRow(imglocation, fromURN, _from, DateTime.ParseExact(_blockdate, "yyyyMMddHHmmss", CultureInfo.InvariantCulture), _message, _transactionId, false, supFlow);
 
-                            try { imglocation = myFriends[_from]; } catch { imglocation = @"includes\anon.png"; }
-                            CreateRow(imglocation, fromURN, _from, DateTime.ParseExact(_blockdate, "yyyyMMddHHmmss", CultureInfo.InvariantCulture), _message, _transactionId, false, supFlow);
-
-                            try { imglocation = myFriends[_to]; } catch { imglocation = @"includes\anon.png"; }
-                            CreateRow(imglocation, toURN, _to, DateTime.ParseExact("19700101010101", "yyyyMMddHHmmss", CultureInfo.InvariantCulture), "", _transactionId, false, supFlow);
-
+                                try { imglocation = myFriends[_to]; } catch { imglocation = @"includes\anon.png"; }
+                                CreateRow(imglocation, toURN, _to, DateTime.ParseExact("19700101010101", "yyyyMMddHHmmss", CultureInfo.InvariantCulture), "", _transactionId, false, supFlow);
+                            }
+                            catch { }
                         });
 
                         string[] files = Directory.GetFiles(@"root\" + _transactionId);
@@ -5186,7 +5188,7 @@ namespace SUP
                                     pictureBox.Dock = DockStyle.Left;
                                     pictureBox.Size = new Size(100, 100);
                                     pictureBox.SizeMode = PictureBoxSizeMode.Zoom;
-                                    pictureBox.ImageLocation = imageUrl;
+                                    try { pictureBox.ImageLocation = imageUrl; } catch { }
                                     pictureBox.MouseClick += (sender, e) => { Attachment_Clicked(content); };
                                     panel.Controls.Add(pictureBox);
                                     //pictures.Add(pictureBox);
@@ -5247,7 +5249,7 @@ namespace SUP
 
                                         this.Invoke((MethodInvoker)delegate
                                         {
-                                            AddImage(content);
+                                            try { AddImage(content); } catch { }
                                         });
                                     }
 

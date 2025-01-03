@@ -251,7 +251,7 @@ namespace SUP.P2FK
                                                         foreach (string keywordId in objectinspector.cre)
                                                         {
                                                             string creator = "";
-                                                            if (int.TryParse(keywordId, out int intId))
+                                                            if (int.TryParse(keywordId, NumberStyles.Any, CultureInfo.GetCultureInfo("en-US"), out int intId))
                                                             {
                                                                 creator = transaction.Keyword.Reverse().ElementAt(intId).Key;
                                                             }
@@ -328,9 +328,6 @@ namespace SUP.P2FK
                                                     {
                                                         break;
                                                     }
-
-
-
 
 
 
@@ -565,10 +562,10 @@ namespace SUP.P2FK
                                             if (!transaction.Keyword.ContainsKey(objectaddress)) { break; }
                                             // no sense checking any further
                                             if (objectState.Owners == null) { break; }
-                                            List<List<int>> givinspector = new List<List<int>> { };
+                                            List<List<long>> givinspector = new List<List<long>> { };
                                             try
                                             {
-                                                givinspector = JsonConvert.DeserializeObject<List<List<int>>>(File.ReadAllText(@"root\" + transaction.TransactionId + @"\GIV"));
+                                                givinspector = JsonConvert.DeserializeObject<List<List<long>>>(File.ReadAllText(@"root\" + transaction.TransactionId + @"\GIV"));
                                             }
                                             catch { break; }
 
@@ -582,7 +579,7 @@ namespace SUP.P2FK
 
                                                 try
                                                 {
-                                                    reciever = transaction.Keyword.Reverse().ElementAt(give[0]).Key;
+                                                    reciever = transaction.Keyword.Reverse().ElementAt((int)give[0]).Key;
 
                                                 }
                                                 catch

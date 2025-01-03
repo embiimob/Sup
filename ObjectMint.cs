@@ -23,6 +23,7 @@ using System.Text;
 using SUP.RPCClient;
 using System.Globalization;
 using NReco.VideoConverter;
+using System.Windows;
 
 
 namespace SUP
@@ -236,7 +237,7 @@ namespace SUP
                 try
                 {
                     Root ROOT = Root.GetRootByTransactionId(txtURN.Text.Substring(0, 64), mainnetLogin, mainnetPassword, mainnetURL, mainnetVersionByte);
-                    if (ROOT.Signed == true && ROOT.SignedBy != signatureAddress) { MessageBox.Show("sorry, the object urn " + txtURN.Text + " can only be claimed by " + ROOT.SignedBy); return; }
+                    if (ROOT.Signed == true && ROOT.SignedBy != signatureAddress) { System.Windows.Forms.MessageBox.Show("sorry, the object urn " + txtURN.Text + " can only be claimed by " + ROOT.SignedBy); return; }
                 }
                 catch (Exception ex)
                 {
@@ -284,7 +285,7 @@ namespace SUP
                 }
                 else
                 {
-                    DialogResult result = MessageBox.Show("The following duplicate information was detected: [  " + chunkBase58 + "  ]. Sorry, you must still use Apertus.io for etchings that require repetitive data", "Confirmation", MessageBoxButtons.OK);
+                    DialogResult result = System.Windows.Forms.MessageBox.Show("The following duplicate information was detected: [  " + chunkBase58 + "  ]. Sorry, you must still use Apertus.io for etchings that require repetitive data", "Confirmation", MessageBoxButtons.OK);
                 }
             }
 
@@ -408,18 +409,9 @@ namespace SUP
 
             if (ismint)
             {
-                if (flowOwners.Controls.Count == 0)
-                {
-                    DialogResult nullOwnerresult = MessageBox.Show("Warning: No owners defined! If this is the first minting transaction, it will be rejected.\nClick OK to confirm only if performing an object update.", "Confirmation", MessageBoxButtons.OKCancel);
+              
 
-                    if (nullOwnerresult != DialogResult.OK)
-                    {
-                        return;
-                    }
-                }
-
-
-                DialogResult result = MessageBox.Show("Are you sure you want to mint this object?", "Confirmation", MessageBoxButtons.YesNo);
+                DialogResult result = System.Windows.Forms.MessageBox.Show("Are you sure you want to mint this object?", "Confirmation", MessageBoxButtons.YesNo);
                 if (result == DialogResult.Yes)
                 {
 
@@ -804,7 +796,7 @@ namespace SUP
                 string pattern = "[" + Regex.Escape(new string(specialChars)) + "][0-9]";
                 if (Regex.IsMatch(P2FKASCII, pattern))
                 {
-                    MessageBox.Show("Sup!? Found special characters within this address that could corrupt P2FK transactions.", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    System.Windows.Forms.MessageBox.Show("Sup!? Found special characters within this address that could corrupt P2FK transactions.", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 }
 
                 LoadFormByAddress(txtObjectAddress.Text);
@@ -925,7 +917,7 @@ namespace SUP
                         string fileName = openFileDialog1.SafeFileName;
 
                         lblIMGBlockDate.Text = "[ uploading to IPFS please wait...]";
-                        MessageBox.Show("Uploading a file to IPFS could take a long time. to prevent any issues, Sup!? will lock while it's loading.  just wait for it.");
+                        System.Windows.Forms.MessageBox.Show("Uploading a file to IPFS could take a long time. to prevent any issues, Sup!? will lock while it's loading.  just wait for it.");
                         Process process = new Process();
                         process.StartInfo.FileName = @"ipfs\ipfs.exe";
                         process.StartInfo.Arguments = "add \"" + filePath + "\"";
@@ -1175,7 +1167,8 @@ namespace SUP
                 if (txtURN.Text != "")
                 {
                     OBJState OBJ = OBJState.GetObjectByURN(txtURN.Text, mainnetLogin, mainnetPassword, mainnetURL, mainnetVersionByte);
-                    if (OBJ.Creators != null) { MessageBox.Show("WARNING: The object URN " + txtURN.Text + " has already been claimed.");
+                    if (OBJ.Creators != null) {
+                        System.Windows.Forms.MessageBox.Show("WARNING: The object URN " + txtURN.Text + " has already been claimed.");
                         btnObjectURN.BackColor = Color.Blue;
                         btnObjectURN.ForeColor = Color.Yellow; }
 
@@ -1210,7 +1203,7 @@ namespace SUP
                         string fileName = openFileDialog1.SafeFileName;
                         openFileDialog1.Title = "Select File";
                         lblURNBlockDate.Text = "[ uploading to IPFS please wait...]";
-                        MessageBox.Show("Uploading a file to IPFS could take a long time. to prevent any issues, Sup!? will lock while it's loading.  just wait for it.");
+                        System.Windows.Forms.MessageBox.Show("Uploading a file to IPFS could take a long time. to prevent any issues, Sup!? will lock while it's loading.  just wait for it.");
                         Process process = new Process();
                         process.StartInfo.FileName = @"ipfs\ipfs.exe";
                         process.StartInfo.Arguments = "add \"" + filePath + "\"";
@@ -1223,7 +1216,7 @@ namespace SUP
                         txtURN.Text = "IPFS:" + hash + @"\" + fileName;
 
                         OBJState OBJ = OBJState.GetObjectByURN(txtURN.Text, mainnetLogin, mainnetPassword, mainnetURL, mainnetVersionByte);
-                        if (OBJ.Creators != null) { MessageBox.Show("Sorry, the object urn " + txtURN.Text + " has already been claimed."); lblURNBlockDate.Text = ""; txtURN.Text = ""; return; }
+                        if (OBJ.Creators != null) { System.Windows.Forms.MessageBox.Show("Sorry, the object urn " + txtURN.Text + " has already been claimed."); lblURNBlockDate.Text = ""; txtURN.Text = ""; return; }
                         urn = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + @"\ipfs\" + hash + @"\" + fileName;
                         
                         if (urn.ToLower().EndsWith(".mov"))
@@ -1888,7 +1881,7 @@ namespace SUP
                 dialog.StartPosition = FormStartPosition.CenterParent;
                 dialog.ControlBox = false;
                 dialog.FormBorderStyle = FormBorderStyle.FixedDialog;
-                dialog.ClientSize = new Size(400, 80);
+                dialog.ClientSize = new System.Drawing.Size(400, 80);
 
                 var tableLayout = new TableLayoutPanel();
                 tableLayout.ColumnCount = 2;
@@ -1906,11 +1899,11 @@ namespace SUP
                 var keyTextBox = new TextBox();
                 keyTextBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
                 keyTextBox.Multiline = true;
-                keyTextBox.Size = new Size(170, 70);
+                keyTextBox.Size = new System.Drawing.Size(170, 70);
 
                 var valueTextBox = new TextBox();
                 valueTextBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-                valueTextBox.Size = new Size(170, 70);
+                valueTextBox.Size = new System.Drawing.Size(170, 70);
                 valueTextBox.Multiline = true;
                 tableLayout.Controls.Add(keyLabel, 0, 0);
                 tableLayout.Controls.Add(valueLabel, 1, 0);
@@ -1966,7 +1959,7 @@ namespace SUP
                 dialog.StartPosition = FormStartPosition.CenterParent;
                 dialog.ControlBox = false;
                 dialog.FormBorderStyle = FormBorderStyle.FixedDialog;
-                dialog.ClientSize = new Size(400, 80);
+                dialog.ClientSize = new System.Drawing.Size(400, 80);
 
                 var tableLayout = new TableLayoutPanel();
                 tableLayout.ColumnCount = 1;
@@ -1979,7 +1972,7 @@ namespace SUP
                 var keyTextBox = new TextBox();
                 keyTextBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
                 keyTextBox.Multiline = true;
-                keyTextBox.Size = new Size(340, 70);
+                keyTextBox.Size = new System.Drawing.Size(340, 70);
                 tableLayout.Controls.Add(keyLabel, 0, 0);
                 tableLayout.Controls.Add(keyTextBox, 0, 1);
 
@@ -2059,7 +2052,7 @@ namespace SUP
                 dialog.StartPosition = FormStartPosition.CenterParent;
                 dialog.ControlBox = false;
                 dialog.FormBorderStyle = FormBorderStyle.FixedDialog;
-                dialog.ClientSize = new Size(400, 80);
+                dialog.ClientSize = new System.Drawing.Size(400, 80);
 
                 var tableLayout = new TableLayoutPanel();
                 tableLayout.ColumnCount = 1;
@@ -2073,7 +2066,7 @@ namespace SUP
                 keyTextBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
 
                 keyTextBox.Multiline = true;
-                keyTextBox.Size = new Size(340, 70);
+                keyTextBox.Size = new System.Drawing.Size(340, 70);
                 tableLayout.Controls.Add(keyLabel, 0, 0);
                 tableLayout.Controls.Add(keyTextBox, 0, 1);
 
@@ -2153,7 +2146,7 @@ namespace SUP
                 dialog.StartPosition = FormStartPosition.CenterParent;
                 dialog.ControlBox = false;
                 dialog.FormBorderStyle = FormBorderStyle.FixedDialog;
-                dialog.ClientSize = new Size(400, 80);
+                dialog.ClientSize = new System.Drawing.Size(400, 80);
 
                 var tableLayout = new TableLayoutPanel();
                 tableLayout.ColumnCount = 2;
@@ -2171,11 +2164,11 @@ namespace SUP
                 var ownerTextBox = new TextBox();
                 ownerTextBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
                 ownerTextBox.Multiline = true;
-                ownerTextBox.Size = new Size(170, 70);
+                ownerTextBox.Size = new System.Drawing.Size(170, 70);
 
                 var qtyTextBox = new TextBox();
                 qtyTextBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-                qtyTextBox.Size = new Size(170, 70);
+                qtyTextBox.Size = new System.Drawing.Size(170, 70);
                 qtyTextBox.Multiline = true;
                 qtyTextBox.KeyPress += new KeyPressEventHandler(qtyTextBox_KeyPress);
 
@@ -2252,7 +2245,7 @@ namespace SUP
                     }
                     else
                     {
-                        MessageBox.Show("Qty field only accepts numeric input.");
+                        System.Windows.Forms.MessageBox.Show("Qty field only accepts numeric input.");
                     }
                 }
             }
@@ -2364,10 +2357,15 @@ namespace SUP
             catch { }
 
             pictureBox1.ImageLocation = @"root\" + txtObjectAddress.Text + @"\OBJPrint.png";
+           
+            OBJState OBJ = OBJState.GetObjectByAddress(txtObjectAddress.Text, mainnetLogin, mainnetPassword, mainnetURL, mainnetVersionByte);
+            if (OBJ.URN == null && btnObjectURN.BackColor == Color.White) { System.Windows.Forms.MessageBox.Show("WARNING: The object URN is a required field. Verify the URN button is blue before minting."); lblURNBlockDate.Text = ""; return;  }
+            if (OBJ.URN == null && flowOwners.Controls.Count == 0) { System.Windows.Forms.MessageBox.Show("WARNING: At least one Owner must be defined. Click the OWN button to add one. For a primary / secondary collection experience, Allocate all units to the object address itself."); return;  }
+           
             ismint = true;
             UpdateRemainingChars();
 
-            OBJState OBJ = OBJState.GetObjectByAddress(txtObjectAddress.Text, mainnetLogin, mainnetPassword, mainnetURL, mainnetVersionByte);
+            OBJ = OBJState.GetObjectByAddress(txtObjectAddress.Text, mainnetLogin, mainnetPassword, mainnetURL, mainnetVersionByte);
 
             if (OBJ.URN != null)
             {
@@ -2496,12 +2494,12 @@ namespace SUP
             instructionLabel.Text = "Enter an Object Address";
             instructionLabel.Font = new Font(instructionLabel.Font.FontFamily, 16, System.Drawing.FontStyle.Bold);
             instructionLabel.AutoSize = true;
-            instructionLabel.Location = new Point(20, 20);
+            instructionLabel.Location = new System.Drawing.Point(20, 20);
             addressForm.Controls.Add(instructionLabel);
 
             // Create a text box for the user to input the address
             TextBox addressTextBox = new TextBox();
-            addressTextBox.Location = new Point(20, 70);
+            addressTextBox.Location = new System.Drawing.Point(20, 70);
             addressTextBox.Width = 300;
             addressTextBox.Height = 50;
             addressTextBox.Multiline = true;
@@ -2510,7 +2508,7 @@ namespace SUP
             // Create a button for the user to click to search for the address
             Button searchButton = new Button();
             searchButton.Text = "Search";
-            searchButton.Location = new Point(20, 120);
+            searchButton.Location = new System.Drawing.Point(20, 120);
             searchButton.Width = 100;
             searchButton.Click += new EventHandler((searchSender, searchE) =>
             {
@@ -2815,7 +2813,7 @@ namespace SUP
                 dialog.StartPosition = FormStartPosition.CenterParent;
                 dialog.ControlBox = false;
                 dialog.FormBorderStyle = FormBorderStyle.FixedDialog;
-                dialog.ClientSize = new Size(400, 80);
+                dialog.ClientSize = new System.Drawing.Size(400, 80);
 
                 var tableLayout = new TableLayoutPanel();
                 tableLayout.ColumnCount = 2;
@@ -2833,11 +2831,11 @@ namespace SUP
                 var ownerTextBox = new TextBox();
                 ownerTextBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
                 ownerTextBox.Multiline = true;
-                ownerTextBox.Size = new Size(170, 70);
+                ownerTextBox.Size = new System.Drawing.Size(170, 70);
 
                 var decTextBox = new TextBox();
                 decTextBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-                decTextBox.Size = new Size(170, 70);
+                decTextBox.Size = new System.Drawing.Size(170, 70);
                 decTextBox.Multiline = true;
                 decTextBox.KeyPress += new KeyPressEventHandler(PercentTextBox_KeyPress);
 
@@ -2914,7 +2912,7 @@ namespace SUP
                     }
                     else
                     {
-                        MessageBox.Show("Percent field only accepts numeric input.");
+                        System.Windows.Forms.MessageBox.Show("Percent field only accepts numeric input.");
                     }
                 }
             }
@@ -2935,7 +2933,7 @@ namespace SUP
             pictureBox1.Refresh();
             System.Drawing.Bitmap bitmap = new Bitmap(this.Width, this.Height - 44);
             Graphics graphics = Graphics.FromImage(bitmap);
-            graphics.CopyFromScreen(this.PointToScreen(new Point(0, 0)), new Point(0, 0), this.Size);
+            graphics.CopyFromScreen(this.PointToScreen(new System.Drawing.Point(0, 0)), new System.Drawing.Point(0, 0), this.Size);
             bitmap.RotateFlip(RotateFlipType.Rotate90FlipNone);
             PrintImage(bitmap);
             lblRemainingChars.Visible = true;
@@ -2980,13 +2978,13 @@ namespace SUP
                     }
                     catch (Exception ex)
                     {
-                        MessageBox.Show("Error saving the image: " + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        System.Windows.Forms.MessageBox.Show("Error saving the image: " + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     }
                 }
             }
             else
             {
-                MessageBox.Show("No image location specified.", "Information", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                System.Windows.Forms.MessageBox.Show("No image location specified.", "Information", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
         }
 
@@ -3014,7 +3012,7 @@ namespace SUP
         private void txtURN_Leave(object sender, EventArgs e)
         {
             OBJState OBJ = OBJState.GetObjectByURN(txtURN.Text, mainnetLogin, mainnetPassword, mainnetURL, mainnetVersionByte);
-            if (OBJ.Creators != null) { MessageBox.Show("WARNING: The object URN " + txtURN.Text + " has already been claimed."); lblURNBlockDate.Text = "";} else
+            if (OBJ.Creators != null) { System.Windows.Forms.MessageBox.Show("WARNING: The object URN " + txtURN.Text + " has already been claimed."); lblURNBlockDate.Text = "";} else
             {
                 txtURN.SelectionStart = 0;
                 txtURN.SelectionLength = 0;

@@ -330,6 +330,7 @@ namespace SUP
                 _addressQtyList.Add((address, qty));
                 addressQtyDataGridView.Rows.Add(address, qty);
             }
+            btnBurn.Enabled = true;
         }
 
         private void ObjectBurn_Load(object sender, EventArgs e)

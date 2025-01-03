@@ -84,10 +84,11 @@
             // 
             this.ObjectPrice.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.ObjectPrice.BackColor = System.Drawing.SystemColors.GradientInactiveCaption;
-            this.ObjectPrice.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.ObjectPrice.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Bold);
             this.ObjectPrice.Location = new System.Drawing.Point(2, 23);
+            this.ObjectPrice.Margin = new System.Windows.Forms.Padding(3, 0, 0, 0);
             this.ObjectPrice.Name = "ObjectPrice";
-            this.ObjectPrice.Size = new System.Drawing.Size(92, 20);
+            this.ObjectPrice.Size = new System.Drawing.Size(110, 20);
             this.ObjectPrice.TabIndex = 9;
             this.ObjectPrice.Text = "-";
             this.ObjectPrice.Click += new System.EventHandler(this.foundListings_Click);
@@ -190,7 +191,7 @@
             this.ObjectName.Location = new System.Drawing.Point(6, 235);
             this.ObjectName.Margin = new System.Windows.Forms.Padding(0);
             this.ObjectName.Name = "ObjectName";
-            this.ObjectName.Size = new System.Drawing.Size(135, 38);
+            this.ObjectName.Size = new System.Drawing.Size(128, 38);
             this.ObjectName.TabIndex = 9;
             this.ObjectName.Text = "Fake UFO";
             this.ObjectName.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
@@ -281,12 +282,12 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
+            this.Controls.Add(this.ObjectQty);
             this.Controls.Add(this.ObjectName);
             this.Controls.Add(this.ObjectDescription);
             this.Controls.Add(this.lblOfficial);
             this.Controls.Add(this.btnOfficial);
             this.Controls.Add(this.ObjectImage);
-            this.Controls.Add(this.ObjectQty);
             this.Controls.Add(this.ObjectCreators);
             this.Controls.Add(this.lblTrash);
             this.Controls.Add(this.ObjectCreators2);

@@ -348,6 +348,7 @@ namespace SUP
                 _addressQtyList.Add((address, qty));
                 addressQtyDataGridView.Rows.Add(address, qty);
             }
+            btnGive.Enabled = true;
         }
 
         private void ObjectGive_Load(object sender, EventArgs e)

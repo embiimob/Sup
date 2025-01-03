@@ -28,8 +28,8 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle5 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle6 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle4 = new System.Windows.Forms.DataGridViewCellStyle();
             this.addressTextBox = new System.Windows.Forms.TextBox();
             this.qtyTextBox = new System.Windows.Forms.TextBox();
             this.addressQtyDataGridView = new System.Windows.Forms.DataGridView();
@@ -57,12 +57,12 @@
             // addressTextBox
             // 
             this.addressTextBox.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
-            this.addressTextBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.addressTextBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
             this.addressTextBox.ForeColor = System.Drawing.Color.White;
             this.addressTextBox.Location = new System.Drawing.Point(12, 22);
             this.addressTextBox.Multiline = true;
             this.addressTextBox.Name = "addressTextBox";
-            this.addressTextBox.Size = new System.Drawing.Size(279, 33);
+            this.addressTextBox.Size = new System.Drawing.Size(291, 33);
             this.addressTextBox.TabIndex = 0;
             // 
             // qtyTextBox
@@ -92,8 +92,8 @@
             // 
             // address
             // 
-            dataGridViewCellStyle5.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.address.DefaultCellStyle = dataGridViewCellStyle5;
+            dataGridViewCellStyle3.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.address.DefaultCellStyle = dataGridViewCellStyle3;
             this.address.HeaderText = "recipient addres";
             this.address.MaxInputLength = 46;
             this.address.MinimumWidth = 6;
@@ -103,8 +103,8 @@
             // 
             // qty
             // 
-            dataGridViewCellStyle6.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.qty.DefaultCellStyle = dataGridViewCellStyle6;
+            dataGridViewCellStyle4.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.qty.DefaultCellStyle = dataGridViewCellStyle4;
             this.qty.HeaderText = "qty to give";
             this.qty.MinimumWidth = 6;
             this.qty.Name = "qty";
@@ -285,7 +285,7 @@
             this.btnToSelector.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.btnToSelector.Font = new System.Drawing.Font("Segoe UI Emoji", 14.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btnToSelector.ForeColor = System.Drawing.Color.Black;
-            this.btnToSelector.Location = new System.Drawing.Point(297, 22);
+            this.btnToSelector.Location = new System.Drawing.Point(309, 22);
             this.btnToSelector.Name = "btnToSelector";
             this.btnToSelector.Padding = new System.Windows.Forms.Padding(3, 0, 0, 0);
             this.btnToSelector.Size = new System.Drawing.Size(39, 33);
