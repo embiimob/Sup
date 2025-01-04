@@ -52,6 +52,13 @@ namespace SUP
 
         private void addButton_Click(object sender, EventArgs e)
         {
+            
+            if (txtSignatureAddress.Text == addressTextBox.Text)
+            {
+                MessageBox.Show($"You cannot give to yourself. You must use the Primary object's signature instead");
+                return;
+            }
+
             if (_addressQtyList.Any(item => item.Item1 == addressTextBox.Text))
             {
                 MessageBox.Show($"You cannot give to the same address twice.");

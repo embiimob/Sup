@@ -5116,26 +5116,30 @@ namespace SUP
                             catch { }
                         });
 
-                        string[] files = Directory.GetFiles(@"root\" + _transactionId);
-
-                        bool containsFileWithINQ = files.Any(file =>
-                               file.EndsWith("INQ", StringComparison.OrdinalIgnoreCase) &&
-                               !file.EndsWith("BLOCK", StringComparison.OrdinalIgnoreCase));
-
-                        if (containsFileWithINQ)
+                        try
                         {
-                            //ADD INQ IF IT EXISTS AND IS NOT BLOCKED
-                            this.Invoke((MethodInvoker)delegate
+                            string[] files = Directory.GetFiles(@"root\" + _transactionId);
+
+                            bool containsFileWithINQ = files.Any(file =>
+                                   file.EndsWith("INQ", StringComparison.OrdinalIgnoreCase) &&
+                                   !file.EndsWith("BLOCK", StringComparison.OrdinalIgnoreCase));
+
+                            if (containsFileWithINQ)
                             {
-                                string profileowner = "";
+                                //ADD INQ IF IT EXISTS AND IS NOT BLOCKED
+                                this.Invoke((MethodInvoker)delegate
+                                {
+                                    string profileowner = "";
 
-                                if (profileOwner.Tag != null) { profileowner = profileOwner.Tag.ToString(); }
+                                    if (profileOwner.Tag != null) { profileowner = profileOwner.Tag.ToString(); }
 
-                                FoundINQControl foundObject = new FoundINQControl(_transactionId, profileowner, testnet);
-                                foundObject.Margin = new Padding(20, 7, 8, 7);
-                                supFlow.Controls.Add(foundObject);
-                            });
+                                    FoundINQControl foundObject = new FoundINQControl(_transactionId, profileowner, testnet);
+                                    foundObject.Margin = new Padding(20, 7, 8, 7);
+                                    supFlow.Controls.Add(foundObject);
+                                });
+                            }
                         }
+                        catch { }
 
                         string pattern = "<<.*?>>";
                         MatchCollection matches = Regex.Matches(unfilteredmessage, pattern);

@@ -88,7 +88,7 @@
             this.ObjectPrice.Location = new System.Drawing.Point(2, 23);
             this.ObjectPrice.Margin = new System.Windows.Forms.Padding(3, 0, 0, 0);
             this.ObjectPrice.Name = "ObjectPrice";
-            this.ObjectPrice.Size = new System.Drawing.Size(110, 20);
+            this.ObjectPrice.Size = new System.Drawing.Size(130, 20);
             this.ObjectPrice.TabIndex = 9;
             this.ObjectPrice.Text = "-";
             this.ObjectPrice.Click += new System.EventHandler(this.foundListings_Click);

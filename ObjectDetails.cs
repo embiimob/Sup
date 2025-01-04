@@ -73,7 +73,6 @@ namespace SUP
             myTooltip.SetToolTip(btnBurn, "click 🔥 to burn the object.\nburn all units of the object and it will no longer be discoverable.");
             myTooltip.SetToolTip(btnGive, "click 💞 to give the object.\n");
             myTooltip.SetToolTip(btnRefreshTransactions, "click 🔍 to show the object's most recent provenance.\nprovenance is a historical record of all object state changes\n click 🔍 again to load additional provenance records.");
-            myTooltip.SetToolTip(btnRefreshOwners, "click 👑 to refresh and or display all ownership information.\n");
             myTooltip.SetToolTip(lblLaunchURI, "click to launch the associated URI\nnote: this is potentially dangerous. verify the URI before clicking.\nthis button could be used to launch a local script.");
             myTooltip.SetToolTip(btnLaunchURN, "click to view the active URN using your systems default viewer.\nthis allows fullscreen mode for video and html based content.\nnote: this is potentially dangerous. verify the URN before clicking.\nthis button could be used to launch a local script.");
             myTooltip.SetToolTip(chkRunTrustedObject, "check this box to allow the object to execute scripts.\nclick ♻️ to reload the object URN with script execution activated.\nnote: this is potentially dangerous. verify the object's publisher and URN before clicking.\nexecuting local scripts could be harmful to your computer.");
@@ -230,7 +229,7 @@ namespace SUP
         }
 
 
-        private void ButtonShowObjectDetailsClick(object sender, EventArgs e)
+        private void RefreshOwners()
         {
             CreatorsPanel.SuspendLayout();
             OwnersPanel.SuspendLayout();
@@ -3161,7 +3160,7 @@ namespace SUP
                 if (OwnersPanel.Visible)
                 {
 
-                    btnRefreshOwners.PerformClick();
+                    RefreshOwners();
 
                 }
                 else

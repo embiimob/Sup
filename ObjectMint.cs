@@ -326,7 +326,7 @@ namespace SUP
                 {
 
                     byte[] payload = new byte[21];
-
+                    webviewer.Dispose();
                     using (FileStream fileStream = new FileStream(fileSource, FileMode.Open))
                     {
                         using (System.Security.Cryptography.SHA256 sha256 = System.Security.Cryptography.SHA256.Create())

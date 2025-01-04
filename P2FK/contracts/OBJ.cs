@@ -1503,6 +1503,7 @@ namespace SUP.P2FK
                                         case "LST":
                                             //is this even the right object!?  no!?  goodbye!
                                             if (!transaction.Keyword.ContainsKey(objectaddress)) { break; }
+
                                             // no sense checking any further
                                             if (objectState.Owners == null) { break; }
 
@@ -1594,7 +1595,21 @@ namespace SUP.P2FK
                                                     // LST Transaction with 0 qty closes all listings
                                                     if (qtyToList == 0)
                                                     {
-                                                        try { if (objectState.Listings != null) { objectState.Listings.Remove(Listr); } } catch { }
+                                                        try
+                                                        {
+                                                            if (objectState.Listings != null)
+                                                            {
+                                                                if (objectState.Listings.ContainsKey(Listr))
+                                                                {
+                                                                    objectState.Listings.Remove(Listr);
+                                                                }
+                                                                else
+                                                                {
+                                                                    if (objectState.Creators.ContainsKey(Listr)) { try { objectState.Listings.Remove(objectaddress); } catch { } }
+                                                                }
+                                                            }
+                                                        }
+                                                        catch { }
 
                                                         if (verbose)
                                                         {

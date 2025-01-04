@@ -51,7 +51,6 @@
             this.lblIMGBlockDate = new System.Windows.Forms.Label();
             this.txtURN = new System.Windows.Forms.TextBox();
             this.lblURNBlockDate = new System.Windows.Forms.Label();
-            this.btnRefreshOwners = new System.Windows.Forms.Button();
             this.btnRefreshSup = new System.Windows.Forms.Button();
             this.btnRefreshTransactions = new System.Windows.Forms.Button();
             this.btnReloadObject = new System.Windows.Forms.Button();
@@ -358,20 +357,6 @@
             this.lblURNBlockDate.Text = "   [ is not immutable ]";
             this.lblURNBlockDate.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
-            // btnRefreshOwners
-            // 
-            this.btnRefreshOwners.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnRefreshOwners.Font = new System.Drawing.Font("Segoe UI Emoji", 13.8F);
-            this.btnRefreshOwners.Location = new System.Drawing.Point(852, 500);
-            this.btnRefreshOwners.Margin = new System.Windows.Forms.Padding(0);
-            this.btnRefreshOwners.Name = "btnRefreshOwners";
-            this.btnRefreshOwners.Size = new System.Drawing.Size(60, 42);
-            this.btnRefreshOwners.TabIndex = 84;
-            this.btnRefreshOwners.Text = "👑";
-            this.btnRefreshOwners.TextAlign = System.Drawing.ContentAlignment.TopCenter;
-            this.btnRefreshOwners.UseVisualStyleBackColor = true;
-            this.btnRefreshOwners.Click += new System.EventHandler(this.ButtonShowObjectDetailsClick);
-            // 
             // btnRefreshSup
             // 
             this.btnRefreshSup.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
@@ -548,10 +533,10 @@
             this.lblTotalOwnedDetail.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.lblTotalOwnedDetail.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lblTotalOwnedDetail.ForeColor = System.Drawing.Color.White;
-            this.lblTotalOwnedDetail.Location = new System.Drawing.Point(921, 495);
+            this.lblTotalOwnedDetail.Location = new System.Drawing.Point(884, 495);
             this.lblTotalOwnedDetail.Name = "lblTotalOwnedDetail";
             this.lblTotalOwnedDetail.Padding = new System.Windows.Forms.Padding(0, 3, 0, 3);
-            this.lblTotalOwnedDetail.Size = new System.Drawing.Size(178, 23);
+            this.lblTotalOwnedDetail.Size = new System.Drawing.Size(215, 23);
             this.lblTotalOwnedDetail.TabIndex = 82;
             this.lblTotalOwnedDetail.Text = "total";
             this.lblTotalOwnedDetail.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
@@ -686,10 +671,10 @@
             this.lblTotalRoyaltiesDetail.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.lblTotalRoyaltiesDetail.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lblTotalRoyaltiesDetail.ForeColor = System.Drawing.Color.White;
-            this.lblTotalRoyaltiesDetail.Location = new System.Drawing.Point(924, 518);
+            this.lblTotalRoyaltiesDetail.Location = new System.Drawing.Point(884, 518);
             this.lblTotalRoyaltiesDetail.Name = "lblTotalRoyaltiesDetail";
             this.lblTotalRoyaltiesDetail.Padding = new System.Windows.Forms.Padding(0, 3, 0, 3);
-            this.lblTotalRoyaltiesDetail.Size = new System.Drawing.Size(175, 23);
+            this.lblTotalRoyaltiesDetail.Size = new System.Drawing.Size(215, 23);
             this.lblTotalRoyaltiesDetail.TabIndex = 111;
             this.lblTotalRoyaltiesDetail.Text = "royalties";
             this.lblTotalRoyaltiesDetail.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
@@ -783,7 +768,6 @@
             this.Controls.Add(this.KeysFlow);
             this.Controls.Add(this.flowPanel);
             this.Controls.Add(this.imgPicture);
-            this.Controls.Add(this.btnRefreshOwners);
             this.Controls.Add(this.btnRefreshSup);
             this.Controls.Add(this.btnRefreshTransactions);
             this.Controls.Add(this.btnReloadObject);
@@ -847,7 +831,6 @@
         private System.Windows.Forms.Label lblIMGBlockDate;
         private System.Windows.Forms.TextBox txtURN;
         private System.Windows.Forms.Label lblURNBlockDate;
-        private System.Windows.Forms.Button btnRefreshOwners;
         private System.Windows.Forms.Button btnRefreshSup;
         private System.Windows.Forms.Button btnRefreshTransactions;
         private System.Windows.Forms.Button btnReloadObject;
