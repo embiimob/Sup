@@ -371,9 +371,15 @@ namespace SUP
 
                                 if (profileURN != null)
                                 {
-                                    List<string> islocal = Root.GetPublicKeysByAddress(profileURN, mainnetLogin, mainnetPassword, mainnetURL);
-                                    if
-                                         (islocal.Count == 2)
+
+                                    NetworkCredential credentials = new NetworkCredential(mainnetLogin, mainnetPassword);
+                                    NBitcoin.RPC.RPCClient rpcClient = new NBitcoin.RPC.RPCClient(credentials, new Uri(mainnetURL), Network.Main);
+                                    string signature = "";
+                                    try { signature = rpcClient.SendCommand("signmessage", profileURN, "DUMMY").ResultString; ; } catch { }
+
+
+                                   if
+                                        ( signature != "")
                                     {
                                         profileOwner.ImageLocation = profileIMG.ImageLocation;
                                         profileOwner.Tag = objectBrowserForm.profileURN.Links[0].LinkData.ToString();

@@ -16,6 +16,7 @@ using Newtonsoft.Json;
 using System.Globalization;
 using System.Text;
 using System.Windows.Media.TextFormatting;
+using System.Net;
 
 namespace SUP
 {
@@ -3705,17 +3706,19 @@ namespace SUP
             if (profileURN.Links[0].LinkData != null)
             {
 
-                try
-                {
-                    List<string> islocal = Root.GetPublicKeysByAddress(profileURN.Links[0].LinkData.ToString(), mainnetLogin, mainnetPassword, mainnetURL);
-                    if
-                         (islocal.Count == 2)
-                    {
-                        _activeProfile = profileURN.Links[0].LinkData.ToString();
-                    }
 
+                NetworkCredential credentials = new NetworkCredential(mainnetLogin, mainnetPassword);
+                NBitcoin.RPC.RPCClient rpcClient = new NBitcoin.RPC.RPCClient(credentials, new Uri(mainnetURL), Network.Main);
+                string signature = "";
+                try { signature = rpcClient.SendCommand("signmessage", profileURN.Links[0].LinkData.ToString(), "DUMMY").ResultString; ; } catch { }
+
+
+                if
+                     (signature != "")
+                {
+                    _activeProfile = profileURN.Links[0].LinkData.ToString();
                 }
-                catch { }
+
 
             }
         }
