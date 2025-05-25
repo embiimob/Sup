@@ -473,7 +473,16 @@ namespace SUP
             if (btnEncryptionStatus.Text == "PRIVATE 🤐")
             {
                 OBJP2FK = "SIG" + GetRandomDelimiter() + "88" + GetRandomDelimiter() + signature + OBJP2FK;
-                byte[] combinedBytes = Root.EncryptRootBytes(mainnetLogin, mainnetPassword, mainnetURL, signatureAddress, Encoding.UTF8.GetBytes(OBJP2FK), toProfile.PKX, toProfile.PKY);
+                byte[] combinedBytes;
+                try
+                {
+                    combinedBytes = Root.EncryptRootBytes(mainnetLogin, mainnetPassword, mainnetURL, signatureAddress, Encoding.UTF8.GetBytes(OBJP2FK), toProfile.PKX, toProfile.PKY);
+                }
+                catch (Exception ex)
+                {
+                    lblObjectStatus.Text = ex.Message.ToString();
+                    return;
+                }
                 // Split byte array into chunks of maximum length 20
                 for (int i = 0; i < combinedBytes.Length; i += 20)
                 {
@@ -1439,7 +1448,7 @@ namespace SUP
                         nameComboBox.Items.Add(pro.URN);
                     }
                 }
-                try { nameComboBox.SelectedIndex = 0; }catch { }
+                try { nameComboBox.SelectedIndex = 0; } catch { }
 
                 var okButton = new Button();
                 okButton.Text = "OK";
@@ -1603,7 +1612,7 @@ namespace SUP
 
         private void btnCameraCapture_Click(object sender, EventArgs e)
         {
-            
+
             pictureBox1.Visible = true;
 
 

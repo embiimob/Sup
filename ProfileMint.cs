@@ -52,6 +52,7 @@ namespace SUP
             myTooltip.SetToolTip(btnBio, "enter an optional bio which will be displayed next to your profile image.\nclick the button until it turns blue to include it in the mint.");
             myTooltip.SetToolTip(btnLocation, "enter one or many optional key value pairs that define your location example  planet | earth");
             myTooltip.SetToolTip(btnURL, "enter one or many optional key value pairs that define links to be displayed on your profile's home menu.\n all url's must be fully qualified example  apertus.io | http://www.apertus.io");
+            myTooltip.SetToolTip(btnSEC, "click to publish your profile's public keys for private SEC messaging.");
             myTooltip.SetToolTip(btnMint, "click to mint your profile. a transaction id will be displayed if it was succesfull.\nprofiles are not discoverable until they have at least one confirmation");
             myTooltip.SetToolTip(btnScan, "click to search for a profile by address.");
 
@@ -68,7 +69,7 @@ namespace SUP
         {
             if (txtURN.Text != "" && txtObjectAddress.Text != "")
             {
-                if ((btnFirstName.BackColor == Color.Blue || btnObjectURN.BackColor == Color.Blue || btnMiddleName.BackColor == Color.Blue || btnSuffix.BackColor == Color.Blue || btnLocation.BackColor == Color.Blue || btnURL.BackColor == Color.Blue || btnObjectImage.BackColor == Color.Blue || btnLastName.BackColor == Color.Blue || btnBio.BackColor == Color.Blue)) { btnMint.Enabled = true; }
+                if ((btnFirstName.BackColor == Color.Blue || btnObjectURN.BackColor == Color.Blue || btnMiddleName.BackColor == Color.Blue || btnSuffix.BackColor == Color.Blue || btnLocation.BackColor == Color.Blue || btnURL.BackColor == Color.Blue || btnObjectImage.BackColor == Color.Blue || btnLastName.BackColor == Color.Blue || btnBio.BackColor == Color.Blue || btnSEC.BackColor == Color.Blue)) { btnMint.Enabled = true; }
             }
 
 
@@ -109,6 +110,7 @@ namespace SUP
             if (btnBio.BackColor == Color.Blue) { PROJson.bio = txtBio.Text; }
             if (btnLastName.BackColor == Color.Blue) { PROJson.lnm = txtLastName.Text; }
             if (btnSuffix.BackColor == Color.Blue) { PROJson.sfx = txtSuffix.Text; }
+            if (btnSEC.BackColor == Color.Blue) { PROJson.pky = txtPKY.Text; PROJson.pkx = txtPKX.Text; }
 
 
             Dictionary<string, string> mintURL = new Dictionary<string, string>();
@@ -144,9 +146,17 @@ namespace SUP
             {
                 try
                 {
-                    List<string> pubkeys = Root.GetPublicKeysByAddress(txtObjectAddress.Text, mainnetLogin, mainnetPassword, mainnetURL);
-                    PROJson.pkx = pubkeys[0];
-                    PROJson.pky = pubkeys[1];
+                    if (btnSEC.BackColor == Color.Blue)
+                    {
+                        if (txtPKX.Text.Length == 0)
+                        {
+                            List<string> pubkeys = Root.GetPublicKeysByAddress(txtObjectAddress.Text, mainnetLogin, mainnetPassword, mainnetURL);
+                            txtPKX.Text = pubkeys[0];
+                            txtPKY.Text = pubkeys[1];
+                        }
+                        PROJson.pkx = txtPKX.Text;
+                        PROJson.pky = txtPKY.Text;
+                    }
                 }
                 catch { }
             }
@@ -155,12 +165,17 @@ namespace SUP
                 PROState PRO = PROState.GetProfileByAddress(txtObjectAddress.Text, mainnetLogin, mainnetPassword, mainnetURL, mainnetVersionByte);
                 try
                 {
-                    List<string> pubkeys = Root.GetPublicKeysByAddress(txtObjectAddress.Text, mainnetLogin, mainnetPassword, mainnetURL);
-                    if (PRO.PKX != pubkeys[0])
+                    if (btnSEC.BackColor == Color.Blue)
                     {
 
-                        PROJson.pkx = pubkeys[0];
-                        PROJson.pky = pubkeys[1];
+                        List<string> pubkeys = Root.GetPublicKeysByAddress(txtObjectAddress.Text, mainnetLogin, mainnetPassword, mainnetURL);
+                          if (txtPKX.Text.Length == 0)
+                            {
+                                txtPKX.Text = pubkeys[0];
+                                txtPKY.Text = pubkeys[1];
+                            }
+                            PROJson.pkx = txtPKX.Text;
+                            PROJson.pky = txtPKY.Text;                        
                     }
                 }
                 catch { }
@@ -201,6 +216,7 @@ namespace SUP
                 if (btnLastName.BackColor != Color.Blue) { txtOBJJSON.Text = txtOBJJSON.Text.Replace(",\"lnm\":\"\"", ""); }
                 if (btnMiddleName.BackColor != Color.Blue) { txtOBJJSON.Text = txtOBJJSON.Text.Replace(",\"mnm\":\"\"", ""); }
                 if (btnSuffix.BackColor != Color.Blue) { txtOBJJSON.Text = txtOBJJSON.Text.Replace(",\"sfx\":\"\"", ""); }
+                if (btnSEC.BackColor != Color.Blue) { txtOBJJSON.Text = txtOBJJSON.Text.Replace(",\"pkx\":\"\"", "").Replace(",\"pky\":\"\"", ""); }
 
 
                 byte[] utf8Bytes = System.Text.Encoding.UTF8.GetBytes(txtOBJJSON.Text);
@@ -272,41 +288,41 @@ namespace SUP
 
                 lblCost.Text = "cost: " + (0.00000546 * encodedList.Count).ToString("0.00000000") + "  + miner fee";
 
-              
 
-                    DialogResult result = MessageBox.Show("Are you sure you want to mint this profile?", "Confirmation", MessageBoxButtons.YesNo);
-                    if (result == DialogResult.Yes)
+
+                DialogResult result = MessageBox.Show("Are you sure you want to mint this profile?", "Confirmation", MessageBoxButtons.YesNo);
+                if (result == DialogResult.Yes)
+                {
+
+                    var recipients = new Dictionary<string, decimal>();
+                    foreach (var encodedAddress in encodedList)
                     {
 
-                        var recipients = new Dictionary<string, decimal>();
-                        foreach (var encodedAddress in encodedList)
-                        {
-
-                            try { recipients.Add(encodedAddress, 0.00000546m); } catch { }
-
-                        }
-
-                        CoinRPC a = new CoinRPC(new Uri(mainnetURL), new NetworkCredential(mainnetLogin, mainnetPassword));
-
-                        try
-                        {
-                            string accountsString = "";
-                            try { accountsString = rpcClient.SendCommand("listaccounts").ResultString; } catch { }
-                            var accounts = JsonConvert.DeserializeObject<Dictionary<string, decimal>>(accountsString);
-                            var keyWithLargestValue = accounts.Aggregate((x, y) => x.Value > y.Value ? x : y).Key;
-                            var results = a.SendMany(keyWithLargestValue, recipients);
-                            lblTransactionID.Text = results;
-                        }
-                        catch (Exception ex) { lblCost.Text = ex.Message; }
-
-
+                        try { recipients.Add(encodedAddress, 0.00000546m); } catch { }
 
                     }
-                    ismint = false;
+
+                    CoinRPC a = new CoinRPC(new Uri(mainnetURL), new NetworkCredential(mainnetLogin, mainnetPassword));
+
+                    try
+                    {
+                        string accountsString = "";
+                        try { accountsString = rpcClient.SendCommand("listaccounts").ResultString; } catch { }
+                        var accounts = JsonConvert.DeserializeObject<Dictionary<string, decimal>>(accountsString);
+                        var keyWithLargestValue = accounts.Aggregate((x, y) => x.Value > y.Value ? x : y).Key;
+                        var results = a.SendMany(keyWithLargestValue, recipients);
+                        lblTransactionID.Text = results;
+                    }
+                    catch (Exception ex) { lblCost.Text = ex.Message; }
+
+
+
                 }
+                ismint = false;
+            }
 
 
-           
+
 
 
 
@@ -341,6 +357,7 @@ namespace SUP
                 txtMiddleName.Enabled = true;
                 txtLastName.Enabled = true;
                 txtSuffix.Enabled = true;
+                btnSEC.Enabled = true;
 
             }
             else
@@ -365,6 +382,7 @@ namespace SUP
                 txtMiddleName.Enabled = false;
                 txtLastName.Enabled = false;
                 txtSuffix.Enabled = false;
+                btnSEC.Enabled = false;
 
 
             }
@@ -454,6 +472,7 @@ namespace SUP
                 txtMiddleName.Enabled = true;
                 txtLastName.Enabled = true;
                 txtSuffix.Enabled = true;
+                btnSEC.Enabled = true;
 
             }
             else
@@ -478,6 +497,7 @@ namespace SUP
                 txtMiddleName.Enabled = false;
                 txtLastName.Enabled = false;
                 txtSuffix.Enabled = false;
+                btnSEC.Enabled = false;
 
 
             }
@@ -1088,6 +1108,8 @@ namespace SUP
                 txtSuffix.Text = foundObject.Suffix;
                 txtObjectAddress.Text = address;
                 txtBio.Text = foundObject.Bio;
+                txtPKY.Text = foundObject.PKY;
+                txtPKX.Text = foundObject.PKX;
 
                 flowURL.Controls.Clear();
 
@@ -1347,9 +1369,19 @@ namespace SUP
         private void txtURN_Leave(object sender, EventArgs e)
         {
             PROState PRO = PROState.GetProfileByURN(txtURN.Text, mainnetLogin, mainnetPassword, mainnetURL, mainnetVersionByte);
-            if (PRO.Creators != null && PRO.Creators[0] != txtObjectAddress.Text ) { MessageBox.Show("Sorry, the profile urn " + txtURN.Text + " has already been claimed."); LoadFormByAddress(PRO.Creators[0]); }
+            if (PRO.Creators != null && PRO.Creators[0] != txtObjectAddress.Text) { MessageBox.Show("Sorry, the profile urn " + txtURN.Text + " has already been claimed."); LoadFormByAddress(PRO.Creators[0]); }
         }
 
+        private void btnSEC_Click(object sender, EventArgs e)
+        {
+            if (btnSEC.BackColor == Color.Blue) { btnSEC.BackColor = Color.White; btnSEC.ForeColor = Color.Black; txtPKX.Text = ""; txtPKY.Text = ""; }
+            else
+            {
+                btnSEC.BackColor = Color.Blue; btnSEC.ForeColor = Color.Yellow;
+            }
+            UpdateRemainingChars();
+        }
 
+       
     }
 }
