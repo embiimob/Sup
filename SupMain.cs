@@ -1687,7 +1687,6 @@ namespace SUP
                                                     { _toId = Toprofile.URN; }
 
                                                     string _message = string.Join(" ", root.Message);
-                                                    string _blockdate = root.BlockDate.ToString("yyyyMMddHHmmss");
                                                     string imglocation = "";
                                                     string unfilteredmessage = _message;
                                                     _message = Regex.Replace(_message, "<<.*?>>", "");
@@ -1695,13 +1694,11 @@ namespace SUP
 
                                                     this.Invoke((MethodInvoker)delegate
                                                     {
-
                                                         try { imglocation = myFriends[_to]; } catch { }
                                                         CreateRow(imglocation, _toId, _to, DateTime.ParseExact("19700101010101", "yyyyMMddHHmmss", CultureInfo.InvariantCulture), " ", "", false, supFlow, true);
-
+                                                        imglocation = "";
                                                         try { imglocation = myFriends[_from]; } catch { }
-                                                        CreateRow(imglocation, _fromId, _from, DateTime.ParseExact(_blockdate, "yyyyMMddHHmmss", CultureInfo.InvariantCulture), _message, root.TransactionId, false, supFlow, true);
-
+                                                        CreateRow(imglocation, _fromId, _from, DateTime.Now, _message, root.TransactionId, false, supFlow, true);
 
                                                     });
 
@@ -2111,7 +2108,6 @@ namespace SUP
                                                         { _toId = Toprofile.URN; }
 
                                                         string _message = string.Join(" ", root.Message);
-                                                        string _blockdate = root.BlockDate.ToString("yyyyMMddHHmmss");
                                                         string imglocation = "";
                                                         string unfilteredmessage = _message;
                                                         _message = Regex.Replace(_message, "<<.*?>>", "");
@@ -2121,9 +2117,9 @@ namespace SUP
                                                         {
                                                             try { imglocation = myFriends[_to]; } catch { }
                                                             CreateRow(imglocation, _toId, _to, DateTime.ParseExact("19700101010101", "yyyyMMddHHmmss", CultureInfo.InvariantCulture), " ", "", false, supFlow, true);
-
+                                                            imglocation = "";
                                                             try { imglocation = myFriends[_from]; } catch { }
-                                                            CreateRow(imglocation, _fromId, _from, DateTime.ParseExact(_blockdate, "yyyyMMddHHmmss", CultureInfo.InvariantCulture), _message, root.TransactionId, false, supFlow, true);
+                                                            CreateRow(imglocation, _fromId, _from, DateTime.Now, _message, root.TransactionId, false, supFlow, true);
 
 
                                                         });
@@ -2484,7 +2480,6 @@ namespace SUP
                                                         string _to = "";
                                                         if (root.Keyword.Count() > 1) { _to = root.Keyword.Keys.GetItemByIndex(root.Keyword.Count() - 2); } else { _to = root.Keyword.Keys.Last(); }
                                                         string _message = string.Join(" ", root.Message);
-                                                        string _blockdate = root.BlockDate.ToString("yyyyMMddHHmmss");
                                                         string imglocation = "";
                                                         string unfilteredmessage = _message;
                                                         _message = Regex.Replace(_message, "<<.*?>>", "");
@@ -2494,9 +2489,9 @@ namespace SUP
                                                         {
                                                             try { imglocation = myFriends[_to]; } catch { }
                                                             CreateRow(imglocation, _to, _to, DateTime.ParseExact("19700101010101", "yyyyMMddHHmmss", CultureInfo.InvariantCulture), " ", "", false, supFlow, true);
-
+                                                            imglocation = "";
                                                             try { imglocation = myFriends[_from]; } catch { }
-                                                            CreateRow(imglocation, _from, _from, DateTime.ParseExact(_blockdate, "yyyyMMddHHmmss", CultureInfo.InvariantCulture), _message, root.TransactionId, false, supFlow, true);
+                                                            CreateRow(imglocation, _from, _from, DateTime.Now, _message, root.TransactionId, false, supFlow, true);
                                                         });
 
                                                         string pattern = "<<.*?>>";
@@ -2831,7 +2826,6 @@ namespace SUP
                                                         string _to = "";
                                                         if (root.Keyword.Count() > 1) { _to = root.Keyword.Keys.GetItemByIndex(root.Keyword.Count() - 2); } else { _to = root.Keyword.Keys.Last(); }
                                                         string _message = string.Join(" ", root.Message);
-                                                        string _blockdate = root.BlockDate.ToString("yyyyMMddHHmmss");
                                                         string imglocation = "";
                                                         string unfilteredmessage = _message;
                                                         _message = Regex.Replace(_message, "<<.*?>>", "");
@@ -2841,9 +2835,9 @@ namespace SUP
                                                         {
                                                             try { imglocation = myFriends[_to]; } catch { }
                                                             CreateRow(imglocation, _to, _to, DateTime.ParseExact("19700101010101", "yyyyMMddHHmmss", CultureInfo.InvariantCulture), " ", "", false, supFlow, true);
-
+                                                            imglocation = "";
                                                             try { imglocation = myFriends[_from]; } catch { }
-                                                            CreateRow(imglocation, _from, _from, DateTime.ParseExact(_blockdate, "yyyyMMddHHmmss", CultureInfo.InvariantCulture), _message, root.TransactionId, false, supFlow, true);
+                                                            CreateRow(imglocation, _from, _from, DateTime.Now, _message, root.TransactionId, false, supFlow, true);
                                                         });
 
                                                         string pattern = "<<.*?>>";
@@ -3182,7 +3176,6 @@ namespace SUP
                                                         string _to = "";
                                                         if (root.Keyword.Count() > 1) { _to = root.Keyword.Keys.GetItemByIndex(root.Keyword.Count() - 2); } else { _to = root.Keyword.Keys.Last(); }
                                                         string _message = string.Join(" ", root.Message);
-                                                        string _blockdate = root.BlockDate.ToString("yyyyMMddHHmmss");
                                                         string imglocation = "";
                                                         string unfilteredmessage = _message;
                                                         _message = Regex.Replace(_message, "<<.*?>>", "");
@@ -3193,9 +3186,9 @@ namespace SUP
                                                             try { imglocation = myFriends[_to]; } catch { }
                                                             CreateRow(imglocation, _to, _to, DateTime.ParseExact("19700101010101", "yyyyMMddHHmmss", CultureInfo.InvariantCulture), " ", "", false, supFlow, true);
 
-
+                                                            imglocation = "";
                                                             try { imglocation = myFriends[_from]; } catch { }
-                                                            CreateRow(imglocation, _from, _from, DateTime.ParseExact(_blockdate, "yyyyMMddHHmmss", CultureInfo.InvariantCulture), _message, root.TransactionId, false, supFlow, true);
+                                                            CreateRow(imglocation, _from, _from, DateTime.Now, _message, root.TransactionId, false, supFlow, true);
                                                         });
 
                                                         string pattern = "<<.*?>>";
@@ -5115,7 +5108,7 @@ namespace SUP
                             {
                                 try { imglocation = myFriends[_from]; } catch { imglocation = @"includes\anon.png"; }
                                 CreateRow(imglocation, fromURN, _from, DateTime.ParseExact(_blockdate, "yyyyMMddHHmmss", CultureInfo.InvariantCulture), _message, _transactionId, false, supFlow);
-
+                                imglocation = "";
                                 try { imglocation = myFriends[_to]; } catch { imglocation = @"includes\anon.png"; }
                                 CreateRow(imglocation, toURN, _to, DateTime.ParseExact("19700101010101", "yyyyMMddHHmmss", CultureInfo.InvariantCulture), "", _transactionId, false, supFlow);
                             }
@@ -6764,12 +6757,8 @@ namespace SUP
                 }
             }
 
-            try
-            {
-                Directory.Delete(@"root\" + transactionid, true);
-                Directory.CreateDirectory(@"root\" + transactionid);
-            }
-            catch { }
+            try { Directory.Delete(@"root\" + transactionid, true); } catch { }
+            try { Directory.CreateDirectory(@"root\" + transactionid); } catch { }
             Root P2FKRoot = new Root();
             P2FKRoot.Confirmations = 1;
             var rootSerialized = JsonConvert.SerializeObject(P2FKRoot);
