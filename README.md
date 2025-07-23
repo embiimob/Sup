@@ -3,14 +3,14 @@ experimental decentralized state engine
 
 Sup!? (satoshi universal protocol) demonstrates fully trustless, censorship free, social media with private messaging, file sharing, DAO voting, website publishing and tradeable blockchain objects.
 
-This experiment is using an ancient blockchain protocol called P2FK (Pay to Future Key) invented by http://HugPuddle.org in 2013.
+This experiment is using an ancient blockchain protocol called P2FK (Pay to Future Key) invented by embii in 2013 as part of the HugPuddle project
 
 P2FK was directly inspired by the satoshi uploader  see --> https://cirosantilli.com/satoshi-uploader
 
 ## **Installation**
 
 1. Download Supv0.7.6-beta.zip ( https://github.com/embiimob/Sup/releases/download/Supv0.7.6-beta/Supv0.7.6-beta.zip )
-2. Create a folder on your **fastest** disk drive with at least **100GB** free (it will be storing the bitcoin testnet blockchain)
+2. Create a folder on your **fastest** disk drive with at least **300GB** free (it will be storing the bitcoin testnet blockchain)
 3. Unzip all contents into the folder
 4. Run SUP.exe
 
@@ -18,7 +18,7 @@ P2FK was directly inspired by the satoshi uploader  see --> https://cirosantilli
 1. Click the key 🗝️ button
 2. Launch a full bitcoin testnet node by clicking the top launch button
 3. Launch IPFS using the button provided "enable IPFS daemon"
-4. Wait until testnet is fully synced. ( this part will take several hours )
+4. Wait until testnet3 is fully synced. ( this part will take several hours )
 5. Type embii4u in the main search box, hit enter and wait while the profile loads for the first time
 <br />
 <br /> 
