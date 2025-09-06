@@ -21,7 +21,15 @@ P2FK was directly inspired by the satoshi uploader  see --> https://cirosantilli
 4. Wait until testnet3 is fully synced. ( this part will take several hours )
 5. Type embii4u in the main search box, hit enter and wait while the profile loads for the first time
 <br />
-<br /> 
+
+**Sync Time Estimates & Disk Space Requirements (Sep 2025)**
+
+*Tested on a SanDisk 2GB/s SSD with an ASUS TUF Gaming laptop (AMD Ryzen 7 4800H, 16GB RAM).*
+
+| Blockchain      | Sync Time   | Disk Space Required |
+|-----------------|-------------|----------------------|
+| Bitcoin Mainnet | 5 days 4 hrs | 921 GB |
+<br />
 
 ## **NOTICE**
 Sup!? is an experimental tool made by adults for #adults. Sup!? is not suitable for children. 
