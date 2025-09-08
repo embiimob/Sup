@@ -28,7 +28,8 @@ P2FK was directly inspired by the satoshi uploader  see --> https://cirosantilli
 
 | Blockchain      | Sync Time   | Disk Space Required |
 |-----------------|-------------|----------------------|
-| Bitcoin Mainnet | 5 days 4 hrs | 921 GB |
+| Bitcoin mainnet | 5 days 4 hrs | 921 GB |
+| Bitcoin testnet3 | 1 days 23 hrs | 260 GB |
 <br />
 
 ## **NOTICE**
