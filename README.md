@@ -129,9 +129,6 @@ searches mainchain - bitcoin testnet by address returns all object associations 
 ### **6d14b0dc526a431f611f16f29d684f73e6b01f0a59a0b7b3d9b8d951091c2422/index.html**
 searches mainchain - bitcoin testnet by transaction id returns referenced index.htm(l) in browser
 
-### **BTC:0618f12af65a4e82f8e7b41f8578721dfeb109e9a73ff71aebdbc982696e3720/index.html**
-searches sidechain - bitcoin production by transaction id returns referenced index.htm(l) in browser
-
 ### **MZC:4dbb0e984586d1994f461c419c460edf7ecf15488a8b11282f19cec9aa7ec285/index.html?viewer=embii4u**
 searches sidechain - mazacoin production by transaction id returns referenced index.htm(l) in browser
 
@@ -139,13 +136,13 @@ searches sidechain - mazacoin production by transaction id returns referenced in
 searches mainchain for up to a 20 character case sensitive keyword and shows all public message and object associations
 
 ### **@UserName**
-searches mainchain by urn - shows currently registered profile object links associated with @username and shows all object associations. profile registrations are transferable and expire after 3 years of no activity allowing them to be claimed by other registrants in the future.
+searches mainchain by urn - shows currently registered profile object links associated with @username and shows all object associations. profile registrations are transferable and expire after 10 years of no activity allowing them to be claimed by other registrants in the future.
 
 ### **ipfs://QmU42aLJToYmshwJu26iprH9RsX6SfJDw3FTf6senJEdF1**
 performs a ipfs get, archives ipfs file(s) locally, pins file(s) if pinning is enabled, and opens a system folder diolouge allowing you to explore any files found
 
 ### **sup://twitter.com**
-searches mainchain by urn - shows currently registered object with uri redirection. if uri redirection is a web url it will be opened in the default web browser.  urn registrations are transferable and expire after 3 years of inactivity allowing them to be claimed by other registrants in the future.  ( there are no urn character limits)
+searches mainchain by urn - shows currently registered object with uri redirection. if uri redirection is a web url it will be opened in the default web browser.  urn registrations are transferable and expire after 10 years of inactivity allowing them to be claimed by other registrants in the future.  ( there are no urn character limits)
 
 ### **http(s)://embii.org**
 navigates to requested url in browser.
