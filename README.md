@@ -31,6 +31,7 @@ P2FK was directly inspired by the satoshi uploader  see --> https://cirosantilli
 | Bitcoin mainnet | 5 days 4 hrs | 921 GB |
 | Bitcoin testnet3 | 1 days 23 hrs | 260 GB |
 | Litecoin mainnet | 1 days 8 hrs | 234 GB |
+| Dogecoin mainnet | 2 days 13 hrs | 215 GB |
 <br />
 
 ## **NOTICE**
