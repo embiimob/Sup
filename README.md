@@ -19,7 +19,8 @@ P2FK was directly inspired by the satoshi uploader  see --> https://cirosantilli
 2. Launch a full bitcoin testnet node by clicking the top launch button
 3. Launch IPFS using the button provided "enable IPFS daemon"
 4. Wait until testnet3 is fully synced. ( see below for time estimates )
-5. Type embii4u in the main search box, hit enter and WAIT while the profile loads for the first time
+5. Type embii4u in the main search box, hit enter and *WAIT while the profile loads for the first time<br />
+*Build time was 1 minute 44 seconds as of Sep 14 2025 at a profile height of 3074 with 190 object associations
 <br />
 
 **Sync Time Estimates & Disk Space Requirements (Sep 2025)**
