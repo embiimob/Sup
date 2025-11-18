@@ -2145,13 +2145,20 @@ namespace SUP
 
                                                                 string extension = Path.GetExtension(imgurn).ToLower();
                                                                 List<string> imgExtensions = new List<string> { ".bmp", ".gif", ".ico", ".jpeg", ".jpg", ".png", ".tif", ".tiff", ".mov", ".avi", ".wav", ".mp3" };
-
+                                                                List<string> objExtensions = new List<string> { ".glb", ".json" };
 
                                                                 string vpattern = @"(?:youtu\.be/|youtube(?:-nocookie)?\.com/(?:[^/\n\s]*[/\n\s]*(?:v/|e(?:mbed)?/|.*[?&]v=))?)?([a-zA-Z0-9_-]{11})";
                                                                 Match vmatch = Regex.Match(content, vpattern);
 
+                                                                if (objExtensions.Contains(extension))
+                                                                {
+                                                                    this.Invoke((MethodInvoker)delegate
+                                                                    {
+                                                                        AddObject(content);
+                                                                    });
 
-                                                                if (!imgExtensions.Contains(extension) && vmatch.Value.Length < 12)
+                                                                }
+                                                                else if (!imgExtensions.Contains(extension) && vmatch.Value.Length < 12)
                                                                 {
 
 
@@ -2515,9 +2522,18 @@ namespace SUP
 
                                                                 string extension = Path.GetExtension(imgurn).ToLower();
                                                                 List<string> imgExtensions = new List<string> { ".bmp", ".gif", ".ico", ".jpeg", ".jpg", ".png", ".tif", ".tiff", ".mp4", ".mov", ".avi", ".wav", ".mp3" };
+                                                                List<string> objExtensions = new List<string> { ".glb", ".json" };
                                                                 string vpattern = @"(?:youtu\.be/|youtube(?:-nocookie)?\.com/(?:[^/\n\s]*[/\n\s]*(?:v/|e(?:mbed)?/|.*[?&]v=))?)?([a-zA-Z0-9_-]{11})";
                                                                 Match vmatch = Regex.Match(content, vpattern);
-                                                                if (!imgExtensions.Contains(extension) && vmatch.Value.Length < 12)
+                                                                if (objExtensions.Contains(extension))
+                                                                {
+                                                                    this.Invoke((MethodInvoker)delegate
+                                                                    {
+                                                                        AddObject(content);
+                                                                    });
+
+                                                                }
+                                                                else if (!imgExtensions.Contains(extension) && vmatch.Value.Length < 12)
                                                                 {
 
 
@@ -2861,9 +2877,18 @@ namespace SUP
 
                                                                 string extension = Path.GetExtension(imgurn).ToLower();
                                                                 List<string> imgExtensions = new List<string> { ".bmp", ".gif", ".ico", ".jpeg", ".jpg", ".png", ".tif", ".tiff", ".mp4", ".mov", ".avi", ".wav", ".mp3" };
+                                                                List<string> objExtensions = new List<string> { ".glb", ".json" };
                                                                 string vpattern = @"(?:youtu\.be/|youtube(?:-nocookie)?\.com/(?:[^/\n\s]*[/\n\s]*(?:v/|e(?:mbed)?/|.*[?&]v=))?)?([a-zA-Z0-9_-]{11})";
                                                                 Match vmatch = Regex.Match(content, vpattern);
-                                                                if (!imgExtensions.Contains(extension) && vmatch.Value.Length < 12)
+                                                                if (objExtensions.Contains(extension))
+                                                                {
+                                                                    this.Invoke((MethodInvoker)delegate
+                                                                    {
+                                                                        AddObject(content);
+                                                                    });
+
+                                                                }
+                                                                else if (!imgExtensions.Contains(extension) && vmatch.Value.Length < 12)
                                                                 {
 
 
@@ -3212,9 +3237,18 @@ namespace SUP
 
                                                                 string extension = Path.GetExtension(imgurn).ToLower();
                                                                 List<string> imgExtensions = new List<string> { ".bmp", ".gif", ".ico", ".jpeg", ".jpg", ".png", ".tif", ".tiff", ".mp4", ".mov", ".avi", ".wav", ".mp3" };
+                                                                List<string> objExtensions = new List<string> { ".glb", ".json" };
                                                                 string vpattern = @"(?:youtu\.be/|youtube(?:-nocookie)?\.com/(?:[^/\n\s]*[/\n\s]*(?:v/|e(?:mbed)?/|.*[?&]v=))?)?([a-zA-Z0-9_-]{11})";
                                                                 Match vmatch = Regex.Match(content, vpattern);
-                                                                if (!imgExtensions.Contains(extension) && vmatch.Value.Length < 12)
+                                                                if (objExtensions.Contains(extension))
+                                                                {
+                                                                    this.Invoke((MethodInvoker)delegate
+                                                                    {
+                                                                        AddObject(content);
+                                                                    });
+
+                                                                }
+                                                                else if (!imgExtensions.Contains(extension) && vmatch.Value.Length < 12)
                                                                 {
 
 
@@ -5639,6 +5673,135 @@ namespace SUP
             }
 
 
+        }
+
+        void AddObject(string objectpath, bool isprivate = false, bool addtoTop = false)
+        {
+            string objectlocation = "";
+            if (objectpath != null)
+            {
+                objectlocation = objectpath;
+
+                if (!objectpath.ToLower().StartsWith("http"))
+                {
+                    objectlocation = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + @"\root\" + objectpath.Replace("BTC:", "").Replace("MZC:", "").Replace("LTC:", "").Replace("DOG:", "").Replace("IPFS:", "").Replace(@"/", @"\");
+                    if (objectpath.ToLower().StartsWith("ipfs:")) { objectlocation = objectlocation.Replace(@"\root\", @"\ipfs\"); if (objectpath.Length == 51) { objectlocation += @"\artifact"; } }
+
+                    Regex regexTransactionId = new Regex(@"\b[0-9a-f]{64}\b");
+                    Match imgurnmatch = regexTransactionId.Match(objectlocation);
+                    string transactionid = imgurnmatch.Value;
+
+                    if (!File.Exists(objectlocation))
+                    {
+
+                        Task.Run(() =>
+                        {
+
+                            switch (objectpath.ToUpper().Substring(0, 4))
+                            {
+                                case "MZC:":
+                                    Root.GetRootByTransactionId(transactionid, "good-user", "better-password", @"http://127.0.0.1:12832", "50");
+
+                                    break;
+                                case "BTC:":
+
+                                    Root.GetRootByTransactionId(transactionid, "good-user", "better-password", @"http://127.0.0.1:8332", "0");
+
+                                    break;
+                                case "LTC:":
+
+                                    Root.GetRootByTransactionId(transactionid, "good-user", "better-password", @"http://127.0.0.1:9332", "48");
+
+
+                                    break;
+                                case "DOG:":
+                                    Root.GetRootByTransactionId(transactionid, "good-user", "better-password", @"http://127.0.0.1:22555", "30");
+
+                                    break;
+                                case "IPFS":
+                                    string transid = "empty";
+                                    try { transid = objectpath.Substring(5, 46); } catch { }
+
+                                    if (!System.IO.Directory.Exists("ipfs/" + transid + "-build"))
+                                    {
+                                        try
+                                        {
+                                            Directory.CreateDirectory("ipfs/" + transid);
+                                        }
+                                        catch { };
+
+                                        Directory.CreateDirectory("ipfs/" + transid + "-build");
+                                        Process process2 = new Process();
+                                        process2.StartInfo.FileName = @"ipfs\ipfs.exe";
+                                        process2.StartInfo.Arguments = "get " + objectpath.Substring(5, 46) + @" -o ipfs\" + transid;
+                                        process2.StartInfo.UseShellExecute = false;
+                                        process2.StartInfo.CreateNoWindow = true;
+                                        process2.Start();
+                                        if (process2.WaitForExit(550000))
+                                        {
+                                            string fileName;
+                                            if (System.IO.File.Exists("ipfs/" + transid))
+                                            {
+                                                System.IO.File.Move("ipfs/" + transid, "ipfs/" + transid + "_tmp");
+                                                System.IO.Directory.CreateDirectory("ipfs/" + transid);
+                                                fileName = objectpath.Replace(@"//", "").Replace(@"\\", "").Substring(51);
+                                                if (fileName == "") { fileName = "artifact"; } else { fileName = fileName.Replace(@"/", "").Replace(@"\", ""); }
+                                                Directory.CreateDirectory("ipfs/" + transid);
+                                                System.IO.File.Move("ipfs/" + transid + "_tmp", objectlocation);
+                                            }
+
+                                            if (System.IO.File.Exists("ipfs/" + transid + "/" + transid))
+                                            {
+                                                fileName = objectpath.Replace(@"//", "").Replace(@"\\", "").Substring(51);
+                                                if (fileName == "") { fileName = "artifact"; } else { fileName = fileName.Replace(@"/", "").Replace(@"\", ""); }
+
+                                                System.IO.File.Move("ipfs/" + transid + "/" + transid, objectlocation);
+                                            }
+
+                                            try
+                                            {
+                                                if (File.Exists("IPFS_PINNING_ENABLED"))
+                                                {
+                                                    Process process3 = new Process
+                                                    {
+                                                        StartInfo = new ProcessStartInfo
+                                                        {
+                                                            FileName = @"ipfs\ipfs.exe",
+                                                            Arguments = "pin add " + transid,
+                                                            UseShellExecute = false,
+                                                            CreateNoWindow = true
+                                                        }
+                                                    };
+                                                    process3.Start();
+                                                }
+                                            }
+                                            catch { }
+
+                                            try { Directory.Delete("ipfs/" + transid + "-build", true); } catch { }
+                                        }
+                                        else
+                                        {
+                                            process2.Kill();
+                                            try { Directory.Delete("ipfs/" + transid + "-build", true); } catch { }
+                                        }
+
+                                    }
+
+                                    break;
+                                default:
+                                    if (!objectpath.ToUpper().StartsWith("HTTP") && transactionid != "")
+                                    {
+                                        Root.GetRootByTransactionId(transactionid, mainnetLogin, mainnetPassword, mainnetURL, mainnetVersionByte);
+
+                                    }
+                                    break;
+
+                            }
+
+                        });
+                    }
+                }
+            }
         }
 
         void AddProfile(string imagepath, string profileurn, string profileaddress)
