@@ -1,0 +1,319 @@
+@page "/settings"
+@rendermode InteractiveServer
+@using Sup.Core.Services
+@inject IBlockchainService BlockchainService
+@inject IIpfsService IpfsService
+
+<PageTitle>Sup!? - Settings</PageTitle>
+
+<div class="settings-container">
+    <div class="settings-header">
+        <h1>⚙️ Settings</h1>
+        <p>Configure your blockchain connections and application preferences</p>
+    </div>
+
+    <div class="settings-content">
+        <div class="settings-section">
+            <h2>🔗 Blockchain Connections</h2>
+            <p class="section-desc">Manage your blockchain node connections and credentials</p>
+
+            <div class="blockchain-card">
+                <div class="blockchain-header">
+                    <div class="blockchain-info">
+                        <span class="blockchain-icon">₿</span>
+                        <div>
+                            <h3>Bitcoin Testnet</h3>
+                            <span class="status-badge @(bitcoinConnected ? "connected" : "disconnected")">
+                                ● @(bitcoinConnected ? "Connected" : "Disconnected")
+                            </span>
+                        </div>
+                    </div>
+                    <button class="toggle-btn" @onclick="() => ToggleBlockchainDetails(0)">
+                        @(showBitcoinDetails ? "Hide" : "Configure")
+                    </button>
+                </div>
+                @if (showBitcoinDetails)
+                {
+                    <div class="blockchain-details">
+                        <div class="form-group">
+                            <label>RPC URL</label>
+                            <input type="text" @bind="bitcoinRpcUrl" class="input-field" />
+                        </div>
+                        <div class="form-group">
+                            <label>Username</label>
+                            <input type="text" @bind="bitcoinUsername" class="input-field" />
+                        </div>
+                        <div class="form-group">
+                            <label>Password</label>
+                            <input type="password" @bind="bitcoinPassword" class="input-field" />
+                        </div>
+                        <button class="test-btn" @onclick="TestBitcoinConnection" disabled="@isTestingConnection">
+                            @(isTestingConnection ? "Testing..." : "Test Connection")
+                        </button>
+                        @if (!string.IsNullOrEmpty(connectionTestResult))
+                        {
+                            <div class="test-result @(connectionTestSuccess ? "success" : "error")">
+                                @connectionTestResult
+                            </div>
+                        }
+                    </div>
+                }
+            </div>
+        </div>
+
+        <div class="settings-section">
+            <h2>📦 IPFS Configuration</h2>
+            <p class="section-desc">Manage your IPFS daemon settings</p>
+
+            <div class="ipfs-card">
+                <div class="ipfs-status">
+                    <h4>IPFS Daemon Status</h4>
+                    <span class="status-badge @(ipfsRunning ? "connected" : "disconnected")">
+                        ● @(ipfsRunning ? "Running" : "Stopped")
+                    </span>
+                </div>
+                
+                <div class="form-group">
+                    <label>IPFS API URL</label>
+                    <input type="text" @bind="ipfsApiUrl" class="input-field" />
+                </div>
+                <div class="form-group">
+                    <label>Gateway URL</label>
+                    <input type="text" @bind="ipfsGatewayUrl" class="input-field" />
+                </div>
+                <div class="form-group checkbox-group">
+                    <label>
+                        <input type="checkbox" @bind="ipfsAutoStart" />
+                        Auto-start IPFS daemon
+                    </label>
+                </div>
+                <div class="form-group checkbox-group">
+                    <label>
+                        <input type="checkbox" @bind="ipfsAutoPin" />
+                        Auto-pin uploaded content
+                    </label>
+                </div>
+                <div class="action-buttons">
+                    <button class="primary-btn" @onclick="StartIpfs" disabled="@(ipfsRunning || isIpfsOperating)">
+                        @(isIpfsOperating ? "Starting..." : "Start Daemon")
+                    </button>
+                    <button class="secondary-btn" @onclick="StopIpfs" disabled="@(!ipfsRunning || isIpfsOperating)">
+                        @(isIpfsOperating ? "Stopping..." : "Stop Daemon")
+                    </button>
+                </div>
+                @if (!string.IsNullOrEmpty(ipfsStatusMessage))
+                {
+                    <div class="status-message">
+                        @ipfsStatusMessage
+                    </div>
+                }
+            </div>
+        </div>
+
+        <div class="settings-section">
+            <h2>🎨 Appearance</h2>
+            <p class="section-desc">Customize the look and feel of the application</p>
+
+            <div class="appearance-card">
+                <div class="form-group">
+                    <label>Theme</label>
+                    <select class="input-field" @bind="selectedTheme">
+                        <option value="light">Light</option>
+                        <option value="dark">Dark</option>
+                        <option value="auto">Auto</option>
+                    </select>
+                </div>
+                <div class="form-group checkbox-group">
+                    <label>
+                        <input type="checkbox" @bind="compactView" />
+                        Compact view
+                    </label>
+                </div>
+                <div class="form-group checkbox-group">
+                    <label>
+                        <input type="checkbox" @bind="showAnimations" />
+                        Show animations
+                    </label>
+                </div>
+            </div>
+        </div>
+
+        <div class="settings-section">
+            <h2>🔒 Privacy & Security</h2>
+            <p class="section-desc">Manage your privacy and security settings</p>
+
+            <div class="privacy-card">
+                <div class="form-group checkbox-group">
+                    <label>
+                        <input type="checkbox" @bind="filterFriendsOnly" />
+                        Filter live postings (friends only)
+                    </label>
+                </div>
+                <div class="form-group checkbox-group">
+                    <label>
+                        <input type="checkbox" @bind="encryptMessages" />
+                        Enable encryption for all messages
+                    </label>
+                </div>
+                <div class="action-buttons">
+                    <button class="danger-btn" @onclick="ClearCache">Clear Cache</button>
+                    <button class="danger-btn" @onclick="PurgeIpfs">Purge IPFS</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="settings-footer">
+        <button class="save-btn" @onclick="SaveSettings">💾 Save Settings</button>
+    </div>
+</div>
+
+@code {
+    // Bitcoin settings
+    private bool bitcoinConnected = false;
+    private bool showBitcoinDetails = false;
+    private string bitcoinRpcUrl = "http://127.0.0.1:18332";
+    private string bitcoinUsername = "bitcoin-rpc";
+    private string bitcoinPassword = "";
+    private bool isTestingConnection = false;
+    private string connectionTestResult = "";
+    private bool connectionTestSuccess = false;
+
+    // IPFS settings
+    private bool ipfsRunning = false;
+    private bool isIpfsOperating = false;
+    private string ipfsApiUrl = "http://127.0.0.1:5001";
+    private string ipfsGatewayUrl = "http://127.0.0.1:8080";
+    private bool ipfsAutoStart = false;
+    private bool ipfsAutoPin = true;
+    private string ipfsStatusMessage = "";
+
+    // Appearance settings
+    private string selectedTheme = "light";
+    private bool compactView = false;
+    private bool showAnimations = true;
+
+    // Privacy settings
+    private bool filterFriendsOnly = false;
+    private bool encryptMessages = false;
+
+    protected override async Task OnInitializedAsync()
+    {
+        // Check initial connection status
+        await CheckConnections();
+    }
+
+    private async Task CheckConnections()
+    {
+        try
+        {
+            bitcoinConnected = await BlockchainService.IsConnectedAsync("BitcoinTestnet");
+            ipfsRunning = await IpfsService.IsRunningAsync();
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error checking connections: {ex.Message}");
+        }
+    }
+
+    private void ToggleBlockchainDetails(int index)
+    {
+        showBitcoinDetails = !showBitcoinDetails;
+    }
+
+    private async Task TestBitcoinConnection()
+    {
+        isTestingConnection = true;
+        connectionTestResult = "";
+        
+        try
+        {
+            await Task.Delay(500); // Small delay for UX
+            bool connected = await BlockchainService.IsConnectedAsync("BitcoinTestnet");
+            
+            if (connected)
+            {
+                connectionTestResult = "✓ Connection successful!";
+                connectionTestSuccess = true;
+                bitcoinConnected = true;
+            }
+            else
+            {
+                connectionTestResult = "✗ Connection failed. Check your RPC settings and ensure the node is running.";
+                connectionTestSuccess = false;
+                bitcoinConnected = false;
+            }
+        }
+        catch (Exception ex)
+        {
+            connectionTestResult = $"✗ Error: {ex.Message}";
+            connectionTestSuccess = false;
+            bitcoinConnected = false;
+        }
+        finally
+        {
+            isTestingConnection = false;
+        }
+    }
+
+    private async Task StartIpfs()
+    {
+        isIpfsOperating = true;
+        ipfsStatusMessage = "Starting IPFS daemon...";
+        
+        try
+        {
+            await IpfsService.StartDaemonAsync();
+            ipfsRunning = true;
+            ipfsStatusMessage = "✓ IPFS daemon started successfully!";
+        }
+        catch (Exception ex)
+        {
+            ipfsStatusMessage = $"✗ Failed to start IPFS: {ex.Message}";
+            ipfsRunning = false;
+        }
+        finally
+        {
+            isIpfsOperating = false;
+        }
+    }
+
+    private async Task StopIpfs()
+    {
+        isIpfsOperating = true;
+        ipfsStatusMessage = "Stopping IPFS daemon...";
+        
+        try
+        {
+            await IpfsService.StopDaemonAsync();
+            ipfsRunning = false;
+            ipfsStatusMessage = "✓ IPFS daemon stopped.";
+        }
+        catch (Exception ex)
+        {
+            ipfsStatusMessage = $"✗ Failed to stop IPFS: {ex.Message}";
+        }
+        finally
+        {
+            isIpfsOperating = false;
+        }
+    }
+
+    private void ClearCache()
+    {
+        // Implement cache clearing
+        Console.WriteLine("Clearing cache...");
+    }
+
+    private void PurgeIpfs()
+    {
+        // Implement IPFS purge
+        Console.WriteLine("Purging IPFS...");
+    }
+
+    private void SaveSettings()
+    {
+        // Save settings to configuration
+        Console.WriteLine("Saving settings...");
+    }
+}
