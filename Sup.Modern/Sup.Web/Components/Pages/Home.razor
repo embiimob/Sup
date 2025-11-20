@@ -1,0 +1,166 @@
+﻿@page "/"
+@rendermode InteractiveServer
+
+<PageTitle>Sup!? - Home</PageTitle>
+
+<div class="home-container">
+    <div class="feed-section">
+        <div class="compose-box">
+            <textarea class="compose-input" placeholder="What's on your mind? Share an object, message, or thought..." rows="3"></textarea>
+            <div class="compose-actions">
+                <div class="compose-tools">
+                    <button class="tool-btn" title="Attach image">🖼️</button>
+                    <button class="tool-btn" title="Attach video">🎬</button>
+                    <button class="tool-btn" title="Attach audio">🎵</button>
+                    <button class="tool-btn" title="Create poll">⁉️</button>
+                    <button class="tool-btn" title="Add GIF">😀</button>
+                </div>
+                <div class="compose-submit">
+                    <label class="privacy-toggle">
+                        <input type="checkbox" />
+                        <span>🤐 Private</span>
+                    </label>
+                    <button class="post-btn">📢 Post</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="feed-filters">
+            <button class="filter-btn active">🌐 All</button>
+            <button class="filter-btn">👥 Following</button>
+            <button class="filter-btn">✨ Objects</button>
+            <button class="filter-btn">💬 Messages</button>
+        </div>
+
+        <div class="feed-items">
+            @for (int i = 0; i < 5; i++)
+            {
+                <div class="feed-card">
+                    <div class="card-header">
+                        <div class="user-info">
+                            <div class="avatar">🎨</div>
+                            <div class="user-details">
+                                <h4>@GetSampleUser(i)</h4>
+                                <span class="timestamp">@GetSampleTime(i)</span>
+                            </div>
+                        </div>
+                        <button class="more-btn">⋮</button>
+                    </div>
+                    <div class="card-content">
+                        <p>@GetSampleContent(i)</p>
+                        @if (i % 3 == 0)
+                        {
+                            <div class="card-media">
+                                <div class="media-placeholder">🖼️ Image Content</div>
+                            </div>
+                        }
+                    </div>
+                    <div class="card-footer">
+                        <button class="action-btn">❤️ @GetSampleLikes(i)</button>
+                        <button class="action-btn">💬 @GetSampleComments(i)</button>
+                        <button class="action-btn">🔄 Share</button>
+                        <button class="action-btn">⚡ Trade</button>
+                    </div>
+                </div>
+            }
+        </div>
+
+        <div class="load-more">
+            <button class="load-more-btn">Load More</button>
+        </div>
+    </div>
+
+    <div class="sidebar-section">
+        <div class="trending-card">
+            <h3>🔥 Trending Keywords</h3>
+            <div class="trending-list">
+                <a href="/search?q=flowersofwar" class="trending-item">#flowersofwar</a>
+                <a href="/search?q=boxpoem" class="trending-item">#boxpoem</a>
+                <a href="/search?q=experimental" class="trending-item">#experimental</a>
+                <a href="/search?q=nft" class="trending-item">#nft</a>
+                <a href="/search?q=art" class="trending-item">#art</a>
+            </div>
+        </div>
+
+        <div class="suggested-card">
+            <h3>👥 Suggested Profiles</h3>
+            <div class="profile-list">
+                <div class="profile-item">
+                    <div class="avatar">🎨</div>
+                    <div class="profile-info">
+                        <h5>embii4u</h5>
+                        <span>Creator</span>
+                    </div>
+                    <button class="follow-btn">Follow</button>
+                </div>
+                <div class="profile-item">
+                    <div class="avatar">🎮</div>
+                    <div class="profile-info">
+                        <h5>cryptoartist</h5>
+                        <span>Artist</span>
+                    </div>
+                    <button class="follow-btn">Follow</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="stats-card">
+            <h3>📊 Your Stats</h3>
+            <div class="stats-grid">
+                <div class="stat-item">
+                    <div class="stat-value">0</div>
+                    <div class="stat-label">Objects</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value">0</div>
+                    <div class="stat-label">Followers</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value">0</div>
+                    <div class="stat-label">Following</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value">0</div>
+                    <div class="stat-label">Messages</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@code {
+    private string GetSampleUser(int index)
+    {
+        var users = new[] { "embii4u", "cryptoartist", "blockchain_bob", "nft_collector", "digital_artist" };
+        return users[index % users.Length];
+    }
+
+    private string GetSampleTime(int index)
+    {
+        var times = new[] { "2 min ago", "15 min ago", "1 hour ago", "3 hours ago", "1 day ago" };
+        return times[index % times.Length];
+    }
+
+    private string GetSampleContent(int index)
+    {
+        var contents = new[]
+        {
+            "Just minted my latest artwork on the Bitcoin testnet! Check it out #art #nft",
+            "Excited to be part of this decentralized social network! The future is here 🚀",
+            "Looking for feedback on my new collection. What do you all think?",
+            "IPFS + Blockchain = True ownership of your digital content 💪",
+            "Building something special with P2FK protocol. Stay tuned!"
+        };
+        return contents[index % contents.Length];
+    }
+
+    private int GetSampleLikes(int index)
+    {
+        return (index + 1) * 12;
+    }
+
+    private int GetSampleComments(int index)
+    {
+        return (index + 1) * 3;
+    }
+}

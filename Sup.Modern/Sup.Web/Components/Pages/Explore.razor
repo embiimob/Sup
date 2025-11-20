@@ -1,0 +1,106 @@
+@page "/explore"
+@rendermode InteractiveServer
+
+<PageTitle>Sup!? - Explore</PageTitle>
+
+<div class="explore-container">
+    <div class="explore-header">
+        <h1>🔍 Explore</h1>
+        <p>Discover objects, profiles, and content across the blockchain</p>
+    </div>
+
+    <div class="category-tabs">
+        <button class="tab-btn active">All</button>
+        <button class="tab-btn">Objects</button>
+        <button class="tab-btn">Profiles</button>
+        <button class="tab-btn">Collections</button>
+        <button class="tab-btn">Media</button>
+    </div>
+
+    <div class="explore-grid">
+        @for (int i = 0; i < 12; i++)
+        {
+            <div class="explore-card">
+                <div class="card-image">
+                    <div class="image-placeholder">🎨</div>
+                    @if (i % 4 == 0)
+                    {
+                        <span class="badge verified">✓ Official</span>
+                    }
+                </div>
+                <div class="card-body">
+                    <h3>@GetSampleTitle(i)</h3>
+                    <p class="creator">By @GetSampleCreator(i)</p>
+                    <div class="card-tags">
+                        @foreach (var tag in GetSampleTags(i))
+                        {
+                            <span class="tag">@tag</span>
+                        }
+                    </div>
+                    <div class="card-stats">
+                        <span>❤️ @GetSampleLikes(i)</span>
+                        <span>👁️ @GetSampleViews(i)</span>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+
+    <div class="pagination">
+        <button class="page-btn">← Previous</button>
+        <div class="page-numbers">
+            <button class="page-num active">1</button>
+            <button class="page-num">2</button>
+            <button class="page-num">3</button>
+            <span>...</span>
+            <button class="page-num">10</button>
+        </div>
+        <button class="page-btn">Next →</button>
+    </div>
+</div>
+
+@code {
+    private string GetSampleTitle(int index)
+    {
+        var titles = new[]
+        {
+            "Digital Sunset #42",
+            "Blockchain Dreams",
+            "Crypto Collection",
+            "Abstract Reality",
+            "NFT Masterpiece",
+            "Virtual Landscape",
+            "Digital Poetry",
+            "Generative Art #7"
+        };
+        return titles[index % titles.Length];
+    }
+
+    private string GetSampleCreator(int index)
+    {
+        var creators = new[] { "embii4u", "cryptoartist", "nft_creator", "digital_dreams" };
+        return creators[index % creators.Length];
+    }
+
+    private string[] GetSampleTags(int index)
+    {
+        var tagSets = new[]
+        {
+            new[] { "#art", "#nft" },
+            new[] { "#crypto", "#digital" },
+            new[] { "#collection", "#rare" },
+            new[] { "#generative", "#unique" }
+        };
+        return tagSets[index % tagSets.Length];
+    }
+
+    private int GetSampleLikes(int index)
+    {
+        return 50 + (index * 17);
+    }
+
+    private int GetSampleViews(int index)
+    {
+        return 200 + (index * 45);
+    }
+}

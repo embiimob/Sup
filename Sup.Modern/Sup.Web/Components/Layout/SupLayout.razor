@@ -1,0 +1,82 @@
+@inherits LayoutComponentBase
+
+<div class="sup-app">
+    <div class="sup-sidebar">
+        <div class="sup-logo">
+            <h1>Sup!?</h1>
+            <p class="tagline">Decentralized Social Network</p>
+        </div>
+        
+        <nav class="sup-nav">
+            <a href="/" class="nav-item @GetActiveClass("/")">
+                <span class="icon">🏠</span>
+                <span>Home</span>
+            </a>
+            <a href="/explore" class="nav-item @GetActiveClass("/explore")">
+                <span class="icon">🔍</span>
+                <span>Explore</span>
+            </a>
+            <a href="/messages" class="nav-item @GetActiveClass("/messages")">
+                <span class="icon">💬</span>
+                <span>Messages</span>
+            </a>
+            <a href="/profile" class="nav-item @GetActiveClass("/profile")">
+                <span class="icon">👤</span>
+                <span>Profile</span>
+            </a>
+            <a href="/mint" class="nav-item @GetActiveClass("/mint")">
+                <span class="icon">✨</span>
+                <span>Create</span>
+            </a>
+            <a href="/media" class="nav-item @GetActiveClass("/media")">
+                <span class="icon">🎬</span>
+                <span>Media</span>
+            </a>
+            <a href="/live" class="nav-item @GetActiveClass("/live")">
+                <span class="icon">📡</span>
+                <span>Live Feed</span>
+            </a>
+            <a href="/settings" class="nav-item @GetActiveClass("/settings")">
+                <span class="icon">⚙️</span>
+                <span>Settings</span>
+            </a>
+        </nav>
+
+        <div class="blockchain-status">
+            <h4>Blockchain Status</h4>
+            <div class="status-item">
+                <span class="status-dot connected"></span>
+                <span>Bitcoin Testnet</span>
+            </div>
+            <div class="status-item">
+                <span class="status-dot"></span>
+                <span>IPFS</span>
+            </div>
+        </div>
+    </div>
+
+    <main class="sup-main">
+        <div class="sup-topbar">
+            <div class="search-container">
+                <input type="text" placeholder="Search profiles, objects, keywords..." class="search-input" />
+                <button class="search-btn">🔍</button>
+            </div>
+            <div class="user-actions">
+                <button class="icon-btn" title="Notifications">🔔</button>
+                <button class="icon-btn" title="Wallet">💰</button>
+            </div>
+        </div>
+
+        <div class="sup-content">
+            @Body
+        </div>
+    </main>
+</div>
+
+@code {
+    private string GetActiveClass(string path)
+    {
+        // This will be implemented with proper navigation tracking
+        return "";
+    }
+}

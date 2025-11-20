@@ -1,0 +1,176 @@
+@page "/settings"
+@rendermode InteractiveServer
+
+<PageTitle>Sup!? - Settings</PageTitle>
+
+<div class="settings-container">
+    <div class="settings-header">
+        <h1>⚙️ Settings</h1>
+        <p>Configure your blockchain connections and application preferences</p>
+    </div>
+
+    <div class="settings-content">
+        <div class="settings-section">
+            <h2>🔗 Blockchain Connections</h2>
+            <p class="section-desc">Manage your blockchain node connections and credentials</p>
+
+            <div class="blockchain-card">
+                <div class="blockchain-header">
+                    <div class="blockchain-info">
+                        <span class="blockchain-icon">₿</span>
+                        <div>
+                            <h3>Bitcoin Testnet</h3>
+                            <span class="status-badge connected">● Connected</span>
+                        </div>
+                    </div>
+                    <button class="toggle-btn">Configure</button>
+                </div>
+                <div class="blockchain-details">
+                    <div class="form-group">
+                        <label>RPC URL</label>
+                        <input type="text" value="http://127.0.0.1:18332" class="input-field" />
+                    </div>
+                    <div class="form-group">
+                        <label>Username</label>
+                        <input type="text" value="bitcoin-rpc" class="input-field" />
+                    </div>
+                    <div class="form-group">
+                        <label>Password</label>
+                        <input type="password" value="••••••••" class="input-field" />
+                    </div>
+                    <button class="test-btn">Test Connection</button>
+                </div>
+            </div>
+
+            <div class="blockchain-card">
+                <div class="blockchain-header">
+                    <div class="blockchain-info">
+                        <span class="blockchain-icon">Ł</span>
+                        <div>
+                            <h3>Litecoin Mainnet</h3>
+                            <span class="status-badge disconnected">● Disconnected</span>
+                        </div>
+                    </div>
+                    <button class="toggle-btn">Configure</button>
+                </div>
+            </div>
+
+            <div class="blockchain-card">
+                <div class="blockchain-header">
+                    <div class="blockchain-info">
+                        <span class="blockchain-icon">Ð</span>
+                        <div>
+                            <h3>Dogecoin Mainnet</h3>
+                            <span class="status-badge disconnected">● Disconnected</span>
+                        </div>
+                    </div>
+                    <button class="toggle-btn">Configure</button>
+                </div>
+            </div>
+
+            <div class="blockchain-card">
+                <div class="blockchain-header">
+                    <div class="blockchain-info">
+                        <span class="blockchain-icon">M</span>
+                        <div>
+                            <h3>Mazacoin Mainnet</h3>
+                            <span class="status-badge disconnected">● Disconnected</span>
+                        </div>
+                    </div>
+                    <button class="toggle-btn">Configure</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="settings-section">
+            <h2>📦 IPFS Configuration</h2>
+            <p class="section-desc">Manage your IPFS daemon settings</p>
+
+            <div class="ipfs-card">
+                <div class="form-group">
+                    <label>IPFS API URL</label>
+                    <input type="text" value="http://127.0.0.1:5001" class="input-field" />
+                </div>
+                <div class="form-group">
+                    <label>Gateway URL</label>
+                    <input type="text" value="http://127.0.0.1:8080" class="input-field" />
+                </div>
+                <div class="form-group checkbox-group">
+                    <label>
+                        <input type="checkbox" checked />
+                        Auto-start IPFS daemon
+                    </label>
+                </div>
+                <div class="form-group checkbox-group">
+                    <label>
+                        <input type="checkbox" checked />
+                        Auto-pin uploaded content
+                    </label>
+                </div>
+                <div class="action-buttons">
+                    <button class="primary-btn">Start Daemon</button>
+                    <button class="secondary-btn">Stop Daemon</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="settings-section">
+            <h2>🎨 Appearance</h2>
+            <p class="section-desc">Customize the look and feel of the application</p>
+
+            <div class="appearance-card">
+                <div class="form-group">
+                    <label>Theme</label>
+                    <select class="input-field">
+                        <option>Light</option>
+                        <option>Dark</option>
+                        <option>Auto</option>
+                    </select>
+                </div>
+                <div class="form-group checkbox-group">
+                    <label>
+                        <input type="checkbox" checked />
+                        Compact view
+                    </label>
+                </div>
+                <div class="form-group checkbox-group">
+                    <label>
+                        <input type="checkbox" />
+                        Show animations
+                    </label>
+                </div>
+            </div>
+        </div>
+
+        <div class="settings-section">
+            <h2>🔒 Privacy & Security</h2>
+            <p class="section-desc">Manage your privacy and security settings</p>
+
+            <div class="privacy-card">
+                <div class="form-group checkbox-group">
+                    <label>
+                        <input type="checkbox" checked />
+                        Filter live postings (friends only)
+                    </label>
+                </div>
+                <div class="form-group checkbox-group">
+                    <label>
+                        <input type="checkbox" />
+                        Enable encryption for all messages
+                    </label>
+                </div>
+                <div class="action-buttons">
+                    <button class="danger-btn">Clear Cache</button>
+                    <button class="danger-btn">Purge IPFS</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="settings-footer">
+        <button class="save-btn">💾 Save Settings</button>
+    </div>
+</div>
+
+@code {
+}
