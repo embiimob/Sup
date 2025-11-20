@@ -14,9 +14,9 @@ public class P2fkApiService : IDisposable
     private readonly string _apiBaseUrl;
     private string? _apiKey;
 
-    public P2fkApiService(string apiBaseUrl = "https://api.p2fk.io", string? apiKey = null)
+    public P2fkApiService(string apiBaseUrl = "https://p2fk.io/", string? apiKey = null)
     {
-        _apiBaseUrl = apiBaseUrl;
+        _apiBaseUrl = apiBaseUrl.TrimEnd('/') + "/";
         _apiKey = apiKey;
         
         _httpClient = new HttpClient

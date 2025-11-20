@@ -71,7 +71,7 @@ Edit `appsettings.json`:
 {
   "Application": {
     "Mode": "Decentralized",  // or "API"
-    "ApiBaseUrl": "https://api.p2fk.io",
+    "ApiBaseUrl": "https://p2fk.io/",
     "ApiKey": "",
     "UseApiWallet": false
   }
@@ -122,7 +122,7 @@ Edit `appsettings.json`:
    {
      "Application": {
        "Mode": "API",
-       "ApiBaseUrl": "https://api.p2fk.io",
+       "ApiBaseUrl": "https://p2fk.io/",
        "ApiKey": "your-api-key-here",  // Optional
        "UseApiWallet": true
      }

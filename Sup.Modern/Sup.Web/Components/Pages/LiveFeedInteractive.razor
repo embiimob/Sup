@@ -1,0 +1,405 @@
+@page "/live-feed"
+@rendermode InteractiveServer
+@using Sup.Core.Services
+@using Sup.Core.Models
+@inject IBlockchainService BlockchainService
+
+<PageTitle>Sup!? - Live Feed</PageTitle>
+
+<div class="live-container">
+    <div class="live-header">
+        <h1>📡 Live Feed</h1>
+        <p>Real-time blockchain activity monitoring</p>
+    </div>
+
+    <div class="live-controls">
+        <div class="blockchain-selector">
+            <label>Blockchain:</label>
+            <select @bind="selectedBlockchain" class="select-field">
+                <option value="BitcoinTestnet">Bitcoin Testnet</option>
+                <option value="Litecoin">Litecoin</option>
+                <option value="Dogecoin">Dogecoin</option>
+            </select>
+        </div>
+
+        <div class="filter-controls">
+            <label class="checkbox-label">
+                <input type="checkbox" @bind="friendsOnly" />
+                Friends Only
+            </label>
+            <button class="refresh-btn" @onclick="RefreshFeed" disabled="@isRefreshing">
+                @(isRefreshing ? "🔄 Refreshing..." : "🔄 Refresh")
+            </button>
+            <button class="clear-btn" @onclick="ClearCache">
+                🗑️ Clear Cache
+            </button>
+        </div>
+
+        @if (isMonitoring)
+        {
+            <div class="monitoring-indicator">
+                <span class="pulse-dot"></span>
+                <span>Live monitoring active</span>
+                <button class="stop-btn" @onclick="StopMonitoring">Stop</button>
+            </div>
+        }
+        else
+        {
+            <button class="start-monitoring-btn" @onclick="StartMonitoring">
+                ▶️ Start Live Monitoring
+            </button>
+        }
+    </div>
+
+    <div class="stats-bar">
+        <div class="stat-card">
+            <span class="stat-icon">📦</span>
+            <div>
+                <div class="stat-label">Objects</div>
+                <div class="stat-value">@totalObjects</div>
+            </div>
+        </div>
+        <div class="stat-card">
+            <span class="stat-icon">💬</span>
+            <div>
+                <div class="stat-label">Messages</div>
+                <div class="stat-value">@totalMessages</div>
+            </div>
+        </div>
+        <div class="stat-card">
+            <span class="stat-icon">👥</span>
+            <div>
+                <div class="stat-label">Active Users</div>
+                <div class="stat-value">@activeUsers</div>
+            </div>
+        </div>
+        <div class="stat-card">
+            <span class="stat-icon">⛓️</span>
+            <div>
+                <div class="stat-label">Block Height</div>
+                <div class="stat-value">@blockHeight</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="live-feed">
+        @if (isLoading)
+        {
+            <div class="loading-state">
+                <div class="spinner"></div>
+                <p>Loading blockchain activity...</p>
+            </div>
+        }
+        else if (feedItems.Count == 0)
+        {
+            <div class="empty-state">
+                <div class="empty-icon">📡</div>
+                <h3>No Activity Yet</h3>
+                <p>Start monitoring to see real-time blockchain activity</p>
+                <button class="primary-btn" @onclick="StartMonitoring">Start Monitoring</button>
+            </div>
+        }
+        else
+        {
+            <div class="feed-items">
+                @foreach (var item in feedItems.OrderByDescending(i => i.Timestamp))
+                {
+                    <div class="feed-item @GetActivityClass(item.Type) fade-in">
+                        <div class="item-icon">@GetActivityIcon(item.Type)</div>
+                        <div class="item-content">
+                            <div class="item-header">
+                                <span class="item-type">@item.Type</span>
+                                <span class="item-time">@GetTimeAgo(item.Timestamp)</span>
+                            </div>
+                            <div class="item-description">@item.Description</div>
+                            @if (!string.IsNullOrEmpty(item.Address))
+                            {
+                                <div class="item-address">
+                                    <span class="address-label">Address:</span>
+                                    <span class="address-value">@item.Address</span>
+                                </div>
+                            }
+                            @if (!string.IsNullOrEmpty(item.TxId))
+                            {
+                                <div class="item-tx">
+                                    <span class="tx-label">TX:</span>
+                                    <span class="tx-value">@item.TxId.Substring(0, Math.Min(16, item.TxId.Length))}...</span>
+                                </div>
+                            }
+                        </div>
+                        <div class="item-actions">
+                            <button class="view-btn" @onclick="() => ViewDetails(item)">View</button>
+                        </div>
+                    </div>
+                }
+            </div>
+        }
+    </div>
+
+    @if (!string.IsNullOrEmpty(errorMessage))
+    {
+        <div class="error-banner">
+            <span>⚠️</span>
+            <span>@errorMessage</span>
+            <button @onclick="() => errorMessage = string.Empty">✕</button>
+        </div>
+    }
+</div>
+
+@code {
+    private string selectedBlockchain = "BitcoinTestnet";
+    private bool friendsOnly = false;
+    private bool isRefreshing = false;
+    private bool isLoading = false;
+    private bool isMonitoring = false;
+    private string errorMessage = "";
+
+    // Stats
+    private int totalObjects = 0;
+    private int totalMessages = 0;
+    private int activeUsers = 0;
+    private int blockHeight = 0;
+
+    // Feed items
+    private List<FeedItem> feedItems = new();
+    private System.Threading.Timer? monitoringTimer;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadInitialStats();
+    }
+
+    private async Task LoadInitialStats()
+    {
+        try
+        {
+            isLoading = true;
+            
+            // Simulate loading stats (in real implementation, fetch from blockchain)
+            await Task.Delay(500);
+            
+            totalObjects = 1234;
+            totalMessages = 5678;
+            activeUsers = 89;
+            blockHeight = 2450123;
+
+            // Load recent activity
+            await LoadRecentActivity();
+        }
+        catch (Exception ex)
+        {
+            errorMessage = $"Failed to load stats: {ex.Message}";
+        }
+        finally
+        {
+            isLoading = false;
+        }
+    }
+
+    private async Task LoadRecentActivity()
+    {
+        try
+        {
+            // In real implementation, fetch recent transactions from blockchain
+            // For now, add some sample items
+            feedItems.Clear();
+            
+            feedItems.Add(new FeedItem
+            {
+                Type = "Object Minted",
+                Description = "New NFT artwork minted: 'Cosmic Dreams #42'",
+                Address = "1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa",
+                TxId = "abc123def456abc123def456abc123def456abc123def456",
+                Timestamp = DateTime.UtcNow.AddMinutes(-5)
+            });
+
+            feedItems.Add(new FeedItem
+            {
+                Type = "Profile Registered",
+                Description = "New user joined: @cryptoartist",
+                Address = "3J98t1WpEZ73CNmYviecrnyiWrnqRhWNLy",
+                TxId = "def789abc012def789abc012def789abc012def789abc012",
+                Timestamp = DateTime.UtcNow.AddMinutes(-12)
+            });
+
+            feedItems.Add(new FeedItem
+            {
+                Type = "Message Sent",
+                Description = "Private message sent (encrypted)",
+                Address = "bc1qxy2kgdygjrsqtzq2n0yrf2493p83kkfjhx0wlh",
+                TxId = "ghi345jkl678ghi345jkl678ghi345jkl678ghi345jkl678",
+                Timestamp = DateTime.UtcNow.AddMinutes(-18)
+            });
+
+            StateHasChanged();
+        }
+        catch (Exception ex)
+        {
+            errorMessage = $"Failed to load activity: {ex.Message}";
+        }
+    }
+
+    private async Task StartMonitoring()
+    {
+        if (isMonitoring) return;
+
+        try
+        {
+            isMonitoring = true;
+            errorMessage = "";
+
+            // Check blockchain connection
+            bool connected = await BlockchainService.IsConnectedAsync(selectedBlockchain);
+            if (!connected)
+            {
+                errorMessage = "Blockchain not connected. Please check settings.";
+                isMonitoring = false;
+                return;
+            }
+
+            // Start monitoring timer (check every 10 seconds)
+            monitoringTimer = new System.Threading.Timer(async _ =>
+            {
+                await CheckForNewActivity();
+            }, null, TimeSpan.Zero, TimeSpan.FromSeconds(10));
+
+            StateHasChanged();
+        }
+        catch (Exception ex)
+        {
+            errorMessage = $"Failed to start monitoring: {ex.Message}";
+            isMonitoring = false;
+        }
+    }
+
+    private void StopMonitoring()
+    {
+        isMonitoring = false;
+        monitoringTimer?.Dispose();
+        monitoringTimer = null;
+        StateHasChanged();
+    }
+
+    private async Task CheckForNewActivity()
+    {
+        try
+        {
+            // In real implementation:
+            // 1. Get latest block height
+            // 2. Scan for new P2FK transactions
+            // 3. Parse and add to feed
+            
+            // Simulate new activity
+            if (new Random().Next(0, 100) < 30) // 30% chance of new activity
+            {
+                var activities = new[] { "Object Minted", "Profile Registered", "Message Sent", "Inquiry Created" };
+                var randomActivity = activities[new Random().Next(activities.Length)];
+                
+                feedItems.Add(new FeedItem
+                {
+                    Type = randomActivity,
+                    Description = $"New {randomActivity.ToLower()} detected",
+                    Address = GenerateRandomAddress(),
+                    TxId = GenerateRandomTxId(),
+                    Timestamp = DateTime.UtcNow
+                });
+
+                // Keep only last 50 items
+                if (feedItems.Count > 50)
+                {
+                    feedItems = feedItems.OrderByDescending(i => i.Timestamp).Take(50).ToList();
+                }
+
+                await InvokeAsync(StateHasChanged);
+            }
+        }
+        catch (Exception ex)
+        {
+            // Log error but don't stop monitoring
+            Console.WriteLine($"Error checking activity: {ex.Message}");
+        }
+    }
+
+    private async Task RefreshFeed()
+    {
+        isRefreshing = true;
+        try
+        {
+            await LoadRecentActivity();
+            await LoadInitialStats();
+        }
+        finally
+        {
+            isRefreshing = false;
+        }
+    }
+
+    private void ClearCache()
+    {
+        feedItems.Clear();
+        totalObjects = 0;
+        totalMessages = 0;
+        activeUsers = 0;
+        StateHasChanged();
+    }
+
+    private void ViewDetails(FeedItem item)
+    {
+        // Navigate to detail view or show modal
+        errorMessage = $"Viewing details for: {item.Description}";
+    }
+
+    private string GetActivityClass(string type)
+    {
+        return type.ToLower().Replace(" ", "-");
+    }
+
+    private string GetActivityIcon(string type)
+    {
+        return type switch
+        {
+            "Object Minted" => "🎨",
+            "Profile Registered" => "👤",
+            "Message Sent" => "💬",
+            "Inquiry Created" => "❓",
+            _ => "📋"
+        };
+    }
+
+    private string GetTimeAgo(DateTime timestamp)
+    {
+        var span = DateTime.UtcNow - timestamp;
+        if (span.TotalMinutes < 1) return "just now";
+        if (span.TotalMinutes < 60) return $"{(int)span.TotalMinutes}m ago";
+        if (span.TotalHours < 24) return $"{(int)span.TotalHours}h ago";
+        return $"{(int)span.TotalDays}d ago";
+    }
+
+    private string GenerateRandomAddress()
+    {
+        var chars = "123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz";
+        var random = new Random();
+        return "1" + new string(Enumerable.Range(0, 33).Select(_ => chars[random.Next(chars.Length)]).ToArray());
+    }
+
+    private string GenerateRandomTxId()
+    {
+        var chars = "0123456789abcdef";
+        var random = new Random();
+        return new string(Enumerable.Range(0, 64).Select(_ => chars[random.Next(chars.Length)]).ToArray());
+    }
+
+    public void Dispose()
+    {
+        monitoringTimer?.Dispose();
+    }
+
+    private class FeedItem
+    {
+        public string Type { get; set; } = "";
+        public string Description { get; set; } = "";
+        public string Address { get; set; } = "";
+        public string TxId { get; set; } = "";
+        public DateTime Timestamp { get; set; }
+    }
+}

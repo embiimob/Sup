@@ -1,0 +1,550 @@
+@page "/settings-enhanced"
+@rendermode InteractiveServer
+@using Sup.Core.Services
+@using Sup.Core.Models
+@inject IBlockchainService BlockchainService
+@inject IIpfsService IpfsService
+@inject P2fkApiService ApiService
+
+<PageTitle>Sup!? - Settings</PageTitle>
+
+<div class="settings-container">
+    <div class="settings-header">
+        <h1>⚙️ Settings</h1>
+        <p>Configure your blockchain connections and application preferences</p>
+    </div>
+
+    <div class="settings-content">
+        <!-- Application Mode Selection -->
+        <div class="settings-section">
+            <h2>🔀 Application Mode</h2>
+            <p class="section-desc">Choose how Sup!? connects to the blockchain</p>
+
+            <div class="mode-selector">
+                <div class="mode-card @(currentMode == ApplicationMode.Decentralized ? "selected" : "")" 
+                     @onclick="() => SelectMode(ApplicationMode.Decentralized)">
+                    <div class="mode-icon">🔧</div>
+                    <h3>Fully Decentralized</h3>
+                    <p>Direct RPC to local blockchain nodes</p>
+                    <ul class="mode-features">
+                        <li>✓ Maximum privacy</li>
+                        <li>✓ No third-party dependencies</li>
+                        <li>✓ Complete control</li>
+                        <li>⚠ Requires full node sync</li>
+                    </ul>
+                    @if (currentMode == ApplicationMode.Decentralized)
+                    {
+                        <span class="mode-badge">Active</span>
+                    }
+                </div>
+
+                <div class="mode-card @(currentMode == ApplicationMode.API ? "selected" : "")" 
+                     @onclick="() => SelectMode(ApplicationMode.API)">
+                    <div class="mode-icon">☁️</div>
+                    <h3>API Mode</h3>
+                    <p>Use p2fk.io API for operations</p>
+                    <ul class="mode-features">
+                        <li>✓ No full node required</li>
+                        <li>✓ Instant access</li>
+                        <li>✓ Lower resources</li>
+                        <li>⚠ Requires API connection</li>
+                    </ul>
+                    @if (currentMode == ApplicationMode.API)
+                    {
+                        <span class="mode-badge">Active</span>
+                    }
+                </div>
+            </div>
+
+            @if (modeChanged)
+            {
+                <div class="mode-changed-notice">
+                    <p>⚠️ Mode changed! Click "Apply Mode Change" to activate.</p>
+                    <button class="primary-btn" @onclick="ApplyModeChange">Apply Mode Change</button>
+                </div>
+            }
+        </div>
+
+        <!-- API Configuration (shown when API mode is selected) -->
+        @if (currentMode == ApplicationMode.API || selectedMode == ApplicationMode.API)
+        {
+            <div class="settings-section">
+                <h2>☁️ API Configuration</h2>
+                <p class="section-desc">Configure p2fk.io API settings</p>
+
+                <div class="api-card">
+                    <div class="form-group">
+                        <label>API Base URL</label>
+                        <input type="text" @bind="apiBaseUrl" class="input-field" />
+                    </div>
+                    <div class="form-group">
+                        <label>API Key (Optional)</label>
+                        <input type="text" @bind="apiKey" class="input-field" placeholder="Leave empty for public access" />
+                    </div>
+
+                    <div class="api-status">
+                        <h4>API Connection Status</h4>
+                        <span class="status-badge @(apiConnected ? "connected" : "disconnected")">
+                            ● @(apiConnected ? "Connected" : "Disconnected")
+                        </span>
+                    </div>
+                    <button class="test-btn" @onclick="TestApiConnection" disabled="@isTestingApi">
+                        @(isTestingApi ? "Testing..." : "Test API Connection")
+                    </button>
+                    @if (!string.IsNullOrEmpty(apiTestResult))
+                    {
+                        <div class="test-result @(apiTestSuccess ? "success" : "error")">
+                            @apiTestResult
+                        </div>
+                    }
+                </div>
+            </div>
+
+            <!-- API Wallet Management -->
+            <div class="settings-section">
+                <h2>👛 API Wallet</h2>
+                <p class="section-desc">Manage your API wallet for signing transactions</p>
+
+                <div class="wallet-card">
+                    @if (string.IsNullOrEmpty(apiWalletToken))
+                    {
+                        <div class="wallet-empty">
+                            <p>No API wallet configured. Create one to enable transaction signing.</p>
+                            <button class="primary-btn" @onclick="CreateApiWallet" disabled="@isCreatingWallet">
+                                @(isCreatingWallet ? "Creating..." : "Create API Wallet")
+                            </button>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="wallet-configured">
+                            <div class="wallet-info">
+                                <span class="wallet-icon">✓</span>
+                                <div>
+                                    <h4>API Wallet Active</h4>
+                                    <p>Token: {apiWalletToken.Substring(0, 20)}...</p>
+                                </div>
+                            </div>
+                            <button class="secondary-btn" @onclick="RemoveApiWallet">Remove Wallet</button>
+                        </div>
+                    }
+
+                    @if (!string.IsNullOrEmpty(walletMessage))
+                    {
+                        <div class="wallet-message @(walletSuccess ? "success" : "error")">
+                            @walletMessage
+                        </div>
+                    }
+                </div>
+            </div>
+        }
+
+        <!-- Blockchain Connections (shown when Decentralized mode is selected) -->
+        @if (currentMode == ApplicationMode.Decentralized || selectedMode == ApplicationMode.Decentralized)
+        {
+            <div class="settings-section">
+                <h2>🔗 Blockchain Connections</h2>
+                <p class="section-desc">Manage your blockchain node connections and credentials</p>
+
+                <div class="blockchain-card">
+                    <div class="blockchain-header">
+                        <div class="blockchain-info">
+                            <span class="blockchain-icon">₿</span>
+                            <div>
+                                <h3>Bitcoin Testnet</h3>
+                                <span class="status-badge @(bitcoinConnected ? "connected" : "disconnected")">
+                                    ● @(bitcoinConnected ? "Connected" : "Disconnected")
+                                </span>
+                            </div>
+                        </div>
+                        <button class="toggle-btn" @onclick="() => ToggleBlockchainDetails(0)">
+                            @(showBitcoinDetails ? "Hide" : "Configure")
+                        </button>
+                    </div>
+                    @if (showBitcoinDetails)
+                    {
+                        <div class="blockchain-details">
+                            <div class="form-group">
+                                <label>RPC URL</label>
+                                <input type="text" @bind="bitcoinRpcUrl" class="input-field" />
+                            </div>
+                            <div class="form-group">
+                                <label>Username</label>
+                                <input type="text" @bind="bitcoinUsername" class="input-field" />
+                            </div>
+                            <div class="form-group">
+                                <label>Password</label>
+                                <input type="password" @bind="bitcoinPassword" class="input-field" />
+                            </div>
+                            <button class="test-btn" @onclick="TestBitcoinConnection" disabled="@isTestingConnection">
+                                @(isTestingConnection ? "Testing..." : "Test Connection")
+                            </button>
+                            @if (!string.IsNullOrEmpty(connectionTestResult))
+                            {
+                                <div class="test-result @(connectionTestSuccess ? "success" : "error")">
+                                    @connectionTestResult
+                                </div>
+                            }
+                        </div>
+                    }
+                </div>
+            </div>
+        }
+
+        <!-- IPFS Configuration -->
+        <div class="settings-section">
+            <h2>📦 IPFS Configuration</h2>
+            <p class="section-desc">Manage your IPFS daemon settings</p>
+
+            <div class="ipfs-card">
+                <div class="ipfs-status">
+                    <h4>IPFS Daemon Status</h4>
+                    <span class="status-badge @(ipfsRunning ? "connected" : "disconnected")">
+                        ● @(ipfsRunning ? "Running" : "Stopped")
+                    </span>
+                </div>
+                
+                <div class="form-group">
+                    <label>IPFS API URL</label>
+                    <input type="text" @bind="ipfsApiUrl" class="input-field" />
+                </div>
+                <div class="form-group">
+                    <label>Gateway URL</label>
+                    <input type="text" @bind="ipfsGatewayUrl" class="input-field" />
+                </div>
+                <div class="form-group checkbox-group">
+                    <label>
+                        <input type="checkbox" @bind="ipfsAutoStart" />
+                        Auto-start IPFS daemon
+                    </label>
+                </div>
+                <div class="form-group checkbox-group">
+                    <label>
+                        <input type="checkbox" @bind="ipfsAutoPin" />
+                        Auto-pin uploaded content
+                    </label>
+                </div>
+                <div class="action-buttons">
+                    <button class="primary-btn" @onclick="StartIpfs" disabled="@(ipfsRunning || isIpfsOperating)">
+                        @(isIpfsOperating ? "Starting..." : "Start Daemon")
+                    </button>
+                    <button class="secondary-btn" @onclick="StopIpfs" disabled="@(!ipfsRunning || isIpfsOperating)">
+                        @(isIpfsOperating ? "Stopping..." : "Stop Daemon")
+                    </button>
+                </div>
+                @if (!string.IsNullOrEmpty(ipfsMessage))
+                {
+                    <div class="ipfs-message @(ipfsSuccess ? "success" : "error")">
+                        @ipfsMessage
+                    </div>
+                }
+            </div>
+        </div>
+
+        <!-- Appearance Settings -->
+        <div class="settings-section">
+            <h2>🎨 Appearance</h2>
+            <p class="section-desc">Customize the look and feel</p>
+
+            <div class="appearance-card">
+                <div class="form-group">
+                    <label>Theme</label>
+                    <select class="input-field">
+                        <option>Purple Gradient (Default)</option>
+                        <option>Dark Mode</option>
+                        <option>Light Mode</option>
+                    </select>
+                </div>
+                <div class="form-group checkbox-group">
+                    <label>
+                        <input type="checkbox" checked />
+                        Enable animations
+                    </label>
+                </div>
+                <div class="form-group checkbox-group">
+                    <label>
+                        <input type="checkbox" checked />
+                        Show emoji icons
+                    </label>
+                </div>
+            </div>
+        </div>
+
+        <!-- Privacy Settings -->
+        <div class="settings-section">
+            <h2>🔒 Privacy</h2>
+            <p class="section-desc">Control your privacy preferences</p>
+
+            <div class="privacy-card">
+                <div class="form-group checkbox-group">
+                    <label>
+                        <input type="checkbox" />
+                        Encrypt all messages by default
+                    </label>
+                </div>
+                <div class="form-group checkbox-group">
+                    <label>
+                        <input type="checkbox" checked />
+                        Only show content from followed profiles
+                    </label>
+                </div>
+                <div class="form-group checkbox-group">
+                    <label>
+                        <input type="checkbox" />
+                        Hide profile from public search
+                    </label>
+                </div>
+            </div>
+        </div>
+
+        <div class="save-section">
+            <button class="save-btn">Save All Settings</button>
+        </div>
+    </div>
+</div>
+
+@code {
+    // Mode management
+    private ApplicationMode currentMode = ApplicationMode.Decentralized;
+    private ApplicationMode selectedMode = ApplicationMode.Decentralized;
+    private bool modeChanged = false;
+
+    // API configuration
+    private string apiBaseUrl = "https://p2fk.io/";
+    private string apiKey = "";
+    private bool apiConnected = false;
+    private bool isTestingApi = false;
+    private string apiTestResult = "";
+    private bool apiTestSuccess = false;
+
+    // API Wallet
+    private string apiWalletToken = "";
+    private bool isCreatingWallet = false;
+    private string walletMessage = "";
+    private bool walletSuccess = false;
+
+    // Blockchain connections
+    private bool bitcoinConnected = false;
+    private bool showBitcoinDetails = false;
+    private string bitcoinRpcUrl = "http://localhost:18332";
+    private string bitcoinUsername = "user";
+    private string bitcoinPassword = "password";
+    private bool isTestingConnection = false;
+    private string connectionTestResult = "";
+    private bool connectionTestSuccess = false;
+
+    // IPFS
+    private bool ipfsRunning = false;
+    private string ipfsApiUrl = "http://localhost:5001";
+    private string ipfsGatewayUrl = "http://localhost:8080";
+    private bool ipfsAutoStart = false;
+    private bool ipfsAutoPin = true;
+    private bool isIpfsOperating = false;
+    private string ipfsMessage = "";
+    private bool ipfsSuccess = false;
+
+    protected override async Task OnInitializedAsync()
+    {
+        // Check current mode
+        if (BlockchainService is UnifiedBlockchainService unifiedService)
+        {
+            // Get current mode from service
+            currentMode = ApplicationMode.Decentralized; // Default
+            selectedMode = currentMode;
+        }
+
+        // Check initial statuses
+        await CheckInitialStatuses();
+    }
+
+    private async Task CheckInitialStatuses()
+    {
+        try
+        {
+            bitcoinConnected = await BlockchainService.IsConnectedAsync("BitcoinTestnet");
+            ipfsRunning = await IpfsService.IsRunningAsync();
+
+            if (currentMode == ApplicationMode.API)
+            {
+                apiConnected = true; // Will be checked on test
+            }
+        }
+        catch { }
+    }
+
+    private void SelectMode(ApplicationMode mode)
+    {
+        selectedMode = mode;
+        modeChanged = (selectedMode != currentMode);
+    }
+
+    private async Task ApplyModeChange()
+    {
+        try
+        {
+            if (BlockchainService is UnifiedBlockchainService unifiedService)
+            {
+                unifiedService.SetMode(selectedMode);
+                currentMode = selectedMode;
+                modeChanged = false;
+
+                if (currentMode == ApplicationMode.API && !string.IsNullOrEmpty(apiWalletToken))
+                {
+                    unifiedService.SetApiWalletToken(apiWalletToken);
+                }
+
+                await CheckInitialStatuses();
+                StateHasChanged();
+            }
+        }
+        catch (Exception ex)
+        {
+            // Handle error
+        }
+    }
+
+    private async Task TestApiConnection()
+    {
+        isTestingApi = true;
+        apiTestResult = "";
+        try
+        {
+            var health = await ApiService.IsHealthyAsync("bitcoin");
+            apiConnected = health;
+            apiTestSuccess = health;
+            apiTestResult = health ? "✓ API connection successful!" : "✗ API connection failed";
+        }
+        catch (Exception ex)
+        {
+            apiConnected = false;
+            apiTestSuccess = false;
+            apiTestResult = $"✗ Error: {ex.Message}";
+        }
+        finally
+        {
+            isTestingApi = false;
+        }
+    }
+
+    private async Task CreateApiWallet()
+    {
+        isCreatingWallet = true;
+        walletMessage = "";
+        try
+        {
+            var result = await ApiService.CreateWalletAsync("bitcoin-testnet");
+            if (result != null && !string.IsNullOrEmpty(result.ApiToken))
+            {
+                apiWalletToken = result.ApiToken;
+                walletSuccess = true;
+                walletMessage = "✓ API wallet created successfully!";
+
+                // Set token in unified service
+                if (BlockchainService is UnifiedBlockchainService unifiedService)
+                {
+                    unifiedService.SetApiWalletToken(apiWalletToken);
+                }
+            }
+            else
+            {
+                walletSuccess = false;
+                walletMessage = "✗ Failed to create API wallet";
+            }
+        }
+        catch (Exception ex)
+        {
+            walletSuccess = false;
+            walletMessage = $"✗ Error: {ex.Message}";
+        }
+        finally
+        {
+            isCreatingWallet = false;
+        }
+    }
+
+    private void RemoveApiWallet()
+    {
+        apiWalletToken = "";
+        walletMessage = "API wallet removed";
+        walletSuccess = true;
+
+        // Clear token in unified service
+        if (BlockchainService is UnifiedBlockchainService unifiedService)
+        {
+            unifiedService.SetApiWalletToken("");
+        }
+    }
+
+    private void ToggleBlockchainDetails(int index)
+    {
+        showBitcoinDetails = !showBitcoinDetails;
+    }
+
+    private async Task TestBitcoinConnection()
+    {
+        isTestingConnection = true;
+        connectionTestResult = "";
+        try
+        {
+            bitcoinConnected = await BlockchainService.IsConnectedAsync("BitcoinTestnet");
+            connectionTestSuccess = bitcoinConnected;
+            connectionTestResult = bitcoinConnected ? "✓ Connection successful!" : "✗ Connection failed";
+        }
+        catch (Exception ex)
+        {
+            bitcoinConnected = false;
+            connectionTestSuccess = false;
+            connectionTestResult = $"✗ Error: {ex.Message}";
+        }
+        finally
+        {
+            isTestingConnection = false;
+        }
+    }
+
+    private async Task StartIpfs()
+    {
+        isIpfsOperating = true;
+        ipfsMessage = "";
+        try
+        {
+            await IpfsService.StartDaemonAsync();
+            await Task.Delay(2000); // Give it time to start
+            ipfsRunning = await IpfsService.IsRunningAsync();
+            ipfsSuccess = ipfsRunning;
+            ipfsMessage = ipfsRunning ? "✓ IPFS daemon started" : "✗ Failed to start daemon";
+        }
+        catch (Exception ex)
+        {
+            ipfsSuccess = false;
+            ipfsMessage = $"✗ Error: {ex.Message}";
+        }
+        finally
+        {
+            isIpfsOperating = false;
+        }
+    }
+
+    private async Task StopIpfs()
+    {
+        isIpfsOperating = true;
+        ipfsMessage = "";
+        try
+        {
+            await IpfsService.StopDaemonAsync();
+            await Task.Delay(1000);
+            ipfsRunning = await IpfsService.IsRunningAsync();
+            ipfsSuccess = !ipfsRunning;
+            ipfsMessage = !ipfsRunning ? "✓ IPFS daemon stopped" : "✗ Failed to stop daemon";
+        }
+        catch (Exception ex)
+        {
+            ipfsSuccess = false;
+            ipfsMessage = $"✗ Error: {ex.Message}";
+        }
+        finally
+        {
+            isIpfsOperating = false;
+        }
+    }
+}
