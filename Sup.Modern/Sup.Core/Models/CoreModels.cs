@@ -47,6 +47,7 @@ public class Message
     public string To { get; set; } = string.Empty;
     public string Content { get; set; } = string.Empty;
     public List<string> Attachments { get; set; } = new();
+    public string? AttachmentUrl { get; set; }
     public List<string> Keywords { get; set; } = new();
     public DateTime Timestamp { get; set; }
     public bool IsEncrypted { get; set; }

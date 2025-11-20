@@ -9,19 +9,31 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
 
-// Register application services
+// Read mode configuration
+var configuration = builder.Configuration;
+var modeConfig = new ModeConfiguration
+{
+    Mode = Enum.Parse<ApplicationMode>(
+        configuration["Application:Mode"] ?? "Decentralized", 
+        ignoreCase: true),
+    ApiBaseUrl = configuration["Application:ApiBaseUrl"] ?? "https://api.p2fk.io",
+    ApiKey = configuration["Application:ApiKey"],
+    UseApiWallet = bool.Parse(configuration["Application:UseApiWallet"] ?? "false")
+};
+
+builder.Services.AddSingleton(modeConfig);
+
+// Register IPFS service
 builder.Services.AddSingleton<IIpfsService>(sp => 
 {
     var ipfsService = new IpfsService();
     return ipfsService;
 });
 
-builder.Services.AddSingleton<IBlockchainService>(sp =>
+// Register RPC-based blockchain service
+builder.Services.AddSingleton<BlockchainService>(sp =>
 {
     var blockchainService = new BlockchainService();
-    
-    // Load blockchain configurations from appsettings
-    var configuration = sp.GetRequiredService<IConfiguration>();
     
     // Add Bitcoin Testnet configuration
     blockchainService.AddBlockchain("BitcoinTestnet", new BlockchainConfig
@@ -36,6 +48,23 @@ builder.Services.AddSingleton<IBlockchainService>(sp =>
     });
     
     return blockchainService;
+});
+
+// Register P2FK API service
+builder.Services.AddSingleton<P2fkApiService>(sp =>
+{
+    var config = sp.GetRequiredService<ModeConfiguration>();
+    return new P2fkApiService(config.ApiBaseUrl, config.ApiKey);
+});
+
+// Register unified blockchain service that switches between RPC and API
+builder.Services.AddSingleton<IBlockchainService>(sp =>
+{
+    var rpcService = sp.GetRequiredService<BlockchainService>();
+    var apiService = sp.GetRequiredService<P2fkApiService>();
+    var config = sp.GetRequiredService<ModeConfiguration>();
+    
+    return new UnifiedBlockchainService(rpcService, apiService, config);
 });
 
 builder.Services.AddScoped<IWalletService>(sp =>

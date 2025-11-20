@@ -1,0 +1,452 @@
+@page "/messages-interactive"
+@rendermode InteractiveServer
+@using Sup.Core.Services
+@using Sup.Core.Models
+@inject IBlockchainService BlockchainService
+@inject NavigationManager Navigation
+
+<PageTitle>Sup!? - Messages</PageTitle>
+
+<div class="messages-container">
+    <div class="messages-layout">
+        <!-- Conversations Sidebar -->
+        <div class="conversations-sidebar">
+            <div class="conversations-header">
+                <h2>💬 Conversations</h2>
+                <button class="new-conversation-btn" @onclick="ShowNewConversation">+</button>
+            </div>
+            
+            <div class="conversation-search">
+                <input type="text" @bind="searchQuery" @bind:event="oninput" 
+                       class="search-input" placeholder="Search conversations..." />
+            </div>
+
+            <div class="conversation-filters">
+                <button class="filter-btn @(activeFilter == "all" ? "active" : "")" 
+                        @onclick='() => SetFilter("all")'>All</button>
+                <button class="filter-btn @(activeFilter == "unread" ? "active" : "")" 
+                        @onclick='() => SetFilter("unread")'>Unread</button>
+                <button class="filter-btn @(activeFilter == "encrypted" ? "active" : "")" 
+                        @onclick='() => SetFilter("encrypted")'>🔒 Encrypted</button>
+            </div>
+
+            <div class="conversations-list">
+                @if (isLoadingConversations)
+                {
+                    <div class="loading-state">Loading conversations...</div>
+                }
+                else if (filteredConversations.Count == 0)
+                {
+                    <div class="empty-state">
+                        <div class="empty-icon">💬</div>
+                        <p>No conversations yet</p>
+                        <small>Start a new conversation to get started</small>
+                    </div>
+                }
+                else
+                {
+                    @foreach (var conv in filteredConversations)
+                    {
+                        <div class="conversation-item @(selectedConversation?.Address == conv.Address ? "active" : "")"
+                             @onclick="() => SelectConversation(conv)">
+                            <div class="conversation-avatar">@GetInitials(conv.Name)</div>
+                            <div class="conversation-info">
+                                <div class="conversation-name">@conv.Name</div>
+                                <div class="conversation-last-message">@conv.LastMessage</div>
+                            </div>
+                            <div class="conversation-meta">
+                                <div class="conversation-time">@conv.LastMessageTime</div>
+                                @if (conv.UnreadCount > 0)
+                                {
+                                    <span class="unread-badge">@conv.UnreadCount</span>
+                                }
+                                @if (conv.IsEncrypted)
+                                {
+                                    <span class="encrypted-icon">🔒</span>
+                                }
+                            </div>
+                        </div>
+                    }
+                }
+            </div>
+        </div>
+
+        <!-- Messages Area -->
+        <div class="messages-area">
+            @if (selectedConversation == null)
+            {
+                <div class="no-conversation-selected">
+                    <div class="empty-icon">✉️</div>
+                    <h3>Select a conversation</h3>
+                    <p>Choose a conversation from the sidebar or start a new one</p>
+                </div>
+            }
+            else
+            {
+                <div class="messages-header">
+                    <div class="recipient-info">
+                        <div class="recipient-avatar">@GetInitials(selectedConversation.Name)</div>
+                        <div>
+                            <h3>@selectedConversation.Name</h3>
+                            <small>@selectedConversation.Address</small>
+                        </div>
+                    </div>
+                    <div class="message-actions">
+                        <button class="icon-btn" title="Encrypted: @selectedConversation.IsEncrypted" 
+                                @onclick="ToggleEncryption">
+                            @(selectedConversation.IsEncrypted ? "🔒" : "🔓")
+                        </button>
+                        <button class="icon-btn" title="Refresh" @onclick="RefreshMessages">🔄</button>
+                    </div>
+                </div>
+
+                <div class="messages-body" @ref="messagesBodyRef">
+                    @if (isLoadingMessages)
+                    {
+                        <div class="loading-messages">Loading messages...</div>
+                    }
+                    else if (currentMessages.Count == 0)
+                    {
+                        <div class="no-messages">
+                            <p>No messages yet. Start the conversation!</p>
+                        </div>
+                    }
+                    else
+                    {
+                        @foreach (var msg in currentMessages)
+                        {
+                            <div class="message-item @(msg.IsSent ? "sent" : "received")">
+                                <div class="message-bubble">
+                                    @if (msg.IsEncrypted)
+                                    {
+                                        <div class="encrypted-indicator">🔒 Encrypted</div>
+                                    }
+                                    <div class="message-text">@msg.Content</div>
+                                    @if (!string.IsNullOrEmpty(msg.AttachmentUrl))
+                                    {
+                                        <div class="message-attachment">
+                                            📎 <a href="@msg.AttachmentUrl" target="_blank">Attachment</a>
+                                        </div>
+                                    }
+                                    <div class="message-meta">
+                                        <span class="message-time">@msg.Timestamp.ToString("MMM dd, HH:mm")</span>
+                                        @if (msg.IsSent)
+                                        {
+                                            <span class="message-status">@(msg.IsConfirmed ? "✓✓" : "✓")</span>
+                                        }
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                    }
+                </div>
+
+                <div class="message-input-area">
+                    @if (!string.IsNullOrEmpty(statusMessage))
+                    {
+                        <div class="input-status @statusClass">@statusMessage</div>
+                    }
+                    <div class="input-container">
+                        <button class="attach-btn" title="Attach file">📎</button>
+                        <input type="text" @bind="messageText" @bind:event="oninput"
+                               @onkeydown="HandleKeyPress"
+                               class="message-input" 
+                               placeholder="Type a message..." />
+                        <button class="send-btn" @onclick="SendMessage" disabled="@(isSending || string.IsNullOrWhiteSpace(messageText))">
+                            @(isSending ? "⏳" : "📢")
+                        </button>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+@code {
+    private ElementReference messagesBodyRef;
+    private string searchQuery = "";
+    private string activeFilter = "all";
+    private string messageText = "";
+    private bool isSending = false;
+    private bool isLoadingConversations = false;
+    private bool isLoadingMessages = false;
+    private string statusMessage = "";
+    private string statusClass = "";
+    
+    private List<ConversationModel> conversations = new();
+    private List<ConversationModel> filteredConversations = new();
+    private ConversationModel? selectedConversation = null;
+    private List<MessageModel> currentMessages = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadConversations();
+    }
+
+    private async Task LoadConversations()
+    {
+        isLoadingConversations = true;
+        
+        try
+        {
+            // Simulate loading conversations
+            // In production, this would fetch from blockchain
+            conversations = new List<ConversationModel>
+            {
+                new ConversationModel
+                {
+                    Address = "tb1qexampleaddress1",
+                    Name = "embii4u",
+                    LastMessage = "Hey! How's the new Sup going?",
+                    LastMessageTime = "2m ago",
+                    UnreadCount = 2,
+                    IsEncrypted = true
+                },
+                new ConversationModel
+                {
+                    Address = "tb1qexampleaddress2",
+                    Name = "cryptoartist",
+                    LastMessage = "Check out my new NFT!",
+                    LastMessageTime = "1h ago",
+                    UnreadCount = 0,
+                    IsEncrypted = false
+                },
+                new ConversationModel
+                {
+                    Address = "tb1qexampleaddress3",
+                    Name = "blockchain_bob",
+                    LastMessage = "Thanks for the help!",
+                    LastMessageTime = "3h ago",
+                    UnreadCount = 0,
+                    IsEncrypted = true
+                }
+            };
+            
+            FilterConversations();
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error loading conversations: {ex.Message}");
+        }
+        finally
+        {
+            isLoadingConversations = false;
+        }
+    }
+
+    private async Task SelectConversation(ConversationModel conversation)
+    {
+        selectedConversation = conversation;
+        conversation.UnreadCount = 0; // Mark as read
+        await LoadMessages();
+    }
+
+    private async Task LoadMessages()
+    {
+        if (selectedConversation == null) return;
+
+        isLoadingMessages = true;
+        
+        try
+        {
+            // Fetch messages from blockchain
+            var messages = await BlockchainService.GetPublicMessagesAsync(
+                selectedConversation.Address, 
+                "BitcoinTestnet", 
+                0, 
+                50);
+
+            currentMessages = messages.Select(m => new MessageModel
+            {
+                Content = m.Content ?? "Message content",
+                Timestamp = m.Timestamp,
+                IsSent = false, // Determine based on sender
+                IsEncrypted = m.IsEncrypted,
+                IsConfirmed = true,
+                AttachmentUrl = m.AttachmentUrl
+            }).ToList();
+
+            // Add some mock sent messages for demo
+            currentMessages.Add(new MessageModel
+            {
+                Content = "This is a test message!",
+                Timestamp = DateTime.Now.AddMinutes(-5),
+                IsSent = true,
+                IsEncrypted = selectedConversation.IsEncrypted,
+                IsConfirmed = true
+            });
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error loading messages: {ex.Message}");
+            // Show mock messages for demo
+            currentMessages = new List<MessageModel>
+            {
+                new MessageModel
+                {
+                    Content = "Hey! How's it going?",
+                    Timestamp = DateTime.Now.AddHours(-2),
+                    IsSent = false,
+                    IsEncrypted = selectedConversation.IsEncrypted
+                },
+                new MessageModel
+                {
+                    Content = "Good! Just testing the new Sup app.",
+                    Timestamp = DateTime.Now.AddHours(-2).AddMinutes(5),
+                    IsSent = true,
+                    IsEncrypted = selectedConversation.IsEncrypted,
+                    IsConfirmed = true
+                }
+            };
+        }
+        finally
+        {
+            isLoadingMessages = false;
+        }
+    }
+
+    private async Task SendMessage()
+    {
+        if (string.IsNullOrWhiteSpace(messageText) || selectedConversation == null)
+            return;
+
+        isSending = true;
+        ShowStatus("Sending message...", "info");
+
+        try
+        {
+            // Check blockchain connection
+            if (!await BlockchainService.IsConnectedAsync("BitcoinTestnet"))
+            {
+                ShowStatus("Not connected to blockchain. Check Settings.", "error");
+                return;
+            }
+
+            // In production, this would create and broadcast a message transaction
+            // For now, just add to local list
+            var newMessage = new MessageModel
+            {
+                Content = messageText,
+                Timestamp = DateTime.Now,
+                IsSent = true,
+                IsEncrypted = selectedConversation.IsEncrypted,
+                IsConfirmed = false
+            };
+
+            currentMessages.Add(newMessage);
+            
+            // Clear input
+            messageText = "";
+            
+            // Simulate blockchain confirmation
+            await Task.Delay(1000);
+            newMessage.IsConfirmed = true;
+            
+            ShowStatus("Message sent successfully!", "success");
+            await Task.Delay(2000);
+            ClearStatus();
+            
+            StateHasChanged();
+        }
+        catch (Exception ex)
+        {
+            ShowStatus($"Failed to send: {ex.Message}", "error");
+        }
+        finally
+        {
+            isSending = false;
+        }
+    }
+
+    private async Task HandleKeyPress(KeyboardEventArgs e)
+    {
+        if (e.Key == "Enter" && !e.ShiftKey)
+        {
+            await SendMessage();
+        }
+    }
+
+    private async Task RefreshMessages()
+    {
+        await LoadMessages();
+        ShowStatus("Messages refreshed", "success");
+        await Task.Delay(1500);
+        ClearStatus();
+    }
+
+    private void ToggleEncryption()
+    {
+        if (selectedConversation != null)
+        {
+            selectedConversation.IsEncrypted = !selectedConversation.IsEncrypted;
+            ShowStatus($"Encryption {(selectedConversation.IsEncrypted ? "enabled" : "disabled")}", "info");
+        }
+    }
+
+    private void ShowNewConversation()
+    {
+        // TODO: Implement new conversation dialog
+        ShowStatus("New conversation feature coming soon!", "info");
+    }
+
+    private void SetFilter(string filter)
+    {
+        activeFilter = filter;
+        FilterConversations();
+    }
+
+    private void FilterConversations()
+    {
+        filteredConversations = conversations
+            .Where(c => 
+                (string.IsNullOrEmpty(searchQuery) || 
+                 c.Name.Contains(searchQuery, StringComparison.OrdinalIgnoreCase)) &&
+                (activeFilter == "all" ||
+                 (activeFilter == "unread" && c.UnreadCount > 0) ||
+                 (activeFilter == "encrypted" && c.IsEncrypted)))
+            .ToList();
+    }
+
+    private string GetInitials(string name)
+    {
+        if (string.IsNullOrEmpty(name)) return "?";
+        var parts = name.Split(' ', StringSplitOptions.RemoveEmptyEntries);
+        if (parts.Length >= 2)
+            return $"{parts[0][0]}{parts[1][0]}".ToUpper();
+        return name.Length >= 2 ? name.Substring(0, 2).ToUpper() : name.ToUpper();
+    }
+
+    private void ShowStatus(string message, string className)
+    {
+        statusMessage = message;
+        statusClass = className;
+        StateHasChanged();
+    }
+
+    private void ClearStatus()
+    {
+        statusMessage = "";
+        statusClass = "";
+    }
+
+    // View models
+    private class ConversationModel
+    {
+        public string Address { get; set; } = "";
+        public string Name { get; set; } = "";
+        public string LastMessage { get; set; } = "";
+        public string LastMessageTime { get; set; } = "";
+        public int UnreadCount { get; set; }
+        public bool IsEncrypted { get; set; }
+    }
+
+    private class MessageModel
+    {
+        public string Content { get; set; } = "";
+        public DateTime Timestamp { get; set; }
+        public bool IsSent { get; set; }
+        public bool IsEncrypted { get; set; }
+        public bool IsConfirmed { get; set; }
+        public string? AttachmentUrl { get; set; }
+    }
+}
