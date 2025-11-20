@@ -1,0 +1,226 @@
+@page "/mint"
+@rendermode InteractiveServer
+
+<PageTitle>Sup!? - Create</PageTitle>
+
+<div class="mint-container">
+    <div class="mint-header">
+        <h1>✨ Create</h1>
+        <p>Mint objects, profiles, and inquiries on the blockchain</p>
+    </div>
+
+    <div class="mint-type-selector">
+        <button class="type-card @(selectedType == "object" ? "active" : "")" @onclick='() => SelectType("object")'>
+            <div class="type-icon">🎨</div>
+            <h3>Object</h3>
+            <p>Create a blockchain object or NFT</p>
+        </button>
+        <button class="type-card @(selectedType == "profile" ? "active" : "")" @onclick='() => SelectType("profile")'>
+            <div class="type-icon">👤</div>
+            <h3>Profile</h3>
+            <p>Register or update your profile</p>
+        </button>
+        <button class="type-card @(selectedType == "inquiry" ? "active" : "")" @onclick='() => SelectType("inquiry")'>
+            <div class="type-icon">⁉️</div>
+            <h3>Inquiry</h3>
+            <p>Create a poll or question</p>
+        </button>
+    </div>
+
+    @if (selectedType == "object")
+    {
+        <div class="mint-form">
+            <h2>🎨 Mint Object</h2>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Object Name *</label>
+                    <input type="text" class="input-field" placeholder="My Digital Artwork" />
+                </div>
+                <div class="form-group">
+                    <label>URN (Unique Resource Name) *</label>
+                    <input type="text" class="input-field" placeholder="my-artwork-2024" />
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label>Description</label>
+                <textarea class="input-field" rows="4" placeholder="Describe your object..."></textarea>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Creator Address</label>
+                    <input type="text" class="input-field" placeholder="Auto-generated or paste address" />
+                </div>
+                <div class="form-group">
+                    <label>Object Address *</label>
+                    <input type="text" class="input-field" placeholder="Auto-generated or paste address" />
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Owner Address</label>
+                    <input type="text" class="input-field" placeholder="Owner's blockchain address" />
+                </div>
+                <div class="form-group">
+                    <label>Quantity</label>
+                    <input type="number" class="input-field" value="1" />
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label>Keywords (comma separated)</label>
+                <input type="text" class="input-field" placeholder="art, nft, digital" />
+            </div>
+
+            <div class="file-upload-section">
+                <div class="upload-box">
+                    <div class="upload-icon">📁</div>
+                    <h4>Upload Files</h4>
+                    <p>Drag & drop or click to browse</p>
+                    <button class="browse-btn">Browse Files</button>
+                </div>
+                <div class="ipfs-options">
+                    <label class="checkbox-label">
+                        <input type="checkbox" checked />
+                        <span>Upload to IPFS</span>
+                    </label>
+                    <label class="checkbox-label">
+                        <input type="checkbox" checked />
+                        <span>Pin to local node</span>
+                    </label>
+                </div>
+            </div>
+
+            <div class="royalty-section">
+                <h4>💎 Royalties (Optional)</h4>
+                <div class="royalty-item">
+                    <input type="text" class="input-field" placeholder="Address" />
+                    <input type="number" class="input-field" placeholder="%" style="max-width: 100px" />
+                    <button class="remove-btn">❌</button>
+                </div>
+                <button class="add-royalty-btn">+ Add Royalty</button>
+            </div>
+
+            <div class="action-buttons">
+                <button class="secondary-btn">Print QR</button>
+                <button class="primary-btn">📢 Mint Object</button>
+            </div>
+        </div>
+    }
+    else if (selectedType == "profile")
+    {
+        <div class="mint-form">
+            <h2>👤 Register Profile</h2>
+            <div class="form-group">
+                <label>URN (Username) *</label>
+                <input type="text" class="input-field" placeholder="embii4u" />
+                <small>Your unique identifier on the network</small>
+            </div>
+
+            <div class="form-group">
+                <label>Profile Address *</label>
+                <input type="text" class="input-field" placeholder="Auto-generated or paste address" />
+                <small>The blockchain address for your profile</small>
+            </div>
+
+            <div class="form-group">
+                <label>Display Name</label>
+                <input type="text" class="input-field" placeholder="Your Name" />
+            </div>
+
+            <div class="form-group">
+                <label>Avatar URL</label>
+                <input type="text" class="input-field" placeholder="ipfs://... or https://..." />
+            </div>
+
+            <div class="form-group">
+                <label>Bio</label>
+                <textarea class="input-field" rows="4" placeholder="Tell people about yourself..."></textarea>
+            </div>
+
+            <div class="form-group">
+                <label>Website / Links</label>
+                <input type="text" class="input-field" placeholder="https://yourwebsite.com" />
+            </div>
+
+            <div class="form-group">
+                <label>Keywords</label>
+                <input type="text" class="input-field" placeholder="artist, creator, developer" />
+            </div>
+
+            <div class="info-box">
+                ℹ️ Profile registrations are valid for 10 years from the last update. After 10 years of inactivity, the URN can be claimed by others.
+            </div>
+
+            <div class="action-buttons">
+                <button class="secondary-btn">Clear</button>
+                <button class="primary-btn">📝 Register Profile</button>
+            </div>
+        </div>
+    }
+    else if (selectedType == "inquiry")
+    {
+        <div class="mint-form">
+            <h2>⁉️ Create Inquiry</h2>
+            <div class="form-group">
+                <label>Question *</label>
+                <textarea class="input-field" rows="3" placeholder="What do you want to ask?"></textarea>
+            </div>
+
+            <div class="form-group">
+                <label>Options</label>
+                @for (int i = 0; i < 4; i++)
+                {
+                    <div class="option-row">
+                        <input type="text" class="input-field" placeholder="@($"Option {i + 1}")" />
+                        @if (i > 1)
+                        {
+                            <button class="remove-btn">❌</button>
+                        }
+                    </div>
+                }
+                <button class="add-option-btn">+ Add Option</button>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Duration</label>
+                    <select class="input-field">
+                        <option>1 day</option>
+                        <option>3 days</option>
+                        <option>1 week</option>
+                        <option>1 month</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="checkbox-label">
+                        <input type="checkbox" />
+                        <span>Require signatures</span>
+                    </label>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label>Token Gate (Optional)</label>
+                <input type="text" class="input-field" placeholder="Object address to gate voting" />
+                <small>Only holders of this object can vote</small>
+            </div>
+
+            <div class="action-buttons">
+                <button class="secondary-btn">Cancel</button>
+                <button class="primary-btn">🗳️ Create Inquiry</button>
+            </div>
+        </div>
+    }
+</div>
+
+@code {
+    private string selectedType = "object";
+
+    private void SelectType(string type)
+    {
+        selectedType = type;
+    }
+}

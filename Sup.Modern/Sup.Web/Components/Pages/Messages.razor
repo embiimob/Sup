@@ -1,0 +1,156 @@
+@page "/messages"
+@rendermode InteractiveServer
+
+<PageTitle>Sup!? - Messages</PageTitle>
+
+<div class="messages-container">
+    <div class="messages-sidebar">
+        <div class="messages-header">
+            <h2>💬 Messages</h2>
+            <button class="compose-msg-btn" title="New Message">✉️</button>
+        </div>
+        
+        <div class="message-tabs">
+            <button class="tab-btn active">All</button>
+            <button class="tab-btn">🌐 Public</button>
+            <button class="tab-btn">🤐 Private</button>
+        </div>
+
+        <div class="conversations-list">
+            @for (int i = 0; i < 8; i++)
+            {
+                <div class="conversation-item @(i == 0 ? "active" : "")">
+                    <div class="conv-avatar">@GetAvatar(i)</div>
+                    <div class="conv-details">
+                        <div class="conv-header">
+                            <h4>@GetUsername(i)</h4>
+                            <span class="conv-time">@GetTime(i)</span>
+                        </div>
+                        <p class="conv-preview">@GetPreview(i)</p>
+                    </div>
+                    @if (i % 3 == 0)
+                    {
+                        <span class="unread-badge">2</span>
+                    }
+                </div>
+            }
+        </div>
+    </div>
+
+    <div class="messages-main">
+        <div class="chat-header">
+            <div class="chat-user-info">
+                <div class="chat-avatar">🎨</div>
+                <div>
+                    <h3>embii4u</h3>
+                    <span class="status-text">● Active now</span>
+                </div>
+            </div>
+            <div class="chat-actions">
+                <button class="icon-btn" title="Profile">👤</button>
+                <button class="icon-btn" title="More">⋮</button>
+            </div>
+        </div>
+
+        <div class="chat-messages">
+            <div class="message-group received">
+                <div class="msg-avatar">🎨</div>
+                <div class="messages-stack">
+                    <div class="message-bubble">
+                        Hey! Check out my latest NFT collection 🎨
+                    </div>
+                    <div class="message-bubble">
+                        <div class="attachment-preview">
+                            <div class="attachment-icon">🖼️</div>
+                            <span>artwork_collection.zip</span>
+                        </div>
+                    </div>
+                    <span class="msg-time">2:30 PM</span>
+                </div>
+            </div>
+
+            <div class="message-group sent">
+                <div class="messages-stack">
+                    <div class="message-bubble">
+                        Wow, looks amazing! 😍
+                    </div>
+                    <div class="message-bubble">
+                        How much are you asking for it?
+                    </div>
+                    <span class="msg-time">2:32 PM</span>
+                </div>
+            </div>
+
+            <div class="message-group received">
+                <div class="msg-avatar">🎨</div>
+                <div class="messages-stack">
+                    <div class="message-bubble">
+                        Thanks! Starting at 0.5 BTC for the collection 💎
+                    </div>
+                    <div class="message-bubble">
+                        Each piece is unique and stored on IPFS
+                    </div>
+                    <span class="msg-time">2:35 PM</span>
+                </div>
+            </div>
+
+            <div class="date-divider">
+                <span>Today</span>
+            </div>
+
+            <div class="message-group sent">
+                <div class="messages-stack">
+                    <div class="message-bubble">
+                        Interested! Can you send me the IPFS links?
+                    </div>
+                    <span class="msg-time">3:10 PM</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="chat-input-container">
+            <button class="attach-btn" title="Attach file">📎</button>
+            <button class="attach-btn" title="Attach image">🖼️</button>
+            <button class="attach-btn" title="Record audio">🎤</button>
+            <button class="attach-btn" title="Encrypt">🔒</button>
+            <input type="text" class="chat-input" placeholder="Type a message..." />
+            <button class="send-btn">📢</button>
+        </div>
+    </div>
+</div>
+
+@code {
+    private string GetAvatar(int index)
+    {
+        var avatars = new[] { "🎨", "🎮", "🎭", "🎪", "🎬", "🎵", "🎸", "🎹" };
+        return avatars[index % avatars.Length];
+    }
+
+    private string GetUsername(int index)
+    {
+        var users = new[] { "embii4u", "cryptoartist", "blockchain_bob", "nft_collector", "digital_artist", "web3_dev", "dao_member", "token_trader" };
+        return users[index % users.Length];
+    }
+
+    private string GetTime(int index)
+    {
+        var times = new[] { "2 min", "15 min", "1 hr", "3 hrs", "1 day", "2 days", "1 wk", "2 wks" };
+        return times[index % times.Length];
+    }
+
+    private string GetPreview(int index)
+    {
+        var previews = new[]
+        {
+            "Hey! Check out my latest NFT collection...",
+            "Thanks for the follow! Your work is amazing",
+            "Are you going to the blockchain conference?",
+            "Just minted a new piece on testnet",
+            "I'd love to collaborate on a project",
+            "Have you tried the new IPFS gateway?",
+            "Your profile looks great!",
+            "Sent you some test tokens"
+        };
+        return previews[index % previews.Length];
+    }
+}

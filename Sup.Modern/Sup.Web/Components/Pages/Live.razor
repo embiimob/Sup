@@ -1,0 +1,151 @@
+@page "/live"
+@rendermode InteractiveServer
+
+<PageTitle>Sup!? - Live Feed</PageTitle>
+
+<div class="live-container">
+    <div class="live-header">
+        <div class="header-left">
+            <h1>📡 Live Feed</h1>
+            <span class="live-indicator">● LIVE</span>
+        </div>
+        <div class="header-right">
+            <button class="filter-toggle-btn">
+                <input type="checkbox" id="friendsOnly" />
+                <label for="friendsOnly">👥 Friends Only</label>
+            </button>
+            <button class="purge-btn">🗑️ Clear Cache</button>
+        </div>
+    </div>
+
+    <div class="blockchain-selector">
+        <button class="blockchain-btn active">₿ Bitcoin Testnet</button>
+        <button class="blockchain-btn">Ł Litecoin</button>
+        <button class="blockchain-btn">Ð Dogecoin</button>
+        <button class="blockchain-btn">M Mazacoin</button>
+    </div>
+
+    <div class="stats-bar">
+        <div class="stat">
+            <span class="stat-label">Objects Today</span>
+            <span class="stat-value">47</span>
+        </div>
+        <div class="stat">
+            <span class="stat-label">Messages</span>
+            <span class="stat-value">128</span>
+        </div>
+        <div class="stat">
+            <span class="stat-label">Active Users</span>
+            <span class="stat-value">23</span>
+        </div>
+        <div class="stat">
+            <span class="stat-label">Block Height</span>
+            <span class="stat-value">2,547,392</span>
+        </div>
+    </div>
+
+    <div class="live-feed">
+        <div class="feed-info">
+            <p>🔄 Monitoring blockchain for new activity...</p>
+            <p class="sub-info">New items will appear automatically at the top</p>
+        </div>
+
+        @for (int i = 0; i < 10; i++)
+        {
+            <div class="live-item @GetItemClass(i)">
+                <div class="item-time">@GetTimeAgo(i)</div>
+                <div class="item-content">
+                    <div class="item-header">
+                        <div class="item-icon">@GetItemIcon(i)</div>
+                        <div class="item-meta">
+                            <h4>@GetItemTitle(i)</h4>
+                            <span class="item-author">by @GetItemAuthor(i)</span>
+                        </div>
+                    </div>
+                    <p class="item-description">@GetItemDescription(i)</p>
+                    @if (i % 4 == 0)
+                    {
+                        <div class="item-preview">
+                            <div class="preview-placeholder">🖼️ Preview</div>
+                        </div>
+                    }
+                    <div class="item-footer">
+                        <span class="item-tx">TX: @GetTransactionId(i)</span>
+                        <button class="delete-btn" title="Delete">🗑️</button>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+
+    <div class="load-more-section">
+        <button class="load-more-btn">Load Earlier Activity</button>
+    </div>
+</div>
+
+@code {
+    private string GetItemClass(int index)
+    {
+        string[] types = { "new-object", "new-message", "new-profile", "new-transaction" };
+        return types[index % types.Length];
+    }
+
+    private string GetTimeAgo(int index)
+    {
+        string[] times = { "Just now", "5s ago", "15s ago", "30s ago", "1m ago", "2m ago", "5m ago", "10m ago", "15m ago", "30m ago" };
+        return times[index % times.Length];
+    }
+
+    private string GetItemIcon(int index)
+    {
+        string[] icons = { "🎨", "💬", "👤", "⚡" };
+        return icons[index % icons.Length];
+    }
+
+    private string GetItemTitle(int index)
+    {
+        string[] titles = 
+        {
+            "New Object Minted",
+            "Public Message Posted",
+            "Profile Registered",
+            "Transaction Confirmed",
+            "Object Listed for Sale",
+            "Private Message Sent",
+            "Inquiry Created",
+            "Object Transfer",
+            "Profile Updated",
+            "Collection Created"
+        };
+        return titles[index % titles.Length];
+    }
+
+    private string GetItemAuthor(int index)
+    {
+        string[] authors = { "embii4u", "cryptoartist", "blockchain_bob", "nft_collector", "digital_artist" };
+        return authors[index % authors.Length];
+    }
+
+    private string GetItemDescription(int index)
+    {
+        string[] descriptions = 
+        {
+            "A new digital artwork has been minted to the blockchain with IPFS storage.",
+            "Public message shared with the community about the latest developments.",
+            "New user profile has been registered with URN and public keys.",
+            "Transaction successfully confirmed and added to the blockchain.",
+            "Object listed on the marketplace with pricing and royalty information.",
+            "Encrypted private message sent between two users.",
+            "New poll created for community voting on important topics.",
+            "Object ownership has been transferred to a new address.",
+            "User profile has been updated with new information and links.",
+            "New collection of objects has been created and organized."
+        };
+        return descriptions[index % descriptions.Length];
+    }
+
+    private string GetTransactionId(int index)
+    {
+        return $"{index:00}ab3cd4ef5gh6ij7kl8mn9op0qr1st2uv3wx4yz5...";
+    }
+}
