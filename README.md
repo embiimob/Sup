@@ -1,13 +1,39 @@
 # Sup!? 
 experimental decentralized state engine
 
+> **🎉 NEW: Modern Cross-Platform Version Available!**  
+> See [Sup.Modern](./Sup.Modern/) for the .NET 8 Blazor Hybrid version with modern UI
+
 Sup!? (satoshi universal protocol) demonstrates fully trustless, censorship free, social media with private messaging, file sharing, DAO voting, website publishing and tradeable blockchain objects.
 
 This experiment is using an ancient blockchain protocol called P2FK (Pay to Future Key) invented by embii in 2013 as part of the HugPuddle project
 
 P2FK was directly inspired by the satoshi uploader  see --> https://cirosantilli.com/satoshi-uploader
 
-## **Installation**
+## **Versions**
+
+### 📦 Modern Version (.NET 8 Blazor Hybrid) - **RECOMMENDED**
+
+**Cross-platform, modern web UI, runs on Windows, Linux, and macOS**
+
+```bash
+cd Sup.Modern/Sup.Desktop
+dotnet run
+```
+
+- ✅ Modern web-like interface
+- ✅ Cross-platform (Windows, Linux, macOS)  
+- ✅ Responsive design
+- ✅ Real-time updates
+- ✅ Easier to extend and maintain
+
+[→ Full Documentation](./Sup.Modern/README.md) | [→ Migration Guide](./MIGRATION_GUIDE.md)
+
+### 📦 Legacy Version (.NET Framework 4.7.2 Windows Forms)
+
+**Original Windows-only desktop application**
+
+## **Installation (Legacy Version)**
 
 1. Download Supv0.7.6-beta.zip ( https://github.com/embiimob/Sup/releases/download/Supv0.7.6-beta/Supv0.7.6-beta.zip )
 2. Create a folder on your **fastest** disk drive with at least **300GB** free (it will be storing the bitcoin testnet blockchain)
