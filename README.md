@@ -1,4 +1,4 @@
-# Sup!? 
+# Sup!? v0.7.6-beta
 experimental decentralized state engine
 
 Sup!? (satoshi universal protocol) demonstrates fully trustless, censorship free, social media with private messaging, file sharing, DAO voting, website publishing and tradeable blockchain objects.
