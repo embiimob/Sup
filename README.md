@@ -3,22 +3,6 @@ experimental decentralized state engine
 
 Sup!? (satoshi universal protocol) demonstrates fully trustless, censorship free, social media with private messaging, file sharing, DAO voting, website publishing and tradeable blockchain objects.
 
-## 📦 Recent Repository Cleanup (December 2024)
-
-The repository has been cleaned up to improve maintainability:
-- **Migrated to NuGet PackageReference**: Removed ~91MB of vendored DLL files from the `includes/` directory. All dependencies are now managed via modern NuGet PackageReference format.
-- **Updated IPFS**: Upgraded from Kubo v0.22.0 to v0.39.0 (latest stable release).
-- **Building the Project**: After cloning, run `dotnet restore` to download all NuGet packages before building.
-
-See [CHANGELOG.md](CHANGELOG.md) for complete details of what was changed.
-
-### Building from Source
-
-1. Clone the repository
-2. Restore NuGet packages: `dotnet restore`
-3. Build the project: `dotnet build SUP.sln` or open `SUP.sln` in Visual Studio
-4. Run the application: `SUP.exe` from the output directory
-
 This experiment is using an ancient blockchain protocol called P2FK (Pay to Future Key) invented by embii in 2013 as part of the HugPuddle project
 
 P2FK was directly inspired by the satoshi uploader  see --> https://cirosantilli.com/satoshi-uploader
