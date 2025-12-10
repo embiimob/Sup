@@ -55,10 +55,7 @@
   <ItemGroup>
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
-    <Reference Include="System">
-      <HintPath>..\..\..\..\..\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.7.2\System.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
+    <Reference Include="System" />
     <Reference Include="System.ComponentModel.Composition">
       <Private>True</Private>
     </Reference>
@@ -67,11 +64,7 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="System.IO.Compression.FileSystem, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL" />
-    <Reference Include="System.IO.Compression.ZipFile, Version=4.0.2.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
-      <HintPath>packages\System.IO.Compression.ZipFile.4.3.0\lib\net46\System.IO.Compression.ZipFile.dll</HintPath>
-      <Private>True</Private>
-      <Private>True</Private>
-    </Reference>
+    <Reference Include="System.IO.Compression.ZipFile, Version=4.0.2.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL" />
     <Reference Include="System.Numerics">
       <Private>True</Private>
     </Reference>
@@ -697,10 +690,6 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="includes\AngleSharp.Css.dll" />
-    <Content Include="includes\AngleSharp.Css.xml" />
-    <Content Include="includes\AngleSharp.dll" />
-    <Content Include="includes\AngleSharp.xml" />
     <Content Include="includes\anon.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
@@ -710,8 +699,6 @@
     <Content Include="includes\BC_Logo.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="includes\NReco.VideoConverter.dll" />
-    <Content Include="includes\NReco.VideoConverter.xml" />
     <Content Include="includes\SUP31.gif">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
@@ -741,10 +728,6 @@
     <Content Include="includes\SUPX.gif" />
     <Content Include="includes\SUPY.gif" />
     <Content Include="includes\SUPZ.gif" />
-    <Content Include="includes\System.Security.AccessControl.dll" />
-    <Content Include="includes\System.Security.AccessControl.xml" />
-    <Content Include="includes\System.Security.Principal.Windows.dll" />
-    <Content Include="includes\System.Security.Principal.Windows.xml" />
     <Content Include="runtimes\win-arm64\native\WebView2Loader.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
@@ -757,51 +740,12 @@
     <None Include="includes\disco.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <Content Include="includes\Gma.QrCodeNet.Encoding.dll" />
-    <Content Include="includes\HtmlSanitizer.dll" />
-    <Content Include="includes\HtmlSanitizer.xml" />
     <Content Include="includes\HugPuddle.jpg">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="includes\loading.html">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="includes\Microsoft.Bcl.AsyncInterfaces.dll" />
-    <Content Include="includes\Microsoft.Bcl.AsyncInterfaces.xml" />
-    <Content Include="includes\Microsoft.Extensions.Configuration.Abstractions.dll" />
-    <Content Include="includes\Microsoft.Extensions.Configuration.Abstractions.xml" />
-    <Content Include="includes\Microsoft.Extensions.Configuration.dll" />
-    <Content Include="includes\Microsoft.Extensions.Configuration.FileExtensions.dll" />
-    <Content Include="includes\Microsoft.Extensions.Configuration.FileExtensions.xml" />
-    <Content Include="includes\Microsoft.Extensions.Configuration.xml" />
-    <Content Include="includes\Microsoft.Extensions.FileProviders.Abstractions.dll" />
-    <Content Include="includes\Microsoft.Extensions.FileProviders.Abstractions.xml" />
-    <Content Include="includes\Microsoft.Extensions.FileProviders.Physical.dll" />
-    <Content Include="includes\Microsoft.Extensions.FileProviders.Physical.xml" />
-    <Content Include="includes\Microsoft.Extensions.FileSystemGlobbing.dll" />
-    <Content Include="includes\Microsoft.Extensions.FileSystemGlobbing.xml" />
-    <Content Include="includes\Microsoft.Extensions.Logging.Abstractions.dll" />
-    <Content Include="includes\Microsoft.Extensions.Logging.Abstractions.xml" />
-    <Content Include="includes\Microsoft.Extensions.Primitives.dll" />
-    <Content Include="includes\Microsoft.Extensions.Primitives.xml" />
-    <Content Include="includes\Microsoft.Web.WebView2.Core.dll" />
-    <Content Include="includes\Microsoft.Web.WebView2.Core.xml" />
-    <Content Include="includes\Microsoft.Web.WebView2.WinForms.dll" />
-    <Content Include="includes\Microsoft.Web.WebView2.WinForms.xml" />
-    <Content Include="includes\Microsoft.Web.WebView2.Wpf.dll" />
-    <Content Include="includes\Microsoft.Web.WebView2.Wpf.xml" />
-    <Content Include="includes\NAudio.Asio.dll" />
-    <Content Include="includes\NAudio.Core.dll" />
-    <Content Include="includes\NAudio.dll" />
-    <Content Include="includes\NAudio.Midi.dll" />
-    <Content Include="includes\NAudio.Wasapi.dll" />
-    <Content Include="includes\NAudio.WinForms.dll" />
-    <Content Include="includes\NAudio.WinMM.dll" />
-    <Content Include="includes\NAudio.xml" />
-    <Content Include="includes\NBitcoin.dll" />
-    <Content Include="includes\NBitcoin.xml" />
-    <Content Include="includes\Newtonsoft.Json.dll" />
-    <Content Include="includes\Newtonsoft.Json.xml" />
     <Content Include="includes\notfound.html">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
@@ -940,37 +884,6 @@
     <Content Include="includes\SUPR.gif">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="includes\System.Buffers.dll" />
-    <Content Include="includes\System.Buffers.xml" />
-    <Content Include="includes\System.Collections.Immutable.dll" />
-    <Content Include="includes\System.Collections.Immutable.xml" />
-    <Content Include="includes\System.ComponentModel.Composition.dll" />
-    <Content Include="includes\System.Data.DataSetExtensions.dll" />
-    <Content Include="includes\System.Data.dll" />
-    <Content Include="includes\System.Deployment.dll" />
-    <Content Include="includes\System.dll" />
-    <Content Include="includes\System.Drawing.dll" />
-    <Content Include="includes\System.Memory.dll" />
-    <Content Include="includes\System.Memory.xml" />
-    <Content Include="includes\System.Net.Http.dll" />
-    <Content Include="includes\System.Numerics.dll" />
-    <Content Include="includes\System.Numerics.Vectors.dll" />
-    <Content Include="includes\System.Numerics.Vectors.xml" />
-    <Content Include="includes\System.Runtime.CompilerServices.Unsafe.dll" />
-    <Content Include="includes\System.Runtime.CompilerServices.Unsafe.xml" />
-    <Content Include="includes\System.Text.Encoding.CodePages.dll" />
-    <Content Include="includes\System.Text.Encoding.CodePages.xml" />
-    <Content Include="includes\System.Text.Encodings.Web.dll" />
-    <Content Include="includes\System.Text.Encodings.Web.xml" />
-    <Content Include="includes\System.Threading.Tasks.Extensions.dll" />
-    <Content Include="includes\System.Threading.Tasks.Extensions.xml" />
-    <Content Include="includes\System.ValueTuple.dll" />
-    <Content Include="includes\System.ValueTuple.xml" />
-    <Content Include="includes\System.Windows.Forms.dll" />
-    <Content Include="includes\System.Xml.dll" />
-    <Content Include="includes\System.Xml.Linq.dll" />
-    <Content Include="includes\WindowsBase.dll" />
-    <Content Include="includes\WindowsFormsIntegration.dll" />
     <Content Include="bitcoin-qt.exe">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
@@ -989,13 +902,4 @@
     </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <Import Project="packages\Microsoft.Web.WebView2.1.0.2045.28\build\Microsoft.Web.WebView2.targets" Condition="Exists('packages\Microsoft.Web.WebView2.1.0.2045.28\build\Microsoft.Web.WebView2.targets')" />
-  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
-    <PropertyGroup>
-      <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
-    </PropertyGroup>
-    <Error Condition="!Exists('packages\Microsoft.Web.WebView2.1.0.2045.28\build\Microsoft.Web.WebView2.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\Microsoft.Web.WebView2.1.0.2045.28\build\Microsoft.Web.WebView2.targets'))" />
-    <Error Condition="!Exists('packages\Microsoft.AspNetCore.Server.IIS.2.2.6\build\netstandard2.0\Microsoft.AspNetCore.Server.IIS.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\Microsoft.AspNetCore.Server.IIS.2.2.6\build\netstandard2.0\Microsoft.AspNetCore.Server.IIS.targets'))" />
-  </Target>
-  <Import Project="packages\Microsoft.AspNetCore.Server.IIS.2.2.6\build\netstandard2.0\Microsoft.AspNetCore.Server.IIS.targets" Condition="Exists('packages\Microsoft.AspNetCore.Server.IIS.2.2.6\build\netstandard2.0\Microsoft.AspNetCore.Server.IIS.targets')" />
 </Project>
