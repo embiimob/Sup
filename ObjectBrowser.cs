@@ -3169,7 +3169,7 @@ namespace SUP
                                     Process process2 = new Process();
                                     process2.StartInfo.FileName = @"ipfs\ipfs.exe";
                                     process2.StartInfo.Arguments = "get " + ipfsHash + @" -o ipfs\" + ipfsHash;
-                                    process2.StartInfo.UseShellExecute = true;
+                                    process2.StartInfo.UseShellExecute = false;
                                     process2.StartInfo.CreateNoWindow = false;
                                     process2.Start();
                                     process2.WaitForExit();
