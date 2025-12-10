@@ -3658,7 +3658,14 @@ namespace SUP
                                         string _uri = HttpUtility.UrlEncode(objstate.URI);
                                         string _img = HttpUtility.UrlEncode(objstate.Image);
 
-                                        string querystring = "?address=" + _address + "&viewer=" + _viewer + "&viewername=" + _viewername + "&creator=" + _creator + "&owner=" + _owner + "&ownername=" + _ownername + "&urn=" + _urn + "&uri=" + _uri + "&img=" + _img + "&transactionid=" + _transactionid + "&genid=" + _genid;
+                                        // Construct paths for ipfs and root folders
+                                        string appFolder = Path.GetDirectoryName(Application.ExecutablePath);
+                                        string ipfsFolder = Path.Combine(appFolder, "ipfs");
+                                        string rootFolder = Path.Combine(appFolder, "root");
+                                        string _ipfsPath = HttpUtility.UrlEncode(ipfsFolder);
+                                        string _rootPath = HttpUtility.UrlEncode(rootFolder);
+
+                                        string querystring = "?address=" + _address + "&viewer=" + _viewer + "&viewername=" + _viewername + "&creator=" + _creator + "&owner=" + _owner + "&ownername=" + _ownername + "&urn=" + _urn + "&uri=" + _uri + "&img=" + _img + "&transactionid=" + _transactionid + "&genid=" + _genid + "&ipfs-path=" + _ipfsPath + "&root-path=" + _rootPath;
                                         htmlembed = "<html><body><embed src=\"" + urn + querystring + "\" width=100% height=100%></body></html>";
 
 

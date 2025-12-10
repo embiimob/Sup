@@ -1655,7 +1655,14 @@ namespace SUP
                             _creator = flowCreators.Controls[0].Text;
                         }
 
-                        string querystring = "?address=" + _address + "&viewer=" + _viewer + "&viewername=" + _viewername + "&creator=" + _creator + "&owner=" + _owner + "&urn=" + _urn + "&uri=" + _uri + "&img=" + _img;
+                        // Construct paths for ipfs and root folders
+                        string appFolder = Path.GetDirectoryName(Application.ExecutablePath);
+                        string ipfsFolder = Path.Combine(appFolder, "ipfs");
+                        string rootFolder = Path.Combine(appFolder, "root");
+                        string _ipfsPath = HttpUtility.UrlEncode(ipfsFolder);
+                        string _rootPath = HttpUtility.UrlEncode(rootFolder);
+
+                        string querystring = "?address=" + _address + "&viewer=" + _viewer + "&viewername=" + _viewername + "&creator=" + _creator + "&owner=" + _owner + "&urn=" + _urn + "&uri=" + _uri + "&img=" + _img + "&ipfs-path=" + _ipfsPath + "&root-path=" + _rootPath;
                         string htmlstring = "<html><body><embed src=\"" + urn + querystring + "\" width=100% height=100%></body></html>";
                         string viewerPath = Path.GetDirectoryName(urn) + @"\urnviewer.html";
                         webviewer.Visible = true;
