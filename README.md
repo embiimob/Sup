@@ -1,4 +1,4 @@
-# Sup!? v0.7.6-beta
+# Sup!? v0.7.7-beta
 experimental decentralized state engine
 
 Sup!? (satoshi universal protocol) demonstrates fully trustless, censorship free, social media with private messaging, file sharing, DAO voting, website publishing and tradeable blockchain objects.
@@ -9,7 +9,7 @@ P2FK was directly inspired by the satoshi uploader  see --> https://cirosantilli
 
 ## **Installation**
 
-1. Download Supv0.7.6-beta.zip ( https://github.com/embiimob/Sup/releases/download/Supv0.7.6-beta/Supv0.7.6-beta.zip )
+1. Download Supv0.7.7-beta.zip ( https://github.com/embiimob/Sup/releases/download/Supv0.7.7-beta/Supv0.7.7-beta.zip )
 2. Create a folder on your **fastest** disk drive with at least **300GB** free (it will be storing the bitcoin testnet blockchain)
 3. Unzip all contents into the folder
 4. Run SUP.exe
