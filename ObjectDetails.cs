@@ -2629,10 +2629,9 @@ namespace SUP
                                         catch { };
                                         Directory.CreateDirectory(@"ipfs/" + transid + "-build");
                                         Process process2 = new Process();
-                                        process2.StartInfo.FileName = @"ipfs\ipfs.exe";
-                                        process2.StartInfo.Arguments = "get " + transid + @" -o ipfs\" + transid;
-                                        process2.StartInfo.UseShellExecute = false;
-                                        process2.StartInfo.CreateNoWindow = false;
+                                        process2.StartInfo.FileName = "cmd.exe";
+                                        process2.StartInfo.Arguments = "/c ipfs\\ipfs.exe get " + transid + @" -o ipfs\" + transid;
+                                        process2.StartInfo.UseShellExecute = true;
                                         process2.Start();
                                         process2.WaitForExit();
 
