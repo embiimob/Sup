@@ -2631,6 +2631,7 @@ namespace SUP
                                         Process process2 = new Process();
                                         process2.StartInfo.FileName = @"ipfs\ipfs.exe";
                                         process2.StartInfo.Arguments = "get " + transid + @" -o ipfs\" + transid;
+                                        process2.StartInfo.UseShellExecute = true;
                                         process2.Start();
                                         process2.WaitForExit();
 
