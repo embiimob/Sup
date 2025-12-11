@@ -361,14 +361,3 @@ MigrationBackup/
 
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
-# NuGet packages directory (restored via dotnet restore)
-packages/
-*.nupkg
-
-
-# IPFS executable (should be downloaded separately)
-ipfs/ipfs.exe
-
-# Vendored dependencies (now managed via NuGet)
-includes/*.dll
-includes/*.xml

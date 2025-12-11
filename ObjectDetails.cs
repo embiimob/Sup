@@ -2629,9 +2629,8 @@ namespace SUP
                                         catch { };
                                         Directory.CreateDirectory(@"ipfs/" + transid + "-build");
                                         Process process2 = new Process();
-                                        process2.StartInfo.FileName = "cmd.exe";
-                                        process2.StartInfo.Arguments = "/c ipfs\\ipfs.exe get " + transid + @" -o ipfs\" + transid;
-                                        process2.StartInfo.UseShellExecute = true;
+                                        process2.StartInfo.FileName = @"ipfs\ipfs.exe";
+                                        process2.StartInfo.Arguments = "get " + transid + @" -o ipfs\" + transid;
                                         process2.Start();
                                         process2.WaitForExit();
 
@@ -3634,80 +3633,33 @@ namespace SUP
 
                                             }
                                         
-string _address = _objectaddress;
-string _transactionid = objstate.TransactionId;
-_genid = objstate.TransactionId;
-string _viewer = _activeprofile;
-string _viewername = null;
+                                        string _address = _objectaddress;
+                                        string _transactionid = objstate.TransactionId;
+                                        _genid = objstate.TransactionId;
+                                        string _viewer = _activeprofile;
+                                        string _viewername = null;
+                                        if (!string.IsNullOrEmpty(_activeprofile))
+                                        {
+                                            if (objstate.Owners.TryGetValue(_activeprofile, out var tupl))
+                                            { _genid = tupl.Item2; }
 
-if (!string.IsNullOrEmpty(_activeprofile))
-{
-    if (objstate.Owners.TryGetValue(_activeprofile, out var tupl))
-    { 
-        _genid = tupl.Item2; 
-    }
+                                            PROState profile = PROState.GetProfileByAddress(_activeprofile, mainnetLogin, mainnetPassword, mainnetURL, mainnetVersionByte);
+                                            if (profile.URN != null) { _viewername = HttpUtility.UrlEncode(profile.URN); }
+                                        }
+                                        string _creator = objstate.Creators.Last().Key;
+                                        string _owner = objstate.Owners.Last().Key;
+                                        string _ownername = null;
+                                        if (_owner != "")
+                                        {
+                                            PROState profile = PROState.GetProfileByAddress(_owner, mainnetLogin, mainnetPassword, mainnetURL, mainnetVersionByte);
+                                            if (profile.URN != null) { _ownername = HttpUtility.UrlEncode(profile.URN); }
+                                        }
+                                        string _urn = HttpUtility.UrlEncode(objstate.URN);
+                                        string _uri = HttpUtility.UrlEncode(objstate.URI);
+                                        string _img = HttpUtility.UrlEncode(objstate.Image);
 
-    PROState profile = PROState.GetProfileByAddress(
-        _activeprofile, mainnetLogin, mainnetPassword, mainnetURL, mainnetVersionByte
-    );
-    if (profile.URN != null)
-    {
-        _viewername = HttpUtility.UrlEncode(profile.URN);
-    }
-}
-
-string _creator = objstate.Creators.Last().Key;
-string _owner = objstate.Owners.Last().Key;
-string _ownername = null;
-
-if (_owner != "")
-{
-    PROState profile = PROState.GetProfileByAddress(
-        _owner, mainnetLogin, mainnetPassword, mainnetURL, mainnetVersionByte
-    );
-    if (profile.URN != null)
-    {
-        _ownername = HttpUtility.UrlEncode(profile.URN);
-    }
-}
-
-string _urn = HttpUtility.UrlEncode(objstate.URN);
-string _uri = HttpUtility.UrlEncode(objstate.URI);
-string _img = HttpUtility.UrlEncode(objstate.Image);
-
-// 🔹 NEW: determine paths based on current executing program
-string basePath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
-
-// path to "...\<exe-folder>\ipfs"
-string ipfsPath = Path.Combine(basePath, "ipfs");
-
-// path to "...\<exe-folder>\root"
-string rootPath = Path.Combine(basePath, "root");
-
-// URL-encode for safe querystring usage
-string _ipfsPath = HttpUtility.UrlEncode(ipfsPath);
-string _rootPath = HttpUtility.UrlEncode(rootPath);
-
-string querystring =
-    "?address=" + _address +
-    "&viewer=" + _viewer +
-    "&viewername=" + _viewername +
-    "&creator=" + _creator +
-    "&owner=" + _owner +
-    "&ownername=" + _ownername +
-    "&urn=" + _urn +
-    "&uri=" + _uri +
-    "&img=" + _img +
-    "&transactionid=" + _transactionid +
-    "&genid=" + _genid +
-    "&ipfs-path=" + _ipfsPath +
-    "&root-path=" + _rootPath;
-
-htmlembed =
-    "<html><body><embed src=\"" +
-    urn + querystring +
-    "\" width=100% height=100%></body></html>";
-
+                                        string querystring = "?address=" + _address + "&viewer=" + _viewer + "&viewername=" + _viewername + "&creator=" + _creator + "&owner=" + _owner + "&ownername=" + _ownername + "&urn=" + _urn + "&uri=" + _uri + "&img=" + _img + "&transactionid=" + _transactionid + "&genid=" + _genid;
+                                        htmlembed = "<html><body><embed src=\"" + urn + querystring + "\" width=100% height=100%></body></html>";
 
 
                                     }

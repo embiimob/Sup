@@ -4273,43 +4273,26 @@ namespace SUP
 
         private void RefreshPrivateSupMessages()
         {
-            // Wrap async call to avoid blocking
-            Task.Run(async () => await RefreshPrivateSupMessagesAsync());
-        }
-
-        private async Task RefreshPrivateSupMessagesAsync()
-        {
             // sorry cannot run two searches at a time
-            if (!btnPrivateMessage.Enabled || !btnPublicMessage.Enabled || !btnCommunityFeed.Enabled || System.IO.File.Exists("ROOTS-PROCESSING"))
+            if (!btnPrivateMessage.Enabled || !btnPrivateMessage.Enabled || !btnCommunityFeed.Enabled || System.IO.File.Exists("ROOTS-PROCESSING"))
             {
                 System.Media.SystemSounds.Beep.Play();
                 return;
             }
-            
-            this.Invoke((MethodInvoker)delegate
-            {
-                supPrivateFlow.SuspendLayout();
-            });
+            supPrivateFlow.SuspendLayout();
             // Clear controls if no messages have been displayed yet
             if (numPrivateMessagesDisplayed == 0)
             {
-                this.Invoke((MethodInvoker)delegate
-                {
-                    splitContainer1.Panel2.Controls.Clear();
-                    supPrivateFlow.Dock = DockStyle.Fill;
-                    supPrivateFlow.AutoScroll = true;
-                    supPrivateFlow.FlowDirection = FlowDirection.LeftToRight;
-                    splitContainer1.Panel2.Controls.Add(supPrivateFlow);
-                });
+                splitContainer1.Panel2.Controls.Clear();
+                supPrivateFlow.Dock = DockStyle.Fill;
+                supPrivateFlow.AutoScroll = true;
+                supPrivateFlow.FlowDirection = FlowDirection.LeftToRight;
+                splitContainer1.Panel2.Controls.Add(supPrivateFlow);
             }
             if (profileURN.Links[0].LinkData == null)
             {
-                this.Invoke((MethodInvoker)delegate
-                {
-                    supPrivateFlow.ResumeLayout();
-                    btnPrivateMessage.Enabled = true;
-                });
-                return;
+                supPrivateFlow.ResumeLayout();
+                btnPrivateMessage.Enabled = true; return;
             }
             List<MessageObject> messages = OBJState.GetPrivateMessagesByAddress(profileURN.Links[0].LinkData.ToString(), mainnetLogin, mainnetPassword, mainnetURL, mainnetVersionByte, numPrivateMessagesDisplayed, 10);
 
@@ -4594,11 +4577,202 @@ namespace SUP
 
                                 if (content.StartsWith("IPFS:") && content.EndsWith(@"\SEC"))
                                 {
-                                    // Load SEC attachment asynchronously without blocking message loading
-                                    // This prevents the UI from freezing when IPFS is slow or fails
-                                    // Use Task.Run to ensure the async operation completes instead of being abandoned
-                                    // Task.Run properly handles async lambdas in both Debug and Release modes
-                                    _ = Task.Run(async () => await LoadSecAttachmentAsync(content, messagePacket.TransactionId, profileURN.Links[0].LinkData.ToString()).ConfigureAwait(false));
+
+
+                                    string transid = "empty";
+                                    try { transid = content.Substring(5, 46); } catch { }
+
+                                    if (!System.IO.Directory.Exists("root/" + transid + "-build"))
+                                    {
+                                        try
+                                        {
+                                            Directory.CreateDirectory("root/" + transid);
+                                        }
+                                        catch { };
+
+                                        Directory.CreateDirectory("root/" + transid + "-build");
+                                        Process process2 = new Process();
+                                        process2.StartInfo.FileName = @"ipfs\ipfs.exe";
+                                        process2.StartInfo.Arguments = "get " + content.Substring(5, 46) + @" -o root\" + transid;
+                                        process2.StartInfo.UseShellExecute = false;
+                                        process2.StartInfo.CreateNoWindow = true;
+                                        process2.Start();
+                                        if (process2.WaitForExit(5000))
+                                        {
+                                            string fileName;
+                                            if (System.IO.File.Exists("root/" + transid))
+                                            {
+                                                System.IO.File.Move("root/" + transid, "root/" + transid + "_tmp");
+                                                System.IO.Directory.CreateDirectory("root/" + transid);
+                                                fileName = content.Replace(@"//", "").Replace(@"\\", "").Substring(51);
+                                                if (fileName == "") { fileName = "artifact"; } else { fileName = fileName.Replace(@"/", "").Replace(@"\", ""); }
+                                                Directory.CreateDirectory("root/" + transid);
+                                                System.IO.File.Move("root/" + transid + "_tmp", @"root/" + transid + @"/SEC");
+                                            }
+
+                                            if (System.IO.File.Exists("root/" + transid + "/" + transid))
+                                            {
+                                                fileName = content.Replace(@"//", "").Replace(@"\\", "").Substring(51);
+                                                if (fileName == "") { fileName = "artifact"; } else { fileName = fileName.Replace(@"/", "").Replace(@"\", ""); }
+
+                                                try { System.IO.File.Move("root/" + transid + "/" + transid, @"root/" + transid + @"/SEC"); }
+                                                catch { }
+                                            }
+
+                                            try
+                                            {
+                                                if (File.Exists("IPFS_PINNING_ENABLED"))
+                                                {
+                                                    Process process3 = new Process
+                                                    {
+                                                        StartInfo = new ProcessStartInfo
+                                                        {
+                                                            FileName = @"ipfs\ipfs.exe",
+                                                            Arguments = "pin add " + transid,
+                                                            UseShellExecute = false,
+                                                            CreateNoWindow = true
+                                                        }
+                                                    };
+                                                    process3.Start();
+                                                }
+                                            }
+                                            catch { }
+
+                                            try { Directory.Delete("root/" + transid + "-build", true); } catch { }
+                                        }
+                                        else
+                                        {
+                                            process2.Kill();
+
+                                            Task.Run(() =>
+                                            {
+                                                process2 = new Process();
+                                                process2.StartInfo.FileName = @"ipfs\ipfs.exe";
+                                                process2.StartInfo.Arguments = "get " + content.Substring(5, 46) + @" -o root\" + transid;
+                                                process2.StartInfo.UseShellExecute = false;
+                                                process2.StartInfo.CreateNoWindow = true;
+                                                process2.Start();
+                                                if (process2.WaitForExit(550000))
+                                                {
+                                                    string fileName;
+                                                    if (System.IO.File.Exists("root/" + transid))
+                                                    {
+                                                        System.IO.File.Move("root/" + transid, "root/" + transid + "_tmp");
+                                                        System.IO.Directory.CreateDirectory("root/" + transid);
+                                                        fileName = content.Replace(@"//", "").Replace(@"\\", "").Substring(51);
+                                                        if (fileName == "") { fileName = "artifact"; } else { fileName = fileName.Replace(@"/", "").Replace(@"\", ""); }
+                                                        Directory.CreateDirectory("root/" + transid);
+                                                        System.IO.File.Move("root/" + transid + "_tmp", @"root/" + transid + @"/SEC");
+                                                    }
+
+                                                    if (System.IO.File.Exists("root/" + transid + "/" + transid))
+                                                    {
+                                                        fileName = content.Replace(@"//", "").Replace(@"\\", "").Substring(51);
+                                                        if (fileName == "") { fileName = "artifact"; } else { fileName = fileName.Replace(@"/", "").Replace(@"\", ""); }
+
+                                                        try { System.IO.File.Move("root/" + transid + "/" + transid, @"root/" + transid + @"/SEC"); }
+                                                        catch { }
+                                                    }
+
+                                                    try
+                                                    {
+                                                        if (File.Exists("IPFS_PINNING_ENABLED"))
+                                                        {
+                                                            Process process3 = new Process
+                                                            {
+                                                                StartInfo = new ProcessStartInfo
+                                                                {
+                                                                    FileName = @"ipfs\ipfs.exe",
+                                                                    Arguments = "pin add " + transid,
+                                                                    UseShellExecute = false,
+                                                                    CreateNoWindow = true
+                                                                }
+                                                            };
+                                                            process3.Start();
+                                                        }
+                                                    }
+                                                    catch { }
+
+                                                    try { Directory.Delete("root/" + transid + "-build", true); } catch { }
+
+
+                                                }
+                                                else
+                                                {
+                                                    process2.Kill();
+                                                }
+                                            });
+
+                                        }
+
+
+                                    }
+
+
+                                    byte[] result2 = Root.GetRootBytesByFile(new string[] { @"root/" + transid + @"/SEC" });
+                                    result = Root.DecryptRootBytes(mainnetLogin, mainnetPassword, mainnetURL, profileURN.Links[0].LinkData.ToString(), result2);
+
+                                    Root decryptedroot = Root.GetRootByTransactionId(transid, mainnetLogin, mainnetPassword, mainnetURL, mainnetVersionByte, result, profileURN.Links[0].LinkData.ToString());
+                                    List<string> imgExtensions = new List<string> { ".bmp", ".gif", ".ico", ".jpeg", ".jpg", ".png", ".tif", ".tiff", ".mp4", ".mov", ".avi", ".wav", ".mp3" };
+
+                                    if (decryptedroot.File != null)
+                                    {
+                                        foreach (string file in decryptedroot.File.Keys)
+                                        {
+
+
+                                            string extension = Path.GetExtension(transid + @"\" + file).ToLower();
+                                            if (!imgExtensions.Contains(extension))
+                                            {
+                                                // Create a new panel to display the metadata
+                                                Panel panel = new Panel();
+                                                panel.BorderStyle = BorderStyle.FixedSingle;
+                                                panel.MinimumSize = new Size(supPrivateFlow.Width - 50, 30);
+                                                panel.MaximumSize = new Size(supPrivateFlow.Width - 20, 30);
+                                                panel.AutoSize = true;
+                                                // Create a label for the title
+                                                LinkLabel titleLabel = new LinkLabel();
+                                                titleLabel.Text = transid + @"\" + file;
+                                                titleLabel.Links[0].LinkData = transid + @"\" + file;
+                                                titleLabel.AutoSize = true;
+                                                titleLabel.Font = new Font("Segoe UI", 8, FontStyle.Bold);
+                                                titleLabel.LinkColor = System.Drawing.SystemColors.GradientActiveCaption;
+                                                titleLabel.Padding = new Padding(5);
+                                                titleLabel.MouseClick += (sender, e) => { Attachment_Clicked(@"root\" + transid + @"\" + file); };
+                                                panel.Controls.Add(titleLabel);
+
+                                                this.Invoke((MethodInvoker)delegate
+                                                {
+                                                    this.supPrivateFlow.Controls.Add(panel);
+                                                });
+
+                                            }
+                                            else
+                                            {
+                                                if (extension == ".mp4" || extension == ".mov" || extension == ".avi" || extension == ".wav" || extension == ".mp3")
+                                                {
+
+                                                    this.Invoke((MethodInvoker)delegate
+                                                    {
+                                                        try { AddMedia(transid + @"\" + file, true); } catch { }
+                                                    });
+
+                                                }
+                                                else
+                                                {
+
+                                                    this.Invoke((MethodInvoker)delegate
+                                                    {
+                                                        AddImage(transid + @"\" + file, true);
+                                                    });
+                                                }
+
+                                            }
+
+
+                                        }
+                                    }
+
                                 }
                                 else
                                 {
@@ -4756,270 +4930,6 @@ namespace SUP
 
 
 
-        }
-
-        /// <summary>
-        /// Asynchronously loads and decrypts an SEC IPFS attachment for a private message.
-        /// This method runs in the background and updates the UI when complete or if it fails.
-        /// </summary>
-        /// <param name="content">The IPFS content string (e.g., "IPFS:hash\SEC")</param>
-        /// <param name="messageTransactionId">The transaction ID of the message (reserved for future use in error tracking)</param>
-        /// <param name="recipientAddress">The recipient's address for decryption</param>
-        private async Task LoadSecAttachmentAsync(string content, string messageTransactionId, string recipientAddress)
-        {
-            string transid = "empty";
-            try { transid = content.Substring(5, 46); } catch { }
-
-            try
-            {
-                Debug.WriteLine($"[LoadSecAttachmentAsync] Starting SEC attachment load for {transid}");
-
-            // Check if already downloaded
-            var secPath = @"root/" + transid + @"/SEC";
-            if (System.IO.File.Exists(secPath))
-            {
-                Debug.WriteLine($"[LoadSecAttachmentAsync] SEC file already exists for {transid}, displaying");
-                await DisplaySecAttachmentAsync(transid, recipientAddress).ConfigureAwait(false);
-                return;
-            }
-
-            // Check if file was downloaded but not yet processed (from previous interrupted run)
-            var hashPath = "root/" + transid;
-            if (System.IO.File.Exists(hashPath) || System.IO.Directory.Exists(hashPath))
-            {
-                // File/directory exists but SEC doesn't - try to process it
-                Debug.WriteLine($"[LoadSecAttachmentAsync] Found existing download for {transid}, attempting to process");
-                
-                bool processed = IpfsHelper.ProcessDownloadedFile(transid, "root", "SEC");
-                if (processed)
-                {
-                    IpfsHelper.CleanupBuildDirectory(transid, "root");
-                    await DisplaySecAttachmentAsync(transid, recipientAddress).ConfigureAwait(false);
-                    return;
-                }
-                else
-                {
-                    // Failed to process existing download - clean up and re-download
-                    Debug.WriteLine($"[LoadSecAttachmentAsync] Failed to process existing download for {transid}, will re-download");
-                    CleanupEmptyDirectory(transid, "root");
-                }
-            }
-
-            // Clean up any stale build directories (from previous crash/interruption)
-            if (System.IO.Directory.Exists("root/" + transid + "-build"))
-            {
-                Debug.WriteLine($"[LoadSecAttachmentAsync] Cleaning up stale build directory for {transid}");
-                IpfsHelper.CleanupBuildDirectory(transid, "root");
-            }
-
-            // Create build directory marker (not the target directory yet)
-            // IPFS will create root/{hash} as file or directory
-            try
-            {
-                Directory.CreateDirectory("root/" + transid + "-build");
-            }
-            catch (Exception ex)
-            {
-                Debug.WriteLine($"[LoadSecAttachmentAsync] Error creating build directory: {ex.Message}");
-                return;
-            }
-
-            // Download from IPFS using the async helper with 60 second timeout
-            // Since we're already async, we can wait longer without blocking the UI
-            // IPFS will download to root/{hash} - either as a file or directory
-            Debug.WriteLine($"[LoadSecAttachmentAsync] About to call IPFS GetAsync for {transid}");
-            bool downloadSuccess = await IpfsHelper.GetAsync(transid, "root\\" + transid, 60000).ConfigureAwait(false);
-            Debug.WriteLine($"[LoadSecAttachmentAsync] IPFS GetAsync returned {downloadSuccess} for {transid}");
-
-            if (downloadSuccess)
-            {
-                Debug.WriteLine($"[LoadSecAttachmentAsync] Download succeeded for {transid}, processing file");
-                
-                // Process the downloaded file
-                bool processed = IpfsHelper.ProcessDownloadedFile(transid, "root", "SEC");
-
-                if (processed)
-                {
-                    Debug.WriteLine($"[LoadSecAttachmentAsync] File processed successfully for {transid}, displaying");
-                    
-                    // Pin the file asynchronously (fire and forget)
-                    _ = IpfsHelper.PinAsync(transid);
-
-                    // Clean up build directory
-                    IpfsHelper.CleanupBuildDirectory(transid, "root");
-
-                    // Display the decrypted attachment
-                    await DisplaySecAttachmentAsync(transid, recipientAddress).ConfigureAwait(false);
-                    
-                    Debug.WriteLine($"[LoadSecAttachmentAsync] Completed displaying {transid}");
-                }
-                else
-                {
-                    Debug.WriteLine($"[LoadSecAttachmentAsync] Failed to process downloaded file for {transid}");
-                    // Clean up build directory and empty hash directory
-                    IpfsHelper.CleanupBuildDirectory(transid, "root");
-                    CleanupEmptyDirectory(transid, "root");
-                    ShowAttachmentError(transid, "Failed to process attachment");
-                }
-            }
-            else
-            {
-                // Download failed after 60 second timeout
-                Debug.WriteLine($"[LoadSecAttachmentAsync] Download failed for {transid} after timeout");
-                // Clean up build directory and empty hash directory
-                IpfsHelper.CleanupBuildDirectory(transid, "root");
-                CleanupEmptyDirectory(transid, "root");
-                ShowAttachmentError(transid, "IPFS download timeout");
-            }
-            }
-            catch (Exception ex)
-            {
-                Debug.WriteLine($"[LoadSecAttachmentAsync] EXCEPTION in LoadSecAttachmentAsync for {transid}: {ex.Message}");
-                Debug.WriteLine($"[LoadSecAttachmentAsync] Stack trace: {ex.StackTrace}");
-                try
-                {
-                    IpfsHelper.CleanupBuildDirectory(transid, "root");
-                    CleanupEmptyDirectory(transid, "root");
-                    ShowAttachmentError(transid, $"Error: {ex.Message}");
-                }
-                catch { }
-            }
-        }
-
-        /// <summary>
-        /// Decrypts and displays an SEC attachment that has been downloaded from IPFS.
-        /// </summary>
-        private async Task DisplaySecAttachmentAsync(string transid, string recipientAddress)
-        {
-            try
-            {
-                Debug.WriteLine($"[DisplaySecAttachmentAsync] Decrypting SEC attachment for {transid}");
-
-                // Read and decrypt the SEC file
-                byte[] result2 = Root.GetRootBytesByFile(new string[] { @"root/" + transid + @"/SEC" });
-                
-                if (result2 == null || result2.Length == 0)
-                {
-                    Debug.WriteLine($"[DisplaySecAttachmentAsync] SEC file is empty for {transid}");
-                    ShowAttachmentError(transid, "Attachment file is empty");
-                    return;
-                }
-
-                byte[] result = Root.DecryptRootBytes(mainnetLogin, mainnetPassword, mainnetURL, recipientAddress, result2);
-
-                if (result == null || result.Length == 0)
-                {
-                    Debug.WriteLine($"[DisplaySecAttachmentAsync] Decryption failed for {transid}");
-                    ShowAttachmentError(transid, "Failed to decrypt attachment");
-                    return;
-                }
-
-                Root decryptedroot = Root.GetRootByTransactionId(transid, mainnetLogin, mainnetPassword, mainnetURL, mainnetVersionByte, result, recipientAddress);
-                List<string> imgExtensions = new List<string> { ".bmp", ".gif", ".ico", ".jpeg", ".jpg", ".png", ".tif", ".tiff", ".mp4", ".mov", ".avi", ".wav", ".mp3" };
-
-                if (decryptedroot.File != null)
-                {
-                    foreach (string file in decryptedroot.File.Keys)
-                    {
-                        string extension = Path.GetExtension(transid + @"\" + file).ToLower();
-                        
-                        this.Invoke((MethodInvoker)delegate
-                        {
-                            if (!imgExtensions.Contains(extension))
-                            {
-                                // Create a new panel to display non-media files
-                                Panel panel = new Panel();
-                                panel.BorderStyle = BorderStyle.FixedSingle;
-                                panel.MinimumSize = new Size(supPrivateFlow.Width - 50, 30);
-                                panel.MaximumSize = new Size(supPrivateFlow.Width - 20, 30);
-                                panel.AutoSize = true;
-
-                                LinkLabel titleLabel = new LinkLabel();
-                                titleLabel.Text = transid + @"\" + file;
-                                titleLabel.Links[0].LinkData = transid + @"\" + file;
-                                titleLabel.AutoSize = true;
-                                titleLabel.Font = new Font("Segoe UI", 8, FontStyle.Bold);
-                                titleLabel.LinkColor = System.Drawing.SystemColors.GradientActiveCaption;
-                                titleLabel.Padding = new Padding(5);
-                                titleLabel.MouseClick += (sender, e) => { Attachment_Clicked(@"root\" + transid + @"\" + file); };
-                                panel.Controls.Add(titleLabel);
-
-                                this.supPrivateFlow.Controls.Add(panel);
-                            }
-                            else if (extension == ".mp4" || extension == ".mov" || extension == ".avi" || extension == ".wav" || extension == ".mp3")
-                            {
-                                try { AddMedia(transid + @"\" + file, true); } catch { }
-                            }
-                            else
-                            {
-                                AddImage(transid + @"\" + file, true);
-                            }
-                        });
-                    }
-
-                    Debug.WriteLine($"[DisplaySecAttachmentAsync] Successfully displayed SEC attachment for {transid}");
-                }
-            }
-            catch (Exception ex)
-            {
-                Debug.WriteLine($"[DisplaySecAttachmentAsync] Exception: {ex.Message}");
-                ShowAttachmentError(transid, "Error displaying attachment");
-            }
-        }
-
-        /// <summary>
-        /// Shows an error message for a failed attachment load.
-        /// </summary>
-        private void ShowAttachmentError(string transid, string errorMessage)
-        {
-            try
-            {
-                this.Invoke((MethodInvoker)delegate
-                {
-                    Panel panel = new Panel();
-                    panel.BorderStyle = BorderStyle.FixedSingle;
-                    panel.MinimumSize = new Size(supPrivateFlow.Width - 50, 30);
-                    panel.MaximumSize = new Size(supPrivateFlow.Width - 20, 30);
-                    panel.AutoSize = true;
-                    panel.BackColor = System.Drawing.Color.DarkRed;
-
-                    Label errorLabel = new Label();
-                    errorLabel.Text = $"⚠ {errorMessage}: {transid.Substring(0, Math.Min(12, transid.Length))}...";
-                    errorLabel.AutoSize = true;
-                    errorLabel.Font = new Font("Segoe UI", 8, FontStyle.Italic);
-                    errorLabel.ForeColor = System.Drawing.Color.White;
-                    errorLabel.Padding = new Padding(5);
-                    panel.Controls.Add(errorLabel);
-
-                    this.supPrivateFlow.Controls.Add(panel);
-                });
-            }
-            catch { }
-        }
-
-        /// <summary>
-        /// Cleans up empty directory if download failed.
-        /// </summary>
-        private void CleanupEmptyDirectory(string hash, string baseDir)
-        {
-            try
-            {
-                var hashDir = Path.Combine(baseDir, hash);
-                if (Directory.Exists(hashDir))
-                {
-                    // Check if directory is empty or only contains empty subdirectories
-                    var files = Directory.GetFiles(hashDir, "*", SearchOption.AllDirectories);
-                    if (files.Length == 0)
-                    {
-                        Directory.Delete(hashDir, true);
-                        Debug.WriteLine($"[CleanupEmptyDirectory] Removed empty directory: {hashDir}");
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                Debug.WriteLine($"[CleanupEmptyDirectory] Error cleaning up {hash}: {ex.Message}");
-            }
         }
 
         private void RefreshCommunityMessages()

@@ -918,50 +918,18 @@ namespace SUP
 
                         lblIMGBlockDate.Text = "[ uploading to IPFS please wait...]";
                         System.Windows.Forms.MessageBox.Show("Uploading a file to IPFS could take a long time. to prevent any issues, Sup!? will lock while it's loading.  just wait for it.");
-                        
-                        try
-                        {
-                            Process process = new Process();
-                            process.StartInfo.FileName = @"ipfs\ipfs.exe";
-                            process.StartInfo.Arguments = "add \"" + filePath + "\"";
-                            process.StartInfo.RedirectStandardOutput = true;
-                            process.StartInfo.UseShellExecute = false;
-                            process.Start();
-                            string output = process.StandardOutput.ReadToEnd();
-                            process.WaitForExit();
-                            
-                            // Parse IPFS output - Expected format: "added <hash> <filename>"
-                            // Example: "added QmYwAPJzv5CZsnA625s3Xf2nemtYgPpHdWEz79ojWnPbdG test.jpg"
-                            if (string.IsNullOrWhiteSpace(output))
-                            {
-                                lblIMGBlockDate.Text = "[ upload failed ]";
-                                System.Windows.Forms.MessageBox.Show("IPFS upload failed. No output received from IPFS.", "IPFS Upload Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                                return;
-                            }
-                            
-                            string[] outputParts = output.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
-                            if (outputParts.Length < 2)
-                            {
-                                lblIMGBlockDate.Text = "[ upload failed ]";
-                                System.Windows.Forms.MessageBox.Show("IPFS upload failed. Invalid output format: " + output, "IPFS Upload Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                                return;
-                            }
-                            
-                            string hash = outputParts[1];
-                            txtIMG.Text = "IPFS:" + hash + @"\" + fileName;
-                            imgurn = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + @"\ipfs\" + hash + @"\" + fileName;
-                        }
-                        catch (Exception ex)
-                        {
-                            lblIMGBlockDate.Text = "[ upload failed ]";
-                            System.Windows.Forms.MessageBox.Show("Error uploading file to IPFS: " + ex.Message, "IPFS Upload Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                            return;
-                        }
-                    }
-                    else
-                    {
-                        // User cancelled the file dialog
-                        return;
+                        Process process = new Process();
+                        process.StartInfo.FileName = @"ipfs\ipfs.exe";
+                        process.StartInfo.Arguments = "add \"" + filePath + "\"";
+                        process.StartInfo.RedirectStandardOutput = true;
+                        process.StartInfo.UseShellExecute = false;
+                        process.Start();
+                        string output = process.StandardOutput.ReadToEnd();
+                        process.WaitForExit();
+                        string hash = output.Split(' ')[1];
+                        txtIMG.Text = "IPFS:" + hash + @"\" + fileName;
+                        imgurn = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + @"\ipfs\" + hash + @"\" + fileName;
+
                     }
 
 
@@ -1036,17 +1004,10 @@ namespace SUP
                                     Process process2 = new Process();
                                     process2.StartInfo.FileName = @"ipfs\ipfs.exe";
                                     process2.StartInfo.Arguments = "get " + txtIMG.Text.Substring(5, 46) + @" -o ipfs\" + txtIMG.Text.Substring(5, 46);
-                                    process2.StartInfo.RedirectStandardOutput = true;
-                                    process2.StartInfo.UseShellExecute = false;
                                     process2.Start();
-                                    process2.StandardOutput.ReadToEnd();
                                     process2.WaitForExit();
 
-                                    // Check if either a file or directory was downloaded
-                                    bool isFile = System.IO.File.Exists("ipfs/" + txtIMG.Text.Substring(5, 46));
-                                    bool isDirectory = System.IO.Directory.Exists("ipfs/" + txtIMG.Text.Substring(5, 46));
-                                    
-                                    if (isFile)
+                                    if (System.IO.File.Exists("ipfs/" + txtIMG.Text.Substring(5, 46)))
                                     {
                                         try { System.IO.File.Move("ipfs/" + txtIMG.Text.Substring(5, 46), "ipfs/" + txtIMG.Text.Substring(5, 46) + "_tmp"); }
                                         catch
@@ -1065,16 +1026,6 @@ namespace SUP
                                         else { fileName = fileName.Replace(@"/", "").Replace(@"\", ""); }
                                         Directory.CreateDirectory(@"ipfs/" + txtIMG.Text.Substring(5, 46));
                                         try { System.IO.File.Move("ipfs/" + txtIMG.Text.Substring(5, 46) + "_tmp", imgurn); } catch { }
-                                    }
-                                    else if (isDirectory)
-                                    {
-                                        // If it's a directory, the file structure is already in place
-                                        string fileName = txtIMG.Text.Replace(@"//", "").Replace(@"\\", "").Substring(51);
-                                        if (fileName == "")
-                                        {
-                                            fileName = "artifact";
-                                        }
-                                        else { fileName = fileName.Replace(@"/", "").Replace(@"\", ""); }
                                     }
 
                                     if (File.Exists(imgurn))
@@ -1246,76 +1197,44 @@ namespace SUP
                 {
                     // Open file dialog and get file path and name
                     OpenFileDialog openFileDialog1 = new OpenFileDialog();
-                    openFileDialog1.Title = "Select File";
                     if (openFileDialog1.ShowDialog() == DialogResult.OK)
                     {
                         string filePath = openFileDialog1.FileName;
                         string fileName = openFileDialog1.SafeFileName;
+                        openFileDialog1.Title = "Select File";
                         lblURNBlockDate.Text = "[ uploading to IPFS please wait...]";
                         System.Windows.Forms.MessageBox.Show("Uploading a file to IPFS could take a long time. to prevent any issues, Sup!? will lock while it's loading.  just wait for it.");
-                        
-                        try
-                        {
-                            Process process = new Process();
-                            process.StartInfo.FileName = @"ipfs\ipfs.exe";
-                            process.StartInfo.Arguments = "add \"" + filePath + "\"";
-                            process.StartInfo.RedirectStandardOutput = true;
-                            process.StartInfo.UseShellExecute = false;
-                            process.Start();
-                            string output = process.StandardOutput.ReadToEnd();
-                            process.WaitForExit();
-                            
-                            // Parse IPFS output - Expected format: "added <hash> <filename>"
-                            // Example: "added QmYwAPJzv5CZsnA625s3Xf2nemtYgPpHdWEz79ojWnPbdG test.jpg"
-                            if (string.IsNullOrWhiteSpace(output))
-                            {
-                                lblURNBlockDate.Text = "[ upload failed ]";
-                                System.Windows.Forms.MessageBox.Show("IPFS upload failed. No output received from IPFS.", "IPFS Upload Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                                return;
-                            }
-                            
-                            string[] outputParts = output.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
-                            if (outputParts.Length < 2)
-                            {
-                                lblURNBlockDate.Text = "[ upload failed ]";
-                                System.Windows.Forms.MessageBox.Show("IPFS upload failed. Invalid output format: " + output, "IPFS Upload Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                                return;
-                            }
-                            
-                            string hash = outputParts[1];
-                            txtURN.Text = "IPFS:" + hash + @"\" + fileName;
+                        Process process = new Process();
+                        process.StartInfo.FileName = @"ipfs\ipfs.exe";
+                        process.StartInfo.Arguments = "add \"" + filePath + "\"";
+                        process.StartInfo.RedirectStandardOutput = true;
+                        process.StartInfo.UseShellExecute = false;
+                        process.Start();
+                        string output = process.StandardOutput.ReadToEnd();
+                        process.WaitForExit();
+                        string hash = output.Split(' ')[1];
+                        txtURN.Text = "IPFS:" + hash + @"\" + fileName;
 
-                            OBJState OBJ = OBJState.GetObjectByURN(txtURN.Text, mainnetLogin, mainnetPassword, mainnetURL, mainnetVersionByte);
-                            if (OBJ.Creators != null) { System.Windows.Forms.MessageBox.Show("Sorry, the object urn " + txtURN.Text + " has already been claimed."); lblURNBlockDate.Text = ""; txtURN.Text = ""; return; }
-                            urn = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + @"\ipfs\" + hash + @"\" + fileName;
-                            
-                            if (urn.ToLower().EndsWith(".mov"))
-                            {
-                                string inputFilePath = urn;
-                                string outputFilePath = System.IO.Path.ChangeExtension(inputFilePath, ".mp4");
-                                if (!File.Exists(outputFilePath))
-                                {
-                                    try
-                                    {
-                                        var ffMpeg = new FFMpegConverter();
-                                        ffMpeg.ConvertMedia(inputFilePath, outputFilePath, Format.mp4);                                   
-                                    }
-                                    catch { }
-                                }
-                               
-                            }
-                        }
-                        catch (Exception ex)
+                        OBJState OBJ = OBJState.GetObjectByURN(txtURN.Text, mainnetLogin, mainnetPassword, mainnetURL, mainnetVersionByte);
+                        if (OBJ.Creators != null) { System.Windows.Forms.MessageBox.Show("Sorry, the object urn " + txtURN.Text + " has already been claimed."); lblURNBlockDate.Text = ""; txtURN.Text = ""; return; }
+                        urn = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + @"\ipfs\" + hash + @"\" + fileName;
+                        
+                        if (urn.ToLower().EndsWith(".mov"))
                         {
-                            lblURNBlockDate.Text = "[ upload failed ]";
-                            System.Windows.Forms.MessageBox.Show("Error uploading file to IPFS: " + ex.Message, "IPFS Upload Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                            return;
+                            string inputFilePath = urn;
+                            string outputFilePath = System.IO.Path.ChangeExtension(inputFilePath, ".mp4");
+                            if (!File.Exists(outputFilePath))
+                            {
+                                try
+                                {
+                                    var ffMpeg = new FFMpegConverter();
+                                    ffMpeg.ConvertMedia(inputFilePath, outputFilePath, Format.mp4);                                   
+                                }
+                                catch { }
+                            }
+                           
                         }
-                    }
-                    else
-                    {
-                        // User cancelled the file dialog
-                        return;
+
                     }
 
 
@@ -1388,17 +1307,10 @@ namespace SUP
                                 Process process2 = new Process();
                                 process2.StartInfo.FileName = @"ipfs\ipfs.exe";
                                 process2.StartInfo.Arguments = "get " + txtURN.Text.Substring(5, 46) + @" -o ipfs\" + txtURN.Text.Substring(5, 46);
-                                process2.StartInfo.RedirectStandardOutput = true;
-                                process2.StartInfo.UseShellExecute = false;
                                 process2.Start();
-                                process2.StandardOutput.ReadToEnd();
                                 process2.WaitForExit();
 
-                                // Check if either a file or directory was downloaded
-                                bool isFile = System.IO.File.Exists("ipfs/" + txtURN.Text.Substring(5, 46));
-                                bool isDirectory = System.IO.Directory.Exists("ipfs/" + txtURN.Text.Substring(5, 46));
-                                
-                                if (isFile)
+                                if (System.IO.File.Exists("ipfs/" + txtURN.Text.Substring(5, 46)))
                                 {
                                     try { System.IO.File.Move("ipfs/" + txtURN.Text.Substring(5, 46), "ipfs/" + txtURN.Text.Substring(5, 46) + "_tmp"); }
                                     catch
@@ -1416,16 +1328,6 @@ namespace SUP
                                     else { fileName = fileName.Replace(@"/", "").Replace(@"\", ""); }
                                     try { Directory.CreateDirectory(@"ipfs/" + txtURN.Text.Substring(5, 46)); } catch { }
                                     try { System.IO.File.Move("ipfs/" + txtURN.Text.Substring(5, 46) + "_tmp", urn); } catch { }
-                                }
-                                else if (isDirectory)
-                                {
-                                    // If it's a directory, the file structure is already in place
-                                    string fileName = txtURN.Text.Replace(@"//", "").Replace(@"\\", "").Substring(51);
-                                    if (fileName == "")
-                                    {
-                                        fileName = "artifact";
-                                    }
-                                    else { fileName = fileName.Replace(@"/", "").Replace(@"\", ""); }
                                 }
 
                                 if (File.Exists(urn))
