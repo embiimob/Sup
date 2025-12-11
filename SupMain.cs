@@ -3555,7 +3555,10 @@ namespace SUP
                 }
                 else if (flowLayoutPanel == supFlow)
                 {
-                    // Could be public or community, clear both to be safe
+                    // Both public and community messages share the same supFlow panel
+                    // Clear both sets to ensure clean state regardless of which view was active
+                    // This is intentionally broad - the cost is just re-rendering already-seen messages
+                    // which is better than showing duplicates from stale tracking state
                     displayedPublicMessageIds.Clear();
                     displayedCommunityMessageIds.Clear();
                 }
@@ -3590,7 +3593,8 @@ namespace SUP
 
             supFlow.SuspendLayout();
 
-            if (messages.Count == 10)
+            // Trigger memory cleanup if we received a full page (and likely have more to load)
+            if (newMessages.Count == 10)
             {
                 Task memoryPrune = Task.Run(() =>
                 {
@@ -4354,7 +4358,8 @@ namespace SUP
             // Filter out messages we've already displayed
             var newMessages = normalizedMessages.Where(m => !displayedPrivateMessageIds.Contains(m.TransactionId)).ToList();
 
-            if (messages.Count == 10)
+            // Trigger memory cleanup if we received a full page (and likely have more to load)
+            if (newMessages.Count == 10)
             {
                 Task memoryPrune = Task.Run(() =>
                 {

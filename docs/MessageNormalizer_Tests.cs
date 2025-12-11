@@ -4,6 +4,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using SUP;
 using SUP.P2FK;
@@ -29,21 +30,21 @@ namespace SUP.Tests
                     TransactionId = "tx1", 
                     Message = "Hello", 
                     FromAddress = "addr1",
-                    BlockDate = DateTime.Parse("2024-01-01")
+                    BlockDate = DateTime.Parse("2024-01-01", CultureInfo.InvariantCulture)
                 },
                 new MessageObject 
                 { 
                     TransactionId = "tx1",  // Duplicate!
                     Message = "Hello", 
                     FromAddress = "addr1",
-                    BlockDate = DateTime.Parse("2024-01-01")
+                    BlockDate = DateTime.Parse("2024-01-01", CultureInfo.InvariantCulture)
                 },
                 new MessageObject 
                 { 
                     TransactionId = "tx2", 
                     Message = "World", 
                     FromAddress = "addr2",
-                    BlockDate = DateTime.Parse("2024-01-02")
+                    BlockDate = DateTime.Parse("2024-01-02", CultureInfo.InvariantCulture)
                 }
             };
 
@@ -75,21 +76,21 @@ namespace SUP.Tests
                     TransactionId = "tx1", 
                     Message = "Old", 
                     FromAddress = "addr1",
-                    BlockDate = DateTime.Parse("2024-01-01")
+                    BlockDate = DateTime.Parse("2024-01-01", CultureInfo.InvariantCulture)
                 },
                 new MessageObject 
                 { 
                     TransactionId = "tx3", 
                     Message = "Newest", 
                     FromAddress = "addr3",
-                    BlockDate = DateTime.Parse("2024-01-03")
+                    BlockDate = DateTime.Parse("2024-01-03", CultureInfo.InvariantCulture)
                 },
                 new MessageObject 
                 { 
                     TransactionId = "tx2", 
                     Message = "Middle", 
                     FromAddress = "addr2",
-                    BlockDate = DateTime.Parse("2024-01-02")
+                    BlockDate = DateTime.Parse("2024-01-02", CultureInfo.InvariantCulture)
                 }
             };
 
@@ -112,7 +113,7 @@ namespace SUP.Tests
         public void Test_Normalize_UsesTransactionIdAsTiebreaker()
         {
             // Arrange
-            var sameDate = DateTime.Parse("2024-01-01");
+            var sameDate = DateTime.Parse("2024-01-01", CultureInfo.InvariantCulture);
             var messages = new List<MessageObject>
             {
                 new MessageObject 
@@ -164,7 +165,7 @@ namespace SUP.Tests
                     TransactionId = "tx1",
                     Message = "Existing",
                     FromAddress = "addr1",
-                    BlockDate = DateTime.Parse("2024-01-01")
+                    BlockDate = DateTime.Parse("2024-01-01", CultureInfo.InvariantCulture)
                 }
             };
 
@@ -175,14 +176,14 @@ namespace SUP.Tests
                     TransactionId = "tx1",  // Duplicate of existing
                     Message = "Existing", 
                     FromAddress = "addr1",
-                    BlockDate = DateTime.Parse("2024-01-01")
+                    BlockDate = DateTime.Parse("2024-01-01", CultureInfo.InvariantCulture)
                 },
                 new MessageObject 
                 { 
                     TransactionId = "tx2",  // New message
                     Message = "New", 
                     FromAddress = "addr2",
-                    BlockDate = DateTime.Parse("2024-01-02")
+                    BlockDate = DateTime.Parse("2024-01-02", CultureInfo.InvariantCulture)
                 }
             };
 
@@ -215,7 +216,7 @@ namespace SUP.Tests
                     TransactionId = $"tx{i:D3}",
                     Message = $"Message {i}",
                     FromAddress = "addr",
-                    BlockDate = DateTime.Parse("2024-01-01").AddSeconds(i)
+                    BlockDate = DateTime.Parse("2024-01-01", CultureInfo.InvariantCulture).AddSeconds(i)
                 });
             }
 
@@ -244,28 +245,28 @@ namespace SUP.Tests
                     TransactionId = "tx1", 
                     Message = "Valid", 
                     FromAddress = "addr1",
-                    BlockDate = DateTime.Parse("2024-01-01")
+                    BlockDate = DateTime.Parse("2024-01-01", CultureInfo.InvariantCulture)
                 },
                 new MessageObject 
                 { 
                     TransactionId = null,  // Invalid
                     Message = "Invalid", 
                     FromAddress = "addr2",
-                    BlockDate = DateTime.Parse("2024-01-02")
+                    BlockDate = DateTime.Parse("2024-01-02", CultureInfo.InvariantCulture)
                 },
                 new MessageObject 
                 { 
                     TransactionId = "",  // Invalid
                     Message = "Also Invalid", 
                     FromAddress = "addr3",
-                    BlockDate = DateTime.Parse("2024-01-03")
+                    BlockDate = DateTime.Parse("2024-01-03", CultureInfo.InvariantCulture)
                 },
                 new MessageObject 
                 { 
                     TransactionId = "tx2", 
                     Message = "Also Valid", 
                     FromAddress = "addr4",
-                    BlockDate = DateTime.Parse("2024-01-04")
+                    BlockDate = DateTime.Parse("2024-01-04", CultureInfo.InvariantCulture)
                 }
             };
 
@@ -298,7 +299,7 @@ namespace SUP.Tests
                     Message = "Test",
                     FromAddress = "addr1",
                     ToAddress = "addr2",
-                    BlockDate = DateTime.Parse("2024-01-01")
+                    BlockDate = DateTime.Parse("2024-01-01", CultureInfo.InvariantCulture)
                 }
             };
 

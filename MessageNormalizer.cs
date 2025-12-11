@@ -46,14 +46,16 @@ namespace SUP
         
         /// <summary>
         /// Converts a MessageObject to a NormalizedMessage.
+        /// Returns null if the message is invalid (null or missing TransactionId).
         /// </summary>
         public static NormalizedMessage ToNormalized(MessageObject msg)
         {
-            if (msg == null) return null;
+            if (msg == null || string.IsNullOrEmpty(msg.TransactionId)) 
+                return null;
             
             return new NormalizedMessage
             {
-                TransactionId = msg.TransactionId ?? string.Empty,
+                TransactionId = msg.TransactionId,
                 Message = msg.Message ?? string.Empty,
                 FromAddress = msg.FromAddress ?? string.Empty,
                 ToAddress = msg.ToAddress ?? string.Empty,
@@ -70,10 +72,10 @@ namespace SUP
         {
             if (messages == null) return new List<NormalizedMessage>();
             
-            // Convert to normalized messages
+            // Convert to normalized messages (ToNormalized returns null for invalid messages)
             var normalized = messages
-                .Where(m => m != null && !string.IsNullOrEmpty(m.TransactionId))
                 .Select(ToNormalized)
+                .Where(m => m != null)
                 .ToList();
             
             // Deduplicate by TransactionId
@@ -102,10 +104,10 @@ namespace SUP
             if (existing == null) existing = new List<NormalizedMessage>();
             if (newMessages == null) newMessages = new List<MessageObject>();
             
-            // Combine existing and new messages
+            // Combine existing and new messages (ToNormalized returns null for invalid messages)
             var allMessages = existing
                 .Concat(newMessages.Select(ToNormalized))
-                .Where(m => m != null && !string.IsNullOrEmpty(m.UniqueKey))
+                .Where(m => m != null)
                 .ToList();
             
             // Deduplicate by TransactionId
