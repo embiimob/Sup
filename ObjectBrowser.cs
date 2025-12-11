@@ -3033,6 +3033,8 @@ namespace SUP
             if (e.KeyCode == Keys.Enter)
             {
                 if (txtSearchAddress.Text == "" || txtSearchAddress.Text.StartsWith("#") || txtSearchAddress.Text.ToUpper().StartsWith("SUP:") || txtSearchAddress.Text.ToUpper().StartsWith("HTTP") || txtSearchAddress.Text.ToUpper().StartsWith("BTC:") || txtSearchAddress.Text.ToUpper().StartsWith("MZC:") || txtSearchAddress.Text.ToUpper().StartsWith("LTC:") || txtSearchAddress.Text.ToUpper().StartsWith("DOG:") || txtSearchAddress.Text.ToUpper().StartsWith("IPFS:")) { btnCreated.BackColor = Color.White; btnOwned.BackColor = Color.White; }
+                // Clear Links before clearing Text to prevent LinkLabel OnPaint issues
+                profileURN.Links.Clear();
                 profileURN.Text = "";
                 e.Handled = true;
                 e.SuppressKeyPress = true;
@@ -3043,16 +3045,24 @@ namespace SUP
                 txtTotal.Text = "0";
                 txtLast.Text = "0";
                 Random rnd = new Random();
-                string[] gifFiles = Directory.GetFiles("includes", "*.gif");
-                if (gifFiles.Length > 0)
+                try
                 {
-                    int randomIndex = rnd.Next(gifFiles.Length);
-                    string randomGifFile = gifFiles[randomIndex];
-                    imgLoading.ImageLocation = randomGifFile;
+                    string[] gifFiles = Directory.GetFiles("includes", "*.gif");
+                    if (gifFiles.Length > 0)
+                    {
+                        int randomIndex = rnd.Next(gifFiles.Length);
+                        string randomGifFile = gifFiles[randomIndex];
+                        imgLoading.ImageLocation = randomGifFile;
+                    }
+                    else
+                    {
+                        imgLoading.ImageLocation = @"includes\HugPuddle.jpg";
+                    }
                 }
-                else
+                catch (DirectoryNotFoundException)
                 {
-                    imgLoading.ImageLocation = @"includes\HugPuddle.jpg";
+                    // If includes directory doesn't exist, use default or leave as is
+                    try { imgLoading.ImageLocation = @"includes\HugPuddle.jpg"; } catch { }
                 }
                 flowLayoutPanel1.Visible = false;
                 if (Control.ModifierKeys == Keys.Control)
