@@ -3593,8 +3593,9 @@ namespace SUP
 
             supFlow.SuspendLayout();
 
-            // Trigger memory cleanup if we received a full page (and likely have more to load)
-            if (newMessages.Count == 10)
+            // Trigger memory cleanup if we received a full page from server (indicates more to load)
+            // Check original message count, not filtered count, since filtering may reduce the count
+            if (messages.Count == 10)
             {
                 Task memoryPrune = Task.Run(() =>
                 {
@@ -4358,8 +4359,9 @@ namespace SUP
             // Filter out messages we've already displayed
             var newMessages = normalizedMessages.Where(m => !displayedPrivateMessageIds.Contains(m.TransactionId)).ToList();
 
-            // Trigger memory cleanup if we received a full page (and likely have more to load)
-            if (newMessages.Count == 10)
+            // Trigger memory cleanup if we received a full page from server (indicates more to load)
+            // Check original message count, not filtered count, since filtering may reduce the count
+            if (messages.Count == 10)
             {
                 Task memoryPrune = Task.Run(() =>
                 {
@@ -5147,7 +5149,9 @@ namespace SUP
                 // Paginate the results
                 var messagesToDisplay = MessageNormalizer.Paginate(newMessages, numFriendFeedsDisplayed, 10);
 
-                if (messagesToDisplay.Count == 10)
+                // Trigger memory cleanup if we have more messages available to paginate
+                // Check if there are at least 10 more messages after the current page
+                if (newMessages.Count > numFriendFeedsDisplayed + 10)
                 {
                     Task memoryPrune = Task.Run(() =>
                     {
