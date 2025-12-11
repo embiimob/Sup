@@ -4801,22 +4801,11 @@ namespace SUP
                 }
             }
 
-            // Check if already being processed - but clean up stale build directories
+            // Clean up any stale build directories (from previous crash/interruption)
             if (System.IO.Directory.Exists("root/" + transid + "-build"))
             {
-                // Could be stale from previous crash/interruption
-                // Only skip if the actual file/directory also exists (being actively processed)
-                if (System.IO.File.Exists(hashPath) || System.IO.Directory.Exists(hashPath))
-                {
-                    Debug.WriteLine($"[LoadSecAttachmentAsync] Already processing {transid}, skipping");
-                    return;
-                }
-                else
-                {
-                    // Stale build directory without actual file - clean it up
-                    Debug.WriteLine($"[LoadSecAttachmentAsync] Cleaning up stale build directory for {transid}");
-                    IpfsHelper.CleanupBuildDirectory(transid, "root");
-                }
+                Debug.WriteLine($"[LoadSecAttachmentAsync] Cleaning up stale build directory for {transid}");
+                IpfsHelper.CleanupBuildDirectory(transid, "root");
             }
 
             // Create build directory marker (not the target directory yet)
