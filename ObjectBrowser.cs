@@ -3730,6 +3730,12 @@ namespace SUP
         //should keep object browser active profile synched with social
         private void profileURN_TextChanged(object sender, EventArgs e)
         {
+            // Don't try to validate hashtags or special URN types as Bitcoin addresses
+            if (profileURN.Text != null && profileURN.Text.StartsWith("#"))
+            {
+                return;
+            }
+
             // Check if Links collection has items before accessing Links[0]
             if (profileURN.Links.Count > 0 && profileURN.Links[0].LinkData != null)
             {
