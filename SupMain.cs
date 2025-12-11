@@ -4825,7 +4825,9 @@ namespace SUP
             // Download from IPFS using the async helper with 60 second timeout
             // Since we're already async, we can wait longer without blocking the UI
             // IPFS will download to root/{hash} - either as a file or directory
+            Debug.WriteLine($"[LoadSecAttachmentAsync] About to call IPFS GetAsync for {transid}");
             bool downloadSuccess = await IpfsHelper.GetAsync(transid, "root\\" + transid, 60000);
+            Debug.WriteLine($"[LoadSecAttachmentAsync] IPFS GetAsync returned {downloadSuccess} for {transid}");
 
             if (downloadSuccess)
             {
