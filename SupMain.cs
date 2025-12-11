@@ -1817,7 +1817,7 @@ namespace SUP
                                                                             // Create a label for the title
                                                                             LinkLabel titleLabel = new LinkLabel();
                                                                             titleLabel.Text = content;
-                                                                            titleLabel.Links[0].LinkData = imgurn;
+                                                                            if (titleLabel.Links.Count > 0) { titleLabel.Links[0].LinkData = imgurn; }
                                                                             titleLabel.Dock = DockStyle.Top;
                                                                             titleLabel.Font = new Font("Segoe UI", 8, FontStyle.Bold);
                                                                             titleLabel.LinkColor = System.Drawing.SystemColors.GradientActiveCaption;
@@ -1845,7 +1845,7 @@ namespace SUP
                                                                         // Create a label for the title
                                                                         LinkLabel titleLabel = new LinkLabel();
                                                                         titleLabel.Text = content;
-                                                                        titleLabel.Links[0].LinkData = imgurn;
+                                                                        if (titleLabel.Links.Count > 0) { titleLabel.Links[0].LinkData = imgurn; }
                                                                         titleLabel.Dock = DockStyle.Top;
                                                                         titleLabel.Font = new Font("Segoe UI", 8, FontStyle.Bold);
                                                                         titleLabel.LinkColor = System.Drawing.SystemColors.GradientActiveCaption;
@@ -2239,7 +2239,7 @@ namespace SUP
                                                                                 // Create a label for the title
                                                                                 LinkLabel titleLabel = new LinkLabel();
                                                                                 titleLabel.Text = content;
-                                                                                titleLabel.Links[0].LinkData = imgurn;
+                                                                                if (titleLabel.Links.Count > 0) { titleLabel.Links[0].LinkData = imgurn; }
                                                                                 titleLabel.Dock = DockStyle.Top;
                                                                                 titleLabel.Font = new Font("Segoe UI", 8, FontStyle.Bold);
                                                                                 titleLabel.LinkColor = System.Drawing.SystemColors.GradientActiveCaption;
@@ -2267,7 +2267,7 @@ namespace SUP
                                                                             // Create a label for the title
                                                                             LinkLabel titleLabel = new LinkLabel();
                                                                             titleLabel.Text = content;
-                                                                            titleLabel.Links[0].LinkData = imgurn;
+                                                                            if (titleLabel.Links.Count > 0) { titleLabel.Links[0].LinkData = imgurn; }
                                                                             titleLabel.Dock = DockStyle.Top;
                                                                             titleLabel.Font = new Font("Segoe UI", 8, FontStyle.Bold);
                                                                             titleLabel.LinkColor = System.Drawing.SystemColors.GradientActiveCaption;
@@ -2601,7 +2601,7 @@ namespace SUP
                                                                                 // Create a label for the title
                                                                                 LinkLabel titleLabel = new LinkLabel();
                                                                                 titleLabel.Text = content;
-                                                                                titleLabel.Links[0].LinkData = imgurn;
+                                                                                if (titleLabel.Links.Count > 0) { titleLabel.Links[0].LinkData = imgurn; }
                                                                                 titleLabel.Dock = DockStyle.Top;
                                                                                 titleLabel.Font = new Font("Segoe UI", 8, FontStyle.Bold);
                                                                                 titleLabel.LinkColor = System.Drawing.SystemColors.GradientActiveCaption;
@@ -2629,7 +2629,7 @@ namespace SUP
                                                                             // Create a label for the title
                                                                             LinkLabel titleLabel = new LinkLabel();
                                                                             titleLabel.Text = content;
-                                                                            titleLabel.Links[0].LinkData = imgurn;
+                                                                            if (titleLabel.Links.Count > 0) { titleLabel.Links[0].LinkData = imgurn; }
                                                                             titleLabel.Dock = DockStyle.Top;
                                                                             titleLabel.Font = new Font("Segoe UI", 8, FontStyle.Bold);
                                                                             titleLabel.LinkColor = System.Drawing.SystemColors.GradientActiveCaption;
@@ -2947,7 +2947,7 @@ namespace SUP
                                                                                 // Create a label for the title
                                                                                 LinkLabel titleLabel = new LinkLabel();
                                                                                 titleLabel.Text = content;
-                                                                                titleLabel.Links[0].LinkData = imgurn;
+                                                                                if (titleLabel.Links.Count > 0) { titleLabel.Links[0].LinkData = imgurn; }
                                                                                 titleLabel.Dock = DockStyle.Top;
                                                                                 titleLabel.Font = new Font("Segoe UI", 8, FontStyle.Bold);
                                                                                 titleLabel.LinkColor = System.Drawing.SystemColors.GradientActiveCaption;
@@ -2975,7 +2975,7 @@ namespace SUP
                                                                             // Create a label for the title
                                                                             LinkLabel titleLabel = new LinkLabel();
                                                                             titleLabel.Text = content;
-                                                                            titleLabel.Links[0].LinkData = imgurn;
+                                                                            if (titleLabel.Links.Count > 0) { titleLabel.Links[0].LinkData = imgurn; }
                                                                             titleLabel.Dock = DockStyle.Top;
                                                                             titleLabel.Font = new Font("Segoe UI", 8, FontStyle.Bold);
                                                                             titleLabel.LinkColor = System.Drawing.SystemColors.GradientActiveCaption;
@@ -3298,7 +3298,7 @@ namespace SUP
                                                                                 // Create a label for the title
                                                                                 LinkLabel titleLabel = new LinkLabel();
                                                                                 titleLabel.Text = content;
-                                                                                titleLabel.Links[0].LinkData = imgurn;
+                                                                                if (titleLabel.Links.Count > 0) { titleLabel.Links[0].LinkData = imgurn; }
                                                                                 titleLabel.Dock = DockStyle.Top;
                                                                                 titleLabel.Font = new Font("Segoe UI", 8, FontStyle.Bold);
                                                                                 titleLabel.LinkColor = System.Drawing.SystemColors.GradientActiveCaption;
@@ -3326,7 +3326,7 @@ namespace SUP
                                                                             // Create a label for the title
                                                                             LinkLabel titleLabel = new LinkLabel();
                                                                             titleLabel.Text = content;
-                                                                            titleLabel.Links[0].LinkData = imgurn;
+                                                                            if (titleLabel.Links.Count > 0) { titleLabel.Links[0].LinkData = imgurn; }
                                                                             titleLabel.Dock = DockStyle.Top;
                                                                             titleLabel.Font = new Font("Segoe UI", 8, FontStyle.Bold);
                                                                             titleLabel.LinkColor = System.Drawing.SystemColors.GradientActiveCaption;
@@ -3600,6 +3600,7 @@ namespace SUP
                     string relativeFolderPath = @"root\" + tid;
                     string folderPath = Path.Combine(Environment.CurrentDirectory, relativeFolderPath);
 
+                    if (!Directory.Exists(folderPath)) { Directory.CreateDirectory(folderPath); }
                     string[] files = Directory.GetFiles(folderPath);
 
                     foreach (string file in files)
@@ -5207,7 +5208,11 @@ namespace SUP
 
                         try
                         {
-                            string[] files = Directory.GetFiles(@"root\" + _transactionId);
+                            string[] files = new string[] { };
+                            if (Directory.Exists(@"root\" + _transactionId))
+                            {
+                                files = Directory.GetFiles(@"root\" + _transactionId);
+                            }
 
                             bool containsFileWithINQ = files.Any(file =>
                                    file.EndsWith("INQ", StringComparison.OrdinalIgnoreCase) &&
