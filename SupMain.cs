@@ -5753,25 +5753,6 @@ namespace SUP
                                                 // Pin if enabled (fire and forget)
                                                 _ = IpfsHelper.PinAsync(transid);
                                             }
-                                            else
-                                            {
-                                                // Show error image on timeout/failure
-                                                this.Invoke((Action)(() =>
-                                                {
-                                                    Random rnd = new Random();
-                                                    string[] gifFiles = Directory.GetFiles("includes", "*.gif");
-                                                    if (gifFiles.Length > 0)
-                                                    {
-                                                        int randomIndex = rnd.Next(gifFiles.Length);
-                                                        pictureBox.ImageLocation = gifFiles[randomIndex];
-                                                    }
-                                                    else
-                                                    {
-                                                        try { pictureBox.ImageLocation = @"includes\HugPuddle.jpg"; }
-                                                        catch { }
-                                                    }
-                                                }));
-                                            }
                                             
                                             // Cleanup build directory
                                             IpfsHelper.CleanupBuildDirectory(transid, "ipfs");
