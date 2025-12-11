@@ -4280,7 +4280,7 @@ namespace SUP
         private async Task RefreshPrivateSupMessagesAsync()
         {
             // sorry cannot run two searches at a time
-            if (!btnPrivateMessage.Enabled || !btnPrivateMessage.Enabled || !btnCommunityFeed.Enabled || System.IO.File.Exists("ROOTS-PROCESSING"))
+            if (!btnPrivateMessage.Enabled || !btnPublicMessage.Enabled || !btnCommunityFeed.Enabled || System.IO.File.Exists("ROOTS-PROCESSING"))
             {
                 System.Media.SystemSounds.Beep.Play();
                 return;
@@ -4761,7 +4761,8 @@ namespace SUP
         /// This method runs in the background and updates the UI when complete or if it fails.
         /// </summary>
         /// <param name="content">The IPFS content string (e.g., "IPFS:hash\SEC")</param>
-        /// <param name="messageTransactionId">The transaction ID of the message</param>
+        /// <param name="messageTransactionId">The transaction ID of the message (reserved for future use in error tracking)</param>
+        /// <param name="recipientAddress">The recipient's address for decryption</param>
         private async Task LoadSecAttachmentAsync(string content, string messageTransactionId, string recipientAddress)
         {
             string transid = "empty";

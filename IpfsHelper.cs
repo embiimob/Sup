@@ -122,35 +122,55 @@ namespace SUP
 
             try
             {
-                var process = new Process
+                using (var cts = new CancellationTokenSource(30000))
                 {
-                    StartInfo = new ProcessStartInfo
+                    var process = new Process
                     {
-                        FileName = IpfsExecutable,
-                        Arguments = $"pin add {hash}",
-                        UseShellExecute = false,
-                        CreateNoWindow = true
-                    }
-                };
+                        StartInfo = new ProcessStartInfo
+                        {
+                            FileName = IpfsExecutable,
+                            Arguments = $"pin add {hash}",
+                            UseShellExecute = false,
+                            CreateNoWindow = true,
+                            RedirectStandardError = true
+                        }
+                    };
 
-                process.Start();
-                
-                // Don't wait for completion - fire and forget
-                await Task.Run(() =>
-                {
-                    // Give it 30 seconds max
-                    if (!process.WaitForExit(30000))
+                    process.Start();
+                    
+                    // Create a task completion source for async waiting
+                    var tcs = new TaskCompletionSource<bool>();
+                    
+                    // Register cancellation
+                    cts.Token.Register(() =>
                     {
                         try
                         {
-                            process.Kill();
-                            LogWarning("PinAsync", $"IPFS pin timeout for {hash}");
+                            if (!process.HasExited)
+                            {
+                                process.Kill();
+                                LogWarning("PinAsync", $"IPFS pin timeout for {hash}");
+                            }
                         }
-                        catch { }
-                    }
-                });
+                        catch (Exception ex)
+                        {
+                            LogError("PinAsync", $"Error killing pin process: {ex.Message}");
+                        }
+                        tcs.TrySetResult(false);
+                    });
 
-                LogInfo("PinAsync", $"Pin initiated for {hash}");
+                    // Handle process exit
+                    process.EnableRaisingEvents = true;
+                    process.Exited += (sender, args) =>
+                    {
+                        tcs.TrySetResult(process.ExitCode == 0);
+                    };
+
+                    // Wait for completion or timeout
+                    await tcs.Task;
+                    
+                    LogInfo("PinAsync", $"Pin completed for {hash}");
+                }
             }
             catch (Exception ex)
             {
