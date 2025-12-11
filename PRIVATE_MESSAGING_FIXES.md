@@ -17,8 +17,8 @@ A new helper class that provides non-blocking, timeout-protected IPFS operations
 
 #### Key Methods:
 
-- **`GetAsync(string hash, string outputPath, int timeoutMs)`**
-  - Asynchronously retrieves files from IPFS with configurable timeout
+- **`GetAsync(string hash, string outputPath, int timeoutMs = 60000)`**
+  - Asynchronously retrieves files from IPFS with 60-second default timeout
   - Uses `CancellationTokenSource` to enforce hard timeout limits
   - Kills hung processes automatically
   - Returns `bool` indicating success/failure
@@ -58,10 +58,10 @@ A new helper class that provides non-blocking, timeout-protected IPFS operations
 **LoadSecAttachmentAsync()**
 
 - Asynchronously loads and decrypts SEC IPFS attachments
-- Implements two-stage timeout strategy:
-  1. Fast path: 5-second timeout for quick downloads
-  2. Slow path: 30-second timeout retry for large files
-- Shows error UI if both attempts fail
+- Uses single 60-second timeout for downloads
+  - Since operations are already async, we can wait longer without blocking UI
+  - No need for retry logic - adequate time for large files to download
+- Shows error UI if download fails
 - Prevents re-processing of in-flight or completed downloads
 - Fire-and-forget execution - doesn't block message loading
 
@@ -113,13 +113,12 @@ A new helper class that provides non-blocking, timeout-protected IPFS operations
 4. Re-enable button
 
 Background (per attachment):
-   - Try download (5s timeout)
-   - If fails, retry (30s timeout)
+   - Try download (60s timeout)
    - If succeeds, decrypt and display
    - If fails, show error
 ```
 
-**Benefit**: Messages appear instantly, attachments load progressively in background
+**Benefit**: Messages appear instantly, attachments load progressively in background with adequate time for completion
 
 ## Testing Recommendations
 
@@ -225,7 +224,7 @@ Background (per attachment):
 
 ### After:
 - **Message Load Time**: <1 second (text appears immediately)
-- **Attachment Load Time**: 5-30 seconds per attachment (background)
+- **Attachment Load Time**: Up to 60 seconds per attachment (background, parallel)
 - **UI Responsiveness**: Remains responsive throughout
 - **Failure Mode**: Graceful error display, conversation continues loading
 

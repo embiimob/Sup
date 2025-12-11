@@ -8,7 +8,7 @@ This document provides an executive summary of the changes made to fix the criti
 
 Users reported that the private messaging feature would freeze the application when attempting to load encrypted SEC IPFS attachments. The `ipfs.exe` process would hang indefinitely, blocking the entire UI. Killing the process would leave the message panel blank with no recovery option.
 
-**Root Cause**: Synchronous blocking calls to IPFS with 550-second timeouts on the UI thread.
+**Root Cause**: Synchronous blocking calls to IPFS with very long timeouts (up to 550 seconds) on the UI thread.
 
 ## Solution
 
@@ -20,7 +20,7 @@ Complete refactoring of private message loading to use asynchronous patterns wit
 **Purpose**: Centralize all IPFS operations with proper async/await patterns
 
 **Key Features**:
-- Async IPFS get operations with configurable timeouts
+- Async IPFS get operations with 60-second default timeout
 - CancellationToken-based timeout enforcement
 - Automatic process cleanup on timeout
 - Fire-and-forget pinning operations
@@ -28,7 +28,7 @@ Complete refactoring of private message loading to use asynchronous patterns wit
 
 **Benefits**:
 - Reusable across the application
-- Consistent timeout and error handling
+- Single adequate timeout (60s) without retry complexity
 - Non-blocking by design
 - Easy to test and maintain
 
@@ -44,7 +44,7 @@ Complete refactoring of private message loading to use asynchronous patterns wit
 
 **Benefits**:
 - Messages appear instantly (< 1 second)
-- Attachments load in background (5-30 seconds)
+- Attachments load in background (up to 60 seconds each)
 - UI remains responsive throughout
 - Failed attachments don't break conversation
 - Multiple attachments load in parallel
@@ -75,9 +75,10 @@ if (!success) {
 }
 
 // After (Non-Blocking)
-var success = await IpfsHelper.GetAsync(hash, path, 5000);
+// Single adequate timeout, no retry needed
+var success = await IpfsHelper.GetAsync(hash, path, 60000);
 if (!success) {
-    _ = RetryInBackground(hash, path, 30000); // Fire-and-forget
+    ShowAttachmentError(hash, "Timeout"); // Show error
 }
 ```
 
@@ -113,13 +114,14 @@ if (!downloadSuccess) {
 |--------|--------|-------|--------|
 | Message text load | 5-550s | < 1s | 99.8% faster |
 | UI freeze duration | 5-550s | 0s | 100% improvement |
+| Attachment timeout | 5s → 550s retry | 60s single attempt | Simpler, adequate |
 | Attachment handling | Sequential blocking | Parallel async | Massive improvement |
 | Error recovery | Crash | Graceful | Critical fix |
 
 ### User Experience Improvements
 - ✅ **Instant feedback**: Messages appear immediately
 - ✅ **No freezing**: UI remains responsive at all times
-- ✅ **Progress visibility**: Can see which attachments are loading/failed
+- ✅ **Adequate timeout**: 60-second timeout gives IPFS enough time without blocking
 - ✅ **Graceful degradation**: Failed attachments don't prevent reading messages
 - ✅ **Better UX**: Can scroll and interact while attachments load
 

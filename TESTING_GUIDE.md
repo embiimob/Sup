@@ -73,7 +73,7 @@ msbuild SUP.sln /p:Configuration=Release
 **Expected Results**:
 - ✅ Text messages appear immediately (< 1 second)
 - ✅ "Loading..." or no attachment initially
-- ✅ Attachments appear within 5-30 seconds
+- ✅ Attachments appear within 60 seconds
 - ✅ UI remains scrollable while attachments load
 - ✅ Can interact with other messages while waiting
 - ✅ Multiple attachments load in parallel
@@ -99,7 +99,7 @@ msbuild SUP.sln /p:Configuration=Release
 **Steps**:
 1. Open private messages with SEC attachments
 2. If using pause method: quickly pause ipfs.exe in Task Manager
-3. Wait for timeout (5-30 seconds)
+3. Wait for timeout (up to 60 seconds)
 
 **Expected Results**:
 - ✅ Text messages appear immediately
@@ -227,7 +227,7 @@ msbuild SUP.sln /p:Configuration=Release
 **Expected Results**:
 - ✅ UI remains responsive
 - ✅ Text appears immediately
-- ✅ Progress is shown (or timeout message after 30s)
+- ✅ Progress is shown (or timeout message after 60s)
 - ✅ Memory usage is reasonable
 - ✅ Large files either load or show error gracefully
 
@@ -311,7 +311,7 @@ Record these metrics during testing:
 
 ### After Fix (Expected)
 - Message text load time: < 1 second
-- Attachment load time: 5-30 seconds per attachment (background)
+- Attachment load time: Up to 60 seconds per attachment (background)
 - UI freeze duration: 0 seconds (responsive throughout)
 - Recovery from IPFS hang: Automatic (timeout + error display)
 

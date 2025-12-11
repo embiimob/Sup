@@ -19,9 +19,9 @@ namespace SUP
         /// </summary>
         /// <param name="hash">IPFS hash to retrieve</param>
         /// <param name="outputPath">Output directory path</param>
-        /// <param name="timeoutMs">Timeout in milliseconds (default: 5000ms)</param>
+        /// <param name="timeoutMs">Timeout in milliseconds (default: 60000ms)</param>
         /// <returns>True if successful, false otherwise</returns>
-        public static async Task<bool> GetAsync(string hash, string outputPath, int timeoutMs = 5000)
+        public static async Task<bool> GetAsync(string hash, string outputPath, int timeoutMs = 60000)
         {
             if (string.IsNullOrEmpty(hash) || string.IsNullOrEmpty(outputPath))
             {

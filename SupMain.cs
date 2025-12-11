@@ -4798,8 +4798,9 @@ namespace SUP
                 return;
             }
 
-            // Download from IPFS using the async helper
-            bool downloadSuccess = await IpfsHelper.GetAsync(transid, "root/" + transid, 5000);
+            // Download from IPFS using the async helper with 60 second timeout
+            // Since we're already async, we can wait longer without blocking the UI
+            bool downloadSuccess = await IpfsHelper.GetAsync(transid, "root/" + transid, 60000);
 
             if (downloadSuccess)
             {
@@ -4826,36 +4827,10 @@ namespace SUP
             }
             else
             {
-                // First attempt failed, try with longer timeout in background
-                Debug.WriteLine($"[LoadSecAttachmentAsync] First download attempt failed for {transid}, trying with longer timeout");
-
-                _ = Task.Run(async () =>
-                {
-                    bool retrySuccess = await IpfsHelper.GetAsync(transid, "root/" + transid, 30000);
-
-                    if (retrySuccess)
-                    {
-                        bool processed = IpfsHelper.ProcessDownloadedFile(transid, "root", "SEC");
-
-                        if (processed)
-                        {
-                            _ = IpfsHelper.PinAsync(transid);
-                            IpfsHelper.CleanupBuildDirectory(transid, "root");
-                            await DisplaySecAttachmentAsync(transid, recipientAddress);
-                        }
-                        else
-                        {
-                            IpfsHelper.CleanupBuildDirectory(transid, "root");
-                            ShowAttachmentError(transid, "Failed to process attachment after retry");
-                        }
-                    }
-                    else
-                    {
-                        Debug.WriteLine($"[LoadSecAttachmentAsync] Retry download also failed for {transid}");
-                        IpfsHelper.CleanupBuildDirectory(transid, "root");
-                        ShowAttachmentError(transid, "IPFS download timeout");
-                    }
-                });
+                // Download failed after 60 second timeout
+                Debug.WriteLine($"[LoadSecAttachmentAsync] Download failed for {transid} after timeout");
+                IpfsHelper.CleanupBuildDirectory(transid, "root");
+                ShowAttachmentError(transid, "IPFS download timeout");
             }
         }
 
