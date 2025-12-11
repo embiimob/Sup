@@ -4768,7 +4768,9 @@ namespace SUP
             string transid = "empty";
             try { transid = content.Substring(5, 46); } catch { }
 
-            Debug.WriteLine($"[LoadSecAttachmentAsync] Starting SEC attachment load for {transid}");
+            try
+            {
+                Debug.WriteLine($"[LoadSecAttachmentAsync] Starting SEC attachment load for {transid}");
 
             // Check if already downloaded
             var secPath = @"root/" + transid + @"/SEC";
@@ -4827,11 +4829,15 @@ namespace SUP
 
             if (downloadSuccess)
             {
+                Debug.WriteLine($"[LoadSecAttachmentAsync] Download succeeded for {transid}, processing file");
+                
                 // Process the downloaded file
                 bool processed = IpfsHelper.ProcessDownloadedFile(transid, "root", "SEC");
 
                 if (processed)
                 {
+                    Debug.WriteLine($"[LoadSecAttachmentAsync] File processed successfully for {transid}, displaying");
+                    
                     // Pin the file asynchronously (fire and forget)
                     _ = IpfsHelper.PinAsync(transid);
 
@@ -4840,6 +4846,8 @@ namespace SUP
 
                     // Display the decrypted attachment
                     await DisplaySecAttachmentAsync(transid, recipientAddress);
+                    
+                    Debug.WriteLine($"[LoadSecAttachmentAsync] Completed displaying {transid}");
                 }
                 else
                 {
@@ -4858,6 +4866,19 @@ namespace SUP
                 IpfsHelper.CleanupBuildDirectory(transid, "root");
                 CleanupEmptyDirectory(transid, "root");
                 ShowAttachmentError(transid, "IPFS download timeout");
+            }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"[LoadSecAttachmentAsync] EXCEPTION in LoadSecAttachmentAsync for {transid}: {ex.Message}");
+                Debug.WriteLine($"[LoadSecAttachmentAsync] Stack trace: {ex.StackTrace}");
+                try
+                {
+                    IpfsHelper.CleanupBuildDirectory(transid, "root");
+                    CleanupEmptyDirectory(transid, "root");
+                    ShowAttachmentError(transid, $"Error: {ex.Message}");
+                }
+                catch { }
             }
         }
 
