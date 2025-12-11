@@ -2,6 +2,8 @@
 using System.IO;
 using System.Net;
 using System.Text;
+using System.Threading;
+using System.Threading.Tasks;
 using Newtonsoft.Json;
 
 namespace SUP.RPCClient
@@ -72,10 +74,80 @@ namespace SUP.RPCClient
 			}
 		}
 
+		protected async Task<string> HttpCallAsync(string jsonRequest, CancellationToken cancellationToken = default)
+		{
+			HttpWebRequest request = (HttpWebRequest)WebRequest.Create(uri);
+
+			request.Method = "POST";
+			request.ContentType = "application/json-rpc";
+
+			// always send auth to avoid 401 response
+			string auth = credentials.UserName + ":" + credentials.Password;
+			auth = Convert.ToBase64String(Encoding.UTF8.GetBytes(auth), Base64FormattingOptions.None);
+			request.Headers.Add("Authorization", "Basic " + auth);
+
+			request.ContentLength = jsonRequest.Length;
+
+            try
+            {
+                using (Stream requestStream = await request.GetRequestStreamAsync().ConfigureAwait(false))
+                using (StreamWriter sw = new StreamWriter(requestStream))
+                {
+                    await sw.WriteAsync(jsonRequest).ConfigureAwait(false);
+                }
+            }
+            catch (WebException wex)
+            {
+             return "{400:\"" + wex.Message +"\"}";
+            }
+        
+			cancellationToken.ThrowIfCancellationRequested();
+
+            try
+            {
+				using (WebResponse webResponse = await request.GetResponseAsync().ConfigureAwait(false))
+				using (HttpWebResponse response = (HttpWebResponse)webResponse)
+				using (Stream responseStream = response.GetResponseStream())
+				using (StreamReader sr = new StreamReader(responseStream))
+				{
+					return await sr.ReadToEndAsync().ConfigureAwait(false);
+				}
+			}
+			catch (WebException wex)
+			{
+				if (wex.Response == null) throw;
+				
+				using (HttpWebResponse response = (HttpWebResponse)wex.Response)
+				using (Stream responseStream = response.GetResponseStream())
+				using (StreamReader sr = new StreamReader(responseStream))
+				{
+					if (response.StatusCode != HttpStatusCode.InternalServerError)
+					{
+						throw;
+					}
+					return await sr.ReadToEndAsync().ConfigureAwait(false);
+				}
+			}
+		}
+
 		private T RpcCall<T>(RPCRequest rpcRequest)
 		{
 			string jsonRequest = JsonConvert.SerializeObject(rpcRequest);
             string result = HttpCall(jsonRequest);
+
+			RPCResponse<T> rpcResponse = JsonConvert.DeserializeObject<RPCResponse<T>>(result);
+
+			if (rpcResponse.error != null)
+			{
+				throw new CoinRPCException(rpcResponse.error);
+			}
+			return rpcResponse.result;
+		}
+
+		private async Task<T> RpcCallAsync<T>(RPCRequest rpcRequest, CancellationToken cancellationToken = default)
+		{
+			string jsonRequest = JsonConvert.SerializeObject(rpcRequest);
+            string result = await HttpCallAsync(jsonRequest, cancellationToken).ConfigureAwait(false);
 
 			RPCResponse<T> rpcResponse = JsonConvert.DeserializeObject<RPCResponse<T>>(result);
 

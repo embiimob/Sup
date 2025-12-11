@@ -89,3 +89,38 @@ namespace SUP.RPCClient
         }
     }
 }
+
+namespace SUP.RPCClient
+{
+    using System.Threading;
+    using System.Threading.Tasks;
+
+    // Async methods extension for CoinRPC
+public partial class CoinRPC
+{
+// Async versions
+public async Task<string> SendManyAsync(string FromAddress, IDictionary<string, decimal> ToBitcoinAddresses, CancellationToken cancellationToken = default)
+{
+return await RpcCallAsync<string>
+(new RPCRequest("sendmany", new Object[] { FromAddress, ToBitcoinAddresses, 0 }), cancellationToken).ConfigureAwait(false);
+}
+
+        public async Task<string> DumpPrivKeyAsync(string Address, CancellationToken cancellationToken = default)
+        {
+            return await RpcCallAsync<string>
+                (new RPCRequest("dumpprivkey", new Object[] { Address }), cancellationToken).ConfigureAwait(false);
+        }
+
+        public async Task<List<GetRawDataTransactionResponse>> SearchRawDataTransactionAsync(string Address, int Verbose = 0, int skip = 0, int returnQty = 100, CancellationToken cancellationToken = default)
+        {
+            return await RpcCallAsync<List<GetRawDataTransactionResponse>>
+                (new RPCRequest("searchrawtransactions", new Object[] { Address, Verbose, skip,returnQty }), cancellationToken).ConfigureAwait(false);
+        }
+
+        public async Task<GetRawDataTransactionResponse> GetRawDataTransactionAsync(string txID, int Verbose = 0, CancellationToken cancellationToken = default)
+        {
+            return await RpcCallAsync<GetRawDataTransactionResponse>
+                (new RPCRequest("getrawtransaction", new Object[] { txID, Verbose }), cancellationToken).ConfigureAwait(false);
+        }
+    }
+}
