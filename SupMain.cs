@@ -3578,6 +3578,14 @@ namespace SUP
                 return;
             }
 
+            // Check if profileURN has valid LinkData before proceeding
+            if (profileURN.Links[0].LinkData == null)
+            {
+                supFlow.ResumeLayout();
+                btnPublicMessage.Enabled = true;
+                return;
+            }
+
             btnPublicMessage.Enabled = false;
 
             List<MessageObject> messages = new List<MessageObject>();
@@ -6268,19 +6276,22 @@ namespace SUP
 
                                 this.Invoke((Action)(() =>
                                 {
-
-                                    if ((videolocation.ToLower().EndsWith(".wav") || videolocation.ToLower().EndsWith(".mp3")) && autoPlay)
+                                    // Check if videolocation is valid before using it
+                                    if (!string.IsNullOrEmpty(videolocation))
                                     {
-                                        audioPlayer.AddToPlaylist(videolocation);
+                                        if ((videolocation.ToLower().EndsWith(".wav") || videolocation.ToLower().EndsWith(".mp3")) && autoPlay)
+                                        {
+                                            audioPlayer.AddToPlaylist(videolocation);
 
+                                        }
+                                        string encodedPath = "file:///" + Uri.EscapeUriString(videolocation.Replace('\\', '/'));
+                                        string viewerPath = Path.GetDirectoryName(videolocation) + @"\urnviewer.html";
+                                        string htmlstring = $"<html><body><embed src=\"{encodedPath}\" width=100% height=100% ></body></html>";
+
+                                        System.IO.File.WriteAllText(viewerPath, htmlstring);
+
+                                        try { webviewer.CoreWebView2.Navigate(viewerPath); } catch { }
                                     }
-                                    string encodedPath = "file:///" + Uri.EscapeUriString(videolocation.Replace('\\', '/'));
-                                    string viewerPath = Path.GetDirectoryName(videolocation) + @"\urnviewer.html";
-                                    string htmlstring = $"<html><body><embed src=\"{encodedPath}\" width=100% height=100% ></body></html>";
-
-                                    System.IO.File.WriteAllText(viewerPath, htmlstring);
-
-                                    try { webviewer.CoreWebView2.Navigate(viewerPath); } catch { }
 
 
                                 }));
