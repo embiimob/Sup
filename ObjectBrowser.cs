@@ -3701,26 +3701,25 @@ namespace SUP
         }
 
         //should keep object browser active profile synched with social
-        private void profileURN_TextChanged(object sender, EventArgs e)
+        private async void profileURN_TextChanged(object sender, EventArgs e)
         {
 
             if (profileURN.Links[0].LinkData != null)
             {
-
-
                 NetworkCredential credentials = new NetworkCredential(mainnetLogin, mainnetPassword);
                 NBitcoin.RPC.RPCClient rpcClient = new NBitcoin.RPC.RPCClient(credentials, new Uri(mainnetURL), Network.Main);
                 string signature = "";
-                try { signature = rpcClient.SendCommand("signmessage", profileURN.Links[0].LinkData.ToString(), "DUMMY").ResultString; ; } catch { }
+                try 
+                { 
+                    var response = await rpcClient.SendCommandAsync("signmessage", profileURN.Links[0].LinkData.ToString(), "DUMMY").ConfigureAwait(true);
+                    signature = response.ResultString;
+                } 
+                catch { }
 
-
-                if
-                     (signature != "")
+                if (signature != "")
                 {
                     _activeProfile = profileURN.Links[0].LinkData.ToString();
                 }
-
-
             }
         }
 
