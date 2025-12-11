@@ -117,13 +117,13 @@ namespace SUP
 
         }
 
-        private void history_MouseWheel(object sender, MouseEventArgs e)
+        private async void history_MouseWheel(object sender, MouseEventArgs e)
         {
             if (flowLayoutPanel1.VerticalScroll.Value + flowLayoutPanel1.ClientSize.Height >= flowLayoutPanel1.VerticalScroll.Maximum)
             {
                 // Add more PictureBoxes if available              
-                if (btnActivity.BackColor == Color.Yellow) { GetHistoryByAddress(txtSearchAddress.Text); }
-                else { BuildSearchResults(false, false); }
+                if (btnActivity.BackColor == Color.Yellow) { await Task.Run(() => GetHistoryByAddress(txtSearchAddress.Text)); }
+                else { await Task.Run(() => BuildSearchResults(false, false)); }
 
             }
         }
@@ -289,9 +289,16 @@ namespace SUP
                     {
                         this.Invoke((Action)(() =>
                         {
-                            profileURN.Links[0].LinkData = profileCheck;
-                            profileURN.LinkColor = System.Drawing.SystemColors.Highlight;
-                            profileURN.Text = txtSearchAddress.Text;
+                            try
+                            {
+                                if (profileURN.Links.Count > 0 && profileURN.Links[0] != null)
+                                {
+                                    profileURN.Links[0].LinkData = profileCheck;
+                                    profileURN.LinkColor = System.Drawing.SystemColors.Highlight;
+                                    profileURN.Text = txtSearchAddress.Text;
+                                }
+                            }
+                            catch { }
                         }));
                     }
 
@@ -329,9 +336,16 @@ namespace SUP
                     {
                         this.Invoke((Action)(() =>
                         {
-                            profileURN.Links[0].LinkData = profileCheck;
-                            profileURN.LinkColor = System.Drawing.SystemColors.Highlight;
-                            profileURN.Text = txtSearchAddress.Text;
+                            try
+                            {
+                                if (profileURN.Links.Count > 0 && profileURN.Links[0] != null)
+                                {
+                                    profileURN.Links[0].LinkData = profileCheck;
+                                    profileURN.LinkColor = System.Drawing.SystemColors.Highlight;
+                                    profileURN.Text = txtSearchAddress.Text;
+                                }
+                            }
+                            catch { }
                         }));
                     }
 
@@ -352,9 +366,16 @@ namespace SUP
                         createdObjects = OBJState.GetFoundObjects(mainnetLogin, mainnetPassword, mainnetURL, mainnetVersionByte, calculate);
                         this.Invoke((Action)(() =>
                         {
-                            profileURN.Links[0].LinkData = "";
-                            profileURN.LinkColor = System.Drawing.SystemColors.Highlight;
-                            profileURN.Text = "anon";
+                            try
+                            {
+                                if (profileURN.Links.Count > 0 && profileURN.Links[0] != null)
+                                {
+                                    profileURN.Links[0].LinkData = "";
+                                }
+                                profileURN.LinkColor = System.Drawing.SystemColors.Highlight;
+                                profileURN.Text = "anon";
+                            }
+                            catch { }
                         }));
 
                     }
@@ -417,9 +438,16 @@ namespace SUP
                         {
                             if (searchprofile.URN != null || createdObjects.Count > 0 || txtSearchAddress.Text.StartsWith("#"))
                             {
-                                profileURN.Links[0].LinkData = profileCheck;
-                                profileURN.LinkColor = System.Drawing.SystemColors.Highlight;
-                                profileURN.Text = txtSearchAddress.Text;
+                                try
+                                {
+                                    if (profileURN.Links.Count > 0 && profileURN.Links[0] != null)
+                                    {
+                                        profileURN.Links[0].LinkData = profileCheck;
+                                        profileURN.LinkColor = System.Drawing.SystemColors.Highlight;
+                                        profileURN.Text = txtSearchAddress.Text;
+                                    }
+                                }
+                                catch { }
                             }
                         }));
 
@@ -3706,24 +3734,27 @@ namespace SUP
         //should keep object browser active profile synched with social
         private async void profileURN_TextChanged(object sender, EventArgs e)
         {
-
-            if (profileURN.Links[0].LinkData != null)
+            try
             {
-                NetworkCredential credentials = new NetworkCredential(mainnetLogin, mainnetPassword);
-                NBitcoin.RPC.RPCClient rpcClient = new NBitcoin.RPC.RPCClient(credentials, new Uri(mainnetURL), Network.Main);
-                string signature = "";
-                try 
-                { 
-                    var response = await rpcClient.SendCommandAsync("signmessage", profileURN.Links[0].LinkData.ToString(), "DUMMY").ConfigureAwait(true);
-                    signature = response.ResultString;
-                } 
-                catch { }
-
-                if (signature != "")
+                if (profileURN.Links.Count > 0 && profileURN.Links[0] != null && profileURN.Links[0].LinkData != null)
                 {
-                    _activeProfile = profileURN.Links[0].LinkData.ToString();
+                    NetworkCredential credentials = new NetworkCredential(mainnetLogin, mainnetPassword);
+                    NBitcoin.RPC.RPCClient rpcClient = new NBitcoin.RPC.RPCClient(credentials, new Uri(mainnetURL), Network.Main);
+                    string signature = "";
+                    try 
+                    { 
+                        var response = await rpcClient.SendCommandAsync("signmessage", profileURN.Links[0].LinkData.ToString(), "DUMMY").ConfigureAwait(true);
+                        signature = response.ResultString;
+                    } 
+                    catch { }
+
+                    if (signature != "" && profileURN.Links.Count > 0 && profileURN.Links[0] != null && profileURN.Links[0].LinkData != null)
+                    {
+                        _activeProfile = profileURN.Links[0].LinkData.ToString();
+                    }
                 }
             }
+            catch { }
         }
 
         private async void btnActivity_Click(object sender, EventArgs e)

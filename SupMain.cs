@@ -297,7 +297,7 @@ namespace SUP
 
         }
 
-        private void OBControl_ProfileURNChanged(object sender, EventArgs e)
+        private async void OBControl_ProfileURNChanged(object sender, EventArgs e)
         {
             try
             {
@@ -364,27 +364,27 @@ namespace SUP
                             btnPublicMessage.ForeColor = Color.Black;
 
 
-                            if (profileURN.Links[0].LinkData != null)
+                            if (profileURN.Links.Count > 0 && profileURN.Links[0] != null && profileURN.Links[0].LinkData != null)
                             {
-
                                 string profileURN = objectBrowserForm.profileURN.Links[0].LinkData.ToString();
 
                                 if (profileURN != null)
                                 {
-
                                     NetworkCredential credentials = new NetworkCredential(mainnetLogin, mainnetPassword);
                                     NBitcoin.RPC.RPCClient rpcClient = new NBitcoin.RPC.RPCClient(credentials, new Uri(mainnetURL), Network.Main);
                                     string signature = "";
-                                    try { signature = rpcClient.SendCommand("signmessage", profileURN, "DUMMY").ResultString; ; } catch { }
+                                    try 
+                                    { 
+                                        var response = await rpcClient.SendCommandAsync("signmessage", profileURN, "DUMMY").ConfigureAwait(true);
+                                        signature = response.ResultString;
+                                    } 
+                                    catch { }
 
-
-                                   if
-                                        ( signature != "")
+                                   if (signature != "" && objectBrowserForm.profileURN.Links.Count > 0 && objectBrowserForm.profileURN.Links[0] != null)
                                     {
                                         profileOwner.ImageLocation = profileIMG.ImageLocation;
                                         profileOwner.Tag = objectBrowserForm.profileURN.Links[0].LinkData.ToString();
                                     }
-
                                 }
                             }
                         }
