@@ -4579,6 +4579,7 @@ namespace SUP
                                 {
 
 
+                                    // Extract the 46-character IPFS CID from the content (format: "IPFS:<CID>\SEC")
                                     string transid = "empty";
                                     try { transid = content.Substring(5, 46); } catch { }
 
@@ -4722,8 +4723,10 @@ namespace SUP
                                         }
                                         else
                                         {
+                                            // Read error output before killing the process
+                                            string stderr = "";
+                                            try { stderr = process2.StandardError.ReadToEnd(); } catch { }
                                             process2.Kill();
-                                            string stderr = process2.StandardError.ReadToEnd();
                                             System.Diagnostics.Debug.WriteLine($"IPFS get timed out after 30s for {transid}, retrying with longer timeout. Error: {stderr}");
 
                                             Task.Run(() =>
@@ -4791,8 +4794,10 @@ namespace SUP
                                                     }
                                                     else
                                                     {
+                                                        // Read error output before killing the process
+                                                        string stderrLong = "";
+                                                        try { stderrLong = process2.StandardError.ReadToEnd(); } catch { }
                                                         process2.Kill();
-                                                        string stderrLong = process2.StandardError.ReadToEnd();
                                                         System.Diagnostics.Debug.WriteLine($"IPFS get failed after 550s timeout for {transid}. Error: {stderrLong}");
                                                     }
                                                 }
