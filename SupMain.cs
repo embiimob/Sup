@@ -4770,13 +4770,6 @@ namespace SUP
 
             Debug.WriteLine($"[LoadSecAttachmentAsync] Starting SEC attachment load for {transid}");
 
-            // Check if already being processed or exists
-            if (System.IO.Directory.Exists("root/" + transid + "-build"))
-            {
-                Debug.WriteLine($"[LoadSecAttachmentAsync] Already processing {transid}, skipping");
-                return;
-            }
-
             // Check if already downloaded
             var secPath = @"root/" + transid + @"/SEC";
             if (System.IO.File.Exists(secPath))
@@ -4784,6 +4777,46 @@ namespace SUP
                 Debug.WriteLine($"[LoadSecAttachmentAsync] SEC file already exists for {transid}, displaying");
                 await DisplaySecAttachmentAsync(transid, recipientAddress);
                 return;
+            }
+
+            // Check if file was downloaded but not yet processed (from previous interrupted run)
+            var hashPath = "root/" + transid;
+            if (System.IO.File.Exists(hashPath) || System.IO.Directory.Exists(hashPath))
+            {
+                // File/directory exists but SEC doesn't - try to process it
+                Debug.WriteLine($"[LoadSecAttachmentAsync] Found existing download for {transid}, attempting to process");
+                
+                bool processed = IpfsHelper.ProcessDownloadedFile(transid, "root", "SEC");
+                if (processed)
+                {
+                    IpfsHelper.CleanupBuildDirectory(transid, "root");
+                    await DisplaySecAttachmentAsync(transid, recipientAddress);
+                    return;
+                }
+                else
+                {
+                    // Failed to process existing download - clean up and re-download
+                    Debug.WriteLine($"[LoadSecAttachmentAsync] Failed to process existing download for {transid}, will re-download");
+                    CleanupEmptyDirectory(transid, "root");
+                }
+            }
+
+            // Check if already being processed - but clean up stale build directories
+            if (System.IO.Directory.Exists("root/" + transid + "-build"))
+            {
+                // Could be stale from previous crash/interruption
+                // Only skip if the actual file/directory also exists (being actively processed)
+                if (System.IO.File.Exists(hashPath) || System.IO.Directory.Exists(hashPath))
+                {
+                    Debug.WriteLine($"[LoadSecAttachmentAsync] Already processing {transid}, skipping");
+                    return;
+                }
+                else
+                {
+                    // Stale build directory without actual file - clean it up
+                    Debug.WriteLine($"[LoadSecAttachmentAsync] Cleaning up stale build directory for {transid}");
+                    IpfsHelper.CleanupBuildDirectory(transid, "root");
+                }
             }
 
             // Create build directory marker (not the target directory yet)
