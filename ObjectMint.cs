@@ -967,6 +967,8 @@ namespace SUP
                                 return;
                             }
                             
+                            // Parse IPFS output - Expected format: "added <hash> <filename>"
+                            // Example: "added QmYwAPJzv5CZsnA625s3Xf2nemtYgPpHdWEz79ojWnPbdG test.jpg"
                             string[] outputParts = output.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
                             if (outputParts.Length < 2)
                             {
@@ -1313,6 +1315,8 @@ namespace SUP
                                 return;
                             }
                             
+                            // Parse IPFS output - Expected format: "added <hash> <filename>"
+                            // Example: "added QmYwAPJzv5CZsnA625s3Xf2nemtYgPpHdWEz79ojWnPbdG test.jpg"
                             string[] outputParts = output.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
                             if (outputParts.Length < 2)
                             {
