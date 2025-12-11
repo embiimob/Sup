@@ -51,6 +51,12 @@ namespace SUP
         private int numMessagesDisplayed;
         private int numPrivateMessagesDisplayed;
         private int numFriendFeedsDisplayed;
+        
+        // Track displayed messages to prevent duplicates
+        private HashSet<string> displayedPrivateMessageIds = new HashSet<string>();
+        private HashSet<string> displayedPublicMessageIds = new HashSet<string>();
+        private HashSet<string> displayedCommunityMessageIds = new HashSet<string>();
+        
         FlowLayoutPanel supPrivateFlow = new FlowLayoutPanel();
         AudioPlayer audioPlayer = new AudioPlayer();
 
@@ -3541,6 +3547,18 @@ namespace SUP
 
                     control.Dispose();
                 }
+                
+                // Reset tracking sets based on which panel is being cleared
+                if (flowLayoutPanel == supPrivateFlow)
+                {
+                    displayedPrivateMessageIds.Clear();
+                }
+                else if (flowLayoutPanel == supFlow)
+                {
+                    // Could be public or community, clear both to be safe
+                    displayedPublicMessageIds.Clear();
+                    displayedCommunityMessageIds.Clear();
+                }
 
             });
 
@@ -3564,6 +3582,11 @@ namespace SUP
             try { messages = OBJState.GetPublicMessagesByAddress(profileURN.Links[0].LinkData.ToString(), mainnetLogin, mainnetPassword, mainnetURL, mainnetVersionByte, numMessagesDisplayed, 10); }
             catch { }
 
+            // Normalize and deduplicate messages
+            var normalizedMessages = MessageNormalizer.Normalize(messages);
+            
+            // Filter out messages we've already displayed
+            var newMessages = normalizedMessages.Where(m => !displayedPublicMessageIds.Contains(m.TransactionId)).ToList();
 
             supFlow.SuspendLayout();
 
@@ -3584,9 +3607,21 @@ namespace SUP
 
             Dictionary<string, string[]> profileAddress = new Dictionary<string, string[]> { };
 
-            foreach (MessageObject messagePacket in messages)
+            foreach (var normalizedMessage in newMessages)
             {
+                // Mark this message as displayed to prevent duplicates
+                displayedPublicMessageIds.Add(normalizedMessage.TransactionId);
                 numMessagesDisplayed++;
+                
+                // Convert back to MessageObject for rendering
+                MessageObject messagePacket = new MessageObject
+                {
+                    TransactionId = normalizedMessage.TransactionId,
+                    Message = normalizedMessage.Message,
+                    FromAddress = normalizedMessage.FromAddress,
+                    ToAddress = normalizedMessage.ToAddress,
+                    BlockDate = normalizedMessage.BlockDate
+                };
 
                 string message = "";
                 string tid = messagePacket.TransactionId.ToString();
@@ -4313,6 +4348,12 @@ namespace SUP
             }
             List<MessageObject> messages = OBJState.GetPrivateMessagesByAddress(profileURN.Links[0].LinkData.ToString(), mainnetLogin, mainnetPassword, mainnetURL, mainnetVersionByte, numPrivateMessagesDisplayed, 10);
 
+            // Normalize and deduplicate messages
+            var normalizedMessages = MessageNormalizer.Normalize(messages);
+            
+            // Filter out messages we've already displayed
+            var newMessages = normalizedMessages.Where(m => !displayedPrivateMessageIds.Contains(m.TransactionId)).ToList();
+
             if (messages.Count == 10)
             {
                 Task memoryPrune = Task.Run(() =>
@@ -4336,9 +4377,21 @@ namespace SUP
             {
 
 
-                foreach (MessageObject messagePacket in messages)
+                foreach (var normalizedMessage in newMessages)
                 {
+                    // Mark this message as displayed to prevent duplicates
+                    displayedPrivateMessageIds.Add(normalizedMessage.TransactionId);
                     numPrivateMessagesDisplayed++;
+                    
+                    // Convert back to MessageObject for rendering
+                    MessageObject messagePacket = new MessageObject
+                    {
+                        TransactionId = normalizedMessage.TransactionId,
+                        Message = normalizedMessage.Message,
+                        FromAddress = normalizedMessage.FromAddress,
+                        ToAddress = normalizedMessage.ToAddress,
+                        BlockDate = normalizedMessage.BlockDate
+                    };
 
                     byte[] result = Array.Empty<byte>();
                     string message = "";
@@ -5065,79 +5118,31 @@ namespace SUP
             if (File.Exists(FriendsListPath))
             {
 
-                List<string> friendFeed = new List<string>();
                 var myFriendsJson = File.ReadAllText(FriendsListPath);
                 var myFriends = JsonConvert.DeserializeObject<Dictionary<string, string>>(myFriendsJson);
 
-                // Iterate over each key in the dictionary, get public messages by address, and combine them into a list
-                var allMessages = new List<object>();
+                // Collect all messages from followed profiles
+                var allMessagesFromFriends = new List<MessageObject>();
                 foreach (var key in myFriends.Keys)
                 {
                     try
                     {
                         List<MessageObject> result = OBJState.GetPublicMessagesByAddress(key, mainnetLogin, mainnetPassword, mainnetURL, mainnetVersionByte, 0, 50);
-
-                        // Add the "to" element to each message object
-
-                        foreach (var message in result)
-                        {
-                            try
-                            {
-
-                                string _from = message.FromAddress;
-                                string _to = message.ToAddress;
-                                string _message = message.Message;
-                                string _blockdate = message.BlockDate.ToString("yyyyMMddHHmmss");
-                                string _transactionid = message.TransactionId;
-
-                                if (!friendFeed.Contains(_from + _to + _message))
-                                {
-                                    friendFeed.Add(_from + _to + _message);
-
-                                    allMessages.Add(new
-                                    {
-                                        Message = _message,
-                                        FromAddress = _from,
-                                        ToAddress = _to,
-                                        BlockDate = _blockdate,
-                                        TransactionId = _transactionid
-                                    });
-                                }
-                            }
-                            catch { }
-                        }
+                        allMessagesFromFriends.AddRange(result);
                     }
                     catch { }
-
                 }
 
-                // Sort the combined list by block date
-                allMessages.Sort((m1, m2) =>
-                {
-                    var date1Prop = m1?.GetType().GetProperty("BlockDate");
-                    var date2Prop = m2?.GetType().GetProperty("BlockDate");
-                    if (date1Prop == null && date2Prop == null)
-                    {
-                        return 0;
-                    }
-                    else if (date1Prop == null)
-                    {
-                        return -1;
-                    }
-                    else if (date2Prop == null)
-                    {
-                        return 1;
-                    }
-                    else
-                    {
-                        var date1 = DateTime.ParseExact(date1Prop.GetValue(m1).ToString(), "yyyyMMddHHmmss", CultureInfo.InvariantCulture);
-                        var date2 = DateTime.ParseExact(date2Prop.GetValue(m2).ToString(), "yyyyMMddHHmmss", CultureInfo.InvariantCulture);
-                        return date2.CompareTo(date1);
-                    }
-                });
+                // Use MessageNormalizer to deduplicate and sort all messages
+                var normalizedMessages = MessageNormalizer.Normalize(allMessagesFromFriends);
+                
+                // Filter out messages we've already displayed
+                var newMessages = normalizedMessages.Where(m => !displayedCommunityMessageIds.Contains(m.TransactionId)).ToList();
+                
+                // Paginate the results
+                var messagesToDisplay = MessageNormalizer.Paginate(newMessages, numFriendFeedsDisplayed, 10);
 
-
-                if (allMessages.Skip(numFriendFeedsDisplayed).Take(10).Count() == 10)
+                if (messagesToDisplay.Count == 10)
                 {
                     Task memoryPrune = Task.Run(() =>
                     {
@@ -5147,20 +5152,17 @@ namespace SUP
                     });
                 }
 
-                foreach (var message in allMessages.Skip(numFriendFeedsDisplayed).Take(10))
+                foreach (var normalizedMessage in messagesToDisplay)
                 {
-                    var fromProp = message.GetType().GetProperty("FromAddress");
-                    var toProp = message.GetType().GetProperty("ToAddress");
-                    var messageProp = message.GetType().GetProperty("Message");
-                    var blockDateProp = message.GetType().GetProperty("BlockDate");
-                    var transactionIdProp = message.GetType().GetProperty("TransactionId");
-
-                    string _from = fromProp?.GetValue(message).ToString();
-                    string _to = toProp?.GetValue(message).ToString();
-                    string _transactionId = transactionIdProp?.GetValue(message).ToString();
-                    string fromURN = fromProp?.GetValue(message).ToString();
-                    string _message = messageProp?.GetValue(message).ToString();
-                    string _blockdate = blockDateProp?.GetValue(message).ToString();
+                    // Mark this message as displayed to prevent duplicates
+                    displayedCommunityMessageIds.Add(normalizedMessage.TransactionId);
+                    
+                    string _from = normalizedMessage.FromAddress;
+                    string _to = normalizedMessage.ToAddress;
+                    string _transactionId = normalizedMessage.TransactionId;
+                    string fromURN = normalizedMessage.FromAddress;
+                    string _message = normalizedMessage.Message;
+                    string _blockdate = normalizedMessage.BlockDate.ToString("yyyyMMddHHmmss");
                     string imglocation = "";
                     string unfilteredmessage = _message;
                     string[] blocks = Regex.Matches(_message, "<<[^<>]+>>")
