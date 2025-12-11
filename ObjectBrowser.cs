@@ -44,6 +44,9 @@ namespace SUP
         List<PictureBox> pictureBoxes = new List<PictureBox>();
 
         private readonly System.Windows.Forms.Timer _doubleClickTimer = new System.Windows.Forms.Timer();
+        
+        // Cancellation support for async operations
+        private System.Threading.CancellationTokenSource _searchCancellationTokenSource;
         public ObjectBrowser(string objectaddress, bool iscontrol = false, bool testnet = true)
         {
             InitializeComponent();
@@ -3760,8 +3763,29 @@ namespace SUP
             }
         }
 
+        /// <summary>
+        /// Cancels any previous search and returns a new cancellation token for a new search operation.
+        /// </summary>
+        private System.Threading.CancellationToken StartNewSearch()
+        {
+            // Cancel any previous search
+            _searchCancellationTokenSource?.Cancel();
+            _searchCancellationTokenSource?.Dispose();
+            
+            // Create new cancellation token source with 30 second timeout
+            _searchCancellationTokenSource = new System.Threading.CancellationTokenSource(TimeSpan.FromSeconds(30));
+            return _searchCancellationTokenSource.Token;
+        }
 
-
+        protected override void OnFormClosing(FormClosingEventArgs e)
+        {
+            // Cancel any in-progress search operations
+            _searchCancellationTokenSource?.Cancel();
+            _searchCancellationTokenSource?.Dispose();
+            _searchCancellationTokenSource = null;
+            
+            base.OnFormClosing(e);
+        }
     }
 
 
