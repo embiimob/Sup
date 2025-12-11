@@ -4597,8 +4597,8 @@ namespace SUP
                                     // Load SEC attachment asynchronously without blocking message loading
                                     // This prevents the UI from freezing when IPFS is slow or fails
                                     // Use Task.Run to ensure the async operation completes instead of being abandoned
-                                    Task.Factory.StartNew(async () => await LoadSecAttachmentAsync(content, messagePacket.TransactionId, profileURN.Links[0].LinkData.ToString()), 
-                                        TaskCreationOptions.LongRunning).Unwrap();
+                                    // Task.Run properly handles async lambdas in both Debug and Release modes
+                                    _ = Task.Run(async () => await LoadSecAttachmentAsync(content, messagePacket.TransactionId, profileURN.Links[0].LinkData.ToString()).ConfigureAwait(false));
                                 }
                                 else
                                 {
