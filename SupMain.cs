@@ -4597,7 +4597,8 @@ namespace SUP
                                     // Load SEC attachment asynchronously without blocking message loading
                                     // This prevents the UI from freezing when IPFS is slow or fails
                                     // Use Task.Run to ensure the async operation completes instead of being abandoned
-                                    Task.Run(async () => await LoadSecAttachmentAsync(content, messagePacket.TransactionId, profileURN.Links[0].LinkData.ToString()));
+                                    Task.Factory.StartNew(async () => await LoadSecAttachmentAsync(content, messagePacket.TransactionId, profileURN.Links[0].LinkData.ToString()), 
+                                        TaskCreationOptions.LongRunning).Unwrap();
                                 }
                                 else
                                 {
@@ -4778,7 +4779,7 @@ namespace SUP
             if (System.IO.File.Exists(secPath))
             {
                 Debug.WriteLine($"[LoadSecAttachmentAsync] SEC file already exists for {transid}, displaying");
-                await DisplaySecAttachmentAsync(transid, recipientAddress);
+                await DisplaySecAttachmentAsync(transid, recipientAddress).ConfigureAwait(false);
                 return;
             }
 
@@ -4793,7 +4794,7 @@ namespace SUP
                 if (processed)
                 {
                     IpfsHelper.CleanupBuildDirectory(transid, "root");
-                    await DisplaySecAttachmentAsync(transid, recipientAddress);
+                    await DisplaySecAttachmentAsync(transid, recipientAddress).ConfigureAwait(false);
                     return;
                 }
                 else
@@ -4827,7 +4828,7 @@ namespace SUP
             // Since we're already async, we can wait longer without blocking the UI
             // IPFS will download to root/{hash} - either as a file or directory
             Debug.WriteLine($"[LoadSecAttachmentAsync] About to call IPFS GetAsync for {transid}");
-            bool downloadSuccess = await IpfsHelper.GetAsync(transid, "root\\" + transid, 60000);
+            bool downloadSuccess = await IpfsHelper.GetAsync(transid, "root\\" + transid, 60000).ConfigureAwait(false);
             Debug.WriteLine($"[LoadSecAttachmentAsync] IPFS GetAsync returned {downloadSuccess} for {transid}");
 
             if (downloadSuccess)
@@ -4848,7 +4849,7 @@ namespace SUP
                     IpfsHelper.CleanupBuildDirectory(transid, "root");
 
                     // Display the decrypted attachment
-                    await DisplaySecAttachmentAsync(transid, recipientAddress);
+                    await DisplaySecAttachmentAsync(transid, recipientAddress).ConfigureAwait(false);
                     
                     Debug.WriteLine($"[LoadSecAttachmentAsync] Completed displaying {transid}");
                 }

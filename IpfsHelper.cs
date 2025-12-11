@@ -78,11 +78,11 @@ namespace SUP
                     };
 
                     // Wait for process to exit or timeout
-                    var result = await tcs.Task;
+                    var result = await tcs.Task.ConfigureAwait(false);
                     
                     // Always read output/error for diagnostics
-                    var output = await outputTask;
-                    var error = await errorTask;
+                    var output = await outputTask.ConfigureAwait(false);
+                    var error = await errorTask.ConfigureAwait(false);
                     
                     if (!result)
                     {
