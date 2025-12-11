@@ -47,6 +47,8 @@ namespace SUP
         private bool mzcActive;
         private bool ltcActive;
         private bool dogActive;
+        private static readonly object _downloadLock = new object();
+        private static readonly HashSet<string> _activeDownloads = new HashSet<string>();
         ObjectBrowserControl OBcontrol = new ObjectBrowserControl();
         private int numMessagesDisplayed;
         private int numPrivateMessagesDisplayed;
@@ -4770,6 +4772,16 @@ namespace SUP
             string transid = "empty";
             try { transid = content.Substring(5, 46); } catch { }
 
+            lock (_downloadLock)
+            {
+                if (_activeDownloads.Contains(transid))
+                {
+                    Debug.WriteLine($"[LoadSecAttachmentAsync] Download already in progress for {transid}, skipping concurrent request");
+                    return;
+                }
+                _activeDownloads.Add(transid);
+            }
+
             try
             {
                 Debug.WriteLine($"[LoadSecAttachmentAsync] Starting SEC attachment load for {transid}");
@@ -4910,6 +4922,13 @@ namespace SUP
                     ShowAttachmentError(transid, $"Error: {ex.Message}");
                 }
                 catch { }
+            }
+            finally
+            {
+                lock (_downloadLock)
+                {
+                    _activeDownloads.Remove(transid);
+                }
             }
         }
 

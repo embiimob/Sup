@@ -29,89 +29,63 @@ namespace SUP
                 return false;
             }
 
-            try
+            return await Task.Run(() =>
             {
-                using (var cts = new CancellationTokenSource(timeoutMs))
+                try
                 {
-                    var process = new Process
+                    using (var process = new Process())
                     {
-                        StartInfo = new ProcessStartInfo
-                        {
-                            FileName = IpfsExecutable,
-                            Arguments = $"get {hash} -o \"{outputPath}\"",
-                            UseShellExecute = false,
-                            CreateNoWindow = true,
-                            RedirectStandardOutput = true,
-                            RedirectStandardError = true
-                        }
-                    };
+                        process.StartInfo.FileName = IpfsExecutable;
+                        process.StartInfo.Arguments = $"get {hash} -o \"{outputPath}\"";
+                        process.StartInfo.UseShellExecute = false;
+                        process.StartInfo.CreateNoWindow = true;
+                        process.StartInfo.RedirectStandardOutput = true;
+                        process.StartInfo.RedirectStandardError = true;
 
-                    // Wait for exit with cancellation token
-                    var tcs = new TaskCompletionSource<bool>();
-                    cts.Token.Register(() =>
-                    {
-                        try
+                        process.Start();
+
+                        // We must read streams to avoid deadlock if they fill up buffer
+                        // ReadToEndAsync runs on thread pool, so it won't block the WaitForExit
+                        var outputTask = process.StandardOutput.ReadToEndAsync();
+                        var errorTask = process.StandardError.ReadToEndAsync();
+
+                        if (process.WaitForExit(timeoutMs))
                         {
-                            if (!process.HasExited)
+                            // Process completed within timeout
+                            // Wait for streams to ensure we have the output
+                            Task.WaitAll(outputTask, errorTask);
+
+                            var output = outputTask.Result;
+                            var error = errorTask.Result;
+
+                            if (process.ExitCode == 0)
                             {
-                                process.Kill();
-                                LogWarning("GetAsync", $"IPFS get timeout for {hash}, killed process after {timeoutMs}ms");
+                                LogInfo("GetAsync", $"Successfully retrieved {hash}");
+                                if (!string.IsNullOrEmpty(output)) LogInfo("GetAsync", $"IPFS output: {output}");
+                                return true;
+                            }
+                            else
+                            {
+                                if (!string.IsNullOrEmpty(error)) LogError("GetAsync", $"IPFS get failed for {hash}: {error}");
+                                if (!string.IsNullOrEmpty(output)) LogInfo("GetAsync", $"IPFS get output for {hash}: {output}");
+                                return false;
                             }
                         }
-                        catch (Exception ex)
+                        else
                         {
-                            LogError("GetAsync", $"Error killing process: {ex.Message}");
-                        }
-                        tcs.TrySetResult(false);
-                    });
-
-                    process.EnableRaisingEvents = true;
-                    process.Exited += (sender, args) =>
-                    {
-                        tcs.TrySetResult(process.ExitCode == 0);
-                    };
-
-                    process.Start();
-
-                    // Start reading output to prevent buffer overflow
-                    var outputTask = process.StandardOutput.ReadToEndAsync();
-                    var errorTask = process.StandardError.ReadToEndAsync();
-
-                    // Wait for process to exit or timeout
-                    var result = await tcs.Task.ConfigureAwait(false);
-                    
-                    // Always read output/error for diagnostics
-                    var output = await outputTask.ConfigureAwait(false);
-                    var error = await errorTask.ConfigureAwait(false);
-                    
-                    if (!result)
-                    {
-                        if (!string.IsNullOrEmpty(error))
-                        {
-                            LogError("GetAsync", $"IPFS get failed for {hash}: {error}");
-                        }
-                        if (!string.IsNullOrEmpty(output))
-                        {
-                            LogInfo("GetAsync", $"IPFS get output for {hash}: {output}");
+                            // Timeout
+                            try { process.Kill(); } catch (Exception ex) { LogError("GetAsync", $"Error killing process on timeout: {ex.Message}"); }
+                            LogError("GetAsync", $"IPFS get timeout for {hash}");
+                            return false;
                         }
                     }
-                    else
-                    {
-                        LogInfo("GetAsync", $"Successfully retrieved {hash}");
-                        if (!string.IsNullOrEmpty(output))
-                        {
-                            LogInfo("GetAsync", $"IPFS output: {output}");
-                        }
-                    }
-
-                    return result;
                 }
-            }
-            catch (Exception ex)
-            {
-                LogError("GetAsync", $"Exception during IPFS get for {hash}: {ex.Message}");
-                return false;
-            }
+                catch (Exception ex)
+                {
+                    LogError("GetAsync", $"Exception during IPFS get for {hash}: {ex.Message}");
+                    return false;
+                }
+            });
         }
 
         /// <summary>
@@ -120,73 +94,41 @@ namespace SUP
         /// <param name="hash">IPFS hash to pin</param>
         public static async Task PinAsync(string hash)
         {
-            if (string.IsNullOrEmpty(hash))
-            {
-                return;
-            }
+            if (string.IsNullOrEmpty(hash)) return;
 
             // Check if pinning is enabled
-            if (!File.Exists("IPFS_PINNING_ENABLED"))
-            {
-                return;
-            }
+            if (!File.Exists("IPFS_PINNING_ENABLED")) return;
 
-            try
+            await Task.Run(() =>
             {
-                using (var cts = new CancellationTokenSource(30000))
+                try
                 {
-                    var process = new Process
+                    using (var process = new Process())
                     {
-                        StartInfo = new ProcessStartInfo
+                        process.StartInfo.FileName = IpfsExecutable;
+                        process.StartInfo.Arguments = $"pin add {hash}";
+                        process.StartInfo.UseShellExecute = false;
+                        process.StartInfo.CreateNoWindow = true;
+                        process.StartInfo.RedirectStandardError = true;
+
+                        process.Start();
+
+                        if (process.WaitForExit(30000))
                         {
-                            FileName = IpfsExecutable,
-                            Arguments = $"pin add {hash}",
-                            UseShellExecute = false,
-                            CreateNoWindow = true,
-                            RedirectStandardError = true
+                             LogInfo("PinAsync", $"Pin completed for {hash}");
                         }
-                    };
-
-                    // Create a task completion source for async waiting
-                    var tcs = new TaskCompletionSource<bool>();
-                    
-                    // Register cancellation
-                    cts.Token.Register(() =>
-                    {
-                        try
+                        else
                         {
-                            if (!process.HasExited)
-                            {
-                                process.Kill();
-                                LogWarning("PinAsync", $"IPFS pin timeout for {hash}");
-                            }
+                            try { process.Kill(); } catch {}
+                            LogWarning("PinAsync", $"IPFS pin timeout for {hash}");
                         }
-                        catch (Exception ex)
-                        {
-                            LogError("PinAsync", $"Error killing pin process: {ex.Message}");
-                        }
-                        tcs.TrySetResult(false);
-                    });
-
-                    // Handle process exit
-                    process.EnableRaisingEvents = true;
-                    process.Exited += (sender, args) =>
-                    {
-                        tcs.TrySetResult(process.ExitCode == 0);
-                    };
-
-                    process.Start();
-
-                    // Wait for completion or timeout
-                    await tcs.Task;
-                    
-                    LogInfo("PinAsync", $"Pin completed for {hash}");
+                    }
                 }
-            }
-            catch (Exception ex)
-            {
-                LogError("PinAsync", $"Exception during IPFS pin for {hash}: {ex.Message}");
-            }
+                catch (Exception ex)
+                {
+                    LogError("PinAsync", $"Exception during IPFS pin for {hash}: {ex.Message}");
+                }
+            });
         }
 
         /// <summary>
