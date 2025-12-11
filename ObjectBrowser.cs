@@ -72,6 +72,12 @@ namespace SUP
                 _testnet = testnet;
             }
             flowLayoutPanel1.MouseWheel += history_MouseWheel;
+            
+            // Initialize profileURN Links collection to prevent null reference exceptions
+            if (profileURN.Links.Count == 0)
+            {
+                profileURN.Links.Add(0, profileURN.Text.Length);
+            }
         }
 
         private async void ObjectBrowserLoad(object sender, EventArgs e)
@@ -291,11 +297,15 @@ namespace SUP
                         {
                             try
                             {
+                                profileURN.Text = txtSearchAddress.Text;
+                                profileURN.LinkColor = System.Drawing.SystemColors.Highlight;
+                                if (profileURN.Links.Count == 0)
+                                {
+                                    profileURN.Links.Add(0, profileURN.Text.Length);
+                                }
                                 if (profileURN.Links.Count > 0 && profileURN.Links[0] != null)
                                 {
                                     profileURN.Links[0].LinkData = profileCheck;
-                                    profileURN.LinkColor = System.Drawing.SystemColors.Highlight;
-                                    profileURN.Text = txtSearchAddress.Text;
                                 }
                             }
                             catch { }
@@ -338,11 +348,15 @@ namespace SUP
                         {
                             try
                             {
+                                profileURN.Text = txtSearchAddress.Text;
+                                profileURN.LinkColor = System.Drawing.SystemColors.Highlight;
+                                if (profileURN.Links.Count == 0)
+                                {
+                                    profileURN.Links.Add(0, profileURN.Text.Length);
+                                }
                                 if (profileURN.Links.Count > 0 && profileURN.Links[0] != null)
                                 {
                                     profileURN.Links[0].LinkData = profileCheck;
-                                    profileURN.LinkColor = System.Drawing.SystemColors.Highlight;
-                                    profileURN.Text = txtSearchAddress.Text;
                                 }
                             }
                             catch { }
@@ -368,12 +382,16 @@ namespace SUP
                         {
                             try
                             {
+                                profileURN.Text = "anon";
+                                profileURN.LinkColor = System.Drawing.SystemColors.Highlight;
+                                if (profileURN.Links.Count == 0)
+                                {
+                                    profileURN.Links.Add(0, profileURN.Text.Length);
+                                }
                                 if (profileURN.Links.Count > 0 && profileURN.Links[0] != null)
                                 {
                                     profileURN.Links[0].LinkData = "";
                                 }
-                                profileURN.LinkColor = System.Drawing.SystemColors.Highlight;
-                                profileURN.Text = "anon";
                             }
                             catch { }
                         }));
@@ -440,11 +458,15 @@ namespace SUP
                             {
                                 try
                                 {
+                                    profileURN.Text = txtSearchAddress.Text;
+                                    profileURN.LinkColor = System.Drawing.SystemColors.Highlight;
+                                    if (profileURN.Links.Count == 0)
+                                    {
+                                        profileURN.Links.Add(0, profileURN.Text.Length);
+                                    }
                                     if (profileURN.Links.Count > 0 && profileURN.Links[0] != null)
                                     {
                                         profileURN.Links[0].LinkData = profileCheck;
-                                        profileURN.LinkColor = System.Drawing.SystemColors.Highlight;
-                                        profileURN.Text = txtSearchAddress.Text;
                                     }
                                 }
                                 catch { }
