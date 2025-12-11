@@ -4812,6 +4812,33 @@ namespace SUP
                 IpfsHelper.CleanupBuildDirectory(transid, "root");
             }
 
+            // Ensure the target directory is clean before downloading
+            // IPFS get will fail if the target already exists
+            if (System.IO.Directory.Exists("root/" + transid))
+            {
+                try
+                {
+                    Debug.WriteLine($"[LoadSecAttachmentAsync] Cleaning up existing target directory for {transid}");
+                    Directory.Delete("root/" + transid, true);
+                }
+                catch (Exception ex)
+                {
+                    Debug.WriteLine($"[LoadSecAttachmentAsync] Warning: Failed to delete existing directory {transid}: {ex.Message}");
+                }
+            }
+            if (System.IO.File.Exists("root/" + transid))
+            {
+                try
+                {
+                    Debug.WriteLine($"[LoadSecAttachmentAsync] Cleaning up existing target file for {transid}");
+                    File.Delete("root/" + transid);
+                }
+                catch (Exception ex)
+                {
+                    Debug.WriteLine($"[LoadSecAttachmentAsync] Warning: Failed to delete existing file {transid}: {ex.Message}");
+                }
+            }
+
             // Create build directory marker (not the target directory yet)
             // IPFS will create root/{hash} as file or directory
             try

@@ -46,12 +46,6 @@ namespace SUP
                         }
                     };
 
-                    process.Start();
-                    
-                    // Start reading output to prevent buffer overflow
-                    var outputTask = process.StandardOutput.ReadToEndAsync();
-                    var errorTask = process.StandardError.ReadToEndAsync();
-                    
                     // Wait for exit with cancellation token
                     var tcs = new TaskCompletionSource<bool>();
                     cts.Token.Register(() =>
@@ -76,6 +70,12 @@ namespace SUP
                     {
                         tcs.TrySetResult(process.ExitCode == 0);
                     };
+
+                    process.Start();
+
+                    // Start reading output to prevent buffer overflow
+                    var outputTask = process.StandardOutput.ReadToEndAsync();
+                    var errorTask = process.StandardError.ReadToEndAsync();
 
                     // Wait for process to exit or timeout
                     var result = await tcs.Task.ConfigureAwait(false);
@@ -147,8 +147,6 @@ namespace SUP
                         }
                     };
 
-                    process.Start();
-                    
                     // Create a task completion source for async waiting
                     var tcs = new TaskCompletionSource<bool>();
                     
@@ -176,6 +174,8 @@ namespace SUP
                     {
                         tcs.TrySetResult(process.ExitCode == 0);
                     };
+
+                    process.Start();
 
                     // Wait for completion or timeout
                     await tcs.Task;
