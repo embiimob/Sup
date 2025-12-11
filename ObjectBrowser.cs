@@ -326,9 +326,14 @@ namespace SUP
                     {
                         this.Invoke((Action)(() =>
                         {
-                            profileURN.Links[0].LinkData = profileCheck;
                             profileURN.LinkColor = System.Drawing.SystemColors.Highlight;
                             profileURN.Text = txtSearchAddress.Text;
+                            // Ensure Links[0] exists before setting LinkData
+                            if (profileURN.Links.Count == 0)
+                            {
+                                profileURN.Links.Add(0, profileURN.Text.Length);
+                            }
+                            profileURN.Links[0].LinkData = profileCheck;
                         }));
                     }
 
@@ -349,9 +354,14 @@ namespace SUP
                         createdObjects = OBJState.GetFoundObjects(mainnetLogin, mainnetPassword, mainnetURL, mainnetVersionByte, calculate);
                         this.Invoke((Action)(() =>
                         {
-                            profileURN.Links[0].LinkData = "";
                             profileURN.LinkColor = System.Drawing.SystemColors.Highlight;
                             profileURN.Text = "anon";
+                            // Ensure Links[0] exists before setting LinkData
+                            if (profileURN.Links.Count == 0)
+                            {
+                                profileURN.Links.Add(0, profileURN.Text.Length);
+                            }
+                            profileURN.Links[0].LinkData = "";
                         }));
 
                     }
@@ -414,9 +424,14 @@ namespace SUP
                         {
                             if (searchprofile.URN != null || createdObjects.Count > 0 || txtSearchAddress.Text.StartsWith("#"))
                             {
-                                profileURN.Links[0].LinkData = profileCheck;
                                 profileURN.LinkColor = System.Drawing.SystemColors.Highlight;
                                 profileURN.Text = txtSearchAddress.Text;
+                                // Ensure Links[0] exists before setting LinkData
+                                if (profileURN.Links.Count == 0)
+                                {
+                                    profileURN.Links.Add(0, profileURN.Text.Length);
+                                }
+                                profileURN.Links[0].LinkData = profileCheck;
                             }
                         }));
 
@@ -1494,12 +1509,14 @@ namespace SUP
 
                         this.Invoke((Action)(() =>
                         {
-
-                            profileURN.Links[0].LinkData = searchprofile.Creators.First();
                             profileURN.LinkColor = System.Drawing.SystemColors.Highlight;
-
                             profileURN.Text = TruncateAddress(searchprofile.URN);
-
+                            // Ensure Links[0] exists before setting LinkData
+                            if (profileURN.Links.Count == 0)
+                            {
+                                profileURN.Links.Add(0, profileURN.Text.Length);
+                            }
+                            profileURN.Links[0].LinkData = searchprofile.Creators.First();
                             profileCheck = searchprofile.Creators.First();
                         }));
 
@@ -1508,9 +1525,14 @@ namespace SUP
                     {
                         this.Invoke((Action)(() =>
                         {
-                            profileURN.Links[0].LinkData = address;
                             profileURN.LinkColor = System.Drawing.SystemColors.GradientActiveCaption;
                             profileURN.Text = "anon";
+                            // Ensure Links[0] exists before setting LinkData
+                            if (profileURN.Links.Count == 0)
+                            {
+                                profileURN.Links.Add(0, profileURN.Text.Length);
+                            }
+                            profileURN.Links[0].LinkData = address;
                         }));
                     }
                 }
@@ -1518,9 +1540,14 @@ namespace SUP
                 {
                     this.Invoke((Action)(() =>
                     {
-                        profileURN.Links[0].LinkData = address;
                         profileURN.LinkColor = System.Drawing.SystemColors.GradientActiveCaption;
                         profileURN.Text = address;
+                        // Ensure Links[0] exists before setting LinkData
+                        if (profileURN.Links.Count == 0)
+                        {
+                            profileURN.Links.Add(0, profileURN.Text.Length);
+                        }
+                        profileURN.Links[0].LinkData = address;
                     }));
                 }
             }
@@ -2988,7 +3015,7 @@ namespace SUP
 
         private void MainUserNameClick(object sender, LinkLabelLinkClickedEventArgs e)
         {
-            if (profileURN.Links[0].LinkData != null)
+            if (profileURN.Links.Count > 0 && profileURN.Links[0].LinkData != null)
             {
                 txtSearchAddress.Text = profileURN.Links[0].LinkData.ToString();
             }
@@ -3703,8 +3730,8 @@ namespace SUP
         //should keep object browser active profile synched with social
         private void profileURN_TextChanged(object sender, EventArgs e)
         {
-
-            if (profileURN.Links[0].LinkData != null)
+            // Check if Links collection has items before accessing Links[0]
+            if (profileURN.Links.Count > 0 && profileURN.Links[0].LinkData != null)
             {
 
 
