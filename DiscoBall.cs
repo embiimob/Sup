@@ -237,10 +237,17 @@ namespace SUP
                                             Process process2 = new Process();
                                             process2.StartInfo.FileName = @"ipfs\ipfs.exe";
                                             process2.StartInfo.Arguments = "get " + txtAttach.Text.Substring(5, 46) + @" -o ipfs\" + txtAttach.Text.Substring(5, 46);
+                                            process2.StartInfo.RedirectStandardOutput = true;
+                                            process2.StartInfo.UseShellExecute = false;
                                             process2.Start();
+                                            process2.StandardOutput.ReadToEnd();
                                             process2.WaitForExit();
 
-                                            if (System.IO.File.Exists("ipfs/" + txtAttach.Text.Substring(5, 46)))
+                                            // Check if either a file or directory was downloaded
+                                            bool isFile = System.IO.File.Exists("ipfs/" + txtAttach.Text.Substring(5, 46));
+                                            bool isDirectory = System.IO.Directory.Exists("ipfs/" + txtAttach.Text.Substring(5, 46));
+                                            
+                                            if (isFile)
                                             {
                                                 try { System.IO.File.Move("ipfs/" + txtAttach.Text.Substring(5, 46), "ipfs/" + txtAttach.Text.Substring(5, 46) + "_tmp"); }
                                                 catch
@@ -259,6 +266,16 @@ namespace SUP
                                                 else { fileName = fileName.Replace(@"/", "").Replace(@"\", ""); }
                                                 Directory.CreateDirectory(@"ipfs/" + txtAttach.Text.Substring(5, 46));
                                                 try { System.IO.File.Move("ipfs/" + txtAttach.Text.Substring(5, 46) + "_tmp", imgurn); } catch { }
+                                            }
+                                            else if (isDirectory)
+                                            {
+                                                // If it's a directory, the file structure is already in place
+                                                string fileName = txtAttach.Text.Replace(@"//", "").Replace(@"\\", "").Substring(51);
+                                                if (fileName == "")
+                                                {
+                                                    fileName = "artifact";
+                                                }
+                                                else { fileName = fileName.Replace(@"/", "").Replace(@"\", ""); }
                                             }
 
 
