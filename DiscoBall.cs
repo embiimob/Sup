@@ -237,10 +237,17 @@ namespace SUP
                                             Process process2 = new Process();
                                             process2.StartInfo.FileName = @"ipfs\ipfs.exe";
                                             process2.StartInfo.Arguments = "get " + txtAttach.Text.Substring(5, 46) + @" -o ipfs\" + txtAttach.Text.Substring(5, 46);
+                                            process2.StartInfo.RedirectStandardOutput = true;
+                                            process2.StartInfo.UseShellExecute = false;
                                             process2.Start();
+                                            process2.StandardOutput.ReadToEnd();
                                             process2.WaitForExit();
 
-                                            if (System.IO.File.Exists("ipfs/" + txtAttach.Text.Substring(5, 46)))
+                                            // Check if either a file or directory was downloaded
+                                            bool isFile = System.IO.File.Exists("ipfs/" + txtAttach.Text.Substring(5, 46));
+                                            bool isDirectory = System.IO.Directory.Exists("ipfs/" + txtAttach.Text.Substring(5, 46));
+                                            
+                                            if (isFile)
                                             {
                                                 try { System.IO.File.Move("ipfs/" + txtAttach.Text.Substring(5, 46), "ipfs/" + txtAttach.Text.Substring(5, 46) + "_tmp"); }
                                                 catch
@@ -259,6 +266,16 @@ namespace SUP
                                                 else { fileName = fileName.Replace(@"/", "").Replace(@"\", ""); }
                                                 Directory.CreateDirectory(@"ipfs/" + txtAttach.Text.Substring(5, 46));
                                                 try { System.IO.File.Move("ipfs/" + txtAttach.Text.Substring(5, 46) + "_tmp", imgurn); } catch { }
+                                            }
+                                            else if (isDirectory)
+                                            {
+                                                // If it's a directory, the file structure is already in place
+                                                string fileName = txtAttach.Text.Replace(@"//", "").Replace(@"\\", "").Substring(51);
+                                                if (fileName == "")
+                                                {
+                                                    fileName = "artifact";
+                                                }
+                                                else { fileName = fileName.Replace(@"/", "").Replace(@"\", ""); }
                                             }
 
 
@@ -848,37 +865,148 @@ namespace SUP
             // Add file to IPFS
             Task<string> addTask = Task.Run(() =>
             {
-                Process process = new Process();
-                process.StartInfo.FileName = @"ipfs\ipfs.exe";
-                process.StartInfo.Arguments = "add \"" + proccessingFile + "\"";
-                process.StartInfo.UseShellExecute = false;
-                process.StartInfo.CreateNoWindow = false;
-                process.StartInfo.RedirectStandardOutput = true;
-                process.Start();
-                string output = process.StandardOutput.ReadToEnd();
-                process.WaitForExit();
-                string hash = output.Split(' ')[1];
-
-                this.Invoke((MethodInvoker)delegate
+                try
                 {
-                    if (btnEncryptionStatus.Text == "PRIVATE 🤐")
+                    Process process = new Process();
+                    process.StartInfo.FileName = @"ipfs\ipfs.exe";
+                    process.StartInfo.Arguments = "add \"" + proccessingFile + "\"";
+                    process.StartInfo.UseShellExecute = false;
+                    process.StartInfo.CreateNoWindow = false;
+                    process.StartInfo.RedirectStandardOutput = true;
+                    process.Start();
+                    string output = process.StandardOutput.ReadToEnd();
+                    process.WaitForExit();
+                    
+                    // Parse IPFS output - Expected format: "added <hash> <filename>"
+                    // Example: "added QmYwAPJzv5CZsnA625s3Xf2nemtYgPpHdWEz79ojWnPbdG recording.wav"
+                    if (string.IsNullOrWhiteSpace(output))
                     {
-                        this.btnPlay.Tag = "IPFS:" + hash + @"\SEC";
+                        this.Invoke((MethodInvoker)delegate
+                        {
+                            MessageBox.Show("IPFS upload failed. No output received from IPFS.", "IPFS Upload Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        });
+                        return null;
                     }
-                    else
+                    
+                    string[] outputParts = output.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+                    if (outputParts.Length < 2)
                     {
-                        // Set the PictureBox properties
-                        this.btnPlay.Tag = "IPFS:" + hash + @"\" + wavFileName;
+                        this.Invoke((MethodInvoker)delegate
+                        {
+                            MessageBox.Show("IPFS upload failed. Invalid output format: " + output, "IPFS Upload Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        });
+                        return null;
                     }
+                    
+                    string hash = outputParts[1];
 
-                    flowAttachments.Controls.Add(this.btnPlay);
-                });
+                    this.Invoke((MethodInvoker)delegate
+                    {
+                        if (btnEncryptionStatus.Text == "PRIVATE 🤐")
+                        {
+                            this.btnPlay.Tag = "IPFS:" + hash + @"\SEC";
+                        }
+                        else
+                        {
+                            // Set the PictureBox properties
+                            this.btnPlay.Tag = "IPFS:" + hash + @"\" + wavFileName;
+                        }
 
-                return "IPFS:" + hash;
+                        flowAttachments.Controls.Add(this.btnPlay);
+                    });
+
+                    return "IPFS:" + hash;
+                }
+                catch (Exception ex)
+                {
+                    this.Invoke((MethodInvoker)delegate
+                    {
+                        MessageBox.Show("Error uploading audio to IPFS: " + ex.Message, "IPFS Upload Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    });
+                    return null;
+                }
             });
             ipfsHash = await addTask;
 
             try { Directory.Delete(@"root\" + processingid, true); } catch { }
+
+            // Download file from IPFS to local cache and pin it
+            if (!string.IsNullOrEmpty(ipfsHash) && ipfsHash.StartsWith("IPFS:"))
+            {
+                string hash = ipfsHash.Substring(5, 46);
+                string localPath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + @"\ipfs\" + hash;
+                
+                // Check if we need to download from IPFS
+                if (!System.IO.Directory.Exists(localPath + "-build") && !System.IO.Directory.Exists(localPath))
+                {
+                    Task ipfsGetTask = Task.Run(() =>
+                    {
+                        try
+                        {
+                            Directory.CreateDirectory(localPath + "-build");
+                            Process process2 = new Process();
+                            process2.StartInfo.FileName = @"ipfs\ipfs.exe";
+                            process2.StartInfo.Arguments = "get " + hash + @" -o ipfs\" + hash;
+                            process2.StartInfo.RedirectStandardOutput = true;
+                            process2.StartInfo.UseShellExecute = false;
+                            process2.Start();
+                            process2.StandardOutput.ReadToEnd();
+                            process2.WaitForExit();
+
+                            // Check if either a file or directory was downloaded
+                            bool isFile = System.IO.File.Exists("ipfs/" + hash);
+                            bool isDirectory = System.IO.Directory.Exists("ipfs/" + hash);
+                            
+                            if (isFile)
+                            {
+                                try { System.IO.File.Move("ipfs/" + hash, "ipfs/" + hash + "_tmp"); }
+                                catch
+                                {
+                                    System.IO.File.Delete("ipfs/" + hash + "_tmp");
+                                    System.IO.File.Move("ipfs/" + hash, "ipfs/" + hash + "_tmp");
+                                }
+
+                                string fileName = ipfsHash.Replace(@"//", "").Replace(@"\\", "").Substring(51);
+                                if (fileName == "") { fileName = btnEncryptionStatus.Text == "PRIVATE 🤐" ? "SEC" : wavFileName; }
+                                else { fileName = fileName.Replace(@"/", "").Replace(@"\", ""); }
+                                
+                                Directory.CreateDirectory(@"ipfs/" + hash);
+                                try { System.IO.File.Move("ipfs/" + hash + "_tmp", localPath + @"\" + fileName); } catch { }
+                            }
+                            else if (isDirectory)
+                            {
+                                // Directory structure already in place
+                            }
+
+                            // Pin the file if pinning is enabled
+                            try
+                            {
+                                if (File.Exists("IPFS_PINNING_ENABLED"))
+                                {
+                                    Process process3 = new Process
+                                    {
+                                        StartInfo = new ProcessStartInfo
+                                        {
+                                            FileName = @"ipfs\ipfs.exe",
+                                            Arguments = "pin add " + hash,
+                                            UseShellExecute = false,
+                                            CreateNoWindow = true
+                                        }
+                                    };
+                                    process3.Start();
+                                }
+                            }
+                            catch { }
+
+                            try { Directory.Delete(@"ipfs/" + hash); } catch { }
+                            try { Directory.Delete(localPath + "-build"); } catch { }
+                        }
+                        catch { }
+                    });
+                    
+                    await ipfsGetTask;
+                }
+            }
 
             if (File.Exists(@"WALKIE_TALKIE_ENABLED"))
             {
@@ -1331,68 +1459,158 @@ namespace SUP
 
             Task<string> addTask = Task.Run(() =>
             {
-                Process process = new Process();
-                process.StartInfo.FileName = @"ipfs\ipfs.exe";
-                process.StartInfo.Arguments = "add \"" + proccessingFile + "\"";
-                process.StartInfo.UseShellExecute = false;
-                process.StartInfo.CreateNoWindow = false;
-                process.StartInfo.RedirectStandardOutput = true;
-                process.Start();
-                string output = process.StandardOutput.ReadToEnd();
-                process.WaitForExit();
-                string hash = output.Split(' ')[1];
-
-                PictureBox pictureBox = new PictureBox();
-                if (btnEncryptionStatus.Text == "PRIVATE 🤐")
-                { pictureBox.Tag = "IPFS:" + hash + @"\SEC"; }
-                else
+                try
                 {
-                    pictureBox.Tag = "IPFS:" + hash + @"\" + fileName;
+                    Process process = new Process();
+                    process.StartInfo.FileName = @"ipfs\ipfs.exe";
+                    process.StartInfo.Arguments = "add \"" + proccessingFile + "\"";
+                    process.StartInfo.UseShellExecute = false;
+                    process.StartInfo.CreateNoWindow = false;
+                    process.StartInfo.RedirectStandardOutput = true;
+                    process.Start();
+                    string output = process.StandardOutput.ReadToEnd();
+                    process.WaitForExit();
+                    
+                    // Parse IPFS output - Expected format: "added <hash> <filename>"
+                    // Example: "added QmYwAPJzv5CZsnA625s3Xf2nemtYgPpHdWEz79ojWnPbdG file.jpg"
+                    if (string.IsNullOrWhiteSpace(output))
+                    {
+                        this.Invoke((MethodInvoker)delegate
+                        {
+                            MessageBox.Show("IPFS upload failed. No output received from IPFS.", "IPFS Upload Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        });
+                        return null;
+                    }
+                    
+                    string[] outputParts = output.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+                    if (outputParts.Length < 2)
+                    {
+                        this.Invoke((MethodInvoker)delegate
+                        {
+                            MessageBox.Show("IPFS upload failed. Invalid output format: " + output, "IPFS Upload Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        });
+                        return null;
+                    }
+                    
+                    string hash = outputParts[1];
+
+                    PictureBox pictureBox = new PictureBox();
+                    if (btnEncryptionStatus.Text == "PRIVATE 🤐")
+                    { pictureBox.Tag = "IPFS:" + hash + @"\SEC"; }
+                    else
+                    {
+                        pictureBox.Tag = "IPFS:" + hash + @"\" + fileName;
+                    }
+                    pictureBox.SizeMode = PictureBoxSizeMode.StretchImage;
+                    pictureBox.Width = 50;
+                    pictureBox.Height = 50;
+
+                    string extension = Path.GetExtension(filePath).ToLower();
+                    if (imageExtensions.Contains(extension))
+                    {
+                        pictureBox.ImageLocation = filePath;
+                        pictureBox.MouseClick += PictureBox_MouseClick;
+                    }
+                    else
+                    {
+                        pictureBox.ImageLocation = @"includes\HugPuddle.jpg";
+                        pictureBox.MouseClick += PictureBox_MouseClick;
+                    }
+
+                    this.Invoke((MethodInvoker)delegate
+                    {
+                        flowAttachments.Controls.Add(pictureBox);
+                    });
+
+                    return hash;
                 }
-                pictureBox.SizeMode = PictureBoxSizeMode.StretchImage;
-                pictureBox.Width = 50;
-                pictureBox.Height = 50;
-
-                string extension = Path.GetExtension(filePath).ToLower();
-                if (imageExtensions.Contains(extension))
+                catch (Exception ex)
                 {
-                    pictureBox.ImageLocation = filePath;
-                    pictureBox.MouseClick += PictureBox_MouseClick;
+                    this.Invoke((MethodInvoker)delegate
+                    {
+                        MessageBox.Show("Error uploading file to IPFS: " + ex.Message, "IPFS Upload Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    });
+                    return null;
                 }
-                else
-                {
-                    pictureBox.ImageLocation = @"includes\HugPuddle.jpg";
-                    pictureBox.MouseClick += PictureBox_MouseClick;
-                }
-
-                this.Invoke((MethodInvoker)delegate
-                {
-                    flowAttachments.Controls.Add(pictureBox);
-                });
-
-                return hash;
             });
 
             ipfsHash = await addTask;
 
-            try
+            // Download file from IPFS to local cache and pin it
+            if (!string.IsNullOrEmpty(ipfsHash))
             {
-                if (File.Exists("IPFS_PINNING_ENABLED"))
+                string hash = ipfsHash;
+                string fullIpfsTag = btnEncryptionStatus.Text == "PRIVATE 🤐" ? "IPFS:" + hash + @"\SEC" : "IPFS:" + hash + @"\" + fileName;
+                string localPath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + @"\ipfs\" + hash;
+                
+                // Check if we need to download from IPFS
+                if (!System.IO.Directory.Exists(localPath + "-build") && !System.IO.Directory.Exists(localPath))
                 {
-                    Process process3 = new Process
+                    Task ipfsGetTask = Task.Run(() =>
                     {
-                        StartInfo = new ProcessStartInfo
+                        try
                         {
-                            FileName = @"ipfs\ipfs.exe",
-                            Arguments = "pin add " + ipfsHash,
-                            UseShellExecute = false,
-                            CreateNoWindow = true
+                            Directory.CreateDirectory(localPath + "-build");
+                            Process process2 = new Process();
+                            process2.StartInfo.FileName = @"ipfs\ipfs.exe";
+                            process2.StartInfo.Arguments = "get " + hash + @" -o ipfs\" + hash;
+                            process2.StartInfo.RedirectStandardOutput = true;
+                            process2.StartInfo.UseShellExecute = false;
+                            process2.Start();
+                            process2.StandardOutput.ReadToEnd();
+                            process2.WaitForExit();
+
+                            // Check if either a file or directory was downloaded
+                            bool isFile = System.IO.File.Exists("ipfs/" + hash);
+                            bool isDirectory = System.IO.Directory.Exists("ipfs/" + hash);
+                            
+                            if (isFile)
+                            {
+                                try { System.IO.File.Move("ipfs/" + hash, "ipfs/" + hash + "_tmp"); }
+                                catch
+                                {
+                                    System.IO.File.Delete("ipfs/" + hash + "_tmp");
+                                    System.IO.File.Move("ipfs/" + hash, "ipfs/" + hash + "_tmp");
+                                }
+
+                                string targetFileName = btnEncryptionStatus.Text == "PRIVATE 🤐" ? "SEC" : fileName;
+                                Directory.CreateDirectory(@"ipfs/" + hash);
+                                try { System.IO.File.Move("ipfs/" + hash + "_tmp", localPath + @"\" + targetFileName); } catch { }
+                            }
+                            else if (isDirectory)
+                            {
+                                // Directory structure already in place
+                            }
+
+                            // Pin the file if pinning is enabled
+                            try
+                            {
+                                if (File.Exists("IPFS_PINNING_ENABLED"))
+                                {
+                                    Process process3 = new Process
+                                    {
+                                        StartInfo = new ProcessStartInfo
+                                        {
+                                            FileName = @"ipfs\ipfs.exe",
+                                            Arguments = "pin add " + hash,
+                                            UseShellExecute = false,
+                                            CreateNoWindow = true
+                                        }
+                                    };
+                                    process3.Start();
+                                }
+                            }
+                            catch { }
+
+                            try { Directory.Delete(@"ipfs/" + hash); } catch { }
+                            try { Directory.Delete(localPath + "-build"); } catch { }
                         }
-                    };
-                    process3.Start();
+                        catch { }
+                    });
+                    
+                    await ipfsGetTask;
                 }
             }
-            catch { }
 
             try { Directory.Delete(@"root\" + processingid, true); } catch { }
         }
