@@ -169,16 +169,30 @@ Background (per attachment):
 - [ ] Verify UI never freezes
 - [ ] Check Debug output for proper logging
 
+## Additional Work Completed (December 2025)
+
+**All IPFS Blocking Operations Fixed**
+
+After the initial private messaging fixes, a comprehensive audit revealed 8 additional locations in SupMain.cs using blocking IPFS operations. All have been refactored to use `IpfsHelper.GetAsync()`:
+
+1. **Profile Image Loading** (lines 656-743) - ✅ Fixed
+2. **Object Browser Images** (lines 1303-1444) - ✅ Fixed  
+3. **Private Message Profile Images** (3 locations: 3614-3742, 3730-3860, 4144-4272) - ✅ Fixed
+4. **Message Image Attachments** (3 locations: 5155-5246, 5482-5573, 5807-5878) - ✅ Fixed
+
+**Key Improvements:**
+- Eliminated all 10 blocking `WaitForExit()` calls (reduced to only init.WaitForExit)
+- Replaced `Thread.Sleep(100)` polling with `await Task.Delay(100)`
+- Changed indefinite/550-second waits to 60-second async timeouts
+- Removed terrible 5s→550s fallback pattern
+
+See `IPFS_RELEASE_FIXES.md` for complete technical details.
+
 ## Remaining Work
 
 ### High Priority:
 
-1. **Profile Image Loading**
-   - Lines 4412-4520 in SupMain.cs still use blocking IPFS calls
-   - Should be refactored to use `IpfsHelper.GetAsync()`
-   - Lower priority since profile images are less critical than message attachments
-
-2. **UI Polish**
+1. **UI Polish**
    - Consider visual loading indicator while attachment downloads
    - Better visual distinction between sent/received messages
    - Improve message bubble styling
@@ -213,7 +227,7 @@ Background (per attachment):
 2. **Data Source Unchanged**: Still uses `OBJState.GetPrivateMessagesByAddress()` 
 3. **Windows Only**: This is a Windows Forms application targeting .NET Framework 4.7.2
 4. **IPFS Dependency**: Still requires IPFS daemon to be running for attachments
-5. **Profile Images**: Not yet refactored to async (lower priority fix)
+5. **All IPFS Operations**: ✅ Now refactored to async (completed December 2025)
 
 ## Performance Characteristics
 
