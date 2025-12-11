@@ -3690,67 +3690,17 @@ namespace SUP
                                                     catch { };
 
                                                     Directory.CreateDirectory("ipfs/" + transid + "-build");
-                                                    Process process2 = new Process();
-                                                    process2.StartInfo.FileName = @"ipfs\ipfs.exe";
-                                                    process2.StartInfo.Arguments = "get " + transid + @" -o ipfs\" + transid;
-                                                    process2.StartInfo.UseShellExecute = false;
-                                                    process2.StartInfo.CreateNoWindow = true;
-                                                    process2.Start();
-                                                    if (process2.WaitForExit(5000))
+                                                    Task.Run(() =>
                                                     {
-                                                        string fileName;
-                                                        if (System.IO.File.Exists("ipfs/" + transid))
-                                                        {
-                                                            System.IO.File.Move("ipfs/" + transid, "ipfs/" + transid + "_tmp");
-                                                            System.IO.Directory.CreateDirectory("ipfs/" + transid);
-                                                            fileName = profile.Image.Replace(@"//", "").Replace(@"\\", "").Substring(51);
-                                                            if (fileName == "") { fileName = "artifact"; } else { fileName = fileName.Replace(@"/", "").Replace(@"\", ""); }
-                                                            Directory.CreateDirectory("ipfs/" + transid);
-                                                            System.IO.File.Move("ipfs/" + transid + "_tmp", fromImage);
-                                                        }
-
-                                                        if (System.IO.File.Exists("ipfs/" + transid + "/" + transid))
-                                                        {
-                                                            fileName = profile.Image.Replace(@"//", "").Replace(@"\\", "").Substring(51);
-                                                            if (fileName == "") { fileName = "artifact"; } else { fileName = fileName.Replace(@"/", "").Replace(@"\", ""); }
-
-                                                            System.IO.File.Move("ipfs/" + transid + "/" + transid, fromImage);
-                                                        }
-
                                                         try
                                                         {
-                                                            if (File.Exists("IPFS_PINNING_ENABLED"))
-                                                            {
-                                                                Process process3 = new Process
-                                                                {
-                                                                    StartInfo = new ProcessStartInfo
-                                                                    {
-                                                                        FileName = @"ipfs\ipfs.exe",
-                                                                        Arguments = "pin add " + transid,
-                                                                        UseShellExecute = false,
-                                                                        CreateNoWindow = true
-                                                                    }
-                                                                };
-                                                                process3.Start();
-                                                            }
-                                                        }
-                                                        catch { }
-
-                                                        try { Directory.Delete("ipfs/" + transid + "-build", true); } catch { }
-                                                    }
-                                                    else
-                                                    {
-                                                        process2.Kill();
-
-                                                        Task.Run(() =>
-                                                        {
-                                                            process2 = new Process();
+                                                            Process process2 = new Process();
                                                             process2.StartInfo.FileName = @"ipfs\ipfs.exe";
                                                             process2.StartInfo.Arguments = "get " + transid + @" -o ipfs\" + transid;
                                                             process2.StartInfo.UseShellExecute = false;
                                                             process2.StartInfo.CreateNoWindow = true;
                                                             process2.Start();
-                                                            if (process2.WaitForExit(550000))
+                                                            if (process2.WaitForExit(5000))
                                                             {
                                                                 string fileName;
                                                                 if (System.IO.File.Exists("ipfs/" + transid))
@@ -3791,16 +3741,70 @@ namespace SUP
                                                                 catch { }
 
                                                                 try { Directory.Delete("ipfs/" + transid + "-build", true); } catch { }
-
-
                                                             }
                                                             else
                                                             {
                                                                 process2.Kill();
-                                                            }
-                                                        });
 
-                                                    }
+                                                                process2 = new Process();
+                                                                process2.StartInfo.FileName = @"ipfs\ipfs.exe";
+                                                                process2.StartInfo.Arguments = "get " + transid + @" -o ipfs\" + transid;
+                                                                process2.StartInfo.UseShellExecute = false;
+                                                                process2.StartInfo.CreateNoWindow = true;
+                                                                process2.Start();
+                                                                if (process2.WaitForExit(550000))
+                                                                {
+                                                                    string fileName;
+                                                                    if (System.IO.File.Exists("ipfs/" + transid))
+                                                                    {
+                                                                        System.IO.File.Move("ipfs/" + transid, "ipfs/" + transid + "_tmp");
+                                                                        System.IO.Directory.CreateDirectory("ipfs/" + transid);
+                                                                        fileName = profile.Image.Replace(@"//", "").Replace(@"\\", "").Substring(51);
+                                                                        if (fileName == "") { fileName = "artifact"; } else { fileName = fileName.Replace(@"/", "").Replace(@"\", ""); }
+                                                                        Directory.CreateDirectory("ipfs/" + transid);
+                                                                        System.IO.File.Move("ipfs/" + transid + "_tmp", fromImage);
+                                                                    }
+
+                                                                    if (System.IO.File.Exists("ipfs/" + transid + "/" + transid))
+                                                                    {
+                                                                        fileName = profile.Image.Replace(@"//", "").Replace(@"\\", "").Substring(51);
+                                                                        if (fileName == "") { fileName = "artifact"; } else { fileName = fileName.Replace(@"/", "").Replace(@"\", ""); }
+
+                                                                        System.IO.File.Move("ipfs/" + transid + "/" + transid, fromImage);
+                                                                    }
+
+                                                                    try
+                                                                    {
+                                                                        if (File.Exists("IPFS_PINNING_ENABLED"))
+                                                                        {
+                                                                            Process process3 = new Process
+                                                                            {
+                                                                                StartInfo = new ProcessStartInfo
+                                                                                {
+                                                                                    FileName = @"ipfs\ipfs.exe",
+                                                                                    Arguments = "pin add " + transid,
+                                                                                    UseShellExecute = false,
+                                                                                    CreateNoWindow = true
+                                                                                }
+                                                                            };
+                                                                            process3.Start();
+                                                                        }
+                                                                    }
+                                                                    catch { }
+
+                                                                    try { Directory.Delete("ipfs/" + transid + "-build", true); } catch { }
+
+
+                                                                }
+                                                                else
+                                                                {
+                                                                    process2.Kill();
+                                                                }
+
+                                                            }
+                                                        }
+                                                        catch { }
+                                                    });
 
 
                                                 }
@@ -3901,67 +3905,17 @@ namespace SUP
                                                     catch { };
 
                                                     Directory.CreateDirectory("ipfs/" + transid + "-build");
-                                                    Process process2 = new Process();
-                                                    process2.StartInfo.FileName = @"ipfs\ipfs.exe";
-                                                    process2.StartInfo.Arguments = "get " + transid + @" -o ipfs\" + transid;
-                                                    process2.StartInfo.UseShellExecute = false;
-                                                    process2.StartInfo.CreateNoWindow = true;
-                                                    process2.Start();
-                                                    if (process2.WaitForExit(5000))
+                                                    Task.Run(() =>
                                                     {
-                                                        string fileName;
-                                                        if (System.IO.File.Exists("ipfs/" + transid))
-                                                        {
-                                                            System.IO.File.Move("ipfs/" + transid, "ipfs/" + transid + "_tmp");
-                                                            System.IO.Directory.CreateDirectory("ipfs/" + transid);
-                                                            fileName = profile.Image.Replace(@"//", "").Replace(@"\\", "").Substring(51);
-                                                            if (fileName == "") { fileName = "artifact"; } else { fileName = fileName.Replace(@"/", "").Replace(@"\", ""); }
-                                                            Directory.CreateDirectory("ipfs/" + transid);
-                                                            System.IO.File.Move("ipfs/" + transid + "_tmp", toImage);
-                                                        }
-
-                                                        if (System.IO.File.Exists("ipfs/" + transid + "/" + transid))
-                                                        {
-                                                            fileName = profile.Image.Replace(@"//", "").Replace(@"\\", "").Substring(51);
-                                                            if (fileName == "") { fileName = "artifact"; } else { fileName = fileName.Replace(@"/", "").Replace(@"\", ""); }
-
-                                                            System.IO.File.Move("ipfs/" + transid + "/" + transid, toImage);
-                                                        }
-
                                                         try
                                                         {
-                                                            if (File.Exists("IPFS_PINNING_ENABLED"))
-                                                            {
-                                                                Process process3 = new Process
-                                                                {
-                                                                    StartInfo = new ProcessStartInfo
-                                                                    {
-                                                                        FileName = @"ipfs\ipfs.exe",
-                                                                        Arguments = "pin add " + transid,
-                                                                        UseShellExecute = false,
-                                                                        CreateNoWindow = true
-                                                                    }
-                                                                };
-                                                                process3.Start();
-                                                            }
-                                                        }
-                                                        catch { }
-
-                                                        try { Directory.Delete("ipfs/" + transid + "-build", true); } catch { }
-                                                    }
-                                                    else
-                                                    {
-                                                        process2.Kill();
-
-                                                        Task.Run(() =>
-                                                        {
-                                                            process2 = new Process();
+                                                            Process process2 = new Process();
                                                             process2.StartInfo.FileName = @"ipfs\ipfs.exe";
                                                             process2.StartInfo.Arguments = "get " + transid + @" -o ipfs\" + transid;
                                                             process2.StartInfo.UseShellExecute = false;
                                                             process2.StartInfo.CreateNoWindow = true;
                                                             process2.Start();
-                                                            if (process2.WaitForExit(550000))
+                                                            if (process2.WaitForExit(5000))
                                                             {
                                                                 string fileName;
                                                                 if (System.IO.File.Exists("ipfs/" + transid))
@@ -4002,16 +3956,70 @@ namespace SUP
                                                                 catch { }
 
                                                                 try { Directory.Delete("ipfs/" + transid + "-build", true); } catch { }
-
-
                                                             }
                                                             else
                                                             {
                                                                 process2.Kill();
-                                                            }
-                                                        });
 
-                                                    }
+                                                                process2 = new Process();
+                                                                process2.StartInfo.FileName = @"ipfs\ipfs.exe";
+                                                                process2.StartInfo.Arguments = "get " + transid + @" -o ipfs\" + transid;
+                                                                process2.StartInfo.UseShellExecute = false;
+                                                                process2.StartInfo.CreateNoWindow = true;
+                                                                process2.Start();
+                                                                if (process2.WaitForExit(550000))
+                                                                {
+                                                                    string fileName;
+                                                                    if (System.IO.File.Exists("ipfs/" + transid))
+                                                                    {
+                                                                        System.IO.File.Move("ipfs/" + transid, "ipfs/" + transid + "_tmp");
+                                                                        System.IO.Directory.CreateDirectory("ipfs/" + transid);
+                                                                        fileName = profile.Image.Replace(@"//", "").Replace(@"\\", "").Substring(51);
+                                                                        if (fileName == "") { fileName = "artifact"; } else { fileName = fileName.Replace(@"/", "").Replace(@"\", ""); }
+                                                                        Directory.CreateDirectory("ipfs/" + transid);
+                                                                        System.IO.File.Move("ipfs/" + transid + "_tmp", toImage);
+                                                                    }
+
+                                                                    if (System.IO.File.Exists("ipfs/" + transid + "/" + transid))
+                                                                    {
+                                                                        fileName = profile.Image.Replace(@"//", "").Replace(@"\\", "").Substring(51);
+                                                                        if (fileName == "") { fileName = "artifact"; } else { fileName = fileName.Replace(@"/", "").Replace(@"\", ""); }
+
+                                                                        System.IO.File.Move("ipfs/" + transid + "/" + transid, toImage);
+                                                                    }
+
+                                                                    try
+                                                                    {
+                                                                        if (File.Exists("IPFS_PINNING_ENABLED"))
+                                                                        {
+                                                                            Process process3 = new Process
+                                                                            {
+                                                                                StartInfo = new ProcessStartInfo
+                                                                                {
+                                                                                    FileName = @"ipfs\ipfs.exe",
+                                                                                    Arguments = "pin add " + transid,
+                                                                                    UseShellExecute = false,
+                                                                                    CreateNoWindow = true
+                                                                                }
+                                                                            };
+                                                                            process3.Start();
+                                                                        }
+                                                                    }
+                                                                    catch { }
+
+                                                                    try { Directory.Delete("ipfs/" + transid + "-build", true); } catch { }
+
+
+                                                                }
+                                                                else
+                                                                {
+                                                                    process2.Kill();
+                                                                }
+
+                                                            }
+                                                        }
+                                                        catch { }
+                                                    });
 
 
                                                 }
@@ -4410,67 +4418,17 @@ namespace SUP
                                                 catch { };
 
                                                 Directory.CreateDirectory("ipfs/" + transid + "-build");
-                                                Process process2 = new Process();
-                                                process2.StartInfo.FileName = @"ipfs\ipfs.exe";
-                                                process2.StartInfo.Arguments = "get " + transid + @" -o ipfs\" + transid;
-                                                process2.StartInfo.UseShellExecute = false;
-                                                process2.StartInfo.CreateNoWindow = true;
-                                                process2.Start();
-                                                if (process2.WaitForExit(5000))
+                                                Task.Run(() =>
                                                 {
-                                                    string fileName;
-                                                    if (System.IO.File.Exists("ipfs/" + transid))
-                                                    {
-                                                        System.IO.File.Move("ipfs/" + transid, "ipfs/" + transid + "_tmp");
-                                                        System.IO.Directory.CreateDirectory("ipfs/" + transid);
-                                                        fileName = profile.Image.Replace(@"//", "").Replace(@"\\", "").Substring(51);
-                                                        if (fileName == "") { fileName = "artifact"; } else { fileName = fileName.Replace(@"/", "").Replace(@"\", ""); }
-                                                        Directory.CreateDirectory("ipfs/" + transid);
-                                                        System.IO.File.Move("ipfs/" + transid + "_tmp", imagelocation);
-                                                    }
-
-                                                    if (System.IO.File.Exists("ipfs/" + transid + "/" + transid))
-                                                    {
-                                                        fileName = profile.Image.Replace(@"//", "").Replace(@"\\", "").Substring(51);
-                                                        if (fileName == "") { fileName = "artifact"; } else { fileName = fileName.Replace(@"/", "").Replace(@"\", ""); }
-
-                                                        System.IO.File.Move("ipfs/" + transid + "/" + transid, imagelocation);
-                                                    }
-
                                                     try
                                                     {
-                                                        if (File.Exists("IPFS_PINNING_ENABLED"))
-                                                        {
-                                                            Process process3 = new Process
-                                                            {
-                                                                StartInfo = new ProcessStartInfo
-                                                                {
-                                                                    FileName = @"ipfs\ipfs.exe",
-                                                                    Arguments = "pin add " + transid,
-                                                                    UseShellExecute = false,
-                                                                    CreateNoWindow = true
-                                                                }
-                                                            };
-                                                            process3.Start();
-                                                        }
-                                                    }
-                                                    catch { }
-
-                                                    try { Directory.Delete("ipfs/" + transid + "-build", true); } catch { }
-                                                }
-                                                else
-                                                {
-                                                    process2.Kill();
-
-                                                    Task.Run(() =>
-                                                    {
-                                                        process2 = new Process();
+                                                        Process process2 = new Process();
                                                         process2.StartInfo.FileName = @"ipfs\ipfs.exe";
                                                         process2.StartInfo.Arguments = "get " + transid + @" -o ipfs\" + transid;
                                                         process2.StartInfo.UseShellExecute = false;
                                                         process2.StartInfo.CreateNoWindow = true;
                                                         process2.Start();
-                                                        if (process2.WaitForExit(550000))
+                                                        if (process2.WaitForExit(5000))
                                                         {
                                                             string fileName;
                                                             if (System.IO.File.Exists("ipfs/" + transid))
@@ -4511,16 +4469,70 @@ namespace SUP
                                                             catch { }
 
                                                             try { Directory.Delete("ipfs/" + transid + "-build", true); } catch { }
-
-
                                                         }
                                                         else
                                                         {
                                                             process2.Kill();
-                                                        }
-                                                    });
 
-                                                }
+                                                            process2 = new Process();
+                                                            process2.StartInfo.FileName = @"ipfs\ipfs.exe";
+                                                            process2.StartInfo.Arguments = "get " + transid + @" -o ipfs\" + transid;
+                                                            process2.StartInfo.UseShellExecute = false;
+                                                            process2.StartInfo.CreateNoWindow = true;
+                                                            process2.Start();
+                                                            if (process2.WaitForExit(550000))
+                                                            {
+                                                                string fileName;
+                                                                if (System.IO.File.Exists("ipfs/" + transid))
+                                                                {
+                                                                    System.IO.File.Move("ipfs/" + transid, "ipfs/" + transid + "_tmp");
+                                                                    System.IO.Directory.CreateDirectory("ipfs/" + transid);
+                                                                    fileName = profile.Image.Replace(@"//", "").Replace(@"\\", "").Substring(51);
+                                                                    if (fileName == "") { fileName = "artifact"; } else { fileName = fileName.Replace(@"/", "").Replace(@"\", ""); }
+                                                                    Directory.CreateDirectory("ipfs/" + transid);
+                                                                    System.IO.File.Move("ipfs/" + transid + "_tmp", imagelocation);
+                                                                }
+
+                                                                if (System.IO.File.Exists("ipfs/" + transid + "/" + transid))
+                                                                {
+                                                                    fileName = profile.Image.Replace(@"//", "").Replace(@"\\", "").Substring(51);
+                                                                    if (fileName == "") { fileName = "artifact"; } else { fileName = fileName.Replace(@"/", "").Replace(@"\", ""); }
+
+                                                                    System.IO.File.Move("ipfs/" + transid + "/" + transid, imagelocation);
+                                                                }
+
+                                                                try
+                                                                {
+                                                                    if (File.Exists("IPFS_PINNING_ENABLED"))
+                                                                    {
+                                                                        Process process3 = new Process
+                                                                        {
+                                                                            StartInfo = new ProcessStartInfo
+                                                                            {
+                                                                                FileName = @"ipfs\ipfs.exe",
+                                                                                Arguments = "pin add " + transid,
+                                                                                UseShellExecute = false,
+                                                                                CreateNoWindow = true
+                                                                            }
+                                                                        };
+                                                                        process3.Start();
+                                                                    }
+                                                                }
+                                                                catch { }
+
+                                                                try { Directory.Delete("ipfs/" + transid + "-build", true); } catch { }
+
+
+                                                            }
+                                                            else
+                                                            {
+                                                                process2.Kill();
+                                                            }
+
+                                                        }
+                                                    }
+                                                    catch { }
+                                                });
 
 
                                             }
