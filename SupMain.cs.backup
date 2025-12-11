@@ -5155,55 +5155,94 @@ namespace SUP
                                 case "IPFS":
                                     string transid = "empty";
                                     try { transid = imagepath.Substring(5, 46); } catch { }
-                                
+
                                     if (!System.IO.Directory.Exists("ipfs/" + transid + "-build"))
                                     {
-                                        Task.Run(async () =>
+                                        try
                                         {
-                                            try { Directory.CreateDirectory("ipfs/" + transid); } catch { };
-                                            Directory.CreateDirectory("ipfs/" + transid + "-build");
-                                            
-                                            // Use IpfsHelper for async, timeout-protected IPFS operations (60s timeout)
-                                            bool success = await IpfsHelper.GetAsync(transid, "ipfs/" + transid, 60000).ConfigureAwait(false);
-                                            
-                                            if (success)
+                                            Directory.CreateDirectory("ipfs/" + transid);
+                                        }
+                                        catch { };
+
+                                        Directory.CreateDirectory("ipfs/" + transid + "-build");
+                                        Process process2 = new Process();
+                                        process2.StartInfo.FileName = @"ipfs\ipfs.exe";
+                                        process2.StartInfo.Arguments = "get " + imagepath.Substring(5, 46) + @" -o ipfs\" + transid;
+                                        process2.StartInfo.UseShellExecute = false;
+                                        process2.StartInfo.CreateNoWindow = true;
+                                        process2.Start();
+                                        if (process2.WaitForExit(550000))
+                                        {
+                                            string fileName;
+                                            if (System.IO.File.Exists("ipfs/" + transid))
                                             {
-                                                // Determine target file name
-                                                string fileName = imagepath.Replace(@"//", "").Replace(@"\\", "").Substring(51);
-                                                if (fileName == "") { fileName = "artifact"; } 
-                                                else { fileName = fileName.Replace(@"/", "").Replace(@"\", ""); }
-                                                
-                                                // Process downloaded file
-                                                IpfsHelper.ProcessDownloadedFile(transid, "ipfs", fileName);
-                                                
-                                                // Pin if enabled (fire and forget)
-                                                _ = IpfsHelper.PinAsync(transid);
+                                                System.IO.File.Move("ipfs/" + transid, "ipfs/" + transid + "_tmp");
+                                                System.IO.Directory.CreateDirectory("ipfs/" + transid);
+                                                fileName = imagepath.Replace(@"//", "").Replace(@"\\", "").Substring(51);
+                                                if (fileName == "") { fileName = "artifact"; } else { fileName = fileName.Replace(@"/", "").Replace(@"\", ""); }
+                                                Directory.CreateDirectory("ipfs/" + transid);
+                                                System.IO.File.Move("ipfs/" + transid + "_tmp", imagelocation);
                                             }
-                                            else
+
+                                            if (System.IO.File.Exists("ipfs/" + transid + "/" + transid))
                                             {
-                                                // Show error image on timeout/failure
-                                                this.Invoke((Action)(() =>
+                                                fileName = imagepath.Replace(@"//", "").Replace(@"\\", "").Substring(51);
+                                                if (fileName == "") { fileName = "artifact"; } else { fileName = fileName.Replace(@"/", "").Replace(@"\", ""); }
+
+                                                System.IO.File.Move("ipfs/" + transid + "/" + transid, imagelocation);
+                                            }
+
+                                            try
+                                            {
+                                                if (File.Exists("IPFS_PINNING_ENABLED"))
                                                 {
-                                                    Random rnd = new Random();
-                                                    string[] gifFiles = Directory.GetFiles("includes", "*.gif");
-                                                    if (gifFiles.Length > 0)
+                                                    Process process3 = new Process
                                                     {
-                                                        int randomIndex = rnd.Next(gifFiles.Length);
-                                                        pictureBox.ImageLocation = gifFiles[randomIndex];
-                                                    }
-                                                    else
-                                                    {
-                                                        try { pictureBox.ImageLocation = @"includes\HugPuddle.jpg"; }
-                                                        catch { }
-                                                    }
-                                                }));
+                                                        StartInfo = new ProcessStartInfo
+                                                        {
+                                                            FileName = @"ipfs\ipfs.exe",
+                                                            Arguments = "pin add " + transid,
+                                                            UseShellExecute = false,
+                                                            CreateNoWindow = true
+                                                        }
+                                                    };
+                                                    process3.Start();
+                                                }
                                             }
-                                            
-                                            // Cleanup build directory
-                                            IpfsHelper.CleanupBuildDirectory(transid, "ipfs");
-                                        });
+                                            catch { }
+
+                                            try { Directory.Delete("ipfs/" + transid + "-build", true); } catch { }
+                                        }
+                                        else
+                                        {
+                                            process2.Kill();
+                                            try { Directory.Delete("ipfs/" + transid + "-build", true); } catch { }
+
+                                            this.Invoke((Action)(() =>
+                                            {
+
+                                                Random rnd = new Random();
+                                                string[] gifFiles = Directory.GetFiles("includes", "*.gif");
+                                                if (gifFiles.Length > 0)
+                                                {
+                                                    int randomIndex = rnd.Next(gifFiles.Length);
+                                                    pictureBox.ImageLocation = gifFiles[randomIndex];
+
+                                                }
+                                                else
+                                                {
+                                                    try
+                                                    {
+
+                                                        pictureBox.ImageLocation = @"includes\HugPuddle.jpg";
+                                                    }
+                                                    catch { }
+                                                }
+                                            }));
+                                        }
+
                                     }
-                                
+
                                     break;
                                 default:
                                     if (!imagepath.ToUpper().StartsWith("HTTP") && transactionid != "")
@@ -5443,55 +5482,94 @@ namespace SUP
                                 case "IPFS":
                                     string transid = "empty";
                                     try { transid = imagepath.Substring(5, 46); } catch { }
-                                
+
                                     if (!System.IO.Directory.Exists("ipfs/" + transid + "-build"))
                                     {
-                                        Task.Run(async () =>
+                                        try
                                         {
-                                            try { Directory.CreateDirectory("ipfs/" + transid); } catch { };
-                                            Directory.CreateDirectory("ipfs/" + transid + "-build");
-                                            
-                                            // Use IpfsHelper for async, timeout-protected IPFS operations (60s timeout)
-                                            bool success = await IpfsHelper.GetAsync(transid, "ipfs/" + transid, 60000).ConfigureAwait(false);
-                                            
-                                            if (success)
+                                            Directory.CreateDirectory("ipfs/" + transid);
+                                        }
+                                        catch { };
+
+                                        Directory.CreateDirectory("ipfs/" + transid + "-build");
+                                        Process process2 = new Process();
+                                        process2.StartInfo.FileName = @"ipfs\ipfs.exe";
+                                        process2.StartInfo.Arguments = "get " + imagepath.Substring(5, 46) + @" -o ipfs\" + transid;
+                                        process2.StartInfo.UseShellExecute = false;
+                                        process2.StartInfo.CreateNoWindow = true;
+                                        process2.Start();
+                                        if (process2.WaitForExit(550000))
+                                        {
+                                            string fileName;
+                                            if (System.IO.File.Exists("ipfs/" + transid))
                                             {
-                                                // Determine target file name
-                                                string fileName = imagepath.Replace(@"//", "").Replace(@"\\", "").Substring(51);
-                                                if (fileName == "") { fileName = "artifact"; } 
-                                                else { fileName = fileName.Replace(@"/", "").Replace(@"\", ""); }
-                                                
-                                                // Process downloaded file
-                                                IpfsHelper.ProcessDownloadedFile(transid, "ipfs", fileName);
-                                                
-                                                // Pin if enabled (fire and forget)
-                                                _ = IpfsHelper.PinAsync(transid);
+                                                System.IO.File.Move("ipfs/" + transid, "ipfs/" + transid + "_tmp");
+                                                System.IO.Directory.CreateDirectory("ipfs/" + transid);
+                                                fileName = imagepath.Replace(@"//", "").Replace(@"\\", "").Substring(51);
+                                                if (fileName == "") { fileName = "artifact"; } else { fileName = fileName.Replace(@"/", "").Replace(@"\", ""); }
+                                                Directory.CreateDirectory("ipfs/" + transid);
+                                                System.IO.File.Move("ipfs/" + transid + "_tmp", imagelocation);
                                             }
-                                            else
+
+                                            if (System.IO.File.Exists("ipfs/" + transid + "/" + transid))
                                             {
-                                                // Show error image on timeout/failure
-                                                this.Invoke((Action)(() =>
+                                                fileName = imagepath.Replace(@"//", "").Replace(@"\\", "").Substring(51);
+                                                if (fileName == "") { fileName = "artifact"; } else { fileName = fileName.Replace(@"/", "").Replace(@"\", ""); }
+
+                                                System.IO.File.Move("ipfs/" + transid + "/" + transid, imagelocation);
+                                            }
+
+                                            try
+                                            {
+                                                if (File.Exists("IPFS_PINNING_ENABLED"))
                                                 {
-                                                    Random rnd = new Random();
-                                                    string[] gifFiles = Directory.GetFiles("includes", "*.gif");
-                                                    if (gifFiles.Length > 0)
+                                                    Process process3 = new Process
                                                     {
-                                                        int randomIndex = rnd.Next(gifFiles.Length);
-                                                        pictureBox.ImageLocation = gifFiles[randomIndex];
-                                                    }
-                                                    else
-                                                    {
-                                                        try { pictureBox.ImageLocation = @"includes\HugPuddle.jpg"; }
-                                                        catch { }
-                                                    }
-                                                }));
+                                                        StartInfo = new ProcessStartInfo
+                                                        {
+                                                            FileName = @"ipfs\ipfs.exe",
+                                                            Arguments = "pin add " + transid,
+                                                            UseShellExecute = false,
+                                                            CreateNoWindow = true
+                                                        }
+                                                    };
+                                                    process3.Start();
+                                                }
                                             }
-                                            
-                                            // Cleanup build directory
-                                            IpfsHelper.CleanupBuildDirectory(transid, "ipfs");
-                                        });
+                                            catch { }
+
+                                            try { Directory.Delete("ipfs/" + transid + "-build", true); } catch { }
+                                        }
+                                        else
+                                        {
+                                            process2.Kill();
+                                            try { Directory.Delete("ipfs/" + transid + "-build", true); } catch { }
+
+                                            this.Invoke((Action)(() =>
+                                            {
+
+                                                Random rnd = new Random();
+                                                string[] gifFiles = Directory.GetFiles("includes", "*.gif");
+                                                if (gifFiles.Length > 0)
+                                                {
+                                                    int randomIndex = rnd.Next(gifFiles.Length);
+                                                    pictureBox.ImageLocation = gifFiles[randomIndex];
+
+                                                }
+                                                else
+                                                {
+                                                    try
+                                                    {
+
+                                                        pictureBox.ImageLocation = @"includes\HugPuddle.jpg";
+                                                    }
+                                                    catch { }
+                                                }
+                                            }));
+                                        }
+
                                     }
-                                
+
                                     break;
                                 default:
                                     if (!imagepath.ToUpper().StartsWith("HTTP") && transactionid != "")
@@ -5729,55 +5807,74 @@ namespace SUP
                                 case "IPFS":
                                     string transid = "empty";
                                     try { transid = videopath.Substring(5, 46); } catch { }
-                                
+
                                     if (!System.IO.Directory.Exists("ipfs/" + transid + "-build"))
                                     {
-                                        Task.Run(async () =>
+                                        try
                                         {
-                                            try { Directory.CreateDirectory("ipfs/" + transid); } catch { };
-                                            Directory.CreateDirectory("ipfs/" + transid + "-build");
-                                            
-                                            // Use IpfsHelper for async, timeout-protected IPFS operations (60s timeout)
-                                            bool success = await IpfsHelper.GetAsync(transid, "ipfs/" + transid, 60000).ConfigureAwait(false);
-                                            
-                                            if (success)
+                                            Directory.CreateDirectory("ipfs/" + transid);
+                                        }
+                                        catch { };
+
+                                        Directory.CreateDirectory("ipfs/" + transid + "-build");
+                                        Process process2 = new Process();
+                                        process2.StartInfo.FileName = @"ipfs\ipfs.exe";
+                                        process2.StartInfo.Arguments = "get " + videopath.Substring(5, 46) + @" -o ipfs\" + transid;
+                                        process2.StartInfo.UseShellExecute = false;
+                                        process2.StartInfo.CreateNoWindow = true;
+                                        process2.Start();
+                                        if (process2.WaitForExit(550000))
+                                        {
+                                            string fileName;
+                                            if (System.IO.File.Exists("ipfs/" + transid))
                                             {
-                                                // Determine target file name
-                                                string fileName = videopath.Replace(@"//", "").Replace(@"\\", "").Substring(51);
-                                                if (fileName == "") { fileName = "artifact"; } 
-                                                else { fileName = fileName.Replace(@"/", "").Replace(@"\", ""); }
-                                                
-                                                // Process downloaded file
-                                                IpfsHelper.ProcessDownloadedFile(transid, "ipfs", fileName);
-                                                
-                                                // Pin if enabled (fire and forget)
-                                                _ = IpfsHelper.PinAsync(transid);
+                                                System.IO.File.Move("ipfs/" + transid, "ipfs/" + transid + "_tmp");
+                                                System.IO.Directory.CreateDirectory("ipfs/" + transid);
+                                                fileName = videopath.Replace(@"//", "").Replace(@"\\", "").Substring(51);
+                                                if (fileName == "") { fileName = "artifact"; } else { fileName = fileName.Replace(@"/", "").Replace(@"\", ""); }
+                                                Directory.CreateDirectory("ipfs/" + transid);
+                                                System.IO.File.Move("ipfs/" + transid + "_tmp", videolocation);
                                             }
-                                            else
+
+                                            if (System.IO.File.Exists("ipfs/" + transid + "/" + transid))
                                             {
-                                                // Show error image on timeout/failure
-                                                this.Invoke((Action)(() =>
+                                                fileName = videopath.Replace(@"//", "").Replace(@"\\", "").Substring(51);
+                                                if (fileName == "") { fileName = "artifact"; } else { fileName = fileName.Replace(@"/", "").Replace(@"\", ""); }
+
+                                                System.IO.File.Move("ipfs/" + transid + "/" + transid, videolocation);
+                                            }
+
+                                            try
+                                            {
+                                                if (File.Exists("IPFS_PINNING_ENABLED"))
                                                 {
-                                                    Random rnd = new Random();
-                                                    string[] gifFiles = Directory.GetFiles("includes", "*.gif");
-                                                    if (gifFiles.Length > 0)
+                                                    Process process3 = new Process
                                                     {
-                                                        int randomIndex = rnd.Next(gifFiles.Length);
-                                                        pictureBox.ImageLocation = gifFiles[randomIndex];
-                                                    }
-                                                    else
-                                                    {
-                                                        try { pictureBox.ImageLocation = @"includes\HugPuddle.jpg"; }
-                                                        catch { }
-                                                    }
-                                                }));
+                                                        StartInfo = new ProcessStartInfo
+                                                        {
+                                                            FileName = @"ipfs\ipfs.exe",
+                                                            Arguments = "pin add " + transid,
+                                                            UseShellExecute = false,
+                                                            CreateNoWindow = true
+                                                        }
+                                                    };
+                                                    process3.Start();
+                                                }
                                             }
-                                            
-                                            // Cleanup build directory
-                                            IpfsHelper.CleanupBuildDirectory(transid, "ipfs");
-                                        });
+                                            catch { }
+                                            try { Directory.Delete("ipfs/" + transid + "-build", true); } catch { }
+                                        }
+                                        else
+                                        {
+                                            process2.Kill();
+
+                                            try { Directory.Delete("ipfs/" + transid + "-build", true); } catch { }
+                                        }
+
+
+
                                     }
-                                
+
                                     break;
 
                                 default:
