@@ -3579,7 +3579,7 @@ namespace SUP
             }
 
             // Check if profileURN has valid LinkData before proceeding
-            if (profileURN.Links[0].LinkData == null)
+            if (profileURN.Links.Count == 0 || profileURN.Links[0].LinkData == null)
             {
                 supFlow.ResumeLayout();
                 btnPublicMessage.Enabled = true;
@@ -4350,7 +4350,7 @@ namespace SUP
                     splitContainer1.Panel2.Controls.Add(supPrivateFlow);
                 });
             }
-            if (profileURN.Links[0].LinkData == null)
+            if (profileURN.Links.Count == 0 || profileURN.Links[0].LinkData == null)
             {
                 this.Invoke((MethodInvoker)delegate
                 {
