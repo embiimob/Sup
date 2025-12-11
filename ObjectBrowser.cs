@@ -286,9 +286,14 @@ namespace SUP
                     {
                         this.Invoke((Action)(() =>
                         {
-                            profileURN.Links[0].LinkData = profileCheck;
                             profileURN.LinkColor = System.Drawing.SystemColors.Highlight;
                             profileURN.Text = txtSearchAddress.Text;
+                            // Ensure Links[0] exists before setting LinkData
+                            if (profileURN.Links.Count == 0)
+                            {
+                                profileURN.Links.Add(0, profileURN.Text.Length);
+                            }
+                            profileURN.Links[0].LinkData = profileCheck;
                         }));
                     }
 
