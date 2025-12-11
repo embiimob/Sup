@@ -4580,23 +4580,53 @@ namespace SUP
 
 
                                     string transid = "empty";
-                                    try { transid = content.Substring(5, 46); } catch { }
+                                    try { transid = content.Substring(5, 46); } 
+                                    catch (Exception ex) 
+                                    { 
+                                        System.Diagnostics.Debug.WriteLine($"SEC IPFS: Error extracting CID from content '{content}': {ex.Message}");
+                                        continue; // Skip this SEC file if CID extraction fails
+                                    }
 
                                     if (!System.IO.Directory.Exists("ipfs/" + transid + "-build"))
                                     {
                                         try
                                         {
                                             Directory.CreateDirectory("ipfs/" + transid);
+                                            System.Diagnostics.Debug.WriteLine($"SEC IPFS: Created directory ipfs/{transid}");
                                         }
-                                        catch { };
+                                        catch (Exception ex) 
+                                        { 
+                                            System.Diagnostics.Debug.WriteLine($"SEC IPFS: Error creating directory ipfs/{transid}: {ex.Message}");
+                                        };
 
-                                        Directory.CreateDirectory("ipfs/" + transid + "-build");
+                                        try
+                                        {
+                                            Directory.CreateDirectory("ipfs/" + transid + "-build");
+                                            System.Diagnostics.Debug.WriteLine($"SEC IPFS: Created build directory ipfs/{transid}-build");
+                                        }
+                                        catch (Exception ex)
+                                        {
+                                            System.Diagnostics.Debug.WriteLine($"SEC IPFS: Error creating build directory ipfs/{transid}-build: {ex.Message}");
+                                            continue; // Skip this SEC file if we can't create build directory
+                                        }
+                                        
                                         Process process2 = new Process();
                                         process2.StartInfo.FileName = @"ipfs\ipfs.exe";
                                         process2.StartInfo.Arguments = "get " + content.Substring(5, 46) + @" -o ipfs\" + transid;
                                         process2.StartInfo.UseShellExecute = false;
                                         process2.StartInfo.CreateNoWindow = true;
-                                        process2.Start();
+                                        
+                                        try
+                                        {
+                                            process2.Start();
+                                            System.Diagnostics.Debug.WriteLine($"SEC IPFS: Started IPFS get for CID {transid}");
+                                        }
+                                        catch (Exception ex)
+                                        {
+                                            System.Diagnostics.Debug.WriteLine($"SEC IPFS: Error starting IPFS process for CID {transid}: {ex.Message}");
+                                            try { Directory.Delete("ipfs/" + transid + "-build", true); } catch { }
+                                            continue; // Skip this SEC file if IPFS process fails to start
+                                        }
                                         if (process2.WaitForExit(5000))
                                         {
                                             string fileName;
@@ -4709,10 +4739,51 @@ namespace SUP
                                     }
 
 
-                                    byte[] result2 = Root.GetRootBytesByFile(new string[] { @"ipfs/" + transid + @"/SEC" });
-                                    result = Root.DecryptRootBytes(mainnetLogin, mainnetPassword, mainnetURL, profileURN.Links[0].LinkData.ToString(), result2);
+                                    byte[] result2;
+                                    try
+                                    {
+                                        result2 = Root.GetRootBytesByFile(new string[] { @"ipfs/" + transid + @"/SEC" });
+                                        if (result2 == null || result2.Length == 0)
+                                        {
+                                            System.Diagnostics.Debug.WriteLine($"SEC IPFS: Downloaded file ipfs/{transid}/SEC is empty or null");
+                                            continue; // Skip this SEC file if download is empty
+                                        }
+                                        System.Diagnostics.Debug.WriteLine($"SEC IPFS: Successfully read {result2.Length} bytes from ipfs/{transid}/SEC");
+                                    }
+                                    catch (Exception ex)
+                                    {
+                                        System.Diagnostics.Debug.WriteLine($"SEC IPFS: Error reading SEC file ipfs/{transid}/SEC: {ex.Message}");
+                                        continue; // Skip this SEC file if we can't read it
+                                    }
 
-                                    Root decryptedroot = Root.GetRootByTransactionId(transid, mainnetLogin, mainnetPassword, mainnetURL, mainnetVersionByte, result, profileURN.Links[0].LinkData.ToString());
+                                    try
+                                    {
+                                        result = Root.DecryptRootBytes(mainnetLogin, mainnetPassword, mainnetURL, profileURN.Links[0].LinkData.ToString(), result2);
+                                        if (result == null || result.Length == 0)
+                                        {
+                                            System.Diagnostics.Debug.WriteLine($"SEC IPFS: Decryption returned empty data for CID {transid}");
+                                            continue; // Skip this SEC file if decryption fails
+                                        }
+                                        System.Diagnostics.Debug.WriteLine($"SEC IPFS: Successfully decrypted {result.Length} bytes for CID {transid}");
+                                    }
+                                    catch (Exception ex)
+                                    {
+                                        System.Diagnostics.Debug.WriteLine($"SEC IPFS: Error decrypting SEC file for CID {transid}: {ex.Message}");
+                                        continue; // Skip this SEC file if decryption fails
+                                    }
+
+                                    Root decryptedroot;
+                                    try
+                                    {
+                                        decryptedroot = Root.GetRootByTransactionId(transid, mainnetLogin, mainnetPassword, mainnetURL, mainnetVersionByte, result, profileURN.Links[0].LinkData.ToString());
+                                        System.Diagnostics.Debug.WriteLine($"SEC IPFS: Successfully parsed decrypted root for CID {transid}");
+                                    }
+                                    catch (Exception ex)
+                                    {
+                                        System.Diagnostics.Debug.WriteLine($"SEC IPFS: Error parsing decrypted root for CID {transid}: {ex.Message}");
+                                        continue; // Skip this SEC file if parsing fails
+                                    }
+
                                     List<string> imgExtensions = new List<string> { ".bmp", ".gif", ".ico", ".jpeg", ".jpg", ".png", ".tif", ".tiff", ".mp4", ".mov", ".avi", ".wav", ".mp3" };
 
                                     if (decryptedroot.File != null)
@@ -4738,7 +4809,7 @@ namespace SUP
                                                 titleLabel.Font = new Font("Segoe UI", 8, FontStyle.Bold);
                                                 titleLabel.LinkColor = System.Drawing.SystemColors.GradientActiveCaption;
                                                 titleLabel.Padding = new Padding(5);
-                                                titleLabel.MouseClick += (sender, e) => { Attachment_Clicked(@"root\" + transid + @"\" + file); };
+                                                titleLabel.MouseClick += (sender, e) => { Attachment_Clicked(@"ipfs\" + transid + @"\" + file); };
                                                 panel.Controls.Add(titleLabel);
 
                                                 this.Invoke((MethodInvoker)delegate
