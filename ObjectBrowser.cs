@@ -286,14 +286,7 @@ namespace SUP
                     {
                         this.Invoke((Action)(() =>
                         {
-                            profileURN.LinkColor = System.Drawing.SystemColors.Highlight;
-                            profileURN.Text = txtSearchAddress.Text;
-                            // Ensure Links[0] exists before setting LinkData
-                            if (profileURN.Links.Count == 0)
-                            {
-                                profileURN.Links.Add(0, profileURN.Text.Length);
-                            }
-                            profileURN.Links[0].LinkData = profileCheck;
+                            SafeUpdateProfileURN(txtSearchAddress.Text, profileCheck, System.Drawing.SystemColors.Highlight);
                         }));
                     }
 
@@ -331,14 +324,7 @@ namespace SUP
                     {
                         this.Invoke((Action)(() =>
                         {
-                            profileURN.LinkColor = System.Drawing.SystemColors.Highlight;
-                            profileURN.Text = txtSearchAddress.Text;
-                            // Ensure Links[0] exists before setting LinkData
-                            if (profileURN.Links.Count == 0)
-                            {
-                                profileURN.Links.Add(0, profileURN.Text.Length);
-                            }
-                            profileURN.Links[0].LinkData = profileCheck;
+                            SafeUpdateProfileURN(txtSearchAddress.Text, profileCheck, System.Drawing.SystemColors.Highlight);
                         }));
                     }
 
@@ -359,14 +345,7 @@ namespace SUP
                         createdObjects = OBJState.GetFoundObjects(mainnetLogin, mainnetPassword, mainnetURL, mainnetVersionByte, calculate);
                         this.Invoke((Action)(() =>
                         {
-                            profileURN.LinkColor = System.Drawing.SystemColors.Highlight;
-                            profileURN.Text = "anon";
-                            // Ensure Links[0] exists before setting LinkData
-                            if (profileURN.Links.Count == 0)
-                            {
-                                profileURN.Links.Add(0, profileURN.Text.Length);
-                            }
-                            profileURN.Links[0].LinkData = "";
+                            SafeUpdateProfileURN("anon", "", System.Drawing.SystemColors.Highlight);
                         }));
 
                     }
@@ -429,14 +408,7 @@ namespace SUP
                         {
                             if (searchprofile.URN != null || createdObjects.Count > 0 || txtSearchAddress.Text.StartsWith("#"))
                             {
-                                profileURN.LinkColor = System.Drawing.SystemColors.Highlight;
-                                profileURN.Text = txtSearchAddress.Text;
-                                // Ensure Links[0] exists before setting LinkData
-                                if (profileURN.Links.Count == 0)
-                                {
-                                    profileURN.Links.Add(0, profileURN.Text.Length);
-                                }
-                                profileURN.Links[0].LinkData = profileCheck;
+                                SafeUpdateProfileURN(txtSearchAddress.Text, profileCheck, System.Drawing.SystemColors.Highlight);
                             }
                         }));
 
@@ -3740,6 +3712,32 @@ namespace SUP
                 INQSearchForm.Show();
             }
             btnInquiry.Enabled = true;
+        }
+
+        // Helper method to safely update profileURN without triggering TextChanged event
+        private void SafeUpdateProfileURN(string text, string linkData, System.Drawing.Color linkColor)
+        {
+            // Temporarily unhook the TextChanged event to prevent race conditions
+            profileURN.TextChanged -= profileURN_TextChanged;
+            try
+            {
+                profileURN.LinkColor = linkColor;
+                profileURN.Text = text;
+                // Ensure Links[0] exists before setting LinkData
+                if (profileURN.Links.Count == 0 && !string.IsNullOrEmpty(text))
+                {
+                    profileURN.Links.Add(0, profileURN.Text.Length);
+                }
+                if (profileURN.Links.Count > 0)
+                {
+                    profileURN.Links[0].LinkData = linkData;
+                }
+            }
+            finally
+            {
+                // Always re-hook the event, even if an exception occurs
+                profileURN.TextChanged += profileURN_TextChanged;
+            }
         }
 
         //should keep object browser active profile synched with social
