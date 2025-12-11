@@ -4582,40 +4582,40 @@ namespace SUP
                                     string transid = "empty";
                                     try { transid = content.Substring(5, 46); } catch { }
 
-                                    if (!System.IO.Directory.Exists("root/" + transid + "-build"))
+                                    if (!System.IO.Directory.Exists("ipfs/" + transid + "-build"))
                                     {
                                         try
                                         {
-                                            Directory.CreateDirectory("root/" + transid);
+                                            Directory.CreateDirectory("ipfs/" + transid);
                                         }
                                         catch { };
 
-                                        Directory.CreateDirectory("root/" + transid + "-build");
+                                        Directory.CreateDirectory("ipfs/" + transid + "-build");
                                         Process process2 = new Process();
                                         process2.StartInfo.FileName = @"ipfs\ipfs.exe";
-                                        process2.StartInfo.Arguments = "get " + content.Substring(5, 46) + @" -o root\" + transid;
+                                        process2.StartInfo.Arguments = "get " + content.Substring(5, 46) + @" -o ipfs\" + transid;
                                         process2.StartInfo.UseShellExecute = false;
                                         process2.StartInfo.CreateNoWindow = true;
                                         process2.Start();
                                         if (process2.WaitForExit(5000))
                                         {
                                             string fileName;
-                                            if (System.IO.File.Exists("root/" + transid))
+                                            if (System.IO.File.Exists("ipfs/" + transid))
                                             {
-                                                System.IO.File.Move("root/" + transid, "root/" + transid + "_tmp");
-                                                System.IO.Directory.CreateDirectory("root/" + transid);
+                                                System.IO.File.Move("ipfs/" + transid, "ipfs/" + transid + "_tmp");
+                                                System.IO.Directory.CreateDirectory("ipfs/" + transid);
                                                 fileName = content.Replace(@"//", "").Replace(@"\\", "").Substring(51);
                                                 if (fileName == "") { fileName = "artifact"; } else { fileName = fileName.Replace(@"/", "").Replace(@"\", ""); }
-                                                Directory.CreateDirectory("root/" + transid);
-                                                System.IO.File.Move("root/" + transid + "_tmp", @"root/" + transid + @"/SEC");
+                                                Directory.CreateDirectory("ipfs/" + transid);
+                                                System.IO.File.Move("ipfs/" + transid + "_tmp", @"ipfs/" + transid + @"/SEC");
                                             }
 
-                                            if (System.IO.File.Exists("root/" + transid + "/" + transid))
+                                            if (System.IO.File.Exists("ipfs/" + transid + "/" + transid))
                                             {
                                                 fileName = content.Replace(@"//", "").Replace(@"\\", "").Substring(51);
                                                 if (fileName == "") { fileName = "artifact"; } else { fileName = fileName.Replace(@"/", "").Replace(@"\", ""); }
 
-                                                try { System.IO.File.Move("root/" + transid + "/" + transid, @"root/" + transid + @"/SEC"); }
+                                                try { System.IO.File.Move("ipfs/" + transid + "/" + transid, @"ipfs/" + transid + @"/SEC"); }
                                                 catch { }
                                             }
 
@@ -4638,7 +4638,7 @@ namespace SUP
                                             }
                                             catch { }
 
-                                            try { Directory.Delete("root/" + transid + "-build", true); } catch { }
+                                            try { Directory.Delete("ipfs/" + transid + "-build", true); } catch { }
                                         }
                                         else
                                         {
@@ -4648,29 +4648,29 @@ namespace SUP
                                             {
                                                 process2 = new Process();
                                                 process2.StartInfo.FileName = @"ipfs\ipfs.exe";
-                                                process2.StartInfo.Arguments = "get " + content.Substring(5, 46) + @" -o root\" + transid;
+                                                process2.StartInfo.Arguments = "get " + content.Substring(5, 46) + @" -o ipfs\" + transid;
                                                 process2.StartInfo.UseShellExecute = false;
                                                 process2.StartInfo.CreateNoWindow = true;
                                                 process2.Start();
                                                 if (process2.WaitForExit(550000))
                                                 {
                                                     string fileName;
-                                                    if (System.IO.File.Exists("root/" + transid))
+                                                    if (System.IO.File.Exists("ipfs/" + transid))
                                                     {
-                                                        System.IO.File.Move("root/" + transid, "root/" + transid + "_tmp");
-                                                        System.IO.Directory.CreateDirectory("root/" + transid);
+                                                        System.IO.File.Move("ipfs/" + transid, "ipfs/" + transid + "_tmp");
+                                                        System.IO.Directory.CreateDirectory("ipfs/" + transid);
                                                         fileName = content.Replace(@"//", "").Replace(@"\\", "").Substring(51);
                                                         if (fileName == "") { fileName = "artifact"; } else { fileName = fileName.Replace(@"/", "").Replace(@"\", ""); }
-                                                        Directory.CreateDirectory("root/" + transid);
-                                                        System.IO.File.Move("root/" + transid + "_tmp", @"root/" + transid + @"/SEC");
+                                                        Directory.CreateDirectory("ipfs/" + transid);
+                                                        System.IO.File.Move("ipfs/" + transid + "_tmp", @"ipfs/" + transid + @"/SEC");
                                                     }
 
-                                                    if (System.IO.File.Exists("root/" + transid + "/" + transid))
+                                                    if (System.IO.File.Exists("ipfs/" + transid + "/" + transid))
                                                     {
                                                         fileName = content.Replace(@"//", "").Replace(@"\\", "").Substring(51);
                                                         if (fileName == "") { fileName = "artifact"; } else { fileName = fileName.Replace(@"/", "").Replace(@"\", ""); }
 
-                                                        try { System.IO.File.Move("root/" + transid + "/" + transid, @"root/" + transid + @"/SEC"); }
+                                                        try { System.IO.File.Move("ipfs/" + transid + "/" + transid, @"ipfs/" + transid + @"/SEC"); }
                                                         catch { }
                                                     }
 
@@ -4693,7 +4693,7 @@ namespace SUP
                                                     }
                                                     catch { }
 
-                                                    try { Directory.Delete("root/" + transid + "-build", true); } catch { }
+                                                    try { Directory.Delete("ipfs/" + transid + "-build", true); } catch { }
 
 
                                                 }
@@ -4709,7 +4709,7 @@ namespace SUP
                                     }
 
 
-                                    byte[] result2 = Root.GetRootBytesByFile(new string[] { @"root/" + transid + @"/SEC" });
+                                    byte[] result2 = Root.GetRootBytesByFile(new string[] { @"ipfs/" + transid + @"/SEC" });
                                     result = Root.DecryptRootBytes(mainnetLogin, mainnetPassword, mainnetURL, profileURN.Links[0].LinkData.ToString(), result2);
 
                                     Root decryptedroot = Root.GetRootByTransactionId(transid, mainnetLogin, mainnetPassword, mainnetURL, mainnetVersionByte, result, profileURN.Links[0].LinkData.ToString());
