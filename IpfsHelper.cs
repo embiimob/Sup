@@ -48,6 +48,10 @@ namespace SUP
 
                     process.Start();
                     
+                    // Start reading output to prevent buffer overflow
+                    var outputTask = process.StandardOutput.ReadToEndAsync();
+                    var errorTask = process.StandardError.ReadToEndAsync();
+                    
                     // Wait for exit with cancellation token
                     var tcs = new TaskCompletionSource<bool>();
                     cts.Token.Register(() =>
@@ -57,7 +61,7 @@ namespace SUP
                             if (!process.HasExited)
                             {
                                 process.Kill();
-                                LogWarning("GetAsync", $"IPFS get timeout for {hash}, killed process");
+                                LogWarning("GetAsync", $"IPFS get timeout for {hash}, killed process after {timeoutMs}ms");
                             }
                         }
                         catch (Exception ex)
@@ -73,24 +77,31 @@ namespace SUP
                         tcs.TrySetResult(process.ExitCode == 0);
                     };
 
-                    // Start reading output to prevent buffer overflow
-                    var outputTask = process.StandardOutput.ReadToEndAsync();
-                    var errorTask = process.StandardError.ReadToEndAsync();
-
                     // Wait for process to exit or timeout
                     var result = await tcs.Task;
                     
+                    // Always read output/error for diagnostics
+                    var output = await outputTask;
+                    var error = await errorTask;
+                    
                     if (!result)
                     {
-                        var error = await errorTask;
                         if (!string.IsNullOrEmpty(error))
                         {
                             LogError("GetAsync", $"IPFS get failed for {hash}: {error}");
+                        }
+                        if (!string.IsNullOrEmpty(output))
+                        {
+                            LogInfo("GetAsync", $"IPFS get output for {hash}: {output}");
                         }
                     }
                     else
                     {
                         LogInfo("GetAsync", $"Successfully retrieved {hash}");
+                        if (!string.IsNullOrEmpty(output))
+                        {
+                            LogInfo("GetAsync", $"IPFS output: {output}");
+                        }
                     }
 
                     return result;
@@ -192,10 +203,14 @@ namespace SUP
                 var hashPath = Path.Combine(baseDir, hash);
                 var targetDir = hashPath;
 
+                LogInfo("ProcessDownloadedFile", $"Processing download for {hash} at {hashPath}");
+
                 // Check if it's a single file or directory
                 if (File.Exists(hashPath))
                 {
-                    // Single file - move and rename
+                    // Single file downloaded - need to convert to directory structure
+                    LogInfo("ProcessDownloadedFile", $"Found file at {hashPath}, converting to directory");
+                    
                     var tempPath = hashPath + "_tmp";
                     if (File.Exists(tempPath))
                     {
@@ -210,16 +225,21 @@ namespace SUP
                     
                     File.Move(tempPath, finalPath);
                     
-                    LogInfo("ProcessDownloadedFile", $"Processed single file for {hash}");
+                    LogInfo("ProcessDownloadedFile", $"Successfully processed single file for {hash} as {finalFileName}");
                     return true;
                 }
                 else if (Directory.Exists(hashPath))
                 {
-                    // Directory - check if we need to rename internal file
+                    // Directory downloaded - check for files to rename
+                    LogInfo("ProcessDownloadedFile", $"Found directory at {hashPath}");
+                    
+                    // Check if there's a file with the hash name inside that needs renaming
                     var internalFile = Path.Combine(hashPath, hash);
                     if (File.Exists(internalFile) && !string.IsNullOrEmpty(targetFileName))
                     {
                         var finalPath = Path.Combine(hashPath, targetFileName);
+                        LogInfo("ProcessDownloadedFile", $"Renaming internal file {hash} to {targetFileName}");
+                        
                         try
                         {
                             if (File.Exists(finalPath))
@@ -227,11 +247,23 @@ namespace SUP
                                 File.Delete(finalPath);
                             }
                             File.Move(internalFile, finalPath);
+                            LogInfo("ProcessDownloadedFile", $"Successfully renamed to {targetFileName}");
                         }
-                        catch { }
+                        catch (Exception ex)
+                        {
+                            LogError("ProcessDownloadedFile", $"Error renaming file: {ex.Message}");
+                        }
                     }
                     
-                    LogInfo("ProcessDownloadedFile", $"Processed directory for {hash}");
+                    // Check if directory has any files at all
+                    var files = Directory.GetFiles(hashPath, "*", SearchOption.AllDirectories);
+                    if (files.Length == 0)
+                    {
+                        LogWarning("ProcessDownloadedFile", $"Directory {hashPath} is empty");
+                        return false;
+                    }
+                    
+                    LogInfo("ProcessDownloadedFile", $"Successfully processed directory for {hash} with {files.Length} file(s)");
                     return true;
                 }
                 else

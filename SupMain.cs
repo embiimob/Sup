@@ -4786,21 +4786,22 @@ namespace SUP
                 return;
             }
 
-            // Create directories
+            // Create build directory marker (not the target directory yet)
+            // IPFS will create root/{hash} as file or directory
             try
             {
-                Directory.CreateDirectory("root/" + transid);
                 Directory.CreateDirectory("root/" + transid + "-build");
             }
             catch (Exception ex)
             {
-                Debug.WriteLine($"[LoadSecAttachmentAsync] Error creating directories: {ex.Message}");
+                Debug.WriteLine($"[LoadSecAttachmentAsync] Error creating build directory: {ex.Message}");
                 return;
             }
 
             // Download from IPFS using the async helper with 60 second timeout
             // Since we're already async, we can wait longer without blocking the UI
-            bool downloadSuccess = await IpfsHelper.GetAsync(transid, "root/" + transid, 60000);
+            // IPFS will download to root/{hash} - either as a file or directory
+            bool downloadSuccess = await IpfsHelper.GetAsync(transid, "root\\" + transid, 60000);
 
             if (downloadSuccess)
             {
@@ -4821,7 +4822,9 @@ namespace SUP
                 else
                 {
                     Debug.WriteLine($"[LoadSecAttachmentAsync] Failed to process downloaded file for {transid}");
+                    // Clean up build directory and empty hash directory
                     IpfsHelper.CleanupBuildDirectory(transid, "root");
+                    CleanupEmptyDirectory(transid, "root");
                     ShowAttachmentError(transid, "Failed to process attachment");
                 }
             }
@@ -4829,7 +4832,9 @@ namespace SUP
             {
                 // Download failed after 60 second timeout
                 Debug.WriteLine($"[LoadSecAttachmentAsync] Download failed for {transid} after timeout");
+                // Clean up build directory and empty hash directory
                 IpfsHelper.CleanupBuildDirectory(transid, "root");
+                CleanupEmptyDirectory(transid, "root");
                 ShowAttachmentError(transid, "IPFS download timeout");
             }
         }
@@ -4943,6 +4948,31 @@ namespace SUP
                 });
             }
             catch { }
+        }
+
+        /// <summary>
+        /// Cleans up empty directory if download failed.
+        /// </summary>
+        private void CleanupEmptyDirectory(string hash, string baseDir)
+        {
+            try
+            {
+                var hashDir = Path.Combine(baseDir, hash);
+                if (Directory.Exists(hashDir))
+                {
+                    // Check if directory is empty or only contains empty subdirectories
+                    var files = Directory.GetFiles(hashDir, "*", SearchOption.AllDirectories);
+                    if (files.Length == 0)
+                    {
+                        Directory.Delete(hashDir, true);
+                        Debug.WriteLine($"[CleanupEmptyDirectory] Removed empty directory: {hashDir}");
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"[CleanupEmptyDirectory] Error cleaning up {hash}: {ex.Message}");
+            }
         }
 
         private void RefreshCommunityMessages()
