@@ -848,33 +848,99 @@ namespace SUP
             // Add file to IPFS
             Task<string> addTask = Task.Run(() =>
             {
-                Process process = new Process();
-                process.StartInfo.FileName = @"ipfs\ipfs.exe";
-                process.StartInfo.Arguments = "add \"" + proccessingFile + "\"";
-                process.StartInfo.UseShellExecute = false;
-                process.StartInfo.CreateNoWindow = false;
-                process.StartInfo.RedirectStandardOutput = true;
-                process.Start();
-                string output = process.StandardOutput.ReadToEnd();
-                process.WaitForExit();
-                string hash = output.Split(' ')[1];
-
-                this.Invoke((MethodInvoker)delegate
+                try
                 {
-                    if (btnEncryptionStatus.Text == "PRIVATE 🤐")
+                    Process process = new Process();
+                    process.StartInfo.FileName = @"ipfs\ipfs.exe";
+                    process.StartInfo.Arguments = "add \"" + proccessingFile + "\"";
+                    process.StartInfo.UseShellExecute = false;
+                    process.StartInfo.CreateNoWindow = true;
+                    process.StartInfo.WindowStyle = ProcessWindowStyle.Hidden;
+                    process.StartInfo.RedirectStandardOutput = true;
+                    process.StartInfo.RedirectStandardError = true;
+                    
+                    if (!process.Start())
                     {
-                        this.btnPlay.Tag = "IPFS:" + hash + @"\SEC";
+                        this.Invoke((MethodInvoker)delegate
+                        {
+                            MessageBox.Show("Failed to start IPFS process. Please ensure IPFS is properly installed.", "IPFS Upload Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        });
+                        return null;
                     }
-                    else
+                    
+                    string output = process.StandardOutput.ReadToEnd();
+                    string errorOutput = process.StandardError.ReadToEnd();
+                    process.WaitForExit();
+                    
+                    // Check if process exited with error
+                    if (process.ExitCode != 0)
                     {
-                        // Set the PictureBox properties
-                        this.btnPlay.Tag = "IPFS:" + hash + @"\" + wavFileName;
+                        string errorMsg = "IPFS upload failed with exit code " + process.ExitCode + ".";
+                        if (!string.IsNullOrWhiteSpace(errorOutput))
+                        {
+                            errorMsg += "\nError: " + errorOutput;
+                        }
+                        this.Invoke((MethodInvoker)delegate
+                        {
+                            MessageBox.Show(errorMsg, "IPFS Upload Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        });
+                        return null;
                     }
+                    
+                    // Validate IPFS output before parsing
+                    if (string.IsNullOrWhiteSpace(output))
+                    {
+                        string errorMsg = "IPFS upload failed. No output received from IPFS.";
+                        if (!string.IsNullOrWhiteSpace(errorOutput))
+                        {
+                            errorMsg += "\nError: " + errorOutput;
+                        }
+                        this.Invoke((MethodInvoker)delegate
+                        {
+                            MessageBox.Show(errorMsg, "IPFS Upload Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        });
+                        return null;
+                    }
+                    
+                    // Parse IPFS output - Expected format: "added <hash> <filename>"
+                    // Example: "added QmYwAPJzv5CZsnA625s3Xf2nemtYgPpHdWEz79ojWnPbdG recording.wav"
+                    string[] outputParts = output.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+                    if (outputParts.Length < 2)
+                    {
+                        this.Invoke((MethodInvoker)delegate
+                        {
+                            MessageBox.Show("IPFS upload failed. Invalid output format: " + output, "IPFS Upload Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        });
+                        return null;
+                    }
+                    
+                    string hash = outputParts[1];
 
-                    flowAttachments.Controls.Add(this.btnPlay);
-                });
+                    this.Invoke((MethodInvoker)delegate
+                    {
+                        if (btnEncryptionStatus.Text == "PRIVATE 🤐")
+                        {
+                            this.btnPlay.Tag = "IPFS:" + hash + @"\SEC";
+                        }
+                        else
+                        {
+                            // Set the PictureBox properties
+                            this.btnPlay.Tag = "IPFS:" + hash + @"\" + wavFileName;
+                        }
 
-                return "IPFS:" + hash;
+                        flowAttachments.Controls.Add(this.btnPlay);
+                    });
+
+                    return "IPFS:" + hash;
+                }
+                catch (Exception ex)
+                {
+                    this.Invoke((MethodInvoker)delegate
+                    {
+                        MessageBox.Show("Error uploading audio to IPFS: " + ex.Message, "IPFS Upload Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    });
+                    return null;
+                }
             });
             ipfsHash = await addTask;
 
@@ -1331,46 +1397,112 @@ namespace SUP
 
             Task<string> addTask = Task.Run(() =>
             {
-                Process process = new Process();
-                process.StartInfo.FileName = @"ipfs\ipfs.exe";
-                process.StartInfo.Arguments = "add \"" + proccessingFile + "\"";
-                process.StartInfo.UseShellExecute = false;
-                process.StartInfo.CreateNoWindow = false;
-                process.StartInfo.RedirectStandardOutput = true;
-                process.Start();
-                string output = process.StandardOutput.ReadToEnd();
-                process.WaitForExit();
-                string hash = output.Split(' ')[1];
-
-                PictureBox pictureBox = new PictureBox();
-                if (btnEncryptionStatus.Text == "PRIVATE 🤐")
-                { pictureBox.Tag = "IPFS:" + hash + @"\SEC"; }
-                else
+                try
                 {
-                    pictureBox.Tag = "IPFS:" + hash + @"\" + fileName;
+                    Process process = new Process();
+                    process.StartInfo.FileName = @"ipfs\ipfs.exe";
+                    process.StartInfo.Arguments = "add \"" + proccessingFile + "\"";
+                    process.StartInfo.UseShellExecute = false;
+                    process.StartInfo.CreateNoWindow = true;
+                    process.StartInfo.WindowStyle = ProcessWindowStyle.Hidden;
+                    process.StartInfo.RedirectStandardOutput = true;
+                    process.StartInfo.RedirectStandardError = true;
+                    
+                    if (!process.Start())
+                    {
+                        this.Invoke((MethodInvoker)delegate
+                        {
+                            MessageBox.Show("Failed to start IPFS process. Please ensure IPFS is properly installed.", "IPFS Upload Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        });
+                        return null;
+                    }
+                    
+                    string output = process.StandardOutput.ReadToEnd();
+                    string errorOutput = process.StandardError.ReadToEnd();
+                    process.WaitForExit();
+                    
+                    // Check if process exited with error
+                    if (process.ExitCode != 0)
+                    {
+                        string errorMsg = "IPFS upload failed with exit code " + process.ExitCode + ".";
+                        if (!string.IsNullOrWhiteSpace(errorOutput))
+                        {
+                            errorMsg += "\nError: " + errorOutput;
+                        }
+                        this.Invoke((MethodInvoker)delegate
+                        {
+                            MessageBox.Show(errorMsg, "IPFS Upload Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        });
+                        return null;
+                    }
+                    
+                    // Validate IPFS output before parsing
+                    if (string.IsNullOrWhiteSpace(output))
+                    {
+                        string errorMsg = "IPFS upload failed. No output received from IPFS.";
+                        if (!string.IsNullOrWhiteSpace(errorOutput))
+                        {
+                            errorMsg += "\nError: " + errorOutput;
+                        }
+                        this.Invoke((MethodInvoker)delegate
+                        {
+                            MessageBox.Show(errorMsg, "IPFS Upload Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        });
+                        return null;
+                    }
+                    
+                    // Parse IPFS output - Expected format: "added <hash> <filename>"
+                    // Example: "added QmYwAPJzv5CZsnA625s3Xf2nemtYgPpHdWEz79ojWnPbdG file.jpg"
+                    string[] outputParts = output.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+                    if (outputParts.Length < 2)
+                    {
+                        this.Invoke((MethodInvoker)delegate
+                        {
+                            MessageBox.Show("IPFS upload failed. Invalid output format: " + output, "IPFS Upload Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        });
+                        return null;
+                    }
+                    
+                    string hash = outputParts[1];
+
+                    PictureBox pictureBox = new PictureBox();
+                    if (btnEncryptionStatus.Text == "PRIVATE 🤐")
+                    { pictureBox.Tag = "IPFS:" + hash + @"\SEC"; }
+                    else
+                    {
+                        pictureBox.Tag = "IPFS:" + hash + @"\" + fileName;
+                    }
+                    pictureBox.SizeMode = PictureBoxSizeMode.StretchImage;
+                    pictureBox.Width = 50;
+                    pictureBox.Height = 50;
+
+                    string extension = Path.GetExtension(filePath).ToLower();
+                    if (imageExtensions.Contains(extension))
+                    {
+                        pictureBox.ImageLocation = filePath;
+                        pictureBox.MouseClick += PictureBox_MouseClick;
+                    }
+                    else
+                    {
+                        pictureBox.ImageLocation = @"includes\HugPuddle.jpg";
+                        pictureBox.MouseClick += PictureBox_MouseClick;
+                    }
+
+                    this.Invoke((MethodInvoker)delegate
+                    {
+                        flowAttachments.Controls.Add(pictureBox);
+                    });
+
+                    return hash;
                 }
-                pictureBox.SizeMode = PictureBoxSizeMode.StretchImage;
-                pictureBox.Width = 50;
-                pictureBox.Height = 50;
-
-                string extension = Path.GetExtension(filePath).ToLower();
-                if (imageExtensions.Contains(extension))
+                catch (Exception ex)
                 {
-                    pictureBox.ImageLocation = filePath;
-                    pictureBox.MouseClick += PictureBox_MouseClick;
+                    this.Invoke((MethodInvoker)delegate
+                    {
+                        MessageBox.Show("Error uploading file to IPFS: " + ex.Message, "IPFS Upload Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    });
+                    return null;
                 }
-                else
-                {
-                    pictureBox.ImageLocation = @"includes\HugPuddle.jpg";
-                    pictureBox.MouseClick += PictureBox_MouseClick;
-                }
-
-                this.Invoke((MethodInvoker)delegate
-                {
-                    flowAttachments.Controls.Add(pictureBox);
-                });
-
-                return hash;
             });
 
             ipfsHash = await addTask;

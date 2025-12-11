@@ -610,18 +610,80 @@ namespace SUP
 
                         lblIMGBlockDate.Text = "[ uploading to IPFS please wait...]";
                         MessageBox.Show("Uploading a file to IPFS could take a long time. to prevent any issues, Sup!? will lock while it's loading.  just wait for it.");
-                        Process process = new Process();
-                        process.StartInfo.FileName = @"ipfs\ipfs.exe";
-                        process.StartInfo.Arguments = "add \"" + filePath + "\"";
-                        process.StartInfo.RedirectStandardOutput = true;
-                        process.StartInfo.UseShellExecute = false;
-                        process.Start();
-                        string output = process.StandardOutput.ReadToEnd();
-                        process.WaitForExit();
-                        string hash = output.Split(' ')[1];
-                        txtIMG.Text = "IPFS:" + hash + @"\" + fileName;
-                        imgurn = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + @"\ipfs\" + hash + @"\" + fileName;
-
+                        
+                        try
+                        {
+                            Process process = new Process();
+                            process.StartInfo.FileName = @"ipfs\ipfs.exe";
+                            process.StartInfo.Arguments = "add \"" + filePath + "\"";
+                            process.StartInfo.RedirectStandardOutput = true;
+                            process.StartInfo.RedirectStandardError = true;
+                            process.StartInfo.UseShellExecute = false;
+                            process.StartInfo.CreateNoWindow = true;
+                            process.StartInfo.WindowStyle = ProcessWindowStyle.Hidden;
+                            
+                            if (!process.Start())
+                            {
+                                lblIMGBlockDate.Text = "[ upload failed ]";
+                                MessageBox.Show("Failed to start IPFS process. Please ensure IPFS is properly installed.", "IPFS Upload Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                                return;
+                            }
+                            
+                            string output = process.StandardOutput.ReadToEnd();
+                            string errorOutput = process.StandardError.ReadToEnd();
+                            process.WaitForExit();
+                            
+                            // Check if process exited with error
+                            if (process.ExitCode != 0)
+                            {
+                                string errorMsg = "IPFS upload failed with exit code " + process.ExitCode + ".";
+                                if (!string.IsNullOrWhiteSpace(errorOutput))
+                                {
+                                    errorMsg += "\nError: " + errorOutput;
+                                }
+                                lblIMGBlockDate.Text = "[ upload failed ]";
+                                MessageBox.Show(errorMsg, "IPFS Upload Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                                return;
+                            }
+                            
+                            // Validate IPFS output before parsing
+                            if (string.IsNullOrWhiteSpace(output))
+                            {
+                                string errorMsg = "IPFS upload failed. No output received from IPFS.";
+                                if (!string.IsNullOrWhiteSpace(errorOutput))
+                                {
+                                    errorMsg += "\nError: " + errorOutput;
+                                }
+                                lblIMGBlockDate.Text = "[ upload failed ]";
+                                MessageBox.Show(errorMsg, "IPFS Upload Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                                return;
+                            }
+                            
+                            // Parse IPFS output - Expected format: "added <hash> <filename>"
+                            // Example: "added QmYwAPJzv5CZsnA625s3Xf2nemtYgPpHdWEz79ojWnPbdG profile.jpg"
+                            string[] outputParts = output.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+                            if (outputParts.Length < 2)
+                            {
+                                lblIMGBlockDate.Text = "[ upload failed ]";
+                                MessageBox.Show("IPFS upload failed. Invalid output format: " + output, "IPFS Upload Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                                return;
+                            }
+                            
+                            string hash = outputParts[1];
+                            txtIMG.Text = "IPFS:" + hash + @"\" + fileName;
+                            imgurn = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + @"\ipfs\" + hash + @"\" + fileName;
+                        }
+                        catch (Exception ex)
+                        {
+                            lblIMGBlockDate.Text = "[ upload failed ]";
+                            MessageBox.Show("Error uploading file to IPFS: " + ex.Message, "IPFS Upload Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                            return;
+                        }
+                    }
+                    else
+                    {
+                        // User cancelled the file dialog
+                        return;
                     }
 
 
