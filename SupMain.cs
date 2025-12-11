@@ -4687,10 +4687,14 @@ namespace SUP
                                                                     process2.StartInfo.UseShellExecute = false;
                                                                     process2.StartInfo.CreateNoWindow = true;
                                                                     process2.StartInfo.RedirectStandardOutput = true;
-                                                                    process2.StartInfo.RedirectStandardError = true;
                                                                     process2.Start();
                                                                     
-                                                                    if (process2.WaitForExit(30000))
+                                                                    // Read output to prevent deadlock
+                                                                    string nestedOutput = process2.StandardOutput.ReadToEnd();
+                                                                    process2.WaitForExit();
+                                                                    
+                                                                    bool nestedDownloadSuccess = (process2.ExitCode == 0 || System.IO.File.Exists("root/" + nestedTransid) || System.IO.File.Exists("root/" + nestedTransid + "/" + nestedTransid));
+                                                                    if (nestedDownloadSuccess)
                                                                     {
                                                                         // Move and rename the downloaded file
                                                                         if (System.IO.File.Exists("root/" + nestedTransid))
@@ -4815,13 +4819,9 @@ namespace SUP
                                                                     }
                                                                     else
                                                                     {
-                                                                        // Timeout on first attempt, try longer timeout
-                                                                        string stderr = "";
-                                                                        try { stderr = process2.StandardError.ReadToEnd(); } catch { }
-                                                                        process2.Kill();
-                                                                        System.Diagnostics.Debug.WriteLine($"IPFS get timed out for nested SEC {nestedTransid}, trying longer timeout. Error: {stderr}");
-                                                                        
-                                                                        // Could implement longer timeout here if needed, but for now just log
+                                                                        // Download failed
+                                                                        System.Diagnostics.Debug.WriteLine($"IPFS get failed for nested SEC {nestedTransid}. Exit code: {process2.ExitCode}. Output: {nestedOutput}");
+                                                                        try { Directory.Delete("root/" + nestedTransid + "-build", true); } catch { }
                                                                     }
                                                                 }
                                                                 else if (System.IO.File.Exists(@"root/" + nestedTransid + @"/SEC"))
@@ -4913,11 +4913,15 @@ namespace SUP
                                         process2.StartInfo.UseShellExecute = false;
                                         process2.StartInfo.CreateNoWindow = true;
                                         process2.StartInfo.RedirectStandardOutput = true;
-                                        process2.StartInfo.RedirectStandardError = true;
                                         process2.Start();
                                         
-                                        // Increase initial timeout to 30 seconds for better reliability
-                                        if (process2.WaitForExit(30000))
+                                        // Read output to prevent deadlock, then wait for completion
+                                        string output = process2.StandardOutput.ReadToEnd();
+                                        process2.WaitForExit();
+                                        
+                                        // Check if download was successful
+                                        bool downloadSuccess = (process2.ExitCode == 0 || System.IO.File.Exists("root/" + transid) || System.IO.File.Exists("root/" + transid + "/" + transid));
+                                        if (downloadSuccess)
                                         {
                                             string fileName;
                                             if (System.IO.File.Exists("root/" + transid))
@@ -4969,89 +4973,9 @@ namespace SUP
                                         }
                                         else
                                         {
-                                            // Read error output before killing the process
-                                            string stderr = "";
-                                            try { stderr = process2.StandardError.ReadToEnd(); } catch { }
-                                            process2.Kill();
-                                            System.Diagnostics.Debug.WriteLine($"IPFS get timed out after 30s for {transid}, retrying with longer timeout. Error: {stderr}");
-
-                                            Task.Run(() =>
-                                            {
-                                                try
-                                                {
-                                                    process2 = new Process();
-                                                    process2.StartInfo.FileName = @"ipfs\ipfs.exe";
-                                                    process2.StartInfo.Arguments = "get " + content.Substring(5, 46) + @" -o root\" + transid;
-                                                    process2.StartInfo.UseShellExecute = false;
-                                                    process2.StartInfo.CreateNoWindow = true;
-                                                    process2.StartInfo.RedirectStandardOutput = true;
-                                                    process2.StartInfo.RedirectStandardError = true;
-                                                    process2.Start();
-                                                    
-                                                    if (process2.WaitForExit(550000))
-                                                    {
-                                                        string fileName;
-                                                        if (System.IO.File.Exists("root/" + transid))
-                                                        {
-                                                            System.IO.File.Move("root/" + transid, "root/" + transid + "_tmp");
-                                                            System.IO.Directory.CreateDirectory("root/" + transid);
-                                                            fileName = content.Replace(@"//", "").Replace(@"\\", "").Substring(51);
-                                                            if (fileName == "") { fileName = "artifact"; } else { fileName = fileName.Replace(@"/", "").Replace(@"\", ""); }
-                                                            Directory.CreateDirectory("root/" + transid);
-                                                            System.IO.File.Move("root/" + transid + "_tmp", @"root/" + transid + @"/SEC");
-                                                        }
-
-                                                        if (System.IO.File.Exists("root/" + transid + "/" + transid))
-                                                        {
-                                                            fileName = content.Replace(@"//", "").Replace(@"\\", "").Substring(51);
-                                                            if (fileName == "") { fileName = "artifact"; } else { fileName = fileName.Replace(@"/", "").Replace(@"\", ""); }
-
-                                                            try { System.IO.File.Move("root/" + transid + "/" + transid, @"root/" + transid + @"/SEC"); }
-                                                            catch { }
-                                                        }
-
-                                                        // Pin the IPFS content if pinning is enabled
-                                                        try
-                                                        {
-                                                            if (File.Exists("IPFS_PINNING_ENABLED"))
-                                                            {
-                                                                Process process3 = new Process
-                                                                {
-                                                                    StartInfo = new ProcessStartInfo
-                                                                    {
-                                                                        FileName = @"ipfs\ipfs.exe",
-                                                                        Arguments = "pin add " + transid,
-                                                                        UseShellExecute = false,
-                                                                        CreateNoWindow = true
-                                                                    }
-                                                                };
-                                                                process3.Start();
-                                                            }
-                                                        }
-                                                        catch (Exception ex)
-                                                        {
-                                                            System.Diagnostics.Debug.WriteLine($"Error pinning IPFS content {transid}: {ex.Message}");
-                                                        }
-
-                                                        try { Directory.Delete("root/" + transid + "-build", true); } catch { }
-                                                        
-                                                        // Process the SEC file after successful download
-                                                        processSecFile();
-                                                    }
-                                                    else
-                                                    {
-                                                        // Read error output before killing the process
-                                                        string stderrLong = "";
-                                                        try { stderrLong = process2.StandardError.ReadToEnd(); } catch { }
-                                                        process2.Kill();
-                                                        System.Diagnostics.Debug.WriteLine($"IPFS get failed after 550s timeout for {transid}. Error: {stderrLong}");
-                                                    }
-                                                }
-                                                catch (Exception ex)
-                                                {
-                                                    System.Diagnostics.Debug.WriteLine($"Error in async IPFS get for {transid}: {ex.Message}");
-                                                }
-                                            });
+                                            // Download failed - clean up and don't process
+                                            System.Diagnostics.Debug.WriteLine($"IPFS get failed for {transid}. Exit code: {process2.ExitCode}. Output: {output}");
+                                            try { Directory.Delete("root/" + transid + "-build", true); } catch { }
                                         }
                                     }
                                     else
