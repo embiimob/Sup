@@ -4600,45 +4600,291 @@ namespace SUP
                                             {
                                                 foreach (string file in decryptedroot.File.Keys)
                                                 {
-                                                    string extension = Path.GetExtension(transid + @"\" + file).ToLower();
-                                                    if (!imgExtensions.Contains(extension))
+                                                    // Check if the file content is itself an IPFS SEC reference
+                                                    string filePath = @"root/" + transid + @"/" + file;
+                                                    bool isNestedSec = false;
+                                                    string nestedSecContent = "";
+                                                    
+                                                    try
                                                     {
-                                                        // Create a new panel to display the metadata
-                                                        Panel panel = new Panel();
-                                                        panel.BorderStyle = BorderStyle.FixedSingle;
-                                                        panel.MinimumSize = new Size(supPrivateFlow.Width - 50, 30);
-                                                        panel.MaximumSize = new Size(supPrivateFlow.Width - 20, 30);
-                                                        panel.AutoSize = true;
-                                                        // Create a label for the title
-                                                        LinkLabel titleLabel = new LinkLabel();
-                                                        titleLabel.Text = transid + @"\" + file;
-                                                        titleLabel.Links[0].LinkData = transid + @"\" + file;
-                                                        titleLabel.AutoSize = true;
-                                                        titleLabel.Font = new Font("Segoe UI", 8, FontStyle.Bold);
-                                                        titleLabel.LinkColor = System.Drawing.SystemColors.GradientActiveCaption;
-                                                        titleLabel.Padding = new Padding(5);
-                                                        titleLabel.MouseClick += (sender, e) => { Attachment_Clicked(@"root\" + transid + @"\" + file); };
-                                                        panel.Controls.Add(titleLabel);
-
+                                                        if (File.Exists(filePath))
+                                                        {
+                                                            // Read first few bytes to check if it's a text IPFS reference
+                                                            byte[] header = new byte[Math.Min(100, (int)new FileInfo(filePath).Length)];
+                                                            using (FileStream fs = new FileStream(filePath, FileMode.Open, FileAccess.Read))
+                                                            {
+                                                                fs.Read(header, 0, header.Length);
+                                                            }
+                                                            string headerText = Encoding.ASCII.GetString(header);
+                                                            if (headerText.StartsWith("IPFS:") && headerText.Contains(@"\SEC"))
+                                                            {
+                                                                // This file contains a reference to another SEC file
+                                                                isNestedSec = true;
+                                                                nestedSecContent = File.ReadAllText(filePath).Trim();
+                                                                System.Diagnostics.Debug.WriteLine($"Found nested SEC reference in {file}: {nestedSecContent}");
+                                                            }
+                                                        }
+                                                    }
+                                                    catch (Exception ex)
+                                                    {
+                                                        System.Diagnostics.Debug.WriteLine($"Error checking if {file} is nested SEC: {ex.Message}");
+                                                    }
+                                                    
+                                                    if (isNestedSec && nestedSecContent.StartsWith("IPFS:") && nestedSecContent.EndsWith(@"\SEC"))
+                                                    {
+                                                        // This is a nested SEC file - process it recursively
+                                                        string nestedTransid = "empty";
+                                                        try { nestedTransid = nestedSecContent.Substring(5, 46); } catch { }
+                                                        
+                                                        System.Diagnostics.Debug.WriteLine($"Processing nested SEC file: {nestedTransid}");
+                                                        
+                                                        // Create placeholder UI element first
                                                         this.Invoke((MethodInvoker)delegate
                                                         {
-                                                            this.supPrivateFlow.Controls.Add(panel);
+                                                            try
+                                                            {
+                                                                // Create a loading placeholder panel
+                                                                TableLayoutPanel loadingPanel = new TableLayoutPanel
+                                                                {
+                                                                    RowCount = 1,
+                                                                    ColumnCount = 1,
+                                                                    AutoSize = true,
+                                                                    BackColor = Color.Black,
+                                                                    Tag = "loading_" + nestedTransid // Tag it so we can find and replace it later
+                                                                };
+                                                                
+                                                                PictureBox loadingPic = new PictureBox
+                                                                {
+                                                                    SizeMode = PictureBoxSizeMode.Zoom,
+                                                                    Width = Math.Min(480, supPrivateFlow.Width - 50),
+                                                                    Height = Math.Min(480, supPrivateFlow.Width - 50),
+                                                                    BackColor = Color.FromArgb(22, 22, 22),
+                                                                    ImageLocation = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + @"\includes\progress.gif"
+                                                                };
+                                                                
+                                                                loadingPanel.Controls.Add(loadingPic);
+                                                                supPrivateFlow.Controls.Add(loadingPanel);
+                                                            }
+                                                            catch (Exception ex)
+                                                            {
+                                                                System.Diagnostics.Debug.WriteLine($"Error creating placeholder for {nestedTransid}: {ex.Message}");
+                                                            }
+                                                        });
+                                                        
+                                                        // Download and process the nested SEC file asynchronously
+                                                        Task.Run(() =>
+                                                        {
+                                                            try
+                                                            {
+                                                                if (!System.IO.Directory.Exists("root/" + nestedTransid + "-build"))
+                                                                {
+                                                                    Directory.CreateDirectory("root/" + nestedTransid);
+                                                                    Directory.CreateDirectory("root/" + nestedTransid + "-build");
+                                                                    
+                                                                    Process process2 = new Process();
+                                                                    process2.StartInfo.FileName = @"ipfs\ipfs.exe";
+                                                                    process2.StartInfo.Arguments = "get " + nestedTransid + @" -o root\" + nestedTransid;
+                                                                    process2.StartInfo.UseShellExecute = false;
+                                                                    process2.StartInfo.CreateNoWindow = true;
+                                                                    process2.StartInfo.RedirectStandardOutput = true;
+                                                                    process2.StartInfo.RedirectStandardError = true;
+                                                                    process2.Start();
+                                                                    
+                                                                    if (process2.WaitForExit(30000))
+                                                                    {
+                                                                        // Move and rename the downloaded file
+                                                                        if (System.IO.File.Exists("root/" + nestedTransid))
+                                                                        {
+                                                                            System.IO.File.Move("root/" + nestedTransid, "root/" + nestedTransid + "_tmp");
+                                                                            System.IO.Directory.CreateDirectory("root/" + nestedTransid);
+                                                                            System.IO.File.Move("root/" + nestedTransid + "_tmp", @"root/" + nestedTransid + @"/SEC");
+                                                                        }
+                                                                        else if (System.IO.File.Exists("root/" + nestedTransid + "/" + nestedTransid))
+                                                                        {
+                                                                            try { System.IO.File.Move("root/" + nestedTransid + "/" + nestedTransid, @"root/" + nestedTransid + @"/SEC"); }
+                                                                            catch { }
+                                                                        }
+                                                                        
+                                                                        // Pin if enabled
+                                                                        try
+                                                                        {
+                                                                            if (File.Exists("IPFS_PINNING_ENABLED"))
+                                                                            {
+                                                                                Process process3 = new Process
+                                                                                {
+                                                                                    StartInfo = new ProcessStartInfo
+                                                                                    {
+                                                                                        FileName = @"ipfs\ipfs.exe",
+                                                                                        Arguments = "pin add " + nestedTransid,
+                                                                                        UseShellExecute = false,
+                                                                                        CreateNoWindow = true
+                                                                                    }
+                                                                                };
+                                                                                process3.Start();
+                                                                            }
+                                                                        }
+                                                                        catch { }
+                                                                        
+                                                                        try { Directory.Delete("root/" + nestedTransid + "-build", true); } catch { }
+                                                                        
+                                                                        // Decrypt and process the nested SEC file
+                                                                        try
+                                                                        {
+                                                                            byte[] nestedSecBytes = Root.GetRootBytesByFile(new string[] { @"root/" + nestedTransid + @"/SEC" });
+                                                                            byte[] nestedDecryptedBytes = Root.DecryptRootBytes(mainnetLogin, mainnetPassword, mainnetURL, profileURN.Links[0].LinkData.ToString(), nestedSecBytes);
+                                                                            Root nestedRoot = Root.GetRootByTransactionId(nestedTransid, mainnetLogin, mainnetPassword, mainnetURL, mainnetVersionByte, nestedDecryptedBytes, profileURN.Links[0].LinkData.ToString());
+                                                                            
+                                                                            if (nestedRoot.File != null && nestedRoot.File.Count > 0)
+                                                                            {
+                                                                                // Get the actual file from the decrypted nested SEC
+                                                                                string actualFile = nestedRoot.File.Keys.First();
+                                                                                string actualFilePath = nestedTransid + @"\" + actualFile;
+                                                                                string extension = Path.GetExtension(actualFile).ToLower();
+                                                                                
+                                                                                System.Diagnostics.Debug.WriteLine($"Nested SEC {nestedTransid} contains file: {actualFile}");
+                                                                                
+                                                                                // Remove the loading placeholder and add actual content
+                                                                                this.Invoke((MethodInvoker)delegate
+                                                                                {
+                                                                                    try
+                                                                                    {
+                                                                                        // Find and remove the placeholder
+                                                                                        Control placeholderToRemove = null;
+                                                                                        foreach (Control ctrl in supPrivateFlow.Controls)
+                                                                                        {
+                                                                                            if (ctrl.Tag != null && ctrl.Tag.ToString() == "loading_" + nestedTransid)
+                                                                                            {
+                                                                                                placeholderToRemove = ctrl;
+                                                                                                break;
+                                                                                            }
+                                                                                        }
+                                                                                        if (placeholderToRemove != null)
+                                                                                        {
+                                                                                            supPrivateFlow.Controls.Remove(placeholderToRemove);
+                                                                                        }
+                                                                                        
+                                                                                        // Add the actual content
+                                                                                        List<string> mediaExtensions = new List<string> { ".mp4", ".mov", ".avi", ".wav", ".mp3" };
+                                                                                        List<string> imageExtensions = new List<string> { ".bmp", ".gif", ".ico", ".jpeg", ".jpg", ".png", ".tif", ".tiff" };
+                                                                                        
+                                                                                        if (mediaExtensions.Contains(extension))
+                                                                                        {
+                                                                                            try { AddMedia(actualFilePath, true); } catch (Exception ex)
+                                                                                            {
+                                                                                                System.Diagnostics.Debug.WriteLine($"Error adding media {actualFilePath}: {ex.Message}");
+                                                                                            }
+                                                                                        }
+                                                                                        else if (imageExtensions.Contains(extension))
+                                                                                        {
+                                                                                            try { AddImage(actualFilePath, true); } catch (Exception ex)
+                                                                                            {
+                                                                                                System.Diagnostics.Debug.WriteLine($"Error adding image {actualFilePath}: {ex.Message}");
+                                                                                            }
+                                                                                        }
+                                                                                        else
+                                                                                        {
+                                                                                            // Non-media file - create a link
+                                                                                            Panel panel = new Panel();
+                                                                                            panel.BorderStyle = BorderStyle.FixedSingle;
+                                                                                            panel.MinimumSize = new Size(supPrivateFlow.Width - 50, 30);
+                                                                                            panel.MaximumSize = new Size(supPrivateFlow.Width - 20, 30);
+                                                                                            panel.AutoSize = true;
+                                                                                            LinkLabel titleLabel = new LinkLabel();
+                                                                                            titleLabel.Text = actualFile;
+                                                                                            titleLabel.Links[0].LinkData = actualFilePath;
+                                                                                            titleLabel.AutoSize = true;
+                                                                                            titleLabel.Font = new Font("Segoe UI", 8, FontStyle.Bold);
+                                                                                            titleLabel.LinkColor = System.Drawing.SystemColors.GradientActiveCaption;
+                                                                                            titleLabel.Padding = new Padding(5);
+                                                                                            titleLabel.MouseClick += (sender, e) => { Attachment_Clicked(@"root\" + actualFilePath); };
+                                                                                            panel.Controls.Add(titleLabel);
+                                                                                            supPrivateFlow.Controls.Add(panel);
+                                                                                        }
+                                                                                    }
+                                                                                    catch (Exception ex)
+                                                                                    {
+                                                                                        System.Diagnostics.Debug.WriteLine($"Error updating UI for nested SEC {nestedTransid}: {ex.Message}");
+                                                                                    }
+                                                                                });
+                                                                            }
+                                                                        }
+                                                                        catch (Exception ex)
+                                                                        {
+                                                                            System.Diagnostics.Debug.WriteLine($"Error decrypting nested SEC {nestedTransid}: {ex.Message}");
+                                                                        }
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        // Timeout on first attempt, try longer timeout
+                                                                        string stderr = "";
+                                                                        try { stderr = process2.StandardError.ReadToEnd(); } catch { }
+                                                                        process2.Kill();
+                                                                        System.Diagnostics.Debug.WriteLine($"IPFS get timed out for nested SEC {nestedTransid}, trying longer timeout. Error: {stderr}");
+                                                                        
+                                                                        // Could implement longer timeout here if needed, but for now just log
+                                                                    }
+                                                                }
+                                                                else if (System.IO.File.Exists(@"root/" + nestedTransid + @"/SEC"))
+                                                                {
+                                                                    // SEC file already exists, try to process it
+                                                                    System.Diagnostics.Debug.WriteLine($"Nested SEC {nestedTransid} already exists, processing it");
+                                                                    // Process it (decrypt and display) - similar logic as above
+                                                                }
+                                                            }
+                                                            catch (Exception ex)
+                                                            {
+                                                                System.Diagnostics.Debug.WriteLine($"Error processing nested SEC {nestedTransid}: {ex.Message}");
+                                                            }
                                                         });
                                                     }
                                                     else
                                                     {
-                                                        if (extension == ".mp4" || extension == ".mov" || extension == ".avi" || extension == ".wav" || extension == ".mp3")
+                                                        // Not a nested SEC - display the file directly
+                                                        string extension = Path.GetExtension(file).ToLower();
+                                                        List<string> mediaExtensions = new List<string> { ".mp4", ".mov", ".avi", ".wav", ".mp3" };
+                                                        List<string> imageExtensions = new List<string> { ".bmp", ".gif", ".ico", ".jpeg", ".jpg", ".png", ".tif", ".tiff" };
+                                                        
+                                                        if (!mediaExtensions.Contains(extension) && !imageExtensions.Contains(extension))
+                                                        {
+                                                            // Non-media file
+                                                            Panel panel = new Panel();
+                                                            panel.BorderStyle = BorderStyle.FixedSingle;
+                                                            panel.MinimumSize = new Size(supPrivateFlow.Width - 50, 30);
+                                                            panel.MaximumSize = new Size(supPrivateFlow.Width - 20, 30);
+                                                            panel.AutoSize = true;
+                                                            LinkLabel titleLabel = new LinkLabel();
+                                                            titleLabel.Text = transid + @"\" + file;
+                                                            titleLabel.Links[0].LinkData = transid + @"\" + file;
+                                                            titleLabel.AutoSize = true;
+                                                            titleLabel.Font = new Font("Segoe UI", 8, FontStyle.Bold);
+                                                            titleLabel.LinkColor = System.Drawing.SystemColors.GradientActiveCaption;
+                                                            titleLabel.Padding = new Padding(5);
+                                                            titleLabel.MouseClick += (sender, e) => { Attachment_Clicked(@"root\" + transid + @"\" + file); };
+                                                            panel.Controls.Add(titleLabel);
+
+                                                            this.Invoke((MethodInvoker)delegate
+                                                            {
+                                                                this.supPrivateFlow.Controls.Add(panel);
+                                                            });
+                                                        }
+                                                        else if (mediaExtensions.Contains(extension))
                                                         {
                                                             this.Invoke((MethodInvoker)delegate
                                                             {
-                                                                try { AddMedia(transid + @"\" + file, true); } catch { }
+                                                                try { AddMedia(transid + @"\" + file, true); } catch (Exception ex)
+                                                                {
+                                                                    System.Diagnostics.Debug.WriteLine($"Error adding media {file}: {ex.Message}");
+                                                                }
                                                             });
                                                         }
                                                         else
                                                         {
                                                             this.Invoke((MethodInvoker)delegate
                                                             {
-                                                                AddImage(transid + @"\" + file, true);
+                                                                try { AddImage(transid + @"\" + file, true); } catch (Exception ex)
+                                                                {
+                                                                    System.Diagnostics.Debug.WriteLine($"Error adding image {file}: {ex.Message}");
+                                                                }
                                                             });
                                                         }
                                                     }
