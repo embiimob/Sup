@@ -103,6 +103,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AudioPlayer.cs" />
+    <Compile Include="IpfsHelper.cs" />
     <Compile Include="Connections.cs">
       <SubType>Form</SubType>
     </Compile>
