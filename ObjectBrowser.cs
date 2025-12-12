@@ -3771,6 +3771,12 @@ namespace SUP
         /// <param name="linkData">The link data to associate with the profileURN</param>
         private void SetProfileURNAtomically(string text, object linkData)
         {
+            // Validate input
+            if (text == null)
+            {
+                text = string.Empty;
+            }
+            
             // For LinkLabel to work properly, we need to set properties in the right order:
             // 1. Ensure the LinkLabel has a Link by checking/creating one
             // 2. Set LinkData on the existing link
@@ -3779,15 +3785,13 @@ namespace SUP
             // Ensure at least one link exists in the Links collection
             if (profileURN.Links.Count == 0)
             {
-                // Create a link if none exists
-                profileURN.Links.Add(new LinkLabel.Link(0, text.Length));
+                // Create a link spanning the entire text if none exists
+                int linkLength = text.Length > 0 ? text.Length : 1;
+                profileURN.Links.Add(new LinkLabel.Link(0, linkLength));
             }
             
-            // Now set LinkData BEFORE setting Text
-            if (profileURN.Links.Count > 0)
-            {
-                profileURN.Links[0].LinkData = linkData;
-            }
+            // Now set LinkData BEFORE setting Text (redundant check removed - link always exists here)
+            profileURN.Links[0].LinkData = linkData;
             
             profileURN.LinkColor = System.Drawing.SystemColors.Highlight;
             
