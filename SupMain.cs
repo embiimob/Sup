@@ -334,12 +334,16 @@ namespace SUP
                             supFlow.Size = new System.Drawing.Size(supFlow.Width, supFlow.Height - 150); // Change the width and height
                         }
 
-                        // Defensive null check for LinkData
-                        if (objectBrowserForm.profileURN.Links != null && objectBrowserForm.profileURN.Links.Count > 0)
+                        // Set Text first to initialize Links collection in profileURN
+                        profileURN.Text = objectBrowserForm.profileURN.Text;
+                        
+                        // Now copy LinkData after Links collection exists
+                        if (objectBrowserForm.profileURN.Links != null && objectBrowserForm.profileURN.Links.Count > 0 &&
+                            profileURN.Links != null && profileURN.Links.Count > 0)
                         {
                             profileURN.Links[0].LinkData = objectBrowserForm.profileURN.Links[0].LinkData;
                         }
-                        profileURN.Text = objectBrowserForm.profileURN.Text;
+                        
                         numMessagesDisplayed = 0;
                         numPrivateMessagesDisplayed = 0;
                         numFriendFeedsDisplayed = 0;
