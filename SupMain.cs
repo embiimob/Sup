@@ -313,7 +313,7 @@ namespace SUP
                             supFlow.Size = new System.Drawing.Size(supFlow.Width, supFlow.Height - 150); // Change the width and height
                         }
 
-                        profileURN.Links[0].LinkData = objectBrowserForm.profileURN.Links[0].LinkData;
+                        if (profileURN.Links.Count > 0 && objectBrowserForm.profileURN.Links.Count > 0) { profileURN.Links[0].LinkData = objectBrowserForm.profileURN.Links[0].LinkData; }
                         profileURN.Text = objectBrowserForm.profileURN.Text;
                         numMessagesDisplayed = 0;
                         numPrivateMessagesDisplayed = 0;
@@ -427,7 +427,7 @@ namespace SUP
 
             profileBIO.Text = activeProfile.Bio;
             profileURN.Text = activeProfile.URN;
-            profileURN.Links[0].LinkData = address;
+            if (profileURN.Links.Count > 0) { profileURN.Links[0].LinkData = address; }
             profileIMG.Tag = address;
 
             Task.Run(() =>
@@ -811,7 +811,7 @@ namespace SUP
                         string searchAddress = Root.GetPublicAddressByKeyword(value.Replace("#", ""), mainnetVersionByte);
                         MakeActiveProfile(searchAddress);
                         profileURN.Text = value;
-                        profileURN.Links[0].LinkData = searchAddress;
+                        if (profileURN.Links.Count > 0) { profileURN.Links[0].LinkData = searchAddress; }
                         profileBIO.Text = "Click the follow button to add this search to your community feed."; profileCreatedDate.Text = ""; profileIMG.ImageLocation = ""; lblProcessHeight.Text = "";
 
                         GenerateImage(value);
@@ -1224,7 +1224,15 @@ namespace SUP
                                     this.Invoke((Action)(() =>
                                     {
                                         Random rnd = new Random();
-                                        string[] gifFiles = Directory.GetFiles("includes", "*.gif");
+                                        string[] gifFiles = new string[] { };
+                                        try
+                                        {
+                                            if (Directory.Exists("includes"))
+                                            {
+                                                gifFiles = Directory.GetFiles("includes", "*.gif");
+                                            }
+                                        }
+                                        catch { }
                                         if (gifFiles.Length > 0)
                                         {
                                             int randomIndex = rnd.Next(gifFiles.Length);
@@ -3601,7 +3609,12 @@ namespace SUP
                     string folderPath = Path.Combine(Environment.CurrentDirectory, relativeFolderPath);
 
                     if (!Directory.Exists(folderPath)) { Directory.CreateDirectory(folderPath); }
-                    string[] files = Directory.GetFiles(folderPath);
+                    string[] files = new string[] { };
+                    try
+                    {
+                        files = Directory.GetFiles(folderPath);
+                    }
+                    catch { }
 
                     foreach (string file in files)
                     {
@@ -4311,7 +4324,7 @@ namespace SUP
                     splitContainer1.Panel2.Controls.Add(supPrivateFlow);
                 });
             }
-            if (profileURN.Links[0].LinkData == null)
+            if (profileURN.Links.Count > 0 && profileURN.Links[0].LinkData == null)
             {
                 this.Invoke((MethodInvoker)delegate
                 {
@@ -4949,7 +4962,7 @@ namespace SUP
 
                                 LinkLabel titleLabel = new LinkLabel();
                                 titleLabel.Text = transid + @"\" + file;
-                                titleLabel.Links[0].LinkData = transid + @"\" + file;
+                                titleLabel.Links.Add(0, titleLabel.Text.Length, transid + @"\" + file);
                                 titleLabel.AutoSize = true;
                                 titleLabel.Font = new Font("Segoe UI", 8, FontStyle.Bold);
                                 titleLabel.LinkColor = System.Drawing.SystemColors.GradientActiveCaption;
@@ -5589,7 +5602,15 @@ namespace SUP
                                             {
 
                                                 Random rnd = new Random();
-                                                string[] gifFiles = Directory.GetFiles("includes", "*.gif");
+                                                string[] gifFiles = new string[] { };
+                                                try
+                                                {
+                                                    if (Directory.Exists("includes"))
+                                                    {
+                                                        gifFiles = Directory.GetFiles("includes", "*.gif");
+                                                    }
+                                                }
+                                                catch { }
                                                 if (gifFiles.Length > 0)
                                                 {
                                                     int randomIndex = rnd.Next(gifFiles.Length);
@@ -5635,7 +5656,15 @@ namespace SUP
                                 {
 
                                     Random rnd = new Random();
-                                    string[] gifFiles = Directory.GetFiles("includes", "*.gif");
+                                        string[] gifFiles = new string[] { };
+                                        try
+                                        {
+                                            if (Directory.Exists("includes"))
+                                            {
+                                                gifFiles = Directory.GetFiles("includes", "*.gif");
+                                            }
+                                        }
+                                        catch { }
                                     if (gifFiles.Length > 0)
                                     {
                                         int randomIndex = rnd.Next(gifFiles.Length);
@@ -5916,7 +5945,15 @@ namespace SUP
                                             {
 
                                                 Random rnd = new Random();
-                                                string[] gifFiles = Directory.GetFiles("includes", "*.gif");
+                                                string[] gifFiles = new string[] { };
+                                                try
+                                                {
+                                                    if (Directory.Exists("includes"))
+                                                    {
+                                                        gifFiles = Directory.GetFiles("includes", "*.gif");
+                                                    }
+                                                }
+                                                catch { }
                                                 if (gifFiles.Length > 0)
                                                 {
                                                     int randomIndex = rnd.Next(gifFiles.Length);
@@ -5962,7 +5999,15 @@ namespace SUP
                                 {
 
                                     Random rnd = new Random();
-                                    string[] gifFiles = Directory.GetFiles("includes", "*.gif");
+                                        string[] gifFiles = new string[] { };
+                                        try
+                                        {
+                                            if (Directory.Exists("includes"))
+                                            {
+                                                gifFiles = Directory.GetFiles("includes", "*.gif");
+                                            }
+                                        }
+                                        catch { }
                                     if (gifFiles.Length > 0)
                                     {
                                         int randomIndex = rnd.Next(gifFiles.Length);
@@ -6734,7 +6779,7 @@ namespace SUP
                 else if (me.Button == MouseButtons.Right && transactionId != "")
                 {
                     // Code to execute for right click
-                    profileURN.Links[0].LinkData = Root.GetPublicAddressByKeyword(transactionId, mainnetVersionByte);
+                    if (profileURN.Links.Count > 0) { profileURN.Links[0].LinkData = Root.GetPublicAddressByKeyword(transactionId, mainnetVersionByte); }
                     string activeUser = "";
                     string activeUserImage = "";
 
@@ -6905,7 +6950,7 @@ namespace SUP
         {
 
             string ActiveProfile = "";
-            if (profileURN.Links[0].LinkData != null) { ActiveProfile = profileURN.Links[0].LinkData.ToString(); }
+            if (profileURN.Links.Count > 0 && profileURN.Links[0].LinkData != null) { ActiveProfile = profileURN.Links[0].LinkData.ToString(); }
             try { new ProfileMint(ActiveProfile, testnet).Show(); } catch { }
         }
 
@@ -6968,7 +7013,7 @@ namespace SUP
             string profileowner = "";
             string toaddress = "";
             if (profileOwner.Tag != null) { profileowner = profileOwner.Tag.ToString(); }
-            if (profileURN.Links[0].LinkData != null) { toaddress = profileURN.Links[0].LinkData.ToString(); }
+            if (profileURN.Links.Count > 0 && profileURN.Links[0].LinkData != null) { toaddress = profileURN.Links[0].LinkData.ToString(); }
             bool isprivate = false;
 
             if (btnPrivateMessage.BackColor == Color.Blue) { isprivate = true; }
@@ -7094,7 +7139,7 @@ namespace SUP
                     {
 
                         profileBIO.Text = ""; profileCreatedDate.Text = ""; profileIMG.ImageLocation = ""; lblProcessHeight.Text = "";
-                        profileURN.Links[0].LinkData = ((PictureBox)sender).Tag.ToString();
+                        if (profileURN.Links.Count > 0) { profileURN.Links[0].LinkData = ((PictureBox)sender).Tag.ToString(); }
                         profileURN.Text = Path.GetFileNameWithoutExtension(((PictureBox)sender).ImageLocation.ToString());
                         profileIMG.ImageLocation = ((PictureBox)sender).ImageLocation.ToString();
 
@@ -7233,7 +7278,7 @@ namespace SUP
                         supFlow.Size = new System.Drawing.Size(supFlow.Width, supFlow.Height + 150); // Change the width and height
                     }
                     profileBIO.Text = ""; profileCreatedDate.Text = ""; profileIMG.ImageLocation = ""; lblProcessHeight.Text = "";
-                    profileURN.Links[0].LinkData = null;
+                    if (profileURN.Links.Count > 0) { profileURN.Links[0].LinkData = null; }
                     profileURN.Text = "anon";
                     ClearMessages(supFlow);
 
@@ -7415,7 +7460,7 @@ namespace SUP
 
         private void imgBTCSwitch_Click(object sender, EventArgs e)
         {
-            profileURN.Text = "anon"; profileBIO.Text = ""; profileCreatedDate.Text = ""; profileIMG.ImageLocation = @"includes/anon.png"; lblProcessHeight.Text = ""; profileURN.Links[0].LinkData = null; profileURN.Links[0].Tag = ""; profileIMG.Tag = ""; profileOwner.ImageLocation = null; profileOwner.Tag = null;
+            profileURN.Text = "anon"; profileBIO.Text = ""; profileCreatedDate.Text = ""; profileIMG.ImageLocation = @"includes/anon.png"; lblProcessHeight.Text = ""; if (profileURN.Links.Count > 0) { profileURN.Links[0].LinkData = null; profileURN.Links[0].Tag = ""; } profileIMG.Tag = ""; profileOwner.ImageLocation = null; profileOwner.Tag = null;
             ClearMessages(supFlow);
             ClearMessages(supPrivateFlow);
             numMessagesDisplayed = 0;
