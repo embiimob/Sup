@@ -204,9 +204,11 @@ This makes it easy to diagnose any remaining issues or unexpected behavior.
    - Added defensive null checks throughout
    - Improved error handling and logging
 
-## Additional Bug Fix (December 12, 2025)
+## Additional Bug Fixes (December 12, 2025)
 
-After user testing, an additional critical issue was identified and fixed:
+After user testing, two additional critical issues were identified and fixed:
+
+### Issue #1: NullReferenceException in LinkLabel.OnPaint() (Commit ab9ce74)
 
 ### NullReferenceException in LinkLabel.OnPaint()
 
@@ -254,6 +256,85 @@ profileURN.Text = "";
 ```
 
 **Result**: The red X and NullReferenceException should no longer occur when searching for hashtags like `#LOVE`.
+
+### Issue #2: Hashtag Search Failure in RefreshSupMessages() (Commits 11b5847, efd4a0a)
+
+**Issue Reported by @embiimob**: After fixing Issue #1, typing `#LOVE` and pressing Enter caused a NullReferenceException in `SupMain.RefreshSupMessages()` at line 3602:
+```
+System.NullReferenceException
+  at SUP.SupMain.RefreshSupMessages() in SupMain.cs:line 3602
+  
+try { messages = OBJState.GetPublicMessagesByAddress(profileURN.Links[0].LinkData.ToString(), ...); }
+```
+
+The search would fail, and no results were returned even though the profile panel updated.
+
+**Root Cause Analysis**:
+The fix for Issue #1 introduced a race condition. When `profileURN.Text` was set at line 469 in ObjectBrowser, it immediately fired the `TextChanged` event BEFORE `LinkData` was set at line 474. This caused the event to propagate to SupMain before LinkData contained the keyword address needed for hashtag searches.
+
+For hashtag searches like `#LOVE`:
+1. The keyword "LOVE" is converted to an address via `Root.GetPublicAddressByKeyword(txtSearchAddress.Text.Substring(1), mainnetVersionByte)` at line 444
+2. This address (stored in `profileCheck`) should be set in `Links[0].LinkData`
+3. `GetPublicMessagesByAddress()` uses this address to fetch messages tagged with the hashtag
+
+**Fix Applied (Commits 11b5847, efd4a0a)**:
+
+1. **Created Helper Method** to set properties atomically:
+```csharp
+/// <summary>
+/// Helper method to atomically set profileURN properties without triggering TextChanged event prematurely.
+/// This prevents race conditions where TextChanged fires before LinkData is set.
+/// </summary>
+private void SetProfileURNAtomically(string text, object linkData)
+{
+    // Temporarily detach TextChanged event
+    profileURN.TextChanged -= profileURN_TextChanged;
+    try
+    {
+        // Set all properties atomically
+        profileURN.Text = text;
+        profileURN.LinkColor = System.Drawing.SystemColors.Highlight;
+        if (profileURN.Links.Count > 0)
+        {
+            profileURN.Links[0].LinkData = linkData;
+        }
+    }
+    finally
+    {
+        // Reattach event and trigger once after all properties are set
+        profileURN.TextChanged += profileURN_TextChanged;
+        profileURN_TextChanged(profileURN, EventArgs.Empty);
+    }
+}
+```
+
+2. **Used helper method** in all 4 locations where profileURN is updated:
+```csharp
+// Before (race condition)
+profileURN.Text = txtSearchAddress.Text;  // TextChanged fires here!
+profileURN.LinkColor = System.Drawing.SystemColors.Highlight;
+if (profileURN.Links.Count > 0)
+{
+    profileURN.Links[0].LinkData = profileCheck;  // Too late!
+}
+
+// After (atomic update)
+SetProfileURNAtomically(txtSearchAddress.Text, profileCheck);
+```
+
+3. **Added defensive check** in RefreshSupMessages():
+```csharp
+// For hashtag searches like #LOVE, LinkData contains the keyword address from Root.GetPublicAddressByKeyword()
+if (profileURN.Links != null && profileURN.Links.Count > 0 && 
+    profileURN.Links[0].LinkData != null && 
+    !string.IsNullOrEmpty(profileURN.Links[0].LinkData.ToString()))
+{
+    try { messages = OBJState.GetPublicMessagesByAddress(profileURN.Links[0].LinkData.ToString(), ...); }
+    catch { }
+}
+```
+
+**Result**: Hashtag searches now work correctly. The keyword address is properly set in LinkData before events fire, allowing RefreshSupMessages() to fetch messages using the converted address.
 
 ## Future Improvements
 
