@@ -336,6 +336,55 @@ if (profileURN.Links != null && profileURN.Links.Count > 0 &&
 
 **Result**: Hashtag searches now work correctly. The keyword address is properly set in LinkData before events fire, allowing RefreshSupMessages() to fetch messages using the converted address.
 
+### Issue #3: Search Not Executing (Commit 0851d87)
+
+**Issue Reported by @embiimob**: After fixing Issue #2, typing `#LOVE` and pressing Enter updated the profile panel immediately, but the search didn't execute. The output showed RPCException errors from NBitcoin.
+
+**Root Cause Analysis**:
+The fix for Issue #2 used an event detach/reattach pattern:
+```csharp
+profileURN.TextChanged -= profileURN_TextChanged;
+// ... set properties ...
+profileURN.TextChanged += profileURN_TextChanged;
+profileURN_TextChanged(profileURN, EventArgs.Empty); // Manually call handler
+```
+
+The problem: manually calling `profileURN_TextChanged()` only invoked ObjectBrowser's internal handler, not the actual LinkLabel.TextChanged event. ObjectBrowserControl listens to `control.profileURN.TextChanged`, but this event never fired because we detached and manually called the wrong handler. This broke the event chain to SupMain, preventing search execution.
+
+**Fix Applied (Commit 0851d87)**:
+
+Removed the detach/reattach pattern and returned to the original property order, with proper Links collection initialization:
+
+```csharp
+private void SetProfileURNAtomically(string text, object linkData)
+{
+    // Ensure at least one link exists in the Links collection
+    if (profileURN.Links.Count == 0)
+    {
+        profileURN.Links.Add(new LinkLabel.Link(0, text.Length));
+    }
+    
+    // Set LinkData BEFORE setting Text (original order restored)
+    if (profileURN.Links.Count > 0)
+    {
+        profileURN.Links[0].LinkData = linkData;
+    }
+    
+    profileURN.LinkColor = System.Drawing.SystemColors.Highlight;
+    
+    // Set Text - this triggers TextChanged naturally, propagating to all handlers
+    profileURN.Text = text;
+}
+```
+
+**Key Changes**:
+1. Explicitly create a Link in the Links collection if none exists
+2. Set LinkData BEFORE Text (original order)
+3. Let Text setter trigger TextChanged naturally (no manual event calls)
+4. Event properly propagates: ObjectBrowser → ObjectBrowserControl → SupMain
+
+**Result**: Search now executes properly. The TextChanged event fires naturally with LinkData already set, propagating correctly through the event chain to trigger search in SupMain.
+
 ## Future Improvements
 
 If this pattern becomes more complex, consider:
