@@ -44,6 +44,10 @@ namespace SUP
         // When true, indicates that profileURN is being updated from an external source (SupMain)
         // and should not trigger BuildSearchResults or propagate changes back
         public bool _isUpdatingFromExternal = false;
+        
+        // Guard flag to suppress profileURN_TextChanged temporarily during atomic property updates
+        // Prevents race conditions where TextChanged fires before LinkData is set
+        private bool _isSuppressingProfileURNTextChanged = false;
 
         List<FoundObjectControl> foundObjects = new List<FoundObjectControl>();
         List<PictureBox> pictureBoxes = new List<PictureBox>();
@@ -3742,6 +3746,17 @@ namespace SUP
         //should keep object browser active profile synched with social
         private void profileURN_TextChanged(object sender, EventArgs e)
         {
+            // Skip if we're in the middle of an atomic property update
+            if (_isSuppressingProfileURNTextChanged)
+            {
+                return;
+            }
+            
+            // Defensive check: Ensure Links collection exists and has at least one link before accessing
+            if (profileURN.Links == null || profileURN.Links.Count == 0)
+            {
+                return;
+            }
 
             if (profileURN.Links[0].LinkData != null)
             {
@@ -3765,7 +3780,7 @@ namespace SUP
 
         /// <summary>
         /// Helper method to atomically set profileURN properties.
-        /// Sets LinkData before Text to ensure it's available when TextChanged event fires.
+        /// Sets all properties with internal TextChanged handler suppressed, then triggers event manually.
         /// </summary>
         /// <param name="text">The text to set for the profileURN</param>
         /// <param name="linkData">The link data to associate with the profileURN</param>
@@ -3777,26 +3792,31 @@ namespace SUP
                 text = string.Empty;
             }
             
-            // For LinkLabel to work properly, we need to set properties in the right order:
-            // 1. Ensure the LinkLabel has a Link by checking/creating one
-            // 2. Set LinkData on the existing link
-            // 3. Set Text (which will trigger TextChanged with LinkData already available)
-            
-            // Ensure at least one link exists in the Links collection
-            if (profileURN.Links.Count == 0)
+            // Suppress internal profileURN_TextChanged handler to set properties atomically
+            _isSuppressingProfileURNTextChanged = true;
+            try
             {
-                // Create a link spanning the entire text if none exists
-                int linkLength = text.Length > 0 ? text.Length : 1;
-                profileURN.Links.Add(new LinkLabel.Link(0, linkLength));
+                profileURN.LinkColor = System.Drawing.SystemColors.Highlight;
+                
+                // Set Text first - WinForms will automatically create/update Links collection
+                // TextChanged event will fire, but our handler is suppressed
+                profileURN.Text = text;
+                
+                // Now safely set LinkData on the link that WinForms created
+                if (profileURN.Links != null && profileURN.Links.Count > 0)
+                {
+                    profileURN.Links[0].LinkData = linkData;
+                }
+            }
+            finally
+            {
+                // Re-enable handler
+                _isSuppressingProfileURNTextChanged = false;
             }
             
-            // Now set LinkData BEFORE setting Text (redundant check removed - link always exists here)
-            profileURN.Links[0].LinkData = linkData;
-            
-            profileURN.LinkColor = System.Drawing.SystemColors.Highlight;
-            
-            // Finally set Text - this will trigger TextChanged with LinkData already set
-            profileURN.Text = text;
+            // Manually trigger the internal handler now that all properties are set
+            // This ensures _activeProfile is updated if needed
+            profileURN_TextChanged(profileURN, EventArgs.Empty);
         }
 
         private async void btnActivity_Click(object sender, EventArgs e)
