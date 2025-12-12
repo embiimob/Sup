@@ -1567,26 +1567,51 @@ namespace SUP
 
                     if (searchprofile.URN != null)
                     {
-
                         this.Invoke((Action)(() =>
                         {
-
-                            profileURN.Links[0].LinkData = searchprofile.Creators.First();
-                            profileURN.LinkColor = System.Drawing.SystemColors.Highlight;
-
-                            profileURN.Text = TruncateAddress(searchprofile.URN);
-
-                            profileCheck = searchprofile.Creators.First();
+                            try
+                            {
+                                _updatingProfileURN = true;
+                                profileURN.Text = TruncateAddress(searchprofile.URN);
+                                profileURN.LinkColor = System.Drawing.SystemColors.Highlight;
+                                if (profileURN.Links.Count == 0)
+                                {
+                                    profileURN.Links.Add(0, profileURN.Text.Length);
+                                }
+                                if (profileURN.Links.Count > 0 && profileURN.Links[0] != null)
+                                {
+                                    profileURN.Links[0].LinkData = searchprofile.Creators.First();
+                                }
+                                profileCheck = searchprofile.Creators.First();
+                            }
+                            finally
+                            {
+                                _updatingProfileURN = false;
+                            }
                         }));
-
                     }
                     else
                     {
                         this.Invoke((Action)(() =>
                         {
-                            profileURN.Links[0].LinkData = address;
-                            profileURN.LinkColor = System.Drawing.SystemColors.GradientActiveCaption;
-                            profileURN.Text = "anon";
+                            try
+                            {
+                                _updatingProfileURN = true;
+                                profileURN.Text = "anon";
+                                profileURN.LinkColor = System.Drawing.SystemColors.GradientActiveCaption;
+                                if (profileURN.Links.Count == 0)
+                                {
+                                    profileURN.Links.Add(0, profileURN.Text.Length);
+                                }
+                                if (profileURN.Links.Count > 0 && profileURN.Links[0] != null)
+                                {
+                                    profileURN.Links[0].LinkData = address;
+                                }
+                            }
+                            finally
+                            {
+                                _updatingProfileURN = false;
+                            }
                         }));
                     }
                 }
@@ -1594,20 +1619,49 @@ namespace SUP
                 {
                     this.Invoke((Action)(() =>
                     {
-                        profileURN.Links[0].LinkData = address;
-                        profileURN.LinkColor = System.Drawing.SystemColors.GradientActiveCaption;
-                        profileURN.Text = address;
+                        try
+                        {
+                            _updatingProfileURN = true;
+                            profileURN.Text = address;
+                            profileURN.LinkColor = System.Drawing.SystemColors.GradientActiveCaption;
+                            if (profileURN.Links.Count == 0)
+                            {
+                                profileURN.Links.Add(0, profileURN.Text.Length);
+                            }
+                            if (profileURN.Links.Count > 0 && profileURN.Links[0] != null)
+                            {
+                                profileURN.Links[0].LinkData = address;
+                            }
+                        }
+                        finally
+                        {
+                            _updatingProfileURN = false;
+                        }
                     }));
                 }
             }
             catch
             {
-
                 this.Invoke((Action)(() =>
                 {
-                    profileURN.Links[0].LinkData = address;
-                    profileURN.LinkColor = System.Drawing.SystemColors.GradientActiveCaption;
-                    profileURN.Text = "anon";
+                    try
+                    {
+                        _updatingProfileURN = true;
+                        profileURN.Text = "anon";
+                        profileURN.LinkColor = System.Drawing.SystemColors.GradientActiveCaption;
+                        if (profileURN.Links.Count == 0)
+                        {
+                            profileURN.Links.Add(0, profileURN.Text.Length);
+                        }
+                        if (profileURN.Links.Count > 0 && profileURN.Links[0] != null)
+                        {
+                            profileURN.Links[0].LinkData = address;
+                        }
+                    }
+                    finally
+                    {
+                        _updatingProfileURN = false;
+                    }
                 }));
             }
 
@@ -1986,26 +2040,51 @@ namespace SUP
 
                     if (searchprofile.URN != null)
                     {
-
                         this.Invoke((Action)(() =>
                         {
-
-                            profileURN.Links[0].LinkData = searchprofile.Creators.First();
-                            profileURN.LinkColor = System.Drawing.SystemColors.Highlight;
-
-                            profileURN.Text = TruncateAddress(searchprofile.URN);
-
-                            profileCheck = searchprofile.Creators.First();
+                            try
+                            {
+                                _updatingProfileURN = true;
+                                profileURN.Text = TruncateAddress(searchprofile.URN);
+                                profileURN.LinkColor = System.Drawing.SystemColors.Highlight;
+                                if (profileURN.Links.Count == 0)
+                                {
+                                    profileURN.Links.Add(0, profileURN.Text.Length);
+                                }
+                                if (profileURN.Links.Count > 0 && profileURN.Links[0] != null)
+                                {
+                                    profileURN.Links[0].LinkData = searchprofile.Creators.First();
+                                }
+                                profileCheck = searchprofile.Creators.First();
+                            }
+                            finally
+                            {
+                                _updatingProfileURN = false;
+                            }
                         }));
-
                     }
                     else
                     {
                         this.Invoke((Action)(() =>
                         {
-                            profileURN.Links[0].LinkData = address;
-                            profileURN.LinkColor = System.Drawing.SystemColors.GradientActiveCaption;
-                            profileURN.Text = "anon";
+                            try
+                            {
+                                _updatingProfileURN = true;
+                                profileURN.Text = "anon";
+                                profileURN.LinkColor = System.Drawing.SystemColors.GradientActiveCaption;
+                                if (profileURN.Links.Count == 0)
+                                {
+                                    profileURN.Links.Add(0, profileURN.Text.Length);
+                                }
+                                if (profileURN.Links.Count > 0 && profileURN.Links[0] != null)
+                                {
+                                    profileURN.Links[0].LinkData = address;
+                                }
+                            }
+                            finally
+                            {
+                                _updatingProfileURN = false;
+                            }
                         }));
                     }
                 }
@@ -2013,20 +2092,49 @@ namespace SUP
                 {
                     this.Invoke((Action)(() =>
                     {
-                        profileURN.Links[0].LinkData = address;
-                        profileURN.LinkColor = System.Drawing.SystemColors.GradientActiveCaption;
-                        profileURN.Text = address;
+                        try
+                        {
+                            _updatingProfileURN = true;
+                            profileURN.Text = address;
+                            profileURN.LinkColor = System.Drawing.SystemColors.GradientActiveCaption;
+                            if (profileURN.Links.Count == 0)
+                            {
+                                profileURN.Links.Add(0, profileURN.Text.Length);
+                            }
+                            if (profileURN.Links.Count > 0 && profileURN.Links[0] != null)
+                            {
+                                profileURN.Links[0].LinkData = address;
+                            }
+                        }
+                        finally
+                        {
+                            _updatingProfileURN = false;
+                        }
                     }));
                 }
             }
             catch
             {
-
                 this.Invoke((Action)(() =>
                 {
-                    profileURN.Links[0].LinkData = address;
-                    profileURN.LinkColor = System.Drawing.SystemColors.GradientActiveCaption;
-                    profileURN.Text = "anon";
+                    try
+                    {
+                        _updatingProfileURN = true;
+                        profileURN.Text = "anon";
+                        profileURN.LinkColor = System.Drawing.SystemColors.GradientActiveCaption;
+                        if (profileURN.Links.Count == 0)
+                        {
+                            profileURN.Links.Add(0, profileURN.Text.Length);
+                        }
+                        if (profileURN.Links.Count > 0 && profileURN.Links[0] != null)
+                        {
+                            profileURN.Links[0].LinkData = address;
+                        }
+                    }
+                    finally
+                    {
+                        _updatingProfileURN = false;
+                    }
                 }));
             }
 
@@ -3077,7 +3185,24 @@ namespace SUP
             if (e.KeyCode == Keys.Enter)
             {
                 if (txtSearchAddress.Text == "" || txtSearchAddress.Text.StartsWith("#") || txtSearchAddress.Text.ToUpper().StartsWith("SUP:") || txtSearchAddress.Text.ToUpper().StartsWith("HTTP") || txtSearchAddress.Text.ToUpper().StartsWith("BTC:") || txtSearchAddress.Text.ToUpper().StartsWith("MZC:") || txtSearchAddress.Text.ToUpper().StartsWith("LTC:") || txtSearchAddress.Text.ToUpper().StartsWith("DOG:") || txtSearchAddress.Text.ToUpper().StartsWith("IPFS:")) { btnCreated.BackColor = Color.White; btnOwned.BackColor = Color.White; }
-                profileURN.Text = "";
+                
+                // Clear profileURN safely with re-entrancy protection
+                try
+                {
+                    _updatingProfileURN = true;
+                    profileURN.Text = "";
+                    // Re-initialize Links collection after clearing text
+                    profileURN.Links.Clear();
+                    if (profileURN.Text.Length > 0)
+                    {
+                        profileURN.Links.Add(0, profileURN.Text.Length);
+                    }
+                }
+                finally
+                {
+                    _updatingProfileURN = false;
+                }
+                
                 e.Handled = true;
                 e.SuppressKeyPress = true;
                 DisableSupInput();
