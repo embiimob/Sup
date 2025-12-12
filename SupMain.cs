@@ -1669,7 +1669,7 @@ namespace SUP
                                                 else { find = true; }
 
                                                 if (File.Exists(@"LIVE_FILTER_ENABLED")) { find = myFriends.ContainsKey(root.Keyword.Keys.Last()); }
-                                                if (find && root.File.ContainsKey("SEC") && root.Keyword.ContainsKey(profileURN.Links[0].LinkData.ToString()))
+                                                if (find && root.File.ContainsKey("SEC") && profileURN.Links.Count > 0 && profileURN.Links[0] != null && profileURN.Links[0].LinkData != null && root.Keyword.ContainsKey(profileURN.Links[0].LinkData.ToString()))
                                                 {
                                                     //enough delay so the in memory element data is populated
                                                     root = Root.GetRootByTransactionId(s, mainnetLogin, mainnetPassword, @"http://127.0.0.1:18332", "111");
@@ -2090,7 +2090,7 @@ namespace SUP
                                                     else { find = true; }
 
                                                     if (File.Exists(@"LIVE_FILTER_ENABLED")) { find = myFriends.ContainsKey(root.Keyword.Keys.Last()); }
-                                                    if (find && root.File.ContainsKey("SEC") && root.Keyword.ContainsKey(profileURN.Links[0].LinkData.ToString()))
+                                                    if (find && root.File.ContainsKey("SEC") && profileURN.Links.Count > 0 && profileURN.Links[0] != null && profileURN.Links[0].LinkData != null && root.Keyword.ContainsKey(profileURN.Links[0].LinkData.ToString()))
                                                     {
                                                         //enough delay so the in memory element data is populated
                                                         root = Root.GetRootByTransactionId(s, mainnetLogin, mainnetPassword, @"http://127.0.0.1:8332", "0");
@@ -3600,8 +3600,11 @@ namespace SUP
 
             List<MessageObject> messages = new List<MessageObject>();
 
-            try { messages = OBJState.GetPublicMessagesByAddress(profileURN.Links[0].LinkData.ToString(), mainnetLogin, mainnetPassword, mainnetURL, mainnetVersionByte, numMessagesDisplayed, 10); }
-            catch { }
+            if (profileURN.Links.Count > 0 && profileURN.Links[0] != null && profileURN.Links[0].LinkData != null)
+            {
+                try { messages = OBJState.GetPublicMessagesByAddress(profileURN.Links[0].LinkData.ToString(), mainnetLogin, mainnetPassword, mainnetURL, mainnetVersionByte, numMessagesDisplayed, 10); }
+                catch { }
+            }
 
 
             supFlow.SuspendLayout();
@@ -4341,7 +4344,7 @@ namespace SUP
                     splitContainer1.Panel2.Controls.Add(supPrivateFlow);
                 });
             }
-            if (profileURN.Links[0].LinkData == null)
+            if (profileURN.Links.Count == 0 || profileURN.Links[0] == null || profileURN.Links[0].LinkData == null)
             {
                 this.Invoke((MethodInvoker)delegate
                 {
@@ -4637,7 +4640,10 @@ namespace SUP
                                     // This prevents the UI from freezing when IPFS is slow or fails
                                     // Use Task.Run to ensure the async operation completes instead of being abandoned
                                     // Task.Run properly handles async lambdas in both Debug and Release modes
-                                    _ = Task.Run(async () => await LoadSecAttachmentAsync(content, messagePacket.TransactionId, profileURN.Links[0].LinkData.ToString()).ConfigureAwait(false));
+                                    if (profileURN.Links.Count > 0 && profileURN.Links[0] != null && profileURN.Links[0].LinkData != null)
+                                    {
+                                        _ = Task.Run(async () => await LoadSecAttachmentAsync(content, messagePacket.TransactionId, profileURN.Links[0].LinkData.ToString()).ConfigureAwait(false));
+                                    }
                                 }
                                 else
                                 {
@@ -6756,7 +6762,17 @@ namespace SUP
                 else if (me.Button == MouseButtons.Right && transactionId != "")
                 {
                     // Code to execute for right click
-                    profileURN.Links[0].LinkData = Root.GetPublicAddressByKeyword(transactionId, mainnetVersionByte);
+                    string address = Root.GetPublicAddressByKeyword(transactionId, mainnetVersionByte);
+                    
+                    // Update profileURN safely
+                    profileURN.Text = address;
+                    profileURN.Links.Clear();
+                    profileURN.Links.Add(0, Math.Max(0, profileURN.Text.Length));
+                    if (profileURN.Links.Count > 0 && profileURN.Links[0] != null)
+                    {
+                        profileURN.Links[0].LinkData = address;
+                    }
+                    
                     string activeUser = "";
                     string activeUserImage = "";
 
@@ -6927,7 +6943,7 @@ namespace SUP
         {
 
             string ActiveProfile = "";
-            if (profileURN.Links[0].LinkData != null) { ActiveProfile = profileURN.Links[0].LinkData.ToString(); }
+            if (profileURN.Links.Count > 0 && profileURN.Links[0] != null && profileURN.Links[0].LinkData != null) { ActiveProfile = profileURN.Links[0].LinkData.ToString(); }
             try { new ProfileMint(ActiveProfile, testnet).Show(); } catch { }
         }
 
@@ -6990,7 +7006,7 @@ namespace SUP
             string profileowner = "";
             string toaddress = "";
             if (profileOwner.Tag != null) { profileowner = profileOwner.Tag.ToString(); }
-            if (profileURN.Links[0].LinkData != null) { toaddress = profileURN.Links[0].LinkData.ToString(); }
+            if (profileURN.Links.Count > 0 && profileURN.Links[0] != null && profileURN.Links[0].LinkData != null) { toaddress = profileURN.Links[0].LinkData.ToString(); }
             bool isprivate = false;
 
             if (btnPrivateMessage.BackColor == Color.Blue) { isprivate = true; }
@@ -7019,7 +7035,11 @@ namespace SUP
             PictureBox pictureBox = new PictureBox();
 
             // Set the PictureBox properties
-            try { pictureBox.Tag = profileURN.Links[0].LinkData.ToString(); } catch { return; }
+            if (profileURN.Links.Count > 0 && profileURN.Links[0] != null && profileURN.Links[0].LinkData != null)
+            {
+                try { pictureBox.Tag = profileURN.Links[0].LinkData.ToString(); } catch { return; }
+            }
+            else { return; }
             pictureBox.SizeMode = PictureBoxSizeMode.StretchImage;
             pictureBox.Width = 50;
             pictureBox.Height = 50;
@@ -7031,7 +7051,10 @@ namespace SUP
 
             try
             {
-                friendDict.Add(profileURN.Links[0].LinkData.ToString(), profileIMG.ImageLocation);
+                if (profileURN.Links.Count > 0 && profileURN.Links[0] != null && profileURN.Links[0].LinkData != null)
+                {
+                    friendDict.Add(profileURN.Links[0].LinkData.ToString(), profileIMG.ImageLocation);
+                }
                 flowFollow.Controls.Add(pictureBox);
             }
             catch { }
@@ -7171,7 +7194,12 @@ namespace SUP
 
                 try
                 {
-                    using (FileStream fs = File.Create(@"root\" + profileURN.Links[0].LinkData.ToString() + @"\MUTE"))
+                    if (profileURN.Links.Count > 0 && profileURN.Links[0] != null && profileURN.Links[0].LinkData != null)
+                    {
+                        using (FileStream fs = File.Create(@"root\" + profileURN.Links[0].LinkData.ToString() + @"\MUTE"))
+                        {
+                        }
+                    }
                     {
 
                     }
@@ -7182,7 +7210,10 @@ namespace SUP
             }
             else
             {
-                try { File.Delete(@"root\" + profileURN.Links[0].LinkData.ToString() + @"\MUTE"); } catch { }
+                if (profileURN.Links.Count > 0 && profileURN.Links[0] != null && profileURN.Links[0].LinkData != null)
+                {
+                    try { File.Delete(@"root\" + profileURN.Links[0].LinkData.ToString() + @"\MUTE"); } catch { }
+                }
                 btnMute.Text = "mute";
             }
         }
@@ -7204,6 +7235,11 @@ namespace SUP
 
 
 
+                    if (profileURN.Links.Count == 0 || profileURN.Links[0] == null || profileURN.Links[0].LinkData == null)
+                    {
+                        return;
+                    }
+                    
                     Root[] root = Root.GetRootsByAddress(profileURN.Links[0].LinkData.ToString(), mainnetLogin, mainnetPassword, mainnetURL, 0, -1, mainnetVersionByte);
 
                     foreach (Root rootItem in root)
@@ -7225,22 +7261,25 @@ namespace SUP
 
                     try { Directory.Delete(@"root\" + profileURN.Text.Replace("#", ""), true); } catch { }
 
-                    try { Directory.Delete(@"root\" + profileURN.Links[0].LinkData.ToString(), true); } catch { }
-                    try { Directory.CreateDirectory(@"root\" + profileURN.Links[0].LinkData.ToString()); } catch { }
-                    try
+                    if (profileURN.Links.Count > 0 && profileURN.Links[0] != null && profileURN.Links[0].LinkData != null)
                     {
-                        using (FileStream fs = File.Create(@"root\" + profileURN.Links[0].LinkData.ToString() + @"\BLOCK"))
+                        try { Directory.Delete(@"root\" + profileURN.Links[0].LinkData.ToString(), true); } catch { }
+                        try { Directory.CreateDirectory(@"root\" + profileURN.Links[0].LinkData.ToString()); } catch { }
+                        try
                         {
+                            using (FileStream fs = File.Create(@"root\" + profileURN.Links[0].LinkData.ToString() + @"\BLOCK"))
+                            {
 
+                            }
                         }
-                    }
-                    catch { }
+                        catch { }
 
-                    foreach (Control control in flowFollow.Controls)
-                    {
-                        if (control is PictureBox pictureBox && pictureBox.Tag.ToString() == profileURN.Links[0].LinkData.ToString())
+                        foreach (Control control in flowFollow.Controls)
                         {
-                            flowFollow.Controls.Remove(pictureBox);
+                            if (control is PictureBox pictureBox && pictureBox.Tag.ToString() == profileURN.Links[0].LinkData.ToString())
+                            {
+                                flowFollow.Controls.Remove(pictureBox);
+                            }
                         }
                     }
 
@@ -7286,7 +7325,10 @@ namespace SUP
             try
             {
 
-                MakeActiveProfile(profileURN.Links[0].LinkData.ToString());
+                if (profileURN.Links.Count > 0 && profileURN.Links[0] != null && profileURN.Links[0].LinkData != null)
+                {
+                    MakeActiveProfile(profileURN.Links[0].LinkData.ToString());
+                }
                 numMessagesDisplayed = 0;
                 btnCommunityFeed.BackColor = System.Drawing.Color.White;
                 btnCommunityFeed.ForeColor = System.Drawing.Color.Black;
@@ -7375,7 +7417,7 @@ namespace SUP
 
             btnJukeBox.Enabled = false;
 
-            if (profileURN.Links[0].LinkData != null)
+            if (profileURN.Links.Count > 0 && profileURN.Links[0] != null && profileURN.Links[0].LinkData != null)
             {
                 JukeBox jukeBoxForm = new JukeBox(profileURN.Text, testnet);
                 jukeBoxForm.Show();
@@ -7399,7 +7441,7 @@ namespace SUP
 
             btnVideoSearch.Enabled = false;
 
-            if (profileURN.Links[0].LinkData != null)
+            if (profileURN.Links.Count > 0 && profileURN.Links[0] != null && profileURN.Links[0].LinkData != null)
             {
                 SupFlix supFlixForm = new SupFlix(profileURN.Text);
                 supFlixForm.Show();
@@ -7417,7 +7459,7 @@ namespace SUP
         {
             btnVideoSearch.Enabled = false;
 
-            if (profileURN.Links[0].LinkData != null)
+            if (profileURN.Links.Count > 0 && profileURN.Links[0] != null && profileURN.Links[0].LinkData != null)
             {
                 INQSearch INQSearchForm = new INQSearch(profileURN.Text);
                 INQSearchForm.Show();

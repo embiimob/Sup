@@ -3179,7 +3179,7 @@ namespace SUP
 
         private void MainUserNameClick(object sender, LinkLabelLinkClickedEventArgs e)
         {
-            if (profileURN.Links[0].LinkData != null)
+            if (profileURN.Links.Count > 0 && profileURN.Links[0] != null && profileURN.Links[0].LinkData != null)
             {
                 txtSearchAddress.Text = profileURN.Links[0].LinkData.ToString();
             }
