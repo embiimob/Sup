@@ -47,6 +47,9 @@ namespace SUP
         
         // Cancellation support for async operations
         private System.Threading.CancellationTokenSource _searchCancellationTokenSource;
+        
+        // Flag to prevent re-entrancy in profileURN_TextChanged
+        private bool _updatingProfileURN = false;
         public ObjectBrowser(string objectaddress, bool iscontrol = false, bool testnet = true)
         {
             InitializeComponent();
@@ -297,6 +300,7 @@ namespace SUP
                         {
                             try
                             {
+                                _updatingProfileURN = true;
                                 profileURN.Text = txtSearchAddress.Text;
                                 profileURN.LinkColor = System.Drawing.SystemColors.Highlight;
                                 if (profileURN.Links.Count == 0)
@@ -309,6 +313,10 @@ namespace SUP
                                 }
                             }
                             catch { }
+                            finally
+                            {
+                                _updatingProfileURN = false;
+                            }
                         }));
                     }
 
@@ -348,6 +356,7 @@ namespace SUP
                         {
                             try
                             {
+                                _updatingProfileURN = true;
                                 profileURN.Text = txtSearchAddress.Text;
                                 profileURN.LinkColor = System.Drawing.SystemColors.Highlight;
                                 if (profileURN.Links.Count == 0)
@@ -360,6 +369,10 @@ namespace SUP
                                 }
                             }
                             catch { }
+                            finally
+                            {
+                                _updatingProfileURN = false;
+                            }
                         }));
                     }
 
@@ -382,6 +395,7 @@ namespace SUP
                         {
                             try
                             {
+                                _updatingProfileURN = true;
                                 profileURN.Text = "anon";
                                 profileURN.LinkColor = System.Drawing.SystemColors.Highlight;
                                 if (profileURN.Links.Count == 0)
@@ -394,6 +408,10 @@ namespace SUP
                                 }
                             }
                             catch { }
+                            finally
+                            {
+                                _updatingProfileURN = false;
+                            }
                         }));
 
                     }
@@ -458,6 +476,7 @@ namespace SUP
                             {
                                 try
                                 {
+                                    _updatingProfileURN = true;
                                     profileURN.Text = txtSearchAddress.Text;
                                     profileURN.LinkColor = System.Drawing.SystemColors.Highlight;
                                     if (profileURN.Links.Count == 0)
@@ -470,6 +489,10 @@ namespace SUP
                                     }
                                 }
                                 catch { }
+                                finally
+                                {
+                                    _updatingProfileURN = false;
+                                }
                             }
                         }));
 
@@ -3756,6 +3779,9 @@ namespace SUP
         //should keep object browser active profile synched with social
         private async void profileURN_TextChanged(object sender, EventArgs e)
         {
+            // Prevent re-entrancy - this event can be triggered while we're updating the LinkLabel
+            if (_updatingProfileURN) return;
+            
             try
             {
                 if (profileURN.Links.Count > 0 && profileURN.Links[0] != null && profileURN.Links[0].LinkData != null)
