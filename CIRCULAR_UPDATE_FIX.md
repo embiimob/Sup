@@ -458,6 +458,76 @@ private void profileURN_TextChanged(object sender, EventArgs e)
 
 **Result**: NullReferenceException eliminated. Links collection is managed by WinForms, internal handler only runs when collection is valid, and external event propagation works correctly.
 
+### Issue #5: Search Stalling After Processing Transactions (Commit f2e7e82)
+
+**Issue Reported by @embiimob**: After fixing Issue #4, the `#LOVE` search would process a few transactions and then stall, not continuing through the process. The logs showed `InvalidOperationException` and multiple threads exiting, suggesting the UI thread was blocked.
+
+**Root Cause Analysis**:
+The profileURN_TextChanged handler makes a synchronous RPC call to sign a message:
+```csharp
+string signature = rpcClient.SendCommand("signmessage", profileURN.Links[0].LinkData.ToString(), "DUMMY").ResultString;
+```
+
+The flow was:
+1. BuildSearchResults (background thread) calls Invoke to update UI
+2. SetProfileURNAtomically is called on UI thread
+3. SetProfileURNAtomically manually calls profileURN_TextChanged
+4. profileURN_TextChanged makes blocking RPC call on UI thread
+5. If RPC is slow/hangs, UI thread blocks
+6. Search processing stalls, threads can't complete
+
+**Fix Applied (Commit f2e7e82)**:
+
+Made the RPC call asynchronous to prevent UI thread blocking:
+
+```csharp
+private void profileURN_TextChanged(object sender, EventArgs e)
+{
+    if (_isSuppressingProfileURNTextChanged) return;
+    if (profileURN.Links?.Count == 0) return;
+
+    if (profileURN.Links[0].LinkData != null)
+    {
+        // Run RPC call asynchronously to avoid blocking the UI thread
+        Task.Run(() =>
+        {
+            try
+            {
+                NetworkCredential credentials = new NetworkCredential(mainnetLogin, mainnetPassword);
+                NBitcoin.RPC.RPCClient rpcClient = new NBitcoin.RPC.RPCClient(credentials, new Uri(mainnetURL), Network.Main);
+                string signature = "";
+                try 
+                { 
+                    signature = rpcClient.SendCommand("signmessage", profileURN.Links[0].LinkData.ToString(), "DUMMY").ResultString; 
+                } 
+                catch (Exception ex)
+                {
+                    Debug.WriteLine($"[ObjectBrowser] signmessage RPC failed: {ex.Message}");
+                }
+
+                if (signature != "")
+                {
+                    _activeProfile = profileURN.Links[0].LinkData.ToString();
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"[ObjectBrowser] Error in profileURN_TextChanged RPC call: {ex.Message}");
+            }
+        });
+    }
+}
+```
+
+**Key Changes**:
+1. Wrapped entire RPC call logic in `Task.Run(() => { ... })`
+2. RPC executes on background thread, not UI thread
+3. Added outer try-catch for additional error handling
+4. `_activeProfile` still gets updated when RPC completes
+5. UI thread never blocks, search processing continues smoothly
+
+**Result**: Search no longer stalls. The UI thread remains responsive, transactions process completely, and the RPC call to determine if the address is in the wallet happens asynchronously in the background.
+
 ## Future Improvements
 
 If this pattern becomes more complex, consider:
