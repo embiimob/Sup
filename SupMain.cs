@@ -7138,8 +7138,16 @@ namespace SUP
                     {
 
                         profileBIO.Text = ""; profileCreatedDate.Text = ""; profileIMG.ImageLocation = ""; lblProcessHeight.Text = "";
-                        profileURN.Links[0].LinkData = ((PictureBox)sender).Tag.ToString();
+                        
+                        // Set Text first to initialize Links collection
                         profileURN.Text = Path.GetFileNameWithoutExtension(((PictureBox)sender).ImageLocation.ToString());
+                        
+                        // Then set LinkData after Links collection exists
+                        if (profileURN.Links != null && profileURN.Links.Count > 0 && ((PictureBox)sender).Tag != null)
+                        {
+                            profileURN.Links[0].LinkData = ((PictureBox)sender).Tag.ToString();
+                        }
+                        
                         profileIMG.ImageLocation = ((PictureBox)sender).ImageLocation.ToString();
 
                     }
