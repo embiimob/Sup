@@ -313,8 +313,15 @@ namespace SUP
                             supFlow.Size = new System.Drawing.Size(supFlow.Width, supFlow.Height - 150); // Change the width and height
                         }
 
-                        profileURN.Links[0].LinkData = objectBrowserForm.profileURN.Links[0].LinkData;
+                        // Update profileURN safely - always set Text first, then recreate Links
                         profileURN.Text = objectBrowserForm.profileURN.Text;
+                        profileURN.Links.Clear();
+                        profileURN.Links.Add(0, Math.Max(0, profileURN.Text.Length));
+                        if (profileURN.Links.Count > 0 && profileURN.Links[0] != null && 
+                            objectBrowserForm.profileURN.Links.Count > 0 && objectBrowserForm.profileURN.Links[0] != null)
+                        {
+                            profileURN.Links[0].LinkData = objectBrowserForm.profileURN.Links[0].LinkData;
+                        }
                         numMessagesDisplayed = 0;
                         numPrivateMessagesDisplayed = 0;
                         numFriendFeedsDisplayed = 0;
@@ -417,7 +424,12 @@ namespace SUP
             PROState activeProfile = PROState.GetProfileByAddress(address, mainnetLogin, mainnetPassword, mainnetURL, mainnetVersionByte);
             if (activeProfile.URN == null)
             {
-                profileURN.Text = "anon"; profileBIO.Text = ""; profileCreatedDate.Text = "";
+                // Update profileURN safely
+                profileURN.Text = "anon";
+                profileURN.Links.Clear();
+                profileURN.Links.Add(0, Math.Max(0, profileURN.Text.Length));
+                
+                profileBIO.Text = ""; profileCreatedDate.Text = "";
                 string errorImageUrl = System.IO.Path.Combine(System.Windows.Forms.Application.StartupPath, "includes\\anon.png");
 
                 profileIMG.ImageLocation = errorImageUrl;
@@ -426,8 +438,15 @@ namespace SUP
             }
 
             profileBIO.Text = activeProfile.Bio;
+            
+            // Update profileURN safely - set Text first, then recreate Links
             profileURN.Text = activeProfile.URN;
-            profileURN.Links[0].LinkData = address;
+            profileURN.Links.Clear();
+            profileURN.Links.Add(0, Math.Max(0, profileURN.Text.Length));
+            if (profileURN.Links.Count > 0 && profileURN.Links[0] != null)
+            {
+                profileURN.Links[0].LinkData = address;
+            }
             profileIMG.Tag = address;
 
             Task.Run(() =>
@@ -810,8 +829,15 @@ namespace SUP
 
                         string searchAddress = Root.GetPublicAddressByKeyword(value.Replace("#", ""), mainnetVersionByte);
                         MakeActiveProfile(searchAddress);
+                        
+                        // Update profileURN safely
                         profileURN.Text = value;
-                        profileURN.Links[0].LinkData = searchAddress;
+                        profileURN.Links.Clear();
+                        profileURN.Links.Add(0, Math.Max(0, profileURN.Text.Length));
+                        if (profileURN.Links.Count > 0 && profileURN.Links[0] != null)
+                        {
+                            profileURN.Links[0].LinkData = searchAddress;
+                        }
                         profileBIO.Text = "Click the follow button to add this search to your community feed."; profileCreatedDate.Text = ""; profileIMG.ImageLocation = ""; lblProcessHeight.Text = "";
 
                         GenerateImage(value);
@@ -7077,8 +7103,15 @@ namespace SUP
                     {
 
                         profileBIO.Text = ""; profileCreatedDate.Text = ""; profileIMG.ImageLocation = ""; lblProcessHeight.Text = "";
-                        profileURN.Links[0].LinkData = ((PictureBox)sender).Tag.ToString();
+                        
+                        // Update profileURN safely
                         profileURN.Text = Path.GetFileNameWithoutExtension(((PictureBox)sender).ImageLocation.ToString());
+                        profileURN.Links.Clear();
+                        profileURN.Links.Add(0, Math.Max(0, profileURN.Text.Length));
+                        if (profileURN.Links.Count > 0 && profileURN.Links[0] != null)
+                        {
+                            profileURN.Links[0].LinkData = ((PictureBox)sender).Tag.ToString();
+                        }
                         profileIMG.ImageLocation = ((PictureBox)sender).ImageLocation.ToString();
 
                     }
@@ -7216,8 +7249,15 @@ namespace SUP
                         supFlow.Size = new System.Drawing.Size(supFlow.Width, supFlow.Height + 150); // Change the width and height
                     }
                     profileBIO.Text = ""; profileCreatedDate.Text = ""; profileIMG.ImageLocation = ""; lblProcessHeight.Text = "";
-                    profileURN.Links[0].LinkData = null;
+                    
+                    // Update profileURN safely
                     profileURN.Text = "anon";
+                    profileURN.Links.Clear();
+                    profileURN.Links.Add(0, Math.Max(0, profileURN.Text.Length));
+                    if (profileURN.Links.Count > 0 && profileURN.Links[0] != null)
+                    {
+                        profileURN.Links[0].LinkData = null;
+                    }
                     ClearMessages(supFlow);
 
                 }
@@ -7398,7 +7438,17 @@ namespace SUP
 
         private void imgBTCSwitch_Click(object sender, EventArgs e)
         {
-            profileURN.Text = "anon"; profileBIO.Text = ""; profileCreatedDate.Text = ""; profileIMG.ImageLocation = @"includes/anon.png"; lblProcessHeight.Text = ""; profileURN.Links[0].LinkData = null; profileURN.Links[0].Tag = ""; profileIMG.Tag = ""; profileOwner.ImageLocation = null; profileOwner.Tag = null;
+            // Update profileURN safely
+            profileURN.Text = "anon";
+            profileURN.Links.Clear();
+            profileURN.Links.Add(0, Math.Max(0, profileURN.Text.Length));
+            if (profileURN.Links.Count > 0 && profileURN.Links[0] != null)
+            {
+                profileURN.Links[0].LinkData = null;
+                profileURN.Links[0].Tag = "";
+            }
+            
+            profileBIO.Text = ""; profileCreatedDate.Text = ""; profileIMG.ImageLocation = @"includes/anon.png"; lblProcessHeight.Text = ""; profileIMG.Tag = ""; profileOwner.ImageLocation = null; profileOwner.Tag = null;
             ClearMessages(supFlow);
             ClearMessages(supPrivateFlow);
             numMessagesDisplayed = 0;
