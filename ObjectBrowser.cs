@@ -3760,21 +3760,23 @@ namespace SUP
 
             if (profileURN.Links[0].LinkData != null)
             {
-
-
                 NetworkCredential credentials = new NetworkCredential(mainnetLogin, mainnetPassword);
                 NBitcoin.RPC.RPCClient rpcClient = new NBitcoin.RPC.RPCClient(credentials, new Uri(mainnetURL), Network.Main);
                 string signature = "";
-                try { signature = rpcClient.SendCommand("signmessage", profileURN.Links[0].LinkData.ToString(), "DUMMY").ResultString; ; } catch { }
+                try 
+                { 
+                    signature = rpcClient.SendCommand("signmessage", profileURN.Links[0].LinkData.ToString(), "DUMMY").ResultString; 
+                } 
+                catch (Exception ex)
+                {
+                    // NBitcoin RPC exceptions are expected for addresses not in wallet (e.g., keyword-derived addresses)
+                    Debug.WriteLine($"[ObjectBrowser] signmessage RPC failed: {ex.Message}");
+                }
 
-
-                if
-                     (signature != "")
+                if (signature != "")
                 {
                     _activeProfile = profileURN.Links[0].LinkData.ToString();
                 }
-
-
             }
         }
 
