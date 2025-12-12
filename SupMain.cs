@@ -3599,8 +3599,14 @@ namespace SUP
 
             List<MessageObject> messages = new List<MessageObject>();
 
-            try { messages = OBJState.GetPublicMessagesByAddress(profileURN.Links[0].LinkData.ToString(), mainnetLogin, mainnetPassword, mainnetURL, mainnetVersionByte, numMessagesDisplayed, 10); }
-            catch { }
+            // Defensive check: Only fetch messages if we have a valid LinkData (not for hashtag searches)
+            // Hashtag searches don't have an associated address, so LinkData might be null or empty
+            if (profileURN.Links != null && profileURN.Links.Count > 0 && profileURN.Links[0].LinkData != null && 
+                !string.IsNullOrEmpty(profileURN.Links[0].LinkData.ToString()))
+            {
+                try { messages = OBJState.GetPublicMessagesByAddress(profileURN.Links[0].LinkData.ToString(), mainnetLogin, mainnetPassword, mainnetURL, mainnetVersionByte, numMessagesDisplayed, 10); }
+                catch { }
+            }
 
 
             supFlow.SuspendLayout();

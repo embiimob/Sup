@@ -295,13 +295,24 @@ namespace SUP
                             if (!_isUpdatingFromExternal)
                             {
                                 Debug.WriteLine($"[ObjectBrowser] Setting profileURN to: {txtSearchAddress.Text}");
-                                // Set Text first to ensure Links collection is initialized by WinForms
-                                profileURN.Text = txtSearchAddress.Text;
-                                profileURN.LinkColor = System.Drawing.SystemColors.Highlight;
-                                // Now safely set LinkData after Text is set and Links collection exists
-                                if (profileURN.Links.Count > 0)
+                                // Temporarily detach TextChanged event to set all properties atomically
+                                profileURN.TextChanged -= profileURN_TextChanged;
+                                try
                                 {
-                                    profileURN.Links[0].LinkData = profileCheck;
+                                    // Set Text first to ensure Links collection is initialized by WinForms
+                                    profileURN.Text = txtSearchAddress.Text;
+                                    profileURN.LinkColor = System.Drawing.SystemColors.Highlight;
+                                    // Now safely set LinkData after Text is set and Links collection exists
+                                    if (profileURN.Links.Count > 0)
+                                    {
+                                        profileURN.Links[0].LinkData = profileCheck;
+                                    }
+                                }
+                                finally
+                                {
+                                    // Reattach event and manually trigger it once
+                                    profileURN.TextChanged += profileURN_TextChanged;
+                                    profileURN_TextChanged(profileURN, EventArgs.Empty);
                                 }
                             }
                             else
@@ -349,13 +360,24 @@ namespace SUP
                             if (!_isUpdatingFromExternal)
                             {
                                 Debug.WriteLine($"[ObjectBrowser] Setting profileURN to: {txtSearchAddress.Text}");
-                                // Set Text first to ensure Links collection is initialized by WinForms
-                                profileURN.Text = txtSearchAddress.Text;
-                                profileURN.LinkColor = System.Drawing.SystemColors.Highlight;
-                                // Now safely set LinkData after Text is set and Links collection exists
-                                if (profileURN.Links.Count > 0)
+                                // Temporarily detach TextChanged event to set all properties atomically
+                                profileURN.TextChanged -= profileURN_TextChanged;
+                                try
                                 {
-                                    profileURN.Links[0].LinkData = profileCheck;
+                                    // Set Text first to ensure Links collection is initialized by WinForms
+                                    profileURN.Text = txtSearchAddress.Text;
+                                    profileURN.LinkColor = System.Drawing.SystemColors.Highlight;
+                                    // Now safely set LinkData after Text is set and Links collection exists
+                                    if (profileURN.Links.Count > 0)
+                                    {
+                                        profileURN.Links[0].LinkData = profileCheck;
+                                    }
+                                }
+                                finally
+                                {
+                                    // Reattach event and manually trigger it once
+                                    profileURN.TextChanged += profileURN_TextChanged;
+                                    profileURN_TextChanged(profileURN, EventArgs.Empty);
                                 }
                             }
                             else
@@ -386,13 +408,24 @@ namespace SUP
                             if (!_isUpdatingFromExternal)
                             {
                                 Debug.WriteLine($"[ObjectBrowser] Setting profileURN to: anon");
-                                // Set Text first to ensure Links collection is initialized by WinForms
-                                profileURN.Text = "anon";
-                                profileURN.LinkColor = System.Drawing.SystemColors.Highlight;
-                                // Now safely set LinkData after Text is set and Links collection exists
-                                if (profileURN.Links.Count > 0)
+                                // Temporarily detach TextChanged event to set all properties atomically
+                                profileURN.TextChanged -= profileURN_TextChanged;
+                                try
                                 {
-                                    profileURN.Links[0].LinkData = "";
+                                    // Set Text first to ensure Links collection is initialized by WinForms
+                                    profileURN.Text = "anon";
+                                    profileURN.LinkColor = System.Drawing.SystemColors.Highlight;
+                                    // Now safely set LinkData after Text is set and Links collection exists
+                                    if (profileURN.Links.Count > 0)
+                                    {
+                                        profileURN.Links[0].LinkData = "";
+                                    }
+                                }
+                                finally
+                                {
+                                    // Reattach event and manually trigger it once
+                                    profileURN.TextChanged += profileURN_TextChanged;
+                                    profileURN_TextChanged(profileURN, EventArgs.Empty);
                                 }
                             }
                             else
@@ -465,13 +498,24 @@ namespace SUP
                                 if (!_isUpdatingFromExternal)
                                 {
                                     Debug.WriteLine($"[ObjectBrowser] Setting profileURN to: {txtSearchAddress.Text}");
-                                    // Set Text first to ensure Links collection is initialized by WinForms
-                                    profileURN.Text = txtSearchAddress.Text;
-                                    profileURN.LinkColor = System.Drawing.SystemColors.Highlight;
-                                    // Now safely set LinkData after Text is set and Links collection exists
-                                    if (profileURN.Links.Count > 0)
+                                    // Temporarily detach TextChanged event to set all properties atomically
+                                    profileURN.TextChanged -= profileURN_TextChanged;
+                                    try
                                     {
-                                        profileURN.Links[0].LinkData = profileCheck;
+                                        // Set Text first to ensure Links collection is initialized by WinForms
+                                        profileURN.Text = txtSearchAddress.Text;
+                                        profileURN.LinkColor = System.Drawing.SystemColors.Highlight;
+                                        // Now safely set LinkData after Text is set and Links collection exists
+                                        if (profileURN.Links.Count > 0)
+                                        {
+                                            profileURN.Links[0].LinkData = profileCheck;
+                                        }
+                                    }
+                                    finally
+                                    {
+                                        // Reattach event and manually trigger it once
+                                        profileURN.TextChanged += profileURN_TextChanged;
+                                        profileURN_TextChanged(profileURN, EventArgs.Empty);
                                     }
                                 }
                                 else
