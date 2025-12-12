@@ -3599,8 +3599,9 @@ namespace SUP
 
             List<MessageObject> messages = new List<MessageObject>();
 
-            // Defensive check: Only fetch messages if we have a valid LinkData (not for hashtag searches)
-            // Hashtag searches don't have an associated address, so LinkData might be null or empty
+            // Defensive check: Only fetch messages if we have a valid LinkData
+            // For hashtag searches like #LOVE, the keyword is converted to an address via Root.GetPublicAddressByKeyword()
+            // and stored in LinkData. This check prevents NullReferenceException if LinkData is not yet set.
             if (profileURN.Links != null && profileURN.Links.Count > 0 && profileURN.Links[0].LinkData != null && 
                 !string.IsNullOrEmpty(profileURN.Links[0].LinkData.ToString()))
             {
