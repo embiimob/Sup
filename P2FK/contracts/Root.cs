@@ -478,6 +478,43 @@ namespace SUP.P2FK
             return P2FKRoot;
         }
 
+        public static async Task<Root> GetRootByTransactionIdAsync(string transactionid, string username, string password, string url, string versionbyte = "111", byte[] rootbytes = null, string signatureaddress = null, bool calculate = false, CancellationToken cancellationToken = default)
+        {
+            // Call the synchronous version but wrap the blocking RPC calls in async
+            // This is a simplified async wrapper - full async conversion would require refactoring the entire method
+            Root P2FKRoot = new Root();
+            string diskpath = "root\\" + transactionid + "\\";
+            
+            try
+            {
+                if (rootbytes == null && calculate == false)
+                {
+                    try
+                    {
+                        string P2FKJSONString = System.IO.File.ReadAllText(diskpath + "ROOT.json");
+                        P2FKRoot = JsonConvert.DeserializeObject<Root>(P2FKJSONString);
+                       
+                        if (P2FKRoot.Confirmations > 0)
+                        {
+                            return P2FKRoot;
+                        }
+                    }
+                    catch { }
+                }
+
+                // For now, run the sync version in a Task to avoid blocking
+                // Ideally we'd refactor the entire method to be truly async
+                return await Task.Run(() => GetRootByTransactionId(transactionid, username, password, url, versionbyte, rootbytes, signatureaddress, calculate), cancellationToken).ConfigureAwait(false);
+            }
+            catch (Exception ex)
+            {
+                P2FKRoot.Message = new string[] { ex.Message };
+                P2FKRoot.BuildDate = DateTime.UtcNow;
+                P2FKRoot.TransactionId = transactionid;
+                return P2FKRoot;
+            }
+        }
+
         public static Root[] GetRootsByAddress(string address, string username, string password, string url, int skip = 0, int qty = -1, string versionByte = "111", bool calculate = false)
         {
 
@@ -593,6 +630,100 @@ namespace SUP.P2FK
 
                 try { System.IO.File.Delete("ROOTS-PROCESSING"); } catch { }
 
+                return rootList.ToArray();
+            }
+        }
+
+        public static async Task<Root[]> GetRootsByAddressAsync(string address, string username, string password, string url, int skip = 0, int qty = -1, string versionByte = "111", bool calculate = false, CancellationToken cancellationToken = default)
+        {
+            try { using (System.IO.File.Create("ROOTS-PROCESSING")) { } }catch { }
+
+            var rootList = new List<Root>();
+
+            try
+            {
+                if (address.Length < 33)
+                {
+                    try { System.IO.File.Delete("ROOTS-PROCESSING"); } catch { }
+                    return rootList.ToArray();
+                }
+
+                bool fetched = false;
+                address = address.Replace("<", "").Replace(">", "");
+                try
+                {
+                    string diskpath = "root\\" + address + "\\";
+                    string P2FKJSONString = System.IO.File.ReadAllText(diskpath + "ROOTS.json");
+                    rootList = JsonConvert.DeserializeObject<List<Root>>(P2FKJSONString);
+                    fetched = true;
+                }
+                catch { }
+
+                int intProcessHeight = 0;
+                try { intProcessHeight = rootList.Max(max => max.Id); } catch { }
+
+                if (calculate) { intProcessHeight = 0; rootList = new List<Root>(); }
+
+                int innerskip = intProcessHeight;
+                bool calculated = false;
+
+                while (true)
+                {
+                    cancellationToken.ThrowIfCancellationRequested();
+                    
+                    CoinRPC a = new CoinRPC(new Uri(url), new NetworkCredential(username, password));
+                    List<GetRawDataTransactionResponse> results = null;
+
+                    try { results = await a.SearchRawDataTransactionAsync(address, 0, innerskip, 300, cancellationToken).ConfigureAwait(false); } catch { break; }
+
+                    if (results == null || results.Count == 0) { break; }
+
+                    for (int i = 0; i < results.Count; i++)
+                    {
+                        calculated = true;
+                        intProcessHeight++;
+                        string hexId = GetTransactionIdByHexString(results[i].hex);
+                        Root root = new Root();
+                        root = await Root.GetRootByTransactionIdAsync(hexId, username, password, url, versionByte, null, null, calculate, cancellationToken).ConfigureAwait(false);
+
+                        if (root != null && root.TotalByteSize > 0 && root.Output != null && !rootList.Any(ROOT => ROOT.TransactionId == root.TransactionId) && root.Output.ContainsKey(address) && root.BlockDate.Year > 1975)
+                        {
+                            root.Id = intProcessHeight;
+                            rootList.Add(root);
+                        }
+                        else
+                        {
+                            if (root != null && root.Output != null && root.BlockDate.Year < 1975) { intProcessHeight--; }
+                        }
+                    }
+                    innerskip += 300;
+                }
+
+                if (calculated && rootList.Count() > 0)
+                {
+                    try { rootList.Last().Id = intProcessHeight; } catch { }
+                    try { Directory.CreateDirectory(@"root\" + address); } catch { }
+                    var rootSerialized = JsonConvert.SerializeObject(rootList);
+                    System.IO.File.WriteAllText(@"root\" + address + @"\" + "ROOTS.json", rootSerialized);
+                }
+
+                try { System.IO.File.Delete("ROOTS-PROCESSING"); } catch { }
+
+                if (skip != 0)
+                {
+                    var skippedList = rootList.Where(state => state.Id >= skip);
+                    if (qty == -1) { return skippedList.ToArray(); }
+                    else { return skippedList.Take(qty).ToArray(); }
+                }
+                else
+                {
+                    if (qty == -1) { return rootList.ToArray(); }
+                    else { return rootList.Take(qty).ToArray(); }
+                }
+            }
+            catch
+            {
+                try { System.IO.File.Delete("ROOTS-PROCESSING"); } catch { }
                 return rootList.ToArray();
             }
         }

@@ -222,7 +222,7 @@ namespace SUP
         }
 
 
-        private void GetObjectsByAddress(string address, bool calculate = false)
+        private async Task GetObjectsByAddressAsync(string address, bool calculate = false)
         {
 
             string profileCheck = address;
@@ -450,7 +450,7 @@ namespace SUP
 
                         }
 
-                        createdObjects = OBJState.GetObjectsByAddress(profileCheck, mainnetLogin, mainnetPassword, mainnetURL, mainnetVersionByte, 0, -1, calculate);
+                        createdObjects = await OBJState.GetObjectsByAddressAsync(profileCheck, mainnetLogin, mainnetPassword, mainnetURL, mainnetVersionByte, 0, -1, calculate).ConfigureAwait(false);
 
                         this.Invoke((Action)(() =>
                         {
@@ -3197,7 +3197,7 @@ namespace SUP
                         {
 
                             historySeen = 0;
-                            GetObjectsByAddress(Root.GetPublicAddressByKeyword(txtSearchAddress.Text.Substring(1), mainnetVersionByte), calculate);
+                            await GetObjectsByAddressAsync(Root.GetPublicAddressByKeyword(txtSearchAddress.Text.Substring(1), mainnetVersionByte), calculate);
                         }
 
                     }
@@ -3309,7 +3309,7 @@ namespace SUP
                             if (txtSearchAddress.Text.ToUpper().StartsWith(@"SUP:"))
                             {
                                 historySeen = 0;
-                                GetObjectsByAddress(txtSearchAddress.Text, calculate);
+                                await GetObjectsByAddressAsync(txtSearchAddress.Text, calculate);
 
                             }
                             else
@@ -3376,7 +3376,7 @@ namespace SUP
                                         {
                                             historySeen = 0;
                                             btnCollections.BackColor = System.Drawing.Color.White;
-                                            GetObjectsByAddress("");
+                                            await GetObjectsByAddressAsync("");
                                         }
 
 
@@ -3397,14 +3397,14 @@ namespace SUP
                                             {
                                                 historySeen = 0;
                                                 btnActivity.BackColor = System.Drawing.Color.White;
-                                                GetObjectsByAddress("");
+                                                await GetObjectsByAddressAsync("");
                                             }
                                         }
                                         else
                                         {
 
                                             historySeen = 0;
-                                            GetObjectsByAddress(txtSearchAddress.Text.Replace("@", ""), calculate);
+                                            await GetObjectsByAddressAsync(txtSearchAddress.Text.Replace("@", ""), calculate);
 
                                         }
                                     }

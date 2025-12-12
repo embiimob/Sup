@@ -1767,6 +1767,13 @@ namespace SUP.P2FK
 
         }
 
+        public static async Task<OBJState> GetObjectByAddressAsync(string objectaddress, string username, string password, string url, string versionByte = "111", CancellationToken cancellationToken = default)
+        {
+            // This method contains a lock statement which is incompatible with async/await
+            // Run the synchronous version in a Task to avoid blocking the caller
+            return await Task.Run(() => GetObjectByAddress(objectaddress, username, password, url, versionByte, false), cancellationToken).ConfigureAwait(false);
+        }
+
         public static OBJState GetObjectByTransactionId(string transactionid, string username, string password, string url, string versionByte = "111")
         {
 
@@ -2589,6 +2596,95 @@ namespace SUP.P2FK
 
 
 
+        }
+
+        public static async Task<List<OBJState>> GetObjectsByAddressAsync(string objectaddress, string username, string password, string url, string versionByte = "111", int skip = 0, int qty = -1, bool calculate = false, CancellationToken cancellationToken = default)
+        {
+            List<OBJState> objectStates = new List<OBJState> { };
+
+            if (System.IO.File.Exists(@"root\" + objectaddress + @"\BLOCK"))
+            {
+                return objectStates;
+            }
+
+            string JSONOBJ;
+            string diskpath = "root\\" + objectaddress + "\\";
+
+            // fetch current JSONOBJ from disk if it exists
+            try
+            {
+                JSONOBJ = System.IO.File.ReadAllText(diskpath + "GetObjectsByAddress.json");
+                objectStates = JsonConvert.DeserializeObject<List<OBJState>>(JSONOBJ);
+            }
+            catch { }
+
+            int intProcessHeight = 0;
+
+            // this one is a bit different... it cannot use max id as the object will have their own Id.   so it stores the cache height at the last id.
+            try { intProcessHeight = objectStates.Last().Id; ; } catch { objectStates = new List<OBJState> { }; }
+
+            if (calculate) { intProcessHeight = 0; }
+
+            Root[] objectTransactions;
+
+            //return all roots found at address - USE ASYNC VERSION
+            objectTransactions = await Root.GetRootsByAddressAsync(objectaddress, username, password, url, intProcessHeight, -1, versionByte, calculate, cancellationToken).ConfigureAwait(false);
+
+            if (intProcessHeight != 0 && objectTransactions.Count() == 0)
+            {
+                if (skip != 0)
+                {
+                    var skippedList = objectStates.Where(state => state.Id >= skip); ;
+                    if (qty == -1) { return skippedList.ToList(); }
+                    else { return skippedList.Take(qty).ToList(); }
+                }
+                else
+                {
+                    if (qty == -1) { return objectStates.ToList(); }
+                    else { return objectStates.Take(qty).ToList(); }
+                }
+            }
+
+            foreach (Root objroot in objectTransactions)
+            {
+                cancellationToken.ThrowIfCancellationRequested();
+                
+                OBJState objState = await GetObjectByAddressAsync(objroot.TransactionId, username, password, url, versionByte, cancellationToken).ConfigureAwait(false);
+
+                if (objState != null && objState.Id == 0)
+                {
+                    objState.Id = objroot.Id;
+                    objectStates.Add(objState);
+                }
+            }
+
+            try { objectStates.Last().Id = objectTransactions.Max(max => max.Id); } catch { }
+
+            _ = Task.Run(() =>
+            {
+                if (objectStates.Count > 0)
+                {
+                    var objectSerialized = JsonConvert.SerializeObject(objectStates);
+
+                    if (!Directory.Exists(@"root\" + objectaddress))
+                    {
+                        Directory.CreateDirectory(@"root\" + objectaddress);
+                    }
+                    System.IO.File.WriteAllText(@"root\" + objectaddress + @"\" + "GetObjectsByAddress.json", objectSerialized);
+                }
+            }, cancellationToken);
+
+            if (skip != 0)
+            {
+                var skippedList = objectStates.Where(state => state.Id >= skip);
+                if (qty == -1) { return skippedList.ToList(); }
+                else { return skippedList.Take(qty).ToList(); }
+            }
+            else
+            {
+                if (qty == -1) { return objectStates.ToList(); }
+                else { return objectStates.Take(qty).ToList(); }
+            }
         }
 
         public static List<OBJState> GetObjectsOwnedByAddress(string objectaddress, string username, string password, string url, string versionByte = "111", int skip = 0, int qty = -1)
