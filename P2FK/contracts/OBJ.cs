@@ -900,7 +900,7 @@ namespace SUP.P2FK
                                                     {
                                                         // remove the dictionary key
                                                         objectState.Owners.Remove(burnr);
-                                                        try { objectState.Listings.Remove(burnr); } catch { }
+                                                        try { if (objectState.Listings != null) objectState.Listings.Remove(burnr); } catch { }
 
                                                         if (objectState.Owners.Count() < 1)
                                                         {
@@ -1141,7 +1141,7 @@ namespace SUP.P2FK
                                                         }
 
                                                         //remove previous owner from list if now 0
-                                                        if (objectState.Listings[buy[0]].Qty < 1) { objectState.Listings.Remove(buy[0]); }
+                                                        if (objectState.Listings != null && objectState.Listings.ContainsKey(buy[0]) && objectState.Listings[buy[0]].Qty < 1) { objectState.Listings.Remove(buy[0]); }
 
 
                                                         if (verbose)
@@ -1295,7 +1295,7 @@ namespace SUP.P2FK
                                                             }
 
                                                             //remove previous owner from list if now 0
-                                                            if (objectState.Listings[buy[0]].Qty < 1) { objectState.Listings.Remove(buy[0]); }
+                                                            if (objectState.Listings != null && objectState.Listings.ContainsKey(buy[0]) && objectState.Listings[buy[0]].Qty < 1) { objectState.Listings.Remove(buy[0]); }
 
 
                                                             if (verbose)
