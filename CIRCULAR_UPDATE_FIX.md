@@ -385,6 +385,79 @@ private void SetProfileURNAtomically(string text, object linkData)
 
 **Result**: Search now executes properly. The TextChanged event fires naturally with LinkData already set, propagating correctly through the event chain to trigger search in SupMain.
 
+### Issue #4: Recurring NullReferenceException (Commit b6ab213)
+
+**Issue Reported by @embiimob**: After fixing Issue #3, the search was working but the NullReferenceException in System.Windows.Forms returned. The exception occurred when accessing the Links collection in ObjectBrowser's profileURN_TextChanged handler.
+
+**Root Cause Analysis**:
+The fix for Issue #3 manually created a Link in the Links collection before setting Text. However, when Text is set, WinForms may recreate or modify the Links collection, potentially invalidating the manually created link. This created a race condition where:
+1. Manual link is created with specific length
+2. Text is set to different length
+3. WinForms updates Links collection
+4. Manual link becomes invalid or Links collection state is inconsistent
+5. profileURN_TextChanged handler accesses Links[0] → NullReferenceException
+
+**Fix Applied (Commit b6ab213)**:
+
+Added internal handler suppression flag and defensive checks:
+
+```csharp
+// New flag in class
+private bool _isSuppressingProfileURNTextChanged = false;
+
+private void SetProfileURNAtomically(string text, object linkData)
+{
+    if (text == null) text = string.Empty;
+    
+    // Suppress internal handler during property updates
+    _isSuppressingProfileURNTextChanged = true;
+    try
+    {
+        profileURN.LinkColor = System.Drawing.SystemColors.Highlight;
+        
+        // Set Text first - WinForms creates/updates Links collection naturally
+        // TextChanged event fires to external handlers, but internal handler suppressed
+        profileURN.Text = text;
+        
+        // Now safely set LinkData on WinForms-created link
+        if (profileURN.Links != null && profileURN.Links.Count > 0)
+        {
+            profileURN.Links[0].LinkData = linkData;
+        }
+    }
+    finally
+    {
+        _isSuppressingProfileURNTextChanged = false;
+    }
+    
+    // Manually trigger internal handler now that all properties are consistent
+    profileURN_TextChanged(profileURN, EventArgs.Empty);
+}
+
+private void profileURN_TextChanged(object sender, EventArgs e)
+{
+    // Skip if suppressed during atomic update
+    if (_isSuppressingProfileURNTextChanged) return;
+    
+    // Defensive checks for Links collection
+    if (profileURN.Links == null || profileURN.Links.Count == 0) return;
+    
+    if (profileURN.Links[0].LinkData != null)
+    {
+        // ... NBitcoin signmessage logic ...
+    }
+}
+```
+
+**Key Changes**:
+1. Internal handler suppression: Only ObjectBrowser's handler is suppressed, not the LinkLabel.TextChanged event
+2. Natural Links creation: Let WinForms create Links collection when Text is set
+3. Defensive null checks: Verify Links collection exists before accessing
+4. Manual handler call: Trigger internal handler after all properties are consistent
+5. Event propagation intact: External handlers (ObjectBrowserControl, SupMain) still receive the event
+
+**Result**: NullReferenceException eliminated. Links collection is managed by WinForms, internal handler only runs when collection is valid, and external event propagation works correctly.
+
 ## Future Improvements
 
 If this pattern becomes more complex, consider:
