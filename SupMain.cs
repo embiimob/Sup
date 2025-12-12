@@ -337,25 +337,6 @@ namespace SUP
                         // Set Text first to initialize Links collection in profileURN
                         profileURN.Text = objectBrowserForm.profileURN.Text;
                         
-                        // Debug: Check Links collection state
-                        Debug.WriteLine($"[SupMain] After setting Text='{profileURN.Text}', Links.Count={profileURN.Links?.Count ?? 0}");
-                        if (objectBrowserForm.profileURN.Links != null && objectBrowserForm.profileURN.Links.Count > 0)
-                        {
-                            Debug.WriteLine($"[SupMain] Source LinkData={objectBrowserForm.profileURN.Links[0].LinkData}");
-                        }
-                        
-                        // Now copy LinkData after Links collection exists
-                        if (objectBrowserForm.profileURN.Links != null && objectBrowserForm.profileURN.Links.Count > 0 &&
-                            profileURN.Links != null && profileURN.Links.Count > 0)
-                        {
-                            profileURN.Links[0].LinkData = objectBrowserForm.profileURN.Links[0].LinkData;
-                            Debug.WriteLine($"[SupMain] Set profileURN.Links[0].LinkData={profileURN.Links[0].LinkData}");
-                        }
-                        else
-                        {
-                            Debug.WriteLine($"[SupMain] WARNING: Could not copy LinkData - source Links.Count={objectBrowserForm.profileURN.Links?.Count ?? 0}, dest Links.Count={profileURN.Links?.Count ?? 0}");
-                        }
-                        
                         numMessagesDisplayed = 0;
                         numPrivateMessagesDisplayed = 0;
                         numFriendFeedsDisplayed = 0;
@@ -400,6 +381,19 @@ namespace SUP
                                 ClearMessages(supFlow);
                             }));
 
+                            // For hashtag searches, ensure we have the keyword address in LinkData before calling RefreshSupMessages
+                            // The keyword address is needed to fetch messages via GetPublicMessagesByAddress
+                            if (objectBrowserForm.profileURN.Links != null && objectBrowserForm.profileURN.Links.Count > 0 && 
+                                objectBrowserForm.profileURN.Links[0].LinkData != null)
+                            {
+                                Debug.WriteLine($"[SupMain] Hashtag search - using keyword address: {objectBrowserForm.profileURN.Links[0].LinkData}");
+                                // Directly set LinkData from source for hashtag searches
+                                if (profileURN.Links != null && profileURN.Links.Count > 0)
+                                {
+                                    profileURN.Links[0].LinkData = objectBrowserForm.profileURN.Links[0].LinkData;
+                                }
+                            }
+                            
                             RefreshSupMessages();
                         }
                         else
