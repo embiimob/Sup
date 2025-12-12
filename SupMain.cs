@@ -53,6 +53,11 @@ namespace SUP
         private int numFriendFeedsDisplayed;
         FlowLayoutPanel supPrivateFlow = new FlowLayoutPanel();
         AudioPlayer audioPlayer = new AudioPlayer();
+        
+        // Guard flag to prevent circular updates between SupMain and ObjectBrowser
+        // When true, indicates that we're updating ObjectBrowser from SupMain and should not
+        // process the ProfileURNChanged event that results from our own update
+        private bool _isUpdatingObjectBrowser = false;
 
         public SupMain()
         {
@@ -301,11 +306,27 @@ namespace SUP
         {
             try
             {
+                // Guard against circular updates: If we're currently updating the ObjectBrowser from SupMain,
+                // don't process the resulting ProfileURNChanged event to avoid infinite loops
+                if (_isUpdatingObjectBrowser)
+                {
+                    Debug.WriteLine("[SupMain] Ignoring ProfileURNChanged event - currently updating ObjectBrowser from SupMain");
+                    return;
+                }
+                
                 if (sender is ObjectBrowserControl objectBrowserControl && !friendClicked)
                 {
                     var objectBrowserForm = objectBrowserControl.Controls[0].Controls[0] as ObjectBrowser;
-                    if (objectBrowserForm != null)
+                    if (objectBrowserForm != null && objectBrowserForm.profileURN != null)
                     {
+                        // Defensive check: Ensure profileURN is valid before processing
+                        if (string.IsNullOrEmpty(objectBrowserForm.profileURN.Text))
+                        {
+                            Debug.WriteLine("[SupMain] Skipping ProfileURNChanged - profileURN text is null or empty");
+                            return;
+                        }
+                        
+                        Debug.WriteLine($"[SupMain] Processing ProfileURNChanged - new profileURN: {objectBrowserForm.profileURN.Text}");
                         if (!panel1.Visible)
                         {
                             panel1.Visible = true;
@@ -313,15 +334,23 @@ namespace SUP
                             supFlow.Size = new System.Drawing.Size(supFlow.Width, supFlow.Height - 150); // Change the width and height
                         }
 
-                        profileURN.Links[0].LinkData = objectBrowserForm.profileURN.Links[0].LinkData;
+                        // Defensive null check for LinkData
+                        if (objectBrowserForm.profileURN.Links != null && objectBrowserForm.profileURN.Links.Count > 0)
+                        {
+                            profileURN.Links[0].LinkData = objectBrowserForm.profileURN.Links[0].LinkData;
+                        }
                         profileURN.Text = objectBrowserForm.profileURN.Text;
                         numMessagesDisplayed = 0;
                         numPrivateMessagesDisplayed = 0;
                         numFriendFeedsDisplayed = 0;
 
-                        if (File.Exists(@"root\" + profileURN.Links[0].LinkData.ToString() + @"\MUTE")) { btnMute.Text = "unmute"; }
+                        // Defensive null check before accessing LinkData
+                        if (profileURN.Links != null && profileURN.Links.Count > 0 && profileURN.Links[0].LinkData != null)
+                        {
+                            if (File.Exists(@"root\" + profileURN.Links[0].LinkData.ToString() + @"\MUTE")) { btnMute.Text = "unmute"; }
+                        }
 
-                        if (profileURN.Text.StartsWith("#"))
+                        if (profileURN.Text != null && profileURN.Text.StartsWith("#"))
                         {
                             lblOfficial.Visible = false;
                             profileBIO.Text = "Click the follow button to add this search to your community feed."; profileCreatedDate.Text = ""; profileIMG.ImageLocation = ""; lblProcessHeight.Text = "";
@@ -359,23 +388,27 @@ namespace SUP
                         }
                         else
                         {
-                            MakeActiveProfile(objectBrowserForm.profileURN.Links[0].LinkData.ToString());
+                            // Defensive null check before accessing LinkData
+                            if (objectBrowserForm.profileURN.Links != null && objectBrowserForm.profileURN.Links.Count > 0 && objectBrowserForm.profileURN.Links[0].LinkData != null)
+                            {
+                                MakeActiveProfile(objectBrowserForm.profileURN.Links[0].LinkData.ToString());
+                            }
                             btnPublicMessage.BackColor = Color.White;
                             btnPublicMessage.ForeColor = Color.Black;
 
 
-                            if (profileURN.Links[0].LinkData != null)
+                            if (profileURN.Links != null && profileURN.Links.Count > 0 && profileURN.Links[0].LinkData != null)
                             {
 
-                                string profileURN = objectBrowserForm.profileURN.Links[0].LinkData.ToString();
+                                string profileURNAddress = objectBrowserForm.profileURN.Links[0].LinkData.ToString();
 
-                                if (profileURN != null)
+                                if (profileURNAddress != null)
                                 {
 
                                     NetworkCredential credentials = new NetworkCredential(mainnetLogin, mainnetPassword);
                                     NBitcoin.RPC.RPCClient rpcClient = new NBitcoin.RPC.RPCClient(credentials, new Uri(mainnetURL), Network.Main);
                                     string signature = "";
-                                    try { signature = rpcClient.SendCommand("signmessage", profileURN, "DUMMY").ResultString; ; } catch { }
+                                    try { signature = rpcClient.SendCommand("signmessage", profileURNAddress, "DUMMY").ResultString; ; } catch { }
 
 
                                    if
@@ -393,7 +426,11 @@ namespace SUP
                 }
                 friendClicked = false;
             }
-            catch { }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"[SupMain] Error in OBControl_ProfileURNChanged: {ex.Message}");
+                // Gracefully handle errors instead of crashing - log and continue
+            }
         }
 
         private void MakeActiveProfile(string address)
@@ -7063,8 +7100,20 @@ namespace SUP
                                 {
                                     this.BeginInvoke((MethodInvoker)delegate
                                  {
-                                     OBcontrol.control.txtSearchAddress.Text = profileURN.Text;
-                                     OBcontrol.control.BuildSearchResults();
+                                     // Set guard flag to prevent circular update loop when updating ObjectBrowser from SupMain
+                                     Debug.WriteLine($"[SupMain] Updating ObjectBrowser search to: {profileURN.Text}");
+                                     _isUpdatingObjectBrowser = true;
+                                     try
+                                     {
+                                         OBcontrol.control._isUpdatingFromExternal = true;
+                                         OBcontrol.control.txtSearchAddress.Text = profileURN.Text;
+                                         OBcontrol.control.BuildSearchResults();
+                                     }
+                                     finally
+                                     {
+                                         OBcontrol.control._isUpdatingFromExternal = false;
+                                         _isUpdatingObjectBrowser = false;
+                                     }
                                  });
                                 }
                                 catch { }

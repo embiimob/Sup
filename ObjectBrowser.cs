@@ -39,6 +39,11 @@ namespace SUP
         int historySeen = 0;
         bool spaceGiven = false;
         Timer resizeTimer;
+        
+        // Guard flag to prevent circular updates between ObjectBrowser and SupMain
+        // When true, indicates that profileURN is being updated from an external source (SupMain)
+        // and should not trigger BuildSearchResults or propagate changes back
+        public bool _isUpdatingFromExternal = false;
 
         List<FoundObjectControl> foundObjects = new List<FoundObjectControl>();
         List<PictureBox> pictureBoxes = new List<PictureBox>();
@@ -286,9 +291,18 @@ namespace SUP
                     {
                         this.Invoke((Action)(() =>
                         {
-                            profileURN.Links[0].LinkData = profileCheck;
-                            profileURN.LinkColor = System.Drawing.SystemColors.Highlight;
-                            profileURN.Text = txtSearchAddress.Text;
+                            // Only update profileURN if not being updated from external source (prevents circular updates)
+                            if (!_isUpdatingFromExternal)
+                            {
+                                Debug.WriteLine($"[ObjectBrowser] Setting profileURN to: {txtSearchAddress.Text}");
+                                profileURN.Links[0].LinkData = profileCheck;
+                                profileURN.LinkColor = System.Drawing.SystemColors.Highlight;
+                                profileURN.Text = txtSearchAddress.Text;
+                            }
+                            else
+                            {
+                                Debug.WriteLine($"[ObjectBrowser] Skipping profileURN update - external update in progress");
+                            }
                         }));
                     }
 
@@ -326,9 +340,18 @@ namespace SUP
                     {
                         this.Invoke((Action)(() =>
                         {
-                            profileURN.Links[0].LinkData = profileCheck;
-                            profileURN.LinkColor = System.Drawing.SystemColors.Highlight;
-                            profileURN.Text = txtSearchAddress.Text;
+                            // Only update profileURN if not being updated from external source (prevents circular updates)
+                            if (!_isUpdatingFromExternal)
+                            {
+                                Debug.WriteLine($"[ObjectBrowser] Setting profileURN to: {txtSearchAddress.Text}");
+                                profileURN.Links[0].LinkData = profileCheck;
+                                profileURN.LinkColor = System.Drawing.SystemColors.Highlight;
+                                profileURN.Text = txtSearchAddress.Text;
+                            }
+                            else
+                            {
+                                Debug.WriteLine($"[ObjectBrowser] Skipping profileURN update - external update in progress");
+                            }
                         }));
                     }
 
@@ -349,9 +372,18 @@ namespace SUP
                         createdObjects = OBJState.GetFoundObjects(mainnetLogin, mainnetPassword, mainnetURL, mainnetVersionByte, calculate);
                         this.Invoke((Action)(() =>
                         {
-                            profileURN.Links[0].LinkData = "";
-                            profileURN.LinkColor = System.Drawing.SystemColors.Highlight;
-                            profileURN.Text = "anon";
+                            // Only update profileURN if not being updated from external source (prevents circular updates)
+                            if (!_isUpdatingFromExternal)
+                            {
+                                Debug.WriteLine($"[ObjectBrowser] Setting profileURN to: anon");
+                                profileURN.Links[0].LinkData = "";
+                                profileURN.LinkColor = System.Drawing.SystemColors.Highlight;
+                                profileURN.Text = "anon";
+                            }
+                            else
+                            {
+                                Debug.WriteLine($"[ObjectBrowser] Skipping profileURN update - external update in progress");
+                            }
                         }));
 
                     }
@@ -414,9 +446,18 @@ namespace SUP
                         {
                             if (searchprofile.URN != null || createdObjects.Count > 0 || txtSearchAddress.Text.StartsWith("#"))
                             {
-                                profileURN.Links[0].LinkData = profileCheck;
-                                profileURN.LinkColor = System.Drawing.SystemColors.Highlight;
-                                profileURN.Text = txtSearchAddress.Text;
+                                // Only update profileURN if not being updated from external source (prevents circular updates)
+                                if (!_isUpdatingFromExternal)
+                                {
+                                    Debug.WriteLine($"[ObjectBrowser] Setting profileURN to: {txtSearchAddress.Text}");
+                                    profileURN.Links[0].LinkData = profileCheck;
+                                    profileURN.LinkColor = System.Drawing.SystemColors.Highlight;
+                                    profileURN.Text = txtSearchAddress.Text;
+                                }
+                                else
+                                {
+                                    Debug.WriteLine($"[ObjectBrowser] Skipping profileURN update - external update in progress");
+                                }
                             }
                         }));
 
