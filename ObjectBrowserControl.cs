@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Windows.Forms;
 
 namespace SUP
@@ -29,14 +30,14 @@ namespace SUP
             // Guard against circular updates: Don't propagate the event if ObjectBrowser is being updated externally
             if (control._isUpdatingFromExternal)
             {
-                System.Diagnostics.Debug.WriteLine("[ObjectBrowserControl] Suppressing ProfileURNChanged event - external update in progress");
+                Debug.WriteLine("[ObjectBrowserControl] Suppressing ProfileURNChanged event - external update in progress");
                 return;
             }
             
             // Check if the link label text has changed
             if (control.profileURN.Text != "")
             {
-                System.Diagnostics.Debug.WriteLine($"[ObjectBrowserControl] Firing ProfileURNChanged event for: {control.profileURN.Text}");
+                Debug.WriteLine($"[ObjectBrowserControl] Firing ProfileURNChanged event for: {control.profileURN.Text}");
                 ProfileURNChanged?.Invoke(this, EventArgs.Empty);
             }
                 

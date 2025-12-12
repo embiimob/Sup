@@ -408,7 +408,7 @@ namespace SUP
                                     NetworkCredential credentials = new NetworkCredential(mainnetLogin, mainnetPassword);
                                     NBitcoin.RPC.RPCClient rpcClient = new NBitcoin.RPC.RPCClient(credentials, new Uri(mainnetURL), Network.Main);
                                     string signature = "";
-                                    try { signature = rpcClient.SendCommand("signmessage", profileURNAddress, "DUMMY").ResultString; ; } catch { }
+                                    try { signature = rpcClient.SendCommand("signmessage", profileURNAddress, "DUMMY").ResultString; } catch { }
 
 
                                    if
@@ -428,7 +428,8 @@ namespace SUP
             }
             catch (Exception ex)
             {
-                Debug.WriteLine($"[SupMain] Error in OBControl_ProfileURNChanged: {ex.Message}");
+                Debug.WriteLine($"[SupMain] Error in OBControl_ProfileURNChanged: {ex.GetType().Name}: {ex.Message}");
+                Debug.WriteLine($"[SupMain] Stack trace: {ex.StackTrace}");
                 // Gracefully handle errors instead of crashing - log and continue
             }
         }
