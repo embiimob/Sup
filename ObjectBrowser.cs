@@ -3760,23 +3760,34 @@ namespace SUP
 
             if (profileURN.Links[0].LinkData != null)
             {
-                NetworkCredential credentials = new NetworkCredential(mainnetLogin, mainnetPassword);
-                NBitcoin.RPC.RPCClient rpcClient = new NBitcoin.RPC.RPCClient(credentials, new Uri(mainnetURL), Network.Main);
-                string signature = "";
-                try 
-                { 
-                    signature = rpcClient.SendCommand("signmessage", profileURN.Links[0].LinkData.ToString(), "DUMMY").ResultString; 
-                } 
-                catch (Exception ex)
+                // Run RPC call asynchronously to avoid blocking the UI thread
+                Task.Run(() =>
                 {
-                    // NBitcoin RPC exceptions are expected for addresses not in wallet (e.g., keyword-derived addresses)
-                    Debug.WriteLine($"[ObjectBrowser] signmessage RPC failed: {ex.Message}");
-                }
+                    try
+                    {
+                        NetworkCredential credentials = new NetworkCredential(mainnetLogin, mainnetPassword);
+                        NBitcoin.RPC.RPCClient rpcClient = new NBitcoin.RPC.RPCClient(credentials, new Uri(mainnetURL), Network.Main);
+                        string signature = "";
+                        try 
+                        { 
+                            signature = rpcClient.SendCommand("signmessage", profileURN.Links[0].LinkData.ToString(), "DUMMY").ResultString; 
+                        } 
+                        catch (Exception ex)
+                        {
+                            // NBitcoin RPC exceptions are expected for addresses not in wallet (e.g., keyword-derived addresses)
+                            Debug.WriteLine($"[ObjectBrowser] signmessage RPC failed: {ex.Message}");
+                        }
 
-                if (signature != "")
-                {
-                    _activeProfile = profileURN.Links[0].LinkData.ToString();
-                }
+                        if (signature != "")
+                        {
+                            _activeProfile = profileURN.Links[0].LinkData.ToString();
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        Debug.WriteLine($"[ObjectBrowser] Error in profileURN_TextChanged RPC call: {ex.Message}");
+                    }
+                });
             }
         }
 
@@ -3817,7 +3828,8 @@ namespace SUP
             }
             
             // Manually trigger the internal handler now that all properties are set
-            // This ensures _activeProfile is updated if needed
+            // The handler will update _activeProfile if the RPC call succeeds
+            // The RPC call is wrapped in try-catch so it won't block indefinitely
             profileURN_TextChanged(profileURN, EventArgs.Empty);
         }
 
