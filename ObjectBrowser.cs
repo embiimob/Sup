@@ -295,9 +295,14 @@ namespace SUP
                             if (!_isUpdatingFromExternal)
                             {
                                 Debug.WriteLine($"[ObjectBrowser] Setting profileURN to: {txtSearchAddress.Text}");
-                                profileURN.Links[0].LinkData = profileCheck;
-                                profileURN.LinkColor = System.Drawing.SystemColors.Highlight;
+                                // Set Text first to ensure Links collection is initialized by WinForms
                                 profileURN.Text = txtSearchAddress.Text;
+                                profileURN.LinkColor = System.Drawing.SystemColors.Highlight;
+                                // Now safely set LinkData after Text is set and Links collection exists
+                                if (profileURN.Links.Count > 0)
+                                {
+                                    profileURN.Links[0].LinkData = profileCheck;
+                                }
                             }
                             else
                             {
@@ -344,9 +349,14 @@ namespace SUP
                             if (!_isUpdatingFromExternal)
                             {
                                 Debug.WriteLine($"[ObjectBrowser] Setting profileURN to: {txtSearchAddress.Text}");
-                                profileURN.Links[0].LinkData = profileCheck;
-                                profileURN.LinkColor = System.Drawing.SystemColors.Highlight;
+                                // Set Text first to ensure Links collection is initialized by WinForms
                                 profileURN.Text = txtSearchAddress.Text;
+                                profileURN.LinkColor = System.Drawing.SystemColors.Highlight;
+                                // Now safely set LinkData after Text is set and Links collection exists
+                                if (profileURN.Links.Count > 0)
+                                {
+                                    profileURN.Links[0].LinkData = profileCheck;
+                                }
                             }
                             else
                             {
@@ -376,9 +386,14 @@ namespace SUP
                             if (!_isUpdatingFromExternal)
                             {
                                 Debug.WriteLine($"[ObjectBrowser] Setting profileURN to: anon");
-                                profileURN.Links[0].LinkData = "";
-                                profileURN.LinkColor = System.Drawing.SystemColors.Highlight;
+                                // Set Text first to ensure Links collection is initialized by WinForms
                                 profileURN.Text = "anon";
+                                profileURN.LinkColor = System.Drawing.SystemColors.Highlight;
+                                // Now safely set LinkData after Text is set and Links collection exists
+                                if (profileURN.Links.Count > 0)
+                                {
+                                    profileURN.Links[0].LinkData = "";
+                                }
                             }
                             else
                             {
@@ -450,9 +465,14 @@ namespace SUP
                                 if (!_isUpdatingFromExternal)
                                 {
                                     Debug.WriteLine($"[ObjectBrowser] Setting profileURN to: {txtSearchAddress.Text}");
-                                    profileURN.Links[0].LinkData = profileCheck;
-                                    profileURN.LinkColor = System.Drawing.SystemColors.Highlight;
+                                    // Set Text first to ensure Links collection is initialized by WinForms
                                     profileURN.Text = txtSearchAddress.Text;
+                                    profileURN.LinkColor = System.Drawing.SystemColors.Highlight;
+                                    // Now safely set LinkData after Text is set and Links collection exists
+                                    if (profileURN.Links.Count > 0)
+                                    {
+                                        profileURN.Links[0].LinkData = profileCheck;
+                                    }
                                 }
                                 else
                                 {
@@ -3042,6 +3062,12 @@ namespace SUP
             if (e.KeyCode == Keys.Enter)
             {
                 if (txtSearchAddress.Text == "" || txtSearchAddress.Text.StartsWith("#") || txtSearchAddress.Text.ToUpper().StartsWith("SUP:") || txtSearchAddress.Text.ToUpper().StartsWith("HTTP") || txtSearchAddress.Text.ToUpper().StartsWith("BTC:") || txtSearchAddress.Text.ToUpper().StartsWith("MZC:") || txtSearchAddress.Text.ToUpper().StartsWith("LTC:") || txtSearchAddress.Text.ToUpper().StartsWith("DOG:") || txtSearchAddress.Text.ToUpper().StartsWith("IPFS:")) { btnCreated.BackColor = Color.White; btnOwned.BackColor = Color.White; }
+                // Clear profileURN properly to avoid inconsistent LinkLabel state
+                // Setting Text to empty string while Links[0].LinkData has a value can cause NullReferenceException in OnPaint
+                if (profileURN.Links != null && profileURN.Links.Count > 0)
+                {
+                    profileURN.Links[0].LinkData = null;
+                }
                 profileURN.Text = "";
                 e.Handled = true;
                 e.SuppressKeyPress = true;
