@@ -77,9 +77,16 @@ namespace SUP
             flowLayoutPanel1.MouseWheel += history_MouseWheel;
             
             // Initialize profileURN Links collection to prevent null reference exceptions
-            if (profileURN.Links.Count == 0)
+            // Always ensure Links are properly initialized for the current Text
+            profileURN.Links.Clear();
+            if (profileURN.Text.Length > 0)
             {
                 profileURN.Links.Add(0, profileURN.Text.Length);
+            }
+            else
+            {
+                // Even with empty text, add a zero-length link to keep LinkLabel happy
+                profileURN.Links.Add(0, 0);
             }
         }
 
@@ -303,10 +310,10 @@ namespace SUP
                                 _updatingProfileURN = true;
                                 profileURN.Text = txtSearchAddress.Text;
                                 profileURN.LinkColor = System.Drawing.SystemColors.Highlight;
-                                if (profileURN.Links.Count == 0)
-                                {
-                                    profileURN.Links.Add(0, profileURN.Text.Length);
-                                }
+                                // Always clear and recreate links to ensure they match the text
+                                profileURN.Links.Clear();
+                                // Always add a link (even zero-length for empty text) to prevent paint errors
+                                profileURN.Links.Add(0, Math.Max(0, profileURN.Text.Length));
                                 if (profileURN.Links.Count > 0 && profileURN.Links[0] != null)
                                 {
                                     profileURN.Links[0].LinkData = profileCheck;
@@ -359,10 +366,10 @@ namespace SUP
                                 _updatingProfileURN = true;
                                 profileURN.Text = txtSearchAddress.Text;
                                 profileURN.LinkColor = System.Drawing.SystemColors.Highlight;
-                                if (profileURN.Links.Count == 0)
-                                {
-                                    profileURN.Links.Add(0, profileURN.Text.Length);
-                                }
+                                // Always clear and recreate links to ensure they match the text
+                                profileURN.Links.Clear();
+                                // Always add a link (even zero-length for empty text) to prevent paint errors
+                                profileURN.Links.Add(0, Math.Max(0, profileURN.Text.Length));
                                 if (profileURN.Links.Count > 0 && profileURN.Links[0] != null)
                                 {
                                     profileURN.Links[0].LinkData = profileCheck;
@@ -398,10 +405,10 @@ namespace SUP
                                 _updatingProfileURN = true;
                                 profileURN.Text = "anon";
                                 profileURN.LinkColor = System.Drawing.SystemColors.Highlight;
-                                if (profileURN.Links.Count == 0)
-                                {
-                                    profileURN.Links.Add(0, profileURN.Text.Length);
-                                }
+                                // Always clear and recreate links to ensure they match the text
+                                profileURN.Links.Clear();
+                                // Always add a link (even zero-length for empty text) to prevent paint errors
+                                profileURN.Links.Add(0, Math.Max(0, profileURN.Text.Length));
                                 if (profileURN.Links.Count > 0 && profileURN.Links[0] != null)
                                 {
                                     profileURN.Links[0].LinkData = "";
@@ -478,15 +485,15 @@ namespace SUP
                                 {
                                     _updatingProfileURN = true;
                                     profileURN.Text = txtSearchAddress.Text;
-                                    profileURN.LinkColor = System.Drawing.SystemColors.Highlight;
-                                    if (profileURN.Links.Count == 0)
-                                    {
-                                        profileURN.Links.Add(0, profileURN.Text.Length);
-                                    }
-                                    if (profileURN.Links.Count > 0 && profileURN.Links[0] != null)
-                                    {
-                                        profileURN.Links[0].LinkData = profileCheck;
-                                    }
+                                profileURN.LinkColor = System.Drawing.SystemColors.Highlight;
+                                // Always clear and recreate links to ensure they match the text
+                                profileURN.Links.Clear();
+                                // Always add a link (even zero-length for empty text) to prevent paint errors
+                                profileURN.Links.Add(0, Math.Max(0, profileURN.Text.Length));
+                                if (profileURN.Links.Count > 0 && profileURN.Links[0] != null)
+                                {
+                                    profileURN.Links[0].LinkData = profileCheck;
+                                }
                                 }
                                 catch { }
                                 finally
@@ -1574,10 +1581,10 @@ namespace SUP
                                 _updatingProfileURN = true;
                                 profileURN.Text = TruncateAddress(searchprofile.URN);
                                 profileURN.LinkColor = System.Drawing.SystemColors.Highlight;
-                                if (profileURN.Links.Count == 0)
-                                {
-                                    profileURN.Links.Add(0, profileURN.Text.Length);
-                                }
+                                // Always clear and recreate links to ensure they match the text
+                                profileURN.Links.Clear();
+                                // Always add a link (even zero-length for empty text) to prevent paint errors
+                                profileURN.Links.Add(0, Math.Max(0, profileURN.Text.Length));
                                 if (profileURN.Links.Count > 0 && profileURN.Links[0] != null)
                                 {
                                     profileURN.Links[0].LinkData = searchprofile.Creators.First();
@@ -1599,10 +1606,10 @@ namespace SUP
                                 _updatingProfileURN = true;
                                 profileURN.Text = "anon";
                                 profileURN.LinkColor = System.Drawing.SystemColors.GradientActiveCaption;
-                                if (profileURN.Links.Count == 0)
-                                {
-                                    profileURN.Links.Add(0, profileURN.Text.Length);
-                                }
+                                // Always clear and recreate links to ensure they match the text
+                                profileURN.Links.Clear();
+                                // Always add a link (even zero-length for empty text) to prevent paint errors
+                                profileURN.Links.Add(0, Math.Max(0, profileURN.Text.Length));
                                 if (profileURN.Links.Count > 0 && profileURN.Links[0] != null)
                                 {
                                     profileURN.Links[0].LinkData = address;
@@ -1623,15 +1630,15 @@ namespace SUP
                         {
                             _updatingProfileURN = true;
                             profileURN.Text = address;
-                            profileURN.LinkColor = System.Drawing.SystemColors.GradientActiveCaption;
-                            if (profileURN.Links.Count == 0)
-                            {
-                                profileURN.Links.Add(0, profileURN.Text.Length);
-                            }
-                            if (profileURN.Links.Count > 0 && profileURN.Links[0] != null)
-                            {
-                                profileURN.Links[0].LinkData = address;
-                            }
+                                profileURN.LinkColor = System.Drawing.SystemColors.GradientActiveCaption;
+                                // Always clear and recreate links to ensure they match the text
+                                profileURN.Links.Clear();
+                                // Always add a link (even zero-length for empty text) to prevent paint errors
+                                profileURN.Links.Add(0, Math.Max(0, profileURN.Text.Length));
+                                if (profileURN.Links.Count > 0 && profileURN.Links[0] != null)
+                                {
+                                    profileURN.Links[0].LinkData = address;
+                                }
                         }
                         finally
                         {
@@ -1648,15 +1655,15 @@ namespace SUP
                     {
                         _updatingProfileURN = true;
                         profileURN.Text = "anon";
-                        profileURN.LinkColor = System.Drawing.SystemColors.GradientActiveCaption;
-                        if (profileURN.Links.Count == 0)
-                        {
-                            profileURN.Links.Add(0, profileURN.Text.Length);
-                        }
-                        if (profileURN.Links.Count > 0 && profileURN.Links[0] != null)
-                        {
-                            profileURN.Links[0].LinkData = address;
-                        }
+                                profileURN.LinkColor = System.Drawing.SystemColors.GradientActiveCaption;
+                                // Always clear and recreate links to ensure they match the text
+                                profileURN.Links.Clear();
+                                // Always add a link (even zero-length for empty text) to prevent paint errors
+                                profileURN.Links.Add(0, Math.Max(0, profileURN.Text.Length));
+                                if (profileURN.Links.Count > 0 && profileURN.Links[0] != null)
+                                {
+                                    profileURN.Links[0].LinkData = address;
+                                }
                     }
                     finally
                     {
@@ -2047,10 +2054,10 @@ namespace SUP
                                 _updatingProfileURN = true;
                                 profileURN.Text = TruncateAddress(searchprofile.URN);
                                 profileURN.LinkColor = System.Drawing.SystemColors.Highlight;
-                                if (profileURN.Links.Count == 0)
-                                {
-                                    profileURN.Links.Add(0, profileURN.Text.Length);
-                                }
+                                // Always clear and recreate links to ensure they match the text
+                                profileURN.Links.Clear();
+                                // Always add a link (even zero-length for empty text) to prevent paint errors
+                                profileURN.Links.Add(0, Math.Max(0, profileURN.Text.Length));
                                 if (profileURN.Links.Count > 0 && profileURN.Links[0] != null)
                                 {
                                     profileURN.Links[0].LinkData = searchprofile.Creators.First();
@@ -2072,10 +2079,10 @@ namespace SUP
                                 _updatingProfileURN = true;
                                 profileURN.Text = "anon";
                                 profileURN.LinkColor = System.Drawing.SystemColors.GradientActiveCaption;
-                                if (profileURN.Links.Count == 0)
-                                {
-                                    profileURN.Links.Add(0, profileURN.Text.Length);
-                                }
+                                // Always clear and recreate links to ensure they match the text
+                                profileURN.Links.Clear();
+                                // Always add a link (even zero-length for empty text) to prevent paint errors
+                                profileURN.Links.Add(0, Math.Max(0, profileURN.Text.Length));
                                 if (profileURN.Links.Count > 0 && profileURN.Links[0] != null)
                                 {
                                     profileURN.Links[0].LinkData = address;
@@ -2096,15 +2103,15 @@ namespace SUP
                         {
                             _updatingProfileURN = true;
                             profileURN.Text = address;
-                            profileURN.LinkColor = System.Drawing.SystemColors.GradientActiveCaption;
-                            if (profileURN.Links.Count == 0)
-                            {
-                                profileURN.Links.Add(0, profileURN.Text.Length);
-                            }
-                            if (profileURN.Links.Count > 0 && profileURN.Links[0] != null)
-                            {
-                                profileURN.Links[0].LinkData = address;
-                            }
+                                profileURN.LinkColor = System.Drawing.SystemColors.GradientActiveCaption;
+                                // Always clear and recreate links to ensure they match the text
+                                profileURN.Links.Clear();
+                                // Always add a link (even zero-length for empty text) to prevent paint errors
+                                profileURN.Links.Add(0, Math.Max(0, profileURN.Text.Length));
+                                if (profileURN.Links.Count > 0 && profileURN.Links[0] != null)
+                                {
+                                    profileURN.Links[0].LinkData = address;
+                                }
                         }
                         finally
                         {
@@ -2121,15 +2128,15 @@ namespace SUP
                     {
                         _updatingProfileURN = true;
                         profileURN.Text = "anon";
-                        profileURN.LinkColor = System.Drawing.SystemColors.GradientActiveCaption;
-                        if (profileURN.Links.Count == 0)
-                        {
-                            profileURN.Links.Add(0, profileURN.Text.Length);
-                        }
-                        if (profileURN.Links.Count > 0 && profileURN.Links[0] != null)
-                        {
-                            profileURN.Links[0].LinkData = address;
-                        }
+                                profileURN.LinkColor = System.Drawing.SystemColors.GradientActiveCaption;
+                                // Always clear and recreate links to ensure they match the text
+                                profileURN.Links.Clear();
+                                // Always add a link (even zero-length for empty text) to prevent paint errors
+                                profileURN.Links.Add(0, Math.Max(0, profileURN.Text.Length));
+                                if (profileURN.Links.Count > 0 && profileURN.Links[0] != null)
+                                {
+                                    profileURN.Links[0].LinkData = address;
+                                }
                     }
                     finally
                     {
@@ -3191,12 +3198,10 @@ namespace SUP
                 {
                     _updatingProfileURN = true;
                     profileURN.Text = "";
-                    // Re-initialize Links collection after clearing text
+                    // Always maintain at least one link to prevent paint errors
                     profileURN.Links.Clear();
-                    if (profileURN.Text.Length > 0)
-                    {
-                        profileURN.Links.Add(0, profileURN.Text.Length);
-                    }
+                    // Add a zero-length link for empty text to keep LinkLabel stable
+                    profileURN.Links.Add(0, 0);
                 }
                 finally
                 {
