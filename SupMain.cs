@@ -326,7 +326,11 @@ namespace SUP
                         numPrivateMessagesDisplayed = 0;
                         numFriendFeedsDisplayed = 0;
 
-                        if (File.Exists(@"root\" + profileURN.Links[0].LinkData.ToString() + @"\MUTE")) { btnMute.Text = "unmute"; }
+                        // Check for MUTE file only if LinkData is not null
+                        if (profileURN.Links.Count > 0 && profileURN.Links[0] != null && profileURN.Links[0].LinkData != null)
+                        {
+                            if (File.Exists(@"root\" + profileURN.Links[0].LinkData.ToString() + @"\MUTE")) { btnMute.Text = "unmute"; }
+                        }
 
                         if (profileURN.Text.StartsWith("#"))
                         {
@@ -366,12 +370,17 @@ namespace SUP
                         }
                         else
                         {
-                            MakeActiveProfile(objectBrowserForm.profileURN.Links[0].LinkData.ToString());
+                            // Only call MakeActiveProfile if LinkData is valid
+                            if (objectBrowserForm.profileURN.Links.Count > 0 && objectBrowserForm.profileURN.Links[0] != null && objectBrowserForm.profileURN.Links[0].LinkData != null)
+                            {
+                                MakeActiveProfile(objectBrowserForm.profileURN.Links[0].LinkData.ToString());
+                            }
                             btnPublicMessage.BackColor = Color.White;
                             btnPublicMessage.ForeColor = Color.Black;
 
 
-                            if (profileURN.Links.Count > 0 && profileURN.Links[0] != null && profileURN.Links[0].LinkData != null)
+                            if (profileURN.Links.Count > 0 && profileURN.Links[0] != null && profileURN.Links[0].LinkData != null &&
+                                objectBrowserForm.profileURN.Links.Count > 0 && objectBrowserForm.profileURN.Links[0] != null && objectBrowserForm.profileURN.Links[0].LinkData != null)
                             {
                                 string profileURN = objectBrowserForm.profileURN.Links[0].LinkData.ToString();
 
@@ -462,7 +471,11 @@ namespace SUP
                 }
             });
 
-            if (File.Exists(@"root\" + profileURN.Links[0].LinkData.ToString() + @"\MUTE")) { btnMute.Text = "unmute"; } else { btnMute.Text = "mute"; }
+            // Check for MUTE file only if LinkData is not null
+            if (profileURN.Links.Count > 0 && profileURN.Links[0] != null && profileURN.Links[0].LinkData != null)
+            {
+                if (File.Exists(@"root\" + profileURN.Links[0].LinkData.ToString() + @"\MUTE")) { btnMute.Text = "unmute"; } else { btnMute.Text = "mute"; }
+            }
 
             if (!panel1.Visible)
             {
