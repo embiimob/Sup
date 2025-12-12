@@ -3764,32 +3764,35 @@ namespace SUP
         }
 
         /// <summary>
-        /// Helper method to atomically set profileURN properties without triggering TextChanged event prematurely.
-        /// This prevents race conditions where TextChanged fires before LinkData is set, causing null reference exceptions in handlers.
+        /// Helper method to atomically set profileURN properties.
+        /// Sets LinkData before Text to ensure it's available when TextChanged event fires.
         /// </summary>
         /// <param name="text">The text to set for the profileURN</param>
         /// <param name="linkData">The link data to associate with the profileURN</param>
         private void SetProfileURNAtomically(string text, object linkData)
         {
-            // Temporarily detach TextChanged event to set all properties atomically
-            profileURN.TextChanged -= profileURN_TextChanged;
-            try
+            // For LinkLabel to work properly, we need to set properties in the right order:
+            // 1. Ensure the LinkLabel has a Link by checking/creating one
+            // 2. Set LinkData on the existing link
+            // 3. Set Text (which will trigger TextChanged with LinkData already available)
+            
+            // Ensure at least one link exists in the Links collection
+            if (profileURN.Links.Count == 0)
             {
-                // Set Text first to ensure Links collection is initialized by WinForms
-                profileURN.Text = text;
-                profileURN.LinkColor = System.Drawing.SystemColors.Highlight;
-                // Now safely set LinkData after Text is set and Links collection exists
-                if (profileURN.Links.Count > 0)
-                {
-                    profileURN.Links[0].LinkData = linkData;
-                }
+                // Create a link if none exists
+                profileURN.Links.Add(new LinkLabel.Link(0, text.Length));
             }
-            finally
+            
+            // Now set LinkData BEFORE setting Text
+            if (profileURN.Links.Count > 0)
             {
-                // Reattach event and manually trigger it once all properties are consistent
-                profileURN.TextChanged += profileURN_TextChanged;
-                profileURN_TextChanged(profileURN, EventArgs.Empty);
+                profileURN.Links[0].LinkData = linkData;
             }
+            
+            profileURN.LinkColor = System.Drawing.SystemColors.Highlight;
+            
+            // Finally set Text - this will trigger TextChanged with LinkData already set
+            profileURN.Text = text;
         }
 
         private async void btnActivity_Click(object sender, EventArgs e)
