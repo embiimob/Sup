@@ -334,8 +334,30 @@ namespace SUP
                             supFlow.Size = new System.Drawing.Size(supFlow.Width, supFlow.Height - 150); // Change the width and height
                         }
 
-                        // Set Text first to initialize Links collection in profileURN
+                        // Copy both Text and LinkData from ObjectBrowser's profileURN
+                        // ObjectBrowser sets these atomically via SetProfileURNAtomically before firing the event
                         profileURN.Text = objectBrowserForm.profileURN.Text;
+                        profileURN.LinkColor = objectBrowserForm.profileURN.LinkColor;
+                        
+                        // Copy LinkData if available
+                        if (objectBrowserForm.profileURN.Links != null && objectBrowserForm.profileURN.Links.Count > 0 &&
+                            objectBrowserForm.profileURN.Links[0].LinkData != null)
+                        {
+                            // Ensure our Links collection exists
+                            if (profileURN.Links != null && profileURN.Links.Count > 0)
+                            {
+                                profileURN.Links[0].LinkData = objectBrowserForm.profileURN.Links[0].LinkData;
+                                Debug.WriteLine($"[SupMain] Copied LinkData: {profileURN.Links[0].LinkData}");
+                            }
+                            else
+                            {
+                                Debug.WriteLine("[SupMain] WARNING: Cannot copy LinkData - destination Links collection is empty");
+                            }
+                        }
+                        else
+                        {
+                            Debug.WriteLine("[SupMain] WARNING: Source LinkData is null or Links collection is empty");
+                        }
                         
                         numMessagesDisplayed = 0;
                         numPrivateMessagesDisplayed = 0;
@@ -381,19 +403,6 @@ namespace SUP
                                 ClearMessages(supFlow);
                             }));
 
-                            // For hashtag searches, ensure we have the keyword address in LinkData before calling RefreshSupMessages
-                            // The keyword address is needed to fetch messages via GetPublicMessagesByAddress
-                            if (objectBrowserForm.profileURN.Links != null && objectBrowserForm.profileURN.Links.Count > 0 && 
-                                objectBrowserForm.profileURN.Links[0].LinkData != null)
-                            {
-                                Debug.WriteLine($"[SupMain] Hashtag search - using keyword address: {objectBrowserForm.profileURN.Links[0].LinkData}");
-                                // Directly set LinkData from source for hashtag searches
-                                if (profileURN.Links != null && profileURN.Links.Count > 0)
-                                {
-                                    profileURN.Links[0].LinkData = objectBrowserForm.profileURN.Links[0].LinkData;
-                                }
-                            }
-                            
                             RefreshSupMessages();
                         }
                         else

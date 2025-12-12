@@ -3797,6 +3797,11 @@ namespace SUP
         /// </summary>
         /// <param name="text">The text to set for the profileURN</param>
         /// <param name="linkData">The link data to associate with the profileURN</param>
+        /// <summary>
+        /// Sets profileURN Text and LinkData atomically to ensure both properties are set
+        /// before any TextChanged events propagate to external listeners (ObjectBrowserControl/SupMain).
+        /// This prevents race conditions where SupMain reads profileURN before LinkData is set.
+        /// </summary>
         private void SetProfileURNAtomically(string text, object linkData)
         {
             // Validate input
@@ -3805,26 +3810,34 @@ namespace SUP
                 text = string.Empty;
             }
             
-            // Suppress internal profileURN_TextChanged handler to set properties atomically
+            // Suppress both internal handler AND external event propagation
+            // This ensures LinkData is set before SupMain receives the event
             _isSuppressingProfileURNTextChanged = true;
+            _isUpdatingFromExternal = true;
             try
             {
                 profileURN.LinkColor = System.Drawing.SystemColors.Highlight;
                 
                 // Set Text first - WinForms will automatically create/update Links collection
-                // TextChanged event will fire, but our handler is suppressed
+                // TextChanged event will fire, but both internal handler and external propagation are suppressed
                 profileURN.Text = text;
                 
                 // Now safely set LinkData on the link that WinForms created
                 if (profileURN.Links != null && profileURN.Links.Count > 0)
                 {
                     profileURN.Links[0].LinkData = linkData;
+                    Debug.WriteLine($"[ObjectBrowser.SetProfileURNAtomically] Set profileURN - Text='{text}', LinkData='{linkData}'");
+                }
+                else
+                {
+                    Debug.WriteLine($"[ObjectBrowser.SetProfileURNAtomically] WARNING: Links collection empty after setting Text='{text}'");
                 }
             }
             finally
             {
-                // Re-enable handler
+                // Re-enable handlers
                 _isSuppressingProfileURNTextChanged = false;
+                _isUpdatingFromExternal = false;
             }
             
             // Manually trigger the internal handler now that all properties are set
