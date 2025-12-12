@@ -204,6 +204,57 @@ This makes it easy to diagnose any remaining issues or unexpected behavior.
    - Added defensive null checks throughout
    - Improved error handling and logging
 
+## Additional Bug Fix (December 12, 2025)
+
+After user testing, an additional critical issue was identified and fixed:
+
+### NullReferenceException in LinkLabel.OnPaint()
+
+**Issue Reported by @embiimob**: When typing `#LOVE` and pressing Enter, a NullReferenceException occurred:
+```
+System.NullReferenceException: Object reference not set to an instance of an object.
+   at System.Windows.Forms.LinkLabel.OnPaint(PaintEventArgs e)
+```
+The profileURN would show a large red X, and the application would throw an unhandled exception.
+
+**Root Cause Analysis**:
+1. **Enter Key Handler Problem**: Line 3045 was setting `profileURN.Text = ""` without clearing `Links[0].LinkData`, creating an inconsistent LinkLabel state
+2. **Property Order Issue**: In BuildSearchResults(), we were trying to set `Links[0].LinkData` BEFORE setting the Text property, but the Links collection might not be initialized yet
+3. **WinForms Behavior**: LinkLabel requires the Text property to be set first, which automatically initializes the Links collection. Accessing Links[0] before setting Text can cause NullReferenceException
+
+**Fix Applied (Commit: ab9ce74)**:
+
+1. **Reordered Property Setting** (4 locations in BuildSearchResults):
+```csharp
+// BEFORE (incorrect order - could cause NullReferenceException)
+profileURN.Links[0].LinkData = profileCheck;
+profileURN.LinkColor = System.Drawing.SystemColors.Highlight;
+profileURN.Text = txtSearchAddress.Text;
+
+// AFTER (correct order - safe)
+// Set Text first to ensure Links collection is initialized by WinForms
+profileURN.Text = txtSearchAddress.Text;
+profileURN.LinkColor = System.Drawing.SystemColors.Highlight;
+// Now safely set LinkData after Text is set and Links collection exists
+if (profileURN.Links.Count > 0)
+{
+    profileURN.Links[0].LinkData = profileCheck;
+}
+```
+
+2. **Fixed Enter Key Handler** (SearchAddressKeyDown method):
+```csharp
+// Clear profileURN properly to avoid inconsistent LinkLabel state
+// Setting Text to empty string while Links[0].LinkData has a value can cause NullReferenceException in OnPaint
+if (profileURN.Links != null && profileURN.Links.Count > 0)
+{
+    profileURN.Links[0].LinkData = null;
+}
+profileURN.Text = "";
+```
+
+**Result**: The red X and NullReferenceException should no longer occur when searching for hashtags like `#LOVE`.
+
 ## Future Improvements
 
 If this pattern becomes more complex, consider:
