@@ -337,11 +337,23 @@ namespace SUP
                         // Set Text first to initialize Links collection in profileURN
                         profileURN.Text = objectBrowserForm.profileURN.Text;
                         
+                        // Debug: Check Links collection state
+                        Debug.WriteLine($"[SupMain] After setting Text='{profileURN.Text}', Links.Count={profileURN.Links?.Count ?? 0}");
+                        if (objectBrowserForm.profileURN.Links != null && objectBrowserForm.profileURN.Links.Count > 0)
+                        {
+                            Debug.WriteLine($"[SupMain] Source LinkData={objectBrowserForm.profileURN.Links[0].LinkData}");
+                        }
+                        
                         // Now copy LinkData after Links collection exists
                         if (objectBrowserForm.profileURN.Links != null && objectBrowserForm.profileURN.Links.Count > 0 &&
                             profileURN.Links != null && profileURN.Links.Count > 0)
                         {
                             profileURN.Links[0].LinkData = objectBrowserForm.profileURN.Links[0].LinkData;
+                            Debug.WriteLine($"[SupMain] Set profileURN.Links[0].LinkData={profileURN.Links[0].LinkData}");
+                        }
+                        else
+                        {
+                            Debug.WriteLine($"[SupMain] WARNING: Could not copy LinkData - source Links.Count={objectBrowserForm.profileURN.Links?.Count ?? 0}, dest Links.Count={profileURN.Links?.Count ?? 0}");
                         }
                         
                         numMessagesDisplayed = 0;
@@ -3602,6 +3614,14 @@ namespace SUP
             btnPublicMessage.Enabled = false;
 
             List<MessageObject> messages = new List<MessageObject>();
+            
+            // Debug logging to trace address retrieval
+            Debug.WriteLine($"[SupMain.RefreshSupMessages] profileURN.Text='{profileURN.Text}'");
+            Debug.WriteLine($"[SupMain.RefreshSupMessages] profileURN.Links.Count={profileURN.Links?.Count ?? 0}");
+            if (profileURN.Links != null && profileURN.Links.Count > 0)
+            {
+                Debug.WriteLine($"[SupMain.RefreshSupMessages] profileURN.Links[0].LinkData={profileURN.Links[0].LinkData}");
+            }
 
             // Defensive check: Only fetch messages if we have a valid LinkData
             // For hashtag searches like #LOVE, the keyword is converted to an address via Root.GetPublicAddressByKeyword()
@@ -3609,8 +3629,13 @@ namespace SUP
             if (profileURN.Links != null && profileURN.Links.Count > 0 && profileURN.Links[0].LinkData != null && 
                 !string.IsNullOrEmpty(profileURN.Links[0].LinkData.ToString()))
             {
+                Debug.WriteLine($"[SupMain.RefreshSupMessages] Fetching messages for address: {profileURN.Links[0].LinkData}");
                 try { messages = OBJState.GetPublicMessagesByAddress(profileURN.Links[0].LinkData.ToString(), mainnetLogin, mainnetPassword, mainnetURL, mainnetVersionByte, numMessagesDisplayed, 10); }
                 catch { }
+            }
+            else
+            {
+                Debug.WriteLine($"[SupMain.RefreshSupMessages] WARNING: No valid LinkData - skipping message fetch");
             }
 
 
