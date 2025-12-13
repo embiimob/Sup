@@ -3112,6 +3112,40 @@ namespace SUP.P2FK
             return true;
         }
 
+        /// <summary>
+        /// Asynchronously retrieves an object's state by address.
+        /// This is a wrapper around the synchronous GetObjectByAddress method to enable non-blocking calls.
+        /// </summary>
+        /// <param name="objectaddress">The object address to query</param>
+        /// <param name="username">RPC username</param>
+        /// <param name="password">RPC password</param>
+        /// <param name="url">RPC URL</param>
+        /// <param name="versionByte">Version byte for address encoding (default "111" for testnet)</param>
+        /// <param name="verbose">Whether to fetch verbose details (default false)</param>
+        /// <returns>Task containing the OBJState</returns>
+        public static Task<OBJState> GetObjectByAddressAsync(string objectaddress, string username, string password, string url, string versionByte = "111", bool verbose = false)
+        {
+            return Task.Run(() => GetObjectByAddress(objectaddress, username, password, url, versionByte, verbose));
+        }
+
+        /// <summary>
+        /// Asynchronously retrieves keywords associated with an object address.
+        /// This is a wrapper around the synchronous GetKeywordsByAddress method to enable non-blocking calls.
+        /// </summary>
+        public static Task<List<string>> GetKeywordsByAddressAsync(string objectaddress, string username, string password, string url, string versionByte = "111")
+        {
+            return Task.Run(() => GetKeywordsByAddress(objectaddress, username, password, url, versionByte));
+        }
+
+        /// <summary>
+        /// Asynchronously retrieves public messages by address.
+        /// This is a wrapper around the synchronous GetPublicMessagesByAddress method to enable non-blocking calls.
+        /// </summary>
+        public static Task<List<MessageObject>> GetPublicMessagesByAddressAsync(string objectaddress, string username, string password, string url, string versionByte = "111", int skip = 0, int qty = 10)
+        {
+            return Task.Run(() => GetPublicMessagesByAddress(objectaddress, username, password, url, versionByte, skip, qty));
+        }
+
     }
 
 }

@@ -435,6 +435,31 @@ namespace SUP.P2FK
             return sortedprofileStatese.ToList();
 
         }
+
+        /// <summary>
+        /// Asynchronously retrieves a profile's state by address.
+        /// This is a wrapper around the synchronous GetProfileByAddress method to enable non-blocking calls.
+        /// </summary>
+        /// <param name="profileaddress">The profile address to query</param>
+        /// <param name="username">RPC username</param>
+        /// <param name="password">RPC password</param>
+        /// <param name="url">RPC URL</param>
+        /// <param name="versionByte">Version byte for address encoding (default "111" for testnet)</param>
+        /// <param name="verbose">Whether to fetch verbose details (default false)</param>
+        /// <returns>Task containing the PROState</returns>
+        public static System.Threading.Tasks.Task<PROState> GetProfileByAddressAsync(string profileaddress, string username, string password, string url, string versionByte = "111", bool verbose = false)
+        {
+            return System.Threading.Tasks.Task.Run(() => GetProfileByAddress(profileaddress, username, password, url, versionByte, verbose));
+        }
+
+        /// <summary>
+        /// Asynchronously retrieves a profile by URN.
+        /// This is a wrapper around the synchronous GetProfileByURN method to enable non-blocking calls.
+        /// </summary>
+        public static System.Threading.Tasks.Task<PROState> GetProfileByURNAsync(string urn, string username, string password, string url, string versionByte = "111")
+        {
+            return System.Threading.Tasks.Task.Run(() => GetProfileByURN(urn, username, password, url, versionByte));
+        }
        
 
     }

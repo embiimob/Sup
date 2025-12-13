@@ -885,5 +885,14 @@ namespace SUP.P2FK
             return sb.ToString();
         }
 
+        /// <summary>
+        /// Asynchronously retrieves a root transaction by transaction ID.
+        /// This is a wrapper around the synchronous GetRootByTransactionId method to enable non-blocking calls.
+        /// </summary>
+        public static System.Threading.Tasks.Task<Root> GetRootByTransactionIdAsync(string transactionid, string username, string password, string url, string versionbyte = "111", byte[] rootbytes = null, string signatureaddress = null, bool calculate = false)
+        {
+            return System.Threading.Tasks.Task.Run(() => GetRootByTransactionId(transactionid, username, password, url, versionbyte, rootbytes, signatureaddress, calculate));
+        }
+
     }
 }

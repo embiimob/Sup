@@ -229,7 +229,7 @@ namespace SUP
         }
 
 
-        private void RefreshOwners()
+        private async Task RefreshOwnersAsync()
         {
             CreatorsPanel.SuspendLayout();
             OwnersPanel.SuspendLayout();
@@ -242,8 +242,8 @@ namespace SUP
 
             numMessagesDisplayed = 0;
 
-
-            OBJState objstate = OBJState.GetObjectByAddress(_objectaddress, mainnetLogin, mainnetPassword, mainnetURL, mainnetVersionByte);
+            // Convert blocking call to async to prevent UI freeze
+            OBJState objstate = await OBJState.GetObjectByAddressAsync(_objectaddress, mainnetLogin, mainnetPassword, mainnetURL, mainnetVersionByte);
             Dictionary<string, string> profileAddress = new Dictionary<string, string> { };
 
 
@@ -274,11 +274,12 @@ namespace SUP
 
                     if (!profileAddress.ContainsKey(searchkey))
                     {
-                        PROState profile = PROState.GetProfileByAddress(searchkey, mainnetLogin, mainnetPassword, mainnetURL, mainnetVersionByte);
+                        // Convert to async to prevent blocking
+                        PROState profile = await PROState.GetProfileByAddressAsync(searchkey, mainnetLogin, mainnetPassword, mainnetURL, mainnetVersionByte);
 
                         if (profile.URN != null)
                         {
-                            PROState URNHolder = PROState.GetProfileByURN(profile.URN, mainnetLogin, mainnetPassword, mainnetURL, mainnetVersionByte);
+                            PROState URNHolder = await PROState.GetProfileByURNAsync(profile.URN, mainnetLogin, mainnetPassword, mainnetURL, mainnetVersionByte);
                             if (URNHolder.Creators[0] == searchkey) { keyLabel.Text = profile.URN; }else { keyLabel.Text = kvp.Key; }
                         }
                         else
@@ -367,8 +368,8 @@ namespace SUP
 
                         if (!profileAddress.ContainsKey(searchkey))
                         {
-
-                            PROState profile = PROState.GetProfileByAddress(searchkey, mainnetLogin, mainnetPassword, mainnetURL, mainnetVersionByte);
+                            // Convert to async to prevent blocking
+                            PROState profile = await PROState.GetProfileByAddressAsync(searchkey, mainnetLogin, mainnetPassword, mainnetURL, mainnetVersionByte);
 
                             if (profile.URN != null)
                             {
@@ -461,7 +462,8 @@ namespace SUP
                         LinkLabel keyLabel = new LinkLabel();
 
                         string searchkey = item.Key;
-                        PROState profile = PROState.GetProfileByAddress(searchkey, mainnetLogin, mainnetPassword, mainnetURL, mainnetVersionByte);
+                        // Convert to async to prevent blocking
+                        PROState profile = await PROState.GetProfileByAddressAsync(searchkey, mainnetLogin, mainnetPassword, mainnetURL, mainnetVersionByte);
 
                         if (profile.URN != null)
                         {
@@ -509,6 +511,13 @@ namespace SUP
             btnRefreshSup.ForeColor = Color.Black;
             OwnersPanel.Visible = true;
 
+        }
+
+        // Keep the synchronous version for compatibility
+        private void RefreshOwners()
+        {
+            // Call the async version and wait synchronously (for legacy callers)
+            RefreshOwnersAsync().Wait();
         }
 
         private void ShowSupPanel(object sender, EventArgs e)
@@ -2097,7 +2106,8 @@ namespace SUP
             bool isWWW = false;
             Regex regexTransactionId = new Regex(@"\b[0-9a-f]{64}\b");
 
-            OBJState objstate = OBJState.GetObjectByAddress(_objectaddress, mainnetLogin, mainnetPassword, mainnetURL, mainnetVersionByte);
+            // Convert blocking call to async to prevent UI freeze during initial load
+            OBJState objstate = await OBJState.GetObjectByAddressAsync(_objectaddress, mainnetLogin, mainnetPassword, mainnetURL, mainnetVersionByte);
 
             if (objstate.Owners != null)
             {
@@ -3092,7 +3102,8 @@ namespace SUP
 
                 List<string> keywords = new List<string>();
 
-                keywords = OBJState.GetKeywordsByAddress(_objectaddress, mainnetLogin, mainnetPassword, mainnetURL, mainnetVersionByte);
+                // Convert to async to prevent blocking
+                keywords = await OBJState.GetKeywordsByAddressAsync(_objectaddress, mainnetLogin, mainnetPassword, mainnetURL, mainnetVersionByte);
                 foreach (string keyword in keywords)
                 {
 
@@ -3160,8 +3171,8 @@ namespace SUP
 
                 if (OwnersPanel.Visible)
                 {
-
-                    RefreshOwners();
+                    // Call async version to prevent UI blocking
+                    await RefreshOwnersAsync();
 
                 }
                 else
@@ -3403,7 +3414,8 @@ namespace SUP
                         }
                         catch
                         {
-                            Thread.Sleep(1000);
+                            // Replace Thread.Sleep with async delay to prevent blocking
+                            await Task.Delay(1000);
                             try
                             {
                                 await webviewer.EnsureCoreWebView2Async();
@@ -3738,7 +3750,8 @@ htmlembed =
                                 }
                                 catch
                                 {
-                                    Thread.Sleep(500);
+                                    // Replace Thread.Sleep with async delay to prevent blocking
+                                    await Task.Delay(500);
                                     try
                                     {
                                         await webviewer.EnsureCoreWebView2Async();
