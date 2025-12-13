@@ -1319,7 +1319,7 @@ namespace SUP
         private void RefreshSupMessages()
         {
             // Fire and forget - don't block the UI thread
-            _ = System.Threading.Tasks.Task.Run(RefreshSupMessagesAsync);
+            _ = Task.Run(RefreshSupMessagesAsync);
         }
 
         void AddImage(string imagepath, bool isprivate = false, bool addtoTop = false)
@@ -4030,7 +4030,7 @@ htmlembed =
             _ = ButtonRefreshTransactionsClickAsync();
         }
 
-        private async System.Threading.Tasks.Task ButtonRefreshTransactionsClickAsync()
+        private async Task ButtonRefreshTransactionsClickAsync()
         {
 
             this.Invoke((Action)(() =>
