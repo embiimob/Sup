@@ -3698,12 +3698,12 @@ namespace SUP
 
             if (txtSearchAddress.Text != null)
             {
-                SupFlix supFlixForm = new SupFlix(txtSearchAddress.Text);
+                SupFlix supFlixForm = new SupFlix(txtSearchAddress.Text, _testnet);
                 supFlixForm.Show();
             }
             else
             {
-                SupFlix supFlixForm = new SupFlix();
+                SupFlix supFlixForm = new SupFlix("mp4", _testnet);
                 supFlixForm.Show();
             }
 
@@ -3717,12 +3717,12 @@ namespace SUP
 
             if (txtSearchAddress.Text != null)
             {
-                JukeBox jukeBoxForm = new JukeBox(txtSearchAddress.Text);
+                JukeBox jukeBoxForm = new JukeBox(txtSearchAddress.Text, _testnet);
                 jukeBoxForm.Show();
             }
             else
             {
-                JukeBox jukeBoxForm = new JukeBox();
+                JukeBox jukeBoxForm = new JukeBox(null, _testnet);
                 jukeBoxForm.Show();
             }
             btnJukeBox.Enabled = true;
@@ -3736,12 +3736,12 @@ namespace SUP
 
             if (txtSearchAddress.Text != null)
             {
-                INQSearch INQSearchForm = new INQSearch(txtSearchAddress.Text);
+                INQSearch INQSearchForm = new INQSearch(txtSearchAddress.Text, _testnet);
                 INQSearchForm.Show();
             }
             else
             {
-                INQSearch INQSearchForm = new INQSearch();
+                INQSearch INQSearchForm = new INQSearch("inq", _testnet);
                 INQSearchForm.Show();
             }
             btnInquiry.Enabled = true;
