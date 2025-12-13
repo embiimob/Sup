@@ -41,7 +41,10 @@ namespace SUP
         private List<string> MZCMemPool = new List<string>();
         private List<string> LTCMemPool = new List<string>();
         private List<string> DOGMemPool = new List<string>();
-
+        
+        // Track transaction IDs that have already been played in Live mode
+        // This prevents confirmed transactions from replaying when rebroadcast
+        private HashSet<string> _playedLiveTransactions = new HashSet<string>();
 
         private bool btcActive;
         private bool mzcActive;
@@ -1680,6 +1683,11 @@ namespace SUP
                                 {
                                     try
                                     {
+                                        // Skip if this transaction has already been played in Live mode
+                                        if (_playedLiveTransactions.Contains(s))
+                                        {
+                                            continue;
+                                        }
 
                                         Root root = Root.GetRootByTransactionId(s, mainnetLogin, mainnetPassword, @"http://127.0.0.1:18332", "111");
                                         if (root.Signed == true || (root.File != null && root.File.ContainsKey("SEC")))
@@ -2050,6 +2058,10 @@ namespace SUP
 
 
                                                 }
+                                                
+                                                // Mark transaction as played to prevent replays
+                                                _playedLiveTransactions.Add(s);
+                                                
                                                 try { System.IO.Directory.Delete(@"root\" + s, true); } catch { }
 
                                             }
@@ -2101,6 +2113,11 @@ namespace SUP
                                     {
                                         try
                                         {
+                                            // Skip if this transaction has already been played in Live mode
+                                            if (_playedLiveTransactions.Contains(s))
+                                            {
+                                                continue;
+                                            }
 
                                             Root root = Root.GetRootByTransactionId(s, mainnetLogin, mainnetPassword, @"http://127.0.0.1:8332", "0");
                                             if (root.Signed == true || (root.File != null && root.File.ContainsKey("SEC")))
@@ -2471,6 +2488,10 @@ namespace SUP
 
 
                                                     }
+                                                    
+                                                    // Mark transaction as played to prevent replays
+                                                    _playedLiveTransactions.Add(s);
+                                                    
                                                     try { System.IO.Directory.Delete(@"root\" + s, true); } catch { }
 
                                                 }
@@ -2524,6 +2545,11 @@ namespace SUP
                                     {
                                         try
                                         {
+                                            // Skip if this transaction has already been played in Live mode
+                                            if (_playedLiveTransactions.Contains(s))
+                                            {
+                                                continue;
+                                            }
 
                                             Root root = Root.GetRootByTransactionId(s, "good-user", "better-password", @"http://127.0.0.1:12832", "50");
                                             if (root.Signed == true)
@@ -2827,6 +2853,10 @@ namespace SUP
                                                         try { Directory.Delete(@"root\" + s, true); } catch { }
 
                                                     }
+                                                    
+                                                    // Mark transaction as played to prevent replays
+                                                    _playedLiveTransactions.Add(s);
+                                                    
                                                     try { System.IO.Directory.Delete(@"root\" + s, true); } catch { }
 
                                                 }
@@ -2870,6 +2900,11 @@ namespace SUP
                                     {
                                         try
                                         {
+                                            // Skip if this transaction has already been played in Live mode
+                                            if (_playedLiveTransactions.Contains(s))
+                                            {
+                                                continue;
+                                            }
 
                                             Root root = Root.GetRootByTransactionId(s, "good-user", "better-password", @"http://127.0.0.1:9332", "48");
                                             if (root.Signed == true)
@@ -3175,6 +3210,10 @@ namespace SUP
 
 
                                                     }
+                                                    
+                                                    // Mark transaction as played to prevent replays
+                                                    _playedLiveTransactions.Add(s);
+                                                    
                                                     try { System.IO.Directory.Delete(@"root\" + s, true); } catch { }
 
                                                 }
@@ -3219,6 +3258,11 @@ namespace SUP
                                     {
                                         try
                                         {
+                                            // Skip if this transaction has already been played in Live mode
+                                            if (_playedLiveTransactions.Contains(s))
+                                            {
+                                                continue;
+                                            }
 
                                             Root root = Root.GetRootByTransactionId(s, "good-user", "better-password", @"http://127.0.0.1:22555", "30");
                                             if (root.Signed == true)
@@ -3527,6 +3571,10 @@ namespace SUP
 
 
                                                     }
+                                                    
+                                                    // Mark transaction as played to prevent replays
+                                                    _playedLiveTransactions.Add(s);
+                                                    
                                                     try { System.IO.Directory.Delete(@"root\" + s, true); } catch { }
 
                                                 }
