@@ -553,13 +553,6 @@ namespace SUP
 
         }
 
-        // Keep the synchronous version for compatibility
-        private void RefreshOwners()
-        {
-            // Call the async version and wait synchronously (for legacy callers)
-            RefreshOwnersAsync().Wait();
-        }
-
         private void ShowSupPanel(object sender, EventArgs e)
         {
             if (!isDiscoBallOpen)
@@ -1326,7 +1319,7 @@ namespace SUP
         private void RefreshSupMessages()
         {
             // Fire and forget - don't block the UI thread
-            _ = Task.Run(() => RefreshSupMessagesAsync());
+            _ = System.Threading.Tasks.Task.Run(RefreshSupMessagesAsync);
         }
 
         void AddImage(string imagepath, bool isprivate = false, bool addtoTop = false)
@@ -4033,6 +4026,12 @@ htmlembed =
 
         private void ButtonRefreshTransactionsClick(object sender, EventArgs e)
         {
+            // Fire and forget - load transactions asynchronously
+            _ = ButtonRefreshTransactionsClickAsync();
+        }
+
+        private async System.Threading.Tasks.Task ButtonRefreshTransactionsClickAsync()
+        {
 
             this.Invoke((Action)(() =>
             {
@@ -4064,7 +4063,8 @@ htmlembed =
             }
             catch { }
 
-            OBJState OBJEvents = OBJState.GetObjectByAddress(_objectaddress, mainnetLogin, mainnetPassword, mainnetURL, mainnetVersionByte, true);
+            // Convert to async to prevent blocking during transaction history load
+            OBJState OBJEvents = await OBJState.GetObjectByAddressAsync(_objectaddress, mainnetLogin, mainnetPassword, mainnetURL, mainnetVersionByte, true);
             OBJEvents.ChangeLog.Reverse();
             foreach (string eventMessage in OBJEvents.ChangeLog.Skip(numChangesDisplayed).Take(10))
             {
