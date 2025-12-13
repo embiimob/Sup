@@ -129,7 +129,7 @@ namespace SUP
             {
                 // Add more PictureBoxes if available              
                 if (btnActivity.BackColor == Color.Yellow) { GetHistoryByAddress(txtSearchAddress.Text); }
-                else { BuildSearchResults(false, false); }
+                else { BuildSearchResults(false, false, false, false); } // isNewSearch = false for scroll-based loading
 
             }
         }
@@ -222,7 +222,7 @@ namespace SUP
         }
 
 
-        private void GetObjectsByAddress(string address, bool calculate = false)
+        private void GetObjectsByAddress(string address, bool calculate = false, bool isNewSearch = true)
         {
 
             string profileCheck = address;
@@ -296,14 +296,15 @@ namespace SUP
                         this.Invoke((Action)(() =>
                         {
                             // Only update profileURN if not being updated from external source (prevents circular updates)
-                            if (!_isUpdatingFromExternal)
+                            // AND only on new searches (Enter key), not on scroll-based lazy loading
+                            if (!_isUpdatingFromExternal && isNewSearch)
                             {
                                 Debug.WriteLine($"[ObjectBrowser] Setting profileURN to: {txtSearchAddress.Text}");
                                 SetProfileURNAtomically(txtSearchAddress.Text, profileCheck);
                             }
                             else
                             {
-                                Debug.WriteLine($"[ObjectBrowser] Skipping profileURN update - external update in progress");
+                                Debug.WriteLine($"[ObjectBrowser] Skipping profileURN update - external update: {_isUpdatingFromExternal}, isNewSearch: {isNewSearch}");
                             }
                         }));
                     }
@@ -343,14 +344,15 @@ namespace SUP
                         this.Invoke((Action)(() =>
                         {
                             // Only update profileURN if not being updated from external source (prevents circular updates)
-                            if (!_isUpdatingFromExternal)
+                            // AND only on new searches (Enter key), not on scroll-based lazy loading
+                            if (!_isUpdatingFromExternal && isNewSearch)
                             {
                                 Debug.WriteLine($"[ObjectBrowser] Setting profileURN to: {txtSearchAddress.Text}");
                                 SetProfileURNAtomically(txtSearchAddress.Text, profileCheck);
                             }
                             else
                             {
-                                Debug.WriteLine($"[ObjectBrowser] Skipping profileURN update - external update in progress");
+                                Debug.WriteLine($"[ObjectBrowser] Skipping profileURN update - external update: {_isUpdatingFromExternal}, isNewSearch: {isNewSearch}");
                             }
                         }));
                     }
@@ -373,14 +375,15 @@ namespace SUP
                         this.Invoke((Action)(() =>
                         {
                             // Only update profileURN if not being updated from external source (prevents circular updates)
-                            if (!_isUpdatingFromExternal)
+                            // AND only on new searches (Enter key), not on scroll-based lazy loading
+                            if (!_isUpdatingFromExternal && isNewSearch)
                             {
                                 Debug.WriteLine($"[ObjectBrowser] Setting profileURN to: anon");
                                 SetProfileURNAtomically("anon", "");
                             }
                             else
                             {
-                                Debug.WriteLine($"[ObjectBrowser] Skipping profileURN update - external update in progress");
+                                Debug.WriteLine($"[ObjectBrowser] Skipping profileURN update - external update: {_isUpdatingFromExternal}, isNewSearch: {isNewSearch}");
                             }
                         }));
 
@@ -445,14 +448,15 @@ namespace SUP
                             if (searchprofile.URN != null || createdObjects.Count > 0 || txtSearchAddress.Text.StartsWith("#"))
                             {
                                 // Only update profileURN if not being updated from external source (prevents circular updates)
-                                if (!_isUpdatingFromExternal)
+                                // AND only on new searches (Enter key), not on scroll-based lazy loading
+                                if (!_isUpdatingFromExternal && isNewSearch)
                                 {
                                     Debug.WriteLine($"[ObjectBrowser] Setting profileURN to: {txtSearchAddress.Text}");
                                     SetProfileURNAtomically(txtSearchAddress.Text, profileCheck);
                                 }
                                 else
                                 {
-                                    Debug.WriteLine($"[ObjectBrowser] Skipping profileURN update - external update in progress");
+                                    Debug.WriteLine($"[ObjectBrowser] Skipping profileURN update - external update: {_isUpdatingFromExternal}, isNewSearch: {isNewSearch}");
                                 }
                             }
                         }));
@@ -3082,7 +3086,7 @@ namespace SUP
 
         }
 
-        public async void BuildSearchResults(bool calculate = false, bool clearresults = true, bool clearpages = true)
+        public async void BuildSearchResults(bool calculate = false, bool clearresults = true, bool clearpages = true, bool isNewSearch = true)
         {
 
 
@@ -3187,7 +3191,7 @@ namespace SUP
                         {
 
                             historySeen = 0;
-                            GetObjectsByAddress(Root.GetPublicAddressByKeyword(txtSearchAddress.Text.Substring(1), mainnetVersionByte), calculate);
+                            GetObjectsByAddress(Root.GetPublicAddressByKeyword(txtSearchAddress.Text.Substring(1), mainnetVersionByte), calculate, isNewSearch);
                         }
 
                     }
@@ -3299,7 +3303,7 @@ namespace SUP
                             if (txtSearchAddress.Text.ToUpper().StartsWith(@"SUP:"))
                             {
                                 historySeen = 0;
-                                GetObjectsByAddress(txtSearchAddress.Text, calculate);
+                                GetObjectsByAddress(txtSearchAddress.Text, calculate, isNewSearch);
 
                             }
                             else
@@ -3366,7 +3370,7 @@ namespace SUP
                                         {
                                             historySeen = 0;
                                             btnCollections.BackColor = System.Drawing.Color.White;
-                                            GetObjectsByAddress("");
+                                            GetObjectsByAddress("", false, isNewSearch);
                                         }
 
 
@@ -3387,14 +3391,14 @@ namespace SUP
                                             {
                                                 historySeen = 0;
                                                 btnActivity.BackColor = System.Drawing.Color.White;
-                                                GetObjectsByAddress("");
+                                                GetObjectsByAddress("", false, isNewSearch);
                                             }
                                         }
                                         else
                                         {
 
                                             historySeen = 0;
-                                            GetObjectsByAddress(txtSearchAddress.Text.Replace("@", ""), calculate);
+                                            GetObjectsByAddress(txtSearchAddress.Text.Replace("@", ""), calculate, isNewSearch);
 
                                         }
                                     }
@@ -3528,7 +3532,7 @@ namespace SUP
 
             if (!string.IsNullOrEmpty(_objectaddress) || !string.IsNullOrEmpty(txtSearchAddress.Text))
             {
-                await Task.Run(() => BuildSearchResults(false, true, false));
+                await Task.Run(() => BuildSearchResults(false, true, false, false)); // Resize shouldn't trigger profile update
                 flowLayoutPanel1.Visible = true;
                 pages.Visible = true;
             }
@@ -3561,7 +3565,7 @@ namespace SUP
                     imgLoading.ImageLocation = @"includes\HugPuddle.jpg";
                 }
                 flowLayoutPanel1.Visible = false;
-                await Task.Run(() => BuildSearchResults(false, true, false));
+                await Task.Run(() => BuildSearchResults(false, true, false, false)); // Page navigation shouldn't trigger profile update
                 flowLayoutPanel1.Visible = true;
                 pages.Visible = true;
 
@@ -3587,7 +3591,7 @@ namespace SUP
                     imgLoading.ImageLocation = @"includes\HugPuddle.jpg";
                 }
                 flowLayoutPanel1.Visible = false;
-                await Task.Run(() => BuildSearchResults(false, true, false));
+                await Task.Run(() => BuildSearchResults(false, true, false, false)); // Page navigation shouldn't trigger profile update
                 flowLayoutPanel1.Visible = true;
                 pages.Visible = true;
             }
