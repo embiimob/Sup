@@ -39,6 +39,15 @@ namespace SUP
         int historySeen = 0;
         bool spaceGiven = false;
         Timer resizeTimer;
+        
+        // Guard flag to prevent circular updates between ObjectBrowser and SupMain
+        // When true, indicates that profileURN is being updated from an external source (SupMain)
+        // and should not trigger BuildSearchResults or propagate changes back
+        public bool _isUpdatingFromExternal = false;
+        
+        // Guard flag to suppress profileURN_TextChanged temporarily during atomic property updates
+        // Prevents race conditions where TextChanged fires before LinkData is set
+        private bool _isSuppressingProfileURNTextChanged = false;
 
         List<FoundObjectControl> foundObjects = new List<FoundObjectControl>();
         List<PictureBox> pictureBoxes = new List<PictureBox>();
@@ -286,9 +295,16 @@ namespace SUP
                     {
                         this.Invoke((Action)(() =>
                         {
-                            profileURN.Links[0].LinkData = profileCheck;
-                            profileURN.LinkColor = System.Drawing.SystemColors.Highlight;
-                            profileURN.Text = txtSearchAddress.Text;
+                            // Only update profileURN if not being updated from external source (prevents circular updates)
+                            if (!_isUpdatingFromExternal)
+                            {
+                                Debug.WriteLine($"[ObjectBrowser] Setting profileURN to: {txtSearchAddress.Text}");
+                                SetProfileURNAtomically(txtSearchAddress.Text, profileCheck);
+                            }
+                            else
+                            {
+                                Debug.WriteLine($"[ObjectBrowser] Skipping profileURN update - external update in progress");
+                            }
                         }));
                     }
 
@@ -326,9 +342,16 @@ namespace SUP
                     {
                         this.Invoke((Action)(() =>
                         {
-                            profileURN.Links[0].LinkData = profileCheck;
-                            profileURN.LinkColor = System.Drawing.SystemColors.Highlight;
-                            profileURN.Text = txtSearchAddress.Text;
+                            // Only update profileURN if not being updated from external source (prevents circular updates)
+                            if (!_isUpdatingFromExternal)
+                            {
+                                Debug.WriteLine($"[ObjectBrowser] Setting profileURN to: {txtSearchAddress.Text}");
+                                SetProfileURNAtomically(txtSearchAddress.Text, profileCheck);
+                            }
+                            else
+                            {
+                                Debug.WriteLine($"[ObjectBrowser] Skipping profileURN update - external update in progress");
+                            }
                         }));
                     }
 
@@ -349,9 +372,16 @@ namespace SUP
                         createdObjects = OBJState.GetFoundObjects(mainnetLogin, mainnetPassword, mainnetURL, mainnetVersionByte, calculate);
                         this.Invoke((Action)(() =>
                         {
-                            profileURN.Links[0].LinkData = "";
-                            profileURN.LinkColor = System.Drawing.SystemColors.Highlight;
-                            profileURN.Text = "anon";
+                            // Only update profileURN if not being updated from external source (prevents circular updates)
+                            if (!_isUpdatingFromExternal)
+                            {
+                                Debug.WriteLine($"[ObjectBrowser] Setting profileURN to: anon");
+                                SetProfileURNAtomically("anon", "");
+                            }
+                            else
+                            {
+                                Debug.WriteLine($"[ObjectBrowser] Skipping profileURN update - external update in progress");
+                            }
                         }));
 
                     }
@@ -414,9 +444,16 @@ namespace SUP
                         {
                             if (searchprofile.URN != null || createdObjects.Count > 0 || txtSearchAddress.Text.StartsWith("#"))
                             {
-                                profileURN.Links[0].LinkData = profileCheck;
-                                profileURN.LinkColor = System.Drawing.SystemColors.Highlight;
-                                profileURN.Text = txtSearchAddress.Text;
+                                // Only update profileURN if not being updated from external source (prevents circular updates)
+                                if (!_isUpdatingFromExternal)
+                                {
+                                    Debug.WriteLine($"[ObjectBrowser] Setting profileURN to: {txtSearchAddress.Text}");
+                                    SetProfileURNAtomically(txtSearchAddress.Text, profileCheck);
+                                }
+                                else
+                                {
+                                    Debug.WriteLine($"[ObjectBrowser] Skipping profileURN update - external update in progress");
+                                }
                             }
                         }));
 
@@ -3001,6 +3038,12 @@ namespace SUP
             if (e.KeyCode == Keys.Enter)
             {
                 if (txtSearchAddress.Text == "" || txtSearchAddress.Text.StartsWith("#") || txtSearchAddress.Text.ToUpper().StartsWith("SUP:") || txtSearchAddress.Text.ToUpper().StartsWith("HTTP") || txtSearchAddress.Text.ToUpper().StartsWith("BTC:") || txtSearchAddress.Text.ToUpper().StartsWith("MZC:") || txtSearchAddress.Text.ToUpper().StartsWith("LTC:") || txtSearchAddress.Text.ToUpper().StartsWith("DOG:") || txtSearchAddress.Text.ToUpper().StartsWith("IPFS:")) { btnCreated.BackColor = Color.White; btnOwned.BackColor = Color.White; }
+                // Clear profileURN properly to avoid inconsistent LinkLabel state
+                // Setting Text to empty string while Links[0].LinkData has a value can cause NullReferenceException in OnPaint
+                if (profileURN.Links != null && profileURN.Links.Count > 0)
+                {
+                    profileURN.Links[0].LinkData = null;
+                }
                 profileURN.Text = "";
                 e.Handled = true;
                 e.SuppressKeyPress = true;
@@ -3703,25 +3746,113 @@ namespace SUP
         //should keep object browser active profile synched with social
         private void profileURN_TextChanged(object sender, EventArgs e)
         {
+            // Skip if we're in the middle of an atomic property update
+            if (_isSuppressingProfileURNTextChanged)
+            {
+                return;
+            }
+            
+            // Defensive check: Ensure Links collection exists and has at least one link before accessing
+            if (profileURN.Links == null || profileURN.Links.Count == 0)
+            {
+                return;
+            }
 
             if (profileURN.Links[0].LinkData != null)
             {
-
-
-                NetworkCredential credentials = new NetworkCredential(mainnetLogin, mainnetPassword);
-                NBitcoin.RPC.RPCClient rpcClient = new NBitcoin.RPC.RPCClient(credentials, new Uri(mainnetURL), Network.Main);
-                string signature = "";
-                try { signature = rpcClient.SendCommand("signmessage", profileURN.Links[0].LinkData.ToString(), "DUMMY").ResultString; ; } catch { }
-
-
-                if
-                     (signature != "")
+                // Run RPC call asynchronously to avoid blocking the UI thread
+                Task.Run(() =>
                 {
-                    _activeProfile = profileURN.Links[0].LinkData.ToString();
-                }
+                    try
+                    {
+                        NetworkCredential credentials = new NetworkCredential(mainnetLogin, mainnetPassword);
+                        NBitcoin.RPC.RPCClient rpcClient = new NBitcoin.RPC.RPCClient(credentials, new Uri(mainnetURL), Network.Main);
+                        string signature = "";
+                        try 
+                        { 
+                            signature = rpcClient.SendCommand("signmessage", profileURN.Links[0].LinkData.ToString(), "DUMMY").ResultString; 
+                        } 
+                        catch (Exception ex)
+                        {
+                            // NBitcoin RPC exceptions are expected for addresses not in wallet (e.g., keyword-derived addresses)
+                            Debug.WriteLine($"[ObjectBrowser] signmessage RPC failed: {ex.Message}");
+                        }
 
-
+                        if (signature != "")
+                        {
+                            _activeProfile = profileURN.Links[0].LinkData.ToString();
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        Debug.WriteLine($"[ObjectBrowser] Error in profileURN_TextChanged RPC call: {ex.Message}");
+                    }
+                });
             }
+        }
+
+        /// <summary>
+        /// Helper method to atomically set profileURN properties.
+        /// Sets all properties with internal TextChanged handler suppressed, then triggers event manually.
+        /// </summary>
+        /// <param name="text">The text to set for the profileURN</param>
+        /// <param name="linkData">The link data to associate with the profileURN</param>
+        /// <summary>
+        /// Sets profileURN Text and LinkData atomically to ensure both properties are set
+        /// before any TextChanged events propagate to external listeners (ObjectBrowserControl/SupMain).
+        /// This prevents race conditions where SupMain reads profileURN before LinkData is set.
+        /// </summary>
+        private void SetProfileURNAtomically(string text, object linkData)
+        {
+            // Validate input
+            if (text == null)
+            {
+                text = string.Empty;
+            }
+            
+            // Suppress both internal handler AND external event propagation
+            // This ensures LinkData is set before SupMain receives the event
+            _isSuppressingProfileURNTextChanged = true;
+            _isUpdatingFromExternal = true;
+            try
+            {
+                profileURN.LinkColor = System.Drawing.SystemColors.Highlight;
+                
+                // Set Text first - WinForms will automatically create/update Links collection
+                // TextChanged event will fire, but both internal handler and external propagation are suppressed
+                profileURN.Text = text;
+                
+                // Now safely set LinkData on the link that WinForms created
+                if (profileURN.Links != null && profileURN.Links.Count > 0)
+                {
+                    profileURN.Links[0].LinkData = linkData;
+                    Debug.WriteLine($"[ObjectBrowser.SetProfileURNAtomically] Set profileURN - Text='{text}', LinkData='{linkData}'");
+                }
+                else
+                {
+                    Debug.WriteLine($"[ObjectBrowser.SetProfileURNAtomically] WARNING: Links collection empty after setting Text='{text}'");
+                }
+            }
+            finally
+            {
+                // Re-enable internal handler
+                _isSuppressingProfileURNTextChanged = false;
+                // Keep _isUpdatingFromExternal = true temporarily to prevent recursive updates
+            }
+            
+            // Manually trigger the internal handler now that all properties are set
+            // The handler will update _activeProfile if the RPC call succeeds
+            // The RPC call is wrapped in try-catch so it won't block indefinitely
+            profileURN_TextChanged(profileURN, EventArgs.Empty);
+            
+            // Now that internal processing is done, re-enable external event propagation
+            _isUpdatingFromExternal = false;
+            
+            // Manually fire the TextChanged event to propagate to ObjectBrowserControl and SupMain
+            // This is safe now because both Text and LinkData are set atomically
+            // Use reflection to call the protected OnTextChanged method
+            typeof(Control).GetMethod("OnTextChanged", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic)
+                .Invoke(profileURN, new object[] { EventArgs.Empty });
         }
 
         private async void btnActivity_Click(object sender, EventArgs e)
