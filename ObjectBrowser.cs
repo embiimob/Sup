@@ -3835,15 +3835,22 @@ namespace SUP
             }
             finally
             {
-                // Re-enable handlers
+                // Re-enable internal handler
                 _isSuppressingProfileURNTextChanged = false;
-                _isUpdatingFromExternal = false;
+                // Keep _isUpdatingFromExternal = true temporarily to prevent recursive updates
             }
             
             // Manually trigger the internal handler now that all properties are set
             // The handler will update _activeProfile if the RPC call succeeds
             // The RPC call is wrapped in try-catch so it won't block indefinitely
             profileURN_TextChanged(profileURN, EventArgs.Empty);
+            
+            // Now that internal processing is done, re-enable external event propagation
+            _isUpdatingFromExternal = false;
+            
+            // Manually fire the TextChanged event to propagate to ObjectBrowserControl and SupMain
+            // This is safe now because both Text and LinkData are set atomically
+            profileURN.OnTextChanged(EventArgs.Empty);
         }
 
         private async void btnActivity_Click(object sender, EventArgs e)
