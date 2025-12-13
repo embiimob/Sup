@@ -311,12 +311,9 @@ namespace SUP.P2FK
 
                         if (isledger)
                         {
-                            var rootLedger = JsonConvert.SerializeObject(P2FKRoot);
-
                             // Do not cache ledger/multifile root objects because their Keywords are assembled
                             // from child transactions which may not match the parent's outputs, causing
                             // issues when the same ledger is accessed for different object addresses
-                            // try { System.IO.File.WriteAllText(@"root\" + P2FKRoot.TransactionId + @"\" + "ROOT.json", rootLedger); } catch { }
                             return P2FKRoot;
                         }
 
