@@ -7446,12 +7446,12 @@ namespace SUP
 
             if (profileURN.Links[0].LinkData != null)
             {
-                INQSearch INQSearchForm = new INQSearch(profileURN.Text);
+                INQSearch INQSearchForm = new INQSearch(profileURN.Text, testnet);
                 INQSearchForm.Show();
             }
             else
             {
-                INQSearch INQSearchForm = new INQSearch();
+                INQSearch INQSearchForm = new INQSearch("inq", testnet);
                 INQSearchForm.Show();
             }
 
