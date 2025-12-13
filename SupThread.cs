@@ -1378,6 +1378,21 @@ namespace SUP
 
                 msg.Controls.Add(webviewer);
 
+                // Forward mouse wheel events to parent to allow scrolling over video
+                webviewer.MouseWheel += (s, e) =>
+                {
+                    // Create a new MouseEventArgs with the same delta and pass it to the parent
+                    MouseEventArgs args = new MouseEventArgs(e.Button, e.Clicks, e.X, e.Y, e.Delta);
+                    supFlow_MouseWheel(supFlow, args);
+                    
+                    // Also update the scroll position directly for smooth scrolling
+                    int newValue = supFlow.VerticalScroll.Value - e.Delta;
+                    if (newValue < 0) newValue = 0;
+                    if (newValue > supFlow.VerticalScroll.Maximum - supFlow.VerticalScroll.LargeChange + 1)
+                        newValue = supFlow.VerticalScroll.Maximum - supFlow.VerticalScroll.LargeChange + 1;
+                    supFlow.AutoScrollPosition = new Point(0, newValue);
+                };
+
                 try { await webviewer.EnsureCoreWebView2Async(); } catch { }
                 // immediately load Progress content into the WebView2 control
                 try { webviewer.CoreWebView2.Navigate(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + @"\includes\loading.html"); } catch { }
