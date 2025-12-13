@@ -313,7 +313,14 @@ namespace SUP
                         if (profile.URN != null)
                         {
                             PROState URNHolder = await PROState.GetProfileByURNAsync(profile.URN, mainnetLogin, mainnetPassword, mainnetURL, mainnetVersionByte);
-                            if (URNHolder.Creators[0] == searchkey) { keyLabel.Text = profile.URN; } else { keyLabel.Text = kvp.Key; }
+                            if (URNHolder.Creators[0] == searchkey) 
+                            { 
+                                keyLabel.Text = profile.URN; 
+                            } 
+                            else 
+                            { 
+                                keyLabel.Text = kvp.Key; 
+                            }
                         }
                         else
                         {
@@ -1319,7 +1326,7 @@ namespace SUP
         private void RefreshSupMessages()
         {
             // Fire and forget - don't block the UI thread
-            Task.Run(async () => await RefreshSupMessagesAsync());
+            _ = Task.Run(() => RefreshSupMessagesAsync());
         }
 
         void AddImage(string imagepath, bool isprivate = false, bool addtoTop = false)
