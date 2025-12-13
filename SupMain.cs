@@ -4935,7 +4935,7 @@ namespace SUP
                     // Clean up build directory and empty hash directory
                     IpfsHelper.CleanupBuildDirectory(transid, "root");
                     CleanupEmptyDirectory(transid, "root");
-                    ShowAttachmentError(transid, "Failed to process attachment");
+                    // Fail silently - no GUI update for IPFS failures
                 }
             }
             else
@@ -4945,7 +4945,7 @@ namespace SUP
                 // Clean up build directory and empty hash directory
                 IpfsHelper.CleanupBuildDirectory(transid, "root");
                 CleanupEmptyDirectory(transid, "root");
-                ShowAttachmentError(transid, "IPFS download timeout");
+                // Fail silently - no GUI update for IPFS failures
             }
             }
             catch (Exception ex)
@@ -4956,7 +4956,7 @@ namespace SUP
                 {
                     IpfsHelper.CleanupBuildDirectory(transid, "root");
                     CleanupEmptyDirectory(transid, "root");
-                    ShowAttachmentError(transid, $"Error: {ex.Message}");
+                    // Fail silently - no GUI update for IPFS failures
                 }
                 catch { }
             }
@@ -4977,7 +4977,7 @@ namespace SUP
                 if (result2 == null || result2.Length == 0)
                 {
                     Debug.WriteLine($"[DisplaySecAttachmentAsync] SEC file is empty for {transid}");
-                    ShowAttachmentError(transid, "Attachment file is empty");
+                    // Fail silently - no GUI update for IPFS failures
                     return;
                 }
 
@@ -4986,7 +4986,7 @@ namespace SUP
                 if (result == null || result.Length == 0)
                 {
                     Debug.WriteLine($"[DisplaySecAttachmentAsync] Decryption failed for {transid}");
-                    ShowAttachmentError(transid, "Failed to decrypt attachment");
+                    // Fail silently - no GUI update for IPFS failures
                     return;
                 }
 
@@ -5039,38 +5039,8 @@ namespace SUP
             catch (Exception ex)
             {
                 Debug.WriteLine($"[DisplaySecAttachmentAsync] Exception: {ex.Message}");
-                ShowAttachmentError(transid, "Error displaying attachment");
+                // Fail silently - no GUI update for IPFS failures
             }
-        }
-
-        /// <summary>
-        /// Shows an error message for a failed attachment load.
-        /// </summary>
-        private void ShowAttachmentError(string transid, string errorMessage)
-        {
-            try
-            {
-                this.Invoke((MethodInvoker)delegate
-                {
-                    Panel panel = new Panel();
-                    panel.BorderStyle = BorderStyle.FixedSingle;
-                    panel.MinimumSize = new Size(supPrivateFlow.Width - 50, 30);
-                    panel.MaximumSize = new Size(supPrivateFlow.Width - 20, 30);
-                    panel.AutoSize = true;
-                    panel.BackColor = System.Drawing.Color.DarkRed;
-
-                    Label errorLabel = new Label();
-                    errorLabel.Text = $"⚠ {errorMessage}: {transid.Substring(0, Math.Min(12, transid.Length))}...";
-                    errorLabel.AutoSize = true;
-                    errorLabel.Font = new Font("Segoe UI", 8, FontStyle.Italic);
-                    errorLabel.ForeColor = System.Drawing.Color.White;
-                    errorLabel.Padding = new Padding(5);
-                    panel.Controls.Add(errorLabel);
-
-                    this.supPrivateFlow.Controls.Add(panel);
-                });
-            }
-            catch { }
         }
 
         /// <summary>
