@@ -3850,7 +3850,9 @@ namespace SUP
             
             // Manually fire the TextChanged event to propagate to ObjectBrowserControl and SupMain
             // This is safe now because both Text and LinkData are set atomically
-            profileURN.OnTextChanged(EventArgs.Empty);
+            // Use reflection to call the protected OnTextChanged method
+            typeof(Control).GetMethod("OnTextChanged", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic)
+                .Invoke(profileURN, new object[] { EventArgs.Empty });
         }
 
         private async void btnActivity_Click(object sender, EventArgs e)
