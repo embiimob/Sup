@@ -59,12 +59,29 @@ namespace SUP
         // process the ProfileURNChanged event that results from our own update
         private bool _isUpdatingObjectBrowser = false;
 
-        // Private message feed management
-        // Stores the currently loaded messages to avoid complete rebuild on scroll
+        // Private message feed state management
+        // These structures prevent UI flicker and maintain consistency during scroll operations
+        
+        /// <summary>
+        /// Stores all currently loaded private messages in chronological order.
+        /// This list is append-only during scroll operations to prevent disappearing items.
+        /// Only cleared when switching profiles or explicitly clearing the feed.
+        /// </summary>
         private List<PrivateMessageViewModel> _loadedPrivateMessages = new List<PrivateMessageViewModel>();
-        // Tracks which message IDs have already been rendered to UI to avoid duplicates
+        
+        /// <summary>
+        /// Tracks which message transaction IDs have been rendered to the UI.
+        /// Prevents duplicate rendering when refreshing or scrolling.
+        /// Used for O(1) duplicate detection instead of searching the message list.
+        /// </summary>
         private HashSet<string> _renderedPrivateMessageIds = new HashSet<string>();
-        // Profile image cache to avoid repeated lookups for same sender
+        
+        /// <summary>
+        /// Caches profile information (display name and image location) by address.
+        /// Key: Bitcoin address of sender
+        /// Value: [0] = display name (URN or truncated address), [1] = image location path
+        /// Retained across conversations to minimize redundant profile lookups.
+        /// </summary>
         private Dictionary<string, string[]> _profileCache = new Dictionary<string, string[]>();
 
         public SupMain()
@@ -6805,7 +6822,6 @@ namespace SUP
 
         void deleteme_LinkClicked(string transactionid)
         {
-
             string unfilteredmessage = "";
             try
             {
@@ -6871,6 +6887,21 @@ namespace SUP
             P2FKRoot.Confirmations = 1;
             var rootSerialized = JsonConvert.SerializeObject(P2FKRoot);
             System.IO.File.WriteAllText(@"root\" + transactionid + @"\" + "ROOT.json", rootSerialized);
+            
+            // Remove from our state tracking if this is a private message
+            // This ensures consistency between the file system and our in-memory state
+            if (_renderedPrivateMessageIds.Contains(transactionid))
+            {
+                _renderedPrivateMessageIds.Remove(transactionid);
+                
+                // Also remove from loaded messages list
+                var messageToRemove = _loadedPrivateMessages.FirstOrDefault(m => m.Id == transactionid);
+                if (messageToRemove != null)
+                {
+                    _loadedPrivateMessages.Remove(messageToRemove);
+                    numPrivateMessagesDisplayed--;
+                }
+            }
         }
 
 
