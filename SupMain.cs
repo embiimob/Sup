@@ -204,36 +204,25 @@ namespace SUP
 
             if (btnPublicMessage.BackColor == System.Drawing.Color.Blue) { btnPublicMessage.BackColor = System.Drawing.Color.White; btnPublicMessage.ForeColor = System.Drawing.Color.Black; btnPrivateMessage.BackColor = System.Drawing.Color.Blue; btnPrivateMessage.ForeColor = System.Drawing.Color.Yellow; }
 
-
+            // Scroll down to load more (older) messages
             if (supPrivateFlow.VerticalScroll.Value + supPrivateFlow.ClientSize.Height >= supPrivateFlow.VerticalScroll.Maximum)
             {
                 int startNum = numPrivateMessagesDisplayed;
+                // Load next batch of messages
                 RefreshPrivateSupMessages();
 
+                // Small scroll adjustment after new messages load
                 if (numPrivateMessagesDisplayed == startNum + 10)
                 {
                     this.Invoke((MethodInvoker)delegate
                     {
+                        // Adjust scroll to maintain reading position
                         supPrivateFlow.AutoScrollPosition = new Point(0, 10);
                     });
                 }
             }
-            else if (supPrivateFlow.VerticalScroll.Value == 0)
-            {
-                if (numPrivateMessagesDisplayed > 10)
-                {
-                    numPrivateMessagesDisplayed = numPrivateMessagesDisplayed - 20; if (numPrivateMessagesDisplayed < 0) { numPrivateMessagesDisplayed = 0; }
-                    else
-                    {
-                        RefreshPrivateSupMessages();
-                        this.Invoke((MethodInvoker)delegate
-                        {
-                            supPrivateFlow.AutoScrollPosition = new Point(0, supPrivateFlow.VerticalScroll.Maximum - 10);
-
-                        });
-                    }
-                }
-            }
+            // Note: Removed scroll-up handler - private messages are append-only
+            // Scrolling up just navigates existing messages, no need to reload
         }
 
         private void SupMaincs_Load(object sender, EventArgs e)
@@ -370,6 +359,10 @@ namespace SUP
                         numMessagesDisplayed = 0;
                         numPrivateMessagesDisplayed = 0;
                         numFriendFeedsDisplayed = 0;
+                        
+                        // Clear private message state when switching profiles
+                        _loadedPrivateMessages.Clear();
+                        _renderedPrivateMessageIds.Clear();
 
                         // Defensive null check before accessing LinkData
                         if (profileURN.Links != null && profileURN.Links.Count > 0 && profileURN.Links[0].LinkData != null)
@@ -3596,6 +3589,8 @@ namespace SUP
         private void ClearMessages(FlowLayoutPanel flowLayoutPanel)
         {
 
+        private void ClearMessages(FlowLayoutPanel flowLayoutPanel)
+        {
             this.BeginInvoke((MethodInvoker)delegate
             {
                 List<Control> controlsList = flowLayoutPanel.Controls.Cast<Control>().ToList();
@@ -3603,13 +3598,18 @@ namespace SUP
 
                 foreach (Control control in controlsList)
                 {
-
                     control.Dispose();
                 }
-
+                
+                // If clearing private message panel, also clear our state tracking
+                if (flowLayoutPanel == supPrivateFlow)
+                {
+                    _loadedPrivateMessages.Clear();
+                    _renderedPrivateMessageIds.Clear();
+                    numPrivateMessagesDisplayed = 0;
+                    // Note: _profileCache is retained for performance across different conversations
+                }
             });
-
-
         }
 
         private void RefreshSupMessages()
