@@ -1384,12 +1384,10 @@ namespace SUP
                 {
                     Size = webviewer.Size,
                     Location = new Point(0, 0),
-                    BackColor = Color.Transparent,
-                    Anchor = webviewer.Anchor,
-                    Dock = webviewer.Dock
+                    BackColor = Color.Transparent
                 };
                 
-                // Make the overlay transparent to mouse events except for the wheel
+                // Capture mouse wheel events on the overlay
                 overlay.MouseWheel += (s, e) =>
                 {
                     // Call the parent's scroll handler first to handle boundary logic (loading more messages)
@@ -1404,8 +1402,15 @@ namespace SUP
                     supFlow.AutoScrollPosition = new Point(0, newValue);
                 };
                 
-                // Make overlay pass through clicks to the WebView2 below
-                overlay.Click += (s, e) => webviewer.Focus();
+                // Forward mouse clicks to WebView2 by hiding overlay temporarily and synthesizing click
+                overlay.MouseDown += (s, e) =>
+                {
+                    overlay.Visible = false;  // Temporarily hide overlay so click goes to WebView2
+                };
+                overlay.MouseUp += (s, e) =>
+                {
+                    overlay.Visible = true;   // Show overlay again after click
+                };
                 
                 msg.Controls.Add(overlay);
                 overlay.BringToFront();
