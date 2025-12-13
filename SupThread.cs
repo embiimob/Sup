@@ -1378,13 +1378,24 @@ namespace SUP
 
                 msg.Controls.Add(webviewer);
 
-                // Forward mouse wheel events to parent to allow scrolling over video
-                webviewer.MouseWheel += (s, e) =>
+                // Create transparent overlay panel to capture mouse wheel events before WebView2 consumes them
+                // WebView2's internal browser engine intercepts mouse events, so we need an overlay to capture them first
+                Panel overlay = new Panel
+                {
+                    Size = webviewer.Size,
+                    Location = new Point(0, 0),
+                    BackColor = Color.Transparent,
+                    Anchor = webviewer.Anchor,
+                    Dock = webviewer.Dock
+                };
+                
+                // Make the overlay transparent to mouse events except for the wheel
+                overlay.MouseWheel += (s, e) =>
                 {
                     // Call the parent's scroll handler first to handle boundary logic (loading more messages)
                     supFlow_MouseWheel(supFlow, e);
                     
-                    // Then manually update scroll position since the event was consumed by WebView2
+                    // Then manually update scroll position since the event was consumed by the overlay
                     // and won't automatically scroll the parent container
                     int newValue = supFlow.VerticalScroll.Value - e.Delta;
                     if (newValue < 0) newValue = 0;
@@ -1392,6 +1403,12 @@ namespace SUP
                         newValue = supFlow.VerticalScroll.Maximum - supFlow.VerticalScroll.LargeChange + 1;
                     supFlow.AutoScrollPosition = new Point(0, newValue);
                 };
+                
+                // Make overlay pass through clicks to the WebView2 below
+                overlay.Click += (s, e) => webviewer.Focus();
+                
+                msg.Controls.Add(overlay);
+                overlay.BringToFront();
 
                 try { await webviewer.EnsureCoreWebView2Async(); } catch { }
                 // immediately load Progress content into the WebView2 control
