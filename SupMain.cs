@@ -222,21 +222,22 @@ namespace SUP
             if (btnPublicMessage.BackColor == System.Drawing.Color.Blue) { btnPublicMessage.BackColor = System.Drawing.Color.White; btnPublicMessage.ForeColor = System.Drawing.Color.Black; btnPrivateMessage.BackColor = System.Drawing.Color.Blue; btnPrivateMessage.ForeColor = System.Drawing.Color.Yellow; }
 
             // Scroll down to load more (older) messages
-            if (supPrivateFlow.VerticalScroll.Value + supPrivateFlow.ClientSize.Height >= supPrivateFlow.VerticalScroll.Maximum)
+            // Only trigger load when very close to bottom (within 50 pixels)
+            if (supPrivateFlow.VerticalScroll.Value + supPrivateFlow.ClientSize.Height >= supPrivateFlow.VerticalScroll.Maximum - 50)
             {
                 int startNum = numPrivateMessagesDisplayed;
                 // Load next batch of messages
                 RefreshPrivateSupMessages();
 
-                // Small scroll adjustment after new messages load
-                if (numPrivateMessagesDisplayed == startNum + 10)
-                {
-                    this.Invoke((MethodInvoker)delegate
-                    {
-                        // Adjust scroll to maintain reading position
-                        supPrivateFlow.AutoScrollPosition = new Point(0, 10);
-                    });
-                }
+                // Don't adjust scroll position - let natural scrolling work
+                // The scroll adjustment was causing jumpiness
+                // if (numPrivateMessagesDisplayed == startNum + 10)
+                // {
+                //     this.Invoke((MethodInvoker)delegate
+                //     {
+                //         supPrivateFlow.AutoScrollPosition = new Point(0, 10);
+                //     });
+                // }
             }
             // Note: Removed scroll-up handler - private messages are append-only
             // Scrolling up just navigates existing messages, no need to reload
@@ -3585,22 +3586,39 @@ namespace SUP
 
         private void RemoveOverFlowMessages(FlowLayoutPanel flowLayoutPanel)
         {
-
-            // Iterate through the controls in the FlowLayoutPanel
-            List<Control> controlsList = flowLayoutPanel.Controls.Cast<Control>().ToList();
-            foreach (Control control in controlsList)
+            // Only remove controls if we have more than a certain threshold (e.g., 100 messages)
+            // This prevents removing controls while user is actively viewing them
+            int controlCount = 0;
+            this.Invoke((MethodInvoker)delegate
             {
-
-                Task memoryPrune = Task.Run(() =>
-                {
-                    this.BeginInvoke((MethodInvoker)delegate
-                    {
-                        flowLayoutPanel.Controls.Remove(control);
-                        control.Dispose();
-                    });
-                });
-
+                controlCount = flowLayoutPanel.Controls.Count;
+            });
+            
+            // Only prune if we have more than 100 controls (generous buffer)
+            if (controlCount <= 100)
+            {
+                return;
             }
+            
+            // Remove the oldest controls (first 20) to free memory
+            // But keep most of the conversation visible
+            this.Invoke((MethodInvoker)delegate
+            {
+                List<Control> controlsToRemove = new List<Control>();
+                
+                // Get first 20 controls (oldest messages at top)
+                for (int i = 0; i < Math.Min(20, flowLayoutPanel.Controls.Count); i++)
+                {
+                    controlsToRemove.Add(flowLayoutPanel.Controls[i]);
+                }
+                
+                // Remove and dispose them
+                foreach (Control control in controlsToRemove)
+                {
+                    flowLayoutPanel.Controls.Remove(control);
+                    control.Dispose();
+                }
+            });
         }
 
         private void ClearMessages(FlowLayoutPanel flowLayoutPanel)
@@ -4449,19 +4467,21 @@ namespace SUP
                     numPrivateMessagesDisplayed, 
                     10);
 
-                // If we got a full batch, trigger memory cleanup of old messages in background
-                if (messages.Count == 10)
-                {
-                    _ = Task.Run(() => RemoveOverFlowMessages(supPrivateFlow));
-                }
+                // Don't trigger memory cleanup - let it accumulate for better UX
+                // RemoveOverFlowMessages was causing controls to disappear during scroll
+                // if (messages.Count == 10)
+                // {
+                //     _ = Task.Run(() => RemoveOverFlowMessages(supPrivateFlow));
+                // }
 
                 // Build view models from the fetched messages
                 List<PrivateMessageViewModel> newMessages = await BuildPrivateMessageViewModelsAsync(messages);
                 
-                // Sort messages consistently by timestamp (oldest first for natural conversation flow)
-                // Note: Messages are fetched newest-first, but we reverse here for display
-                // This ensures that as we scroll down, older messages appear below
-                newMessages = newMessages.OrderBy(m => m.Timestamp).ToList();
+                // IMPORTANT: Do NOT re-sort the messages here
+                // GetPrivateMessagesByAddress returns them in newest-first order with skip/take
+                // As we scroll down (increase skip), we get OLDER messages
+                // So we need to APPEND them in the order received (which maintains timeline)
+                // Do NOT sort by timestamp here as it will jumble the order across batches
                 
                 // Add new messages to our loaded list and render them
                 foreach (var msgViewModel in newMessages)

@@ -3028,7 +3028,8 @@ namespace SUP.P2FK
             var filteredObjects = AllRoots
                            .Where(obj => obj.File != null && obj.File.Keys.Contains("SEC"))
                            .OrderByDescending(obj => obj.Id)
-                           .Skip(skip);
+                           .Skip(skip)
+                           .Take(qty);
             // Now, filteredObjects contains objects with at least one message or one file
             foreach (var obj in filteredObjects)
             {
@@ -3052,8 +3053,6 @@ namespace SUP.P2FK
                         messageObject.TransactionId = obj.TransactionId;
                         messages.Add(messageObject);
 
-                        if (messages.Count() == qty) { break; }
-
                     }
                     else
                     {
@@ -3073,7 +3072,6 @@ namespace SUP.P2FK
                             messageObject.BlockDate = obj.BlockDate;
                             messageObject.TransactionId = obj.TransactionId;
                             messages.Add(messageObject);
-                            if (messages.Count() == qty) { break; }
                         }
                         else
                         {
@@ -3091,12 +3089,10 @@ namespace SUP.P2FK
                             messageObject.BlockDate = obj.BlockDate;
                             messageObject.TransactionId = obj.TransactionId;
                             messages.Add(messageObject);
-                            if (messages.Count() == qty) { break; }
                         }
                     }
                 }
                 catch { }
-                if (messages.Count() == qty) { break; }
             }
 
 
