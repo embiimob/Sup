@@ -900,7 +900,10 @@ namespace SUP.P2FK
                                                     {
                                                         // remove the dictionary key
                                                         objectState.Owners.Remove(burnr);
-                                                        try { objectState.Listings.Remove(burnr); } catch { }
+                                                        if (objectState.Listings != null && objectState.Listings.ContainsKey(burnr))
+                                                            { objectState.Listings.Remove(burnr); } 
+
+
 
                                                         if (objectState.Owners.Count() < 1)
                                                         {
