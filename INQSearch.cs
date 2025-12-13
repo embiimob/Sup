@@ -117,6 +117,7 @@ namespace SUP
                 });
 
                 soundFiles = new List<string>();
+                HashSet<string> seenObjectAddresses = new HashSet<string>();
                 string searchAddress = Root.GetPublicAddressByKeyword(searchstring.Replace("#", ""),mainnetVersionByte);
 
                 if (searchstring.Length > 20) { searchAddress = searchstring; }
@@ -175,21 +176,25 @@ namespace SUP
 
                         if (obj.URN.ToLower().EndsWith("inq"))
                         {
+                            // Use object creator address as unique identifier to prevent duplicates
+                            if (obj.Creators != null && obj.Creators.Count > 0)
+                            {
+                                string objectAddress = obj.Creators.First().Key;
+                                if (seenObjectAddresses.Add(objectAddress))
+                                {
+                                    string creatorKey = null;
 
-                            string creatorKey = null;
-
-                            if (obj.Creators.Keys.Count > 1)
-                            {
-                                creatorKey = obj.Creators.Keys.ElementAt(1);
-                            }
-                            else if (obj.Creators.Keys.Count == 1)
-                            {
-                                creatorKey = obj.Creators.Keys.First();
-                            }
-                            string audioPacket = getLocalPath(obj.URN) + "," + obj.CreatedDate + "," + creatorKey + "," + obj.URN;
-                            if (!soundFiles.Contains(audioPacket))
-                            {
-                                soundFiles.Add(audioPacket);
+                                    if (obj.Creators.Keys.Count > 1)
+                                    {
+                                        creatorKey = obj.Creators.Keys.ElementAt(1);
+                                    }
+                                    else if (obj.Creators.Keys.Count == 1)
+                                    {
+                                        creatorKey = obj.Creators.Keys.First();
+                                    }
+                                    string audioPacket = getLocalPath(obj.URN) + "," + obj.CreatedDate + "," + creatorKey + "," + obj.URN;
+                                    soundFiles.Add(audioPacket);
+                                }
                             }
                         }
                     }
@@ -204,23 +209,26 @@ namespace SUP
 
                         if (obj.URN.ToLower().EndsWith("inq"))
                         {
-
-                            string creatorKey = null;
-
-                            if (obj.Creators.Keys.Count > 1)
+                            // Use object creator address as unique identifier to prevent duplicates
+                            if (obj.Creators != null && obj.Creators.Count > 0)
                             {
-                                creatorKey = obj.Creators.Keys.ElementAt(1);
-                            }
-                            else if (obj.Creators.Keys.Count == 1)
-                            {
-                                creatorKey = obj.Creators.Keys.First();
-                            }
+                                string objectAddress = obj.Creators.First().Key;
+                                if (seenObjectAddresses.Add(objectAddress))
+                                {
+                                    string creatorKey = null;
 
-                            string audioPacket = getLocalPath(obj.URN) + "," + obj.CreatedDate + "," + creatorKey + "," + obj.URN;
-                            if (!soundFiles.Contains(audioPacket))
-                            {
-                                soundFiles.Add(audioPacket);
+                                    if (obj.Creators.Keys.Count > 1)
+                                    {
+                                        creatorKey = obj.Creators.Keys.ElementAt(1);
+                                    }
+                                    else if (obj.Creators.Keys.Count == 1)
+                                    {
+                                        creatorKey = obj.Creators.Keys.First();
+                                    }
 
+                                    string audioPacket = getLocalPath(obj.URN) + "," + obj.CreatedDate + "," + creatorKey + "," + obj.URN;
+                                    soundFiles.Add(audioPacket);
+                                }
                             }
                         }
                     }
