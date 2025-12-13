@@ -368,7 +368,7 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="AngleSharp">
-      <Version>0.17.1</Version>
+      <Version>1.4.0</Version>
     </PackageReference>
     <PackageReference Include="AngleSharp.Css">
       <Version>0.17.0</Version>
@@ -377,7 +377,7 @@
       <Version>2.9.1</Version>
     </PackageReference>
     <PackageReference Include="HtmlSanitizer">
-      <Version>8.0.723</Version>
+      <Version>9.0.889</Version>
     </PackageReference>
     <PackageReference Include="Microsoft.AspNetCore">
       <Version>2.3.0</Version>
@@ -389,7 +389,7 @@
       <Version>2.3.0</Version>
     </PackageReference>
     <PackageReference Include="Microsoft.AspNetCore.Connections.Abstractions">
-      <Version>2.3.0</Version>
+      <Version>10.0.1</Version>
     </PackageReference>
     <PackageReference Include="Microsoft.AspNetCore.Diagnostics">
       <Version>2.3.0</Version>
@@ -422,7 +422,7 @@
       <Version>2.3.0</Version>
     </PackageReference>
     <PackageReference Include="Microsoft.AspNetCore.HttpOverrides">
-      <Version>2.3.0</Version>
+      <Version>2.3.7</Version>
     </PackageReference>
     <PackageReference Include="Microsoft.AspNetCore.Routing">
       <Version>2.3.0</Version>
@@ -455,130 +455,130 @@
       <Version>2.3.0</Version>
     </PackageReference>
     <PackageReference Include="Microsoft.Bcl.AsyncInterfaces">
-      <Version>8.0.0</Version>
+      <Version>10.0.1</Version>
     </PackageReference>
     <PackageReference Include="Microsoft.CSharp">
-      <Version>4.0.1</Version>
+      <Version>4.7.0</Version>
     </PackageReference>
     <PackageReference Include="Microsoft.Extensions.Configuration">
-      <Version>8.0.0</Version>
+      <Version>10.0.1</Version>
     </PackageReference>
     <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions">
-      <Version>8.0.0</Version>
+      <Version>10.0.1</Version>
     </PackageReference>
     <PackageReference Include="Microsoft.Extensions.Configuration.Binder">
-      <Version>8.0.2</Version>
+      <Version>10.0.1</Version>
     </PackageReference>
     <PackageReference Include="Microsoft.Extensions.Configuration.CommandLine">
-      <Version>8.0.0</Version>
+      <Version>10.0.1</Version>
     </PackageReference>
     <PackageReference Include="Microsoft.Extensions.Configuration.EnvironmentVariables">
-      <Version>8.0.0</Version>
+      <Version>10.0.1</Version>
     </PackageReference>
     <PackageReference Include="Microsoft.Extensions.Configuration.FileExtensions">
-      <Version>8.0.1</Version>
+      <Version>10.0.1</Version>
     </PackageReference>
     <PackageReference Include="Microsoft.Extensions.Configuration.Json">
-      <Version>8.0.1</Version>
+      <Version>10.0.1</Version>
     </PackageReference>
     <PackageReference Include="Microsoft.Extensions.Configuration.UserSecrets">
-      <Version>8.0.1</Version>
+      <Version>10.0.1</Version>
     </PackageReference>
     <PackageReference Include="Microsoft.Extensions.DependencyInjection">
-      <Version>8.0.1</Version>
+      <Version>10.0.1</Version>
     </PackageReference>
     <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions">
-      <Version>8.0.2</Version>
+      <Version>10.0.1</Version>
     </PackageReference>
     <PackageReference Include="Microsoft.Extensions.Diagnostics.Abstractions">
-      <Version>8.0.1</Version>
+      <Version>10.0.1</Version>
     </PackageReference>
     <PackageReference Include="Microsoft.Extensions.FileProviders.Abstractions">
-      <Version>8.0.0</Version>
+      <Version>10.0.1</Version>
     </PackageReference>
     <PackageReference Include="Microsoft.Extensions.FileProviders.Physical">
-      <Version>8.0.0</Version>
+      <Version>10.0.1</Version>
     </PackageReference>
     <PackageReference Include="Microsoft.Extensions.FileSystemGlobbing">
-      <Version>8.0.0</Version>
+      <Version>10.0.1</Version>
     </PackageReference>
     <PackageReference Include="Microsoft.Extensions.Hosting.Abstractions">
-      <Version>8.0.1</Version>
+      <Version>10.0.1</Version>
     </PackageReference>
     <PackageReference Include="Microsoft.Extensions.Logging">
-      <Version>8.0.1</Version>
+      <Version>10.0.1</Version>
     </PackageReference>
     <PackageReference Include="Microsoft.Extensions.Logging.Abstractions">
-      <Version>8.0.2</Version>
+      <Version>10.0.1</Version>
     </PackageReference>
     <PackageReference Include="Microsoft.Extensions.Logging.Configuration">
-      <Version>8.0.1</Version>
+      <Version>10.0.1</Version>
     </PackageReference>
     <PackageReference Include="Microsoft.Extensions.Logging.Console">
-      <Version>8.0.1</Version>
+      <Version>10.0.1</Version>
     </PackageReference>
     <PackageReference Include="Microsoft.Extensions.Logging.Debug">
-      <Version>8.0.1</Version>
+      <Version>10.0.1</Version>
     </PackageReference>
     <PackageReference Include="Microsoft.Extensions.Logging.EventSource">
-      <Version>3.1.4</Version>
+      <Version>10.0.1</Version>
     </PackageReference>
     <PackageReference Include="Microsoft.Extensions.ObjectPool">
-      <Version>8.0.11</Version>
+      <Version>10.0.1</Version>
     </PackageReference>
     <PackageReference Include="Microsoft.Extensions.Options">
-      <Version>8.0.2</Version>
+      <Version>10.0.1</Version>
     </PackageReference>
     <PackageReference Include="Microsoft.Extensions.Options.ConfigurationExtensions">
-      <Version>8.0.0</Version>
+      <Version>10.0.1</Version>
     </PackageReference>
     <PackageReference Include="Microsoft.Extensions.Primitives">
-      <Version>8.0.0</Version>
+      <Version>10.0.1</Version>
     </PackageReference>
     <PackageReference Include="Microsoft.Net.Http.Headers">
       <Version>2.3.0</Version>
     </PackageReference>
     <PackageReference Include="Microsoft.Web.WebView2">
-      <Version>1.0.2045.28</Version>
+      <Version>1.0.3650.58</Version>
     </PackageReference>
     <PackageReference Include="Microsoft.Win32.Registry">
-      <Version>4.7.0</Version>
+      <Version>5.0.0</Version>
     </PackageReference>
     <PackageReference Include="NAudio">
-      <Version>2.1.0</Version>
+      <Version>2.2.1</Version>
     </PackageReference>
     <PackageReference Include="NAudio.Asio">
-      <Version>2.1.0</Version>
+      <Version>2.2.1</Version>
     </PackageReference>
     <PackageReference Include="NAudio.Core">
-      <Version>2.1.0</Version>
+      <Version>2.2.1</Version>
     </PackageReference>
     <PackageReference Include="NAudio.Midi">
-      <Version>2.1.0</Version>
+      <Version>2.2.1</Version>
     </PackageReference>
     <PackageReference Include="NAudio.Wasapi">
-      <Version>2.1.0</Version>
+      <Version>2.2.1</Version>
     </PackageReference>
     <PackageReference Include="NAudio.WinForms">
-      <Version>2.1.0</Version>
+      <Version>2.2.1</Version>
     </PackageReference>
     <PackageReference Include="NAudio.WinMM">
-      <Version>2.1.0</Version>
+      <Version>2.2.1</Version>
     </PackageReference>
     <PackageReference Include="NBitcoin">
-      <Version>7.0.23</Version>
+      <Version>9.0.4</Version>
     </PackageReference>
     <PackageReference Include="NReco.VideoConverter">
       <Version>1.2.1</Version>
     </PackageReference>
     <PackageReference Include="Newtonsoft.Json">
-      <Version>13.0.2</Version>
+      <Version>13.0.4</Version>
     </PackageReference>
     <PackageReference Include="QrCode.Net">
       <Version>0.4.0.0</Version>
     </PackageReference>
     <PackageReference Include="System.Buffers">
-      <Version>4.6.0</Version>
+      <Version>4.6.1</Version>
     </PackageReference>
     <PackageReference Include="System.Collections">
       <Version>4.3.0</Version>
@@ -587,16 +587,16 @@
       <Version>4.3.0</Version>
     </PackageReference>
     <PackageReference Include="System.Collections.Immutable">
-      <Version>8.0.0</Version>
+      <Version>10.0.1</Version>
     </PackageReference>
     <PackageReference Include="System.ComponentModel.Annotations">
-      <Version>4.5.0</Version>
+      <Version>5.0.0</Version>
     </PackageReference>
     <PackageReference Include="System.Diagnostics.Debug">
       <Version>4.3.0</Version>
     </PackageReference>
     <PackageReference Include="System.Diagnostics.DiagnosticSource">
-      <Version>8.0.1</Version>
+      <Version>10.0.1</Version>
     </PackageReference>
     <PackageReference Include="System.Globalization">
       <Version>4.3.0</Version>
@@ -608,22 +608,22 @@
       <Version>4.3.0</Version>
     </PackageReference>
     <PackageReference Include="System.IO.Pipelines">
-      <Version>8.0.0</Version>
+      <Version>10.0.1</Version>
     </PackageReference>
     <PackageReference Include="System.Linq">
       <Version>4.3.0</Version>
     </PackageReference>
     <PackageReference Include="System.Memory">
-      <Version>4.6.0</Version>
+      <Version>4.6.3</Version>
     </PackageReference>
     <PackageReference Include="System.Numerics.Vectors">
-      <Version>4.6.0</Version>
+      <Version>4.6.1</Version>
     </PackageReference>
     <PackageReference Include="System.Reflection">
       <Version>4.3.0</Version>
     </PackageReference>
     <PackageReference Include="System.Reflection.Metadata">
-      <Version>8.0.1</Version>
+      <Version>10.0.1</Version>
     </PackageReference>
     <PackageReference Include="System.Resources.ResourceManager">
       <Version>4.3.0</Version>
@@ -632,7 +632,7 @@
       <Version>4.3.1</Version>
     </PackageReference>
     <PackageReference Include="System.Runtime.CompilerServices.Unsafe">
-      <Version>6.1.0</Version>
+      <Version>6.1.2</Version>
     </PackageReference>
     <PackageReference Include="System.Runtime.Extensions">
       <Version>4.3.1</Version>
@@ -641,7 +641,7 @@
       <Version>4.3.0</Version>
     </PackageReference>
     <PackageReference Include="System.Security.AccessControl">
-      <Version>4.7.0</Version>
+      <Version>6.0.1</Version>
     </PackageReference>
     <PackageReference Include="System.Security.Cryptography.Algorithms">
       <Version>4.3.1</Version>
@@ -659,22 +659,21 @@
       <Version>5.0.0</Version>
     </PackageReference>
     <PackageReference Include="System.Text.Encoding.CodePages">
-      <Version>6.0.0</Version>
+      <Version>10.0.1</Version>
     </PackageReference>
     <PackageReference Include="System.Text.Encodings.Web">
-      <Version>8.0.0</Version>
+      <Version>10.0.1</Version>
     </PackageReference>
     <PackageReference Include="System.Text.Json">
-      <Version>8.0.5</Version>
+      <Version>10.0.1</Version>
     </PackageReference>
     <PackageReference Include="System.Threading.Tasks.Extensions">
-      <Version>4.6.0</Version>
+      <Version>4.6.3</Version>
     </PackageReference>
     <PackageReference Include="System.ValueTuple">
-      <Version>4.5.0</Version>
+      <Version>4.6.1</Version>
     </PackageReference>
   </ItemGroup>
-
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
@@ -900,7 +899,7 @@
     <Content Include="maza-qt.exe">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    </ItemGroup>
+  </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
