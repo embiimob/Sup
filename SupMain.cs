@@ -3605,9 +3605,6 @@ namespace SUP
 
         private void ClearMessages(FlowLayoutPanel flowLayoutPanel)
         {
-
-        private void ClearMessages(FlowLayoutPanel flowLayoutPanel)
-        {
             this.BeginInvoke((MethodInvoker)delegate
             {
                 List<Control> controlsList = flowLayoutPanel.Controls.Cast<Control>().ToList();
@@ -7310,7 +7307,7 @@ namespace SUP
             catch { }
         }
         //GPT3
-        static void GenerateImage(string text)
+        private void GenerateImage(string text)
         {
             // Set the image size
             int width = 1000;
