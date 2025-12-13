@@ -3604,19 +3604,43 @@ namespace SUP
             // But keep most of the conversation visible
             this.Invoke((MethodInvoker)delegate
             {
-                List<Control> controlsToRemove = new List<Control>();
-                
-                // Get first 20 controls (oldest messages at top)
-                for (int i = 0; i < Math.Min(20, flowLayoutPanel.Controls.Count); i++)
+                try
                 {
-                    controlsToRemove.Add(flowLayoutPanel.Controls[i]);
+                    // Suspend layout to prevent flicker during batch removal
+                    flowLayoutPanel.SuspendLayout();
+                    
+                    List<Control> controlsToRemove = new List<Control>();
+                    
+                    // Get first 20 controls (oldest messages at top)
+                    int removeCount = Math.Min(20, flowLayoutPanel.Controls.Count);
+                    for (int i = 0; i < removeCount; i++)
+                    {
+                        controlsToRemove.Add(flowLayoutPanel.Controls[i]);
+                    }
+                    
+                    // Remove them all at once without triggering layout for each
+                    foreach (Control control in controlsToRemove)
+                    {
+                        flowLayoutPanel.Controls.Remove(control);
+                    }
+                    
+                    // Resume layout once to apply all changes together
+                    flowLayoutPanel.ResumeLayout(true);
+                    
+                    // Dispose controls after removal to free memory (do this after resume to avoid delay)
+                    Task.Run(() =>
+                    {
+                        foreach (Control control in controlsToRemove)
+                        {
+                            try { control.Dispose(); } catch { }
+                        }
+                    });
                 }
-                
-                // Remove and dispose them
-                foreach (Control control in controlsToRemove)
+                catch (Exception ex)
                 {
-                    flowLayoutPanel.Controls.Remove(control);
-                    control.Dispose();
+                    Debug.WriteLine($"[RemoveOverFlowMessages] Error: {ex.Message}");
+                    // Always resume layout even if error occurred
+                    try { flowLayoutPanel.ResumeLayout(true); } catch { }
                 }
             });
         }
