@@ -59,6 +59,14 @@ namespace SUP
         // process the ProfileURNChanged event that results from our own update
         private bool _isUpdatingObjectBrowser = false;
 
+        // Private message feed management
+        // Stores the currently loaded messages to avoid complete rebuild on scroll
+        private List<PrivateMessageViewModel> _loadedPrivateMessages = new List<PrivateMessageViewModel>();
+        // Tracks which message IDs have already been rendered to UI to avoid duplicates
+        private HashSet<string> _renderedPrivateMessageIds = new HashSet<string>();
+        // Profile image cache to avoid repeated lookups for same sender
+        private Dictionary<string, string[]> _profileCache = new Dictionary<string, string[]>();
+
         public SupMain()
         {
             InitializeComponent();
@@ -4348,491 +4356,424 @@ namespace SUP
 
         }
 
+        /// <summary>
+        /// Refreshes the private message feed display.
+        /// This is the public entry point that should be called from UI thread.
+        /// </summary>
         private void RefreshPrivateSupMessages()
         {
             // Wrap async call to avoid blocking
             Task.Run(async () => await RefreshPrivateSupMessagesAsync());
         }
 
+        /// <summary>
+        /// Asynchronously loads and displays private messages for the active profile.
+        /// Messages are fetched in batches (10 at a time) and rendered incrementally.
+        /// This method maintains a stable list of messages and only adds new ones,
+        /// preventing the UI from flickering or items disappearing during scroll.
+        /// </summary>
         private async Task RefreshPrivateSupMessagesAsync()
         {
-            // sorry cannot run two searches at a time
+            // Prevent concurrent searches
             if (!btnPrivateMessage.Enabled || !btnPublicMessage.Enabled || !btnCommunityFeed.Enabled || System.IO.File.Exists("ROOTS-PROCESSING"))
             {
                 System.Media.SystemSounds.Beep.Play();
                 return;
             }
             
-            this.Invoke((MethodInvoker)delegate
-            {
-                supPrivateFlow.SuspendLayout();
-            });
-            // Clear controls if no messages have been displayed yet
+            // Initialize the private flow panel on first load
             if (numPrivateMessagesDisplayed == 0)
             {
+                // Clear the cached data structures for a fresh start
+                _loadedPrivateMessages.Clear();
+                _renderedPrivateMessageIds.Clear();
+                // Profile cache can be retained across refreshes for performance
+                
                 this.Invoke((MethodInvoker)delegate
                 {
+                    // Suspend layout during initial setup
+                    supPrivateFlow.SuspendLayout();
+                    
                     splitContainer1.Panel2.Controls.Clear();
+                    supPrivateFlow.Controls.Clear();
                     supPrivateFlow.Dock = DockStyle.Fill;
                     supPrivateFlow.AutoScroll = true;
-                    supPrivateFlow.FlowDirection = FlowDirection.LeftToRight;
+                    supPrivateFlow.FlowDirection = FlowDirection.TopDown;
+                    supPrivateFlow.WrapContents = false;
                     splitContainer1.Panel2.Controls.Add(supPrivateFlow);
+                    
+                    supPrivateFlow.ResumeLayout();
                 });
             }
+            
+            // Validate we have an active profile
             if (profileURN.Links[0].LinkData == null)
             {
                 this.Invoke((MethodInvoker)delegate
                 {
-                    supPrivateFlow.ResumeLayout();
                     btnPrivateMessage.Enabled = true;
                 });
                 return;
             }
-            List<MessageObject> messages = OBJState.GetPrivateMessagesByAddress(profileURN.Links[0].LinkData.ToString(), mainnetLogin, mainnetPassword, mainnetURL, mainnetVersionByte, numPrivateMessagesDisplayed, 10);
 
-            if (messages.Count == 10)
-            {
-                Task memoryPrune = Task.Run(() =>
-                {
-
-                    RemoveOverFlowMessages(supPrivateFlow);
-
-                });
-            }
-
-
+            // Disable button during load
             this.Invoke((MethodInvoker)delegate
             {
                 btnPrivateMessage.Enabled = false;
             });
 
-            Dictionary<string, string[]> profileAddress = new Dictionary<string, string[]> { };
-
-
             try
             {
+                // Fetch the next batch of messages
+                // GetPrivateMessagesByAddress returns messages ordered by Id descending (newest first)
+                List<MessageObject> messages = OBJState.GetPrivateMessagesByAddress(
+                    profileURN.Links[0].LinkData.ToString(), 
+                    mainnetLogin, 
+                    mainnetPassword, 
+                    mainnetURL, 
+                    mainnetVersionByte, 
+                    numPrivateMessagesDisplayed, 
+                    10);
 
-
-                foreach (MessageObject messagePacket in messages)
+                // If we got a full batch, trigger memory cleanup of old messages in background
+                if (messages.Count == 10)
                 {
+                    _ = Task.Run(() => RemoveOverFlowMessages(supPrivateFlow));
+                }
+
+                // Build view models from the fetched messages
+                List<PrivateMessageViewModel> newMessages = await BuildPrivateMessageViewModelsAsync(messages);
+                
+                // Sort messages consistently by timestamp (oldest first for natural conversation flow)
+                // Note: Messages are fetched newest-first, but we reverse here for display
+                // This ensures that as we scroll down, older messages appear below
+                newMessages = newMessages.OrderBy(m => m.Timestamp).ToList();
+                
+                // Add new messages to our loaded list and render them
+                foreach (var msgViewModel in newMessages)
+                {
+                    // Skip duplicates (shouldn't happen, but defensive check)
+                    if (_renderedPrivateMessageIds.Contains(msgViewModel.Id))
+                    {
+                        continue;
+                    }
+                    
+                    _loadedPrivateMessages.Add(msgViewModel);
+                    _renderedPrivateMessageIds.Add(msgViewModel.Id);
                     numPrivateMessagesDisplayed++;
+                    
+                    // Render the message on the UI thread
+                    await RenderPrivateMessageAsync(msgViewModel);
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"[RefreshPrivateSupMessagesAsync] Error: {ex.Message}");
+                Debug.WriteLine($"[RefreshPrivateSupMessagesAsync] Stack: {ex.StackTrace}");
+            }
+            finally
+            {
+                // Always re-enable the button
+                this.Invoke((MethodInvoker)delegate
+                {
+                    btnPrivateMessage.Enabled = true;
+                });
+            }
+        }
 
-                    byte[] result = Array.Empty<byte>();
-                    string message = "";
-                    try { message = messagePacket.Message; } catch { };
-
-
+        /// <summary>
+        /// Builds PrivateMessageViewModel objects from raw MessageObject data.
+        /// Handles profile lookups and caching for sender information.
+        /// </summary>
+        private async Task<List<PrivateMessageViewModel>> BuildPrivateMessageViewModelsAsync(List<MessageObject> messages)
+        {
+            var viewModels = new List<PrivateMessageViewModel>();
+            
+            foreach (MessageObject messagePacket in messages)
+            {
+                try
+                {
+                    // Extract message data
+                    string message = messagePacket.Message ?? "";
                     string fromAddress = messagePacket.FromAddress;
                     string imagelocation = @"includes\anon.png";
+                    string displayName = TruncateAddress(fromAddress);
 
-
-                    if (!profileAddress.ContainsKey(fromAddress))
+                    // Use cached profile data if available
+                    if (!_profileCache.ContainsKey(fromAddress))
                     {
-
+                        // Look up profile information for this sender
                         PROState profile = PROState.GetProfileByAddress(fromAddress, mainnetLogin, mainnetPassword, mainnetURL, mainnetVersionByte);
 
                         if (profile.URN != null)
                         {
-                            fromAddress = TruncateAddress(profile.URN);
+                            displayName = TruncateAddress(profile.URN);
                             imagelocation = profile.Image;
 
-                            if (profile.Image != null)
+                            if (profile.Image != null && !profile.Image.ToLower().StartsWith("http"))
                             {
-                                imagelocation = profile.Image;
-
-
-                                if (!profile.Image.ToLower().StartsWith("http"))
+                                imagelocation = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + @"\root\" + 
+                                    profile.Image.Replace("BTC:", "").Replace("MZC:", "").Replace("LTC:", "").Replace("DOG:", "").Replace("IPFS:", "").Replace(@"/", @"\");
+                                if (profile.Image.ToLower().StartsWith("ipfs:"))
                                 {
-                                    imagelocation = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + @"\root\" + profile.Image.Replace("BTC:", "").Replace("MZC:", "").Replace("LTC:", "").Replace("DOG:", "").Replace("IPFS:", "").Replace(@"/", @"\");
-                                    if (profile.Image.ToLower().StartsWith("ipfs:")) { imagelocation = imagelocation.Replace(@"\root\", @"\ipfs\"); if (profile.Image.Length == 51) { imagelocation += @"\artifact"; } }
+                                    imagelocation = imagelocation.Replace(@"\root\", @"\ipfs\");
+                                    if (profile.Image.Length == 51) { imagelocation += @"\artifact"; }
                                 }
-                                Regex regexTransactionId = new Regex(@"\b[0-9a-f]{64}\b");
-                                Match imgurnmatch = regexTransactionId.Match(imagelocation);
-                                string transactionid = imgurnmatch.Value;
-                                Root broot = new Root();
-                                if (!File.Exists(imagelocation))
-                                {
-                                    switch (profile.Image.ToUpper().Substring(0, 4))
-                                    {
-                                        case "MZC:":
-                                            broot = Root.GetRootByTransactionId(transactionid, "good-user", "better-password", @"http://127.0.0.1:12832", "50");
-
-                                            break;
-                                        case "BTC:":
-
-                                            broot = Root.GetRootByTransactionId(transactionid, "good-user", "better-password", @"http://127.0.0.1:8332", "0");
-
-                                            break;
-                                        case "LTC:":
-
-                                            broot = Root.GetRootByTransactionId(transactionid, "good-user", "better-password", @"http://127.0.0.1:9332", "48");
-
-
-                                            break;
-                                        case "DOG:":
-                                            broot = Root.GetRootByTransactionId(transactionid, "good-user", "better-password", @"http://127.0.0.1:22555", "30");
-
-                                            break;
-                                        case "IPFS":
-                                            string transid = "empty";
-                                            try { transid = profile.Image.Substring(5, 46); } catch { }
-
-                                            if (!System.IO.Directory.Exists("ipfs/" + transid + "-build"))
-                                            {
-                                                try
-                                                {
-                                                    Directory.CreateDirectory("ipfs/" + transid);
-                                                }
-                                                catch { };
-
-                                                Directory.CreateDirectory("ipfs/" + transid + "-build");
-                                                Process process2 = new Process();
-                                                process2.StartInfo.FileName = @"ipfs\ipfs.exe";
-                                                process2.StartInfo.Arguments = "get " + transid + @" -o ipfs\" + transid;
-                                                process2.StartInfo.UseShellExecute = false;
-                                                process2.StartInfo.CreateNoWindow = true;
-                                                process2.Start();
-                                                if (process2.WaitForExit(5000))
-                                                {
-                                                    string fileName;
-                                                    if (System.IO.File.Exists("ipfs/" + transid))
-                                                    {
-                                                        System.IO.File.Move("ipfs/" + transid, "ipfs/" + transid + "_tmp");
-                                                        System.IO.Directory.CreateDirectory("ipfs/" + transid);
-                                                        fileName = profile.Image.Replace(@"//", "").Replace(@"\\", "").Substring(51);
-                                                        if (fileName == "") { fileName = "artifact"; } else { fileName = fileName.Replace(@"/", "").Replace(@"\", ""); }
-                                                        Directory.CreateDirectory("ipfs/" + transid);
-                                                        System.IO.File.Move("ipfs/" + transid + "_tmp", imagelocation);
-                                                    }
-
-                                                    if (System.IO.File.Exists("ipfs/" + transid + "/" + transid))
-                                                    {
-                                                        fileName = profile.Image.Replace(@"//", "").Replace(@"\\", "").Substring(51);
-                                                        if (fileName == "") { fileName = "artifact"; } else { fileName = fileName.Replace(@"/", "").Replace(@"\", ""); }
-
-                                                        System.IO.File.Move("ipfs/" + transid + "/" + transid, imagelocation);
-                                                    }
-
-                                                    try
-                                                    {
-                                                        if (File.Exists("IPFS_PINNING_ENABLED"))
-                                                        {
-                                                            Process process3 = new Process
-                                                            {
-                                                                StartInfo = new ProcessStartInfo
-                                                                {
-                                                                    FileName = @"ipfs\ipfs.exe",
-                                                                    Arguments = "pin add " + transid,
-                                                                    UseShellExecute = false,
-                                                                    CreateNoWindow = true
-                                                                }
-                                                            };
-                                                            process3.Start();
-                                                        }
-                                                    }
-                                                    catch { }
-
-                                                    try { Directory.Delete("ipfs/" + transid + "-build", true); } catch { }
-                                                }
-                                                else
-                                                {
-                                                    process2.Kill();
-
-                                                    Task.Run(() =>
-                                                    {
-                                                        process2 = new Process();
-                                                        process2.StartInfo.FileName = @"ipfs\ipfs.exe";
-                                                        process2.StartInfo.Arguments = "get " + transid + @" -o ipfs\" + transid;
-                                                        process2.StartInfo.UseShellExecute = false;
-                                                        process2.StartInfo.CreateNoWindow = true;
-                                                        process2.Start();
-                                                        if (process2.WaitForExit(550000))
-                                                        {
-                                                            string fileName;
-                                                            if (System.IO.File.Exists("ipfs/" + transid))
-                                                            {
-                                                                System.IO.File.Move("ipfs/" + transid, "ipfs/" + transid + "_tmp");
-                                                                System.IO.Directory.CreateDirectory("ipfs/" + transid);
-                                                                fileName = profile.Image.Replace(@"//", "").Replace(@"\\", "").Substring(51);
-                                                                if (fileName == "") { fileName = "artifact"; } else { fileName = fileName.Replace(@"/", "").Replace(@"\", ""); }
-                                                                Directory.CreateDirectory("ipfs/" + transid);
-                                                                System.IO.File.Move("ipfs/" + transid + "_tmp", imagelocation);
-                                                            }
-
-                                                            if (System.IO.File.Exists("ipfs/" + transid + "/" + transid))
-                                                            {
-                                                                fileName = profile.Image.Replace(@"//", "").Replace(@"\\", "").Substring(51);
-                                                                if (fileName == "") { fileName = "artifact"; } else { fileName = fileName.Replace(@"/", "").Replace(@"\", ""); }
-
-                                                                System.IO.File.Move("ipfs/" + transid + "/" + transid, imagelocation);
-                                                            }
-
-                                                            try
-                                                            {
-                                                                if (File.Exists("IPFS_PINNING_ENABLED"))
-                                                                {
-                                                                    Process process3 = new Process
-                                                                    {
-                                                                        StartInfo = new ProcessStartInfo
-                                                                        {
-                                                                            FileName = @"ipfs\ipfs.exe",
-                                                                            Arguments = "pin add " + transid,
-                                                                            UseShellExecute = false,
-                                                                            CreateNoWindow = true
-                                                                        }
-                                                                    };
-                                                                    process3.Start();
-                                                                }
-                                                            }
-                                                            catch { }
-
-                                                            try { Directory.Delete("ipfs/" + transid + "-build", true); } catch { }
-
-
-                                                        }
-                                                        else
-                                                        {
-                                                            process2.Kill();
-                                                        }
-                                                    });
-
-                                                }
-
-
-                                            }
-
-                                            break;
-                                        default:
-                                            if (!profile.Image.ToUpper().StartsWith("HTTP") && transactionid != "")
-                                            {
-                                                broot = Root.GetRootByTransactionId(transactionid, mainnetLogin, mainnetPassword, mainnetURL, mainnetVersionByte);
-
-                                            }
-                                            break;
-                                    }
-                                }
-
-
-
-
-
                             }
-
-
-
                         }
-                        else
-                        { fromAddress = TruncateAddress(fromAddress); }
-
+                        
+                        // Cache the profile data
                         string[] profilePacket = new string[2];
-
-                        profilePacket[0] = fromAddress;
+                        profilePacket[0] = displayName;
                         profilePacket[1] = imagelocation;
-                        profileAddress.Add(messagePacket.FromAddress, profilePacket);
-
+                        _profileCache.Add(fromAddress, profilePacket);
                     }
                     else
                     {
-                        string[] profilePacket = new string[] { };
-                        profileAddress.TryGetValue(fromAddress, out profilePacket);
-                        fromAddress = profilePacket[0];
+                        // Use cached profile data
+                        string[] profilePacket = _profileCache[fromAddress];
+                        displayName = profilePacket[0];
                         imagelocation = profilePacket[1];
-
                     }
 
-
-                    string tstamp = messagePacket.BlockDate.ToString("yyyyMMddHHmmss");
-                    System.Drawing.Color bgcolor = System.Drawing.Color.White;
-
-                    string unfilteredmessage = message;
+                    // Parse attachments from message
                     string[] blocks = Regex.Matches(message, "<<[^<>]+>>")
-                                             .Cast<Match>()
-                                             .Select(m => m.Value.Trim(new char[] { '<', '>' }))
-                                             .ToArray();
-                    message = Regex.Replace(message, "<<.*?>>", "");
+                                          .Cast<Match>()
+                                          .Select(m => m.Value.Trim(new char[] { '<', '>' }))
+                                          .ToArray();
+                    
+                    // Strip attachment tags from message text
+                    string cleanMessage = Regex.Replace(message, "<<.*?>>", "");
 
-                    if (message != "" || blocks.Length > 1 || (blocks.Length == 1 && !int.TryParse(blocks[0], NumberStyles.Any, CultureInfo.GetCultureInfo("en-US"), out _)))
+                    // Only create view model if there's content to display
+                    if (cleanMessage.Trim() != "" || blocks.Length > 1 || 
+                        (blocks.Length == 1 && !int.TryParse(blocks[0], NumberStyles.Any, CultureInfo.GetCultureInfo("en-US"), out _)))
                     {
-
-
-                        this.Invoke((MethodInvoker)delegate
+                        var viewModel = new PrivateMessageViewModel
                         {
-                            CreateRow(imagelocation, fromAddress, messagePacket.FromAddress, DateTime.ParseExact(tstamp, "yyyyMMddHHmmss", CultureInfo.InvariantCulture), message, messagePacket.TransactionId, true, supPrivateFlow);
-                        });
-
-
-                        string pattern = "<<.*?>>";
-                        MatchCollection matches = Regex.Matches(unfilteredmessage, pattern);
-                        foreach (Match match in matches)
-                        {
-                            string content = match.Value.Substring(2, match.Value.Length - 4);
-                            if (!int.TryParse(content, NumberStyles.Any, CultureInfo.GetCultureInfo("en-US"), out int id) && !content.Trim().StartsWith("#"))
-                            {
-
-                                if (content.StartsWith("IPFS:") && content.EndsWith(@"\SEC"))
-                                {
-                                    // Load SEC attachment asynchronously without blocking message loading
-                                    // This prevents the UI from freezing when IPFS is slow or fails
-                                    // Use Task.Run to ensure the async operation completes instead of being abandoned
-                                    // Task.Run properly handles async lambdas in both Debug and Release modes
-                                    _ = Task.Run(async () => await LoadSecAttachmentAsync(content, messagePacket.TransactionId, profileURN.Links[0].LinkData.ToString()).ConfigureAwait(false));
-                                }
-                                else
-                                {
-
-
-                                    List<string> imgExtensions = new List<string> { ".bmp", ".gif", ".ico", ".jpeg", ".jpg", ".png", ".tif", ".tiff", ".mp4", ".mov", ".avi", ".wav", ".mp3" };
-
-                                    string extension = Path.GetExtension(content).ToLower();
-                                    if (!imgExtensions.Contains(extension) && !content.Contains("youtube.com") && !content.Contains("youtu.be"))
-                                    {
-                                        string title = content;
-                                        string description = content;
-                                        string imageUrl = @"includes\disco.png";
-
-                                        // Create a new panel to display the metadata
-                                        Panel panel = new Panel();
-                                        panel.BorderStyle = BorderStyle.FixedSingle;
-                                        panel.Size = new Size(supFlow.Width - 50, 100);
-
-                                        // Create a label for the title
-                                        Label titleLabel = new Label();
-                                        titleLabel.Text = title;
-                                        titleLabel.Dock = DockStyle.Top;
-                                        titleLabel.Font = new Font("Segoe UI", 12, FontStyle.Bold);
-                                        titleLabel.ForeColor = Color.White;
-                                        titleLabel.MinimumSize = new Size(supFlow.Width - 150, 30);
-                                        titleLabel.Padding = new Padding(5);
-                                        titleLabel.MouseClick += (sender, e) => { Attachment_Clicked(content); };
-                                        panel.Controls.Add(titleLabel);
-
-                                        // Create a label for the description
-                                        Label descriptionLabel = new Label();
-                                        descriptionLabel.Text = description;
-                                        descriptionLabel.ForeColor = Color.White;
-                                        descriptionLabel.Dock = DockStyle.Fill;
-                                        descriptionLabel.Padding = new Padding(5, 40, 5, 5);
-                                        descriptionLabel.MouseClick += (sender, e) => { Attachment_Clicked(content); };
-                                        panel.Controls.Add(descriptionLabel);
-
-
-
-                                        // Create a new PictureBox control and add it to the panel
-                                        PictureBox pictureBox = new PictureBox();
-                                        pictureBox.Dock = DockStyle.Left;
-                                        pictureBox.Size = new Size(100, 100);
-                                        pictureBox.SizeMode = PictureBoxSizeMode.Zoom;
-                                        pictureBox.ImageLocation = imageUrl;
-                                        pictureBox.MouseClick += (sender, e) => { Attachment_Clicked(content); };
-                                        panel.Controls.Add(pictureBox);
-                                        //pictures.Add(pictureBox);
-
-                                        this.supPrivateFlow.Controls.Add(panel);
-
-                                        Task.Run(() =>
-                                        {
-                                            try
-                                            {
-                                                string html = "";
-                                                WebClient client = new WebClient();
-                                                // Create a WebClient object to fetch the webpage
-                                                if (!content.ToLower().EndsWith(".zip"))
-                                                {
-                                                    html = client.DownloadString(content.StripLeadingTrailingSpaces());
-                                                }
-                                                // Create a MemoryStream object from the image data
-
-                                                // Use regular expressions to extract the metadata from the HTML
-                                                title = Regex.Match(html, @"<title>\s*(.+?)\s*</title>").Groups[1].Value;
-                                                description = Regex.Match(html, @"<meta\s+name\s*=\s*""description""\s+content\s*=\s*""(.+?)""\s*/?>").Groups[1].Value;
-                                                imageUrl = Regex.Match(html, @"<meta\s+property\s*=\s*""og:image""\s+content\s*=\s*""(.+?)""\s*/?>").Groups[1].Value;
-
-                                                byte[] imageData = client.DownloadData(imageUrl);
-                                                MemoryStream memoryStream = new MemoryStream(imageData);
-
-                                                this.Invoke((MethodInvoker)delegate
-                                                {
-                                                    titleLabel.Text = title;
-                                                    descriptionLabel.Text = description;
-                                                    pictureBox.ImageLocation = null;
-                                                    pictureBox.Image = System.Drawing.Image.FromStream(memoryStream);
-                                                });
-
-
-
-                                            }
-                                            catch { }
-                                        });
-
-
-                                    }
-                                    else
-                                    {
-                                        if (extension == ".mp4" || extension == ".mov" || extension == ".avi" || content.Contains("youtube.com") || content.Contains("youtu.be") || extension == ".wav" || extension == ".mp3")
-                                        {
-
-                                            this.Invoke((MethodInvoker)delegate
-                                            {
-                                                try { AddMedia(content, true); } catch { }
-                                            });
-
-                                        }
-                                        else
-                                        {
-
-                                            this.Invoke((MethodInvoker)delegate
-                                            {
-                                                AddImage(content, true);
-                                            });
-                                        }
-
-                                    }
-
-
-                                }
-                            }
-
-                        }
-
-                        TableLayoutPanel padding = new TableLayoutPanel
-                        {
-                            RowCount = 1,
-                            ColumnCount = 1,
-                            Dock = DockStyle.Top,
-                            BackColor = Color.Black,
-                            ForeColor = Color.White,
-                            AutoSize = true,
-                            CellBorderStyle = TableLayoutPanelCellBorderStyle.Single,
-                            Margin = new System.Windows.Forms.Padding(0, 10, 0, 10),
-                            Padding = new System.Windows.Forms.Padding(0)
-
+                            Id = messagePacket.TransactionId,
+                            FromAddress = messagePacket.FromAddress,
+                            FromName = displayName,
+                            FromImageLocation = imagelocation,
+                            MessageText = cleanMessage.Trim(),
+                            RawMessage = message,
+                            Timestamp = messagePacket.BlockDate
                         };
 
-                        padding.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, supPrivateFlow.Width - 20));
+                        // Parse attachments
+                        foreach (string block in blocks)
+                        {
+                            // Skip numeric blocks (they're formatting/styling info)
+                            if (int.TryParse(block, NumberStyles.Any, CultureInfo.GetCultureInfo("en-US"), out _))
+                                continue;
+                                
+                            // Skip hashtag blocks (they're keywords)
+                            if (block.Trim().StartsWith("#"))
+                                continue;
+
+                            var attachment = new MessageAttachment { Content = block };
+                            
+                            // Determine attachment type
+                            if (block.StartsWith("IPFS:") && block.EndsWith(@"\SEC"))
+                            {
+                                attachment.Type = AttachmentType.SEC;
+                            }
+                            else if (block.Contains("youtube.com") || block.Contains("youtu.be"))
+                            {
+                                attachment.Type = AttachmentType.Video;
+                            }
+                            else
+                            {
+                                string extension = Path.GetExtension(block).ToLower();
+                                attachment.Extension = extension;
+                                
+                                List<string> imageExts = new List<string> { ".bmp", ".gif", ".ico", ".jpeg", ".jpg", ".png", ".tif", ".tiff" };
+                                List<string> videoExts = new List<string> { ".mp4", ".mov", ".avi" };
+                                List<string> audioExts = new List<string> { ".wav", ".mp3" };
+                                
+                                if (imageExts.Contains(extension))
+                                    attachment.Type = AttachmentType.Image;
+                                else if (videoExts.Contains(extension))
+                                    attachment.Type = AttachmentType.Video;
+                                else if (audioExts.Contains(extension))
+                                    attachment.Type = AttachmentType.Audio;
+                                else if (extension != "")
+                                    attachment.Type = AttachmentType.Other;
+                                else
+                                    attachment.Type = AttachmentType.Link;
+                            }
+                            
+                            viewModel.Attachments.Add(attachment);
+                        }
+
+                        viewModels.Add(viewModel);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Debug.WriteLine($"[BuildPrivateMessageViewModelsAsync] Error processing message: {ex.Message}");
+                }
+            }
+            
+            return viewModels;
+        }
+
+        /// <summary>
+        /// Renders a single private message view model to the UI.
+        /// Creates all necessary controls and handles attachments.
+        /// </summary>
+        private async Task RenderPrivateMessageAsync(PrivateMessageViewModel viewModel)
+        {
+            try
+            {
+                // Create the message row on UI thread
+                this.Invoke((MethodInvoker)delegate
+                {
+                    CreateRow(viewModel.FromImageLocation, viewModel.FromName, viewModel.FromAddress, 
+                              viewModel.Timestamp, viewModel.MessageText, viewModel.Id, true, supPrivateFlow);
+                });
+
+                // Render each attachment
+                foreach (var attachment in viewModel.Attachments)
+                {
+                    if (attachment.Type == AttachmentType.SEC)
+                    {
+                        // Load SEC attachment asynchronously (fire-and-forget)
+                        _ = Task.Run(async () => await LoadSecAttachmentAsync(
+                            attachment.Content, 
+                            viewModel.Id, 
+                            profileURN.Links[0].LinkData.ToString()).ConfigureAwait(false));
+                    }
+                    else if (attachment.Type == AttachmentType.Image)
+                    {
                         this.Invoke((MethodInvoker)delegate
                         {
-                            supPrivateFlow.Controls.Add(padding);
+                            AddImage(attachment.Content, true);
                         });
-
                     }
-
+                    else if (attachment.Type == AttachmentType.Video || attachment.Type == AttachmentType.Audio)
+                    {
+                        this.Invoke((MethodInvoker)delegate
+                        {
+                            try { AddMedia(attachment.Content, true); } catch { }
+                        });
+                    }
+                    else if (attachment.Type == AttachmentType.Link || attachment.Type == AttachmentType.Other)
+                    {
+                        // Render link/other attachment on UI thread
+                        this.Invoke((MethodInvoker)delegate
+                        {
+                            RenderLinkAttachment(attachment.Content, supPrivateFlow);
+                        });
+                    }
                 }
 
+                // Add spacing between messages
+                this.Invoke((MethodInvoker)delegate
+                {
+                    TableLayoutPanel padding = new TableLayoutPanel
+                    {
+                        RowCount = 1,
+                        ColumnCount = 1,
+                        Dock = DockStyle.Top,
+                        BackColor = Color.Black,
+                        ForeColor = Color.White,
+                        AutoSize = true,
+                        CellBorderStyle = TableLayoutPanelCellBorderStyle.Single,
+                        Margin = new System.Windows.Forms.Padding(0, 10, 0, 10),
+                        Padding = new System.Windows.Forms.Padding(0)
+                    };
 
+                    padding.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, supPrivateFlow.Width - 20));
+                    supPrivateFlow.Controls.Add(padding);
+                });
             }
             catch (Exception ex)
             {
-                string errormessage = ex.Message;
+                Debug.WriteLine($"[RenderPrivateMessageAsync] Error rendering message: {ex.Message}");
             }
+        }
 
-            this.Invoke((MethodInvoker)delegate
+        /// <summary>
+        /// Renders a link or unknown file type attachment.
+        /// </summary>
+        private void RenderLinkAttachment(string content, FlowLayoutPanel flowPanel)
+        {
+            try
             {
-                supPrivateFlow.ResumeLayout();
-                btnPrivateMessage.Enabled = true;
-            });
+                string title = content;
+                string description = content;
+                string imageUrl = @"includes\disco.png";
 
+                // Create a new panel to display the metadata
+                Panel panel = new Panel();
+                panel.BorderStyle = BorderStyle.FixedSingle;
+                panel.Size = new Size(flowPanel.Width - 50, 100);
 
+                // Create a label for the title
+                Label titleLabel = new Label();
+                titleLabel.Text = title;
+                titleLabel.Dock = DockStyle.Top;
+                titleLabel.Font = new Font("Segoe UI", 12, FontStyle.Bold);
+                titleLabel.ForeColor = Color.White;
+                titleLabel.MinimumSize = new Size(flowPanel.Width - 150, 30);
+                titleLabel.Padding = new Padding(5);
+                titleLabel.MouseClick += (sender, e) => { Attachment_Clicked(content); };
+                panel.Controls.Add(titleLabel);
 
+                // Create a label for the description
+                Label descriptionLabel = new Label();
+                descriptionLabel.Text = description;
+                descriptionLabel.ForeColor = Color.White;
+                descriptionLabel.Dock = DockStyle.Fill;
+                descriptionLabel.Padding = new Padding(5, 40, 5, 5);
+                descriptionLabel.MouseClick += (sender, e) => { Attachment_Clicked(content); };
+                panel.Controls.Add(descriptionLabel);
+
+                // Create a new PictureBox control and add it to the panel
+                PictureBox pictureBox = new PictureBox();
+                pictureBox.Dock = DockStyle.Left;
+                pictureBox.Size = new Size(100, 100);
+                pictureBox.SizeMode = PictureBoxSizeMode.Zoom;
+                pictureBox.ImageLocation = imageUrl;
+                pictureBox.MouseClick += (sender, e) => { Attachment_Clicked(content); };
+                panel.Controls.Add(pictureBox);
+
+                flowPanel.Controls.Add(panel);
+
+                // Try to fetch metadata in background (don't block rendering)
+                Task.Run(() =>
+                {
+                    try
+                    {
+                        string html = "";
+                        WebClient client = new WebClient();
+                        
+                        if (!content.ToLower().EndsWith(".zip"))
+                        {
+                            html = client.DownloadString(content.StripLeadingTrailingSpaces());
+                        }
+
+                        // Use regular expressions to extract the metadata from the HTML
+                        title = Regex.Match(html, @"<title>\s*(.+?)\s*</title>").Groups[1].Value;
+                        description = Regex.Match(html, @"<meta\s+name\s*=\s*""description""\s+content\s*=\s*""(.+?)""\s*/?>").Groups[1].Value;
+                        imageUrl = Regex.Match(html, @"<meta\s+property\s*=\s*""og:image""\s+content\s*=\s*""(.+?)""\s*/?>").Groups[1].Value;
+
+                        byte[] imageData = client.DownloadData(imageUrl);
+                        MemoryStream memoryStream = new MemoryStream(imageData);
+
+                        this.Invoke((MethodInvoker)delegate
+                        {
+                            titleLabel.Text = title;
+                            descriptionLabel.Text = description;
+                            pictureBox.ImageLocation = null;
+                            pictureBox.Image = System.Drawing.Image.FromStream(memoryStream);
+                        });
+                    }
+                    catch { }
+                });
+            }
+            catch { }
         }
 
         /// <summary>
