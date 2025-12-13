@@ -542,7 +542,7 @@ namespace SUP
             }
         }
 
-        private void RefreshSupMessages()
+        private async Task RefreshSupMessagesAsync()
         {
 
             // sorry cannot run two searches at a time
@@ -579,7 +579,8 @@ namespace SUP
 
             List<MessageObject> messages = new List<MessageObject>();
 
-            try { messages = OBJState.GetPublicMessagesByAddress(_objectaddress, mainnetLogin, mainnetPassword, mainnetURL, mainnetVersionByte, numMessagesDisplayed, 10); }
+            // Convert to async to prevent blocking during message retrieval
+            try { messages = await OBJState.GetPublicMessagesByAddressAsync(_objectaddress, mainnetLogin, mainnetPassword, mainnetURL, mainnetVersionByte, numMessagesDisplayed, 10); }
             catch (Exception ex) { string error = ex.Message; return; }
 
 
@@ -633,8 +634,8 @@ namespace SUP
 
                         if (!profileAddress.ContainsKey(fromAddress))
                         {
-
-                            PROState profile = PROState.GetProfileByAddress(fromAddress, mainnetLogin, mainnetPassword, mainnetURL, mainnetVersionByte);
+                            // Convert to async to prevent blocking during profile lookup
+                            PROState profile = await PROState.GetProfileByAddressAsync(fromAddress, mainnetLogin, mainnetPassword, mainnetURL, mainnetVersionByte);
 
                             if (profile.URN != null)
                             {
@@ -844,8 +845,8 @@ namespace SUP
 
                         if (!profileAddress.ContainsKey(toAddress))
                         {
-
-                            PROState profile = PROState.GetProfileByAddress(toAddress, mainnetLogin, mainnetPassword, mainnetURL, mainnetVersionByte);
+                            // Convert to async to prevent blocking during profile lookup
+                            PROState profile = await PROState.GetProfileByAddressAsync(toAddress, mainnetLogin, mainnetPassword, mainnetURL, mainnetVersionByte);
 
                             if (profile.URN != null)
                             {
@@ -1264,6 +1265,13 @@ namespace SUP
 
 
 
+        }
+
+        // Keep synchronous version for compatibility with event handlers
+        private void RefreshSupMessages()
+        {
+            // Fire and forget - don't block the UI thread
+            Task.Run(async () => await RefreshSupMessagesAsync());
         }
 
         void AddImage(string imagepath, bool isprivate = false, bool addtoTop = false)
@@ -3659,7 +3667,8 @@ if (!string.IsNullOrEmpty(_activeprofile))
         _genid = tupl.Item2; 
     }
 
-    PROState profile = PROState.GetProfileByAddress(
+    // Convert to async to prevent blocking during profile lookup
+    PROState profile = await PROState.GetProfileByAddressAsync(
         _activeprofile, mainnetLogin, mainnetPassword, mainnetURL, mainnetVersionByte
     );
     if (profile.URN != null)
@@ -3674,7 +3683,8 @@ string _ownername = null;
 
 if (_owner != "")
 {
-    PROState profile = PROState.GetProfileByAddress(
+    // Convert to async to prevent blocking during profile lookup
+    PROState profile = await PROState.GetProfileByAddressAsync(
         _owner, mainnetLogin, mainnetPassword, mainnetURL, mainnetVersionByte
     );
     if (profile.URN != null)
