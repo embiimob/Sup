@@ -1381,11 +1381,11 @@ namespace SUP
                 // Forward mouse wheel events to parent to allow scrolling over video
                 webviewer.MouseWheel += (s, e) =>
                 {
-                    // Create a new MouseEventArgs with the same delta and pass it to the parent
-                    MouseEventArgs args = new MouseEventArgs(e.Button, e.Clicks, e.X, e.Y, e.Delta);
-                    supFlow_MouseWheel(supFlow, args);
+                    // Call the parent's scroll handler first to handle boundary logic (loading more messages)
+                    supFlow_MouseWheel(supFlow, e);
                     
-                    // Also update the scroll position directly for smooth scrolling
+                    // Then manually update scroll position since the event was consumed by WebView2
+                    // and won't automatically scroll the parent container
                     int newValue = supFlow.VerticalScroll.Value - e.Delta;
                     if (newValue < 0) newValue = 0;
                     if (newValue > supFlow.VerticalScroll.Maximum - supFlow.VerticalScroll.LargeChange + 1)
