@@ -3698,12 +3698,12 @@ namespace SUP
 
             if (txtSearchAddress.Text != null)
             {
-                SupFlix supFlixForm = new SupFlix(txtSearchAddress.Text);
+                SupFlix supFlixForm = new SupFlix(txtSearchAddress.Text, _testnet);
                 supFlixForm.Show();
             }
             else
             {
-                SupFlix supFlixForm = new SupFlix();
+                SupFlix supFlixForm = new SupFlix("mp4", _testnet);
                 supFlixForm.Show();
             }
 

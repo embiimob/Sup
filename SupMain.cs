@@ -7428,12 +7428,12 @@ namespace SUP
 
             if (profileURN.Links[0].LinkData != null)
             {
-                SupFlix supFlixForm = new SupFlix(profileURN.Text);
+                SupFlix supFlixForm = new SupFlix(profileURN.Text, testnet);
                 supFlixForm.Show();
             }
             else
             {
-                SupFlix supFlixForm = new SupFlix();
+                SupFlix supFlixForm = new SupFlix("mp4", testnet);
                 supFlixForm.Show();
             }
 
