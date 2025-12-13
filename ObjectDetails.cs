@@ -27,6 +27,27 @@ using Label = System.Windows.Forms.Label;
 
 namespace SUP
 {
+    /// <summary>
+    /// ObjectDetails form displays detailed information about blockchain objects.
+    /// 
+    /// PERFORMANCE OPTIMIZATIONS (2025):
+    /// - Converted all blocking blockchain RPC calls to async to prevent UI freeze
+    /// - MainRefreshClick now uses GetObjectByAddressAsync() instead of blocking call
+    /// - RefreshOwnersAsync uses async profile lookups to prevent serial blocking
+    /// - RefreshSupMessagesAsync loads messages asynchronously 
+    /// - Replaced Thread.Sleep with Task.Delay to avoid blocking threads
+    /// - All PROState.GetProfileByAddress calls converted to async
+    /// 
+    /// KEY METHODS:
+    /// - MainRefreshClick: Main refresh handler, loads object state asynchronously
+    /// - RefreshOwnersAsync: Loads owners/creators/royalties with async profile lookups
+    /// - RefreshSupMessagesAsync: Loads public messages with async calls
+    /// 
+    /// TRADEOFFS:
+    /// - Slightly more complex code with async/await patterns
+    /// - Better responsiveness during initial page load
+    /// - Progressive loading of secondary data after primary UI renders
+    /// </summary>
     public partial class ObjectDetails : Form
     {
         private readonly string _objectaddress;
@@ -229,6 +250,18 @@ namespace SUP
         }
 
 
+        /// <summary>
+        /// Asynchronously refreshes the owners, creators, and royalties panels.
+        /// 
+        /// Previously this method used synchronous GetObjectByAddress and GetProfileByAddress calls
+        /// which blocked the UI thread during database/RPC operations. Now uses async versions to
+        /// prevent UI freezing during initial page load.
+        /// 
+        /// Performance: Converted blocking calls to async:
+        /// - OBJState.GetObjectByAddress → GetObjectByAddressAsync
+        /// - PROState.GetProfileByAddress → GetProfileByAddressAsync (multiple calls)
+        /// - PROState.GetProfileByURN → GetProfileByURNAsync
+        /// </summary>
         private async Task RefreshOwnersAsync()
         {
             CreatorsPanel.SuspendLayout();
@@ -542,6 +575,21 @@ namespace SUP
             }
         }
 
+        /// <summary>
+        /// Asynchronously loads and displays public messages for the object.
+        /// 
+        /// This method supports progressive/lazy loading - messages are loaded in batches
+        /// of 10 as the user scrolls. Previously used blocking calls that could freeze the UI
+        /// during message and profile retrieval.
+        /// 
+        /// Performance improvements:
+        /// - GetPublicMessagesByAddress → GetPublicMessagesByAddressAsync (async message loading)
+        /// - GetProfileByAddress → GetProfileByAddressAsync (async profile lookups for from/to addresses)
+        /// - Maintains progressive loading pattern for better perceived performance
+        /// 
+        /// Note: The synchronous RefreshSupMessages() wrapper uses fire-and-forget Task.Run
+        /// to maintain compatibility with synchronous event handlers.
+        /// </summary>
         private async Task RefreshSupMessagesAsync()
         {
 
@@ -2100,6 +2148,21 @@ namespace SUP
             new ObjectBrowser(ownerId, false, _testnet).Show();
         }
 
+        /// <summary>
+        /// Main refresh handler for the object details page.
+        /// 
+        /// Previously used blocking synchronous calls that froze the UI during initial render.
+        /// Now uses async/await pattern for non-blocking data loading.
+        /// 
+        /// Performance improvements:
+        /// - GetObjectByAddress → GetObjectByAddressAsync (prevents blocking during RPC call)
+        /// - GetKeywordsByAddress → GetKeywordsByAddressAsync (async keyword loading)
+        /// - Multiple GetProfileByAddress → GetProfileByAddressAsync (async profile lookups)
+        /// - Thread.Sleep → Task.Delay (prevents thread blocking)
+        /// - Calls RefreshOwnersAsync for async owner/creator loading
+        /// 
+        /// The page shell renders immediately while data loads asynchronously in the background.
+        /// </summary>
         private async void MainRefreshClick(object sender, EventArgs e)
         {
             transFlow.Visible = false;
