@@ -313,7 +313,7 @@ namespace SUP
                         if (profile.URN != null)
                         {
                             PROState URNHolder = await PROState.GetProfileByURNAsync(profile.URN, mainnetLogin, mainnetPassword, mainnetURL, mainnetVersionByte);
-                            if (URNHolder.Creators[0] == searchkey) { keyLabel.Text = profile.URN; }else { keyLabel.Text = kvp.Key; }
+                            if (URNHolder.Creators[0] == searchkey) { keyLabel.Text = profile.URN; } else { keyLabel.Text = kvp.Key; }
                         }
                         else
                         {
