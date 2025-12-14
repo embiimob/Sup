@@ -192,48 +192,13 @@ namespace SUP
                     supFlow.Size = new System.Drawing.Size(supFlow.Width, supFlow.Height - 150); // Change the width and height
                 }
 
+                // Note: Removed scroll-up handler - public messages are append-only
+                // Scrolling up just navigates existing messages, no need to reload
+                // The scroll-up loading was causing issues:
+                // 1. Messages wouldn't load due to duplicate tracking
+                // 2. AutoScrollPosition was jumping to bottom instead of staying at top
+                // This matches the behavior already implemented for private messages
 
-
-
-
-
-                if (btnPublicMessage.BackColor == System.Drawing.Color.Blue)
-                {
-
-                    if (numMessagesDisplayed > 10)
-                    {
-                        numMessagesDisplayed = numMessagesDisplayed - 20; if (numMessagesDisplayed < 0) { numMessagesDisplayed = 0; }
-                        else
-                        {
-                            RefreshSupMessages();
-                            this.Invoke((MethodInvoker)delegate
-                        {
-                            supFlow.AutoScrollPosition = new Point(0, supFlow.VerticalScroll.Maximum - 10);
-
-                        });
-                        }
-                    }
-                }
-                else
-                {
-
-                    if (btnCommunityFeed.BackColor == System.Drawing.Color.Blue)
-                    {
-                        if (numFriendFeedsDisplayed > 10)
-                        {
-                            numFriendFeedsDisplayed = numFriendFeedsDisplayed - 20; if (numFriendFeedsDisplayed < 0) { numFriendFeedsDisplayed = 0; }
-                            else
-                            {
-                                RefreshCommunityMessages();
-                                this.Invoke((MethodInvoker)delegate
-                                {
-                                    supFlow.AutoScrollPosition = new Point(0, supFlow.VerticalScroll.Maximum - 10);
-
-                                });
-                            }
-                        }
-                    }
-                }
             }
 
         }
