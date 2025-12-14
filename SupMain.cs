@@ -3622,21 +3622,22 @@ namespace SUP
         private void RemoveOverFlowMessages(FlowLayoutPanel flowLayoutPanel)
         {
             // Only remove controls if we have more than a certain threshold
-            // Reduced from 100 to 50 to prevent app lockup with large message counts
+            // Reduced to 40 messages to prevent performance degradation with large message counts
             int controlCount = 0;
             this.Invoke((MethodInvoker)delegate
             {
                 controlCount = flowLayoutPanel.Controls.Count;
             });
             
-            // Only prune if we have more than 50 controls
-            if (controlCount <= 50)
+            // Only prune if we have more than 40 controls
+            // More aggressive than before to prevent slowdown
+            if (controlCount <= 40)
             {
                 return;
             }
             
-            // Remove the oldest controls (first 30) to free memory
-            // Increased from 20 to reduce frequency of removal operations
+            // Remove more aggressively - keep only the most recent 20 messages worth of controls
+            // This prevents blank space accumulation and performance degradation
             this.Invoke((MethodInvoker)delegate
             {
                 try
@@ -3646,18 +3647,23 @@ namespace SUP
                     
                     List<Control> controlsToRemove = new List<Control>();
                     List<string> transactionIdsToRemove = new List<string>();
+                    HashSet<string> processedIds = new HashSet<string>();
                     
-                    // Get first 30 controls (oldest messages at top)
-                    int removeCount = Math.Min(30, flowLayoutPanel.Controls.Count);
-                    for (int i = 0; i < removeCount; i++)
+                    // Remove from the top (oldest) until we get down to ~20 messages
+                    // We need to remove MORE than just the overflow to prevent blank space issues
+                    int targetCount = 20;
+                    int removeCount = Math.Max(controlCount - targetCount, 0);
+                    
+                    for (int i = 0; i < removeCount && i < flowLayoutPanel.Controls.Count; i++)
                     {
                         Control control = flowLayoutPanel.Controls[i];
                         controlsToRemove.Add(control);
                         
                         // Extract transaction ID from control Tag if available
-                        if (control.Tag != null && control.Tag is string tid)
+                        if (control.Tag != null && control.Tag is string tid && !processedIds.Contains(tid))
                         {
                             transactionIdsToRemove.Add(tid);
+                            processedIds.Add(tid);
                         }
                     }
                     
@@ -3667,8 +3673,10 @@ namespace SUP
                         flowLayoutPanel.Controls.Remove(control);
                     }
                     
-                    // Resume layout once to apply all changes together
+                    // Force layout recalculation to reclaim space and prevent blank areas
+                    flowLayoutPanel.PerformLayout();
                     flowLayoutPanel.ResumeLayout(true);
+                    flowLayoutPanel.Refresh();
                     
                     // Remove transaction IDs from tracking HashSets to allow re-rendering if scrolled back
                     foreach (string tid in transactionIdsToRemove)
@@ -3685,7 +3693,7 @@ namespace SUP
                         }
                     }
                     
-                    Debug.WriteLine($"[RemoveOverFlowMessages] Removed {controlsToRemove.Count} controls and {transactionIdsToRemove.Count} IDs from tracking");
+                    Debug.WriteLine($"[RemoveOverFlowMessages] Removed {controlsToRemove.Count} controls and {transactionIdsToRemove.Count} IDs from tracking. Controls remaining: {flowLayoutPanel.Controls.Count}");
                     
                     // Dispose controls after removal to free memory (do this after resume to avoid delay)
                     Task.Run(() =>
@@ -3693,6 +3701,22 @@ namespace SUP
                         foreach (Control control in controlsToRemove)
                         {
                             try { control.Dispose(); } catch { }
+                        }
+                        
+                        // Force garbage collection to reclaim memory more aggressively
+                        GC.Collect();
+                        GC.WaitForPendingFinalizers();
+                        GC.Collect();
+                    });
+                }
+                catch (Exception ex)
+                {
+                    Debug.WriteLine($"[RemoveOverFlowMessages] Error: {ex.Message}");
+                    // Always resume layout even if error occurred
+                    try { flowLayoutPanel.ResumeLayout(true); } catch { }
+                }
+            });
+        }
                         }
                     });
                 }
