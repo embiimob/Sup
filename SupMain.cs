@@ -7301,8 +7301,9 @@ namespace SUP
                 File.WriteAllText(filePath, json);
                 try { File.Delete(filePath); } catch { }
                 numFriendFeedsDisplayed = 0;
-                // Clear community message tracking when friend list changes
+                // Clear tracking when friend list changes for consistency
                 _renderedCommunityMessageIds.Clear();
+                _renderedPublicMessageIds.Clear();
             }
         }
 
