@@ -3172,27 +3172,41 @@ namespace SUP
 
                 if (!isUserControl) { registrationPanel.Visible = true; }
 
-
-                OBJState isOfficial = OBJState.GetObjectByURN(objstate.URN, mainnetLogin, mainnetPassword, mainnetURL, mainnetVersionByte);
-                if (isOfficial.URN != null)
+                try
                 {
-                    if (isOfficial.Creators.First().Key != this._objectaddress)
+                    OBJState isOfficial = OBJState.GetObjectByURN(objstate.URN, mainnetLogin, mainnetPassword, mainnetURL, mainnetVersionByte);
+                    if (isOfficial.URN != null)
                     {
-                        txtOfficialURN.Text = isOfficial.Creators.First().Key;
-                        btnLaunchURN.Visible = false;
-                        btnOfficial.Visible = true;
-                        lblLaunchURI.Visible = false;
-                        lblWarning.Visible = false;
+                        if (isOfficial.Creators.First().Key != this._objectaddress)
+                        {
+                            txtOfficialURN.Text = isOfficial.Creators.First().Key;
+                            btnLaunchURN.Visible = false;
+                            btnOfficial.Visible = true;
+                            lblLaunchURI.Visible = false;
+                            lblWarning.Visible = false;
 
+                        }
+                        else
+                        {
+
+                            lblOfficial.Visible = true;
+                            System.Windows.Forms.ToolTip myTooltip = new System.Windows.Forms.ToolTip();
+                            myTooltip.SetToolTip(lblOfficial, isOfficial.URN);
+
+                        }
                     }
-                    else
-                    {
-
-                        lblOfficial.Visible = true;
-                        System.Windows.Forms.ToolTip myTooltip = new System.Windows.Forms.ToolTip();
-                        myTooltip.SetToolTip(lblOfficial, isOfficial.URN);
-
-                    }
+                }
+                catch (CryptographicException ex)
+                {
+                    // Log the cryptographic error and continue - don't crash the form
+                    Debug.WriteLine($"Cryptographic error when retrieving official object: {ex.Message}");
+                    // Optionally notify user that official verification failed
+                    // MessageBox.Show("Unable to verify official status at this time. Please try again later.", "Verification Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                }
+                catch (Exception ex)
+                {
+                    // Catch any other exceptions to keep the form responsive
+                    Debug.WriteLine($"Error when retrieving official object: {ex.Message}");
                 }
 
 

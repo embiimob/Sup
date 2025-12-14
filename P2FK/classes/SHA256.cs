@@ -6,7 +6,6 @@ namespace SUP.P2FK
 {
     public class SHA256
     {
-        private static readonly SHA256Managed sha256 = new SHA256Managed();
         private static readonly Dictionary<string, byte> _hexToByte = new Dictionary<
             string,
             byte
@@ -14,12 +13,30 @@ namespace SUP.P2FK
 
         public static byte[] Hash(byte[] data)
         {
-            return sha256.ComputeHash(data);
+            if (data == null)
+            {
+                throw new ArgumentNullException(nameof(data), "Input data cannot be null");
+            }
+
+            using (var sha = System.Security.Cryptography.SHA256.Create())
+            {
+                return sha.ComputeHash(data);
+            }
         }
 
         public static byte[] DoubleHash(byte[] data)
         {
-            return sha256.ComputeHash(sha256.ComputeHash(data));
+            if (data == null)
+            {
+                throw new ArgumentNullException(nameof(data), "Input data cannot be null");
+            }
+
+            using (var sha = System.Security.Cryptography.SHA256.Create())
+            {
+                var firstHash = sha.ComputeHash(data);
+                var secondHash = sha.ComputeHash(firstHash);
+                return secondHash;
+            }
         }
 
         public static byte[] DoubleHashCheckSum(byte[] data)
