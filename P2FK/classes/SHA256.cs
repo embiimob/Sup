@@ -31,11 +31,16 @@ namespace SUP.P2FK
                 throw new ArgumentNullException(nameof(data), "Input data cannot be null");
             }
 
-            using (var sha = System.Security.Cryptography.SHA256.Create())
+            // Create fresh instances for each hash to ensure thread-safety and clarity
+            byte[] firstHash;
+            using (var sha1 = System.Security.Cryptography.SHA256.Create())
             {
-                var firstHash = sha.ComputeHash(data);
-                var secondHash = sha.ComputeHash(firstHash);
-                return secondHash;
+                firstHash = sha1.ComputeHash(data);
+            }
+            
+            using (var sha2 = System.Security.Cryptography.SHA256.Create())
+            {
+                return sha2.ComputeHash(firstHash);
             }
         }
 

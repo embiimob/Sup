@@ -3200,8 +3200,6 @@ namespace SUP
                 {
                     // Log the cryptographic error and continue - don't crash the form
                     Debug.WriteLine($"Cryptographic error when retrieving official object: {ex.Message}");
-                    // Optionally notify user that official verification failed
-                    // MessageBox.Show("Unable to verify official status at this time. Please try again later.", "Verification Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 }
                 catch (Exception ex)
                 {
