@@ -3658,6 +3658,7 @@ namespace SUP
             }
             
             Debug.WriteLine($"[RemoveOverFlowMessages] Control count ({controlCount}) exceeds limit ({MAX_CONTROLS}), removing oldest {REMOVE_COUNT} controls");
+            MemoryDiagnostics.LogMemoryUsage("Before removing overflow controls");
             
             // Remove the oldest controls to free memory
             this.Invoke((MethodInvoker)delegate
@@ -3716,6 +3717,7 @@ namespace SUP
                         GC.Collect();
                         
                         Debug.WriteLine("[RemoveOverFlowMessages] Completed control disposal and GC");
+                        MemoryDiagnostics.LogMemoryUsage("After removing overflow controls and GC");
                     });
                 }
                 catch (Exception ex)

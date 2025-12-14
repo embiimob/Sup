@@ -211,6 +211,7 @@
       <DependentUpon>ProfileMint.cs</DependentUpon>
     </Compile>
     <Compile Include="MessageCache.cs" />
+    <Compile Include="MemoryDiagnostics.cs" />
     <Compile Include="PublicMessageViewModel.cs" />
     <Compile Include="PrivateMessageViewModel.cs" />
     <Compile Include="SupMain.cs">
