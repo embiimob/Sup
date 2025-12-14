@@ -86,6 +86,20 @@ namespace SUP
         /// Retained across conversations to minimize redundant profile lookups.
         /// </summary>
         private Dictionary<string, string[]> _profileCache = new Dictionary<string, string[]>();
+        
+        /// <summary>
+        /// Tracks which public message transaction IDs have been rendered to the UI.
+        /// Prevents duplicate rendering when refreshing or scrolling public message threads.
+        /// Used for O(1) duplicate detection similar to private messages.
+        /// </summary>
+        private HashSet<string> _renderedPublicMessageIds = new HashSet<string>();
+        
+        /// <summary>
+        /// Tracks which community feed message transaction IDs have been rendered to the UI.
+        /// Prevents duplicate rendering when refreshing or scrolling the community feed.
+        /// Used for O(1) duplicate detection similar to private messages.
+        /// </summary>
+        private HashSet<string> _renderedCommunityMessageIds = new HashSet<string>();
 
         public SupMain()
         {
@@ -185,6 +199,9 @@ namespace SUP
                         numMessagesDisplayed = numMessagesDisplayed - 20; if (numMessagesDisplayed < 0) { numMessagesDisplayed = 0; }
                         else
                         {
+                            // When going back in pagination, clear tracking and UI to re-render
+                            _renderedPublicMessageIds.Clear();
+                            ClearMessages(supFlow);
                             RefreshSupMessages();
                             this.Invoke((MethodInvoker)delegate
                         {
@@ -204,6 +221,9 @@ namespace SUP
                             numFriendFeedsDisplayed = numFriendFeedsDisplayed - 20; if (numFriendFeedsDisplayed < 0) { numFriendFeedsDisplayed = 0; }
                             else
                             {
+                                // When going back in pagination, clear tracking and UI to re-render
+                                _renderedCommunityMessageIds.Clear();
+                                ClearMessages(supFlow);
                                 RefreshCommunityMessages();
                                 this.Invoke((MethodInvoker)delegate
                                 {
@@ -384,6 +404,8 @@ namespace SUP
                         // Clear private message state when switching profiles
                         _loadedPrivateMessages.Clear();
                         _renderedPrivateMessageIds.Clear();
+                        _renderedPublicMessageIds.Clear();
+                        _renderedCommunityMessageIds.Clear();
 
                         // Defensive null check before accessing LinkData
                         if (profileURN.Links != null && profileURN.Links.Count > 0 && profileURN.Links[0].LinkData != null)
@@ -3713,6 +3735,14 @@ namespace SUP
                     numPrivateMessagesDisplayed = 0;
                     // Note: _profileCache is retained for performance across different conversations
                 }
+                // If clearing public message panel (supFlow), clear public/community tracking
+                else if (flowLayoutPanel == supFlow)
+                {
+                    _renderedPublicMessageIds.Clear();
+                    _renderedCommunityMessageIds.Clear();
+                    numMessagesDisplayed = 0;
+                    numFriendFeedsDisplayed = 0;
+                }
             });
         }
 
@@ -3775,10 +3805,20 @@ namespace SUP
 
             foreach (MessageObject messagePacket in messages)
             {
+                string tid = messagePacket.TransactionId.ToString();
+                
+                // Skip this message if we've already rendered it
+                // This prevents duplicates when scrolling and refreshing
+                if (_renderedPublicMessageIds.Contains(tid))
+                {
+                    continue;
+                }
+                
+                // Mark this message as rendered
+                _renderedPublicMessageIds.Add(tid);
                 numMessagesDisplayed++;
 
                 string message = "";
-                string tid = messagePacket.TransactionId.ToString();
                 string tstamp = messagePacket.BlockDate.ToString("yyyyMMddHHmmss");
                 try
                 {
@@ -5252,6 +5292,18 @@ namespace SUP
                     string _from = fromProp?.GetValue(message).ToString();
                     string _to = toProp?.GetValue(message).ToString();
                     string _transactionId = transactionIdProp?.GetValue(message).ToString();
+                    
+                    // Skip this message if we've already rendered it
+                    // This prevents duplicates when scrolling and refreshing the community feed
+                    if (_renderedCommunityMessageIds.Contains(_transactionId))
+                    {
+                        continue;
+                    }
+                    
+                    // Mark this message as rendered
+                    _renderedCommunityMessageIds.Add(_transactionId);
+                    numFriendFeedsDisplayed++;
+                    
                     string fromURN = fromProp?.GetValue(message).ToString();
                     string _message = messageProp?.GetValue(message).ToString();
                     string _blockdate = blockDateProp?.GetValue(message).ToString();
@@ -6859,6 +6911,8 @@ namespace SUP
             numMessagesDisplayed = 0;
             numPrivateMessagesDisplayed = 0;
             numFriendFeedsDisplayed = 0;
+            _renderedPublicMessageIds.Clear();
+            _renderedCommunityMessageIds.Clear();
             if (btnCommunityFeed.BackColor == Color.Blue) { btnCommunityFeed.BackColor = Color.White; btnCommunityFeed.ForeColor = Color.Black; btnPublicMessage.BackColor = Color.Blue; btnPublicMessage.ForeColor = Color.Yellow; }
             friendClicked = true;
             MakeActiveProfile(ownerId);
@@ -7144,6 +7198,8 @@ namespace SUP
                     numMessagesDisplayed = 0;
                     numFriendFeedsDisplayed = 0;
                     numPrivateMessagesDisplayed = 0;
+                    _renderedPublicMessageIds.Clear();
+                    _renderedCommunityMessageIds.Clear();
                     btnCommunityFeed.BackColor = System.Drawing.Color.White;
                     btnCommunityFeed.ForeColor = System.Drawing.Color.Black;
                     btnPrivateMessage.BackColor = System.Drawing.Color.White;
@@ -7363,6 +7419,7 @@ namespace SUP
 
                 MakeActiveProfile(profileURN.Links[0].LinkData.ToString());
                 numMessagesDisplayed = 0;
+                _renderedPublicMessageIds.Clear();
                 btnCommunityFeed.BackColor = System.Drawing.Color.White;
                 btnCommunityFeed.ForeColor = System.Drawing.Color.Black;
             }
@@ -7532,6 +7589,10 @@ namespace SUP
             numMessagesDisplayed = 0;
             numPrivateMessagesDisplayed = 0;
             numFriendFeedsDisplayed = 0;
+            _renderedPublicMessageIds.Clear();
+            _renderedCommunityMessageIds.Clear();
+            _renderedPrivateMessageIds.Clear();
+            _loadedPrivateMessages.Clear();
             lblOfficial.Visible = false;
 
             if (btnMainnetSwitch.ImageLocation == @"includes/BCT_Logo.png")
