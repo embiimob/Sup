@@ -3632,24 +3632,34 @@ namespace SUP
             }
         }
 
+        /// <summary>
+        /// Removes overflow messages from the flow panel to maintain bounded memory usage.
+        /// Keeps approximately 40 controls (representing ~20 messages with their UI elements) visible at a time.
+        /// This provides smooth scrolling while preventing unbounded memory growth.
+        /// </summary>
         private void RemoveOverFlowMessages(FlowLayoutPanel flowLayoutPanel)
         {
-            // Only remove controls if we have more than a certain threshold (e.g., 100 messages)
-            // This prevents removing controls while user is actively viewing them
+            // Target: Keep only ~40 controls (approximately 20 messages + their components)
+            // Each message typically has 2-5 controls (header, body, attachments, padding)
+            const int MAX_CONTROLS = 40;
+            const int REMOVE_COUNT = 20; // Remove this many when threshold exceeded
+            
             int controlCount = 0;
             this.Invoke((MethodInvoker)delegate
             {
                 controlCount = flowLayoutPanel.Controls.Count;
             });
             
-            // Only prune if we have more than 100 controls (generous buffer)
-            if (controlCount <= 100)
+            // Only prune if we exceed the maximum
+            if (controlCount <= MAX_CONTROLS)
             {
+                Debug.WriteLine($"[RemoveOverFlowMessages] Control count ({controlCount}) within limit ({MAX_CONTROLS}), no pruning needed");
                 return;
             }
             
-            // Remove the oldest controls (first 20) to free memory
-            // But keep most of the conversation visible
+            Debug.WriteLine($"[RemoveOverFlowMessages] Control count ({controlCount}) exceeds limit ({MAX_CONTROLS}), removing oldest {REMOVE_COUNT} controls");
+            
+            // Remove the oldest controls to free memory
             this.Invoke((MethodInvoker)delegate
             {
                 try
@@ -3659,8 +3669,8 @@ namespace SUP
                     
                     List<Control> controlsToRemove = new List<Control>();
                     
-                    // Get first 20 controls (oldest messages at top)
-                    int removeCount = Math.Min(20, flowLayoutPanel.Controls.Count);
+                    // Get first N controls (oldest messages at top)
+                    int removeCount = Math.Min(REMOVE_COUNT, flowLayoutPanel.Controls.Count);
                     for (int i = 0; i < removeCount; i++)
                     {
                         controlsToRemove.Add(flowLayoutPanel.Controls[i]);
@@ -3675,13 +3685,37 @@ namespace SUP
                     // Resume layout once to apply all changes together
                     flowLayoutPanel.ResumeLayout(true);
                     
-                    // Dispose controls after removal to free memory (do this after resume to avoid delay)
+                    Debug.WriteLine($"[RemoveOverFlowMessages] Removed {removeCount} controls, {flowLayoutPanel.Controls.Count} remaining");
+                    
+                    // Dispose controls after removal to free memory (do this after resume to avoid UI delay)
                     Task.Run(() =>
                     {
                         foreach (Control control in controlsToRemove)
                         {
-                            try { control.Dispose(); } catch { }
+                            try 
+                            { 
+                                // Recursively dispose child controls first
+                                if (control.HasChildren)
+                                {
+                                    foreach (Control child in control.Controls)
+                                    {
+                                        try { child.Dispose(); } catch { }
+                                    }
+                                }
+                                control.Dispose(); 
+                            } 
+                            catch (Exception disposeEx) 
+                            {
+                                Debug.WriteLine($"[RemoveOverFlowMessages] Disposal error: {disposeEx.Message}");
+                            }
                         }
+                        
+                        // Force garbage collection after significant cleanup
+                        GC.Collect();
+                        GC.WaitForPendingFinalizers();
+                        GC.Collect();
+                        
+                        Debug.WriteLine("[RemoveOverFlowMessages] Completed control disposal and GC");
                     });
                 }
                 catch (Exception ex)
@@ -3756,13 +3790,13 @@ namespace SUP
 
             supFlow.SuspendLayout();
 
-            if (messages.Count == 10)
+            // Trigger memory cleanup after loading messages
+            // This ensures we maintain bounded memory usage (~40 controls = ~20 messages)
+            if (messages.Count > 0)
             {
                 Task memoryPrune = Task.Run(() =>
                 {
-
                     RemoveOverFlowMessages(supFlow);
-
                 });
             }
 
@@ -4539,12 +4573,12 @@ namespace SUP
                     numPrivateMessagesDisplayed, 
                     10);
 
-                // Don't trigger memory cleanup - let it accumulate for better UX
-                // RemoveOverFlowMessages was causing controls to disappear during scroll
-                // if (messages.Count == 10)
-                // {
-                //     _ = Task.Run(() => RemoveOverFlowMessages(supPrivateFlow));
-                // }
+                // Trigger memory cleanup after loading messages
+                // This ensures we maintain bounded memory usage (~40 controls = ~20 messages)
+                if (messages.Count > 0)
+                {
+                    _ = Task.Run(() => RemoveOverFlowMessages(supPrivateFlow));
+                }
 
                 // Build view models from the fetched messages
                 List<PrivateMessageViewModel> newMessages = await BuildPrivateMessageViewModelsAsync(messages);
@@ -5231,17 +5265,18 @@ namespace SUP
                 });
 
 
-                if (allMessages.Skip(numFriendFeedsDisplayed).Take(10).Count() == 10)
+                // Trigger memory cleanup after loading messages
+                // This ensures we maintain bounded memory usage (~40 controls = ~20 messages)
+                var messagesToDisplay = allMessages.Skip(numFriendFeedsDisplayed).Take(10).ToList();
+                if (messagesToDisplay.Count > 0)
                 {
                     Task memoryPrune = Task.Run(() =>
                     {
-
                         RemoveOverFlowMessages(supFlow);
-
                     });
                 }
 
-                foreach (var message in allMessages.Skip(numFriendFeedsDisplayed).Take(10))
+                foreach (var message in messagesToDisplay)
                 {
                     var fromProp = message.GetType().GetProperty("FromAddress");
                     var toProp = message.GetType().GetProperty("ToAddress");
