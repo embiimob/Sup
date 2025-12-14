@@ -212,8 +212,13 @@
     </Compile>
     <Compile Include="MessageCache.cs" />
     <Compile Include="MemoryDiagnostics.cs" />
+    <Compile Include="PrivateMessageAdapter.cs" />
+    <Compile Include="PublicMessageAdapter.cs" />
     <Compile Include="PublicMessageViewModel.cs" />
     <Compile Include="PrivateMessageViewModel.cs" />
+    <Compile Include="VirtualizedMessageList.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
     <Compile Include="SupMain.cs">
       <SubType>Form</SubType>
     </Compile>
