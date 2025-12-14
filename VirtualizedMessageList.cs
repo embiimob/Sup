@@ -16,7 +16,7 @@ namespace SUP
     {
         private VScrollBar _vScrollBar;
         private Panel _viewport;
-        private int _itemHeight = 100; // Estimated average message height
+        private int _itemHeight = 100; // Estimated average message height (can be dynamically adjusted)
         private int _totalItemCount = 0;
         private int _firstVisibleIndex = 0;
         private int _visibleItemCount = 0;
@@ -27,6 +27,46 @@ namespace SUP
         /// Maximum number of messages to keep rendered at once
         /// </summary>
         public const int MaxRenderedMessages = 20;
+        
+        /// <summary>
+        /// Buffer items to render beyond visible area to reduce flicker during scrolling
+        /// </summary>
+        private const int BufferItemCount = 2;
+
+        /// <summary>
+        /// Sets the estimated average item height for scroll calculations.
+        /// Can be dynamically updated based on actual rendered message heights.
+        /// </summary>
+        public void SetEstimatedItemHeight(int height)
+        {
+            if (height > 0)
+            {
+                _itemHeight = height;
+                UpdateScrollBar();
+            }
+        }
+
+        /// <summary>
+        /// Automatically calculates average item height from currently rendered controls.
+        /// Call this periodically to improve scroll accuracy with variable-height messages.
+        /// </summary>
+        public void RecalculateItemHeight()
+        {
+            if (_renderedControls.Count == 0) return;
+
+            int totalHeight = 0;
+            foreach (var control in _renderedControls.Values)
+            {
+                totalHeight += control.Height;
+            }
+
+            int avgHeight = totalHeight / _renderedControls.Count;
+            if (avgHeight > 0)
+            {
+                _itemHeight = avgHeight;
+                Debug.WriteLine($"[VirtualizedMessageList] Recalculated average item height: {_itemHeight}px");
+            }
+        }
 
         public VirtualizedMessageList()
         {
@@ -132,7 +172,7 @@ namespace SUP
             }
 
             // Calculate how many items can fit in viewport
-            _visibleItemCount = Math.Max(1, _viewport.Height / _itemHeight) + 2; // +2 for buffer
+            _visibleItemCount = Math.Max(1, _viewport.Height / _itemHeight) + BufferItemCount;
 
             // Update scrollbar range
             int maxScroll = Math.Max(0, _totalItemCount - 1);

@@ -3711,13 +3711,25 @@ namespace SUP
                             }
                         }
                         
-                        // Force garbage collection after significant cleanup
-                        GC.Collect();
-                        GC.WaitForPendingFinalizers();
-                        GC.Collect();
-                        
-                        Debug.WriteLine("[RemoveOverFlowMessages] Completed control disposal and GC");
-                        MemoryDiagnostics.LogMemoryUsage("After removing overflow controls and GC");
+                        // Force garbage collection after significant cleanup (on background thread to avoid UI freeze)
+                        Task.Run(() =>
+                        {
+                            try
+                            {
+                                // Request GC of gen 0 and 1 first (faster, less disruptive)
+                                GC.Collect(1, GCCollectionMode.Optimized, false);
+                                GC.WaitForPendingFinalizers();
+                                // Then do a full collection
+                                GC.Collect();
+                                
+                                Debug.WriteLine("[RemoveOverFlowMessages] Completed control disposal and GC");
+                                MemoryDiagnostics.LogMemoryUsage("After removing overflow controls and GC");
+                            }
+                            catch (Exception gcEx)
+                            {
+                                Debug.WriteLine($"[RemoveOverFlowMessages] GC error: {gcEx.Message}");
+                            }
+                        });
                     });
                 }
                 catch (Exception ex)
