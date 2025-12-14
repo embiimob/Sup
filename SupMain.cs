@@ -150,13 +150,16 @@ namespace SUP
                     int startNum = numMessagesDisplayed;
                     RefreshSupMessages();
 
-                    if (numMessagesDisplayed == startNum + 10)
-                    {
-                        this.Invoke((MethodInvoker)delegate
-                        {
-                            supFlow.AutoScrollPosition = new Point(0, 10);
-                        });
-                    }
+                    // Don't adjust scroll position - let natural scrolling work
+                    // The scroll adjustment was causing jumpiness and sending user to top
+                    // Similar to private message handling (see supPrivateFlow_MouseWheel)
+                    // if (numMessagesDisplayed == startNum + 10)
+                    // {
+                    //     this.Invoke((MethodInvoker)delegate
+                    //     {
+                    //         supFlow.AutoScrollPosition = new Point(0, 10);
+                    //     });
+                    // }
 
                 }
                 else
@@ -167,13 +170,16 @@ namespace SUP
                         int startNum = numFriendFeedsDisplayed;
                         RefreshCommunityMessages();
 
-                        if (numFriendFeedsDisplayed == startNum + 10)
-                        {
-                            this.Invoke((MethodInvoker)delegate
-                            {
-                                supFlow.AutoScrollPosition = new Point(0, 10);
-                            });
-                        }
+                        // Don't adjust scroll position - let natural scrolling work
+                        // The scroll adjustment was causing jumpiness and sending user to top
+                        // Similar to private message handling (see supPrivateFlow_MouseWheel)
+                        // if (numFriendFeedsDisplayed == startNum + 10)
+                        // {
+                        //     this.Invoke((MethodInvoker)delegate
+                        //     {
+                        //         supFlow.AutoScrollPosition = new Point(0, 10);
+                        //     });
+                        // }
                     }
                 }
             }
