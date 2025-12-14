@@ -3796,8 +3796,12 @@ namespace SUP
                 });
             }
 
+            // Reset other message type counters when viewing public messages
+            // Note: This appears to be intentional behavior in the original code
             numFriendFeedsDisplayed = 0;
             numPrivateMessagesDisplayed = 0;
+            // Also clear community tracking to match counter reset
+            _renderedCommunityMessageIds.Clear();
 
 
 
@@ -5525,7 +5529,6 @@ namespace SUP
 
 
                     }
-                    numFriendFeedsDisplayed++;
                 }
 
 
@@ -7298,6 +7301,8 @@ namespace SUP
                 File.WriteAllText(filePath, json);
                 try { File.Delete(filePath); } catch { }
                 numFriendFeedsDisplayed = 0;
+                // Clear community message tracking when friend list changes
+                _renderedCommunityMessageIds.Clear();
             }
         }
 
