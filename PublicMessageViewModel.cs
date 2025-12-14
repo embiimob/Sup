@@ -4,11 +4,11 @@ using System.Collections.Generic;
 namespace SUP
 {
     /// <summary>
-    /// View model for private messages in the feed.
+    /// View model for public/community messages in the feed.
     /// Provides a stable, sortable representation of message data.
     /// Implements IDisposable to clean up resources when message scrolls out of view.
     /// </summary>
-    public class PrivateMessageViewModel : IDisposable
+    public class PublicMessageViewModel : IDisposable
     {
         private bool _disposed = false;
 
@@ -33,12 +33,27 @@ namespace SUP
         public string FromImageLocation { get; set; }
 
         /// <summary>
+        /// Address of the message recipient
+        /// </summary>
+        public string ToAddress { get; set; }
+
+        /// <summary>
+        /// Display name for the recipient (URN or truncated address)
+        /// </summary>
+        public string ToName { get; set; }
+
+        /// <summary>
+        /// Profile image location for the recipient
+        /// </summary>
+        public string ToImageLocation { get; set; }
+
+        /// <summary>
         /// Message text content
         /// </summary>
         public string MessageText { get; set; }
 
         /// <summary>
-        /// Raw message with attachment tags (e.g., &lt;&lt;IPFS:hash\SEC&gt;&gt;)
+        /// Raw message with attachment tags (e.g., &lt;&lt;hash/file.jpg&gt;&gt;)
         /// </summary>
         public string RawMessage { get; set; }
 
@@ -57,7 +72,12 @@ namespace SUP
         /// </summary>
         public bool IsRendered { get; set; }
 
-        public PrivateMessageViewModel()
+        /// <summary>
+        /// For community feed: source profile/keyword this message came from
+        /// </summary>
+        public string SourceProfile { get; set; }
+
+        public PublicMessageViewModel()
         {
             Attachments = new List<MessageAttachment>();
             IsRendered = false;
@@ -88,39 +108,5 @@ namespace SUP
 
             _disposed = true;
         }
-    }
-
-    /// <summary>
-    /// Represents an attachment in a private message
-    /// </summary>
-    public class MessageAttachment
-    {
-        /// <summary>
-        /// Type of attachment (Image, Video, Audio, SEC, Link, etc.)
-        /// </summary>
-        public AttachmentType Type { get; set; }
-
-        /// <summary>
-        /// Content string (IPFS hash, file path, URL, etc.)
-        /// </summary>
-        public string Content { get; set; }
-
-        /// <summary>
-        /// File extension if applicable
-        /// </summary>
-        public string Extension { get; set; }
-    }
-
-    /// <summary>
-    /// Types of attachments supported in messages
-    /// </summary>
-    public enum AttachmentType
-    {
-        Image,
-        Video,
-        Audio,
-        SEC,      // Encrypted IPFS attachment
-        Link,
-        Other
     }
 }

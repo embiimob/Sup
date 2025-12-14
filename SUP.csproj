@@ -210,6 +210,8 @@
     <Compile Include="ProfileMint.Designer.cs">
       <DependentUpon>ProfileMint.cs</DependentUpon>
     </Compile>
+    <Compile Include="MessageCache.cs" />
+    <Compile Include="PublicMessageViewModel.cs" />
     <Compile Include="PrivateMessageViewModel.cs" />
     <Compile Include="SupMain.cs">
       <SubType>Form</SubType>
