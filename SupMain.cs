@@ -3621,22 +3621,22 @@ namespace SUP
 
         private void RemoveOverFlowMessages(FlowLayoutPanel flowLayoutPanel)
         {
-            // Only remove controls if we have more than a certain threshold (e.g., 100 messages)
-            // This prevents removing controls while user is actively viewing them
+            // Only remove controls if we have more than a certain threshold
+            // Reduced from 100 to 50 to prevent app lockup with large message counts
             int controlCount = 0;
             this.Invoke((MethodInvoker)delegate
             {
                 controlCount = flowLayoutPanel.Controls.Count;
             });
             
-            // Only prune if we have more than 100 controls (generous buffer)
-            if (controlCount <= 100)
+            // Only prune if we have more than 50 controls
+            if (controlCount <= 50)
             {
                 return;
             }
             
-            // Remove the oldest controls (first 20) to free memory
-            // But keep most of the conversation visible
+            // Remove the oldest controls (first 30) to free memory
+            // Increased from 20 to reduce frequency of removal operations
             this.Invoke((MethodInvoker)delegate
             {
                 try
@@ -3645,12 +3645,20 @@ namespace SUP
                     flowLayoutPanel.SuspendLayout();
                     
                     List<Control> controlsToRemove = new List<Control>();
+                    List<string> transactionIdsToRemove = new List<string>();
                     
-                    // Get first 20 controls (oldest messages at top)
-                    int removeCount = Math.Min(20, flowLayoutPanel.Controls.Count);
+                    // Get first 30 controls (oldest messages at top)
+                    int removeCount = Math.Min(30, flowLayoutPanel.Controls.Count);
                     for (int i = 0; i < removeCount; i++)
                     {
-                        controlsToRemove.Add(flowLayoutPanel.Controls[i]);
+                        Control control = flowLayoutPanel.Controls[i];
+                        controlsToRemove.Add(control);
+                        
+                        // Extract transaction ID from control Tag if available
+                        if (control.Tag != null && control.Tag is string tid)
+                        {
+                            transactionIdsToRemove.Add(tid);
+                        }
                     }
                     
                     // Remove them all at once without triggering layout for each
@@ -3661,6 +3669,23 @@ namespace SUP
                     
                     // Resume layout once to apply all changes together
                     flowLayoutPanel.ResumeLayout(true);
+                    
+                    // Remove transaction IDs from tracking HashSets to allow re-rendering if scrolled back
+                    foreach (string tid in transactionIdsToRemove)
+                    {
+                        if (flowLayoutPanel == supFlow)
+                        {
+                            // Could be public or community messages
+                            _renderedPublicMessageIds.Remove(tid);
+                            _renderedCommunityMessageIds.Remove(tid);
+                        }
+                        else if (flowLayoutPanel == supPrivateFlow)
+                        {
+                            _renderedPrivateMessageIds.Remove(tid);
+                        }
+                    }
+                    
+                    Debug.WriteLine($"[RemoveOverFlowMessages] Removed {controlsToRemove.Count} controls and {transactionIdsToRemove.Count} IDs from tracking");
                     
                     // Dispose controls after removal to free memory (do this after resume to avoid delay)
                     Task.Run(() =>
@@ -4548,12 +4573,12 @@ namespace SUP
                     numPrivateMessagesDisplayed, 
                     10);
 
-                // Don't trigger memory cleanup - let it accumulate for better UX
-                // RemoveOverFlowMessages was causing controls to disappear during scroll
-                // if (messages.Count == 10)
-                // {
-                //     _ = Task.Run(() => RemoveOverFlowMessages(supPrivateFlow));
-                // }
+                // Trigger memory cleanup to prevent app lockup with large message counts
+                // Removes oldest messages when threshold is exceeded
+                if (messages.Count == 10)
+                {
+                    _ = Task.Run(() => RemoveOverFlowMessages(supPrivateFlow));
+                }
 
                 // Build view models from the fetched messages
                 List<PrivateMessageViewModel> newMessages = await BuildPrivateMessageViewModelsAsync(messages);
@@ -6465,7 +6490,8 @@ namespace SUP
                     BackColor = Color.Black,
                     ForeColor = Color.White,
                     Padding = new Padding(0),
-                    Margin = new Padding(0)
+                    Margin = new Padding(0),
+                    Tag = transactionid  // Store transaction ID for memory management
                 };
                 // Add the width of the first column to fixed value and second to fill remaining space
                 row.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 50));
@@ -6614,7 +6640,8 @@ namespace SUP
                     BackColor = Color.Black,
                     ForeColor = Color.White,
                     Padding = new Padding(0),
-                    Margin = new Padding(0)
+                    Margin = new Padding(0),
+                    Tag = transactionid  // Store transaction ID for memory management
                 };
                 // Add the width of the first column to fixed value and second to fill remaining space
                 row.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 50));
