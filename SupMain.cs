@@ -199,9 +199,6 @@ namespace SUP
                         numMessagesDisplayed = numMessagesDisplayed - 20; if (numMessagesDisplayed < 0) { numMessagesDisplayed = 0; }
                         else
                         {
-                            // When going back in pagination, clear tracking and UI to re-render
-                            _renderedPublicMessageIds.Clear();
-                            ClearMessages(supFlow);
                             RefreshSupMessages();
                             this.Invoke((MethodInvoker)delegate
                         {
@@ -221,9 +218,6 @@ namespace SUP
                             numFriendFeedsDisplayed = numFriendFeedsDisplayed - 20; if (numFriendFeedsDisplayed < 0) { numFriendFeedsDisplayed = 0; }
                             else
                             {
-                                // When going back in pagination, clear tracking and UI to re-render
-                                _renderedCommunityMessageIds.Clear();
-                                ClearMessages(supFlow);
                                 RefreshCommunityMessages();
                                 this.Invoke((MethodInvoker)delegate
                                 {
