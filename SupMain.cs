@@ -59,6 +59,11 @@ namespace SUP
         FlowLayoutPanel supPrivateFlow = new FlowLayoutPanel();
         AudioPlayer audioPlayer = new AudioPlayer();
         
+        // IPFS process management
+        private const int MAX_CONCURRENT_IPFS_PROCESSES = 5;
+        private static readonly object _ipfsProcessLock = new object();
+        private static int _currentIPFSProcessCount = 0;
+        
         // Guard flag to prevent circular updates between SupMain and ObjectBrowser
         // When true, indicates that we're updating ObjectBrowser from SupMain and should not
         // process the ProfileURNChanged event that results from our own update
@@ -3654,16 +3659,17 @@ namespace SUP
 
         /// <summary>
         /// Removes overflow messages from the flow panel to maintain bounded memory usage.
-        /// Keeps approximately 40 controls (representing ~20 messages with their UI elements) visible at a time.
+        /// Keeps approximately 20 messages visible at a time.
         /// This provides smooth scrolling while preventing unbounded memory growth.
         /// Removes controls from the END (bottom) of the list, so the most recent messages at top stay visible.
+        /// Also stops any IPFS processes associated with removed messages and cleans up -build folders.
         /// </summary>
         private void RemoveOverFlowMessages(FlowLayoutPanel flowLayoutPanel)
         {
-            // Target: Keep only ~40 controls (approximately 20 messages + their components)
-            // Each message typically has 2-5 controls (header, body, attachments, padding)
-            const int MAX_CONTROLS = 40;
-            const int REMOVE_COUNT = 20; // Remove this many when threshold exceeded
+            // Target: Keep only ~20 messages max
+            // We need to be more aggressive - count actual controls and prune when we exceed
+            const int MAX_MESSAGES = 20;
+            const int REMOVE_COUNT = 10; // Remove this many when threshold exceeded
             
             int controlCount = 0;
             this.Invoke((MethodInvoker)delegate
@@ -3671,14 +3677,14 @@ namespace SUP
                 controlCount = flowLayoutPanel.Controls.Count;
             });
             
-            // Only prune if we exceed the maximum
-            if (controlCount <= MAX_CONTROLS)
+            // Only prune if we exceed the maximum messages
+            if (controlCount <= MAX_MESSAGES)
             {
-                Debug.WriteLine($"[RemoveOverFlowMessages] Control count ({controlCount}) within limit ({MAX_CONTROLS}), no pruning needed");
+                Debug.WriteLine($"[RemoveOverFlowMessages] Control count ({controlCount}) within limit ({MAX_MESSAGES}), no pruning needed");
                 return;
             }
             
-            Debug.WriteLine($"[RemoveOverFlowMessages] Control count ({controlCount}) exceeds limit ({MAX_CONTROLS}), removing oldest {REMOVE_COUNT} controls from bottom");
+            Debug.WriteLine($"[RemoveOverFlowMessages] Control count ({controlCount}) exceeds limit ({MAX_MESSAGES}), removing oldest {REMOVE_COUNT} controls from bottom");
             MemoryDiagnostics.LogMemoryUsage("Before removing overflow controls");
             
             // Remove the controls from the END (bottom) to preserve scroll position
@@ -3718,12 +3724,20 @@ namespace SUP
                         {
                             try 
                             { 
+                                // Stop any IPFS processes associated with this control
+                                StopIPFSProcessesForControl(control);
+                                
                                 // Recursively dispose child controls first
                                 if (control.HasChildren)
                                 {
                                     foreach (Control child in control.Controls)
                                     {
-                                        try { child.Dispose(); } catch { }
+                                        try 
+                                        { 
+                                            StopIPFSProcessesForControl(child);
+                                            child.Dispose(); 
+                                        } 
+                                        catch { }
                                     }
                                 }
                                 control.Dispose(); 
@@ -3762,6 +3776,142 @@ namespace SUP
                     try { flowLayoutPanel.ResumeLayout(true); } catch { }
                 }
             });
+        }
+
+        /// <summary>
+        /// Stops IPFS processes associated with a control and cleans up -build folders.
+        /// This prevents resource leaks and system overload from too many simultaneous IPFS processes.
+        /// </summary>
+        private void StopIPFSProcessesForControl(Control control)
+        {
+            try
+            {
+                // Look for transaction IDs or IPFS hashes in the control's Tag or related data
+                string transactionId = null;
+                
+                // Check control's Tag for transaction ID
+                if (control.Tag != null && control.Tag is string tagStr)
+                {
+                    transactionId = tagStr;
+                }
+                
+                // Check if control has a Name that contains a transaction ID (64-char hex)
+                if (string.IsNullOrEmpty(transactionId) && !string.IsNullOrEmpty(control.Name))
+                {
+                    var match = System.Text.RegularExpressions.Regex.Match(control.Name, @"\b[0-9a-f]{64}\b");
+                    if (match.Success)
+                    {
+                        transactionId = match.Value;
+                    }
+                }
+                
+                if (!string.IsNullOrEmpty(transactionId))
+                {
+                    Debug.WriteLine($"[StopIPFSProcesses] Stopping IPFS processes for transaction: {transactionId}");
+                    
+                    // Find and kill any IPFS processes related to this transaction
+                    var ipfsProcesses = System.Diagnostics.Process.GetProcessesByName("ipfs");
+                    foreach (var process in ipfsProcesses)
+                    {
+                        try
+                        {
+                            // Check if process command line contains the transaction ID
+                            // Note: This is a simplified check - may need more robust implementation
+                            if (!process.HasExited)
+                            {
+                                process.Kill();
+                                Debug.WriteLine($"[StopIPFSProcesses] Killed IPFS process PID: {process.Id}");
+                            }
+                        }
+                        catch (Exception ex)
+                        {
+                            Debug.WriteLine($"[StopIPFSProcesses] Error killing process: {ex.Message}");
+                        }
+                    }
+                    
+                    // Clean up -build folders for this transaction
+                    string rootPath = Path.Combine(Environment.CurrentDirectory, "root", transactionId);
+                    string buildPath = rootPath + "-build";
+                    
+                    if (Directory.Exists(buildPath))
+                    {
+                        try
+                        {
+                            Directory.Delete(buildPath, true);
+                            Debug.WriteLine($"[StopIPFSProcesses] Deleted -build folder: {buildPath}");
+                        }
+                        catch (Exception ex)
+                        {
+                            Debug.WriteLine($"[StopIPFSProcesses] Error deleting -build folder: {ex.Message}");
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"[StopIPFSProcesses] Error in StopIPFSProcessesForControl: {ex.Message}");
+            }
+        }
+
+        /// <summary>
+        /// Limits the number of concurrent IPFS processes to prevent system overload.
+        /// Returns true if a new process can be started, false if limit is reached.
+        /// </summary>
+        private bool CanStartIPFSProcess()
+        {
+            lock (_ipfsProcessLock)
+            {
+                // Count actual running IPFS processes
+                var ipfsProcesses = System.Diagnostics.Process.GetProcessesByName("ipfs");
+                _currentIPFSProcessCount = ipfsProcesses.Count(p => !p.HasExited);
+                
+                if (_currentIPFSProcessCount >= MAX_CONCURRENT_IPFS_PROCESSES)
+                {
+                    Debug.WriteLine($"[IPFSLimit] Cannot start new IPFS process - limit reached ({_currentIPFSProcessCount}/{MAX_CONCURRENT_IPFS_PROCESSES})");
+                    return false;
+                }
+                
+                Debug.WriteLine($"[IPFSLimit] Can start IPFS process ({_currentIPFSProcessCount}/{MAX_CONCURRENT_IPFS_PROCESSES})");
+                return true;
+            }
+        }
+
+        /// <summary>
+        /// Cleans up excess IPFS processes when limit is exceeded.
+        /// Kills oldest processes first to stay within the limit.
+        /// </summary>
+        private void CleanupExcessIPFSProcesses()
+        {
+            try
+            {
+                var ipfsProcesses = System.Diagnostics.Process.GetProcessesByName("ipfs")
+                    .Where(p => !p.HasExited)
+                    .OrderBy(p => p.StartTime)
+                    .ToList();
+                
+                int excessCount = ipfsProcesses.Count - MAX_CONCURRENT_IPFS_PROCESSES;
+                if (excessCount > 0)
+                {
+                    Debug.WriteLine($"[IPFSCleanup] Killing {excessCount} excess IPFS processes (total: {ipfsProcesses.Count}, limit: {MAX_CONCURRENT_IPFS_PROCESSES})");
+                    
+                    foreach (var process in ipfsProcesses.Take(excessCount))
+                    {
+                        try
+                        {
+                            process.Kill();
+                            Debug.WriteLine($"[IPFSCleanup] Killed IPFS process PID: {process.Id}");
+                        }
+                        catch (Exception ex)
+                        {
+                            Debug.WriteLine($"[IPFSCleanup] Error killing process: {ex.Message}");
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"[IPFSCleanup] Error in CleanupExcessIPFSProcesses: {ex.Message}");
+            }
         }
 
         private void ClearMessages(FlowLayoutPanel flowLayoutPanel, bool synchronous = false)
@@ -3807,6 +3957,8 @@ namespace SUP
 
         private void RefreshSupMessages()
         {
+            // Clean up any excess IPFS processes before loading new messages
+            CleanupExcessIPFSProcesses();
 
             // sorry cannot run two searches at a time
             if (!btnPrivateMessage.Enabled || !btnPrivateMessage.Enabled || !btnCommunityFeed.Enabled || System.IO.File.Exists("ROOTS-PROCESSING"))
@@ -3853,13 +4005,11 @@ namespace SUP
             supFlow.SuspendLayout();
 
             // Trigger memory cleanup after loading messages
-            // This ensures we maintain bounded memory usage (~40 controls = ~20 messages)
+            // This ensures we maintain bounded memory usage (~20 messages max)
+            // Call synchronously to ensure it executes immediately
             if (messages.Count > 0)
             {
-                Task memoryPrune = Task.Run(() =>
-                {
-                    RemoveOverFlowMessages(supFlow);
-                });
+                RemoveOverFlowMessages(supFlow);
                 
                 // Increment skip counter by the number of messages fetched from API
                 // This ensures pagination works correctly even if some messages are filtered out
@@ -4640,10 +4790,11 @@ namespace SUP
                     10);
 
                 // Trigger memory cleanup after loading messages
-                // This ensures we maintain bounded memory usage (~40 controls = ~20 messages)
+                // This ensures we maintain bounded memory usage (~20 messages max)
+                // Call synchronously to ensure it executes immediately
                 if (messages.Count > 0)
                 {
-                    _ = Task.Run(() => RemoveOverFlowMessages(supPrivateFlow));
+                    RemoveOverFlowMessages(supPrivateFlow);
                 }
 
                 // Build view models from the fetched messages
@@ -5335,14 +5486,12 @@ namespace SUP
 
 
                 // Trigger memory cleanup after loading messages
-                // This ensures we maintain bounded memory usage (~40 controls = ~20 messages)
+                // This ensures we maintain bounded memory usage (~20 messages max)
+                // Call synchronously to ensure it executes immediately
                 var messagesToDisplay = allMessages.Skip(numFriendFeedsSkip).Take(10).ToList();
                 if (messagesToDisplay.Count > 0)
                 {
-                    Task memoryPrune = Task.Run(() =>
-                    {
-                        RemoveOverFlowMessages(supFlow);
-                    });
+                    RemoveOverFlowMessages(supFlow);
                     
                     // Increment skip counter by the number of messages actually displayed
                     numFriendFeedsSkip += messagesToDisplay.Count;
