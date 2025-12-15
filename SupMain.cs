@@ -263,6 +263,7 @@ namespace SUP
             if (supPrivateFlow.VerticalScroll.Value + supPrivateFlow.ClientSize.Height >= supPrivateFlow.VerticalScroll.Maximum - 50)
             {
                 int startNum = numPrivateMessagesDisplayed;
+                _loadingOlderMessages = true; // Set flag for scroll direction
                 // Load next batch of messages
                 RefreshPrivateSupMessages();
 
@@ -276,8 +277,25 @@ namespace SUP
                 //     });
                 // }
             }
-            // Note: Removed scroll-up handler - private messages are append-only
-            // Scrolling up just navigates existing messages, no need to reload
+            // Scroll up to load newer messages - now implemented like public messages
+            // Trigger when near top (within 50 pixels)
+            else if (supPrivateFlow.VerticalScroll.Value <= 50 && numPrivateMessagesDisplayed > 0)
+            {
+                // Clear messages and reload from beginning to show newer messages
+                _loadingOlderMessages = false; // Set flag for scroll direction
+                this.Invoke((MethodInvoker)delegate
+                {
+                    ClearMessages(supPrivateFlow, synchronous: true);
+                });
+                
+                // Reset counters to start from beginning
+                numPrivateMessagesDisplayed = 0;
+                _loadedPrivateMessages.Clear();
+                _renderedPrivateMessageIds.Clear();
+                
+                // Load first batch of messages
+                RefreshPrivateSupMessages();
+            }
         }
 
         private void SupMaincs_Load(object sender, EventArgs e)
@@ -5635,7 +5653,7 @@ namespace SUP
 
                                     FoundINQControl foundObject = new FoundINQControl(_transactionId, profileowner, testnet);
                                     foundObject.Margin = new Padding(20, 7, 8, 7);
-                                    supFlow.Controls.Add(foundObject);
+                                    AddMessageControl(supFlow, foundObject);
                                 });
                             }
                         }
@@ -5697,7 +5715,7 @@ namespace SUP
                                     panel.Controls.Add(pictureBox);
                                     //pictures.Add(pictureBox);
 
-                                    this.supFlow.Controls.Add(panel);
+                                    AddMessageControl(supFlow, panel);
 
                                     Task.Run(() =>
                                     {
@@ -5785,7 +5803,7 @@ namespace SUP
 
                         this.Invoke((MethodInvoker)delegate
                         {
-                            supFlow.Controls.Add(padding);
+                            AddMessageControl(supFlow, padding);
                         });
 
 
@@ -5800,6 +5818,7 @@ namespace SUP
             this.BeginInvoke((MethodInvoker)delegate
             {
                 supFlow.ResumeLayout();
+                RemoveOverFlowMessages(supFlow); // Clean up excess controls after layout
                 btnCommunityFeed.Enabled = true;
             });
 
