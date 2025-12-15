@@ -3654,16 +3654,16 @@ namespace SUP
 
         /// <summary>
         /// Removes overflow messages from the flow panel to maintain bounded memory usage.
-        /// Keeps approximately 20 messages visible at a time.
+        /// Keeps approximately 200 controls visible at a time (roughly 40-50 messages with their UI elements).
         /// This provides smooth scrolling while preventing unbounded memory growth.
         /// Removes controls from the END (bottom) of the list, so the most recent messages at top stay visible.
         /// Also stops any IPFS processes associated with removed messages and cleans up -build folders.
         /// </summary>
         private void RemoveOverFlowMessages(FlowLayoutPanel flowLayoutPanel)
         {
-            // Target: Keep only ~20 messages max
-            // We need to be aggressive - remove ALL excess controls, not just 10 at a time
-            const int MAX_MESSAGES = 20;
+            // Target: Keep only ~200 controls max (roughly 40-50 messages)
+            // We need to be aggressive - remove ALL excess controls, not just a fixed count at a time
+            const int MAX_CONTROLS = 200;
             
             int controlCount = 0;
             this.Invoke((MethodInvoker)delegate
@@ -3671,18 +3671,18 @@ namespace SUP
                 controlCount = flowLayoutPanel.Controls.Count;
             });
             
-            Debug.WriteLine($"[RemoveOverFlowMessages] Current control count: {controlCount}, MAX_MESSAGES: {MAX_MESSAGES}");
+            Debug.WriteLine($"[RemoveOverFlowMessages] Current control count: {controlCount}, MAX_CONTROLS: {MAX_CONTROLS}");
             
-            // Only prune if we exceed the maximum messages
-            if (controlCount <= MAX_MESSAGES)
+            // Only prune if we exceed the maximum controls
+            if (controlCount <= MAX_CONTROLS)
             {
-                Debug.WriteLine($"[RemoveOverFlowMessages] Control count ({controlCount}) within limit ({MAX_MESSAGES}), no pruning needed");
+                Debug.WriteLine($"[RemoveOverFlowMessages] Control count ({controlCount}) within limit ({MAX_CONTROLS}), no pruning needed");
                 return;
             }
             
-            // Calculate how many to remove - ALL excess controls, not just 10
-            int excessCount = controlCount - MAX_MESSAGES;
-            Debug.WriteLine($"[RemoveOverFlowMessages] Control count ({controlCount}) exceeds limit ({MAX_MESSAGES}), removing ALL {excessCount} excess controls");
+            // Calculate how many to remove - ALL excess controls, not just a fixed amount
+            int excessCount = controlCount - MAX_CONTROLS;
+            Debug.WriteLine($"[RemoveOverFlowMessages] Control count ({controlCount}) exceeds limit ({MAX_CONTROLS}), removing ALL {excessCount} excess controls");
             MemoryDiagnostics.LogMemoryUsage("Before removing overflow controls");
             
             // Remove the controls based on scroll direction
