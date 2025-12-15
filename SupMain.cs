@@ -220,9 +220,6 @@ namespace SUP
                 // This prevents unnecessary refresh when user is already at the newest messages
                 // Background thread will handle new message notifications separately
             }
-                // At top of scroll - Community messages also just stop here
-                // No automatic reload - user must manually refresh if needed
-            }
 
         }
 
