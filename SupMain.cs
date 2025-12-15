@@ -100,6 +100,12 @@ namespace SUP
         /// false = loading NEWER messages (add to top, remove from bottom)
         /// </summary>
         private bool _loadingOlderMessages = false;
+        
+        /// <summary>
+        /// Prevents infinite reload loops when scroll position is at trigger zones (top/bottom).
+        /// Set to true when loading messages, back to false after scroll position is adjusted.
+        /// </summary>
+        private bool _isLoadingMessages = false;
 
         public SupMain()
         {
@@ -133,6 +139,9 @@ namespace SUP
         {
 
             if (btnCommunityFeed.Enabled == false || btnPublicMessage.Enabled == false || btnPrivateMessage.Enabled == false) { return; }
+            
+            // Prevent infinite reload loops
+            if (_isLoadingMessages) { return; }
 
             if (btnPrivateMessage.BackColor == System.Drawing.Color.Blue) { btnPrivateMessage.BackColor = System.Drawing.Color.White; btnPrivateMessage.ForeColor = System.Drawing.Color.Black; btnPublicMessage.BackColor = System.Drawing.Color.Blue; btnPublicMessage.ForeColor = System.Drawing.Color.Yellow; }
 
@@ -147,11 +156,26 @@ namespace SUP
 
                 if (btnPublicMessage.BackColor == System.Drawing.Color.Blue)
                 {
+                    _isLoadingMessages = true; // Prevent re-entry
                     _loadingOlderMessages = true; // Scrolling DOWN - loading OLDER messages
                     RefreshSupMessages();
 
-                    // Don't force scroll position - let user stay where they scrolled
-                    // numMessagesSkip is incremented inside RefreshSupMessages based on messages fetched
+                    // Move scroll up slightly to prevent immediate re-trigger
+                    this.BeginInvoke((MethodInvoker)delegate
+                    {
+                        try
+                        {
+                            if (supFlow != null && supFlow.VerticalScroll != null && supFlow.VerticalScroll.Maximum > 100)
+                            {
+                                supFlow.AutoScrollPosition = new Point(0, supFlow.VerticalScroll.Maximum - 100);
+                            }
+                        }
+                        catch { }
+                        finally
+                        {
+                            _isLoadingMessages = false; // Allow future loads
+                        }
+                    });
 
                 }
                 else
@@ -159,11 +183,26 @@ namespace SUP
 
                     if (btnCommunityFeed.BackColor == System.Drawing.Color.Blue)
                     {
+                        _isLoadingMessages = true; // Prevent re-entry
                         _loadingOlderMessages = true; // Scrolling DOWN - loading OLDER messages
                         RefreshCommunityMessages();
 
-                        // Don't force scroll position - let user stay where they scrolled
-                        // numFriendFeedsSkip is incremented inside RefreshCommunityMessages based on messages fetched
+                        // Move scroll up slightly to prevent immediate re-trigger
+                        this.BeginInvoke((MethodInvoker)delegate
+                        {
+                            try
+                            {
+                                if (supFlow != null && supFlow.VerticalScroll != null && supFlow.VerticalScroll.Maximum > 100)
+                                {
+                                    supFlow.AutoScrollPosition = new Point(0, supFlow.VerticalScroll.Maximum - 100);
+                                }
+                            }
+                            catch { }
+                            finally
+                            {
+                                _isLoadingMessages = false; // Allow future loads
+                            }
+                        });
                     }
                 }
             }
@@ -186,6 +225,7 @@ namespace SUP
 
                     if (numMessagesSkip > 0)
                     {
+                        _isLoadingMessages = true; // Prevent re-entry
                         _loadingOlderMessages = false; // Scrolling UP - loading NEWER messages
                         // Clear existing messages before loading older ones (synchronously to avoid race conditions)
                         ClearMessages(supFlow, synchronous: true);
@@ -195,20 +235,24 @@ namespace SUP
                         
                         RefreshSupMessages();
                         
-                        // Set scroll position after messages are loaded
+                        // Set scroll position after messages are loaded - move down to prevent immediate re-trigger
                         // Add null check to prevent NullReferenceException
-                        this.Invoke((MethodInvoker)delegate
+                        this.BeginInvoke((MethodInvoker)delegate
                         {
                             try
                             {
                                 if (supFlow != null && supFlow.VerticalScroll != null)
                                 {
-                                    supFlow.AutoScrollPosition = new Point(0, supFlow.VerticalScroll.Maximum - 10);
+                                    supFlow.AutoScrollPosition = new Point(0, Math.Max(100, supFlow.VerticalScroll.Maximum - supFlow.ClientSize.Height));
                                 }
                             }
                             catch (Exception ex)
                             {
                                 Debug.WriteLine($"[supFlow_MouseWheel] Error setting scroll position: {ex.Message}");
+                            }
+                            finally
+                            {
+                                _isLoadingMessages = false; // Allow future loads
                             }
                         });
                     }
@@ -220,6 +264,7 @@ namespace SUP
                     {
                         if (numFriendFeedsSkip > 0)
                         {
+                            _isLoadingMessages = true; // Prevent re-entry
                             _loadingOlderMessages = false; // Scrolling UP - loading NEWER messages
                             // Clear existing messages before loading older ones (synchronously to avoid race conditions)
                             ClearMessages(supFlow, synchronous: true);
@@ -229,20 +274,24 @@ namespace SUP
                             
                             RefreshCommunityMessages();
                             
-                            // Set scroll position after messages are loaded
+                            // Set scroll position after messages are loaded - move down to prevent immediate re-trigger
                             // Add null check to prevent NullReferenceException
-                            this.Invoke((MethodInvoker)delegate
+                            this.BeginInvoke((MethodInvoker)delegate
                             {
                                 try
                                 {
                                     if (supFlow != null && supFlow.VerticalScroll != null)
                                     {
-                                        supFlow.AutoScrollPosition = new Point(0, supFlow.VerticalScroll.Maximum - 10);
+                                        supFlow.AutoScrollPosition = new Point(0, Math.Max(100, supFlow.VerticalScroll.Maximum - supFlow.ClientSize.Height));
                                     }
                                 }
                                 catch (Exception ex)
                                 {
                                     Debug.WriteLine($"[supFlow_MouseWheel] Error setting scroll position: {ex.Message}");
+                                }
+                                finally
+                                {
+                                    _isLoadingMessages = false; // Allow future loads
                                 }
                             });
                         }
@@ -255,6 +304,9 @@ namespace SUP
         private void supPrivateFlow_MouseWheel(object sender, MouseEventArgs e)
         {
             if (btnCommunityFeed.Enabled == false || btnPublicMessage.Enabled == false || btnPrivateMessage.Enabled == false) { return; }
+            
+            // Prevent infinite reload loops
+            if (_isLoadingMessages) { return; }
 
             if (btnPublicMessage.BackColor == System.Drawing.Color.Blue) { btnPublicMessage.BackColor = System.Drawing.Color.White; btnPublicMessage.ForeColor = System.Drawing.Color.Black; btnPrivateMessage.BackColor = System.Drawing.Color.Blue; btnPrivateMessage.ForeColor = System.Drawing.Color.Yellow; }
 
@@ -262,25 +314,34 @@ namespace SUP
             // Only trigger load when very close to bottom (within 50 pixels)
             if (supPrivateFlow.VerticalScroll.Value + supPrivateFlow.ClientSize.Height >= supPrivateFlow.VerticalScroll.Maximum - 50)
             {
+                _isLoadingMessages = true; // Prevent re-entry
                 int startNum = numPrivateMessagesDisplayed;
                 _loadingOlderMessages = true; // Set flag for scroll direction
                 // Load next batch of messages
                 RefreshPrivateSupMessages();
 
-                // Don't adjust scroll position - let natural scrolling work
-                // The scroll adjustment was causing jumpiness
-                // if (numPrivateMessagesDisplayed == startNum + 10)
-                // {
-                //     this.Invoke((MethodInvoker)delegate
-                //     {
-                //         supPrivateFlow.AutoScrollPosition = new Point(0, 10);
-                //     });
-                // }
+                // Move scroll up slightly to prevent immediate re-trigger
+                this.BeginInvoke((MethodInvoker)delegate
+                {
+                    try
+                    {
+                        if (supPrivateFlow != null && supPrivateFlow.VerticalScroll != null && supPrivateFlow.VerticalScroll.Maximum > 100)
+                        {
+                            supPrivateFlow.AutoScrollPosition = new Point(0, supPrivateFlow.VerticalScroll.Maximum - 100);
+                        }
+                    }
+                    catch { }
+                    finally
+                    {
+                        _isLoadingMessages = false; // Allow future loads
+                    }
+                });
             }
             // Scroll up to load newer messages - now implemented like public messages
             // Trigger when near top (within 50 pixels)
             else if (supPrivateFlow.VerticalScroll.Value <= 50 && numPrivateMessagesDisplayed > 0)
             {
+                _isLoadingMessages = true; // Prevent re-entry
                 // Clear messages and reload from beginning to show newer messages
                 _loadingOlderMessages = false; // Set flag for scroll direction
                 this.Invoke((MethodInvoker)delegate
@@ -295,6 +356,23 @@ namespace SUP
                 
                 // Load first batch of messages
                 RefreshPrivateSupMessages();
+                
+                // Move scroll down to prevent immediate re-trigger
+                this.BeginInvoke((MethodInvoker)delegate
+                {
+                    try
+                    {
+                        if (supPrivateFlow != null && supPrivateFlow.VerticalScroll != null)
+                        {
+                            supPrivateFlow.AutoScrollPosition = new Point(0, Math.Max(100, supPrivateFlow.VerticalScroll.Maximum - supPrivateFlow.ClientSize.Height));
+                        }
+                    }
+                    catch { }
+                    finally
+                    {
+                        _isLoadingMessages = false; // Allow future loads
+                    }
+                });
             }
         }
 
