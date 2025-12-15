@@ -3657,7 +3657,9 @@ namespace SUP
         /// Keeps approximately 200 controls visible at a time (roughly 40-50 messages with their UI elements).
         /// This provides smooth scrolling while preventing unbounded memory growth.
         /// Removes controls from the END (bottom) of the list, so the most recent messages at top stay visible.
-        /// Also stops any IPFS processes associated with removed messages and cleans up -build folders.
+        /// 
+        /// NOTE: Does NOT stop IPFS processes - CleanupExcessIPFSProcesses() handles that separately.
+        /// This allows IPFS downloads to complete even if messages scroll out of view.
         /// </summary>
         private void RemoveOverFlowMessages(FlowLayoutPanel flowLayoutPanel)
         {
@@ -3717,56 +3719,60 @@ namespace SUP
                     
                     Debug.WriteLine($"[RemoveOverFlowMessages] Removed {removeCount} controls from top, {flowLayoutPanel.Controls.Count} remaining");
                     
-                    // Dispose controls after removal to free memory (do this after resume to avoid UI delay)
-                    Task.Run(() =>
+                    // Dispose controls after removal to free memory
+                    // MUST be done on UI thread since these are WinForms controls
+                    foreach (Control control in controlsToRemove)
                     {
-                        foreach (Control control in controlsToRemove)
-                        {
-                            try 
-                            { 
-                                // Stop any IPFS processes associated with this control
-                                StopIPFSProcessesForControl(control);
-                                
-                                // Recursively dispose child controls first
-                                if (control.HasChildren)
+                        try 
+                        { 
+                            // NOTE: Do NOT stop IPFS processes here - let CleanupExcessIPFSProcesses() handle that
+                            // Only that method should kill IPFS processes based on the 22 limit
+                            // Killing IPFS for every removed message causes downloads to never complete
+                            
+                            // Recursively dispose child controls first
+                            if (control.HasChildren)
+                            {
+                                List<Control> children = control.Controls.Cast<Control>().ToList();
+                                foreach (Control child in children)
                                 {
-                                    foreach (Control child in control.Controls)
+                                    try 
+                                    { 
+                                        child.Dispose(); 
+                                    } 
+                                    catch (Exception childEx) 
                                     {
-                                        try 
-                                        { 
-                                            StopIPFSProcessesForControl(child);
-                                            child.Dispose(); 
-                                        } 
-                                        catch { }
+                                        Debug.WriteLine($"[RemoveOverFlowMessages] Child disposal error: {childEx.Message}");
                                     }
                                 }
-                                control.Dispose(); 
-                            } 
-                            catch (Exception disposeEx) 
-                            {
-                                Debug.WriteLine($"[RemoveOverFlowMessages] Disposal error: {disposeEx.Message}");
                             }
-                        }
-                        
-                        // Force garbage collection after significant cleanup (on background thread to avoid UI freeze)
-                        Task.Run(() =>
+                            control.Dispose(); 
+                        } 
+                        catch (Exception disposeEx) 
                         {
-                            try
-                            {
-                                // Request GC of gen 0 and 1 first (faster, less disruptive)
-                                GC.Collect(1, GCCollectionMode.Optimized, false);
-                                GC.WaitForPendingFinalizers();
-                                // Then do a full collection
-                                GC.Collect();
-                                
-                                Debug.WriteLine("[RemoveOverFlowMessages] Completed control disposal and GC");
-                                MemoryDiagnostics.LogMemoryUsage("After removing overflow controls and GC");
-                            }
-                            catch (Exception gcEx)
-                            {
-                                Debug.WriteLine($"[RemoveOverFlowMessages] GC error: {gcEx.Message}");
-                            }
-                        });
+                            Debug.WriteLine($"[RemoveOverFlowMessages] Disposal error: {disposeEx.Message}");
+                        }
+                    }
+                    
+                    Debug.WriteLine("[RemoveOverFlowMessages] Completed control disposal");
+                    MemoryDiagnostics.LogMemoryUsage("After removing overflow controls");
+                    
+                    // Force garbage collection on background thread to avoid UI freeze
+                    Task.Run(() =>
+                    {
+                        try
+                        {
+                            // Request GC of gen 0 and 1 first (faster, less disruptive)
+                            GC.Collect(1, GCCollectionMode.Optimized, false);
+                            GC.WaitForPendingFinalizers();
+                            // Then do a full collection
+                            GC.Collect();
+                            
+                            Debug.WriteLine("[RemoveOverFlowMessages] Completed GC");
+                        }
+                        catch (Exception gcEx)
+                        {
+                            Debug.WriteLine($"[RemoveOverFlowMessages] GC error: {gcEx.Message}");
+                        }
                     });
                 }
                 catch (Exception ex)
@@ -3779,79 +3785,12 @@ namespace SUP
         }
 
         /// <summary>
-        /// Stops IPFS processes associated with a control and cleans up -build folders.
-        /// This prevents resource leaks and system overload from too many simultaneous IPFS processes.
+        /// NOTE: IPFS process cleanup removed from here.
+        /// IPFS processes should NOT be killed when messages are removed from view.
+        /// Only CleanupExcessIPFSProcesses() should kill IPFS processes, and only when the 22 limit is exceeded.
+        /// This allows IPFS downloads to complete even if the message scrolls out of view.
+        /// -build folder cleanup is also handled separately, not tied to message removal.
         /// </summary>
-        private void StopIPFSProcessesForControl(Control control)
-        {
-            try
-            {
-                // Look for transaction IDs or IPFS hashes in the control's Tag or related data
-                string transactionId = null;
-                
-                // Check control's Tag for transaction ID
-                if (control.Tag != null && control.Tag is string tagStr)
-                {
-                    transactionId = tagStr;
-                }
-                
-                // Check if control has a Name that contains a transaction ID (64-char hex)
-                if (string.IsNullOrEmpty(transactionId) && !string.IsNullOrEmpty(control.Name))
-                {
-                    var match = System.Text.RegularExpressions.Regex.Match(control.Name, @"\b[0-9a-f]{64}\b");
-                    if (match.Success)
-                    {
-                        transactionId = match.Value;
-                    }
-                }
-                
-                if (!string.IsNullOrEmpty(transactionId))
-                {
-                    Debug.WriteLine($"[StopIPFSProcesses] Stopping IPFS processes for transaction: {transactionId}");
-                    
-                    // Find and kill any IPFS processes related to this transaction
-                    var ipfsProcesses = System.Diagnostics.Process.GetProcessesByName("ipfs");
-                    foreach (var process in ipfsProcesses)
-                    {
-                        try
-                        {
-                            // Check if process command line contains the transaction ID
-                            // Note: This is a simplified check - may need more robust implementation
-                            if (!process.HasExited)
-                            {
-                                process.Kill();
-                                Debug.WriteLine($"[StopIPFSProcesses] Killed IPFS process PID: {process.Id}");
-                            }
-                        }
-                        catch (Exception ex)
-                        {
-                            Debug.WriteLine($"[StopIPFSProcesses] Error killing process: {ex.Message}");
-                        }
-                    }
-                    
-                    // Clean up -build folders for this transaction
-                    string rootPath = Path.Combine(Environment.CurrentDirectory, "root", transactionId);
-                    string buildPath = rootPath + "-build";
-                    
-                    if (Directory.Exists(buildPath))
-                    {
-                        try
-                        {
-                            Directory.Delete(buildPath, true);
-                            Debug.WriteLine($"[StopIPFSProcesses] Deleted -build folder: {buildPath}");
-                        }
-                        catch (Exception ex)
-                        {
-                            Debug.WriteLine($"[StopIPFSProcesses] Error deleting -build folder: {ex.Message}");
-                        }
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                Debug.WriteLine($"[StopIPFSProcesses] Error in StopIPFSProcessesForControl: {ex.Message}");
-            }
-        }
 
         /// <summary>
         /// Limits the number of concurrent IPFS processes to prevent system overload.
