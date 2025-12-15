@@ -3791,7 +3791,7 @@ namespace SUP
                 // Use Invoke for synchronous execution when we need to ensure clearing is complete
                 if (this.InvokeRequired)
                 {
-                    this.Invoke((MethodInvoker)clearAction);
+                    this.Invoke(new MethodInvoker(clearAction));
                 }
                 else
                 {
@@ -3801,7 +3801,7 @@ namespace SUP
             else
             {
                 // Use BeginInvoke for asynchronous execution
-                this.BeginInvoke((MethodInvoker)clearAction);
+                this.BeginInvoke(new MethodInvoker(clearAction));
             }
         }
 
