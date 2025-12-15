@@ -3662,9 +3662,8 @@ namespace SUP
         private void RemoveOverFlowMessages(FlowLayoutPanel flowLayoutPanel)
         {
             // Target: Keep only ~20 messages max
-            // We need to be more aggressive - count actual controls and prune when we exceed
+            // We need to be aggressive - remove ALL excess controls, not just 10 at a time
             const int MAX_MESSAGES = 20;
-            const int REMOVE_COUNT = 10; // Remove this many when threshold exceeded
             
             int controlCount = 0;
             this.Invoke((MethodInvoker)delegate
@@ -3681,7 +3680,9 @@ namespace SUP
                 return;
             }
             
-            Debug.WriteLine($"[RemoveOverFlowMessages] Control count ({controlCount}) exceeds limit ({MAX_MESSAGES}), removing oldest {REMOVE_COUNT} controls from bottom");
+            // Calculate how many to remove - ALL excess controls, not just 10
+            int excessCount = controlCount - MAX_MESSAGES;
+            Debug.WriteLine($"[RemoveOverFlowMessages] Control count ({controlCount}) exceeds limit ({MAX_MESSAGES}), removing ALL {excessCount} excess controls");
             MemoryDiagnostics.LogMemoryUsage("Before removing overflow controls");
             
             // Remove the controls based on scroll direction
@@ -3697,8 +3698,8 @@ namespace SUP
                     List<Control> controlsToRemove = new List<Control>();
                     
                     // When scrolling down (loading older), new messages added at bottom, remove from top
-                    // Get first N controls (newest/most recent messages) to remove
-                    int removeCount = Math.Min(REMOVE_COUNT, flowLayoutPanel.Controls.Count);
+                    // Remove ALL excess controls, not just a fixed count
+                    int removeCount = Math.Min(excessCount, flowLayoutPanel.Controls.Count);
                     
                     for (int i = 0; i < removeCount; i++)
                     {
@@ -3894,29 +3895,56 @@ namespace SUP
                 int excessCount = ipfsProcesses.Count - MAX_CONCURRENT_IPFS_PROCESSES;
                 if (excessCount > 0)
                 {
-                    Debug.WriteLine($"[IPFSCleanup] Killing {excessCount} OLDEST processes (keeping {MAX_CONCURRENT_IPFS_PROCESSES} newest)");
+                    Debug.WriteLine($"[IPFSCleanup] AGGRESSIVE CLEANUP: Killing ALL {excessCount} OLDEST processes (keeping only {MAX_CONCURRENT_IPFS_PROCESSES} newest)");
                     
-                    // Kill only the OLDEST processes (first excessCount in the ordered list)
+                    // Kill ALL excess processes, not just some
                     var processesToKill = ipfsProcesses.Take(excessCount).ToList();
+                    int killedCount = 0;
+                    
                     foreach (var process in processesToKill)
                     {
                         try
                         {
-                            Debug.WriteLine($"[IPFSCleanup] Killing oldest IPFS process PID: {process.Id}, StartTime: {process.StartTime}");
-                            process.Kill();
-                            Debug.WriteLine($"[IPFSCleanup] Successfully killed IPFS process PID: {process.Id}");
+                            if (!process.HasExited)
+                            {
+                                Debug.WriteLine($"[IPFSCleanup] Killing oldest IPFS process PID: {process.Id}, StartTime: {process.StartTime}");
+                                process.Kill();
+                                process.WaitForExit(1000); // Wait up to 1 second for clean exit
+                                killedCount++;
+                                Debug.WriteLine($"[IPFSCleanup] Successfully killed IPFS process PID: {process.Id}");
+                            }
                         }
                         catch (Exception ex)
                         {
                             Debug.WriteLine($"[IPFSCleanup] Error killing process {process.Id}: {ex.Message}");
                         }
+                        finally
+                        {
+                            try { process.Dispose(); } catch { }
+                        }
                     }
                     
-                    Debug.WriteLine($"[IPFSCleanup] Cleanup complete. {ipfsProcesses.Count - excessCount} processes should remain running");
+                    // Update the counter based on actual remaining processes
+                    lock (_ipfsProcessLock)
+                    {
+                        _currentIPFSProcessCount = ipfsProcesses.Count - killedCount;
+                        Debug.WriteLine($"[IPFSCleanup] Cleanup complete. Killed {killedCount} processes. Updated counter to {_currentIPFSProcessCount}");
+                    }
                 }
                 else
                 {
-                    Debug.WriteLine($"[IPFSCleanup] No cleanup needed - within limit");
+                    // Still update counter to match reality
+                    lock (_ipfsProcessLock)
+                    {
+                        _currentIPFSProcessCount = ipfsProcesses.Count;
+                        Debug.WriteLine($"[IPFSCleanup] No cleanup needed - within limit. Updated counter to {_currentIPFSProcessCount}");
+                    }
+                }
+                
+                // Dispose all process objects
+                foreach (var p in ipfsProcesses)
+                {
+                    try { p.Dispose(); } catch { }
                 }
             }
             catch (Exception ex)
