@@ -6458,7 +6458,14 @@ namespace SUP
 
                 try { await webviewer.EnsureCoreWebView2Async(); } catch { }
                 // immediately load Progress content into the WebView2 control
-                try { webviewer.CoreWebView2.Navigate(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + @"\includes\loading.html"); } catch { }
+                try 
+                { 
+                    if (webviewer?.CoreWebView2 != null)
+                    {
+                        webviewer.CoreWebView2.Navigate(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + @"\includes\loading.html");
+                    }
+                } 
+                catch { }
 
 
                 if (!videopath.ToLower().StartsWith("http"))
@@ -6616,7 +6623,14 @@ namespace SUP
 
                                     System.IO.File.WriteAllText(viewerPath, htmlstring);
 
-                                    try { webviewer.CoreWebView2.Navigate(viewerPath); } catch { }
+                                    try 
+                                    { 
+                                        if (webviewer?.CoreWebView2 != null)
+                                        {
+                                            webviewer.CoreWebView2.Navigate(viewerPath);
+                                        }
+                                    } 
+                                    catch { }
 
 
                                 }));
@@ -6625,7 +6639,14 @@ namespace SUP
                             }
                             else
                             {
-                                try { webviewer.CoreWebView2.Navigate(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + @"\includes\notfound.html"); } catch { }
+                                try 
+                                { 
+                                    if (webviewer?.CoreWebView2 != null)
+                                    {
+                                        webviewer.CoreWebView2.Navigate(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + @"\includes\notfound.html");
+                                    }
+                                } 
+                                catch { }
 
                             }
 
@@ -6657,7 +6678,14 @@ namespace SUP
 
 
                         System.IO.File.WriteAllText(viewerPath, htmlstring);
-                        try { webviewer.CoreWebView2.Navigate(viewerPath); } catch { }
+                        try 
+                        { 
+                            if (webviewer?.CoreWebView2 != null)
+                            {
+                                webviewer.CoreWebView2.Navigate(viewerPath);
+                            }
+                        } 
+                        catch { }
                     }
 
 
@@ -6672,7 +6700,14 @@ namespace SUP
                         videolocation = @"https://www.youtube.com/embed/" + match.Groups[1].Value;
                     }
 
-                    try { webviewer.CoreWebView2.Navigate(videolocation); } catch { }
+                    try 
+                    { 
+                        if (webviewer?.CoreWebView2 != null)
+                        {
+                            webviewer.CoreWebView2.Navigate(videolocation);
+                        }
+                    } 
+                    catch { }
                 }
 
 
