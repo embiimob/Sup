@@ -5801,6 +5801,21 @@ namespace SUP
             {
                 supFlow.ResumeLayout();
                 RemoveOverFlowMessages(supFlow); // Clean up excess controls after layout
+                
+                // Reset scroll position to top when loading community feed
+                // Ensures user starts at newest messages every time
+                try
+                {
+                    if (supFlow != null && supFlow.VerticalScroll != null)
+                    {
+                        supFlow.AutoScrollPosition = new Point(0, 0);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Debug.WriteLine($"[CommunityFeed] Error resetting scroll position: {ex.Message}");
+                }
+                
                 btnCommunityFeed.Enabled = true;
                 _isLoadingMessages = false; // Reset flag to allow subsequent loads
             });
@@ -7375,10 +7390,29 @@ namespace SUP
 
         private void RefreshCommunityMessages_Click(object sender, EventArgs e)
         {
-            if (btnCommunityFeed.BackColor != Color.Blue) { ClearMessages(supFlow); }
+            // Always clear and rebuild when activating community feed
+            // This ensures:
+            // 1. Updated friends list (after adding/removing friends)
+            // 2. Fresh message load from all followed users
+            // 3. Scroll position reset to top
+            if (btnCommunityFeed.BackColor != Color.Blue) 
+            { 
+                ClearMessages(supFlow); 
+            }
+            else
+            {
+                // Even if already active (blue), clear to force rebuild
+                // User may have removed a friend or visited another profile
+                ClearMessages(supFlow);
+            }
             
             // Reset loading flag to allow community feed to load
             _isLoadingMessages = false;
+            
+            // Reset skip counters to start from beginning
+            // This ensures we always start at the top when rebuilding
+            numFriendFeedsSkip = 0;
+            numFriendFeedsDisplayed = 0;
             
             btnCommunityFeed.BackColor = System.Drawing.Color.Blue; btnCommunityFeed.ForeColor = System.Drawing.Color.Yellow;
             RefreshCommunityMessages();
