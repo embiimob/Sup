@@ -135,17 +135,10 @@ namespace SUP
 
                 if (btnPublicMessage.BackColor == System.Drawing.Color.Blue)
                 {
-                    int startSkip = numMessagesSkip;
                     RefreshSupMessages();
-                    
-                    // Update skip counter by batch size if messages were loaded
-                    if (numMessagesSkip == startSkip)
-                    {
-                        numMessagesSkip += 10; // Increment by batch size
-                    }
 
                     // Don't force scroll position - let user stay where they scrolled
-                    // Removed: supFlow.AutoScrollPosition = new Point(0, 10);
+                    // numMessagesSkip is incremented inside RefreshSupMessages based on messages fetched
 
                 }
                 else
@@ -153,17 +146,10 @@ namespace SUP
 
                     if (btnCommunityFeed.BackColor == System.Drawing.Color.Blue)
                     {
-                        int startSkip = numFriendFeedsSkip;
                         RefreshCommunityMessages();
-                        
-                        // Update skip counter by batch size if messages were loaded
-                        if (numFriendFeedsSkip == startSkip)
-                        {
-                            numFriendFeedsSkip += 10; // Increment by batch size
-                        }
 
                         // Don't force scroll position - let user stay where they scrolled
-                        // Removed: supFlow.AutoScrollPosition = new Point(0, 10);
+                        // numFriendFeedsSkip is incremented inside RefreshCommunityMessages based on messages fetched
                     }
                 }
             }
@@ -186,17 +172,18 @@ namespace SUP
 
                     if (numMessagesSkip > 0)
                     {
+                        // Clear existing messages before loading older ones
+                        ClearMessages(supFlow);
+                        
                         numMessagesSkip = numMessagesSkip - 20; 
                         if (numMessagesSkip < 0) { numMessagesSkip = 0; }
-                        else
-                        {
-                            RefreshSupMessages();
-                            this.Invoke((MethodInvoker)delegate
+                        
+                        RefreshSupMessages();
+                        this.Invoke((MethodInvoker)delegate
                         {
                             supFlow.AutoScrollPosition = new Point(0, supFlow.VerticalScroll.Maximum - 10);
 
                         });
-                        }
                     }
                 }
                 else
@@ -206,17 +193,18 @@ namespace SUP
                     {
                         if (numFriendFeedsSkip > 0)
                         {
+                            // Clear existing messages before loading older ones
+                            ClearMessages(supFlow);
+                            
                             numFriendFeedsSkip = numFriendFeedsSkip - 20; 
                             if (numFriendFeedsSkip < 0) { numFriendFeedsSkip = 0; }
-                            else
+                            
+                            RefreshCommunityMessages();
+                            this.Invoke((MethodInvoker)delegate
                             {
-                                RefreshCommunityMessages();
-                                this.Invoke((MethodInvoker)delegate
-                                {
-                                    supFlow.AutoScrollPosition = new Point(0, supFlow.VerticalScroll.Maximum - 10);
+                                supFlow.AutoScrollPosition = new Point(0, supFlow.VerticalScroll.Maximum - 10);
 
-                                });
-                            }
+                            });
                         }
                     }
                 }
@@ -3823,6 +3811,10 @@ namespace SUP
                 {
                     RemoveOverFlowMessages(supFlow);
                 });
+                
+                // Increment skip counter by the number of messages fetched from API
+                // This ensures pagination works correctly even if some messages are filtered out
+                numMessagesSkip += messages.Count;
             }
 
             numFriendFeedsDisplayed = 0;
@@ -5302,6 +5294,9 @@ namespace SUP
                     {
                         RemoveOverFlowMessages(supFlow);
                     });
+                    
+                    // Increment skip counter by the number of messages actually displayed
+                    numFriendFeedsSkip += messagesToDisplay.Count;
                 }
 
                 foreach (var message in messagesToDisplay)
