@@ -52,8 +52,10 @@ namespace SUP
         private bool dogActive;
         ObjectBrowserControl OBcontrol = new ObjectBrowserControl();
         private int numMessagesDisplayed;
+        private int numMessagesSkip; // Actual API skip value (always increments by batch size)
         private int numPrivateMessagesDisplayed;
         private int numFriendFeedsDisplayed;
+        private int numFriendFeedsSkip; // Actual API skip value for community feed
         FlowLayoutPanel supPrivateFlow = new FlowLayoutPanel();
         AudioPlayer audioPlayer = new AudioPlayer();
         
@@ -133,16 +135,17 @@ namespace SUP
 
                 if (btnPublicMessage.BackColor == System.Drawing.Color.Blue)
                 {
-                    int startNum = numMessagesDisplayed;
+                    int startSkip = numMessagesSkip;
                     RefreshSupMessages();
-
-                    if (numMessagesDisplayed == startNum + 10)
+                    
+                    // Update skip counter by batch size if messages were loaded
+                    if (numMessagesSkip == startSkip)
                     {
-                        this.Invoke((MethodInvoker)delegate
-                        {
-                            supFlow.AutoScrollPosition = new Point(0, 10);
-                        });
+                        numMessagesSkip += 10; // Increment by batch size
                     }
+
+                    // Don't force scroll position - let user stay where they scrolled
+                    // Removed: supFlow.AutoScrollPosition = new Point(0, 10);
 
                 }
                 else
@@ -150,16 +153,17 @@ namespace SUP
 
                     if (btnCommunityFeed.BackColor == System.Drawing.Color.Blue)
                     {
-                        int startNum = numFriendFeedsDisplayed;
+                        int startSkip = numFriendFeedsSkip;
                         RefreshCommunityMessages();
-
-                        if (numFriendFeedsDisplayed == startNum + 10)
+                        
+                        // Update skip counter by batch size if messages were loaded
+                        if (numFriendFeedsSkip == startSkip)
                         {
-                            this.Invoke((MethodInvoker)delegate
-                            {
-                                supFlow.AutoScrollPosition = new Point(0, 10);
-                            });
+                            numFriendFeedsSkip += 10; // Increment by batch size
                         }
+
+                        // Don't force scroll position - let user stay where they scrolled
+                        // Removed: supFlow.AutoScrollPosition = new Point(0, 10);
                     }
                 }
             }
@@ -180,9 +184,10 @@ namespace SUP
                 if (btnPublicMessage.BackColor == System.Drawing.Color.Blue)
                 {
 
-                    if (numMessagesDisplayed > 10)
+                    if (numMessagesSkip > 0)
                     {
-                        numMessagesDisplayed = numMessagesDisplayed - 20; if (numMessagesDisplayed < 0) { numMessagesDisplayed = 0; }
+                        numMessagesSkip = numMessagesSkip - 20; 
+                        if (numMessagesSkip < 0) { numMessagesSkip = 0; }
                         else
                         {
                             RefreshSupMessages();
@@ -199,9 +204,10 @@ namespace SUP
 
                     if (btnCommunityFeed.BackColor == System.Drawing.Color.Blue)
                     {
-                        if (numFriendFeedsDisplayed > 10)
+                        if (numFriendFeedsSkip > 0)
                         {
-                            numFriendFeedsDisplayed = numFriendFeedsDisplayed - 20; if (numFriendFeedsDisplayed < 0) { numFriendFeedsDisplayed = 0; }
+                            numFriendFeedsSkip = numFriendFeedsSkip - 20; 
+                            if (numFriendFeedsSkip < 0) { numFriendFeedsSkip = 0; }
                             else
                             {
                                 RefreshCommunityMessages();
@@ -378,8 +384,10 @@ namespace SUP
                         }
                         
                         numMessagesDisplayed = 0;
+                        numMessagesSkip = 0;
                         numPrivateMessagesDisplayed = 0;
                         numFriendFeedsDisplayed = 0;
+                        numFriendFeedsSkip = 0;
                         
                         // Clear private message state when switching profiles
                         _loadedPrivateMessages.Clear();
@@ -3636,6 +3644,7 @@ namespace SUP
         /// Removes overflow messages from the flow panel to maintain bounded memory usage.
         /// Keeps approximately 40 controls (representing ~20 messages with their UI elements) visible at a time.
         /// This provides smooth scrolling while preventing unbounded memory growth.
+        /// Removes controls from the END (bottom) of the list, so the most recent messages at top stay visible.
         /// </summary>
         private void RemoveOverFlowMessages(FlowLayoutPanel flowLayoutPanel)
         {
@@ -3657,10 +3666,10 @@ namespace SUP
                 return;
             }
             
-            Debug.WriteLine($"[RemoveOverFlowMessages] Control count ({controlCount}) exceeds limit ({MAX_CONTROLS}), removing oldest {REMOVE_COUNT} controls");
+            Debug.WriteLine($"[RemoveOverFlowMessages] Control count ({controlCount}) exceeds limit ({MAX_CONTROLS}), removing oldest {REMOVE_COUNT} controls from bottom");
             MemoryDiagnostics.LogMemoryUsage("Before removing overflow controls");
             
-            // Remove the oldest controls to free memory
+            // Remove the controls from the END (bottom) to preserve scroll position
             this.Invoke((MethodInvoker)delegate
             {
                 try
@@ -3670,9 +3679,11 @@ namespace SUP
                     
                     List<Control> controlsToRemove = new List<Control>();
                     
-                    // Get first N controls (oldest messages at top)
+                    // Get last N controls (oldest messages at bottom when scrolling down)
                     int removeCount = Math.Min(REMOVE_COUNT, flowLayoutPanel.Controls.Count);
-                    for (int i = 0; i < removeCount; i++)
+                    int startIndex = flowLayoutPanel.Controls.Count - removeCount;
+                    
+                    for (int i = startIndex; i < flowLayoutPanel.Controls.Count; i++)
                     {
                         controlsToRemove.Add(flowLayoutPanel.Controls[i]);
                     }
@@ -3686,7 +3697,7 @@ namespace SUP
                     // Resume layout once to apply all changes together
                     flowLayoutPanel.ResumeLayout(true);
                     
-                    Debug.WriteLine($"[RemoveOverFlowMessages] Removed {removeCount} controls, {flowLayoutPanel.Controls.Count} remaining");
+                    Debug.WriteLine($"[RemoveOverFlowMessages] Removed {removeCount} controls from bottom, {flowLayoutPanel.Controls.Count} remaining");
                     
                     // Dispose controls after removal to free memory (do this after resume to avoid UI delay)
                     Task.Run(() =>
@@ -3792,8 +3803,8 @@ namespace SUP
             if (profileURN.Links != null && profileURN.Links.Count > 0 && profileURN.Links[0].LinkData != null && 
                 !string.IsNullOrEmpty(profileURN.Links[0].LinkData.ToString()))
             {
-                Debug.WriteLine($"[SupMain.RefreshSupMessages] Fetching messages for address: {profileURN.Links[0].LinkData}");
-                try { messages = OBJState.GetPublicMessagesByAddress(profileURN.Links[0].LinkData.ToString(), mainnetLogin, mainnetPassword, mainnetURL, mainnetVersionByte, numMessagesDisplayed, 10); }
+                Debug.WriteLine($"[SupMain.RefreshSupMessages] Fetching messages for address: {profileURN.Links[0].LinkData}, skip: {numMessagesSkip}");
+                try { messages = OBJState.GetPublicMessagesByAddress(profileURN.Links[0].LinkData.ToString(), mainnetLogin, mainnetPassword, mainnetURL, mainnetVersionByte, numMessagesSkip, 10); }
                 catch { }
             }
             else
@@ -5197,7 +5208,10 @@ namespace SUP
 
 
             numMessagesDisplayed = 0;
+            numMessagesSkip = 0;
             numPrivateMessagesDisplayed = 0;
+            numFriendFeedsDisplayed = 0;
+            numFriendFeedsSkip = 0;
 
 
             string FriendsListPath = "";
@@ -5281,7 +5295,7 @@ namespace SUP
 
                 // Trigger memory cleanup after loading messages
                 // This ensures we maintain bounded memory usage (~40 controls = ~20 messages)
-                var messagesToDisplay = allMessages.Skip(numFriendFeedsDisplayed).Take(10).ToList();
+                var messagesToDisplay = allMessages.Skip(numFriendFeedsSkip).Take(10).ToList();
                 if (messagesToDisplay.Count > 0)
                 {
                     Task memoryPrune = Task.Run(() =>
@@ -5292,6 +5306,7 @@ namespace SUP
 
                 foreach (var message in messagesToDisplay)
                 {
+                    numFriendFeedsDisplayed++; // Track actual displayed count
                     var fromProp = message.GetType().GetProperty("FromAddress");
                     var toProp = message.GetType().GetProperty("ToAddress");
                     var messageProp = message.GetType().GetProperty("Message");
@@ -6906,8 +6921,10 @@ namespace SUP
         void profileImageClick(string ownerId)
         {
             numMessagesDisplayed = 0;
+            numMessagesSkip = 0;
             numPrivateMessagesDisplayed = 0;
             numFriendFeedsDisplayed = 0;
+            numFriendFeedsSkip = 0;
             if (btnCommunityFeed.BackColor == Color.Blue) { btnCommunityFeed.BackColor = Color.White; btnCommunityFeed.ForeColor = Color.Black; btnPublicMessage.BackColor = Color.Blue; btnPublicMessage.ForeColor = Color.Yellow; }
             friendClicked = true;
             MakeActiveProfile(ownerId);
@@ -7191,6 +7208,10 @@ namespace SUP
                 if (!((PictureBox)sender).ImageLocation.Contains("anon.png") || profileURN.Text != "anon")
                 {
                     numMessagesDisplayed = 0;
+                    numMessagesSkip = 0;
+                    numPrivateMessagesDisplayed = 0;
+                    numFriendFeedsDisplayed = 0;
+                    numFriendFeedsSkip = 0;
                     numFriendFeedsDisplayed = 0;
                     numPrivateMessagesDisplayed = 0;
                     btnCommunityFeed.BackColor = System.Drawing.Color.White;
@@ -7412,6 +7433,10 @@ namespace SUP
 
                 MakeActiveProfile(profileURN.Links[0].LinkData.ToString());
                 numMessagesDisplayed = 0;
+                numMessagesSkip = 0;
+                numPrivateMessagesDisplayed = 0;
+                numFriendFeedsDisplayed = 0;
+                numFriendFeedsSkip = 0;
                 btnCommunityFeed.BackColor = System.Drawing.Color.White;
                 btnCommunityFeed.ForeColor = System.Drawing.Color.Black;
             }
@@ -7579,6 +7604,10 @@ namespace SUP
             ClearMessages(supFlow);
             ClearMessages(supPrivateFlow);
             numMessagesDisplayed = 0;
+            numMessagesSkip = 0;
+            numPrivateMessagesDisplayed = 0;
+            numFriendFeedsDisplayed = 0;
+            numFriendFeedsSkip = 0;
             numPrivateMessagesDisplayed = 0;
             numFriendFeedsDisplayed = 0;
             lblOfficial.Visible = false;
