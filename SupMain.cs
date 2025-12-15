@@ -5898,6 +5898,7 @@ namespace SUP
                 supFlow.ResumeLayout();
                 RemoveOverFlowMessages(supFlow); // Clean up excess controls after layout
                 btnCommunityFeed.Enabled = true;
+                _isLoadingMessages = false; // Reset flag to allow subsequent loads
             });
 
 
@@ -7471,6 +7472,10 @@ namespace SUP
         private void RefreshCommunityMessages_Click(object sender, EventArgs e)
         {
             if (btnCommunityFeed.BackColor != Color.Blue) { ClearMessages(supFlow); }
+            
+            // Reset loading flag to allow community feed to load
+            _isLoadingMessages = false;
+            
             btnCommunityFeed.BackColor = System.Drawing.Color.Blue; btnCommunityFeed.ForeColor = System.Drawing.Color.Yellow;
             RefreshCommunityMessages();
 
