@@ -93,6 +93,13 @@ namespace SUP
         /// Retained across conversations to minimize redundant profile lookups.
         /// </summary>
         private Dictionary<string, string[]> _profileCache = new Dictionary<string, string[]>();
+        
+        /// <summary>
+        /// Tracks whether we're loading older messages (scroll down to bottom) or newer messages (scroll up to top).
+        /// true = loading OLDER messages (add to bottom, remove from top)
+        /// false = loading NEWER messages (add to top, remove from bottom)
+        /// </summary>
+        private bool _loadingOlderMessages = false;
 
         public SupMain()
         {
@@ -140,6 +147,7 @@ namespace SUP
 
                 if (btnPublicMessage.BackColor == System.Drawing.Color.Blue)
                 {
+                    _loadingOlderMessages = true; // Scrolling DOWN - loading OLDER messages
                     RefreshSupMessages();
 
                     // Don't force scroll position - let user stay where they scrolled
@@ -151,6 +159,7 @@ namespace SUP
 
                     if (btnCommunityFeed.BackColor == System.Drawing.Color.Blue)
                     {
+                        _loadingOlderMessages = true; // Scrolling DOWN - loading OLDER messages
                         RefreshCommunityMessages();
 
                         // Don't force scroll position - let user stay where they scrolled
@@ -177,6 +186,7 @@ namespace SUP
 
                     if (numMessagesSkip > 0)
                     {
+                        _loadingOlderMessages = false; // Scrolling UP - loading NEWER messages
                         // Clear existing messages before loading older ones (synchronously to avoid race conditions)
                         ClearMessages(supFlow, synchronous: true);
                         
@@ -210,6 +220,7 @@ namespace SUP
                     {
                         if (numFriendFeedsSkip > 0)
                         {
+                            _loadingOlderMessages = false; // Scrolling UP - loading NEWER messages
                             // Clear existing messages before loading older ones (synchronously to avoid race conditions)
                             ClearMessages(supFlow, synchronous: true);
                             
@@ -1624,8 +1635,7 @@ namespace SUP
 
                             foundObject.ResumeLayout();
 
-                            supFlow.Controls.Add(foundObject);
-                            supFlow.Controls.SetChildIndex(foundObject, 0);
+                            AddMessageControl(supFlow, foundObject);
 
                         }
                         supFlow.ResumeLayout();
@@ -1910,8 +1920,7 @@ namespace SUP
                                                                             }
 
 
-                                                                            this.supFlow.Controls.Add(panel);
-                                                                            supFlow.Controls.SetChildIndex(panel, 0);
+                                                                            AddMessageControl(supFlow, panel);
                                                                         });
 
                                                                     }
@@ -1936,8 +1945,7 @@ namespace SUP
                                                                             panel.Controls.Add(titleLabel);
 
 
-                                                                            this.supFlow.Controls.Add(panel);
-                                                                            supFlow.Controls.SetChildIndex(panel, 0);
+                                                                            AddMessageControl(supFlow, panel);
                                                                         });
 
                                                                     }
@@ -1964,8 +1972,7 @@ namespace SUP
                                                                         panel.Controls.Add(titleLabel);
 
 
-                                                                        this.supFlow.Controls.Add(panel);
-                                                                        supFlow.Controls.SetChildIndex(panel, 0);
+                                                                        AddMessageControl(supFlow, panel);
                                                                     });
 
 
@@ -2341,8 +2348,7 @@ namespace SUP
                                                                                 }
 
 
-                                                                                this.supFlow.Controls.Add(panel);
-                                                                                supFlow.Controls.SetChildIndex(panel, 0);
+                                                                                AddMessageControl(supFlow, panel);
                                                                             });
 
                                                                         }
@@ -2367,8 +2373,7 @@ namespace SUP
                                                                                 panel.Controls.Add(titleLabel);
 
 
-                                                                                this.supFlow.Controls.Add(panel);
-                                                                                supFlow.Controls.SetChildIndex(panel, 0);
+                                                                                AddMessageControl(supFlow, panel);
                                                                             });
 
                                                                         }
@@ -2395,8 +2400,7 @@ namespace SUP
                                                                             panel.Controls.Add(titleLabel);
 
 
-                                                                            this.supFlow.Controls.Add(panel);
-                                                                            supFlow.Controls.SetChildIndex(panel, 0);
+                                                                            AddMessageControl(supFlow, panel);
                                                                         });
 
 
@@ -2712,8 +2716,7 @@ namespace SUP
                                                                                 }
 
 
-                                                                                this.supFlow.Controls.Add(panel);
-                                                                                supFlow.Controls.SetChildIndex(panel, 0);
+                                                                                AddMessageControl(supFlow, panel);
                                                                             });
 
                                                                         }
@@ -2738,8 +2741,7 @@ namespace SUP
                                                                                 panel.Controls.Add(titleLabel);
 
 
-                                                                                this.supFlow.Controls.Add(panel);
-                                                                                supFlow.Controls.SetChildIndex(panel, 0);
+                                                                                AddMessageControl(supFlow, panel);
                                                                             });
 
                                                                         }
@@ -2766,8 +2768,7 @@ namespace SUP
                                                                             panel.Controls.Add(titleLabel);
 
 
-                                                                            this.supFlow.Controls.Add(panel);
-                                                                            supFlow.Controls.SetChildIndex(panel, 0);
+                                                                            AddMessageControl(supFlow, panel);
                                                                         });
 
 
@@ -3067,8 +3068,7 @@ namespace SUP
                                                                                 }
 
 
-                                                                                this.supFlow.Controls.Add(panel);
-                                                                                supFlow.Controls.SetChildIndex(panel, 0);
+                                                                                AddMessageControl(supFlow, panel);
                                                                             });
 
                                                                         }
@@ -3093,8 +3093,7 @@ namespace SUP
                                                                                 panel.Controls.Add(titleLabel);
 
 
-                                                                                this.supFlow.Controls.Add(panel);
-                                                                                supFlow.Controls.SetChildIndex(panel, 0);
+                                                                                AddMessageControl(supFlow, panel);
                                                                             });
 
                                                                         }
@@ -3121,8 +3120,7 @@ namespace SUP
                                                                             panel.Controls.Add(titleLabel);
 
 
-                                                                            this.supFlow.Controls.Add(panel);
-                                                                            supFlow.Controls.SetChildIndex(panel, 0);
+                                                                            AddMessageControl(supFlow, panel);
                                                                         });
 
 
@@ -3427,8 +3425,7 @@ namespace SUP
                                                                                 }
 
 
-                                                                                this.supFlow.Controls.Add(panel);
-                                                                                supFlow.Controls.SetChildIndex(panel, 0);
+                                                                                AddMessageControl(supFlow, panel);
                                                                             });
 
                                                                         }
@@ -3453,8 +3450,7 @@ namespace SUP
                                                                                 panel.Controls.Add(titleLabel);
 
 
-                                                                                this.supFlow.Controls.Add(panel);
-                                                                                supFlow.Controls.SetChildIndex(panel, 0);
+                                                                                AddMessageControl(supFlow, panel);
                                                                             });
 
                                                                         }
@@ -3481,8 +3477,7 @@ namespace SUP
                                                                             panel.Controls.Add(titleLabel);
 
 
-                                                                            this.supFlow.Controls.Add(panel);
-                                                                            supFlow.Controls.SetChildIndex(panel, 0);
+                                                                            AddMessageControl(supFlow, panel);
                                                                         });
 
 
@@ -3689,9 +3684,9 @@ namespace SUP
             Debug.WriteLine($"[RemoveOverFlowMessages] Control count ({controlCount}) exceeds limit ({MAX_MESSAGES}), removing oldest {REMOVE_COUNT} controls from bottom");
             MemoryDiagnostics.LogMemoryUsage("Before removing overflow controls");
             
-            // Remove the controls from the BEGINNING (top) to maintain viewing position
-            // When scrolling down, newer messages at top should be removed
-            // When scrolling up, this method may not be called (cleared and reloaded instead)
+            // Remove the controls based on scroll direction
+            // When loading OLDER messages (scrolling down): Remove from BEGINNING (top) - newest messages
+            // When loading NEWER messages (scrolling up): This shouldn't be called (cleared and reloaded instead)
             this.Invoke((MethodInvoker)delegate
             {
                 try
@@ -3701,8 +3696,8 @@ namespace SUP
                     
                     List<Control> controlsToRemove = new List<Control>();
                     
-                    // Get first N controls (newest messages at top when scrolling down)
-                    // Remove these to keep the older messages at bottom visible
+                    // When scrolling down (loading older), new messages added at bottom, remove from top
+                    // Get first N controls (newest/most recent messages) to remove
                     int removeCount = Math.Min(REMOVE_COUNT, flowLayoutPanel.Controls.Count);
                     
                     for (int i = 0; i < removeCount; i++)
@@ -3969,6 +3964,26 @@ namespace SUP
                 // Use BeginInvoke for asynchronous execution
                 this.BeginInvoke(new MethodInvoker(clearAction));
             }
+        }
+        
+        /// <summary>
+        /// Adds a control to the flow panel in the correct position based on scroll direction.
+        /// When loading OLDER messages (scrolling down), adds to END (bottom).
+        /// When loading NEWER messages (scrolling up), adds to BEGIN (top at index 0).
+        /// </summary>
+        /// <param name="flowPanel">The FlowLayoutPanel to add the control to</param>
+        /// <param name="control">The control to add</param>
+        private void AddMessageControl(FlowLayoutPanel flowPanel, Control control)
+        {
+            flowPanel.Controls.Add(control);
+            
+            // Only move to top (index 0) when loading NEWER messages (scrolling up)
+            // When loading OLDER messages (scrolling down), keep at bottom
+            if (!_loadingOlderMessages)
+            {
+                flowPanel.Controls.SetChildIndex(control, 0);
+            }
+            // else: control stays at end (bottom) where it was naturally added
         }
 
         private void RefreshSupMessages()
@@ -6152,8 +6167,7 @@ namespace SUP
                 // Add the PictureBox to the first row and first column
                 msg.Controls.Add(pictureBox, 0, 0);
 
-                supFlow.Controls.Add(msg);
-                supFlow.Controls.SetChildIndex(msg, 0);
+                AddMessageControl(supFlow, msg);
 
 
 
