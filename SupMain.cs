@@ -3824,33 +3824,96 @@ namespace SUP
         {
             try
             {
-                var ipfsProcesses = System.Diagnostics.Process.GetProcessesByName("ipfs")
+                var allIPFSProcesses = System.Diagnostics.Process.GetProcessesByName("ipfs")
                     .Where(p => !p.HasExited)
-                    .OrderBy(p => p.StartTime)
                     .ToList();
                 
-                Debug.WriteLine($"[IPFSCleanup] Found {ipfsProcesses.Count} running IPFS processes, limit: {MAX_CONCURRENT_IPFS_PROCESSES}");
+                // CRITICAL: Identify and protect the IPFS daemon process
+                // The daemon is typically the oldest process or one with "daemon" in command line
+                // Client processes (ipfs get, ipfs cat, etc.) are temporary and can be killed
+                Process daemonProcess = null;
+                var clientProcesses = new List<Process>();
                 
-                int excessCount = ipfsProcesses.Count - MAX_CONCURRENT_IPFS_PROCESSES;
+                foreach (var process in allIPFSProcesses)
+                {
+                    try
+                    {
+                        // Try to get command line arguments to identify daemon vs client
+                        // Daemon typically has "daemon" in args or is the oldest long-running process
+                        string commandLine = "";
+                        try
+                        {
+                            // Try to get command line (may fail due to permissions)
+                            using (var searcher = new System.Management.ManagementObjectSearcher(
+                                $"SELECT CommandLine FROM Win32_Process WHERE ProcessId = {process.Id}"))
+                            {
+                                foreach (System.Management.ManagementObject obj in searcher.Get())
+                                {
+                                    commandLine = obj["CommandLine"]?.ToString() ?? "";
+                                    break;
+                                }
+                            }
+                        }
+                        catch
+                        {
+                            // If we can't get command line, assume oldest process is daemon
+                        }
+                        
+                        // Identify daemon by command line containing "daemon" or being oldest
+                        if (commandLine.Contains("daemon") || commandLine.Contains("--enable-gc"))
+                        {
+                            daemonProcess = process;
+                            Debug.WriteLine($"[IPFSCleanup] Identified IPFS daemon PID: {process.Id}, StartTime: {process.StartTime}");
+                        }
+                        else
+                        {
+                            clientProcesses.Add(process);
+                        }
+                    }
+                    catch
+                    {
+                        // If error identifying, assume it's a client process
+                        clientProcesses.Add(process);
+                    }
+                }
+                
+                // If we didn't identify daemon by command line, assume the OLDEST process is the daemon
+                if (daemonProcess == null && allIPFSProcesses.Count > 0)
+                {
+                    daemonProcess = allIPFSProcesses.OrderBy(p => p.StartTime).First();
+                    clientProcesses.Remove(daemonProcess);
+                    Debug.WriteLine($"[IPFSCleanup] Identified IPFS daemon by age PID: {daemonProcess.Id}, StartTime: {daemonProcess.StartTime}");
+                }
+                
+                // Order client processes by start time (oldest first)
+                clientProcesses = clientProcesses.OrderBy(p => p.StartTime).ToList();
+                
+                int totalProcesses = (daemonProcess != null ? 1 : 0) + clientProcesses.Count;
+                Debug.WriteLine($"[IPFSCleanup] Found {totalProcesses} total IPFS processes (1 daemon protected, {clientProcesses.Count} clients), limit: {MAX_CONCURRENT_IPFS_PROCESSES}");
+                
+                // Calculate how many CLIENT processes need to be killed
+                // We always keep the daemon, so limit applies to clients
+                int excessCount = clientProcesses.Count - (MAX_CONCURRENT_IPFS_PROCESSES - 1);
+                
                 if (excessCount > 0)
                 {
-                    Debug.WriteLine($"[IPFSCleanup] AGGRESSIVE CLEANUP: Killing ALL {excessCount} OLDEST processes (keeping only {MAX_CONCURRENT_IPFS_PROCESSES} newest)");
+                    Debug.WriteLine($"[IPFSCleanup] AGGRESSIVE CLEANUP: Killing {excessCount} OLDEST client processes (protecting daemon)");
                     
-                    // Kill ALL excess processes, not just some
-                    var processesToKill = ipfsProcesses.Take(excessCount).ToList();
+                    // Kill ONLY excess CLIENT processes, never the daemon
+                    var processesToKill = clientProcesses.Take(excessCount).ToList();
                     int killedCount = 0;
                     
                     foreach (var process in processesToKill)
                     {
                         try
                         {
-                            if (!process.HasExited)
+                            if (!process.HasExited && process != daemonProcess)
                             {
-                                Debug.WriteLine($"[IPFSCleanup] Killing oldest IPFS process PID: {process.Id}, StartTime: {process.StartTime}");
+                                Debug.WriteLine($"[IPFSCleanup] Killing client process PID: {process.Id}, StartTime: {process.StartTime}");
                                 process.Kill();
                                 process.WaitForExit(1000); // Wait up to 1 second for clean exit
                                 killedCount++;
-                                Debug.WriteLine($"[IPFSCleanup] Successfully killed IPFS process PID: {process.Id}");
+                                Debug.WriteLine($"[IPFSCleanup] Successfully killed client process PID: {process.Id}");
                             }
                         }
                         catch (Exception ex)
@@ -3863,11 +3926,11 @@ namespace SUP
                         }
                     }
                     
-                    // Update the counter based on actual remaining processes
+                    // Update the counter based on actual remaining processes (daemon + remaining clients)
                     lock (_ipfsProcessLock)
                     {
-                        _currentIPFSProcessCount = ipfsProcesses.Count - killedCount;
-                        Debug.WriteLine($"[IPFSCleanup] Cleanup complete. Killed {killedCount} processes. Updated counter to {_currentIPFSProcessCount}");
+                        _currentIPFSProcessCount = 1 + (clientProcesses.Count - killedCount); // 1 for daemon
+                        Debug.WriteLine($"[IPFSCleanup] Cleanup complete. Killed {killedCount} client processes. Daemon protected. Updated counter to {_currentIPFSProcessCount}");
                     }
                 }
                 else
@@ -3875,13 +3938,13 @@ namespace SUP
                     // Still update counter to match reality
                     lock (_ipfsProcessLock)
                     {
-                        _currentIPFSProcessCount = ipfsProcesses.Count;
-                        Debug.WriteLine($"[IPFSCleanup] No cleanup needed - within limit. Updated counter to {_currentIPFSProcessCount}");
+                        _currentIPFSProcessCount = totalProcesses;
+                        Debug.WriteLine($"[IPFSCleanup] No cleanup needed - within limit. Daemon protected. Updated counter to {_currentIPFSProcessCount}");
                     }
                 }
                 
                 // Dispose all process objects
-                foreach (var p in ipfsProcesses)
+                foreach (var p in allIPFSProcesses)
                 {
                     try { p.Dispose(); } catch { }
                 }
