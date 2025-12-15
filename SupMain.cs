@@ -3689,7 +3689,9 @@ namespace SUP
             Debug.WriteLine($"[RemoveOverFlowMessages] Control count ({controlCount}) exceeds limit ({MAX_MESSAGES}), removing oldest {REMOVE_COUNT} controls from bottom");
             MemoryDiagnostics.LogMemoryUsage("Before removing overflow controls");
             
-            // Remove the controls from the END (bottom) to preserve scroll position
+            // Remove the controls from the BEGINNING (top) to maintain viewing position
+            // When scrolling down, newer messages at top should be removed
+            // When scrolling up, this method may not be called (cleared and reloaded instead)
             this.Invoke((MethodInvoker)delegate
             {
                 try
@@ -3699,11 +3701,11 @@ namespace SUP
                     
                     List<Control> controlsToRemove = new List<Control>();
                     
-                    // Get last N controls (oldest messages at bottom when scrolling down)
+                    // Get first N controls (newest messages at top when scrolling down)
+                    // Remove these to keep the older messages at bottom visible
                     int removeCount = Math.Min(REMOVE_COUNT, flowLayoutPanel.Controls.Count);
-                    int startIndex = flowLayoutPanel.Controls.Count - removeCount;
                     
-                    for (int i = startIndex; i < flowLayoutPanel.Controls.Count; i++)
+                    for (int i = 0; i < removeCount; i++)
                     {
                         controlsToRemove.Add(flowLayoutPanel.Controls[i]);
                     }
@@ -3717,7 +3719,7 @@ namespace SUP
                     // Resume layout once to apply all changes together
                     flowLayoutPanel.ResumeLayout(true);
                     
-                    Debug.WriteLine($"[RemoveOverFlowMessages] Removed {removeCount} controls from bottom, {flowLayoutPanel.Controls.Count} remaining");
+                    Debug.WriteLine($"[RemoveOverFlowMessages] Removed {removeCount} controls from top, {flowLayoutPanel.Controls.Count} remaining");
                     
                     // Dispose controls after removal to free memory (do this after resume to avoid UI delay)
                     Task.Run(() =>
