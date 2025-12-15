@@ -60,7 +60,7 @@ namespace SUP
         AudioPlayer audioPlayer = new AudioPlayer();
         
         // IPFS process management
-        private const int MAX_CONCURRENT_IPFS_PROCESSES = 5;
+        private const int MAX_CONCURRENT_IPFS_PROCESSES = 22;
         private static readonly object _ipfsProcessLock = new object();
         private static int _currentIPFSProcessCount = 0;
         
@@ -3677,6 +3677,8 @@ namespace SUP
                 controlCount = flowLayoutPanel.Controls.Count;
             });
             
+            Debug.WriteLine($"[RemoveOverFlowMessages] Current control count: {controlCount}, MAX_MESSAGES: {MAX_MESSAGES}");
+            
             // Only prune if we exceed the maximum messages
             if (controlCount <= MAX_MESSAGES)
             {
@@ -3879,6 +3881,7 @@ namespace SUP
         /// <summary>
         /// Cleans up excess IPFS processes when limit is exceeded.
         /// Kills oldest processes first to stay within the limit.
+        /// Only kills processes beyond the limit, not all processes.
         /// </summary>
         private void CleanupExcessIPFSProcesses()
         {
@@ -3889,23 +3892,34 @@ namespace SUP
                     .OrderBy(p => p.StartTime)
                     .ToList();
                 
+                Debug.WriteLine($"[IPFSCleanup] Found {ipfsProcesses.Count} running IPFS processes, limit: {MAX_CONCURRENT_IPFS_PROCESSES}");
+                
                 int excessCount = ipfsProcesses.Count - MAX_CONCURRENT_IPFS_PROCESSES;
                 if (excessCount > 0)
                 {
-                    Debug.WriteLine($"[IPFSCleanup] Killing {excessCount} excess IPFS processes (total: {ipfsProcesses.Count}, limit: {MAX_CONCURRENT_IPFS_PROCESSES})");
+                    Debug.WriteLine($"[IPFSCleanup] Killing {excessCount} OLDEST processes (keeping {MAX_CONCURRENT_IPFS_PROCESSES} newest)");
                     
-                    foreach (var process in ipfsProcesses.Take(excessCount))
+                    // Kill only the OLDEST processes (first excessCount in the ordered list)
+                    var processesToKill = ipfsProcesses.Take(excessCount).ToList();
+                    foreach (var process in processesToKill)
                     {
                         try
                         {
+                            Debug.WriteLine($"[IPFSCleanup] Killing oldest IPFS process PID: {process.Id}, StartTime: {process.StartTime}");
                             process.Kill();
-                            Debug.WriteLine($"[IPFSCleanup] Killed IPFS process PID: {process.Id}");
+                            Debug.WriteLine($"[IPFSCleanup] Successfully killed IPFS process PID: {process.Id}");
                         }
                         catch (Exception ex)
                         {
-                            Debug.WriteLine($"[IPFSCleanup] Error killing process: {ex.Message}");
+                            Debug.WriteLine($"[IPFSCleanup] Error killing process {process.Id}: {ex.Message}");
                         }
                     }
+                    
+                    Debug.WriteLine($"[IPFSCleanup] Cleanup complete. {ipfsProcesses.Count - excessCount} processes should remain running");
+                }
+                else
+                {
+                    Debug.WriteLine($"[IPFSCleanup] No cleanup needed - within limit");
                 }
             }
             catch (Exception ex)
@@ -4004,15 +4018,10 @@ namespace SUP
 
             supFlow.SuspendLayout();
 
-            // Trigger memory cleanup after loading messages
-            // This ensures we maintain bounded memory usage (~20 messages max)
-            // Call synchronously to ensure it executes immediately
+            // Increment skip counter by the number of messages fetched from API
+            // This ensures pagination works correctly even if some messages are filtered out
             if (messages.Count > 0)
             {
-                RemoveOverFlowMessages(supFlow);
-                
-                // Increment skip counter by the number of messages fetched from API
-                // This ensures pagination works correctly even if some messages are filtered out
                 numMessagesSkip += messages.Count;
             }
 
@@ -4702,6 +4711,10 @@ namespace SUP
 
                 supFlow.ResumeLayout();
                 btnPublicMessage.Enabled = true;
+                
+                // Trigger memory cleanup AFTER messages are added and layout is resumed
+                // This ensures we maintain bounded memory usage (~20 messages max)
+                RemoveOverFlowMessages(supFlow);
             });
 
 
