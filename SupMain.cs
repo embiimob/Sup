@@ -5472,11 +5472,16 @@ namespace SUP
 
                 // Iterate over each key in the dictionary, get public messages by address, and combine them into a list
                 var allMessages = new List<object>();
+                Debug.WriteLine($"[CommunityFeed] Loading messages from {myFriends.Keys.Count} friends");
+                int friendIndex = 0;
                 foreach (var key in myFriends.Keys)
                 {
+                    friendIndex++;
                     try
                     {
+                        Debug.WriteLine($"[CommunityFeed] Friend {friendIndex}/{myFriends.Keys.Count}: {key}");
                         List<MessageObject> result = OBJState.GetPublicMessagesByAddress(key, mainnetLogin, mainnetPassword, mainnetURL, mainnetVersionByte, 0, 50);
+                        Debug.WriteLine($"[CommunityFeed] Friend {friendIndex}: Got {result.Count} messages");
 
                         // Add the "to" element to each message object
 
@@ -5508,9 +5513,13 @@ namespace SUP
                             catch { }
                         }
                     }
-                    catch { }
+                    catch (Exception ex) 
+                    {
+                        Debug.WriteLine($"[CommunityFeed] Error loading friend {friendIndex}: {ex.Message}");
+                    }
 
                 }
+                Debug.WriteLine($"[CommunityFeed] Total messages collected: {allMessages.Count}");
 
                 // Sort the combined list by block date
                 allMessages.Sort((m1, m2) =>
@@ -5542,6 +5551,7 @@ namespace SUP
                 // This ensures we maintain bounded memory usage (~20 messages max)
                 // Call synchronously to ensure it executes immediately
                 var messagesToDisplay = allMessages.Skip(numFriendFeedsSkip).Take(10).ToList();
+                Debug.WriteLine($"[CommunityFeed] Displaying {messagesToDisplay.Count} messages (skip: {numFriendFeedsSkip})");
                 if (messagesToDisplay.Count > 0)
                 {
                     RemoveOverFlowMessages(supFlow);
