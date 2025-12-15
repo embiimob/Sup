@@ -172,17 +172,29 @@ namespace SUP
 
                     if (numMessagesSkip > 0)
                     {
-                        // Clear existing messages before loading older ones
-                        ClearMessages(supFlow);
+                        // Clear existing messages before loading older ones (synchronously to avoid race conditions)
+                        ClearMessages(supFlow, synchronous: true);
                         
                         numMessagesSkip = numMessagesSkip - 20; 
                         if (numMessagesSkip < 0) { numMessagesSkip = 0; }
                         
                         RefreshSupMessages();
+                        
+                        // Set scroll position after messages are loaded
+                        // Add null check to prevent NullReferenceException
                         this.Invoke((MethodInvoker)delegate
                         {
-                            supFlow.AutoScrollPosition = new Point(0, supFlow.VerticalScroll.Maximum - 10);
-
+                            try
+                            {
+                                if (supFlow != null && supFlow.VerticalScroll != null)
+                                {
+                                    supFlow.AutoScrollPosition = new Point(0, supFlow.VerticalScroll.Maximum - 10);
+                                }
+                            }
+                            catch (Exception ex)
+                            {
+                                Debug.WriteLine($"[supFlow_MouseWheel] Error setting scroll position: {ex.Message}");
+                            }
                         });
                     }
                 }
@@ -193,17 +205,29 @@ namespace SUP
                     {
                         if (numFriendFeedsSkip > 0)
                         {
-                            // Clear existing messages before loading older ones
-                            ClearMessages(supFlow);
+                            // Clear existing messages before loading older ones (synchronously to avoid race conditions)
+                            ClearMessages(supFlow, synchronous: true);
                             
                             numFriendFeedsSkip = numFriendFeedsSkip - 20; 
                             if (numFriendFeedsSkip < 0) { numFriendFeedsSkip = 0; }
                             
                             RefreshCommunityMessages();
+                            
+                            // Set scroll position after messages are loaded
+                            // Add null check to prevent NullReferenceException
                             this.Invoke((MethodInvoker)delegate
                             {
-                                supFlow.AutoScrollPosition = new Point(0, supFlow.VerticalScroll.Maximum - 10);
-
+                                try
+                                {
+                                    if (supFlow != null && supFlow.VerticalScroll != null)
+                                    {
+                                        supFlow.AutoScrollPosition = new Point(0, supFlow.VerticalScroll.Maximum - 10);
+                                    }
+                                }
+                                catch (Exception ex)
+                                {
+                                    Debug.WriteLine($"[supFlow_MouseWheel] Error setting scroll position: {ex.Message}");
+                                }
                             });
                         }
                     }
@@ -3740,9 +3764,9 @@ namespace SUP
             });
         }
 
-        private void ClearMessages(FlowLayoutPanel flowLayoutPanel)
+        private void ClearMessages(FlowLayoutPanel flowLayoutPanel, bool synchronous = false)
         {
-            this.BeginInvoke((MethodInvoker)delegate
+            Action clearAction = () =>
             {
                 List<Control> controlsList = flowLayoutPanel.Controls.Cast<Control>().ToList();
                 flowLayoutPanel.Controls.Clear();
@@ -3760,7 +3784,25 @@ namespace SUP
                     numPrivateMessagesDisplayed = 0;
                     // Note: _profileCache is retained for performance across different conversations
                 }
-            });
+            };
+
+            if (synchronous)
+            {
+                // Use Invoke for synchronous execution when we need to ensure clearing is complete
+                if (this.InvokeRequired)
+                {
+                    this.Invoke((MethodInvoker)clearAction);
+                }
+                else
+                {
+                    clearAction();
+                }
+            }
+            else
+            {
+                // Use BeginInvoke for asynchronous execution
+                this.BeginInvoke((MethodInvoker)clearAction);
+            }
         }
 
         private void RefreshSupMessages()
@@ -3800,6 +3842,13 @@ namespace SUP
                 Debug.WriteLine($"[SupMain.RefreshSupMessages] WARNING: No valid LinkData - skipping message fetch");
             }
 
+
+            // Add null check before SuspendLayout to prevent NullReferenceException
+            if (supFlow == null)
+            {
+                Debug.WriteLine($"[SupMain.RefreshSupMessages] ERROR: supFlow is null, cannot continue");
+                return;
+            }
 
             supFlow.SuspendLayout();
 
