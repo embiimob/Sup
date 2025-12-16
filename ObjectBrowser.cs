@@ -110,8 +110,6 @@ namespace SUP
                 _historyList.BringToFront();
             }
         }
-            }
-        }
         
         private void SwitchToVirtualizedHistory()
         {
