@@ -5379,6 +5379,7 @@ namespace SUP
             // sorry cannot run two searches at a time
             if (!btnPrivateMessage.Enabled || !btnPrivateMessage.Enabled || !btnCommunityFeed.Enabled || System.IO.File.Exists("ROOTS-PROCESSING"))
             {
+                Debug.WriteLine($"[CommunityFeed] Cannot refresh - button states: PM={btnPrivateMessage.Enabled}, Pub={btnPublicMessage.Enabled}, Comm={btnCommunityFeed.Enabled}, ROOTS-PROCESSING={System.IO.File.Exists("ROOTS-PROCESSING")}");
                 System.Media.SystemSounds.Beep.Play();
                 return;
             }
@@ -7361,6 +7362,8 @@ namespace SUP
 
         private void RefreshCommunityMessages_Click(object sender, EventArgs e)
         {
+            Debug.WriteLine($"[CommunityFeed] Community Feed button clicked - current state: Enabled={btnCommunityFeed.Enabled}, Color={btnCommunityFeed.BackColor}");
+            
             // Always clear and rebuild when activating community feed
             // This ensures:
             // 1. Updated friends list (after adding/removing friends)
@@ -7385,6 +7388,9 @@ namespace SUP
             numFriendFeedsSkip = 0;
             numFriendFeedsDisplayed = 0;
             
+            // Ensure button is enabled before calling RefreshCommunityMessages
+            // This prevents the early return in RefreshCommunityMessages when button is disabled
+            btnCommunityFeed.Enabled = true;
             btnCommunityFeed.BackColor = System.Drawing.Color.Blue; btnCommunityFeed.ForeColor = System.Drawing.Color.Yellow;
             RefreshCommunityMessages(resetCounters: true); // Reset counters on button click
 
