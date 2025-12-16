@@ -159,24 +159,8 @@ namespace SUP
                     _isLoadingMessages = true; // Prevent re-entry
                     _loadingOlderMessages = true; // Scrolling DOWN - loading OLDER messages
                     RefreshSupMessages();
-
-                    // Move scroll up slightly to prevent immediate re-trigger
-                    this.BeginInvoke((MethodInvoker)delegate
-                    {
-                        try
-                        {
-                            if (supFlow != null && supFlow.VerticalScroll != null && supFlow.VerticalScroll.Maximum > 100)
-                            {
-                                supFlow.AutoScrollPosition = new Point(0, supFlow.VerticalScroll.Maximum - 100);
-                            }
-                        }
-                        catch { }
-                        finally
-                        {
-                            _isLoadingMessages = false; // Allow future loads
-                        }
-                    });
-
+                    // No scroll adjustment needed - position preserved naturally
+                    // The _isLoadingMessages flag prevents re-entry
                 }
                 else
                 {
@@ -185,24 +169,8 @@ namespace SUP
                     {
                         _isLoadingMessages = true; // Prevent re-entry
                         _loadingOlderMessages = true; // Scrolling DOWN - loading OLDER messages
-                        RefreshCommunityMessages();
-
-                        // Move scroll up slightly to prevent immediate re-trigger
-                        this.BeginInvoke((MethodInvoker)delegate
-                        {
-                            try
-                            {
-                                if (supFlow != null && supFlow.VerticalScroll != null && supFlow.VerticalScroll.Maximum > 100)
-                                {
-                                    supFlow.AutoScrollPosition = new Point(0, supFlow.VerticalScroll.Maximum - 100);
-                                }
-                            }
-                            catch { }
-                            finally
-                            {
-                                _isLoadingMessages = false; // Allow future loads
-                            }
-                        });
+                        RefreshCommunityMessages(); // resetCounters defaults to false, preserves scroll position
+                        // No scroll adjustment needed - position preserved naturally
                     }
                 }
             }
@@ -241,23 +209,8 @@ namespace SUP
                 _loadingOlderMessages = true; // Set flag for scroll direction
                 // Load next batch of messages
                 RefreshPrivateSupMessages();
-
-                // Move scroll up slightly to prevent immediate re-trigger
-                this.BeginInvoke((MethodInvoker)delegate
-                {
-                    try
-                    {
-                        if (supPrivateFlow != null && supPrivateFlow.VerticalScroll != null && supPrivateFlow.VerticalScroll.Maximum > 100)
-                        {
-                            supPrivateFlow.AutoScrollPosition = new Point(0, supPrivateFlow.VerticalScroll.Maximum - 100);
-                        }
-                    }
-                    catch { }
-                    finally
-                    {
-                        _isLoadingMessages = false; // Allow future loads
-                    }
-                });
+                // No scroll adjustment needed - position preserved naturally
+                // The _isLoadingMessages flag prevents re-entry
             }
             // Scroll up to top - just stop here, don't reload
             // Only load if user explicitly requests it via button click
@@ -4752,6 +4705,9 @@ namespace SUP
                 // Trigger memory cleanup AFTER messages are added and layout is resumed
                 // This ensures we maintain bounded memory usage (~20 messages max)
                 RemoveOverFlowMessages(supFlow);
+                
+                // Reset loading flag to allow future loads
+                _isLoadingMessages = false;
             });
 
 
@@ -4880,10 +4836,11 @@ namespace SUP
             }
             finally
             {
-                // Always re-enable the button
+                // Always re-enable the button and reset loading flag
                 this.Invoke((MethodInvoker)delegate
                 {
                     btnPrivateMessage.Enabled = true;
+                    _isLoadingMessages = false; // Reset loading flag to allow future loads
                 });
             }
         }
@@ -5417,7 +5374,7 @@ namespace SUP
             }
         }
 
-        private void RefreshCommunityMessages()
+        private void RefreshCommunityMessages(bool resetCounters = false)
         {
             // sorry cannot run two searches at a time
             if (!btnPrivateMessage.Enabled || !btnPrivateMessage.Enabled || !btnCommunityFeed.Enabled || System.IO.File.Exists("ROOTS-PROCESSING"))
@@ -5449,11 +5406,15 @@ namespace SUP
             });
 
 
-            numMessagesDisplayed = 0;
-            numMessagesSkip = 0;
-            numPrivateMessagesDisplayed = 0;
-            numFriendFeedsDisplayed = 0;
-            numFriendFeedsSkip = 0;
+            // Only reset counters when explicitly told (button click), not on scroll
+            if (resetCounters)
+            {
+                numMessagesDisplayed = 0;
+                numMessagesSkip = 0;
+                numPrivateMessagesDisplayed = 0;
+                numFriendFeedsDisplayed = 0;
+                numFriendFeedsSkip = 0;
+            }
 
 
             string FriendsListPath = "";
@@ -5809,18 +5770,21 @@ namespace SUP
                 supFlow.ResumeLayout();
                 RemoveOverFlowMessages(supFlow); // Clean up excess controls after layout
                 
-                // Reset scroll position to top when loading community feed
-                // Ensures user starts at newest messages every time
-                try
+                // Only reset scroll position when explicitly requested (button click)
+                // When scrolling to load more, preserve current position so user doesn't lose their place
+                if (resetCounters)
                 {
-                    if (supFlow != null && supFlow.VerticalScroll != null)
+                    try
                     {
-                        supFlow.AutoScrollPosition = new Point(0, 0);
+                        if (supFlow != null && supFlow.VerticalScroll != null)
+                        {
+                            supFlow.AutoScrollPosition = new Point(0, 0);
+                        }
                     }
-                }
-                catch (Exception ex)
-                {
-                    Debug.WriteLine($"[CommunityFeed] Error resetting scroll position: {ex.Message}");
+                    catch (Exception ex)
+                    {
+                        Debug.WriteLine($"[CommunityFeed] Error resetting scroll position: {ex.Message}");
+                    }
                 }
                 
                 btnCommunityFeed.Enabled = true;
@@ -7422,7 +7386,7 @@ namespace SUP
             numFriendFeedsDisplayed = 0;
             
             btnCommunityFeed.BackColor = System.Drawing.Color.Blue; btnCommunityFeed.ForeColor = System.Drawing.Color.Yellow;
-            RefreshCommunityMessages();
+            RefreshCommunityMessages(resetCounters: true); // Reset counters on button click
 
             btnPrivateMessage.BackColor = System.Drawing.Color.White;
             btnPrivateMessage.ForeColor = System.Drawing.Color.Black;
