@@ -51,6 +51,11 @@ namespace SUP
 
         List<FoundObjectControl> foundObjects = new List<FoundObjectControl>();
         List<PictureBox> pictureBoxes = new List<PictureBox>();
+        
+        // Virtualized history components
+        private VirtualizedMessageList _historyList;
+        private HistoryTransactionAdapter _historyAdapter;
+        private bool _useVirtualizedHistory = false;
 
         private readonly System.Windows.Forms.Timer _doubleClickTimer = new System.Windows.Forms.Timer();
         public ObjectBrowser(string objectaddress, bool iscontrol = false, bool testnet = true)
@@ -78,6 +83,49 @@ namespace SUP
                 _testnet = testnet;
             }
             flowLayoutPanel1.MouseWheel += history_MouseWheel;
+            
+            // Initialize virtualized history components
+            InitializeVirtualizedHistory();
+        }
+        
+        private void InitializeVirtualizedHistory()
+        {
+            _historyList = new VirtualizedMessageList
+            {
+                Dock = DockStyle.Fill,
+                Visible = false
+            };
+            
+            _historyAdapter = new HistoryTransactionAdapter();
+            _historyList.SetAdapter(_historyAdapter);
+            
+            // Add to the same parent as flowLayoutPanel1
+            if (flowLayoutPanel1.Parent != null)
+            {
+                flowLayoutPanel1.Parent.Controls.Add(_historyList);
+                _historyList.BringToFront();
+            }
+        }
+        
+        private void SwitchToVirtualizedHistory()
+        {
+            if (!_useVirtualizedHistory)
+            {
+                flowLayoutPanel1.Visible = false;
+                _historyList.Visible = true;
+                _useVirtualizedHistory = true;
+            }
+        }
+        
+        private void SwitchToFlowLayoutPanel()
+        {
+            if (_useVirtualizedHistory)
+            {
+                _historyList.Visible = false;
+                _historyList.Clear();
+                flowLayoutPanel1.Visible = true;
+                _useVirtualizedHistory = false;
+            }
         }
 
         private async void ObjectBrowserLoad(object sender, EventArgs e)
@@ -128,8 +176,15 @@ namespace SUP
             if (flowLayoutPanel1.VerticalScroll.Value + flowLayoutPanel1.ClientSize.Height >= flowLayoutPanel1.VerticalScroll.Maximum)
             {
                 // Add more PictureBoxes if available              
-                if (btnActivity.BackColor == Color.Yellow) { GetHistoryByAddress(txtSearchAddress.Text); }
-                else { BuildSearchResults(false, false, false, false); } // isNewSearch = false for scroll-based loading
+                // Note: Virtualized history handles scrolling automatically, no need to load more
+                if (btnActivity.BackColor == Color.Yellow && !_useVirtualizedHistory) 
+                { 
+                    GetHistoryByAddress(txtSearchAddress.Text); 
+                }
+                else if (btnActivity.BackColor != Color.Yellow)
+                { 
+                    BuildSearchResults(false, false, false, false); // isNewSearch = false for scroll-based loading
+                }
 
             }
         }
@@ -224,6 +279,8 @@ namespace SUP
 
         private void GetObjectsByAddress(string address, bool calculate = false, bool isNewSearch = true)
         {
+            // Switch back to flowLayoutPanel if we were using virtualized history
+            this.Invoke((Action)(() => { SwitchToFlowLayoutPanel(); }));
 
             string profileCheck = address;
             PROState searchprofile = new PROState();
@@ -1931,6 +1988,539 @@ namespace SUP
 
         }
 
+        private void GetHistoryByAddressVirtualized(string address, bool calculate = false)
+        {
+            string profileCheck = address;
+            PROState searchprofile = new PROState();
+            
+            // Update profile information
+            try
+            {
+                if (!address.StartsWith("#"))
+                {
+                    searchprofile = PROState.GetProfileByURN(address, mainnetLogin, mainnetPassword, mainnetURL, mainnetVersionByte);
+
+                    if (searchprofile.URN != null)
+                    {
+                        this.Invoke((Action)(() =>
+                        {
+                            profileURN.Links[0].LinkData = searchprofile.Creators.First();
+                            profileURN.LinkColor = System.Drawing.SystemColors.Highlight;
+                            profileURN.Text = TruncateAddress(searchprofile.URN);
+                            profileCheck = searchprofile.Creators.First();
+                        }));
+                    }
+                    else
+                    {
+                        this.Invoke((Action)(() =>
+                        {
+                            profileURN.Links[0].LinkData = address;
+                            profileURN.LinkColor = System.Drawing.SystemColors.GradientActiveCaption;
+                            profileURN.Text = "anon";
+                        }));
+                    }
+                }
+                else
+                {
+                    this.Invoke((Action)(() =>
+                    {
+                        profileURN.Links[0].LinkData = address;
+                        profileURN.LinkColor = System.Drawing.SystemColors.GradientActiveCaption;
+                        profileURN.Text = address;
+                    }));
+                }
+            }
+            catch
+            {
+                this.Invoke((Action)(() =>
+                {
+                    profileURN.Links[0].LinkData = address;
+                    profileURN.LinkColor = System.Drawing.SystemColors.GradientActiveCaption;
+                    profileURN.Text = "anon";
+                }));
+            }
+
+            // Load friend list for profile images
+            string myFriendsJson = "";
+            string friendPath = @"root\MyFriendList.Json";
+            Dictionary<string, string> myFriends = new Dictionary<string, string>();
+
+            if (mainnetVersionByte == "0") { friendPath = @"root\MyProdFriendList.Json"; }
+
+            if (System.IO.File.Exists(friendPath))
+            {
+                myFriendsJson = System.IO.File.ReadAllText(friendPath);
+                myFriends = JsonConvert.DeserializeObject<Dictionary<string, string>>(myFriendsJson);
+            }
+
+            // Check if we're in filtered mode (History + Owned or History + Created)
+            bool isOwnedFilter = false;
+            bool isCreatedFilter = false;
+            this.Invoke((Action)(() =>
+            {
+                isOwnedFilter = btnOwned.BackColor == Color.Yellow;
+                isCreatedFilter = btnCreated.BackColor == Color.Yellow;
+            }));
+
+            List<HistoryTransactionViewModel> transactions = new List<HistoryTransactionViewModel>();
+            Dictionary<string, Color> objectColors = new Dictionary<string, Color>(); // For classifier tags
+            Random colorRandom = new Random();
+            
+            // Get all transactions for the address
+            List<Root> combinedRoots = Root.GetRootsByAddress(profileCheck, mainnetLogin, mainnetPassword, mainnetURL, 0, -1, mainnetVersionByte, calculate).ToList();
+            combinedRoots.Reverse(); // Chronological order (oldest first, then newest)
+
+            // If in filtered mode, get the list of owned/created objects
+            HashSet<string> filteredObjects = new HashSet<string>();
+            if (isOwnedFilter || isCreatedFilter)
+            {
+                if (isOwnedFilter)
+                {
+                    var ownedObjects = OBJState.GetObjectsOwnedByAddress(profileCheck, mainnetLogin, mainnetPassword, mainnetURL, mainnetVersionByte, 0, -1);
+                    foreach (var obj in ownedObjects)
+                    {
+                        filteredObjects.Add(obj.URN);
+                    }
+                }
+                if (isCreatedFilter)
+                {
+                    var createdObjects = OBJState.GetObjectsCreatedByAddress(profileCheck, mainnetLogin, mainnetPassword, mainnetURL, mainnetVersionByte, 0, -1);
+                    foreach (var obj in createdObjects)
+                    {
+                        filteredObjects.Add(obj.URN);
+                    }
+                }
+            }
+
+            // Process transactions and build view models
+            foreach (Root root in combinedRoots)
+            {
+                try
+                {
+                    if (root.Signed != true) continue;
+                    if (System.IO.File.Exists(@"root\" + root.SignedBy + @"\BLOCK")) continue;
+
+                    string fileType = root.File.Last().Key.ToString();
+                    if (fileType.Length < 3) continue;
+                    fileType = fileType.Substring(fileType.Length - 3);
+
+                    switch (fileType)
+                    {
+                        case "OBJ":
+                            ProcessOBJTransaction(root, profileCheck, myFriends, transactions, filteredObjects, objectColors, colorRandom, isOwnedFilter, isCreatedFilter);
+                            break;
+                        case "GIV":
+                            ProcessGIVTransaction(root, profileCheck, myFriends, transactions, filteredObjects, objectColors, colorRandom, isOwnedFilter, isCreatedFilter);
+                            break;
+                        case "BUY":
+                            ProcessBUYTransaction(root, profileCheck, myFriends, transactions, filteredObjects, objectColors, colorRandom, isOwnedFilter, isCreatedFilter);
+                            break;
+                        case "LST":
+                            ProcessLSTTransaction(root, profileCheck, myFriends, transactions, filteredObjects, objectColors, colorRandom, isOwnedFilter, isCreatedFilter);
+                            break;
+                        case "BRN":
+                            ProcessBRNTransaction(root, profileCheck, myFriends, transactions, filteredObjects, objectColors, colorRandom, isOwnedFilter, isCreatedFilter);
+                            break;
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Debug.WriteLine($"[GetHistoryByAddressVirtualized] Error processing transaction: {ex.Message}");
+                }
+            }
+
+            // Update UI on main thread
+            this.Invoke((Action)(() =>
+            {
+                // Switch to virtualized list
+                SwitchToVirtualizedHistory();
+                
+                // Update adapter with transactions
+                _historyAdapter.SetTransactions(transactions);
+                _historyAdapter.SetFriendList(myFriends);
+                _historyList.NotifyDataSetChanged();
+            }));
+        }
+
+        private void ProcessOBJTransaction(Root root, string profileCheck, Dictionary<string, string> myFriends, 
+            List<HistoryTransactionViewModel> transactions, HashSet<string> filteredObjects, 
+            Dictionary<string, Color> objectColors, Random colorRandom, bool isOwnedFilter, bool isCreatedFilter)
+        {
+            OBJ objinspector = null;
+            try
+            {
+                objinspector = JsonConvert.DeserializeObject<OBJ>(System.IO.File.ReadAllText(@"root\" + root.TransactionId + @"\OBJ"));
+            }
+            catch { return; }
+
+            if (objinspector == null) return;
+
+            string _from = root.SignedBy;
+            string _to = "";
+            string _message = "";
+            string _objectAddress = "";
+
+            try { _to = objinspector.cre.First(); } catch { }
+            if (_to != profileCheck && _from != profileCheck) return;
+
+            try { if (objinspector.own != null) { _message = "MINT 💎 " + objinspector.own.Values.Sum(); } else { _message = "OBJ 💎"; } } catch { }
+            string _blockdate = root.BlockDate.ToString("yyyyMMddHHmmss");
+            string imglocation = objinspector.img;
+            if (imglocation == null) { imglocation = objinspector.urn; }
+            if (imglocation == null) { imglocation = ""; }
+            
+            _objectAddress = objinspector.urn;
+
+            // If in filtered mode, check if this object is in the filtered list
+            if ((isOwnedFilter || isCreatedFilter) && !filteredObjects.Contains(_objectAddress))
+            {
+                return; // Skip this transaction
+            }
+
+            // Assign a color for this object if we don't have one yet
+            Color classifierColor = Color.White;
+            string classifierTag = null;
+            if (isOwnedFilter || isCreatedFilter)
+            {
+                if (!objectColors.ContainsKey(_objectAddress))
+                {
+                    // Generate a distinct color
+                    classifierColor = Color.FromArgb(
+                        100 + colorRandom.Next(156),
+                        100 + colorRandom.Next(156),
+                        100 + colorRandom.Next(156)
+                    );
+                    objectColors[_objectAddress] = classifierColor;
+                }
+                else
+                {
+                    classifierColor = objectColors[_objectAddress];
+                }
+                classifierTag = TruncateAddress(_objectAddress);
+            }
+
+            try { imglocation = myFriends[_from]; } catch { }
+
+            transactions.Add(new HistoryTransactionViewModel
+            {
+                TransactionId = root.TransactionId,
+                FromAddress = _from,
+                ToAddress = _to,
+                ObjectAddress = _objectAddress,
+                Message = _message,
+                BlockDate = DateTime.ParseExact(_blockdate, "yyyyMMddHHmmss", CultureInfo.InvariantCulture),
+                ImageLocation = imglocation,
+                ClassifierTag = classifierTag,
+                ClassifierColor = classifierColor
+            });
+        }
+
+        private void ProcessGIVTransaction(Root root, string profileCheck, Dictionary<string, string> myFriends, 
+            List<HistoryTransactionViewModel> transactions, HashSet<string> filteredObjects, 
+            Dictionary<string, Color> objectColors, Random colorRandom, bool isOwnedFilter, bool isCreatedFilter)
+        {
+            List<List<int>> givinspector = null;
+            try
+            {
+                givinspector = JsonConvert.DeserializeObject<List<List<int>>>(System.IO.File.ReadAllText(@"root\" + root.TransactionId + @"\GIV"));
+            }
+            catch { return; }
+
+            if (givinspector == null) return;
+
+            List<int> firstElements = givinspector
+                .Where(sublist => sublist.Count > 0 && sublist[0] > 0)
+                .Select(sublist => sublist[0])
+                .ToList();
+
+            if (firstElements.Count == 0) return;
+            int lowestFirstElement = firstElements.Min();
+
+            foreach (var give in givinspector)
+            {
+                if (root.Keyword.Count <= lowestFirstElement) continue;
+
+                for (int g = 1; g < lowestFirstElement; g++)
+                {
+                    string _from = root.SignedBy;
+                    string _to = "";
+                    string objectaddress = root.Keyword.Reverse().GetItemByIndex(g).Key;
+
+                    try { _to = root.Keyword.Reverse().GetItemByIndex(give[0]).Key; } catch { }
+                    if (_to != profileCheck && _from != profileCheck) continue;
+
+                    // If in filtered mode, check if this object is in the filtered list
+                    if ((isOwnedFilter || isCreatedFilter) && !filteredObjects.Contains(objectaddress))
+                    {
+                        continue;
+                    }
+
+                    string _message = "GIV 💕 ";
+                    try { _message = _message + give[1]; } catch { }
+                    string _blockdate = root.BlockDate.ToString("yyyyMMddHHmmss");
+                    string imglocation = "";
+
+                    if (give[1] <= 0) continue;
+
+                    // Assign classifier tag and color
+                    Color classifierColor = Color.White;
+                    string classifierTag = null;
+                    if (isOwnedFilter || isCreatedFilter)
+                    {
+                        if (!objectColors.ContainsKey(objectaddress))
+                        {
+                            classifierColor = Color.FromArgb(
+                                100 + colorRandom.Next(156),
+                                100 + colorRandom.Next(156),
+                                100 + colorRandom.Next(156)
+                            );
+                            objectColors[objectaddress] = classifierColor;
+                        }
+                        else
+                        {
+                            classifierColor = objectColors[objectaddress];
+                        }
+                        classifierTag = TruncateAddress(objectaddress);
+                    }
+
+                    try { imglocation = myFriends[_from]; } catch { }
+
+                    transactions.Add(new HistoryTransactionViewModel
+                    {
+                        TransactionId = root.TransactionId,
+                        FromAddress = _from,
+                        ToAddress = _to,
+                        ObjectAddress = objectaddress,
+                        Message = _message,
+                        BlockDate = DateTime.ParseExact(_blockdate, "yyyyMMddHHmmss", CultureInfo.InvariantCulture),
+                        ImageLocation = imglocation,
+                        ClassifierTag = classifierTag,
+                        ClassifierColor = classifierColor
+                    });
+                }
+            }
+        }
+
+        private void ProcessBUYTransaction(Root root, string profileCheck, Dictionary<string, string> myFriends, 
+            List<HistoryTransactionViewModel> transactions, HashSet<string> filteredObjects, 
+            Dictionary<string, Color> objectColors, Random colorRandom, bool isOwnedFilter, bool isCreatedFilter)
+        {
+            List<List<string>> buyinspector = null;
+            try
+            {
+                buyinspector = JsonConvert.DeserializeObject<List<List<string>>>(System.IO.File.ReadAllText(@"root\" + root.TransactionId + @"\BUY"));
+            }
+            catch { return; }
+
+            if (buyinspector == null) return;
+
+            foreach (var buy in buyinspector)
+            {
+                string _from = root.SignedBy;
+                string _to = "";
+                string objectaddress = "";
+                
+                try { _to = root.Keyword.Reverse().GetItemByIndex(1).Key; objectaddress = _to; } catch { }
+                if (_to != profileCheck && _from != profileCheck && buy[0] != profileCheck) continue;
+
+                string _message = "BUY 💰 " + buy[1];
+                string _blockdate = root.BlockDate.ToString("yyyyMMddHHmmss");
+                string imglocation = "";
+
+                if (long.Parse(buy[1], NumberStyles.Any, CultureInfo.GetCultureInfo("en-US")) < 0) continue;
+
+                // If in filtered mode, check if this object is in the filtered list
+                if ((isOwnedFilter || isCreatedFilter) && !filteredObjects.Contains(objectaddress))
+                {
+                    continue;
+                }
+
+                // Assign classifier tag and color
+                Color classifierColor = Color.White;
+                string classifierTag = null;
+                if (isOwnedFilter || isCreatedFilter)
+                {
+                    if (!objectColors.ContainsKey(objectaddress))
+                    {
+                        classifierColor = Color.FromArgb(
+                            100 + colorRandom.Next(156),
+                            100 + colorRandom.Next(156),
+                            100 + colorRandom.Next(156)
+                        );
+                        objectColors[objectaddress] = classifierColor;
+                    }
+                    else
+                    {
+                        classifierColor = objectColors[objectaddress];
+                    }
+                    classifierTag = TruncateAddress(objectaddress);
+                }
+
+                try { imglocation = myFriends[_from]; } catch { }
+
+                transactions.Add(new HistoryTransactionViewModel
+                {
+                    TransactionId = root.TransactionId,
+                    FromAddress = _from,
+                    ToAddress = buy[0],
+                    ObjectAddress = objectaddress,
+                    Message = _message,
+                    BlockDate = DateTime.ParseExact(_blockdate, "yyyyMMddHHmmss", CultureInfo.InvariantCulture),
+                    ImageLocation = imglocation,
+                    ClassifierTag = classifierTag,
+                    ClassifierColor = classifierColor
+                });
+            }
+        }
+
+        private void ProcessLSTTransaction(Root root, string profileCheck, Dictionary<string, string> myFriends, 
+            List<HistoryTransactionViewModel> transactions, HashSet<string> filteredObjects, 
+            Dictionary<string, Color> objectColors, Random colorRandom, bool isOwnedFilter, bool isCreatedFilter)
+        {
+            List<List<string>> lstinspector = null;
+            try
+            {
+                lstinspector = JsonConvert.DeserializeObject<List<List<string>>>(System.IO.File.ReadAllText(@"root\" + root.TransactionId + @"\LST"));
+            }
+            catch { return; }
+
+            if (lstinspector == null) return;
+
+            foreach (var lst in lstinspector)
+            {
+                string _from = root.SignedBy;
+                string _to = lst[0];
+                string objectaddress = _to;
+
+                if (_to != profileCheck && _from != profileCheck) continue;
+
+                string _message = "LST 📰 ";
+                try { _message = _message + lst[1] + " at "; } catch { }
+                try { _message = _message + lst[2] + " each"; } catch { }
+                string _blockdate = root.BlockDate.ToString("yyyyMMddHHmmss");
+                string imglocation = "";
+
+                if (long.Parse(lst[1], NumberStyles.Any, CultureInfo.GetCultureInfo("en-US")) < 0) continue;
+
+                // If in filtered mode, check if this object is in the filtered list
+                if ((isOwnedFilter || isCreatedFilter) && !filteredObjects.Contains(objectaddress))
+                {
+                    continue;
+                }
+
+                // Assign classifier tag and color
+                Color classifierColor = Color.White;
+                string classifierTag = null;
+                if (isOwnedFilter || isCreatedFilter)
+                {
+                    if (!objectColors.ContainsKey(objectaddress))
+                    {
+                        classifierColor = Color.FromArgb(
+                            100 + colorRandom.Next(156),
+                            100 + colorRandom.Next(156),
+                            100 + colorRandom.Next(156)
+                        );
+                        objectColors[objectaddress] = classifierColor;
+                    }
+                    else
+                    {
+                        classifierColor = objectColors[objectaddress];
+                    }
+                    classifierTag = TruncateAddress(objectaddress);
+                }
+
+                try { imglocation = myFriends[_from]; } catch { }
+
+                transactions.Add(new HistoryTransactionViewModel
+                {
+                    TransactionId = root.TransactionId,
+                    FromAddress = _from,
+                    ToAddress = _to,
+                    ObjectAddress = objectaddress,
+                    Message = _message,
+                    BlockDate = DateTime.ParseExact(_blockdate, "yyyyMMddHHmmss", CultureInfo.InvariantCulture),
+                    ImageLocation = imglocation,
+                    ClassifierTag = classifierTag,
+                    ClassifierColor = classifierColor
+                });
+            }
+        }
+
+        private void ProcessBRNTransaction(Root root, string profileCheck, Dictionary<string, string> myFriends, 
+            List<HistoryTransactionViewModel> transactions, HashSet<string> filteredObjects, 
+            Dictionary<string, Color> objectColors, Random colorRandom, bool isOwnedFilter, bool isCreatedFilter)
+        {
+            List<List<int>> brninspector = null;
+            try
+            {
+                brninspector = JsonConvert.DeserializeObject<List<List<int>>>(System.IO.File.ReadAllText(@"root\" + root.TransactionId + @"\BRN"));
+            }
+            catch { return; }
+
+            if (brninspector == null) return;
+
+            foreach (var burn in brninspector)
+            {
+                if (root.Keyword.GetItemByIndex(burn[0]).Key == null) continue;
+
+                string _from = root.SignedBy;
+                string _to = "";
+                string objectaddress = root.Keyword.GetItemByIndex(burn[0]).Key;
+
+                try { _to = root.Keyword.Reverse().GetItemByIndex(burn[0]).Key; } catch { }
+                if (_to != profileCheck && _from != profileCheck) continue;
+
+                string _message = "BURN 🔥 ";
+                try { _message = _message + burn[1]; } catch { }
+                string _blockdate = root.BlockDate.ToString("yyyyMMddHHmmss");
+                string imglocation = "";
+
+                if (burn[1] <= 0) continue;
+
+                // If in filtered mode, check if this object is in the filtered list
+                if ((isOwnedFilter || isCreatedFilter) && !filteredObjects.Contains(objectaddress))
+                {
+                    continue;
+                }
+
+                // Assign classifier tag and color
+                Color classifierColor = Color.White;
+                string classifierTag = null;
+                if (isOwnedFilter || isCreatedFilter)
+                {
+                    if (!objectColors.ContainsKey(objectaddress))
+                    {
+                        classifierColor = Color.FromArgb(
+                            100 + colorRandom.Next(156),
+                            100 + colorRandom.Next(156),
+                            100 + colorRandom.Next(156)
+                        );
+                        objectColors[objectaddress] = classifierColor;
+                    }
+                    else
+                    {
+                        classifierColor = objectColors[objectaddress];
+                    }
+                    classifierTag = TruncateAddress(objectaddress);
+                }
+
+                try { imglocation = myFriends[_from]; } catch { }
+
+                transactions.Add(new HistoryTransactionViewModel
+                {
+                    TransactionId = root.TransactionId,
+                    FromAddress = _from,
+                    ToAddress = _to,
+                    ObjectAddress = objectaddress,
+                    Message = _message,
+                    BlockDate = DateTime.ParseExact(_blockdate, "yyyyMMddHHmmss", CultureInfo.InvariantCulture),
+                    ImageLocation = imglocation,
+                    ClassifierTag = classifierTag,
+                    ClassifierColor = classifierColor
+                });
+            }
+        }
+
 
         private void GetCollectionsByAddress(string address, bool calculate = false)
         {
@@ -2915,13 +3505,30 @@ namespace SUP
 
         private async void ButtonGetOwnedClick(object sender, EventArgs e)
         {
-            if (btnOwned.BackColor == Color.Yellow) { btnOwned.BackColor = Color.White; }
+            // Toggle Owned button
+            if (btnOwned.BackColor == Color.Yellow) 
+            { 
+                btnOwned.BackColor = Color.White;
+                // If History is also selected, reload History with default behavior
+                if (btnActivity.BackColor == Color.Yellow)
+                {
+                    txtLast.Text = "0";
+                    DisableSupInput();
+                    await Task.Run(() => BuildSearchResults());
+                    EnableSupInput();
+                    return;
+                }
+            }
             else
             {
                 btnOwned.BackColor = Color.Yellow;
-                btnCreated.BackColor = Color.White;
-                btnCollections.BackColor = Color.White;
-                btnActivity.BackColor = Color.White;
+                // If History is selected, keep it selected (allow combination)
+                // Otherwise, deselect other filters
+                if (btnActivity.BackColor != Color.Yellow)
+                {
+                    btnCreated.BackColor = Color.White;
+                    btnCollections.BackColor = Color.White;
+                }
             }
             txtLast.Text = "0";
             txtTotal.Text = "0";
@@ -2954,14 +3561,30 @@ namespace SUP
 
         private async void ButtonGetCreatedClick(object sender, EventArgs e)
         {
-
-            if (btnCreated.BackColor == Color.Yellow) { btnCreated.BackColor = Color.White; }
+            // Toggle Created button
+            if (btnCreated.BackColor == Color.Yellow) 
+            { 
+                btnCreated.BackColor = Color.White;
+                // If History is also selected, reload History with default behavior
+                if (btnActivity.BackColor == Color.Yellow)
+                {
+                    txtLast.Text = "0";
+                    DisableSupInput();
+                    await Task.Run(() => BuildSearchResults());
+                    EnableSupInput();
+                    return;
+                }
+            }
             else
             {
                 btnCreated.BackColor = Color.Yellow;
-                btnOwned.BackColor = Color.White;
-                btnCollections.BackColor = Color.White;
-                btnActivity.BackColor = Color.White;
+                // If History is selected, keep it selected (allow combination)
+                // Otherwise, deselect other filters
+                if (btnActivity.BackColor != Color.Yellow)
+                {
+                    btnOwned.BackColor = Color.White;
+                    btnCollections.BackColor = Color.White;
+                }
             }
             txtLast.Text = "0";
             if (txtSearchAddress.Text != "" && !txtSearchAddress.Text.StartsWith("#") && !txtSearchAddress.Text.ToUpper().StartsWith("BTC:") && !txtSearchAddress.Text.ToUpper().StartsWith("MZC:") && !txtSearchAddress.Text.ToUpper().StartsWith("LTC:") && !txtSearchAddress.Text.ToUpper().StartsWith("IPFS:") && !txtSearchAddress.Text.ToUpper().StartsWith("HTTP") && !txtSearchAddress.Text.ToUpper().StartsWith("SUP:"))
@@ -3384,7 +4007,7 @@ namespace SUP
                                             if (!string.IsNullOrEmpty(txtSearchAddress.Text))
                                             {
                                                 historySeen = 0;
-                                                GetHistoryByAddress(txtSearchAddress.Text.Replace("@", ""), calculate);
+                                                GetHistoryByAddressVirtualized(txtSearchAddress.Text.Replace("@", ""), calculate);
 
                                             }
                                             else
@@ -3861,13 +4484,26 @@ namespace SUP
 
         private async void btnActivity_Click(object sender, EventArgs e)
         {
-            if (btnActivity.BackColor == Color.Yellow) { btnActivity.BackColor = Color.White; }
+            // Toggle History button
+            if (btnActivity.BackColor == Color.Yellow) 
+            { 
+                btnActivity.BackColor = Color.White;
+                // If Owned or Created are selected, reload them without History
+                if (btnOwned.BackColor == Color.Yellow || btnCreated.BackColor == Color.Yellow)
+                {
+                    txtLast.Text = "0";
+                    DisableSupInput();
+                    await Task.Run(() => BuildSearchResults());
+                    EnableSupInput();
+                    return;
+                }
+            }
             else
             {
-                btnCreated.BackColor = Color.White;
-                btnOwned.BackColor = Color.White;
-                btnCollections.BackColor = Color.White;
                 btnActivity.BackColor = Color.Yellow;
+                // Allow combination with Owned or Created
+                // Only deselect Collections
+                btnCollections.BackColor = Color.White;
             }
             txtLast.Text = "0";
             if (txtSearchAddress.Text != "" && !txtSearchAddress.Text.ToUpper().StartsWith("BTC:") && !txtSearchAddress.Text.ToUpper().StartsWith("MZC:") && !txtSearchAddress.Text.ToUpper().StartsWith("LTC:") && !txtSearchAddress.Text.ToUpper().StartsWith("IPFS:") && !txtSearchAddress.Text.ToUpper().StartsWith("HTTP") && !txtSearchAddress.Text.ToUpper().StartsWith("SUP:"))
