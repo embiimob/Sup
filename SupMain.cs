@@ -5603,19 +5603,10 @@ namespace SUP
                         }
 
 
-                        this.Invoke((MethodInvoker)delegate
-                        {
-                            try
-                            {
-                                try { imglocation = myFriends[_from]; } catch { imglocation = @"includes\anon.png"; }
-                                CreateRow(imglocation, fromURN, _from, DateTime.ParseExact(_blockdate, "yyyyMMddHHmmss", CultureInfo.InvariantCulture), _message, _transactionId, false, supFlow);
-                                imglocation = "";
-                                try { imglocation = myFriends[_to]; } catch { imglocation = @"includes\anon.png"; }
-                                CreateRow(imglocation, toURN, _to, DateTime.ParseExact("19700101010101", "yyyyMMddHHmmss", CultureInfo.InvariantCulture), "", _transactionId, false, supFlow);
-                            }
-                            catch { }
-                        });
-
+                        // Check for INQ file before creating divs
+                        // This allows us to add everything in the correct order in one UI thread operation
+                        bool hasINQ = false;
+                        FoundINQControl inqControl = null;
                         try
                         {
                             string[] files = Directory.GetFiles(@"root\" + _transactionId);
@@ -5626,20 +5617,36 @@ namespace SUP
 
                             if (containsFileWithINQ)
                             {
-                                //ADD INQ IF IT EXISTS AND IS NOT BLOCKED
-                                this.Invoke((MethodInvoker)delegate
-                                {
-                                    string profileowner = "";
+                                hasINQ = true;
+                                string profileowner = "";
+                                if (profileOwner.Tag != null) { profileowner = profileOwner.Tag.ToString(); }
 
-                                    if (profileOwner.Tag != null) { profileowner = profileOwner.Tag.ToString(); }
-
-                                    FoundINQControl foundObject = new FoundINQControl(_transactionId, profileowner, testnet);
-                                    foundObject.Margin = new Padding(20, 7, 8, 7);
-                                    AddMessageControl(supFlow, foundObject);
-                                });
+                                inqControl = new FoundINQControl(_transactionId, profileowner, testnet);
+                                inqControl.Margin = new Padding(20, 7, 8, 7);
                             }
                         }
                         catch { }
+
+                        // Add divs and INQ control together in one UI operation
+                        // This prevents divs from showing before INQ control is added
+                        this.Invoke((MethodInvoker)delegate
+                        {
+                            try
+                            {
+                                try { imglocation = myFriends[_from]; } catch { imglocation = @"includes\anon.png"; }
+                                CreateRow(imglocation, fromURN, _from, DateTime.ParseExact(_blockdate, "yyyyMMddHHmmss", CultureInfo.InvariantCulture), _message, _transactionId, false, supFlow);
+                                imglocation = "";
+                                try { imglocation = myFriends[_to]; } catch { imglocation = @"includes\anon.png"; }
+                                CreateRow(imglocation, toURN, _to, DateTime.ParseExact("19700101010101", "yyyyMMddHHmmss", CultureInfo.InvariantCulture), "", _transactionId, false, supFlow);
+                                
+                                // Add INQ control immediately after divs if it exists
+                                if (hasINQ && inqControl != null)
+                                {
+                                    AddMessageControl(supFlow, inqControl);
+                                }
+                            }
+                            catch { }
+                        });
 
                         string pattern = "<<.*?>>";
                         MatchCollection matches = Regex.Matches(unfilteredmessage, pattern);
