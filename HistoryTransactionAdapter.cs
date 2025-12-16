@@ -197,7 +197,7 @@ namespace SUP
             // Block date label
             Label dateLabel = new Label
             {
-                Text = transaction.BlockDate.ToString("MM/dd/yyyy hh:mm:ss tt"),
+                Text = transaction.BlockDate.ToString("g", CultureInfo.CurrentCulture), // Short date/time format respecting locale
                 Location = new Point(transactionPanel.Width - 180, 10),
                 AutoSize = true,
                 Font = new Font("Segoe UI", 8F, FontStyle.Regular),

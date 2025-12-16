@@ -56,6 +56,10 @@ namespace SUP
         private VirtualizedMessageList _historyList;
         private HistoryTransactionAdapter _historyAdapter;
         private bool _useVirtualizedHistory = false;
+        
+        // Constants for classifier color generation
+        private const int MIN_COLOR_VALUE = 100; // Minimum RGB value to avoid dark colors
+        private const int COLOR_RANGE = 156; // Range from MIN_COLOR_VALUE to 255 (156 = 255 - 100 + 1)
 
         private readonly System.Windows.Forms.Timer _doubleClickTimer = new System.Windows.Forms.Timer();
         public ObjectBrowser(string objectaddress, bool iscontrol = false, bool testnet = true)
@@ -2067,8 +2071,9 @@ namespace SUP
             Random colorRandom = new Random();
             
             // Get all transactions for the address
+            // Note: GetRootsByAddress returns transactions in reverse chronological order (newest first)
             List<Root> combinedRoots = Root.GetRootsByAddress(profileCheck, mainnetLogin, mainnetPassword, mainnetURL, 0, -1, mainnetVersionByte, calculate).ToList();
-            combinedRoots.Reverse(); // Chronological order (oldest first, then newest)
+            combinedRoots.Reverse(); // Reverse to chronological order (oldest first, newest last)
 
             // If in filtered mode, get the list of owned/created objects
             HashSet<string> filteredObjects = new HashSet<string>();
@@ -2186,9 +2191,9 @@ namespace SUP
                 {
                     // Generate a distinct color
                     classifierColor = Color.FromArgb(
-                        100 + colorRandom.Next(156),
-                        100 + colorRandom.Next(156),
-                        100 + colorRandom.Next(156)
+                        MIN_COLOR_VALUE + colorRandom.Next(COLOR_RANGE),
+                        MIN_COLOR_VALUE + colorRandom.Next(COLOR_RANGE),
+                        MIN_COLOR_VALUE + colorRandom.Next(COLOR_RANGE)
                     );
                     objectColors[_objectAddress] = classifierColor;
                 }
@@ -2240,11 +2245,11 @@ namespace SUP
             {
                 if (root.Keyword.Count <= lowestFirstElement) continue;
 
-                for (int g = 1; g < lowestFirstElement; g++)
+                for (int keywordIndex = 1; keywordIndex < lowestFirstElement; keywordIndex++)
                 {
                     string _from = root.SignedBy;
                     string _to = "";
-                    string objectaddress = root.Keyword.Reverse().GetItemByIndex(g).Key;
+                    string objectaddress = root.Keyword.Reverse().GetItemByIndex(keywordIndex).Key;
 
                     try { _to = root.Keyword.Reverse().GetItemByIndex(give[0]).Key; } catch { }
                     if (_to != profileCheck && _from != profileCheck) continue;
@@ -2270,9 +2275,9 @@ namespace SUP
                         if (!objectColors.ContainsKey(objectaddress))
                         {
                             classifierColor = Color.FromArgb(
-                                100 + colorRandom.Next(156),
-                                100 + colorRandom.Next(156),
-                                100 + colorRandom.Next(156)
+                                MIN_COLOR_VALUE + colorRandom.Next(COLOR_RANGE),
+                                MIN_COLOR_VALUE + colorRandom.Next(COLOR_RANGE),
+                                MIN_COLOR_VALUE + colorRandom.Next(COLOR_RANGE)
                             );
                             objectColors[objectaddress] = classifierColor;
                         }
@@ -2343,9 +2348,9 @@ namespace SUP
                     if (!objectColors.ContainsKey(objectaddress))
                     {
                         classifierColor = Color.FromArgb(
-                            100 + colorRandom.Next(156),
-                            100 + colorRandom.Next(156),
-                            100 + colorRandom.Next(156)
+                            MIN_COLOR_VALUE + colorRandom.Next(COLOR_RANGE),
+                            MIN_COLOR_VALUE + colorRandom.Next(COLOR_RANGE),
+                            MIN_COLOR_VALUE + colorRandom.Next(COLOR_RANGE)
                         );
                         objectColors[objectaddress] = classifierColor;
                     }
@@ -2416,9 +2421,9 @@ namespace SUP
                     if (!objectColors.ContainsKey(objectaddress))
                     {
                         classifierColor = Color.FromArgb(
-                            100 + colorRandom.Next(156),
-                            100 + colorRandom.Next(156),
-                            100 + colorRandom.Next(156)
+                            MIN_COLOR_VALUE + colorRandom.Next(COLOR_RANGE),
+                            MIN_COLOR_VALUE + colorRandom.Next(COLOR_RANGE),
+                            MIN_COLOR_VALUE + colorRandom.Next(COLOR_RANGE)
                         );
                         objectColors[objectaddress] = classifierColor;
                     }
@@ -2491,9 +2496,9 @@ namespace SUP
                     if (!objectColors.ContainsKey(objectaddress))
                     {
                         classifierColor = Color.FromArgb(
-                            100 + colorRandom.Next(156),
-                            100 + colorRandom.Next(156),
-                            100 + colorRandom.Next(156)
+                            MIN_COLOR_VALUE + colorRandom.Next(COLOR_RANGE),
+                            MIN_COLOR_VALUE + colorRandom.Next(COLOR_RANGE),
+                            MIN_COLOR_VALUE + colorRandom.Next(COLOR_RANGE)
                         );
                         objectColors[objectaddress] = classifierColor;
                     }
