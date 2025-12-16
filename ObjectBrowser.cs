@@ -2468,9 +2468,8 @@ namespace SUP
                 try { _to = root.Keyword.Reverse().GetItemByIndex(1).Key; objectaddress = _to; } catch { }
                 if (_to != profileCheck && _from != profileCheck && buy[0] != profileCheck) continue;
 
-                string _message = "BUY 💰 " + buy[1];
+                string _message = "BUY 💰 " + buy[1] + " from " + TruncateAddress(buy[0]);
                 string _blockdate = root.BlockDate.ToString("yyyyMMddHHmmss");
-                string imglocation = "";
 
                 if (long.Parse(buy[1], NumberStyles.Any, CultureInfo.GetCultureInfo("en-US")) < 0) continue;
 
@@ -2501,17 +2500,76 @@ namespace SUP
                     classifierTag = TruncateAddress(objectaddress);
                 }
 
-                try { imglocation = myFriends[_from]; } catch { }
+                // Resolve FROM profile/object
+                string fromURN = _from;
+                string fromImageLocation = "";
+                bool isFromObject = false;
+                
+                PROState fromProfile = PROState.GetProfileByAddress(_from, mainnetLogin, mainnetPassword, mainnetURL, mainnetVersionByte);
+                if (fromProfile.URN != null)
+                {
+                    fromURN = fromProfile.URN;
+                    try { fromImageLocation = myFriends[_from]; } catch { }
+                }
+                else
+                {
+                    OBJState fromObj = OBJState.GetObjectByAddress(_from, mainnetLogin, mainnetPassword, mainnetURL, mainnetVersionByte);
+                    if (fromObj.Creators != null)
+                    {
+                        isFromObject = true;
+                        fromURN = fromObj.URN;
+                        fromImageLocation = GetObjectImagePath(fromObj);
+                    }
+                }
+
+                // Resolve TO (buyer) profile/object
+                string toURN = buy[0];
+                string toImageLocation = "";
+                bool isToObject = false;
+                
+                PROState toProfile = PROState.GetProfileByAddress(buy[0], mainnetLogin, mainnetPassword, mainnetURL, mainnetVersionByte);
+                if (toProfile.URN != null)
+                {
+                    toURN = toProfile.URN;
+                }
+                else
+                {
+                    OBJState toObj = OBJState.GetObjectByAddress(buy[0], mainnetLogin, mainnetPassword, mainnetURL, mainnetVersionByte);
+                    if (toObj.Creators != null)
+                    {
+                        isToObject = true;
+                        toURN = toObj.URN;
+                        toImageLocation = GetObjectImagePath(toObj);
+                    }
+                }
+
+                // Resolve middle object (being bought)
+                string objectURN = objectaddress;
+                string objectImageLocation = "";
+                OBJState buyObj = OBJState.GetObjectByAddress(objectaddress, mainnetLogin, mainnetPassword, mainnetURL, mainnetVersionByte);
+                if (buyObj.URN != null)
+                {
+                    objectURN = buyObj.URN;
+                    objectImageLocation = GetObjectImagePath(buyObj);
+                }
 
                 transactions.Add(new HistoryTransactionViewModel
                 {
                     TransactionId = root.TransactionId,
                     FromAddress = _from,
+                    FromURN = fromURN,
+                    FromImageLocation = fromImageLocation,
+                    IsFromObject = isFromObject,
                     ToAddress = buy[0],
+                    ToURN = toURN,
+                    ToImageLocation = toImageLocation,
+                    IsToObject = isToObject,
                     ObjectAddress = objectaddress,
+                    ObjectURN = objectURN,
+                    ObjectImageLocation = objectImageLocation,
+                    HasMiddleObject = true,
                     Message = _message,
                     BlockDate = DateTime.ParseExact(_blockdate, "yyyyMMddHHmmss", CultureInfo.InvariantCulture),
-                    ImageLocation = imglocation,
                     ClassifierTag = classifierTag,
                     ClassifierColor = classifierColor
                 });
