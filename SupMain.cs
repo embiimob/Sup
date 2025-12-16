@@ -52,10 +52,17 @@ namespace SUP
         private bool dogActive;
         ObjectBrowserControl OBcontrol = new ObjectBrowserControl();
         private int numMessagesDisplayed;
+        private int numMessagesSkip; // Actual API skip value (always increments by batch size)
         private int numPrivateMessagesDisplayed;
         private int numFriendFeedsDisplayed;
+        private int numFriendFeedsSkip; // Actual API skip value for community feed
         FlowLayoutPanel supPrivateFlow = new FlowLayoutPanel();
         AudioPlayer audioPlayer = new AudioPlayer();
+        
+        // IPFS process management
+        private const int MAX_CONCURRENT_IPFS_PROCESSES = 22;
+        private static readonly object _ipfsProcessLock = new object();
+        private static int _currentIPFSProcessCount = 0;
         
         // Guard flag to prevent circular updates between SupMain and ObjectBrowser
         // When true, indicates that we're updating ObjectBrowser from SupMain and should not
@@ -86,6 +93,19 @@ namespace SUP
         /// Retained across conversations to minimize redundant profile lookups.
         /// </summary>
         private Dictionary<string, string[]> _profileCache = new Dictionary<string, string[]>();
+        
+        /// <summary>
+        /// Tracks whether we're loading older messages (scroll down to bottom) or newer messages (scroll up to top).
+        /// true = loading OLDER messages (add to bottom, remove from top)
+        /// false = loading NEWER messages (add to top, remove from bottom)
+        /// </summary>
+        private bool _loadingOlderMessages = false;
+        
+        /// <summary>
+        /// Prevents infinite reload loops when scroll position is at trigger zones (top/bottom).
+        /// Set to true when loading messages, back to false after scroll position is adjusted.
+        /// </summary>
+        private bool _isLoadingMessages = false;
 
         public SupMain()
         {
@@ -119,6 +139,9 @@ namespace SUP
         {
 
             if (btnCommunityFeed.Enabled == false || btnPublicMessage.Enabled == false || btnPrivateMessage.Enabled == false) { return; }
+            
+            // Prevent infinite reload loops
+            if (_isLoadingMessages) { return; }
 
             if (btnPrivateMessage.BackColor == System.Drawing.Color.Blue) { btnPrivateMessage.BackColor = System.Drawing.Color.White; btnPrivateMessage.ForeColor = System.Drawing.Color.Black; btnPublicMessage.BackColor = System.Drawing.Color.Blue; btnPublicMessage.ForeColor = System.Drawing.Color.Yellow; }
 
@@ -133,33 +156,21 @@ namespace SUP
 
                 if (btnPublicMessage.BackColor == System.Drawing.Color.Blue)
                 {
-                    int startNum = numMessagesDisplayed;
+                    _isLoadingMessages = true; // Prevent re-entry
+                    _loadingOlderMessages = true; // Scrolling DOWN - loading OLDER messages
                     RefreshSupMessages();
-
-                    if (numMessagesDisplayed == startNum + 10)
-                    {
-                        this.Invoke((MethodInvoker)delegate
-                        {
-                            supFlow.AutoScrollPosition = new Point(0, 10);
-                        });
-                    }
-
+                    // No scroll adjustment needed - position preserved naturally
+                    // The _isLoadingMessages flag prevents re-entry
                 }
                 else
                 {
 
                     if (btnCommunityFeed.BackColor == System.Drawing.Color.Blue)
                     {
-                        int startNum = numFriendFeedsDisplayed;
-                        RefreshCommunityMessages();
-
-                        if (numFriendFeedsDisplayed == startNum + 10)
-                        {
-                            this.Invoke((MethodInvoker)delegate
-                            {
-                                supFlow.AutoScrollPosition = new Point(0, 10);
-                            });
-                        }
+                        _isLoadingMessages = true; // Prevent re-entry
+                        _loadingOlderMessages = true; // Scrolling DOWN - loading OLDER messages
+                        RefreshCommunityMessages(); // resetCounters defaults to false, preserves scroll position
+                        // No scroll adjustment needed - position preserved naturally
                     }
                 }
             }
@@ -172,48 +183,10 @@ namespace SUP
                     supFlow.Size = new System.Drawing.Size(supFlow.Width, supFlow.Height - 150); // Change the width and height
                 }
 
-
-
-
-
-
-                if (btnPublicMessage.BackColor == System.Drawing.Color.Blue)
-                {
-
-                    if (numMessagesDisplayed > 10)
-                    {
-                        numMessagesDisplayed = numMessagesDisplayed - 20; if (numMessagesDisplayed < 0) { numMessagesDisplayed = 0; }
-                        else
-                        {
-                            RefreshSupMessages();
-                            this.Invoke((MethodInvoker)delegate
-                        {
-                            supFlow.AutoScrollPosition = new Point(0, supFlow.VerticalScroll.Maximum - 10);
-
-                        });
-                        }
-                    }
-                }
-                else
-                {
-
-                    if (btnCommunityFeed.BackColor == System.Drawing.Color.Blue)
-                    {
-                        if (numFriendFeedsDisplayed > 10)
-                        {
-                            numFriendFeedsDisplayed = numFriendFeedsDisplayed - 20; if (numFriendFeedsDisplayed < 0) { numFriendFeedsDisplayed = 0; }
-                            else
-                            {
-                                RefreshCommunityMessages();
-                                this.Invoke((MethodInvoker)delegate
-                                {
-                                    supFlow.AutoScrollPosition = new Point(0, supFlow.VerticalScroll.Maximum - 10);
-
-                                });
-                            }
-                        }
-                    }
-                }
+                // At top of scroll - just stop here, don't reload
+                // Only load if there are actually older messages (numMessagesSkip > 0)
+                // This prevents unnecessary refresh when user is already at the newest messages
+                // Background thread will handle new message notifications separately
             }
 
         }
@@ -221,6 +194,9 @@ namespace SUP
         private void supPrivateFlow_MouseWheel(object sender, MouseEventArgs e)
         {
             if (btnCommunityFeed.Enabled == false || btnPublicMessage.Enabled == false || btnPrivateMessage.Enabled == false) { return; }
+            
+            // Prevent infinite reload loops
+            if (_isLoadingMessages) { return; }
 
             if (btnPublicMessage.BackColor == System.Drawing.Color.Blue) { btnPublicMessage.BackColor = System.Drawing.Color.White; btnPublicMessage.ForeColor = System.Drawing.Color.Black; btnPrivateMessage.BackColor = System.Drawing.Color.Blue; btnPrivateMessage.ForeColor = System.Drawing.Color.Yellow; }
 
@@ -228,22 +204,23 @@ namespace SUP
             // Only trigger load when very close to bottom (within 50 pixels)
             if (supPrivateFlow.VerticalScroll.Value + supPrivateFlow.ClientSize.Height >= supPrivateFlow.VerticalScroll.Maximum - 50)
             {
+                _isLoadingMessages = true; // Prevent re-entry
                 int startNum = numPrivateMessagesDisplayed;
+                _loadingOlderMessages = true; // Set flag for scroll direction
                 // Load next batch of messages
                 RefreshPrivateSupMessages();
-
-                // Don't adjust scroll position - let natural scrolling work
-                // The scroll adjustment was causing jumpiness
-                // if (numPrivateMessagesDisplayed == startNum + 10)
-                // {
-                //     this.Invoke((MethodInvoker)delegate
-                //     {
-                //         supPrivateFlow.AutoScrollPosition = new Point(0, 10);
-                //     });
-                // }
+                // No scroll adjustment needed - position preserved naturally
+                // The _isLoadingMessages flag prevents re-entry
             }
-            // Note: Removed scroll-up handler - private messages are append-only
-            // Scrolling up just navigates existing messages, no need to reload
+            // Scroll up to top - just stop here, don't reload
+            // Only load if user explicitly requests it via button click
+            // This prevents unnecessary refresh and cursor jumping
+            // Make behavior consistent with public messages
+            else if (supPrivateFlow.VerticalScroll.Value <= 50)
+            {
+                // Just stop at the top - no action needed
+                // Background thread will handle new message notifications separately
+            }
         }
 
         private void SupMaincs_Load(object sender, EventArgs e)
@@ -378,8 +355,10 @@ namespace SUP
                         }
                         
                         numMessagesDisplayed = 0;
+                        numMessagesSkip = 0;
                         numPrivateMessagesDisplayed = 0;
                         numFriendFeedsDisplayed = 0;
+                        numFriendFeedsSkip = 0;
                         
                         // Clear private message state when switching profiles
                         _loadedPrivateMessages.Clear();
@@ -1599,8 +1578,7 @@ namespace SUP
 
                             foundObject.ResumeLayout();
 
-                            supFlow.Controls.Add(foundObject);
-                            supFlow.Controls.SetChildIndex(foundObject, 0);
+                            AddMessageControl(supFlow, foundObject);
 
                         }
                         supFlow.ResumeLayout();
@@ -1885,8 +1863,7 @@ namespace SUP
                                                                             }
 
 
-                                                                            this.supFlow.Controls.Add(panel);
-                                                                            supFlow.Controls.SetChildIndex(panel, 0);
+                                                                            AddMessageControl(supFlow, panel);
                                                                         });
 
                                                                     }
@@ -1911,8 +1888,7 @@ namespace SUP
                                                                             panel.Controls.Add(titleLabel);
 
 
-                                                                            this.supFlow.Controls.Add(panel);
-                                                                            supFlow.Controls.SetChildIndex(panel, 0);
+                                                                            AddMessageControl(supFlow, panel);
                                                                         });
 
                                                                     }
@@ -1939,8 +1915,7 @@ namespace SUP
                                                                         panel.Controls.Add(titleLabel);
 
 
-                                                                        this.supFlow.Controls.Add(panel);
-                                                                        supFlow.Controls.SetChildIndex(panel, 0);
+                                                                        AddMessageControl(supFlow, panel);
                                                                     });
 
 
@@ -2316,8 +2291,7 @@ namespace SUP
                                                                                 }
 
 
-                                                                                this.supFlow.Controls.Add(panel);
-                                                                                supFlow.Controls.SetChildIndex(panel, 0);
+                                                                                AddMessageControl(supFlow, panel);
                                                                             });
 
                                                                         }
@@ -2342,8 +2316,7 @@ namespace SUP
                                                                                 panel.Controls.Add(titleLabel);
 
 
-                                                                                this.supFlow.Controls.Add(panel);
-                                                                                supFlow.Controls.SetChildIndex(panel, 0);
+                                                                                AddMessageControl(supFlow, panel);
                                                                             });
 
                                                                         }
@@ -2370,8 +2343,7 @@ namespace SUP
                                                                             panel.Controls.Add(titleLabel);
 
 
-                                                                            this.supFlow.Controls.Add(panel);
-                                                                            supFlow.Controls.SetChildIndex(panel, 0);
+                                                                            AddMessageControl(supFlow, panel);
                                                                         });
 
 
@@ -2687,8 +2659,7 @@ namespace SUP
                                                                                 }
 
 
-                                                                                this.supFlow.Controls.Add(panel);
-                                                                                supFlow.Controls.SetChildIndex(panel, 0);
+                                                                                AddMessageControl(supFlow, panel);
                                                                             });
 
                                                                         }
@@ -2713,8 +2684,7 @@ namespace SUP
                                                                                 panel.Controls.Add(titleLabel);
 
 
-                                                                                this.supFlow.Controls.Add(panel);
-                                                                                supFlow.Controls.SetChildIndex(panel, 0);
+                                                                                AddMessageControl(supFlow, panel);
                                                                             });
 
                                                                         }
@@ -2741,8 +2711,7 @@ namespace SUP
                                                                             panel.Controls.Add(titleLabel);
 
 
-                                                                            this.supFlow.Controls.Add(panel);
-                                                                            supFlow.Controls.SetChildIndex(panel, 0);
+                                                                            AddMessageControl(supFlow, panel);
                                                                         });
 
 
@@ -3042,8 +3011,7 @@ namespace SUP
                                                                                 }
 
 
-                                                                                this.supFlow.Controls.Add(panel);
-                                                                                supFlow.Controls.SetChildIndex(panel, 0);
+                                                                                AddMessageControl(supFlow, panel);
                                                                             });
 
                                                                         }
@@ -3068,8 +3036,7 @@ namespace SUP
                                                                                 panel.Controls.Add(titleLabel);
 
 
-                                                                                this.supFlow.Controls.Add(panel);
-                                                                                supFlow.Controls.SetChildIndex(panel, 0);
+                                                                                AddMessageControl(supFlow, panel);
                                                                             });
 
                                                                         }
@@ -3096,8 +3063,7 @@ namespace SUP
                                                                             panel.Controls.Add(titleLabel);
 
 
-                                                                            this.supFlow.Controls.Add(panel);
-                                                                            supFlow.Controls.SetChildIndex(panel, 0);
+                                                                            AddMessageControl(supFlow, panel);
                                                                         });
 
 
@@ -3402,8 +3368,7 @@ namespace SUP
                                                                                 }
 
 
-                                                                                this.supFlow.Controls.Add(panel);
-                                                                                supFlow.Controls.SetChildIndex(panel, 0);
+                                                                                AddMessageControl(supFlow, panel);
                                                                             });
 
                                                                         }
@@ -3428,8 +3393,7 @@ namespace SUP
                                                                                 panel.Controls.Add(titleLabel);
 
 
-                                                                                this.supFlow.Controls.Add(panel);
-                                                                                supFlow.Controls.SetChildIndex(panel, 0);
+                                                                                AddMessageControl(supFlow, panel);
                                                                             });
 
                                                                         }
@@ -3456,8 +3420,7 @@ namespace SUP
                                                                             panel.Controls.Add(titleLabel);
 
 
-                                                                            this.supFlow.Controls.Add(panel);
-                                                                            supFlow.Controls.SetChildIndex(panel, 0);
+                                                                            AddMessageControl(supFlow, panel);
                                                                         });
 
 
@@ -3632,24 +3595,44 @@ namespace SUP
             }
         }
 
+        /// <summary>
+        /// Removes overflow messages from the flow panel to maintain bounded memory usage.
+        /// Keeps approximately 200 controls visible at a time (roughly 40-50 messages with their UI elements).
+        /// This provides smooth scrolling while preventing unbounded memory growth.
+        /// Removes controls from the END (bottom) of the list, so the most recent messages at top stay visible.
+        /// 
+        /// NOTE: Does NOT stop IPFS processes - CleanupExcessIPFSProcesses() handles that separately.
+        /// This allows IPFS downloads to complete even if messages scroll out of view.
+        /// </summary>
         private void RemoveOverFlowMessages(FlowLayoutPanel flowLayoutPanel)
         {
-            // Only remove controls if we have more than a certain threshold (e.g., 100 messages)
-            // This prevents removing controls while user is actively viewing them
+            // Target: Keep only ~200 controls max (roughly 40-50 messages)
+            // We need to be aggressive - remove ALL excess controls, not just a fixed count at a time
+            const int MAX_CONTROLS = 200;
+            
             int controlCount = 0;
             this.Invoke((MethodInvoker)delegate
             {
                 controlCount = flowLayoutPanel.Controls.Count;
             });
             
-            // Only prune if we have more than 100 controls (generous buffer)
-            if (controlCount <= 100)
+            Debug.WriteLine($"[RemoveOverFlowMessages] Current control count: {controlCount}, MAX_CONTROLS: {MAX_CONTROLS}");
+            
+            // Only prune if we exceed the maximum controls
+            if (controlCount <= MAX_CONTROLS)
             {
+                Debug.WriteLine($"[RemoveOverFlowMessages] Control count ({controlCount}) within limit ({MAX_CONTROLS}), no pruning needed");
                 return;
             }
             
-            // Remove the oldest controls (first 20) to free memory
-            // But keep most of the conversation visible
+            // Calculate how many to remove - ALL excess controls, not just a fixed amount
+            int excessCount = controlCount - MAX_CONTROLS;
+            Debug.WriteLine($"[RemoveOverFlowMessages] Control count ({controlCount}) exceeds limit ({MAX_CONTROLS}), removing ALL {excessCount} excess controls");
+            MemoryDiagnostics.LogMemoryUsage("Before removing overflow controls");
+            
+            // Remove the controls based on scroll direction
+            // When loading OLDER messages (scrolling down): Remove from BEGINNING (top) - newest messages
+            // When loading NEWER messages (scrolling up): This shouldn't be called (cleared and reloaded instead)
             this.Invoke((MethodInvoker)delegate
             {
                 try
@@ -3659,8 +3642,10 @@ namespace SUP
                     
                     List<Control> controlsToRemove = new List<Control>();
                     
-                    // Get first 20 controls (oldest messages at top)
-                    int removeCount = Math.Min(20, flowLayoutPanel.Controls.Count);
+                    // When scrolling down (loading older), new messages added at bottom, remove from top
+                    // Remove ALL excess controls, not just a fixed count
+                    int removeCount = Math.Min(excessCount, flowLayoutPanel.Controls.Count);
+                    
                     for (int i = 0; i < removeCount; i++)
                     {
                         controlsToRemove.Add(flowLayoutPanel.Controls[i]);
@@ -3675,12 +3660,61 @@ namespace SUP
                     // Resume layout once to apply all changes together
                     flowLayoutPanel.ResumeLayout(true);
                     
-                    // Dispose controls after removal to free memory (do this after resume to avoid delay)
+                    Debug.WriteLine($"[RemoveOverFlowMessages] Removed {removeCount} controls from top, {flowLayoutPanel.Controls.Count} remaining");
+                    
+                    // Dispose controls after removal to free memory
+                    // MUST be done on UI thread since these are WinForms controls
+                    foreach (Control control in controlsToRemove)
+                    {
+                        try 
+                        { 
+                            // NOTE: Do NOT stop IPFS processes here - let CleanupExcessIPFSProcesses() handle that
+                            // Only that method should kill IPFS processes based on the 22 limit
+                            // Killing IPFS for every removed message causes downloads to never complete
+                            
+                            // Recursively dispose child controls first
+                            if (control.HasChildren)
+                            {
+                                List<Control> children = control.Controls.Cast<Control>().ToList();
+                                foreach (Control child in children)
+                                {
+                                    try 
+                                    { 
+                                        child.Dispose(); 
+                                    } 
+                                    catch (Exception childEx) 
+                                    {
+                                        Debug.WriteLine($"[RemoveOverFlowMessages] Child disposal error: {childEx.Message}");
+                                    }
+                                }
+                            }
+                            control.Dispose(); 
+                        } 
+                        catch (Exception disposeEx) 
+                        {
+                            Debug.WriteLine($"[RemoveOverFlowMessages] Disposal error: {disposeEx.Message}");
+                        }
+                    }
+                    
+                    Debug.WriteLine("[RemoveOverFlowMessages] Completed control disposal");
+                    MemoryDiagnostics.LogMemoryUsage("After removing overflow controls");
+                    
+                    // Force garbage collection on background thread to avoid UI freeze
                     Task.Run(() =>
                     {
-                        foreach (Control control in controlsToRemove)
+                        try
                         {
-                            try { control.Dispose(); } catch { }
+                            // Request GC of gen 0 and 1 first (faster, less disruptive)
+                            GC.Collect(1, GCCollectionMode.Optimized, false);
+                            GC.WaitForPendingFinalizers();
+                            // Then do a full collection
+                            GC.Collect();
+                            
+                            Debug.WriteLine("[RemoveOverFlowMessages] Completed GC");
+                        }
+                        catch (Exception gcEx)
+                        {
+                            Debug.WriteLine($"[RemoveOverFlowMessages] GC error: {gcEx.Message}");
                         }
                     });
                 }
@@ -3693,9 +3727,180 @@ namespace SUP
             });
         }
 
-        private void ClearMessages(FlowLayoutPanel flowLayoutPanel)
+        /// <summary>
+        /// NOTE: IPFS process cleanup removed from here.
+        /// IPFS processes should NOT be killed when messages are removed from view.
+        /// Only CleanupExcessIPFSProcesses() should kill IPFS processes, and only when the 22 limit is exceeded.
+        /// This allows IPFS downloads to complete even if the message scrolls out of view.
+        /// -build folder cleanup is also handled separately, not tied to message removal.
+        /// </summary>
+
+        /// <summary>
+        /// Limits the number of concurrent IPFS processes to prevent system overload.
+        /// Returns true if a new process can be started, false if limit is reached.
+        /// </summary>
+        private bool CanStartIPFSProcess()
         {
-            this.BeginInvoke((MethodInvoker)delegate
+            lock (_ipfsProcessLock)
+            {
+                // Count actual running IPFS processes
+                var ipfsProcesses = System.Diagnostics.Process.GetProcessesByName("ipfs");
+                _currentIPFSProcessCount = ipfsProcesses.Count(p => !p.HasExited);
+                
+                if (_currentIPFSProcessCount >= MAX_CONCURRENT_IPFS_PROCESSES)
+                {
+                    Debug.WriteLine($"[IPFSLimit] Cannot start new IPFS process - limit reached ({_currentIPFSProcessCount}/{MAX_CONCURRENT_IPFS_PROCESSES})");
+                    return false;
+                }
+                
+                Debug.WriteLine($"[IPFSLimit] Can start IPFS process ({_currentIPFSProcessCount}/{MAX_CONCURRENT_IPFS_PROCESSES})");
+                return true;
+            }
+        }
+
+        /// <summary>
+        /// Cleans up excess IPFS processes when limit is exceeded.
+        /// Kills oldest processes first to stay within the limit.
+        /// Only kills processes beyond the limit, not all processes.
+        /// </summary>
+        private void CleanupExcessIPFSProcesses()
+        {
+            try
+            {
+                var allIPFSProcesses = System.Diagnostics.Process.GetProcessesByName("ipfs")
+                    .Where(p => !p.HasExited)
+                    .ToList();
+                
+                // CRITICAL: Identify and protect the IPFS daemon process
+                // The daemon is typically the oldest process or one with "daemon" in command line
+                // Client processes (ipfs get, ipfs cat, etc.) are temporary and can be killed
+                Process daemonProcess = null;
+                var clientProcesses = new List<Process>();
+                
+                foreach (var process in allIPFSProcesses)
+                {
+                    try
+                    {
+                        // Try to get command line arguments to identify daemon vs client
+                        // Daemon typically has "daemon" in args or is the oldest long-running process
+                        string commandLine = "";
+                        try
+                        {
+                            // Try to get command line (may fail due to permissions)
+                            using (var searcher = new System.Management.ManagementObjectSearcher(
+                                $"SELECT CommandLine FROM Win32_Process WHERE ProcessId = {process.Id}"))
+                            {
+                                foreach (System.Management.ManagementObject obj in searcher.Get())
+                                {
+                                    commandLine = obj["CommandLine"]?.ToString() ?? "";
+                                    break;
+                                }
+                            }
+                        }
+                        catch
+                        {
+                            // If we can't get command line, assume oldest process is daemon
+                        }
+                        
+                        // Identify daemon by command line containing "daemon" or being oldest
+                        if (commandLine.Contains("daemon") || commandLine.Contains("--enable-gc"))
+                        {
+                            daemonProcess = process;
+                            Debug.WriteLine($"[IPFSCleanup] Identified IPFS daemon PID: {process.Id}, StartTime: {process.StartTime}");
+                        }
+                        else
+                        {
+                            clientProcesses.Add(process);
+                        }
+                    }
+                    catch
+                    {
+                        // If error identifying, assume it's a client process
+                        clientProcesses.Add(process);
+                    }
+                }
+                
+                // If we didn't identify daemon by command line, assume the OLDEST process is the daemon
+                if (daemonProcess == null && allIPFSProcesses.Count > 0)
+                {
+                    daemonProcess = allIPFSProcesses.OrderBy(p => p.StartTime).First();
+                    clientProcesses.Remove(daemonProcess);
+                    Debug.WriteLine($"[IPFSCleanup] Identified IPFS daemon by age PID: {daemonProcess.Id}, StartTime: {daemonProcess.StartTime}");
+                }
+                
+                // Order client processes by start time (oldest first)
+                clientProcesses = clientProcesses.OrderBy(p => p.StartTime).ToList();
+                
+                int totalProcesses = (daemonProcess != null ? 1 : 0) + clientProcesses.Count;
+                Debug.WriteLine($"[IPFSCleanup] Found {totalProcesses} total IPFS processes (1 daemon protected, {clientProcesses.Count} clients), limit: {MAX_CONCURRENT_IPFS_PROCESSES}");
+                
+                // Calculate how many CLIENT processes need to be killed
+                // We always keep the daemon, so limit applies to clients
+                int excessCount = clientProcesses.Count - (MAX_CONCURRENT_IPFS_PROCESSES - 1);
+                
+                if (excessCount > 0)
+                {
+                    Debug.WriteLine($"[IPFSCleanup] AGGRESSIVE CLEANUP: Killing {excessCount} OLDEST client processes (protecting daemon)");
+                    
+                    // Kill ONLY excess CLIENT processes, never the daemon
+                    var processesToKill = clientProcesses.Take(excessCount).ToList();
+                    int killedCount = 0;
+                    
+                    foreach (var process in processesToKill)
+                    {
+                        try
+                        {
+                            if (!process.HasExited && process != daemonProcess)
+                            {
+                                Debug.WriteLine($"[IPFSCleanup] Killing client process PID: {process.Id}, StartTime: {process.StartTime}");
+                                process.Kill();
+                                process.WaitForExit(1000); // Wait up to 1 second for clean exit
+                                killedCount++;
+                                Debug.WriteLine($"[IPFSCleanup] Successfully killed client process PID: {process.Id}");
+                            }
+                        }
+                        catch (Exception ex)
+                        {
+                            Debug.WriteLine($"[IPFSCleanup] Error killing process {process.Id}: {ex.Message}");
+                        }
+                        finally
+                        {
+                            try { process.Dispose(); } catch { }
+                        }
+                    }
+                    
+                    // Update the counter based on actual remaining processes (daemon + remaining clients)
+                    lock (_ipfsProcessLock)
+                    {
+                        _currentIPFSProcessCount = 1 + (clientProcesses.Count - killedCount); // 1 for daemon
+                        Debug.WriteLine($"[IPFSCleanup] Cleanup complete. Killed {killedCount} client processes. Daemon protected. Updated counter to {_currentIPFSProcessCount}");
+                    }
+                }
+                else
+                {
+                    // Still update counter to match reality
+                    lock (_ipfsProcessLock)
+                    {
+                        _currentIPFSProcessCount = totalProcesses;
+                        Debug.WriteLine($"[IPFSCleanup] No cleanup needed - within limit. Daemon protected. Updated counter to {_currentIPFSProcessCount}");
+                    }
+                }
+                
+                // Dispose all process objects
+                foreach (var p in allIPFSProcesses)
+                {
+                    try { p.Dispose(); } catch { }
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"[IPFSCleanup] Error in CleanupExcessIPFSProcesses: {ex.Message}");
+            }
+        }
+
+        private void ClearMessages(FlowLayoutPanel flowLayoutPanel, bool synchronous = false)
+        {
+            Action clearAction = () =>
             {
                 List<Control> controlsList = flowLayoutPanel.Controls.Cast<Control>().ToList();
                 flowLayoutPanel.Controls.Clear();
@@ -3713,11 +3918,51 @@ namespace SUP
                     numPrivateMessagesDisplayed = 0;
                     // Note: _profileCache is retained for performance across different conversations
                 }
-            });
+            };
+
+            if (synchronous)
+            {
+                // Use Invoke for synchronous execution when we need to ensure clearing is complete
+                if (this.InvokeRequired)
+                {
+                    this.Invoke(new MethodInvoker(clearAction));
+                }
+                else
+                {
+                    clearAction();
+                }
+            }
+            else
+            {
+                // Use BeginInvoke for asynchronous execution
+                this.BeginInvoke(new MethodInvoker(clearAction));
+            }
+        }
+        
+        /// <summary>
+        /// Adds a control to the flow panel in the correct position based on scroll direction.
+        /// When loading OLDER messages (scrolling down), adds to END (bottom).
+        /// When loading NEWER messages (scrolling up), adds to BEGIN (top at index 0).
+        /// </summary>
+        /// <param name="flowPanel">The FlowLayoutPanel to add the control to</param>
+        /// <param name="control">The control to add</param>
+        private void AddMessageControl(FlowLayoutPanel flowPanel, Control control)
+        {
+            flowPanel.Controls.Add(control);
+            
+            // Only move to top (index 0) when loading NEWER messages (scrolling up)
+            // When loading OLDER messages (scrolling down), keep at bottom
+            if (!_loadingOlderMessages)
+            {
+                flowPanel.Controls.SetChildIndex(control, 0);
+            }
+            // else: control stays at end (bottom) where it was naturally added
         }
 
         private void RefreshSupMessages()
         {
+            // Clean up any excess IPFS processes before loading new messages
+            CleanupExcessIPFSProcesses();
 
             // sorry cannot run two searches at a time
             if (!btnPrivateMessage.Enabled || !btnPrivateMessage.Enabled || !btnCommunityFeed.Enabled || System.IO.File.Exists("ROOTS-PROCESSING"))
@@ -3744,8 +3989,8 @@ namespace SUP
             if (profileURN.Links != null && profileURN.Links.Count > 0 && profileURN.Links[0].LinkData != null && 
                 !string.IsNullOrEmpty(profileURN.Links[0].LinkData.ToString()))
             {
-                Debug.WriteLine($"[SupMain.RefreshSupMessages] Fetching messages for address: {profileURN.Links[0].LinkData}");
-                try { messages = OBJState.GetPublicMessagesByAddress(profileURN.Links[0].LinkData.ToString(), mainnetLogin, mainnetPassword, mainnetURL, mainnetVersionByte, numMessagesDisplayed, 10); }
+                Debug.WriteLine($"[SupMain.RefreshSupMessages] Fetching messages for address: {profileURN.Links[0].LinkData}, skip: {numMessagesSkip}");
+                try { messages = OBJState.GetPublicMessagesByAddress(profileURN.Links[0].LinkData.ToString(), mainnetLogin, mainnetPassword, mainnetURL, mainnetVersionByte, numMessagesSkip, 10); }
                 catch { }
             }
             else
@@ -3754,16 +3999,20 @@ namespace SUP
             }
 
 
+            // Add null check before SuspendLayout to prevent NullReferenceException
+            if (supFlow == null)
+            {
+                Debug.WriteLine($"[SupMain.RefreshSupMessages] ERROR: supFlow is null, cannot continue");
+                return;
+            }
+
             supFlow.SuspendLayout();
 
-            if (messages.Count == 10)
+            // Increment skip counter by the number of messages fetched from API
+            // This ensures pagination works correctly even if some messages are filtered out
+            if (messages.Count > 0)
             {
-                Task memoryPrune = Task.Run(() =>
-                {
-
-                    RemoveOverFlowMessages(supFlow);
-
-                });
+                numMessagesSkip += messages.Count;
             }
 
             numFriendFeedsDisplayed = 0;
@@ -4452,6 +4701,13 @@ namespace SUP
 
                 supFlow.ResumeLayout();
                 btnPublicMessage.Enabled = true;
+                
+                // Trigger memory cleanup AFTER messages are added and layout is resumed
+                // This ensures we maintain bounded memory usage (~20 messages max)
+                RemoveOverFlowMessages(supFlow);
+                
+                // Reset loading flag to allow future loads
+                _isLoadingMessages = false;
             });
 
 
@@ -4539,12 +4795,13 @@ namespace SUP
                     numPrivateMessagesDisplayed, 
                     10);
 
-                // Don't trigger memory cleanup - let it accumulate for better UX
-                // RemoveOverFlowMessages was causing controls to disappear during scroll
-                // if (messages.Count == 10)
-                // {
-                //     _ = Task.Run(() => RemoveOverFlowMessages(supPrivateFlow));
-                // }
+                // Trigger memory cleanup after loading messages
+                // This ensures we maintain bounded memory usage (~20 messages max)
+                // Call synchronously to ensure it executes immediately
+                if (messages.Count > 0)
+                {
+                    RemoveOverFlowMessages(supPrivateFlow);
+                }
 
                 // Build view models from the fetched messages
                 List<PrivateMessageViewModel> newMessages = await BuildPrivateMessageViewModelsAsync(messages);
@@ -4579,10 +4836,11 @@ namespace SUP
             }
             finally
             {
-                // Always re-enable the button
+                // Always re-enable the button and reset loading flag
                 this.Invoke((MethodInvoker)delegate
                 {
                     btnPrivateMessage.Enabled = true;
+                    _isLoadingMessages = false; // Reset loading flag to allow future loads
                 });
             }
         }
@@ -5116,7 +5374,7 @@ namespace SUP
             }
         }
 
-        private void RefreshCommunityMessages()
+        private void RefreshCommunityMessages(bool resetCounters = false)
         {
             // sorry cannot run two searches at a time
             if (!btnPrivateMessage.Enabled || !btnPrivateMessage.Enabled || !btnCommunityFeed.Enabled || System.IO.File.Exists("ROOTS-PROCESSING"))
@@ -5148,8 +5406,15 @@ namespace SUP
             });
 
 
-            numMessagesDisplayed = 0;
-            numPrivateMessagesDisplayed = 0;
+            // Only reset counters when explicitly told (button click), not on scroll
+            if (resetCounters)
+            {
+                numMessagesDisplayed = 0;
+                numMessagesSkip = 0;
+                numPrivateMessagesDisplayed = 0;
+                numFriendFeedsDisplayed = 0;
+                numFriendFeedsSkip = 0;
+            }
 
 
             string FriendsListPath = "";
@@ -5165,11 +5430,16 @@ namespace SUP
 
                 // Iterate over each key in the dictionary, get public messages by address, and combine them into a list
                 var allMessages = new List<object>();
+                Debug.WriteLine($"[CommunityFeed] Loading messages from {myFriends.Keys.Count} friends");
+                int friendIndex = 0;
                 foreach (var key in myFriends.Keys)
                 {
+                    friendIndex++;
                     try
                     {
+                        Debug.WriteLine($"[CommunityFeed] Friend {friendIndex}/{myFriends.Keys.Count}: {key}");
                         List<MessageObject> result = OBJState.GetPublicMessagesByAddress(key, mainnetLogin, mainnetPassword, mainnetURL, mainnetVersionByte, 0, 50);
+                        Debug.WriteLine($"[CommunityFeed] Friend {friendIndex}: Got {result.Count} messages");
 
                         // Add the "to" element to each message object
 
@@ -5201,9 +5471,13 @@ namespace SUP
                             catch { }
                         }
                     }
-                    catch { }
+                    catch (Exception ex) 
+                    {
+                        Debug.WriteLine($"[CommunityFeed] Error loading friend {friendIndex}: {ex.Message}");
+                    }
 
                 }
+                Debug.WriteLine($"[CommunityFeed] Total messages collected: {allMessages.Count}");
 
                 // Sort the combined list by block date
                 allMessages.Sort((m1, m2) =>
@@ -5231,18 +5505,22 @@ namespace SUP
                 });
 
 
-                if (allMessages.Skip(numFriendFeedsDisplayed).Take(10).Count() == 10)
+                // Trigger memory cleanup after loading messages
+                // This ensures we maintain bounded memory usage (~20 messages max)
+                // Call synchronously to ensure it executes immediately
+                var messagesToDisplay = allMessages.Skip(numFriendFeedsSkip).Take(10).ToList();
+                Debug.WriteLine($"[CommunityFeed] Displaying {messagesToDisplay.Count} messages (skip: {numFriendFeedsSkip})");
+                if (messagesToDisplay.Count > 0)
                 {
-                    Task memoryPrune = Task.Run(() =>
-                    {
-
-                        RemoveOverFlowMessages(supFlow);
-
-                    });
+                    RemoveOverFlowMessages(supFlow);
+                    
+                    // Increment skip counter by the number of messages actually displayed
+                    numFriendFeedsSkip += messagesToDisplay.Count;
                 }
 
-                foreach (var message in allMessages.Skip(numFriendFeedsDisplayed).Take(10))
+                foreach (var message in messagesToDisplay)
                 {
+                    numFriendFeedsDisplayed++; // Track actual displayed count
                     var fromProp = message.GetType().GetProperty("FromAddress");
                     var toProp = message.GetType().GetProperty("ToAddress");
                     var messageProp = message.GetType().GetProperty("Message");
@@ -5286,19 +5564,10 @@ namespace SUP
                         }
 
 
-                        this.Invoke((MethodInvoker)delegate
-                        {
-                            try
-                            {
-                                try { imglocation = myFriends[_from]; } catch { imglocation = @"includes\anon.png"; }
-                                CreateRow(imglocation, fromURN, _from, DateTime.ParseExact(_blockdate, "yyyyMMddHHmmss", CultureInfo.InvariantCulture), _message, _transactionId, false, supFlow);
-                                imglocation = "";
-                                try { imglocation = myFriends[_to]; } catch { imglocation = @"includes\anon.png"; }
-                                CreateRow(imglocation, toURN, _to, DateTime.ParseExact("19700101010101", "yyyyMMddHHmmss", CultureInfo.InvariantCulture), "", _transactionId, false, supFlow);
-                            }
-                            catch { }
-                        });
-
+                        // Check for INQ file before creating divs
+                        // This allows us to add everything in the correct order in one UI thread operation
+                        bool hasINQ = false;
+                        FoundINQControl inqControl = null;
                         try
                         {
                             string[] files = Directory.GetFiles(@"root\" + _transactionId);
@@ -5309,20 +5578,36 @@ namespace SUP
 
                             if (containsFileWithINQ)
                             {
-                                //ADD INQ IF IT EXISTS AND IS NOT BLOCKED
-                                this.Invoke((MethodInvoker)delegate
-                                {
-                                    string profileowner = "";
+                                hasINQ = true;
+                                string profileowner = "";
+                                if (profileOwner.Tag != null) { profileowner = profileOwner.Tag.ToString(); }
 
-                                    if (profileOwner.Tag != null) { profileowner = profileOwner.Tag.ToString(); }
-
-                                    FoundINQControl foundObject = new FoundINQControl(_transactionId, profileowner, testnet);
-                                    foundObject.Margin = new Padding(20, 7, 8, 7);
-                                    supFlow.Controls.Add(foundObject);
-                                });
+                                inqControl = new FoundINQControl(_transactionId, profileowner, testnet);
+                                inqControl.Margin = new Padding(20, 7, 8, 7);
                             }
                         }
                         catch { }
+
+                        // Add divs and INQ control together in one UI operation
+                        // This prevents divs from showing before INQ control is added
+                        this.Invoke((MethodInvoker)delegate
+                        {
+                            try
+                            {
+                                try { imglocation = myFriends[_from]; } catch { imglocation = @"includes\anon.png"; }
+                                CreateRow(imglocation, fromURN, _from, DateTime.ParseExact(_blockdate, "yyyyMMddHHmmss", CultureInfo.InvariantCulture), _message, _transactionId, false, supFlow);
+                                imglocation = "";
+                                try { imglocation = myFriends[_to]; } catch { imglocation = @"includes\anon.png"; }
+                                CreateRow(imglocation, toURN, _to, DateTime.ParseExact("19700101010101", "yyyyMMddHHmmss", CultureInfo.InvariantCulture), "", _transactionId, false, supFlow);
+                                
+                                // Add INQ control immediately after divs if it exists
+                                if (hasINQ && inqControl != null)
+                                {
+                                    AddMessageControl(supFlow, inqControl);
+                                }
+                            }
+                            catch { }
+                        });
 
                         string pattern = "<<.*?>>";
                         MatchCollection matches = Regex.Matches(unfilteredmessage, pattern);
@@ -5380,7 +5665,7 @@ namespace SUP
                                     panel.Controls.Add(pictureBox);
                                     //pictures.Add(pictureBox);
 
-                                    this.supFlow.Controls.Add(panel);
+                                    AddMessageControl(supFlow, panel);
 
                                     Task.Run(() =>
                                     {
@@ -5468,7 +5753,7 @@ namespace SUP
 
                         this.Invoke((MethodInvoker)delegate
                         {
-                            supFlow.Controls.Add(padding);
+                            AddMessageControl(supFlow, padding);
                         });
 
 
@@ -5483,7 +5768,27 @@ namespace SUP
             this.BeginInvoke((MethodInvoker)delegate
             {
                 supFlow.ResumeLayout();
+                RemoveOverFlowMessages(supFlow); // Clean up excess controls after layout
+                
+                // Only reset scroll position when explicitly requested (button click)
+                // When scrolling to load more, preserve current position so user doesn't lose their place
+                if (resetCounters)
+                {
+                    try
+                    {
+                        if (supFlow != null && supFlow.VerticalScroll != null)
+                        {
+                            supFlow.AutoScrollPosition = new Point(0, 0);
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        Debug.WriteLine($"[CommunityFeed] Error resetting scroll position: {ex.Message}");
+                    }
+                }
+                
                 btnCommunityFeed.Enabled = true;
+                _isLoadingMessages = false; // Reset flag to allow subsequent loads
             });
 
 
@@ -5880,8 +6185,7 @@ namespace SUP
                 // Add the PictureBox to the first row and first column
                 msg.Controls.Add(pictureBox, 0, 0);
 
-                supFlow.Controls.Add(msg);
-                supFlow.Controls.SetChildIndex(msg, 0);
+                AddMessageControl(supFlow, msg);
 
 
 
@@ -6205,7 +6509,14 @@ namespace SUP
 
                 try { await webviewer.EnsureCoreWebView2Async(); } catch { }
                 // immediately load Progress content into the WebView2 control
-                try { webviewer.CoreWebView2.Navigate(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + @"\includes\loading.html"); } catch { }
+                try 
+                { 
+                    if (webviewer?.CoreWebView2 != null)
+                    {
+                        webviewer.CoreWebView2.Navigate(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + @"\includes\loading.html");
+                    }
+                } 
+                catch { }
 
 
                 if (!videopath.ToLower().StartsWith("http"))
@@ -6363,7 +6674,14 @@ namespace SUP
 
                                     System.IO.File.WriteAllText(viewerPath, htmlstring);
 
-                                    try { webviewer.CoreWebView2.Navigate(viewerPath); } catch { }
+                                    try 
+                                    { 
+                                        if (webviewer?.CoreWebView2 != null)
+                                        {
+                                            webviewer.CoreWebView2.Navigate(viewerPath);
+                                        }
+                                    } 
+                                    catch { }
 
 
                                 }));
@@ -6372,7 +6690,14 @@ namespace SUP
                             }
                             else
                             {
-                                try { webviewer.CoreWebView2.Navigate(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + @"\includes\notfound.html"); } catch { }
+                                try 
+                                { 
+                                    if (webviewer?.CoreWebView2 != null)
+                                    {
+                                        webviewer.CoreWebView2.Navigate(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + @"\includes\notfound.html");
+                                    }
+                                } 
+                                catch { }
 
                             }
 
@@ -6404,7 +6729,14 @@ namespace SUP
 
 
                         System.IO.File.WriteAllText(viewerPath, htmlstring);
-                        try { webviewer.CoreWebView2.Navigate(viewerPath); } catch { }
+                        try 
+                        { 
+                            if (webviewer?.CoreWebView2 != null)
+                            {
+                                webviewer.CoreWebView2.Navigate(viewerPath);
+                            }
+                        } 
+                        catch { }
                     }
 
 
@@ -6419,7 +6751,14 @@ namespace SUP
                         videolocation = @"https://www.youtube.com/embed/" + match.Groups[1].Value;
                     }
 
-                    try { webviewer.CoreWebView2.Navigate(videolocation); } catch { }
+                    try 
+                    { 
+                        if (webviewer?.CoreWebView2 != null)
+                        {
+                            webviewer.CoreWebView2.Navigate(videolocation);
+                        }
+                    } 
+                    catch { }
                 }
 
 
@@ -6857,8 +7196,10 @@ namespace SUP
         void profileImageClick(string ownerId)
         {
             numMessagesDisplayed = 0;
+            numMessagesSkip = 0;
             numPrivateMessagesDisplayed = 0;
             numFriendFeedsDisplayed = 0;
+            numFriendFeedsSkip = 0;
             if (btnCommunityFeed.BackColor == Color.Blue) { btnCommunityFeed.BackColor = Color.White; btnCommunityFeed.ForeColor = Color.Black; btnPublicMessage.BackColor = Color.Blue; btnPublicMessage.ForeColor = Color.Yellow; }
             friendClicked = true;
             MakeActiveProfile(ownerId);
@@ -7020,9 +7361,32 @@ namespace SUP
 
         private void RefreshCommunityMessages_Click(object sender, EventArgs e)
         {
-            if (btnCommunityFeed.BackColor != Color.Blue) { ClearMessages(supFlow); }
+            // Always clear and rebuild when activating community feed
+            // This ensures:
+            // 1. Updated friends list (after adding/removing friends)
+            // 2. Fresh message load from all followed users
+            // 3. Scroll position reset to top
+            if (btnCommunityFeed.BackColor != Color.Blue) 
+            { 
+                ClearMessages(supFlow); 
+            }
+            else
+            {
+                // Even if already active (blue), clear to force rebuild
+                // User may have removed a friend or visited another profile
+                ClearMessages(supFlow);
+            }
+            
+            // Reset loading flag to allow community feed to load
+            _isLoadingMessages = false;
+            
+            // Reset skip counters to start from beginning
+            // This ensures we always start at the top when rebuilding
+            numFriendFeedsSkip = 0;
+            numFriendFeedsDisplayed = 0;
+            
             btnCommunityFeed.BackColor = System.Drawing.Color.Blue; btnCommunityFeed.ForeColor = System.Drawing.Color.Yellow;
-            RefreshCommunityMessages();
+            RefreshCommunityMessages(resetCounters: true); // Reset counters on button click
 
             btnPrivateMessage.BackColor = System.Drawing.Color.White;
             btnPrivateMessage.ForeColor = System.Drawing.Color.Black;
@@ -7142,6 +7506,10 @@ namespace SUP
                 if (!((PictureBox)sender).ImageLocation.Contains("anon.png") || profileURN.Text != "anon")
                 {
                     numMessagesDisplayed = 0;
+                    numMessagesSkip = 0;
+                    numPrivateMessagesDisplayed = 0;
+                    numFriendFeedsDisplayed = 0;
+                    numFriendFeedsSkip = 0;
                     numFriendFeedsDisplayed = 0;
                     numPrivateMessagesDisplayed = 0;
                     btnCommunityFeed.BackColor = System.Drawing.Color.White;
@@ -7363,6 +7731,10 @@ namespace SUP
 
                 MakeActiveProfile(profileURN.Links[0].LinkData.ToString());
                 numMessagesDisplayed = 0;
+                numMessagesSkip = 0;
+                numPrivateMessagesDisplayed = 0;
+                numFriendFeedsDisplayed = 0;
+                numFriendFeedsSkip = 0;
                 btnCommunityFeed.BackColor = System.Drawing.Color.White;
                 btnCommunityFeed.ForeColor = System.Drawing.Color.Black;
             }
@@ -7530,6 +7902,10 @@ namespace SUP
             ClearMessages(supFlow);
             ClearMessages(supPrivateFlow);
             numMessagesDisplayed = 0;
+            numMessagesSkip = 0;
+            numPrivateMessagesDisplayed = 0;
+            numFriendFeedsDisplayed = 0;
+            numFriendFeedsSkip = 0;
             numPrivateMessagesDisplayed = 0;
             numFriendFeedsDisplayed = 0;
             lblOfficial.Visible = false;

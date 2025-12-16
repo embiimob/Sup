@@ -64,6 +64,7 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="System.IO.Compression.FileSystem, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL" />
+    <Reference Include="System.Management" />
     <Reference Include="System.Numerics">
       <Private>True</Private>
     </Reference>
@@ -210,7 +211,15 @@
     <Compile Include="ProfileMint.Designer.cs">
       <DependentUpon>ProfileMint.cs</DependentUpon>
     </Compile>
+    <Compile Include="MessageCache.cs" />
+    <Compile Include="MemoryDiagnostics.cs" />
+    <Compile Include="PrivateMessageAdapter.cs" />
+    <Compile Include="PublicMessageAdapter.cs" />
+    <Compile Include="PublicMessageViewModel.cs" />
     <Compile Include="PrivateMessageViewModel.cs" />
+    <Compile Include="VirtualizedMessageList.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
     <Compile Include="SupMain.cs">
       <SubType>Form</SubType>
     </Compile>
