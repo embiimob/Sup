@@ -7390,6 +7390,9 @@ namespace SUP
             
             // Ensure button is enabled before calling RefreshCommunityMessages
             // This prevents the early return in RefreshCommunityMessages when button is disabled
+            // Scenario: User clicks community feed -> navigates to friend (button disabled) -> clicks community feed again
+            // Without this fix, the button may still be disabled from a previous incomplete operation,
+            // causing RefreshCommunityMessages to return early and show a blank screen
             btnCommunityFeed.Enabled = true;
             btnCommunityFeed.BackColor = System.Drawing.Color.Blue; btnCommunityFeed.ForeColor = System.Drawing.Color.Yellow;
             RefreshCommunityMessages(resetCounters: true); // Reset counters on button click
