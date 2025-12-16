@@ -2599,7 +2599,6 @@ namespace SUP
                 try { _message = _message + lst[1] + " at "; } catch { }
                 try { _message = _message + lst[2] + " each"; } catch { }
                 string _blockdate = root.BlockDate.ToString("yyyyMMddHHmmss");
-                string imglocation = "";
 
                 if (long.Parse(lst[1], NumberStyles.Any, CultureInfo.GetCultureInfo("en-US")) < 0) continue;
 
@@ -2630,19 +2629,58 @@ namespace SUP
                     classifierTag = TruncateAddress(objectaddress);
                 }
 
-                try { imglocation = myFriends[_from]; } catch { }
+                // Resolve FROM profile/object
+                string fromURN = _from;
+                string fromImageLocation = "";
+                bool isFromObject = false;
+                
+                PROState fromProfile = PROState.GetProfileByAddress(_from, mainnetLogin, mainnetPassword, mainnetURL, mainnetVersionByte);
+                if (fromProfile.URN != null)
+                {
+                    fromURN = fromProfile.URN;
+                    try { fromImageLocation = myFriends[_from]; } catch { }
+                }
+                else
+                {
+                    OBJState fromObj = OBJState.GetObjectByAddress(_from, mainnetLogin, mainnetPassword, mainnetURL, mainnetVersionByte);
+                    if (fromObj.Creators != null)
+                    {
+                        isFromObject = true;
+                        fromURN = fromObj.URN;
+                        fromImageLocation = GetObjectImagePath(fromObj);
+                    }
+                }
+
+                // Resolve TO/object (the object being listed)
+                string toURN = _to;
+                string toImageLocation = "";
+                bool isToObject = false;
+                
+                OBJState toObj = OBJState.GetObjectByAddress(_to, mainnetLogin, mainnetPassword, mainnetURL, mainnetVersionByte);
+                if (toObj.URN != null)
+                {
+                    isToObject = true;
+                    toURN = toObj.URN;
+                    toImageLocation = GetObjectImagePath(toObj);
+                }
 
                 transactions.Add(new HistoryTransactionViewModel
                 {
                     TransactionId = root.TransactionId,
                     FromAddress = _from,
+                    FromURN = fromURN,
+                    FromImageLocation = fromImageLocation,
+                    IsFromObject = isFromObject,
                     ToAddress = _to,
+                    ToURN = toURN,
+                    ToImageLocation = toImageLocation,
+                    IsToObject = isToObject,
                     ObjectAddress = objectaddress,
                     Message = _message,
                     BlockDate = DateTime.ParseExact(_blockdate, "yyyyMMddHHmmss", CultureInfo.InvariantCulture),
-                    ImageLocation = imglocation,
                     ClassifierTag = classifierTag,
-                    ClassifierColor = classifierColor
+                    ClassifierColor = classifierColor,
+                    HasMiddleObject = false
                 });
             }
         }
@@ -2674,7 +2712,6 @@ namespace SUP
                 string _message = "BURN 🔥 ";
                 try { _message = _message + burn[1]; } catch { }
                 string _blockdate = root.BlockDate.ToString("yyyyMMddHHmmss");
-                string imglocation = "";
 
                 if (burn[1] <= 0) continue;
 
@@ -2705,19 +2742,61 @@ namespace SUP
                     classifierTag = TruncateAddress(objectaddress);
                 }
 
-                try { imglocation = myFriends[_from]; } catch { }
+                // Resolve FROM profile/object
+                string fromURN = _from;
+                string fromImageLocation = "";
+                bool isFromObject = false;
+                
+                PROState fromProfile = PROState.GetProfileByAddress(_from, mainnetLogin, mainnetPassword, mainnetURL, mainnetVersionByte);
+                if (fromProfile.URN != null)
+                {
+                    fromURN = fromProfile.URN;
+                    try { fromImageLocation = myFriends[_from]; } catch { }
+                }
+                else
+                {
+                    OBJState fromObj = OBJState.GetObjectByAddress(_from, mainnetLogin, mainnetPassword, mainnetURL, mainnetVersionByte);
+                    if (fromObj.Creators != null)
+                    {
+                        isFromObject = true;
+                        fromURN = fromObj.URN;
+                        fromImageLocation = GetObjectImagePath(fromObj);
+                    }
+                }
+
+                // Resolve TO/object (the object being burned)
+                string toURN = _to;
+                string toImageLocation = "";
+                bool isToObject = false;
+                
+                if (!string.IsNullOrEmpty(_to))
+                {
+                    OBJState toObj = OBJState.GetObjectByAddress(_to, mainnetLogin, mainnetPassword, mainnetURL, mainnetVersionByte);
+                    if (toObj.URN != null)
+                    {
+                        isToObject = true;
+                        toURN = toObj.URN;
+                        toImageLocation = GetObjectImagePath(toObj);
+                    }
+                }
 
                 transactions.Add(new HistoryTransactionViewModel
                 {
                     TransactionId = root.TransactionId,
                     FromAddress = _from,
+                    FromURN = fromURN,
+                    FromImageLocation = fromImageLocation,
+                    IsFromObject = isFromObject,
                     ToAddress = _to,
+                    ToURN = toURN,
+                    ToImageLocation = toImageLocation,
+                    IsToObject = isToObject,
                     ObjectAddress = objectaddress,
                     Message = _message,
                     BlockDate = DateTime.ParseExact(_blockdate, "yyyyMMddHHmmss", CultureInfo.InvariantCulture),
-                    ImageLocation = imglocation,
                     ClassifierTag = classifierTag,
-                    ClassifierColor = classifierColor
+                    ClassifierColor = classifierColor,
+                    HasMiddleObject = false
                 });
             }
         }
