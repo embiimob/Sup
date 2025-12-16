@@ -5385,8 +5385,6 @@ namespace SUP
 
             supFlow.SuspendLayout();
 
-
-
             this.Invoke((MethodInvoker)delegate
             {
                 btnCommunityFeed.BackColor = System.Drawing.Color.Blue;
@@ -5416,385 +5414,398 @@ namespace SUP
                 numFriendFeedsSkip = 0;
             }
 
-
-            string FriendsListPath = "";
-            if (testnet) { FriendsListPath = @"root\MyFriendList.Json"; } else { FriendsListPath = @"root\MyProdFriendList.Json"; }
-
-
-            if (File.Exists(FriendsListPath))
+            Task.Run(() =>
             {
-
-                List<string> friendFeed = new List<string>();
-                var myFriendsJson = File.ReadAllText(FriendsListPath);
-                var myFriends = JsonConvert.DeserializeObject<Dictionary<string, string>>(myFriendsJson);
-
-                // Iterate over each key in the dictionary, get public messages by address, and combine them into a list
-                var allMessages = new List<object>();
-                Debug.WriteLine($"[CommunityFeed] Loading messages from {myFriends.Keys.Count} friends");
-                int friendIndex = 0;
-                foreach (var key in myFriends.Keys)
+                try
                 {
-                    friendIndex++;
-                    try
+                    string FriendsListPath = "";
+                    if (testnet) { FriendsListPath = @"root\MyFriendList.Json"; } else { FriendsListPath = @"root\MyProdFriendList.Json"; }
+
+
+                    if (File.Exists(FriendsListPath))
                     {
-                        Debug.WriteLine($"[CommunityFeed] Friend {friendIndex}/{myFriends.Keys.Count}: {key}");
-                        List<MessageObject> result = OBJState.GetPublicMessagesByAddress(key, mainnetLogin, mainnetPassword, mainnetURL, mainnetVersionByte, 0, 50);
-                        Debug.WriteLine($"[CommunityFeed] Friend {friendIndex}: Got {result.Count} messages");
 
-                        // Add the "to" element to each message object
+                        List<string> friendFeed = new List<string>();
+                        var myFriendsJson = File.ReadAllText(FriendsListPath);
+                        var myFriends = JsonConvert.DeserializeObject<Dictionary<string, string>>(myFriendsJson);
 
-                        foreach (var message in result)
+                        // Iterate over each key in the dictionary, get public messages by address, and combine them into a list
+                        var allMessages = new List<object>();
+                        Debug.WriteLine($"[CommunityFeed] Loading messages from {myFriends.Keys.Count} friends");
+                        int friendIndex = 0;
+                        foreach (var key in myFriends.Keys)
                         {
+                            friendIndex++;
                             try
                             {
+                                Debug.WriteLine($"[CommunityFeed] Friend {friendIndex}/{myFriends.Keys.Count}: {key}");
+                                List<MessageObject> result = OBJState.GetPublicMessagesByAddress(key, mainnetLogin, mainnetPassword, mainnetURL, mainnetVersionByte, 0, 50);
+                                Debug.WriteLine($"[CommunityFeed] Friend {friendIndex}: Got {result.Count} messages");
 
-                                string _from = message.FromAddress;
-                                string _to = message.ToAddress;
-                                string _message = message.Message;
-                                string _blockdate = message.BlockDate.ToString("yyyyMMddHHmmss");
-                                string _transactionid = message.TransactionId;
+                                // Add the "to" element to each message object
 
-                                if (!friendFeed.Contains(_from + _to + _message))
+                                foreach (var message in result)
                                 {
-                                    friendFeed.Add(_from + _to + _message);
-
-                                    allMessages.Add(new
+                                    try
                                     {
-                                        Message = _message,
-                                        FromAddress = _from,
-                                        ToAddress = _to,
-                                        BlockDate = _blockdate,
-                                        TransactionId = _transactionid
-                                    });
+
+                                        string _from = message.FromAddress;
+                                        string _to = message.ToAddress;
+                                        string _message = message.Message;
+                                        string _blockdate = message.BlockDate.ToString("yyyyMMddHHmmss");
+                                        string _transactionid = message.TransactionId;
+
+                                        if (!friendFeed.Contains(_from + _to + _message))
+                                        {
+                                            friendFeed.Add(_from + _to + _message);
+
+                                            allMessages.Add(new
+                                            {
+                                                Message = _message,
+                                                FromAddress = _from,
+                                                ToAddress = _to,
+                                                BlockDate = _blockdate,
+                                                TransactionId = _transactionid
+                                            });
+                                        }
+                                    }
+                                    catch { }
                                 }
                             }
-                            catch { }
-                        }
-                    }
-                    catch (Exception ex) 
-                    {
-                        Debug.WriteLine($"[CommunityFeed] Error loading friend {friendIndex}: {ex.Message}");
-                    }
-
-                }
-                Debug.WriteLine($"[CommunityFeed] Total messages collected: {allMessages.Count}");
-
-                // Sort the combined list by block date
-                allMessages.Sort((m1, m2) =>
-                {
-                    var date1Prop = m1?.GetType().GetProperty("BlockDate");
-                    var date2Prop = m2?.GetType().GetProperty("BlockDate");
-                    if (date1Prop == null && date2Prop == null)
-                    {
-                        return 0;
-                    }
-                    else if (date1Prop == null)
-                    {
-                        return -1;
-                    }
-                    else if (date2Prop == null)
-                    {
-                        return 1;
-                    }
-                    else
-                    {
-                        var date1 = DateTime.ParseExact(date1Prop.GetValue(m1).ToString(), "yyyyMMddHHmmss", CultureInfo.InvariantCulture);
-                        var date2 = DateTime.ParseExact(date2Prop.GetValue(m2).ToString(), "yyyyMMddHHmmss", CultureInfo.InvariantCulture);
-                        return date2.CompareTo(date1);
-                    }
-                });
-
-
-                // Trigger memory cleanup after loading messages
-                // This ensures we maintain bounded memory usage (~20 messages max)
-                // Call synchronously to ensure it executes immediately
-                var messagesToDisplay = allMessages.Skip(numFriendFeedsSkip).Take(10).ToList();
-                Debug.WriteLine($"[CommunityFeed] Displaying {messagesToDisplay.Count} messages (skip: {numFriendFeedsSkip})");
-                if (messagesToDisplay.Count > 0)
-                {
-                    RemoveOverFlowMessages(supFlow);
-                    
-                    // Increment skip counter by the number of messages actually displayed
-                    numFriendFeedsSkip += messagesToDisplay.Count;
-                }
-
-                foreach (var message in messagesToDisplay)
-                {
-                    numFriendFeedsDisplayed++; // Track actual displayed count
-                    var fromProp = message.GetType().GetProperty("FromAddress");
-                    var toProp = message.GetType().GetProperty("ToAddress");
-                    var messageProp = message.GetType().GetProperty("Message");
-                    var blockDateProp = message.GetType().GetProperty("BlockDate");
-                    var transactionIdProp = message.GetType().GetProperty("TransactionId");
-
-                    string _from = fromProp?.GetValue(message).ToString();
-                    string _to = toProp?.GetValue(message).ToString();
-                    string _transactionId = transactionIdProp?.GetValue(message).ToString();
-                    string fromURN = fromProp?.GetValue(message).ToString();
-                    string _message = messageProp?.GetValue(message).ToString();
-                    string _blockdate = blockDateProp?.GetValue(message).ToString();
-                    string imglocation = "";
-                    string unfilteredmessage = _message;
-                    string[] blocks = Regex.Matches(_message, "<<[^<>]+>>")
-                                             .Cast<Match>()
-                                             .Select(m => m.Value.Trim(new char[] { '<', '>' }))
-                                             .ToArray();
-                    _message = Regex.Replace(_message, "<<.*?>>", "");
-
-
-
-
-                    if (_message != "" || blocks.Length > 1 || (blocks.Length == 1 && !int.TryParse(blocks[0], NumberStyles.Any, CultureInfo.GetCultureInfo("en-US"), out _)) || File.Exists(@"root\" + _transactionId + @"\INQ"))
-                    {
-
-                        PROState fromProfile = PROState.GetProfileByAddress(fromURN, mainnetLogin, mainnetPassword, mainnetURL, mainnetVersionByte);
-                        if (fromProfile.URN != null)
-                        {
-                            fromURN = fromProfile.URN;
-
-                        }
-
-
-                        string toURN = toProp?.GetValue(message).ToString();
-                        PROState toProfile = PROState.GetProfileByAddress(toURN, mainnetLogin, mainnetPassword, mainnetURL, mainnetVersionByte);
-                        if (toProfile.URN != null)
-                        {
-                            toURN = toProfile.URN;
-
-                        }
-
-
-                        // Check for INQ file before creating divs
-                        // This allows us to add everything in the correct order in one UI thread operation
-                        bool hasINQ = false;
-                        FoundINQControl inqControl = null;
-                        try
-                        {
-                            string[] files = Directory.GetFiles(@"root\" + _transactionId);
-
-                            bool containsFileWithINQ = files.Any(file =>
-                                   file.EndsWith("INQ", StringComparison.OrdinalIgnoreCase) &&
-                                   !file.EndsWith("BLOCK", StringComparison.OrdinalIgnoreCase));
-
-                            if (containsFileWithINQ)
+                            catch (Exception ex)
                             {
-                                hasINQ = true;
-                                string profileowner = "";
-                                if (profileOwner.Tag != null) { profileowner = profileOwner.Tag.ToString(); }
-
-                                inqControl = new FoundINQControl(_transactionId, profileowner, testnet);
-                                inqControl.Margin = new Padding(20, 7, 8, 7);
+                                Debug.WriteLine($"[CommunityFeed] Error loading friend {friendIndex}: {ex.Message}");
                             }
+
                         }
-                        catch { }
+                        Debug.WriteLine($"[CommunityFeed] Total messages collected: {allMessages.Count}");
 
-                        // Add divs and INQ control together in one UI operation
-                        // This prevents divs from showing before INQ control is added
-                        this.Invoke((MethodInvoker)delegate
+                        // Sort the combined list by block date
+                        allMessages.Sort((m1, m2) =>
                         {
-                            try
+                            var date1Prop = m1?.GetType().GetProperty("BlockDate");
+                            var date2Prop = m2?.GetType().GetProperty("BlockDate");
+                            if (date1Prop == null && date2Prop == null)
                             {
-                                try { imglocation = myFriends[_from]; } catch { imglocation = @"includes\anon.png"; }
-                                CreateRow(imglocation, fromURN, _from, DateTime.ParseExact(_blockdate, "yyyyMMddHHmmss", CultureInfo.InvariantCulture), _message, _transactionId, false, supFlow);
-                                imglocation = "";
-                                try { imglocation = myFriends[_to]; } catch { imglocation = @"includes\anon.png"; }
-                                CreateRow(imglocation, toURN, _to, DateTime.ParseExact("19700101010101", "yyyyMMddHHmmss", CultureInfo.InvariantCulture), "", _transactionId, false, supFlow);
-                                
-                                // Add INQ control immediately after divs if it exists
-                                if (hasINQ && inqControl != null)
-                                {
-                                    AddMessageControl(supFlow, inqControl);
-                                }
+                                return 0;
                             }
-                            catch { }
+                            else if (date1Prop == null)
+                            {
+                                return -1;
+                            }
+                            else if (date2Prop == null)
+                            {
+                                return 1;
+                            }
+                            else
+                            {
+                                var date1 = DateTime.ParseExact(date1Prop.GetValue(m1).ToString(), "yyyyMMddHHmmss", CultureInfo.InvariantCulture);
+                                var date2 = DateTime.ParseExact(date2Prop.GetValue(m2).ToString(), "yyyyMMddHHmmss", CultureInfo.InvariantCulture);
+                                return date2.CompareTo(date1);
+                            }
                         });
 
-                        string pattern = "<<.*?>>";
-                        MatchCollection matches = Regex.Matches(unfilteredmessage, pattern);
-                        foreach (Match match in matches)
+
+                        // Trigger memory cleanup after loading messages
+                        // This ensures we maintain bounded memory usage (~20 messages max)
+                        // Call synchronously to ensure it executes immediately
+                        var messagesToDisplay = allMessages.Skip(numFriendFeedsSkip).Take(10).ToList();
+                        Debug.WriteLine($"[CommunityFeed] Displaying {messagesToDisplay.Count} messages (skip: {numFriendFeedsSkip})");
+                        if (messagesToDisplay.Count > 0)
                         {
+                            this.Invoke((MethodInvoker)delegate
+                            {
+                                RemoveOverFlowMessages(supFlow);
+                            });
+
+                            // Increment skip counter by the number of messages actually displayed
+                            numFriendFeedsSkip += messagesToDisplay.Count;
+                        }
+
+                        foreach (var message in messagesToDisplay)
+                        {
+                            numFriendFeedsDisplayed++; // Track actual displayed count
+                            var fromProp = message.GetType().GetProperty("FromAddress");
+                            var toProp = message.GetType().GetProperty("ToAddress");
+                            var messageProp = message.GetType().GetProperty("Message");
+                            var blockDateProp = message.GetType().GetProperty("BlockDate");
+                            var transactionIdProp = message.GetType().GetProperty("TransactionId");
+
+                            string _from = fromProp?.GetValue(message).ToString();
+                            string _to = toProp?.GetValue(message).ToString();
+                            string _transactionId = transactionIdProp?.GetValue(message).ToString();
+                            string fromURN = fromProp?.GetValue(message).ToString();
+                            string _message = messageProp?.GetValue(message).ToString();
+                            string _blockdate = blockDateProp?.GetValue(message).ToString();
+                            string imglocation = "";
+                            string unfilteredmessage = _message;
+                            string[] blocks = Regex.Matches(_message, "<<[^<>]+>>")
+                                                     .Cast<Match>()
+                                                     .Select(m => m.Value.Trim(new char[] { '<', '>' }))
+                                                     .ToArray();
+                            _message = Regex.Replace(_message, "<<.*?>>", "");
 
 
-                            string content = match.Value.Substring(2, match.Value.Length - 4);
-                            if (!int.TryParse(content, NumberStyles.Any, CultureInfo.GetCultureInfo("en-US"), out int id) && !content.Trim().StartsWith("#"))
+
+
+                            if (_message != "" || blocks.Length > 1 || (blocks.Length == 1 && !int.TryParse(blocks[0], NumberStyles.Any, CultureInfo.GetCultureInfo("en-US"), out _)) || File.Exists(@"root\" + _transactionId + @"\INQ"))
                             {
 
-                                List<string> imgExtensions = new List<string> { ".bmp", ".gif", ".ico", ".jpeg", ".jpg", ".png", ".tif", ".tiff", ".mp4", ".mov", ".avi", ".wav", ".mp3" };
-
-                                string extension = Path.GetExtension(content).ToLower();
-                                if (!imgExtensions.Contains(extension) && !content.Contains("youtube.com") && !content.Contains("youtu.be"))
+                                PROState fromProfile = PROState.GetProfileByAddress(fromURN, mainnetLogin, mainnetPassword, mainnetURL, mainnetVersionByte);
+                                if (fromProfile.URN != null)
                                 {
-                                    string title = content;
-                                    string description = content;
-                                    string imageUrl = @"includes\disco.png";
+                                    fromURN = fromProfile.URN;
 
-                                    // Create a new panel to display the metadata
-                                    Panel panel = new Panel();
-                                    panel.BorderStyle = BorderStyle.FixedSingle;
-                                    panel.Size = new Size(supFlow.Width - 50, 100);
-
-                                    // Create a label for the title
-                                    Label titleLabel = new Label();
-                                    titleLabel.Text = title;
-                                    titleLabel.Dock = DockStyle.Top;
-                                    titleLabel.Font = new Font("Segoe UI", 12, FontStyle.Bold);
-                                    titleLabel.ForeColor = Color.White;
-                                    titleLabel.MinimumSize = new Size(supFlow.Width - 150, 30);
-                                    titleLabel.Padding = new Padding(5);
-                                    titleLabel.MouseClick += (sender, e) => { Attachment_Clicked(content); };
-                                    panel.Controls.Add(titleLabel);
-
-                                    // Create a label for the description
-                                    Label descriptionLabel = new Label();
-                                    descriptionLabel.Text = description;
-                                    descriptionLabel.ForeColor = Color.White;
-                                    descriptionLabel.Dock = DockStyle.Fill;
-                                    descriptionLabel.Padding = new Padding(5, 40, 5, 5);
-                                    descriptionLabel.MouseClick += (sender, e) => { Attachment_Clicked(content); };
-                                    panel.Controls.Add(descriptionLabel);
+                                }
 
 
+                                string toURN = toProp?.GetValue(message).ToString();
+                                PROState toProfile = PROState.GetProfileByAddress(toURN, mainnetLogin, mainnetPassword, mainnetURL, mainnetVersionByte);
+                                if (toProfile.URN != null)
+                                {
+                                    toURN = toProfile.URN;
 
-                                    // Create a new PictureBox control and add it to the panel
-                                    PictureBox pictureBox = new PictureBox();
-                                    pictureBox.Dock = DockStyle.Left;
-                                    pictureBox.Size = new Size(100, 100);
-                                    pictureBox.SizeMode = PictureBoxSizeMode.Zoom;
-                                    try { pictureBox.ImageLocation = imageUrl; } catch { }
-                                    pictureBox.MouseClick += (sender, e) => { Attachment_Clicked(content); };
-                                    panel.Controls.Add(pictureBox);
-                                    //pictures.Add(pictureBox);
+                                }
 
-                                    AddMessageControl(supFlow, panel);
 
-                                    Task.Run(() =>
+                                // Check for INQ file before creating divs
+                                // This allows us to add everything in the correct order in one UI thread operation
+                                bool hasINQ = false;
+                                FoundINQControl inqControl = null;
+                                try
+                                {
+                                    string[] files = Directory.GetFiles(@"root\" + _transactionId);
+
+                                    bool containsFileWithINQ = files.Any(file =>
+                                           file.EndsWith("INQ", StringComparison.OrdinalIgnoreCase) &&
+                                           !file.EndsWith("BLOCK", StringComparison.OrdinalIgnoreCase));
+
+                                    if (containsFileWithINQ)
                                     {
-                                        try
+                                        hasINQ = true;
+                                        string profileowner = "";
+                                        if (profileOwner.Tag != null) { profileowner = profileOwner.Tag.ToString(); }
+
+                                        inqControl = new FoundINQControl(_transactionId, profileowner, testnet);
+                                        inqControl.Margin = new Padding(20, 7, 8, 7);
+                                    }
+                                }
+                                catch { }
+
+                                // Add divs and INQ control together in one UI operation
+                                // This prevents divs from showing before INQ control is added
+                                this.Invoke((MethodInvoker)delegate
+                                {
+                                    try
+                                    {
+                                        try { imglocation = myFriends[_from]; } catch { imglocation = @"includes\anon.png"; }
+                                        CreateRow(imglocation, fromURN, _from, DateTime.ParseExact(_blockdate, "yyyyMMddHHmmss", CultureInfo.InvariantCulture), _message, _transactionId, false, supFlow);
+                                        imglocation = "";
+                                        try { imglocation = myFriends[_to]; } catch { imglocation = @"includes\anon.png"; }
+                                        CreateRow(imglocation, toURN, _to, DateTime.ParseExact("19700101010101", "yyyyMMddHHmmss", CultureInfo.InvariantCulture), "", _transactionId, false, supFlow);
+
+                                        // Add INQ control immediately after divs if it exists
+                                        if (hasINQ && inqControl != null)
                                         {
-                                            string html = "";
-                                            WebClient client = new WebClient();
-                                            // Create a WebClient object to fetch the webpage
-                                            if (!content.ToLower().EndsWith(".zip"))
-                                            {
-                                                html = client.DownloadString(content.StripLeadingTrailingSpaces());
-                                            }
-                                            // Create a MemoryStream object from the image data
+                                            AddMessageControl(supFlow, inqControl);
+                                        }
+                                    }
+                                    catch { }
+                                });
 
-                                            // Use regular expressions to extract the metadata from the HTML
-                                            title = Regex.Match(html, @"<title>\s*(.+?)\s*</title>").Groups[1].Value;
-                                            description = Regex.Match(html, @"<meta\s+name\s*=\s*""description""\s+content\s*=\s*""(.+?)""\s*/?>").Groups[1].Value;
-                                            imageUrl = Regex.Match(html, @"<meta\s+property\s*=\s*""og:image""\s+content\s*=\s*""(.+?)""\s*/?>").Groups[1].Value;
+                                string pattern = "<<.*?>>";
+                                MatchCollection matches = Regex.Matches(unfilteredmessage, pattern);
+                                foreach (Match match in matches)
+                                {
 
-                                            byte[] imageData = client.DownloadData(imageUrl);
-                                            MemoryStream memoryStream = new MemoryStream(imageData);
+
+                                    string content = match.Value.Substring(2, match.Value.Length - 4);
+                                    if (!int.TryParse(content, NumberStyles.Any, CultureInfo.GetCultureInfo("en-US"), out int id) && !content.Trim().StartsWith("#"))
+                                    {
+
+                                        List<string> imgExtensions = new List<string> { ".bmp", ".gif", ".ico", ".jpeg", ".jpg", ".png", ".tif", ".tiff", ".mp4", ".mov", ".avi", ".wav", ".mp3" };
+
+                                        string extension = Path.GetExtension(content).ToLower();
+                                        if (!imgExtensions.Contains(extension) && !content.Contains("youtube.com") && !content.Contains("youtu.be"))
+                                        {
+                                            string title = content;
+                                            string description = content;
+                                            string imageUrl = @"includes\disco.png";
 
                                             this.Invoke((MethodInvoker)delegate
                                             {
+                                                // Create a new panel to display the metadata
+                                                Panel panel = new Panel();
+                                                panel.BorderStyle = BorderStyle.FixedSingle;
+                                                panel.Size = new Size(supFlow.Width - 50, 100);
+
+                                                // Create a label for the title
+                                                Label titleLabel = new Label();
                                                 titleLabel.Text = title;
+                                                titleLabel.Dock = DockStyle.Top;
+                                                titleLabel.Font = new Font("Segoe UI", 12, FontStyle.Bold);
+                                                titleLabel.ForeColor = Color.White;
+                                                titleLabel.MinimumSize = new Size(supFlow.Width - 150, 30);
+                                                titleLabel.Padding = new Padding(5);
+                                                titleLabel.MouseClick += (sender, e) => { Attachment_Clicked(content); };
+                                                panel.Controls.Add(titleLabel);
+
+                                                // Create a label for the description
+                                                Label descriptionLabel = new Label();
                                                 descriptionLabel.Text = description;
-                                                pictureBox.ImageLocation = null;
-                                                pictureBox.Image = System.Drawing.Image.FromStream(memoryStream);
+                                                descriptionLabel.ForeColor = Color.White;
+                                                descriptionLabel.Dock = DockStyle.Fill;
+                                                descriptionLabel.Padding = new Padding(5, 40, 5, 5);
+                                                descriptionLabel.MouseClick += (sender, e) => { Attachment_Clicked(content); };
+                                                panel.Controls.Add(descriptionLabel);
+
+
+
+                                                // Create a new PictureBox control and add it to the panel
+                                                PictureBox pictureBox = new PictureBox();
+                                                pictureBox.Dock = DockStyle.Left;
+                                                pictureBox.Size = new Size(100, 100);
+                                                pictureBox.SizeMode = PictureBoxSizeMode.Zoom;
+                                                try { pictureBox.ImageLocation = imageUrl; } catch { }
+                                                pictureBox.MouseClick += (sender, e) => { Attachment_Clicked(content); };
+                                                panel.Controls.Add(pictureBox);
+                                                //pictures.Add(pictureBox);
+
+                                                AddMessageControl(supFlow, panel);
+
+                                                Task.Run(() =>
+                                                {
+                                                    try
+                                                    {
+                                                        string html = "";
+                                                        WebClient client = new WebClient();
+                                                        // Create a WebClient object to fetch the webpage
+                                                        if (!content.ToLower().EndsWith(".zip"))
+                                                        {
+                                                            html = client.DownloadString(content.StripLeadingTrailingSpaces());
+                                                        }
+                                                        // Create a MemoryStream object from the image data
+
+                                                        // Use regular expressions to extract the metadata from the HTML
+                                                        title = Regex.Match(html, @"<title>\s*(.+?)\s*</title>").Groups[1].Value;
+                                                        description = Regex.Match(html, @"<meta\s+name\s*=\s*""description""\s+content\s*=\s*""(.+?)""\s*/?>").Groups[1].Value;
+                                                        imageUrl = Regex.Match(html, @"<meta\s+property\s*=\s*""og:image""\s+content\s*=\s*""(.+?)""\s*/?>").Groups[1].Value;
+
+                                                        byte[] imageData = client.DownloadData(imageUrl);
+                                                        MemoryStream memoryStream = new MemoryStream(imageData);
+
+                                                        this.Invoke((MethodInvoker)delegate
+                                                        {
+                                                            titleLabel.Text = title;
+                                                            descriptionLabel.Text = description;
+                                                            pictureBox.ImageLocation = null;
+                                                            pictureBox.Image = System.Drawing.Image.FromStream(memoryStream);
+                                                        });
+
+
+
+                                                    }
+                                                    catch { }
+                                                });
                                             });
 
 
+                                        }
+                                        else
+                                        {
+
+                                            if (extension == ".mp4" || extension == ".mov" || extension == ".avi" || content.Contains("youtube.com") || content.Contains("youtu.be") || extension == ".wav" || extension == ".mp3")
+                                            {
+
+                                                this.Invoke((MethodInvoker)delegate
+                                                {
+                                                    try { AddMedia(content); } catch { }
+                                                });
+
+                                            }
+                                            else
+                                            {
+
+                                                this.Invoke((MethodInvoker)delegate
+                                                {
+                                                    try { AddImage(content); } catch { }
+                                                });
+                                            }
+
 
                                         }
-                                        catch { }
-                                    });
+
+
+
+                                    }
 
 
                                 }
-                                else
+
+                                this.Invoke((MethodInvoker)delegate
                                 {
-
-                                    if (extension == ".mp4" || extension == ".mov" || extension == ".avi" || content.Contains("youtube.com") || content.Contains("youtu.be") || extension == ".wav" || extension == ".mp3")
+                                    TableLayoutPanel padding = new TableLayoutPanel
                                     {
+                                        RowCount = 1,
+                                        ColumnCount = 1,
+                                        Dock = DockStyle.Top,
+                                        BackColor = Color.Black,
+                                        ForeColor = Color.White,
+                                        AutoSize = true,
+                                        CellBorderStyle = TableLayoutPanelCellBorderStyle.Single,
+                                        Margin = new System.Windows.Forms.Padding(0, 10, 0, 10),
+                                        Padding = new System.Windows.Forms.Padding(0)
 
-                                        this.Invoke((MethodInvoker)delegate
-                                        {
-                                            try { AddMedia(content); } catch { }
-                                        });
+                                    };
 
-                                    }
-                                    else
-                                    {
-
-                                        this.Invoke((MethodInvoker)delegate
-                                        {
-                                            try { AddImage(content); } catch { }
-                                        });
-                                    }
+                                    padding.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, supFlow.Width - 20));
 
 
-                                }
-
+                                    AddMessageControl(supFlow, padding);
+                                });
 
 
                             }
-
-
+                            numFriendFeedsDisplayed++;
                         }
 
-                        TableLayoutPanel padding = new TableLayoutPanel
-                        {
-                            RowCount = 1,
-                            ColumnCount = 1,
-                            Dock = DockStyle.Top,
-                            BackColor = Color.Black,
-                            ForeColor = Color.White,
-                            AutoSize = true,
-                            CellBorderStyle = TableLayoutPanelCellBorderStyle.Single,
-                            Margin = new System.Windows.Forms.Padding(0, 10, 0, 10),
-                            Padding = new System.Windows.Forms.Padding(0)
-
-                        };
-
-                        padding.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, supFlow.Width - 20));
-
-                        this.Invoke((MethodInvoker)delegate
-                        {
-                            AddMessageControl(supFlow, padding);
-                        });
 
 
                     }
-                    numFriendFeedsDisplayed++;
                 }
-
-
-
-            }
-
-            this.BeginInvoke((MethodInvoker)delegate
-            {
-                supFlow.ResumeLayout();
-                RemoveOverFlowMessages(supFlow); // Clean up excess controls after layout
-                
-                // Only reset scroll position when explicitly requested (button click)
-                // When scrolling to load more, preserve current position so user doesn't lose their place
-                if (resetCounters)
+                catch (Exception ex)
                 {
-                    try
-                    {
-                        if (supFlow != null && supFlow.VerticalScroll != null)
-                        {
-                            supFlow.AutoScrollPosition = new Point(0, 0);
-                        }
-                    }
-                    catch (Exception ex)
-                    {
-                        Debug.WriteLine($"[CommunityFeed] Error resetting scroll position: {ex.Message}");
-                    }
+                    Debug.WriteLine($"[RefreshCommunityMessages] Error: {ex.Message}");
                 }
-                
-                btnCommunityFeed.Enabled = true;
-                _isLoadingMessages = false; // Reset flag to allow subsequent loads
+                finally
+                {
+                    this.BeginInvoke((MethodInvoker)delegate
+                    {
+                        supFlow.ResumeLayout();
+                        RemoveOverFlowMessages(supFlow); // Clean up excess controls after layout
+
+                        // Only reset scroll position when explicitly requested (button click)
+                        // When scrolling to load more, preserve current position so user doesn't lose their place
+                        if (resetCounters)
+                        {
+                            try
+                            {
+                                if (supFlow != null && supFlow.VerticalScroll != null)
+                                {
+                                    supFlow.AutoScrollPosition = new Point(0, 0);
+                                }
+                            }
+                            catch (Exception ex)
+                            {
+                                Debug.WriteLine($"[CommunityFeed] Error resetting scroll position: {ex.Message}");
+                            }
+                        }
+
+                        btnCommunityFeed.Enabled = true;
+                        _isLoadingMessages = false; // Reset flag to allow subsequent loads
+                    });
+                }
             });
-
-
-
-
-        }
 
         void AddImage(string imagepath, bool isprivate = false, bool addtoTop = false)
         {
