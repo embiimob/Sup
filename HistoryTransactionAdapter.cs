@@ -4,22 +4,27 @@ using System.Drawing;
 using System.Globalization;
 using System.Windows.Forms;
 using System.Diagnostics;
+using System.IO;
+using System.Reflection;
 
 namespace SUP
 {
     /// <summary>
     /// Adapter for displaying transaction history in a VirtualizedMessageList.
     /// Shows transactions in chronological order with visual classifier tags for owned/created objects.
+    /// Matches the original CreateFeedRow functionality.
     /// </summary>
     public class HistoryTransactionAdapter : IMessageListAdapter
     {
         private List<HistoryTransactionViewModel> _transactions;
         private Dictionary<string, string> _friendList;
+        private ObjectBrowser _parentForm; // Need reference to parent for click handlers
 
-        public HistoryTransactionAdapter()
+        public HistoryTransactionAdapter(ObjectBrowser parentForm = null)
         {
             _transactions = new List<HistoryTransactionViewModel>();
             _friendList = new Dictionary<string, string>();
+            _parentForm = parentForm;
         }
 
         /// <summary>
@@ -69,171 +74,177 @@ namespace SUP
             var transaction = GetTransaction(position);
             if (transaction == null) return null;
 
-            // Create a transaction row view
-            return CreateTransactionView(transaction, convertView);
-        }
-
-        private Control CreateTransactionView(HistoryTransactionViewModel transaction, Control convertView)
-        {
-            Panel transactionPanel = convertView as Panel ?? new Panel
+            // Create a TableLayoutPanel similar to the original CreateFeedRow
+            TableLayoutPanel row = convertView as TableLayoutPanel ?? new TableLayoutPanel
             {
-                Height = 90, // Increased height to accommodate classifier tag
+                RowCount = 1,
+                ColumnCount = 5,
+                AutoSize = true,
                 BackColor = Color.Black,
-                Padding = new Padding(5),
-                Margin = new Padding(0, 2, 0, 2)
+                ForeColor = Color.White,
+                Padding = new Padding(0),
+                Margin = new Padding(0, 2, 0, 2),
+                Tag = transaction.TransactionId
             };
 
             // Clear existing controls if reusing
             if (convertView != null)
             {
-                transactionPanel.Controls.Clear();
+                row.Controls.Clear();
+                row.ColumnStyles.Clear();
             }
 
-            // Classifier tag (if in filtered mode)
-            int leftOffset = 5;
+            // Set column styles (5 columns for: From Image, From Info, Message, Object/Middle, To Info)
+            row.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 80));  // From image
+            row.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 85));  // From label
+            row.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 100)); // Message
+            row.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 80));  // Middle object
+            row.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 85));  // To label
+
+            // Add classifier tag if in filtered mode
             if (!string.IsNullOrEmpty(transaction.ClassifierTag))
             {
-                Panel classifierPanel = new Panel
-                {
-                    Size = new Size(8, 80), // Vertical colored bar
-                    Location = new Point(5, 5),
-                    BackColor = transaction.ClassifierColor
-                };
-                transactionPanel.Controls.Add(classifierPanel);
-
                 Label classifierLabel = new Label
                 {
-                    Text = transaction.ClassifierTag,
-                    Location = new Point(18, 5),
+                    Text = "▌ " + transaction.ClassifierTag,
                     AutoSize = true,
-                    MaximumSize = new Size(150, 20),
-                    Font = new Font("Segoe UI", 8F, FontStyle.Bold),
+                    Font = new Font("Segoe UI", 7F, FontStyle.Bold),
                     ForeColor = transaction.ClassifierColor,
-                    BackColor = Color.Transparent
+                    BackColor = Color.Black,
+                    Margin = new Padding(0),
+                    Padding = new Padding(3, 0, 0, 0)
                 };
-                transactionPanel.Controls.Add(classifierLabel);
-                leftOffset = 18;
+                row.Controls.Add(classifierLabel);
+                row.SetColumnSpan(classifierLabel, 5);
             }
 
-            // Profile picture
-            PictureBox profilePic = new PictureBox
+            // Column 0: From Image (profile or object)
+            PictureBox fromPicture = new PictureBox
             {
-                Size = new Size(60, 60),
-                Location = new Point(leftOffset, 20),
-                SizeMode = PictureBoxSizeMode.StretchImage,
-                BackColor = Color.FromArgb(30, 30, 30)
+                Size = new Size(80, 80),
+                SizeMode = PictureBoxSizeMode.Zoom,
+                Margin = new Padding(0)
             };
 
-            // Set image location
-            string imageLocation = transaction.ImageLocation;
-            if (!string.IsNullOrEmpty(imageLocation))
+            if (!string.IsNullOrEmpty(transaction.FromImageLocation) && 
+                (File.Exists(transaction.FromImageLocation) || transaction.FromImageLocation.ToUpper().StartsWith("HTTP")))
             {
-                try
-                {
-                    // Try friend list override
-                    if (_friendList.ContainsKey(transaction.FromAddress))
-                    {
-                        imageLocation = _friendList[transaction.FromAddress];
-                    }
-                    profilePic.ImageLocation = imageLocation;
-                }
-                catch
-                {
-                    profilePic.ImageLocation = "includes\\anon.png";
-                }
+                fromPicture.ImageLocation = transaction.FromImageLocation;
             }
             else
             {
-                profilePic.ImageLocation = "includes\\anon.png";
+                fromPicture.ImageLocation = "includes\\anon.png";
+            }
+            row.Controls.Add(fromPicture, 0, 0);
+
+            // Column 1: From Label (URN or address) or From Object Image
+            if (transaction.IsFromObject && !string.IsNullOrEmpty(transaction.FromImageLocation))
+            {
+                PictureBox fromObjectPicture = new PictureBox
+                {
+                    Size = new Size(80, 80),
+                    SizeMode = PictureBoxSizeMode.Zoom,
+                    ImageLocation = transaction.FromImageLocation,
+                    Margin = new Padding(0),
+                    Cursor = Cursors.Hand
+                };
+                if (_parentForm != null)
+                {
+                    fromObjectPicture.MouseClick += (sender, e) => { _parentForm.object_LinkClicked(transaction.FromAddress); };
+                }
+                row.Controls.Add(fromObjectPicture, 1, 0);
+            }
+            else
+            {
+                LinkLabel fromLabel = new LinkLabel
+                {
+                    Text = !string.IsNullOrEmpty(transaction.FromURN) ? transaction.FromURN : TruncateAddress(transaction.FromAddress),
+                    BackColor = Color.Black,
+                    ForeColor = Color.White,
+                    AutoSize = true,
+                    Dock = DockStyle.Bottom,
+                    Font = new Font("Microsoft Sans Serif", 7.7F, FontStyle.Regular),
+                    Margin = new Padding(3)
+                };
+                if (_parentForm != null)
+                {
+                    fromLabel.LinkClicked += (sender, e) => { _parentForm.Owner_LinkClicked(transaction.FromAddress); };
+                }
+                row.Controls.Add(fromLabel, 1, 0);
             }
 
-            transactionPanel.Controls.Add(profilePic);
-
-            int textLeftOffset = leftOffset + 70;
-
-            // From address (clickable)
-            LinkLabel fromLabel = new LinkLabel
-            {
-                Text = TruncateAddress(transaction.FromAddress),
-                Location = new Point(textLeftOffset, 20),
-                AutoSize = true,
-                Font = new Font("Segoe UI", 10F, FontStyle.Bold),
-                LinkColor = Color.LightBlue,
-                ActiveLinkColor = Color.White,
-                VisitedLinkColor = Color.LightBlue,
-                BackColor = Color.Transparent
-            };
-            fromLabel.Links.Add(0, fromLabel.Text.Length, transaction.FromAddress);
-            transactionPanel.Controls.Add(fromLabel);
-
-            // Message label
+            // Column 2: Message/Transaction Type
             Label messageLabel = new Label
             {
-                Text = transaction.Message,
-                Location = new Point(textLeftOffset, 40),
                 AutoSize = true,
-                MaximumSize = new Size(transactionPanel.Width - textLeftOffset - 200, 30),
-                Font = new Font("Segoe UI", 9F, FontStyle.Regular),
-                ForeColor = Color.White,
-                BackColor = Color.Transparent
+                Text = transaction.Message,
+                Font = new Font("Segoe UI", 7.77F, FontStyle.Regular),
+                Margin = new Padding(0),
+                Padding = new Padding(0),
+                TextAlign = ContentAlignment.BottomLeft,
+                MinimumSize = new Size(100, 46)
             };
-            transactionPanel.Controls.Add(messageLabel);
+            row.Controls.Add(messageLabel, 2, 0);
 
-            // To address (if present)
-            if (!string.IsNullOrEmpty(transaction.ToAddress))
+            // Column 3: Middle Object (for GIV, BUY, etc.)
+            if (transaction.HasMiddleObject && !string.IsNullOrEmpty(transaction.ObjectImageLocation))
             {
-                Label toLabel = new Label
+                PictureBox objectPicture = new PictureBox
                 {
-                    Text = "→ " + TruncateAddress(transaction.ToAddress),
-                    Location = new Point(textLeftOffset, 60),
-                    AutoSize = true,
-                    Font = new Font("Segoe UI", 8F, FontStyle.Regular),
-                    ForeColor = Color.Gray,
-                    BackColor = Color.Transparent
+                    Size = new Size(80, 80),
+                    SizeMode = PictureBoxSizeMode.Zoom,
+                    ImageLocation = transaction.ObjectImageLocation,
+                    Margin = new Padding(0),
+                    Cursor = Cursors.Hand
                 };
-                transactionPanel.Controls.Add(toLabel);
+                if (_parentForm != null)
+                {
+                    objectPicture.MouseClick += (sender, e) => { _parentForm.object_LinkClicked(transaction.ObjectAddress); };
+                }
+                row.Controls.Add(objectPicture, 3, 0);
             }
 
-            // Block date label
-            Label dateLabel = new Label
+            // Column 4: To Label or To Object Image
+            if (!string.IsNullOrEmpty(transaction.ToAddress))
             {
-                Text = transaction.BlockDate.ToString("g", CultureInfo.CurrentCulture), // Short date/time format respecting locale
-                Location = new Point(transactionPanel.Width - 180, 10),
-                AutoSize = true,
-                Font = new Font("Segoe UI", 8F, FontStyle.Regular),
-                ForeColor = Color.Gray,
-                BackColor = Color.Transparent,
-                Anchor = AnchorStyles.Top | AnchorStyles.Right
-            };
-            transactionPanel.Controls.Add(dateLabel);
-
-            // Transaction ID label (clickable)
-            LinkLabel txIdLabel = new LinkLabel
-            {
-                Text = TruncateAddress(transaction.TransactionId),
-                Location = new Point(transactionPanel.Width - 180, 30),
-                AutoSize = true,
-                Font = new Font("Segoe UI", 8F, FontStyle.Regular),
-                LinkColor = Color.DarkGray,
-                ActiveLinkColor = Color.White,
-                VisitedLinkColor = Color.DarkGray,
-                BackColor = Color.Transparent,
-                Anchor = AnchorStyles.Top | AnchorStyles.Right
-            };
-            txIdLabel.Links.Add(0, txIdLabel.Text.Length, transaction.TransactionId);
-            transactionPanel.Controls.Add(txIdLabel);
-
-            // Separator line
-            Panel separator = new Panel
-            {
-                Height = 1,
-                BackColor = Color.FromArgb(40, 40, 40),
-                Dock = DockStyle.Bottom
-            };
-            transactionPanel.Controls.Add(separator);
+                if (transaction.IsToObject && !string.IsNullOrEmpty(transaction.ToImageLocation))
+                {
+                    PictureBox toPicture = new PictureBox
+                    {
+                        Size = new Size(80, 80),
+                        SizeMode = PictureBoxSizeMode.Zoom,
+                        ImageLocation = transaction.ToImageLocation,
+                        Margin = new Padding(0),
+                        Cursor = Cursors.Hand
+                    };
+                    if (_parentForm != null)
+                    {
+                        toPicture.MouseClick += (sender, e) => { _parentForm.object_LinkClicked(transaction.ToAddress); };
+                    }
+                    row.Controls.Add(toPicture, 4, 0);
+                }
+                else
+                {
+                    LinkLabel toLabel = new LinkLabel
+                    {
+                        Text = !string.IsNullOrEmpty(transaction.ToURN) ? transaction.ToURN : TruncateAddress(transaction.ToAddress),
+                        BackColor = Color.Black,
+                        ForeColor = Color.White,
+                        AutoSize = true,
+                        Dock = DockStyle.Bottom,
+                        Font = new Font("Microsoft Sans Serif", 7.7F, FontStyle.Regular),
+                        Margin = new Padding(3)
+                    };
+                    if (_parentForm != null)
+                    {
+                        toLabel.LinkClicked += (sender, e) => { _parentForm.Owner_LinkClicked(transaction.ToAddress); };
+                    }
+                    row.Controls.Add(toLabel, 4, 0);
+                }
+            }
 
             transaction.IsRendered = true;
-            return transactionPanel;
+            return row;
         }
 
         private string TruncateAddress(string address)

@@ -100,7 +100,7 @@ namespace SUP
                 Visible = false
             };
             
-            _historyAdapter = new HistoryTransactionAdapter();
+            _historyAdapter = new HistoryTransactionAdapter(this); // Pass parent form for click handlers
             _historyList.SetAdapter(_historyAdapter);
             
             // Add to the same parent as flowLayoutPanel1
@@ -108,6 +108,8 @@ namespace SUP
             {
                 flowLayoutPanel1.Parent.Controls.Add(_historyList);
                 _historyList.BringToFront();
+            }
+        }
             }
         }
         
@@ -1244,13 +1246,13 @@ namespace SUP
         }
 
 
-        void Owner_LinkClicked(string ownerId)
+        public void Owner_LinkClicked(string ownerId)
         {
 
             new ObjectBrowser(ownerId, false, _testnet).Show();
         }
 
-        void object_LinkClicked(string objectAddress)
+        public void object_LinkClicked(string objectAddress)
         {
 
             new ObjectDetails(objectAddress, _activeProfile, false, _testnet).Show();
