@@ -2342,7 +2342,6 @@ namespace SUP
                     string _message = "GIV 💕 ";
                     try { _message = _message + give[1]; } catch { }
                     string _blockdate = root.BlockDate.ToString("yyyyMMddHHmmss");
-                    string imglocation = "";
 
                     if (give[1] <= 0) continue;
 
@@ -2367,17 +2366,79 @@ namespace SUP
                         classifierTag = TruncateAddress(objectaddress);
                     }
 
-                    try { imglocation = myFriends[_from]; } catch { }
+                    // Resolve FROM profile/object
+                    string fromURN = _from;
+                    string fromImageLocation = "";
+                    bool isFromObject = false;
+                    
+                    PROState fromProfile = PROState.GetProfileByAddress(_from, mainnetLogin, mainnetPassword, mainnetURL, mainnetVersionByte);
+                    if (fromProfile.URN != null)
+                    {
+                        fromURN = fromProfile.URN;
+                        try { fromImageLocation = myFriends[_from]; } catch { }
+                    }
+                    else
+                    {
+                        OBJState fromObj = OBJState.GetObjectByAddress(_from, mainnetLogin, mainnetPassword, mainnetURL, mainnetVersionByte);
+                        if (fromObj.Creators != null)
+                        {
+                            isFromObject = true;
+                            fromURN = fromObj.URN;
+                            fromImageLocation = GetObjectImagePath(fromObj);
+                        }
+                    }
+
+                    // Resolve TO profile/object
+                    string toURN = _to;
+                    string toImageLocation = "";
+                    bool isToObject = false;
+                    
+                    if (!string.IsNullOrEmpty(_to))
+                    {
+                        PROState toProfile = PROState.GetProfileByAddress(_to, mainnetLogin, mainnetPassword, mainnetURL, mainnetVersionByte);
+                        if (toProfile.URN != null)
+                        {
+                            toURN = toProfile.URN;
+                        }
+                        else
+                        {
+                            OBJState toObj = OBJState.GetObjectByAddress(_to, mainnetLogin, mainnetPassword, mainnetURL, mainnetVersionByte);
+                            if (toObj.Creators != null)
+                            {
+                                isToObject = true;
+                                toURN = toObj.URN;
+                                toImageLocation = GetObjectImagePath(toObj);
+                            }
+                        }
+                    }
+
+                    // Resolve middle object (the thing being given)
+                    string objectURN = objectaddress;
+                    string objectImageLocation = "";
+                    OBJState giveObj = OBJState.GetObjectByAddress(objectaddress, mainnetLogin, mainnetPassword, mainnetURL, mainnetVersionByte);
+                    if (giveObj.URN != null)
+                    {
+                        objectURN = giveObj.URN;
+                        objectImageLocation = GetObjectImagePath(giveObj);
+                    }
 
                     transactions.Add(new HistoryTransactionViewModel
                     {
                         TransactionId = root.TransactionId,
                         FromAddress = _from,
+                        FromURN = fromURN,
+                        FromImageLocation = fromImageLocation,
+                        IsFromObject = isFromObject,
                         ToAddress = _to,
+                        ToURN = toURN,
+                        ToImageLocation = toImageLocation,
+                        IsToObject = isToObject,
                         ObjectAddress = objectaddress,
+                        ObjectURN = objectURN,
+                        ObjectImageLocation = objectImageLocation,
+                        HasMiddleObject = true,
                         Message = _message,
                         BlockDate = DateTime.ParseExact(_blockdate, "yyyyMMddHHmmss", CultureInfo.InvariantCulture),
-                        ImageLocation = imglocation,
                         ClassifierTag = classifierTag,
                         ClassifierColor = classifierColor
                     });
