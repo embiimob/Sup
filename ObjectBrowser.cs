@@ -2172,9 +2172,6 @@ namespace SUP
 
             try { if (objinspector.own != null) { _message = "MINT 💎 " + objinspector.own.Values.Sum(); } else { _message = "OBJ 💎"; } } catch { }
             string _blockdate = root.BlockDate.ToString("yyyyMMddHHmmss");
-            string imglocation = objinspector.img;
-            if (imglocation == null) { imglocation = objinspector.urn; }
-            if (imglocation == null) { imglocation = ""; }
             
             _objectAddress = objinspector.urn;
 
@@ -2191,7 +2188,6 @@ namespace SUP
             {
                 if (!objectColors.ContainsKey(_objectAddress))
                 {
-                    // Generate a distinct color
                     classifierColor = Color.FromArgb(
                         MIN_COLOR_VALUE + colorRandom.Next(COLOR_RANGE),
                         MIN_COLOR_VALUE + colorRandom.Next(COLOR_RANGE),
@@ -2206,20 +2202,101 @@ namespace SUP
                 classifierTag = TruncateAddress(_objectAddress);
             }
 
-            try { imglocation = myFriends[_from]; } catch { }
+            // Resolve FROM profile/object
+            string fromURN = _from;
+            string fromImageLocation = "";
+            bool isFromObject = false;
+            
+            PROState fromProfile = PROState.GetProfileByAddress(_from, mainnetLogin, mainnetPassword, mainnetURL, mainnetVersionByte);
+            if (fromProfile.URN != null)
+            {
+                fromURN = fromProfile.URN;
+                try { fromImageLocation = myFriends[_from]; } catch { }
+            }
+            else
+            {
+                OBJState fromObj = OBJState.GetObjectByAddress(_from, mainnetLogin, mainnetPassword, mainnetURL, mainnetVersionByte);
+                if (fromObj.Creators != null)
+                {
+                    isFromObject = true;
+                    fromURN = fromObj.URN;
+                    fromImageLocation = GetObjectImagePath(fromObj);
+                }
+            }
+
+            // Resolve TO profile/object
+            string toURN = _to;
+            string toImageLocation = "";
+            bool isToObject = false;
+            
+            if (!string.IsNullOrEmpty(_to))
+            {
+                PROState toProfile = PROState.GetProfileByAddress(_to, mainnetLogin, mainnetPassword, mainnetURL, mainnetVersionByte);
+                if (toProfile.URN != null)
+                {
+                    toURN = toProfile.URN;
+                }
+                else
+                {
+                    OBJState toObj = OBJState.GetObjectByAddress(_to, mainnetLogin, mainnetPassword, mainnetURL, mainnetVersionByte);
+                    if (toObj.Creators != null)
+                    {
+                        isToObject = true;
+                        toURN = toObj.URN;
+                        toImageLocation = GetObjectImagePath(toObj);
+                    }
+                }
+            }
 
             transactions.Add(new HistoryTransactionViewModel
             {
                 TransactionId = root.TransactionId,
                 FromAddress = _from,
+                FromURN = fromURN,
+                FromImageLocation = fromImageLocation,
+                IsFromObject = isFromObject,
                 ToAddress = _to,
+                ToURN = toURN,
+                ToImageLocation = toImageLocation,
+                IsToObject = isToObject,
                 ObjectAddress = _objectAddress,
                 Message = _message,
                 BlockDate = DateTime.ParseExact(_blockdate, "yyyyMMddHHmmss", CultureInfo.InvariantCulture),
-                ImageLocation = imglocation,
                 ClassifierTag = classifierTag,
-                ClassifierColor = classifierColor
+                ClassifierColor = classifierColor,
+                HasMiddleObject = false
             });
+        }
+
+        // Helper method to get object image path
+        private string GetObjectImagePath(OBJState obj)
+        {
+            if (obj == null || obj.URN == null) return "";
+            
+            string imagepath = obj.Image ?? obj.URN;
+            string objectImagelocation = "";
+            
+            if (!imagepath.ToLower().StartsWith("http"))
+            {
+                objectImagelocation = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + 
+                    @"\root\" + imagepath.Replace("BTC:", "").Replace("MZC:", "").Replace("LTC:", "").Replace("DOG:", "").Replace("IPFS:", "").Replace(@"/", @"\");
+                if (imagepath.ToLower().StartsWith("ipfs:")) 
+                { 
+                    objectImagelocation = objectImagelocation.Replace(@"\root\", @"\ipfs\"); 
+                    if (imagepath.Length == 51) { objectImagelocation += @"\artifact"; } 
+                }
+            }
+            else
+            {
+                return imagepath; // Return HTTP URL directly
+            }
+            
+            if (!objectImagelocation.ToLower().EndsWith(".gif")) 
+            { 
+                objectImagelocation = objectImagelocation + "-thumbnail.jpg"; 
+            }
+            
+            return objectImagelocation;
         }
 
         private void ProcessGIVTransaction(Root root, string profileCheck, Dictionary<string, string> myFriends, 
