@@ -3965,7 +3965,7 @@ namespace SUP
             CleanupExcessIPFSProcesses();
 
             // sorry cannot run two searches at a time
-            if (!btnPrivateMessage.Enabled || !btnPrivateMessage.Enabled || !btnCommunityFeed.Enabled || System.IO.File.Exists("ROOTS-PROCESSING"))
+            if (!btnPrivateMessage.Enabled || !btnPublicMessage.Enabled || !btnCommunityFeed.Enabled || System.IO.File.Exists("ROOTS-PROCESSING"))
             {
                 System.Media.SystemSounds.Beep.Play();
                 return;
@@ -5377,7 +5377,7 @@ namespace SUP
         private void RefreshCommunityMessages(bool resetCounters = false)
         {
             // sorry cannot run two searches at a time
-            if (!btnPrivateMessage.Enabled || !btnPrivateMessage.Enabled || !btnCommunityFeed.Enabled || System.IO.File.Exists("ROOTS-PROCESSING"))
+            if (!btnPrivateMessage.Enabled || !btnPublicMessage.Enabled || !btnCommunityFeed.Enabled || System.IO.File.Exists("ROOTS-PROCESSING"))
             {
                 Debug.WriteLine($"[CommunityFeed] Cannot refresh - button states: PM={btnPrivateMessage.Enabled}, Pub={btnPublicMessage.Enabled}, Comm={btnCommunityFeed.Enabled}, ROOTS-PROCESSING={System.IO.File.Exists("ROOTS-PROCESSING")}");
                 System.Media.SystemSounds.Beep.Play();
