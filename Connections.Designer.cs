@@ -109,11 +109,9 @@
             this.label19 = new System.Windows.Forms.Label();
             this.txtApiBaseUrl = new System.Windows.Forms.TextBox();
             this.txtApiKey = new System.Windows.Forms.TextBox();
-            this.txtApiSecret = new System.Windows.Forms.TextBox();
             this.chkEnableBlockchainApi = new System.Windows.Forms.CheckBox();
             this.label20 = new System.Windows.Forms.Label();
             this.label21 = new System.Windows.Forms.Label();
-            this.label22 = new System.Windows.Forms.Label();
             this.panel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.SuspendLayout();
@@ -199,11 +197,9 @@
             this.panel1.Controls.Add(this.label19);
             this.panel1.Controls.Add(this.txtApiBaseUrl);
             this.panel1.Controls.Add(this.txtApiKey);
-            this.panel1.Controls.Add(this.txtApiSecret);
             this.panel1.Controls.Add(this.chkEnableBlockchainApi);
             this.panel1.Controls.Add(this.label20);
             this.panel1.Controls.Add(this.label21);
-            this.panel1.Controls.Add(this.label22);
             this.panel1.Location = new System.Drawing.Point(9, 3);
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(706, 631);
@@ -958,16 +954,8 @@
             // 
             this.txtApiKey.Location = new System.Drawing.Point(362, 396);
             this.txtApiKey.Name = "txtApiKey";
-            this.txtApiKey.Size = new System.Drawing.Size(150, 20);
+            this.txtApiKey.Size = new System.Drawing.Size(306, 20);
             this.txtApiKey.TabIndex = 174;
-            // 
-            // txtApiSecret
-            // 
-            this.txtApiSecret.Location = new System.Drawing.Point(518, 396);
-            this.txtApiSecret.Name = "txtApiSecret";
-            this.txtApiSecret.Size = new System.Drawing.Size(150, 20);
-            this.txtApiSecret.TabIndex = 175;
-            this.txtApiSecret.UseSystemPasswordChar = true;
             // 
             // chkEnableBlockchainApi
             // 
@@ -994,18 +982,9 @@
             this.label21.AutoSize = true;
             this.label21.Location = new System.Drawing.Point(362, 380);
             this.label21.Name = "label21";
-            this.label21.Size = new System.Drawing.Size(82, 13);
+            this.label21.Size = new System.Drawing.Size(51, 13);
             this.label21.TabIndex = 178;
-            this.label21.Text = "login / api key";
-            // 
-            // label22
-            // 
-            this.label22.AutoSize = true;
-            this.label22.Location = new System.Drawing.Point(518, 380);
-            this.label22.Name = "label22";
-            this.label22.Size = new System.Drawing.Size(97, 13);
-            this.label22.TabIndex = 179;
-            this.label22.Text = "credential / secret";
+            this.label21.Text = "token id";
             // 
             // Connections
             // 
@@ -1108,10 +1087,8 @@
         private System.Windows.Forms.Label label19;
         private System.Windows.Forms.TextBox txtApiBaseUrl;
         private System.Windows.Forms.TextBox txtApiKey;
-        private System.Windows.Forms.TextBox txtApiSecret;
         private System.Windows.Forms.CheckBox chkEnableBlockchainApi;
         private System.Windows.Forms.Label label20;
         private System.Windows.Forms.Label label21;
-        private System.Windows.Forms.Label label22;
     }
 }

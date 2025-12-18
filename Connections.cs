@@ -50,8 +50,7 @@ namespace SUP
             
             myTooltip.SetToolTip(chkEnableBlockchainApi, "enable hosted blockchain API mode to run Sup!? without a local Bitcoin Core installation.");
             myTooltip.SetToolTip(txtApiBaseUrl, "base URL for the blockchain API (default: BlockCypher)");
-            myTooltip.SetToolTip(txtApiKey, "API key or token for authentication (optional for BlockCypher)");
-            myTooltip.SetToolTip(txtApiSecret, "additional credential or secret (not required for BlockCypher)");
+            myTooltip.SetToolTip(txtApiKey, "BlockCypher API token ID (optional - register at https://accounts.blockcypher.com/ for higher rate limits)");
            
         }
 
@@ -178,7 +177,6 @@ namespace SUP
                 var apiConfig = BlockchainApiConfig.Load();
                 txtApiBaseUrl.Text = apiConfig.BaseUrl;
                 txtApiKey.Text = apiConfig.ApiKey;
-                txtApiSecret.Text = apiConfig.Secret;
                 chkEnableBlockchainApi.Checked = apiConfig.EnableBlockchainApi;
             }
             catch (Exception ex)
@@ -838,7 +836,7 @@ namespace SUP
                 {
                     BaseUrl = txtApiBaseUrl.Text,
                     ApiKey = txtApiKey.Text,
-                    Secret = txtApiSecret.Text,
+                    Secret = "", // Not used for BlockCypher
                     EnableBlockchainApi = chkEnableBlockchainApi.Checked
                 };
                 
