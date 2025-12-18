@@ -168,11 +168,12 @@ namespace SUP.P2FK
             return new BigInteger(clone);
         }
 
-        public static string GetBitcoinAddress(this ECPoint publicKey, bool compressed = true)
+        public static string GetBitcoinAddress(this ECPoint publicKey, bool compressed = true, byte versionByte = 0x00)
         {
             var pubKeyHash = Hash160.Hash(publicKey.EncodePoint(compressed));
 
             byte[] addressBytes = new byte[pubKeyHash.Length + 1];
+            addressBytes[0] = versionByte; // Set the version byte (0x00 for mainnet, 0x6F for testnet)
             Buffer.BlockCopy(pubKeyHash, 0, addressBytes, 1, pubKeyHash.Length);
             return Base58.EncodeWithCheckSum(addressBytes);
         }

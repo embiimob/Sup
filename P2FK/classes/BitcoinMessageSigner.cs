@@ -89,7 +89,9 @@ namespace SUP.P2FK
                 }
 
                 // Get the Bitcoin address from the recovered public key
-                string recoveredAddress = recoveredPubKey.GetBitcoinAddress(isCompressed);
+                // Use the correct version byte: 0x00 for mainnet, 0x6F (111) for testnet
+                byte versionByte = isTestnet ? (byte)0x6F : (byte)0x00;
+                string recoveredAddress = recoveredPubKey.GetBitcoinAddress(isCompressed, versionByte);
                 
                 // Compare with the claimed address
                 return recoveredAddress == address;
