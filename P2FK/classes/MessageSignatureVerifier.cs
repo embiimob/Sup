@@ -15,6 +15,7 @@ namespace SUP.P2FK
 
         /// <summary>
         /// Verifies a Bitcoin message signature against an address.
+        /// Uses NBitcoin's optimized libsecp256k1 for fast verification.
         /// </summary>
         /// <param name="address">The Bitcoin address that supposedly signed the message</param>
         /// <param name="signature">The base64-encoded compact signature</param>
@@ -23,81 +24,12 @@ namespace SUP.P2FK
         /// <returns>True if the signature is valid for the given address and message; False if invalid, null, or empty inputs</returns>
         public static bool VerifyMessage(string address, string signature, string message, bool isTestnet = true)
         {
-            try
-            {
-                // Validate inputs - null and empty strings both return false
-                if (string.IsNullOrEmpty(address) || string.IsNullOrEmpty(signature) || string.IsNullOrEmpty(message))
-                {
-                    return false;
-                }
-
-                // Quick address format validation (length only, skip expensive Base58 decode)
-                if (address.Length < 26 || address.Length > 35)
-                {
-                    return false;
-                }
-
-                // Decode the base64 signature
-                byte[] signatureBytes;
-                try
-                {
-                    signatureBytes = Convert.FromBase64String(signature);
-                }
-                catch
-                {
-                    return false; // Invalid base64
-                }
-
-                if (signatureBytes.Length != 65)
-                {
-                    return false; // Invalid signature length
-                }
-
-                // Extract recovery flag and signature components
-                int recoveryFlag = signatureBytes[0] - 27;
-                bool compressed = (recoveryFlag & 4) != 0;
-                int recId = recoveryFlag & 3;
-
-                if (recId < 0 || recId > 3)
-                {
-                    return false; // Invalid recovery ID
-                }
-
-                // Extract r and s from signature
-                byte[] rBytes = new byte[32];
-                byte[] sBytes = new byte[32];
-                Buffer.BlockCopy(signatureBytes, 1, rBytes, 0, 32);
-                Buffer.BlockCopy(signatureBytes, 33, sBytes, 0, 32);
-
-                BigInteger r = rBytes.ToBigIntegerUnsigned(true);
-                BigInteger s = sBytes.ToBigIntegerUnsigned(true);
-
-                // Create the message hash using Bitcoin's message signing format
-                byte[] messageHash = HashMessage(message);
-
-                // Recover the public key from the signature
-                ECPoint publicKey = RecoverPublicKey(r, s, messageHash, recId, compressed);
-                if (publicKey == null)
-                {
-                    return false;
-                }
-
-                // Get the Bitcoin address from the recovered public key
-                string recoveredAddress = GetAddressFromPublicKey(publicKey, compressed, isTestnet);
-
-                // Compare addresses
-                return recoveredAddress == address;
-            }
-            catch
-            {
-                return false;
-            }
+            // Use NBitcoin's fast verification which wraps libsecp256k1
+            return MessageSignatureVerifierNBitcoin.VerifyMessage(address, signature, message, isTestnet);
         }
+    }
+}
 
-        /// <summary>
-        /// Creates a Bitcoin message hash following the standard Bitcoin message signing format.
-        /// </summary>
-        private static byte[] HashMessage(string message)
         {
             // Bitcoin message signing treats the message as a UTF-8 string, not as hex bytes
             // Even if the message looks like hex (e.g., "ABCD1234"), it's signed as that literal string
