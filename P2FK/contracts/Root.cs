@@ -109,8 +109,9 @@ namespace SUP.P2FK
 
                     try
                     {
-                        CoinRPC a = new CoinRPC(new Uri(url), new NetworkCredential(username, password));
-                        deserializedObject = a.GetRawDataTransaction(transactionid, 1);
+                        // Use backend factory to get appropriate backend (RPC or API)
+                        IBitcoinBackend backend = BitcoinBackendFactory.Create(url, username, password, versionbyte);
+                        deserializedObject = backend.GetRawTransaction(transactionid, 1);
 
                     }
                     catch (Exception ex)
@@ -134,15 +135,11 @@ namespace SUP.P2FK
                     {
                         try
                         {
-                            NetworkCredential credentials = new NetworkCredential(username, password);
-                            NBitcoin.RPC.RPCClient rpcClient = new NBitcoin.RPC.RPCClient(credentials, new Uri(url), Network.Main);
+                            // Use backend factory for block height lookup
+                            IBitcoinBackend backend = BitcoinBackendFactory.Create(url, username, password, versionbyte);
                             string hash = deserializedObject.blockhash;
-                            dynamic blockobject = rpcClient.SendCommand("getblock", hash).Result;
-                            if (blockobject != null)
-                            {
-                                blockheight = blockobject.height;
-                                P2FKRoot.BlockHeight = blockheight;
-                            }
+                            blockheight = backend.GetBlockHeight(hash);
+                            P2FKRoot.BlockHeight = blockheight;
                         }
                         catch(Exception ex) {
                             string er = ex.Message;
@@ -519,12 +516,12 @@ namespace SUP.P2FK
 
                 while (true)
                 {
-                    
-                        CoinRPC a = new CoinRPC(new Uri(url), new NetworkCredential(username, password));
+                        // Use backend factory to get appropriate backend (RPC or API)
+                        IBitcoinBackend backend = BitcoinBackendFactory.Create(url, username, password, versionByte);
 
                         List<GetRawDataTransactionResponse> results = null;
 
-                    try { results = a.SearchRawDataTransaction(address, 0, innerskip, 300); } catch { break; }
+                    try { results = backend.SearchRawTransactions(address, 0, innerskip, 300); } catch { break; }
 
 
                         if (results == null || results.Count == 0) { break; }
@@ -791,6 +788,13 @@ namespace SUP.P2FK
             }
             byte[] output = new byte[rootbytes.Length - (secondIndex + 1)];
             Array.Copy(rootbytes, secondIndex + 1, output, 0, output.Length);
+            
+            // Check if API mode is enabled
+            if (BitcoinBackendFactory.IsApiModeEnabled())
+            {
+                return Encoding.ASCII.GetBytes("?ERROR: DecryptRootBytes requires wallet access which is not available in API mode. Please use local RPC mode for this operation.");
+            }
+            
             NetworkCredential credentials = new NetworkCredential(username, password);
             NBitcoin.RPC.RPCClient rpcClient = new NBitcoin.RPC.RPCClient(credentials, new Uri(url));
             string privKeyHex;
@@ -815,6 +819,12 @@ namespace SUP.P2FK
             ECPoint publicKey;
             if (pkx == "")
             {
+                // Check if API mode is enabled
+                if (BitcoinBackendFactory.IsApiModeEnabled())
+                {
+                    return Encoding.ASCII.GetBytes("?ERROR: EncryptRootBytes requires wallet access which is not available in API mode. Please use local RPC mode for this operation.");
+                }
+                
                 // generate public key from private key
                 NetworkCredential credentials = new NetworkCredential(username, password);
                 NBitcoin.RPC.RPCClient rpcClient = new NBitcoin.RPC.RPCClient(credentials, new Uri(url));
