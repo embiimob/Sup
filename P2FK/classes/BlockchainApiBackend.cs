@@ -187,6 +187,8 @@ namespace SUP.P2FK
                             var response = new GetRawDataTransactionResponse
                             {
                                 txid = txData["hash"]?.ToString(),
+                                // Note: BlockCypher's /addrs/{address}/full endpoint doesn't include raw hex
+                                // The hex field will be null, but txid is always available
                                 hex = txData["hex"]?.ToString(),
                                 confirmations = txData["confirmations"]?.Value<int>() ?? 0,
                                 blocktime = txData["confirmed"]?.Value<DateTime>() != null ? DateTimeToUnixTimeSeconds(txData["confirmed"].Value<DateTime>()) : 0,

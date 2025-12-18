@@ -530,9 +530,25 @@ namespace SUP.P2FK
                         {
                             calculated = true;
                             intProcessHeight++;
-                            string hexId = GetTransactionIdByHexString(results[i].hex);
+                            // Use txid directly from the response instead of calculating from hex
+                            // This works for both RPC (which includes hex) and API mode (which provides txid)
+                            string txId = results[i].txid;
+                            
+                            // Fallback: if txid is null but hex is available, calculate it from hex
+                            if (string.IsNullOrEmpty(txId) && !string.IsNullOrEmpty(results[i].hex))
+                            {
+                                txId = GetTransactionIdByHexString(results[i].hex);
+                            }
+                            
+                            if (string.IsNullOrEmpty(txId))
+                            {
+                                // Skip this transaction if we can't get the ID
+                                intProcessHeight--;
+                                continue;
+                            }
+                            
                             Root root = new Root();
-                            root = Root.GetRootByTransactionId(hexId, username, password, url, versionByte, null, null, calculate);
+                            root = Root.GetRootByTransactionId(txId, username, password, url, versionByte, null, null, calculate);
 
                             if (root != null && root.TotalByteSize > 0 && root.Output != null && !rootList.Any(ROOT => ROOT.TransactionId == root.TransactionId) && root.Output.ContainsKey(address) && root.BlockDate.Year > 1975)
                             {
