@@ -575,15 +575,28 @@ namespace SUP.P2FK
                             Root root = new Root();
                             root = Root.GetRootByTransactionId(txId, username, password, url, versionByte, null, null, calculate);
 
+                            // Debug logging to understand filtering
+                            if (root != null)
+                            {
+                                Debug.WriteLine($"[GetRootsByAddress] Root {txId}: TotalByteSize={root.TotalByteSize}, HasOutput={root.Output != null}, OutputCount={root.Output?.Count ?? 0}, BlockYear={root.BlockDate.Year}");
+                                if (root.Output != null)
+                                {
+                                    Debug.WriteLine($"[GetRootsByAddress] Root {txId} Output addresses: {string.Join(", ", root.Output.Keys)}");
+                                    Debug.WriteLine($"[GetRootsByAddress] Root {txId} ContainsKey({address})={root.Output.ContainsKey(address)}");
+                                }
+                            }
+
                             if (root != null && root.TotalByteSize > 0 && root.Output != null && !rootList.Any(ROOT => ROOT.TransactionId == root.TransactionId) && root.Output.ContainsKey(address) && root.BlockDate.Year > 1975)
                             {
                                 root.Id = intProcessHeight;
 
                                 rootList.Add(root);
+                                Debug.WriteLine($"[GetRootsByAddress] ✓ Added root {txId} to list");
                             }
                             else
                             {
                                 if (root != null && root.Output != null && root.BlockDate.Year < 1975) { intProcessHeight--; }
+                                if (root != null) Debug.WriteLine($"[GetRootsByAddress] ✗ Skipped root {txId} - filter failed");
                             }
 
                         }
