@@ -4038,17 +4038,22 @@ namespace SUP
                     string relativeFolderPath = @"root\" + tid;
                     string folderPath = Path.Combine(Environment.CurrentDirectory, relativeFolderPath);
 
-                    string[] files = Directory.GetFiles(folderPath);
-
-                    foreach (string file in files)
+                    // Only try to get files if the directory exists
+                    // In API mode, directories may not exist yet for all transactions
+                    if (Directory.Exists(folderPath))
                     {
-                        string extension = Path.GetExtension(file);
+                        string[] files = Directory.GetFiles(folderPath);
 
-                        if (Path.GetFileName(file) == "INQ" || (!string.IsNullOrEmpty(extension) && !file.Contains("ROOT.json") && !file.EndsWith("-thumbnail.jpg")))
+                        foreach (string file in files)
                         {
-                            message = message + @"<<" + tid + @"/" + Path.GetFileName(file) + ">>";
-                        }
+                            string extension = Path.GetExtension(file);
 
+                            if (Path.GetFileName(file) == "INQ" || (!string.IsNullOrEmpty(extension) && !file.Contains("ROOT.json") && !file.EndsWith("-thumbnail.jpg")))
+                            {
+                                message = message + @"<<" + tid + @"/" + Path.GetFileName(file) + ">>";
+                            }
+
+                        }
                     }
 
                     string fromAddress = messagePacket.FromAddress;
