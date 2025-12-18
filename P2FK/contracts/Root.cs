@@ -419,30 +419,24 @@ namespace SUP.P2FK
                         )
                         .Replace("-", String.Empty);
 
-                    // Check if API mode is enabled
-                    if (!BitcoinBackendFactory.IsApiModeEnabled())
+                    // Use client-side signature verification (works in both RPC and API modes)
+                    // This bypasses the need for wallet RPC or API calls
+                    try
                     {
-                        // Signature verification requires wallet RPC (verifymessage)
-                        // Only available in local RPC mode
-                        NetworkCredential credentials = new NetworkCredential(username, password);
-                        NBitcoin.RPC.RPCClient rpcClient = new NBitcoin.RPC.RPCClient(credentials, new Uri(url), Network.Main);
-                        try
-                        {
-                            string result = rpcClient.SendCommand(
-                                "verifymessage",
-                                P2FKSignatureAddress,
-                                signature,
-                                P2FKRoot.Hash
-                            ).ResultString;
-                            P2FKRoot.Signed = Convert.ToBoolean(result);
-                        }
-                        catch { } // default to false if any issues with signature
+                        // Determine the network based on version byte
+                        Network network = (versionbyte == "111") ? Network.TestNet : Network.Main;
+                        
+                        // Verify the signature using client-side verification
+                        P2FKRoot.Signed = BitcoinMessageSigner.VerifyMessage(
+                            P2FKSignatureAddress,
+                            signature,
+                            P2FKRoot.Hash,
+                            network
+                        );
                     }
-                    else
+                    catch
                     {
-                        // TODO: Implement client-side signature verification for API mode
-                        // For now, signatures are not verified in API mode
-                        // The SignedBy and Signature fields are still populated for reference
+                        // Default to false if any issues with signature verification
                         P2FKRoot.Signed = false;
                     }
                 }

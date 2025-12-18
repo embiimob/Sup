@@ -210,6 +210,7 @@
     <Compile Include="p2fk\classes\BlockchainApiBackend.cs" />
     <Compile Include="p2fk\classes\BlockchainApiConfig.cs" />
     <Compile Include="p2fk\classes\BitcoinBackendFactory.cs" />
+    <Compile Include="p2fk\classes\BitcoinMessageSigner.cs" />
     <Compile Include="ProfileMint.cs">
       <SubType>Form</SubType>
     </Compile>

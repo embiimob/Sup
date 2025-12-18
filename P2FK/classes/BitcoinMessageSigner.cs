@@ -1,0 +1,175 @@
+using System;
+using System.Linq;
+using System.Text;
+using NBitcoin;
+using NBitcoin.Crypto;
+
+namespace SUP.P2FK
+{
+    /// <summary>
+    /// Provides client-side Bitcoin message signature verification.
+    /// This bypasses the need for RPC or API calls to verify message signatures.
+    /// Implements the Bitcoin message signing standard (BIP 137).
+    /// </summary>
+    public static class BitcoinMessageSigner
+    {
+        /// <summary>
+        /// Verifies a Bitcoin message signature without requiring RPC or API access.
+        /// </summary>
+        /// <param name="address">The Bitcoin address that allegedly signed the message</param>
+        /// <param name="signature">The base64-encoded signature</param>
+        /// <param name="message">The message that was signed (typically a hash)</param>
+        /// <param name="network">The Bitcoin network (mainnet, testnet, etc.)</param>
+        /// <returns>True if the signature is valid for the given address and message</returns>
+        public static bool VerifyMessage(string address, string signature, string message, Network network = null)
+        {
+            try
+            {
+                // Default to Bitcoin mainnet if no network specified
+                if (network == null)
+                {
+                    network = Network.Main;
+                }
+
+                // Decode the signature from base64
+                byte[] signatureBytes;
+                try
+                {
+                    signatureBytes = Convert.FromBase64String(signature);
+                }
+                catch
+                {
+                    return false;
+                }
+
+                // The signature should be 65 bytes (recovery flag + r + s)
+                if (signatureBytes.Length != 65)
+                {
+                    return false;
+                }
+
+                // Format the message according to Bitcoin message signing standard
+                byte[] messageBytes = FormatMessageForSigning(message);
+
+                // Hash the formatted message with double SHA256
+                uint256 messageHash = Hashes.Hash256(messageBytes);
+
+                // Try to recover the public key from the signature and verify
+                try
+                {
+                    // Try to recover the public key using NBitcoin
+                    PubKey recoveredPubKey = PubKey.RecoverCompact(messageHash, signatureBytes);
+                    
+                    if (recoveredPubKey == null)
+                    {
+                        return false;
+                    }
+
+                    // Get the address from the recovered public key
+                    // Try legacy P2PKH address format
+                    var recoveredAddress = recoveredPubKey.GetAddress(ScriptPubKeyType.Legacy, network);
+                    
+                    // Compare with the claimed address
+                    if (recoveredAddress.ToString() == address)
+                    {
+                        return true;
+                    }
+
+                    // If mainnet didn't work and no network was specified, try testnet
+                    if (network == Network.Main)
+                    {
+                        recoveredAddress = recoveredPubKey.GetAddress(ScriptPubKeyType.Legacy, Network.TestNet);
+                        return recoveredAddress.ToString() == address;
+                    }
+
+                    return false;
+                }
+                catch
+                {
+                    return false;
+                }
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+        }
+
+        /// <summary>
+        /// Formats a message according to the Bitcoin message signing standard.
+        /// The standard prepends "Bitcoin Signed Message:\n" with length prefixes.
+        /// </summary>
+        private static byte[] FormatMessageForSigning(string message)
+        {
+            const string messagePrefix = "Bitcoin Signed Message:\n";
+            
+            // Convert strings to bytes
+            byte[] prefixBytes = Encoding.UTF8.GetBytes(messagePrefix);
+            byte[] messageBytes = Encoding.UTF8.GetBytes(message);
+            
+            // Build the formatted message with compact size prefixes
+            var result = new System.Collections.Generic.List<byte>();
+            
+            // Add prefix length as varint
+            result.AddRange(EncodeVarInt(prefixBytes.Length));
+            result.AddRange(prefixBytes);
+            
+            // Add message length as varint
+            result.AddRange(EncodeVarInt(messageBytes.Length));
+            result.AddRange(messageBytes);
+            
+            return result.ToArray();
+        }
+
+        /// <summary>
+        /// Encodes an integer as a Bitcoin variable-length integer (varint).
+        /// </summary>
+        private static byte[] EncodeVarInt(long value)
+        {
+            if (value < 0)
+            {
+                throw new ArgumentOutOfRangeException(nameof(value), "Value must be non-negative");
+            }
+
+            if (value < 0xFD)
+            {
+                return new byte[] { (byte)value };
+            }
+            else if (value <= 0xFFFF)
+            {
+                return new byte[] 
+                { 
+                    0xFD, 
+                    (byte)(value & 0xFF), 
+                    (byte)((value >> 8) & 0xFF) 
+                };
+            }
+            else if (value <= 0xFFFFFFFF)
+            {
+                return new byte[] 
+                { 
+                    0xFE,
+                    (byte)(value & 0xFF),
+                    (byte)((value >> 8) & 0xFF),
+                    (byte)((value >> 16) & 0xFF),
+                    (byte)((value >> 24) & 0xFF)
+                };
+            }
+            else
+            {
+                return new byte[] 
+                { 
+                    0xFF,
+                    (byte)(value & 0xFF),
+                    (byte)((value >> 8) & 0xFF),
+                    (byte)((value >> 16) & 0xFF),
+                    (byte)((value >> 24) & 0xFF),
+                    (byte)((value >> 32) & 0xFF),
+                    (byte)((value >> 40) & 0xFF),
+                    (byte)((value >> 48) & 0xFF),
+                    (byte)((value >> 56) & 0xFF)
+                };
+            }
+        }
+    }
+}
