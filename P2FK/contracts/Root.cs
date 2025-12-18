@@ -420,27 +420,27 @@ namespace SUP.P2FK
                         )
                         .Replace("-", String.Empty);
 
-                    // Use RPC-based signature verification (works in both RPC and API modes)
+                    // Use client-side signature verification (works in both RPC and API modes)
                     // 
                     // P2FK Signature Verification Process:
                     // 1. The P2FK message data packet is hashed (SHA-256) → P2FKRoot.Hash
                     // 2. The hash is signed with the signature address using Bitcoin message signing
                     // 3. To verify: Check that the signature is valid for the hash using the signature address
                     //
-                    // Note: verifymessage is a utility RPC command that doesn't require wallet access.
-                    // It only needs the address (public), signature, and message - works with any node.
-                    // It does NOT need the private key, so it works in both local and API modes.
+                    // This uses complete ECDSA signature recovery with the project's Secp256k1 infrastructure.
+                    // No RPC or API calls needed - pure cryptographic verification.
                     try
                     {
+                        // Determine if testnet based on version byte
+                        bool isTestnet = (versionbyte == "111");
+                        
                         // Verify the signature: Check that 'signature' is a valid signature 
                         // of 'P2FKRoot.Hash' by 'P2FKSignatureAddress'
                         P2FKRoot.Signed = BitcoinMessageSigner.VerifyMessage(
                             P2FKSignatureAddress,
                             signature,
                             P2FKRoot.Hash,
-                            url,
-                            username,
-                            password
+                            isTestnet
                         );
                     }
                     catch
