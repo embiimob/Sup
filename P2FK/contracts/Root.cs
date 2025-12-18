@@ -407,7 +407,8 @@ namespace SUP.P2FK
                     // Convert the byte array to an ASCII-encoded string
                     //string asciiString = Encoding.ASCII.GetString(transactionBytes);
 
-                    // Create SHA-256 hash
+                    // Create SHA-256 hash of the P2FK message data packet
+                    // This hash is what gets signed by the signature address
                     System.Security.Cryptography.SHA256 mySHA256 = SHA256Managed.Create();
                     P2FKRoot.Hash = BitConverter
                         .ToString(
@@ -421,12 +422,25 @@ namespace SUP.P2FK
 
                     // Use client-side signature verification (works in both RPC and API modes)
                     // This bypasses the need for wallet RPC or API calls
+                    // 
+                    // P2FK Signature Verification Process:
+                    // 1. The P2FK message data packet is hashed (SHA-256) → P2FKRoot.Hash
+                    // 2. The hash is signed with the signature address using Bitcoin message signing
+                    // 3. To verify: Check that the signature is valid for the hash using the signature address
+                    //
+                    // BitcoinMessageSigner.VerifyMessage does:
+                    // - Takes the hash (as hex string) as the message
+                    // - Formats it with "Bitcoin Signed Message:\n" prefix (per BIP 137)
+                    // - Double-hashes the formatted message
+                    // - Recovers the public key from the signature
+                    // - Derives the address and compares with the signature address
                     try
                     {
                         // Determine the network based on version byte
                         NBitcoin.Network network = (versionbyte == "111") ? NBitcoin.Network.TestNet : NBitcoin.Network.Main;
                         
-                        // Verify the signature using client-side verification
+                        // Verify the signature: Check that 'signature' is a valid signature 
+                        // of 'P2FKRoot.Hash' by 'P2FKSignatureAddress'
                         P2FKRoot.Signed = BitcoinMessageSigner.VerifyMessage(
                             P2FKSignatureAddress,
                             signature,

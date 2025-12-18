@@ -9,15 +9,31 @@ namespace SUP.P2FK
     /// Provides client-side Bitcoin message signature verification.
     /// This bypasses the need for RPC or API calls to verify message signatures.
     /// Implements the Bitcoin message signing standard (BIP 137).
+    /// 
+    /// For P2FK verification:
+    /// 1. The P2FK message data packet is hashed (SHA-256) to create a hash
+    /// 2. The hash (as hex string) is signed using Bitcoin message signing
+    /// 3. This class verifies that the signature is valid for that hash
+    /// 
+    /// The verification process:
+    /// - Takes the hash as the "message" parameter
+    /// - Formats it with "Bitcoin Signed Message:\n" prefix per BIP 137
+    /// - Double-hashes the formatted message (SHA-256)
+    /// - Recovers the public key from the ECDSA signature
+    /// - Derives the Bitcoin address from the recovered public key
+    /// - Compares the derived address with the claimed signer address
     /// </summary>
     public static class BitcoinMessageSigner
     {
         /// <summary>
         /// Verifies a Bitcoin message signature without requiring RPC or API access.
+        /// 
+        /// For P2FK: The 'message' parameter is the SHA-256 hash (hex string) of the 
+        /// P2FK data packet. This hash was signed, and we verify the signature is valid.
         /// </summary>
         /// <param name="address">The Bitcoin address that allegedly signed the message</param>
         /// <param name="signature">The base64-encoded signature</param>
-        /// <param name="message">The message that was signed (typically a hash)</param>
+        /// <param name="message">The message that was signed (for P2FK: the hex hash of the data packet)</param>
         /// <param name="network">The Bitcoin network (mainnet=0x00, testnet=0x6F)</param>
         /// <returns>True if the signature is valid for the given address and message</returns>
         public static bool VerifyMessage(string address, string signature, string message, NBitcoin.Network network = null)
