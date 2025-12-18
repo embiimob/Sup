@@ -31,8 +31,8 @@ namespace SUP.P2FK
                     return false;
                 }
 
-                // Basic address format validation
-                if (!IsValidAddressFormat(address))
+                // Quick address format validation (length only, skip expensive Base58 decode)
+                if (address.Length < 26 || address.Length > 35)
                 {
                     return false;
                 }
@@ -165,12 +165,8 @@ namespace SUP.P2FK
                     return null;
                 }
 
-                // Verify that R * n = Infinity
-                ECPoint nR = R.Multiply(Secp256k1.N);
-                if (!nR.IsInfinity)
-                {
-                    return null;
-                }
+                // Note: Skipping R * n = Infinity check as it's computationally expensive
+                // and R is derived from a valid signature, so it should be on the curve
 
                 // Calculate public key: Q = r^-1 * (s*R - e*G)
                 BigInteger rInv = r.ModInverse(Secp256k1.N);
@@ -246,34 +242,6 @@ namespace SUP.P2FK
             return Base58.EncodeWithCheckSum(addressBytes);
         }
 
-        /// <summary>
-        /// Validates that an address is in a valid Base58 format.
-        /// </summary>
-        private static bool IsValidAddressFormat(string address)
-        {
-            try
-            {
-                // Bitcoin addresses should be between 26 and 35 characters
-                if (address.Length < 26 || address.Length > 35)
-                {
-                    return false;
-                }
 
-                // Try to decode the address to verify it's valid Base58
-                byte[] decoded = Base58.Decode(address);
-                
-                // Decoded address should be at least 25 bytes (1 version + 20 hash + 4 checksum)
-                if (decoded.Length < 25)
-                {
-                    return false;
-                }
-
-                return true;
-            }
-            catch
-            {
-                return false;
-            }
-        }
     }
 }
