@@ -588,7 +588,8 @@ namespace SUP.P2FK
 
                             // SearchRawTransactions already filters by address, so we don't need Output.ContainsKey check
                             // That filter was rejecting valid messages because outputs often go to change addresses
-                            if (root != null && root.TotalByteSize > 0 && root.Output != null && !rootList.Any(ROOT => ROOT.TransactionId == root.TransactionId) && root.BlockDate.Year > 1975)
+                            // TotalByteSize may be 0 when using SearchRawTransactions in API mode, so we don't filter on it
+                            if (root != null && root.Output != null && !rootList.Any(ROOT => ROOT.TransactionId == root.TransactionId) && root.BlockDate.Year > 1975)
                             {
                                 root.Id = intProcessHeight;
 
