@@ -160,6 +160,10 @@ namespace SUP.P2FK
         {
             try
             {
+                // Note: searchrawtransactions is a non-standard RPC command (btcd/address index builds only)
+                // BlockCypher's /addrs/{address}/full endpoint provides equivalent functionality
+                // It returns full transaction data in a single call, avoiding rate limit issues
+                
                 string endpoint = $"addrs/{address}/full?limit={returnQty}";
                 if (skip > 0)
                 {
@@ -171,24 +175,74 @@ namespace SUP.P2FK
                 
                 var transactions = new List<GetRawDataTransactionResponse>();
                 
+                // Parse transactions directly from the full address response
+                // This is more efficient than making individual calls per transaction
                 if (data["txs"] != null)
                 {
-                    foreach (var tx in data["txs"])
+                    foreach (var txData in data["txs"])
                     {
-                        string txId = tx["hash"]?.ToString();
-                        if (!string.IsNullOrEmpty(txId))
+                        try
                         {
-                            // For each transaction, we need the full details
-                            try
+                            // Parse transaction data directly from the response
+                            var response = new GetRawDataTransactionResponse
                             {
-                                var fullTx = GetRawTransaction(txId, verbose);
-                                transactions.Add(fullTx);
-                            }
-                            catch
+                                txid = txData["hash"]?.ToString(),
+                                hex = txData["hex"]?.ToString(),
+                                confirmations = txData["confirmations"]?.Value<int>() ?? 0,
+                                blocktime = txData["confirmed"]?.Value<DateTime>() != null ? DateTimeToUnixTimeSeconds(txData["confirmed"].Value<DateTime>()) : 0,
+                                blockhash = txData["block_hash"]?.ToString(),
+                                size = txData["size"]?.Value<int>() ?? 0
+                            };
+
+                            // Parse inputs
+                            if (txData["inputs"] != null)
                             {
-                                // Skip transactions that fail to load
-                                continue;
+                                var inputs = new List<GetRawDataTransactionResponse.Input>();
+                                foreach (var input in txData["inputs"])
+                                {
+                                    inputs.Add(new GetRawDataTransactionResponse.Input
+                                    {
+                                        txid = input["prev_hash"]?.ToString(),
+                                        vout = input["output_index"]?.Value<int>() ?? 0,
+                                        scriptSig = new GetRawDataTransactionResponse.Input.ScriptSig
+                                        {
+                                            hex = input["script"]?.ToString()
+                                        },
+                                        sequence = input["sequence"]?.Value<long>() ?? 0
+                                    });
+                                }
+                                response.vin = inputs.ToArray();
                             }
+
+                            // Parse outputs
+                            if (txData["outputs"] != null)
+                            {
+                                var outputs = new List<GetRawDataTransactionResponse.Output>();
+                                int n = 0;
+                                foreach (var output in txData["outputs"])
+                                {
+                                    var addresses = output["addresses"]?.ToObject<string[]>();
+                                    outputs.Add(new GetRawDataTransactionResponse.Output
+                                    {
+                                        value = (output["value"]?.Value<long>() ?? 0) / 100000000m, // Satoshis to BTC
+                                        n = n++,
+                                        scriptPubKey = new GetRawDataTransactionResponse.Output.ScriptPubKey
+                                        {
+                                            hex = output["script"]?.ToString(),
+                                            addresses = addresses,
+                                            type = output["script_type"]?.ToString()
+                                        }
+                                    });
+                                }
+                                response.vout = outputs.ToArray();
+                            }
+                            
+                            transactions.Add(response);
+                        }
+                        catch
+                        {
+                            // Skip transactions that fail to parse
+                            continue;
                         }
                     }
                 }
@@ -253,6 +307,24 @@ namespace SUP.P2FK
             catch (Exception ex)
             {
                 throw new Exception($"Failed to get block height for {blockHash}: {ex.Message}", ex);
+            }
+        }
+
+        public int GetBlockCount()
+        {
+            try
+            {
+                // BlockCypher doesn't have a direct "get block count" endpoint
+                // Instead, we get the latest block which includes the height
+                string endpoint = "blocks/latest";
+                string jsonResponse = MakeApiCall(endpoint);
+                JObject data = JObject.Parse(jsonResponse);
+                
+                return data["height"]?.Value<int>() ?? 0;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Failed to get block count: {ex.Message}", ex);
             }
         }
     }

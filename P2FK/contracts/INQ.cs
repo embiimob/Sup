@@ -387,10 +387,9 @@ namespace SUP.P2FK
 
                     if (objectState.MaxBlockHeight > 0)
                     {
-                        NetworkCredential credentials = new NetworkCredential(username, password);
-                        NBitcoin.RPC.RPCClient rpcClient = new NBitcoin.RPC.RPCClient(credentials, new Uri(url), Network.Main);
-                        dynamic blockCountResult = rpcClient.SendCommand("getblockcount");
-                        int currentBlockHeight = int.Parse(blockCountResult.ResultString, NumberStyles.Any, CultureInfo.GetCultureInfo("en-US"));
+                        // Use backend factory to get block count
+                        IBitcoinBackend backend = BitcoinBackendFactory.Create(url, username, password, versionByte);
+                        int currentBlockHeight = backend.GetBlockCount();
 
                         if (currentBlockHeight > objectState.MaxBlockHeight)
                         {

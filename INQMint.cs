@@ -94,16 +94,23 @@ namespace SUP
                 string ANSAddress = answerCnt.ToString();
                 if (ismint)
                 {
+                    // Check if API mode is enabled
+                    if (BitcoinBackendFactory.IsApiModeEnabled())
+                    {
+                        MessageBox.Show("Address generation is not available in API mode. Please use local RPC mode for minting operations.", "API Mode Limitation", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                        return;
+                    }
+                    
                     NetworkCredential credentials = new NetworkCredential(mainnetLogin,mainnetPassword);
                     NBitcoin.RPC.RPCClient rpcClient = new NBitcoin.RPC.RPCClient(credentials, new Uri(mainnetURL), Network.Main);
                     // Loop until an address with no transactions is found
                     while (true)
                     {
                         ANSAddress = rpcClient.SendCommand("getnewaddress", attributeControl.Text + "!" + DateTime.UtcNow.ToString("yyyyMMddHHmmss")).ResultString;
-                        CoinRPC a = new CoinRPC(new Uri(mainnetURL), new NetworkCredential(mainnetLogin, mainnetPassword));
+                        IBitcoinBackend backend = BitcoinBackendFactory.Create(mainnetURL, mainnetLogin, mainnetPassword, mainnetVersionByte);
                         List<GetRawDataTransactionResponse> results = null;
 
-                        try { results = a.SearchRawDataTransaction(ANSAddress, 0, 0, 2); if (results.Count == 0) { break; } } catch { break; }
+                        try { results = backend.SearchRawTransactions(ANSAddress, 0, 0, 2); if (results.Count == 0) { break; } } catch { break; }
                        
                     }
 

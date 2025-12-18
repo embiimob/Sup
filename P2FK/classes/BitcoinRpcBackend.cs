@@ -69,5 +69,10 @@ namespace SUP.P2FK
             }
             return 0;
         }
+
+        public int GetBlockCount()
+        {
+            return _nbitcoinRpc.GetBlockCount();
+        }
     }
 }

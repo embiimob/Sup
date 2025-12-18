@@ -70,5 +70,11 @@ namespace SUP.P2FK
         /// <param name="blockHash">Block hash</param>
         /// <returns>Block height</returns>
         int GetBlockHeight(string blockHash);
+
+        /// <summary>
+        /// Gets the current block count (height of the longest chain).
+        /// </summary>
+        /// <returns>Current block count</returns>
+        int GetBlockCount();
     }
 }

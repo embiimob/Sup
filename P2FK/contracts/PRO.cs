@@ -373,6 +373,14 @@ namespace SUP.P2FK
                 }
                 catch { }
             }
+            
+            // Check if API mode is enabled
+            if (BitcoinBackendFactory.IsApiModeEnabled())
+            {
+                // GetLocalProfiles requires wallet access (listreceivedbyaddress) which is not available in API mode
+                return profileStates;
+            }
+            
             NetworkCredential credentials = new NetworkCredential(username, password);
             NBitcoin.RPC.RPCClient rpcClient = new NBitcoin.RPC.RPCClient(credentials, new Uri(url), Network.Main);
 
