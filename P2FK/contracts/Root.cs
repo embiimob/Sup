@@ -586,7 +586,9 @@ namespace SUP.P2FK
                                 }
                             }
 
-                            if (root != null && root.TotalByteSize > 0 && root.Output != null && !rootList.Any(ROOT => ROOT.TransactionId == root.TransactionId) && root.Output.ContainsKey(address) && root.BlockDate.Year > 1975)
+                            // SearchRawTransactions already filters by address, so we don't need Output.ContainsKey check
+                            // That filter was rejecting valid messages because outputs often go to change addresses
+                            if (root != null && root.TotalByteSize > 0 && root.Output != null && !rootList.Any(ROOT => ROOT.TransactionId == root.TransactionId) && root.BlockDate.Year > 1975)
                             {
                                 root.Id = intProcessHeight;
 
@@ -596,7 +598,7 @@ namespace SUP.P2FK
                             else
                             {
                                 if (root != null && root.Output != null && root.BlockDate.Year < 1975) { intProcessHeight--; }
-                                if (root != null) Debug.WriteLine($"[GetRootsByAddress] ✗ Skipped root {txId} - filter failed");
+                                if (root != null) Debug.WriteLine($"[GetRootsByAddress] ✗ Skipped root {txId} - filter failed (TotalByteSize={root.TotalByteSize}, Output={root.Output != null}, Year={root.BlockDate.Year})");
                             }
 
                         }
