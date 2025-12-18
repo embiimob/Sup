@@ -205,6 +205,11 @@
     <Compile Include="p2fk\classes\RPCError.cs" />
     <Compile Include="p2fk\classes\RPCRequest.cs" />
     <Compile Include="p2fk\classes\RPCResponse.cs" />
+    <Compile Include="p2fk\classes\IBitcoinBackend.cs" />
+    <Compile Include="p2fk\classes\BitcoinRpcBackend.cs" />
+    <Compile Include="p2fk\classes\BlockchainApiBackend.cs" />
+    <Compile Include="p2fk\classes\BlockchainApiConfig.cs" />
+    <Compile Include="p2fk\classes\BitcoinBackendFactory.cs" />
     <Compile Include="ProfileMint.cs">
       <SubType>Form</SubType>
     </Compile>

@@ -106,6 +106,14 @@
             this.txtPort = new System.Windows.Forms.TextBox();
             this.btnTMP = new System.Windows.Forms.Button();
             this.label1 = new System.Windows.Forms.Label();
+            this.label19 = new System.Windows.Forms.Label();
+            this.txtApiBaseUrl = new System.Windows.Forms.TextBox();
+            this.txtApiKey = new System.Windows.Forms.TextBox();
+            this.txtApiSecret = new System.Windows.Forms.TextBox();
+            this.chkEnableBlockchainApi = new System.Windows.Forms.CheckBox();
+            this.label20 = new System.Windows.Forms.Label();
+            this.label21 = new System.Windows.Forms.Label();
+            this.label22 = new System.Windows.Forms.Label();
             this.panel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.SuspendLayout();
@@ -188,6 +196,14 @@
             this.panel1.Controls.Add(this.txtPort);
             this.panel1.Controls.Add(this.btnTMP);
             this.panel1.Controls.Add(this.label1);
+            this.panel1.Controls.Add(this.label19);
+            this.panel1.Controls.Add(this.txtApiBaseUrl);
+            this.panel1.Controls.Add(this.txtApiKey);
+            this.panel1.Controls.Add(this.txtApiSecret);
+            this.panel1.Controls.Add(this.chkEnableBlockchainApi);
+            this.panel1.Controls.Add(this.label20);
+            this.panel1.Controls.Add(this.label21);
+            this.panel1.Controls.Add(this.label22);
             this.panel1.Location = new System.Drawing.Point(9, 3);
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(706, 631);
@@ -920,6 +936,77 @@
             this.label1.TabIndex = 50;
             this.label1.Text = "main chain";
             // 
+            // label19
+            // 
+            this.label19.AutoSize = true;
+            this.label19.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label19.Location = new System.Drawing.Point(6, 351);
+            this.label19.Name = "label19";
+            this.label19.Size = new System.Drawing.Size(124, 13);
+            this.label19.TabIndex = 172;
+            this.label19.Text = "blockchain API mode";
+            // 
+            // txtApiBaseUrl
+            // 
+            this.txtApiBaseUrl.Location = new System.Drawing.Point(76, 396);
+            this.txtApiBaseUrl.Name = "txtApiBaseUrl";
+            this.txtApiBaseUrl.Size = new System.Drawing.Size(280, 20);
+            this.txtApiBaseUrl.TabIndex = 173;
+            this.txtApiBaseUrl.Text = "https://api.blockcypher.com/v1/btc";
+            // 
+            // txtApiKey
+            // 
+            this.txtApiKey.Location = new System.Drawing.Point(362, 396);
+            this.txtApiKey.Name = "txtApiKey";
+            this.txtApiKey.Size = new System.Drawing.Size(150, 20);
+            this.txtApiKey.TabIndex = 174;
+            // 
+            // txtApiSecret
+            // 
+            this.txtApiSecret.Location = new System.Drawing.Point(518, 396);
+            this.txtApiSecret.Name = "txtApiSecret";
+            this.txtApiSecret.Size = new System.Drawing.Size(150, 20);
+            this.txtApiSecret.TabIndex = 175;
+            this.txtApiSecret.UseSystemPasswordChar = true;
+            // 
+            // chkEnableBlockchainApi
+            // 
+            this.chkEnableBlockchainApi.AutoSize = true;
+            this.chkEnableBlockchainApi.Location = new System.Drawing.Point(19, 399);
+            this.chkEnableBlockchainApi.Name = "chkEnableBlockchainApi";
+            this.chkEnableBlockchainApi.Size = new System.Drawing.Size(59, 17);
+            this.chkEnableBlockchainApi.TabIndex = 176;
+            this.chkEnableBlockchainApi.Text = "enable";
+            this.chkEnableBlockchainApi.UseVisualStyleBackColor = true;
+            this.chkEnableBlockchainApi.CheckedChanged += new System.EventHandler(this.chkEnableBlockchainApi_CheckedChanged);
+            // 
+            // label20
+            // 
+            this.label20.AutoSize = true;
+            this.label20.Location = new System.Drawing.Point(76, 380);
+            this.label20.Name = "label20";
+            this.label20.Size = new System.Drawing.Size(47, 13);
+            this.label20.TabIndex = 177;
+            this.label20.Text = "base url";
+            // 
+            // label21
+            // 
+            this.label21.AutoSize = true;
+            this.label21.Location = new System.Drawing.Point(362, 380);
+            this.label21.Name = "label21";
+            this.label21.Size = new System.Drawing.Size(82, 13);
+            this.label21.TabIndex = 178;
+            this.label21.Text = "login / api key";
+            // 
+            // label22
+            // 
+            this.label22.AutoSize = true;
+            this.label22.Location = new System.Drawing.Point(518, 380);
+            this.label22.Name = "label22";
+            this.label22.Size = new System.Drawing.Size(97, 13);
+            this.label22.TabIndex = 179;
+            this.label22.Text = "credential / secret";
+            // 
             // Connections
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -1018,5 +1105,13 @@
         private System.Windows.Forms.CheckBox chkScanMZC;
         private System.Windows.Forms.CheckBox chkScanBTC;
         private System.Windows.Forms.CheckBox chkScanBTCT;
+        private System.Windows.Forms.Label label19;
+        private System.Windows.Forms.TextBox txtApiBaseUrl;
+        private System.Windows.Forms.TextBox txtApiKey;
+        private System.Windows.Forms.TextBox txtApiSecret;
+        private System.Windows.Forms.CheckBox chkEnableBlockchainApi;
+        private System.Windows.Forms.Label label20;
+        private System.Windows.Forms.Label label21;
+        private System.Windows.Forms.Label label22;
     }
 }

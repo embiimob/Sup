@@ -47,6 +47,11 @@ namespace SUP
             myTooltip.SetToolTip(btnPurge, "this removes all cached files and configuration data found in the sup root folder");
             myTooltip.SetToolTip(btnPurgeBlock, "this removes the blocks from all blocked transaction ids and addresses.");
             myTooltip.SetToolTip(btnPurgeMute, "this removes all address based muting that is currently ennabled.");
+            
+            myTooltip.SetToolTip(chkEnableBlockchainApi, "enable hosted blockchain API mode to run Sup!? without a local Bitcoin Core installation.");
+            myTooltip.SetToolTip(txtApiBaseUrl, "base URL for the blockchain API (default: BlockCypher)");
+            myTooltip.SetToolTip(txtApiKey, "API key or token for authentication (optional for BlockCypher)");
+            myTooltip.SetToolTip(txtApiSecret, "additional credential or secret (not required for BlockCypher)");
            
         }
 
@@ -167,7 +172,19 @@ namespace SUP
 
         private void Connections_Load(object sender, EventArgs e)
         {
-
+            // Load blockchain API configuration
+            try
+            {
+                var apiConfig = BlockchainApiConfig.Load();
+                txtApiBaseUrl.Text = apiConfig.BaseUrl;
+                txtApiKey.Text = apiConfig.ApiKey;
+                txtApiSecret.Text = apiConfig.Secret;
+                chkEnableBlockchainApi.Checked = apiConfig.EnableBlockchainApi;
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Failed to load blockchain API configuration: {ex.Message}", "Configuration Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            }
 
 
             if (File.Exists(@"IPFS_PINNING_ENABLED"))
@@ -810,6 +827,39 @@ namespace SUP
                 try { File.Delete(@"IPFS_PINNING_ENABLED"); } catch { }
 
 
+            }
+        }
+
+        private void chkEnableBlockchainApi_CheckedChanged(object sender, EventArgs e)
+        {
+            try
+            {
+                var apiConfig = new BlockchainApiConfig
+                {
+                    BaseUrl = txtApiBaseUrl.Text,
+                    ApiKey = txtApiKey.Text,
+                    Secret = txtApiSecret.Text,
+                    EnableBlockchainApi = chkEnableBlockchainApi.Checked
+                };
+                
+                apiConfig.Save();
+                BitcoinBackendFactory.ReloadConfig();
+                
+                // Show status message
+                if (chkEnableBlockchainApi.Checked)
+                {
+                    MessageBox.Show("Blockchain API mode enabled. Sup!? will now use the hosted API instead of local Bitcoin Core.\n\nNote: Some features requiring wallet access (like sending transactions) may not be available in API mode.", 
+                        "API Mode Enabled", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                }
+                else
+                {
+                    MessageBox.Show("Blockchain API mode disabled. Sup!? will use local Bitcoin Core RPC.", 
+                        "Local RPC Mode", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Failed to save blockchain API configuration: {ex.Message}", "Configuration Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
