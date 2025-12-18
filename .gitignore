@@ -13,6 +13,9 @@
 # User-specific files (MonoDevelop/Xamarin Studio)
 *.userprefs
 
+# Blockchain API configuration (contains sensitive API keys)
+blockchain_api_config.json
+
 # Mono auto generated files
 mono_crash.*
 

@@ -7,6 +7,30 @@ This experiment is using an ancient blockchain protocol called P2FK (Pay to Futu
 
 P2FK was directly inspired by the satoshi uploader  see --> https://cirosantilli.com/satoshi-uploader
 
+## **NEW: Blockchain API Mode**
+
+Sup!? now supports running without a local Bitcoin Core installation! You can use a hosted blockchain API service instead.
+
+### **Quick Start with API Mode**
+
+1. Launch SUP.exe
+2. Click the 🗝️ (Connections) button
+3. Scroll down to the "blockchain API mode" section
+4. Check the **"enable"** checkbox to activate API mode
+5. The default settings use **BlockCypher** (free tier includes Bitcoin testnet3 and mainnet)
+6. Click OK and restart the application
+
+**Note:** Some features requiring wallet access (like sending transactions or minting objects) are not available in API mode. For full functionality, use a local Bitcoin Core node.
+
+### **API Configuration**
+
+- **Base URL**: Default is `https://api.blockcypher.com/v1/btc` (BlockCypher API)
+- **Login / API Key**: Optional. Register at https://accounts.blockcypher.com/ for higher rate limits
+- **Credential / Secret**: Not required for BlockCypher
+- **Enable checkbox**: Must be checked to use API mode (unchecked by default)
+
+Configuration is saved in `blockchain_api_config.json` and persists across app restarts.
+
 ## **Installation**
 
 1. Download Supv0.8.0-beta.zip ( https://github.com/embiimob/Sup/releases/download/Supv0.8.0-beta/Supv0.8.0-beta.zip )
