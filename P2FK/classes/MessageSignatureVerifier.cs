@@ -20,12 +20,19 @@ namespace SUP.P2FK
         /// <param name="signature">The base64-encoded compact signature</param>
         /// <param name="message">The message that was signed (can be hex or plain text)</param>
         /// <param name="isTestnet">Whether to verify against testnet3 addresses (default: true)</param>
-        /// <returns>True if the signature is valid for the given address and message</returns>
+        /// <returns>True if the signature is valid for the given address and message; False if invalid, null, or empty inputs</returns>
         public static bool VerifyMessage(string address, string signature, string message, bool isTestnet = true)
         {
             try
             {
+                // Validate inputs - null and empty strings both return false
                 if (string.IsNullOrEmpty(address) || string.IsNullOrEmpty(signature) || string.IsNullOrEmpty(message))
+                {
+                    return false;
+                }
+
+                // Basic address format validation
+                if (!IsValidAddressFormat(address))
                 {
                     return false;
                 }
@@ -99,8 +106,9 @@ namespace SUP.P2FK
             // Bitcoin message format: varint(len(header)) + header + varint(len(message)) + message
             byte[] header = Encoding.UTF8.GetBytes(BitcoinSignedMessageHeader);
             
-            // Create the full message with Bitcoin's format
-            byte[] fullMessage = new byte[header.Length + messageBytes.Length + 2];
+            // Calculate the correct size accounting for varint encoding
+            int varintSize = messageBytes.Length < 253 ? 1 : 3;
+            byte[] fullMessage = new byte[1 + header.Length + varintSize + messageBytes.Length];
             int offset = 0;
 
             // Add header length (varint)
@@ -117,10 +125,6 @@ namespace SUP.P2FK
             }
             else
             {
-                // For longer messages, we need to expand the array
-                byte[] expandedMessage = new byte[header.Length + messageBytes.Length + 4];
-                Buffer.BlockCopy(fullMessage, 0, expandedMessage, 0, offset);
-                fullMessage = expandedMessage;
                 fullMessage[offset++] = 0xfd; // varint prefix for 2-byte length
                 fullMessage[offset++] = (byte)(messageBytes.Length & 0xff);
                 fullMessage[offset++] = (byte)((messageBytes.Length >> 8) & 0xff);
@@ -128,13 +132,6 @@ namespace SUP.P2FK
 
             // Add message
             Buffer.BlockCopy(messageBytes, 0, fullMessage, offset, messageBytes.Length);
-            offset += messageBytes.Length;
-
-            // Resize to actual used length
-            if (offset != fullMessage.Length)
-            {
-                Array.Resize(ref fullMessage, offset);
-            }
 
             // Double SHA256 hash
             return SHA256.DoubleHash(fullMessage);
@@ -247,6 +244,36 @@ namespace SUP.P2FK
             Buffer.BlockCopy(pubKeyHash, 0, addressBytes, 1, pubKeyHash.Length);
             
             return Base58.EncodeWithCheckSum(addressBytes);
+        }
+
+        /// <summary>
+        /// Validates that an address is in a valid Base58 format.
+        /// </summary>
+        private static bool IsValidAddressFormat(string address)
+        {
+            try
+            {
+                // Bitcoin addresses should be between 26 and 35 characters
+                if (address.Length < 26 || address.Length > 35)
+                {
+                    return false;
+                }
+
+                // Try to decode the address to verify it's valid Base58
+                byte[] decoded = Base58.Decode(address);
+                
+                // Decoded address should be at least 25 bytes (1 version + 20 hash + 4 checksum)
+                if (decoded.Length < 25)
+                {
+                    return false;
+                }
+
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
         }
     }
 }
