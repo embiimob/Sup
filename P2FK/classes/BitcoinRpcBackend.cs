@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Net;
 using SUP.RPCClient;
-using NBitcoin.RPC;
 
 namespace SUP.P2FK
 {
@@ -13,7 +12,7 @@ namespace SUP.P2FK
     public class BitcoinRpcBackend : IBitcoinBackend
     {
         private readonly CoinRPC _coinRpc;
-        private readonly RPCClient _nbitcoinRpc;
+        private readonly NBitcoin.RPC.RPCClient _nbitcoinRpc;
         private readonly string _url;
         private readonly NetworkCredential _credentials;
 
@@ -22,7 +21,7 @@ namespace SUP.P2FK
             _url = url;
             _credentials = new NetworkCredential(username, password);
             _coinRpc = new CoinRPC(new Uri(url), _credentials);
-            _nbitcoinRpc = new RPCClient(_credentials, new Uri(url), NBitcoin.Network.Main);
+            _nbitcoinRpc = new NBitcoin.RPC.RPCClient(_credentials, new Uri(url), NBitcoin.Network.Main);
         }
 
         public GetRawDataTransactionResponse GetRawTransaction(string txId, int verbose = 0)
