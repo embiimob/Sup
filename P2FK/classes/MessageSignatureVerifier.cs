@@ -92,16 +92,9 @@ namespace SUP.P2FK
         /// </summary>
         private static byte[] HashMessage(string message)
         {
-            // Try to parse as hex string first (for compatibility with existing code)
-            byte[] messageBytes;
-            if (IsHexString(message))
-            {
-                messageBytes = HexStringToBytes(message);
-            }
-            else
-            {
-                messageBytes = Encoding.UTF8.GetBytes(message);
-            }
+            // Bitcoin message signing treats the message as a UTF-8 string, not as hex bytes
+            // Even if the message looks like hex (e.g., "ABCD1234"), it's signed as that literal string
+            byte[] messageBytes = Encoding.UTF8.GetBytes(message);
 
             // Bitcoin message format: varint(len(header)) + header + varint(len(message)) + message
             byte[] header = Encoding.UTF8.GetBytes(BitcoinSignedMessageHeader);
@@ -254,37 +247,6 @@ namespace SUP.P2FK
             Buffer.BlockCopy(pubKeyHash, 0, addressBytes, 1, pubKeyHash.Length);
             
             return Base58.EncodeWithCheckSum(addressBytes);
-        }
-
-        /// <summary>
-        /// Checks if a string is a valid hex string.
-        /// </summary>
-        private static bool IsHexString(string str)
-        {
-            if (string.IsNullOrEmpty(str) || str.Length % 2 != 0)
-            {
-                return false;
-            }
-
-            return str.All(c => (c >= '0' && c <= '9') || (c >= 'a' && c <= 'f') || (c >= 'A' && c <= 'F'));
-        }
-
-        /// <summary>
-        /// Converts a hex string to bytes.
-        /// </summary>
-        private static byte[] HexStringToBytes(string hex)
-        {
-            if (hex.Length % 2 != 0)
-            {
-                hex = "0" + hex;
-            }
-
-            byte[] bytes = new byte[hex.Length / 2];
-            for (int i = 0; i < bytes.Length; i++)
-            {
-                bytes[i] = Convert.ToByte(hex.Substring(i * 2, 2), 16);
-            }
-            return bytes;
         }
     }
 }

@@ -105,23 +105,23 @@ namespace SUP.P2FK.Tests
                 failed++;
             }
 
-            // Test 6: Hex message support
+            // Test 6: Plain text message support
             try
             {
-                // Test that hex messages are properly handled
-                string hexMessage = "48656C6C6F"; // "Hello" in hex
+                // Test that plain text messages are properly handled
+                string plainMessage = "Hello World";
                 bool result = MessageSignatureVerifier.VerifyMessage(
                     "muVrFVk3ErfrnmWosLF4WixxRtDKfMx9bs",
                     Convert.ToBase64String(new byte[65]), // Invalid signature but valid format
-                    hexMessage,
+                    plainMessage,
                     true
                 );
-                results.AppendLine($"Test 6 (Hex Message Support): {(!result ? "PASS" : "N/A - signature doesn't match but format accepted")}");
+                results.AppendLine($"Test 6 (Plain Text Message): {(!result ? "PASS" : "N/A - signature doesn't match but format accepted")}");
                 if (!result) passed++; else failed++;
             }
             catch (Exception ex)
             {
-                results.AppendLine($"Test 6 (Hex Message Support): FAIL - Exception: {ex.Message}");
+                results.AppendLine($"Test 6 (Plain Text Message): FAIL - Exception: {ex.Message}");
                 failed++;
             }
 
