@@ -33,6 +33,19 @@ namespace SUP.RPCClient
                 (new RPCRequest("getrawtransaction", new Object[] { txID, Verbose }));
         }
 
+        /// <summary>
+        /// Verifies a Bitcoin message signature locally without RPC calls.
+        /// This method works offline and does not require Bitcoin Core to be running.
+        /// </summary>
+        /// <param name="address">The Bitcoin address that supposedly signed the message</param>
+        /// <param name="signature">The base64-encoded compact signature</param>
+        /// <param name="message">The message that was signed (can be hex or plain text)</param>
+        /// <param name="isTestnet">Whether to verify against testnet3 addresses (default: true)</param>
+        /// <returns>True if the signature is valid for the given address and message</returns>
+        public bool VerifyMessage(string address, string signature, string message, bool isTestnet = true)
+        {
+            return SUP.P2FK.MessageSignatureVerifier.VerifyMessage(address, signature, message, isTestnet);
+        }
 
 
 

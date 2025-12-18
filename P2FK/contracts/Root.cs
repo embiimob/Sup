@@ -422,17 +422,16 @@ namespace SUP.P2FK
                         )
                         .Replace("-", String.Empty);
 
-                    NetworkCredential credentials = new NetworkCredential(username, password);
-                    NBitcoin.RPC.RPCClient rpcClient = new NBitcoin.RPC.RPCClient(credentials, new Uri(url), Network.Main);
+                    // Verify signature locally without RPC (works offline)
                     try
                     {
-                        string result = rpcClient.SendCommand(
-                            "verifymessage",
+                        bool isTestnet = VersionByte == 0x6f; // 0x6f (111) is testnet3, 0x00 is mainnet
+                        P2FKRoot.Signed = MessageSignatureVerifier.VerifyMessage(
                             P2FKSignatureAddress,
                             signature,
-                            P2FKRoot.Hash
-                        ).ResultString;
-                        P2FKRoot.Signed = Convert.ToBoolean(result);
+                            P2FKRoot.Hash,
+                            isTestnet
+                        );
                     }
                     catch { } // default to false if any issues with signature
                 }

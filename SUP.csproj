@@ -256,6 +256,8 @@
     <Compile Include="p2fk\classes\ECPoint.cs" />
     <Compile Include="p2fk\classes\Hash160.cs" />
     <Compile Include="p2fk\classes\Hex.cs" />
+    <Compile Include="p2fk\classes\MessageSignatureVerifier.cs" />
+    <Compile Include="p2fk\classes\MessageSignatureVerifierTests.cs" />
     <Compile Include="p2fk\contracts\OBJ.cs" />
     <Compile Include="p2fk\contracts\PRO.cs" />
     <Compile Include="p2fk\classes\RIPEMD160.cs" />
