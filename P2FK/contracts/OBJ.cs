@@ -2978,12 +2978,21 @@ namespace SUP.P2FK
 
             List<MessageObject> messages = new List<MessageObject>();
 
+            // Debug logging to understand filtering
+            Debug.WriteLine($"[GetPublicMessagesByAddress] AllRoots.Length={AllRoots.Length}");
+            int signedCount = AllRoots.Count(obj => obj.Signed);
+            int withMessageCount = AllRoots.Count(obj => obj.Message != null && obj.Message.Length > 0);
+            Debug.WriteLine($"[GetPublicMessagesByAddress] Signed={signedCount}, WithMessage={withMessageCount}");
 
+            // FIXED: Filter should only require Signed=true, not necessarily Message.Length > 0
+            // Some roots may have files but no text messages
             var filteredObjects = AllRoots
-                .Where(obj => obj.Message != null && obj.Message.Length > 0)
+                .Where(obj => obj.Signed && (obj.Message != null && obj.Message.Length > 0 || obj.File != null && obj.File.Count > 0))
                 .OrderByDescending(obj => obj.Id)
                 .Skip(skip)
                 .Take(qty);
+
+            Debug.WriteLine($"[GetPublicMessagesByAddress] filteredObjects.Count={filteredObjects.Count()}");
 
             // Now, filteredObjects contains objects with at least one message or one file
             foreach (var obj in filteredObjects)
