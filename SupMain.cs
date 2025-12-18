@@ -4038,11 +4038,14 @@ namespace SUP
                     string relativeFolderPath = @"root\" + tid;
                     string folderPath = Path.Combine(Environment.CurrentDirectory, relativeFolderPath);
 
+                    // Declare files array before the if statement so it's available in the entire scope
+                    string[] files = new string[0];
+
                     // Only try to get files if the directory exists
                     // In API mode, directories may not exist yet for all transactions
                     if (Directory.Exists(folderPath))
                     {
-                        string[] files = Directory.GetFiles(folderPath);
+                        files = Directory.GetFiles(folderPath);
 
                         foreach (string file in files)
                         {
