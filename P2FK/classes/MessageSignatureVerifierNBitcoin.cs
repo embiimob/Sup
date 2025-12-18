@@ -66,12 +66,18 @@ namespace SUP.P2FK
                 byte[] messageBytes = Encoding.UTF8.GetBytes(message);
                 uint256 messageHash = new uint256(HashMessage(messageBytes));
 
+                // Extract recovery flag from first byte
+                int recoveryFlag = signatureBytes[0] - 27;
+                
+                // Extract the 64-byte signature (r and s components)
+                byte[] sig64 = new byte[64];
+                Buffer.BlockCopy(signatureBytes, 1, sig64, 0, 64);
+
                 // Try to recover the public key and verify
-                // NBitcoin's CompactSignature expects the full 65-byte signature
                 try
                 {
-                    // Create CompactSignature from the 65-byte signature
-                    var compactSig = new CompactSignature(signatureBytes);
+                    // Create CompactSignature with recovery flag and 64-byte signature
+                    var compactSig = new CompactSignature(recoveryFlag, sig64);
                     
                     // Recover the public key using NBitcoin's libsecp256k1 wrapper
                     PubKey recoveredPubKey = compactSig.RecoverPubKey(messageHash);
