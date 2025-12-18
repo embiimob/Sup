@@ -64,39 +64,48 @@ namespace SUP.P2FK
 
                 // Create the message hash using Bitcoin's standard format
                 byte[] messageBytes = Encoding.UTF8.GetBytes(message);
-                uint256 messageHash = HashMessage(messageBytes);
+                uint256 messageHash = new uint256(HashMessage(messageBytes));
 
-                // Try to recover the public key from the signature
-                // NBitcoin's PubKey.RecoverCompact does the heavy lifting with libsecp256k1
-                for (int recovery = 0; recovery < 4; recovery++)
+                // Extract recovery flag and signature components
+                int recoveryFlag = signatureBytes[0] - 27;
+                bool compressed = (recoveryFlag & 4) != 0;
+                int recId = recoveryFlag & 3;
+
+                if (recId < 0 || recId > 3)
                 {
-                    try
-                    {
-                        // Adjust the recovery flag
-                        byte[] sigWithRecovery = new byte[65];
-                        sigWithRecovery[0] = (byte)(27 + recovery + (signatureBytes[0] >= 31 ? 4 : 0));
-                        Buffer.BlockCopy(signatureBytes, 1, sigWithRecovery, 1, 64);
+                    return false; // Invalid recovery ID
+                }
 
-                        // Recover the public key using NBitcoin's libsecp256k1 wrapper
-                        PubKey recoveredPubKey = PubKey.RecoverCompact(messageHash, sigWithRecovery);
+                // Extract r and s components
+                byte[] r = new byte[32];
+                byte[] s = new byte[32];
+                Buffer.BlockCopy(signatureBytes, 1, r, 0, 32);
+                Buffer.BlockCopy(signatureBytes, 33, s, 0, 32);
+
+                try
+                {
+                    // Create CompactSignature object for NBitcoin
+                    var compactSig = new CompactSignature(recId, r, s);
+                    
+                    // Recover the public key using NBitcoin's libsecp256k1 wrapper
+                    PubKey recoveredPubKey = compactSig.RecoverPubKey(messageHash);
+                    
+                    if (recoveredPubKey != null)
+                    {
+                        // Get the Bitcoin address from the recovered public key
+                        BitcoinAddress recoveredAddress = recoveredPubKey.GetAddress(ScriptPubKeyType.Legacy, network);
                         
-                        if (recoveredPubKey != null)
+                        // Compare addresses
+                        if (recoveredAddress.ToString() == address)
                         {
-                            // Get the Bitcoin address from the recovered public key
-                            BitcoinAddress recoveredAddress = recoveredPubKey.GetAddress(ScriptPubKeyType.Legacy, network);
-                            
-                            // Compare addresses
-                            if (recoveredAddress.ToString() == address)
-                            {
-                                return true;
-                            }
+                            return true;
                         }
                     }
-                    catch
-                    {
-                        // Try next recovery ID
-                        continue;
-                    }
+                }
+                catch
+                {
+                    // Signature recovery failed
+                    return false;
                 }
 
                 return false;
@@ -110,7 +119,7 @@ namespace SUP.P2FK
         /// <summary>
         /// Creates a Bitcoin message hash following the standard Bitcoin message signing format.
         /// </summary>
-        private static uint256 HashMessage(byte[] messageBytes)
+        private static byte[] HashMessage(byte[] messageBytes)
         {
             // Bitcoin message format: varint(len(header)) + header + varint(len(message)) + message
             byte[] header = Encoding.UTF8.GetBytes(BitcoinSignedMessageHeader);
@@ -142,8 +151,8 @@ namespace SUP.P2FK
             // Add message
             Buffer.BlockCopy(messageBytes, 0, fullMessage, offset, messageBytes.Length);
 
-            // Double SHA256 hash using NBitcoin's Hashes class
-            return Hashes.Hash256(fullMessage);
+            // Double SHA256 hash using existing SHA256 class
+            return SHA256.DoubleHash(fullMessage);
         }
     }
 }
