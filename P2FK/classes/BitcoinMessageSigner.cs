@@ -72,35 +72,61 @@ namespace SUP.P2FK
                 // Try to recover the public key from the signature and verify
                 try
                 {
-                    // Use NBitcoin's message verification directly
-                    // Create a compact signature object
-                    var compactSig = new NBitcoin.Crypto.CompactSignature(signatureBytes);
+                    // Extract recovery flag and signature components
+                    int recoveryFlag = signatureBytes[0] - 27;
+                    bool isCompressed = (recoveryFlag & 4) != 0;
+                    int recoveryId = recoveryFlag & 3;
                     
-                    // Try to recover the public key
-                    var pubKey = NBitcoin.PubKey.RecoverCompact(new NBitcoin.uint256(messageHash), compactSig);
+                    // Extract r and s components (32 bytes each)
+                    byte[] r = new byte[32];
+                    byte[] s = new byte[32];
+                    Array.Copy(signatureBytes, 1, r, 0, 32);
+                    Array.Copy(signatureBytes, 33, s, 0, 32);
                     
-                    if (pubKey == null)
+                    // Try to recover public key for each possible recovery flag
+                    for (int i = 0; i < 4; i++)
                     {
-                        return false;
+                        try
+                        {
+                            // Reconstruct the compact signature with current recovery attempt
+                            byte[] compactSig = new byte[65];
+                            compactSig[0] = (byte)(27 + i + (isCompressed ? 4 : 0));
+                            Array.Copy(r, 0, compactSig, 1, 32);
+                            Array.Copy(s, 0, compactSig, 33, 32);
+                            
+                            // Try to recover the public key using NBitcoin's built-in method
+                            // PubKey.RecoverFromMessage expects the message hash and compact signature
+                            var pubKey = NBitcoin.PubKey.RecoverFromMessage(messageHash, compactSig);
+                            
+                            if (pubKey != null)
+                            {
+                                // Get the address from the recovered public key
+                                var recoveredAddress = pubKey.GetAddress(NBitcoin.ScriptPubKeyType.Legacy, network);
+                                
+                                // Compare with the claimed address
+                                if (recoveredAddress.ToString() == address)
+                                {
+                                    return true;
+                                }
+                                
+                                // If mainnet didn't work, try testnet
+                                if (network == NBitcoin.Network.Main)
+                                {
+                                    recoveredAddress = pubKey.GetAddress(NBitcoin.ScriptPubKeyType.Legacy, NBitcoin.Network.TestNet);
+                                    if (recoveredAddress.ToString() == address)
+                                    {
+                                        return true;
+                                    }
+                                }
+                            }
+                        }
+                        catch
+                        {
+                            // Try next recovery flag
+                            continue;
+                        }
                     }
-
-                    // Get the address from the recovered public key
-                    // Try legacy P2PKH address format
-                    var recoveredAddress = pubKey.GetAddress(NBitcoin.ScriptPubKeyType.Legacy, network);
                     
-                    // Compare with the claimed address
-                    if (recoveredAddress.ToString() == address)
-                    {
-                        return true;
-                    }
-
-                    // If mainnet didn't work and no specific network was specified, try testnet
-                    if (network == NBitcoin.Network.Main)
-                    {
-                        recoveredAddress = pubKey.GetAddress(NBitcoin.ScriptPubKeyType.Legacy, NBitcoin.Network.TestNet);
-                        return recoveredAddress.ToString() == address;
-                    }
-
                     return false;
                 }
                 catch
