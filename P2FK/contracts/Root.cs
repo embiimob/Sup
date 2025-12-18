@@ -424,7 +424,7 @@ namespace SUP.P2FK
                     try
                     {
                         // Determine the network based on version byte
-                        Network network = (versionbyte == "111") ? Network.TestNet : Network.Main;
+                        NBitcoin.Network network = (versionbyte == "111") ? NBitcoin.Network.TestNet : NBitcoin.Network.Main;
                         
                         // Verify the signature using client-side verification
                         P2FKRoot.Signed = BitcoinMessageSigner.VerifyMessage(

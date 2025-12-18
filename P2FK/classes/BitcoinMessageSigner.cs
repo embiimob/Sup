@@ -1,8 +1,7 @@
 using System;
 using System.Linq;
 using System.Text;
-using NBitcoin;
-using NBitcoin.Crypto;
+using System.Security.Cryptography;
 
 namespace SUP.P2FK
 {
@@ -19,16 +18,16 @@ namespace SUP.P2FK
         /// <param name="address">The Bitcoin address that allegedly signed the message</param>
         /// <param name="signature">The base64-encoded signature</param>
         /// <param name="message">The message that was signed (typically a hash)</param>
-        /// <param name="network">The Bitcoin network (mainnet, testnet, etc.)</param>
+        /// <param name="network">The Bitcoin network (mainnet=0x00, testnet=0x6F)</param>
         /// <returns>True if the signature is valid for the given address and message</returns>
-        public static bool VerifyMessage(string address, string signature, string message, Network network = null)
+        public static bool VerifyMessage(string address, string signature, string message, NBitcoin.Network network = null)
         {
             try
             {
                 // Default to Bitcoin mainnet if no network specified
                 if (network == null)
                 {
-                    network = Network.Main;
+                    network = NBitcoin.Network.Main;
                 }
 
                 // Decode the signature from base64
@@ -51,23 +50,27 @@ namespace SUP.P2FK
                 // Format the message according to Bitcoin message signing standard
                 byte[] messageBytes = FormatMessageForSigning(message);
 
-                // Hash the formatted message with double SHA256
-                uint256 messageHash = Hashes.Hash256(messageBytes);
+                // Hash the formatted message with double SHA256 using the project's SHA256 class
+                byte[] messageHash = SUP.P2FK.SHA256.DoubleHash(messageBytes);
 
                 // Try to recover the public key from the signature and verify
                 try
                 {
-                    // Try to recover the public key using NBitcoin
-                    PubKey recoveredPubKey = PubKey.RecoverCompact(messageHash, signatureBytes);
+                    // Use NBitcoin's message verification directly
+                    // Create a compact signature object
+                    var compactSig = new NBitcoin.Crypto.CompactSignature(signatureBytes);
                     
-                    if (recoveredPubKey == null)
+                    // Try to recover the public key
+                    var pubKey = NBitcoin.PubKey.RecoverCompact(new NBitcoin.uint256(messageHash), compactSig);
+                    
+                    if (pubKey == null)
                     {
                         return false;
                     }
 
                     // Get the address from the recovered public key
                     // Try legacy P2PKH address format
-                    var recoveredAddress = recoveredPubKey.GetAddress(ScriptPubKeyType.Legacy, network);
+                    var recoveredAddress = pubKey.GetAddress(NBitcoin.ScriptPubKeyType.Legacy, network);
                     
                     // Compare with the claimed address
                     if (recoveredAddress.ToString() == address)
@@ -75,10 +78,10 @@ namespace SUP.P2FK
                         return true;
                     }
 
-                    // If mainnet didn't work and no network was specified, try testnet
-                    if (network == Network.Main)
+                    // If mainnet didn't work and no specific network was specified, try testnet
+                    if (network == NBitcoin.Network.Main)
                     {
-                        recoveredAddress = recoveredPubKey.GetAddress(ScriptPubKeyType.Legacy, Network.TestNet);
+                        recoveredAddress = pubKey.GetAddress(NBitcoin.ScriptPubKeyType.Legacy, NBitcoin.Network.TestNet);
                         return recoveredAddress.ToString() == address;
                     }
 
