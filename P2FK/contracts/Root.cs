@@ -537,7 +537,16 @@ namespace SUP.P2FK
 
                         List<GetRawDataTransactionResponse> results = null;
 
-                    try { results = backend.SearchRawTransactions(address, 0, innerskip, 300); } catch { break; }
+                    try 
+                    { 
+                        results = backend.SearchRawTransactions(address, 0, innerskip, 300);
+                        Debug.WriteLine($"[GetRootsByAddress] SearchRawTransactions returned {(results != null ? results.Count : 0)} results for address {address}, skip {innerskip}");
+                    } 
+                    catch (Exception ex) 
+                    { 
+                        Debug.WriteLine($"[GetRootsByAddress] SearchRawTransactions failed: {ex.Message}");
+                        break; 
+                    }
 
 
                         if (results == null || results.Count == 0) { break; }
