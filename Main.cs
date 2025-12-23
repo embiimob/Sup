@@ -1800,8 +1800,12 @@ namespace ADD
                 {
                     System.Security.Cryptography.SHA256 mySHA256 = SHA256Managed.Create();
                     byte[] hashValue = mySHA256.ComputeHash(RawBytes.Skip(intStartSignedPosition + 1).Take(intEndSignedPosition - intStartSignedPosition).ToArray());
-                    var a = new CoinRPC(new Uri(GetURL(coinIP[WalletKey]) + ":" + coinPort[WalletKey]), new NetworkCredential(coinUser[WalletKey], coinPassword[WalletKey]));
-                    isSigned = a.VerifyMessage(strSigAddress, strSig, BitConverter.ToString(hashValue).Replace("-", String.Empty));
+                    
+                    // Verify signature locally without RPC (works offline)
+                    // Determine if this is testnet based on the coin version byte
+                    bool isTestnet = coinVersion[WalletKey] == 0x6f; // 0x6f (111) is testnet3 for Bitcoin, 0x00 is mainnet
+                    string messageHash = BitConverter.ToString(hashValue).Replace("-", String.Empty);
+                    isSigned = SUP.P2FK.MessageSignatureVerifier.VerifyMessage(strSigAddress, strSig, messageHash, isTestnet);
 
                 }
                 if (!isSigned && blockUnSignedContent && TrustLink == null)
