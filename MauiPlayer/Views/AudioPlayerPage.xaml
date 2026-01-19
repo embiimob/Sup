@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:vm="clr-namespace:MauiPlayer.ViewModels"
+             x:Class="MauiPlayer.Views.AudioPlayerPage"
+             Title="🎵 Audio"
+             x:DataType="vm:AudioPlayerViewModel">
+
+    <!-- Minimal UI optimized for Apple Watch sized screens -->
+    <Grid RowDefinitions="Auto,*,Auto,Auto" Padding="5">
+        
+        <!-- Current Track Info - Compact -->
+        <Frame Grid.Row="0" Padding="8" Margin="2" BackgroundColor="{StaticResource Primary}">
+            <VerticalStackLayout Spacing="2">
+                <Label Text="{Binding CurrentTrack.FileName, FallbackValue='No Track'}" 
+                       FontSize="12" 
+                       FontAttributes="Bold"
+                       TextColor="White"
+                       MaxLines="1"
+                       LineBreakMode="TailTruncation"
+                       HorizontalOptions="Center"/>
+                <Label Text="{Binding StatusText}" 
+                       FontSize="10"
+                       TextColor="White"
+                       HorizontalOptions="Center"/>
+            </VerticalStackLayout>
+        </Frame>
+
+        <!-- Track List - Minimal -->
+        <CollectionView Grid.Row="1" 
+                       ItemsSource="{Binding AudioFiles}"
+                       SelectionMode="Single"
+                       SelectedItem="{Binding CurrentTrack}"
+                       EmptyView="No audio files">
+            <CollectionView.ItemTemplate>
+                <DataTemplate>
+                    <SwipeView>
+                        <SwipeView.RightItems>
+                            <SwipeItems>
+                                <SwipeItem Text="+" 
+                                          BackgroundColor="Green"
+                                          Command="{Binding Source={RelativeSource AncestorType={x:Type vm:AudioPlayerViewModel}}, Path=AddToPlaylistCommand}"
+                                          CommandParameter="{Binding .}"/>
+                            </SwipeItems>
+                        </SwipeView.RightItems>
+                        
+                        <Frame Padding="6" Margin="2,1" HasShadow="False">
+                            <Grid ColumnDefinitions="*,Auto" ColumnSpacing="5">
+                                <Label Text="{Binding FileName}" 
+                                      FontSize="11"
+                                      MaxLines="1"
+                                      LineBreakMode="MiddleTruncation"
+                                      VerticalOptions="Center"
+                                      Grid.Column="0">
+                                    <Label.GestureRecognizers>
+                                        <TapGestureRecognizer 
+                                            Command="{Binding Source={RelativeSource AncestorType={x:Type vm:AudioPlayerViewModel}}, Path=SelectTrackCommand}"
+                                            CommandParameter="{Binding .}"/>
+                                    </Label.GestureRecognizers>
+                                </Label>
+                                <Label Text="🎵" 
+                                      FontSize="14"
+                                      VerticalOptions="Center"
+                                      Grid.Column="1"/>
+                            </Grid>
+                        </Frame>
+                    </SwipeView>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
+
+        <!-- Playback Controls - Large Touch Targets -->
+        <Grid Grid.Row="2" ColumnDefinitions="*,*,*" Padding="5" ColumnSpacing="5">
+            <Button Text="⏮" 
+                   Command="{Binding PreviousCommand}"
+                   FontSize="24"
+                   Padding="0"
+                   Grid.Column="0"
+                   HeightRequest="50"/>
+            <Button Text="{Binding IsPlaying, Converter={StaticResource BoolToTextConverter}, ConverterParameter='⏸|▶'}" 
+                   Command="{Binding PlayPauseCommand}"
+                   FontSize="32"
+                   Padding="0"
+                   Grid.Column="1"
+                   HeightRequest="50"/>
+            <Button Text="⏭" 
+                   Command="{Binding NextCommand}"
+                   FontSize="24"
+                   Padding="0"
+                   Grid.Column="2"
+                   HeightRequest="50"/>
+        </Grid>
+
+        <!-- Refresh Button -->
+        <Button Grid.Row="3" 
+               Text="↻ Refresh" 
+               Command="{Binding RefreshCommand}"
+               FontSize="12"
+               Padding="5"
+               Margin="2"
+               HeightRequest="35"/>
+    </Grid>
+</ContentPage>

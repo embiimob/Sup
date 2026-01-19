@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:vm="clr-namespace:MauiPlayer.ViewModels"
+             x:Class="MauiPlayer.Views.SearchPage"
+             Title="Search"
+             x:DataType="vm:SearchViewModel">
+
+    <ScrollView>
+        <VerticalStackLayout Padding="20" Spacing="15">
+            
+            <!-- Search Header -->
+            <Frame BackgroundColor="{AppThemeBinding Light={StaticResource Primary}, Dark={StaticResource PrimaryDark}}" 
+                   Padding="15">
+                <Label Text="Search P2FK Messages" 
+                       FontSize="24" 
+                       FontAttributes="Bold"
+                       TextColor="White"
+                       HorizontalOptions="Center"/>
+            </Frame>
+
+            <!-- Search Type Picker -->
+            <Label Text="Search By:" FontAttributes="Bold"/>
+            <Picker Title="Select search type" 
+                   ItemsSource="{Binding SearchTypes}"
+                   SelectedItem="{Binding SearchType}"/>
+
+            <!-- Search Input -->
+            <Label Text="{Binding SearchType, StringFormat='Enter {0}:'}" FontAttributes="Bold"/>
+            <Entry Placeholder="{Binding SearchType, StringFormat='Enter {0}...'}"
+                   Text="{Binding SearchQuery}"
+                   ReturnCommand="{Binding SearchCommand}"/>
+
+            <!-- Search Buttons -->
+            <Grid ColumnDefinitions="*,Auto" ColumnSpacing="10">
+                <Button Text="Search" 
+                       Command="{Binding SearchCommand}"
+                       IsEnabled="{Binding IsSearching, Converter={StaticResource InvertedBoolConverter}}"
+                       Grid.Column="0"/>
+                <Button Text="Clear" 
+                       Command="{Binding ClearResultsCommand}"
+                       Grid.Column="1"/>
+            </Grid>
+
+            <!-- Status -->
+            <Label Text="{Binding StatusText}" 
+                   FontSize="14"
+                   TextColor="Gray"
+                   HorizontalOptions="Center"/>
+
+            <!-- Loading Indicator -->
+            <ActivityIndicator IsRunning="{Binding IsSearching}" 
+                              IsVisible="{Binding IsSearching}"
+                              Color="{StaticResource Primary}"/>
+
+            <!-- Results Count -->
+            <Label Text="{Binding ResultCount, StringFormat='{0} result(s) found'}" 
+                   FontSize="16"
+                   FontAttributes="Bold"
+                   IsVisible="{Binding ResultCount, Converter={StaticResource IntToBoolConverter}}"
+                   Margin="0,10,0,0"/>
+
+            <!-- Search Results -->
+            <CollectionView ItemsSource="{Binding SearchResults}" 
+                           EmptyView="No results found">
+                <CollectionView.ItemTemplate>
+                    <DataTemplate>
+                        <SwipeView>
+                            <SwipeView.RightItems>
+                                <SwipeItems>
+                                    <SwipeItem Text="Block" 
+                                              BackgroundColor="Orange"
+                                              Command="{Binding Source={RelativeSource AncestorType={x:Type vm:SearchViewModel}}, Path=BlockAddressCommand}"
+                                              CommandParameter="{Binding .}"/>
+                                    <SwipeItem Text="Delete" 
+                                              BackgroundColor="Red"
+                                              Command="{Binding Source={RelativeSource AncestorType={x:Type vm:SearchViewModel}}, Path=DeleteMessageCommand}"
+                                              CommandParameter="{Binding .}"/>
+                                </SwipeItems>
+                            </SwipeView.RightItems>
+                            
+                            <Frame Margin="0,5" Padding="12">
+                                <VerticalStackLayout Spacing="8">
+                                    <!-- Message Content -->
+                                    <Label Text="{Binding Message}" 
+                                          FontSize="15" 
+                                          LineBreakMode="WordWrap"/>
+                                    
+                                    <!-- Message Info -->
+                                    <Grid ColumnDefinitions="Auto,*" RowDefinitions="Auto,Auto,Auto,Auto" 
+                                         ColumnSpacing="10" RowSpacing="5">
+                                        
+                                        <Label Text="From:" FontSize="12" FontAttributes="Bold" TextColor="Gray" 
+                                              Grid.Row="0" Grid.Column="0"/>
+                                        <Label Text="{Binding FromAddress}" FontSize="12" TextColor="Gray" 
+                                              LineBreakMode="MiddleTruncation"
+                                              Grid.Row="0" Grid.Column="1"/>
+                                        
+                                        <Label Text="To:" FontSize="12" FontAttributes="Bold" TextColor="Gray" 
+                                              Grid.Row="1" Grid.Column="0"/>
+                                        <Label Text="{Binding ToAddress}" FontSize="12" TextColor="Gray" 
+                                              LineBreakMode="MiddleTruncation"
+                                              Grid.Row="1" Grid.Column="1"/>
+                                        
+                                        <Label Text="Type:" FontSize="12" FontAttributes="Bold" TextColor="Gray" 
+                                              Grid.Row="2" Grid.Column="0"/>
+                                        <Label Text="{Binding MessageType}" FontSize="12" TextColor="Gray" 
+                                              Grid.Row="2" Grid.Column="1"/>
+                                        
+                                        <Label Text="Date:" FontSize="12" FontAttributes="Bold" TextColor="Gray" 
+                                              Grid.Row="3" Grid.Column="0"/>
+                                        <Label Text="{Binding BlockDate, StringFormat='{0:MMM dd yyyy, HH:mm}'}" 
+                                              FontSize="12" TextColor="Gray" 
+                                              Grid.Row="3" Grid.Column="1"/>
+                                    </Grid>
+
+                                    <!-- Transaction ID -->
+                                    <Label Text="{Binding TransactionId, StringFormat='TX: {0}'}" 
+                                          FontSize="11" 
+                                          TextColor="LightGray"
+                                          LineBreakMode="MiddleTruncation"/>
+
+                                    <!-- IPFS Badge -->
+                                    <Label Text="📦 IPFS Content Available" 
+                                          FontSize="12"
+                                          TextColor="Green"
+                                          FontAttributes="Bold"
+                                          IsVisible="{Binding IpfsHash, Converter={StaticResource StringToBoolConverter}}"/>
+                                </VerticalStackLayout>
+                            </Frame>
+                        </SwipeView>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+
+        </VerticalStackLayout>
+    </ScrollView>
+</ContentPage>

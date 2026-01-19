@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:vm="clr-namespace:MauiPlayer.ViewModels"
+             x:Class="MauiPlayer.Views.SetupPage"
+             Title="Setup"
+             x:DataType="vm:SetupViewModel">
+
+    <ScrollView>
+        <VerticalStackLayout Padding="20" Spacing="15">
+            
+            <!-- Setup Header -->
+            <Frame BackgroundColor="{AppThemeBinding Light={StaticResource Primary}, Dark={StaticResource PrimaryDark}}" 
+                   Padding="15">
+                <Label Text="Configuration & Setup" 
+                       FontSize="24" 
+                       FontAttributes="Bold"
+                       TextColor="White"
+                       HorizontalOptions="Center"/>
+            </Frame>
+
+            <!-- Bitcoin RPC Settings -->
+            <Label Text="Bitcoin RPC Configuration" FontSize="18" FontAttributes="Bold"/>
+            
+            <Label Text="RPC URL:"/>
+            <Entry Placeholder="http://127.0.0.1:18332" Text="{Binding RpcUrl}"/>
+            
+            <Label Text="RPC Username:"/>
+            <Entry Placeholder="username" Text="{Binding RpcUsername}"/>
+            
+            <Label Text="RPC Password:"/>
+            <Entry Placeholder="password" Text="{Binding RpcPassword}" IsPassword="True"/>
+            
+            <Label Text="Version Byte (testnet3 = 111):"/>
+            <Entry Placeholder="111" Text="{Binding VersionByte}" Keyboard="Numeric"/>
+
+            <Button Text="Test Connection" Command="{Binding TestConnectionCommand}"/>
+
+            <!-- IPFS Settings -->
+            <Label Text="IPFS Configuration" FontSize="18" FontAttributes="Bold" Margin="0,20,0,0"/>
+            
+            <Label Text="IPFS Gateway URL:"/>
+            <Entry Placeholder="https://ipfs.io/ipfs/" Text="{Binding IpfsGateway}"/>
+            
+            <HorizontalStackLayout Spacing="10">
+                <CheckBox IsChecked="{Binding AutoDownloadIpfs}"/>
+                <Label Text="Auto-download IPFS content" VerticalOptions="Center"/>
+            </HorizontalStackLayout>
+            
+            <Label Text="Max auto-download size (MB):"/>
+            <Entry Placeholder="10" Text="{Binding MaxAutoDownloadSizeMb}" Keyboard="Numeric"/>
+
+            <!-- Monitoring Settings -->
+            <Label Text="Transaction Monitoring" FontSize="18" FontAttributes="Bold" Margin="0,20,0,0"/>
+            
+            <HorizontalStackLayout Spacing="10">
+                <CheckBox IsChecked="{Binding MonitoringEnabled}"/>
+                <Label Text="Enable transaction monitoring" VerticalOptions="Center"/>
+            </HorizontalStackLayout>
+            
+            <Label Text="Monitoring interval (seconds):"/>
+            <Entry Placeholder="30" Text="{Binding MonitoringIntervalSeconds}" Keyboard="Numeric"/>
+
+            <Label Text="Monitored Addresses (comma-separated):"/>
+            <Editor Placeholder="Enter addresses to monitor..."
+                   Text="{Binding MonitoredAddresses}"
+                   HeightRequest="100"/>
+
+            <Label Text="Monitored Handles (comma-separated):"/>
+            <Editor Placeholder="Enter P2FK handles to monitor..."
+                   Text="{Binding MonitoredHandles}"
+                   HeightRequest="100"/>
+
+            <Label Text="{Binding LastProcessedBlockHeight, StringFormat='Last processed block: {0}'}" 
+                   FontSize="12" TextColor="Gray"/>
+
+            <!-- Save Button -->
+            <Button Text="Save Settings" 
+                   Command="{Binding SaveSettingsCommand}"
+                   IsEnabled="{Binding IsSaving, Converter={StaticResource InvertedBoolConverter}}"
+                   Margin="0,10,0,0"/>
+
+            <!-- Status -->
+            <Label Text="{Binding StatusText}" 
+                   FontSize="14"
+                   TextColor="Gray"
+                   HorizontalOptions="Center"/>
+
+            <!-- Blocked Addresses -->
+            <Label Text="Blocked Addresses" FontSize="18" FontAttributes="Bold" Margin="0,20,0,0"/>
+            
+            <CollectionView ItemsSource="{Binding BlockedAddresses}"
+                           EmptyView="No blocked addresses">
+                <CollectionView.ItemTemplate>
+                    <DataTemplate>
+                        <SwipeView>
+                            <SwipeView.RightItems>
+                                <SwipeItems>
+                                    <SwipeItem Text="Unblock" 
+                                              BackgroundColor="Green"
+                                              Command="{Binding Source={RelativeSource AncestorType={x:Type vm:SetupViewModel}}, Path=UnblockAddressCommand}"
+                                              CommandParameter="{Binding .}"/>
+                                </SwipeItems>
+                            </SwipeView.RightItems>
+                            
+                            <Frame Margin="0,5" Padding="10">
+                                <VerticalStackLayout Spacing="3">
+                                    <Label Text="{Binding Address}" FontSize="14" FontAttributes="Bold"/>
+                                    <Label Text="{Binding Handle, StringFormat='Handle: {0}'}" 
+                                          FontSize="12" TextColor="Gray"
+                                          IsVisible="{Binding Handle, Converter={StaticResource StringToBoolConverter}}"/>
+                                    <Label Text="{Binding Reason, StringFormat='Reason: {0}'}" 
+                                          FontSize="12" TextColor="Gray"
+                                          IsVisible="{Binding Reason, Converter={StaticResource StringToBoolConverter}}"/>
+                                    <Label Text="{Binding BlockedDate, StringFormat='Blocked: {0:MMM dd yyyy}'}" 
+                                          FontSize="11" TextColor="LightGray"/>
+                                </VerticalStackLayout>
+                            </Frame>
+                        </SwipeView>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+
+            <!-- Advanced Actions -->
+            <Label Text="Advanced Actions" FontSize="18" FontAttributes="Bold" Margin="0,20,0,0"/>
+            
+            <Button Text="Rescan Blockchain" 
+                   Command="{Binding RescanBlockchainCommand}"
+                   BackgroundColor="DarkOrange"/>
+            
+            <Button Text="Clear All Data" 
+                   Command="{Binding ClearAllDataCommand}"
+                   BackgroundColor="Red"
+                   TextColor="White"/>
+
+        </VerticalStackLayout>
+    </ScrollView>
+</ContentPage>

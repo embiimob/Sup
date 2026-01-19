@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:vm="clr-namespace:MauiPlayer.ViewModels"
+             x:Class="MauiPlayer.Views.StatusPage"
+             Title="Status"
+             x:DataType="vm:StatusViewModel">
+
+    <ScrollView>
+        <VerticalStackLayout Padding="20" Spacing="15">
+            
+            <!-- Status Header -->
+            <Frame BackgroundColor="{AppThemeBinding Light={StaticResource Primary}, Dark={StaticResource PrimaryDark}}" 
+                   Padding="15">
+                <VerticalStackLayout Spacing="5">
+                    <Label Text="P2FK Mini Player" 
+                           FontSize="24" 
+                           FontAttributes="Bold"
+                           TextColor="White"
+                           HorizontalOptions="Center"/>
+                    <Label Text="{Binding StatusText}" 
+                           FontSize="14"
+                           TextColor="White"
+                           HorizontalOptions="Center"/>
+                </VerticalStackLayout>
+            </Frame>
+
+            <!-- Connection Status -->
+            <Frame>
+                <Grid ColumnDefinitions="*,Auto" RowDefinitions="Auto,Auto" ColumnSpacing="10" RowSpacing="5">
+                    <Label Text="Connection Status:" FontAttributes="Bold" Grid.Row="0" Grid.Column="0"/>
+                    <Label Text="{Binding IsConnected, StringFormat='Connected: {0}'}" Grid.Row="0" Grid.Column="1"/>
+                    
+                    <Label Text="Block Height:" FontAttributes="Bold" Grid.Row="1" Grid.Column="0"/>
+                    <Label Text="{Binding BlockHeight}" Grid.Row="1" Grid.Column="1"/>
+                </Grid>
+            </Frame>
+
+            <!-- Action Buttons -->
+            <Grid ColumnDefinitions="*,*" ColumnSpacing="10">
+                <Button Text="{Binding IsConnected, Converter={StaticResource BoolToTextConverter}, ConverterParameter='Disconnect|Connect'}"
+                        Command="{Binding ConnectToBitcoinCommand}"
+                        Grid.Column="0"/>
+                <Button Text="{Binding IsMonitoring, Converter={StaticResource BoolToTextConverter}, ConverterParameter='Stop Monitor|Start Monitor'}"
+                        Command="{Binding ToggleMonitoringCommand}"
+                        Grid.Column="1"/>
+            </Grid>
+
+            <!-- Statistics -->
+            <Frame>
+                <Grid ColumnDefinitions="*,*" RowDefinitions="Auto,Auto" ColumnSpacing="10" RowSpacing="10">
+                    <VerticalStackLayout Grid.Row="0" Grid.Column="0" Spacing="5">
+                        <Label Text="Messages" FontAttributes="Bold" HorizontalOptions="Center"/>
+                        <Label Text="{Binding MessageCount}" FontSize="32" HorizontalOptions="Center"/>
+                    </VerticalStackLayout>
+                    
+                    <VerticalStackLayout Grid.Row="0" Grid.Column="1" Spacing="5">
+                        <Label Text="Files" FontAttributes="Bold" HorizontalOptions="Center"/>
+                        <Label Text="{Binding FileCount}" FontSize="32" HorizontalOptions="Center"/>
+                    </VerticalStackLayout>
+                </Grid>
+            </Frame>
+
+            <!-- Recent Messages -->
+            <Label Text="Recent Messages" FontSize="18" FontAttributes="Bold" Margin="0,10,0,0"/>
+            <Button Text="Refresh" Command="{Binding RefreshDataCommand}" />
+            
+            <CollectionView ItemsSource="{Binding RecentMessages}" 
+                           EmptyView="No messages indexed yet">
+                <CollectionView.ItemTemplate>
+                    <DataTemplate>
+                        <SwipeView>
+                            <SwipeView.RightItems>
+                                <SwipeItems>
+                                    <SwipeItem Text="Delete" 
+                                              BackgroundColor="Red"
+                                              Command="{Binding Source={RelativeSource AncestorType={x:Type vm:StatusViewModel}}, Path=DeleteMessageCommand}"
+                                              CommandParameter="{Binding .}"/>
+                                </SwipeItems>
+                            </SwipeView.RightItems>
+                            
+                            <Frame Margin="0,5" Padding="10">
+                                <VerticalStackLayout Spacing="5">
+                                    <Label Text="{Binding Message}" 
+                                          FontSize="14" 
+                                          MaxLines="2"
+                                          LineBreakMode="TailTruncation"/>
+                                    <Grid ColumnDefinitions="*,Auto" ColumnSpacing="10">
+                                        <Label Text="{Binding FromAddress, StringFormat='From: {0}'}" 
+                                              FontSize="12" 
+                                              TextColor="Gray"
+                                              Grid.Column="0"/>
+                                        <Label Text="{Binding BlockDate, StringFormat='{0:MMM dd, HH:mm}'}" 
+                                              FontSize="12"
+                                              TextColor="Gray"
+                                              Grid.Column="1"/>
+                                    </Grid>
+                                    <Label Text="{Binding MessageType, StringFormat='Type: {0}'}" 
+                                          FontSize="12"
+                                          TextColor="Gray"/>
+                                </VerticalStackLayout>
+                            </Frame>
+                        </SwipeView>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+
+            <!-- Recent Files -->
+            <Label Text="Recent Files" FontSize="18" FontAttributes="Bold" Margin="0,20,0,0"/>
+            
+            <CollectionView ItemsSource="{Binding RecentFiles}"
+                           EmptyView="No files downloaded yet">
+                <CollectionView.ItemTemplate>
+                    <DataTemplate>
+                        <SwipeView>
+                            <SwipeView.RightItems>
+                                <SwipeItems>
+                                    <SwipeItem Text="Delete"
+                                              BackgroundColor="Red"
+                                              Command="{Binding Source={RelativeSource AncestorType={x:Type vm:StatusViewModel}}, Path=DeleteFileCommand}"
+                                              CommandParameter="{Binding .}"/>
+                                </SwipeItems>
+                            </SwipeView.RightItems>
+                            
+                            <Frame Margin="0,5" Padding="10">
+                                <Grid ColumnDefinitions="Auto,*" ColumnSpacing="10">
+                                    <Label Text="{Binding FileType, StringFormat='📁 {0}'}" 
+                                          FontSize="24"
+                                          VerticalOptions="Center"
+                                          Grid.Column="0"/>
+                                    <VerticalStackLayout Grid.Column="1" Spacing="3">
+                                        <Label Text="{Binding FileName}" 
+                                              FontSize="14"
+                                              MaxLines="1"
+                                              LineBreakMode="TailTruncation"/>
+                                        <Label Text="{Binding FileSize, StringFormat='Size: {0:N0} bytes'}" 
+                                              FontSize="12"
+                                              TextColor="Gray"/>
+                                        <Label Text="{Binding DownloadedDate, StringFormat='Downloaded: {0:MMM dd, HH:mm}'}" 
+                                              FontSize="12"
+                                              TextColor="Gray"/>
+                                    </VerticalStackLayout>
+                                </Grid>
+                            </Frame>
+                        </SwipeView>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+
+        </VerticalStackLayout>
+    </ScrollView>
+</ContentPage>

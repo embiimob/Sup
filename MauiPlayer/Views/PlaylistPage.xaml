@@ -1,0 +1,176 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:vm="clr-namespace:MauiPlayer.ViewModels"
+             x:Class="MauiPlayer.Views.PlaylistPage"
+             Title="📃 Playlists"
+             x:DataType="vm:PlaylistViewModel">
+
+    <!-- Minimal UI optimized for small screens -->
+    <Grid RowDefinitions="Auto,*,Auto" Padding="5">
+        
+        <!-- Header with Create Button -->
+        <Grid Grid.Row="0" ColumnDefinitions="*,Auto" Padding="2" Margin="2">
+            <Label Text="{Binding StatusText}" 
+                   FontSize="11"
+                   VerticalOptions="Center"
+                   Grid.Column="0"/>
+            <Button Text="+ New" 
+                   Command="{Binding CreatePlaylistCommand}"
+                   FontSize="11"
+                   Padding="8,4"
+                   HeightRequest="30"
+                   Grid.Column="1"/>
+        </Grid>
+
+        <!-- Main Content - Playlists or Playlist Items -->
+        <Grid Grid.Row="1" IsVisible="{Binding SelectedPlaylist, Converter={StaticResource StringToBoolConverter}, ConverterParameter='invert'}">
+            <!-- Playlists List -->
+            <CollectionView ItemsSource="{Binding Playlists}"
+                           EmptyView="No playlists. Tap + New">
+                <CollectionView.ItemTemplate>
+                    <DataTemplate>
+                        <SwipeView>
+                            <SwipeView.RightItems>
+                                <SwipeItems>
+                                    <SwipeItem Text="Delete" 
+                                              BackgroundColor="Red"
+                                              Command="{Binding Source={RelativeSource AncestorType={x:Type vm:PlaylistViewModel}}, Path=DeletePlaylistCommand}"
+                                              CommandParameter="{Binding .}"/>
+                                </SwipeItems>
+                            </SwipeView.RightItems>
+                            
+                            <Frame Padding="8" Margin="2,1" HasShadow="False">
+                                <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="8">
+                                    <Label Text="{Binding Type, StringFormat='{0}', Converter={StaticResource PlaylistTypeToEmojiConverter}}" 
+                                          FontSize="18"
+                                          VerticalOptions="Center"
+                                          Grid.Column="0"/>
+                                    <VerticalStackLayout Grid.Column="1" Spacing="1">
+                                        <Label Text="{Binding Name}" 
+                                              FontSize="12"
+                                              FontAttributes="Bold"
+                                              MaxLines="1"/>
+                                        <Label Text="{Binding ItemCount, StringFormat='{0} items'}" 
+                                              FontSize="10"
+                                              TextColor="Gray"/>
+                                    </VerticalStackLayout>
+                                    <Label Text="▶" 
+                                          FontSize="16"
+                                          VerticalOptions="Center"
+                                          Grid.Column="2"/>
+                                </Grid>
+                                <Frame.GestureRecognizers>
+                                    <TapGestureRecognizer 
+                                        Command="{Binding Source={RelativeSource AncestorType={x:Type vm:PlaylistViewModel}}, Path=SelectPlaylistCommand}"
+                                        CommandParameter="{Binding .}"/>
+                                </Frame.GestureRecognizers>
+                            </Frame>
+                        </SwipeView>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+        </Grid>
+
+        <!-- Playlist Items View -->
+        <Grid Grid.Row="1" 
+             IsVisible="{Binding SelectedPlaylist, Converter={StaticResource StringToBoolConverter}}"
+             RowDefinitions="Auto,*,Auto">
+            
+            <!-- Back Button and Current Playlist -->
+            <Frame Grid.Row="0" Padding="6" Margin="2" BackgroundColor="{StaticResource Primary}">
+                <Grid ColumnDefinitions="Auto,*" ColumnSpacing="8">
+                    <Button Text="←" 
+                           FontSize="18"
+                           Padding="6,0"
+                           WidthRequest="35"
+                           HeightRequest="30"
+                           Grid.Column="0"
+                           Clicked="OnBackToPlaylistsClicked"/>
+                    <Label Text="{Binding SelectedPlaylist.Name}" 
+                           FontSize="12"
+                           FontAttributes="Bold"
+                           TextColor="White"
+                           VerticalOptions="Center"
+                           Grid.Column="1"/>
+                </Grid>
+            </Frame>
+
+            <!-- Playlist Items -->
+            <CollectionView Grid.Row="1" 
+                           ItemsSource="{Binding PlaylistItems}"
+                           EmptyView="No items in playlist">
+                <CollectionView.ItemTemplate>
+                    <DataTemplate>
+                        <SwipeView>
+                            <SwipeView.RightItems>
+                                <SwipeItems>
+                                    <SwipeItem Text="Remove" 
+                                              BackgroundColor="Red"
+                                              Command="{Binding Source={RelativeSource AncestorType={x:Type vm:PlaylistViewModel}}, Path=RemoveItemCommand}"
+                                              CommandParameter="{Binding .}"/>
+                                </SwipeItems>
+                            </SwipeView.RightItems>
+                            
+                            <Frame Padding="6" Margin="2,1" HasShadow="False">
+                                <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="5">
+                                    <Label Text="{Binding OrderIndex, StringFormat='{0}.'}" 
+                                          FontSize="10"
+                                          VerticalOptions="Center"
+                                          Grid.Column="0"/>
+                                    <Label Text="{Binding FileName}" 
+                                          FontSize="11"
+                                          MaxLines="1"
+                                          LineBreakMode="MiddleTruncation"
+                                          VerticalOptions="Center"
+                                          Grid.Column="1">
+                                        <Label.GestureRecognizers>
+                                            <TapGestureRecognizer 
+                                                Command="{Binding Source={RelativeSource AncestorType={x:Type vm:PlaylistViewModel}}, Path=PlayItemCommand}"
+                                                CommandParameter="{Binding .}"/>
+                                        </Label.GestureRecognizers>
+                                    </Label>
+                                    <Label Text="{Binding MediaType, Converter={StaticResource MediaTypeToEmojiConverter}}" 
+                                          FontSize="14"
+                                          VerticalOptions="Center"
+                                          Grid.Column="2"/>
+                                </Grid>
+                            </Frame>
+                        </SwipeView>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+
+            <!-- Playback Controls for Playlist -->
+            <Grid Grid.Row="2" ColumnDefinitions="*,*,*" Padding="5" ColumnSpacing="5">
+                <Button Text="⏮" 
+                       Command="{Binding PreviousCommand}"
+                       FontSize="24"
+                       Padding="0"
+                       Grid.Column="0"
+                       HeightRequest="50"/>
+                <Button Text="{Binding IsPlaying, Converter={StaticResource BoolToTextConverter}, ConverterParameter='⏸|▶'}" 
+                       Command="{Binding PlayPauseCommand}"
+                       FontSize="32"
+                       Padding="0"
+                       Grid.Column="1"
+                       HeightRequest="50"/>
+                <Button Text="⏭" 
+                       Command="{Binding NextCommand}"
+                       FontSize="24"
+                       Padding="0"
+                       Grid.Column="2"
+                       HeightRequest="50"/>
+            </Grid>
+        </Grid>
+
+        <!-- Refresh Button -->
+        <Button Grid.Row="2" 
+               Text="↻ Refresh" 
+               Command="{Binding RefreshCommand}"
+               FontSize="12"
+               Padding="5"
+               Margin="2"
+               HeightRequest="35"/>
+    </Grid>
+</ContentPage>

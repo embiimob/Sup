@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<Shell
+    x:Class="MauiPlayer.AppShell"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:local="clr-namespace:MauiPlayer.Views"
+    Shell.FlyoutBehavior="Flyout"
+    Title="P2FK Mini Player">
+
+    <FlyoutItem Title="Status" Icon="home.png">
+        <ShellContent
+            Title="Status"
+            ContentTemplate="{DataTemplate local:StatusPage}"
+            Route="StatusPage" />
+    </FlyoutItem>
+
+    <FlyoutItem Title="Audio Player" Icon="audio.png">
+        <ShellContent
+            Title="🎵 Audio"
+            ContentTemplate="{DataTemplate local:AudioPlayerPage}"
+            Route="AudioPlayerPage" />
+    </FlyoutItem>
+
+    <FlyoutItem Title="Video Player" Icon="video.png">
+        <ShellContent
+            Title="🎬 Video"
+            ContentTemplate="{DataTemplate local:VideoPlayerPage}"
+            Route="VideoPlayerPage" />
+    </FlyoutItem>
+
+    <FlyoutItem Title="Playlists" Icon="playlist.png">
+        <ShellContent
+            Title="📃 Playlists"
+            ContentTemplate="{DataTemplate local:PlaylistPage}"
+            Route="PlaylistPage" />
+    </FlyoutItem>
+
+    <FlyoutItem Title="Search" Icon="search.png">
+        <ShellContent
+            Title="Search"
+            ContentTemplate="{DataTemplate local:SearchPage}"
+            Route="SearchPage" />
+    </FlyoutItem>
+
+    <FlyoutItem Title="Setup" Icon="settings.png">
+        <ShellContent
+            Title="Setup"
+            ContentTemplate="{DataTemplate local:SetupPage}"
+            Route="SetupPage" />
+    </FlyoutItem>
+
+</Shell>
