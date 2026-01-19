@@ -7,6 +7,20 @@ This experiment is using an ancient blockchain protocol called P2FK (Pay to Futu
 
 P2FK was directly inspired by the satoshi uploader  see --> https://cirosantilli.com/satoshi-uploader
 
+## **P2FK Mini Player (.NET MAUI)**
+
+A new cross-platform mini player application built with .NET MAUI for viewing and playing P2FK messages, audio, and video files. Optimized for small screens including Apple Watch.
+
+### Features
+- **🎵 Audio Player**: Minimalist audio player with playlist support
+- **🎬 Video Player**: Lightweight video player with sequential playback  
+- **📃 Playlists**: Create and manage custom playlists for audio and video
+- **🔍 Search**: Search messages by address, handle, or transaction ID
+- **⚙️ Setup**: Configure Bitcoin RPC, IPFS, and monitoring settings
+- **🛡️ Secure**: Encrypted local storage, address blocking, offline-first
+
+See [MauiPlayer/README.md](MauiPlayer/README.md) for setup and usage instructions.
+
 ## **Installation**
 
 1. Download Supv0.8.0-beta.zip ( https://github.com/embiimob/Sup/releases/download/Supv0.8.0-beta/Supv0.8.0-beta.zip )
