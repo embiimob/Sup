@@ -151,6 +151,12 @@
     <Compile Include="SupFlix.Designer.cs">
       <DependentUpon>SupFlix.cs</DependentUpon>
     </Compile>
+    <Compile Include="SupTrain.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="SupTrain.Designer.cs">
+      <DependentUpon>SupTrain.cs</DependentUpon>
+    </Compile>
     <Compile Include="JukeBox.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -289,6 +295,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="SupFlix.resx">
       <DependentUpon>SupFlix.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="SupTrain.resx">
+      <DependentUpon>SupTrain.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="JukeBox.resx">
       <DependentUpon>JukeBox.cs</DependentUpon>

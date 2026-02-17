@@ -128,6 +128,7 @@ namespace SUP
             myTooltip.SetToolTip(btnPublicMessage, "click 😍 to view the active profile's public messages.\nclick 😍 before clicking 📣 to send the active profile a public message.");
             myTooltip.SetToolTip(btnSkipAudio, "click ⏩ skip to skip the currently playing audio file while in live monitoring mode.");
             myTooltip.SetToolTip(btnVideoSearch, "click 🎬 to open the supflix video searching tool.\nthe active profile will be searched by default.");
+            myTooltip.SetToolTip(btnSupTrain, "click 🤖 to open the suptrain module.\ndecentralized AI training with IPFS coordination.");
             myTooltip.SetToolTip(btnWorkBench, "click ⚙️ to open the sup workbench panel.\n the workbench is full of tools and metrics to help you understand most sup function calls.");
             myTooltip.SetToolTip(lblProcessHeight, "the total amount of transactions associated with the active profile.\nincludes social media posts as well as object mints and trades.");
             myTooltip.SetToolTip(btnCommunityFeed, "click 🌆 to see the top 50 posts from all of the profiles you are following in the order that they were posted.");
@@ -7867,6 +7868,22 @@ namespace SUP
             }
 
             btnVideoSearch.Enabled = true;
+        }
+
+        private void btnSupTrain_Click(object sender, EventArgs e)
+        {
+            btnSupTrain.Enabled = false;
+
+            string searchKey = "#suptrain";
+            if (profileURN.Links[0].LinkData != null && !string.IsNullOrEmpty(profileURN.Text))
+            {
+                searchKey = profileURN.Text;
+            }
+
+            SupTrain supTrainForm = new SupTrain(searchKey, testnet);
+            supTrainForm.Show();
+
+            btnSupTrain.Enabled = true;
         }
 
         private void btnInquirySearch_Click(object sender, EventArgs e)

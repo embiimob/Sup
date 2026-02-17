@@ -42,6 +42,7 @@ namespace SUP
             this.btnMint = new System.Windows.Forms.Button();
             this.btnInquirySearch = new System.Windows.Forms.Button();
             this.btnVideoSearch = new System.Windows.Forms.Button();
+            this.btnSupTrain = new System.Windows.Forms.Button();
             this.btnSkipAudio = new System.Windows.Forms.Button();
             this.btnJukeBox = new System.Windows.Forms.Button();
             this.btnCommunityFeed = new System.Windows.Forms.Button();
@@ -119,6 +120,7 @@ namespace SUP
             // 
             this.splitContainer2.Panel2.Controls.Add(this.btnInquirySearch);
             this.splitContainer2.Panel2.Controls.Add(this.btnVideoSearch);
+            this.splitContainer2.Panel2.Controls.Add(this.btnSupTrain);
             this.splitContainer2.Panel2.Controls.Add(this.btnSkipAudio);
             this.splitContainer2.Panel2.Controls.Add(this.btnJukeBox);
             this.splitContainer2.Panel2.Controls.Add(this.btnCommunityFeed);
@@ -234,6 +236,18 @@ namespace SUP
             this.btnVideoSearch.Text = "🎬";
             this.btnVideoSearch.UseVisualStyleBackColor = true;
             this.btnVideoSearch.Click += new System.EventHandler(this.btnVideoSearch_Click);
+            // 
+            // btnSupTrain
+            // 
+            this.btnSupTrain.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.btnSupTrain.Font = new System.Drawing.Font("Segoe UI Emoji", 13.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnSupTrain.Location = new System.Drawing.Point(239, 692);
+            this.btnSupTrain.Name = "btnSupTrain";
+            this.btnSupTrain.Size = new System.Drawing.Size(56, 40);
+            this.btnSupTrain.TabIndex = 102;
+            this.btnSupTrain.Text = "🤖";
+            this.btnSupTrain.UseVisualStyleBackColor = true;
+            this.btnSupTrain.Click += new System.EventHandler(this.btnSupTrain_Click);
             // 
             // btnSkipAudio
             // 
@@ -566,6 +580,7 @@ namespace SUP
         private System.Windows.Forms.Button btnJukeBox;
         private System.Windows.Forms.Button btnSkipAudio;
         private System.Windows.Forms.Button btnVideoSearch;
+        private System.Windows.Forms.Button btnSupTrain;
         private System.Windows.Forms.Button btnInquirySearch;
         private System.Windows.Forms.PictureBox btnMainnetSwitch;
         public System.Windows.Forms.Label lblOfficial;
