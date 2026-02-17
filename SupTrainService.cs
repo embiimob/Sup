@@ -315,7 +315,7 @@ namespace SUP
             return $"{SupTrainKeywords.Base} {SupTrainKeywords.Update} " +
                    $"{SupTrainKeywords.Job(update.JobId)} " +
                    $"{SupTrainKeywords.Round(update.Round)} " +
-                   $"{SupTrainKeywords.Base(update.BaseCheckpointCID)} " +
+                   $"{SupTrainKeywords.BaseCheckpoint(update.BaseCheckpointCID)} " +
                    $"{SupTrainKeywords.Delta(update.DeltaCID)} " +
                    $"{SupTrainKeywords.Metrics(update.MetricsCID)} " +
                    $"{SupTrainKeywords.From(workerAddress)}";
@@ -341,7 +341,7 @@ namespace SUP
                    $"#cid:{job.BaseCheckpointCID} " +
                    $"{SupTrainKeywords.Manifest(job.ManifestCID)} " +
                    $"{SupTrainKeywords.Checkpoint} " +
-                   $"{SupTrainKeywords.Base(job.BaseCheckpointCID)} " +
+                   $"{SupTrainKeywords.BaseCheckpoint(job.BaseCheckpointCID)} " +
                    $"{SupTrainKeywords.From(creatorAddress)}";
         }
 

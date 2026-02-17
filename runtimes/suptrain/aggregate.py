@@ -73,6 +73,8 @@ def merge_deltas(delta_paths: List[str], weights: List[float]) -> bytes:
     2. Apply weights
     3. Average corresponding parameters
     4. Save merged adapter
+    
+    TODO: Implement actual weighted tensor averaging. Currently using first delta as placeholder.
     """
     log("Merging deltas...")
     
@@ -86,8 +88,8 @@ def merge_deltas(delta_paths: List[str], weights: List[float]) -> bytes:
     if not deltas:
         raise ValueError("No valid deltas to merge")
     
-    # Simulate weighted merge
-    # In production, would do actual tensor operations
+    # TODO: Replace this placeholder with actual tensor merge logic
+    # In production, would do actual tensor operations with weighted averaging
     merged = deltas[0]  # Placeholder - just use first delta
     
     log(f"  Merged {len(deltas)} deltas")
@@ -222,7 +224,7 @@ def main():
                                      os.path.join(args.output_dir, "checkpoint.safetensors"))
     metrics_path = save_aggregate_metrics(args.output_dir, all_metrics)
     
-    # Create dummy CIDs for inputs (in production, would use actual CIDs)
+    # Note: These are simulated CIDs for testing. In production, actual IPFS CIDs will be used.
     delta_cids = [f"Qm{i:08x}" for i in range(len(valid_updates))]
     worker_ids = [f"worker_{i}" for i in range(len(valid_updates))]
     inputs_path = save_aggregate_inputs(args.output_dir, delta_cids, worker_ids, weights)

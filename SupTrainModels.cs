@@ -179,7 +179,7 @@ namespace SUP
         public static string CID(string cid) => $"#cid:{cid}";
         public static string Manifest(string cid) => $"#manifest:{cid}";
         public static string Data(string cid) => $"#data:{cid}";
-        public static string Base(string cid) => $"#base:{cid}";
+        public static string BaseCheckpoint(string cid) => $"#base:{cid}";
         public static string Delta(string cid) => $"#delta:{cid}";
         public static string Metrics(string cid) => $"#metrics:{cid}";
         public static string From(string urn) => $"#from:{urn}";

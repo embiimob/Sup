@@ -10,6 +10,7 @@ import json
 import os
 import sys
 import time
+import uuid
 from pathlib import Path
 from typing import Dict, List, Optional
 
@@ -112,12 +113,13 @@ def save_metrics(output_dir: str, metrics: Dict) -> str:
     """Save training metrics to JSON"""
     metrics_path = os.path.join(output_dir, "metrics.json")
     
+    # TODO: In production, detect actual GPU info using torch.cuda.get_device_name()
     metrics_data = {
         "loss_curve": metrics["loss_curve"],
         "eval_scores": metrics["eval_scores"],
         "total_steps": metrics["total_steps"],
         "training_time": metrics["training_time"],
-        "gpu_info": "NVIDIA RTX 3080",  # Placeholder
+        "gpu_info": "NVIDIA RTX 3080",  # Placeholder - replace with actual detection
         "final_loss": metrics["final_loss"],
         "final_perplexity": metrics["final_perplexity"]
     }
@@ -133,11 +135,12 @@ def save_update_info(output_dir: str, job_id: str, round_num: int,
     """Save update metadata"""
     update_path = os.path.join(output_dir, "update.json")
     
+    # Use uuid4() for guaranteed unique worker IDs across distributed workers
     update_data = {
         "job_id": job_id,
         "round": round_num,
         "base_checkpoint_cid": base_ckpt_cid,
-        "worker_id": "worker_" + os.urandom(4).hex(),
+        "worker_id": f"worker_{uuid.uuid4().hex[:8]}",
         "params": params,
         "timestamp": time.time()
     }

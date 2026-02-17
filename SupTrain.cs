@@ -134,7 +134,7 @@ namespace SUP
 
             var lblCheckpoint = new Label
             {
-                Text = $"Base Checkpoint: {baseCkptCID.Substring(0, Math.Min(30, baseCkptCID.Length))}...",
+                Text = $"Base Checkpoint: {TruncateCID(baseCkptCID, 30)}...",
                 ForeColor = Color.LightGray,
                 Location = new Point(10, 55),
                 AutoSize = true
@@ -401,12 +401,14 @@ namespace SUP
             LogConsole("");
             LogConsole("Phase 4: Saving LoRA adapter (delta)...");
             System.Threading.Thread.Sleep(500);
+            // Note: These are simulated CIDs for testing. In production, actual IPFS CIDs will be returned
             string deltaCID = "QmExampleDelta" + Guid.NewGuid().ToString().Substring(0, 8);
             LogConsole($"✓ Delta uploaded to IPFS: {deltaCID}");
             LogConsole("");
             
             LogConsole("Phase 5: Saving metrics...");
             System.Threading.Thread.Sleep(500);
+            // Note: These are simulated CIDs for testing. In production, actual IPFS CIDs will be returned
             string metricsCID = "QmExampleMetrics" + Guid.NewGuid().ToString().Substring(0, 8);
             LogConsole($"✓ Metrics uploaded to IPFS: {metricsCID}");
             LogConsole("");
@@ -626,6 +628,21 @@ namespace SUP
                 txtConsoleOutput.SelectionStart = txtConsoleOutput.Text.Length;
                 txtConsoleOutput.ScrollToCaret();
             }
+        }
+
+        #endregion
+
+        #region Helper Methods
+
+        private string TruncateCID(string cid, int maxLength = 30)
+        {
+            if (string.IsNullOrEmpty(cid))
+                return "";
+            
+            if (cid.Length <= maxLength)
+                return cid;
+            
+            return cid.Substring(0, maxLength);
         }
 
         #endregion
