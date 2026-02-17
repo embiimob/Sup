@@ -1,0 +1,17 @@
+# SupTrain Python Dependencies
+# For LoRA fine-tuning with PyTorch and PEFT
+
+# Core dependencies for production training
+# torch>=2.0.0
+# transformers>=4.30.0
+# peft>=0.4.0
+# accelerate>=0.20.0
+# datasets>=2.12.0
+# safetensors>=0.3.0
+
+# Optional: for specific model types
+# sentencepiece>=0.1.99
+# protobuf>=3.20.0
+
+# For testing/simulation, no dependencies required
+# The current worker.py and aggregate.py are standalone simulators

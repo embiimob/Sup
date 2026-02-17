@@ -223,6 +223,8 @@
     <Compile Include="PublicMessageAdapter.cs" />
     <Compile Include="PublicMessageViewModel.cs" />
     <Compile Include="PrivateMessageViewModel.cs" />
+    <Compile Include="SupTrainService.cs" />
+    <Compile Include="SupTrainModels.cs" />
     <Compile Include="VirtualizedMessageList.cs">
       <SubType>UserControl</SubType>
     </Compile>

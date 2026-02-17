@@ -1,0 +1,26 @@
+{
+  "model_slug": "suplm-example",
+  "description": "Example SupTrain manifest for community language model",
+  "defaults": {
+    "epochs": 1,
+    "learning_rate": 0.0001,
+    "batch_size": 1,
+    "precision": "fp16",
+    "output_type": "lora"
+  },
+  "tokenizer_cid": "QmExampleTokenizer...",
+  "config_cid": "QmExampleConfig...",
+  "allowed_data_sources": [
+    "*.txt",
+    "*.json",
+    "*.jsonl"
+  ],
+  "excluded_keywords_cid": "QmExampleExcludedKeywords...",
+  "aggregation": {
+    "min_updates": 3,
+    "max_updates": 10,
+    "min_loss": 0.5,
+    "max_loss": 5.0,
+    "require_followed": false
+  }
+}
