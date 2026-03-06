@@ -273,16 +273,35 @@ namespace SUP
         private void LoadAttachment(MessageAttachment attachment, PublicMessageViewModel message, Panel attachmentPanel)
         {
             Debug.WriteLine($"[PublicMessageAdapter] Loading attachment: {attachment.Type} - {attachment.Content}");
-            
-            // Update UI to show loading
-            if (attachmentPanel.Controls.Count > 0 && attachmentPanel.Controls[0] is Label label)
-            {
-                label.Text = $"⏳ Loading {attachment.Type}...";
-            }
 
-            // TODO: Implement actual lazy loading based on attachment type
-            // For now, just log
-            Debug.WriteLine($"[PublicMessageAdapter] Attachment load requested but not yet implemented");
+            string src = attachment.Content;
+            if (string.IsNullOrEmpty(src))
+                return;
+
+            try
+            {
+                if (src.StartsWith("http://") || src.StartsWith("https://"))
+                {
+                    System.Diagnostics.Process.Start(src);
+                }
+                else if (src.ToUpper().StartsWith("IPFS:"))
+                {
+                    string ipfsPath = src.Substring("IPFS:".Length).Trim();
+                    string appFolder = System.IO.Path.GetDirectoryName(Application.ExecutablePath);
+                    string ipfsFolderPath = System.IO.Path.Combine(appFolder, "ipfs", ipfsPath);
+                    System.Diagnostics.Process.Start(ipfsFolderPath);
+                }
+                else
+                {
+                    string appFolder = System.IO.Path.GetDirectoryName(Application.ExecutablePath);
+                    string fullPath = System.IO.Path.Combine(appFolder, "root", src);
+                    System.Diagnostics.Process.Start(fullPath);
+                }
+            }
+            catch
+            {
+                System.Media.SystemSounds.Exclamation.Play();
+            }
         }
 
         public void OnItemRecycled(int position, Control view)

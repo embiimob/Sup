@@ -4028,14 +4028,29 @@ htmlembed =
 
         void Attachment_Clicked(string path)
         {
-            if (path.ToUpper().StartsWith("IPFS:") || path.ToUpper().StartsWith("BTC:") || path.ToUpper().StartsWith("MZC:") || path.ToUpper().StartsWith("LTC:") || path.ToUpper().StartsWith("DOG:"))
+            if (path.ToUpper().StartsWith("@") || path.ToUpper().StartsWith("SUP:") || path.ToUpper().StartsWith("IPFS:") || path.ToUpper().StartsWith("BTC:") || path.ToUpper().StartsWith("MZC:") || path.ToUpper().StartsWith("LTC:") || path.ToUpper().StartsWith("DOG:"))
             {
                 new ObjectBrowser(path, false, _testnet).Show();
             }
             else
             {
                 try
-                { System.Diagnostics.Process.Start(path); }
+                {
+                    if (path.StartsWith("http://") || path.StartsWith("https://"))
+                    {
+                        System.Diagnostics.Process.Start(path);
+                    }
+                    else if (!System.IO.Path.IsPathRooted(path))
+                    {
+                        string appFolder = System.IO.Path.GetDirectoryName(Application.ExecutablePath);
+                        string fullPath = System.IO.Path.Combine(appFolder, "root", path);
+                        System.Diagnostics.Process.Start(fullPath);
+                    }
+                    else
+                    {
+                        System.Diagnostics.Process.Start(path);
+                    }
+                }
                 catch { System.Media.SystemSounds.Exclamation.Play(); }
             }
         }
