@@ -2222,7 +2222,7 @@ namespace ADD
                 HashSet<string> safeExtensions =
                new HashSet<string>(StringComparer.OrdinalIgnoreCase)
                 {
-                    ".gif", ".jpg", ".jpeg", ".txt", ".tiff", ".tif", ".mp3", ".mpeg", ".mpg", ".wav"
+                    ".gif", ".jpg", ".jpeg", ".txt", ".tiff", ".tif", ".mp3", ".mpeg", ".mpg", ".wav", ".webm"
                 };
 
                 HashSet<string> embExtensions =
@@ -2234,7 +2234,7 @@ namespace ADD
                 HashSet<string> vidExtensions =
                 new HashSet<string>(StringComparer.OrdinalIgnoreCase)
                 {
-                      ".3g2", ".3gp2", ".3gp", ".3gpp", ".aaf", ".asf", ".avchd", ".avi", ".cam", ".flv",".m1v", ".m2v", ".m4v",".mov", ".mpg", ".mpeg", ".mpe", ".mp4", ".wmv",".mp3"
+                      ".3g2", ".3gp2", ".3gp", ".3gpp", ".aaf", ".asf", ".avchd", ".avi", ".cam", ".flv",".m1v", ".m2v", ".m4v",".mov", ".mpg", ".mpeg", ".mpe", ".mp4", ".wmv",".mp3", ".webm"
                 };
 
                 HashSet<string> imgExtensions =

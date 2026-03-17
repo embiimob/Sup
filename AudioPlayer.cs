@@ -64,6 +64,10 @@ namespace SUP
                 {
                     reader = new Mp3FileReader(audioLocation);
                 }
+                else if (audioLocation.ToLower().EndsWith(".webm"))
+                {
+                    reader = new MediaFoundationReader(audioLocation);
+                }
                 else
                 {
                     // Handle unsupported audio formats

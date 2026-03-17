@@ -1074,7 +1074,7 @@ namespace SUP
                         }
 
                         string pattern = "<<.*?>>";
-                        List<string> imgExtensions = new List<string> { ".bmp", ".gif", ".ico", ".jpeg", ".jpg", ".png", ".tif", ".tiff", ".mp4", ".mov", ".avi", ".wav", ".mp3" };
+                        List<string> imgExtensions = new List<string> { ".bmp", ".gif", ".ico", ".jpeg", ".jpg", ".png", ".tif", ".tiff", ".mp4", ".mov", ".avi", ".wav", ".mp3", ".webm" };
 
                         MatchCollection matches = Regex.Matches(unfilteredmessage, pattern);
                         foreach (Match match in matches)
@@ -1188,7 +1188,7 @@ namespace SUP
                                     if (!int.TryParse(content, NumberStyles.Any, CultureInfo.GetCultureInfo("en-US"), out int id))
                                     {
 
-                                        if (extension == ".mp4" || extension == ".mov" || extension == ".avi" || content.Contains("youtube.com") || content.Contains("youtu.be") || extension == ".wav" || extension == ".mp3")
+                                        if (extension == ".mp4" || extension == ".mov" || extension == ".avi" || content.Contains("youtube.com") || content.Contains("youtu.be") || extension == ".wav" || extension == ".mp3" || extension == ".webm")
                                         {
                                             this.Invoke((MethodInvoker)delegate
                                             {
@@ -1729,6 +1729,17 @@ namespace SUP
                                         {
                                             WaveOut waveOut = new WaveOut();
                                             Mp3FileReader reader = new Mp3FileReader(videolocation);
+                                            waveOut.Init(reader);
+                                            waveOut.Play();
+
+                                        }
+
+                                        // If it's a .webm file and autoplay is enabled, trigger the audio playback
+                                        if (videolocation.ToLower().EndsWith(".webm") && autoPlay)
+
+                                        {
+                                            WaveOut waveOut = new WaveOut();
+                                            MediaFoundationReader reader = new MediaFoundationReader(videolocation);
                                             waveOut.Init(reader);
                                             waveOut.Play();
 
@@ -3390,6 +3401,7 @@ namespace SUP
                     case ".avi":
                     case ".mp3":
                     case ".wav":
+                    case ".webm":
                     case ".pdf":
 
                         string outputFilePath = urn;
