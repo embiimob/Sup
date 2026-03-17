@@ -856,7 +856,7 @@ namespace SUP
                         }
 
                         string pattern = "<<.*?>>";
-                        List<string> imgExtensions = new List<string> { ".bmp", ".gif", ".ico", ".jpeg", ".jpg", ".png", ".tif", ".tiff", ".mp4", ".mov", ".avi", ".wav", ".mp3" };
+                        List<string> imgExtensions = new List<string> { ".bmp", ".gif", ".ico", ".jpeg", ".jpg", ".png", ".tif", ".tiff", ".mp4", ".mov", ".avi", ".wav", ".mp3", ".webm" };
 
                         MatchCollection matches = Regex.Matches(unfilteredmessage, pattern);
                         foreach (Match match in matches)
@@ -968,7 +968,7 @@ namespace SUP
                                     if (!int.TryParse(content, NumberStyles.Any, CultureInfo.GetCultureInfo("en-US"), out int id))
                                     {
 
-                                        if (extension == ".mp4" || extension == ".mov" || extension == ".avi" || content.Contains("youtube.com") || content.Contains("youtu.be") || extension == ".wav" || extension == ".mp3")
+                                        if (extension == ".mp4" || extension == ".mov" || extension == ".avi" || content.Contains("youtube.com") || content.Contains("youtu.be") || extension == ".wav" || extension == ".mp3" || extension == ".webm")
                                         {
 
                                             try { AddMedia(content); } catch { }
@@ -1318,7 +1318,7 @@ namespace SUP
 
 
 
-                if (videolocation.ToLower().EndsWith(".wav") || videolocation.ToLower().EndsWith(".mp3"))
+                if (videolocation.ToLower().EndsWith(".wav") || videolocation.ToLower().EndsWith(".mp3") || videolocation.ToLower().EndsWith(".webm"))
                 {
 
 
@@ -1527,7 +1527,7 @@ namespace SUP
                                 this.Invoke((Action)(() =>
                                 {
 
-                                    if ((videolocation.ToLower().EndsWith(".wav") || videolocation.ToLower().EndsWith(".mp3")) && autoPlay)
+                                    if ((videolocation.ToLower().EndsWith(".wav") || videolocation.ToLower().EndsWith(".mp3") || videolocation.ToLower().EndsWith(".webm")) && autoPlay)
                                     {
                                         audioPlayer.AddToPlaylist(videolocation);
 
@@ -1562,7 +1562,7 @@ namespace SUP
                     else
                     {
 
-                        if ((videolocation.ToLower().EndsWith(".wav") || videolocation.ToLower().EndsWith(".mp3")) && autoPlay)
+                        if ((videolocation.ToLower().EndsWith(".wav") || videolocation.ToLower().EndsWith(".mp3") || videolocation.ToLower().EndsWith(".webm")) && autoPlay)
                         {
                             audioPlayer.AddToPlaylist(videolocation);
                         }

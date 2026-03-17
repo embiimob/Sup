@@ -141,7 +141,7 @@ namespace SUP
                         foreach (string message in TRACK.Message)
                         {
                             // Find all occurrences of strings surrounded by << >> that end in .mp3 or .wav
-                            foreach (Match match in Regex.Matches(message, @"<<([^>]*?(\s*\.mp3\s*(?=>>|$)|\.mp3\s*>>|\s*\.wav\s*(?=>>|$)|\.wav\s*>>))"))
+                            foreach (Match match in Regex.Matches(message, @"<<([^>]*?(\s*\.mp3\s*(?=>>|$)|\.mp3\s*>>|\s*\.wav\s*(?=>>|$)|\.wav\s*>>|\s*\.webm\s*(?=>>|$)|\.webm\s*>>))"))
                             {
                                 string audioFrom = TRACK.SignedBy;
                                 string audioPacket = getLocalPath(match.Groups[1].Value) + "," + TRACK.BlockDate + "," + audioFrom + "," + match.Groups[1].Value;
@@ -157,7 +157,7 @@ namespace SUP
                         foreach (string attachment in TRACK.File.Keys)
                         {
                             // Check if the attachment ends in .GIF (case-insensitive)
-                            if (attachment.EndsWith(".MP3", StringComparison.OrdinalIgnoreCase) || attachment.EndsWith(".WAV", StringComparison.OrdinalIgnoreCase))
+                            if (attachment.EndsWith(".MP3", StringComparison.OrdinalIgnoreCase) || attachment.EndsWith(".WAV", StringComparison.OrdinalIgnoreCase) || attachment.EndsWith(".WEBM", StringComparison.OrdinalIgnoreCase))
                             {
                                 string audioFrom = TRACK.SignedBy;
                                 string audioPacket = getLocalPath(TRACK.TransactionId + @"\" + attachment) + "," + TRACK.BlockDate + "," + audioFrom + "," + TRACK.TransactionId + @"\" + attachment;
@@ -175,7 +175,7 @@ namespace SUP
                     foreach (OBJState obj in objects)
                     {
 
-                        if (obj.URN.ToLower().EndsWith(".mp3") || obj.URN.ToLower().EndsWith(".wav"))
+                        if (obj.URN.ToLower().EndsWith(".mp3") || obj.URN.ToLower().EndsWith(".wav") || obj.URN.ToLower().EndsWith(".webm"))
                         {
                             // Use object creator address as unique identifier to prevent duplicates
                             if (obj.Creators != null && obj.Creators.Count > 0)
@@ -206,7 +206,7 @@ namespace SUP
                     foreach (OBJState obj in objects)
                     {
 
-                        if (obj.URN.ToLower().EndsWith(".mp3") || obj.URN.ToLower().EndsWith(".wav"))
+                        if (obj.URN.ToLower().EndsWith(".mp3") || obj.URN.ToLower().EndsWith(".wav") || obj.URN.ToLower().EndsWith(".webm"))
                         {
                             // Use object creator address as unique identifier to prevent duplicates
                             if (obj.Creators != null && obj.Creators.Count > 0)
@@ -238,7 +238,7 @@ namespace SUP
                     foreach (OBJState obj in objects)
                     {
 
-                        if (obj.URN.ToLower().EndsWith(".mp3") || obj.URN.ToLower().EndsWith(".wav"))
+                        if (obj.URN.ToLower().EndsWith(".mp3") || obj.URN.ToLower().EndsWith(".wav") || obj.URN.ToLower().EndsWith(".webm"))
                         {
 
                             string creatorKey = null;
