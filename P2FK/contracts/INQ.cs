@@ -2,6 +2,7 @@
 using NBitcoin;
 using Newtonsoft.Json;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
@@ -57,6 +58,7 @@ namespace SUP.P2FK
 
 
         private readonly static object SupLocker = new object();
+        private static readonly ConcurrentDictionary<string, INQState> _inqCache = new ConcurrentDictionary<string, INQState>();
         public static INQState GetInquiryByAddress(string objectaddress, string username, string password, string url, string versionByte = "111", bool calculate = false)
         {
             string sentinelDir = @"root\" + objectaddress;
@@ -83,15 +85,28 @@ namespace SUP.P2FK
                     string diskpath = "root\\" + objectaddress + "\\";
 
 
-                    // fetch current JSONOBJ from disk if it exists
-                    try
+                    // Check in-memory cache first (skip disk read on warm addresses)
+                    if (!calculate && _inqCache.TryGetValue(objectaddress, out INQState memInq))
                     {
-                        JSONOBJ = System.IO.File.ReadAllText(diskpath + "INQ.json");
-                        objectState = JsonConvert.DeserializeObject<INQState>(JSONOBJ);
+                        objectState = memInq;
                         fetched = true;
-
                     }
-                    catch { }
+                    else
+                    {
+                        // fetch current JSONOBJ from disk if it exists
+                        try
+                        {
+                            JSONOBJ = System.IO.File.ReadAllText(diskpath + "INQ.json");
+                            objectState = JsonConvert.DeserializeObject<INQState>(JSONOBJ);
+                            fetched = true;
+                            // Warm the memory cache from the disk read
+                            if (objectState != null)
+                            {
+                                _inqCache[objectaddress] = objectState;
+                            }
+                        }
+                        catch { }
+                    }
 
                     if (fetched && objectState.URN == null && !calculate)
                     {
@@ -416,7 +431,9 @@ namespace SUP.P2FK
                     string inqTarget = @"root\" + objectaddress + @"\INQ.json";
                     string inqTmp = inqTarget + ".tmp";
                     System.IO.File.WriteAllText(inqTmp, objectSerialized);
-                    System.IO.File.Move(inqTmp, inqTarget, true);
+                    if (System.IO.File.Exists(inqTarget)) System.IO.File.Delete(inqTarget); System.IO.File.Move(inqTmp, inqTarget);
+                    // Keep memory cache in sync with the freshly computed state
+                    _inqCache[objectaddress] = objectState;
 
                 }
                 catch (Exception ex)
@@ -608,7 +625,7 @@ namespace SUP.P2FK
                     string inqByAddrTarget = @"root\" + objectaddress + @"\GetInquiriesByAddress.json";
                     string inqByAddrTmp = inqByAddrTarget + ".tmp";
                     System.IO.File.WriteAllText(inqByAddrTmp, objectSerialized);
-                    System.IO.File.Move(inqByAddrTmp, inqByAddrTarget, true);
+                    if (System.IO.File.Exists(inqByAddrTarget)) System.IO.File.Delete(inqByAddrTarget); System.IO.File.Move(inqByAddrTmp, inqByAddrTarget);
                 }
                 catch { }
                 finally { try { File.Delete(sentinelFile2); } catch { } }
@@ -710,7 +727,7 @@ namespace SUP.P2FK
                 string inqCreatedTarget = @"root\" + objectaddress + @"\GetInquiriesCreatedByAddress.json";
                 string inqCreatedTmp = inqCreatedTarget + ".tmp";
                 System.IO.File.WriteAllText(inqCreatedTmp, objectSerialized);
-                System.IO.File.Move(inqCreatedTmp, inqCreatedTarget, true);
+                if (System.IO.File.Exists(inqCreatedTarget)) System.IO.File.Delete(inqCreatedTarget); System.IO.File.Move(inqCreatedTmp, inqCreatedTarget);
 
                 return objectStates;
 

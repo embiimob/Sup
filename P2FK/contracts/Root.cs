@@ -3,6 +3,7 @@ using SUP.RPCClient;
 using NBitcoin;
 using Newtonsoft.Json;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -34,6 +35,8 @@ namespace SUP.P2FK
         public int Confirmations { get; set; }
         public DateTime BuildDate { get; set; }
         public bool Cached { get; set; }
+
+        private static readonly ConcurrentDictionary<string, List<Root>> _rootsCache = new ConcurrentDictionary<string, List<Root>>();
 
 
         public static Root GetRootByTransactionId(string transactionid, string username, string password, string url, string versionbyte = "111", byte[] rootbytes = null, string signatureaddress = null, bool calculate = false)
@@ -467,7 +470,7 @@ namespace SUP.P2FK
                         string rootTarget = @"root\" + P2FKRoot.TransactionId + @"\ROOT.json";
                         string rootTmp = rootTarget + ".tmp";
                         System.IO.File.WriteAllText(rootTmp, rootSerialized);
-                        System.IO.File.Move(rootTmp, rootTarget, true);
+                        if (System.IO.File.Exists(rootTarget)) System.IO.File.Delete(rootTarget); System.IO.File.Move(rootTmp, rootTarget);
                     }
                                       
 
@@ -496,15 +499,29 @@ namespace SUP.P2FK
             try
             {
                 bool fetched = false;
-                try
-                {
-                    string diskpath = "root\\" + address + "\\";
-                    string P2FKJSONString = System.IO.File.ReadAllText(diskpath + "ROOTS.json");
-                    rootList = JsonConvert.DeserializeObject<List<Root>>(P2FKJSONString);
-                    fetched = true;
 
+                // Check in-memory cache first (skip disk read on warm addresses)
+                if (!calculate && _rootsCache.TryGetValue(address, out List<Root> memCached))
+                {
+                    rootList = new List<Root>(memCached);
+                    fetched = true;
                 }
-                catch { }
+                else
+                {
+                    try
+                    {
+                        string diskpath = "root\\" + address + "\\";
+                        string P2FKJSONString = System.IO.File.ReadAllText(diskpath + "ROOTS.json");
+                        rootList = JsonConvert.DeserializeObject<List<Root>>(P2FKJSONString);
+                        fetched = true;
+                        // Warm the memory cache from the disk read
+                        if (rootList != null && rootList.Count > 0)
+                        {
+                            _rootsCache[address] = new List<Root>(rootList);
+                        }
+                    }
+                    catch { }
+                }
 
 
                 int intProcessHeight = 0;
@@ -568,7 +585,9 @@ namespace SUP.P2FK
                     string rootsTarget = @"root\" + address + @"\ROOTS.json";
                     string rootsTmp = rootsTarget + ".tmp";
                     System.IO.File.WriteAllText(rootsTmp, rootSerialized);
-                    System.IO.File.Move(rootsTmp, rootsTarget, true);
+                    if (System.IO.File.Exists(rootsTarget)) System.IO.File.Delete(rootsTarget); System.IO.File.Move(rootsTmp, rootsTarget);
+                    // Keep memory cache in sync with the freshly written data
+                    _rootsCache[address] = new List<Root>(rootList);
 
                 }
 
