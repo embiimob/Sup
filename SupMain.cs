@@ -4953,7 +4953,7 @@ namespace SUP
                                 
                                 List<string> imageExts = new List<string> { ".bmp", ".gif", ".ico", ".jpeg", ".jpg", ".png", ".tif", ".tiff" };
                                 List<string> videoExts = new List<string> { ".mp4", ".mov", ".avi" };
-                                List<string> audioExts = new List<string> { ".wav", ".mp3" };
+                                List<string> audioExts = new List<string> { ".wav", ".mp3", ".webm" };
                                 
                                 if (imageExts.Contains(extension))
                                     attachment.Type = AttachmentType.Image;
@@ -6419,7 +6419,7 @@ namespace SUP
 
 
 
-                if (videolocation.ToLower().EndsWith(".wav") || videolocation.ToLower().EndsWith(".mp3"))
+                if (videolocation.ToLower().EndsWith(".wav") || videolocation.ToLower().EndsWith(".mp3") || videolocation.ToLower().EndsWith(".webm"))
                 {
 
 
@@ -6664,7 +6664,7 @@ namespace SUP
                                 this.Invoke((Action)(() =>
                                 {
 
-                                    if ((videolocation.ToLower().EndsWith(".wav") || videolocation.ToLower().EndsWith(".mp3")) && autoPlay)
+                                    if ((videolocation.ToLower().EndsWith(".wav") || videolocation.ToLower().EndsWith(".mp3") || videolocation.ToLower().EndsWith(".webm")) && autoPlay)
                                     {
                                         audioPlayer.AddToPlaylist(videolocation);
 
@@ -6713,7 +6713,7 @@ namespace SUP
                     else
                     {
 
-                        if ((videolocation.ToLower().EndsWith(".wav") || videolocation.ToLower().EndsWith(".mp3")) && autoPlay)
+                        if ((videolocation.ToLower().EndsWith(".wav") || videolocation.ToLower().EndsWith(".mp3") || videolocation.ToLower().EndsWith(".webm")) && autoPlay)
                         {
                             audioPlayer.AddToPlaylist(videolocation);
                         }
