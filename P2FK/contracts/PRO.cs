@@ -261,7 +261,8 @@ namespace SUP.P2FK
                     string profileTarget = @"root\" + profileaddress + @"\GetProfileByAddress.json";
                     string profileTmp = profileTarget + ".tmp";
                     System.IO.File.WriteAllText(profileTmp, profileSerialized);
-                    if (System.IO.File.Exists(profileTarget)) System.IO.File.Delete(profileTarget); System.IO.File.Move(profileTmp, profileTarget);
+                    if (System.IO.File.Exists(profileTarget)) System.IO.File.Delete(profileTarget);
+                    System.IO.File.Move(profileTmp, profileTarget);
                 }
                 catch
                 {
@@ -276,7 +277,8 @@ namespace SUP.P2FK
                         string profileTarget = @"root\" + profileaddress + @"\GetProfileByAddress.json";
                         string profileTmp = profileTarget + ".tmp";
                         System.IO.File.WriteAllText(profileTmp, profileSerialized);
-                        if (System.IO.File.Exists(profileTarget)) System.IO.File.Delete(profileTarget); System.IO.File.Move(profileTmp, profileTarget);
+                        if (System.IO.File.Exists(profileTarget)) System.IO.File.Delete(profileTarget);
+                        System.IO.File.Move(profileTmp, profileTarget);
                     }
                     catch { };
                 }
@@ -346,7 +348,8 @@ namespace SUP.P2FK
                                         string profileUrnTarget = @"root\" + profileaddress + @"\GetProfileByURN.json";
                                         string profileUrnTmp = profileUrnTarget + ".tmp";
                                         System.IO.File.WriteAllText(profileUrnTmp, profileSerialized);
-                                        if (System.IO.File.Exists(profileUrnTarget)) System.IO.File.Delete(profileUrnTarget); System.IO.File.Move(profileUrnTmp, profileUrnTarget);
+                                        if (System.IO.File.Exists(profileUrnTarget)) System.IO.File.Delete(profileUrnTarget);
+                                        System.IO.File.Move(profileUrnTmp, profileUrnTarget);
                                     }
                                     catch
                                     {
@@ -361,7 +364,8 @@ namespace SUP.P2FK
                                             string profileUrnTarget = @"root\" + profileaddress + @"\GetProfileByURN.json";
                                             string profileUrnTmp = profileUrnTarget + ".tmp";
                                             System.IO.File.WriteAllText(profileUrnTmp, profileSerialized);
-                                            if (System.IO.File.Exists(profileUrnTarget)) System.IO.File.Delete(profileUrnTarget); System.IO.File.Move(profileUrnTmp, profileUrnTarget);
+                                            if (System.IO.File.Exists(profileUrnTarget)) System.IO.File.Delete(profileUrnTarget);
+                                            System.IO.File.Move(profileUrnTmp, profileUrnTarget);
                                         }
                                         catch { };
                                     }

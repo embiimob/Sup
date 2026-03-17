@@ -941,7 +941,8 @@ namespace SUP.P2FK
                                                                 string rootsTarget2 = @"root\" + objectState.TransactionId + @"\ROOTS.json";
                                                                 string rootsTmp2 = rootsTarget2 + ".tmp";
                                                                 System.IO.File.WriteAllText(rootsTmp2, rootSerialized);
-                                                                if (System.IO.File.Exists(rootsTarget2)) System.IO.File.Delete(rootsTarget2); System.IO.File.Move(rootsTmp2, rootsTarget2);
+                                                                if (System.IO.File.Exists(rootsTarget2)) System.IO.File.Delete(rootsTarget2);
+                                                                System.IO.File.Move(rootsTmp2, rootsTarget2);
 
                                                                 objectState = new OBJState();
                                                                 break;
@@ -1777,7 +1778,8 @@ namespace SUP.P2FK
                     string objTarget = @"root\" + objectaddress + @"\OBJ.json";
                     string objTmp = objTarget + ".tmp";
                     System.IO.File.WriteAllText(objTmp, objectSerialized);
-                    if (System.IO.File.Exists(objTarget)) System.IO.File.Delete(objTarget); System.IO.File.Move(objTmp, objTarget);
+                    if (System.IO.File.Exists(objTarget)) System.IO.File.Delete(objTarget);
+                    System.IO.File.Move(objTmp, objTarget);
                     // Keep memory cache in sync with the freshly computed state
                     _objCache[objectaddress] = objectState;
                 }
@@ -1929,7 +1931,8 @@ namespace SUP.P2FK
             string objSignedTarget = @"root\" + objectTransaction.SignedBy + @"\OBJ.json";
             string objSignedTmp = objSignedTarget + ".tmp";
             System.IO.File.WriteAllText(objSignedTmp, objectSerialized);
-            if (System.IO.File.Exists(objSignedTarget)) System.IO.File.Delete(objSignedTarget); System.IO.File.Move(objSignedTmp, objSignedTarget);
+            if (System.IO.File.Exists(objSignedTarget)) System.IO.File.Delete(objSignedTarget);
+            System.IO.File.Move(objSignedTmp, objSignedTarget);
 
 
             objectSerialized = JsonConvert.SerializeObject(objectTransaction);
@@ -1941,7 +1944,8 @@ namespace SUP.P2FK
             string rootByTxTarget = @"root\" + objectTransaction.SignedBy + @"\GetRootByTransactionId.json";
             string rootByTxTmp = rootByTxTarget + ".tmp";
             System.IO.File.WriteAllText(rootByTxTmp, objectSerialized);
-            if (System.IO.File.Exists(rootByTxTarget)) System.IO.File.Delete(rootByTxTarget); System.IO.File.Move(rootByTxTmp, rootByTxTarget);
+            if (System.IO.File.Exists(rootByTxTarget)) System.IO.File.Delete(rootByTxTarget);
+            System.IO.File.Move(rootByTxTmp, rootByTxTarget);
 
             //used to determine where to begin object State processing when retrieved from cache
             objectState.ProcessHeight = intProcessHeight;
@@ -2020,7 +2024,8 @@ namespace SUP.P2FK
                                 {
                                     string urnTmp1 = filepath + ".tmp";
                                     System.IO.File.WriteAllText(urnTmp1, profileSerialized1);
-                                    if (System.IO.File.Exists(filepath)) System.IO.File.Delete(filepath); System.IO.File.Move(urnTmp1, filepath);
+                                    if (System.IO.File.Exists(filepath)) System.IO.File.Delete(filepath);
+                                    System.IO.File.Move(urnTmp1, filepath);
                                 }
                                 catch
                                 {
@@ -2034,7 +2039,8 @@ namespace SUP.P2FK
                                         }
                                         string urnTmp1 = filepath + ".tmp";
                                         System.IO.File.WriteAllText(urnTmp1, profileSerialized1);
-                                        if (System.IO.File.Exists(filepath)) System.IO.File.Delete(filepath); System.IO.File.Move(urnTmp1, filepath);
+                                        if (System.IO.File.Exists(filepath)) System.IO.File.Delete(filepath);
+                                        System.IO.File.Move(urnTmp1, filepath);
                                     }
                                     catch { };
                                 }
@@ -2058,7 +2064,8 @@ namespace SUP.P2FK
                                 {
                                     string urnTmp2 = filepath + ".tmp";
                                     System.IO.File.WriteAllText(urnTmp2, profileSerialized2);
-                                    if (System.IO.File.Exists(filepath)) System.IO.File.Delete(filepath); System.IO.File.Move(urnTmp2, filepath);
+                                    if (System.IO.File.Exists(filepath)) System.IO.File.Delete(filepath);
+                                    System.IO.File.Move(urnTmp2, filepath);
                                 }
                                 catch
                                 {
@@ -2072,7 +2079,8 @@ namespace SUP.P2FK
                                         }
                                         string urnTmp2 = filepath + ".tmp";
                                         System.IO.File.WriteAllText(urnTmp2, profileSerialized2);
-                                        if (System.IO.File.Exists(filepath)) System.IO.File.Delete(filepath); System.IO.File.Move(urnTmp2, filepath);
+                                        if (System.IO.File.Exists(filepath)) System.IO.File.Delete(filepath);
+                                        System.IO.File.Move(urnTmp2, filepath);
                                     }
                                     catch { };
                                 }
@@ -2097,7 +2105,8 @@ namespace SUP.P2FK
             {
                 string urnTmp3 = filepath + ".tmp";
                 System.IO.File.WriteAllText(urnTmp3, profileSerialized3);
-                if (System.IO.File.Exists(filepath)) System.IO.File.Delete(filepath); System.IO.File.Move(urnTmp3, filepath);
+                if (System.IO.File.Exists(filepath)) System.IO.File.Delete(filepath);
+                System.IO.File.Move(urnTmp3, filepath);
             }
             catch
             {
@@ -2111,7 +2120,8 @@ namespace SUP.P2FK
                     }
                     string urnTmp3 = filepath + ".tmp";
                     System.IO.File.WriteAllText(urnTmp3, profileSerialized3);
-                    if (System.IO.File.Exists(filepath)) System.IO.File.Delete(filepath); System.IO.File.Move(urnTmp3, filepath);
+                    if (System.IO.File.Exists(filepath)) System.IO.File.Delete(filepath);
+                    System.IO.File.Move(urnTmp3, filepath);
                 }
                 catch { };
             }
@@ -2613,7 +2623,8 @@ namespace SUP.P2FK
                     string objsByAddrTarget = @"root\" + objectaddress + @"\GetObjectsByAddress.json";
                     string objsByAddrTmp = objsByAddrTarget + ".tmp";
                     System.IO.File.WriteAllText(objsByAddrTmp, objectSerialized);
-                    if (System.IO.File.Exists(objsByAddrTarget)) System.IO.File.Delete(objsByAddrTarget); System.IO.File.Move(objsByAddrTmp, objsByAddrTarget);
+                    if (System.IO.File.Exists(objsByAddrTarget)) System.IO.File.Delete(objsByAddrTarget);
+                    System.IO.File.Move(objsByAddrTmp, objsByAddrTarget);
                 }
 
             });
@@ -2696,7 +2707,8 @@ namespace SUP.P2FK
             string ownedTarget = @"root\" + objectaddress + @"\GetObjectsOwnedByAddress.json";
             string ownedTmp = ownedTarget + ".tmp";
             System.IO.File.WriteAllText(ownedTmp, objectSerialized);
-            if (System.IO.File.Exists(ownedTarget)) System.IO.File.Delete(ownedTarget); System.IO.File.Move(ownedTmp, ownedTarget);
+            if (System.IO.File.Exists(ownedTarget)) System.IO.File.Delete(ownedTarget);
+            System.IO.File.Move(ownedTmp, ownedTarget);
 
             return objectStates;
 
@@ -2768,7 +2780,8 @@ namespace SUP.P2FK
             string createdTarget = @"root\" + objectaddress + @"\GetObjectsCreatedByAddress.json";
             string createdTmp = createdTarget + ".tmp";
             System.IO.File.WriteAllText(createdTmp, objectSerialized);
-            if (System.IO.File.Exists(createdTarget)) System.IO.File.Delete(createdTarget); System.IO.File.Move(createdTmp, createdTarget);
+            if (System.IO.File.Exists(createdTarget)) System.IO.File.Delete(createdTarget);
+            System.IO.File.Move(createdTmp, createdTarget);
 
             return objectStates;
 
@@ -2909,7 +2922,8 @@ namespace SUP.P2FK
             string colTarget = @"root\" + objectaddress + @"\GetObjectsCollectionsByAddress.json";
             string colTmp = colTarget + ".tmp";
             System.IO.File.WriteAllText(colTmp, objectSerialized);
-            if (System.IO.File.Exists(colTarget)) System.IO.File.Delete(colTarget); System.IO.File.Move(colTmp, colTarget);
+            if (System.IO.File.Exists(colTarget)) System.IO.File.Delete(colTarget);
+            System.IO.File.Move(colTmp, colTarget);
 
             return objectStates;
 
@@ -2994,7 +3008,8 @@ namespace SUP.P2FK
             string foundTarget = @"root\found\GetFoundObjects.json";
             string foundTmp = foundTarget + ".tmp";
             System.IO.File.WriteAllText(foundTmp, objectSerialized);
-            if (System.IO.File.Exists(foundTarget)) System.IO.File.Delete(foundTarget); System.IO.File.Move(foundTmp, foundTarget);
+            if (System.IO.File.Exists(foundTarget)) System.IO.File.Delete(foundTarget);
+            System.IO.File.Move(foundTmp, foundTarget);
 
             return objectStates;
 

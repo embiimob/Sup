@@ -431,7 +431,8 @@ namespace SUP.P2FK
                     string inqTarget = @"root\" + objectaddress + @"\INQ.json";
                     string inqTmp = inqTarget + ".tmp";
                     System.IO.File.WriteAllText(inqTmp, objectSerialized);
-                    if (System.IO.File.Exists(inqTarget)) System.IO.File.Delete(inqTarget); System.IO.File.Move(inqTmp, inqTarget);
+                    if (System.IO.File.Exists(inqTarget)) System.IO.File.Delete(inqTarget);
+                    System.IO.File.Move(inqTmp, inqTarget);
                     // Keep memory cache in sync with the freshly computed state
                     _inqCache[objectaddress] = objectState;
 
@@ -625,7 +626,8 @@ namespace SUP.P2FK
                     string inqByAddrTarget = @"root\" + objectaddress + @"\GetInquiriesByAddress.json";
                     string inqByAddrTmp = inqByAddrTarget + ".tmp";
                     System.IO.File.WriteAllText(inqByAddrTmp, objectSerialized);
-                    if (System.IO.File.Exists(inqByAddrTarget)) System.IO.File.Delete(inqByAddrTarget); System.IO.File.Move(inqByAddrTmp, inqByAddrTarget);
+                    if (System.IO.File.Exists(inqByAddrTarget)) System.IO.File.Delete(inqByAddrTarget);
+                    System.IO.File.Move(inqByAddrTmp, inqByAddrTarget);
                 }
                 catch { }
                 finally { try { File.Delete(sentinelFile2); } catch { } }
@@ -727,7 +729,8 @@ namespace SUP.P2FK
                 string inqCreatedTarget = @"root\" + objectaddress + @"\GetInquiriesCreatedByAddress.json";
                 string inqCreatedTmp = inqCreatedTarget + ".tmp";
                 System.IO.File.WriteAllText(inqCreatedTmp, objectSerialized);
-                if (System.IO.File.Exists(inqCreatedTarget)) System.IO.File.Delete(inqCreatedTarget); System.IO.File.Move(inqCreatedTmp, inqCreatedTarget);
+                if (System.IO.File.Exists(inqCreatedTarget)) System.IO.File.Delete(inqCreatedTarget);
+                System.IO.File.Move(inqCreatedTmp, inqCreatedTarget);
 
                 return objectStates;
 

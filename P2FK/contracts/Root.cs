@@ -470,7 +470,8 @@ namespace SUP.P2FK
                         string rootTarget = @"root\" + P2FKRoot.TransactionId + @"\ROOT.json";
                         string rootTmp = rootTarget + ".tmp";
                         System.IO.File.WriteAllText(rootTmp, rootSerialized);
-                        if (System.IO.File.Exists(rootTarget)) System.IO.File.Delete(rootTarget); System.IO.File.Move(rootTmp, rootTarget);
+                        if (System.IO.File.Exists(rootTarget)) System.IO.File.Delete(rootTarget);
+                        System.IO.File.Move(rootTmp, rootTarget);
                     }
                                       
 
@@ -585,7 +586,8 @@ namespace SUP.P2FK
                     string rootsTarget = @"root\" + address + @"\ROOTS.json";
                     string rootsTmp = rootsTarget + ".tmp";
                     System.IO.File.WriteAllText(rootsTmp, rootSerialized);
-                    if (System.IO.File.Exists(rootsTarget)) System.IO.File.Delete(rootsTarget); System.IO.File.Move(rootsTmp, rootsTarget);
+                    if (System.IO.File.Exists(rootsTarget)) System.IO.File.Delete(rootsTarget);
+                    System.IO.File.Move(rootsTmp, rootsTarget);
                     // Keep memory cache in sync with the freshly written data
                     _rootsCache[address] = new List<Root>(rootList);
 
