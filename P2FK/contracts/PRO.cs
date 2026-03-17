@@ -82,8 +82,6 @@ namespace SUP.P2FK
 
             if (intProcessHeight != 0 && objectTransactions.Count() == 0)
             {
-                try { File.Delete(@"GET_OBJECT_BY_ADDRESS"); } catch { }
-
                 return profileState;
             }
 
@@ -245,7 +243,10 @@ namespace SUP.P2FK
 
                 try
                 {
-                    System.IO.File.WriteAllText(@"root\" + profileaddress + @"\" + "GetProfileByAddress.json", profileSerialized);
+                    string profileTarget = @"root\" + profileaddress + @"\GetProfileByAddress.json";
+                    string profileTmp = profileTarget + ".tmp";
+                    System.IO.File.WriteAllText(profileTmp, profileSerialized);
+                    System.IO.File.Move(profileTmp, profileTarget, true);
                 }
                 catch
                 {
@@ -257,7 +258,10 @@ namespace SUP.P2FK
                         {
                             Directory.CreateDirectory(@"root\" + profileaddress);
                         }
-                        System.IO.File.WriteAllText(@"root\" + profileaddress + @"\" + "GetProfileByAddress.json", profileSerialized);
+                        string profileTarget = @"root\" + profileaddress + @"\GetProfileByAddress.json";
+                        string profileTmp = profileTarget + ".tmp";
+                        System.IO.File.WriteAllText(profileTmp, profileSerialized);
+                        System.IO.File.Move(profileTmp, profileTarget, true);
                     }
                     catch { };
                 }
@@ -322,7 +326,10 @@ namespace SUP.P2FK
                                     var profileSerialized = JsonConvert.SerializeObject(isObject);
                                     try
                                     {
-                                        System.IO.File.WriteAllText(@"root\" + profileaddress + @"\" + "GetProfileByURN.json", profileSerialized);
+                                        string profileUrnTarget = @"root\" + profileaddress + @"\GetProfileByURN.json";
+                                        string profileUrnTmp = profileUrnTarget + ".tmp";
+                                        System.IO.File.WriteAllText(profileUrnTmp, profileSerialized);
+                                        System.IO.File.Move(profileUrnTmp, profileUrnTarget, true);
                                     }
                                     catch
                                     {
@@ -334,7 +341,10 @@ namespace SUP.P2FK
                                             {
                                                 Directory.CreateDirectory(@"root\" + profileaddress);
                                             }
-                                            System.IO.File.WriteAllText(@"root\" + profileaddress + @"\" + "GetProfileByURN.json", profileSerialized);
+                                            string profileUrnTarget = @"root\" + profileaddress + @"\GetProfileByURN.json";
+                                            string profileUrnTmp = profileUrnTarget + ".tmp";
+                                            System.IO.File.WriteAllText(profileUrnTmp, profileSerialized);
+                                            System.IO.File.Move(profileUrnTmp, profileUrnTarget, true);
                                         }
                                         catch { };
                                     }

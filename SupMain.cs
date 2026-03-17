@@ -457,7 +457,7 @@ namespace SUP
         private void MakeActiveProfile(string address)
         {
 
-            if (!btnPrivateMessage.Enabled || !btnPublicMessage.Enabled || !btnCommunityFeed.Enabled || System.IO.File.Exists("ROOTS-PROCESSING"))
+            if (!btnPrivateMessage.Enabled || !btnPublicMessage.Enabled || !btnCommunityFeed.Enabled)
             {
                 System.Media.SystemSounds.Beep.Play();
                 return;
@@ -3965,7 +3965,7 @@ namespace SUP
             CleanupExcessIPFSProcesses();
 
             // sorry cannot run two searches at a time
-            if (!btnPrivateMessage.Enabled || !btnPublicMessage.Enabled || !btnCommunityFeed.Enabled || System.IO.File.Exists("ROOTS-PROCESSING"))
+            if (!btnPrivateMessage.Enabled || !btnPublicMessage.Enabled || !btnCommunityFeed.Enabled)
             {
                 System.Media.SystemSounds.Beep.Play();
                 return;
@@ -4735,7 +4735,7 @@ namespace SUP
         private async Task RefreshPrivateSupMessagesAsync()
         {
             // Prevent concurrent searches
-            if (!btnPrivateMessage.Enabled || !btnPublicMessage.Enabled || !btnCommunityFeed.Enabled || System.IO.File.Exists("ROOTS-PROCESSING"))
+            if (!btnPrivateMessage.Enabled || !btnPublicMessage.Enabled || !btnCommunityFeed.Enabled)
             {
                 System.Media.SystemSounds.Beep.Play();
                 return;
@@ -5377,9 +5377,9 @@ namespace SUP
         private void RefreshCommunityMessages(bool resetCounters = false)
         {
             // sorry cannot run two searches at a time
-            if (!btnPrivateMessage.Enabled || !btnPublicMessage.Enabled || !btnCommunityFeed.Enabled || System.IO.File.Exists("ROOTS-PROCESSING"))
+            if (!btnPrivateMessage.Enabled || !btnPublicMessage.Enabled || !btnCommunityFeed.Enabled)
             {
-                Debug.WriteLine($"[CommunityFeed] Cannot refresh - button states: PM={btnPrivateMessage.Enabled}, Pub={btnPublicMessage.Enabled}, Comm={btnCommunityFeed.Enabled}, ROOTS-PROCESSING={System.IO.File.Exists("ROOTS-PROCESSING")}");
+                Debug.WriteLine($"[CommunityFeed] Cannot refresh - button states: PM={btnPrivateMessage.Enabled}, Pub={btnPublicMessage.Enabled}, Comm={btnCommunityFeed.Enabled}");
                 System.Media.SystemSounds.Beep.Play();
                 return;
             }
@@ -7492,7 +7492,7 @@ namespace SUP
             friendClicked = true;
             lblOfficial.Visible = false;
             //if any current searches are loading you got to wait.  
-            if (!btnPrivateMessage.Enabled || !btnPublicMessage.Enabled || !btnCommunityFeed.Enabled || ((PictureBox)sender).ImageLocation == null || System.IO.File.Exists("ROOTS-PROCESSING"))
+            if (!btnPrivateMessage.Enabled || !btnPublicMessage.Enabled || !btnCommunityFeed.Enabled || ((PictureBox)sender).ImageLocation == null)
             {
                 System.Media.SystemSounds.Beep.Play();
                 return;

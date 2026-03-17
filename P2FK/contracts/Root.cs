@@ -464,7 +464,10 @@ namespace SUP.P2FK
                     if (!System.IO.File.Exists(@"root\" + P2FKRoot.SignedBy + @"\BLOCK"))
                     {
                         var rootSerialized = JsonConvert.SerializeObject(P2FKRoot);
-                        System.IO.File.WriteAllText(@"root\" + P2FKRoot.TransactionId + @"\" + "ROOT.json", rootSerialized);
+                        string rootTarget = @"root\" + P2FKRoot.TransactionId + @"\ROOT.json";
+                        string rootTmp = rootTarget + ".tmp";
+                        System.IO.File.WriteAllText(rootTmp, rootSerialized);
+                        System.IO.File.Move(rootTmp, rootTarget, true);
                     }
                                       
 
@@ -479,21 +482,20 @@ namespace SUP.P2FK
         public static Root[] GetRootsByAddress(string address, string username, string password, string url, int skip = 0, int qty = -1, string versionByte = "111", bool calculate = false)
         {
 
-            try { using (System.IO.File.Create("ROOTS-PROCESSING")) { } }catch { }
-
             var rootList = new List<Root>();
+
+            if (address == null || address.Length < 33) { return rootList.ToArray(); }
+
+            address = address.Replace("<", "").Replace(">", "");
+
+            string sentinelDir = @"root\" + address;
+            string sentinelFile = sentinelDir + @"\ROOTS-PROCESSING";
+            try { Directory.CreateDirectory(sentinelDir); } catch { }
+            try { using (System.IO.File.Create(sentinelFile)) { } } catch { }
 
             try
             {
-                if (address.Length < 33)
-                {
-
-                    try { System.IO.File.Delete("ROOTS-PROCESSING"); } catch { }
-                    return rootList.ToArray();
-                }
-
                 bool fetched = false;
-                address = address.Replace("<", "").Replace(">", "");
                 try
                 {
                     string diskpath = "root\\" + address + "\\";
@@ -563,12 +565,12 @@ namespace SUP.P2FK
 
                     try { Directory.CreateDirectory(@"root\" + address); } catch { }
                     var rootSerialized = JsonConvert.SerializeObject(rootList);
-                    System.IO.File.WriteAllText(@"root\" + address + @"\" + "ROOTS.json", rootSerialized);
+                    string rootsTarget = @"root\" + address + @"\ROOTS.json";
+                    string rootsTmp = rootsTarget + ".tmp";
+                    System.IO.File.WriteAllText(rootsTmp, rootSerialized);
+                    System.IO.File.Move(rootsTmp, rootsTarget, true);
 
                 }
-
-                try { System.IO.File.Delete("ROOTS-PROCESSING"); } catch { }
-
 
                 if (skip != 0)
                 {
@@ -588,10 +590,11 @@ namespace SUP.P2FK
             }
             catch
             {
-
-                try { System.IO.File.Delete("ROOTS-PROCESSING"); } catch { }
-
                 return rootList.ToArray();
+            }
+            finally
+            {
+                try { System.IO.File.Delete(sentinelFile); } catch { }
             }
         }
 

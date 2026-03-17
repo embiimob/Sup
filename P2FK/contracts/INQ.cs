@@ -59,10 +59,10 @@ namespace SUP.P2FK
         private readonly static object SupLocker = new object();
         public static INQState GetInquiryByAddress(string objectaddress, string username, string password, string url, string versionByte = "111", bool calculate = false)
         {
-            using (FileStream fs = File.Create(@"GET_INQUIRY_BY_ADDRESS"))
-            {
-
-            }
+            string sentinelDir = @"root\" + objectaddress;
+            string sentinelFile = sentinelDir + @"\GET_INQUIRY_BY_ADDRESS";
+            try { Directory.CreateDirectory(sentinelDir); } catch { }
+            try { using (FileStream fs = File.Create(sentinelFile)) { } } catch { }
 
             lock (SupLocker)
             {
@@ -75,7 +75,6 @@ namespace SUP.P2FK
 
                     if (System.IO.File.Exists(@"root\" + objectaddress + @"\BLOCK"))
                     {
-                        try { File.Delete(@"GET_INQUIRY_BY_ADDRESS"); } catch { }
                         return objectState;
                     }
 
@@ -96,8 +95,6 @@ namespace SUP.P2FK
 
                     if (fetched && objectState.URN == null && !calculate)
                     {
-                        try { File.Delete(@"GET_INQUIRY_BY_ADDRESS"); } catch { }
-
                         return objectState;
                     }
 
@@ -416,15 +413,17 @@ namespace SUP.P2FK
                     {
                         Directory.CreateDirectory(@"root\" + objectaddress);
                     }
-                    System.IO.File.WriteAllText(@"root\" + objectaddress + @"\" + "INQ.json", objectSerialized);
+                    string inqTarget = @"root\" + objectaddress + @"\INQ.json";
+                    string inqTmp = inqTarget + ".tmp";
+                    System.IO.File.WriteAllText(inqTmp, objectSerialized);
+                    System.IO.File.Move(inqTmp, inqTarget, true);
 
-                    try { File.Delete(@"GET_INQUIRY_BY_ADDRESS"); } catch { }
                 }
                 catch (Exception ex)
                 {
                     string error = ex.Message;
                 }
-                finally { try { File.Delete(@"GET_INQUIRY_BY_ADDRESS"); } catch { } }
+                finally { try { File.Delete(sentinelFile); } catch { } }
                 return objectState;
 
             }
@@ -468,10 +467,10 @@ namespace SUP.P2FK
 
         public static List<INQState> GetInquiriesByAddress(string objectaddress, string username, string password, string url, string versionByte = "111", int skip = 0, int qty = -1, bool calculate = false)
         {
-            using (FileStream fs = File.Create(@"GET_INQUIRIES_BY_ADDRESS"))
-            {
-
-            }
+            string sentinelDir2 = @"root\" + objectaddress;
+            string sentinelFile2 = sentinelDir2 + @"\GET_INQUIRIES_BY_ADDRESS";
+            try { Directory.CreateDirectory(sentinelDir2); } catch { }
+            try { using (FileStream fs = File.Create(sentinelFile2)) { } } catch { }
 
             lock (SupLocker)
             {
@@ -482,8 +481,6 @@ namespace SUP.P2FK
 
                     if (System.IO.File.Exists(@"root\" + objectaddress + @"\BLOCK"))
                     {
-                        try { File.Delete(@"GET_INQUIRIES_BY_ADDRESS"); } catch { }
-
                         return objectStates;
                     }
 
@@ -503,8 +500,6 @@ namespace SUP.P2FK
                     catch { }
                     if (fetched && objectStates.Count < 1)
                     {
-                        try { File.Delete(@"GET_INQUIRIES_BY_ADDRESS"); } catch { }
-
                         return objectStates;
                     }
 
@@ -527,8 +522,6 @@ namespace SUP.P2FK
                     
                     if (intProcessHeight != 0 && intProcessHeight == maxID)
                     {
-                        try { File.Delete(@"GET_INQUIRIES_BY_ADDRESS"); } catch { }
-
                         if (skip != 0)
                         {
                             //GPT3 SUGGESTED
@@ -612,12 +605,13 @@ namespace SUP.P2FK
                     {
                         Directory.CreateDirectory(@"root\" + objectaddress);
                     }
-                    System.IO.File.WriteAllText(@"root\" + objectaddress + @"\" + "GetInquiriesByAddress.json", objectSerialized);
-
-                    try { File.Delete(@"GET_INQUIRIES_BY_ADDRESS"); } catch { }
+                    string inqByAddrTarget = @"root\" + objectaddress + @"\GetInquiriesByAddress.json";
+                    string inqByAddrTmp = inqByAddrTarget + ".tmp";
+                    System.IO.File.WriteAllText(inqByAddrTmp, objectSerialized);
+                    System.IO.File.Move(inqByAddrTmp, inqByAddrTarget, true);
                 }
                 catch { }
-                finally { try { File.Delete(@"GET_INQUIRIES_BY_ADDRESS"); } catch { } }
+                finally { try { File.Delete(sentinelFile2); } catch { } }
                 
                 if (skip != 0)
                 {
@@ -713,7 +707,10 @@ namespace SUP.P2FK
                 {
                     Directory.CreateDirectory(@"root\" + objectaddress);
                 }
-                System.IO.File.WriteAllText(@"root\" + objectaddress + @"\" + "GetInquiriesCreatedByAddress.json", objectSerialized);
+                string inqCreatedTarget = @"root\" + objectaddress + @"\GetInquiriesCreatedByAddress.json";
+                string inqCreatedTmp = inqCreatedTarget + ".tmp";
+                System.IO.File.WriteAllText(inqCreatedTmp, objectSerialized);
+                System.IO.File.Move(inqCreatedTmp, inqCreatedTarget, true);
 
                 return objectStates;
 
