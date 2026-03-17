@@ -2,6 +2,7 @@
 using NBitcoin;
 using Newtonsoft.Json;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
@@ -49,6 +50,7 @@ namespace SUP.P2FK
         public DateTime CreatedDate { get; set; }
         public DateTime ChangeDate { get; set; }
         private static char[] specialChars = new char[] { '\\', '/', ':', '*', '?', '"', '<', '>', '|' };
+        private static readonly ConcurrentDictionary<string, PROState> _profileCache = new ConcurrentDictionary<string, PROState>();
 
         public static PROState GetProfileByAddress(string profileaddress, string username, string password, string url, string versionByte = "111", bool verbose = false)
         {
@@ -62,13 +64,26 @@ namespace SUP.P2FK
             string diskpath = "root\\" + profileaddress + "\\";
 
 
-            // fetch current JSONOBJ from disk if it exists
-            try
+            // Check in-memory cache first (skip disk read on warm addresses)
+            if (!verbose && _profileCache.TryGetValue(profileaddress, out PROState memProfile))
             {
-                JSONOBJ = System.IO.File.ReadAllText(diskpath + "GetProfileByAddress.json");
-                profileState = JsonConvert.DeserializeObject<PROState>(JSONOBJ);
+                profileState = memProfile;
             }
-            catch { }
+            else
+            {
+                // fetch current JSONOBJ from disk if it exists
+                try
+                {
+                    JSONOBJ = System.IO.File.ReadAllText(diskpath + "GetProfileByAddress.json");
+                    profileState = JsonConvert.DeserializeObject<PROState>(JSONOBJ);
+                    // Warm the memory cache from the disk read
+                    if (profileState != null)
+                    {
+                        _profileCache[profileaddress] = profileState;
+                    }
+                }
+                catch { }
+            }
 
             int intProcessHeight = 0;
             bool calculated = false;
@@ -82,8 +97,6 @@ namespace SUP.P2FK
 
             if (intProcessHeight != 0 && objectTransactions.Count() == 0)
             {
-                try { File.Delete(@"GET_OBJECT_BY_ADDRESS"); } catch { }
-
                 return profileState;
             }
 
@@ -245,7 +258,11 @@ namespace SUP.P2FK
 
                 try
                 {
-                    System.IO.File.WriteAllText(@"root\" + profileaddress + @"\" + "GetProfileByAddress.json", profileSerialized);
+                    string profileTarget = @"root\" + profileaddress + @"\GetProfileByAddress.json";
+                    string profileTmp = profileTarget + ".tmp";
+                    System.IO.File.WriteAllText(profileTmp, profileSerialized);
+                    if (System.IO.File.Exists(profileTarget)) System.IO.File.Delete(profileTarget);
+                    System.IO.File.Move(profileTmp, profileTarget);
                 }
                 catch
                 {
@@ -257,10 +274,16 @@ namespace SUP.P2FK
                         {
                             Directory.CreateDirectory(@"root\" + profileaddress);
                         }
-                        System.IO.File.WriteAllText(@"root\" + profileaddress + @"\" + "GetProfileByAddress.json", profileSerialized);
+                        string profileTarget = @"root\" + profileaddress + @"\GetProfileByAddress.json";
+                        string profileTmp = profileTarget + ".tmp";
+                        System.IO.File.WriteAllText(profileTmp, profileSerialized);
+                        if (System.IO.File.Exists(profileTarget)) System.IO.File.Delete(profileTarget);
+                        System.IO.File.Move(profileTmp, profileTarget);
                     }
                     catch { };
                 }
+                // Keep memory cache in sync with the freshly computed state
+                _profileCache[profileaddress] = profileState;
             }
 
             return profileState;
@@ -322,7 +345,11 @@ namespace SUP.P2FK
                                     var profileSerialized = JsonConvert.SerializeObject(isObject);
                                     try
                                     {
-                                        System.IO.File.WriteAllText(@"root\" + profileaddress + @"\" + "GetProfileByURN.json", profileSerialized);
+                                        string profileUrnTarget = @"root\" + profileaddress + @"\GetProfileByURN.json";
+                                        string profileUrnTmp = profileUrnTarget + ".tmp";
+                                        System.IO.File.WriteAllText(profileUrnTmp, profileSerialized);
+                                        if (System.IO.File.Exists(profileUrnTarget)) System.IO.File.Delete(profileUrnTarget);
+                                        System.IO.File.Move(profileUrnTmp, profileUrnTarget);
                                     }
                                     catch
                                     {
@@ -334,7 +361,11 @@ namespace SUP.P2FK
                                             {
                                                 Directory.CreateDirectory(@"root\" + profileaddress);
                                             }
-                                            System.IO.File.WriteAllText(@"root\" + profileaddress + @"\" + "GetProfileByURN.json", profileSerialized);
+                                            string profileUrnTarget = @"root\" + profileaddress + @"\GetProfileByURN.json";
+                                            string profileUrnTmp = profileUrnTarget + ".tmp";
+                                            System.IO.File.WriteAllText(profileUrnTmp, profileSerialized);
+                                            if (System.IO.File.Exists(profileUrnTarget)) System.IO.File.Delete(profileUrnTarget);
+                                            System.IO.File.Move(profileUrnTmp, profileUrnTarget);
                                         }
                                         catch { };
                                     }

@@ -305,7 +305,7 @@ namespace SUP
         {
 
             // sorry cannot run two searches at a time
-            if (System.IO.File.Exists("ROOTS-PROCESSING"))
+            if (System.IO.File.Exists(@"root\" + searchAddress + @"\ROOTS-PROCESSING"))
             {
                 System.Media.SystemSounds.Beep.Play();
                 return;

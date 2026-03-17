@@ -3,6 +3,7 @@ using NBitcoin;
 using Newtonsoft.Json;
 using System;
 using System.Collections;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
@@ -91,6 +92,7 @@ namespace SUP.P2FK
 
 
         private readonly static object SupLocker = new object();
+        private static readonly ConcurrentDictionary<string, OBJState> _objCache = new ConcurrentDictionary<string, OBJState>();
         public static OBJState GetObjectByAddress(string objectaddress, string username, string password, string url, string versionByte = "111", bool verbose = false)
         {
 
@@ -112,15 +114,28 @@ namespace SUP.P2FK
                 string diskpath = "root\\" + objectaddress + "\\";
 
 
-                // fetch current JSONOBJ from disk if it exists
-                try
+                // Check in-memory cache first (skip disk read on warm addresses)
+                if (!verbose && _objCache.TryGetValue(objectaddress, out OBJState memObj))
                 {
-                    JSONOBJ = System.IO.File.ReadAllText(diskpath + "OBJ.json");
-                    objectState = JsonConvert.DeserializeObject<OBJState>(JSONOBJ);
+                    objectState = memObj;
                     fetched = true;
-
                 }
-                catch { }
+                else
+                {
+                    // fetch current JSONOBJ from disk if it exists
+                    try
+                    {
+                        JSONOBJ = System.IO.File.ReadAllText(diskpath + "OBJ.json");
+                        objectState = JsonConvert.DeserializeObject<OBJState>(JSONOBJ);
+                        fetched = true;
+                        // Warm the memory cache from the disk read
+                        if (objectState != null && objectState.URN != null)
+                        {
+                            _objCache[objectaddress] = objectState;
+                        }
+                    }
+                    catch { }
+                }
                 if (fetched && objectState.URN == null && objectState.ProcessHeight == 0)
                 {
 
@@ -923,7 +938,11 @@ namespace SUP.P2FK
                                                                 try { Directory.CreateDirectory(@"root\" + objectState.TransactionId); } catch { }
 
                                                                 var rootSerialized = JsonConvert.SerializeObject(new Root()); ;
-                                                                System.IO.File.WriteAllText(@"root\" + objectState.TransactionId + @"\" + "ROOTS.json", rootSerialized);
+                                                                string rootsTarget2 = @"root\" + objectState.TransactionId + @"\ROOTS.json";
+                                                                string rootsTmp2 = rootsTarget2 + ".tmp";
+                                                                System.IO.File.WriteAllText(rootsTmp2, rootSerialized);
+                                                                if (System.IO.File.Exists(rootsTarget2)) System.IO.File.Delete(rootsTarget2);
+                                                                System.IO.File.Move(rootsTmp2, rootsTarget2);
 
                                                                 objectState = new OBJState();
                                                                 break;
@@ -1756,7 +1775,13 @@ namespace SUP.P2FK
                     {
                         Directory.CreateDirectory(@"root\" + objectaddress);
                     }
-                    System.IO.File.WriteAllText(@"root\" + objectaddress + @"\" + "OBJ.json", objectSerialized);
+                    string objTarget = @"root\" + objectaddress + @"\OBJ.json";
+                    string objTmp = objTarget + ".tmp";
+                    System.IO.File.WriteAllText(objTmp, objectSerialized);
+                    if (System.IO.File.Exists(objTarget)) System.IO.File.Delete(objTarget);
+                    System.IO.File.Move(objTmp, objTarget);
+                    // Keep memory cache in sync with the freshly computed state
+                    _objCache[objectaddress] = objectState;
                 }
 
             }
@@ -1903,7 +1928,11 @@ namespace SUP.P2FK
             {
                 Directory.CreateDirectory(@"root\" + objectTransaction.SignedBy);
             }
-            System.IO.File.WriteAllText(@"root\" + objectTransaction.SignedBy + @"\" + "OBJ.json", objectSerialized);
+            string objSignedTarget = @"root\" + objectTransaction.SignedBy + @"\OBJ.json";
+            string objSignedTmp = objSignedTarget + ".tmp";
+            System.IO.File.WriteAllText(objSignedTmp, objectSerialized);
+            if (System.IO.File.Exists(objSignedTarget)) System.IO.File.Delete(objSignedTarget);
+            System.IO.File.Move(objSignedTmp, objSignedTarget);
 
 
             objectSerialized = JsonConvert.SerializeObject(objectTransaction);
@@ -1912,7 +1941,11 @@ namespace SUP.P2FK
             {
                 Directory.CreateDirectory(@"root\" + objectTransaction.SignedBy);
             }
-            System.IO.File.WriteAllText(@"root\" + objectTransaction.SignedBy + @"\" + "GetRootByTransactionId.json", objectSerialized);
+            string rootByTxTarget = @"root\" + objectTransaction.SignedBy + @"\GetRootByTransactionId.json";
+            string rootByTxTmp = rootByTxTarget + ".tmp";
+            System.IO.File.WriteAllText(rootByTxTmp, objectSerialized);
+            if (System.IO.File.Exists(rootByTxTarget)) System.IO.File.Delete(rootByTxTarget);
+            System.IO.File.Move(rootByTxTmp, rootByTxTarget);
 
             //used to determine where to begin object State processing when retrieved from cache
             objectState.ProcessHeight = intProcessHeight;
@@ -1989,7 +2022,10 @@ namespace SUP.P2FK
                                 var profileSerialized1 = JsonConvert.SerializeObject(isObject);
                                 try
                                 {
-                                    System.IO.File.WriteAllText(filepath, profileSerialized1);
+                                    string urnTmp1 = filepath + ".tmp";
+                                    System.IO.File.WriteAllText(urnTmp1, profileSerialized1);
+                                    if (System.IO.File.Exists(filepath)) System.IO.File.Delete(filepath);
+                                    System.IO.File.Move(urnTmp1, filepath);
                                 }
                                 catch
                                 {
@@ -2001,7 +2037,10 @@ namespace SUP.P2FK
                                         {
                                             Directory.CreateDirectory(@"root\" + objectaddress);
                                         }
-                                        System.IO.File.WriteAllText(filepath, profileSerialized1);
+                                        string urnTmp1 = filepath + ".tmp";
+                                        System.IO.File.WriteAllText(urnTmp1, profileSerialized1);
+                                        if (System.IO.File.Exists(filepath)) System.IO.File.Delete(filepath);
+                                        System.IO.File.Move(urnTmp1, filepath);
                                     }
                                     catch { };
                                 }
@@ -2023,7 +2062,10 @@ namespace SUP.P2FK
                                 var profileSerialized2 = JsonConvert.SerializeObject(isObject);
                                 try
                                 {
-                                    System.IO.File.WriteAllText(filepath, profileSerialized2);
+                                    string urnTmp2 = filepath + ".tmp";
+                                    System.IO.File.WriteAllText(urnTmp2, profileSerialized2);
+                                    if (System.IO.File.Exists(filepath)) System.IO.File.Delete(filepath);
+                                    System.IO.File.Move(urnTmp2, filepath);
                                 }
                                 catch
                                 {
@@ -2035,7 +2077,10 @@ namespace SUP.P2FK
                                         {
                                             Directory.CreateDirectory(@"root\" + objectaddress);
                                         }
-                                        System.IO.File.WriteAllText(filepath, profileSerialized2);
+                                        string urnTmp2 = filepath + ".tmp";
+                                        System.IO.File.WriteAllText(urnTmp2, profileSerialized2);
+                                        if (System.IO.File.Exists(filepath)) System.IO.File.Delete(filepath);
+                                        System.IO.File.Move(urnTmp2, filepath);
                                     }
                                     catch { };
                                 }
@@ -2058,7 +2103,10 @@ namespace SUP.P2FK
             var profileSerialized3 = JsonConvert.SerializeObject(objectState);
             try
             {
-                System.IO.File.WriteAllText(filepath, profileSerialized3);
+                string urnTmp3 = filepath + ".tmp";
+                System.IO.File.WriteAllText(urnTmp3, profileSerialized3);
+                if (System.IO.File.Exists(filepath)) System.IO.File.Delete(filepath);
+                System.IO.File.Move(urnTmp3, filepath);
             }
             catch
             {
@@ -2070,7 +2118,10 @@ namespace SUP.P2FK
                     {
                         Directory.CreateDirectory(@"root\" + objectaddress);
                     }
-                    System.IO.File.WriteAllText(filepath, profileSerialized3);
+                    string urnTmp3 = filepath + ".tmp";
+                    System.IO.File.WriteAllText(urnTmp3, profileSerialized3);
+                    if (System.IO.File.Exists(filepath)) System.IO.File.Delete(filepath);
+                    System.IO.File.Move(urnTmp3, filepath);
                 }
                 catch { };
             }
@@ -2569,7 +2620,11 @@ namespace SUP.P2FK
                     {
                         Directory.CreateDirectory(@"root\" + objectaddress);
                     }
-                    System.IO.File.WriteAllText(@"root\" + objectaddress + @"\" + "GetObjectsByAddress.json", objectSerialized);
+                    string objsByAddrTarget = @"root\" + objectaddress + @"\GetObjectsByAddress.json";
+                    string objsByAddrTmp = objsByAddrTarget + ".tmp";
+                    System.IO.File.WriteAllText(objsByAddrTmp, objectSerialized);
+                    if (System.IO.File.Exists(objsByAddrTarget)) System.IO.File.Delete(objsByAddrTarget);
+                    System.IO.File.Move(objsByAddrTmp, objsByAddrTarget);
                 }
 
             });
@@ -2649,7 +2704,11 @@ namespace SUP.P2FK
             {
                 Directory.CreateDirectory(@"root\" + objectaddress);
             }
-            System.IO.File.WriteAllText(@"root\" + objectaddress + @"\" + "GetObjectsOwnedByAddress.json", objectSerialized);
+            string ownedTarget = @"root\" + objectaddress + @"\GetObjectsOwnedByAddress.json";
+            string ownedTmp = ownedTarget + ".tmp";
+            System.IO.File.WriteAllText(ownedTmp, objectSerialized);
+            if (System.IO.File.Exists(ownedTarget)) System.IO.File.Delete(ownedTarget);
+            System.IO.File.Move(ownedTmp, ownedTarget);
 
             return objectStates;
 
@@ -2718,7 +2777,11 @@ namespace SUP.P2FK
             {
                 Directory.CreateDirectory(@"root\" + objectaddress);
             }
-            System.IO.File.WriteAllText(@"root\" + objectaddress + @"\" + "GetObjectsCreatedByAddress.json", objectSerialized);
+            string createdTarget = @"root\" + objectaddress + @"\GetObjectsCreatedByAddress.json";
+            string createdTmp = createdTarget + ".tmp";
+            System.IO.File.WriteAllText(createdTmp, objectSerialized);
+            if (System.IO.File.Exists(createdTarget)) System.IO.File.Delete(createdTarget);
+            System.IO.File.Move(createdTmp, createdTarget);
 
             return objectStates;
 
@@ -2856,7 +2919,11 @@ namespace SUP.P2FK
             {
                 Directory.CreateDirectory(@"root\" + objectaddress);
             }
-            System.IO.File.WriteAllText(@"root\" + objectaddress + @"\" + "GetObjectsCollectionsByAddress.json", objectSerialized);
+            string colTarget = @"root\" + objectaddress + @"\GetObjectsCollectionsByAddress.json";
+            string colTmp = colTarget + ".tmp";
+            System.IO.File.WriteAllText(colTmp, objectSerialized);
+            if (System.IO.File.Exists(colTarget)) System.IO.File.Delete(colTarget);
+            System.IO.File.Move(colTmp, colTarget);
 
             return objectStates;
 
@@ -2938,7 +3005,11 @@ namespace SUP.P2FK
             {
                 Directory.CreateDirectory(@"root\found");
             }
-            System.IO.File.WriteAllText(@"root\found\GetFoundObjects.json", objectSerialized);
+            string foundTarget = @"root\found\GetFoundObjects.json";
+            string foundTmp = foundTarget + ".tmp";
+            System.IO.File.WriteAllText(foundTmp, objectSerialized);
+            if (System.IO.File.Exists(foundTarget)) System.IO.File.Delete(foundTarget);
+            System.IO.File.Move(foundTmp, foundTarget);
 
             return objectStates;
 
