@@ -386,7 +386,7 @@
       <Version>2.9.1</Version>
     </PackageReference>
     <PackageReference Include="HtmlSanitizer">
-      <Version>9.0.889</Version>
+      <Version>9.2.963</Version>
     </PackageReference>
     <PackageReference Include="Microsoft.AspNetCore">
       <Version>2.3.0</Version>
