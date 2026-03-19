@@ -757,11 +757,24 @@ namespace SUP.P2FK
                                                         }
                                                         // Update the value
                                                         objectState.Owners[giver] = (newValue, genid);
+                                                        try
+                                                        {
+                                                            if (objectState.Listings != null && objectState.Listings.ContainsKey(giver))
+                                                            {
+                                                                if (objectState.Listings[giver].Qty > newValue)
+                                                                {
+                                                                    objectState.Listings[giver].Qty = newValue;
+                                                                }
+                                                            }
+                                                        }
+                                                        catch { }
                                                     }
                                                     else
                                                     {
                                                         // Remove the dictionary key
                                                         objectState.Owners.Remove(giver);
+                                                        if (objectState.Listings != null && objectState.Listings.ContainsKey(giver))
+                                                            { objectState.Listings.Remove(giver); }
                                                     }
 
                                                     //close all currently open offers from reciever
