@@ -698,7 +698,12 @@ namespace SUP.P2FK
 
 
                                                 long qtyListed = 0;
-                                                try { if (objectState.Listings != null) { qtyListed = qtyListed + objectState.Listings[giver].Qty; } } catch { }
+                                                // The primary object container (objectaddress) can give listed units directly;
+                                                // only apply the listing restriction to regular (non-primary) owners.
+                                                if (giver != objectaddress)
+                                                {
+                                                    try { if (objectState.Listings != null) { qtyListed = qtyListed + objectState.Listings[giver].Qty; } } catch { }
+                                                }
 
                                                 if (qtyOwnedG.Item1 - qtyListed >= qtyToGive)
                                                 {
