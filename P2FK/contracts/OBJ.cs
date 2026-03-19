@@ -700,7 +700,7 @@ namespace SUP.P2FK
                                                 long qtyListed = 0;
                                                 try { if (objectState.Listings != null) { qtyListed = qtyListed + objectState.Listings[giver].Qty; } } catch { }
 
-                                                if (qtyOwnedG.Item1 - qtyListed >= qtyToGive)
+                                                if (qtyOwnedG.Item1 >= qtyToGive)
                                                 {
 
 
@@ -757,11 +757,30 @@ namespace SUP.P2FK
                                                         }
                                                         // Update the value
                                                         objectState.Owners[giver] = (newValue, genid);
+                                                        try
+                                                        {
+                                                            if (objectState.Listings != null && objectState.Listings.ContainsKey(giver))
+                                                            {
+                                                                if (objectState.Listings[giver].Qty > newValue)
+                                                                {
+                                                                    objectState.Listings[giver].Qty = newValue;
+                                                                }
+                                                            }
+                                                        }
+                                                        catch { }
                                                     }
                                                     else
                                                     {
                                                         // Remove the dictionary key
                                                         objectState.Owners.Remove(giver);
+                                                        try
+                                                        {
+                                                            if (objectState.Listings != null && objectState.Listings.ContainsKey(giver))
+                                                            {
+                                                                objectState.Listings.Remove(giver);
+                                                            }
+                                                        }
+                                                        catch { }
                                                     }
 
                                                     //close all currently open offers from reciever
