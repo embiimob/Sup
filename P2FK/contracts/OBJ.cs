@@ -669,8 +669,8 @@ namespace SUP.P2FK
                                                 }
 
 
-                                                // Check if the transaction signer is not on the Owners list
-                                                if (!objectState.Owners.TryGetValue(transaction.SignedBy, out var qtyOwnedG))
+                                                // Check if the transaction signer is not on the Owners list, or owns zero units
+                                                if (!objectState.Owners.TryGetValue(transaction.SignedBy, out var qtyOwnedG) || qtyOwnedG.Item1 <= 0)
                                                 {
                                                     // Check if the object container is empty
                                                     if (!objectState.Owners.TryGetValue(objectaddress, out var tuple) || tuple.Item1 <= 0)
