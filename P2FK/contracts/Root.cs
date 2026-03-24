@@ -128,10 +128,11 @@ namespace SUP.P2FK
 
                     totalByteSize = deserializedObject.size;
                     confirmations = deserializedObject.confirmations;
-                    blockdate =
-                     DateTimeOffset.FromUnixTimeSeconds(
-                         Convert.ToInt32(deserializedObject.blocktime)
-                     ).DateTime;
+                    long rawBlockTime = deserializedObject.blocktime != 0 ? (long)deserializedObject.blocktime : (long)deserializedObject.time;
+                    if (rawBlockTime != 0)
+                    {
+                        blockdate = DateTimeOffset.FromUnixTimeSeconds(rawBlockTime).DateTime;
+                    }
 
                     if (calculate)
                     {

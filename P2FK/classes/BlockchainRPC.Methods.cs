@@ -81,6 +81,7 @@ namespace SUP.RPCClient
         public Output[] vout;
         public string blockhash;
         public int confirmations;
+        public long time;
         public long blocktime;
 
         public static implicit operator GetRawDataTransactionResponse(String s)
