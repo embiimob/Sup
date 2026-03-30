@@ -2854,7 +2854,7 @@ namespace SUP.P2FK
                 {
                     if (isKeywordSearch)
                     {
-                        if (objectstate.URN != null && objectstate.Creators.Count() > 1 && objectstate.Creators.ElementAt(1).Value.Year > 1975)
+                        if (objectstate.URN != null && objectstate.Creators.Count() > 2 && objectstate.Creators.ElementAt(1).Value.Year > 1975)
                         {
 
                             if (!addedValues.Contains(objectstate.Creators.ElementAt(1).Key) && !System.IO.File.Exists(@"root\" + objectstate.Creators.ElementAt(1).Key + @"\BLOCK") && !System.IO.File.Exists(@"root\" + objectstate.Creators.ElementAt(0).Key + @"\BLOCK"))
@@ -2886,19 +2886,19 @@ namespace SUP.P2FK
                                 {
                                     OBJState activeObject = OBJState.GetObjectByAddress(objectstate.Creators.ElementAt(1).Key, username, password, url, versionByte);
 
-                                    if (activeObject.URN != null)
+                                    if (activeObject.URN != null && activeObject.Creators != null && activeObject.Creators.ContainsKey(objectaddress))
                                     {
-                                        colstate.Name = activeObject.URN;
-                                        colstate.Description = activeObject.Description;
-                                        colstate.Image = activeObject.Image;
-                                        colstate.CreatedDate = activeObject.CreatedDate;
+                                        List<OBJState> objectsAtCollection = OBJState.GetObjectsByAddress(objectstate.Creators.ElementAt(1).Key, username, password, url, versionByte, 0, -1);
 
-                                        if (activeObject.Name != null)
+                                        if (objectsAtCollection.Count > 1)
                                         {
-                                            colstate.Name = activeObject.Name;
-                                        }
+                                            colstate.Name = activeObject.URN;
+                                            colstate.Description = activeObject.Description;
+                                            colstate.Image = activeObject.Image;
+                                            colstate.CreatedDate = activeObject.CreatedDate;
 
-                                        objectStates.Add(colstate);
+                                            objectStates.Add(colstate);
+                                        }
                                     }
                                 }
 
@@ -2908,7 +2908,7 @@ namespace SUP.P2FK
                     }
                     else
                     {
-                        if (objectstate.URN != null && objectstate.Creators != null && objectstate.Creators.Count > 1 && objectstate.Creators.ContainsKey(objectaddress) && objectstate.Creators[objectaddress].Year > 1975)
+                        if (objectstate.URN != null && objectstate.Creators != null && objectstate.Creators.Count > 2 && objectstate.Creators.ContainsKey(objectaddress) && objectstate.Creators[objectaddress].Year > 1975)
                         {
 
                             if (!addedValues.Contains(objectstate.Creators.ElementAt(1).Key) && !System.IO.File.Exists(@"root\" + objectstate.Creators.ElementAt(1).Key + @"\BLOCK"))
@@ -2940,19 +2940,19 @@ namespace SUP.P2FK
                                 {
                                     OBJState activeObject = OBJState.GetObjectByAddress(objectstate.Creators.ElementAt(1).Key, username, password, url, versionByte);
 
-                                    if (activeObject.URN != null)
+                                    if (activeObject.URN != null && activeObject.Creators != null && activeObject.Creators.ContainsKey(objectaddress))
                                     {
-                                        colstate.Name = activeObject.URN;
-                                        colstate.Description = activeObject.Description;
-                                        colstate.Image = activeObject.Image;
-                                        colstate.CreatedDate = activeObject.CreatedDate;
+                                        List<OBJState> objectsAtCollection = OBJState.GetObjectsByAddress(objectstate.Creators.ElementAt(1).Key, username, password, url, versionByte, 0, -1);
 
-                                        if (activeObject.Name != null)
+                                        if (objectsAtCollection.Count > 1)
                                         {
-                                            colstate.Name = activeObject.Name;
-                                        }
+                                            colstate.Name = activeObject.URN;
+                                            colstate.Description = activeObject.Description;
+                                            colstate.Image = activeObject.Image;
+                                            colstate.CreatedDate = activeObject.CreatedDate;
 
-                                        objectStates.Add(colstate);
+                                            objectStates.Add(colstate);
+                                        }
                                     }
                                 }
 
