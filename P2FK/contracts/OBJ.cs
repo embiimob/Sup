@@ -2882,6 +2882,25 @@ namespace SUP.P2FK
 
                                     objectStates.Add(colstate);
                                 }
+                                else
+                                {
+                                    OBJState activeObject = OBJState.GetObjectByAddress(objectstate.Creators.ElementAt(1).Key, username, password, url, versionByte);
+
+                                    if (activeObject.URN != null)
+                                    {
+                                        colstate.Name = activeObject.URN;
+                                        colstate.Description = activeObject.Description;
+                                        colstate.Image = activeObject.Image;
+                                        colstate.CreatedDate = activeObject.CreatedDate;
+
+                                        if (activeObject.Name != null)
+                                        {
+                                            colstate.Name = activeObject.Name;
+                                        }
+
+                                        objectStates.Add(colstate);
+                                    }
+                                }
 
 
                             }
@@ -2916,6 +2935,25 @@ namespace SUP.P2FK
                                     }
 
                                     objectStates.Add(colstate);
+                                }
+                                else
+                                {
+                                    OBJState activeObject = OBJState.GetObjectByAddress(objectstate.Creators.ElementAt(1).Key, username, password, url, versionByte);
+
+                                    if (activeObject.URN != null)
+                                    {
+                                        colstate.Name = activeObject.URN;
+                                        colstate.Description = activeObject.Description;
+                                        colstate.Image = activeObject.Image;
+                                        colstate.CreatedDate = activeObject.CreatedDate;
+
+                                        if (activeObject.Name != null)
+                                        {
+                                            colstate.Name = activeObject.Name;
+                                        }
+
+                                        objectStates.Add(colstate);
+                                    }
                                 }
 
 

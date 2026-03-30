@@ -1966,12 +1966,29 @@ namespace SUP
                     }
                     else
                     {
-                        this.Invoke((Action)(() =>
+                        OBJState searchobject = OBJState.GetObjectByURN(address, mainnetLogin, mainnetPassword, mainnetURL, mainnetVersionByte);
+
+                        if (searchobject.URN != null)
                         {
-                            profileURN.Links[0].LinkData = address;
-                            profileURN.LinkColor = System.Drawing.SystemColors.GradientActiveCaption;
-                            profileURN.Text = "anon";
-                        }));
+                            this.Invoke((Action)(() =>
+                            {
+                                profileURN.Links[0].LinkData = searchobject.Creators.ElementAt(0).Key;
+                                profileURN.LinkColor = System.Drawing.SystemColors.Highlight;
+
+                                profileURN.Text = TruncateAddress(searchobject.URN);
+
+                                profileCheck = searchobject.Creators.ElementAt(0).Key;
+                            }));
+                        }
+                        else
+                        {
+                            this.Invoke((Action)(() =>
+                            {
+                                profileURN.Links[0].LinkData = address;
+                                profileURN.LinkColor = System.Drawing.SystemColors.GradientActiveCaption;
+                                profileURN.Text = "anon";
+                            }));
+                        }
                     }
                 }
                 else
