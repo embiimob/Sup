@@ -467,7 +467,7 @@ namespace SUP.P2FK
                 //Cache Root to disk to speed up future crawls
 
 
-                    if (!System.IO.File.Exists(@"root\" + P2FKRoot.SignedBy + @"\BLOCK"))
+                    if (rootbytes == null && !System.IO.File.Exists(@"root\" + P2FKRoot.SignedBy + @"\BLOCK"))
                     {
                         var rootSerialized = JsonConvert.SerializeObject(P2FKRoot);
                         string rootTarget = @"root\" + P2FKRoot.TransactionId + @"\ROOT.json";
