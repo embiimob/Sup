@@ -303,10 +303,13 @@ namespace SUP.P2FK
                             else { fileName = ""; fileBytes = Array.Empty<byte>(); }
 
                             P2FKRoot.TotalByteSize += totalByteSize;
-                            P2FKRoot.Confirmations = confirmations;
-                            P2FKRoot.BlockDate = blockdate;
-                            P2FKRoot.Output = outputs;
-                            P2FKRoot.BlockHeight = blockheight;
+                            if (rootbytes == null)
+                            {
+                                P2FKRoot.Confirmations = confirmations;
+                                P2FKRoot.BlockDate = blockdate;
+                                P2FKRoot.Output = outputs;
+                                P2FKRoot.BlockHeight = blockheight;
+                            }
 
                         }
 
