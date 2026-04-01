@@ -303,10 +303,13 @@ namespace SUP.P2FK
                             else { fileName = ""; fileBytes = Array.Empty<byte>(); }
 
                             P2FKRoot.TotalByteSize += totalByteSize;
-                            P2FKRoot.Confirmations = confirmations;
-                            P2FKRoot.BlockDate = blockdate;
-                            P2FKRoot.Output = outputs;
-                            P2FKRoot.BlockHeight = blockheight;
+                            if (rootbytes == null)
+                            {
+                                P2FKRoot.Confirmations = confirmations;
+                                P2FKRoot.BlockDate = blockdate;
+                                P2FKRoot.Output = outputs;
+                                P2FKRoot.BlockHeight = blockheight;
+                            }
 
                         }
 
@@ -314,9 +317,19 @@ namespace SUP.P2FK
 
                         if (isledger)
                         {
-                            // Do not cache ledger/multifile root objects because their Keywords are assembled
-                            // from child transactions which may not match the parent's outputs, causing
-                            // issues when the same ledger is accessed for different object addresses
+                            // Only the top-level call (rootbytes == null) has correct Output/Confirmations/
+                            // BlockDate/BlockHeight metadata; write ROOT.json here so ledger roots are cached.
+                            if (rootbytes == null && !System.IO.File.Exists(@"root\" + P2FKRoot.SignedBy + @"\BLOCK"))
+                            {
+                                P2FKRoot.BuildDate = DateTime.UtcNow;
+                                P2FKRoot.Cached = true;
+                                var rootSerialized = JsonConvert.SerializeObject(P2FKRoot);
+                                string rootTarget = @"root\" + P2FKRoot.TransactionId + @"\ROOT.json";
+                                string rootTmp = rootTarget + ".tmp";
+                                System.IO.File.WriteAllText(rootTmp, rootSerialized);
+                                if (System.IO.File.Exists(rootTarget)) System.IO.File.Delete(rootTarget);
+                                System.IO.File.Move(rootTmp, rootTarget);
+                            }
                             return P2FKRoot;
                         }
 
@@ -464,7 +477,7 @@ namespace SUP.P2FK
                 //Cache Root to disk to speed up future crawls
 
 
-                    if (!System.IO.File.Exists(@"root\" + P2FKRoot.SignedBy + @"\BLOCK"))
+                    if (rootbytes == null && !System.IO.File.Exists(@"root\" + P2FKRoot.SignedBy + @"\BLOCK"))
                     {
                         var rootSerialized = JsonConvert.SerializeObject(P2FKRoot);
                         string rootTarget = @"root\" + P2FKRoot.TransactionId + @"\ROOT.json";
