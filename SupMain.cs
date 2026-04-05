@@ -46,6 +46,12 @@ namespace SUP
         // This prevents confirmed transactions from replaying when rebroadcast
         private HashSet<string> _playedLiveTransactions = new HashSet<string>();
 
+        // Track pending (unconfirmed) transactions so their cached Root.json can be
+        // updated once the transaction confirms.  Value: [url, versionbyte, username, password]
+        private Dictionary<string, string[]> _pendingTransactions = new Dictionary<string, string[]>();
+        private const string PendingTransactionsFile = @"PENDING_TRANSACTIONS.json";
+        private readonly object _pendingLock = new object();
+
         private bool btcActive;
         private bool mzcActive;
         private bool ltcActive;
@@ -1150,6 +1156,7 @@ namespace SUP
                 btnLive.ForeColor = Color.Black;
                 tmrSearchMemoryPool.Enabled = false;
 
+                CleanupPendingTransactions();
 
                 try { File.Delete(@"LIVE_MONITOR_ENABLED"); } catch { }
 
@@ -1638,6 +1645,10 @@ namespace SUP
                         }
                         string filter = "";
 
+                        // Re-check any previously found but still-unconfirmed transactions so their
+                        // cached Root.json is updated once they are mined into a block.
+                        CheckPendingTransactions();
+
 
                         try
                         {
@@ -2028,16 +2039,14 @@ namespace SUP
                                                 {
                                                     isobject.TransactionId = s;
                                                     foundobjects.Add(isobject);
-                                                    try { Directory.Delete(@"root\" + s, true); } catch { }
-
-
-
                                                 }
                                                 
                                                 // Mark transaction as played to prevent replays
                                                 _playedLiveTransactions.Add(s);
                                                 
-                                                try { System.IO.Directory.Delete(@"root\" + s, true); } catch { }
+                                                // Keep the cached directory on disk and track as pending so the
+                                                // Root.json is updated once the transaction confirms.
+                                                AddPendingTransaction(s, @"http://127.0.0.1:18332", "111", mainnetLogin, mainnetPassword);
 
                                             }
                                             else { try { System.IO.Directory.Delete(@"root\" + s, true); } catch { } }
@@ -2455,16 +2464,14 @@ namespace SUP
                                                     {
                                                         isobject.TransactionId = s;
                                                         foundobjects.Add(isobject);
-                                                        try { Directory.Delete(@"root\" + s, true); } catch { }
-
-
-
                                                     }
                                                     
                                                     // Mark transaction as played to prevent replays
                                                     _playedLiveTransactions.Add(s);
                                                     
-                                                    try { System.IO.Directory.Delete(@"root\" + s, true); } catch { }
+                                                    // Keep the cached directory on disk and track as pending so the
+                                                    // Root.json is updated once the transaction confirms.
+                                                    AddPendingTransaction(s, @"http://127.0.0.1:8332", "0", mainnetLogin, mainnetPassword);
 
                                                 }
                                                 else { try { System.IO.Directory.Delete(@"root\" + s, true); } catch { } }
@@ -2819,14 +2826,14 @@ namespace SUP
 
                                                         isobject.TransactionId = s;
                                                         foundobjects.Add(isobject);
-                                                        try { Directory.Delete(@"root\" + s, true); } catch { }
-
                                                     }
                                                     
                                                     // Mark transaction as played to prevent replays
                                                     _playedLiveTransactions.Add(s);
                                                     
-                                                    try { System.IO.Directory.Delete(@"root\" + s, true); } catch { }
+                                                    // Keep the cached directory on disk and track as pending so the
+                                                    // Root.json is updated once the transaction confirms.
+                                                    AddPendingTransaction(s, @"http://127.0.0.1:12832", "50", "good-user", "better-password");
 
                                                 }
                                                 else { try { System.IO.Directory.Delete(@"root\" + s, true); } catch { } }
@@ -2835,7 +2842,10 @@ namespace SUP
                                             else { }
 
                                         }
-                                        catch { }
+                                        catch (Exception ex)
+                                        {
+                                            string error = ex.Message;
+                                        }
 
                                     }
 
@@ -3172,7 +3182,6 @@ namespace SUP
                                                     {
                                                         isobject.TransactionId = s;
                                                         foundobjects.Add(isobject);
-                                                        try { Directory.Delete(@"root\" + s, true); } catch { }
 
 
                                                     }
@@ -3180,7 +3189,9 @@ namespace SUP
                                                     // Mark transaction as played to prevent replays
                                                     _playedLiveTransactions.Add(s);
                                                     
-                                                    try { System.IO.Directory.Delete(@"root\" + s, true); } catch { }
+                                                    // Keep the cached directory on disk and track as pending so the
+                                                    // Root.json is updated once the transaction confirms.
+                                                    AddPendingTransaction(s, @"http://127.0.0.1:9332", "48", "good-user", "better-password");
 
                                                 }
                                                 else { try { System.IO.Directory.Delete(@"root\" + s, true); } catch { } }
@@ -3189,7 +3200,10 @@ namespace SUP
                                             else { }
 
                                         }
-                                        catch { }
+                                        catch (Exception ex)
+                                        {
+                                            string error = ex.Message;
+                                        }
 
                                     }
 
@@ -3530,7 +3544,6 @@ namespace SUP
                                                     {
                                                         isobject.TransactionId = s;
                                                         foundobjects.Add(isobject);
-                                                        try { Directory.Delete(@"root\" + s, true); } catch { }
 
 
                                                     }
@@ -3538,7 +3551,9 @@ namespace SUP
                                                     // Mark transaction as played to prevent replays
                                                     _playedLiveTransactions.Add(s);
                                                     
-                                                    try { System.IO.Directory.Delete(@"root\" + s, true); } catch { }
+                                                    // Keep the cached directory on disk and track as pending so the
+                                                    // Root.json is updated once the transaction confirms.
+                                                    AddPendingTransaction(s, @"http://127.0.0.1:22555", "30", "good-user", "better-password");
 
                                                 }
                                                 else { try { System.IO.Directory.Delete(@"root\" + s, true); } catch { } }
@@ -3547,7 +3562,10 @@ namespace SUP
                                             else { }
 
                                         }
-                                        catch { }
+                                        catch (Exception ex)
+                                        {
+                                            string error = ex.Message;
+                                        }
 
                                     }
 
@@ -3592,6 +3610,107 @@ namespace SUP
 
 
 
+            }
+        }
+
+        /// <summary>
+        /// Persists the pending transaction dictionary to disk so it survives between monitoring
+        /// cycles.  Called after any mutation to _pendingTransactions.
+        /// </summary>
+        private void SavePendingTransactions()
+        {
+            try
+            {
+                string json;
+                lock (_pendingLock)
+                {
+                    json = JsonConvert.SerializeObject(_pendingTransactions);
+                }
+                System.IO.File.WriteAllText(PendingTransactionsFile, json);
+            }
+            catch { }
+        }
+
+        /// <summary>
+        /// Adds a transaction to the pending set and saves to disk.
+        /// </summary>
+        private void AddPendingTransaction(string txid, string url, string versionbyte, string username, string password)
+        {
+            lock (_pendingLock)
+            {
+                if (!_pendingTransactions.ContainsKey(txid))
+                {
+                    _pendingTransactions[txid] = new string[] { url, versionbyte, username, password };
+                }
+            }
+            SavePendingTransactions();
+        }
+
+        /// <summary>
+        /// Deletes every pending transaction's cached directory from disk, clears the in-memory
+        /// dictionary, and removes the PENDING_TRANSACTIONS.json file.  Called when the live
+        /// monitor is disabled by the user or when the application is closing.
+        /// </summary>
+        private void CleanupPendingTransactions()
+        {
+            try
+            {
+                lock (_pendingLock)
+                {
+                    foreach (var txid in _pendingTransactions.Keys)
+                    {
+                        try { System.IO.Directory.Delete(@"root\" + txid, true); } catch { }
+                    }
+                    _pendingTransactions.Clear();
+                }
+                try { System.IO.File.Delete(PendingTransactionsFile); } catch { }
+            }
+            catch { }
+        }
+
+        /// <summary>
+        /// Re-checks every pending transaction against its blockchain.  Once a transaction
+        /// receives at least one confirmation its Root.json is already updated by
+        /// GetRootByTransactionId, so we simply remove it from the pending set.
+        /// </summary>
+        private void CheckPendingTransactions()
+        {
+            Dictionary<string, string[]> snapshot;
+            lock (_pendingLock)
+            {
+                if (_pendingTransactions.Count == 0) return;
+                snapshot = new Dictionary<string, string[]>(_pendingTransactions);
+            }
+
+            List<string> confirmed = new List<string>();
+            foreach (var kvp in snapshot)
+            {
+                try
+                {
+                    // value layout: [url, versionbyte, username, password]
+                    Root confirmedRoot = Root.GetRootByTransactionId(
+                        kvp.Key, kvp.Value[2], kvp.Value[3], kvp.Value[0], kvp.Value[1]);
+                    if (confirmedRoot != null && confirmedRoot.Confirmations > 0)
+                    {
+                        confirmed.Add(kvp.Key);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    string error = ex.Message;
+                }
+            }
+
+            if (confirmed.Count > 0)
+            {
+                lock (_pendingLock)
+                {
+                    foreach (var txid in confirmed)
+                    {
+                        _pendingTransactions.Remove(txid);
+                    }
+                }
+                SavePendingTransactions();
             }
         }
 
@@ -7902,6 +8021,9 @@ namespace SUP
             process.Start();
 
             try { System.IO.File.Delete("ROOTS-PROCESSING"); } catch { }
+
+            // Clean up pending transaction cache so stale data doesn't persist after app close
+            CleanupPendingTransactions();
 
         }
 
