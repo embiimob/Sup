@@ -3071,7 +3071,7 @@ namespace SUP.P2FK
 
             var filteredObjects = AllRoots
                 .Where(obj => obj.Message != null && obj.Message.Length > 0)
-                .OrderByDescending(obj => obj.Id)
+                .OrderByDescending(obj => obj.BlockDate)
                 .Skip(skip)
                 .Take(qty);
 
@@ -3120,7 +3120,7 @@ namespace SUP.P2FK
 
             var filteredObjects = AllRoots
                            .Where(obj => obj.File != null && obj.File.Keys.Contains("SEC"))
-                           .OrderByDescending(obj => obj.Id)
+                           .OrderByDescending(obj => obj.BlockDate)
                            .Skip(skip)
                            .Take(qty);
             // Now, filteredObjects contains objects with at least one message or one file
