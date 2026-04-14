@@ -247,7 +247,7 @@ namespace SUP.P2FK
                 
             }
 
-            if (calculated)
+            if (calculated && Root.WasLastFetchComplete(profileaddress))
             {
                 if (objectTransactions.Count() > 0)
                 {
@@ -343,6 +343,8 @@ namespace SUP.P2FK
                                     isObject.ProcessHeight = intProcessHeight;
 
                                     var profileSerialized = JsonConvert.SerializeObject(isObject);
+                                    if (Root.WasLastFetchComplete(profileaddress))
+                                    {
                                     try
                                     {
                                         string profileUrnTarget = @"root\" + profileaddress + @"\GetProfileByURN.json";
@@ -368,6 +370,7 @@ namespace SUP.P2FK
                                             System.IO.File.Move(profileUrnTmp, profileUrnTarget);
                                         }
                                         catch { };
+                                    }
                                     }
 
 

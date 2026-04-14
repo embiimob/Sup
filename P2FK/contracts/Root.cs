@@ -37,6 +37,19 @@ namespace SUP.P2FK
         public bool Cached { get; set; }
 
         private static readonly ConcurrentDictionary<string, List<Root>> _rootsCache = new ConcurrentDictionary<string, List<Root>>();
+        private static readonly ConcurrentDictionary<string, bool> _lastFetchCompleted = new ConcurrentDictionary<string, bool>();
+
+        /// <summary>
+        /// Returns true if the most recent GetRootsByAddress call for this address completed
+        /// without a network or RPC error.  Returns true by default for addresses that have
+        /// never been fetched (so callers that have never called GetRootsByAddress are not
+        /// blocked from writing).
+        /// </summary>
+        public static bool WasLastFetchComplete(string address)
+        {
+            if (address == null) return true;
+            return !_lastFetchCompleted.TryGetValue(address, out bool errored) || !errored;
+        }
 
 
         public static Root GetRootByTransactionId(string transactionid, string username, string password, string url, string versionbyte = "111", byte[] rootbytes = null, string signatureaddress = null, bool calculate = false)
@@ -547,6 +560,9 @@ namespace SUP.P2FK
 
                 int innerskip = intProcessHeight;
                 bool calculated = false;
+                // Track whether all batches were fetched without error. If a network/RPC
+                // timeout kills a batch mid-way we must NOT persist the partial list.
+                bool fetchError = false;
 
 
 
@@ -557,7 +573,7 @@ namespace SUP.P2FK
 
                         List<GetRawDataTransactionResponse> results = null;
 
-                    try { results = a.SearchRawDataTransaction(address, 0, innerskip, 300); } catch { break; }
+                    try { results = a.SearchRawDataTransaction(address, 0, innerskip, 300); } catch { fetchError = true; break; }
 
 
                         if (results == null || results.Count == 0) { break; }
@@ -587,10 +603,14 @@ namespace SUP.P2FK
 
                 }
 
+                // Record whether this address last had a complete (error-free) fetch so
+                // callers can decide whether to persist derived cache files.
+                _lastFetchCompleted[address] = fetchError;
 
-
-
-                if (calculated && rootList.Count() > 0)
+                // Only persist ROOTS.json when the fetch completed without a network/RPC
+                // error. A partial list written to disk would corrupt future incremental
+                // builds because the next call would skip the missing transactions.
+                if (!fetchError && calculated && rootList.Count() > 0)
                 {
                     try { rootList.Last().Id = intProcessHeight; } catch { }
 

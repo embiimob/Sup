@@ -423,18 +423,20 @@ namespace SUP.P2FK
 
                     var objectSerialized = JsonConvert.SerializeObject(objectState);
 
-
-                    if (!Directory.Exists(@"root\" + objectaddress))
+                    if (Root.WasLastFetchComplete(objectaddress))
                     {
-                        Directory.CreateDirectory(@"root\" + objectaddress);
+                        if (!Directory.Exists(@"root\" + objectaddress))
+                        {
+                            Directory.CreateDirectory(@"root\" + objectaddress);
+                        }
+                        string inqTarget = @"root\" + objectaddress + @"\INQ.json";
+                        string inqTmp = inqTarget + ".tmp";
+                        System.IO.File.WriteAllText(inqTmp, objectSerialized);
+                        if (System.IO.File.Exists(inqTarget)) System.IO.File.Delete(inqTarget);
+                        System.IO.File.Move(inqTmp, inqTarget);
+                        // Keep memory cache in sync with the freshly computed state
+                        _inqCache[objectaddress] = objectState;
                     }
-                    string inqTarget = @"root\" + objectaddress + @"\INQ.json";
-                    string inqTmp = inqTarget + ".tmp";
-                    System.IO.File.WriteAllText(inqTmp, objectSerialized);
-                    if (System.IO.File.Exists(inqTarget)) System.IO.File.Delete(inqTarget);
-                    System.IO.File.Move(inqTmp, inqTarget);
-                    // Keep memory cache in sync with the freshly computed state
-                    _inqCache[objectaddress] = objectState;
 
                 }
                 catch (Exception ex)
@@ -617,17 +619,20 @@ namespace SUP.P2FK
                     }
                     objectStates.Last().Id = objectTransactions.Count();
 
-                    var objectSerialized = JsonConvert.SerializeObject(objectStates);
-
-                    if (!Directory.Exists(@"root\" + objectaddress))
+                    if (Root.WasLastFetchComplete(objectaddress))
                     {
-                        Directory.CreateDirectory(@"root\" + objectaddress);
+                        var objectSerialized = JsonConvert.SerializeObject(objectStates);
+
+                        if (!Directory.Exists(@"root\" + objectaddress))
+                        {
+                            Directory.CreateDirectory(@"root\" + objectaddress);
+                        }
+                        string inqByAddrTarget = @"root\" + objectaddress + @"\GetInquiriesByAddress.json";
+                        string inqByAddrTmp = inqByAddrTarget + ".tmp";
+                        System.IO.File.WriteAllText(inqByAddrTmp, objectSerialized);
+                        if (System.IO.File.Exists(inqByAddrTarget)) System.IO.File.Delete(inqByAddrTarget);
+                        System.IO.File.Move(inqByAddrTmp, inqByAddrTarget);
                     }
-                    string inqByAddrTarget = @"root\" + objectaddress + @"\GetInquiriesByAddress.json";
-                    string inqByAddrTmp = inqByAddrTarget + ".tmp";
-                    System.IO.File.WriteAllText(inqByAddrTmp, objectSerialized);
-                    if (System.IO.File.Exists(inqByAddrTarget)) System.IO.File.Delete(inqByAddrTarget);
-                    System.IO.File.Move(inqByAddrTmp, inqByAddrTarget);
                 }
                 catch { }
                 finally { try { File.Delete(sentinelFile2); } catch { } }
