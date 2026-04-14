@@ -115,7 +115,8 @@ namespace SUP.P2FK
 
 
                 // Check in-memory cache first (skip disk read on warm addresses)
-                if (!verbose && _objCache.TryGetValue(objectaddress, out OBJState memObj))
+                // In CLI mode the process exits immediately so the in-memory cache has no benefit.
+                if (!verbose && !Root.IsCLI && _objCache.TryGetValue(objectaddress, out OBJState memObj))
                 {
                     objectState = memObj;
                     fetched = true;
@@ -128,8 +129,8 @@ namespace SUP.P2FK
                         JSONOBJ = System.IO.File.ReadAllText(diskpath + "OBJ.json");
                         objectState = JsonConvert.DeserializeObject<OBJState>(JSONOBJ);
                         fetched = true;
-                        // Warm the memory cache from the disk read
-                        if (objectState != null && objectState.URN != null)
+                        // Warm the memory cache from the disk read (GUI mode only)
+                        if (!Root.IsCLI && objectState != null && objectState.URN != null)
                         {
                             _objCache[objectaddress] = objectState;
                         }
@@ -167,6 +168,11 @@ namespace SUP.P2FK
                 try { intProcessHeight = objectState.Id; } catch { }
 
                 Root[] objectTransactions;
+                // Collect creator addresses whose collection-cache files should be
+                // invalidated only AFTER OBJ.json has been written successfully. Deleting
+                // them mid-loop would leave the cache in a broken state if the process is
+                // killed before the write completes.
+                List<string> pendingCacheInvalidations = new List<string>();
 
                 if (verbose == true) { intProcessHeight = 0; objectState = new OBJState(); objectState.ChangeLog = new List<string>(); }
 
@@ -1735,11 +1741,12 @@ namespace SUP.P2FK
 
 
                                                         //force all assoicated collections to update by purging the cache file when listed on secondary
+                                                        // Defer the actual deletion until after OBJ.json has been written so a
+                                                        // mid-loop process kill never leaves the cache in a partially-rebuilt state.
                                                         foreach (string creatorAddress in objectState.Creators.Keys)
                                                         {
-                                                            try { System.IO.File.Delete(@"root\" + creatorAddress + @"\" + "GetObjectsByAddress.json"); } catch { }
-                                                            try { System.IO.File.Delete(@"root\" + creatorAddress + @"\" + "GetObjectsCreatedByAddress.json"); } catch { }
-
+                                                            if (!pendingCacheInvalidations.Contains(creatorAddress))
+                                                                pendingCacheInvalidations.Add(creatorAddress);
                                                         }
                                                         if (verbose)
                                                         {
@@ -1787,20 +1794,37 @@ namespace SUP.P2FK
                     objectState.Id = objectTransactions.Max(state => state.Id);
                     objectState.Verbose = verbose;
 
-
-                    var objectSerialized = JsonConvert.SerializeObject(objectState);
-
-                    if (!Directory.Exists(@"root\" + objectaddress))
+                    // Only persist the new state when the underlying root fetch completed
+                    // without error. If the API timed-out mid-fetch, writing a partial state
+                    // would permanently corrupt the cache – the existing file is far safer.
+                    if (Root.WasLastFetchComplete(objectaddress))
                     {
-                        Directory.CreateDirectory(@"root\" + objectaddress);
+                        var objectSerialized = JsonConvert.SerializeObject(objectState);
+
+                        if (!Directory.Exists(@"root\" + objectaddress))
+                        {
+                            Directory.CreateDirectory(@"root\" + objectaddress);
+                        }
+                        string objTarget = @"root\" + objectaddress + @"\OBJ.json";
+                        string objTmp = objTarget + ".tmp";
+                        System.IO.File.WriteAllText(objTmp, objectSerialized);
+                        if (System.IO.File.Exists(objTarget)) System.IO.File.Delete(objTarget);
+                        System.IO.File.Move(objTmp, objTarget);
+                        // Keep memory cache in sync with the freshly computed state (GUI mode only)
+                        if (!Root.IsCLI) { _objCache[objectaddress] = objectState; }
                     }
-                    string objTarget = @"root\" + objectaddress + @"\OBJ.json";
-                    string objTmp = objTarget + ".tmp";
-                    System.IO.File.WriteAllText(objTmp, objectSerialized);
-                    if (System.IO.File.Exists(objTarget)) System.IO.File.Delete(objTarget);
-                    System.IO.File.Move(objTmp, objTarget);
-                    // Keep memory cache in sync with the freshly computed state
-                    _objCache[objectaddress] = objectState;
+                }
+
+                // Execute deferred collection-cache invalidations now that OBJ.json is
+                // safely written. Doing this outside the lock and after the write ensures
+                // a process kill during the loop cannot leave the cache partly cleared.
+                if (Root.WasLastFetchComplete(objectaddress))
+                {
+                    foreach (string addr in pendingCacheInvalidations)
+                    {
+                        try { System.IO.File.Delete(@"root\" + addr + @"\" + "GetObjectsByAddress.json"); } catch { }
+                        try { System.IO.File.Delete(@"root\" + addr + @"\" + "GetObjectsCreatedByAddress.json"); } catch { }
+                    }
                 }
 
             }
@@ -2628,10 +2652,13 @@ namespace SUP.P2FK
 
             try { objectStates.Last().Id = objectTransactions.Max(max => max.Id); } catch { }
 
-
+            // Capture the completion flag for the background task closure before
+            // returning (the address string is already captured by value).
+            bool rootsFetchComplete = Root.WasLastFetchComplete(objectaddress);
             Task.Run(() =>
             {
-                if (objectStates.Count > 0)
+                // Only write the collection list if the root fetch completed without error.
+                if (objectStates.Count > 0 && rootsFetchComplete)
                 {
                     var objectSerialized = JsonConvert.SerializeObject(objectStates);
 

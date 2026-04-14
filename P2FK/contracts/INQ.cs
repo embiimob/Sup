@@ -86,7 +86,8 @@ namespace SUP.P2FK
 
 
                     // Check in-memory cache first (skip disk read on warm addresses)
-                    if (!calculate && _inqCache.TryGetValue(objectaddress, out INQState memInq))
+                    // In CLI mode the process exits immediately so the in-memory cache has no benefit.
+                    if (!calculate && !Root.IsCLI && _inqCache.TryGetValue(objectaddress, out INQState memInq))
                     {
                         objectState = memInq;
                         fetched = true;
@@ -99,8 +100,8 @@ namespace SUP.P2FK
                             JSONOBJ = System.IO.File.ReadAllText(diskpath + "INQ.json");
                             objectState = JsonConvert.DeserializeObject<INQState>(JSONOBJ);
                             fetched = true;
-                            // Warm the memory cache from the disk read
-                            if (objectState != null)
+                            // Warm the memory cache from the disk read (GUI mode only)
+                            if (!Root.IsCLI && objectState != null)
                             {
                                 _inqCache[objectaddress] = objectState;
                             }
@@ -423,18 +424,20 @@ namespace SUP.P2FK
 
                     var objectSerialized = JsonConvert.SerializeObject(objectState);
 
-
-                    if (!Directory.Exists(@"root\" + objectaddress))
+                    if (Root.WasLastFetchComplete(objectaddress))
                     {
-                        Directory.CreateDirectory(@"root\" + objectaddress);
+                        if (!Directory.Exists(@"root\" + objectaddress))
+                        {
+                            Directory.CreateDirectory(@"root\" + objectaddress);
+                        }
+                        string inqTarget = @"root\" + objectaddress + @"\INQ.json";
+                        string inqTmp = inqTarget + ".tmp";
+                        System.IO.File.WriteAllText(inqTmp, objectSerialized);
+                        if (System.IO.File.Exists(inqTarget)) System.IO.File.Delete(inqTarget);
+                        System.IO.File.Move(inqTmp, inqTarget);
+                        // Keep memory cache in sync with the freshly computed state (GUI mode only)
+                        if (!Root.IsCLI) { _inqCache[objectaddress] = objectState; }
                     }
-                    string inqTarget = @"root\" + objectaddress + @"\INQ.json";
-                    string inqTmp = inqTarget + ".tmp";
-                    System.IO.File.WriteAllText(inqTmp, objectSerialized);
-                    if (System.IO.File.Exists(inqTarget)) System.IO.File.Delete(inqTarget);
-                    System.IO.File.Move(inqTmp, inqTarget);
-                    // Keep memory cache in sync with the freshly computed state
-                    _inqCache[objectaddress] = objectState;
 
                 }
                 catch (Exception ex)
@@ -617,17 +620,20 @@ namespace SUP.P2FK
                     }
                     objectStates.Last().Id = objectTransactions.Count();
 
-                    var objectSerialized = JsonConvert.SerializeObject(objectStates);
-
-                    if (!Directory.Exists(@"root\" + objectaddress))
+                    if (Root.WasLastFetchComplete(objectaddress))
                     {
-                        Directory.CreateDirectory(@"root\" + objectaddress);
+                        var objectSerialized = JsonConvert.SerializeObject(objectStates);
+
+                        if (!Directory.Exists(@"root\" + objectaddress))
+                        {
+                            Directory.CreateDirectory(@"root\" + objectaddress);
+                        }
+                        string inqByAddrTarget = @"root\" + objectaddress + @"\GetInquiriesByAddress.json";
+                        string inqByAddrTmp = inqByAddrTarget + ".tmp";
+                        System.IO.File.WriteAllText(inqByAddrTmp, objectSerialized);
+                        if (System.IO.File.Exists(inqByAddrTarget)) System.IO.File.Delete(inqByAddrTarget);
+                        System.IO.File.Move(inqByAddrTmp, inqByAddrTarget);
                     }
-                    string inqByAddrTarget = @"root\" + objectaddress + @"\GetInquiriesByAddress.json";
-                    string inqByAddrTmp = inqByAddrTarget + ".tmp";
-                    System.IO.File.WriteAllText(inqByAddrTmp, objectSerialized);
-                    if (System.IO.File.Exists(inqByAddrTarget)) System.IO.File.Delete(inqByAddrTarget);
-                    System.IO.File.Move(inqByAddrTmp, inqByAddrTarget);
                 }
                 catch { }
                 finally { try { File.Delete(sentinelFile2); } catch { } }

@@ -65,7 +65,8 @@ namespace SUP.P2FK
 
 
             // Check in-memory cache first (skip disk read on warm addresses)
-            if (!verbose && _profileCache.TryGetValue(profileaddress, out PROState memProfile))
+            // In CLI mode the process exits immediately so the in-memory cache has no benefit.
+            if (!verbose && !Root.IsCLI && _profileCache.TryGetValue(profileaddress, out PROState memProfile))
             {
                 profileState = memProfile;
             }
@@ -76,8 +77,8 @@ namespace SUP.P2FK
                 {
                     JSONOBJ = System.IO.File.ReadAllText(diskpath + "GetProfileByAddress.json");
                     profileState = JsonConvert.DeserializeObject<PROState>(JSONOBJ);
-                    // Warm the memory cache from the disk read
-                    if (profileState != null)
+                    // Warm the memory cache from the disk read (GUI mode only)
+                    if (!Root.IsCLI && profileState != null)
                     {
                         _profileCache[profileaddress] = profileState;
                     }
@@ -247,7 +248,7 @@ namespace SUP.P2FK
                 
             }
 
-            if (calculated)
+            if (calculated && Root.WasLastFetchComplete(profileaddress))
             {
                 if (objectTransactions.Count() > 0)
                 {
@@ -282,8 +283,8 @@ namespace SUP.P2FK
                     }
                     catch { };
                 }
-                // Keep memory cache in sync with the freshly computed state
-                _profileCache[profileaddress] = profileState;
+                // Keep memory cache in sync with the freshly computed state (GUI mode only)
+                if (!Root.IsCLI) { _profileCache[profileaddress] = profileState; }
             }
 
             return profileState;
@@ -343,6 +344,8 @@ namespace SUP.P2FK
                                     isObject.ProcessHeight = intProcessHeight;
 
                                     var profileSerialized = JsonConvert.SerializeObject(isObject);
+                                    if (Root.WasLastFetchComplete(profileaddress))
+                                    {
                                     try
                                     {
                                         string profileUrnTarget = @"root\" + profileaddress + @"\GetProfileByURN.json";
@@ -368,6 +371,7 @@ namespace SUP.P2FK
                                             System.IO.File.Move(profileUrnTmp, profileUrnTarget);
                                         }
                                         catch { };
+                                    }
                                     }
 
 

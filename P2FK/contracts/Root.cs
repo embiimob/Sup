@@ -37,6 +37,29 @@ namespace SUP.P2FK
         public bool Cached { get; set; }
 
         private static readonly ConcurrentDictionary<string, List<Root>> _rootsCache = new ConcurrentDictionary<string, List<Root>>();
+        // Stores true when the last GetRootsByAddress for an address completed fully
+        // (no network/RPC error), false when it failed mid-fetch.
+        private static readonly ConcurrentDictionary<string, bool> _lastFetchCompleted = new ConcurrentDictionary<string, bool>();
+
+        /// <summary>
+        /// Set to true by Program.cs when the process is running as a CLI command.
+        /// In CLI mode the process exits immediately after returning, so populating
+        /// in-memory caches only wastes CPU and allocation time.  Disk caches are
+        /// still read and written as normal.
+        /// </summary>
+        public static bool IsCLI { get; set; } = false;
+
+        /// <summary>
+        /// Returns true if the most recent GetRootsByAddress call for this address completed
+        /// without a network or RPC error.  Returns true by default for addresses that have
+        /// never been fetched (so callers that have never called GetRootsByAddress are not
+        /// blocked from writing).
+        /// </summary>
+        public static bool WasLastFetchComplete(string address)
+        {
+            if (address == null) return true;
+            return !_lastFetchCompleted.TryGetValue(address, out bool completed) || completed;
+        }
 
 
         public static Root GetRootByTransactionId(string transactionid, string username, string password, string url, string versionbyte = "111", byte[] rootbytes = null, string signatureaddress = null, bool calculate = false)
@@ -515,7 +538,9 @@ namespace SUP.P2FK
                 bool fetched = false;
 
                 // Check in-memory cache first (skip disk read on warm addresses)
-                if (!calculate && _rootsCache.TryGetValue(address, out List<Root> memCached))
+                // In CLI mode the process exits immediately so there is no benefit to
+                // reading or writing the in-memory cache.
+                if (!calculate && !IsCLI && _rootsCache.TryGetValue(address, out List<Root> memCached))
                 {
                     rootList = new List<Root>(memCached);
                     fetched = true;
@@ -528,8 +553,8 @@ namespace SUP.P2FK
                         string P2FKJSONString = System.IO.File.ReadAllText(diskpath + "ROOTS.json");
                         rootList = JsonConvert.DeserializeObject<List<Root>>(P2FKJSONString);
                         fetched = true;
-                        // Warm the memory cache from the disk read
-                        if (rootList != null && rootList.Count > 0)
+                        // Warm the memory cache from the disk read (GUI mode only)
+                        if (!IsCLI && rootList != null && rootList.Count > 0)
                         {
                             _rootsCache[address] = new List<Root>(rootList);
                         }
@@ -547,6 +572,9 @@ namespace SUP.P2FK
 
                 int innerskip = intProcessHeight;
                 bool calculated = false;
+                // Track whether all batches were fetched without error. If a network/RPC
+                // timeout kills a batch mid-way we must NOT persist the partial list.
+                bool fetchError = false;
 
 
 
@@ -557,7 +585,7 @@ namespace SUP.P2FK
 
                         List<GetRawDataTransactionResponse> results = null;
 
-                    try { results = a.SearchRawDataTransaction(address, 0, innerskip, 300); } catch { break; }
+                    try { results = a.SearchRawDataTransaction(address, 0, innerskip, 300); } catch { fetchError = true; break; }
 
 
                         if (results == null || results.Count == 0) { break; }
@@ -587,10 +615,14 @@ namespace SUP.P2FK
 
                 }
 
+                // Record whether this address last had a complete (error-free) fetch so
+                // callers can decide whether to persist derived cache files.
+                _lastFetchCompleted[address] = !fetchError;
 
-
-
-                if (calculated && rootList.Count() > 0)
+                // Only persist ROOTS.json when the fetch completed without a network/RPC
+                // error. A partial list written to disk would corrupt future incremental
+                // builds because the next call would skip the missing transactions.
+                if (!fetchError && calculated && rootList.Count() > 0)
                 {
                     try { rootList.Last().Id = intProcessHeight; } catch { }
 
@@ -601,8 +633,8 @@ namespace SUP.P2FK
                     System.IO.File.WriteAllText(rootsTmp, rootSerialized);
                     if (System.IO.File.Exists(rootsTarget)) System.IO.File.Delete(rootsTarget);
                     System.IO.File.Move(rootsTmp, rootsTarget);
-                    // Keep memory cache in sync with the freshly written data
-                    _rootsCache[address] = new List<Root>(rootList);
+                    // Keep memory cache in sync with the freshly written data (GUI mode only)
+                    if (!IsCLI) { _rootsCache[address] = new List<Root>(rootList); }
 
                 }
 
