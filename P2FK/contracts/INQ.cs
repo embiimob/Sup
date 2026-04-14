@@ -86,7 +86,8 @@ namespace SUP.P2FK
 
 
                     // Check in-memory cache first (skip disk read on warm addresses)
-                    if (!calculate && _inqCache.TryGetValue(objectaddress, out INQState memInq))
+                    // In CLI mode the process exits immediately so the in-memory cache has no benefit.
+                    if (!calculate && !Root.IsCLI && _inqCache.TryGetValue(objectaddress, out INQState memInq))
                     {
                         objectState = memInq;
                         fetched = true;
@@ -99,8 +100,8 @@ namespace SUP.P2FK
                             JSONOBJ = System.IO.File.ReadAllText(diskpath + "INQ.json");
                             objectState = JsonConvert.DeserializeObject<INQState>(JSONOBJ);
                             fetched = true;
-                            // Warm the memory cache from the disk read
-                            if (objectState != null)
+                            // Warm the memory cache from the disk read (GUI mode only)
+                            if (!Root.IsCLI && objectState != null)
                             {
                                 _inqCache[objectaddress] = objectState;
                             }
@@ -434,8 +435,8 @@ namespace SUP.P2FK
                         System.IO.File.WriteAllText(inqTmp, objectSerialized);
                         if (System.IO.File.Exists(inqTarget)) System.IO.File.Delete(inqTarget);
                         System.IO.File.Move(inqTmp, inqTarget);
-                        // Keep memory cache in sync with the freshly computed state
-                        _inqCache[objectaddress] = objectState;
+                        // Keep memory cache in sync with the freshly computed state (GUI mode only)
+                        if (!Root.IsCLI) { _inqCache[objectaddress] = objectState; }
                     }
 
                 }

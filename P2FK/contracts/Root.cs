@@ -42,6 +42,14 @@ namespace SUP.P2FK
         private static readonly ConcurrentDictionary<string, bool> _lastFetchCompleted = new ConcurrentDictionary<string, bool>();
 
         /// <summary>
+        /// Set to true by Program.cs when the process is running as a CLI command.
+        /// In CLI mode the process exits immediately after returning, so populating
+        /// in-memory caches only wastes CPU and allocation time.  Disk caches are
+        /// still read and written as normal.
+        /// </summary>
+        public static bool IsCLI { get; set; } = false;
+
+        /// <summary>
         /// Returns true if the most recent GetRootsByAddress call for this address completed
         /// without a network or RPC error.  Returns true by default for addresses that have
         /// never been fetched (so callers that have never called GetRootsByAddress are not
@@ -530,7 +538,9 @@ namespace SUP.P2FK
                 bool fetched = false;
 
                 // Check in-memory cache first (skip disk read on warm addresses)
-                if (!calculate && _rootsCache.TryGetValue(address, out List<Root> memCached))
+                // In CLI mode the process exits immediately so there is no benefit to
+                // reading or writing the in-memory cache.
+                if (!calculate && !IsCLI && _rootsCache.TryGetValue(address, out List<Root> memCached))
                 {
                     rootList = new List<Root>(memCached);
                     fetched = true;
@@ -543,8 +553,8 @@ namespace SUP.P2FK
                         string P2FKJSONString = System.IO.File.ReadAllText(diskpath + "ROOTS.json");
                         rootList = JsonConvert.DeserializeObject<List<Root>>(P2FKJSONString);
                         fetched = true;
-                        // Warm the memory cache from the disk read
-                        if (rootList != null && rootList.Count > 0)
+                        // Warm the memory cache from the disk read (GUI mode only)
+                        if (!IsCLI && rootList != null && rootList.Count > 0)
                         {
                             _rootsCache[address] = new List<Root>(rootList);
                         }
@@ -623,8 +633,8 @@ namespace SUP.P2FK
                     System.IO.File.WriteAllText(rootsTmp, rootSerialized);
                     if (System.IO.File.Exists(rootsTarget)) System.IO.File.Delete(rootsTarget);
                     System.IO.File.Move(rootsTmp, rootsTarget);
-                    // Keep memory cache in sync with the freshly written data
-                    _rootsCache[address] = new List<Root>(rootList);
+                    // Keep memory cache in sync with the freshly written data (GUI mode only)
+                    if (!IsCLI) { _rootsCache[address] = new List<Root>(rootList); }
 
                 }
 
