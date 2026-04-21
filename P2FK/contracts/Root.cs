@@ -13,12 +13,43 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Globalization;
+using System.Threading;
 
 
 namespace SUP.P2FK
 {
     public class Root
     {
+        private const int MutexHashPrefixLength = 48;
+
+        private sealed class AddressCacheLock : IDisposable
+        {
+            private readonly Mutex _mutex;
+            private readonly bool _hasHandle;
+
+            public AddressCacheLock(Mutex mutex, bool hasHandle)
+            {
+                _mutex = mutex;
+                _hasHandle = hasHandle;
+            }
+
+            public void Dispose()
+            {
+                try
+                {
+                    if (_hasHandle)
+                    {
+                        _mutex.ReleaseMutex();
+                    }
+                }
+                catch { /* lock may already be released/abandoned during shutdown */ }
+                finally
+                {
+                    _mutex.Dispose();
+                }
+            }
+        }
+
         public int Id { get; set; }
         public string[] Message { get; set; }
         public Dictionary<string, BigInteger> File { get; set; }
@@ -61,6 +92,56 @@ namespace SUP.P2FK
             return !_lastFetchCompleted.TryGetValue(address, out bool completed) || completed;
         }
 
+        public static IDisposable AcquireAddressCacheLock(string address, string cacheName)
+        {
+            string normalizedAddress = (address ?? string.Empty).Trim().ToLowerInvariant();
+            string normalizedCache = (cacheName ?? string.Empty).Trim().ToLowerInvariant();
+            string source = normalizedAddress + "|" + normalizedCache;
+            string hash;
+            using (System.Security.Cryptography.SHA256 sha256 = System.Security.Cryptography.SHA256.Create())
+            {
+                byte[] hashBytes = sha256.ComputeHash(Encoding.UTF8.GetBytes(source));
+                hash = BitConverter.ToString(hashBytes).Replace("-", string.Empty);
+            }
+
+            // Named mutex provides cross-process synchronization on Windows.
+            // Keep mutex name short and deterministic while still hash-based.
+            string mutexName = @"Global\SUP_CACHE_" + hash.Substring(0, MutexHashPrefixLength);
+            var mutex = new Mutex(false, mutexName);
+            bool hasHandle = false;
+            try
+            {
+                hasHandle = mutex.WaitOne();
+            }
+            catch (AbandonedMutexException)
+            {
+                hasHandle = true;
+            }
+
+            return new AddressCacheLock(mutex, hasHandle);
+        }
+
+        public static void AtomicWriteCacheFile(string targetPath, string contents)
+        {
+            string directory = Path.GetDirectoryName(targetPath);
+            if (!string.IsNullOrEmpty(directory))
+            {
+                Directory.CreateDirectory(directory);
+            }
+
+            string tmpPath = targetPath + ".tmp." + Guid.NewGuid().ToString("N");
+            try
+            {
+                System.IO.File.WriteAllText(tmpPath, contents);
+                if (System.IO.File.Exists(targetPath)) System.IO.File.Delete(targetPath);
+                System.IO.File.Move(tmpPath, targetPath);
+            }
+            finally
+            {
+                try { if (System.IO.File.Exists(tmpPath)) System.IO.File.Delete(tmpPath); } catch { /* best-effort tmp cleanup */ }
+            }
+        }
+
 
         public static Root GetRootByTransactionId(string transactionid, string username, string password, string url, string versionbyte = "111", byte[] rootbytes = null, string signatureaddress = null, bool calculate = false)
         {
@@ -77,7 +158,7 @@ namespace SUP.P2FK
 
                         P2FKJSONString = System.IO.File.ReadAllText(diskpath + "ROOT.json");
                         P2FKRoot = JsonConvert.DeserializeObject<Root>(P2FKJSONString);
-                       
+
                         if (P2FKRoot.Confirmations > 0)
                         {
                             return P2FKRoot;
@@ -87,7 +168,7 @@ namespace SUP.P2FK
 
                 }
 
-    
+
                 //used as P2FK Delimiters
                 char[] specialChars = new char[] { '\\', '/', ':', '*', '?', '"', '<', '>', '|' };
                 Regex regexSpecialChars = new Regex(@"([\\/:*?""<>|])\d+");
@@ -129,7 +210,7 @@ namespace SUP.P2FK
     "0.01000000",
     "0.02000000",
     "1"
-   
+
 };
 
 
@@ -504,17 +585,14 @@ namespace SUP.P2FK
                     {
                         var rootSerialized = JsonConvert.SerializeObject(P2FKRoot);
                         string rootTarget = @"root\" + P2FKRoot.TransactionId + @"\ROOT.json";
-                        string rootTmp = rootTarget + ".tmp";
-                        System.IO.File.WriteAllText(rootTmp, rootSerialized);
-                        if (System.IO.File.Exists(rootTarget)) System.IO.File.Delete(rootTarget);
-                        System.IO.File.Move(rootTmp, rootTarget);
+                        AtomicWriteCacheFile(rootTarget, rootSerialized);
                     }
-                                      
 
-              
+
+
 
             }
-            catch (Exception ex)  { 
+            catch (Exception ex)  {
                     string error = ex.Message; }
             return P2FKRoot;
         }
@@ -535,6 +613,8 @@ namespace SUP.P2FK
 
             try
             {
+                using (AcquireAddressCacheLock(address, "GetRootsByAddress"))
+                {
                 bool fetched = false;
 
                 // Check in-memory cache first (skip disk read on warm addresses)
@@ -580,7 +660,7 @@ namespace SUP.P2FK
 
                 while (true)
                 {
-                    
+
                         CoinRPC a = new CoinRPC(new Uri(url), new NetworkCredential(username, password));
 
                         List<GetRawDataTransactionResponse> results = null;
@@ -611,7 +691,7 @@ namespace SUP.P2FK
 
                         }
                         innerskip += 300;
-                   
+
 
                 }
 
@@ -626,15 +706,30 @@ namespace SUP.P2FK
                 {
                     try { rootList.Last().Id = intProcessHeight; } catch { }
 
-                    try { Directory.CreateDirectory(@"root\" + address); } catch { }
-                    var rootSerialized = JsonConvert.SerializeObject(rootList);
                     string rootsTarget = @"root\" + address + @"\ROOTS.json";
-                    string rootsTmp = rootsTarget + ".tmp";
-                    System.IO.File.WriteAllText(rootsTmp, rootSerialized);
-                    if (System.IO.File.Exists(rootsTarget)) System.IO.File.Delete(rootsTarget);
-                    System.IO.File.Move(rootsTmp, rootsTarget);
-                    // Keep memory cache in sync with the freshly written data (GUI mode only)
-                    if (!IsCLI) { _rootsCache[address] = new List<Root>(rootList); }
+                    bool canCommit = true;
+                    try
+                    {
+                        string existingJson = System.IO.File.ReadAllText(rootsTarget);
+                        List<Root> existingRoots = JsonConvert.DeserializeObject<List<Root>>(existingJson);
+                        if (existingRoots != null && existingRoots.Count > 0)
+                        {
+                            int existingCursor = 0;
+                            try { existingCursor = existingRoots.Max(r => r.Id); } catch { }
+                            // Guard against stale/partial writers overwriting a better on-disk snapshot.
+                            if (intProcessHeight < existingCursor) { canCommit = false; }
+                            else if (intProcessHeight == existingCursor && rootList.Count < existingRoots.Count) { canCommit = false; }
+                        }
+                    }
+                    catch { }
+
+                    if (canCommit)
+                    {
+                        var rootSerialized = JsonConvert.SerializeObject(rootList);
+                        AtomicWriteCacheFile(rootsTarget, rootSerialized);
+                        // Keep memory cache in sync with the freshly written data (GUI mode only)
+                        if (!IsCLI) { _rootsCache[address] = new List<Root>(rootList); }
+                    }
 
                 }
 
@@ -652,6 +747,7 @@ namespace SUP.P2FK
                     if (qty == -1) { return rootList.ToArray(); }
                     else { return rootList.Take(qty).ToArray(); }
 
+                }
                 }
             }
             catch

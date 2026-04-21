@@ -56,98 +56,100 @@ namespace SUP.P2FK
         {
 
             PROState profileState = new PROState();
-           
+
             if (System.IO.File.Exists(@"root\" + profileaddress + @"\BLOCK")) { return new PROState { }; }
-               
+
             string JSONOBJ;
             string logstatus;
             string diskpath = "root\\" + profileaddress + "\\";
+            string profilePath = diskpath + "GetProfileByAddress.json";
 
-
-            // Check in-memory cache first (skip disk read on warm addresses)
-            // In CLI mode the process exits immediately so the in-memory cache has no benefit.
-            if (!verbose && !Root.IsCLI && _profileCache.TryGetValue(profileaddress, out PROState memProfile))
+            using (Root.AcquireAddressCacheLock(profileaddress, "GetProfileByAddress"))
             {
-                profileState = memProfile;
-            }
-            else
-            {
-                // fetch current JSONOBJ from disk if it exists
-                try
+                // Check in-memory cache first (skip disk read on warm addresses)
+                // In CLI mode the process exits immediately so the in-memory cache has no benefit.
+                if (!verbose && !Root.IsCLI && _profileCache.TryGetValue(profileaddress, out PROState memProfile))
                 {
-                    JSONOBJ = System.IO.File.ReadAllText(diskpath + "GetProfileByAddress.json");
-                    profileState = JsonConvert.DeserializeObject<PROState>(JSONOBJ);
-                    // Warm the memory cache from the disk read (GUI mode only)
-                    if (!Root.IsCLI && profileState != null)
-                    {
-                        _profileCache[profileaddress] = profileState;
-                    }
+                    profileState = memProfile;
                 }
-                catch { }
-            }
-
-            int intProcessHeight = 0;
-            bool calculated = false;
-            try { intProcessHeight = profileState.Id; } catch { }
-
-            Root[] objectTransactions;
-
-            if (verbose == true) { intProcessHeight = 0; profileState = new PROState(); }
-
-            objectTransactions = Root.GetRootsByAddress(profileaddress, username, password, url, intProcessHeight, -1, versionByte, verbose);
-
-            if (intProcessHeight != 0 && objectTransactions.Count() == 0)
-            {
-                return profileState;
-            }
-
-            foreach (Root transaction in objectTransactions)
-            {
-                if (transaction.Id > intProcessHeight)
+                else
                 {
-                    calculated = true;
-                    //ignore any transaction that is not signed
-                    if (transaction.Signed && (transaction.File.ContainsKey("PRO")))
+                    // fetch current JSONOBJ from disk if it exists
+                    try
                     {
-                        
-                        intProcessHeight = transaction.Id;
-                        profileState.ProcessHeight = intProcessHeight;
-
-
-                        string sigSeen = null;
-
-                        // Calculate SHA-256 hash of the signature
-                        using (System.Security.Cryptography.SHA256 sha256 = System.Security.Cryptography.SHA256.Create())
+                        JSONOBJ = System.IO.File.ReadAllText(profilePath);
+                        profileState = JsonConvert.DeserializeObject<PROState>(JSONOBJ);
+                        // Warm the memory cache from the disk read (GUI mode only)
+                        if (!Root.IsCLI && profileState != null)
                         {
-                            byte[] hashBytes = sha256.ComputeHash(Encoding.UTF8.GetBytes(transaction.Signature));
-                            string hashedSignature = BitConverter.ToString(hashBytes).Replace("-", "");
-
-                            string filePath = @"root\" + profileaddress + @"\sig\" + hashedSignature;
-
-                            if (!System.IO.File.Exists(filePath))
-                            {
-                                if (!System.IO.Directory.Exists(@"root\" + profileaddress + @"\sig")) { Directory.CreateDirectory(@"root\" + profileaddress + @"\sig"); }
-                                // If the file does not exist, create it and write the text string to it
-                                System.IO.File.WriteAllText(filePath, transaction.TransactionId);
-                            }
-                            else
-                            {
-                                // If the file exists, read its content
-                                sigSeen = System.IO.File.ReadAllText(filePath);
-                            }
+                            _profileCache[profileaddress] = profileState;
                         }
+                    }
+                    catch { }
+                }
 
+                int intProcessHeight = 0;
+                bool calculated = false;
+                try { intProcessHeight = profileState.Id; } catch { }
 
-                        if (sigSeen == null || (verbose && sigSeen == transaction.TransactionId))
+                Root[] objectTransactions;
+
+                if (verbose == true) { intProcessHeight = 0; profileState = new PROState(); }
+
+                objectTransactions = Root.GetRootsByAddress(profileaddress, username, password, url, intProcessHeight, -1, versionByte, verbose);
+
+                if (intProcessHeight != 0 && objectTransactions.Count() == 0)
+                {
+                    return profileState;
+                }
+
+                foreach (Root transaction in objectTransactions)
+                {
+                    if (transaction.Id > intProcessHeight)
+                    {
+                        calculated = true;
+                        //ignore any transaction that is not signed
+                        if (transaction.Signed && (transaction.File.ContainsKey("PRO")))
                         {
 
+                            intProcessHeight = transaction.Id;
+                            profileState.ProcessHeight = intProcessHeight;
 
-                            PRO profileinspector = null;
-                            try
+
+                            string sigSeen = null;
+
+                            // Calculate SHA-256 hash of the signature
+                            using (System.Security.Cryptography.SHA256 sha256 = System.Security.Cryptography.SHA256.Create())
                             {
-                                profileinspector = JsonConvert.DeserializeObject<PRO>(File.ReadAllText(@"root\" + transaction.TransactionId + @"\PRO"));
+                                byte[] hashBytes = sha256.ComputeHash(Encoding.UTF8.GetBytes(transaction.Signature));
+                                string hashedSignature = BitConverter.ToString(hashBytes).Replace("-", "");
+
+                                string filePath = @"root\" + profileaddress + @"\sig\" + hashedSignature;
+
+                                if (!System.IO.File.Exists(filePath))
+                                {
+                                    if (!System.IO.Directory.Exists(@"root\" + profileaddress + @"\sig")) { Directory.CreateDirectory(@"root\" + profileaddress + @"\sig"); }
+                                    // If the file does not exist, create it and write the text string to it
+                                    System.IO.File.WriteAllText(filePath, transaction.TransactionId);
+                                }
+                                else
+                                {
+                                    // If the file exists, read its content
+                                    sigSeen = System.IO.File.ReadAllText(filePath);
+                                }
                             }
-                            catch{}
+
+
+                            if (sigSeen == null || (verbose && sigSeen == transaction.TransactionId))
+                            {
+
+
+                                PRO profileinspector = null;
+                                try
+                                {
+                                    profileinspector = JsonConvert.DeserializeObject<PRO>(File.ReadAllText(@"root\" + transaction.TransactionId + @"\PRO"));
+                                }
+                                catch{}
 
 
 
@@ -231,66 +233,63 @@ namespace SUP.P2FK
                                 if (profileinspector.loc != null) { profileState.ChangeDate = transaction.BlockDate; profileState.Location = profileinspector.loc; }
                                 if (profileinspector.pkx != null) { profileState.ChangeDate = transaction.BlockDate; profileState.PKX = profileinspector.pkx; }
                                 if (profileinspector.pky != null) { profileState.ChangeDate = transaction.BlockDate; profileState.PKY = profileinspector.pky; }
-                               
 
-                               
+
+
 
                             }
-                            
+
+
+                            }
+
+
 
                         }
-                        
+                    }
+                }
 
-                        
+                if (calculated && Root.WasLastFetchComplete(profileaddress))
+                {
+                    if (objectTransactions.Count() > 0)
+                    {
+                        profileState.Id = objectTransactions.Max(max => max.Id);
                     }
 
-                }
-                
-            }
-
-            if (calculated && Root.WasLastFetchComplete(profileaddress))
-            {
-                if (objectTransactions.Count() > 0)
-                {
-                    profileState.Id = objectTransactions.Max(max => max.Id);
-                }
-
-                var profileSerialized = JsonConvert.SerializeObject(profileState);
-
-                try
-                {
-                    string profileTarget = @"root\" + profileaddress + @"\GetProfileByAddress.json";
-                    string profileTmp = profileTarget + ".tmp";
-                    System.IO.File.WriteAllText(profileTmp, profileSerialized);
-                    if (System.IO.File.Exists(profileTarget)) System.IO.File.Delete(profileTarget);
-                    System.IO.File.Move(profileTmp, profileTarget);
-                }
-                catch
-                {
-
+                    bool canCommit = true;
                     try
                     {
-                        if (!Directory.Exists(@"root\" + profileaddress))
-
+                        JSONOBJ = System.IO.File.ReadAllText(profilePath);
+                        PROState existing = JsonConvert.DeserializeObject<PROState>(JSONOBJ);
+                        if (existing != null)
                         {
-                            Directory.CreateDirectory(@"root\" + profileaddress);
+                            if (existing.Id > profileState.Id) { canCommit = false; }
+                            else if (existing.Id == profileState.Id)
+                            {
+                                // At equal cursor, prefer the profile snapshot that preserved
+                                // more creator associations instead of replacing with a thinner view.
+                                int existingCreators = existing.Creators == null ? 0 : existing.Creators.Count;
+                                int newCreators = profileState.Creators == null ? 0 : profileState.Creators.Count;
+                                if (existingCreators > newCreators) { canCommit = false; }
+                            }
                         }
-                        string profileTarget = @"root\" + profileaddress + @"\GetProfileByAddress.json";
-                        string profileTmp = profileTarget + ".tmp";
-                        System.IO.File.WriteAllText(profileTmp, profileSerialized);
-                        if (System.IO.File.Exists(profileTarget)) System.IO.File.Delete(profileTarget);
-                        System.IO.File.Move(profileTmp, profileTarget);
                     }
                     catch { };
+
+                    if (canCommit)
+                    {
+                        var profileSerialized = JsonConvert.SerializeObject(profileState);
+                        Root.AtomicWriteCacheFile(profilePath, profileSerialized);
+                    }
+
+                    // Keep memory cache in sync with the freshly computed state (GUI mode only)
+                    if (!Root.IsCLI) { _profileCache[profileaddress] = profileState; }
                 }
-                // Keep memory cache in sync with the freshly computed state (GUI mode only)
-                if (!Root.IsCLI) { _profileCache[profileaddress] = profileState; }
+
+                return profileState;
             }
 
-            return profileState;
-
         }
-        
+
         public static PROState GetProfileByURN(string searchstring, string username, string password, string url, string versionByte = "111", bool verbose = false)
         {
             PROState profileState = new PROState { };
@@ -299,22 +298,25 @@ namespace SUP.P2FK
 
 
             string diskpath = "root\\" + profileaddress + "\\";
+            string profileUrnPath = diskpath + "GetProfileByURN.json";
 
-            try
+            using (Root.AcquireAddressCacheLock(profileaddress, "GetProfileByURN"))
             {
-                JSONOBJ = System.IO.File.ReadAllText(diskpath + "GetProfileByURN.json");
-                profileState = JsonConvert.DeserializeObject<PROState>(JSONOBJ);
-            }
-            catch { }
+                try
+                {
+                    JSONOBJ = System.IO.File.ReadAllText(profileUrnPath);
+                    profileState = JsonConvert.DeserializeObject<PROState>(JSONOBJ);
+                }
+                catch { }
 
-            var intProcessHeight = profileState.Id;
-            Root[] profileTransactions;
+                var intProcessHeight = profileState.Id;
+                Root[] profileTransactions;
 
-            if (verbose == true) { intProcessHeight = 0; profileState = new PROState(); }
+                if (verbose == true) { intProcessHeight = 0; profileState = new PROState(); }
 
-            profileTransactions = Root.GetRootsByAddress(profileaddress, username, password, url, intProcessHeight, -1, versionByte, verbose);
+                profileTransactions = Root.GetRootsByAddress(profileaddress, username, password, url, intProcessHeight, -1, versionByte, verbose);
 
-            if (intProcessHeight > 0 && profileTransactions.Count() == 0) { return profileState; }
+                if (intProcessHeight > 0 && profileTransactions.Count() == 0) { return profileState; }
 
 
             HashSet<string> addedValues = new HashSet<string>();
@@ -346,32 +348,29 @@ namespace SUP.P2FK
                                     var profileSerialized = JsonConvert.SerializeObject(isObject);
                                     if (Root.WasLastFetchComplete(profileaddress))
                                     {
-                                    try
-                                    {
-                                        string profileUrnTarget = @"root\" + profileaddress + @"\GetProfileByURN.json";
-                                        string profileUrnTmp = profileUrnTarget + ".tmp";
-                                        System.IO.File.WriteAllText(profileUrnTmp, profileSerialized);
-                                        if (System.IO.File.Exists(profileUrnTarget)) System.IO.File.Delete(profileUrnTarget);
-                                        System.IO.File.Move(profileUrnTmp, profileUrnTarget);
-                                    }
-                                    catch
-                                    {
-
+                                        bool canCommit = true;
                                         try
                                         {
-                                            if (!Directory.Exists(@"root\" + profileaddress))
-
+                                            JSONOBJ = System.IO.File.ReadAllText(profileUrnPath);
+                                            PROState existing = JsonConvert.DeserializeObject<PROState>(JSONOBJ);
+                                            if (existing != null)
                                             {
-                                                Directory.CreateDirectory(@"root\" + profileaddress);
+                                                if (existing.Id > isObject.Id) { canCommit = false; }
+                                                else if (existing.Id == isObject.Id)
+                                                {
+                                                    // At equal cursor, keep the richer creator map.
+                                                    int existingCreators = existing.Creators == null ? 0 : existing.Creators.Count;
+                                                    int newCreators = isObject.Creators == null ? 0 : isObject.Creators.Count;
+                                                    if (existingCreators > newCreators) { canCommit = false; }
+                                                }
                                             }
-                                            string profileUrnTarget = @"root\" + profileaddress + @"\GetProfileByURN.json";
-                                            string profileUrnTmp = profileUrnTarget + ".tmp";
-                                            System.IO.File.WriteAllText(profileUrnTmp, profileSerialized);
-                                            if (System.IO.File.Exists(profileUrnTarget)) System.IO.File.Delete(profileUrnTarget);
-                                            System.IO.File.Move(profileUrnTmp, profileUrnTarget);
                                         }
                                         catch { };
-                                    }
+
+                                        if (canCommit)
+                                        {
+                                            Root.AtomicWriteCacheFile(profileUrnPath, profileSerialized);
+                                        }
                                     }
 
 
@@ -388,7 +387,8 @@ namespace SUP.P2FK
 
             }
 
-            return profileState;
+                return profileState;
+            }
 
         }
 
@@ -439,7 +439,7 @@ namespace SUP.P2FK
                 if (isObject.URN != null && isObject.Creators != null)
                 {
                     PROState activeprofile = PROState.GetProfileByURN(isObject.URN, username, password, url, versionByte);
-                    
+
                     if (string.Concat(activeprofile.Creators) == string.Concat(isObject.Creators))
                     {
                         profileStates.Add(activeprofile);
@@ -470,10 +470,7 @@ namespace SUP.P2FK
             return sortedprofileStatese.ToList();
 
         }
-       
+
 
     }
 }
-
-
-
