@@ -31,14 +31,14 @@ namespace SUP
 
     internal static class Program
     {
-       
+
         /// <summary>
         /// The main entry point for the application.
         /// </summary>
         [STAThread]
         static void Main(string[] args)
         {
-                     
+
             var parserResult = Parser.Default.ParseArguments<CommandOptions>(args);
             if (parserResult is Parsed<CommandOptions> parsedOptions)
             {
@@ -48,229 +48,254 @@ namespace SUP
                 Root.IsCLI = true;
 
                 var options = parsedOptions.Value;
-                // If the user provided the required arguments for a function, execute that function
-                if (options.GetRootsByAddress)
+                IDisposable cliAddressLock = null;
+                try
                 {
-                    int _Qty = -1;
-                    if (options.Qty != 0) { _Qty = options.Qty; }
-                    var roots = Root.GetRootsByAddress(options.Address, options.Username, options.Password, options.Url, options.Skip, _Qty, options.VersionByte, options.Verbose);
-                    var json = JsonConvert.SerializeObject(roots);
-                    Console.OutputEncoding = Encoding.UTF8;
-                    Console.WriteLine(json);
-                    
+                    string lockAddress = options.Address;
+                    if (string.IsNullOrWhiteSpace(lockAddress) && !string.IsNullOrWhiteSpace(options.URN))
+                    {
+                        try { lockAddress = Root.GetPublicAddressByKeyword(options.URN, options.VersionByte); } catch { }
+                    }
+                    if (string.IsNullOrWhiteSpace(lockAddress) && !string.IsNullOrWhiteSpace(options.Keyword) && options.GetObjectsByKeyword)
+                    {
+                        try { lockAddress = Root.GetPublicAddressByKeyword(options.Keyword, options.VersionByte); } catch { }
+                    }
+
+                    // Serialize CLI work per address across processes so all CLI entry-points
+                    // follow the same cross-process cache safety pattern.
+                    if (!string.IsNullOrWhiteSpace(lockAddress))
+                    {
+                        cliAddressLock = Root.AcquireAddressCacheLock(lockAddress, "CLI_COMMAND");
+                    }
+
+                    // If the user provided the required arguments for a function, execute that function
+                    if (options.GetRootsByAddress)
+                    {
+                        int _Qty = -1;
+                        if (options.Qty != 0) { _Qty = options.Qty; }
+                        var roots = Root.GetRootsByAddress(options.Address, options.Username, options.Password, options.Url, options.Skip, _Qty, options.VersionByte, options.Verbose);
+                        var json = JsonConvert.SerializeObject(roots);
+                        Console.OutputEncoding = Encoding.UTF8;
+                        Console.WriteLine(json);
+
+                    }
+                    else if (options.GetRootByTransactionId)
+                    {
+
+                        var root = Root.GetRootByTransactionId(options.TransactionId, options.Username, options.Password, options.Url, options.VersionByte, null, null, options.Verbose);
+                        var json = JsonConvert.SerializeObject(root);
+                        Console.OutputEncoding = Encoding.UTF8;
+                        Console.WriteLine(json);
+
+                    }
+                    else if (options.GetPublicAddressByKeyword)
+                    {
+
+                        var root = Root.GetPublicAddressByKeyword(options.Keyword, options.VersionByte);
+                        var json = JsonConvert.SerializeObject(root);
+                        Console.OutputEncoding = Encoding.UTF8;
+                        Console.WriteLine(json);
+
+                    }
+                    else if (options.GetKeywordByPublicAddress)
+                    {
+
+                        var root = Root.GetKeywordByPublicAddress(options.Address);
+                        var json = JsonConvert.SerializeObject(root);
+                        Console.OutputEncoding = Encoding.UTF8;
+                        Console.WriteLine(json);
+
+                    }
+                    else if (options.GetObjectByAddress)
+                    {
+
+                        var root = OBJState.GetObjectByAddress(options.Address, options.Username, options.Password, options.Url, options.VersionByte, options.Verbose);
+                        var json = JsonConvert.SerializeObject(root);
+                        Console.OutputEncoding = Encoding.UTF8;
+                        Console.WriteLine(json);
+
+                    }
+                    else if (options.GetObjectByTransactionId)
+                    {
+
+                        var root = OBJState.GetObjectByTransactionId(options.TransactionId, options.Username, options.Password, options.Url, options.VersionByte);
+                        var json = JsonConvert.SerializeObject(root);
+                        Console.OutputEncoding = Encoding.UTF8;
+                        Console.WriteLine(json);
+
+                    }
+                    else if (options.GetObjectByURN)
+                    {
+
+                        var root = OBJState.GetObjectByURN(options.URN, options.Username, options.Password, options.Url, options.VersionByte);
+                        var json = JsonConvert.SerializeObject(root);
+                        Console.OutputEncoding = Encoding.UTF8;
+                        Console.WriteLine(json);
+
+                    }
+                    else if (options.GetObjectByFile)
+                    {
+
+                        var root = OBJState.GetObjectByFile(options.FilePath, options.Username, options.Password, options.Url, options.VersionByte);
+                        var json = JsonConvert.SerializeObject(root);
+                        Console.OutputEncoding = Encoding.UTF8;
+                        Console.WriteLine(json);
+
+                    }
+                    else if (options.GetObjectsByAddress)
+                    {
+
+                        var root = OBJState.GetObjectsByAddress(options.Address, options.Username, options.Password, options.Url, options.VersionByte, options.Skip, options.Qty, options.Verbose);
+                        var json = JsonConvert.SerializeObject(root);
+                        Console.OutputEncoding = Encoding.UTF8;
+                        Console.WriteLine(json);
+
+                    }
+                    else if (options.GetObjectsOwnedByAddress)
+                    {
+
+                        var root = OBJState.GetObjectsOwnedByAddress(options.Address, options.Username, options.Password, options.Url, options.VersionByte, options.Skip, options.Qty);
+                        var json = JsonConvert.SerializeObject(root);
+                        Console.OutputEncoding = Encoding.UTF8;
+                        Console.WriteLine(json);
+
+                    }
+                    else if (options.GetObjectsCreatedByAddress)
+                    {
+
+                        var root = OBJState.GetObjectsCreatedByAddress(options.Address, options.Username, options.Password, options.Url, options.VersionByte, options.Skip, options.Qty);
+                        var json = JsonConvert.SerializeObject(root);
+                        Console.OutputEncoding = Encoding.UTF8;
+                        Console.WriteLine(json);
+
+                    }
+                    else if (options.GetObjectsByKeyword)
+                    {
+
+                        List<string> keywords = new List<string>();
+                        keywords.Add(options.Keyword);
+                        var root = OBJState.GetObjectsByKeyword(keywords, options.Username, options.Password, options.Url, options.VersionByte, options.Skip, options.Qty);
+                        var json = JsonConvert.SerializeObject(root);
+                        Console.OutputEncoding = Encoding.UTF8;
+                        Console.WriteLine(json);
+
+                    }
+                    else if (options.GetFoundObjects)
+                    {
+
+                        var root = OBJState.GetFoundObjects(options.Username, options.Password, options.Url, options.VersionByte, options.Verbose);
+                        var json = JsonConvert.SerializeObject(root);
+                        Console.OutputEncoding = Encoding.UTF8;
+                        Console.WriteLine(json);
+
+                    }
+                    else if (options.GetKeywordsByAddress)
+                    {
+
+
+                        var root = OBJState.GetKeywordsByAddress(options.Address, options.Username, options.Password, options.Url, options.VersionByte);
+                        var json = JsonConvert.SerializeObject(root);
+                        Console.OutputEncoding = Encoding.UTF8;
+                        Console.WriteLine(json);
+
+                    }
+                    else if (options.GetPublicMessagesByAddress)
+                    {
+
+
+                        var root = OBJState.GetPublicMessagesByAddress(options.Address, options.Username, options.Password, options.Url, options.VersionByte, options.Skip, options.Qty);
+                        var json = JsonConvert.SerializeObject(root);
+                        Console.OutputEncoding = Encoding.UTF8;
+                        Console.WriteLine(json);
+
+                    }
+                    else if (options.GetPrivateMessagesByAddress)
+                    {
+
+
+                        var root = OBJState.GetPrivateMessagesByAddress(options.Address, options.Username, options.Password, options.Url, options.VersionByte, options.Skip, options.Qty);
+                        var json = JsonConvert.SerializeObject(root);
+                        Console.OutputEncoding = Encoding.UTF8;
+                        Console.WriteLine(json);
+
+                    }
+                    else if (options.GetPublicKeysByAddress)
+                    {
+                        var root = Root.GetPublicKeysByAddress(options.Address, options.Username, options.Password, options.Url);
+                        var json = JsonConvert.SerializeObject(root);
+                        Console.OutputEncoding = Encoding.UTF8;
+                        Console.WriteLine(json);
+
+                    }
+                    else if (options.GetProfileByAddress)
+                    {
+
+                        List<string> keywords = new List<string>();
+                        keywords.Add(options.Keyword);
+                        var root = PROState.GetProfileByAddress(options.Address, options.Username, options.Password, options.Url, options.VersionByte, options.Verbose);
+                        var json = JsonConvert.SerializeObject(root);
+                        Console.OutputEncoding = Encoding.UTF8;
+                        Console.WriteLine(json);
+
+                    }
+                    else if (options.GetProfileByURN)
+                    {
+
+                        List<string> keywords = new List<string>();
+                        keywords.Add(options.Keyword);
+                        var root = PROState.GetProfileByURN(options.URN, options.Username, options.Password, options.Url, options.VersionByte, options.Verbose);
+                        var json = JsonConvert.SerializeObject(root);
+                        Console.OutputEncoding = Encoding.UTF8;
+                        Console.WriteLine(json);
+
+                    }
+                    else if (options.GetInquiryByAddress)
+                    {
+
+                        var root = INQState.GetInquiryByAddress(options.Address, options.Username, options.Password, options.Url, options.VersionByte, options.Verbose);
+                        var json = JsonConvert.SerializeObject(root);
+                        Console.OutputEncoding = Encoding.UTF8;
+                        Console.WriteLine(json);
+
+                    }
+                    else if (options.GetInquiryByTransactionId)
+                    {
+
+                        var root = INQState.GetInquiryByTransactionId(options.TransactionId, options.Username, options.Password, options.Url, options.VersionByte);
+                        var json = JsonConvert.SerializeObject(root);
+                        Console.OutputEncoding = Encoding.UTF8;
+                        Console.WriteLine(json);
+
+                    }
+                    else if (options.GetInquiriesByAddress)
+                    {
+
+                        var root = INQState.GetInquiriesByAddress(options.Address, options.Username, options.Password, options.Url, options.VersionByte, options.Skip, options.Qty, options.Verbose);
+                        var json = JsonConvert.SerializeObject(root);
+                        Console.OutputEncoding = Encoding.UTF8;
+                        Console.WriteLine(json);
+
+                    }
+                    else if (options.GetInquiriesCreatedByAddress)
+                    {
+
+                        var root = INQState.GetInquiriesCreatedByAddress(options.Address, options.Username, options.Password, options.Url, options.VersionByte, options.Skip, options.Qty, options.Verbose);
+                        var json = JsonConvert.SerializeObject(root);
+                        Console.OutputEncoding = Encoding.UTF8;
+                        Console.WriteLine(json);
+
+                    }
+                    else
+                    {
+                        Magician.DisappearConsole();
+                        Application.EnableVisualStyles();
+                        Application.SetCompatibleTextRenderingDefault(false);
+                        Application.Run(new SupMain());
+                    }
                 }
-                else if (options.GetRootByTransactionId)
+                finally
                 {
-                   
-                    var root = Root.GetRootByTransactionId(options.TransactionId, options.Username, options.Password, options.Url, options.VersionByte,null,null, options.Verbose);
-                    var json = JsonConvert.SerializeObject(root);
-                    Console.OutputEncoding = Encoding.UTF8;
-                    Console.WriteLine(json);
-
-                }
-                else if (options.GetPublicAddressByKeyword)
-                {
-
-                    var root = Root.GetPublicAddressByKeyword(options.Keyword, options.VersionByte);
-                    var json = JsonConvert.SerializeObject(root);
-                    Console.OutputEncoding = Encoding.UTF8;
-                    Console.WriteLine(json);
-
-                }
-                else if (options.GetKeywordByPublicAddress)
-                {
-
-                    var root = Root.GetKeywordByPublicAddress(options.Address);
-                    var json = JsonConvert.SerializeObject(root);
-                    Console.OutputEncoding = Encoding.UTF8;
-                    Console.WriteLine(json);
-
-                }
-                else if (options.GetObjectByAddress)
-                {
-
-                    var root = OBJState.GetObjectByAddress(options.Address,options.Username,options.Password,options.Url, options.VersionByte, options.Verbose);
-                    var json = JsonConvert.SerializeObject(root);
-                    Console.OutputEncoding = Encoding.UTF8;
-                    Console.WriteLine(json);
-
-                }
-                else if (options.GetObjectByTransactionId)
-                {
-
-                    var root = OBJState.GetObjectByTransactionId(options.TransactionId, options.Username, options.Password, options.Url, options.VersionByte);
-                    var json = JsonConvert.SerializeObject(root);
-                    Console.OutputEncoding = Encoding.UTF8;
-                    Console.WriteLine(json);
-
-                }
-                else if (options.GetObjectByURN)
-                {
-
-                    var root = OBJState.GetObjectByURN(options.URN, options.Username, options.Password, options.Url, options.VersionByte);
-                    var json = JsonConvert.SerializeObject(root);
-                    Console.OutputEncoding = Encoding.UTF8;
-                    Console.WriteLine(json);
-
-                }
-                else if (options.GetObjectByFile)
-                {
-
-                    var root = OBJState.GetObjectByFile(options.FilePath, options.Username, options.Password, options.Url, options.VersionByte);
-                    var json = JsonConvert.SerializeObject(root);
-                    Console.OutputEncoding = Encoding.UTF8;
-                    Console.WriteLine(json);
-
-                }
-                else if (options.GetObjectsByAddress)
-                {
-
-                    var root = OBJState.GetObjectsByAddress(options.Address, options.Username, options.Password, options.Url, options.VersionByte, options.Skip, options.Qty, options.Verbose);
-                    var json = JsonConvert.SerializeObject(root);
-                    Console.OutputEncoding = Encoding.UTF8;
-                    Console.WriteLine(json);
-
-                }
-                else if (options.GetObjectsOwnedByAddress)
-                {
-
-                    var root = OBJState.GetObjectsOwnedByAddress(options.Address, options.Username, options.Password, options.Url, options.VersionByte, options.Skip, options.Qty);
-                    var json = JsonConvert.SerializeObject(root);
-                    Console.OutputEncoding = Encoding.UTF8;
-                    Console.WriteLine(json);
-
-                }
-                else if (options.GetObjectsCreatedByAddress)
-                {
-
-                    var root = OBJState.GetObjectsCreatedByAddress(options.Address, options.Username, options.Password, options.Url, options.VersionByte, options.Skip, options.Qty);
-                    var json = JsonConvert.SerializeObject(root);
-                    Console.OutputEncoding = Encoding.UTF8;
-                    Console.WriteLine(json);
-
-                }
-                else if (options.GetObjectsByKeyword)
-                {
-
-                    List<string> keywords = new List<string>();
-                    keywords.Add(options.Keyword);
-                    var root = OBJState.GetObjectsByKeyword(keywords, options.Username, options.Password, options.Url, options.VersionByte, options.Skip, options.Qty);
-                    var json = JsonConvert.SerializeObject(root);
-                    Console.OutputEncoding = Encoding.UTF8;
-                    Console.WriteLine(json);
-
-                }
-                else if (options.GetFoundObjects)
-                {
-
-                    var root = OBJState.GetFoundObjects(options.Username, options.Password, options.Url, options.VersionByte, options.Verbose);
-                    var json = JsonConvert.SerializeObject(root);
-                    Console.OutputEncoding = Encoding.UTF8;
-                    Console.WriteLine(json);
-
-                }
-                else if (options.GetKeywordsByAddress)
-                {
-
-                   
-                    var root = OBJState.GetKeywordsByAddress(options.Address, options.Username, options.Password, options.Url, options.VersionByte);
-                    var json = JsonConvert.SerializeObject(root);
-                    Console.OutputEncoding = Encoding.UTF8;
-                    Console.WriteLine(json);
-
-                }
-                else if (options.GetPublicMessagesByAddress)
-                {
-
-
-                    var root = OBJState.GetPublicMessagesByAddress(options.Address, options.Username, options.Password, options.Url, options.VersionByte, options.Skip, options.Qty);
-                    var json = JsonConvert.SerializeObject(root);
-                    Console.OutputEncoding = Encoding.UTF8;
-                    Console.WriteLine(json);
-
-                }
-                else if (options.GetPrivateMessagesByAddress)
-                {
-
-
-                    var root = OBJState.GetPrivateMessagesByAddress(options.Address, options.Username, options.Password, options.Url, options.VersionByte, options.Skip, options.Qty);
-                    var json = JsonConvert.SerializeObject(root);
-                    Console.OutputEncoding = Encoding.UTF8;
-                    Console.WriteLine(json);
-
-                }
-                else if (options.GetPublicKeysByAddress)
-                {
-                    var root = Root.GetPublicKeysByAddress(options.Address, options.Username, options.Password, options.Url);
-                    var json = JsonConvert.SerializeObject(root);
-                    Console.OutputEncoding = Encoding.UTF8;
-                    Console.WriteLine(json);
-
-                }
-                else if (options.GetProfileByAddress)
-                {
-
-                    List<string> keywords = new List<string>();
-                    keywords.Add(options.Keyword);
-                    var root = PROState.GetProfileByAddress(options.Address, options.Username, options.Password, options.Url, options.VersionByte,options.Verbose);
-                    var json = JsonConvert.SerializeObject(root);
-                    Console.OutputEncoding = Encoding.UTF8;
-                    Console.WriteLine(json);
-
-                }
-                else if (options.GetProfileByURN)
-                {
-
-                    List<string> keywords = new List<string>();
-                    keywords.Add(options.Keyword);
-                    var root = PROState.GetProfileByURN(options.URN, options.Username, options.Password, options.Url, options.VersionByte, options.Verbose);
-                    var json = JsonConvert.SerializeObject(root);
-                    Console.OutputEncoding = Encoding.UTF8;
-                    Console.WriteLine(json);
-
-                }
-                else if (options.GetInquiryByAddress)
-                {
-
-                    var root = INQState.GetInquiryByAddress(options.Address, options.Username, options.Password, options.Url, options.VersionByte, options.Verbose);
-                    var json = JsonConvert.SerializeObject(root);
-                    Console.OutputEncoding = Encoding.UTF8;
-                    Console.WriteLine(json);
-
-                }
-                else if (options.GetInquiryByTransactionId)
-                {
-
-                    var root = INQState.GetInquiryByTransactionId(options.TransactionId, options.Username, options.Password, options.Url, options.VersionByte);
-                    var json = JsonConvert.SerializeObject(root);
-                    Console.OutputEncoding = Encoding.UTF8;
-                    Console.WriteLine(json);
-
-                }
-                else if (options.GetInquiriesByAddress)
-                {
-
-                    var root = INQState.GetInquiriesByAddress(options.Address, options.Username, options.Password, options.Url, options.VersionByte, options.Skip, options.Qty, options.Verbose);
-                    var json = JsonConvert.SerializeObject(root);
-                    Console.OutputEncoding = Encoding.UTF8;
-                    Console.WriteLine(json);
-
-                }
-                else if (options.GetInquiriesCreatedByAddress)
-                {
-
-                    var root = INQState.GetInquiriesCreatedByAddress(options.Address, options.Username, options.Password, options.Url, options.VersionByte, options.Skip, options.Qty, options.Verbose);
-                    var json = JsonConvert.SerializeObject(root);
-                    Console.OutputEncoding = Encoding.UTF8;
-                    Console.WriteLine(json);
-
-                }
-                else
-                {
-                    Magician.DisappearConsole();
-                    Application.EnableVisualStyles();
-                    Application.SetCompatibleTextRenderingDefault(false);
-                    Application.Run(new SupMain());
+                    if (cliAddressLock != null) { cliAddressLock.Dispose(); }
                 }
             }
             else
@@ -349,7 +374,7 @@ namespace SUP
 
         [Option("getinquiriesbyaddress", Required = false, HelpText = "Get inquiries by address")]
         public bool GetInquiriesByAddress { get; set; }
-   
+
         [Option("getinquiriescreatedbyaddress", Required = false, HelpText = "Get inquiries created by address")]
         public bool GetInquiriesCreatedByAddress { get; set; }
 
