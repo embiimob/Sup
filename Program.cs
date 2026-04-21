@@ -52,13 +52,14 @@ namespace SUP
                 try
                 {
                     string lockAddress = options.Address;
-                    if (string.IsNullOrWhiteSpace(lockAddress) && !string.IsNullOrWhiteSpace(options.URN))
+                    if (string.IsNullOrWhiteSpace(lockAddress) && !string.IsNullOrWhiteSpace(options.URN) && (options.GetObjectByURN || options.GetProfileByURN))
                     {
-                        try { lockAddress = Root.GetPublicAddressByKeyword(options.URN, options.VersionByte); } catch { }
+                        // URN lookups resolve to the profile/object holding address.
+                        lockAddress = Root.GetPublicAddressByKeyword(options.URN, options.VersionByte);
                     }
                     if (string.IsNullOrWhiteSpace(lockAddress) && !string.IsNullOrWhiteSpace(options.Keyword) && options.GetObjectsByKeyword)
                     {
-                        try { lockAddress = Root.GetPublicAddressByKeyword(options.Keyword, options.VersionByte); } catch { }
+                        lockAddress = Root.GetPublicAddressByKeyword(options.Keyword, options.VersionByte);
                     }
 
                     // Serialize CLI work per address across processes so all CLI entry-points

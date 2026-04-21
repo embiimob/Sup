@@ -265,6 +265,8 @@ namespace SUP.P2FK
                             if (existing.Id > profileState.Id) { canCommit = false; }
                             else if (existing.Id == profileState.Id)
                             {
+                                // At equal cursor, prefer the profile snapshot that preserved
+                                // more creator associations instead of replacing with a thinner view.
                                 int existingCreators = existing.Creators == null ? 0 : existing.Creators.Count;
                                 int newCreators = profileState.Creators == null ? 0 : profileState.Creators.Count;
                                 if (existingCreators > newCreators) { canCommit = false; }
@@ -356,6 +358,7 @@ namespace SUP.P2FK
                                                 if (existing.Id > isObject.Id) { canCommit = false; }
                                                 else if (existing.Id == isObject.Id)
                                                 {
+                                                    // At equal cursor, keep the richer creator map.
                                                     int existingCreators = existing.Creators == null ? 0 : existing.Creators.Count;
                                                     int newCreators = isObject.Creators == null ? 0 : isObject.Creators.Count;
                                                     if (existingCreators > newCreators) { canCommit = false; }
@@ -471,4 +474,3 @@ namespace SUP.P2FK
 
     }
 }
-

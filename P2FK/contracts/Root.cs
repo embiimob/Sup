@@ -20,6 +20,8 @@ namespace SUP.P2FK
 {
     public class Root
     {
+        private const int MutexHashPrefixLength = 48;
+
         private sealed class AddressCacheLock : IDisposable
         {
             private readonly Mutex _mutex;
@@ -40,7 +42,7 @@ namespace SUP.P2FK
                         _mutex.ReleaseMutex();
                     }
                 }
-                catch { }
+                catch { /* lock may already be released/abandoned during shutdown */ }
                 finally
                 {
                     _mutex.Dispose();
@@ -103,7 +105,8 @@ namespace SUP.P2FK
             }
 
             // Named mutex provides cross-process synchronization on Windows.
-            string mutexName = @"Global\SUP_CACHE_" + hash.Substring(0, 48);
+            // Keep mutex name short and deterministic while still hash-based.
+            string mutexName = @"Global\SUP_CACHE_" + hash.Substring(0, MutexHashPrefixLength);
             var mutex = new Mutex(false, mutexName);
             bool hasHandle = false;
             try
@@ -135,7 +138,7 @@ namespace SUP.P2FK
             }
             finally
             {
-                try { if (System.IO.File.Exists(tmpPath)) System.IO.File.Delete(tmpPath); } catch { }
+                try { if (System.IO.File.Exists(tmpPath)) System.IO.File.Delete(tmpPath); } catch { /* best-effort tmp cleanup */ }
             }
         }
 
@@ -713,6 +716,7 @@ namespace SUP.P2FK
                         {
                             int existingCursor = 0;
                             try { existingCursor = existingRoots.Max(r => r.Id); } catch { }
+                            // Guard against stale/partial writers overwriting a better on-disk snapshot.
                             if (intProcessHeight < existingCursor) { canCommit = false; }
                             else if (intProcessHeight == existingCursor && rootList.Count < existingRoots.Count) { canCommit = false; }
                         }

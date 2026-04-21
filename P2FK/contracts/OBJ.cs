@@ -1809,6 +1809,7 @@ namespace SUP.P2FK
                                 if (existing != null)
                                 {
                                     if (existing.Id > objectState.Id) { canCommit = false; }
+                                    // At equal cursor, keep the fresher object snapshot.
                                     else if (existing.Id == objectState.Id && existing.ChangeDate > objectState.ChangeDate) { canCommit = false; }
                                 }
                             }
@@ -2522,6 +2523,8 @@ namespace SUP.P2FK
             void StampCursor(List<OBJState> states, int cursor)
             {
                 if (states == null || states.Count == 0) return;
+                // Legacy list readers use the final element Id as process cursor.
+                // Keep this mirrored for compatibility while LastRootId is persisted.
                 try { states[states.Count - 1].Id = cursor; } catch { }
             }
 
@@ -2763,7 +2766,7 @@ namespace SUP.P2FK
                 try
                 {
                     cachedStates = JsonConvert.DeserializeObject<List<OBJState>>(json) ?? new List<OBJState> { };
-                    cursor = cachedStates.Count > 0 ? cachedStates.Last().Id : 0;
+                    cursor = cachedStates.Count > 0 ? cachedStates.Max(state => state.Id) : 0;
                     StampCursor(cachedStates, cursor);
                     return true;
                 }
@@ -2876,7 +2879,7 @@ namespace SUP.P2FK
                 try
                 {
                     cachedStates = JsonConvert.DeserializeObject<List<OBJState>>(json) ?? new List<OBJState> { };
-                    cursor = cachedStates.Count > 0 ? cachedStates.Last().Id : 0;
+                    cursor = cachedStates.Count > 0 ? cachedStates.Max(state => state.Id) : 0;
                     StampCursor(cachedStates, cursor);
                     return true;
                 }
@@ -3358,4 +3361,3 @@ namespace SUP.P2FK
     }
 
 }
-
