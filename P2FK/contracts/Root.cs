@@ -98,7 +98,7 @@ namespace SUP.P2FK
             string normalizedCache = (cacheName ?? string.Empty).Trim().ToLowerInvariant();
             string source = normalizedAddress + "|" + normalizedCache;
             string hash;
-            using (SHA256 sha256 = SHA256.Create())
+            using (System.Security.Cryptography.SHA256 sha256 = System.Security.Cryptography.SHA256.Create())
             {
                 byte[] hashBytes = sha256.ComputeHash(Encoding.UTF8.GetBytes(source));
                 hash = BitConverter.ToString(hashBytes).Replace("-", string.Empty);
