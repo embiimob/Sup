@@ -165,7 +165,7 @@ namespace P2FK.IO
                 }
                 catch (OperationCanceledException)
                 {
-                    try { process.Kill(entireProcessTree: true); } catch { /* process may have already exited */ }
+                    try { process.Kill(entireProcessTree: true); } catch { /* process may have already exited or be inaccessible */ }
                     return "[\"error: request timed out\"]";
                 }
 
