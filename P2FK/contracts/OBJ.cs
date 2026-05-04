@@ -9,6 +9,7 @@ using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Numerics;
 using System.Security.Cryptography;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -48,6 +49,7 @@ namespace SUP.P2FK
         public string ToAddress { get; set; }
         public DateTime BlockDate { get; set; }
         public string TransactionId { get; set; }
+        public Dictionary<string, BigInteger> File { get; set; }
     }
 
 
@@ -3257,6 +3259,7 @@ namespace SUP.P2FK
                 messageob.Message = message;
                 messageob.BlockDate = tstamp;
                 messageob.TransactionId = transactionID;
+                messageob.File = obj.File ?? new Dictionary<string, BigInteger>();
                 messages.Add(messageob);
 
             }
