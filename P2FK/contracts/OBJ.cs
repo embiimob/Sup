@@ -3259,7 +3259,7 @@ namespace SUP.P2FK
                 messageob.Message = message;
                 messageob.BlockDate = tstamp;
                 messageob.TransactionId = transactionID;
-                messageob.File = obj.File;
+                messageob.File = obj.File ?? new Dictionary<string, BigInteger>();
                 messages.Add(messageob);
 
             }
