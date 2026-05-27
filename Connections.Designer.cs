@@ -39,6 +39,7 @@
             this.label18 = new System.Windows.Forms.Label();
             this.textBox29 = new System.Windows.Forms.TextBox();
             this.chkLiveFeedPinning = new System.Windows.Forms.CheckBox();
+            this.chkUseIpfsApiHelpers = new System.Windows.Forms.CheckBox();
             this.label17 = new System.Windows.Forms.Label();
             this.chkWalkieTalkie = new System.Windows.Forms.CheckBox();
             this.chkFilterLivePostings = new System.Windows.Forms.CheckBox();
@@ -121,6 +122,7 @@
             this.panel1.Controls.Add(this.label18);
             this.panel1.Controls.Add(this.textBox29);
             this.panel1.Controls.Add(this.chkLiveFeedPinning);
+            this.panel1.Controls.Add(this.chkUseIpfsApiHelpers);
             this.panel1.Controls.Add(this.label17);
             this.panel1.Controls.Add(this.chkWalkieTalkie);
             this.panel1.Controls.Add(this.chkFilterLivePostings);
@@ -284,6 +286,17 @@
             this.chkLiveFeedPinning.Text = " IPFS pinning";
             this.chkLiveFeedPinning.UseVisualStyleBackColor = true;
             this.chkLiveFeedPinning.CheckedChanged += new System.EventHandler(this.chkLiveFeedPinning_CheckedChanged);
+            // 
+            // chkUseIpfsApiHelpers
+            // 
+            this.chkUseIpfsApiHelpers.AutoSize = true;
+            this.chkUseIpfsApiHelpers.Location = new System.Drawing.Point(166, 395);
+            this.chkUseIpfsApiHelpers.Name = "chkUseIpfsApiHelpers";
+            this.chkUseIpfsApiHelpers.Size = new System.Drawing.Size(135, 17);
+            this.chkUseIpfsApiHelpers.TabIndex = 165;
+            this.chkUseIpfsApiHelpers.Text = " use IPFS API helpers";
+            this.chkUseIpfsApiHelpers.UseVisualStyleBackColor = true;
+            this.chkUseIpfsApiHelpers.CheckedChanged += new System.EventHandler(this.chkUseIpfsApiHelpers_CheckedChanged);
             // 
             // label17
             // 
@@ -1010,6 +1023,7 @@
         private System.Windows.Forms.CheckBox chkWalkieTalkie;
         private System.Windows.Forms.Label label17;
         private System.Windows.Forms.CheckBox chkLiveFeedPinning;
+        private System.Windows.Forms.CheckBox chkUseIpfsApiHelpers;
         private System.Windows.Forms.Label label18;
         private System.Windows.Forms.TextBox textBox29;
         private System.Windows.Forms.Button btnAddIPFS;

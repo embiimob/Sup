@@ -4246,6 +4246,28 @@ namespace SUP
                                                     catch { };
 
                                                     Directory.CreateDirectory("ipfs/" + transid + "-build");
+
+                                                    bool _gatewaySuccess = false;
+                                                    if (File.Exists("IPFS_API_HELPERS_ENABLED"))
+                                                    {
+                                                        _gatewaySuccess = IpfsHelper.TryGetFromPublicGateways(transid, fromImage);
+                                                        if (_gatewaySuccess)
+                                                        {
+                                                            try
+                                                            {
+                                                                if (File.Exists("IPFS_PINNING_ENABLED"))
+                                                                {
+                                                                    Process pinProcess = new Process { StartInfo = new ProcessStartInfo { FileName = @"ipfs\ipfs.exe", Arguments = "pin add " + transid, UseShellExecute = false, CreateNoWindow = true } };
+                                                                    pinProcess.Start();
+                                                                }
+                                                            }
+                                                            catch { }
+                                                            try { Directory.Delete("ipfs/" + transid + "-build", true); } catch { }
+                                                        }
+                                                    }
+
+                                                    if (!_gatewaySuccess)
+                                                    {
                                                     Process process2 = new Process();
                                                     process2.StartInfo.FileName = @"ipfs\ipfs.exe";
                                                     process2.StartInfo.Arguments = "get " + transid + @" -o ipfs\" + transid;
@@ -4357,6 +4379,7 @@ namespace SUP
                                                         });
 
                                                     }
+                                                    }
 
 
                                                 }
@@ -4457,6 +4480,28 @@ namespace SUP
                                                     catch { };
 
                                                     Directory.CreateDirectory("ipfs/" + transid + "-build");
+
+                                                    bool _gatewaySuccess = false;
+                                                    if (File.Exists("IPFS_API_HELPERS_ENABLED"))
+                                                    {
+                                                        _gatewaySuccess = IpfsHelper.TryGetFromPublicGateways(transid, toImage);
+                                                        if (_gatewaySuccess)
+                                                        {
+                                                            try
+                                                            {
+                                                                if (File.Exists("IPFS_PINNING_ENABLED"))
+                                                                {
+                                                                    Process pinProcess = new Process { StartInfo = new ProcessStartInfo { FileName = @"ipfs\ipfs.exe", Arguments = "pin add " + transid, UseShellExecute = false, CreateNoWindow = true } };
+                                                                    pinProcess.Start();
+                                                                }
+                                                            }
+                                                            catch { }
+                                                            try { Directory.Delete("ipfs/" + transid + "-build", true); } catch { }
+                                                        }
+                                                    }
+
+                                                    if (!_gatewaySuccess)
+                                                    {
                                                     Process process2 = new Process();
                                                     process2.StartInfo.FileName = @"ipfs\ipfs.exe";
                                                     process2.StartInfo.Arguments = "get " + transid + @" -o ipfs\" + transid;
@@ -4569,6 +4614,7 @@ namespace SUP
 
                                                     }
 
+                                                    }
 
                                                 }
 
@@ -6034,6 +6080,28 @@ namespace SUP
                                         catch { };
 
                                         Directory.CreateDirectory("ipfs/" + transid + "-build");
+
+                                        bool _gatewaySuccess = false;
+                                        if (File.Exists("IPFS_API_HELPERS_ENABLED"))
+                                        {
+                                            _gatewaySuccess = IpfsHelper.TryGetFromPublicGateways(transid, imagelocation);
+                                            if (_gatewaySuccess)
+                                            {
+                                                try
+                                                {
+                                                    if (File.Exists("IPFS_PINNING_ENABLED"))
+                                                    {
+                                                        Process pinProcess = new Process { StartInfo = new ProcessStartInfo { FileName = @"ipfs\ipfs.exe", Arguments = "pin add " + transid, UseShellExecute = false, CreateNoWindow = true } };
+                                                        pinProcess.Start();
+                                                    }
+                                                }
+                                                catch { }
+                                                try { Directory.Delete("ipfs/" + transid + "-build", true); } catch { }
+                                            }
+                                        }
+
+                                        if (!_gatewaySuccess)
+                                        {
                                         Process process2 = new Process();
                                         process2.StartInfo.FileName = @"ipfs\ipfs.exe";
                                         process2.StartInfo.Arguments = "get " + imagepath.Substring(5, 46) + @" -o ipfs\" + transid;
@@ -6110,6 +6178,7 @@ namespace SUP
                                             }));
                                         }
 
+                                        }
                                     }
 
                                     break;
@@ -6360,6 +6429,28 @@ namespace SUP
                                         catch { };
 
                                         Directory.CreateDirectory("ipfs/" + transid + "-build");
+
+                                        bool _gatewaySuccess = false;
+                                        if (File.Exists("IPFS_API_HELPERS_ENABLED"))
+                                        {
+                                            _gatewaySuccess = IpfsHelper.TryGetFromPublicGateways(transid, imagelocation);
+                                            if (_gatewaySuccess)
+                                            {
+                                                try
+                                                {
+                                                    if (File.Exists("IPFS_PINNING_ENABLED"))
+                                                    {
+                                                        Process pinProcess = new Process { StartInfo = new ProcessStartInfo { FileName = @"ipfs\ipfs.exe", Arguments = "pin add " + transid, UseShellExecute = false, CreateNoWindow = true } };
+                                                        pinProcess.Start();
+                                                    }
+                                                }
+                                                catch { }
+                                                try { Directory.Delete("ipfs/" + transid + "-build", true); } catch { }
+                                            }
+                                        }
+
+                                        if (!_gatewaySuccess)
+                                        {
                                         Process process2 = new Process();
                                         process2.StartInfo.FileName = @"ipfs\ipfs.exe";
                                         process2.StartInfo.Arguments = "get " + imagepath.Substring(5, 46) + @" -o ipfs\" + transid;
@@ -6436,6 +6527,7 @@ namespace SUP
                                             }));
                                         }
 
+                                        }
                                     }
 
                                     break;
@@ -6692,6 +6784,28 @@ namespace SUP
                                         catch { };
 
                                         Directory.CreateDirectory("ipfs/" + transid + "-build");
+
+                                        bool _gatewaySuccess = false;
+                                        if (File.Exists("IPFS_API_HELPERS_ENABLED"))
+                                        {
+                                            _gatewaySuccess = IpfsHelper.TryGetFromPublicGateways(transid, videolocation);
+                                            if (_gatewaySuccess)
+                                            {
+                                                try
+                                                {
+                                                    if (File.Exists("IPFS_PINNING_ENABLED"))
+                                                    {
+                                                        Process pinProcess = new Process { StartInfo = new ProcessStartInfo { FileName = @"ipfs\ipfs.exe", Arguments = "pin add " + transid, UseShellExecute = false, CreateNoWindow = true } };
+                                                        pinProcess.Start();
+                                                    }
+                                                }
+                                                catch { }
+                                                try { Directory.Delete("ipfs/" + transid + "-build", true); } catch { }
+                                            }
+                                        }
+
+                                        if (!_gatewaySuccess)
+                                        {
                                         Process process2 = new Process();
                                         process2.StartInfo.FileName = @"ipfs\ipfs.exe";
                                         process2.StartInfo.Arguments = "get " + videopath.Substring(5, 46) + @" -o ipfs\" + transid;
@@ -6748,6 +6862,7 @@ namespace SUP
 
 
 
+                                        }
                                     }
 
                                     break;

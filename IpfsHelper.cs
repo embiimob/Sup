@@ -1,6 +1,7 @@
 using System;
 using System.Diagnostics;
 using System.IO;
+using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -187,6 +188,79 @@ namespace SUP
             {
                 LogError("PinAsync", $"Exception during IPFS pin for {hash}: {ex.Message}");
             }
+        }
+
+        /// <summary>
+        /// Attempts to download an IPFS file from public HTTP gateways (ipfs.io then p2fk.io).
+        /// Downloads the raw content directly to the target file path.
+        /// If a gateway succeeds the file is saved locally; the caller should pin if desired.
+        /// </summary>
+        /// <param name="cid">IPFS content identifier (CID/hash)</param>
+        /// <param name="targetFilePath">Full path where the downloaded file should be saved</param>
+        /// <param name="timeoutMs">Per-gateway request timeout in milliseconds (default: 30000ms)</param>
+        /// <returns>True if any gateway succeeded and a non-empty file was saved, false otherwise</returns>
+        public static bool TryGetFromPublicGateways(string cid, string targetFilePath, int timeoutMs = 30000)
+        {
+            if (string.IsNullOrEmpty(cid) || string.IsNullOrEmpty(targetFilePath))
+            {
+                LogError("TryGetFromPublicGateways", "Invalid CID or target path");
+                return false;
+            }
+
+            string[] gateways = new[]
+            {
+                $"https://ipfs.io/ipfs/{cid}",
+                $"https://p2fk.io/ipfs/{cid}"
+            };
+
+            foreach (var url in gateways)
+            {
+                try
+                {
+                    // Ensure target directory exists
+                    string dir = Path.GetDirectoryName(targetFilePath);
+                    if (!string.IsNullOrEmpty(dir) && !Directory.Exists(dir))
+                        Directory.CreateDirectory(dir);
+
+                    // Remove any existing (possibly empty/corrupt) file before writing
+                    if (File.Exists(targetFilePath))
+                        File.Delete(targetFilePath);
+
+                    var request = (HttpWebRequest)WebRequest.Create(url);
+                    request.Timeout = timeoutMs;
+                    request.UserAgent = "Mozilla/5.0";
+                    request.AllowAutoRedirect = true;
+
+                    using (var response = (HttpWebResponse)request.GetResponse())
+                    {
+                        if (response.StatusCode == HttpStatusCode.OK)
+                        {
+                            using (var responseStream = response.GetResponseStream())
+                            using (var fileStream = File.Create(targetFilePath))
+                            {
+                                responseStream.CopyTo(fileStream);
+                            }
+
+                            if (File.Exists(targetFilePath) && new FileInfo(targetFilePath).Length > 0)
+                            {
+                                LogInfo("TryGetFromPublicGateways", $"Downloaded {cid} from {url}");
+                                return true;
+                            }
+
+                            // Empty response – clean up and try next gateway
+                            try { File.Delete(targetFilePath); } catch { }
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    LogWarning("TryGetFromPublicGateways", $"Gateway {url} failed for {cid}: {ex.Message}");
+                    try { if (File.Exists(targetFilePath)) File.Delete(targetFilePath); } catch { }
+                }
+            }
+
+            LogInfo("TryGetFromPublicGateways", $"All public gateways failed for {cid}");
+            return false;
         }
 
         /// <summary>
