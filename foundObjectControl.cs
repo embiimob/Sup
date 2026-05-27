@@ -162,7 +162,7 @@ namespace SUP
                         try { Directory.Delete(@"root\" + ObjectAddress.Text, true); } catch { }
                         try { Directory.CreateDirectory(@"root\" + ObjectAddress.Text); } catch { }
 
-                        using (FileStream fs = File.Create(@"root\" + ObjectAddress.Text + @"\BLOCK"))
+                        using (FileStream fs = File.Create(@"root\" + ObjectAddress.Text + @"\SUP_BLOCK"))
                         {
 
                         }

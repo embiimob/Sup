@@ -423,7 +423,7 @@ namespace SUP.P2FK
                         {
                             // Only the top-level call (rootbytes == null) has correct Output/Confirmations/
                             // BlockDate/BlockHeight metadata; write ROOT.json here so ledger roots are cached.
-                            if (rootbytes == null && !System.IO.File.Exists(@"root\" + P2FKRoot.SignedBy + @"\BLOCK"))
+                            if (rootbytes == null && !System.IO.File.Exists(@"root\" + P2FKRoot.SignedBy + @"\SUP_BLOCK"))
                             {
                                 P2FKRoot.BuildDate = DateTime.UtcNow;
                                 P2FKRoot.Cached = true;
@@ -581,7 +581,7 @@ namespace SUP.P2FK
                 //Cache Root to disk to speed up future crawls
 
 
-                    if (rootbytes == null && !System.IO.File.Exists(@"root\" + P2FKRoot.SignedBy + @"\BLOCK"))
+                    if (rootbytes == null && !System.IO.File.Exists(@"root\" + P2FKRoot.SignedBy + @"\SUP_BLOCK"))
                     {
                         var rootSerialized = JsonConvert.SerializeObject(P2FKRoot);
                         string rootTarget = @"root\" + P2FKRoot.TransactionId + @"\ROOT.json";

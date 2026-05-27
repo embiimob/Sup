@@ -686,7 +686,7 @@ namespace SUP
                 catch { }
 
                 try { Directory.Delete(@"root\" + txtSearchAddress.Text, true); Directory.CreateDirectory(@"root\" + txtSearchAddress.Text); } catch { }
-                using (FileStream fs = File.Create(@"root\" + txtSearchAddress.Text + @"\BLOCK"))
+                using (FileStream fs = File.Create(@"root\" + txtSearchAddress.Text + @"\SUP_BLOCK"))
                 {
 
                 }
@@ -725,7 +725,7 @@ namespace SUP
 
         private void ButtonMuteAddressClick(object sender, EventArgs e)
         {
-            using (FileStream fs = File.Create(@"root\" + txtSearchAddress.Text + @"\MUTE"))
+            using (FileStream fs = File.Create(@"root\" + txtSearchAddress.Text + @"\SUP_MUTE"))
             {
 
             }
@@ -733,7 +733,7 @@ namespace SUP
 
         private void ButtonUnMuteAddressClick(object sender, EventArgs e)
         {
-            try { File.Delete(@"root\" + txtSearchAddress.Text + @"\MUTE"); } catch { }
+            try { File.Delete(@"root\" + txtSearchAddress.Text + @"\SUP_MUTE"); } catch { }
 
         }
 

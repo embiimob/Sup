@@ -12,7 +12,7 @@ namespace SUP
     /// </summary>
     public static class IpfsHelper
     {
-        private static readonly string IpfsExecutable = @"ipfs\ipfs.exe";
+        private static readonly string IpfsExecutable = Path.Combine(Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location), "ipfs", "ipfs.exe");
         
         /// <summary>
         /// Asynchronously retrieves a file from IPFS with timeout support.

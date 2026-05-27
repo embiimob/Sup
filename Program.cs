@@ -38,6 +38,7 @@ namespace SUP
         [STAThread]
         static void Main(string[] args)
         {
+            SupIpfsDaemonManager.EnsureEnvironment();
 
             var parserResult = Parser.Default.ParseArguments<CommandOptions>(args);
             if (parserResult is Parsed<CommandOptions> parsedOptions)

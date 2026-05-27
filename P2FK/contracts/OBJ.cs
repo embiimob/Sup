@@ -105,7 +105,7 @@ namespace SUP.P2FK
             {
                 bool fetched = false;
 
-                if (System.IO.File.Exists(@"root\" + objectaddress + @"\BLOCK"))
+                if (System.IO.File.Exists(@"root\" + objectaddress + @"\SUP_BLOCK"))
                 {
 
                     return objectState;
@@ -951,7 +951,7 @@ namespace SUP.P2FK
                                                         {
                                                             try
                                                             {
-                                                                using (FileStream fs = File.Create(@"root\" + objectaddress + @"\BLOCK"))
+                                                                using (FileStream fs = File.Create(@"root\" + objectaddress + @"\SUP_BLOCK"))
                                                                 {
 
                                                                 }
@@ -2015,7 +2015,7 @@ namespace SUP.P2FK
             OBJState objectState = new OBJState();
             if (searchstring == null) { return objectState; }
             string objectaddress = Root.GetPublicAddressByKeyword(searchstring, versionByte);
-            if (System.IO.File.Exists(@"root\" + objectaddress + @"\BLOCK")) { return objectState; }
+            if (System.IO.File.Exists(@"root\" + objectaddress + @"\SUP_BLOCK")) { return objectState; }
 
             string JSONOBJ;
             string diskpath = "root\\" + objectaddress + "\\";
@@ -2215,7 +2215,7 @@ namespace SUP.P2FK
             string objectaddress = Base58.EncodeWithCheckSum(payload);
 
 
-            if (System.IO.File.Exists(@"root\" + objectaddress + @"\BLOCK")) { return objectState; }
+            if (System.IO.File.Exists(@"root\" + objectaddress + @"\SUP_BLOCK")) { return objectState; }
 
 
 
@@ -2580,7 +2580,7 @@ namespace SUP.P2FK
 
             List<OBJState> objectStates = new List<OBJState> { };
 
-            if (System.IO.File.Exists(@"root\" + objectaddress + @"\BLOCK"))
+            if (System.IO.File.Exists(@"root\" + objectaddress + @"\SUP_BLOCK"))
             {
 
                 return objectStates;
@@ -2793,7 +2793,7 @@ namespace SUP.P2FK
 
             List<OBJState> objectStates = new List<OBJState> { };
 
-            if (System.IO.File.Exists(@"root\" + objectaddress + @"\BLOCK")) { return objectStates; }
+            if (System.IO.File.Exists(@"root\" + objectaddress + @"\SUP_BLOCK")) { return objectStates; }
 
             string diskpath = "root\\" + objectaddress + "\\";
             string ownedPath = diskpath + "GetObjectsOwnedByAddress.json";
@@ -2907,7 +2907,7 @@ namespace SUP.P2FK
 
             List<OBJState> objectStates = new List<OBJState> { };
 
-            if (System.IO.File.Exists(@"root\" + objectaddress + @"\BLOCK")) { return objectStates; }
+            if (System.IO.File.Exists(@"root\" + objectaddress + @"\SUP_BLOCK")) { return objectStates; }
 
             string diskpath = "root\\" + objectaddress + "\\";
             string createdPath = diskpath + "GetObjectsCreatedByAddress.json";
@@ -2972,7 +2972,7 @@ namespace SUP.P2FK
 
             if (objectaddress.StartsWith("#")) { objectaddress = Root.GetPublicAddressByKeyword(objectaddress.Substring(1), versionByte); isKeywordSearch = true; }
 
-            if (System.IO.File.Exists(@"root\" + objectaddress + @"\BLOCK")) { return objectStates; }
+            if (System.IO.File.Exists(@"root\" + objectaddress + @"\SUP_BLOCK")) { return objectStates; }
 
             string JSONOBJ;
             string diskpath = "root\\" + objectaddress + "\\";
@@ -3012,7 +3012,7 @@ namespace SUP.P2FK
                         if (objectstate.URN != null && objectstate.Creators.Count() > 1 && objectstate.Creators.ElementAt(1).Value.Year > 1975)
                         {
 
-                            if (!addedValues.Contains(objectstate.Creators.ElementAt(1).Key) && !System.IO.File.Exists(@"root\" + objectstate.Creators.ElementAt(1).Key + @"\BLOCK") && !System.IO.File.Exists(@"root\" + objectstate.Creators.ElementAt(0).Key + @"\BLOCK"))
+                            if (!addedValues.Contains(objectstate.Creators.ElementAt(1).Key) && !System.IO.File.Exists(@"root\" + objectstate.Creators.ElementAt(1).Key + @"\SUP_BLOCK") && !System.IO.File.Exists(@"root\" + objectstate.Creators.ElementAt(0).Key + @"\SUP_BLOCK"))
                             {
                                 addedValues.Add(objectstate.Creators.ElementAt(1).Key);
                                 COLState colstate = new COLState();
@@ -3047,7 +3047,7 @@ namespace SUP.P2FK
                         if (objectstate.URN != null && objectstate.Creators != null && objectstate.Creators.Count > 1 && objectstate.Creators.ContainsKey(objectaddress) && objectstate.Creators[objectaddress].Year > 1975)
                         {
 
-                            if (!addedValues.Contains(objectstate.Creators.ElementAt(1).Key) && !System.IO.File.Exists(@"root\" + objectstate.Creators.ElementAt(1).Key + @"\BLOCK"))
+                            if (!addedValues.Contains(objectstate.Creators.ElementAt(1).Key) && !System.IO.File.Exists(@"root\" + objectstate.Creators.ElementAt(1).Key + @"\SUP_BLOCK"))
                             {
                                 addedValues.Add(objectstate.Creators.ElementAt(1).Key);
                                 COLState colstate = new COLState();
@@ -3118,7 +3118,7 @@ namespace SUP.P2FK
                 string objectaddress = Root.GetPublicAddressByKeyword(search, versionByte);
 
 
-                if (!System.IO.File.Exists(@"root\" + objectaddress + @"\BLOCK"))
+                if (!System.IO.File.Exists(@"root\" + objectaddress + @"\SUP_BLOCK"))
                 {
 
                     List<OBJState> keySearch = GetObjectsByAddress(objectaddress, username, password, url, versionByte, 0, -1);

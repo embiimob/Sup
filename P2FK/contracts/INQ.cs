@@ -75,7 +75,7 @@ namespace SUP.P2FK
                 {
                     bool fetched = false;
 
-                    if (System.IO.File.Exists(@"root\" + objectaddress + @"\BLOCK"))
+                    if (System.IO.File.Exists(@"root\" + objectaddress + @"\SUP_BLOCK"))
                     {
                         return objectState;
                     }
@@ -500,7 +500,7 @@ namespace SUP.P2FK
                 {
                     bool fetched = false;
 
-                    if (System.IO.File.Exists(@"root\" + objectaddress + @"\BLOCK"))
+                    if (System.IO.File.Exists(@"root\" + objectaddress + @"\SUP_BLOCK"))
                     {
                         return objectStates;
                     }
@@ -665,7 +665,7 @@ namespace SUP.P2FK
                 List<INQState> objectStates = new List<INQState> { };
                 bool fetched = false;
 
-                if (System.IO.File.Exists(@"root\" + objectaddress + @"\BLOCK")) { return objectStates; }
+                if (System.IO.File.Exists(@"root\" + objectaddress + @"\SUP_BLOCK")) { return objectStates; }
 
                 string JSONOBJ;
                 string diskpath = "root\\" + objectaddress + "\\";
@@ -758,7 +758,7 @@ namespace SUP.P2FK
                     string objectaddress = Root.GetPublicAddressByKeyword(search, versionByte);
 
 
-                    if (!System.IO.File.Exists(@"root\" + objectaddress + @"\BLOCK"))
+                    if (!System.IO.File.Exists(@"root\" + objectaddress + @"\SUP_BLOCK"))
                     {
 
                         List<INQState> keySearch = GetInquiriesByAddress(objectaddress, username, password, url, versionByte, 0, -1, calculate);

@@ -839,7 +839,7 @@ namespace SUP
 
                         bool containsFileWithINQ = files.Any(file =>
                         file.EndsWith("INQ", StringComparison.OrdinalIgnoreCase) &&
-                        !file.EndsWith("BLOCK", StringComparison.OrdinalIgnoreCase));
+                        !file.EndsWith("SUP_BLOCK", StringComparison.OrdinalIgnoreCase));
 
                         if (containsFileWithINQ)
                         {

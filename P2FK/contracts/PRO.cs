@@ -57,7 +57,7 @@ namespace SUP.P2FK
 
             PROState profileState = new PROState();
 
-            if (System.IO.File.Exists(@"root\" + profileaddress + @"\BLOCK")) { return new PROState { }; }
+            if (System.IO.File.Exists(@"root\" + profileaddress + @"\SUP_BLOCK")) { return new PROState { }; }
 
             string JSONOBJ;
             string logstatus;
@@ -331,7 +331,7 @@ namespace SUP.P2FK
                     {
                         string findObject = transaction.Keyword.ElementAt(transaction.Keyword.Count - 1).Key;
 
-                        if (!System.IO.File.Exists(@"root\" + findObject + @"\BLOCK"))
+                        if (!System.IO.File.Exists(@"root\" + findObject + @"\SUP_BLOCK"))
                         {
 
 

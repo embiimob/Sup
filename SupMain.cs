@@ -373,7 +373,7 @@ namespace SUP
                         // Defensive null check before accessing LinkData
                         if (profileURN.Links != null && profileURN.Links.Count > 0 && profileURN.Links[0].LinkData != null)
                         {
-                            if (File.Exists(@"root\" + profileURN.Links[0].LinkData.ToString() + @"\MUTE")) { btnMute.Text = "unmute"; }
+                            if (File.Exists(@"root\" + profileURN.Links[0].LinkData.ToString() + @"\SUP_MUTE")) { btnMute.Text = "unmute"; }
                         }
 
                         if (profileURN.Text != null && profileURN.Text.StartsWith("#"))
@@ -507,7 +507,7 @@ namespace SUP
                 }
             });
 
-            if (File.Exists(@"root\" + profileURN.Links[0].LinkData.ToString() + @"\MUTE")) { btnMute.Text = "unmute"; } else { btnMute.Text = "mute"; }
+            if (File.Exists(@"root\" + profileURN.Links[0].LinkData.ToString() + @"\SUP_MUTE")) { btnMute.Text = "unmute"; } else { btnMute.Text = "mute"; }
 
             if (!panel1.Visible)
             {
@@ -1115,35 +1115,7 @@ namespace SUP
 
                 if (File.Exists("IPFS_PINNING_ENABLED"))
                 {
-                    string ipfsDir = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
-
-                    // Set the environment variable IPFS_PATH to the same directory
-                    Environment.SetEnvironmentVariable("IPFS_PATH", ipfsDir + @"\ipfs");
-
-                    // Create the process to initialize the repo
-                    var init = new Process
-                    {
-                        StartInfo = new ProcessStartInfo
-                        {
-                            FileName = @"ipfs\ipfs.exe",
-                            Arguments = "init",
-                            UseShellExecute = false,
-                            CreateNoWindow = true
-                        }
-                    };
-                    init.Start();
-                    init.WaitForExit();
-                    // Set the cache location to the same directory
-                    var process = new Process
-                    {
-                        StartInfo = new ProcessStartInfo
-                        {
-                            FileName = @"ipfs\ipfs.exe",
-                            Arguments = $"daemon --repo-dir {ipfsDir + @"\ipfs"}",
-                            UseShellExecute = false,
-                            CreateNoWindow = true
-                        }
-                    };
+                    var process = SupIpfsDaemonManager.CreateDaemonProcess();
                     process.Start();
                 }
 
@@ -1682,7 +1654,7 @@ namespace SUP
                                         if (root.Signed == true || (root.File != null && root.File.ContainsKey("SEC")))
                                         {
 
-                                            if (!System.IO.File.Exists(@"root\" + root.Keyword.Keys.Last() + @"\BLOCK") && !System.IO.File.Exists(@"root\" + root.Keyword.Keys.Last() + @"\MUTE"))
+                                            if (!System.IO.File.Exists(@"root\" + root.Keyword.Keys.Last() + @"\SUP_BLOCK") && !System.IO.File.Exists(@"root\" + root.Keyword.Keys.Last() + @"\SUP_MUTE"))
                                             {
                                                 bool find = false;
 
@@ -2107,7 +2079,7 @@ namespace SUP
                                             if (root.Signed == true || (root.File != null && root.File.ContainsKey("SEC")))
                                             {
 
-                                                if (!System.IO.File.Exists(@"root\" + root.Keyword.Keys.Last() + @"\BLOCK") && !System.IO.File.Exists(@"root\" + root.Keyword.Keys.Last() + @"\MUTE"))
+                                                if (!System.IO.File.Exists(@"root\" + root.Keyword.Keys.Last() + @"\SUP_BLOCK") && !System.IO.File.Exists(@"root\" + root.Keyword.Keys.Last() + @"\SUP_MUTE"))
                                                 {
                                                     bool find = false;
 
@@ -2533,7 +2505,7 @@ namespace SUP
                                             Root root = Root.GetRootByTransactionId(s, "good-user", "better-password", @"http://127.0.0.1:12832", "50");
                                             if (root.Signed == true)
                                             {
-                                                if (!System.IO.File.Exists(@"root\" + root.Keyword.Keys.Last() + @"\BLOCK") && !System.IO.File.Exists(@"root\" + root.Keyword.Keys.Last() + @"\MUTE"))
+                                                if (!System.IO.File.Exists(@"root\" + root.Keyword.Keys.Last() + @"\SUP_BLOCK") && !System.IO.File.Exists(@"root\" + root.Keyword.Keys.Last() + @"\SUP_MUTE"))
                                                 {
                                                     bool find = false;
 
@@ -2888,7 +2860,7 @@ namespace SUP
                                             Root root = Root.GetRootByTransactionId(s, "good-user", "better-password", @"http://127.0.0.1:9332", "48");
                                             if (root.Signed == true)
                                             {
-                                                if (!System.IO.File.Exists(@"root\" + root.Keyword.Keys.Last() + @"\BLOCK") && !System.IO.File.Exists(@"root\" + root.Keyword.Keys.Last() + @"\MUTE"))
+                                                if (!System.IO.File.Exists(@"root\" + root.Keyword.Keys.Last() + @"\SUP_BLOCK") && !System.IO.File.Exists(@"root\" + root.Keyword.Keys.Last() + @"\SUP_MUTE"))
                                                 {
                                                     bool find = false;
 
@@ -3248,7 +3220,7 @@ namespace SUP
                                             if (root.Signed == true)
                                             {
 
-                                                if (!System.IO.File.Exists(@"root\" + root.Keyword.Keys.Last() + @"\BLOCK") && !System.IO.File.Exists(@"root\" + root.Keyword.Keys.Last() + @"\MUTE"))
+                                                if (!System.IO.File.Exists(@"root\" + root.Keyword.Keys.Last() + @"\SUP_BLOCK") && !System.IO.File.Exists(@"root\" + root.Keyword.Keys.Last() + @"\SUP_MUTE"))
                                                 {
                                                     bool find = false;
 
@@ -4619,7 +4591,7 @@ namespace SUP
 
                         bool containsFileWithINQ = files.Any(file =>
                         file.EndsWith("INQ", StringComparison.OrdinalIgnoreCase) &&
-                        !file.EndsWith("BLOCK", StringComparison.OrdinalIgnoreCase));
+                        !file.EndsWith("SUP_BLOCK", StringComparison.OrdinalIgnoreCase));
 
                         if (containsFileWithINQ)
                         {
@@ -5694,7 +5666,7 @@ namespace SUP
 
                             bool containsFileWithINQ = files.Any(file =>
                                    file.EndsWith("INQ", StringComparison.OrdinalIgnoreCase) &&
-                                   !file.EndsWith("BLOCK", StringComparison.OrdinalIgnoreCase));
+                                   !file.EndsWith("SUP_BLOCK", StringComparison.OrdinalIgnoreCase));
 
                             if (containsFileWithINQ)
                             {
@@ -7749,7 +7721,7 @@ namespace SUP
 
                 try
                 {
-                    using (FileStream fs = File.Create(@"root\" + profileURN.Links[0].LinkData.ToString() + @"\MUTE"))
+                    using (FileStream fs = File.Create(@"root\" + profileURN.Links[0].LinkData.ToString() + @"\SUP_MUTE"))
                     {
 
                     }
@@ -7760,7 +7732,7 @@ namespace SUP
             }
             else
             {
-                try { File.Delete(@"root\" + profileURN.Links[0].LinkData.ToString() + @"\MUTE"); } catch { }
+                try { File.Delete(@"root\" + profileURN.Links[0].LinkData.ToString() + @"\SUP_MUTE"); } catch { }
                 btnMute.Text = "mute";
             }
         }
@@ -7807,7 +7779,7 @@ namespace SUP
                     try { Directory.CreateDirectory(@"root\" + profileURN.Links[0].LinkData.ToString()); } catch { }
                     try
                     {
-                        using (FileStream fs = File.Create(@"root\" + profileURN.Links[0].LinkData.ToString() + @"\BLOCK"))
+                        using (FileStream fs = File.Create(@"root\" + profileURN.Links[0].LinkData.ToString() + @"\SUP_BLOCK"))
                         {
 
                         }

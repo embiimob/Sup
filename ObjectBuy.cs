@@ -833,7 +833,7 @@ namespace SUP
 
 
 
-                                        if (!System.IO.File.Exists(@"root\" + root.SignedBy + @"\BLOCK"))
+                                        if (!System.IO.File.Exists(@"root\" + root.SignedBy + @"\SUP_BLOCK"))
                                         {
                                             bool find = false;
 

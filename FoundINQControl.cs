@@ -56,7 +56,7 @@ namespace SUP
                     try { Directory.Delete(@"root\" + txtTransactionId.Text, true); } catch { }
                     try { Directory.CreateDirectory(@"root\" + txtTransactionId.Text); } catch { }
 
-                    using (FileStream fs = File.Create(@"root\" + txtTransactionId.Text + @"\BLOCK"))
+                    using (FileStream fs = File.Create(@"root\" + txtTransactionId.Text + @"\SUP_BLOCK"))
                     {
 
                     }
@@ -66,7 +66,7 @@ namespace SUP
                         try { Directory.Delete(@"root\" + txtObjectAddress.Text, true); } catch { }
                         try { Directory.CreateDirectory(@"root\" + txtObjectAddress.Text); } catch { }
 
-                        using (FileStream fs = File.Create(@"root\" + txtObjectAddress.Text + @"\BLOCK"))
+                        using (FileStream fs = File.Create(@"root\" + txtObjectAddress.Text + @"\SUP_BLOCK"))
                         {
 
                         }

@@ -366,37 +366,7 @@ namespace SUP
                 btnIPFS.ForeColor = Color.Yellow;
                 btnIPFS.BackColor = Color.Blue;
 
-                // Get the current directory of the ipfs.exe file
-                string ipfsDir = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
-
-                // Set the environment variable IPFS_PATH to the same directory
-                Environment.SetEnvironmentVariable("IPFS_PATH", ipfsDir + @"\ipfs");
-
-                // Create the process to initialize the repo
-                var init = new Process
-                {
-                    StartInfo = new ProcessStartInfo
-                    {
-                        FileName = @"ipfs\ipfs.exe",
-                        Arguments = "init",
-                        UseShellExecute = false,
-                        CreateNoWindow = true
-                    }
-                };
-                init.Start();
-                init.WaitForExit();
-
-                // Create the process to start the daemon
-                var process = new Process
-                {
-                    StartInfo = new ProcessStartInfo
-                    {
-                        FileName = @"ipfs\ipfs.exe",
-                        Arguments = $"daemon --repo-dir {ipfsDir + @"\ipfs"}",
-                        UseShellExecute = false,
-                        CreateNoWindow = true
-                    }
-                };
+                var process = SupIpfsDaemonManager.CreateDaemonProcess();
                 process.Start();
 
                 btnPinIPFS.Enabled = true;
@@ -689,8 +659,8 @@ namespace SUP
                             // Get the name of the file
                             string fileName = System.IO.Path.GetFileName(file);
 
-                            // Check if the file name is "BLOCK" (case-insensitive check)
-                            if (fileName.Equals("BLOCK", StringComparison.OrdinalIgnoreCase))
+                            // Check if the file name is "SUP_BLOCK" (case-insensitive check)
+                            if (fileName.Equals("SUP_BLOCK", StringComparison.OrdinalIgnoreCase))
                             {
                                 string[] pathParts = file.Split('\\');
 
@@ -748,7 +718,7 @@ namespace SUP
                         // Get the name of the file
                         string fileName = System.IO.Path.GetFileName(file);
 
-                        if (fileName.Equals("MUTE", StringComparison.OrdinalIgnoreCase))
+                        if (fileName.Equals("SUP_MUTE", StringComparison.OrdinalIgnoreCase))
                         {
                             // Delete the file
                             File.Delete(file);
