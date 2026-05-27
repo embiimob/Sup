@@ -39,6 +39,7 @@ namespace SUP
 
             myTooltip.SetToolTip(btnIPFS, "launches the IPFS dameon. displays active if currently running.");
             myTooltip.SetToolTip(chkLiveFeedPinning, "check this box to pin all images and videos displayed in your live feed.\nthis help prevent them from being purged from the network.");
+            myTooltip.SetToolTip(chkUseIpfsApiHelpers, "when checked, IPFS attachments in the live monitor are first fetched from public gateways\n(ipfs.io then p2fk.io) before falling back to the local Kubo node.\nthe file is cached locally and pinned if IPFS pinning is enabled.");
             myTooltip.SetToolTip(btnAddIPFS, "adds all files currently found in your sup ipfs cache to the IPFS network.\nthis is helpfull if your files have been purged from the network.");
             myTooltip.SetToolTip(btnPinIPFS, "pins all files currently found in your sup ipfs cache to your local IPFS store.\nthis speeds up access to the files and helps prevent them from being purged from the network.");
             myTooltip.SetToolTip(btnUnpinIPFS, "removes the pin from all files found in your sup ipfs cache.\nthis is helpful if you want to purge them from the IFPS network.");
@@ -174,6 +175,11 @@ namespace SUP
             {
                 chkLiveFeedPinning.Checked = true;
 
+            }
+
+            if (File.Exists(@"IPFS_API_HELPERS_ENABLED"))
+            {
+                chkUseIpfsApiHelpers.Checked = true;
             }
 
             if (File.Exists(@"WALKIE_TALKIE_ENABLED"))
@@ -810,6 +816,18 @@ namespace SUP
                 try { File.Delete(@"IPFS_PINNING_ENABLED"); } catch { }
 
 
+            }
+        }
+
+        private void chkUseIpfsApiHelpers_CheckedChanged(object sender, EventArgs e)
+        {
+            if (chkUseIpfsApiHelpers.Checked)
+            {
+                using (FileStream fs = File.Create(@"IPFS_API_HELPERS_ENABLED")) { }
+            }
+            else
+            {
+                try { File.Delete(@"IPFS_API_HELPERS_ENABLED"); } catch { }
             }
         }
 
