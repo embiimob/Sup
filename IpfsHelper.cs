@@ -191,6 +191,98 @@ namespace SUP
         }
 
         /// <summary>
+        /// Adds a locally downloaded IPFS file/folder to the local daemon cache and pins by hash if enabled.
+        /// </summary>
+        /// <param name="hash">IPFS hash to pin when pinning is enabled</param>
+        /// <param name="targetFilePath">Expected local file path downloaded by helper</param>
+        public static void AddToLocalCacheAndPinIfEnabled(string hash, string targetFilePath)
+        {
+            if (string.IsNullOrEmpty(hash))
+            {
+                LogWarning("AddToLocalCacheAndPinIfEnabled", "Hash is empty");
+                return;
+            }
+
+            try
+            {
+                string localPath = null;
+                if (!string.IsNullOrEmpty(targetFilePath) && File.Exists(targetFilePath))
+                {
+                    localPath = targetFilePath;
+                }
+                else
+                {
+                    string cidDirectory = Path.Combine("ipfs", hash);
+                    if (Directory.Exists(cidDirectory))
+                    {
+                        localPath = cidDirectory;
+                    }
+                }
+
+                if (string.IsNullOrEmpty(localPath))
+                {
+                    LogWarning("AddToLocalCacheAndPinIfEnabled", $"No local file/folder found for {hash}");
+                    return;
+                }
+
+                bool isDirectory = Directory.Exists(localPath);
+                string addArgs = isDirectory
+                    ? $"add -r \"{localPath}\""
+                    : $"add \"{localPath}\"";
+
+                using (var addProcess = new Process
+                {
+                    StartInfo = new ProcessStartInfo
+                    {
+                        FileName = IpfsExecutable,
+                        Arguments = addArgs,
+                        UseShellExecute = false,
+                        CreateNoWindow = true,
+                        RedirectStandardOutput = true,
+                        RedirectStandardError = true
+                    }
+                })
+                {
+                    addProcess.Start();
+
+                    var outputTask = addProcess.StandardOutput.ReadToEndAsync();
+                    var errorTask = addProcess.StandardError.ReadToEndAsync();
+
+                    if (!addProcess.WaitForExit(120000))
+                    {
+                        try { addProcess.Kill(); } catch { }
+                        LogWarning("AddToLocalCacheAndPinIfEnabled", $"Timeout while adding {localPath} to IPFS cache");
+                        return;
+                    }
+
+                    string output = outputTask.GetAwaiter().GetResult();
+                    string error = errorTask.GetAwaiter().GetResult();
+
+                    if (addProcess.ExitCode != 0)
+                    {
+                        LogError("AddToLocalCacheAndPinIfEnabled", $"ipfs add failed for {localPath}: {error}");
+                        return;
+                    }
+
+                    LogInfo("AddToLocalCacheAndPinIfEnabled", $"ipfs add succeeded for {localPath}");
+                    if (!string.IsNullOrEmpty(output))
+                    {
+                        LogInfo("AddToLocalCacheAndPinIfEnabled", $"ipfs add output: {output}");
+                    }
+                }
+
+                if (File.Exists("IPFS_PINNING_ENABLED"))
+                {
+                    _ = PinAsync(hash);
+                }
+            }
+            catch (Exception ex)
+            {
+                LogError("AddToLocalCacheAndPinIfEnabled", $"Exception for {hash}: {ex.Message}");
+            }
+        }
+
+        /// <summary>
         /// Attempts to download an IPFS file from public HTTP gateways (ipfs.io then p2fk.io).
         /// Downloads the raw content directly to the target file path.
         /// If a gateway succeeds the file is saved locally; the caller should pin if desired.
