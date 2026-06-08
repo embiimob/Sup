@@ -1568,7 +1568,7 @@ namespace SUP
                 if (!videopath.ToLower().StartsWith("http"))
                 {
                     videolocation = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + @"\root\" + videopath.Replace("BTC:", "").Replace("MZC:", "").Replace("LTC:", "").Replace("DOG:", "").Replace("IPFS:", "").Replace(@"/", @"\");
-                    if (videopath.ToLower().StartsWith("ipfs:")) { videolocation = videolocation.Replace(@"\root\", @"\ipfs\"); if (videopath.Length == 51) { videolocation += @"\artifact"; } }
+                    if (videopath.ToLower().StartsWith("ipfs:")) { videolocation = videolocation.Replace(@"\root\", @"\ipfs\"); if (videopath.Length == 51) { videolocation += @"\artifact"; } else if (videopath.Length > 51 && videopath[51] == '.') { string _ext = videopath.Substring(51); videolocation = videolocation.Substring(0, videolocation.Length - _ext.Length) + @"\artifact" + _ext; } }
 
 
                     if (!File.Exists(videolocation))
@@ -4170,4 +4170,3 @@ htmlembed =
 
     }
 }
-

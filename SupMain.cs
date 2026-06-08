@@ -51,6 +51,18 @@ namespace SUP
         private Dictionary<string, string[]> _pendingTransactions = new Dictionary<string, string[]>();
         private const string PendingTransactionsFile = @"PENDING_TRANSACTIONS.json";
         private readonly object _pendingLock = new object();
+        private static readonly HashSet<string> CommonImageExtensions = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
+        {
+            ".bmp", ".dib", ".gif", ".ico", ".cur", ".jpeg", ".jpg", ".jpe", ".png", ".tif", ".tiff", ".svg", ".svgz", ".webp", ".avif", ".apng"
+        };
+        private static readonly HashSet<string> CommonVideoExtensions = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
+        {
+            ".mp4", ".mov", ".avi", ".m4v", ".mkv", ".wmv", ".mpeg", ".mpg", ".ogv", ".webm"
+        };
+        private static readonly HashSet<string> CommonAudioExtensions = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
+        {
+            ".wav", ".mp3", ".ogg", ".oga", ".opus", ".flac", ".m4a", ".aac", ".wma", ".weba", ".webm"
+        };
 
         private bool btcActive;
         private bool mzcActive;
@@ -140,6 +152,40 @@ namespace SUP
             myTooltip.SetToolTip(btnMainnetSwitch, "click to toggle all sup functions between bitcoin testnet (green) and bitcoin mainnet (orange)");
 
         }
+
+        private static string GetNormalizedExtension(string pathOrUrl)
+        {
+            if (string.IsNullOrWhiteSpace(pathOrUrl))
+            {
+                return string.Empty;
+            }
+
+            string candidate = pathOrUrl.Trim();
+
+            if (Uri.TryCreate(candidate, UriKind.Absolute, out Uri uri))
+            {
+                candidate = uri.AbsolutePath;
+            }
+            else
+            {
+                int queryIndex = candidate.IndexOfAny(new[] { '?', '#' });
+                if (queryIndex >= 0)
+                {
+                    candidate = candidate.Substring(0, queryIndex);
+                }
+            }
+
+            return Path.GetExtension(candidate)?.ToLowerInvariant() ?? string.Empty;
+        }
+
+        private static bool IsImageExtension(string extension) => CommonImageExtensions.Contains(extension);
+        private static bool IsVideoExtension(string extension) => CommonVideoExtensions.Contains(extension);
+        private static bool IsAudioExtension(string extension) => CommonAudioExtensions.Contains(extension);
+        private static bool IsMediaExtension(string extension) =>
+            IsImageExtension(extension) || IsVideoExtension(extension) || IsAudioExtension(extension);
+        private static bool IsSvgExtension(string extension) =>
+            string.Equals(extension, ".svg", StringComparison.OrdinalIgnoreCase) ||
+            string.Equals(extension, ".svgz", StringComparison.OrdinalIgnoreCase);
 
         private void supFlow_MouseWheel(object sender, MouseEventArgs e)
         {
@@ -586,7 +632,7 @@ namespace SUP
                 if (!activeProfile.Image.ToLower().StartsWith("http"))
                 {
                     imgurn = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + @"\root\" + activeProfile.Image.Replace("BTC:", "").Replace("MZC:", "").Replace("LTC:", "").Replace("DOG:", "").Replace("IPFS:", "").Replace("btc:", "").Replace("mzc:", "").Replace("ltc:", "").Replace("dog:", "").Replace("ipfs:", "").Replace(@"/", @"\");
-                    if (activeProfile.Image.ToLower().StartsWith("ipfs:")) { imgurn = imgurn.Replace(@"\root\", @"\ipfs\"); if (activeProfile.Image.Length == 51) { imgurn += @"\artifact"; } }
+                    if (activeProfile.Image.ToLower().StartsWith("ipfs:")) { imgurn = imgurn.Replace(@"\root\", @"\ipfs\"); if (activeProfile.Image.Length == 51) { imgurn += @"\artifact"; } else if (activeProfile.Image.Length > 51 && activeProfile.Image[51] == '.') { string _ext = activeProfile.Image.Substring(51); imgurn = imgurn.Substring(0, imgurn.Length - _ext.Length) + @"\artifact" + _ext; } }
                 }
 
 
@@ -1214,7 +1260,7 @@ namespace SUP
                                     if (!objstate.Image.ToLower().StartsWith("http"))
                                     {
                                         imgurn = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + @"\root\" + objstate.Image.Replace("BTC:", "").Replace("MZC:", "").Replace("LTC:", "").Replace("DOG:", "").Replace("IPFS:", "").Replace(@"/", @"\");
-                                        if (objstate.Image.ToLower().StartsWith("ipfs:")) { imgurn = imgurn.Replace(@"\root\", @"\ipfs\"); if (objstate.Image.Length == 51) { imgurn += @"\artifact"; } }
+                                        if (objstate.Image.ToLower().StartsWith("ipfs:")) { imgurn = imgurn.Replace(@"\root\", @"\ipfs\"); if (objstate.Image.Length == 51) { imgurn += @"\artifact"; } else if (objstate.Image.Length > 51 && objstate.Image[51] == '.') { string _ext = objstate.Image.Substring(51); imgurn = imgurn.Substring(0, imgurn.Length - _ext.Length) + @"\artifact" + _ext; } }
                                     }
                                 }
                                 Regex regexTransactionId = new Regex(@"\b[0-9a-f]{64}\b");
@@ -1794,8 +1840,8 @@ namespace SUP
                                                                 if (content.ToLower().StartsWith("ipfs:")) { imgurn = imgurn.Replace(@"\root\", @"\ipfs\"); }
                                                             }
 
-                                                            string extension = Path.GetExtension(imgurn).ToLower();
-                                                            List<string> imgExtensions = new List<string> { ".bmp", ".gif", ".ico", ".jpeg", ".jpg", ".png", ".tif", ".tiff", ".mp4", ".mov", ".avi", ".wav", ".mp3", ".webm" };
+                                                            string extension = GetNormalizedExtension(imgurn);
+                                                            HashSet<string> imgExtensions = new HashSet<string>(CommonImageExtensions.Concat(CommonVideoExtensions).Concat(CommonAudioExtensions), StringComparer.OrdinalIgnoreCase);
 
 
                                                             string vpattern = @"(?:youtu\.be/|youtube(?:-nocookie)?\.com/(?:[^/\n\s]*[/\n\s]*(?:v/|e(?:mbed)?/|.*[?&]v=))?)?([a-zA-Z0-9_-]{11})";
@@ -1941,7 +1987,7 @@ namespace SUP
                                                                 {
 
 
-                                                                    if ((vmatch.Success && !imgExtensions.Contains(extension)) || extension == ".mp4" || extension == ".mov" || extension == ".avi" || extension == ".wav" || extension == ".mp3" || extension == ".webm")
+                                                                    if ((vmatch.Success && !imgExtensions.Contains(extension)) || IsVideoExtension(extension) || IsAudioExtension(extension) || IsSvgExtension(extension))
                                                                     {
                                                                         this.Invoke((MethodInvoker)delegate
                                                                         {
@@ -2220,8 +2266,8 @@ namespace SUP
                                                                     if (content.ToLower().StartsWith("ipfs:")) { imgurn = imgurn.Replace(@"\root\", @"\ipfs\"); }
                                                                 }
 
-                                                                string extension = Path.GetExtension(imgurn).ToLower();
-                                                                List<string> imgExtensions = new List<string> { ".bmp", ".gif", ".ico", ".jpeg", ".jpg", ".png", ".tif", ".tiff", ".mp4", ".mov", ".avi", ".wav", ".mp3", ".webm" };
+                                                                string extension = GetNormalizedExtension(imgurn);
+                                                                HashSet<string> imgExtensions = new HashSet<string>(CommonImageExtensions.Concat(CommonVideoExtensions).Concat(CommonAudioExtensions), StringComparer.OrdinalIgnoreCase);
 
 
                                                                 string vpattern = @"(?:youtu\.be/|youtube(?:-nocookie)?\.com/(?:[^/\n\s]*[/\n\s]*(?:v/|e(?:mbed)?/|.*[?&]v=))?)?([a-zA-Z0-9_-]{11})";
@@ -2367,7 +2413,7 @@ namespace SUP
                                                                     {
 
 
-                                                                        if ((vmatch.Success && !imgExtensions.Contains(extension)) || extension == ".mov" || extension == ".mp4" || extension == ".avi" || extension == ".wav" || extension == ".mp3" || extension == ".webm")
+                                                                        if ((vmatch.Success && !imgExtensions.Contains(extension)) || IsVideoExtension(extension) || IsAudioExtension(extension) || IsSvgExtension(extension))
                                                                         {
                                                                             this.Invoke((MethodInvoker)delegate
                                                                             {
@@ -2594,8 +2640,8 @@ namespace SUP
                                                                     if (content.ToLower().StartsWith("ipfs:")) { imgurn = imgurn.Replace(@"\root\", @"\ipfs\"); }
                                                                 }
 
-                                                                string extension = Path.GetExtension(imgurn).ToLower();
-                                                                List<string> imgExtensions = new List<string> { ".bmp", ".gif", ".ico", ".jpeg", ".jpg", ".png", ".tif", ".tiff", ".mp4", ".mov", ".avi", ".wav", ".mp3", ".webm" };
+                                                                string extension = GetNormalizedExtension(imgurn);
+                                                                HashSet<string> imgExtensions = new HashSet<string>(CommonImageExtensions.Concat(CommonVideoExtensions).Concat(CommonAudioExtensions), StringComparer.OrdinalIgnoreCase);
                                                                 string vpattern = @"(?:youtu\.be/|youtube(?:-nocookie)?\.com/(?:[^/\n\s]*[/\n\s]*(?:v/|e(?:mbed)?/|.*[?&]v=))?)?([a-zA-Z0-9_-]{11})";
                                                                 Match vmatch = Regex.Match(content, vpattern);
                                                                 if (!imgExtensions.Contains(extension) && vmatch.Value.Length < 12)
@@ -2731,7 +2777,7 @@ namespace SUP
 
                                                                     if (!int.TryParse(content, NumberStyles.Any, CultureInfo.GetCultureInfo("en-US"), out int id))
                                                                     {
-                                                                        if (vmatch.Success || extension == ".mov" || extension == ".mp4" || extension == ".avi" || extension == ".wav" || extension == ".mp3" || extension == ".webm")
+                                                                        if ((vmatch.Success && !imgExtensions.Contains(extension)) || IsVideoExtension(extension) || IsAudioExtension(extension) || IsSvgExtension(extension))
                                                                         {
                                                                             this.Invoke((MethodInvoker)delegate
                                                                             {
@@ -2949,8 +2995,8 @@ namespace SUP
                                                                     if (content.ToLower().StartsWith("ipfs:")) { imgurn = imgurn.Replace(@"\root\", @"\ipfs\"); }
                                                                 }
 
-                                                                string extension = Path.GetExtension(imgurn).ToLower();
-                                                                List<string> imgExtensions = new List<string> { ".bmp", ".gif", ".ico", ".jpeg", ".jpg", ".png", ".tif", ".tiff", ".mp4", ".mov", ".avi", ".wav", ".mp3", ".webm" };
+                                                                string extension = GetNormalizedExtension(imgurn);
+                                                                HashSet<string> imgExtensions = new HashSet<string>(CommonImageExtensions.Concat(CommonVideoExtensions).Concat(CommonAudioExtensions), StringComparer.OrdinalIgnoreCase);
                                                                 string vpattern = @"(?:youtu\.be/|youtube(?:-nocookie)?\.com/(?:[^/\n\s]*[/\n\s]*(?:v/|e(?:mbed)?/|.*[?&]v=))?)?([a-zA-Z0-9_-]{11})";
                                                                 Match vmatch = Regex.Match(content, vpattern);
                                                                 if (!imgExtensions.Contains(extension) && vmatch.Value.Length < 12)
@@ -3086,7 +3132,7 @@ namespace SUP
 
                                                                     if (!int.TryParse(content, NumberStyles.Any, CultureInfo.GetCultureInfo("en-US"), out int id))
                                                                     {
-                                                                        if (vmatch.Success || extension == ".mov" || extension == ".mp4" || extension == ".avi" || extension == ".wav" || extension == ".mp3" || extension == ".webm")
+                                                                        if ((vmatch.Success && !imgExtensions.Contains(extension)) || IsVideoExtension(extension) || IsAudioExtension(extension) || IsSvgExtension(extension))
                                                                         {
                                                                             this.Invoke((MethodInvoker)delegate
                                                                             {
@@ -3310,8 +3356,8 @@ namespace SUP
                                                                     if (content.ToLower().StartsWith("ipfs:")) { imgurn = imgurn.Replace(@"\root\", @"\ipfs\"); }
                                                                 }
 
-                                                                string extension = Path.GetExtension(imgurn).ToLower();
-                                                                List<string> imgExtensions = new List<string> { ".bmp", ".gif", ".ico", ".jpeg", ".jpg", ".png", ".tif", ".tiff", ".mp4", ".mov", ".avi", ".wav", ".mp3", ".webm" };
+                                                                string extension = GetNormalizedExtension(imgurn);
+                                                                HashSet<string> imgExtensions = new HashSet<string>(CommonImageExtensions.Concat(CommonVideoExtensions).Concat(CommonAudioExtensions), StringComparer.OrdinalIgnoreCase);
                                                                 string vpattern = @"(?:youtu\.be/|youtube(?:-nocookie)?\.com/(?:[^/\n\s]*[/\n\s]*(?:v/|e(?:mbed)?/|.*[?&]v=))?)?([a-zA-Z0-9_-]{11})";
                                                                 Match vmatch = Regex.Match(content, vpattern);
                                                                 if (!imgExtensions.Contains(extension) && vmatch.Value.Length < 12)
@@ -3447,7 +3493,7 @@ namespace SUP
 
                                                                     if (!int.TryParse(content, NumberStyles.Any, CultureInfo.GetCultureInfo("en-US"), out int id))
                                                                     {
-                                                                        if (vmatch.Success || extension == ".mov" || extension == ".mp4" || extension == ".avi" || extension == ".wav" || extension == ".mp3" || extension == ".webm")
+                                                                        if ((vmatch.Success && !imgExtensions.Contains(extension)) || IsVideoExtension(extension) || IsAudioExtension(extension) || IsSvgExtension(extension))
                                                                         {
                                                                             this.Invoke((MethodInvoker)delegate
                                                                             {
@@ -4204,7 +4250,7 @@ namespace SUP
                                     if (!profile.Image.ToLower().StartsWith("http"))
                                     {
                                         fromImage = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + @"\root\" + profile.Image.Replace("BTC:", "").Replace("MZC:", "").Replace("LTC:", "").Replace("DOG:", "").Replace("IPFS:", "").Replace(@"/", @"\");
-                                        if (profile.Image.ToLower().StartsWith("ipfs:")) { fromImage = fromImage.Replace(@"\root\", @"\ipfs\"); if (profile.Image.Length == 51) { fromImage += @"\artifact"; } }
+                                        if (profile.Image.ToLower().StartsWith("ipfs:")) { fromImage = fromImage.Replace(@"\root\", @"\ipfs\"); if (profile.Image.Length == 51) { fromImage += @"\artifact"; } else if (profile.Image.Length > 51 && profile.Image[51] == '.') { string _ext = profile.Image.Substring(51); fromImage = fromImage.Substring(0, fromImage.Length - _ext.Length) + @"\artifact" + _ext; } }
                                     }
                                     Regex regexTransactionId = new Regex(@"\b[0-9a-f]{64}\b");
                                     Match imgurnmatch = regexTransactionId.Match(fromImage);
@@ -4430,7 +4476,7 @@ namespace SUP
                                     if (!profile.Image.ToLower().StartsWith("http"))
                                     {
                                         toImage = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + @"\root\" + profile.Image.Replace("BTC:", "").Replace("MZC:", "").Replace("LTC:", "").Replace("DOG:", "").Replace("IPFS:", "").Replace(@"/", @"\");
-                                        if (profile.Image.ToLower().StartsWith("ipfs:")) { toImage = toImage.Replace(@"\root\", @"\ipfs\"); if (profile.Image.Length == 51) { toImage += @"\artifact"; } }
+                                        if (profile.Image.ToLower().StartsWith("ipfs:")) { toImage = toImage.Replace(@"\root\", @"\ipfs\"); if (profile.Image.Length == 51) { toImage += @"\artifact"; } else if (profile.Image.Length > 51 && profile.Image[51] == '.') { string _ext = profile.Image.Substring(51); toImage = toImage.Substring(0, toImage.Length - _ext.Length) + @"\artifact" + _ext; } }
                                     }
                                     Regex regexTransactionId = new Regex(@"\b[0-9a-f]{64}\b");
                                     Match imgurnmatch = regexTransactionId.Match(toImage);
@@ -4666,7 +4712,7 @@ namespace SUP
                         }
 
                         string pattern = "<<.*?>>";
-                        List<string> imgExtensions = new List<string> { ".bmp", ".gif", ".ico", ".jpeg", ".jpg", ".png", ".tif", ".tiff", ".mp4", ".mov", ".avi", ".wav", ".mp3", ".webm" };
+                        HashSet<string> imgExtensions = new HashSet<string>(CommonImageExtensions.Concat(CommonVideoExtensions).Concat(CommonAudioExtensions), StringComparer.OrdinalIgnoreCase);
 
                         MatchCollection matches = Regex.Matches(unfilteredmessage, pattern);
                         foreach (Match match in matches)
@@ -4689,7 +4735,7 @@ namespace SUP
                                     if (content.ToLower().StartsWith("ipfs:")) { imgurn = imgurn.Replace(@"\root\", @"\ipfs\"); }
                                 }
 
-                                string extension = Path.GetExtension(imgurn).ToLower();
+                                string extension = GetNormalizedExtension(imgurn);
                                 if (!imgExtensions.Contains(extension) && !imgurn.Contains("youtube.com") && !imgurn.Contains("youtu.be"))
                                 {
 
@@ -4780,7 +4826,7 @@ namespace SUP
                                     if (!int.TryParse(content, NumberStyles.Any, CultureInfo.GetCultureInfo("en-US"), out int id))
                                     {
 
-                                        if (extension == ".mp4" || extension == ".mov" || extension == ".avi" || content.Contains("youtube.com") || content.Contains("youtu.be") || extension == ".wav" || extension == ".mp3" || extension == ".webm")
+                                        if (IsVideoExtension(extension) || IsAudioExtension(extension) || IsSvgExtension(extension) || content.Contains("youtube.com") || content.Contains("youtu.be"))
                                         {
 
                                             try { AddMedia(content); } catch { }
@@ -5031,6 +5077,7 @@ namespace SUP
                                 {
                                     imagelocation = imagelocation.Replace(@"\root\", @"\ipfs\");
                                     if (profile.Image.Length == 51) { imagelocation += @"\artifact"; }
+                                    else if (profile.Image.Length > 51 && profile.Image[51] == '.') { string _ext = profile.Image.Substring(51); imagelocation = imagelocation.Substring(0, imagelocation.Length - _ext.Length) + @"\artifact" + _ext; }
                                 }
                             }
                         }
@@ -5097,12 +5144,12 @@ namespace SUP
                             }
                             else
                             {
-                                string extension = Path.GetExtension(block).ToLower();
+                                string extension = GetNormalizedExtension(block);
                                 attachment.Extension = extension;
                                 
-                                List<string> imageExts = new List<string> { ".bmp", ".gif", ".ico", ".jpeg", ".jpg", ".png", ".tif", ".tiff" };
-                                List<string> videoExts = new List<string> { ".mp4", ".mov", ".avi" };
-                                List<string> audioExts = new List<string> { ".wav", ".mp3", ".webm" };
+                                HashSet<string> imageExts = new HashSet<string>(CommonImageExtensions, StringComparer.OrdinalIgnoreCase);
+                                HashSet<string> videoExts = new HashSet<string>(CommonVideoExtensions, StringComparer.OrdinalIgnoreCase);
+                                HashSet<string> audioExts = new HashSet<string>(CommonAudioExtensions, StringComparer.OrdinalIgnoreCase);
                                 
                                 if (imageExts.Contains(extension))
                                     attachment.Type = AttachmentType.Image;
@@ -5161,7 +5208,14 @@ namespace SUP
                     {
                         this.Invoke((MethodInvoker)delegate
                         {
-                            AddImage(attachment.Content, true);
+                            if (IsSvgExtension(attachment.Extension))
+                            {
+                                try { AddMedia(attachment.Content, true); } catch { }
+                            }
+                            else
+                            {
+                                AddImage(attachment.Content, true);
+                            }
                         });
                     }
                     else if (attachment.Type == AttachmentType.Video || attachment.Type == AttachmentType.Audio)
@@ -5446,13 +5500,13 @@ namespace SUP
                 }
 
                 Root decryptedroot = Root.GetRootByTransactionId(transid, mainnetLogin, mainnetPassword, mainnetURL, mainnetVersionByte, result, recipientAddress);
-                List<string> imgExtensions = new List<string> { ".bmp", ".gif", ".ico", ".jpeg", ".jpg", ".png", ".tif", ".tiff", ".mp4", ".mov", ".avi", ".wav", ".mp3", ".webm" };
+                HashSet<string> imgExtensions = new HashSet<string>(CommonImageExtensions.Concat(CommonVideoExtensions).Concat(CommonAudioExtensions), StringComparer.OrdinalIgnoreCase);
 
                 if (decryptedroot.File != null)
                 {
                     foreach (string file in decryptedroot.File.Keys)
                     {
-                        string extension = Path.GetExtension(transid + @"\" + file).ToLower();
+                        string extension = GetNormalizedExtension(transid + @"\" + file);
                         
                         this.Invoke((MethodInvoker)delegate
                         {
@@ -5477,7 +5531,7 @@ namespace SUP
 
                                 this.supPrivateFlow.Controls.Add(panel);
                             }
-                            else if (extension == ".mp4" || extension == ".mov" || extension == ".avi" || extension == ".wav" || extension == ".mp3" || extension == ".webm")
+                            else if (IsVideoExtension(extension) || IsAudioExtension(extension) || IsSvgExtension(extension))
                             {
                                 try { AddMedia(transid + @"\" + file, true); } catch { }
                             }
@@ -5769,9 +5823,9 @@ namespace SUP
                             if (!int.TryParse(content, NumberStyles.Any, CultureInfo.GetCultureInfo("en-US"), out int id) && !content.Trim().StartsWith("#"))
                             {
 
-                                List<string> imgExtensions = new List<string> { ".bmp", ".gif", ".ico", ".jpeg", ".jpg", ".png", ".tif", ".tiff", ".mp4", ".mov", ".avi", ".wav", ".mp3", ".webm" };
+                                HashSet<string> imgExtensions = new HashSet<string>(CommonImageExtensions.Concat(CommonVideoExtensions).Concat(CommonAudioExtensions), StringComparer.OrdinalIgnoreCase);
 
-                                string extension = Path.GetExtension(content).ToLower();
+                                string extension = GetNormalizedExtension(content);
                                 if (!imgExtensions.Contains(extension) && !content.Contains("youtube.com") && !content.Contains("youtu.be"))
                                 {
                                     string title = content;
@@ -5857,7 +5911,7 @@ namespace SUP
                                 else
                                 {
 
-                                    if (extension == ".mp4" || extension == ".mov" || extension == ".avi" || content.Contains("youtube.com") || content.Contains("youtu.be") || extension == ".wav" || extension == ".mp3" || extension == ".webm")
+                                    if (IsVideoExtension(extension) || IsAudioExtension(extension) || IsSvgExtension(extension) || content.Contains("youtube.com") || content.Contains("youtu.be"))
                                     {
 
                                         this.Invoke((MethodInvoker)delegate
@@ -5948,6 +6002,7 @@ namespace SUP
 
         void AddImage(string imagepath, bool isprivate = false, bool addtoTop = false)
         {
+            imagepath = IpfsHelper.NormalizeIpfsControlChars(imagepath);
             string imagelocation = "";
             if (imagepath != null)
             {
@@ -6018,7 +6073,7 @@ namespace SUP
                 if (!imagepath.ToLower().StartsWith("http"))
                 {
                     imagelocation = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + @"\root\" + imagepath.Replace("BTC:", "").Replace("MZC:", "").Replace("LTC:", "").Replace("DOG:", "").Replace("IPFS:", "").Replace(@"/", @"\");
-                    if (imagepath.ToLower().StartsWith("ipfs:")) { imagelocation = imagelocation.Replace(@"\root\", @"\ipfs\"); if (imagepath.Length == 51) { imagelocation += @"\artifact"; } }
+                    if (imagepath.ToLower().StartsWith("ipfs:")) { imagelocation = imagelocation.Replace(@"\root\", @"\ipfs\"); if (imagepath.Length == 51) { imagelocation += @"\artifact"; } else if (imagepath.Length > 51 && imagepath[51] == '.') { string _ext = imagepath.Substring(51); imagelocation = imagelocation.Substring(0, imagelocation.Length - _ext.Length) + @"\artifact" + _ext; } }
 
                     Regex regexTransactionId = new Regex(@"\b[0-9a-f]{64}\b");
                     Match imgurnmatch = regexTransactionId.Match(imagelocation);
@@ -6209,66 +6264,60 @@ namespace SUP
                     }
                     else
                     {
-
-
-
                         string thumbnailPath = imagelocation + "-thumbnail.jpg";
 
                         // Check if a thumbnail exists
                         if (System.IO.File.Exists(thumbnailPath))
                         {
-
                             pictureBox.ImageLocation = thumbnailPath;
                             pictureBox.MouseClick += (sender, e) => { Attachment_Clicked(imagelocation); };
-                     
-
                         }
                         else
                         {
-                            // Load the original image from file
-                            System.Drawing.Image originalImage = System.Drawing.Image.FromFile(imagelocation);
+                            // Display immediately via ImageLocation (works for all formats including JPEG).
+                            // Synchronous GDI+ resize can throw for certain JPEG files with ICC/EXIF data,
+                            // so we match SupThread's approach: set ImageLocation first, then create the
+                            // thumbnail in the background so it is available on future loads.
+                            pictureBox.ImageLocation = imagelocation;
+                            pictureBox.MouseClick += (sender, e) => { Attachment_Clicked(imagelocation); };
 
-                            // Check if the original image is a GIF
-                            if (Path.GetExtension(imagelocation).Equals(".gif", StringComparison.OrdinalIgnoreCase))
+                            if (!Path.GetExtension(imagelocation).Equals(".gif", StringComparison.OrdinalIgnoreCase))
                             {
-                                // For GIF images, directly use the original image without creating a thumbnail
-                                pictureBox.ImageLocation = imagelocation;
-                                pictureBox.MouseClick += (sender, e) => { Attachment_Clicked(imagelocation); };
-                                
-                            }
-                            else
-                            {
-                                // Resize the image if needed
-                                int maxWidth = pictureBox.Width;
-                                int maxHeight = pictureBox.Height;
-
-                                int newWidth, newHeight;
-                                if (originalImage.Width > originalImage.Height)
+                                int thumbWidth = calcwidth;
+                                string thumbPath = thumbnailPath;
+                                string imgLoc = imagelocation;
+                                Task.Run(() =>
                                 {
-                                    newWidth = maxWidth;
-                                    newHeight = (int)((double)originalImage.Height / originalImage.Width * newWidth);
-                                }
-                                else
-                                {
-                                    newHeight = maxHeight;
-                                    newWidth = (int)((double)originalImage.Width / originalImage.Height * newHeight);
-                                }
-
-                                System.Drawing.Image resizedImage = new Bitmap(originalImage, newWidth, newHeight);
-                                originalImage.Dispose();
-                                this.Invoke((Action)(() =>
-                                {
-                                    pictureBox.ImageLocation = null;
-                                    pictureBox.Image = resizedImage;
-
-                                }));
-
-                                // Save the resized image as a thumbnail
-                                resizedImage.Save(thumbnailPath, ImageFormat.Jpeg);
+                                    try
+                                    {
+                                        System.Drawing.Image originalImage = System.Drawing.Image.FromFile(imgLoc);
+                                        int newWidth, newHeight;
+                                        if (originalImage.Width > originalImage.Height)
+                                        {
+                                            newWidth = thumbWidth;
+                                            newHeight = (int)((double)originalImage.Height / originalImage.Width * newWidth);
+                                        }
+                                        else
+                                        {
+                                            newHeight = thumbWidth;
+                                            newWidth = (int)((double)originalImage.Width / originalImage.Height * newHeight);
+                                        }
+                                        if (newWidth > 0 && newHeight > 0)
+                                        {
+                                            System.Drawing.Image resizedImage = new Bitmap(originalImage, newWidth, newHeight);
+                                            originalImage.Dispose();
+                                            resizedImage.Save(thumbPath, ImageFormat.Jpeg);
+                                            resizedImage.Dispose();
+                                        }
+                                        else
+                                        {
+                                            originalImage.Dispose();
+                                        }
+                                    }
+                                    catch { }
+                                });
                             }
                         }
-
-
                     }
                 }
                 else
@@ -6359,7 +6408,7 @@ namespace SUP
                 if (!imagepath.ToLower().StartsWith("http"))
                 {
                     imagelocation = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + @"\root\" + imagepath.Replace("BTC:", "").Replace("MZC:", "").Replace("LTC:", "").Replace("DOG:", "").Replace("IPFS:", "").Replace(@"/", @"\");
-                    if (imagepath.ToLower().StartsWith("ipfs:")) { imagelocation = imagelocation.Replace(@"\root\", @"\ipfs\"); if (imagepath.Length == 51) { imagelocation += @"\artifact"; } }
+                    if (imagepath.ToLower().StartsWith("ipfs:")) { imagelocation = imagelocation.Replace(@"\root\", @"\ipfs\"); if (imagepath.Length == 51) { imagelocation += @"\artifact"; } else if (imagepath.Length > 51 && imagepath[51] == '.') { string _ext = imagepath.Substring(51); imagelocation = imagelocation.Substring(0, imagelocation.Length - _ext.Length) + @"\artifact" + _ext; } }
 
                     Regex regexTransactionId = new Regex(@"\b[0-9a-f]{64}\b");
                     Match imgurnmatch = regexTransactionId.Match(imagelocation);
@@ -6582,6 +6631,7 @@ namespace SUP
 
         async void AddMedia(string videopath, bool isprivate = false, bool addtoTop = false, bool autoPlay = false)
         {
+            videopath = IpfsHelper.NormalizeIpfsControlChars(videopath);
             string videolocation = "";
             if (videopath != null)
             {
@@ -6598,7 +6648,7 @@ namespace SUP
 
 
 
-                if (videolocation.ToLower().EndsWith(".wav") || videolocation.ToLower().EndsWith(".mp3") || videolocation.ToLower().EndsWith(".webm"))
+                if (IsAudioExtension(GetNormalizedExtension(videolocation)))
                 {
 
 
@@ -6702,7 +6752,7 @@ namespace SUP
                 if (!videopath.ToLower().StartsWith("http"))
                 {
                     videolocation = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + @"\root\" + videopath.Replace("BTC:", "").Replace("MZC:", "").Replace("LTC:", "").Replace("DOG:", "").Replace("IPFS:", "").Replace(@"/", @"\");
-                    if (videopath.ToLower().StartsWith("ipfs:")) { videolocation = videolocation.Replace(@"\root\", @"\ipfs\"); if (videopath.Length == 51) { videolocation += @"\artifact"; } }
+                    if (videopath.ToLower().StartsWith("ipfs:")) { videolocation = videolocation.Replace(@"\root\", @"\ipfs\"); if (videopath.Length == 51) { videolocation += @"\artifact"; } else if (videopath.Length > 51 && videopath[51] == '.') { string _ext = videopath.Substring(51); videolocation = videolocation.Substring(0, videolocation.Length - _ext.Length) + @"\artifact" + _ext; } }
 
 
                     if (!File.Exists(videolocation))
@@ -6858,7 +6908,7 @@ namespace SUP
                                 this.Invoke((Action)(() =>
                                 {
 
-                                    if ((videolocation.ToLower().EndsWith(".wav") || videolocation.ToLower().EndsWith(".mp3") || videolocation.ToLower().EndsWith(".webm")) && autoPlay)
+                                    if (IsAudioExtension(GetNormalizedExtension(videolocation)) && autoPlay)
                                     {
                                         audioPlayer.AddToPlaylist(videolocation);
 
@@ -6907,7 +6957,7 @@ namespace SUP
                     else
                     {
 
-                        if ((videolocation.ToLower().EndsWith(".wav") || videolocation.ToLower().EndsWith(".mp3") || videolocation.ToLower().EndsWith(".webm")) && autoPlay)
+                        if (IsAudioExtension(GetNormalizedExtension(videolocation)) && autoPlay)
                         {
                             audioPlayer.AddToPlaylist(videolocation);
                         }
@@ -6938,12 +6988,22 @@ namespace SUP
                 }
                 else
                 {
-                    string pattern = @"(?:youtu\.be/|youtube(?:-nocookie)?\.com/(?:[^/\n\s]*[/\n\s]*(?:v/|e(?:mbed)?/|.*[?&]v=))?)?([a-zA-Z0-9_-]{11})";
-
-                    Match match = Regex.Match(videopath, pattern);
-                    if (match.Success)
+                    if (videopath.Contains("youtube.com") || videopath.Contains("youtu.be"))
                     {
-                        videolocation = @"https://www.youtube.com/embed/" + match.Groups[1].Value;
+                        string pattern = @"(?:youtu\.be/|youtube(?:-nocookie)?\.com/(?:[^/\n\s]*[/\n\s]*(?:v/|e(?:mbed)?/|.*[?&]v=))?)?([a-zA-Z0-9_-]{11})";
+                        Match match = Regex.Match(videopath, pattern);
+                        if (match.Success)
+                        {
+                            videolocation = @"https://www.youtube.com/embed/" + match.Groups[1].Value;
+                        }
+                        else
+                        {
+                            videolocation = videopath;
+                        }
+                    }
+                    else
+                    {
+                        videolocation = videopath;
                     }
 
                     try 
@@ -7448,6 +7508,7 @@ namespace SUP
                             {
                                 imagelocation = imagelocation.Replace(@"\root\", @"\ipfs\");
                                 if (content.Length == 51) { imagelocation += @"\artifact"; }
+                                else if (content.Length > 51 && content[51] == '.') { string _ext = content.Substring(51); imagelocation = imagelocation.Substring(0, imagelocation.Length - _ext.Length) + @"\artifact" + _ext; }
                             }
 
                             string parentDir = Path.GetDirectoryName(imagelocation);
@@ -7460,9 +7521,7 @@ namespace SUP
                             parentDir = parentDir.Replace(@"\ipfs\", @"\root\");
 
                             if (Directory.Exists(parentDir))
-                            {
                                 Directory.Delete(parentDir, true);
-                            }
 
                             if (Directory.Exists(parentDir + "-build"))
                             {
