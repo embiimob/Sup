@@ -470,28 +470,43 @@ namespace SUP
         /// This method detects such control characters at position 51 (immediately after the
         /// 5-char "IPFS:" prefix and 46-char CIDv0) and restores them to a forward slash
         /// followed by the original letter, e.g. chr(12) → "/f".
-        /// Supports both "IPFS:" and "ipfs:" prefixes and the formats
-        /// <c>IPFS:CID/filename</c> and <c>IPFS:CID\filename</c> without modification.
+        /// Supports both "IPFS:" and "ipfs:" prefixes, including URI-style forms
+        /// like <c>ipfs://CID/filename</c>, and normalizes to
+        /// <c>IPFS:CID/filename</c> (or <c>IPFS:CID.ext</c>) for downstream handling.
         /// </summary>
         /// <param name="urn">Raw IPFS URN, possibly containing JSON-decoded control characters.</param>
         /// <returns>Normalized URN with correct forward-slash separator and restored letter.</returns>
         public static string NormalizeIpfsControlChars(string urn)
         {
-            if (string.IsNullOrEmpty(urn) || urn.Length <= 51) return urn;
+            if (string.IsNullOrEmpty(urn)) return urn;
             if (!urn.StartsWith("IPFS:", StringComparison.OrdinalIgnoreCase)) return urn;
+
+            string normalized = urn;
+
+            // Accept common URI variants like "ipfs://CID/..." and "ipfs:/CID/..."
+            // and normalize them to "IPFS:CID/..." so downstream fixed-index CID
+            // extraction (Substring(5, 46), index 51 checks) remains valid.
+            string remainder = normalized.Substring(5);
+            while (remainder.Length > 0 && (remainder[0] == '/' || remainder[0] == '\\'))
+            {
+                remainder = remainder.Substring(1);
+            }
+            normalized = "IPFS:" + remainder;
+
+            if (normalized.Length <= 51) return normalized;
 
             // Position 51 is the first character after "IPFS:" (5 chars) + CIDv0 (46 chars).
             // It should be '/', '\', or '.' (extension). A control character here means the
             // JSON encoder wrote a literal backslash before the filename's first letter, which
             // the JSON parser then decoded as that letter's escape sequence (consuming the letter).
-            switch (urn[51])
+            switch (normalized[51])
             {
-                case '\f': return urn.Substring(0, 51) + "/f" + urn.Substring(52); // \f → form-feed; restore /f
-                case '\b': return urn.Substring(0, 51) + "/b" + urn.Substring(52); // \b → backspace; restore /b
-                case '\t': return urn.Substring(0, 51) + "/t" + urn.Substring(52); // \t → tab; restore /t
-                case '\r': return urn.Substring(0, 51) + "/r" + urn.Substring(52); // \r → carriage-return; restore /r
-                case '\n': return urn.Substring(0, 51) + "/n" + urn.Substring(52); // \n → newline; restore /n
-                default:   return urn;
+                case '\f': return normalized.Substring(0, 51) + "/f" + normalized.Substring(52); // \f → form-feed; restore /f
+                case '\b': return normalized.Substring(0, 51) + "/b" + normalized.Substring(52); // \b → backspace; restore /b
+                case '\t': return normalized.Substring(0, 51) + "/t" + normalized.Substring(52); // \t → tab; restore /t
+                case '\r': return normalized.Substring(0, 51) + "/r" + normalized.Substring(52); // \r → carriage-return; restore /r
+                case '\n': return normalized.Substring(0, 51) + "/n" + normalized.Substring(52); // \n → newline; restore /n
+                default:   return normalized;
             }
         }
 
