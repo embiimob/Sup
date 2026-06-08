@@ -2777,7 +2777,7 @@ namespace SUP
 
                                                                     if (!int.TryParse(content, NumberStyles.Any, CultureInfo.GetCultureInfo("en-US"), out int id))
                                                                     {
-                                                                        if (vmatch.Success || IsVideoExtension(extension) || IsAudioExtension(extension) || IsSvgExtension(extension))
+                                                                        if ((vmatch.Success && !imgExtensions.Contains(extension)) || IsVideoExtension(extension) || IsAudioExtension(extension) || IsSvgExtension(extension))
                                                                         {
                                                                             this.Invoke((MethodInvoker)delegate
                                                                             {
@@ -3132,7 +3132,7 @@ namespace SUP
 
                                                                     if (!int.TryParse(content, NumberStyles.Any, CultureInfo.GetCultureInfo("en-US"), out int id))
                                                                     {
-                                                                        if (vmatch.Success || IsVideoExtension(extension) || IsAudioExtension(extension) || IsSvgExtension(extension))
+                                                                        if ((vmatch.Success && !imgExtensions.Contains(extension)) || IsVideoExtension(extension) || IsAudioExtension(extension) || IsSvgExtension(extension))
                                                                         {
                                                                             this.Invoke((MethodInvoker)delegate
                                                                             {
@@ -3493,7 +3493,7 @@ namespace SUP
 
                                                                     if (!int.TryParse(content, NumberStyles.Any, CultureInfo.GetCultureInfo("en-US"), out int id))
                                                                     {
-                                                                        if (vmatch.Success || IsVideoExtension(extension) || IsAudioExtension(extension) || IsSvgExtension(extension))
+                                                                        if ((vmatch.Success && !imgExtensions.Contains(extension)) || IsVideoExtension(extension) || IsAudioExtension(extension) || IsSvgExtension(extension))
                                                                         {
                                                                             this.Invoke((MethodInvoker)delegate
                                                                             {
