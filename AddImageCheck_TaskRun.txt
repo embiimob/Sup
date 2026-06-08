@@ -1,0 +1,11 @@
+                            }
+                            if (File.Exists(imagelocation))
+                            {
+                                this.Invoke((Action)(() =>
+                                {
+                                    pictureBox.ImageLocation = imagelocation;
+                                    pictureBox.MouseClick += (sender, e) => { Attachment_Clicked(imagelocation); };
+
+                                }));
+                            }
+                            else

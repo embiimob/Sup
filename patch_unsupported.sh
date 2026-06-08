@@ -1,0 +1,54 @@
+#!/bin/bash
+cat << 'DIFF' > patch.diff
+<<<<<<< SEARCH
+        private static bool IsSvgExtension(string extension) =>
+            string.Equals(extension, ".svg", StringComparison.OrdinalIgnoreCase) ||
+            string.Equals(extension, ".svgz", StringComparison.OrdinalIgnoreCase);
+
+        private void supFlow_MouseWheel(object sender, MouseEventArgs e)
+=======
+        private static bool IsSvgExtension(string extension) =>
+            string.Equals(extension, ".svg", StringComparison.OrdinalIgnoreCase) ||
+            string.Equals(extension, ".svgz", StringComparison.OrdinalIgnoreCase);
+
+        private bool IsUnsupportedImageFormat(string filePath)
+        {
+            try
+            {
+                if (!File.Exists(filePath)) return false;
+
+                using (FileStream fs = new FileStream(filePath, FileMode.Open, FileAccess.Read))
+                {
+                    if (fs.Length < 12) return false;
+
+                    byte[] header = new byte[12];
+                    fs.Read(header, 0, 12);
+
+                    // Check for RIFF WEBP
+                    if (header[0] == 0x52 && header[1] == 0x49 && header[2] == 0x46 && header[3] == 0x46 && // RIFF
+                        header[8] == 0x57 && header[9] == 0x45 && header[10] == 0x42 && header[11] == 0x50)   // WEBP
+                    {
+                        return true;
+                    }
+
+                    // Check for ftypavif (AVIF) and other HEIF/HEIC formats
+                    if (header[4] == 0x66 && header[5] == 0x74 && header[6] == 0x79 && header[7] == 0x70) // ftyp
+                    {
+                        if (header[8] == 0x61 && header[9] == 0x76 && header[10] == 0x69 && header[11] == 0x66) return true; // avif
+                        if (header[8] == 0x6d && header[9] == 0x69 && header[10] == 0x66 && header[11] == 0x31) return true; // mif1
+                        if (header[8] == 0x6d && header[9] == 0x73 && header[10] == 0x66 && header[11] == 0x31) return true; // msf1
+                        if (header[8] == 0x68 && header[9] == 0x65 && header[10] == 0x69 && header[11] == 0x63) return true; // heic
+                        if (header[8] == 0x68 && header[9] == 0x65 && header[10] == 0x69 && header[11] == 0x78) return true; // heix
+                        if (header[8] == 0x68 && header[9] == 0x65 && header[10] == 0x76 && header[11] == 0x63) return true; // hevc
+                        if (header[8] == 0x68 && header[9] == 0x65 && header[10] == 0x76 && header[11] == 0x78) return true; // hevx
+                    }
+                }
+            }
+            catch { }
+
+            return false;
+        }
+
+        private void supFlow_MouseWheel(object sender, MouseEventArgs e)
+>>>>>>> REPLACE
+DIFF
