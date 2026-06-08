@@ -289,6 +289,7 @@ namespace SUP
                             {
                                 imagelocation = imagelocation.Replace(@"\root\", @"\ipfs\");
                                 if (content.Length == 51) { imagelocation += @"\artifact"; }
+                                else if (content.Length > 51 && content[51] == '.') { string _ext = content.Substring(51); imagelocation = imagelocation.Substring(0, imagelocation.Length - _ext.Length) + @"\artifact" + _ext; }
                             }
 
                             string parentDir = Path.GetDirectoryName(imagelocation);
@@ -467,7 +468,7 @@ namespace SUP
                                     if (!profile.Image.ToLower().StartsWith("http"))
                                     {
                                         fromImage = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + @"\root\" + profile.Image.Replace("BTC:", "").Replace("MZC:", "").Replace("LTC:", "").Replace("DOG:", "").Replace("IPFS:", "").Replace(@"/", @"\");
-                                        if (profile.Image.ToLower().StartsWith("ipfs:")) { fromImage = fromImage.Replace(@"\root\", @"\ipfs\"); if (profile.Image.Length == 51) { fromImage += @"\artifact"; } }
+                                        if (profile.Image.ToLower().StartsWith("ipfs:")) { fromImage = fromImage.Replace(@"\root\", @"\ipfs\"); if (profile.Image.Length == 51) { fromImage += @"\artifact"; } else if (profile.Image.Length > 51 && profile.Image[51] == '.') { string _ext = profile.Image.Substring(51); fromImage = fromImage.Substring(0, fromImage.Length - _ext.Length) + @"\artifact" + _ext; } }
                                     }
                                     Regex regexTransactionId = new Regex(@"\b[0-9a-f]{64}\b");
                                     Match imgurnmatch = regexTransactionId.Match(fromImage);
@@ -678,7 +679,7 @@ namespace SUP
                                     if (!profile.Image.ToLower().StartsWith("http"))
                                     {
                                         toImage = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + @"\root\" + profile.Image.Replace("BTC:", "").Replace("MZC:", "").Replace("LTC:", "").Replace("DOG:", "").Replace("IPFS:", "").Replace(@"/", @"\");
-                                        if (profile.Image.ToLower().StartsWith("ipfs:")) { toImage = toImage.Replace(@"\root\", @"\ipfs\"); if (profile.Image.Length == 51) { toImage += @"\artifact"; } }
+                                        if (profile.Image.ToLower().StartsWith("ipfs:")) { toImage = toImage.Replace(@"\root\", @"\ipfs\"); if (profile.Image.Length == 51) { toImage += @"\artifact"; } else if (profile.Image.Length > 51 && profile.Image[51] == '.') { string _ext = profile.Image.Substring(51); toImage = toImage.Substring(0, toImage.Length - _ext.Length) + @"\artifact" + _ext; } }
                                     }
                                     Regex regexTransactionId = new Regex(@"\b[0-9a-f]{64}\b");
                                     Match imgurnmatch = regexTransactionId.Match(toImage);
@@ -1138,7 +1139,7 @@ namespace SUP
                 if (!imagepath.ToLower().StartsWith("http"))
                 {
                     imagelocation = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + @"\root\" + imagepath.Replace("BTC:", "").Replace("MZC:", "").Replace("LTC:", "").Replace("DOG:", "").Replace("IPFS:", "").Replace(@"/", @"\");
-                    if (imagepath.ToLower().StartsWith("ipfs:")) { imagelocation = imagelocation.Replace(@"\root\", @"\ipfs\"); if (imagepath.Length == 51) { imagelocation += @"\artifact"; } }
+                    if (imagepath.ToLower().StartsWith("ipfs:")) { imagelocation = imagelocation.Replace(@"\root\", @"\ipfs\"); if (imagepath.Length == 51) { imagelocation += @"\artifact"; } else if (imagepath.Length > 51 && imagepath[51] == '.') { string _ext = imagepath.Substring(51); imagelocation = imagelocation.Substring(0, imagelocation.Length - _ext.Length) + @"\artifact" + _ext; } }
 
                     Regex regexTransactionId = new Regex(@"\b[0-9a-f]{64}\b");
                     Match imgurnmatch = regexTransactionId.Match(imagelocation);
