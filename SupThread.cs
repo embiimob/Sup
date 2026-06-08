@@ -32,6 +32,18 @@ namespace SUP
         private string searchAddress = "";
         private string activeUserAddress = "";
         private string activeUserImage = "";
+        private static readonly HashSet<string> CommonImageExtensions = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
+        {
+            ".bmp", ".dib", ".gif", ".ico", ".cur", ".jpeg", ".jpg", ".jpe", ".png", ".tif", ".tiff", ".svg", ".svgz", ".webp", ".avif", ".apng"
+        };
+        private static readonly HashSet<string> CommonVideoExtensions = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
+        {
+            ".mp4", ".mov", ".avi", ".m4v", ".mkv", ".wmv", ".mpeg", ".mpg", ".ogv", ".webm"
+        };
+        private static readonly HashSet<string> CommonAudioExtensions = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
+        {
+            ".wav", ".mp3", ".ogg", ".oga", ".opus", ".flac", ".m4a", ".aac", ".wma", ".weba", ".webm"
+        };
         public SupThread(string _searchAddress = "", string _activeUserAddress = "", string _activeUserImage = "", bool isTestnet = true)
         {
             InitializeComponent();
@@ -48,6 +60,37 @@ namespace SUP
             }
             RefreshSupMessages();
         }
+
+        private static string GetNormalizedExtension(string pathOrUrl)
+        {
+            if (string.IsNullOrWhiteSpace(pathOrUrl))
+            {
+                return string.Empty;
+            }
+
+            string candidate = pathOrUrl.Trim();
+
+            if (Uri.TryCreate(candidate, UriKind.Absolute, out Uri uri))
+            {
+                candidate = uri.AbsolutePath;
+            }
+            else
+            {
+                int queryIndex = candidate.IndexOfAny(new[] { '?', '#' });
+                if (queryIndex >= 0)
+                {
+                    candidate = candidate.Substring(0, queryIndex);
+                }
+            }
+
+            return Path.GetExtension(candidate)?.ToLowerInvariant() ?? string.Empty;
+        }
+
+        private static bool IsVideoExtension(string extension) => CommonVideoExtensions.Contains(extension);
+        private static bool IsAudioExtension(string extension) => CommonAudioExtensions.Contains(extension);
+        private static bool IsSvgExtension(string extension) =>
+            string.Equals(extension, ".svg", StringComparison.OrdinalIgnoreCase) ||
+            string.Equals(extension, ".svgz", StringComparison.OrdinalIgnoreCase);
 
         private void supFlow_MouseWheel(object sender, MouseEventArgs e)
         {
@@ -856,7 +899,7 @@ namespace SUP
                         }
 
                         string pattern = "<<.*?>>";
-                        List<string> imgExtensions = new List<string> { ".bmp", ".gif", ".ico", ".jpeg", ".jpg", ".png", ".tif", ".tiff", ".mp4", ".mov", ".avi", ".wav", ".mp3", ".webm" };
+                        HashSet<string> imgExtensions = new HashSet<string>(CommonImageExtensions.Concat(CommonVideoExtensions).Concat(CommonAudioExtensions), StringComparer.OrdinalIgnoreCase);
 
                         MatchCollection matches = Regex.Matches(unfilteredmessage, pattern);
                         foreach (Match match in matches)
@@ -879,7 +922,7 @@ namespace SUP
                                     if (content.ToLower().StartsWith("ipfs:")) { imgurn = imgurn.Replace(@"\root\", @"\ipfs\"); }
                                 }
 
-                                string extension = Path.GetExtension(imgurn).ToLower();
+                                string extension = GetNormalizedExtension(imgurn);
                                 if (!imgExtensions.Contains(extension) && !imgurn.Contains("youtube.com") && !imgurn.Contains("youtu.be"))
                                 {
                                     string title = content;
@@ -968,7 +1011,7 @@ namespace SUP
                                     if (!int.TryParse(content, NumberStyles.Any, CultureInfo.GetCultureInfo("en-US"), out int id))
                                     {
 
-                                        if (extension == ".mp4" || extension == ".mov" || extension == ".avi" || content.Contains("youtube.com") || content.Contains("youtu.be") || extension == ".wav" || extension == ".mp3" || extension == ".webm")
+                                        if (IsVideoExtension(extension) || IsAudioExtension(extension) || IsSvgExtension(extension) || content.Contains("youtube.com") || content.Contains("youtu.be"))
                                         {
 
                                             try { AddMedia(content); } catch { }
@@ -1318,7 +1361,7 @@ namespace SUP
 
 
 
-                if (videolocation.ToLower().EndsWith(".wav") || videolocation.ToLower().EndsWith(".mp3") || videolocation.ToLower().EndsWith(".webm"))
+                if (IsAudioExtension(GetNormalizedExtension(videolocation)))
                 {
 
 
@@ -1527,7 +1570,7 @@ namespace SUP
                                 this.Invoke((Action)(() =>
                                 {
 
-                                    if ((videolocation.ToLower().EndsWith(".wav") || videolocation.ToLower().EndsWith(".mp3") || videolocation.ToLower().EndsWith(".webm")) && autoPlay)
+                                    if (IsAudioExtension(GetNormalizedExtension(videolocation)) && autoPlay)
                                     {
                                         audioPlayer.AddToPlaylist(videolocation);
 
@@ -1562,7 +1605,7 @@ namespace SUP
                     else
                     {
 
-                        if ((videolocation.ToLower().EndsWith(".wav") || videolocation.ToLower().EndsWith(".mp3") || videolocation.ToLower().EndsWith(".webm")) && autoPlay)
+                        if (IsAudioExtension(GetNormalizedExtension(videolocation)) && autoPlay)
                         {
                             audioPlayer.AddToPlaylist(videolocation);
                         }
@@ -1586,12 +1629,22 @@ namespace SUP
                 }
                 else
                 {
-                    string pattern = @"(?:youtu\.be/|youtube(?:-nocookie)?\.com/(?:[^/\n\s]*[/\n\s]*(?:v/|e(?:mbed)?/|.*[?&]v=))?)?([a-zA-Z0-9_-]{11})";
-
-                    Match match = Regex.Match(videopath, pattern);
-                    if (match.Success)
+                    if (videopath.Contains("youtube.com") || videopath.Contains("youtu.be"))
                     {
-                        videolocation = @"https://www.youtube.com/embed/" + match.Groups[1].Value;
+                        string pattern = @"(?:youtu\.be/|youtube(?:-nocookie)?\.com/(?:[^/\n\s]*[/\n\s]*(?:v/|e(?:mbed)?/|.*[?&]v=))?)?([a-zA-Z0-9_-]{11})";
+                        Match match = Regex.Match(videopath, pattern);
+                        if (match.Success)
+                        {
+                            videolocation = @"https://www.youtube.com/embed/" + match.Groups[1].Value;
+                        }
+                        else
+                        {
+                            videolocation = videopath;
+                        }
+                    }
+                    else
+                    {
+                        videolocation = videopath;
                     }
 
                     try { webviewer.CoreWebView2.Navigate(videolocation); } catch { }
