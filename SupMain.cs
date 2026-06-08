@@ -6002,6 +6002,7 @@ namespace SUP
 
         void AddImage(string imagepath, bool isprivate = false, bool addtoTop = false)
         {
+            imagepath = IpfsHelper.NormalizeIpfsControlChars(imagepath);
             string imagelocation = "";
             if (imagepath != null)
             {
@@ -6636,6 +6637,7 @@ namespace SUP
 
         async void AddMedia(string videopath, bool isprivate = false, bool addtoTop = false, bool autoPlay = false)
         {
+            videopath = IpfsHelper.NormalizeIpfsControlChars(videopath);
             string videolocation = "";
             if (videopath != null)
             {

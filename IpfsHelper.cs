@@ -461,6 +461,40 @@ namespace SUP
             catch { }
         }
 
+        /// <summary>
+        /// Normalizes an IPFS URN whose CID/filename separator was corrupted by JSON decoding.
+        /// When a URN like <c>IPFS:CID\bfilename</c> is stored in JSON, the backslash-letter
+        /// sequence (e.g. <c>\f</c> for a filename starting with 'f') is decoded by the JSON
+        /// parser as a control character (form-feed 0x0C) rather than a backslash + the letter.
+        /// Both the separator and the first letter of the filename are lost in the process.
+        /// This method detects such control characters at position 51 (immediately after the
+        /// 5-char "IPFS:" prefix and 46-char CIDv0) and restores them to a forward slash
+        /// followed by the original letter, e.g. chr(12) → "/f".
+        /// Supports both "IPFS:" and "ipfs:" prefixes and the formats
+        /// <c>IPFS:CID/filename</c> and <c>IPFS:CID\filename</c> without modification.
+        /// </summary>
+        /// <param name="urn">Raw IPFS URN, possibly containing JSON-decoded control characters.</param>
+        /// <returns>Normalized URN with correct forward-slash separator and restored letter.</returns>
+        public static string NormalizeIpfsControlChars(string urn)
+        {
+            if (string.IsNullOrEmpty(urn) || urn.Length <= 51) return urn;
+            if (!urn.StartsWith("IPFS:", StringComparison.OrdinalIgnoreCase)) return urn;
+
+            // Position 51 is the first character after "IPFS:" (5 chars) + CIDv0 (46 chars).
+            // It should be '/', '\', or '.' (extension). A control character here means the
+            // JSON encoder wrote a literal backslash before the filename's first letter, which
+            // the JSON parser then decoded as that letter's escape sequence (consuming the letter).
+            switch (urn[51])
+            {
+                case '\f': return urn.Substring(0, 51) + "/f" + urn.Substring(52); // \f → form-feed; restore /f
+                case '\b': return urn.Substring(0, 51) + "/b" + urn.Substring(52); // \b → backspace; restore /b
+                case '\t': return urn.Substring(0, 51) + "/t" + urn.Substring(52); // \t → tab; restore /t
+                case '\r': return urn.Substring(0, 51) + "/r" + urn.Substring(52); // \r → carriage-return; restore /r
+                case '\n': return urn.Substring(0, 51) + "/n" + urn.Substring(52); // \n → newline; restore /n
+                default:   return urn;
+            }
+        }
+
         private static void LogInfo(string method, string message)
         {
             Debug.WriteLine($"[IpfsHelper.{method}] INFO: {message}");
