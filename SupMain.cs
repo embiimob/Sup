@@ -6264,66 +6264,60 @@ namespace SUP
                     }
                     else
                     {
-
-
-
                         string thumbnailPath = imagelocation + "-thumbnail.jpg";
 
                         // Check if a thumbnail exists
                         if (System.IO.File.Exists(thumbnailPath))
                         {
-
                             pictureBox.ImageLocation = thumbnailPath;
                             pictureBox.MouseClick += (sender, e) => { Attachment_Clicked(imagelocation); };
-                     
-
                         }
                         else
                         {
-                            // Load the original image from file
-                            System.Drawing.Image originalImage = System.Drawing.Image.FromFile(imagelocation);
+                            // Display immediately via ImageLocation (works for all formats including JPEG).
+                            // Synchronous GDI+ resize can throw for certain JPEG files with ICC/EXIF data,
+                            // so we match SupThread's approach: set ImageLocation first, then create the
+                            // thumbnail in the background so it is available on future loads.
+                            pictureBox.ImageLocation = imagelocation;
+                            pictureBox.MouseClick += (sender, e) => { Attachment_Clicked(imagelocation); };
 
-                            // Check if the original image is a GIF
-                            if (Path.GetExtension(imagelocation).Equals(".gif", StringComparison.OrdinalIgnoreCase))
+                            if (!Path.GetExtension(imagelocation).Equals(".gif", StringComparison.OrdinalIgnoreCase))
                             {
-                                // For GIF images, directly use the original image without creating a thumbnail
-                                pictureBox.ImageLocation = imagelocation;
-                                pictureBox.MouseClick += (sender, e) => { Attachment_Clicked(imagelocation); };
-                                
-                            }
-                            else
-                            {
-                                // Resize the image if needed
-                                int maxWidth = pictureBox.Width;
-                                int maxHeight = pictureBox.Height;
-
-                                int newWidth, newHeight;
-                                if (originalImage.Width > originalImage.Height)
+                                int thumbWidth = calcwidth;
+                                string thumbPath = thumbnailPath;
+                                string imgLoc = imagelocation;
+                                Task.Run(() =>
                                 {
-                                    newWidth = maxWidth;
-                                    newHeight = (int)((double)originalImage.Height / originalImage.Width * newWidth);
-                                }
-                                else
-                                {
-                                    newHeight = maxHeight;
-                                    newWidth = (int)((double)originalImage.Width / originalImage.Height * newHeight);
-                                }
-
-                                System.Drawing.Image resizedImage = new Bitmap(originalImage, newWidth, newHeight);
-                                originalImage.Dispose();
-                                this.Invoke((Action)(() =>
-                                {
-                                    pictureBox.ImageLocation = null;
-                                    pictureBox.Image = resizedImage;
-
-                                }));
-
-                                // Save the resized image as a thumbnail
-                                resizedImage.Save(thumbnailPath, ImageFormat.Jpeg);
+                                    try
+                                    {
+                                        System.Drawing.Image originalImage = System.Drawing.Image.FromFile(imgLoc);
+                                        int newWidth, newHeight;
+                                        if (originalImage.Width > originalImage.Height)
+                                        {
+                                            newWidth = thumbWidth;
+                                            newHeight = (int)((double)originalImage.Height / originalImage.Width * newWidth);
+                                        }
+                                        else
+                                        {
+                                            newHeight = thumbWidth;
+                                            newWidth = (int)((double)originalImage.Width / originalImage.Height * newHeight);
+                                        }
+                                        if (newWidth > 0 && newHeight > 0)
+                                        {
+                                            System.Drawing.Image resizedImage = new Bitmap(originalImage, newWidth, newHeight);
+                                            originalImage.Dispose();
+                                            resizedImage.Save(thumbPath, ImageFormat.Jpeg);
+                                            resizedImage.Dispose();
+                                        }
+                                        else
+                                        {
+                                            originalImage.Dispose();
+                                        }
+                                    }
+                                    catch { }
+                                });
                             }
                         }
-
-
                     }
                 }
                 else
