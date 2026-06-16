@@ -3274,11 +3274,26 @@ namespace SUP
                                     try { Directory.CreateDirectory("ipfs/" + ipfsHash); } catch { };
                                     Directory.CreateDirectory("ipfs/" + ipfsHash + "-build");
                                     Process process2 = new Process();
-                                    process2.StartInfo.FileName = "cmd.exe";
-                                    process2.StartInfo.Arguments = "/c ipfs\\ipfs.exe get " + ipfsHash + @" -o ipfs\" + ipfsHash;
-                                    process2.StartInfo.UseShellExecute = true;
-                                    process2.Start();
-                                    process2.WaitForExit();
+
+                                    bool _gatewaySuccess = false;
+                                    if (File.Exists("IPFS_API_HELPERS_ENABLED"))
+                                    {
+                                        _gatewaySuccess = IpfsHelper.TryGetFromPublicGateways(ipfsHash, @"ipfs\" + ipfsHash);
+                                        if (_gatewaySuccess)
+                                        {
+                                            IpfsHelper.AddToLocalCacheAndPinIfEnabled(ipfsHash, @"ipfs\" + ipfsHash);
+                                            try { Directory.Delete("ipfs/" + ipfsHash + "-build", true); } catch { }
+                                        }
+                                    }
+
+                                    if (!_gatewaySuccess)
+                                    {
+                                        process2.StartInfo.FileName = "cmd.exe";
+                                        process2.StartInfo.Arguments = "/c ipfs\\ipfs.exe get " + ipfsHash + @" -o ipfs\" + ipfsHash;
+                                        process2.StartInfo.UseShellExecute = true;
+                                        process2.Start();
+                                        process2.WaitForExit();
+                                    }
 
                                     string fileName;
                                     if (System.IO.File.Exists("ipfs/" + ipfsHash))
